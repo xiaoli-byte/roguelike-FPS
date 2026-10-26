@@ -18,9 +18,14 @@ namespace Spiritfire.Game.Testing
     ///   火舌：火浣鼠 / 镇墓兽 / 祸斗 / 炭童近景 + 地火、火柱；出生显形中途、死亡迸散（火元素击杀）、尸体溶解。
     /// 检查项只核对「有没有出」：外观组件挂上、破层计数、反应执行，不卡画面。
     /// </summary>
-    public sealed class FxBlastSuite : PlaytestSuite
+    public class FxBlastSuite : PlaytestSuite
     {
         public override string Id => "fx-blast";
+
+        /// <summary>只跑一段（迭代用：fx-blast-boom / -rx / -status / -layer / -life）；null = 全部</summary>
+        protected virtual string Only => null;
+
+        bool Run(string part) => Only == null || Only == part;
         public override string Scene => "Assets/Scenes/TestArena.unity";
 
         const string Target = "jerboa_blade";
@@ -66,12 +71,12 @@ namespace Spiritfire.Game.Testing
             Time.captureDeltaTime = 1f / 60f;
             try
             {
-                yield return Explosions();
-                yield return ReactionsCase();
-                yield return Statuses();
-                yield return LayerBreaks();
-                yield return Flames();
-                yield return SpawnDeath();
+                if (Run("boom")) yield return Explosions();
+                if (Run("rx")) yield return ReactionsCase();
+                if (Run("status")) yield return Statuses();
+                if (Run("layer")) yield return LayerBreaks();
+                if (Run("life")) yield return Flames();
+                if (Run("life")) yield return SpawnDeath();
             }
             finally
             {
@@ -271,7 +276,10 @@ namespace Spiritfire.Game.Testing
                 var showing = sfx ? sfx.Showing : StatusMask.None;
                 PoseShot(list[i], back * 0.9f + side * 0.3f, $"fxb_status_{names[i]}");
                 yield return Frames(3);
-                Line($"状态 · {names[i]}：外观组件 {(sfx ? "✓" : "✗")}，显示 {showing}");
+                Line($"状态 · {names[i]}：外观组件 {(sfx ? "✓" : "✗")}，显示 {showing}，状态皮 {(sfx && sfx.SkinShowing ? "✓" : "✗")}" +
+                     (i == 0 && sfx ? $"，身上火舌 {sfx.TonguesShowing} 片" : ""));
+                if (sfx && !sfx.SkinShowing) Fail($"{names[i]}：没有挂上状态皮");
+                if (i == 0 && sfx && sfx.TonguesShowing == 0) Fail("灼烧：身上没有火舌");
                 if (!sfx) Fail($"{names[i]}：没有挂 StatusFx");
                 else if ((showing & want[i]) == 0) Fail($"{names[i]}：StatusFx 没有显示 {want[i]}（{showing}）");
             }
@@ -305,19 +313,27 @@ namespace Spiritfire.Game.Testing
                 if (layer == DamageLayer.Shield) GameEvents.EnemyShieldBroken += on;
                 else GameEvents.EnemyArmorBroken += on;
                 string ln = layer == DamageLayer.Shield ? "shield" : "armor";
-                var camPos = BodyCenter(d) + back * 3.6f + side * 2.2f + Vector3.up * 0.5f;
+                // 机位每次按靶子当前位置算（中弹会被打退）
+                Vector3 CamPos() => BodyCenter(d) + back * 3.2f + side * 1.9f + Vector3.up * 0.4f;
                 weapons.Active.reserve = weapons.Active.def.reserve;
                 weapons.testFire = true;
                 bool hitShot = false;
-                float t0 = Time.time;
+                float t0 = Time.time, firstRipple = -1;
+                int ripples0 = ShieldBubble.Ripples;
                 while (Time.time - t0 < 8f && !broke)
                 {
                     if (ai && d) Aim(motor, eye, BodyCenter(d));
-                    if (!hitShot && Time.time - t0 > 0.25f)
+                    // 受击：第一次打到护盾（球壳罩起来）后 0.1 s 拍；护甲照旧 0.25 s
+                    if (layer == DamageLayer.Shield && firstRipple < 0 && ShieldBubble.Ripples > ripples0) firstRipple = Time.time;
+                    bool ready = layer == DamageLayer.Shield ? firstRipple >= 0 && Time.time - firstRipple > 0.1f : Time.time - t0 > 0.25f;
+                    if (!hitShot && ready)
                     {
                         hitShot = true;
                         Shot(weapons.eye, $"fxb_{ln}_hit");
-                        CamShot(camPos, BodyCenter(d), $"fxb_{ln}_hit_side");
+                        CamShot(CamPos(), BodyCenter(d), $"fxb_{ln}_hit_side");
+                        var bub = ShieldBubble.Of(d);
+                        if (layer == DamageLayer.Shield)
+                            Line(bub ? $"  护盾球壳：位置 {bub.transform.position}，大小 {bub.transform.localScale}，激活 {bub.gameObject.activeInHierarchy}，可见 {bub.Visible:F2}；靶子 {BodyCenter(d)}" : "  护盾球壳：没有");
                     }
                     weapons.Active.reserve = weapons.Active.def.reserve;
                     yield return null;
@@ -326,13 +342,15 @@ namespace Spiritfire.Game.Testing
                 if (broke)
                 {
                     yield return Frames(2);
-                    CamShot(camPos, BodyCenter(d), $"fxb_{ln}_break");
+                    CamShot(CamPos(), BodyCenter(d), $"fxb_{ln}_break");
                     yield return Frames(15);
-                    CamShot(camPos, BodyCenter(d), $"fxb_{ln}_break_late");
+                    CamShot(CamPos(), BodyCenter(d), $"fxb_{ln}_break_late");
                 }
                 if (layer == DamageLayer.Shield) GameEvents.EnemyShieldBroken -= on;
                 else GameEvents.EnemyArmorBroken -= on;
-                Line($"破{(layer == DamageLayer.Shield ? "盾" : "甲")}：{(broke ? "✓ 打穿" : "✗ 8 s 没打穿")}");
+                Line($"破{(layer == DamageLayer.Shield ? "盾" : "甲")}：{(broke ? "✓ 打穿" : "✗ 8 s 没打穿")}" +
+                     (layer == DamageLayer.Shield ? $"，护盾球壳 涟漪 {ShieldBubble.Ripples} 次 / 破碎 {ShieldBubble.Shatters} 次" : ""));
+                if (layer == DamageLayer.Shield && (ShieldBubble.Ripples == 0 || ShieldBubble.Shatters == 0)) Fail("护盾球壳没有出涟漪 / 破碎");
                 if (!broke) Fail($"{layer} 8 s 没打穿");
                 yield return Frames(30);
             }
@@ -403,6 +421,52 @@ namespace Spiritfire.Game.Testing
             }
             Line($"死亡：溶解中途 {(mid ? "✓" : "✗")}");
             arena.Clear();
+            yield return Frames(20);
+            // 三章出生法阵：通用光墙 / 溶解 / 光点螺旋 + C 路的本章主题法阵叠在一起（测试场按图鉴章节选主题）
+            foreach (var id in new[] { "jerboa_blade", "jiaoren", "tantong" })
+            {
+                if (!ArenaSpawner.IsRegistered(id)) continue;
+                var e = Spawn(id, stage, 200);
+                if (!e) continue;
+                yield return new WaitForSeconds(0.3f);
+                CamShot(camPos, g + Vector3.up * 0.8f, $"fxb_spawn_theme_{id}");
+                yield return new WaitForSeconds(0.25f);
+                CamShot(camPos, g + Vector3.up * 0.8f, $"fxb_spawn_theme_{id}_late");
+                Line($"出生法阵 · {id}：主题 {SpawnThemes.For(e)}");
+                yield return new WaitForSeconds(0.6f);
+                arena.Clear();
+                yield return Frames(20);
+            }
         }
+    }
+
+    public sealed class FxBlastBoomSuite : FxBlastSuite
+    {
+        public override string Id => "fx-blast-boom";
+        protected override string Only => "boom";
+    }
+
+    public sealed class FxBlastRxSuite : FxBlastSuite
+    {
+        public override string Id => "fx-blast-rx";
+        protected override string Only => "rx";
+    }
+
+    public sealed class FxBlastStatusSuite : FxBlastSuite
+    {
+        public override string Id => "fx-blast-status";
+        protected override string Only => "status";
+    }
+
+    public sealed class FxBlastLayerSuite : FxBlastSuite
+    {
+        public override string Id => "fx-blast-layer";
+        protected override string Only => "layer";
+    }
+
+    public sealed class FxBlastLifeSuite : FxBlastSuite
+    {
+        public override string Id => "fx-blast-life";
+        protected override string Only => "life";
     }
 }

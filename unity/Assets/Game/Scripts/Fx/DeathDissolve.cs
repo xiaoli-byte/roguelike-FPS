@@ -26,6 +26,8 @@ namespace Spiritfire.Game
         bool triggered;
         float diedAt = -1, emitAcc;
         Color color, edge;
+        /// <summary>击杀那一下的元素（元素色迸散、灰烬掺元素色）</summary>
+        Element killElement;
         readonly List<Renderer> targets = new(), others = new();
         MaterialPropertyBlock block;
 
@@ -52,7 +54,11 @@ namespace Spiritfire.Game
             if (hp) hp.Died -= OnDied;
         }
 
-        void OnDied(DamageInfo info) => TriggerNow();
+        void OnDied(DamageInfo info)
+        {
+            killElement = info.element;
+            TriggerNow();
+        }
 
         /// <summary>立刻按「刚死」处理：迸散，开始倒计时溶解</summary>
         public void TriggerNow()
@@ -62,9 +68,13 @@ namespace Spiritfire.Game
             var c = FxDirector.Body(hp, out float r);
             color = FxDirector.EnemyColor(hp);
             Fx.Death(c, color, Mathf.Clamp(r * 2f, 0.6f, 6f));
+            // B 路：元素击杀再叠一层元素色迸散
+            var elementId = DeathElementPreset.IdOf(killElement);
+            if (elementId != null) Fx.Play(elementId, c, Vector3.up, Fx.ElementColor(killElement), Mathf.Clamp(r * 2f, 0.6f, 6f));
             FxDirector.CountDeath();
             diedAt = Time.time;
-            edge = new Color(color.r * 2.6f + 0.4f, color.g * 2.6f + 0.3f, color.b * 2.6f + 0.2f, 1);
+            // 溶解前沿：HDR 敌人色 + 白热底（B 路：亮一档，Bloom 吃得到一圈清楚的亮边）
+            edge = new Color(color.r * 4f + 0.6f, color.g * 4f + 0.5f, color.b * 4f + 0.4f, 1);
             Collect(gameObject, targets, others);
             emitAcc = 0;
             enabled = true;
@@ -142,7 +152,7 @@ namespace Spiritfire.Game
             var b = BoundsOf(targets, transform.position + Vector3.up * 0.5f);
             float h = Mathf.Max(0.3f, b.size.y);
             // 上面先溶（g = (顶 − y) / 高，前沿从上往下走），权重 0.35：主要还是噪声斑驳地化掉
-            Apply(targets, block, k, new Vector4(b.max.y, -1f / h, 0, 0), 0.35f, edge, 0.1f);
+            Apply(targets, block, k, new Vector4(b.max.y, -1f / h, 0, 0), 0.35f, edge, 0.13f);
             if (k > 0.45f)
                 foreach (var r in others)
                     if (r) r.forceRenderingOff = true;
@@ -156,7 +166,7 @@ namespace Spiritfire.Game
                 emitAcc -= 1;
                 if (e == null) continue;
                 var p = new Vector3(Random.Range(b.min.x, b.max.x), Random.Range(b.min.y, b.max.y), Random.Range(b.min.z, b.max.z));
-                var c = Color.Lerp(color, Color.white, Random.value * 0.4f);
+                var c = Color.Lerp(killElement != Element.None && Random.value < 0.45f ? Fx.ElementColor(killElement) : color, Color.white, Random.value * 0.4f);
                 rt.EmitOne(e, p, new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(0.6f, 1.6f), Random.Range(-0.3f, 0.3f)), Random.Range(0.06f, 0.12f),
                     Random.Range(0.5f, 0.9f), c, 0);
             }
