@@ -16,6 +16,11 @@
 //   · 亮边随进度变亮（紧迫度 = 进度²）并脉动，脉动相位由 CPU 按 10 → 32 rad/s 积分写进来（避免着色器里变频造成的相位跳变）；收尾闪一下、略放大。
 // 动画全部由 CPU 推进后写进材质（每个预警一份材质实例）。
 // 投影盒内还有两道淡出：竖直面（由重建坐标导数得到的法线 |n.y| < 0.25）不画，避免墙面 / 角色侧面被拉成长条；盒子上下 12% 渐隐，不在穿过盒边的物体上切出硬边。
+// 角色不染色（特效打磨 C 路）：Telegraph 把落在投影盒里的敌人（最多 4 只）的水平包围框 _Occ[i] 和脚下地面高度 / 头顶 _OccY[i] 写进来，
+//   包围框里、比脚下地面高出 7 cm 以上的点不画——火鼍、沙魇这类贴地矮个子的身体下沿不再被染上预警色，地面照画。_OccY[i].z = 0 表示这一格没用。
+// 乘色（特效打磨 C 路，_Mul.x > 0 时）：另一个通道（SRPDefaultUnlit，先于主通道画）把形状内的地面乘上 _Mul.yzw——亮沙、冰雪上危险区读成正红
+//   （普通混合的淡红铺在亮地表上只会是粉色），暗地表上乘色几乎不起作用、靠主通道的亮边；开乘色时主通道的淡底减到 0.7 倍、填充前沿不往白里混。
+//   _Mul.x = 0（默认）时这个通道被 Telegraph 关掉，主通道输出与原来完全一样。
 Shader "Spiritfire/Telegraph"
 {
     Properties
@@ -29,6 +34,7 @@ Shader "Spiritfire/Telegraph"
         _Extent("Box Size XY, Origin XY", Vector) = (2, 2, 0, 0)
         _Mode("Shape, Style, Additive", Vector) = (0, 0, 0, 0)
         _Plane("Liquid Plane Y, Enabled, Box Height", Vector) = (0, 0, 0, 0)
+        _Mul("Multiply Strength, Tint RGB", Vector) = (0, 1, 1, 1)
         [HideInInspector] _SrcBlend("Src Blend", Float) = 5
         [HideInInspector] _DstBlend("Dst Blend", Float) = 10
         // 网格通道的两种模式：体积投射（Cull Front + ZTest Greater）/ 平放 Quad（Cull Off + ZTest LEqual + Offset）
@@ -72,6 +78,9 @@ Shader "Spiritfire/Telegraph"
             float4 _Extent;  // xy 投影盒尺寸（米），zw 形状原点相对盒心的偏移（米）
             float4 _Mode;    // x 形状，y 样式，z 加法混合
             float4 _Plane;   // x 液面高度（世界 y），y 1 = 有液面，z 投影盒高（米，0 = 按比例渐隐）
+            float4 _Mul;     // x 乘色强度（0 = 关），yzw 乘色
+            float4 _Occ[4];  // 不染色的角色：水平包围框 xz 最小、xz 最大（世界米）
+            float4 _OccY[4]; // x 脚下地面高度，y 头顶高度，z 1 = 这一格有效
             float _SrcBlend;
             float _DstBlend;
             float _Volume;
@@ -201,11 +210,15 @@ Shader "Spiritfire/Telegraph"
                     deco = step(0.55, frac(s.along * 0.3 - abs(s.lane) * 0.3 - t * 1.6)) * 0.1;
                 }
                 float body = 0.15 + 0.05 * u + filled * (0.19 + 0.13 * u) + deco;  // 填满时约 0.52：暗地表上不糊成一片
+                // 开乘色时地面已经被乘红：淡底减到 0.7 倍，免得叠成一块不透明的红板
+                body *= _Mul.x > 0.0 ? lerp(1.0, 0.7, saturate(_Mul.x)) : 1.0;
                 // 亮边一出现就近乎不透明（形状第一帧就读得出），紧迫时只略微提亮：HDR 提太多会被泛光 + 冷色调白平衡洗成粉白
                 float glow = lerp(1.0, 1.3, u) * lerp(0.85, 1.0, pulse);
                 float rimA = lerp(0.88, 1.0, u) * lerp(0.85, 1.0, pulse);
                 col = base * lerp(0.85, 1.0, filled);
-                col = lerp(col, lerp(base, float3(1.0, 1.0, 1.0), 0.35) * 1.4, front);
+                // 填充前沿：亮一道。开乘色时不往白里混（混白在冷色调下发粉），只提亮主色
+                float3 frontCol = _Mul.x > 0.0 ? base * 1.45 + float3(0.06, 0.02, 0.02) : lerp(base, float3(1.0, 1.0, 1.0), 0.35) * 1.4;
+                col = lerp(col, frontCol, front);
                 col = lerp(col, base * glow, rim);
                 a = max(max(body, front * 0.9), rim * rimA);
             }
@@ -252,6 +265,39 @@ Shader "Spiritfire/Telegraph"
             return float4(col, a);
         }
 
+        // 角色遮罩：落在某只角色的水平包围框里（外扩 8 cm）、比它脚下地面高出 4–12 cm 以上的点 → 1（不画）；地面、框外 → 0
+        float OccluderMask(float3 p)
+        {
+            float m = 0.0;
+            [unroll] for (int k = 0; k < 4; k++)
+            {
+                float4 box = _Occ[k];
+                float4 yy = _OccY[k];
+                float2 lo = box.xy - 0.08, hi = box.zw + 0.08;
+                float inXZ = step(lo.x, p.x) * step(p.x, hi.x) * step(lo.y, p.z) * step(p.z, hi.y);
+                float above = smoothstep(yy.x + 0.04, yy.x + 0.12, p.y) * step(p.y, yy.y + 0.1);
+                m = max(m, inXZ * above * step(0.5, yy.z));
+            }
+            return m;
+        }
+
+        // 乘色通道的系数：形状里面（含倒计时填充）的地面乘多少（0 = 不乘，1 = 乘满 _Mul.yzw）
+        float MultiplyWeight(float2 q)
+        {
+            q /= 1.0 + 0.06 * _Anim2.x;
+            TeleShape s = EvalShape(q);
+            float fw = clamp(fwidth(s.edge), 1e-4, 0.6);
+            float fwp = clamp(fwidth(s.prog) * s.span, 1e-4, 0.6);
+            float inside = saturate(s.edge / fw + 0.5);
+            float progress = _Anim.x;
+            bool closing = _Mode.x < 0.5 || _Mode.x > 2.5;
+            float f = closing ? 1.0 - progress : progress;
+            float frontM = (s.prog - f) * s.span;
+            float filled = (closing ? saturate(frontM / fwp + 0.5) : saturate(-frontM / fwp + 0.5)) * step(0.001, progress);
+            float k = inside * (0.8 + 0.2 * filled) * saturate(_Mul.x);
+            return k * saturate(_Anim.y) * _Color.a;
+        }
+
         // 盒子空间（x 右、y 投射深度、z 前，各在 −0.5..0.5）里的着色：裁掉盒外、竖直面、盒子上下边缘渐隐
         float4 ShadeInBox(float3 ds, float3 positionWS)
         {
@@ -266,7 +312,7 @@ Shader "Spiritfire/Telegraph"
             float fadeY = _Plane.z > 0.0
                 ? saturate((0.5 - abs(ds.y)) * _Plane.z / 0.2)
                 : 1.0 - smoothstep(0.38, 0.5, abs(ds.y));
-            c.a *= smoothstep(0.25, 0.5, facing) * fadeY;
+            c.a *= smoothstep(0.25, 0.5, facing) * fadeY * (1.0 - OccluderMask(positionWS));
             return c;
         }
 
@@ -355,6 +401,96 @@ Shader "Spiritfire/Telegraph"
             float4 Frag(Varyings i) : SV_Target
             {
                 return FragDecalCommon(i, false);
+            }
+            ENDHLSL
+        }
+
+        // 乘色通道（特效打磨 C 路）：先于主通道画，把形状里面的地面乘上 _Mul.yzw（Blend DstColor Zero：结果 = 地面 × 乘色）。
+        // 只在体积投射 / 平放 Quad 时用（贴花投影没有这个通道）；_Mul.x = 0 时 Telegraph 关掉这个通道。
+        Pass
+        {
+            Name "TelegraphMultiply"
+            Tags { "LightMode" = "SRPDefaultUnlit" }
+            Blend DstColor Zero
+            Cull [_Cull]
+            ZWrite Off
+            ZTest [_ZTest]
+            Offset [_OffsetFactor], [_OffsetUnits]
+
+            HLSLPROGRAM
+            #pragma vertex VertMul
+            #pragma fragment FragMul
+            #pragma multi_compile_instancing
+
+            struct MulAttributes
+            {
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct MulVaryings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            MulVaryings VertMul(MulAttributes v)
+            {
+                MulVaryings o = (MulVaryings)0;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
+                o.uv = v.uv;
+                return o;
+            }
+
+            float4 FragMul(MulVaryings i) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(i);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+                float k;
+                if (_Volume > 0.5)
+                {
+                    // 重建坐标与主通道的体积投射完全一样
+                    float2 pixel = i.positionCS.xy;
+                    float2 fetch = pixel;
+                    TransformScreenUV(fetch, _ScreenSize.y);
+                #if UNITY_REVERSED_Z
+                    float depth = LoadSceneDepth(uint2(fetch));
+                #else
+                    float depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, LoadSceneDepth(uint2(fetch)));
+                #endif
+                    float3 positionWS = ComputeWorldSpacePosition(pixel * _ScreenSize.zw, depth, UNITY_MATRIX_I_VP);
+                    if (_Plane.y > 0.5 && positionWS.y < _Plane.x - 0.3)
+                    {
+                        float3 ray = positionWS - _WorldSpaceCameraPos;
+                        if (ray.y < -1e-4)
+                        {
+                            float kk = (_Plane.x - _WorldSpaceCameraPos.y) / ray.y;
+                            if (kk > 0.0 && kk < 1.0) positionWS = _WorldSpaceCameraPos + ray * kk;
+                        }
+                    }
+                    float3 ds = TransformWorldToObject(positionWS);
+                    float2 uv = ds.xz + 0.5;
+                    float2 q = (uv - 0.5) * _Extent.xy - _Extent.zw;
+                    float3 nrm = cross(ddy(positionWS), ddx(positionWS));
+                    float facing = abs(nrm.y) * rsqrt(max(dot(nrm, nrm), 1e-12));
+                    k = MultiplyWeight(q);
+                    clip(0.5 - max(abs(ds.x), max(abs(ds.y), abs(ds.z))));
+                    float fadeY = _Plane.z > 0.0
+                        ? saturate((0.5 - abs(ds.y)) * _Plane.z / 0.2)
+                        : 1.0 - smoothstep(0.38, 0.5, abs(ds.y));
+                    k *= smoothstep(0.25, 0.5, facing) * fadeY * (1.0 - OccluderMask(positionWS));
+                }
+                else
+                {
+                    k = MultiplyWeight((i.uv - 0.5) * _Extent.xy - _Extent.zw);
+                }
+                return float4(lerp(float3(1.0, 1.0, 1.0), _Mul.yzw, saturate(k)), 1.0);
             }
             ENDHLSL
         }

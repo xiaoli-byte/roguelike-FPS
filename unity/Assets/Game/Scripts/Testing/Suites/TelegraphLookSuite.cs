@@ -110,6 +110,9 @@ namespace Spiritfire.Game.Testing
             });
             if (lastUnderfoot > 0.01f) Fail($"站在原色（非危险）预警里也亮了底边光带（{lastUnderfoot:F2}）");
 
+            // 贴地矮个子（火鼍、沙魇）站在落点圈里：身体下沿不该染上预警色（Telegraph 把投影盒里的角色排除掉，地面照画）
+            yield return LowBodies();
+
             // 2-4：鹏 · 扇翼狂风的冻风带（环台外缘的大环，r 外缘 − 5 … 外缘 + 1），从冰窟上空俯拍
             if (IceHole.All.Count > 0 && IceHole.All[0])
             {
@@ -159,6 +162,88 @@ namespace Spiritfire.Game.Testing
             yield return null;
             foreach (var h in hs) h.End();
             yield return new WaitForSeconds(0.3f);
+        }
+
+        IEnumerator LowBodies()
+        {
+            var ids = new[] { "tuo", "sand_wraith" };
+            var bodies = new System.Collections.Generic.List<EnemyAI>();
+            var spots = new System.Collections.Generic.List<Vector3>();
+            for (int i = 0; i < ids.Length; i++)
+            {
+                var at = At(9f, i == 0 ? -0.9f : 1.5f);
+                var ai = EnemyRoster.Spawn(ids[i], at, Quaternion.LookRotation(i == 0 ? side : -fwd), 1f, false);
+                if (!ai)
+                {
+                    Line($"  lowbody：名册里没有 {ids[i]}");
+                    continue;
+                }
+                bodies.Add(ai);
+                spots.Add(at);
+            }
+            // 等出生显形走完，再把 AI 和寻路停住、摆回圈里（站在原地、不出招）
+            yield return new WaitForSeconds(1.1f);
+            for (int i = 0; i < bodies.Count; i++)
+            {
+                var ai = bodies[i];
+                if (!ai) continue;
+                ai.enabled = false;
+                var agent = ai.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                if (agent) agent.enabled = false;
+                ai.transform.SetPositionAndRotation(spots[i], Quaternion.LookRotation(i == 0 ? side : -fwd));
+                var loco = ai.GetComponent<CreatureLocomotion>();
+                if (loco)
+                {
+                    loco.Teleported();
+                    loco.enabled = false;
+                }
+            }
+            yield return null;
+            Aim(motor, eye.transform, At(9f, 0) + Vector3.up * 0.6f);
+            var h = Telegraph.Circle(At(9f, 0), 3.8f, Duration, Color.white);
+            if (!h.Alive) Fail("lowbody：预警没生成");
+            float t0 = Time.time;
+            while (Time.time - t0 < Duration * 0.7f)
+            {
+                Pin(bodies, spots);
+                yield return null;
+            }
+            // 对照：先关掉角色排除拍一张（改前的样子），再打开
+            Telegraph.OccludersOff = true;
+            Pin(bodies, spots);
+            yield return null;
+            Pin(bodies, spots);
+            yield return null;
+            var close = At(9f, 0) - fwd * 6.5f + side * 3f + Vector3.up * 2.6f;
+            spec.transform.position = close;
+            spec.transform.LookAt(At(9f, 0) + Vector3.up * 0.4f);
+            Shot(spec, $"tlook_{tag}_lowbody_off_tp");
+            Telegraph.OccludersOff = false;
+            Pin(bodies, spots);
+            yield return null;
+            Pin(bodies, spots);
+            yield return null;
+            int occ = Telegraph.OccluderCount(h);
+            var center = At(9f, 0);
+            Line($"  lowbody：{bodies.Count} 只（{string.Join("、", bodies.ConvertAll(b => b ? $"{b.enemyId} 离圆心 {Vector3.Distance(b.transform.position, center):F1} m" : "?"))}），{Telegraph.Describe(h)}");
+            if (bodies.Count > 0 && occ < 1) Fail($"lowbody：落点圈里站着 {bodies.Count} 只敌人，预警没有排除任何角色");
+            Shot(eye, $"tlook_{tag}_lowbody");
+            spec.transform.position = close;
+            spec.transform.LookAt(At(9f, 0) + Vector3.up * 0.4f);
+            Shot(spec, $"tlook_{tag}_lowbody_tp");
+            yield return null;
+            h.End();
+            foreach (var ai in bodies)
+                if (ai) Destroy(ai.gameObject);
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        /// <summary>把站桩的敌人钉在原位（动画根运动、碰撞挤开都会让它们挪走）</summary>
+        void Pin(System.Collections.Generic.List<EnemyAI> bodies, System.Collections.Generic.List<Vector3> spots)
+        {
+            for (int i = 0; i < bodies.Count && i < spots.Count; i++)
+                if (bodies[i])
+                    bodies[i].transform.SetPositionAndRotation(spots[i], Quaternion.LookRotation(i == 0 ? side : -fwd));
         }
 
         void Shoot(string name)

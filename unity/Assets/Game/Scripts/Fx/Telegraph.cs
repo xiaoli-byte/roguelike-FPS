@@ -49,13 +49,15 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 预警的统一色板（D21 整改，见 docs/art/review/unity-combat 问题清单）：危险预警全游戏一个色义——
-    /// 赤红（偏玫瑰）在亮沙、冰雪、石地上都跳得出来，和沙黄、冰蓝、火元素橙都拉开色相；火狱关（熔岩、火光都是橙红）换电光品红。
+    /// 赤红在亮沙、冰雪、石地上都跳得出来，和沙黄、冰蓝、火元素橙都拉开色相；火狱关（熔岩、火光都是橙红）换电光品红。
     /// 暗衬边是危险色的近黑，铺在亮地表上把亮边托出来。
+    /// 特效打磨 C 路：赤红从偏玫瑰（0xff1e46）挪到正红（0xff1c24）；亮沙、冰雪上的淡底改成「地面乘色」（<see cref="DangerMultiply"/>，SF_Telegraph 的乘色通道），
+    /// 普通混合的淡红铺在亮地表上只会是粉色，乘色之后是正红、地面纹理还在。
     /// </summary>
     public static class TelegraphPalette
     {
-        /// <summary>赤红：沙地、冰雪、石地</summary>
-        public static readonly Color Crimson = Hex.Rgb(0xff1e46);
+        /// <summary>赤红：沙地、冰雪、石地（正红略偏冷一点，和火元素橙拉开）</summary>
+        public static readonly Color Crimson = Hex.Rgb(0xff1c24);
         /// <summary>电光品红：火狱（第三章）——熔岩和火光是橙红，赤红会混进去</summary>
         public static readonly Color Magenta = Hex.Rgb(0xff2bd6);
         /// <summary>危险预警的暗衬边（alpha = 强度）</summary>
@@ -68,6 +70,18 @@ namespace Spiritfire.Game
 
         /// <summary>当前关卡的危险色：第三章（关卡 id 3-x）品红，其余赤红</summary>
         public static Color Danger => Override ?? (InfernoLevel ? Magenta : Crimson);
+
+        /// <summary>
+        /// 危险区里地面的乘色（SF_Telegraph 乘色通道，形状内的地面 × 它）：危险色按最亮通道归一后往白里退 10%——
+        /// 赤红 ≈ (1, 0.2, 0.22)：亮沙、冰雪乘完是正红；品红 ≈ (1, 0.25, 0.86)
+        /// </summary>
+        public static Color DangerMultiply => MultiplyFor(Danger);
+
+        public static Color MultiplyFor(Color d)
+        {
+            float m = Mathf.Max(1e-3f, Mathf.Max(d.r, Mathf.Max(d.g, d.b)));
+            return Color.Lerp(new Color(d.r / m, d.g / m, d.b / m, 1), Color.white, 0.1f);
+        }
 
         /// <summary>当前关卡是火狱章（Level Meta 的关卡 id 以「3-」开头）</summary>
         public static bool InfernoLevel
@@ -261,6 +275,10 @@ namespace Spiritfire.Game
         static readonly int ColorId = Shader.PropertyToID("_Color");
         static readonly int Color2Id = Shader.PropertyToID("_Color2");
         static readonly int PlaneId = Shader.PropertyToID("_Plane");
+        static readonly int MulId = Shader.PropertyToID("_Mul");
+        static readonly int OccId = Shader.PropertyToID("_Occ");
+        static readonly int OccYId = Shader.PropertyToID("_OccY");
+        const string MulPass = "SRPDefaultUnlit";
         static readonly int VolumeId = Shader.PropertyToID("_Volume");
         static readonly int CullId = Shader.PropertyToID("_Cull");
         static readonly int ZTestId = Shader.PropertyToID("_ZTest");
@@ -297,6 +315,12 @@ namespace Spiritfire.Game
             public bool vol;
             public TelegraphSpec spec;
             public float age, phase, fade = -1, fadeFrom, progress, opacity, pulse = 1, flash, grow, seed;
+            /// <summary>投影盒的水平包围框（世界 xz 最小 / 最大）和盒底 / 盒顶高度：挑要排除的角色用</summary>
+            public Vector2 boxMin, boxMax;
+            public float boxLo, boxHi;
+            /// <summary>上次写进材质的角色遮罩（只在变了的时候重写）</summary>
+            public readonly Vector4[] occ = new Vector4[OccMax], occY = new Vector4[OccMax];
+            public int occCount = -1;
             public int stamp;
 
             public bool Pending => active && fade < 0 && spec.style == TelegraphStyle.Warning && age < spec.duration;
@@ -434,8 +458,11 @@ namespace Spiritfire.Game
             var scale = s.vol && s.volume ? s.volume.transform.localScale : s.decal && s.projector ? s.projector.size : Vector3.zero;
             var plane = s.shaderMat ? s.mat.GetVector(PlaneId) : Vector4.zero;
             return $"{(s.vol ? "体积" : s.decal ? "贴花" : "平放")}，盒心 {t.position:F1}，盒 {scale:F1}，液面 {(plane.y > 0.5f ? plane.x.ToString("F2") : "无")}，" +
-                   $"进度 {s.progress:F2}，不透明 {s.opacity:F2}，配色 {(s.spec.Danger ? "危险" : "原色")}";
+                   $"进度 {s.progress:F2}，不透明 {s.opacity:F2}，配色 {(s.spec.Danger ? "危险" : "原色")}，乘色 {(UsesMultiply(s) ? "开" : "关")}，排除角色 {Mathf.Max(0, s.occCount)} 只";
         }
+
+        /// <summary>这个预警现在排除了几只角色（不染色；测试用）</summary>
+        public static int OccluderCount(TelegraphHandle h) => h.Alive && h.Slot != null ? Mathf.Max(0, h.Slot.occCount) : 0;
 
         /// <summary>预热：在 at 处放一个全透明的预警（0.05 s），提前建好槽位、材质实例和贴花的绘制状态</summary>
         internal static void WarmUp(Vector3 at) =>
@@ -719,6 +746,9 @@ namespace Spiritfire.Game
                 bool add = s.spec.additive && !s.spec.Danger;
                 m.SetFloat(SrcBlendId, (float)BlendMode.SrcAlpha);
                 m.SetFloat(DstBlendId, (float)(add ? BlendMode.One : BlendMode.OneMinusSrcAlpha));
+                // 乘色通道：危险预警在体积投射 / 平放 Quad 时开（贴花投影没有这个通道）
+                m.SetShaderPassEnabled(MulPass, UsesMultiply(s));
+                s.occCount = -1;
             }
             else
             {
@@ -799,7 +829,12 @@ namespace Spiritfire.Game
             if (!s.shaderMat) return;
             s.mat.SetColor(ColorId, MainColor(s.spec));
             s.mat.SetColor(Color2Id, s.spec.Danger ? TelegraphPalette.DangerBacking : TelegraphPalette.BackingFor(s.spec.color));
+            var mul = TelegraphPalette.DangerMultiply;
+            s.mat.SetVector(MulId, UsesMultiply(s) ? new Vector4(1, mul.r, mul.g, mul.b) : new Vector4(0, 1, 1, 1));
         }
+
+        /// <summary>这个预警用乘色通道：危险配色的预警（不是冲击环 / 持续区域），体积投射或平放 Quad（贴花投影没有乘色通道）</summary>
+        static bool UsesMultiply(Slot s) => s.shaderMat && !s.decal && s.spec.Danger && s.spec.style == TelegraphStyle.Warning;
 
         // ───────────── 摆放：投影盒尺寸 + 贴合地面的高度 ─────────────
 
@@ -951,6 +986,14 @@ namespace Spiritfire.Game
                 m.SetVector(PlaneId, float.IsNaN(liquid) ? new Vector4(0, 0, depth, 0) : new Vector4(liquid, 1, depth, 0));
             }
 
+            // 水平包围框 + 盒底 / 盒顶：每帧挑要排除的角色（UpdateOccluders）
+            float bx = Mathf.Abs(right.x) * size.x * 0.5f + Mathf.Abs(fwd.x) * size.y * 0.5f;
+            float bz = Mathf.Abs(right.z) * size.x * 0.5f + Mathf.Abs(fwd.z) * size.y * 0.5f;
+            s.boxMin = new Vector2(boxCenter.x - bx, boxCenter.z - bz);
+            s.boxMax = new Vector2(boxCenter.x + bx, boxCenter.z + bz);
+            s.boxLo = lo;
+            s.boxHi = hi;
+
             var t = s.go.transform;
             if (s.vol)
             {
@@ -1017,6 +1060,7 @@ namespace Spiritfire.Game
         {
             float dt = Time.deltaTime;
             if (dt <= 0) return;
+            bool gathered = false;
             foreach (var s in slots)
             {
                 if (!s.active) continue;
@@ -1026,7 +1070,177 @@ namespace Spiritfire.Game
                     continue;
                 }
                 Animate(s);
+                if (!s.shaderMat) continue;
+                if (!gathered)
+                {
+                    GatherOccluders();
+                    gathered = true;
+                }
+                UpdateOccluders(s);
             }
+        }
+
+        // ───────────── 角色不染色（特效打磨 C 路） ─────────────
+
+        /// <summary>测试用：关掉角色排除（telegraph-look 拍改前 / 改后对照）</summary>
+        internal static bool OccludersOff;
+
+        /// <summary>每个预警最多排除几只角色（SF_Telegraph 的 _Occ / _OccY 数组长度）</summary>
+        public const int OccMax = 4;
+        /// <summary>包围框水平尺寸超过这个（米）的不排除：鲲、鹏这种巨物的框太大，会把框里抬高的地面（冰柱、台沿）也一起挖掉</summary>
+        const float OccMaxSize = 8f;
+
+        struct Occluder
+        {
+            public EnemyAI ai;
+            public Vector2 min, max;
+            public float bottom, top, ground;
+            public bool grounded;
+        }
+
+        sealed class OccCache
+        {
+            public Renderer[] renderers;
+            public int frame;
+        }
+
+        static readonly List<Occluder> occluders = new(32);
+        static readonly Dictionary<EnemyAI, OccCache> occCache = new();
+        static readonly List<Renderer> occScratch = new(16);
+        static readonly List<EnemyAI> occDead = new(8);
+        static readonly List<int> occPick = new(OccMax);
+
+        /// <summary>这一帧所有敌人（不含巨型首领）的身体包围框：只取网格 / 蒙皮网格渲染器（粒子、拖尾的世界空间包围盒会大得离谱）</summary>
+        static void GatherOccluders()
+        {
+            occluders.Clear();
+            var all = EnemyAI.All;
+            if (all == null) return;
+            int frame = Time.frameCount;
+            foreach (var ai in all)
+            {
+                if (!ai || !ai.gameObject.activeInHierarchy) continue;
+                if (!occCache.TryGetValue(ai, out var c))
+                {
+                    c = new OccCache { frame = -1000 };
+                    occCache[ai] = c;
+                }
+                // 换模型（化形、换形态）、挂件增减：每 1.5 s 左右重新收一次渲染器；中间有被销毁的立刻重收
+                bool stale = frame - c.frame > 90 || c.renderers == null;
+                if (!stale)
+                    foreach (var r in c.renderers)
+                        if (!r)
+                        {
+                            stale = true;
+                            break;
+                        }
+                if (stale)
+                {
+                    occScratch.Clear();
+                    ai.GetComponentsInChildren(false, occScratch);
+                    int n = 0;
+                    foreach (var r in occScratch)
+                        if (r is MeshRenderer or SkinnedMeshRenderer)
+                            n++;
+                    c.renderers = new Renderer[n];
+                    n = 0;
+                    foreach (var r in occScratch)
+                        if (r is MeshRenderer or SkinnedMeshRenderer)
+                            c.renderers[n++] = r;
+                    c.frame = frame;
+                }
+                bool any = false;
+                var b = default(Bounds);
+                foreach (var r in c.renderers)
+                {
+                    if (!r || !r.enabled || r.forceRenderingOff || !r.gameObject.activeInHierarchy) continue;
+                    if (!any)
+                    {
+                        b = r.bounds;
+                        any = true;
+                    }
+                    else b.Encapsulate(r.bounds);
+                }
+                if (!any || b.size.x > OccMaxSize || b.size.z > OccMaxSize) continue;
+                occluders.Add(new Occluder
+                {
+                    ai = ai, min = new Vector2(b.min.x, b.min.z), max = new Vector2(b.max.x, b.max.z), bottom = b.min.y, top = b.max.y,
+                });
+            }
+            // 已经不在场上的敌人从缓存里清掉
+            if (occCache.Count > all.Count + 8)
+            {
+                occDead.Clear();
+                foreach (var kv in occCache)
+                    if (!kv.Key || !all.Contains(kv.Key))
+                        occDead.Add(kv.Key);
+                foreach (var k in occDead) occCache.Remove(k);
+            }
+        }
+
+        /// <summary>挑出和这个预警投影盒重叠的角色（最多 <see cref="OccMax"/> 只，离盒心近的优先），写进材质；和上次一样就不写</summary>
+        static void UpdateOccluders(Slot s)
+        {
+            occPick.Clear();
+            var mid = (s.boxMin + s.boxMax) * 0.5f;
+            for (int i = 0; i < (OccludersOff ? 0 : occluders.Count); i++)
+            {
+                var o = occluders[i];
+                if (o.max.x < s.boxMin.x || o.min.x > s.boxMax.x || o.max.y < s.boxMin.y || o.min.y > s.boxMax.y) continue;
+                if (o.top < s.boxLo || o.bottom > s.boxHi) continue;
+                if (occPick.Count < OccMax)
+                {
+                    occPick.Add(i);
+                    continue;
+                }
+                // 满了：换掉离盒心最远的那只
+                int far = 0;
+                float farD = -1;
+                for (int k = 0; k < occPick.Count; k++)
+                {
+                    var p = occluders[occPick[k]];
+                    float d = ((p.min + p.max) * 0.5f - mid).sqrMagnitude;
+                    if (d > farD)
+                    {
+                        farD = d;
+                        far = k;
+                    }
+                }
+                if (((o.min + o.max) * 0.5f - mid).sqrMagnitude < farD) occPick[far] = i;
+            }
+            bool changed = s.occCount != occPick.Count;
+            for (int k = 0; k < OccMax; k++)
+            {
+                Vector4 box = Vector4.zero, yy = Vector4.zero;
+                if (k < occPick.Count)
+                {
+                    int i = occPick[k];
+                    var o = occluders[i];
+                    if (!o.grounded)
+                    {
+                        // 脚下地面：身体中心往下打一条射线（埋进沙里的沙魇、站在台阶上的都按真实地面算，不按根节点）
+                        var c = o.ai.transform.position;
+                        o.ground = Physics.Raycast(new Vector3(c.x, Mathf.Max(c.y, o.bottom) + 0.6f, c.z), Vector3.down, out var h, 3f, Layers.WorldMask,
+                            QueryTriggerInteraction.Ignore)
+                            ? h.point.y
+                            : c.y;
+                        o.grounded = true;
+                        occluders[i] = o;
+                    }
+                    box = new Vector4(o.min.x, o.min.y, o.max.x, o.max.y);
+                    yy = new Vector4(o.ground, o.top, 1, 0);
+                }
+                if ((box - s.occ[k]).sqrMagnitude > 0.0004f || (yy - s.occY[k]).sqrMagnitude > 0.0004f)
+                {
+                    s.occ[k] = box;
+                    s.occY[k] = yy;
+                    changed = true;
+                }
+            }
+            if (!changed) return;
+            s.occCount = occPick.Count;
+            s.mat.SetVectorArray(OccId, s.occ);
+            s.mat.SetVectorArray(OccYId, s.occY);
         }
 
         /// <summary>推进一帧；返回 false = 该收起了</summary>
