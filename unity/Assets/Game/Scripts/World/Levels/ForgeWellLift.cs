@@ -6,17 +6,18 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 3-2 铸神井的炉坛升降台（docs/level-design/maps/3-2.md §6；通用的 L6 MovingPlatform 还没做，这是本关自己的小件）：
+    /// 3-2 铸神井的炉坛升降台（docs/level-design/maps/3-2.md §6；本关自己的两站逻辑，载人 / 压人检测用 L6 的通用核心 <see cref="PlatformCarrier"/>，
+    /// 和通用件 <see cref="MovingPlatform"/> 同一套）：
     /// 一块竖直往返的铁台，两站——下站在井底炉坛旁，上站在上环岩台沿的栈桥头（出口铸门前）。
     ///   · 通电：<see cref="powerSite"/>（井底炉坛）肃清后才动；没设 = 一直通电。通电时亮灯、提示一次。
     ///   · 乘坐：站上台面 <see cref="departDelay"/> 秒后开往另一站；到站后乘客要先下来再上去才会再开（不会把站着发呆的人送回去）。
     ///     台面空着、玩家在另一站 <see cref="callRadius"/> 米内等着时，自己开过去接人（半径只罩住台口：上站是栈桥前半段，
     ///     沿上环岩台内沿路过的人离井道 8.5 m，不会把台面空叫上去）。
     ///     下行时台面投影里站着玩家，台面停在他头顶上方等，并提示一次「站开」——站开以后接着落下来。
-    ///   · 角色控制器安全：本组件排在 PlayerMotor 之前更新；往上走先用 CharacterController.Move 把乘客抬起、再挪台面，
+    ///   · 角色控制器安全（<see cref="PlatformCarrier"/>）：本组件排在 PlayerMotor 之前更新；往上走先用 CharacterController.Move 把乘客抬起、再挪台面，
     ///     往下走先挪台面、再把乘客按同样的位移放下——乘客始终贴着台面，PlayerMotor 这一帧照常走、照常判落地，台面的位移不进它的速度
     ///     （到站不会被甩出去）。下行时台面下方有角色就停住等（不压人）。
-    ///   · 台面挂运动学刚体：SafeGround 不会把会动的台面记成安全落脚点。
+    ///   · 台面挂运动学刚体（PlatformCarrier 挂）：SafeGround 不会把会动的台面记成安全落脚点。
     /// 场景里台面放在下站：导航网格、L5 验收（可达性、净空）都按下站算；上站接一段固定的栈桥，栈桥和岩台都在导航网格上。
     /// </summary>
     [DisallowMultipleComponent]
@@ -65,17 +66,15 @@ namespace Spiritfire.Game
         /// <summary>当前速度（m/s）</summary>
         public float Speed => moving ? velocity : 0;
         /// <summary>台面上的乘客（本帧）</summary>
-        public IReadOnlyList<CharacterController> Riders => riders;
+        public IReadOnlyList<CharacterController> Riders => carrier != null ? carrier.Riders : Array.Empty<CharacterController>();
         /// <summary>到站（站）</summary>
         public event Action<ForgeWellLift, Stop> Arrived;
 
-        Rigidbody body;
+        PlatformCarrier carrier;
         bool moving, holdUntilClear, blockedHinted;
         Stop at = Stop.Low, target = Stop.Low;
         float velocity, standTime, callTime, nextFind, blockedTime;
         PlayerMotor player;
-        readonly List<CharacterController> riders = new();
-        static readonly Collider[] hits = new Collider[16];
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => Active = null;
@@ -83,11 +82,7 @@ namespace Spiritfire.Game
         void Awake()
         {
             if (!deck) deck = transform;
-            body = deck.GetComponent<Rigidbody>();
-            if (!body) body = deck.gameObject.AddComponent<Rigidbody>();
-            body.isKinematic = true;
-            body.useGravity = false;
-            body.interpolation = RigidbodyInterpolation.None;
+            carrier = new PlatformCarrier(deck, deckSize, deckThickness);
             at = target = (deck.position - highPosition).sqrMagnitude < (deck.position - lowPosition).sqrMagnitude ? Stop.High : Stop.Low;
             SetDeck(StopPosition(at));
         }
@@ -127,7 +122,7 @@ namespace Spiritfire.Game
         public static Stop Other(Stop s) => s == Stop.High ? Stop.Low : Stop.High;
 
         /// <summary>这个角色控制器现在站在台面上</summary>
-        public bool Carrying(CharacterController cc) => cc && riders.Contains(cc);
+        public bool Carrying(CharacterController cc) => carrier != null && carrier.Carrying(cc);
 
         void Update()
         {
@@ -135,7 +130,9 @@ namespace Spiritfire.Game
             if (!deck || !(dt > 0)) return;
             // 场地肃清的事件万一错过（场景重载、测试强清）：每帧补查一次
             if (!Powered && IsPowerSiteDone()) ApplyPower(true, true);
-            CollectRiders();
+            carrier.size = deckSize;
+            carrier.thickness = deckThickness;
+            carrier.CollectRiders();
             if (moving) Travel(dt);
             else Idle(dt);
             UpdateCables();
@@ -148,7 +145,7 @@ namespace Spiritfire.Game
                 standTime = callTime = 0;
                 return;
             }
-            if (riders.Count > 0)
+            if (carrier.Riders.Count > 0)
             {
                 callTime = 0;
                 if (holdUntilClear) return;
@@ -192,7 +189,7 @@ namespace Spiritfire.Game
             if (velocity > cap) velocity = cap;
             float stepLen = Mathf.Min(dist, Mathf.Max(velocity, 0.15f) * dt);
             var delta = to / dist * stepLen;
-            if (delta.y < 0 && SomethingBelow(-delta.y, out bool playerBelow))
+            if (delta.y < 0 && carrier.SomethingBelow(-delta.y, out bool playerBelow))
             {
                 velocity = 0;
                 Blocked = true;
@@ -208,13 +205,13 @@ namespace Spiritfire.Game
             blockedTime = 0;
             if (delta.y >= 0)
             {
-                MoveRiders(delta);
-                SetDeck(pos + delta);
+                carrier.MoveRiders(delta);
+                carrier.SetDeck(pos + delta);
             }
             else
             {
-                SetDeck(pos + delta);
-                MoveRiders(delta);
+                carrier.SetDeck(pos + delta);
+                carrier.MoveRiders(delta);
             }
             if (stepLen >= dist - 1e-4f) Arrive(goal);
         }
@@ -227,46 +224,11 @@ namespace Spiritfire.Game
             at = target;
             Trips++;
             // 坐过来的人先下去，台面才会再开
-            holdUntilClear = riders.Count > 0;
+            holdUntilClear = carrier.Riders.Count > 0;
             Arrived?.Invoke(this, at);
         }
 
-        void SetDeck(Vector3 p)
-        {
-            deck.position = p;
-            if (body) body.position = p;
-            Physics.SyncTransforms();
-        }
-
-        void MoveRiders(Vector3 delta)
-        {
-            foreach (var cc in riders)
-                if (cc && cc.enabled && cc.gameObject.activeInHierarchy)
-                    cc.Move(delta);
-        }
-
-        /// <summary>台面上方一层薄薄的盒子里的角色控制器 = 乘客（跳在半空的不算）</summary>
-        void CollectRiders()
-        {
-            riders.Clear();
-            var half = new Vector3(Mathf.Max(0.1f, deckSize.x * 0.5f - 0.1f), 0.35f, Mathf.Max(0.1f, deckSize.y * 0.5f - 0.1f));
-            int n = Physics.OverlapBoxNonAlloc(deck.position + Vector3.up * 0.25f, half, hits, deck.rotation, 1 << Layers.Character, QueryTriggerInteraction.Ignore);
-            for (int i = 0; i < n; i++)
-                if (hits[i] is CharacterController cc && cc.enabled && !riders.Contains(cc))
-                    riders.Add(cc);
-        }
-
-        /// <summary>下行这一步扫过的空间（台面底下）里有没有角色；playerBelow = 其中有玩家</summary>
-        bool SomethingBelow(float drop, out bool playerBelow)
-        {
-            var half = new Vector3(Mathf.Max(0.1f, deckSize.x * 0.5f - 0.05f), drop * 0.5f + 0.06f, Mathf.Max(0.1f, deckSize.y * 0.5f - 0.05f));
-            var c = deck.position + Vector3.down * (deckThickness + drop * 0.5f + 0.06f);
-            int n = Physics.OverlapBoxNonAlloc(c, half, hits, deck.rotation, 1 << Layers.Character, QueryTriggerInteraction.Ignore);
-            playerBelow = false;
-            for (int i = 0; i < n && !playerBelow; i++)
-                playerBelow = hits[i] && hits[i].GetComponentInParent<PlayerMotor>();
-            return n > 0;
-        }
+        void SetDeck(Vector3 p) => carrier.SetDeck(p);
 
         /// <summary>玩家站在另一站的台口（水平 callRadius 内、高差 2.5 m 内）、没在台面上</summary>
         bool PlayerWaitingAt(Stop s)
