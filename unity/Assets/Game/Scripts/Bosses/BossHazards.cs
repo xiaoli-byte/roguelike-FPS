@@ -97,6 +97,11 @@ namespace Spiritfire.Game
         public bool embers;
         /// <summary>玩家脚底离地多高以内算站在里面</summary>
         public float maxHeight;
+        /// <summary>
+        /// 预警画进招式组（前摇一开始就铺、要等前摇走完才生效的区域）：招式被打断时预警跟着撤回，招式自己在 OnEnd 里 <see cref="HazardZone.Expire"/> 掉区域。
+        /// 缺省 false = 危险物组（随区域兑现，招式结束不撤）
+        /// </summary>
+        public bool moveWarning;
 
         /// <summary>缺省：预警 0.4 s、每 0.5 s 一跳、火元素、脚底 0.6 m 以内</summary>
         public BossZoneSpec(Vector3 center, float radius, float duration, float damage, Color color)
@@ -112,6 +117,7 @@ namespace Spiritfire.Game
             element = Element.Fire;
             embers = false;
             maxHeight = 0.6f;
+            moveWarning = false;
         }
     }
 
@@ -633,6 +639,24 @@ namespace Spiritfire.Game
             return Scope(kind).Spokes(center, count, length, width, yawDeg, Mathf.Max(0.05f, seconds), color);
         }
 
+        /// <summary>
+        /// 前摇一开始就画的落点预警（招式组：前摇里被打断就撤回）：seconds = 估计到落地的总时长；前摇里可以 MoveTo 跟着瞄准点挪，
+        /// 出手时把句柄交给 <see cref="Lob(in BossLobSpec, TelegraphHandle)"/>——挪到最终落点、按飞行时间重新计时、转进危险物组（招式收招后照样亮到落地）
+        /// </summary>
+        public TelegraphHandle AimWarning(Vector3 at, float radius, float seconds, Color color)
+        {
+            WarningsDrawn++;
+            return MoveWarnings.Circle(at, radius, Mathf.Max(0.2f, seconds), color);
+        }
+
+        /// <summary>把一个招式组预警转进危险物组（随已发出的危险物兑现，招式结束不撤回）</summary>
+        public TelegraphHandle Commit(TelegraphHandle h)
+        {
+            if (!h.Alive) return h;
+            MoveWarnings.Release(h);
+            return HazardWarnings.Contains(h) ? h : HazardWarnings.Add(h);
+        }
+
         /// <summary>撤回招式组里还没填满的预警（招式结束 / 被打断时自动调；hazard 组不受影响）</summary>
         public void CancelMoveWarnings() => MoveWarnings.Cancel();
 
@@ -652,6 +676,8 @@ namespace Spiritfire.Game
             {
                 shape = s.FullCircle ? TelegraphShape.Circle : TelegraphShape.Sector, style = TelegraphStyle.Ring, center = s.center,
                 yaw = s.arcYaw, halfAngle = Mathf.Min(180, s.arcHalf), radius = s.maxRadius, duration = dur, color = s.color, additive = true, linear = true,
+                // 伤人的冲击波用危险配色（普通混合 + 暗衬）：浅色加法环在冰雪、亮沙上读不出来
+                tone = TelegraphTone.Danger,
             });
             waves.Add(w);
             WavesSpawned++;
@@ -712,8 +738,9 @@ namespace Spiritfire.Game
             bool ring = s.innerRadius > 0;
             if (arm > 0)
             {
-                if (ring) AnnulusWarning(s.center, s.innerRadius, s.radius, arm, s.color, WarnKind.Hazard);
-                else GroundWarning(s.center, s.radius, arm, s.color, WarnKind.Hazard);
+                var kind = s.moveWarning ? WarnKind.Move : WarnKind.Hazard;
+                if (ring) AnnulusWarning(s.center, s.innerRadius, s.radius, arm, s.color, kind);
+                else GroundWarning(s.center, s.radius, arm, s.color, kind);
             }
             var spec = new HazardZone.Spec(s.center, s.radius, Mathf.Max(0, s.duration), s.damage)
             {
@@ -743,7 +770,7 @@ namespace Spiritfire.Game
                     visuals.Add(Telegraph.Spawn(new TelegraphSpec
                     {
                         shape = TelegraphShape.Annulus, style = TelegraphStyle.Zone, center = h.center, radius = h.radius, inner = Mathf.Min(h.innerRadius, h.radius * 0.98f),
-                        duration = h.duration, color = h.color,
+                        duration = h.duration, color = h.color, tone = TelegraphTone.Danger,
                     }));
                 });
             }
@@ -754,12 +781,26 @@ namespace Spiritfire.Game
 
         // ───────────── 抛射 / 坠落 ─────────────
 
-        public void Lob(in BossLobSpec s)
+        public void Lob(in BossLobSpec s) => Lob(s, TelegraphHandle.None);
+
+        /// <summary>抛射 / 坠落；mark = 前摇里已经画好的落点预警（<see cref="AimWarning"/>）：挪到落点、按飞行时间重新计时、转进危险物组，不再另画</summary>
+        public void Lob(in BossLobSpec s, TelegraphHandle mark)
         {
-            if (OwnerDead || !Fx.Finite(s.from) || !Fx.Finite(s.to)) return;
+            if (OwnerDead || !Fx.Finite(s.from) || !Fx.Finite(s.to))
+            {
+                mark.Cancel();
+                return;
+            }
             var obj = BuildLobModel(s);
             obj.position = s.from;
-            if (s.warn) GroundWarning(s.to, s.radius, Mathf.Max(0.2f, s.time), s.color, WarnKind.Hazard);
+            if (mark.Alive)
+            {
+                mark.MoveTo(s.to);
+                mark.SetRadius(s.radius);
+                mark.Retime(Mathf.Max(0.2f, s.time));
+                Commit(mark);
+            }
+            else if (s.warn) GroundWarning(s.to, s.radius, Mathf.Max(0.2f, s.time), s.color, WarnKind.Hazard);
             lobs.Add(new LobRun
             {
                 spec = s, obj = obj,

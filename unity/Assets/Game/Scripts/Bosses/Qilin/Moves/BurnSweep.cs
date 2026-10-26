@@ -6,6 +6,7 @@ namespace Spiritfire.Game
     /// 火麒麟 · 焚身 · 麟火吐息扫象限（TS Qilin 'sweep'）：
     ///   飞到熔池对岸（玩家所在象限中线的反方向、池外 2.2 m；3 m 高、20 m/s，≤ 2.2 s），落地；
     ///   蓄势 1.2 s：扇形预警盖住整个象限（从落点看两条渠在殿墙边的端点之间，外加 4.6°），转向起扫的一侧——从离玩家远的那条渠扫起；
+    ///     扇形在起飞那一刻（前摇开始）就画出来，落地时按蓄势时长重新计时，填满那一刻开扫；
     ///   吐息 2.6 s：一道窄火（半角 8.6°）从象限一侧匀速扫到另一侧，每 0.15 s 判一次：在火里、口到玩家胸口不被挡 → 9（火）。
     ///   石柱和池中的倒鼎挡得住——躲到它们后面；或者翻过渠躲到隔壁象限。
     /// 落点、扫的方向由 <see cref="Plan"/> 算（纯计算，EditMode 测试守着）。
@@ -36,6 +37,7 @@ namespace Spiritfire.Game
         float acc, fxAcc, lastYaw;
         bool arrived, firing;
         BossBeam beam;
+        TelegraphHandle warn;
 
         public BurnSweep()
         {
@@ -101,11 +103,24 @@ namespace Spiritfire.Game
             if (Qilin) Qilin.SkyTarget = ApproachAlt;
         }
 
+        /// <summary>
+        /// 前摇（飞向对岸）一开始就把象限扇形画出来：预警时长 = 估计的飞行时间 + 蓄势；落地开始蓄势时按蓄势时长重新计时（D21 整改：原来落地后才画，前摇里看不到）
+        /// </summary>
         protected override void OnTelegraph()
         {
             Brain.PlayAct("Locomotion");
             Sfx("boss_roar", 0.7f, 1.2f);
+            var off = Spot - Brain.transform.position;
+            off.y = 0;
+            // 下限 1 s：估计 + 蓄势 ≥ 飞行上限 2.2 s，飞得再慢也不会在落地前就填满
+            float eta = Mathf.Clamp(off.magnitude / ApproachSpeed + 0.25f, ApproachMax - Tele, ApproachMax);
+            warn = Hazards.SectorWarning(Spot, WarnMid, WarnHalf, Range, eta + Tele, QilinDef.Warn);
+            CountWarning();
         }
+
+        /// <summary>预警扇形：两端方位的中线、半角（两端夹角的一半 + 放宽）</summary>
+        float WarnMid => Yaw0 + Mathf.DeltaAngle(Yaw0, Yaw1) * 0.5f;
+        float WarnHalf => Mathf.Abs(Mathf.DeltaAngle(Yaw0, Yaw1)) * 0.5f + WarnPad;
 
         protected override bool WindupDone => arrived || StageT >= ApproachMax;
 
@@ -127,10 +142,13 @@ namespace Spiritfire.Game
                 Qilin.SkyTarget = 0;
                 Qilin.Brake(0.3f);
             }
-            float mid = Yaw0 + Mathf.DeltaAngle(Yaw0, Yaw1) * 0.5f;
-            float half = Mathf.Abs(Mathf.DeltaAngle(Yaw0, Yaw1)) * 0.5f + WarnPad;
-            Hazards.SectorWarning(Spot, mid, half, Range, Tele, QilinDef.Warn);
-            CountWarning();
+            // 前摇里画的扇形接着走，按蓄势时长重新计时；万一已经没了（被挤出池子）就补画
+            if (warn.Pending) warn.Retime(Tele);
+            else
+            {
+                warn = Hazards.SectorWarning(Spot, WarnMid, WarnHalf, Range, Tele, QilinDef.Warn);
+                CountWarning();
+            }
             Brain.PlayAct("breath", Tele + SweepTime);
             Sfx("enemy_charge", 1f, 0.5f);
             Qilin?.Tell("sweep", "焚身要吐息扫过整个象限——躲到石柱或池中倒鼎的后面！", Hex.Rgb(0xff9a4a));

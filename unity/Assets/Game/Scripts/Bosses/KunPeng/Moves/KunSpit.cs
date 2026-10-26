@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Spiritfire.Game
 {
     /// <summary>
     /// 鲲 · 吐冰（Three.js KunPeng.ts 'spit'，1.3 s）：只在玩家离得远（&gt; 12 m）时出。
-    ///   前摇 0.7 s：扬头蓄力（act_spit，projectile 事件），一路转头盯着玩家；
+    ///   前摇 0.7 s：扬头蓄力（act_spit，projectile 事件），一路转头盯着玩家；前摇一开始就亮出各块的落点预警，跟着瞄准点挪，出手时锁定（D21 整改：前摇里就看得到落点）；
     ///   出手：朝玩家 0.6 s 后的位置和两侧（± 3.2 m，鲲怒时再加一块 6.2 m）各吐一块抛物线冰弹（1.15 s 落地、拱高 7 m、落点 2.6 m、16 伤），
     ///     落点都有预警，都夹在环台上（冰窟外 1 m、外缘内 1.5 m）；
     ///   收招 0.5 s。
@@ -42,19 +43,16 @@ namespace Spiritfire.Game
             CuedSfx("enemy_charge", 1f, 0.7f);
         }
 
-        protected override void OnWindup(float dt)
-        {
-            if (!KP) return;
-            KP.TurnKunToward(69f, dt);
-            KP.PlaceKun();
-        }
+        /// <summary>前摇里就画好的落点预警（跟着瞄准点挪，出手时交给冰弹）</summary>
+        readonly List<TelegraphHandle> marks = new(4);
+        readonly List<Vector3> targets = new(4);
 
-        protected override bool WindupDone => Cue("projectile", WindupTime);
+        int Count => KP && KP.KunFury ? 4 : 3;
 
-        protected override void OnActiveBegin()
+        /// <summary>此刻出手的话各块冰弹的落点：玩家 0.6 s 后的位置和两侧（± 3.2 m，再一块 6.2 m），夹在环台上</summary>
+        void Plan(int n)
         {
-            var from = KP ? KP.Muzzle : Brain.BodyCenter + Vector3.up * 2f;
-            int n = KP && KP.KunFury ? 4 : 3;
+            targets.Clear();
             var aim = AtFloor(Brain.Predict(Lead));
             var to = aim - Brain.transform.position;
             to.y = 0;
@@ -65,13 +63,54 @@ namespace Spiritfire.Game
                 float s = i == 0 ? 0 : (i % 2 == 1 ? 1 : -1) * (3.2f + Mathf.Floor((i - 1) / 2f) * 3f);
                 var target = aim + side * s;
                 if (Hole.found) target = Hole.ClampToRing(target);
-                Hazards.Lob(new BossLobSpec(from, target, Flight, Arc, Radius, Dmg(16), KunPengDef.Warn, LobKind.Ice) { scale = 1.4f });
+                targets.Add(target);
+            }
+        }
+
+        /// <summary>前摇一开始就画落点：预警时长 = 前摇 + 飞行（出手时按飞行时间重新计时），前摇里跟着鲲的瞄准挪</summary>
+        protected override void OnTelegraph()
+        {
+            marks.Clear();
+            Plan(Count);
+            foreach (var t in targets)
+            {
+                marks.Add(Hazards.AimWarning(t, Radius, WindupTime + Flight, KunPengDef.Warn));
                 CountWarning();
+            }
+        }
+
+        protected override void OnWindup(float dt)
+        {
+            if (KP)
+            {
+                KP.TurnKunToward(69f, dt);
+                KP.PlaceKun();
+            }
+            if (marks.Count == 0) return;
+            Plan(marks.Count);
+            for (int i = 0; i < marks.Count; i++) marks[i].MoveTo(targets[i]);
+        }
+
+        protected override bool WindupDone => Cue("projectile", WindupTime);
+
+        protected override void OnActiveBegin()
+        {
+            var from = KP ? KP.Muzzle : Brain.BodyCenter + Vector3.up * 2f;
+            Plan(Count);
+            for (int i = 0; i < targets.Count; i++)
+            {
+                var mark = i < marks.Count ? marks[i] : TelegraphHandle.None;
+                Hazards.Lob(new BossLobSpec(from, targets[i], Flight, Arc, Radius, Dmg(16), KunPengDef.Warn, LobKind.Ice) { scale = 1.4f }, mark);
+                if (!mark.Alive) CountWarning();
                 Lobs++;
                 TotalLobs++;
             }
+            for (int i = targets.Count; i < marks.Count; i++) marks[i].Cancel();
+            marks.Clear();
             Sfx("enemy_shot", 0.9f, 0.6f);
         }
+
+        protected override void OnEnd(bool cancelled) => marks.Clear();
 
         protected override void OnActive(float dt) => KP?.PlaceKun();
         protected override void OnRecover(float dt) => KP?.PlaceKun();
