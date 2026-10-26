@@ -218,6 +218,8 @@ namespace Spiritfire.Game
             slot.spec.duration = slot.age + Mathf.Clamp(remaining, 0.05f, 60f);
         }
 
+        internal Telegraph.Slot Slot => slot != null && slot.gen == gen ? slot : null;
+
         /// <summary>两个句柄指向同一个预警（同一槽位、同一代）</summary>
         public bool Same(TelegraphHandle other) => slot != null && slot == other.slot && gen == other.gen;
 
@@ -236,7 +238,7 @@ namespace Spiritfire.Game
     ///     冰晶特效和粒子之前，所以熔岩渠、冰面上的预警不会被盖住 / 洗白；液面不在深度图里，按液面高度改投到液面上（<see cref="Place"/>）。
     ///   · URP 贴花（没有深度图、渲染器有贴花特性时）：DecalProjector，绘制顺序在 FX 贴花（弹孔、焦痕、霜纹、地火、熔池、法阵）之上。
     ///   · 平放的 Quad（都没有时，同一着色器的网格通道）；连着色器都没有时退回程序贴图的普通透明 Quad。
-    /// 投影盒的高度按形状覆盖范围内的地面高度采样定（大形状 5 × 5、小形状 3 × 3）：平地上只有约 1.2 m 高（只染到脚踝），坡上自动加高。
+    /// 投影盒的高度按形状覆盖范围内的地面高度采样定（大形状 5 × 5、小形状 3 × 3）：平地上只有约 1.15 m 高、顶在地面上 0.42 m（只染到脚踝），坡上自动加高。
     /// 旧接口 Circle / Wave / Line（LineHandle）签名不变（多了可选的配色参数）；成组撤回用 <see cref="WarnScope"/>。
     /// </summary>
     public sealed class Telegraph : MonoBehaviour
@@ -422,6 +424,18 @@ namespace Spiritfire.Game
 
         /// <summary>元素色（预警用元素的颜色：火 / 冰 / 雷 / 蚀…）</summary>
         public static Color ElementColor(Element e) => DamageTable.ElementColor(e);
+
+        /// <summary>测试 / 诊断：一个预警当前的投射方式、投影盒（世界中心、尺寸）、液面</summary>
+        public static string Describe(TelegraphHandle h)
+        {
+            if (!h.Alive || h.Slot == null) return "（已结束）";
+            var s = h.Slot;
+            var t = s.go.transform;
+            var scale = s.vol && s.volume ? s.volume.transform.localScale : s.decal && s.projector ? s.projector.size : Vector3.zero;
+            var plane = s.shaderMat ? s.mat.GetVector(PlaneId) : Vector4.zero;
+            return $"{(s.vol ? "体积" : s.decal ? "贴花" : "平放")}，盒心 {t.position:F1}，盒 {scale:F1}，液面 {(plane.y > 0.5f ? plane.x.ToString("F2") : "无")}，" +
+                   $"进度 {s.progress:F2}，不透明 {s.opacity:F2}，配色 {(s.spec.Danger ? "危险" : "原色")}";
+        }
 
         /// <summary>预热：在 at 处放一个全透明的预警（0.05 s），提前建好槽位、材质实例和贴花的绘制状态</summary>
         internal static void WarmUp(Vector3 at) =>
@@ -792,12 +806,13 @@ namespace Spiritfire.Game
         /// <summary>投影盒在形状外留的余量（米）：暗衬边画在这里面</summary>
         const float Pad = 0.6f;
         /// <summary>盒子顶在采样到的最高地面之上多少米（再往上是角色身体，不染）</summary>
-        const float BoxTop = 0.55f;
+        const float BoxTop = 0.42f;
         static readonly Vector2[] SamplePoints =
         {
             new(0, 0), new(-1, -1), new(1, -1), new(-1, 1), new(1, 1), new(0, -1), new(0, 1), new(-1, 0), new(1, 0),
         };
         static readonly Vector2[] SamplePointsWide = BuildGrid(5);
+        static readonly List<float> heights = new(32);
 
         static Vector2[] BuildGrid(int n)
         {
@@ -850,27 +865,78 @@ namespace Spiritfire.Game
 
             // 覆盖范围内的地面高度（大形状 5 × 5、小形状 3 × 3）：平地上盒子很矮（只染到脚踝），坡上 / 台阶自动加高。
             // 熔岩 / 水面没有碰撞（射线打到的是床）：记下液面高度——盒子往下包住床（深度图里是床），着色器把落在液面以下一截的点改投到液面上
-            float g0 = SurfaceAt(sp.center, sp.center.y, out bool hit0, out float bed0, out float liquid0);
-            float lo = Mathf.Min(g0, bed0), hi = g0, liquid = liquid0;
+            // 参考高度 g0：形状中心处的地面。中心悬在坑 / 冰窟 / 没认出液面的水洞上方（射线打到的比调用方给的高度低 1.5 m 以上）时，
+            // 覆盖范围里只要有地面落在调用方高度附近，就改以调用方高度为准——否则环台中间是冰窟的大环带（扇翼狂风的冻风带）
+            // 会把整个盒子放到窟底，环台上一点都画不出来；都没有（中心给在半空）照旧按中心下方的地面
+            float c0 = SurfaceAt(sp.center, sp.center.y, out bool hit0, out float bed0, out float liquid0);
+            float g0 = c0;
             float hx = size.x * 0.5f - Pad, hz = size.y * 0.5f - Pad;
-            foreach (var p in Mathf.Max(hx, hz) > 5f ? SamplePointsWide : SamplePoints)
+            var pts = Mathf.Max(hx, hz) > 5f ? SamplePointsWide : SamplePoints;
+            if (hit0 && c0 < sp.center.y - 1.5f)
+                foreach (var p in pts)
+                {
+                    float y = SurfaceAt(boxCenter + right * (p.x * hx) + fwd * (p.y * hz), sp.center.y, out bool h, out _, out _);
+                    if (!h || Mathf.Abs(y - sp.center.y) > 1.5f) continue;
+                    g0 = sp.center.y;
+                    break;
+                }
+            float lo = Mathf.Min(g0, Mathf.Min(c0, bed0)), liquid = liquid0;
+            heights.Clear();
+            heights.Add(g0);
+            foreach (var p in pts)
             {
                 var at = boxCenter + right * (p.x * hx) + fwd * (p.y * hz);
                 float y = SurfaceAt(at, g0, out bool hit, out float bed, out float lq);
                 if (!hit) continue;
                 lo = Mathf.Min(lo, y);
-                hi = Mathf.Max(hi, y);
+                heights.Add(y);
                 if (!float.IsNaN(lq))
                 {
                     liquid = float.IsNaN(liquid) ? lq : Mathf.Max(liquid, lq);
                     lo = Mathf.Min(lo, bed);
                 }
             }
-            // 不让一根柱子 / 一堵墙把盒子拉到半空（坡度上限约 35°）；液面下的床不受这个限制
+            // 采样点没落进去的窄水带（1-4 月牙泉是一条条 3 m 宽的水体）：按水体的包围盒补上液面和床（包围盒粗筛：多算进来的代价是盒子往下多包一截、低于液面 0.3 m 的点改投到液面上）
+            float reachR = 0.5f * Mathf.Sqrt(size.x * size.x + size.y * size.y);
+            foreach (var w in WaterVolume.All)
+            {
+                if (!w) continue;
+                var wt = w.transform;
+                Vector3 ax = wt.TransformVector(0.5f, 0, 0), ay = wt.TransformVector(0, 0.5f, 0), az = wt.TransformVector(0, 0, 0.5f);
+                float wx = Mathf.Abs(ax.x) + Mathf.Abs(ay.x) + Mathf.Abs(az.x), wz = Mathf.Abs(ax.z) + Mathf.Abs(ay.z) + Mathf.Abs(az.z);
+                var wc = wt.position;
+                if (Mathf.Abs(wc.x - boxCenter.x) > wx + reachR || Mathf.Abs(wc.z - boxCenter.z) > wz + reachR) continue;
+                float surface = w.Surface, bottom = wt.TransformPoint(0, -0.5f, 0).y;
+                if (surface < g0 - 3f || surface > g0 + 3f) continue;
+                liquid = float.IsNaN(liquid) ? surface : Mathf.Max(liquid, surface);
+                lo = Mathf.Min(lo, bottom);
+                heights.Add(surface);
+            }
+            // 同理补上采样点没落进去的窄熔岩渠（3-4 祝融殿的渠）
+            foreach (var b in LavaField.Bodies)
+            {
+                if (b == null || !b.enabled) continue;
+                float br = b.shape == LavaShape.Disc ? b.size.x : 0.5f * Mathf.Sqrt(b.size.x * b.size.x + b.size.y * b.size.y);
+                if (Mathf.Abs(b.center.x - boxCenter.x) > br + reachR || Mathf.Abs(b.center.z - boxCenter.z) > br + reachR) continue;
+                float surface = b.level + LavaTuning.SurfaceLift;
+                if (surface < g0 - 3f || surface > g0 + 3f) continue;
+                liquid = float.IsNaN(liquid) ? surface : Mathf.Max(liquid, surface);
+                lo = Mathf.Min(lo, b.level - Mathf.Min(b.depth, 3f));
+                heights.Add(surface);
+            }
+            // 盒顶：取采样高度的第 80 百分位、最多再让 1 m 给最高点——柱顶、祭台、屋顶这类少数高点不把盒子拉高
+            // （否则柱身上的箍、台阶边沿这些朝上的面都会被染上预警色）；坡地、台阶的高差是连续的，照样包得住
+            heights.Sort();
+            float top = heights[heights.Count - 1];
+            float p80 = heights[Mathf.Clamp(Mathf.CeilToInt(heights.Count * 0.8f) - 1, 0, heights.Count - 1)];
+            float hi = Mathf.Min(top, p80 + 1f);
+            // 不让一堵墙把盒子拉到半空（坡度上限约 35°）；液面下的床不受这个限制
             float reach = 0.7f * Mathf.Max(size.x, size.y) * 0.5f + 0.6f;
             lo = (float.IsNaN(liquid) ? Mathf.Max(lo, g0 - reach) : lo) - 0.6f;
             hi = Mathf.Min(hi, g0 + reach) + BoxTop;
-            float depth = Mathf.Max(1.15f, hi - lo);
+            // 盒子至少 1.15 m 高，往下补（往上补会把盒顶抬到角色腿上）
+            lo = Mathf.Min(lo, hi - 1.15f);
+            float depth = hi - lo;
 
             var m = s.mat;
             if (s.shaderMat)

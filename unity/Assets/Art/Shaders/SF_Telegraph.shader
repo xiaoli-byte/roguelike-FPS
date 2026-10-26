@@ -264,7 +264,7 @@ Shader "Spiritfire/Telegraph"
             clip(0.5 - max(abs(ds.x), max(abs(ds.y), abs(ds.z))));
             // 盒子上下面附近渐隐：按米算（_Plane.z = 盒高），盒子为包住液面下的床拉得很高时，地面也不会落进按比例算的渐隐带里变淡
             float fadeY = _Plane.z > 0.0
-                ? saturate((0.5 - abs(ds.y)) * _Plane.z / 0.25)
+                ? saturate((0.5 - abs(ds.y)) * _Plane.z / 0.2)
                 : 1.0 - smoothstep(0.38, 0.5, abs(ds.y));
             c.a *= smoothstep(0.25, 0.5, facing) * fadeY;
             return c;

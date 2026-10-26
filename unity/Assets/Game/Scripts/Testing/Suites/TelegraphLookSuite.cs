@@ -110,6 +110,21 @@ namespace Spiritfire.Game.Testing
             });
             if (lastUnderfoot > 0.01f) Fail($"站在原色（非危险）预警里也亮了底边光带（{lastUnderfoot:F2}）");
 
+            // 2-4：鹏 · 扇翼狂风的冻风带（环台外缘的大环，r 外缘 − 5 … 外缘 + 1），从冰窟上空俯拍
+            if (IceHole.All.Count > 0 && IceHole.All[0])
+            {
+                var hole = IceHole.All[0];
+                var c = hole.transform.position;
+                var band = Telegraph.Annulus(c, Mathf.Max(hole.radius + 4f, hole.outer - 5f), hole.outer + 1f, 4f, Color.white);
+                yield return new WaitForSeconds(2.5f);
+                Line($"  冻风带（冰窟 r {hole.radius:F0} / 外缘 {hole.outer:F0}，圆心 {c:F1}）：{Telegraph.Describe(band)}");
+                spec.transform.position = c + Vector3.up * 55f - fwd * 30f;
+                spec.transform.LookAt(c);
+                Shot(spec, $"tlook_{tag}_gustband_tp");
+                yield return null;
+                band.End();
+            }
+
             Destroy(go);
             vitals.invulnerableUntil = -1;
             motor.inputEnabled = true;
