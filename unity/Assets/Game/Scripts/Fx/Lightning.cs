@@ -12,7 +12,7 @@ namespace Spiritfire.Game
     /// </summary>
     public sealed class Lightning : MonoBehaviour
     {
-        const int MaxBolts = 40, Segments = 16, BranchSegments = 5;
+        const int MaxBolts = 40, Segments = 16, BranchSegments = 5, MaxWaypoints = 6;
         const float DefaultWidth = 0.07f;
 
         sealed class Bolt : FxSlot
@@ -24,6 +24,9 @@ namespace Spiritfire.Game
             public int n, bn;
             public readonly Vector3[] pts = new Vector3[Segments + 1];
             public readonly Vector3[] bpts = new Vector3[BranchSegments + 1];
+            /// <summary>折线骨架（<see cref="Lightning.Chain"/>：贴着骨骼跳的电弧）；wayN &lt; 2 = 普通两点闪电</summary>
+            public readonly Vector3[] way = new Vector3[MaxWaypoints];
+            public int wayN;
 
             public override void CancelFx() => life = Mathf.Min(life, age + 0.05f);
 
@@ -44,7 +47,23 @@ namespace Spiritfire.Game
             var rt = FxRuntime.Ensure();
             if (!rt) return FxHandle.None;
             if (!instance) instance = rt.gameObject.AddComponent<Lightning>();
-            return instance.Take(from, to, color, width);
+            return instance.Take(from, to, color, width, null, 0, true);
+        }
+
+        /// <summary>
+        /// 沿一串点（骨骼位置）劈一道贴着走的电弧（B 路：感电的电弧贴着骨骼跳）：每两点之间细碎地抖，不分叉、不闪灯，末端只溅两三颗电火花。
+        /// points 取前 count 个（2..6）
+        /// </summary>
+        public static FxHandle Chain(Vector3[] points, int count, Color color, float width = 0.04f)
+        {
+            if (points == null || count < 2) return FxHandle.None;
+            count = Mathf.Min(count, Mathf.Min(points.Length, MaxWaypoints));
+            for (int i = 0; i < count; i++)
+                if (!Fx.Finite(points[i])) return FxHandle.None;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return FxHandle.None;
+            if (!instance) instance = rt.gameObject.AddComponent<Lightning>();
+            return instance.Take(points[0], points[count - 1], color, width, points, count, false);
         }
 
         /// <summary>全部收起（换关清场）</summary>
@@ -59,7 +78,7 @@ namespace Spiritfire.Game
             if (instance == this) instance = null;
         }
 
-        FxHandle Take(Vector3 from, Vector3 to, Color color, float width)
+        FxHandle Take(Vector3 from, Vector3 to, Color color, float width, Vector3[] way, int wayN, bool full)
         {
             Bolt bo = null, oldest = null;
             foreach (var x in bolts)
@@ -92,11 +111,23 @@ namespace Spiritfire.Game
             bo.life = 0.15f + Random.value * 0.04f;
             bo.rejitter = 0.035f;
             bo.widthK = Mathf.Clamp(width / DefaultWidth, 0.3f, 4f);
+            bo.wayN = way != null ? wayN : 0;
+            for (int i = 0; i < bo.wayN; i++) bo.way[i] = way[i];
             Jag(bo);
             Draw(bo, 1);
 
-            // 两端的电火花 + 光团，落点闪一下灯
             var rt = FxRuntime.Ensure();
+            if (!full)
+            {
+                // 贴骨电弧：末端两三颗电火花，不闪灯（身上一秒好几道，灯会把整个人照花）
+                var sp = rt ? rt.GetEmitter("StreakLight") : null;
+                if (sp != null)
+                    for (int i = 0; i < 3; i++)
+                        rt.EmitOne(sp, to, Random.onUnitSphere * Random.Range(2f, 4.5f), 0.03f, Random.Range(0.08f, 0.16f), color, 0);
+                return new FxHandle(bo);
+            }
+
+            // 两端的电火花 + 光团，落点闪一下灯
             if (rt)
             {
                 var sparks = rt.GetEmitter("StreakLight");
@@ -132,6 +163,11 @@ namespace Spiritfire.Game
         /// <summary>重新生成闪电折线（主干随机游走 + 正弦包络，端点固定；八成概率带一条分叉）</summary>
         static void Jag(Bolt bo)
         {
+            if (bo.wayN >= 2)
+            {
+                JagPath(bo);
+                return;
+            }
             var d = bo.b - bo.a;
             float dist = d.magnitude;
             if (dist < 1e-4f)
@@ -174,6 +210,35 @@ namespace Spiritfire.Game
             }
             else bo.bn = 0;
             bo.flicker = Random.Range(0.55f, 1f);
+        }
+
+        /// <summary>沿骨架折线：每两点之间均分几段、垂直方向细碎抖动（两端固定在骨架点上），不分叉</summary>
+        static void JagPath(Bolt bo)
+        {
+            int legs = bo.wayN - 1;
+            int per = Mathf.Max(1, Segments / legs);
+            int w = 0;
+            bo.pts[w++] = bo.way[0];
+            for (int l = 0; l < legs && w <= Segments; l++)
+            {
+                var p0 = bo.way[l];
+                var p1 = bo.way[l + 1];
+                var d = p1 - p0;
+                float dist = d.magnitude;
+                var dn = dist > 1e-4f ? d / dist : Vector3.up;
+                var u = Vector3.Cross(dn, Mathf.Abs(dn.y) < 0.95f ? Vector3.up : Vector3.right).normalized;
+                var v = Vector3.Cross(dn, u);
+                float amp = Mathf.Clamp(dist * 0.22f, 0.02f, 0.09f);
+                for (int j = 1; j <= per && w <= Segments; j++)
+                {
+                    float t = j / (float)per;
+                    float k = j == per ? 0 : Mathf.Sin(Mathf.PI * t);
+                    bo.pts[w++] = p0 + d * t + (u * Random.Range(-amp, amp) + v * Random.Range(-amp, amp)) * k;
+                }
+            }
+            bo.n = w - 1;
+            bo.bn = 0;
+            bo.flicker = Random.Range(0.6f, 1f);
         }
 
         void Draw(Bolt bo, float alpha)
