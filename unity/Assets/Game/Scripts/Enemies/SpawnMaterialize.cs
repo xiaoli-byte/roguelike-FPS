@@ -26,6 +26,8 @@ namespace Spiritfire.Game
         Vector3 ground;
         float t0, radius, height, ringR, emitAcc, swirlAcc;
         bool finale, done, air;
+        /// <summary>本章法阵主题（C 路 <see cref="SpawnThemes"/>：画了主题法阵就不画通用法阵，出了地表卷尘就不卷通用沙旋）</summary>
+        SpawnTheme theme;
 
         /// <summary>此刻的溶解量（测试用）：1 = 还看不见，0 = 完全显形</summary>
         public float Amount { get; private set; }
@@ -45,7 +47,8 @@ namespace Spiritfire.Game
         {
             var hp = ai.Health;
             color = ai.elite ? EliteGold : FxDirector.EnemyColor(hp);
-            edge = new Color(color.r * 2.8f + 0.3f, color.g * 2.8f + 0.25f, color.b * 2.8f + 0.2f, 1);
+            // 显形前沿：HDR 敌人色 + 白热底（B 路打磨：比原来亮一档，Bloom 吃得到一圈清楚的亮边）
+            edge = new Color(color.r * 4.2f + 0.55f, color.g * 4.2f + 0.5f, color.b * 4.2f + 0.45f, 1);
             DeathDissolve.Collect(gameObject, targets, others);
             var b = DeathDissolve.BoundsOf(targets, transform.position + Vector3.up);
             radius = Mathf.Clamp(Mathf.Max(b.extents.x, b.extents.z), 0.3f, 4f);
@@ -63,7 +66,8 @@ namespace Spiritfire.Game
 
             // 脚下的法阵 + 光墙
             var rt = FxRuntime.Ensure();
-            if (!air) FxDecals.Rune(ground + Vector3.up * 0.02f, ringR, color, Duration + 0.25f);
+            theme = SpawnThemes.For(ai);
+            if (!air && !SpawnThemes.Begin(theme, ground, ringR, color, Duration + 0.25f, ai.elite)) FxDecals.Rune(ground + Vector3.up * 0.02f, ringR, color, Duration + 0.25f);
             if (rt)
             {
                 if (air)
@@ -98,7 +102,7 @@ namespace Spiritfire.Game
         {
             // 脚先出现：g = (顶 − y) / 高（底部 g 大、先显形），权重 0.75；前沿宽 0.12
             float top = transform.position.y + height;
-            DeathDissolve.Apply(targets, block, amount, new Vector4(top, -1f / height, 0, 0), 0.75f, edge, 0.12f);
+            DeathDissolve.Apply(targets, block, amount, new Vector4(top, -1f / height, 0, 0), 0.75f, edge, 0.15f);
         }
 
         void Update()
@@ -123,6 +127,7 @@ namespace Spiritfire.Game
                 finale = true;
                 var c = DeathDissolve.BoundsOf(targets, transform.position + Vector3.up).center;
                 Fx.Play("SpawnFinale", c, Vector3.up, color, Mathf.Clamp(radius * 2, 0.6f, 6f));
+                SpawnThemes.Finale(theme, c, Mathf.Clamp(radius * 2, 0.6f, 6f), color);
             }
             if (t >= 1f) Finish();
         }
@@ -145,7 +150,8 @@ namespace Spiritfire.Game
                 var v = new Vector3(-Mathf.Sin(a) * 1.4f - Mathf.Cos(a) * 0.6f, Random.Range(1.8f, 4.2f), Mathf.Cos(a) * 1.4f - Mathf.Sin(a) * 0.6f);
                 rt.EmitOne(mote, p, v, Random.Range(0.07f, 0.14f), Random.Range(0.45f, 0.85f), color, 0);
             }
-            // 沙旋：贴地打转的尘团（前 70%）
+            // 沙旋：贴地打转的尘团（前 70%）；本章主题自己出了地表卷尘就不卷通用的
+            if (!air && SpawnThemes.Tick(theme, ground, ringR, k, dt, color)) return;
             if (swirlColor.a <= 0 || k > 0.7f) return;
             swirlAcc += dt * 14f * Fx.Density;
             var dust = swirlAcc >= 1 ? rt.GetEmitter(swirlColor.b > 0.95f ? "Powder" : "Dust") : null;
