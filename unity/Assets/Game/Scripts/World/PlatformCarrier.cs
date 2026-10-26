@@ -12,7 +12,7 @@ namespace Spiritfire.Game
     ///     用它的组件排在 PlayerMotor 之前更新（DefaultExecutionOrder −30）：PlayerMotor 这一帧照常走、照常判落地，台面的位移不进它的速度（到站不会被甩出去）。
     ///     乘客的位移全是扫掠的 Move，不会被瞬移进地面；PlayerMotor 的防穿地（帧初 → 帧末之间穿过一层朝上的地面才托回）拿到的帧初位置
     ///     已经是平台挪完之后的，下降的台面不会触发误救。
-    ///   · 往下走时台面底下（这一步扫过的空间）有角色就停住等（不压人）。
+    ///   · 往下走时台面底下（这一步扫过的空间）有角色就停住等（不压人；通用件再多留 <see cref="clearance"/>，台面停在头顶上方）。
     ///   · 两项只在通用件里打开（<see cref="Step"/>；ForgeWellLift 走老路 <see cref="SomethingBelow"/> + <see cref="MoveRiders"/>，行为不变）：
     ///     往上时乘客头顶被挡就停住（不把人挤进天花板）；横着走时把挡在台面前进方向上的玩家一起推开（扫掠 Move），推不动就停住（不把人夹进墙里）。
     ///     敌人（导航代理，不是角色控制器）横着不推：台面穿过它们的胶囊不产生物理反应；往下照样会停住等它们走开。
@@ -26,6 +26,8 @@ namespace Spiritfire.Game
         /// <summary>台面尺寸（米，台面局部 X 宽 × Z 深）与厚度：载人 / 压人 / 推人检测按它</summary>
         public Vector2 size;
         public float thickness;
+        /// <summary>通用一步（<see cref="Step"/>）往下时台底和下面的角色之间至少留多少（米）：台面停在头顶上方、不贴着头皮</summary>
+        public float clearance = 0.3f;
 
         readonly Rigidbody body;
         readonly List<CharacterController> riders = new();
@@ -77,9 +79,13 @@ namespace Spiritfire.Game
                     riders.Add(cc);
         }
 
-        /// <summary>下行这一步扫过的空间（台面底下）里有没有角色；playerBelow = 其中有玩家</summary>
-        public bool SomethingBelow(float drop, out bool playerBelow)
+        /// <summary>
+        /// 下行这一步扫过的空间（台面底下，再往下多看 extra 米）里有没有角色；playerBelow = 其中有玩家。
+        /// （ForgeWellLift 用 extra = 0；物理查询看到的角色控制器胶囊比它的标称高度矮几厘米，通用件用 <see cref="clearance"/> 留出余量）
+        /// </summary>
+        public bool SomethingBelow(float drop, out bool playerBelow, float extra = 0)
         {
+            drop += Mathf.Max(0, extra);
             var half = new Vector3(Mathf.Max(0.1f, size.x * 0.5f - 0.05f), drop * 0.5f + 0.06f, Mathf.Max(0.1f, size.y * 0.5f - 0.05f));
             var c = deck.position + Vector3.down * (thickness + drop * 0.5f + 0.06f);
             int n = Physics.OverlapBoxNonAlloc(c, half, hits, deck.rotation, 1 << Layers.Character, QueryTriggerInteraction.Ignore);
@@ -96,7 +102,7 @@ namespace Spiritfire.Game
         public Result Step(Vector3 delta)
         {
             PlayerBlocking = false;
-            if (delta.y < 0 && SomethingBelow(-delta.y, out bool below))
+            if (delta.y < 0 && SomethingBelow(-delta.y, out bool below, clearance))
             {
                 PlayerBlocking = below;
                 return Result.BlockedBelow;

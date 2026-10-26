@@ -8,7 +8,8 @@ namespace Spiritfire.Game
     /// <summary>
     /// 可断裂桥段（L6 场景件）：一座由若干段桥板（<see cref="segments"/>，各自带碰撞）拼成的桥 / 栈道 / 冰桥，可以一段一段塌，也可以整座断。
     ///   · 怎么断（<see cref="triggers"/>，可叠）：
-    ///     Step —— 玩家站上某一段（<see cref="stepByEnemies"/> 打开时敌人也算），那段抖 <see cref="stepDelay"/> 秒后塌（2-1「断桥冲刺」：跑过去，身后一段段掉）；
+    ///     Step —— 玩家踩上某一段（<see cref="stepByEnemies"/> 打开时敌人也算），那段 <see cref="stepDelay"/> 秒后开始抖、再过 warnTime 秒塌——
+    ///             踩一下就记上，不用一直站着（2-1「断桥冲刺」：跑过去，身后一段段掉；站着不动的那段 0.8 s 后塌）；
     ///     Damage —— 根节点的 <see cref="Damageable"/>（不给奖励、不计击杀，血 <see cref="baseHp"/> × 难度，桥板都挂命中盒）打空就整座断，从被打的那段开始往两头塌；
     ///              没开 Damage 的桥不挂血量，子弹打上去就是普通的世界几何（弹着点、弹孔），不弹「格挡」；
     ///     Signal —— 被 <see cref="SceneActivator"/> 触发就整座断（从 <see cref="signalOrigin"/> 那段开始）。
@@ -39,7 +40,7 @@ namespace Spiritfire.Game
         public Vector2 segmentSize = new(3f, 1.5f);
         public float segmentThickness = 0.3f;
         public Trigger triggers = Trigger.Damage | Trigger.Signal;
-        [Tooltip("Step：站上去多久开始塌（秒）；敌人站上去也算")]
+        [Tooltip("Step：踩上去多久开始抖（秒，之后再过 warnTime 塌）；stepByEnemies = 敌人踩上去也算")]
         public float stepDelay = 0.35f;
         public bool stepByEnemies;
         [Tooltip("每段塌之前抖多久（秒，这段时间还站得住）、整座断时相邻两段的间隔（秒）")]
@@ -68,7 +69,7 @@ namespace Spiritfire.Game
             public Collider[] colliders;
             public NavMeshObstacle carve;
             public SegState state;
-            public float timer, standTime, vy, groundY;
+            public float timer, vy, groundY;
             public Vector3 spin, drift;
         }
 
@@ -187,12 +188,7 @@ namespace Spiritfire.Game
                 switch (s.state)
                 {
                     case SegState.Intact:
-                        if ((triggers & Trigger.Step) != 0 && SomeoneOn(s))
-                        {
-                            s.standTime += dt;
-                            if (s.standTime >= stepDelay) Warn(i);
-                        }
-                        else s.standTime = 0;
+                        if ((triggers & Trigger.Step) != 0 && SomeoneOn(s)) Warn(i, stepDelay);
                         break;
                     case SegState.Warning:
                         s.timer += dt;
@@ -291,7 +287,7 @@ namespace Spiritfire.Game
             foreach (var s in segs)
             {
                 s.state = SegState.Intact;
-                s.timer = s.standTime = s.vy = 0;
+                s.timer = s.vy = 0;
                 s.t.gameObject.SetActive(true);
                 s.t.SetPositionAndRotation(s.home, s.homeRot);
                 foreach (var c in s.colliders)
