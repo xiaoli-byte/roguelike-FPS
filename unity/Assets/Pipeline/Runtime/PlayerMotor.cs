@@ -298,6 +298,7 @@ namespace Spiritfire.Art
             var flags = cc.Move(step.delta);
             bool touching = cc.isGrounded;
             if (!touching && step.snap) touching = SnapDown(cc.stepOffset);
+            if (RescueFromGround(start)) touching = true;
             bool steep = touching && Vector3.Angle(hitGroundNormal, Vector3.up) > cc.slopeLimit;
             var fb = new MotorFeedback
             {
@@ -338,6 +339,82 @@ namespace Spiritfire.Art
             if (cc.isGrounded) hitGroundNormal = hit.normal;
             return cc.isGrounded;
         }
+
+        /// <summary>
+        /// 防穿地：角色控制器的重叠恢复会把胶囊沿最短方向推出压着它的静态碰撞体（敌人根节点的角色胶囊没有刚体），这一步不扫掠——
+        /// 方向朝下时（敌人身体压在头顶、旋壳撞过来时罩住上半身）直接把人推进地形，第一人称看到地面背面，随后掉出世界。
+        /// 三个条件同时成立才算穿下去了：① 这一帧往下走了；② 帧初的胶囊中心到现在的脚底之间隔着一层朝上的世界地面，且比脚底高出 5 cm 以上；
+        /// ③ 现在的胶囊（半径收 2 cm）和世界几何重叠。扫掠过的正常移动（走下台阶 / 崖边 / 坡顶、冲刺、击飞、跟着下降的平台）停在皮肤厚度外，
+        /// ③ 永远不成立——哪怕 ② 的射线擦过了台阶沿、上一层楼板；掉进洞里、深水 / 熔岩托回（Teleport，不在这里）中间没有地面，② 不成立。
+        /// 成立时：脚底放回穿过的那层地面（现在的水平位置处，找不到就用射线穿过的那一点），下落速度清零；
+        /// 放的时候胶囊底球沿地面法线贴在皮肤厚度外（坡上不会一半埋进坡里），还和世界几何重叠就往上抬一点再试，都不行就不动。
+        /// </summary>
+        bool RescueFromGround(Vector3 start)
+        {
+            var end = transform.position;
+            if (end.y >= start.y - 1e-4f) return false;
+            var from = start + Vector3.up * cc.center.y;
+            var seg = end - from;
+            float len = seg.magnitude;
+            if (len < 1e-4f) return false;
+            if (!Physics.Raycast(from, seg / len, out var hit, len, groundMask, QueryTriggerInteraction.Ignore)) return false;
+            if (hit.normal.y < RescueMinNormalY || hit.point.y < end.y + RescueSlack) return false;
+            if (!OverlapsWorld(end)) return false;
+            // 现在的水平位置处的那层地面（从穿过点上方 0.5 m 往下找）；找不到 / 放不下就用射线穿过的那一点
+            Vector3 feet, normal;
+            if (Physics.Raycast(new Vector3(end.x, hit.point.y + 0.5f, end.z), Vector3.down, out var g, 0.5f + (hit.point.y - end.y), groundMask, QueryTriggerInteraction.Ignore)
+                && g.normal.y >= RescueMinNormalY && g.point.y > end.y + RescueSlack && RestOn(g.point, g.normal, out feet))
+                normal = g.normal;
+            else if (RestOn(hit.point, hit.normal, out feet))
+                normal = hit.normal;
+            else return false;
+            LastRescueDepth = feet.y - end.y;
+            GroundRescues++;
+            if (Time.unscaledTime >= rescueLogAt)
+            {
+                rescueLogAt = Time.unscaledTime + 0.5f;
+                Debug.Log($"[PlayerMotor] 防穿地托回 #{GroundRescues}：脚底本来要陷进地面 {LastRescueDepth:F2} m（{end} → {feet}，地面 {(normal.y >= 0.999f ? "平" : $"{Vector3.Angle(normal, Vector3.up):F0}°")}）");
+            }
+            cc.enabled = false;
+            transform.position = feet;
+            cc.enabled = true;
+            if (core.velocity.y < 0) core.velocity.y = 0;
+            hitGroundNormal = normal;
+            return true;
+        }
+
+        /// <summary>胶囊底球沿法线 n 贴在地面点 point 的皮肤厚度外时的脚底位置；和世界几何重叠就往上抬（最多 0.3 m）再试</summary>
+        bool RestOn(Vector3 point, Vector3 n, out Vector3 feet)
+        {
+            float r = cc.radius;
+            float bottom = cc.center.y - Mathf.Max(0, cc.height * 0.5f - r);
+            var basis = point + n.normalized * (r + cc.skinWidth) - Vector3.up * bottom;
+            foreach (float lift in RescueLifts)
+            {
+                feet = basis + Vector3.up * lift;
+                if (!OverlapsWorld(feet)) return true;
+            }
+            feet = default;
+            return false;
+        }
+
+        static readonly float[] RescueLifts = { 0, 0.08f, 0.18f, 0.3f };
+        float rescueLogAt;
+
+        /// <summary>脚底在 feet 时的胶囊（半径收 2 cm，不算皮肤厚度内的贴靠）和世界几何重叠</summary>
+        bool OverlapsWorld(Vector3 feet)
+        {
+            float r = Mathf.Max(0.05f, cc.radius - 0.02f);
+            float half = Mathf.Max(0, cc.height * 0.5f - cc.radius);
+            var c = feet + cc.center;
+            return Physics.CheckCapsule(c - Vector3.up * half, c + Vector3.up * half, r, groundMask, QueryTriggerInteraction.Ignore);
+        }
+
+        const float RescueSlack = 0.05f, RescueMinNormalY = 0.3f;
+
+        /// <summary>防穿地托回的次数、最近一次脚底陷进地面的深度（米）：测试 / 调试读</summary>
+        public int GroundRescues { get; private set; }
+        public float LastRescueDepth { get; private set; }
 
         /// <summary>从胶囊底部球心往下扫一个略小的球：找到坡度不超过 slopeLimit 的地面</summary>
         bool ProbeGroundBelow(Vector3 position, float maxDrop, out RaycastHit hit)
