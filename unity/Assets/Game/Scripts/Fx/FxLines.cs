@@ -25,6 +25,9 @@ namespace Spiritfire.Game
     ///     元素曳光下面另垫一道普通混合的暗色线（深红 / 深蓝 / 深绿，同敌方刀光的暗月牙）：纯加法的线在亮沙 / 雪地上会偏成黄白，
     ///     垫底把元素色托出来，火和蚀在亮地面上也分得开。
     ///   光束：外层光晕 + 中层 + 白热核心三层，宽度高频抖动；末端持续溅火花；每帧连续调用（同一发射点、同色）合并成同一条。
+    ///   第一人称可读（特效打磨 A 路）：弹头刚出膛时按速度拉长（头 0.02 s 拉到 ~1.8 倍）、出膛那几帧整段弹道更亮；
+    ///     离相机远的一端按距离加宽（最少约 0.45 mrad / 像素级不缩没，最多 2.6 倍）——第一人称里弹头一路飞向准星都看得见，
+    ///     枪口那头（离相机 0.9 m）只在出膛那几帧加粗 1.5 倍、很快收回，不糊屏；整段弹道后半段从枪口那头往弹头方向收（追尾），读作一发子弹飞出去，而不是一根静止的线。
     /// </summary>
     public sealed class FxLines : MonoBehaviour
     {
@@ -103,6 +106,12 @@ namespace Spiritfire.Game
         readonly List<TracerSlot> tracers = new();
         readonly List<BeamSlot> beams = new();
         float time;
+        /// <summary>这一帧的相机位置（远端加宽用）</summary>
+        static Vector3 camPos;
+        static bool hasCam;
+
+        /// <summary>离相机越远越宽：8 m 内不变，之后按距离线性加宽，最多 2.6 倍（远处的弹头不缩成看不见的一点）</summary>
+        static float Comp(Vector3 p) => hasCam ? Mathf.Clamp(Vector3.Distance(camPos, p) / 8f, 1f, 2.6f) : 1f;
 
         // ───────────── 曳光 ─────────────
 
@@ -138,6 +147,9 @@ namespace Spiritfire.Game
             t.jitterAt = JagInterval;
             t.flicker = 1;
             for (int i = 0; i < JagPoints; i++) t.jag[i] = Random.insideUnitCircle;
+            var cam = Camera.main;
+            hasCam = cam;
+            if (hasCam) camPos = cam.transform.position;
             int heads = kind == TracerKind.Shock ? JagPoints : 2;
             if (t.head.positionCount != heads) t.head.positionCount = heads;
             t.trail.enabled = true;
@@ -174,16 +186,26 @@ namespace Spiritfire.Game
             float k = Mathf.Clamp01(t.age / t.life);
             float kh = Mathf.Clamp01(t.age / t.headLife);
             float head = t.dist * Mathf.Min(1, (t.age + 0.012f) / t.fly);
-            float streak = Mathf.Min(t.dist * 0.5f, t.kind == TracerKind.Shock ? 3.5f : 5f);
+            // 速度拉伸：刚出膛的弹头更长（1.8 倍），之后收回常规长度
+            float stretch = 1f + 0.8f * (1f - Mathf.Clamp01(kh * 2.2f));
+            float streak = Mathf.Min(t.dist * 0.6f, (t.kind == TracerKind.Shock ? 3.5f : 5f) * stretch);
             float tail = Mathf.Max(0, head - streak);
             float w = t.width;
             float fade = kh < 0.6f ? 1 : Mathf.Max(0, 1 - (kh - 0.6f) / 0.4f);
             var c = t.color;
             var pHead = t.a + t.dir * head;
             var pTail = t.a + t.dir * tail;
+            float compHead = Comp(pHead), compTail = Comp(pTail);
+            // 出膛那几帧整段弹道更亮（前 35% 寿命从 1.6 倍降回 1）
+            float birth = 1f + 0.6f * (1f - Mathf.Clamp01(k / 0.35f));
+            // 追尾：整段弹道的起点在后半段寿命里从枪口往弹头收（蚀的长拖尾不收）
+            float chase = t.kind == TracerKind.Corrode ? 0 : Mathf.Clamp01((k - 0.3f) / 0.7f);
+            var pStart = t.a + t.dir * (head * 0.85f * chase * chase);
+            // 起始段：出膛那几帧枪口一端加粗 1.5 倍（第一人称里读得出弹道从枪口出去），很快收回
+            float compStart = Comp(pStart) * (1f + 0.5f * (1f - Mathf.Clamp01(k / 0.4f)));
 
             // 整条弹道：枪口那一头最亮——第一人称里这一段就是从枪口连向准星的那一截
-            t.trail.SetPosition(0, t.a);
+            t.trail.SetPosition(0, pStart);
             t.trail.SetPosition(1, pHead);
             switch (t.kind)
             {
@@ -192,24 +214,24 @@ namespace Spiritfire.Game
                     // 绿色长拖尾：粗、留 0.35 s 慢慢淡掉（前 30% 不淡）
                     float linger = k < 0.3f ? 1 : 1 - (k - 0.3f) / 0.7f;
                     linger *= linger;
-                    t.trail.startWidth = w * 0.7f;
-                    t.trail.endWidth = w * 1.1f;
+                    t.trail.startWidth = w * 0.7f * compStart;
+                    t.trail.endWidth = w * 1.1f * compHead;
                     t.trail.startColor = Rgba(CorrodeGreen(c), 0.55f * linger * c.a);
                     t.trail.endColor = Rgba(CorrodeGreen(c), 0.7f * linger * c.a);
                     break;
                 }
                 case TracerKind.Fire:
                 case TracerKind.Shock:
-                    t.trail.startWidth = w * 0.45f;
-                    t.trail.endWidth = w * 0.55f;
-                    t.trail.startColor = Rgba(c, 0.45f * (1 - k) * t.flicker * c.a);
-                    t.trail.endColor = Rgba(c, 0.4f * (1 - k) * t.flicker * c.a);
+                    t.trail.startWidth = w * 0.45f * compStart;
+                    t.trail.endWidth = w * 0.55f * compHead;
+                    t.trail.startColor = Rgba(c, Mathf.Min(1, 0.45f * birth) * (1 - k) * t.flicker * c.a);
+                    t.trail.endColor = Rgba(c, Mathf.Min(1, 0.4f * birth) * (1 - k) * t.flicker * c.a);
                     break;
                 default:
-                    t.trail.startWidth = w * 0.25f;
-                    t.trail.endWidth = w * 0.45f;
-                    t.trail.startColor = Rgba(c, 0.2f * (1 - k) * c.a);
-                    t.trail.endColor = Rgba(c, 0.4f * (1 - k) * c.a);
+                    t.trail.startWidth = w * 0.25f * compStart;
+                    t.trail.endWidth = w * 0.45f * compHead;
+                    t.trail.startColor = Rgba(c, 0.28f * birth * (1 - k) * c.a);
+                    t.trail.endColor = Rgba(c, Mathf.Min(1, 0.45f * birth) * (1 - k) * c.a);
                     break;
             }
 
@@ -221,8 +243,8 @@ namespace Spiritfire.Game
                     // 尾巴暗红 → 尖端橙黄（加法线在亮沙上会往黄白偏，尖端不再用金黄，靠下面的暗红垫底托住橙红）
                     t.head.SetPosition(0, pTail);
                     t.head.SetPosition(1, pHead);
-                    t.head.startWidth = w * 0.45f;
-                    t.head.endWidth = w * 1.15f;
+                    t.head.startWidth = w * 0.45f * compTail;
+                    t.head.endWidth = w * 1.15f * compHead;
                     t.head.startColor = new Color(0.85f, 0.12f, 0.03f, 0.35f * hf);
                     t.head.endColor = new Color(1f, 0.5f, 0.16f, hf);
                     break;
@@ -237,8 +259,8 @@ namespace Spiritfire.Game
                         if (i > 0 && i < JagPoints - 1) p += (t.u * t.jag[i].x + t.v * t.jag[i].y) * amp;
                         t.head.SetPosition(i, p);
                     }
-                    t.head.startWidth = w * 0.5f;
-                    t.head.endWidth = w * 0.9f;
+                    t.head.startWidth = w * 0.5f * compTail;
+                    t.head.endWidth = w * 0.9f * compHead;
                     t.head.startColor = Rgba(Color.Lerp(c, Color.white, 0.1f), 0.6f * hf);
                     t.head.endColor = Rgba(Color.Lerp(c, Color.white, 0.35f), hf);
                     break;
@@ -246,18 +268,18 @@ namespace Spiritfire.Game
                 case TracerKind.Corrode:
                     t.head.SetPosition(0, pTail);
                     t.head.SetPosition(1, pHead);
-                    t.head.startWidth = w * 0.6f;
-                    t.head.endWidth = w;
+                    t.head.startWidth = w * 0.6f * compTail;
+                    t.head.endWidth = w * compHead;
                     t.head.startColor = Rgba(CorrodeGreen(c), 0.3f * hf);
                     t.head.endColor = Hot(CorrodeGreen(c), 1.2f, hf);
                     break;
                 default:
                     t.head.SetPosition(0, pTail);
                     t.head.SetPosition(1, pHead);
-                    t.head.startWidth = w * 0.3f;
-                    t.head.endWidth = w;
+                    t.head.startWidth = w * 0.3f * compTail;
+                    t.head.endWidth = w * 1.15f * compHead;
                     t.head.startColor = Rgba(c, 0);
-                    t.head.endColor = Hot(c, 1.4f, fade * c.a);
+                    t.head.endColor = Hot(c, 1.4f * Mathf.Min(1.3f, birth), fade * c.a);
                     break;
             }
 
@@ -267,8 +289,8 @@ namespace Spiritfire.Game
                 t.glow.SetPosition(0, pTail);
                 t.glow.SetPosition(1, pHead);
                 float gw = t.kind == TracerKind.Shock ? 3.4f : 3f;
-                t.glow.startWidth = w * gw * 0.6f;
-                t.glow.endWidth = w * gw;
+                t.glow.startWidth = w * gw * 0.6f * compTail;
+                t.glow.endWidth = w * gw * compHead;
                 var gc = t.kind == TracerKind.Fire ? new Color(1f, 0.3f, 0.06f) : t.kind == TracerKind.Corrode ? CorrodeGreen(c) : c;
                 t.glow.startColor = Rgba(gc, 0);
                 t.glow.endColor = Rgba(gc, (t.kind == TracerKind.Shock ? 0.45f : 0.32f) * hf);
@@ -295,10 +317,10 @@ namespace Spiritfire.Game
                     float linger = k < 0.3f ? 1 : 1 - (k - 0.3f) / 0.7f;
                     linger *= linger;
                     if (t.back.positionCount != 2) t.back.positionCount = 2;
-                    t.back.SetPosition(0, t.a);
+                    t.back.SetPosition(0, pStart);
                     t.back.SetPosition(1, pHead);
-                    t.back.startWidth = w * 1.1f;
-                    t.back.endWidth = w * 1.7f;
+                    t.back.startWidth = w * 1.1f * compStart;
+                    t.back.endWidth = w * 1.7f * compHead;
                     t.back.startColor = Rgba(bc, 0.35f * linger * c.a);
                     t.back.endColor = Rgba(bc, 0.55f * linger * c.a);
                 }
@@ -454,6 +476,9 @@ namespace Spiritfire.Game
             time += dt;
             var rt = FxRuntime.Ensure();
             int frame = Time.frameCount;
+            var cam = Camera.main;
+            hasCam = cam;
+            if (hasCam) camPos = cam.transform.position;
             foreach (var t in tracers)
             {
                 if (!t.active) continue;
