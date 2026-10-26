@@ -121,22 +121,79 @@ namespace Spiritfire.Art.Editor
             AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
         }
 
-        /// <summary>存网格：已有资产就原地覆盖（GUID 不变，引用它的 Prefab 不断）</summary>
+        /// <summary>
+        /// 存网格：已有资产就原地覆盖（GUID 不变，引用它的 Prefab 不断）；内容一样就不动资产。
+        /// 不用 EditorUtility.CopySerialized：它对运行时新建的蒙皮大网格（128 骨、UInt32 索引的碎片网格）复制出来是 0 顶点的空网格，
+        /// 这里按网格 API 逐项拷（顶点、法线、各 UV 通道、子网格索引、骨骼权重、绑定姿势、包围盒）
+        /// </summary>
         static Mesh SaveMesh(Mesh mesh, string path)
         {
             mesh.name = Path.GetFileNameWithoutExtension(path);
             var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (existing)
             {
-                existing.Clear();
-                EditorUtility.CopySerialized(mesh, existing);
+                if (!SameMesh(mesh, existing))
+                {
+                    CopyMesh(mesh, existing);
+                    // 拷完再比一遍：拷丢了（0 顶点 / 索引 / 骨骼权重不对）就报错，不悄悄存一个空网格
+                    if (!SameMesh(mesh, existing))
+                        Debug.LogError($"[Blade] 网格拷进 {path} 后内容不一致（{existing.vertexCount} 顶点 / 应 {mesh.vertexCount}）");
+                    EditorUtility.SetDirty(existing);
+                }
                 existing.name = mesh.name;
                 Object.DestroyImmediate(mesh);
-                EditorUtility.SetDirty(existing);
                 return existing;
             }
             AssetDatabase.CreateAsset(mesh, path);
             return mesh;
+        }
+
+        static readonly UnityEngine.Rendering.VertexAttribute[] UvChannels =
+        {
+            UnityEngine.Rendering.VertexAttribute.TexCoord0, UnityEngine.Rendering.VertexAttribute.TexCoord1, UnityEngine.Rendering.VertexAttribute.TexCoord2,
+            UnityEngine.Rendering.VertexAttribute.TexCoord3,
+        };
+
+        /// <summary>按网格 API 把 src 的内容拷进 dst（dst 先清空）</summary>
+        static void CopyMesh(Mesh src, Mesh dst)
+        {
+            dst.Clear();
+            dst.indexFormat = src.indexFormat;
+            dst.SetVertices(src.vertices);
+            if (src.HasVertexAttribute(UnityEngine.Rendering.VertexAttribute.Normal)) dst.SetNormals(src.normals);
+            if (src.HasVertexAttribute(UnityEngine.Rendering.VertexAttribute.Tangent)) dst.SetTangents(src.tangents);
+            if (src.HasVertexAttribute(UnityEngine.Rendering.VertexAttribute.Color)) dst.SetColors(src.colors);
+            for (int ch = 0; ch < UvChannels.Length; ch++)
+            {
+                if (!src.HasVertexAttribute(UvChannels[ch])) continue;
+                var uv = new List<Vector4>();
+                src.GetUVs(ch, uv);
+                switch (src.GetVertexAttributeDimension(UvChannels[ch]))
+                {
+                    case 2: dst.SetUVs(ch, uv.Select(q => new Vector2(q.x, q.y)).ToList()); break;
+                    case 3: dst.SetUVs(ch, uv.Select(q => new Vector3(q.x, q.y, q.z)).ToList()); break;
+                    default: dst.SetUVs(ch, uv); break;
+                }
+            }
+            dst.subMeshCount = src.subMeshCount;
+            for (int i = 0; i < src.subMeshCount; i++) dst.SetIndices(src.GetIndices(i), src.GetTopology(i), i, false);
+            var perVertex = src.GetBonesPerVertex();
+            if (perVertex.Length > 0) dst.SetBoneWeights(perVertex, src.GetAllBoneWeights());
+            dst.bindposes = src.bindposes;
+            dst.bounds = src.bounds;
+        }
+
+        /// <summary>两份网格内容一样（顶点、法线、UV0、索引、骨骼权重、绑定姿势）：一样就不重写资产</summary>
+        static bool SameMesh(Mesh a, Mesh b)
+        {
+            if (a.vertexCount != b.vertexCount || a.subMeshCount != b.subMeshCount || a.indexFormat != b.indexFormat || b.vertexCount == 0) return false;
+            if (!a.vertices.SequenceEqual(b.vertices) || !a.normals.SequenceEqual(b.normals) || !a.uv.SequenceEqual(b.uv)) return false;
+            for (int i = 0; i < a.subMeshCount; i++)
+                if (a.GetTopology(i) != b.GetTopology(i) || !a.GetIndices(i).SequenceEqual(b.GetIndices(i)))
+                    return false;
+            if (!a.GetBonesPerVertex().SequenceEqual(b.GetBonesPerVertex())) return false;
+            if (!a.GetAllBoneWeights().SequenceEqual(b.GetAllBoneWeights())) return false;
+            return a.bindposes.SequenceEqual(b.bindposes);
         }
 
         /// <summary>存 PNG：内容没变就不写（不碰时间戳）；configure 返回 true 时重新导入</summary>
@@ -261,18 +318,68 @@ namespace Spiritfire.Art.Editor
             }
         }
 
-        /// <summary>存材质：已有就改属性（GUID 不变）</summary>
+        /// <summary>
+        /// 存材质：已有就改属性（GUID 不变）。先在一份副本上套 setup，和现有材质逐项比（着色器、渲染队列、关键字、每个着色器属性）——
+        /// 一样就不碰资产（以前每次都 SetDirty，重跑 blade 会把两个材质整份重新序列化一遍）
+        /// </summary>
         static Material SaveMaterial(string path, Shader shader, Action<Material> setup)
         {
             var m = AssetDatabase.LoadAssetAtPath<Material>(path);
-            bool created = !m;
-            if (created) m = new Material(shader);
-            else if (m.shader != shader) m.shader = shader;
-            m.name = Path.GetFileNameWithoutExtension(path);
+            string name = Path.GetFileNameWithoutExtension(path);
+            if (!m)
+            {
+                m = new Material(shader) { name = name };
+                setup(m);
+                AssetDatabase.CreateAsset(m, path);
+                return m;
+            }
+            var probe = new Material(m);
+            try
+            {
+                if (probe.shader != shader) probe.shader = shader;
+                setup(probe);
+                if (SameMaterial(probe, m)) return m;
+            }
+            finally
+            {
+                Object.DestroyImmediate(probe);
+            }
+            if (m.shader != shader) m.shader = shader;
+            m.name = name;
             setup(m);
-            if (created) AssetDatabase.CreateAsset(m, path);
-            else EditorUtility.SetDirty(m);
+            EditorUtility.SetDirty(m);
             return m;
+        }
+
+        static bool SameMaterial(Material a, Material b)
+        {
+            if (a.shader != b.shader || a.renderQueue != b.renderQueue || a.enableInstancing != b.enableInstancing || a.globalIlluminationFlags != b.globalIlluminationFlags) return false;
+            if (!new HashSet<string>(a.shaderKeywords).SetEquals(b.shaderKeywords)) return false;
+            var sh = a.shader;
+            for (int i = 0; i < sh.GetPropertyCount(); i++)
+            {
+                int id = sh.GetPropertyNameId(i);
+                switch (sh.GetPropertyType(i))
+                {
+                    case UnityEngine.Rendering.ShaderPropertyType.Color:
+                        if (a.GetColor(id) != b.GetColor(id)) return false;
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Vector:
+                        if (a.GetVector(id) != b.GetVector(id)) return false;
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Float:
+                    case UnityEngine.Rendering.ShaderPropertyType.Range:
+                        if (!Mathf.Approximately(a.GetFloat(id), b.GetFloat(id))) return false;
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Int:
+                        if (a.GetInteger(id) != b.GetInteger(id)) return false;
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Texture:
+                        if (a.GetTexture(id) != b.GetTexture(id) || a.GetTextureScale(id) != b.GetTextureScale(id) || a.GetTextureOffset(id) != b.GetTextureOffset(id)) return false;
+                        break;
+                }
+            }
+            return true;
         }
     }
 }

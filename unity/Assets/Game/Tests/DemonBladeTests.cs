@@ -188,6 +188,42 @@ namespace Spiritfire.Game.Tests
             }
         }
 
+        /// <summary>
+        /// 烘焙器原地覆盖网格资产那一步（BladeMeshBaker.CopyMesh，编辑器程序集里的私有方法，按名字反射调用）：
+        /// 128 骨的碎片网格拷进一份已有网格后顶点、索引、骨骼权重、绑定姿势都在（以前用 EditorUtility.CopySerialized，拷出来是 0 顶点的空网格）
+        /// </summary>
+        [Test]
+        public void BakerCopyKeepsShardGeometry()
+        {
+            var baker = Type.GetType("Spiritfire.Art.Editor.BladeMeshBaker, Spiritfire.Art.Editor");
+            if (baker == null) Assert.Ignore("编辑器程序集 Spiritfire.Art.Editor 没加载");
+            const System.Reflection.BindingFlags Flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static;
+            var copy = baker.GetMethod("CopyMesh", Flags);
+            var same = baker.GetMethod("SameMesh", Flags);
+            Assert.IsNotNull(copy, "BladeMeshBaker.CopyMesh");
+            Assert.IsNotNull(same, "BladeMeshBaker.SameMesh");
+            var src = BladeMeshes.BuildShards();
+            var dst = BladeMeshes.BuildRoot(); // 已有内容的网格：拷之前要先清掉
+            try
+            {
+                Assert.IsFalse((bool)same.Invoke(null, new object[] { src, dst }));
+                copy.Invoke(null, new object[] { src, dst });
+                Assert.AreEqual(src.vertexCount, dst.vertexCount, "顶点数");
+                Assert.Greater(dst.vertexCount, 0);
+                Assert.AreEqual(src.subMeshCount, dst.subMeshCount);
+                Assert.AreEqual(src.GetIndexCount(0), dst.GetIndexCount(0), "索引数");
+                Assert.AreEqual(128, dst.bindposes.Length);
+                Assert.AreEqual(src.vertexCount, dst.boneWeights.Length, "每个顶点都有骨骼权重");
+                Assert.AreEqual(src.bounds.size, dst.bounds.size);
+                Assert.IsTrue((bool)same.Invoke(null, new object[] { src, dst }), "拷完后内容应一致");
+            }
+            finally
+            {
+                Object.DestroyImmediate(src);
+                Object.DestroyImmediate(dst);
+            }
+        }
+
         [Test]
         public void RootSlabTriangulationCoversThePolygon()
         {
