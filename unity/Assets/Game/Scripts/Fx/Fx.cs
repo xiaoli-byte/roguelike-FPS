@@ -258,12 +258,26 @@ namespace Spiritfire.Game
         public static FxHandle Lightning(Vector3 from, Vector3 to) => Lightning(from, to, LightningColor);
 
         /// <summary>弹道曳光：淡淡的整段弹道 + 明亮的弹头拖尾（0.06–0.1 s）。width = 弹头宽度（米）</summary>
-        public static FxHandle Tracer(Vector3 from, Vector3 to, Color color, float width = 0.05f)
+        public static FxHandle Tracer(Vector3 from, Vector3 to, Color color, float width = 0.05f) => Tracer(from, to, color, width, TracerKind.Plain);
+
+        /// <summary>
+        /// 指定样式的曳光（见 <see cref="FxLines"/>）：火 = 橙红弹头 + 沿途火星，雷 = 蓝白锯齿闪烁，蚀 = 绿色长拖尾 + 蚀液滴；Plain 同上面的普通曳光
+        /// </summary>
+        public static FxHandle Tracer(Vector3 from, Vector3 to, Color color, float width, TracerKind kind)
         {
             if (!Finite(from) || !Finite(to)) return FxHandle.None;
             var rt = FxRuntime.Ensure();
-            return rt ? rt.Lines.Tracer(from, to, color, width) : FxHandle.None;
+            return rt ? rt.Lines.Tracer(from, to, color, width, kind) : FxHandle.None;
         }
+
+        /// <summary>元素对应的曳光样式（无元素 = Plain）</summary>
+        public static TracerKind TracerKindOf(Element e) => e switch
+        {
+            Element.Fire => TracerKind.Fire,
+            Element.Shock => TracerKind.Shock,
+            Element.Corrode => TracerKind.Corrode,
+            _ => TracerKind.Plain,
+        };
 
         /// <summary>刀光弧（见 <see cref="SlashArc.Spawn"/>）</summary>
         public static FxHandle Slash(Vector3 center, float yawDeg, float radius, float arc, int dir, float tilt, float width, float duration, Color color,

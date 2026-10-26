@@ -204,27 +204,62 @@ namespace Spiritfire.Game.Testing
 
             var w = weapons.Active;
             var original = w.element;
+            var rt = FxRuntime.Ensure();
             foreach (var el in new[] { Element.Fire, Element.Shock, Element.Corrode })
             {
                 w.element = el;
                 Aim(motor, eye, far + Vector3.right * Random.Range(-2f, 2f));
+                var want = Fx.ElementColor(el);
+                string sparkStyle = el == Element.Fire ? "Ember" : el == Element.Shock ? "Crackle" : "Drop";
+                var sparks = rt ? rt.GetEmitter(sparkStyle) : null;
+                int sparks0 = sparks != null && sparks.ps ? sparks.ps.particleCount : 0;
+                // 等到这一发真的打出去（上一发的截图帧很慢，等枪口火焰时间戳变了再拍）
+                float flash0 = MuzzleFlashes.LastFlashTime;
                 weapons.testFire = true;
-                // 开枪后第二帧：曳光的弹头已经飞出一段（第一帧弹头还贴在枪口）；第一人称看曳光是往屏幕里缩的一小段，
-                // 再从侧面 3 m 拍一张，看得清整条弹道的颜色和粗细
-                yield return null;
+                float fireStart = Time.time;
+                do yield return null;
+                while (MuzzleFlashes.LastFlashTime <= flash0 && Time.time - fireStart < 1f);
+                weapons.testFire = false;
+                // 打出去之后再等一帧：弹头已经飞出一段；第一人称看曳光是从枪口连向准星的一截，再从侧面 3 m 拍一张，看得清整条弹道的颜色和形状
                 yield return null;
                 Shot(weapons.eye, $"fx_tracer_{el.ToString().ToLowerInvariant()}");
-                // 弹头这时在 15–20 m 外：侧面相机对准弹头那一段，3 m 外拍
-                var heads = FindObjectsByType<LineRenderer>().Where(l => l.enabled && l.name == "Tracer Head").ToArray();
-                var hd = heads.FirstOrDefault();
-                Line($"曳光 · {el}：画着的弹头 {heads.Length} 条" + (hd ? $"，长 {Vector3.Distance(hd.GetPosition(0), hd.GetPosition(1)):F1} m，宽 {hd.endWidth:F3} m，色 {hd.endColor}" : ""));
+                // 认这一发的曳光：弹头颜色最接近元素色的那条（池里可能还有别的曳光在淡出）
+                LineRenderer Pick(string name) => FindObjectsByType<LineRenderer>()
+                    .Where(l => l.enabled && l.name == name)
+                    .OrderBy(l => ColorDist(l.endColor, want)).FirstOrDefault();
+                var hd = Pick("Tracer Head");
+                var trail = Pick("Tracer Trail");
+                var glow = Pick("Tracer Glow");
+                int sparkNow = sparks != null && sparks.ps ? sparks.ps.particleCount : 0;
+                bool hueOk = hd && HueNear(hd.endColor, want, 0.1f);
+                string shape = !hd ? "—" : el == Element.Shock ? $"锯齿 {hd.positionCount} 点" : $"直线 {hd.positionCount} 点";
+                Line($"曳光 · {el}：弹头{(hd ? $" 长 {Vector3.Distance(hd.GetPosition(0), hd.GetPosition(hd.positionCount - 1)):F1} m，宽 {hd.endWidth:F3} m，色 {hd.endColor}（{(hueOk ? "元素色 ✓" : "✗ 不像元素色")}），{shape}" : " ✗ 没画出来")}；" +
+                     $"光晕 {(glow ? "✓" : "✗")}；枪口一段 {(trail ? $"宽 {trail.startWidth:F3} m、亮 {trail.startColor.a:F2}" : "✗")}；沿途{sparkStyle} {sparkNow - sparks0:+0;-0;0} 颗");
                 if (hd)
                 {
-                    var mid = (hd.GetPosition(0) + hd.GetPosition(1)) * 0.5f;
+                    var mid = (hd.GetPosition(0) + hd.GetPosition(hd.positionCount - 1)) * 0.5f;
                     SideShot(mid, eye.right * 3f + Vector3.up * 0.6f, $"fx_tracer_{el.ToString().ToLowerInvariant()}_side");
                 }
-                if (heads.Length == 0) Fail($"{el} 开枪后没有画出曳光");
-                weapons.testFire = false;
+                if (!hd) Fail($"{el} 开枪后没有画出曳光");
+                else
+                {
+                    if (!hueOk) Fail($"{el} 曳光弹头不是元素色（{hd.endColor}，应接近 {want}）");
+                    if (el == Element.Shock && hd.positionCount <= 2) Fail("雷曳光的弹头应是锯齿折线");
+                    if (el != Element.Shock && hd.positionCount != 2) Fail($"{el} 曳光的弹头应是直线（{hd.positionCount} 点）");
+                }
+                if (!glow) Fail($"{el} 曳光没有同色光晕");
+                // 第一人称：整段弹道在枪口那一头要看得见（以前 0.1 的透明度、0.008 m 宽，第一人称几乎看不到）
+                if (!trail || trail.startColor.a < 0.25f || trail.startWidth < 0.02f) Fail($"{el} 曳光枪口那一段太淡 / 太细（第一人称看不到弹道起点）");
+                if (el != Element.Shock && sparkNow <= sparks0) Fail($"{el} 曳光沿途没有撒{(el == Element.Fire ? "火星" : "蚀液滴")}");
+                if (el == Element.Corrode)
+                {
+                    // 长拖尾：0.2 s 后整段弹道还在
+                    yield return new WaitForSeconds(0.2f);
+                    var linger = Pick("Tracer Trail");
+                    bool lingering = linger && HueNear(linger.endColor, want, 0.1f) && linger.endColor.a > 0.05f;
+                    Line($"  蚀 · 0.2 s 后拖尾 {(lingering ? $"还在 ✓（亮 {linger.endColor.a:F2}）" : "✗ 没了")}");
+                    if (!lingering) Fail("蚀曳光没有长拖尾（0.2 s 后整段弹道就没了）");
+                }
                 yield return new WaitForSeconds(0.25f);
             }
             w.element = original;
@@ -234,6 +269,17 @@ namespace Spiritfire.Game.Testing
             yield return null;
             Shot(weapons.eye, "fx_lightning");
             yield return new WaitForSeconds(0.3f);
+        }
+
+        static float ColorDist(Color a, Color b) => new Vector3(a.r - b.r, a.g - b.g, a.b - b.b).magnitude;
+
+        /// <summary>色相相近（0..1 一圈，绕回）：偏白的蓝白雷光也按色相比</summary>
+        static bool HueNear(Color a, Color b, float tol)
+        {
+            Color.RGBToHSV(a, out float ha, out _, out _);
+            Color.RGBToHSV(b, out float hb, out _, out _);
+            float d = Mathf.Abs(ha - hb);
+            return Mathf.Min(d, 1 - d) <= tol;
         }
 
         /// <summary>临时相机从 at + offset 看向 at 拍一张（不带 HUD、不带第一人称枪模）</summary>

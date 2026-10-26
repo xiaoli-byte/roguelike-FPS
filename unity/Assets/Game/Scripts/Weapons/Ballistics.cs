@@ -204,14 +204,16 @@ namespace Spiritfire.Game
             if (tracer.a > 0)
             {
                 // FX1 曳光：粗细取武器表的 tracerWidth（同 Three.js；控制器传的是统一的 0.02 / 0.012），整体加粗到 2.2 倍
-                // （Unity 的线是柔边横截面，同样宽度看着比 Three.js 的发光带细一圈）；带元素的一发用 Three.js 元素色（火橙 / 雷蓝 / 蚀绿），再粗 25%
+                // （Unity 的线是柔边横截面，同样宽度看着比 Three.js 的发光带细一圈）；带元素的一发用 Three.js 元素色（火橙 / 雷蓝 / 蚀绿），再粗 25%，
+                // 形状也按元素换（火星 / 锯齿闪烁 / 长拖尾，见 FxLines）——侧面看颜色相近的火和蚀也分得开
                 float shown = Mathf.Max(tracerWidth, def.tracerWidth) * 2.2f;
                 if (s.element != Element.None)
                 {
                     tracer = Fx.ElementColor(s.element);
                     shown *= 1.25f;
+                    Fx.Tracer(muzzle, end, tracer, shown, Fx.TracerKindOf(s.element));
                 }
-                ShotFx.Instance?.Tracer(muzzle, end, tracer, shown);
+                else ShotFx.Instance?.Tracer(muzzle, end, tracer, shown);
                 // 满蓄一击：沿弹道追加主光束 + 虹光（WC3 贯虹灵炮）
                 if (s.full) RailgunBeam.Spawn(muzzle, end, s.element, Mathf.Max(tracerWidth, def.tracerWidth));
             }
