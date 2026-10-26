@@ -84,7 +84,8 @@ namespace Spiritfire.Game
             else if (info.element != Element.None) color = Fx.ElementColor(info.element);
             else color = layer == DamageLayer.Health ? EnemyColor(d) : Fx.LayerColor(layer);
             var p = Fx.Finite(info.point) && info.point != Vector3.zero ? info.point : Body(d, out _);
-            Fx.EnemyHit(p, color, r.crit, layer);
+            // 层火花 + 弱点一响 + 暴击重音（星芒偏到轮廓外、叠加有上限，Fx.Shot.cs）
+            Fx.EnemyHitOn(d, p, color, r.crit, layer, info.weakpoint);
             Sparks++;
             if (r.crit) CritSparks++;
         }
