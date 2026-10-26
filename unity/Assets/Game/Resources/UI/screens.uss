@@ -43,7 +43,9 @@
     border-color: var(--cinnabar-hi);
 }
 
+/* 面板的头、页签、脚不跟着收：内容（长列表）超出面板高度时只压滚动区（UI Toolkit 默认 flex-shrink 1，按键页 1280×720 下标题和副标题被压得叠在一起） */
 .sf-panel__head {
+    flex-shrink: 0;
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom-width: 1px;
@@ -55,6 +57,7 @@
 }
 
 .sf-panel__foot {
+    flex-shrink: 0;
     flex-direction: row;
     align-items: center;
     margin-top: 16px;
@@ -245,6 +248,7 @@
 
 /* 页签 */
 .sf-tabs {
+    flex-shrink: 0;
     flex-direction: row;
     margin-bottom: 12px;
     border-bottom-width: 1px;

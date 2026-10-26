@@ -22,15 +22,20 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 分层面板的配置——编辑器的 UIBuilder 生成 Resources/UI/Panels/&lt;层&gt;.asset 和运行时兜底（资产还没生成时在内存里建）共用这一份，
-    /// 改参数只改这里。缩放：资产里是「按屏幕缩放，参考 1920×1080、按高度匹配」（编辑器预览用），
-    /// 运行时 <see cref="UIRoot"/> 用资产的副本改成「固定像素 × <see cref="Scale"/>」，照搬 Three.js 的 computeUiScale：
-    /// 小屏幕不按比例缩到底（Steam Deck 1280×800 是 0.85 而不是 0.74），字不至于小到看不清。
+    /// 改参数只改这里（运行时 <see cref="UIRoot"/> 用资产的副本，缩放参数再按这里写一遍，资产旧了也不影响）。
+    /// 缩放：四层都「按参考分辨率 1920×1080 缩放，<see cref="MatchMode"/> = Expand」——缩放倍率 = min(宽 / 1920, 高 / 1080)，
+    /// 面板的逻辑尺寸在任何分辨率下都不小于 1920×1080（16:9 的 1280×720 / 1366×768 / 1600×900 / 2560×1440 都正好是 1920×1080，
+    /// 16:10、窗口化的怪尺寸在宽或高一边多出来）。USS 按 1920×1080 写的排版因此在哪个分辨率下都一样，不会被挤得断行、溢出。
+    /// 相当于每个分辨率自动取 match（宽、高里更紧的那一边），比固定 match 稳：固定按高度匹配时 16:10 的逻辑宽度只有 1728，会挤。
+    /// （以前照搬 Three.js computeUiScale 用「固定像素 × 缩放」，小屏幕只缩差值的 45%：1477×791 下逻辑尺寸只剩 1680×900，菜单文字被挤成两行。）
     /// </summary>
     public static class UILayers
     {
         public const int Count = 4;
         /// <summary>设计分辨率：USS 里的像素值都按 1920×1080 写（与 Three.js 的 CSS 设计像素一致）</summary>
         public static readonly Vector2Int ReferenceResolution = new(1920, 1080);
+        /// <summary>按参考分辨率缩放时的匹配方式：Expand = 逻辑尺寸两边都不小于参考分辨率（缩放取宽高比例里小的那个）</summary>
+        public const PanelScreenMatchMode MatchMode = PanelScreenMatchMode.Expand;
         /// <summary>Resources 下的路径（不带扩展名）</summary>
         public const string PanelsFolder = "UI/Panels", ThemePath = "UI/DefaultTheme", StylePath = "UI/theme", TextSettingsPath = "UI/Panels/PanelText";
 
@@ -50,27 +55,31 @@ namespace Spiritfire.Game
         {
             ps.themeStyleSheet = theme;
             ps.textSettings = text;
-            ps.scaleMode = PanelScaleMode.ScaleWithScreenSize;
-            ps.referenceResolution = ReferenceResolution;
-            ps.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
-            ps.match = 1f;
+            ApplyScaling(ps);
             ps.sortingOrder = SortingOrder(layer);
             ps.targetDisplay = 0;
             ps.clearColor = false;
             ps.clearDepthStencil = false;
         }
 
+        /// <summary>缩放参数：按参考分辨率缩放 + Expand（match 只在 MatchWidthOrHeight 下起作用，留 1 = 按高度，换回那种模式时的默认）</summary>
+        public static void ApplyScaling(PanelSettings ps)
+        {
+            ps.scaleMode = PanelScaleMode.ScaleWithScreenSize;
+            ps.referenceResolution = ReferenceResolution;
+            ps.screenMatchMode = MatchMode;
+            ps.match = 1f;
+            ps.scale = 1f;
+        }
+
         /// <summary>
-        /// 运行时界面缩放（同 Three.js src/ui/dom.ts computeUiScale）：raw = min(宽 / 1920, 高 / 1080)，
-        /// 放大照比例，缩小只缩差值的 45%，夹在 0.7–1.75；HUD 层下限 0.78
+        /// 面板在 width×height 屏幕上的缩放倍率（= PanelSettings 按 Expand 算出来的：min(宽 / 1920, 高 / 1080)）；
+        /// 屏幕像素 ÷ 它 = 面板逻辑尺寸（设计像素）。四层一样，layer 参数留着兼容
         /// </summary>
         public static float Scale(UILayer layer, int width, int height)
         {
-            float raw = Mathf.Min(width / (float)ReferenceResolution.x, height / (float)ReferenceResolution.y);
-            float s = raw >= 1 ? raw : 1 - (1 - raw) * 0.45f;
-            if (float.IsNaN(s) || float.IsInfinity(s)) s = 1;
-            s = Mathf.Clamp(s, 0.7f, 1.75f);
-            return layer == UILayer.Hud ? Mathf.Clamp(s, 0.78f, 1.75f) : s;
+            float s = Mathf.Min(width / (float)ReferenceResolution.x, height / (float)ReferenceResolution.y);
+            return float.IsNaN(s) || float.IsInfinity(s) || s <= 0 ? 1 : s;
         }
     }
 }

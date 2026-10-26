@@ -77,7 +77,7 @@ namespace Spiritfire.Game
             mark.AddToClassList("sf-toast__mark");
             mark.style.backgroundColor = c;
             el.Add(mark);
-            var label = new Label(text) { pickingMode = PickingMode.Ignore };
+            var label = new FitLabel(text) { pickingMode = PickingMode.Ignore };
             label.AddToClassList("sf-toast__text");
             el.Add(label);
             var cnt = new Label { pickingMode = PickingMode.Ignore };

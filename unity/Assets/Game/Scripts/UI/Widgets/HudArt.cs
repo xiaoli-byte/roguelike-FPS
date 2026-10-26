@@ -41,10 +41,13 @@ namespace Spiritfire.Game
             return e;
         }
 
-        /// <summary>一个不接指针的 Label（去掉默认主题的 unity-label / unity-text-element 类）；role = 内联字体</summary>
+        /// <summary>
+        /// 一个不接指针的 Label（去掉默认主题的 unity-label / unity-text-element 类）；role = 内联字体。
+        /// 是 <see cref="FitLabel"/>：会换行的标签按内容量宽时留余量，短句不会被挤断成两行
+        /// </summary>
         public static Label Text(string classes, VisualElement parent = null, string text = null, UIFontRole role = UIFontRole.Body, bool rich = false)
         {
-            var l = new Label(text ?? "") { pickingMode = PickingMode.Ignore, enableRichText = rich };
+            var l = new FitLabel(text ?? "") { pickingMode = PickingMode.Ignore, enableRichText = rich };
             l.RemoveFromClassList(Label.ussClassName);
             l.RemoveFromClassList(TextElement.ussClassName);
             AddClasses(l, classes);

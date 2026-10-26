@@ -9,7 +9,8 @@ namespace Spiritfire.Game
     /// 挂主题样式表和打包字体，托管全局的提示组件（<see cref="Toasts"/> / <see cref="Banner"/> / <see cref="Curtain"/> / <see cref="Flash"/>），
     /// 每帧推进它们和 <see cref="UIRouter"/>（全部用不缩放时间：暂停中照常淡出）。
     ///   · 第一次用到时（<see cref="Ensure"/>）建，DontDestroyOnLoad：换场景 / R 重开不丢，黑幕能盖住场景切换。
-    ///   · 面板设置取 Resources/UI/Panels/&lt;层&gt;（编辑器 UIBuilder 生成）的运行时副本，缩放改成 Three.js 的 computeUiScale（<see cref="UILayers.Scale"/>）；
+    ///   · 面板设置取 Resources/UI/Panels/&lt;层&gt;（编辑器 UIBuilder 生成）的运行时副本，缩放参数按 <see cref="UILayers.ApplyScaling"/> 再写一遍
+    ///     （按参考分辨率 1920×1080 缩放、Expand：逻辑尺寸不小于 1920×1080，换分辨率由面板自己跟）；
     ///     资产还没生成时按 <see cref="UILayers.Configure"/> 在内存里建（功能一样）。
     ///   · 只有界面层（Modal）接输入，其余层整层不挡点击。每层根元素：类 sf-layer + sf-layer--&lt;层名小写&gt;，正文字体内联在根上。
     /// 截图：UI Toolkit 叠层直接画在屏幕上，相机渲染到贴图拍不到——冒烟测试截图见 <see cref="UICapture"/>。
@@ -23,7 +24,6 @@ namespace Spiritfire.Game
         readonly UIDocument[] docs = new UIDocument[UILayers.Count];
         readonly VisualElement[] layers = new VisualElement[UILayers.Count];
         readonly PanelSettings[] panels = new PanelSettings[UILayers.Count];
-        Vector2Int screenSize;
         StyleSheet theme;
 
         /// <summary>提示队列（左侧，最多 4 条，相同的合并 ×N）</summary>
@@ -86,7 +86,6 @@ namespace Spiritfire.Game
             Instance = this;
             theme = Resources.Load<StyleSheet>(UILayers.StylePath);
             if (!theme) Debug.LogWarning($"[UI] 找不到 Resources/{UILayers.StylePath}.uss");
-            screenSize = new Vector2Int(Screen.width, Screen.height);
             for (int i = 0; i < UILayers.Count; i++) BuildLayer((UILayer)i);
 
             Toasts = new UIToasts(layers[(int)UILayer.Toast]);
@@ -138,8 +137,7 @@ namespace Spiritfire.Game
             }
             ps.name = "UI " + UILayers.Name(layer) + " (runtime)";
             ps.hideFlags = HideFlags.DontSave;
-            ps.scaleMode = PanelScaleMode.ConstantPixelSize;
-            ps.scale = UILayers.Scale(layer, Screen.width, Screen.height);
+            UILayers.ApplyScaling(ps);
             return ps;
         }
 
@@ -151,13 +149,6 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            var size = new Vector2Int(Screen.width, Screen.height);
-            if (size != screenSize && size.x > 0 && size.y > 0)
-            {
-                screenSize = size;
-                for (int i = 0; i < UILayers.Count; i++)
-                    if (panels[i]) panels[i].scale = UILayers.Scale((UILayer)i, size.x, size.y);
-            }
             float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
             Toasts.Tick(now);
             Banner.Tick(now);

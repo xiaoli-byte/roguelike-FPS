@@ -1,7 +1,7 @@
 /*
  * 灵火破晓 · UI Toolkit 主题（docs/unity-parity.md D18 / U1；移植自 Three.js src/ui/css/base.css）。
  * 东方奇幻：墨黑底、朱砂与鎏金点缀、细描边。像素值都是 1920×1080 下的设计像素（与 Three.js 的 CSS 一致），
- * 运行时由 UIRoot 按屏幕缩放（UILayers.Scale）。UIRoot 把本表加到每一层的根元素上，:root 即各层根。
+ * 运行时四层面板按参考分辨率 1920×1080 缩放（Expand：逻辑尺寸不小于 1920×1080，见 UILayers）。UIRoot 把本表加到每一层的根元素上，:root 即各层根。
  * 字体：正文是各层根上的默认字体（Noto Sans SC 子集）；.sf-title 用标题字体（霞鹜文楷子集 WenKai SF），.sf-num 用数字字体（Barlow Condensed）。
  * UI Toolkit 没有 em / line-height / 渐变：行高在字体资产里设（UIFonts.SpecOf），渐变用 UITheme 的程序贴图。
  * 改颜色时同步 UITheme.cs 的调色板（代码里拼颜色用）。
@@ -44,6 +44,13 @@
     color: var(--paper);
     font-size: 15px;
     -unity-paragraph-spacing: 4px;
+    /*
+     * 默认不换行（white-space 会继承）：标题、按钮、页签、数值、标签一律单行。
+     * 界面按非整数倍缩放时（1280×720 是 ×0.667），按内容收缩的标签排版宽度会比量出来的单行宽少零点几像素（左右边各自取整到像素格）、字距在测宽里也只算进一部分，
+     * 允许换行的话最后一个字会被挤到第二行（「操作说⏎明」「魂⏎晶」）。成段的说明（.sf-body、各种 __desc / __hint / 对话框正文）在自己的类里写 white-space: normal，
+     * 这类标签用 FitLabel 建（HudArt.Text / ScreenKit.Text）：按内容收缩时补上字距和取整的余量，短句不会被挤断。
+     */
+    white-space: nowrap;
 }
 
 /* ───────────────────────── 字体 ───────────────────────── */
