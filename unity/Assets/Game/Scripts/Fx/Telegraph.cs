@@ -33,6 +33,56 @@ namespace Spiritfire.Game
         Zone,
     }
 
+    /// <summary>预警配色</summary>
+    public enum TelegraphTone
+    {
+        /// <summary>按样式：预警 = <see cref="Danger"/>；冲击环、持续区域 = <see cref="Own"/></summary>
+        Auto,
+        /// <summary>
+        /// 危险（会挨打的地方）：不管传进来的元素色，统一用 <see cref="TelegraphPalette.Danger"/> 的高饱和危险色 + 暗衬边，普通混合（不加法——加法在亮沙、冰雪上读不出来）。
+        /// 敌人 / 首领的伤害预警默认就是它；元素身份交给出手的特效。
+        /// </summary>
+        Danger,
+        /// <summary>原色：传进来的颜色原样用（灵宠 / 友方技能、出生点、增益圈这类不是「会挨打」的提示，冲击环、持续区域的默认）</summary>
+        Own,
+    }
+
+    /// <summary>
+    /// 预警的统一色板（D21 整改，见 docs/art/review/unity-combat 问题清单）：危险预警全游戏一个色义——
+    /// 赤红（偏玫瑰）在亮沙、冰雪、石地上都跳得出来，和沙黄、冰蓝、火元素橙都拉开色相；火狱关（熔岩、火光都是橙红）换电光品红。
+    /// 暗衬边是危险色的近黑，铺在亮地表上把亮边托出来。
+    /// </summary>
+    public static class TelegraphPalette
+    {
+        /// <summary>赤红：沙地、冰雪、石地</summary>
+        public static readonly Color Crimson = Hex.Rgb(0xff1e46);
+        /// <summary>电光品红：火狱（第三章）——熔岩和火光是橙红，赤红会混进去</summary>
+        public static readonly Color Magenta = Hex.Rgb(0xff2bd6);
+        /// <summary>危险预警的暗衬边（alpha = 强度）</summary>
+        public static readonly Color DangerBacking = new(0.05f, 0f, 0.025f, 0.62f);
+        /// <summary>测试 / 演示时强制指定危险色（null = 按关卡）</summary>
+        public static Color? Override;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => Override = null;
+
+        /// <summary>当前关卡的危险色：第三章（关卡 id 3-x）品红，其余赤红</summary>
+        public static Color Danger => Override ?? (InfernoLevel ? Magenta : Crimson);
+
+        /// <summary>当前关卡是火狱章（Level Meta 的关卡 id 以「3-」开头）</summary>
+        public static bool InfernoLevel
+        {
+            get
+            {
+                var meta = LevelMeta.Current;
+                return meta && !string.IsNullOrEmpty(meta.levelId) && meta.levelId.StartsWith("3-");
+            }
+        }
+
+        /// <summary>原色预警的暗衬边：同色压暗</summary>
+        public static Color BackingFor(Color c) => new(c.r * 0.12f, c.g * 0.12f, c.b * 0.12f, 0.45f);
+    }
+
     /// <summary>一个预警的全部参数（<see cref="Telegraph.Spawn"/>；常用形状有便捷方法）</summary>
     public struct TelegraphSpec
     {
@@ -56,12 +106,17 @@ namespace Spiritfire.Game
         public float duration;
         /// <summary>预警填满后继续亮着的秒数（沿线依次破土的地刺）</summary>
         public float hold;
-        /// <summary>颜色（元素色：火橙、冰蓝、雷青、蚀绿…；alpha 乘整体不透明度）</summary>
+        /// <summary>颜色（<see cref="tone"/> = 原色时才用它的 rgb；alpha 乘整体不透明度，0 = 隐形）</summary>
         public Color color;
-        /// <summary>加法混合（冲击环默认加法；浅色雪地上预警要用普通混合才读得出）</summary>
+        /// <summary>配色：默认按样式（预警 = 统一危险色，冲击环 / 区域 = 原色）</summary>
+        public TelegraphTone tone;
+        /// <summary>加法混合（冲击环默认加法；危险配色一律普通混合）</summary>
         public bool additive;
         /// <summary>冲击环线性扩散（与玩法判定同步的冲击波）；否则缓出</summary>
         public bool linear;
+
+        /// <summary>实际配色（Auto 按样式解析）</summary>
+        public readonly bool Danger => tone == TelegraphTone.Danger || tone == TelegraphTone.Auto && style == TelegraphStyle.Warning;
     }
 
     /// <summary>
@@ -153,19 +208,36 @@ namespace Spiritfire.Game
             slot.owner.ApplyColor(slot);
         }
 
+        /// <summary>
+        /// 预警：改成从现在起再过 remaining 秒填满（进度从当前值平滑接着走，不跳）。
+        /// 前摇一开始就画、真正出手时刻要等到位才知道的招式用它（落点预警交给抛射物时按飞行时间重算、飞到位才开始蓄势的吐息）
+        /// </summary>
+        public void Retime(float remaining)
+        {
+            if (!Alive || slot.spec.style != TelegraphStyle.Warning || slot.fade >= 0 || !Fx.Finite(remaining)) return;
+            slot.spec.duration = slot.age + Mathf.Clamp(remaining, 0.05f, 60f);
+        }
+
+        /// <summary>两个句柄指向同一个预警（同一槽位、同一代）</summary>
+        public bool Same(TelegraphHandle other) => slot != null && slot == other.slot && gen == other.gen;
+
         public static implicit operator FxHandle(TelegraphHandle h) => h.slot != null ? new FxHandle(h.slot, h.gen) : FxHandle.None;
     }
 
     /// <summary>
-    /// 地面预警（F2，Three.js fx.groundWarning / Hazards.lineWarning / sectorWarning / NovaSpokes）：URP 贴花投射，贴合坡面与台阶，
+    /// 地面预警（F2，Three.js fx.groundWarning / Hazards.lineWarning / sectorWarning / NovaSpokes）：投影盒投射，贴合坡面与台阶，
     /// 不再是平面 Quad 在坡上穿地。形状：圆 / 环 / 扇形 / 长条 / 辐条 / 正多边形；样式：预警 / 冲击环 / 持续区域。
-    ///   预警：由内向外填满（紧迫度 = 进度²，脉动 10 → 32 rad/s，即 Three.js 的 sin(t·(10 + 22u))），填满后闪一下、略放大、消失；
-    ///         撤回时停在当前进度、0.1 s 淡出（不闪不放大，读作「这一下不会来了」）。
+    ///   预警：倒计时填充（圆类从外沿往里收，长条 / 辐条由近到远推；紧迫度 = 进度²，亮边随之变亮，脉动 10 → 32 rad/s，即 Three.js 的 sin(t·(10 + 22u))），
+    ///         填满后闪一下、略放大、消失；撤回时停在当前进度、0.1 s 淡出（不闪不放大，读作「这一下不会来了」）。
+    ///         配色默认是统一的危险色（<see cref="TelegraphPalette"/>，见 <see cref="TelegraphTone"/>）：亮边 + 暗衬边，线宽按屏幕像素保底。
     ///   冲击环：线性（与冲击波判定同步）或缓出扩散，越往外越细，淡出。
-    /// 每个预警一个 DecalProjector + 一份材质实例（SF_Telegraph，FxBuilder 生成 M_Fx_Telegraph），池化（上限 64，满了先挤掉正在淡出的，再挤最老的）。
-    /// 投影盒的高度按形状覆盖范围内 9 个点的地面高度定：平地上只有约 1.4 m 高（只染到脚踝），坡上自动加高。
-    /// 渲染器没有贴花特性（还没跑 FxBuilder）时退回平放的 Quad（同一着色器的网格通道）；连着色器都没有时退回程序贴图的普通透明 Quad。
-    /// 旧接口 Circle / Wave / Line（LineHandle）签名不变；成组撤回用 <see cref="WarnScope"/>。
+    /// 每个预警一个投影盒 + 一份材质实例（SF_Telegraph，FxBuilder 生成 M_Fx_Telegraph），池化（上限 64，满了先挤掉正在淡出的，再挤最老的）。投射方式：
+    ///   · 体积投射（管线开着深度图时，PC）：单位立方体 MeshRenderer，透明队列 <see cref="VolumeQueue"/>——画在熔岩面 / 冰面 / 水面（透明队列的地表）之后、
+    ///     冰晶特效和粒子之前，所以熔岩渠、冰面上的预警不会被盖住 / 洗白；液面不在深度图里，按液面高度改投到液面上（<see cref="Place"/>）。
+    ///   · URP 贴花（没有深度图、渲染器有贴花特性时）：DecalProjector，绘制顺序在 FX 贴花（弹孔、焦痕、霜纹、地火、熔池、法阵）之上。
+    ///   · 平放的 Quad（都没有时，同一着色器的网格通道）；连着色器都没有时退回程序贴图的普通透明 Quad。
+    /// 投影盒的高度按形状覆盖范围内的地面高度采样定（大形状 5 × 5、小形状 3 × 3）：平地上只有约 1.2 m 高（只染到脚踝），坡上自动加高。
+    /// 旧接口 Circle / Wave / Line（LineHandle）签名不变（多了可选的配色参数）；成组撤回用 <see cref="WarnScope"/>。
     /// </summary>
     public sealed class Telegraph : MonoBehaviour
     {
@@ -176,7 +248,22 @@ namespace Spiritfire.Game
         const string MeshPass = "UniversalForwardOnly";
         static readonly string[] DecalPasses = { "DecalScreenSpaceProjector", "DecalProjectorForwardEmissive" };
 
+        /// <summary>
+        /// 体积投射的透明队列：熔岩面（Transparent−100）、冰面（−50）、水面（−40）之后，冰晶特效（−20）、粒子（0 起）之前。
+        /// 持续区域 −1、冲击环 +1（预警叠在持续区域上，冲击环叠在预警上）
+        /// </summary>
+        public const int VolumeQueue = (int)RenderQueue.Transparent - 30;
+        /// <summary>贴花退路的绘制顺序：FX 贴花在 −2（弹孔）… 2（法阵 / 涡旋），预警一律在它们之上</summary>
+        public const int DecalOrderZone = 3, DecalOrderWarning = 5, DecalOrderRing = 6;
+
         static readonly int ColorId = Shader.PropertyToID("_Color");
+        static readonly int Color2Id = Shader.PropertyToID("_Color2");
+        static readonly int PlaneId = Shader.PropertyToID("_Plane");
+        static readonly int VolumeId = Shader.PropertyToID("_Volume");
+        static readonly int CullId = Shader.PropertyToID("_Cull");
+        static readonly int ZTestId = Shader.PropertyToID("_ZTest");
+        static readonly int OffsetFactorId = Shader.PropertyToID("_OffsetFactor");
+        static readonly int OffsetUnitsId = Shader.PropertyToID("_OffsetUnits");
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         static readonly int AnimId = Shader.PropertyToID("_Anim");
         static readonly int Anim2Id = Shader.PropertyToID("_Anim2");
@@ -198,10 +285,14 @@ namespace Spiritfire.Game
             public GameObject go;
             public DecalProjector projector;
             public MeshRenderer quad;
+            /// <summary>体积投射用的单位立方体</summary>
+            public MeshRenderer volume;
             public Material mat;
             /// <summary>材质是 SF_Telegraph（否则是程序贴图的普通透明兜底）</summary>
             public bool shaderMat;
             public bool decal;
+            /// <summary>体积投射（透明队列，深度图重建）</summary>
+            public bool vol;
             public TelegraphSpec spec;
             public float age, phase, fade = -1, fadeFrom, progress, opacity, pulse = 1, flash, grow, seed;
             public int stamp;
@@ -239,6 +330,7 @@ namespace Spiritfire.Game
             var rt = FxRuntime.Ensure();
             if (!rt) return null;
             if (!rt.TryGetComponent(out instance)) instance = rt.gameObject.AddComponent<Telegraph>();
+            if (!rt.TryGetComponent<TelegraphUnderfoot>(out _)) rt.gameObject.AddComponent<TelegraphUnderfoot>();
             return instance;
         }
 
@@ -251,23 +343,24 @@ namespace Spiritfire.Game
         }
 
         /// <summary>圆形落点预警：duration 秒内由内向外填满</summary>
-        public static TelegraphHandle Circle(Vector3 center, float radius, float duration, Color color) =>
-            Spawn(new TelegraphSpec { shape = TelegraphShape.Circle, center = center, radius = radius, duration = duration, color = color });
+        public static TelegraphHandle Circle(Vector3 center, float radius, float duration, Color color, TelegraphTone tone = TelegraphTone.Auto) =>
+            Spawn(new TelegraphSpec { shape = TelegraphShape.Circle, center = center, radius = radius, duration = duration, color = color, tone = tone });
 
         /// <summary>圆环预警（inner 以内安全）</summary>
         public static TelegraphHandle Annulus(Vector3 center, float inner, float outer, float duration, Color color) =>
             Spawn(new TelegraphSpec { shape = TelegraphShape.Annulus, center = center, radius = outer, inner = Mathf.Clamp(inner, 0, outer * 0.98f), duration = duration, color = color });
 
         /// <summary>扇形预警：中线朝 yaw（度），半角 halfAngle（度），可带内半径</summary>
-        public static TelegraphHandle Sector(Vector3 center, float yawDeg, float halfAngleDeg, float radius, float duration, Color color, float inner = 0) =>
+        public static TelegraphHandle Sector(Vector3 center, float yawDeg, float halfAngleDeg, float radius, float duration, Color color, float inner = 0,
+            TelegraphTone tone = TelegraphTone.Auto) =>
             Spawn(new TelegraphSpec
             {
                 shape = TelegraphShape.Sector, center = center, yaw = yawDeg, halfAngle = halfAngleDeg, radius = radius,
-                inner = Mathf.Clamp(inner, 0, radius * 0.98f), duration = duration, color = color,
+                inner = Mathf.Clamp(inner, 0, radius * 0.98f), duration = duration, color = color, tone = tone,
             });
 
         /// <summary>长条预警（新接口，返回值类型句柄）：从 from 到 to、全宽 width，由近到远填满；hold = 填满后再亮几秒</summary>
-        public static TelegraphHandle Lane(Vector3 from, Vector3 to, float width, float duration, Color color, float hold = 0)
+        public static TelegraphHandle Lane(Vector3 from, Vector3 to, float width, float duration, Color color, float hold = 0, TelegraphTone tone = TelegraphTone.Auto)
         {
             var d = to - from;
             d.y = 0;
@@ -276,7 +369,7 @@ namespace Spiritfire.Game
             return Spawn(new TelegraphSpec
             {
                 shape = TelegraphShape.Line, center = from, yaw = yaw, radius = Mathf.Max(0.1f, len), width = Mathf.Max(0.05f, width),
-                duration = duration, hold = hold, color = color,
+                duration = duration, hold = hold, color = color, tone = tone,
             });
         }
 
@@ -292,12 +385,12 @@ namespace Spiritfire.Game
         public static TelegraphHandle Polygon(Vector3 center, int sides, float radius, float yawDeg, float duration, Color color) =>
             Spawn(new TelegraphSpec { shape = TelegraphShape.Polygon, center = center, count = Mathf.Max(3, sides), radius = radius, yaw = yawDeg, duration = duration, color = color });
 
-        /// <summary>向外线性扩散的冲击波环（与冲击波判定同步）：半径以 speed 增长到 maxRadius</summary>
-        public static TelegraphHandle Wave(Vector3 center, float maxRadius, float speed, Color color) =>
+        /// <summary>向外线性扩散的冲击波环（与冲击波判定同步）：半径以 speed 增长到 maxRadius；敌人 / 首领伤人的冲击波传 tone = Danger</summary>
+        public static TelegraphHandle Wave(Vector3 center, float maxRadius, float speed, Color color, TelegraphTone tone = TelegraphTone.Auto) =>
             Spawn(new TelegraphSpec
             {
                 shape = TelegraphShape.Circle, style = TelegraphStyle.Ring, center = center, radius = maxRadius,
-                duration = maxRadius / Mathf.Max(0.1f, speed), color = color, additive = true, linear = true,
+                duration = maxRadius / Mathf.Max(0.1f, speed), color = color, additive = true, linear = true, tone = tone,
             });
 
         /// <summary>缓出扩散的冲击环（装饰：这一下的爆发范围；Fx.Ring 用）</summary>
@@ -324,8 +417,8 @@ namespace Spiritfire.Game
         }
 
         /// <summary>旧接口：长条预警，返回可每帧 Move 的句柄</summary>
-        public static LineHandle Line(Vector3 from, Vector3 to, float width, float duration, Color color) =>
-            new() { h = Lane(from, to, width, duration, color) };
+        public static LineHandle Line(Vector3 from, Vector3 to, float width, float duration, Color color, TelegraphTone tone = TelegraphTone.Auto) =>
+            new() { h = Lane(from, to, width, duration, color, 0, tone) };
 
         /// <summary>元素色（预警用元素的颜色：火 / 冰 / 雷 / 蚀…）</summary>
         public static Color ElementColor(Element e) => DamageTable.ElementColor(e);
@@ -340,6 +433,119 @@ namespace Spiritfire.Game
             if (!instance) return;
             foreach (var s in instance.slots)
                 if (s.active) instance.Hide(s);
+        }
+
+        // ───────────── 脚下的危险（第一人称提示 TelegraphUnderfoot 用） ─────────────
+
+        /// <summary>
+        /// p（玩家脚底点）落在哪些还在倒计时的危险预警里（预警样式、危险配色、看得见、没撤回；带 hold 的长条亮着期间也算）：
+        /// 返回其中最高的进度 0..1，不在任何危险预警里返回 −1。margin = 水平外扩（米，玩家半径）
+        /// </summary>
+        public static float DangerAt(Vector3 p, float margin = 0.3f) => DangerAt(p, margin, out _);
+
+        /// <summary>同上；core = 最紧迫的那个预警里离 p 最近的「核心」点（圆 / 多边形的圆心、环带的中线、长条 / 辐条 / 扇形的中轴线），没有时 = p</summary>
+        public static float DangerAt(Vector3 p, float margin, out Vector3 core)
+        {
+            core = p;
+            if (!instance) return -1;
+            float best = -1;
+            foreach (var s in instance.slots)
+            {
+                if (!s.active || s.fade >= 0) continue;
+                var sp = s.spec;
+                if (sp.style != TelegraphStyle.Warning || !sp.Danger || !(sp.color.a > 0) || s.age >= sp.duration + sp.hold) continue;
+                if (Mathf.Abs(p.y - sp.center.y) > 3f) continue;
+                if (!Contains(sp, p, margin) || s.progress <= best) continue;
+                best = s.progress;
+                core = CoreNear(sp, p);
+            }
+            return best;
+        }
+
+        /// <summary>形状里离 p 最近的核心点（躲的方向 = 背离它）</summary>
+        static Vector3 CoreNear(in TelegraphSpec sp, Vector3 p)
+        {
+            var c = sp.center;
+            var d = new Vector3(p.x - c.x, 0, p.z - c.z);
+            float yaw = sp.yaw * Mathf.Deg2Rad;
+            var fwd = new Vector3(Mathf.Sin(yaw), 0, Mathf.Cos(yaw));
+            switch (sp.shape)
+            {
+                case TelegraphShape.Line:
+                case TelegraphShape.Sector when sp.halfAngle < 179.5f:
+                    return c + fwd * Mathf.Clamp(Vector3.Dot(d, fwd), 0, sp.radius);
+                case TelegraphShape.Spokes:
+                {
+                    int n = Mathf.Max(1, sp.count);
+                    float bestD = float.MaxValue;
+                    var best = c;
+                    for (int i = 0; i < n; i++)
+                    {
+                        float a = yaw + i * Mathf.PI * 2f / n;
+                        var dir = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                        var q = c + dir * Mathf.Clamp(Vector3.Dot(d, dir), sp.inner, sp.radius);
+                        float dd = (new Vector3(p.x - q.x, 0, p.z - q.z)).sqrMagnitude;
+                        if (dd < bestD)
+                        {
+                            bestD = dd;
+                            best = q;
+                        }
+                    }
+                    return best;
+                }
+                case TelegraphShape.Annulus:
+                    return d.sqrMagnitude > 1e-6f ? c + d.normalized * ((sp.inner + sp.radius) * 0.5f) : c;
+                default:
+                    return c;
+            }
+        }
+
+        /// <summary>水平面上 p 在不在预警形状里（与着色器同一套几何：yaw = 前方，长条原点在近端中点；外扩 margin 米）</summary>
+        public static bool Contains(in TelegraphSpec sp, Vector3 p, float margin = 0)
+        {
+            var d = new Vector2(p.x - sp.center.x, p.z - sp.center.z);
+            float yaw = sp.yaw * Mathf.Deg2Rad;
+            var fwd = new Vector2(Mathf.Sin(yaw), Mathf.Cos(yaw));
+            var right = new Vector2(fwd.y, -fwd.x);
+            float dist = d.magnitude;
+            switch (sp.shape)
+            {
+                case TelegraphShape.Line:
+                {
+                    float along = Vector2.Dot(d, fwd), lane = Vector2.Dot(d, right);
+                    return along >= -margin && along <= sp.radius + margin && Mathf.Abs(lane) <= sp.width * 0.5f + margin;
+                }
+                case TelegraphShape.Spokes:
+                {
+                    int n = Mathf.Max(1, sp.count);
+                    for (int i = 0; i < n; i++)
+                    {
+                        float a = yaw + i * Mathf.PI * 2f / n;
+                        var dir = new Vector2(Mathf.Sin(a), Mathf.Cos(a));
+                        float along = Vector2.Dot(d, dir), across = Mathf.Abs(dir.x * d.y - dir.y * d.x);
+                        if (along >= sp.inner - margin && along <= sp.radius + margin && across <= sp.width * 0.5f + margin) return true;
+                    }
+                    return false;
+                }
+                case TelegraphShape.Polygon:
+                {
+                    int n = Mathf.Max(3, sp.count);
+                    float seg = Mathf.PI * 2f / n;
+                    float rel = Mathf.Atan2(Vector2.Dot(d, right), Vector2.Dot(d, fwd));
+                    float a = rel - Mathf.Round(rel / seg) * seg;
+                    return dist * Mathf.Cos(a) <= sp.radius * Mathf.Cos(Mathf.PI / n) + margin;
+                }
+                default:
+                {
+                    // 圆 / 环 / 扇形
+                    if (dist > sp.radius + margin) return false;
+                    float inner = sp.shape is TelegraphShape.Annulus or TelegraphShape.Sector ? sp.inner : 0;
+                    if (inner > 0 && dist < inner - margin) return false;
+                    if (sp.shape != TelegraphShape.Sector || sp.halfAngle >= 179.5f || dist < 1e-3f) return true;
+                    float off = Mathf.Abs(Mathf.DeltaAngle(sp.yaw, Mathf.Atan2(d.x, d.y) * Mathf.Rad2Deg)) - sp.halfAngle;
+                    return off <= 0 || dist * Mathf.Sin(Mathf.Min(off, 90f) * Mathf.Deg2Rad) <= margin;
+                }
+            }
         }
 
         // ───────────── 槽位 ─────────────
@@ -383,7 +589,8 @@ namespace Spiritfire.Game
             Place(s);
             Animate(s);
             s.go.SetActive(true);
-            if (s.decal) s.projector.enabled = true;
+            if (s.vol) s.volume.enabled = true;
+            else if (s.decal) s.projector.enabled = true;
             else if (s.quad) s.quad.enabled = true;
             return new TelegraphHandle(s);
         }
@@ -454,22 +661,48 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>选投射方式：有贴花特性 → DecalProjector；否则平放的 Quad（同一材质的网格通道 / 程序贴图）</summary>
+        static int depthFrame = -1;
+        static bool depthCached;
+
+        /// <summary>当前管线开着相机深度图（体积投射要从深度图重建坐标）</summary>
+        public static bool DepthTextureAvailable
+        {
+            get
+            {
+                if (Time.frameCount == depthFrame) return depthCached;
+                depthFrame = Time.frameCount;
+                depthCached = GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset asset && asset.supportsCameraDepthTexture;
+                return depthCached;
+            }
+        }
+
+        /// <summary>
+        /// 选投射方式：开着深度图 → 体积投射（透明队列，压在熔岩 / 冰 / 水面之上）；否则有贴花特性 → DecalProjector；否则平放的 Quad（同一材质的网格通道 / 程序贴图）
+        /// </summary>
         void ChooseMode(Slot s)
         {
-            bool decal = s.shaderMat && DecalsSupported;
+            bool vol = s.shaderMat && DepthTextureAvailable;
+            bool decal = !vol && s.shaderMat && DecalsSupported;
+            s.vol = vol;
             s.decal = decal;
             var m = s.mat;
             if (s.shaderMat)
             {
-                // 投影时关掉网格通道（否则投影立方体会被前向通道当普通网格画出来）；平放时关掉贴花通道
+                // 投影时关掉网格通道（否则投影立方体会被前向通道当普通网格画出来）；网格通道（体积 / 平放）时关掉贴花通道
                 m.SetShaderPassEnabled(MeshPass, !decal);
                 foreach (var p in DecalPasses) m.SetShaderPassEnabled(p, decal);
                 int order = s.spec.style switch { TelegraphStyle.Zone => -1, TelegraphStyle.Ring => 1, _ => 0 };
-                m.SetFloat(DrawOrderId, order);
+                int decalOrder = s.spec.style switch { TelegraphStyle.Zone => DecalOrderZone, TelegraphStyle.Ring => DecalOrderRing, _ => DecalOrderWarning };
+                m.SetFloat(DrawOrderId, decalOrder);
                 // 贴花必须在不透明队列范围内（URP 的贴花通道按 RenderQueueRange.opaque 过滤）
-                m.renderQueue = decal ? 2010 + order : (int)RenderQueue.Transparent - 10 + order;
-                bool add = s.spec.additive;
+                m.renderQueue = decal ? 2000 + decalOrder : vol ? VolumeQueue + order : (int)RenderQueue.Transparent - 10 + order;
+                m.SetFloat(VolumeId, vol ? 1 : 0);
+                m.SetFloat(CullId, (float)(vol ? CullMode.Front : CullMode.Off));
+                m.SetFloat(ZTestId, (float)(vol ? CompareFunction.Greater : CompareFunction.LessEqual));
+                m.SetFloat(OffsetFactorId, vol ? 0 : -2);
+                m.SetFloat(OffsetUnitsId, vol ? 0 : -2);
+                // 危险配色一律普通混合：加法在亮沙、冰雪上读不出来，也画不了暗衬边
+                bool add = s.spec.additive && !s.spec.Danger;
                 m.SetFloat(SrcBlendId, (float)BlendMode.SrcAlpha);
                 m.SetFloat(DstBlendId, (float)(add ? BlendMode.One : BlendMode.OneMinusSrcAlpha));
             }
@@ -481,7 +714,19 @@ namespace Spiritfire.Game
                 if (m.HasProperty(MainTexId)) m.SetTexture(MainTexId, tex);
             }
 
-            if (decal)
+            if (vol)
+            {
+                if (!s.volume)
+                {
+                    var v = new GameObject("Volume");
+                    v.transform.SetParent(s.go.transform, false);
+                    v.AddComponent<MeshFilter>().sharedMesh = CubeMesh();
+                    s.volume = MakeRenderer(v, m);
+                }
+                if (s.quad) s.quad.enabled = false;
+                if (s.projector) s.projector.enabled = false;
+            }
+            else if (decal)
             {
                 if (!s.projector)
                 {
@@ -496,6 +741,7 @@ namespace Spiritfire.Game
                     s.projector.endAngleFade = 180;
                 }
                 if (s.quad) s.quad.enabled = false;
+                if (s.volume) s.volume.enabled = false;
             }
             else
             {
@@ -504,31 +750,64 @@ namespace Spiritfire.Game
                     var q = new GameObject("Quad");
                     q.transform.SetParent(s.go.transform, false);
                     q.AddComponent<MeshFilter>().sharedMesh = QuadMesh();
-                    s.quad = q.AddComponent<MeshRenderer>();
-                    s.quad.sharedMaterial = m;
-                    s.quad.shadowCastingMode = ShadowCastingMode.Off;
-                    s.quad.receiveShadows = false;
-                    s.quad.lightProbeUsage = LightProbeUsage.Off;
-                    s.quad.reflectionProbeUsage = ReflectionProbeUsage.Off;
-                    s.quad.enabled = false;
+                    s.quad = MakeRenderer(q, m);
                 }
                 if (s.projector) s.projector.enabled = false;
+                if (s.volume) s.volume.enabled = false;
             }
+        }
+
+        static MeshRenderer MakeRenderer(GameObject go, Material m)
+        {
+            var r = go.AddComponent<MeshRenderer>();
+            r.sharedMaterial = m;
+            r.shadowCastingMode = ShadowCastingMode.Off;
+            r.receiveShadows = false;
+            r.lightProbeUsage = LightProbeUsage.Off;
+            r.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            r.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+            r.allowOcclusionWhenDynamic = false;
+            r.enabled = false;
+            return r;
+        }
+
+        /// <summary>实际用的主色：危险配色 = 当前关卡的危险色（alpha 沿用传进来的；0 = 隐形，其余不低于 0.85——危险预警不许画得淡）</summary>
+        static Color MainColor(in TelegraphSpec sp)
+        {
+            if (!sp.Danger) return sp.color;
+            var d = TelegraphPalette.Danger;
+            d.a = sp.color.a <= 0 ? 0 : Mathf.Max(0.85f, Mathf.Min(1f, sp.color.a));
+            return d;
         }
 
         internal void ApplyColor(Slot s)
         {
-            var c = s.spec.color;
-            if (s.shaderMat) s.mat.SetColor(ColorId, c);
+            if (!s.shaderMat) return;
+            s.mat.SetColor(ColorId, MainColor(s.spec));
+            s.mat.SetColor(Color2Id, s.spec.Danger ? TelegraphPalette.DangerBacking : TelegraphPalette.BackingFor(s.spec.color));
         }
 
         // ───────────── 摆放：投影盒尺寸 + 贴合地面的高度 ─────────────
 
-        const float Pad = 0.35f;
+        /// <summary>投影盒在形状外留的余量（米）：暗衬边画在这里面</summary>
+        const float Pad = 0.6f;
+        /// <summary>盒子顶在采样到的最高地面之上多少米（再往上是角色身体，不染）</summary>
+        const float BoxTop = 0.55f;
         static readonly Vector2[] SamplePoints =
         {
             new(0, 0), new(-1, -1), new(1, -1), new(-1, 1), new(1, 1), new(0, -1), new(0, 1), new(-1, 0), new(1, 0),
         };
+        static readonly Vector2[] SamplePointsWide = BuildGrid(5);
+
+        static Vector2[] BuildGrid(int n)
+        {
+            var pts = new Vector2[n * n];
+            int k = 0;
+            for (int z = 0; z < n; z++)
+            for (int x = 0; x < n; x++)
+                pts[k++] = new Vector2(x / (n - 1f) * 2 - 1, z / (n - 1f) * 2 - 1);
+            return pts;
+        }
 
         internal void Place(Slot s)
         {
@@ -547,59 +826,74 @@ namespace Spiritfire.Game
                     origin = new Vector2(0, -sp.radius * 0.5f);
                     boxCenter = sp.center + fwd * (sp.radius * 0.5f);
                     kind = 1;
-                    rim = Mathf.Clamp(sp.width * 0.15f, 0.06f, 0.3f);
+                    rim = Mathf.Clamp(sp.width * 0.16f, 0.1f, 0.4f);
                     break;
                 case TelegraphShape.Spokes:
                     size = Vector2.one * (sp.radius + Pad) * 2;
                     origin = Vector2.zero;
                     kind = 2;
-                    rim = Mathf.Clamp(sp.width * 0.25f, 0.04f, 0.2f);
+                    rim = Mathf.Clamp(sp.width * 0.25f, 0.05f, 0.2f);
                     break;
                 case TelegraphShape.Polygon:
                     size = Vector2.one * (sp.radius + Pad) * 2;
                     origin = Vector2.zero;
                     kind = 3;
-                    rim = Mathf.Clamp(sp.radius * 0.1f, 0.1f, 0.45f);
+                    rim = Mathf.Clamp(sp.radius * 0.08f, 0.16f, 0.5f);
                     break;
                 default:
                     size = Vector2.one * (sp.radius + Pad) * 2;
                     origin = Vector2.zero;
                     kind = 0;
-                    rim = Mathf.Clamp(sp.radius * 0.1f, 0.1f, 0.45f);
+                    rim = Mathf.Clamp(sp.radius * 0.08f, 0.16f, 0.5f);
                     break;
             }
 
-            // 覆盖范围内 9 个点的地面高度：平地上盒子很矮（只染到脚踝），坡上 / 台阶自动加高
-            float g0 = GroundAt(sp.center, sp.center.y, out bool hit0);
-            float lo = g0, hi = g0;
+            // 覆盖范围内的地面高度（大形状 5 × 5、小形状 3 × 3）：平地上盒子很矮（只染到脚踝），坡上 / 台阶自动加高。
+            // 熔岩 / 水面没有碰撞（射线打到的是床）：记下液面高度——盒子往下包住床（深度图里是床），着色器把落在液面以下一截的点改投到液面上
+            float g0 = SurfaceAt(sp.center, sp.center.y, out bool hit0, out float bed0, out float liquid0);
+            float lo = Mathf.Min(g0, bed0), hi = g0, liquid = liquid0;
             float hx = size.x * 0.5f - Pad, hz = size.y * 0.5f - Pad;
-            foreach (var p in SamplePoints)
+            foreach (var p in Mathf.Max(hx, hz) > 5f ? SamplePointsWide : SamplePoints)
             {
                 var at = boxCenter + right * (p.x * hx) + fwd * (p.y * hz);
-                float y = GroundAt(at, g0, out bool hit);
+                float y = SurfaceAt(at, g0, out bool hit, out float bed, out float lq);
                 if (!hit) continue;
                 lo = Mathf.Min(lo, y);
                 hi = Mathf.Max(hi, y);
+                if (!float.IsNaN(lq))
+                {
+                    liquid = float.IsNaN(liquid) ? lq : Mathf.Max(liquid, lq);
+                    lo = Mathf.Min(lo, bed);
+                }
             }
-            // 不让一根柱子 / 一堵墙把盒子拉到半空（坡度上限约 35°）
+            // 不让一根柱子 / 一堵墙把盒子拉到半空（坡度上限约 35°）；液面下的床不受这个限制
             float reach = 0.7f * Mathf.Max(size.x, size.y) * 0.5f + 0.6f;
-            lo = Mathf.Max(lo, g0 - reach) - 0.6f;
-            hi = Mathf.Min(hi, g0 + reach) + 0.8f;
-            float depth = Mathf.Max(1.2f, hi - lo);
+            lo = (float.IsNaN(liquid) ? Mathf.Max(lo, g0 - reach) : lo) - 0.6f;
+            hi = Mathf.Min(hi, g0 + reach) + BoxTop;
+            float depth = Mathf.Max(1.15f, hi - lo);
 
             var m = s.mat;
             if (s.shaderMat)
             {
                 float halfAngle = sp.shape == TelegraphShape.Sector && sp.halfAngle < 179.5f ? sp.halfAngle * Mathf.Deg2Rad : 4f;
                 float inner = sp.shape is TelegraphShape.Annulus or TelegraphShape.Sector or TelegraphShape.Spokes ? sp.inner : 0;
+                bool add = sp.additive && !sp.Danger;
                 m.SetVector(ExtentId, new Vector4(size.x, size.y, origin.x, origin.y));
                 m.SetVector(Shape0Id, new Vector4(sp.radius, inner, halfAngle, sp.count));
-                m.SetVector(Shape1Id, new Vector4(sp.width * 0.5f, 0, rim, 0));
-                m.SetVector(ModeId, new Vector4(kind, (int)sp.style, 0, 0));
+                m.SetVector(Shape1Id, new Vector4(sp.width * 0.5f, 0, rim, Pad - 0.08f));
+                m.SetVector(ModeId, new Vector4(kind, (int)sp.style, add ? 1 : 0, 0));
+                m.SetVector(PlaneId, float.IsNaN(liquid) ? new Vector4(0, 0, depth, 0) : new Vector4(liquid, 1, depth, 0));
             }
 
             var t = s.go.transform;
-            if (s.decal)
+            if (s.vol)
+            {
+                // 单位立方体：x 右、y 上、z 前（着色器里 uv = xz + 0.5，与贴花投影同一套形状坐标）
+                t.SetPositionAndRotation(new Vector3(boxCenter.x, (lo + hi) * 0.5f, boxCenter.z), rot);
+                var want = new Vector3(size.x, depth, size.y);
+                if (s.volume.transform.localScale != want) s.volume.transform.localScale = want;
+            }
+            else if (s.decal)
             {
                 t.SetPositionAndRotation(new Vector3(boxCenter.x, (lo + hi) * 0.5f, boxCenter.z), Quaternion.LookRotation(Vector3.down, fwd));
                 var want = new Vector3(size.x, size.y, depth);
@@ -613,11 +907,25 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>(x, z) 处、参考高度 refY 附近的地面高度；没有命中返回 refY</summary>
-        static float GroundAt(Vector3 p, float refY, out bool hit)
+        /// <summary>
+        /// (x, z) 处、参考高度 refY 附近能站上去 / 看得到的表面高度：射线打到的地面，上面有熔岩 / 水面时取液面（liquid = 液面高度，bed = 射线打到的床；
+        /// 没有液面时 liquid = NaN、bed = 地面）。没有命中返回 refY
+        /// </summary>
+        static float SurfaceAt(Vector3 p, float refY, out bool hit, out float bed, out float liquid)
         {
+            liquid = float.NaN;
             hit = Physics.Raycast(new Vector3(p.x, refY + 4f, p.z), Vector3.down, out var h, 12f, Layers.WorldMask, QueryTriggerInteraction.Ignore);
-            return hit ? h.point.y : refY;
+            bed = hit ? h.point.y : refY;
+            if (!hit) return refY;
+            float y = bed;
+            if (LavaField.Any && LavaField.TrySurfaceHeight(new Vector3(p.x, bed, p.z), out float ly) && ly > bed + 0.05f && ly < bed + 12f) liquid = ly;
+            var w = WaterVolume.At(new Vector3(p.x, bed + 0.05f, p.z), out _);
+            if (w)
+            {
+                float wy = w.Surface;
+                if (wy > bed + 0.05f && (float.IsNaN(liquid) || wy > liquid)) liquid = wy;
+            }
+            return float.IsNaN(liquid) ? y : liquid;
         }
 
         // ───────────── 动画 ─────────────
@@ -635,6 +943,7 @@ namespace Spiritfire.Game
             s.active = false;
             if (s.projector) s.projector.enabled = false;
             if (s.quad) s.quad.enabled = false;
+            if (s.volume) s.volume.enabled = false;
             s.go.SetActive(false);
         }
 
@@ -667,6 +976,9 @@ namespace Spiritfire.Game
                 s.opacity = s.fadeFrom * (1 - o) * (1 - o);
                 return true;
             }
+            // 预警的进度按「剩下的部分 / 剩下的时间」积分：时长固定时就是 age / duration；中途 Retime 改了时长也从当前进度平滑接着走
+            if (sp.style == TelegraphStyle.Warning && s.age < sp.duration)
+                s.progress += (1 - s.progress) * Mathf.Min(1, dt / Mathf.Max(1e-4f, sp.duration - s.age));
             s.age += dt;
             switch (sp.style)
             {
@@ -689,7 +1001,7 @@ namespace Spiritfire.Game
                 {
                     if (s.age < sp.duration)
                     {
-                        s.progress = s.age / sp.duration;
+                        s.progress = Mathf.Clamp01(s.progress);
                         s.opacity = Mathf.Min(1, s.age / 0.1f) * 0.95f;
                     }
                     else if (s.age < sp.duration + sp.hold)
@@ -727,7 +1039,7 @@ namespace Spiritfire.Game
                 return;
             }
             // 程序贴图兜底：只能整体调亮度
-            var c = s.spec.color;
+            var c = MainColor(s.spec);
             float a = Mathf.Clamp01(s.opacity * (s.spec.style == TelegraphStyle.Warning ? Mathf.Lerp(0.35f, 1f, s.progress) * s.pulse : 1f) * c.a);
             var col = new Color(c.r, c.g, c.b, a);
             m.SetColor(BaseColorId, col);
@@ -736,7 +1048,30 @@ namespace Spiritfire.Game
 
         // ───────────── 兜底网格 / 贴图 ─────────────
 
-        static Mesh quadMesh;
+        static Mesh quadMesh, cubeMesh;
+
+        /// <summary>体积投射用的单位立方体（中心在原点，边长 1；只用背面）</summary>
+        static Mesh CubeMesh()
+        {
+            if (cubeMesh) return cubeMesh;
+            cubeMesh = new Mesh { name = "Telegraph Volume", hideFlags = HideFlags.DontSave };
+            var v = new Vector3[8];
+            for (int i = 0; i < 8; i++) v[i] = new Vector3((i & 1) == 0 ? -0.5f : 0.5f, (i & 2) == 0 ? -0.5f : 0.5f, (i & 4) == 0 ? -0.5f : 0.5f);
+            cubeMesh.vertices = v;
+            cubeMesh.uv = new Vector2[8];
+            // 六个面，外法线方向逆时针看为正面（Unity 顺时针为正面：这里按顺时针写）
+            cubeMesh.triangles = new[]
+            {
+                0, 2, 3, 0, 3, 1, // −z
+                4, 5, 7, 4, 7, 6, // +z
+                0, 4, 6, 0, 6, 2, // −x
+                1, 3, 7, 1, 7, 5, // +x
+                0, 1, 5, 0, 5, 4, // −y
+                2, 6, 7, 2, 7, 3, // +y
+            };
+            cubeMesh.RecalculateBounds();
+            return cubeMesh;
+        }
 
         /// <summary>XY 平面上 1×1 的方片（uv 0..1），双面</summary>
         static Mesh QuadMesh()

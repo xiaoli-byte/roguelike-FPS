@@ -414,7 +414,8 @@ namespace Spiritfire.Game
             p.warned = true;
             p.at = Mathf.Max(p.at, now + WarnTime); // 慢帧跨过了预警时刻，屏幕上的预警也要给足
             var (r, _) = SpawnStations.BodySize(p.def, p.elite);
-            p.warning = Telegraph.Circle(p.pos, Mathf.Max(1.1f, r + 0.3f), p.at - now, p.elite ? WarnElite : WarnNormal);
+            // 出生点提示（不伤人）：原色（精英金 / 普通红），不用危险配色
+            p.warning = Telegraph.Circle(p.pos, Mathf.Max(1.1f, r + 0.3f), p.at - now, p.elite ? WarnElite : WarnNormal, TelegraphTone.Own);
         }
 
         // ───────────── 选点 ─────────────

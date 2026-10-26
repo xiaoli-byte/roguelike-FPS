@@ -100,6 +100,18 @@ namespace Spiritfire.Game
             effects.Clear();
         }
 
+        /// <summary>这个预警登记在组里</summary>
+        public bool Contains(TelegraphHandle h)
+        {
+            foreach (var w in warnings)
+                if (w.Same(h))
+                    return true;
+            return false;
+        }
+
+        /// <summary>把一个预警从组里摘出来（不动它）：前摇里画的落点预警在出手时交给另一组（招式组 → 危险物组）；返回它原本在不在组里</summary>
+        public bool Release(TelegraphHandle h) => warnings.RemoveAll(w => w.Same(h)) > 0;
+
         /// <summary>只忘掉登记，不动它们（预警照常播完）</summary>
         public void Clear()
         {

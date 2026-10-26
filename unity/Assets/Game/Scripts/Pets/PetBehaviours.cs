@@ -170,7 +170,7 @@ namespace Spiritfire.Game
             var dir = Owner.Forward;
             var right = new Vector3(dir.z, 0, -dir.x);
             var start = PlayerPos + right * 0.9f + dir * 0.5f;
-            Telegraph.Line(start, start + dir * RushLength, RushWidth * 2, 0.35f, Fx);
+            Telegraph.Line(start, start + dir * RushLength, RushWidth * 2, 0.35f, Fx, TelegraphTone.Own);
             pet.Act(Rush(start, dir));
             return true;
         }
@@ -412,7 +412,7 @@ namespace Spiritfire.Game
                 point = PlayerPos + Owner.Forward * 20f;
                 point.y = Pet.GroundY(point + Vector3.up * 30f);
             }
-            Telegraph.Circle(point, RainRadius, 2.4f, Fire);
+            Telegraph.Circle(point, RainRadius, 2.4f, Fire, TelegraphTone.Own);
             pet.Act(Rain(point));
             return true;
         }
@@ -1140,7 +1140,7 @@ namespace Spiritfire.Game
         {
             until = Mathf.Max(until, Time.time + seconds);
             if (Time.time < circleUntil - 0.1f) return;
-            Telegraph.Circle(transform.position, radius, until - Time.time, new Color(color.r, color.g, color.b, 0.5f));
+            Telegraph.Circle(transform.position, radius, until - Time.time, new Color(color.r, color.g, color.b, 0.5f), TelegraphTone.Own);
             circleUntil = until;
         }
 
@@ -1158,7 +1158,7 @@ namespace Spiritfire.Game
             z.next = Time.time + 0.25f;
             z.color = color;
             z.circleUntil = z.until;
-            Telegraph.Circle(center, radius, duration, new Color(color.r, color.g, color.b, 0.5f));
+            Telegraph.Circle(center, radius, duration, new Color(color.r, color.g, color.b, 0.5f), TelegraphTone.Own);
             var glow = FxMaterials.GlowSprite(go.transform, radius * 2.4f, new Color(color.r, color.g, color.b, 0.25f));
             glow.localPosition = Vector3.up * 0.4f;
             return z;

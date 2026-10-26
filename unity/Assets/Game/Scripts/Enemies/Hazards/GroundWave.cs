@@ -120,7 +120,7 @@ namespace Spiritfire.Game
             var w = go.AddComponent<GroundWave>();
             w.spec = s;
             w.front = new WaveFront(s.startRadius, s.speed, s.maxRadius, s.width * 0.5f, s.overshoot);
-            if (s.ring) Telegraph.Wave(s.center, s.maxRadius, s.speed, s.color);
+            if (s.ring) Telegraph.Wave(s.center, s.maxRadius, s.speed, s.color, TelegraphTone.Danger);
             return w;
         }
 

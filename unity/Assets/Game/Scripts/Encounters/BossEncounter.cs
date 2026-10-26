@@ -149,7 +149,7 @@ namespace Spiritfire.Game
             var at = arena ? arena.BossSpawnPoint : transform.position;
             // 登场演出接管镜头（测试开关关着 / 没有玩家镜头时为 null，照旧预警）：演出里不画预警圈、不弹提示
             intro = BossIntroDirector.Play(this);
-            if (!intro) warn = Telegraph.Circle(at, Mathf.Max(3f, def.radius * 3f), Mathf.Max(0.2f, warnSeconds), def.WarnColor);
+            if (!intro) warn = Telegraph.Circle(at, Mathf.Max(3f, def.radius * 3f), Mathf.Max(0.2f, warnSeconds), def.WarnColor, TelegraphTone.Own);
             CameraShake.Quake(at, 0.35f, 80f, Mathf.Max(0.6f, warnSeconds * 0.8f));
             GameAudio.PlayAt("boss_roar", at + Vector3.up * 2f, 0.6f, 0.7f);
             GameAudio.SetMusic("boss");

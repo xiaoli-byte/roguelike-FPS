@@ -464,7 +464,8 @@ namespace Spiritfire.Game
             PlayTimed(spell + "Windup", castTime, 0.1f);
             GameAudio.PlayAt("pipa_roll", TetherOrigin, 0.55f, 1.2f);
             SetState("cast");
-            Telegraph.Circle(transform.position, 1.2f, castTime, spell == "bless" ? new Color(1f, 0.8f, 0.3f) : new Color(0.6f, 1f, 0.75f));
+            // 增益施法圈（不伤人）：原色，不用危险配色
+            Telegraph.Circle(transform.position, 1.2f, castTime, spell == "bless" ? new Color(1f, 0.8f, 0.3f) : new Color(0.6f, 1f, 0.75f), TelegraphTone.Own);
         }
 
         void Release(string spell)

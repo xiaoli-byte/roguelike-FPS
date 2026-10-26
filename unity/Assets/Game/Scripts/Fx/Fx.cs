@@ -175,7 +175,7 @@ namespace Spiritfire.Game
         /// <summary>归墟收束（FX2）：紫色预警圈 + 三色涡旋向中心收拢 + 越来越亮的紫黑核心，持续 seconds 秒</summary>
         public static FxHandle AbyssWindup(Vector3 ground, float radius, float seconds)
         {
-            Telegraph.Circle(ground, radius, seconds, AbyssColor);
+            Telegraph.Circle(ground, radius, seconds, AbyssColor, TelegraphTone.Own);
             return FxDecals.Vortex(ground + Vector3.up * 0.02f, radius, seconds + 0.1f);
         }
 

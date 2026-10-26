@@ -140,7 +140,7 @@ namespace Spiritfire.Game
                 if (arena) pos = arena.Clamp(pos, 2.5f);
                 if (UnityEngine.AI.NavMesh.SamplePosition(pos, out var hit, 4f, UnityEngine.AI.NavMesh.AllAreas)) pos = hit.position;
                 float warn = Mathf.Max(0, o.warn);
-                if (warn > 0) Telegraph.Circle(pos, Mathf.Max(1f, (def?.radius ?? 0.5f) * (def?.scale ?? 1f) * 2.2f), warn, color);
+                if (warn > 0) Telegraph.Circle(pos, Mathf.Max(1f, (def?.radius ?? 0.5f) * (def?.scale ?? 1f) * 2.2f), warn, color, TelegraphTone.Own);
                 pending.Add(new Pending { id = enemyId, pos = pos, at = now + warn, o = o });
             }
             if (!(o.warn > 0)) Tick(0);
