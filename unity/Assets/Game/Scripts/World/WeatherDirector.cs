@@ -538,6 +538,9 @@ namespace Spiritfire.Game
 
         static readonly WeatherParticles[] ParticleKinds = { WeatherParticles.Sand, WeatherParticles.Snow, WeatherParticles.Ash };
 
+        /// <summary>每种天气粒子的存活上限（画质高；再乘每种风格的上限倍率 低 0.5 / 中 0.75）</summary>
+        public const int MaxWeatherParticles = 4000;
+
         void UpdateParticles(Vector3 eye)
         {
             foreach (var kind in ParticleKinds)
@@ -554,7 +557,11 @@ namespace Spiritfire.Game
                 // 发射盒放在相机上风处，粒子顺风穿过视野
                 ps.transform.SetPositionAndRotation(eye - windVec * (speed * 0.6f) + Vector3.up * 2f, Quaternion.LookRotation(windVec));
                 var em = ps.emission;
-                em.rateOverTime = e.rate * Fx.Density;
+                // 画质密度 × 战斗余量（同屏粒子多时减到一半：风暴本身是玩法上的遮挡，不能全停）
+                em.rateOverTime = e.rate * Fx.Density * Mathf.Lerp(0.5f, 1f, EnvParticles.Headroom);
+                var cap = Mathf.Max(64, Mathf.RoundToInt(MaxWeatherParticles * FxBudget.StyleCapScale));
+                var mm = ps.main;
+                if (mm.maxParticles != cap) mm.maxParticles = cap;
                 if (e.rate > 0.5f)
                 {
                     var main = ps.main;
@@ -574,14 +581,15 @@ namespace Spiritfire.Game
             var go = new GameObject($"Weather Particles · {kind}");
             go.transform.SetParent(transform, false);
             var ps = go.AddComponent<ParticleSystem>();
+            // 风沙：沿风拉长的沙丝；雪：六臂雪花（打转）；灰：卷边的灰片（翻转）——都是普通混合，亮天空前也看得出形状
             var cfg = new FxParticle
             {
                 blend = FxBlend.Alpha,
-                texture = kind == WeatherParticles.Sand ? FxTexture.Streak : kind == WeatherParticles.Snow ? FxTexture.Glow : FxTexture.Dust,
+                texture = kind == WeatherParticles.Sand ? FxTexture.Streak : kind == WeatherParticles.Snow ? FxTexture.Snowflake : FxTexture.Paper,
                 render = kind == WeatherParticles.Sand ? FxRender.Stretched : FxRender.Billboard,
-                fade = kind == WeatherParticles.Snow ? FxFade.Hold : FxFade.Smoke,
-                stretchVelocity = 0.05f, stretchLength = 1.5f, spin = kind == WeatherParticles.Ash ? 90 : 0,
-                maxParticles = 4000,
+                fade = kind == WeatherParticles.Sand ? FxFade.Smoke : FxFade.Hold,
+                stretchVelocity = 0.05f, stretchLength = 1.5f, spin = kind == WeatherParticles.Ash ? 160 : kind == WeatherParticles.Snow ? 90 : 0,
+                maxParticles = Mathf.Max(64, Mathf.RoundToInt(MaxWeatherParticles * FxBudget.StyleCapScale)),
             };
             FxSetup.Configure(ps, cfg, FxMaterials.ParticleAlpha);
             var main = ps.main;
@@ -589,8 +597,8 @@ namespace Spiritfire.Game
             main.startSize = kind switch
             {
                 WeatherParticles.Sand => new ParticleSystem.MinMaxCurve(0.08f, 0.22f),
-                WeatherParticles.Snow => new ParticleSystem.MinMaxCurve(0.05f, 0.12f),
-                _ => new ParticleSystem.MinMaxCurve(0.06f, 0.16f),
+                WeatherParticles.Snow => new ParticleSystem.MinMaxCurve(0.06f, 0.14f),
+                _ => new ParticleSystem.MinMaxCurve(0.05f, 0.12f),
             };
             main.startSpeed = 0;
             var em = ps.emission;

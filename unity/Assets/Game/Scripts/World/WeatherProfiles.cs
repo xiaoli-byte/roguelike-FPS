@@ -123,7 +123,7 @@ namespace Spiritfire.Game
                     fogColor = new Color(0.9f, 0.94f, 1f), fogStart = 0, fogEnd = 20,
                     sunMult = 0.75f, sunTint = new Color(0.92f, 0.96f, 1f),
                     postExposure = 0.7f, contrast = -28, saturation = -40, colorFilter = new Color(0.95f, 0.98f, 1f),
-                    wind = 1, particles = WeatherParticles.Snow, particleRate = 900, particleColor = new Color(1f, 1f, 1f, 0.8f), particleSpeed = 14,
+                    wind = 1, particles = WeatherParticles.Snow, particleRate = 900, particleColor = new Color(0.9f, 0.95f, 1f, 0.75f), particleSpeed = 14,
                     dome = 1, windSound = 0.9f,
                 },
                 new WeatherProfile
@@ -132,7 +132,7 @@ namespace Spiritfire.Game
                     fogColor = new Color(0.32f, 0.2f, 0.17f), fogStart = 0, fogEnd = 24,
                     sunMult = 0.6f, sunTint = new Color(1f, 0.7f, 0.55f),
                     postExposure = -0.2f, contrast = -15, saturation = -25, colorFilter = new Color(1f, 0.82f, 0.72f),
-                    wind = 0.8f, particles = WeatherParticles.Ash, particleRate = 600, particleColor = new Color(0.35f, 0.3f, 0.28f, 0.6f), particleSpeed = 9,
+                    wind = 0.8f, particles = WeatherParticles.Ash, particleRate = 600, particleColor = new Color(0.34f, 0.25f, 0.29f, 0.6f), particleSpeed = 9,
                     dome = 1, windSound = 0.7f,
                 },
                 new WeatherProfile
@@ -141,7 +141,7 @@ namespace Spiritfire.Game
                     fogColor = new Color(0.82f, 0.88f, 0.96f), fogStart = 4, fogEnd = 55,
                     sunMult = 0.55f, sunTint = new Color(0.9f, 0.95f, 1f),
                     postExposure = 0.15f, contrast = -14, saturation = -25, colorFilter = new Color(0.94f, 0.98f, 1f),
-                    wind = 0.9f, particles = WeatherParticles.Snow, particleRate = 800, particleColor = new Color(1f, 1f, 1f, 0.75f), particleSpeed = 11,
+                    wind = 0.9f, particles = WeatherParticles.Snow, particleRate = 800, particleColor = new Color(0.9f, 0.95f, 1f, 0.72f), particleSpeed = 11,
                     dome = 0.9f, windSound = 0.8f, visibility = 40,
                 },
                 new WeatherProfile
@@ -150,7 +150,7 @@ namespace Spiritfire.Game
                     fogColor = new Color(0.3f, 0.17f, 0.15f), fogStart = 12, fogEnd = 120,
                     sunMult = 0.8f, sunTint = new Color(1f, 0.75f, 0.6f),
                     contrast = -6, saturation = -10, colorFilter = new Color(1f, 0.88f, 0.8f),
-                    wind = 0.3f, particles = WeatherParticles.Ash, particleRate = 160, particleColor = new Color(0.42f, 0.36f, 0.33f, 0.5f), particleSpeed = 2.5f,
+                    wind = 0.3f, particles = WeatherParticles.Ash, particleRate = 160, particleColor = new Color(0.36f, 0.27f, 0.31f, 0.55f), particleSpeed = 2.5f,
                     dome = 0.3f, windSound = 0.2f,
                 },
             };

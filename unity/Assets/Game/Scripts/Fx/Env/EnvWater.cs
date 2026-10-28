@@ -117,14 +117,15 @@ namespace Spiritfire.Game
         static void Splash(Vector3 at, float radius, float strength)
         {
             float k = strength * Mathf.Sqrt(Mathf.Clamp(radius, 0.5f, 16f) / 3f);
-            int drops = EnvParticles.Allow(Mathf.RoundToInt(10 + 26 * k));
+            // 水花团：颗数少、个头大（docs/art/fx-style.md：风格化的水花团，不做写实飞沫）
+            int drops = EnvParticles.Allow(Mathf.RoundToInt(6 + 12 * k));
             for (int i = 0; i < drops; i++)
             {
                 var d = Random.insideUnitCircle;
                 float up = Random.Range(2.5f, 6.5f) * Mathf.Sqrt(k);
                 var v = new Vector3(d.x * Random.Range(1f, 3.2f) * Mathf.Sqrt(k), up, d.y * Random.Range(1f, 3.2f) * Mathf.Sqrt(k));
                 var p = at + new Vector3(d.x, 0, d.y) * radius * 0.25f;
-                EnvParticles.Emit("Drop", p, v, Random.Range(0.07f, 0.16f) * Mathf.Clamp(k, 0.6f, 2f), Random.Range(0.6f, 1.1f), Spray);
+                EnvParticles.Emit("Drop", p, v, Random.Range(0.14f, 0.26f) * Mathf.Clamp(k, 0.6f, 2f), Random.Range(0.6f, 1.1f), Spray);
             }
             int mist = EnvParticles.Allow(Mathf.RoundToInt(4 + 8 * k));
             for (int i = 0; i < mist; i++)
@@ -197,12 +198,12 @@ namespace Spiritfire.Game
 
         static void Bubble(Vector3 p, float strength)
         {
-            int n = EnvParticles.Allow(Mathf.RoundToInt(2 + 3 * strength));
+            int n = EnvParticles.Allow(Mathf.RoundToInt(1 + 2 * strength));
             for (int i = 0; i < n; i++)
             {
                 var d = Random.insideUnitCircle * 0.6f;
                 EnvParticles.Emit("Drop", p + new Vector3(d.x, 0.02f, d.y), new Vector3(d.x, Random.Range(1.2f, 2.8f) * Mathf.Sqrt(strength), d.y),
-                    Random.Range(0.05f, 0.11f), Random.Range(0.35f, 0.6f), Spray);
+                    Random.Range(0.1f, 0.18f), Random.Range(0.35f, 0.6f), Spray);
             }
             if (EnvParticles.Allow(1) > 0)
                 EnvParticles.Emit("Powder", p + Vector3.up * 0.15f, new Vector3(0, Random.Range(0.4f, 1f), 0), Random.Range(0.5f, 0.9f) * Mathf.Max(0.8f, strength),
