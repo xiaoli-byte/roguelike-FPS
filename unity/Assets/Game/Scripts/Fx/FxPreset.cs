@@ -126,6 +126,8 @@ namespace Spiritfire.Game
         Fixed,
         /// <summary>在固定色与调用方颜色之间随机（爆炸火团：亮黄 ↔ 主色）</summary>
         RandomMix,
+        /// <summary>章节环境色：<see cref="FxLayer.fixedColor"/> 写沙寺的颜色，按当前章节换成霜山 / 熔火的同明暗色（<see cref="FxTone"/>），再混入调用方颜色 mix（烟、尘、碎屑）</summary>
+        Ground,
     }
 
     /// <summary>

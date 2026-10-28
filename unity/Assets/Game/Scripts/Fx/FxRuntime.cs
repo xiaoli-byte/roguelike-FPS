@@ -364,6 +364,7 @@ namespace Spiritfire.Game
             FxColor.White => Color.white,
             FxColor.Fixed => Color.Lerp(fixedColor, tint, mix),
             FxColor.RandomMix => Color.Lerp(fixedColor, tint, Random.value),
+            FxColor.Ground => Color.Lerp(FxTone.Ground(fixedColor), tint, mix),
             _ => tint,
         };
 
@@ -391,6 +392,7 @@ namespace Spiritfire.Game
             float speedK = L.speedScale.Eval(s), sizeK = L.sizeScale.Eval(s), spread = L.spread.Eval(s);
             var basePos = pos + n * L.offset;
             var hot = Color.Lerp(tint, Color.white, L.mix);
+            var ground = L.color == FxColor.Ground ? Color.Lerp(FxTone.Ground(L.fixedColor), tint, L.mix) : default;
             for (int i = 0; i < count; i++)
             {
                 var d = Direction(L, n, i, count);
@@ -406,6 +408,7 @@ namespace Spiritfire.Game
                     FxColor.White => Color.white,
                     FxColor.Fixed => Color.Lerp(L.fixedColor, tint, L.mix),
                     FxColor.RandomMix => Color.Lerp(L.fixedColor, tint, Random.value),
+                    FxColor.Ground => ground,
                     _ => tint,
                 };
                 if (L.shade.x != 1 || L.shade.y != 1)
