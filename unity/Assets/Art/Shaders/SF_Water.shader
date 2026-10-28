@@ -24,7 +24,7 @@ Shader "Spiritfire/Water"
         _Gloss("Gloss", Range(0, 1)) = 1
         _Flow("Flow (xy dir, z speed, w wind response)", Vector) = (0, 0, 0, 1)
         _ShoreFoam("Shore Foam", Range(0, 1)) = 0.85
-        _ShoreDepth("Shore Foam Depth (m)", Float) = 0.35
+        _ShoreDepth("Shore Foam Depth (m)", Float) = 0.3
         _DeepDepth("Depth Where Water Reads Deep (m)", Float) = 2.5
         _Sparkle("Sun Sparkles", Range(0, 2)) = 1
         _RippleStrength("Ripple Strength", Range(0, 2)) = 1
@@ -254,8 +254,8 @@ Shader "Spiritfire/Water"
                     float sd = max(0.05, _ShoreDepth);
                     float s01 = saturate(vertical / sd);
                     float n1 = ValueNoise(xz0 * 2.3 + float2(t * 0.25, -t * 0.2));
-                    float edgeFoam = step(s01, 0.22 + 0.3 * n1);
-                    float lines = step(0.74, frac(s01 * 2.2 - t * 0.35 + n1 * 0.4)) * step(s01, 0.8) * step(0.35, n1);
+                    float edgeFoam = step(s01, 0.16 + 0.22 * n1);
+                    float lines = step(0.76, frac(s01 * 2.2 - t * 0.35 + n1 * 0.4)) * step(s01, 0.55) * step(0.4, n1);
                     shore = saturate(edgeFoam + lines * 0.8) * _ShoreFoam;
                     foam = max(foam, shore);
                 }
@@ -272,14 +272,14 @@ Shader "Spiritfire/Water"
                 half glint = 0;
                 if (top && _Sparkle > 0.001 && _Swirl < 0.5)
                 {
-                    float2 gc = floor(xz0 * 1.7);
-                    float2 gf = frac(xz0 * 1.7);
+                    float2 gc = floor(xz0 * 1.1);
+                    float2 gf = frac(xz0 * 1.1);
                     float gh = Hash21(gc + 3.7);
                     float2 gp = 0.2 + 0.6 * float2(Hash21(gc + 11.1), gh);
                     float tw = saturate(sin(t * (2.0 + gh * 3.0) + gh * 40.0) * 3.0 - 2.0);
                     float dot_ = 1.0 - smoothstep(0.0, 0.045, length(gf - gp));
-                    float lobe = smoothstep(0.86, 0.985, ndh);
-                    glint = dot_ * tw * lobe * step(0.72, gh) * _Sparkle * (1.0 - foam);
+                    float lobe = smoothstep(0.95, 0.995, ndh);
+                    glint = dot_ * tw * lobe * step(0.8, gh) * _Sparkle * (1.0 - foam);
                 }
                 lit += light.color * (spec + glint * 2.2) * (1.0 - _Swirl * 0.8);
                 half3 sky = SampleSH(reflect(-V, N)) * 1.1;

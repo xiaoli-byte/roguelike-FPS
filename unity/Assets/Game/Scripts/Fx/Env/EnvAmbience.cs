@@ -132,6 +132,8 @@ namespace Spiritfire.Game
             for (int i = 0; i < n; i++)
             {
                 var p = gustOrigin + gustSide * R(-15f, 15f) + gustDir * R(-2f, 2f);
+                // 会从镜头上擦过去的那几条不发（贴脸的沙丝会变成横过屏幕的大白弧）
+                if (Mathf.Abs(Vector3.Dot(p - eye, gustSide)) < 5f) continue;
                 float g = Ground(p, eye.y);
                 // 打到屋顶、墙头上的不发（沙帘贴着地面走）
                 if (g > eye.y + 0.5f) continue;
@@ -144,10 +146,11 @@ namespace Spiritfire.Game
             for (int i = 0; i < m; i++)
             {
                 var p = gustOrigin + gustSide * R(-14f, 14f);
+                if (Mathf.Abs(Vector3.Dot(p - eye, gustSide)) < 7f) continue;
                 float g = Ground(p, eye.y);
                 if (g > eye.y + 0.5f) continue;
                 p.y = g + R(0.2f, 0.8f);
-                Emit("Dust", p, gustDir * speed * R(0.6f, 0.9f), R(1.8f, 3.2f), R(1.6f, 2.4f), FxEnvStyles.SandVeil);
+                Emit("Dust", p, gustDir * speed * R(0.6f, 0.9f), R(0.8f, 1.4f), R(1.6f, 2.4f), FxEnvStyles.SandVeil);
             }
         }
 

@@ -14,6 +14,7 @@ namespace Spiritfire.Game
     public sealed class EnvWaterBody : MonoBehaviour
     {
         public const float Reach = 45f, MistRate = 2.4f;
+        static readonly int ShoreDepthId = Shader.PropertyToID("_ShoreDepth");
 
         Renderer surface;
         bool cold;
@@ -28,6 +29,15 @@ namespace Spiritfire.Game
             if (!w) w = r.gameObject.AddComponent<EnvWaterBody>();
             w.surface = r;
             w.cold = theme == EnvTheme.Frost;
+            // 鲲鹏的冰窟（北冥海）是很深的水：水下会有鲲的身子之类贴着水面的东西，岸边白沫只认真正冒出水面的那一线
+            foreach (var hole in FindObjectsByType<IceHole>())
+                if (hole && hole.WaterSurface == r)
+                {
+                    var mpb = new MaterialPropertyBlock();
+                    r.GetPropertyBlock(mpb);
+                    mpb.SetFloat(ShoreDepthId, 0.1f);
+                    r.SetPropertyBlock(mpb);
+                }
             return w;
         }
 
