@@ -470,6 +470,8 @@ namespace Spiritfire.Game
             {
                 Fx.MoltenSplash(p, 1.4f, Molten);
                 Fx.Basalt(p, 0.8f, Slag);
+                // 裂锅：铜水从裂口泼出来——熔铜冠 + 四溅的熔滴 + 地上一滩冷却的熔铜
+                Fx.MoltenBurst(p, 1.5f, true, Molten);
                 GameUI.FloatText(p + Vector3.up * 0.3f, "坩埚裂了", Molten, 1f);
             }
             GameAudio.PlayAt("shield_break", p, 1f, 0.6f);

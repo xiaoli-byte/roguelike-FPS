@@ -525,6 +525,9 @@ namespace Spiritfire.Game
         {
             var c = BellyCenter;
             GunpowderBlast(c, 1.2f, 0.8f);
+            // 哑炸：肚子里的引信嗤嗤乱喷一阵（一串火星 + 黑烟），然后整个往后倒
+            Fx.Burst(c, InfernoPalette.Gold, 18, 7f, 0.5f, 0.05f, 6f);
+            Fx.Play("Soot", c + Vector3.up * 0.3f, Vector3.up, InfernoPalette.Soot, 1.2f);
             int n = elite ? RocketsElite : Rockets;
             var tg = new Vector3[n];
             var from = new Vector3[n];

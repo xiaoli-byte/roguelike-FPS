@@ -249,6 +249,9 @@ namespace Spiritfire.Game
                 case "foxfireWindup":
                     Stop();
                     FacePlayer(172, dt);
+                    // 前摇：三条尾尖上各蓄起一团青白狐火（原来前摇只有动作和一声提示音）
+                    for (int i = 0; i < 3; i++)
+                        Fx.Wisp(FoxfireOrigin(i), FoxfireColor, 0.32f + 0.2f * Mathf.Clamp01(stateTime / Mathf.Max(0.05f, windTime)), dt);
                     if (stateTime >= windTime)
                     {
                         CastFoxfire();
@@ -527,7 +530,7 @@ namespace Spiritfire.Game
             for (int i = 0; i < 3; i++)
             {
                 float lat = (i - 1) * 2.6f;
-                var p = transform.TransformPoint(new Vector3((i - 1) * 0.55f, 1.45f + (i == 1 ? 0.3f : 0), -0.25f));
+                var p = FoxfireOrigin(i);
                 var q = chest + right * lat + Vector3.up * 1.2f;
                 var dir = (q - p).normalized;
                 EnemyProjectile.Spawn(new EnemyProjectileSpec(p, dir * FoxfireSpeed, Damage * FoxfireMult, 0.28f, 5f)
@@ -535,9 +538,14 @@ namespace Spiritfire.Game
                     homing = FoxfireHoming, visual = "orb", color = FoxfireColor, scale = 1.4f, source = this, spirit = Taunted,
                 });
                 Fx.Burst(p, FoxfireColor, 8, 1.5f, 0.4f, 0.07f, -1);
+                // 放出那一下：尾尖一团狐火炸开（鬼火 + 磷火 + 细拉丝）
+                Fx.Play("BossFoxfire", p, Vector3.up, FoxfireColor, 0.8f);
             }
             GameAudio.PlayAt("enemy_shot", transform.position + Vector3.up * 1.5f * Size, 0.6f, 1.2f);
         }
+
+        /// <summary>第 i 团狐火的出发点（三条尾尖）</summary>
+        Vector3 FoxfireOrigin(int i) => transform.TransformPoint(new Vector3((i - 1) * 0.55f, 1.45f + (i == 1 ? 0.3f : 0), -0.25f));
 
         // ───────────── 受击 / 碎镜 / 死亡 ─────────────
 

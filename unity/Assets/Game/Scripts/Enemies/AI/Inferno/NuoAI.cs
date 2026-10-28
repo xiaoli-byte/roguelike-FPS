@@ -523,6 +523,8 @@ namespace Spiritfire.Game
             {
                 Fx.Burst(p, WoodChip, 18, 3.5f, 0.8f, 0.07f, 12);
                 Fx.Burst(p, EmberColor, 14, 2.5f, 0.5f, 0.07f, 2);
+                // 碎面：红漆木片朝前翻滚着崩飞、描金碎屑闪一下、一圈火星（原来只有两团小粒子）
+                Fx.Play("BossFaceShatter", p, transform.forward, Faces[face].Readable, 1.1f);
                 GameUI.FloatText(p + Vector3.up * 0.3f, Faces[face].name + "碎了", Faces[face].Readable, 1f);
             }
             GameAudio.PlayAt("shield_break", p, 0.9f, 1.2f);

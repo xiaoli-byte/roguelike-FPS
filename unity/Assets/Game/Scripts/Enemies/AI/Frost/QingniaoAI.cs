@@ -393,6 +393,9 @@ namespace Spiritfire.Game
             Act("perched", 0, 0.12f);
             SetState("perched");
             FrostKit.SnowPuff(perch.position, Size, 8);
+            // 歇脚：收翅落定时一记冰晶星芒 + 抖落的雪
+            Fx.FrostGlint(perch.position + Vector3.up * 0.8f * Size, 1.1f);
+            Fx.FrostVapour(perch.position + Vector3.up * 0.3f, 1f, FrostPalette.Snow);
         }
 
         protected override void OnLandingFailed()

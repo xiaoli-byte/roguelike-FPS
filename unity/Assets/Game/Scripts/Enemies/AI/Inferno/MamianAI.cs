@@ -229,6 +229,8 @@ namespace Spiritfire.Game
                 case "punchWind":
                 {
                     FacePlayer(6 * Mathf.Rad2Deg, dt);
+                    // 前摇：右拳上烧起一团火（原来重拳前摇只有一声蓄力音，没有任何能看的）
+                    Fx.Wisp(PunchFist, PunchFire, 0.45f + 0.35f * Mathf.Clamp01(stateTime / Mathf.Max(0.05f, Windup(PunchWind, 0.22f))), dt);
                     // 前冲半步
                     if (stateTime > PunchWind * 0.5f) MoveTo(transform.position + transform.forward * 1.5f, 3f);
                     if (stateTime >= Windup(PunchWind, 0.22f))
@@ -236,6 +238,10 @@ namespace Spiritfire.Game
                         Act("punch", 0.04f);
                         SetState("punch");
                         punchHit = Melee(PunchRange * Reach + 0.3f, Damage * PunchMult, 0.4f);
+                        // 出拳：拳面前一记白热冲击球 + 往前喷的气浪火星，地上一圈小冲击环
+                        var fist = transform.position + transform.forward * (PunchRange * Reach * 0.75f) + Vector3.up * 1.2f * Size;
+                        Fx.Play("BossPunch", fist, transform.forward, PunchFire, punchHit ? 1.4f : 1.1f);
+                        Fx.Ring(transform.position + transform.forward * 1.2f + Vector3.up * 0.1f, 2.6f, PunchFire, 0.3f, false);
                         if (punchHit)
                         {
                             var f = transform.forward * 4;
@@ -601,6 +607,11 @@ namespace Spiritfire.Game
         }
 
         // ───────────── 缴械后的肉搏 ─────────────
+
+        static readonly Color PunchFire = Hex.Rgb(0xff8a3a);
+
+        /// <summary>重拳的拳头（右拳大约的位置，前摇时蓄火用）</summary>
+        Vector3 PunchFist => transform.TransformPoint(new Vector3(0.42f, 1.25f, 0.45f));
 
         void Brawl(float dt, float d)
         {
