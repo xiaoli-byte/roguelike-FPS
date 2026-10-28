@@ -6,7 +6,7 @@
 全部确定性（固定种子），重跑逐字节相同。按线性空间导入（数据，不是颜色）。
 
 T_Fx_MuzzleSet.png  1024 × 1024，4 × 4 格（每格 256 px，第 0 格在左上角，按行往右数）：
-    RGB = 亮度（白热芯 1 → 边缘 0.55，乘调用方颜色），A = 形状（硬边 + 1–2 px 抗锯齿：卡通、干脆）
+    RGB = 亮度 × 覆盖（预乘；火焰类格的亮度硬化成三段：亮芯 1 / 主色 0.76 / 暗边 0.52，乘调用方颜色），A = 形状（硬边 + 1–2 px 抗锯齿：卡通、干脆）
     正面（格心 = 枪口，朝枪管方向看）：
         0 十字星芒（步枪：四道长芒 + 四道短芒）      1 霰弹喷口（一圈火舌簇 + 弹丸火星点）
         2 粗火团（左轮 / 榴弹：鼓起的火云团）          3 冲击环（狙击 / 灵炮：带缺口的细环）
@@ -209,9 +209,9 @@ def muzzle_cell(i):
             a = np.maximum(a, ring * (1.1 - R * 0.5))
         a = np.maximum(a, np.exp(-(r / 0.22) ** 2) * 0.8)
         lum = np.clip(a, 0, 1) * 0.85 + 0.15 * core
-    elif i == 5:  # 白热芯
-        a = np.clip(aa(0.3 - r, px) * 0.85 + np.exp(-(r / 0.45) ** 2) * 0.6, 0, 1) * aa(0.98 - r, px)
-        lum = np.clip(0.6 + 0.4 * (1 - r / 0.5), 0.6, 1)
+    elif i == 5:  # 白热芯：硬边扇贝圆（风格审查：高光要小、要硬，不要一团柔光）
+        a = aa(0.42 + 0.035 * np.sin(th * 7) - r, px)
+        lum = np.where(r < 0.27, 1.0, 0.8)
     elif i == 6:  # 六角星芒（冲锋枪）
         c1, l1 = spikes(x, y, 6, 0.78, 0.16, rot=np.pi / 2)
         disc = aa(0.22 - r, px)
@@ -236,13 +236,12 @@ def muzzle_cell(i):
             w = w * (1 + 0.32 * np.exp(-((t - 0.36) / 0.06) ** 2) + 0.25 * np.exp(-((t - 0.64) / 0.06) ** 2))
             w = w - 0.1 * np.exp(-((t - 0.5) / 0.05) ** 2) * (1 - t)
             a = aa(w - ay, px) * (t < 0.99)
-            inner = aa(w * 0.45 - ay, px)
-            lum = a * (0.62 + 0.38 * inner) * (1 - 0.3 * t)
+            # 三段色阶跟着火舌的形状走（芯 / 主色 / 暗边各是一条更窄的火舌），不按长度渐暗（那样会在半中间切出一道竖线）
+            lum = a * (0.52 + 0.24 * aa(w * 0.55 - ay, px) + 0.24 * aa(w * 0.24 - ay, px))
         elif i == 9:  # 粗短火舌
             w = 0.78 * np.sin(np.pi * np.clip(t / 0.82, 0, 1)) ** 0.55 * (1 - t) ** 0.25 + 0.04 * np.sin(t * 40) * (1 - t)
             a = aa(w - ay, px) * (t < 0.82)
-            inner = aa(w * 0.5 - ay, px)
-            lum = a * (0.6 + 0.4 * inner) * (1 - 0.25 * t)
+            lum = a * (0.52 + 0.24 * aa(w * 0.6 - ay, px) + 0.24 * aa(w * 0.28 - ay, px))
         elif i == 10:  # 扇形喷口
             g = rng(1010)
             ang = np.arctan2(y, np.maximum(t, 1e-4) * 2)
@@ -255,8 +254,10 @@ def muzzle_cell(i):
             cell = ((ang + 0.62) / 1.24 * n) % 1
             tip = L * (0.65 + 0.35 * np.sin(np.pi * cell))
             a = aa((tip - t) * 2, px) * (np.abs(ang) < 0.62) * aa(0.62 - np.abs(ang), 0.03)
-            a = np.maximum(a, aa(0.26 * np.sqrt(np.clip(t * 6, 0, 1)) - ay, px) * (t < 0.3))
-            lum = a * (0.95 - 0.45 * t)
+            root = aa(0.26 * np.sqrt(np.clip(t * 6, 0, 1)) - ay, px) * (t < 0.3)
+            a = np.maximum(a, root)
+            # 三段：根部的白热团 / 每道火舌的前七成 / 舌尖（按各自的长度，不按统一的横坐标切）
+            lum = a * (0.52 + 0.24 * (t < tip * 0.7) + 0.24 * aa(0.16 - np.sqrt(((t - 0.05) * 0.8) ** 2 + ay ** 2), px))
             for j in range(10):
                 cx = g.uniform(0.0, 0.9)
                 cy = g.uniform(-0.5, 0.5) * (cx + 0.1)
@@ -268,8 +269,7 @@ def muzzle_cell(i):
             w = 0.42 * np.clip(1 - t / 0.78, 0, 1) ** 0.8 * np.sqrt(np.clip(t * 8, 0, 1))
             w = w * (1 + 0.28 * np.exp(-((t - 0.4) / 0.07) ** 2))
             a = aa(w - ay, px) * (t < 0.78)
-            inner = aa(w * 0.45 - ay, px)
-            lum = a * (0.62 + 0.38 * inner) * (1 - 0.3 * t)
+            lum = a * (0.52 + 0.24 * aa(w * 0.55 - ay, px) + 0.24 * aa(w * 0.24 - ay, px))
         else:  # 能量流
             band = np.exp(-(ay / (0.12 + 0.05 * t)) ** 2) * (1 - t) ** 0.6
             a = band
@@ -284,15 +284,31 @@ def muzzle_cell(i):
     return lum, a
 
 
+# 能量类的格（波纹、符环、能量流）保留柔和的亮度；火焰类的格亮度硬化成三段
+SOFT_CELLS = (4, 7, 12)
+
+
+def band3(lum):
+    """火焰亮度硬化成三段色阶（docs/art/fx-style.md：2–3 个色阶、阶与阶之间是硬一点的软阶梯）：
+    暗边 0.52（乘出来是赭色的边）/ 主色 0.76 / 亮芯 1.0"""
+    w = 0.025
+    lo = sstep(0.66 - w, 0.66 + w, lum)
+    hi = sstep(0.86 - w, 0.86 + w, lum)
+    return 0.52 + 0.24 * lo + 0.24 * hi
+
+
 def muzzle_atlas():
+    """RGB = 亮度 × 覆盖（预乘：着色器按 One / OneMinusSrcAlpha 混合，外面一圈是 0 不发光），A = 覆盖"""
     img = np.zeros((4 * MN, 4 * MN, 4), dtype=np.float64)
     for i in range(16):
         if i >= 14:
             continue
         lum, a = muzzle_cell(i)
+        if i not in SOFT_CELLS:
+            lum = band3(lum)
         col, row = i % 4, i // 4
         sl = img[row * MN:(row + 1) * MN, col * MN:(col + 1) * MN]
-        sl[..., 0] = sl[..., 1] = sl[..., 2] = np.where(a > 0, lum, 0)
+        sl[..., 0] = sl[..., 1] = sl[..., 2] = np.where(a > 0, lum, 0) * a
         sl[..., 3] = a
     return img
 
@@ -404,8 +420,9 @@ def hole_sand(v):
         rc0 = 0.52 + 0.03 * (v % 2)
         d, t = seg_dist(x, y, np.cos(ang) * rc0, np.sin(ang) * rc0, np.cos(ang) * L, np.sin(ang) * L)
         rays = np.maximum(rays, aa(0.035 * (1 - t) + 0.005 - d, 2.0 / HN))
-    grains = (vnoise(x * 60, y * 60, s + 4) > 0.82) * sstep(0.95, 0.6, r) * (r > rc)
-    h += 0.04 * rays + 0.03 * grains
+    # 风格审查：不撒细碎的沙粒噪点，溅沙只靠几道放射沙痕
+    grains = np.zeros_like(x)
+    h += 0.04 * rays
     dark = np.maximum(poster(bowl, 2, 0.12) * 0.32 * (0.8 + 0.4 * n), pit * 0.75)
     light = np.maximum.reduce([poster(np.clip(rim, 0, 1), 2, 0.15) * 0.5, rays * 0.35, grains * 0.4])
     heat = pit * 0.35
@@ -514,12 +531,17 @@ def scorch(v):
         d1 = np.minimum(d1, d)
     edge = aa(0.014 - (d2 - d1), 2.0 / n2) * sstep(0.55, 0.3, r)
     h = 0.5 - 0.06 * charcoal - 0.08 * edge - 0.03 * body
-    # 余热：缝里最热（中心）往外熄，外加零星火星点
-    embers = (vnoise(x * 34, y * 34, s + 3) > 0.86) * sstep(0.62, 0.25, r)
-    heat = np.maximum(edge * (0.45 + 0.55 * sstep(0.55, 0.0, r)), embers * 0.75)
+    # 余热：缝里最热（中心）往外熄，外加几块中尺度的余烬（风格审查：不要细碎的噪点火星 / 灰点）
+    embers = np.zeros_like(x)
+    for k in range(5 + v % 3):
+        ang = g.uniform(0, 2 * np.pi)
+        rr = g.uniform(0.12, 0.42)
+        ex, ey = np.cos(ang) * rr, np.sin(ang) * rr
+        pr = polygon_radius(np.arctan2(y - ey, x - ex), 6, g.uniform(0.028, 0.045), 0.3, s + 30 + k)
+        embers = np.maximum(embers, aa(pr - np.sqrt((x - ex) ** 2 + (y - ey) ** 2), 2.0 / n2))
+    heat = np.maximum(edge * (0.45 + 0.55 * sstep(0.55, 0.0, r)), embers * 0.55)
     heat = np.maximum(heat, charcoal * 0.35 * sstep(0.3, 0.0, r))
-    ash = (vnoise(x * 50, y * 50, s + 4) > 0.9) * soot * (r > 0.3) * 0.35
-    light = ash
+    light = np.zeros_like(x)
     cover = np.maximum.reduce([dark, heat, light, np.abs(h - 0.5) * 6])
     return finish(dark, heat, light, h, cover)
 

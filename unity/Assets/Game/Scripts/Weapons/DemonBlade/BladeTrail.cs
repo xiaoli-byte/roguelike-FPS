@@ -7,7 +7,8 @@ namespace Spiritfire.Game
     /// 碎刃第一人称刀光（WC7；Three.js BladeView.ts 的 SwingTrail，外观参数走 FX1 预设 <see cref="BladeTrailPreset"/>）：
     /// 挂在第一人称视图里（相机空间、FirstPerson 层，由枪模相机画），视图每帧把这一帧走过的挥砍进度细分采样，
     /// 每个采样点记下刀身 35% 处（内沿）与伸长后的刀尖（外沿）的位置和外沿速度——刀光就是刀身扫过的那块面，和刀身严格同步。
-    ///   · 横截面：内沿透明 → 七成处淡淡一层 → 外沿最亮（带身，普通混合：亮背景上也看得见；亮度集中在刃口一侧，像一弯月牙）→ 外缘一道加色光边；
+    ///   · 横截面：刀身扫过的面只画靠刃口的四成——短短一段过渡到带身色（墨笔的边）→ 外沿刃口暖白（两段色阶，普通混合：亮背景上也看得见）→ 外缘一道加色光边；
+    ///   · 墨笔起收锋（风格审查）：一条刀光沿长度方向两头收尖（最老的起笔端收成尖、贴刀的一端略收），读作一弯月牙，不再是四四方方的一片；
     ///   · 亮度跟速度走（<see cref="FxTrailSpec.Brightness"/>）：出刀那两三帧满亮、收势越来越暗；最新的 0.04 s 再白热一点；
     ///   · 采样点活 0.16 s（游戏时间：顿帧时刀光跟着停住），新一段斩击另起一条（<see cref="Break"/>），旧的自然淡掉，不会被拉成一根线连过去。
     /// 网格顶点数固定（<see cref="FxTrailSpec.maxSamples"/> × 5：内沿、七成处、外沿、光边内侧、光边外侧），每帧只重写位置 / 颜色 / 索引。
@@ -26,9 +27,16 @@ namespace Spiritfire.Game
             public bool start;
         }
 
-        const int Stride = 5;
-        /// <summary>带身中间那一圈的位置（内沿 → 外沿的比例）与不透明度（占外沿的比例）</summary>
-        const float MidAt = 0.7f, MidAlpha = 0.42f;
+        const int Stride = 6;
+        /// <summary>
+        /// 带身横截面（风格审查：刀身扫过的那块面只留靠刃口的四成，读作一弯月牙，不是一整张半透明面）：
+        /// 内沿 → InnerAt 处还是透明（这一段不画）→ MidAt 处到带身色（短短一段过渡 = 墨笔的边）→ 外沿刃口（暖白）→ 外缘光边。两段色阶：带身色 / 刃口
+        /// </summary>
+        const float InnerAt = 0.5f, MidAt = 0.64f, MidAlpha = 0.6f;
+        /// <summary>墨笔起收锋：一条刀光最老的那一段（起笔）收成尖（占全长的比例），最新的那一小段（贴着刀）略收一点</summary>
+        const float TailTaper = 0.42f, HeadTaper = 0.12f;
+        /// <summary>刃口混向的暖白（玩家刀光偏金、偏灵火）</summary>
+        static readonly Color WarmWhite = new(1f, 0.9f, 0.66f);
 
         FxTrailSpec spec;
         Sample[] samples;
@@ -77,7 +85,7 @@ namespace Spiritfire.Game
             samples = new Sample[n];
             verts = new Vector3[n * Stride];
             colors = new Color[n * Stride];
-            body = new int[(n - 1) * 12];
+            body = new int[(n - 1) * 18];
             fringe = new int[(n - 1) * 6];
             mesh = new Mesh { name = "Blade Trail", hideFlags = HideFlags.DontSave };
             mesh.MarkDynamic();
@@ -184,36 +192,57 @@ namespace Spiritfire.Game
             return Vector3.Lerp(s.inner, pushed, need);
         }
 
+        /// <summary>墨笔起收锋的宽度系数：u = 这一点在这条刀光里的位置（0 = 最老的起笔端，1 = 贴着刀的最新端）</summary>
+        static float BrushWidth(float u)
+        {
+            float tail = Mathf.Clamp01(u / TailTaper);
+            tail = tail * tail * (3 - 2 * tail);
+            float head = 1 - 0.3f * Mathf.Clamp01((u - (1 - HeadTaper)) / HeadTaper);
+            return Mathf.Sqrt(tail) * head;
+        }
+
         /// <summary>重写网格；没有相连的两点（画不出带子）返回 false</summary>
         bool Rebuild(Color color)
         {
-            var white = Color.white;
             float widenMax = 0, sideSign = 0;
+            int stripStart = 0, stripEnd = 0;
             for (int i = 0; i < count; i++)
             {
                 var s = samples[i];
-                if (s.start) sideSign = 0;
+                if (s.start || i == 0)
+                {
+                    sideSign = 0;
+                    stripStart = i;
+                    stripEnd = i;
+                    while (stripEnd + 1 < count && !samples[stripEnd + 1].start) stripEnd++;
+                }
                 s.inner = WidenedInner(i, ref sideSign, ref widenMax);
+                // 起收锋：内沿往刃口收（刃口不动），两头尖、中间饱满的一弯月牙
+                float u = stripEnd > stripStart ? (i - stripStart) / (float)(stripEnd - stripStart) : 1f;
+                float bw = BrushWidth(u);
+                s.inner = Vector3.LerpUnclamped(s.outer, s.inner, bw);
                 float life = Mathf.Clamp01(1 - s.age / Mathf.Max(0.01f, spec.life));
                 float head = Mathf.Clamp01(1 - s.age / Mathf.Max(0.005f, spec.headTime));
                 float fade = life * life;
-                var hot = Color.Lerp(color, white, Mathf.Clamp01(spec.hotMix + spec.headHotMix * head));
+                var hot = Color.Lerp(color, WarmWhite, Mathf.Clamp01(spec.hotMix + spec.headHotMix * head));
                 float k = spec.bodyIntensity * (0.55f + 0.45f * s.bright);
                 int v = i * Stride;
-                float a = fade * spec.bodyAlpha * s.bright;
-                var mid = Color.Lerp(color, hot, 0.35f);
+                float a = fade * spec.bodyAlpha * s.bright * Mathf.Lerp(0.55f, 1f, bw);
+                var mid = Color.Lerp(color, hot, 0.2f);
                 verts[v] = s.inner;
-                verts[v + 1] = Vector3.LerpUnclamped(s.inner, s.outer, MidAt);
-                verts[v + 2] = s.outer;
+                verts[v + 1] = Vector3.LerpUnclamped(s.inner, s.outer, InnerAt);
+                verts[v + 2] = Vector3.LerpUnclamped(s.inner, s.outer, MidAt);
                 verts[v + 3] = s.outer;
-                verts[v + 4] = s.outer + (s.outer - s.inner) * spec.fringe;
-                colors[v] = new Color(color.r * k, color.g * k, color.b * k, 0);
-                colors[v + 1] = new Color(mid.r * k, mid.g * k, mid.b * k, a * MidAlpha);
-                colors[v + 2] = new Color(hot.r * k, hot.g * k, hot.b * k, a);
+                verts[v + 4] = s.outer;
+                verts[v + 5] = s.outer + (s.outer - s.inner) * spec.fringe;
+                colors[v] = new Color(mid.r * k, mid.g * k, mid.b * k, 0);
+                colors[v + 1] = new Color(mid.r * k, mid.g * k, mid.b * k, 0);
+                colors[v + 2] = new Color(mid.r * k, mid.g * k, mid.b * k, a * MidAlpha);
+                colors[v + 3] = new Color(hot.r * k, hot.g * k, hot.b * k, a);
                 // 外缘光边：加色，刃口那一侧亮（alpha = 强度）、向外收掉
                 float f = spec.fringeIntensity;
-                colors[v + 3] = new Color(hot.r * f, hot.g * f, hot.b * f, fade * s.bright);
-                colors[v + 4] = new Color(hot.r * f, hot.g * f, hot.b * f, 0);
+                colors[v + 4] = new Color(hot.r * f, hot.g * f, hot.b * f, fade * s.bright * bw);
+                colors[v + 5] = new Color(hot.r * f, hot.g * f, hot.b * f, 0);
             }
             LastWiden = widenMax;
             // 没用到的顶点叠到第一个点上：包围盒只算现存的采样
@@ -223,8 +252,8 @@ namespace Spiritfire.Game
             {
                 if (samples[i].start) continue;
                 int a = (i - 1) * Stride, b = i * Stride;
-                // 带身：内沿 → 七成处 → 外沿
-                for (int r = 0; r < 2; r++)
+                // 带身：月牙的内边（InnerAt → MidAt 的过渡）→ 外沿；内沿到 InnerAt 那一段全透明，不画
+                for (int r = 1; r < 3; r++)
                 {
                     body[nb++] = a + r;
                     body[nb++] = a + r + 1;
@@ -234,12 +263,12 @@ namespace Spiritfire.Game
                     body[nb++] = b + r;
                 }
                 // 外缘光边：光边内侧 → 外侧
-                fringe[nf++] = a + 3;
                 fringe[nf++] = a + 4;
-                fringe[nf++] = b + 3;
-                fringe[nf++] = a + 4;
+                fringe[nf++] = a + 5;
                 fringe[nf++] = b + 4;
-                fringe[nf++] = b + 3;
+                fringe[nf++] = a + 5;
+                fringe[nf++] = b + 5;
+                fringe[nf++] = b + 4;
             }
             if (nb == 0) return false;
             mesh.vertices = verts;

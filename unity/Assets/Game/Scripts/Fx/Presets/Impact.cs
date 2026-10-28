@@ -48,14 +48,15 @@ namespace Spiritfire.Game
                 {
                     style = "Dust", count = new FxScale(0, 2, 1, 0, 4), shape = FxShape.Cone, coneAngle = 45, offset = 0.03f,
                     speed = new Vector2(0.6f, 1.8f), up = 0.2f, size = new Vector2(0.18f, 0.3f), sizeScale = FxScale.Lin(0, 1),
-                    life = new Vector2(0.45f, 0.8f), color = FxColor.Fixed, fixedColor = Hex.Rgb(0x8c8274), mix = 0.1f,
+                    // 尘、碎屑写沙寺的暖色（风格审查：沙寺的尘是暖沙色，不用灰），按章节换调子
+                    life = new Vector2(0.45f, 0.8f), color = FxColor.Ground, fixedColor = Hex.Rgb(0xb4967a), mix = 0.1f,
                 },
                 // 小碎屑
                 new FxLayer
                 {
                     style = "Chunk", count = FxScale.Lin(0, 2), shape = FxShape.Hemisphere, normalBias = 1.2f, offset = 0.03f,
                     speed = new Vector2(2.5f, 6), up = 1, size = new Vector2(0.035f, 0.07f), sizeScale = FxScale.Lin(0, 1),
-                    life = new Vector2(0.5f, 0.9f), color = FxColor.Fixed, fixedColor = Hex.Rgb(0x3b322b), mix = 0,
+                    life = new Vector2(0.5f, 0.9f), color = FxColor.Ground, fixedColor = Hex.Rgb(0x6e4c34), mix = 0,
                 },
             };
         }

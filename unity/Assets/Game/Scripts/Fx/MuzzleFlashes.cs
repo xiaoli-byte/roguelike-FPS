@@ -24,7 +24,11 @@ namespace Spiritfire.Game
         const int PoolSize = 6, MaxParts = 5;
         /// <summary>WeaponController 的常数枪口（相机局部坐标，腰射 → 开镜）：ShotFx 用它认出哪次 MuzzleFlash 调用是开枪</summary>
         static readonly Vector3 MuzzleHip = new(0.2f, -0.13f, 0.75f), MuzzleAim = new(0, -0.08f, 0.7f);
-        static readonly Color DefaultColor = new(1f, 0.75f, 0.4f);
+        /// <summary>没有元素的枪：橙色主色（形状集的三段乘出来是 白热芯 / 橙 / 赭边，见 fx_shot_textures.py band3）</summary>
+        static readonly Color DefaultColor = new(1f, 0.64f, 0.28f);
+        static readonly Color WarmWhite = new(1f, 0.95f, 0.82f);
+        /// <summary>预乘混合时火焰片的不透明度：盖住身后八成（亮地面上色阶看得出），留两成透出背景（不是一张贴纸）</summary>
+        const float PremulOpacity = 0.8f;
         static readonly Color RailTint = new(0.79f, 0.66f, 1f);
         static readonly Color BowTint = new(0.86f, 0.92f, 1f);
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
@@ -469,7 +473,9 @@ namespace Spiritfire.Game
                 var part = v.look.parts[i];
                 float k = Mathf.Clamp01(k0 / Mathf.Max(0.2f, part.life));
                 float alpha = (part.expand ? Mathf.Pow(1 - k, 1.2f) : 1 - k * k) * part.alpha;
-                var c = part.hot ? Color.Lerp(v.color, Color.white, 0.65f) * 2.2f : v.color * 1.6f;
+                // 风格审查：预乘（形状集）时 HDR 收一档——白热芯是暖白、主色片按形状集的三段色阶出橙 / 赭，不再一片发白
+                bool premul = FxShotAssets.MuzzlePremultiplied;
+                var c = part.hot ? Color.Lerp(v.color, premul ? WarmWhite : Color.white, premul ? 0.7f : 0.65f) * (premul ? 1.7f : 2.2f) : v.color * (premul ? 1.3f : 1.6f);
                 for (int copy = 0; copy < 2; copy++)
                 {
                     bool fpCopy = copy == 0;
@@ -491,7 +497,7 @@ namespace Spiritfire.Game
                         cp.t[i].localRotation = Quaternion.Euler(0, 0, v.roll[i]);
                     }
                     block.Clear();
-                    block.SetColor(BaseColorId, new Color(c.r, c.g, c.b, a));
+                    block.SetColor(BaseColorId, premul ? new Color(c.r * a, c.g * a, c.b * a, a * PremulOpacity) : new Color(c.r, c.g, c.b, a));
                     cp.r[i].SetPropertyBlock(block);
                 }
             }

@@ -21,7 +21,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(0.42f, 0.42f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.08f, 0.08f), color = FxColor.Hot, mix = 0.5f,
+                    size = new Vector2(0.28f, 0.28f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.07f, 0.07f), color = FxColor.Hot, mix = 0.35f,
                 },
                 new FxLayer
                 {

@@ -34,7 +34,11 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>第一人称枪口火焰材质（M_Fx_Muzzle 的副本，贴图换成形状集）；形状集缺失时为 null</summary>
+        /// <summary>
+        /// 第一人称枪口火焰材质（M_Fx_Muzzle 的副本，贴图换成形状集）；形状集缺失时为 null。
+        /// 风格审查：混合从纯加法改成预乘（One / OneMinusSrcAlpha；形状集的 RGB 已经乘过覆盖，颜色的 RGB 由 MuzzleFlashes 再乘一次透明度）——
+        /// 纯加法叠在亮沙、雪地上只剩一团白，预乘以后亮芯 / 主色 / 暗边三段色阶在任何地面上都看得出来。
+        /// </summary>
         public static Material Muzzle
         {
             get
@@ -47,9 +51,17 @@ namespace Spiritfire.Game
                 muzzle = new Material(baseMat) { name = "M_Fx_MuzzleSet (runtime)", hideFlags = HideFlags.DontSave };
                 if (muzzle.HasProperty("_BaseMap")) muzzle.SetTexture("_BaseMap", tex);
                 if (muzzle.HasProperty("_MainTex")) muzzle.SetTexture("_MainTex", tex);
+                muzzle.SetFloat("_Blend", 1);
+                muzzle.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                muzzle.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                muzzle.SetFloat("_SrcBlendAlpha", (float)UnityEngine.Rendering.BlendMode.One);
+                muzzle.SetFloat("_DstBlendAlpha", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 return muzzle;
             }
         }
+
+        /// <summary>枪口火焰用的是预乘的形状集材质（<see cref="Muzzle"/>）：颜色要按预乘写（RGB × 透明度）</summary>
+        public static bool MuzzlePremultiplied => Muzzle;
 
         /// <summary>弹壳材质</summary>
         public static Material Shell

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 碎刃刀光（WC7，<see cref="BladeTrail"/> 按 id 取）：紫色带身 + 白热刃口 + 一道加色光边，寿命 0.16 s（同 Three.js SwingTrail）；挥得快就更亮。
+    /// 碎刃刀光（WC7，<see cref="BladeTrail"/> 按 id 取）：紫色带身 + 暖白刃口（玩家刀光偏金）+ 一道加色光边，两头墨笔起收锋，寿命 0.16 s（同 Three.js SwingTrail）；挥得快就更亮。
     /// 规模 s：普通两段 1、第三段（伸刃）1.6、人刀合一再 ×1.25。
     /// 判定帧在刀尖的屏幕位置往前 1.6 m 处（贴脸淡出之外）顺着挥动方向甩出一小撮碎刃火星：拉丝光点 + 一颗白热闪光。
     /// </summary>
@@ -37,7 +37,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(0.22f, 0.22f), sizeScale = FxScale.Pow(0.5f), life = new Vector2(0.06f, 0.08f), color = FxColor.Hot, mix = 0.5f,
+                    size = new Vector2(0.16f, 0.16f), sizeScale = FxScale.Pow(0.5f), life = new Vector2(0.05f, 0.06f), color = FxColor.Hot, mix = 0.4f,
                 },
             };
         }
