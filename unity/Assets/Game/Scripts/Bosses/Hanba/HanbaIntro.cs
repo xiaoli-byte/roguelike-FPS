@@ -11,6 +11,8 @@ namespace Spiritfire.Game
     ///                   月牙阁在更远处；长啸（日轮炸亮、震屏、闪屏、慢动作由 HanbaBrain 自己放），名字卡
     ///   6.5–7.9         沿着决斗线拉回玩家眼睛
     /// 首领出生点就是月牙泉凸顶（关卡构建器 BossSpawn = 泉心），所以「泉」锚点 = 出生点；泉水组件（HanbaSpring）只用来判断有没有水花可放。
+    /// 破泉特效（特效打磨 C 路）：泉心先翻涌（水面扰动）、鼓起一个水包，2.2 s 炸开——冲天水柱、一圈往外翻的水冠、三面水幕围着她往上涌、
+    /// 水面荡开大涟漪；升起时身上的水和沙一路往下淌（BodyStreams），出水后脚下一滩湿痕。测试场没有泉水：同样的东西换成沙（沙柱、沙幕、泻沙）。
     /// </summary>
     [Defs]
     public sealed class HanbaIntro : BossIntroScript
@@ -48,18 +50,56 @@ namespace Spiritfire.Game
                 var p = c.Spawn + new Vector3(c.Random(-1.5f, 1.5f), 0.2f, c.Random(-1.5f, 1.5f));
                 Fx.Burst(p, HasSpring(c) ? Water : HanbaDef.Sand, 5, 2.5f, 0.6f, 0.18f, 6f);
             }));
+            // 泉心翻涌（水面扰动）+ 1.6 s 起鼓起一个水包 / 沙包
+            cues.Add(IntroCue.Call(0.5f, "spring churn", c =>
+            {
+                if (HasSpring(c)) c.Bag["churn"] = Fx.WaterChurn(Surface(c), 4.5f, 1.7f, 1.1f);
+            }));
+            cues.Add(IntroCue.Call(1.6f, "spring dome", c =>
+                Surge.Dome(Surface(c), 2.4f, 1.3f, HasSpring(c) ? SurgeKind.Water : SurgeKind.Sand, 0.55f, 0.05f, 0.25f, HasSpring(c) ? WaterBody : null, null)));
             cues.Add(IntroCue.Shake(0.7f, 0.2f, 0.8f));
             cues.Add(IntroCue.Sfx(1.2f, "boss_roar", IntroAnchors.Spawn, 0.45f, 0.5f));
             cues.Add(IntroCue.Shake(1.8f, 0.35f, 0.6f));
-            // 生成那一刻：泉心炸开
+            // 生成那一刻：泉心炸开——冲天水柱、水冠、三面水幕、大涟漪（测试场：沙柱、沙幕）
             cues.Add(IntroCue.Call(2.2f, "spring burst", c =>
             {
                 var at = c.Spawn + Vector3.up * 0.4f;
-                Fx.Burst(at, HasSpring(c) ? Water : HanbaDef.Sand, 40, 9f, 1.0f, 0.32f, 7f);
+                var w = Surface(c);
+                bool spring = HasSpring(c);
+                if (c.Bag.TryGetValue("churn", out var ch) && ch is FxHandle churn) churn.Cancel();
+                if (spring)
+                {
+                    Fx.WaterDisturb(w, 9f, 2f);
+                    Fx.Splash(w, 3.2f, Water);
+                    Fx.WaterSpout(w, 1.7f, 9.5f, 0.9f, Water);
+                }
+                else
+                {
+                    Fx.SandBlast(at, 3.2f);
+                    Surge.Column(c.Spawn, 1.7f, 8.5f, SurgeKind.Sand, 0.3f, 0.8f, 0.8f, null, null, 2f, 0.95f);
+                }
+                // 三面水幕 / 沙幕围着她往上涌（升起的 1.6 s 里一直在，塌下去时正好露出整个人）
+                float y0 = c.Random(0, 360f);
+                for (int i = 0; i < 3; i++)
+                    Surge.Sheet(w, y0 + i * 120f + c.Random(-15f, 15f), 2.4f, 95f, 5.2f, spring ? SurgeKind.Water : SurgeKind.Sand,
+                        0.35f, 0.75f, 0.8f, spring ? WaterBody : null, null, 2.2f, 0.85f);
                 Fx.Burst(at, HanbaDef.Sand, 24, 6f, 1.2f, 0.4f, 3f);
                 Fx.Ring(c.Spawn + Vector3.up * 0.1f, 8f, HanbaDef.Sand, 0.8f);
                 GameAudio.PlayAt("boss_slam", at, 0.7f, 0.6f);
                 CameraShake.Add(0.45f, 0.6f);
+            }));
+            // 身上流泻：升起时一路淌水 + 泻沙（生成后才有模型），出水后脚下一滩湿痕
+            cues.Add(IntroCue.Call(2.25f, "body streams", c =>
+            {
+                var model = c.Boss && c.Boss.Model?.root ? c.Boss.Model.root : c.Boss ? c.Boss.gameObject : null;
+                if (!model) return;
+                if (HasSpring(c)) Fx.BodyStream(model, StreamKind.Water, 4.6f, 120f, Water);
+                Fx.BodyStream(model, StreamKind.Sand, 4.2f, HasSpring(c) ? 45f : 110f);
+            }));
+            cues.Add(IntroCue.Call(3.9f, "wet patch", c =>
+            {
+                if (!HasSpring(c)) Fx.WetPatch(c.Spawn, 3.2f, 7f);
+                else Fx.WaterDisturb(Surface(c), 5f, 0.8f);
             }));
             // 升起时水线上一圈飞溅
             cues.Add(IntroCue.Every(2.25f, 2.2f + RiseSeconds, 0.08f, "rise spray", c =>
@@ -69,6 +109,10 @@ namespace Spiritfire.Game
                 Fx.Burst(p, HasSpring(c) ? Water : HanbaDef.Sand, 6, 4f, 0.7f, 0.2f, 9f);
             }));
             cues.Add(IntroCue.NameCard(4.8f, 2.6f));
+            IntroFx.Wind(this, HanbaDef.Sand);
+            fxShots.Add((2.0f, "dome"));
+            fxShots.Add((2.75f, "burst"));
+            fxShots.Add((3.35f, "curtain"));
 
             onTick = (c, dt) =>
             {
@@ -86,6 +130,19 @@ namespace Spiritfire.Game
                 if (k < 1f) c.OffsetModel(Vector3.down * (RiseDepth * (1f - k)));
                 c.Overlay(Gold, Mathf.Clamp01(1f - fade) * 0.55f);
             };
+        }
+
+        /// <summary>水体体积的本体色（水花色压暗偏青）</summary>
+        static readonly Color WaterBody = new(0.48f, 0.74f, 0.74f, 1);
+
+        /// <summary>泉心的水面（有水体时）/ 出生点</summary>
+        static Vector3 Surface(BossIntroContext c)
+        {
+            if (c.Bag.TryGetValue("surface", out var v)) return (Vector3)v;
+            var p = c.Spawn;
+            if (IntroFx.WaterSurface(p, out float y)) p.y = y;
+            c.Bag["surface"] = p;
+            return p;
         }
 
         /// <summary>场地里有月牙泉的水（1-4）：水花用水色，测试场用沙色。只看水体名字，不去挂 HanbaSpring（那是二阶段的事）</summary>

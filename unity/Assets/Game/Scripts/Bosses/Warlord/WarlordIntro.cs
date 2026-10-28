@@ -9,7 +9,9 @@ namespace Spiritfire.Game
     ///   2.0–3.3 impact  侧面低机位跟拍下坠（看点 = 模型，胶囊不动），2.66 s 落地：熔铜四溅、地面一圈火环、闪屏、短慢动作
     ///   3.3–5.2 roar    略低于头的特写（角盔露全），咆哮，余烬绕身，名字卡
     ///   5.2–6.5         拉回玩家眼睛
-    /// 魔将还没有动作片段（部件骨架，ART8）：下坠、落地、咆哮的身体姿态都缺，这里只有位移和特效。
+    /// 魔将还没有动作片段（部件骨架，ART8）：下坠、落地、咆哮的身体姿态都缺，这里只有位移和特效——
+    /// 下坠靠火尾体积 + 身上三片大火舌 + 甩出的熔铜遮住僵直的姿态，落地是看得清的砸地（尘浪、熔铜冠、熔铜贴花、残火，不再被通用爆炸光整个盖住），
+    /// 咆哮靠肩头火柱 + 脚下残火（WarlordBrain.BeginDropFx / Land / RoarFx）。镜头转场的风见 <see cref="IntroFx.Wind"/>。
     /// </summary>
     [Defs]
     public sealed class WarlordIntro : BossIntroScript
@@ -51,16 +53,17 @@ namespace Spiritfire.Game
             {
                 var sky = c.Spawn + Vector3.up * 30f;
                 Fx.Burst(sky, WarlordDef.Fire, 30, 4f, 0.8f, 0.6f, -1f);
+                Fx.SunFlare(sky, 3.5f, WarlordDef.Fire);
                 Fx.Flash(sky, WarlordDef.Fire, 8f, 30f, 0.5f);
             }));
-            // 落地（生成后 1.04 s）：熔铜四溅
+            // 落地（生成后 1.04 s）：砸地本身在 WarlordBrain.Land；这里再往外甩一圈远一点的熔铜（落在 5–8 m）
             cues.Add(IntroCue.Call(2.66f, "copper splash", c =>
             {
-                for (int i = 0; i < 7; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    float a = i / 7f * Mathf.PI * 2 + c.Random(-0.3f, 0.3f), r = c.Random(1.5f, 4.5f) * Mathf.Max(0.8f, c.Size);
+                    float a = i / 5f * Mathf.PI * 2 + c.Random(-0.4f, 0.4f), r = c.Random(5f, 8f) * Mathf.Max(0.8f, c.Size);
                     var p = c.Spawn + new Vector3(Mathf.Sin(a) * r, 0.3f, Mathf.Cos(a) * r);
-                    Fx.Burst(p, i % 2 == 0 ? Copper : Slag, 14, 9f, 1.1f, 0.24f, 16f);
+                    Fx.MoltenSplash(p, 1.1f, i % 2 == 0 ? Copper : Slag);
                 }
                 Fx.Ring(c.Spawn + Vector3.up * 0.1f, 18f, WarlordDef.Fire, 1f);
                 GameUI.ScreenFlash(new Color(1f, 0.55f, 0.2f, 0.32f), 0.35f);
@@ -80,6 +83,10 @@ namespace Spiritfire.Game
                 Fx.Burst(p, WarlordDef.Embers, 3, 1.4f, 1.1f, 0.1f, -3f);
             }));
             cues.Add(IntroCue.NameCard(3.6f, 2.5f));
+            IntroFx.Wind(this, WarlordDef.Embers);
+            fxShots.Add((2.3f, "fall"));
+            fxShots.Add((2.7f, "slam"));
+            fxShots.Add((3.1f, "after"));
         }
     }
 }

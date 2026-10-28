@@ -39,7 +39,8 @@ namespace Spiritfire.Game
             if (!float.IsNegativeInfinity(gy))
             {
                 var g = new Vector3(at.x, gy, at.z);
-                Surge.Crown(g, radius * 0.6f, radius * 0.75f, SurgeKind.Molten, 0.75f);
+                // 冠要矮而宽：落在身体外圈，不盖住砸下来的身体
+                Surge.Crown(g, radius * 0.75f, radius * 0.42f, SurgeKind.Molten, 0.75f);
                 if (decal) MoltenSplat(g, radius * 1.1f, 1f, 9f);
             }
             return h;
@@ -77,6 +78,41 @@ namespace Spiritfire.Game
         /// <summary>身上流泻：model 上挂 duration 秒的水 / 沙 / 熔浆往下淌（刚出来哗哗地淌，慢慢只剩几滴）</summary>
         public static BodyStreams BodyStream(GameObject model, StreamKind kind, float duration, float rate = 60f, Color? color = null) =>
             BodyStreams.Attach(model, kind, duration, rate, color);
+
+        /// <summary>
+        /// 一阵风（镜头转场的风声的视觉部分）：在 eye 前方 2.5–10 m 的一片里，淡色风线沿 sweep 方向横扫过去 + 几缕尘 / 雪 / 火星。
+        /// tint = 场地色（沙黄 / 冰白 / 余烬橙），strength 0..1.5 管数量
+        /// </summary>
+        public static void WindGust(Vector3 eye, Vector3 forward, Vector3 sweep, Color tint, float strength = 1f)
+        {
+            if (!Finite(eye) || !Finite(forward) || !Finite(sweep) || sweep.sqrMagnitude < 1e-4f) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            forward = forward.normalized;
+            sweep = sweep.normalized;
+            var right = Vector3.Cross(Vector3.up, forward).normalized;
+            if (right.sqrMagnitude < 0.5f) right = Vector3.right;
+            int n = FxBudget.Allow(Mathf.RoundToInt(28 * strength * Density), false);
+            var streak = rt.GetEmitter("Spray");
+            var line = new Color(Mathf.Lerp(tint.r, 1, 0.55f), Mathf.Lerp(tint.g, 1, 0.55f), Mathf.Lerp(tint.b, 1, 0.55f), 0.32f);
+            for (int i = 0; streak != null && i < n; i++)
+            {
+                var p = eye + forward * Random.Range(2.5f, 10f) + right * Random.Range(-5f, 5f) + Vector3.up * Random.Range(-1.6f, 2.2f) - sweep * Random.Range(1f, 4f);
+                var v = sweep * Random.Range(18f, 30f) + Vector3.up * Random.Range(-0.5f, 1.5f);
+                rt.EmitOne(streak, p, v, Random.Range(0.025f, 0.05f), Random.Range(0.22f, 0.38f), line, 0);
+            }
+            // 几缕尘 / 雪团跟着风滚过去
+            int m = FxBudget.Allow(Mathf.RoundToInt(5 * strength * Density), false);
+            bool cold = tint.b > tint.r;
+            var dust = rt.GetEmitter(cold ? "Powder" : "Dust");
+            var dc = tint;
+            dc.a = 0.55f;
+            for (int i = 0; dust != null && i < m; i++)
+            {
+                var p = eye + forward * Random.Range(4f, 11f) + right * Random.Range(-5f, 5f) + Vector3.up * Random.Range(-2f, 0.5f) - sweep * 3f;
+                rt.EmitOne(dust, p, sweep * Random.Range(6f, 11f), Random.Range(0.7f, 1.3f), Random.Range(0.5f, 0.8f), dc, 0);
+            }
+        }
 
         /// <summary>水体体积的本体色：水花色压暗、偏青一点（体积是一整片，原色铺满会发白）</summary>
         static Color WaterBody(Color c) => new(c.r * 0.6f, c.g * 0.82f, c.b * 0.88f, 1);

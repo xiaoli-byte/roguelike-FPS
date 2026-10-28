@@ -842,7 +842,12 @@ namespace Spiritfire.Game
                 introRoared = true;
                 PlayAct("rear", 1.2f);
                 PlaySfx("boss_roar", 1f, 0.8f);
-                Fx.Ring(OnFloor(transform.position) + Vector3.up * 0.1f, 12f, QilinDef.Warn, 1f);
+                var floor = OnFloor(transform.position);
+                Fx.Ring(floor + Vector3.up * 0.1f, 12f, QilinDef.Warn, 1f);
+                // 落地：溅一圈熔浆、地上留一滩冷却的熔铜（带出来的熔浆）
+                Fx.MoltenBurst(floor + Vector3.up * 0.3f, 2.4f, false);
+                Fx.MoltenSplat(floor, 3.6f, 1f, 10f);
+                Fx.Slam(floor, 3f, Hex.Rgb(0x4a3028));
                 Shake(0.6f, 1f);
             }
         }

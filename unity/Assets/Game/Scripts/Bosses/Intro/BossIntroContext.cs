@@ -17,6 +17,8 @@ namespace Spiritfire.Game
         public BossEncounter Encounter { get; internal set; }
         public BossArena Arena { get; internal set; }
         public BossDef Def { get; internal set; }
+        /// <summary>演出镜头（导演开着时；预览 / 测试里为 null）——镜头转场的风这类贴着镜头的特效用</summary>
+        public Camera Camera => director ? director.Camera : null;
         /// <summary>首领（生成前为 null）</summary>
         public BossBrain Boss { get; private set; }
         /// <summary>演出开始后的秒数（游戏时间）</summary>

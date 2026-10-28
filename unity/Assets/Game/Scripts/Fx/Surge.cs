@@ -229,7 +229,7 @@ namespace Spiritfire.Game
                 SurgeShape.Crown => (12f, 1.4f, 0.3f, 0.55f, 0.05f, 0.4f),
                 SurgeShape.Sheet => (Mathf.Max(4f, arc / 12f), 1.8f, 0.25f, 0.62f, 0.05f, 0.35f),
                 SurgeShape.Disk => (14f, 1.6f, 0.04f, 0.8f, 0.25f, 0f),
-                SurgeShape.Trail => (5f, 1.6f, 0.4f, 0.3f, 0.02f, 0.2f),
+                SurgeShape.Trail => (5f, 1.6f, 0.1f, 0.3f, 0.02f, 0.2f),
                 _ => (9f, 1.6f, 0.5f, 0.85f, 0.02f, 0.5f),
             };
             s.p2 = new Vector4(nu, nv, soft, s.add);
@@ -299,7 +299,8 @@ namespace Spiritfire.Game
                 var back = speed > 0.5f ? -s.vel / speed : Vector3.up;
                 t.SetPositionAndRotation(p, Quaternion.FromToRotation(Vector3.up, back));
                 float r = s.radius * Mathf.Lerp(0.6f, 1f, k);
-                t.localScale = new Vector3(r, Mathf.Max(0.05f, len * k), r);
+                // 收尾时长度跟着一起缩（落地那一下火尾不能还竖在头顶）
+                t.localScale = new Vector3(r, Mathf.Max(0.05f, len * k * end * end), r);
                 alpha = s.alpha * k * end;
                 dis = 1 - end;
                 Write(s, alpha, dis);
@@ -376,7 +377,8 @@ namespace Spiritfire.Game
 
         const int Segs = 24, Rings = 10;
 
-        static Mesh MeshFor(SurgeShape shape, int arc)
+        /// <summary>某种形状的单位网格（QilinFx 这类常驻、自己驱动的体积借用）</summary>
+        internal static Mesh MeshFor(SurgeShape shape, int arc = 0)
         {
             int key = (int)shape * 1000 + arc;
             if (meshes.TryGetValue(key, out var m) && m) return m;

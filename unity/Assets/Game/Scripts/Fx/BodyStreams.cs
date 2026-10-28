@@ -18,11 +18,12 @@ namespace Spiritfire.Game
     /// 身上流泻（特效打磨 C 路：首领出水 / 出熔池后身上淌下来的水、沙、熔浆）。挂到模型上 duration 秒：
     /// 每帧从模型的骨骼（没有骨骼就从渲染器包围盒表面）随机挑点往下发粒子，频率随时间衰减（刚出来时哗哗地淌，最后只剩零星几滴）。
     /// 粒子走共享发射器（Drop / Spray / Grit / Dust / Molten / Cinder / Powder），数量乘画质密度、过 <see cref="FxBudget"/>。
-    /// 首领被销毁、组件被移除时自然停止；同一个模型重复挂会刷新时长。
+    /// 每种流泻是模型下一个子物体（「BodyStreams 水 / 沙 / 熔浆」），同一个模型可以同时淌水又泻沙；同一种重复挂会刷新时长。首领被销毁时自然停止。
     /// </summary>
     public sealed class BodyStreams : MonoBehaviour
     {
         StreamKind kind;
+        Transform source;
         float age, duration, rate, acc, mistAcc;
         Color color;
         readonly List<Transform> points = new();
@@ -34,7 +35,15 @@ namespace Spiritfire.Game
         public static BodyStreams Attach(GameObject model, StreamKind kind, float duration, float rate = 60f, Color? color = null)
         {
             if (!model || !(duration > 0) || !Application.isPlaying) return null;
-            if (!model.TryGetComponent(out BodyStreams s)) s = model.AddComponent<BodyStreams>();
+            string name = "BodyStreams " + kind;
+            var child = model.transform.Find(name);
+            if (!child)
+            {
+                child = new GameObject(name).transform;
+                child.SetParent(model.transform, false);
+            }
+            if (!child.TryGetComponent(out BodyStreams s)) s = child.gameObject.AddComponent<BodyStreams>();
+            s.source = model.transform;
             s.kind = kind;
             s.age = 0;
             s.duration = duration;
@@ -55,7 +64,8 @@ namespace Spiritfire.Game
         void Collect()
         {
             points.Clear();
-            renderers = GetComponentsInChildren<Renderer>(false);
+            var root = source ? source : transform;
+            renderers = System.Array.FindAll(root.GetComponentsInChildren<Renderer>(false), r => r is MeshRenderer or SkinnedMeshRenderer);
             foreach (var r in renderers)
                 if (r is SkinnedMeshRenderer sk && sk.bones != null)
                     foreach (var b in sk.bones)
@@ -123,7 +133,7 @@ namespace Spiritfire.Game
         /// <summary>挑一个发射点：骨骼位置（离身体中心往外 5 cm），没有骨骼时在渲染器包围盒的侧面上随机取</summary>
         bool Pick(out Vector3 p, out Vector3 outward)
         {
-            var center = transform.position;
+            var center = source ? source.position : transform.position;
             if (renderers != null && renderers.Length > 0 && renderers[0]) center = renderers[0].bounds.center;
             for (int tries = 0; tries < 4; tries++)
             {

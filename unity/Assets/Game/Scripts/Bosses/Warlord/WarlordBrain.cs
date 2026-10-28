@@ -45,6 +45,9 @@ namespace Spiritfire.Game
         int dirStep;
         bool prevWall, roared, rigged;
         float ambientAcc, fxAcc;
+        // 登场下坠的火尾（锥尾体积 + 挂在身上的火舌 + 甩出去的熔铜）：落地时收掉
+        FxHandle dropTrail;
+        readonly System.Collections.Generic.List<FlameTongue> dropFlames = new();
         Renderer[] lookRenderers;
         MaterialPropertyBlock lookBlock;
         /// <summary>前摇亮度（0..1，进前摇快升、出前摇慢落；测试 / 调试读）</summary>
@@ -323,11 +326,13 @@ namespace Spiritfire.Game
             if (!Landed)
             {
                 SetDrop(d.dropHeight * (1 - fall * fall));
+                if (!dropTrail.Alive && dropFlames.Count == 0) BeginDropFx();
+                // 下坠时往后甩的火星（火尾体积和火舌是主体，这里只是碎屑）
                 fxAcc += dt;
-                if (fxAcc >= 0.03f)
+                if (fxAcc >= 0.05f)
                 {
                     fxAcc = 0;
-                    Fx.Burst(transform.position + Vector3.up * (DropNow + 1.5f), WarlordDef.Fire, 6, 3f, 0.5f, 0.2f, -2f);
+                    Fx.Burst(transform.position + Vector3.up * (DropNow + 1.5f), WarlordDef.Embers, 3, 2.5f, 0.6f, 0.14f, -3f);
                 }
                 if (fall >= 1f) Land();
             }
@@ -337,7 +342,47 @@ namespace Spiritfire.Game
                 Act("roar", 1.2f);
                 PlaySfx("boss_roar");
                 Shake(0.45f, 0.8f);
+                RoarFx();
             }
+        }
+
+        /// <summary>
+        /// 下坠的火（魔将没有下坠动作片段，靠特效遮）：一条从身上拖到天上的火尾（锥尾体积，长度随速度、最长 14 m）、
+        /// 头肩和身后三片大火舌（火苗永远往上窜 = 往下坠时正好拖在身后）、往外甩的熔铜滴
+        /// </summary>
+        void BeginDropFx()
+        {
+            var root = Model?.root ? Model.root.transform : transform;
+            float s = Mathf.Max(0.01f, Model?.scale ?? 1f);
+            dropTrail = Surge.Trail(root, Vector3.up * 2.2f, 1.7f, 14f, SurgeKind.Fire, 3f);
+            var spots = new[] { new Vector3(0, 3.4f, -0.2f), new Vector3(-0.9f, 2.7f, -0.4f), new Vector3(0.9f, 2.7f, -0.4f) };
+            var sizes = new[] { new Vector3(3.2f, 5.5f, 3.2f), new Vector3(2.2f, 3.8f, 2.2f), new Vector3(2.2f, 3.8f, 2.2f) };
+            for (int i = 0; i < spots.Length; i++)
+            {
+                var ft = FlameTongue.Attach(root, spots[i] / s, sizes[i]);
+                if (ft) dropFlames.Add(ft);
+            }
+            Fx.BodyStream(root.gameObject, StreamKind.Molten, 1.4f, 70f);
+        }
+
+        void EndDropFx()
+        {
+            dropTrail.Cancel();
+            foreach (var f in dropFlames)
+                if (f)
+                    Destroy(f.gameObject);
+            dropFlames.Clear();
+        }
+
+        /// <summary>咆哮（没有咆哮动作片段，靠特效撑）：肩头两道火柱窜起、胸口一圈热浪、脚下一圈残火</summary>
+        void RoarFx()
+        {
+            var c = BodyCenter;
+            var right = transform.right;
+            Fx.FlamePillar(c + Vector3.up * 1.1f + right * 0.9f, 0.35f, 2.6f);
+            Fx.FlamePillar(c + Vector3.up * 1.1f - right * 0.9f, 0.35f, 2.6f);
+            Fx.Ring(transform.position + Vector3.up * 0.15f, 7f, WarlordDef.Fire, 0.6f);
+            FlameTongues.Ground(transform.position, BodyRadius + 1.4f, 8, 2.4f, 0.9f);
         }
 
         void Land()
@@ -346,9 +391,21 @@ namespace Spiritfire.Game
             SetDrop(0);
             var floor = transform.position;
             Act("land", 0.7f);
-            Fx.Explosion(floor + Vector3.up * 0.5f, 6f, WarlordDef.Fire);
+            EndDropFx();
+            // 看得清的砸地（不再是一团盖住全身的通用爆炸光）：贴地尘浪 + 碎石 + 裂痕、熔铜冠 + 四溅的熔铜、一大滩熔铜贴花、一圈残火，
+            // 闪光压低贴地，落地的身体始终在画面里
+            Fx.Slam(floor, 6f, Hex.Rgb(0x4a3a30));
+            Fx.MoltenBurst(floor + Vector3.up * 0.4f, 3.2f, false);
+            Fx.MoltenSplat(floor, 6.5f, 1f, 14f);
+            for (int i = 0; i < 6; i++)
+            {
+                float a = i / 6f * Mathf.PI * 2 + UnityEngine.Random.Range(-0.3f, 0.3f), r = UnityEngine.Random.Range(2.6f, 5f);
+                Fx.MoltenSplash(floor + new Vector3(Mathf.Sin(a) * r, 0.2f, Mathf.Cos(a) * r), 1.3f);
+            }
+            FlameTongues.Ground(floor, 3.8f, 9, 2.4f, 0.6f);
+            Fx.Flash(floor + Vector3.up * 0.4f, WarlordDef.Fire, 7f, 16f, 0.3f);
             Fx.Ring(floor + Vector3.up * 0.1f, 14f, WarlordDef.Fire, 0.9f);
-            Fx.Burst(floor + Vector3.up * 0.3f, WarlordDef.Embers, 50, 12f, 1.2f, 0.25f, 12f);
+            Fx.Burst(floor + Vector3.up * 0.3f, WarlordDef.Embers, 30, 10f, 1.2f, 0.2f, 12f);
             Shake(1f, 0.8f);
             PlaySfx("boss_slam");
             PlaySfx("explosion", 1f, 0.6f);

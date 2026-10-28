@@ -10,6 +10,8 @@ namespace Spiritfire.Game
     ///   4.3–6.2 pearl   仰拍头部和额前的鲛珠（弱点），名字卡
     ///   6.2–7.6         拉回玩家眼睛
     /// 锚点：hole = 冰窟圆心（水面高度），breach = 鲲升起的位置（出生点那一侧、离圆心 KunRing，水面高度）——都按 <see cref="IceHole.Resolve"/>，测试场里是虚拟冰窟。
+    /// 破冰特效（特效打磨 C 路）：冰窟水面翻涌（水面扰动）、破水点上转起白沫漩涡、鼓起一个大水包；2.15 s 破水——冲天水柱、水冠、
+    /// 四面水墙围着鲲往上涌、水面荡开大涟漪、白沫；出水后身上一路淌水（BodyStreams）。镜头转场的风见 <see cref="IntroFx.Wind"/>。
     /// </summary>
     [Defs]
     public sealed class KunPengIntro : BossIntroScript
@@ -62,6 +64,21 @@ namespace Spiritfire.Game
                 float a = c.Random(0, Mathf.PI * 2), r = c.Random(0.2f, 0.7f) * h.radius;
                 Fx.Ring(new Vector3(h.center.x + Mathf.Sin(a) * r, h.waterY + 0.05f, h.center.z + Mathf.Cos(a) * r), c.Random(2.5f, 4.5f), KunPengDef.Warn, 0.9f);
             }));
+            // 冰窟水面翻涌（D 路水面扰动）+ 破水点上的白沫漩涡（越转越快、往里收）+ 外圈一圈慢转的白沫
+            cues.Add(IntroCue.Call(0.3f, "churn", c =>
+            {
+                var h = Info(c);
+                c.Bag["churn"] = Fx.WaterChurn(c.Anchor(Hole), Mathf.Max(6f, h.radius * 0.7f), 1.85f, 1.2f);
+            }));
+            cues.Add(IntroCue.Call(0.6f, "whirlpool", c =>
+            {
+                var b = c.Anchor(Breach) + Vector3.up * 0.06f;
+                Surge.Disk(b, 5.5f, SurgeKind.Water, 1.75f, 150f, -1.4f, 0.75f, WaterBody, Foam, 0.85f);
+                Surge.Disk(b - Vector3.up * 0.02f, 9f, SurgeKind.Water, 1.9f, -50f, -0.6f, 1f, WaterBody, Foam, 0.5f);
+            }));
+            // 破水前一刻水面鼓起
+            cues.Add(IntroCue.Call(1.55f, "dome", c =>
+                Surge.Dome(c.Anchor(Breach), 4.2f, 1.9f, SurgeKind.Water, 0.55f, 0.05f, 0.25f, WaterBody, Foam)));
             cues.Add(IntroCue.Shake(0.8f, 0.2f, 0.8f));
             cues.Add(IntroCue.Sfx(0.9f, "boss_roar", Hole, 0.5f, 0.45f));
             cues.Add(IntroCue.Shake(1.7f, 0.35f, 0.6f));
@@ -69,6 +86,15 @@ namespace Spiritfire.Game
             cues.Add(IntroCue.Call(2.15f, "breach", c =>
             {
                 var at = c.Anchor(Breach) + Vector3.up * 0.3f;
+                var w = c.Anchor(Breach);
+                if (c.Bag.TryGetValue("churn", out var ch) && ch is FxHandle churn) churn.Cancel();
+                Fx.WaterDisturb(w, 12f, 2f);
+                Fx.Splash(w, 4.5f, Fx.NorthSea);
+                Fx.WaterSpout(w, 2.6f, 15f, 0.45f, Fx.NorthSea);
+                // 四面水墙围着鲲往上涌
+                float y0 = c.Random(0, 360f);
+                for (int i = 0; i < 4; i++)
+                    Surge.Sheet(w, y0 + i * 90f + c.Random(-12f, 12f), 5.5f, 75f, 6.5f, SurgeKind.Water, 0.4f, 0.5f, 0.8f, WaterBody, Foam, 2.4f, 0.8f);
                 Fx.Burst(at, Foam, 60, 12f, 1.2f, 0.36f, 9f);
                 Fx.Burst(at, KunPengDef.Ice, 30, 7f, 1.4f, 0.5f, 5f);
                 Fx.Ring(at, 10f, KunPengDef.Warn, 1f);
@@ -82,9 +108,23 @@ namespace Spiritfire.Game
                 var p = c.Anchor(Breach) + new Vector3(Mathf.Sin(a) * r, 0.2f, Mathf.Cos(a) * r);
                 Fx.Burst(p, Foam, 5, 5f, 0.8f, 0.25f, 10f);
             }));
+            // 出水后身上一路淌水
+            cues.Add(IntroCue.Call(2.3f, "body streams", c =>
+            {
+                var model = c.Boss && c.Boss.Model?.root ? c.Boss.Model.root : c.Boss ? c.Boss.gameObject : null;
+                if (model) Fx.BodyStream(model, StreamKind.Water, 5.5f, 170f, Fx.NorthSea);
+            }));
             cues.Add(IntroCue.SlowMo(3.0f, 0.4f, 0.35f));
             cues.Add(IntroCue.NameCard(4.5f, 2.5f));
+            IntroFx.Wind(this, FrostPalette.Snow);
+            fxShots.Add((1.2f, "whirlpool"));
+            fxShots.Add((2.0f, "dome"));
+            fxShots.Add((2.5f, "breach"));
+            fxShots.Add((3.5f, "streams"));
         }
+
+        /// <summary>北冥的水体体积色（深青蓝）</summary>
+        static readonly Color WaterBody = new(0.36f, 0.66f, 0.82f, 1);
 
         static IceHoleInfo Info(BossIntroContext c)
         {

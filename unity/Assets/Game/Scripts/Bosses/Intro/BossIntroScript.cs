@@ -220,6 +220,8 @@ namespace Spiritfire.Game
         public string epithet;
         public readonly List<IntroShot> shots = new();
         public readonly List<IntroCue> cues = new();
+        /// <summary>特效关键帧（演出开始后的秒数 + 名字）：boss-intro 套件在这些时刻额外各拍一张（看破水 / 砸地这类一闪而过的特效），不影响演出</summary>
+        public readonly List<(float at, string name)> fxShots = new();
         /// <summary>脚本自己的锚点（返回 null = 退回首领出生点）</summary>
         public readonly Dictionary<string, Func<BossIntroContext, Vector3?>> anchors = new();
         /// <summary>开始 / 每帧（Update 里，dt = 游戏时间）/ 结束（正常结束、跳过、被打断都会调一次：撤掉临时改动）</summary>

@@ -271,6 +271,7 @@ namespace Spiritfire.Game.Testing
             if (script.Id != id) Fail($"{id} 用的是演出「{script.Id}」，不是专属的");
             BossBrain boss = null;
             var shotTaken = new HashSet<int>();
+            var fxTaken = new HashSet<string>();
             int lastShot = -1;
             bool skipTried = false;
             float t0 = Time.time;
@@ -320,6 +321,15 @@ namespace Spiritfire.Game.Testing
                         yield return Snapshot($"intro_{tag}_{d.ShotIndex + 1}_{shot.name}");
                     }
                 }
+                // 特效关键帧：脚本登记的时刻（破水、砸地这类一闪而过的）
+                if (mode == Mode.Full && d.Phase == BossIntroDirector.Stage.Shots)
+                    foreach (var fs in script.fxShots)
+                        if (d.Elapsed >= fs.at && fxTaken.Add(fs.name))
+                        {
+                            rec.shots++;
+                            yield return Snapshot($"intro_{tag}_fx_{fs.name}");
+                            break;
+                        }
                 if (mode == Mode.Skip && !skipTried && d.RealElapsed >= 0.3f)
                 {
                     skipTried = true;

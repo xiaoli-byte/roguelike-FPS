@@ -10,6 +10,8 @@ namespace Spiritfire.Game
     ///   3.8–5.7 rear    仰拍人立长啸的麒麟，巨鼎在它头顶后方，名字卡
     ///   5.7–7.0         拉回玩家眼睛
     /// 锚点：pool = 熔池圆心（QilinFurnace；测试场里首领生成时才建，之前退回场地中心——两者重合），cauldron = 吊鼎的鼎身（没有就熔池上方 7.2 m）。
+    /// 跃出熔池的特效（特效打磨 C 路）：熔池炸开一圈熔浆冠 + 四溅的熔滴，熔岩柱是流动的熔浆体积（QilinFx）；跃起时身上一路往下滴熔浆、
+    /// 身后甩出一道熔浆尾，落地溅一圈熔浆、地上留一滩冷却的熔铜（QilinBrain.IntroTick）。镜头转场的风见 <see cref="IntroFx.Wind"/>。
     /// </summary>
     [Defs]
     public sealed class QilinIntro : BossIntroScript
@@ -77,16 +79,29 @@ namespace Spiritfire.Game
             cues.Add(IntroCue.Call(2.0f, "eruption", c =>
             {
                 var at = c.Anchor(Pool) + Vector3.up * 0.3f;
-                Fx.Burst(at, QilinDef.Fire, 50, 10f, 1.0f, 0.32f, 8f);
+                Fx.MoltenBurst(at, 3.6f, false);
+                Surge.Crown(c.Anchor(Pool), PoolRadius(c) * 0.45f, 3.6f, SurgeKind.Molten, 0.9f);
                 Fx.Burst(at, QilinDef.Hot, 24, 6f, 1.2f, 0.45f, 4f);
                 GameAudio.PlayAt("explosion", at, 0.7f, 0.6f);
                 CameraShake.Add(0.4f, 0.6f);
             }));
-            cues.Add(IntroCue.Every(2.4f, 3.4f, 0.06f, "lava drips", c =>
-                Fx.Burst(c.Anchor(IntroAnchors.Model), QilinDef.Fire, 5, 2.5f, 0.6f, 0.2f, 12f)));
+            // 跃起：身上一路往下滴熔浆（BodyStreams）+ 身后甩出一道熔浆尾（跟着模型，落地前收掉）
+            cues.Add(IntroCue.Call(2.05f, "lava streams", c =>
+            {
+                var model = c.Boss && c.Boss.Model?.root ? c.Boss.Model.root : c.Boss ? c.Boss.gameObject : null;
+                if (!model) return;
+                Fx.BodyStream(model, StreamKind.Molten, 3.6f, 120f);
+                Surge.Trail(model.transform, Vector3.up * 1.6f, 0.9f, 6f, SurgeKind.Molten, 1.35f);
+            }));
+            cues.Add(IntroCue.Every(2.4f, 3.4f, 0.12f, "lava drips", c =>
+                Fx.MoltenSplash(c.Anchor(IntroAnchors.Model), 0.8f)));
             cues.Add(IntroCue.SlowMo(2.9f, 0.4f, 0.3f));
             cues.Add(IntroCue.Call(2.95f, "cauldron swing", c => FindCauldron(c)?.Rattle(4f)));
             cues.Add(IntroCue.NameCard(4.0f, 2.5f));
+            IntroFx.Wind(this, QilinDef.Hot);
+            fxShots.Add((2.2f, "eruption"));
+            fxShots.Add((2.9f, "leap"));
+            fxShots.Add((3.5f, "land"));
         }
 
         static QilinCauldron FindCauldron(BossIntroContext c)
