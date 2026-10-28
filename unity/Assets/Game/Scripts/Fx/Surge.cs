@@ -143,12 +143,16 @@ namespace Spiritfire.Game
             Spawn(SurgeShape.Crown, kind, ground, Quaternion.Euler(0, Random.value * 360f, 0), radius, height, life * 0.22f, life * 0.18f, life * 0.6f, 2.2f, 0, 1.5f,
                 true, a, b, alpha);
 
-        /// <summary>弧幕（水墙、冰浪、沙幕）：中心 center、朝 yaw（弧在 center 前方 radius 米处），arcDeg 度的一段弧，高 height</summary>
+        /// <summary>
+        /// 弧幕（水墙、冰浪、沙幕）：中心 center、朝 yaw（弧在 center 前方 radius 米处），arcDeg 度的一段弧，高 height；
+        /// grow &gt; 1 = 整个寿命里半径线性放大到 radius × grow（跟着冲击波前沿往外推的浪 / 沙墙：grow = 1 + 射程 / 起始半径）
+        /// </summary>
         public static FxHandle Sheet(Vector3 center, float yaw, float radius, float arcDeg, float height, SurgeKind kind, float rise, float hold, float fall,
-            Color? a = null, Color? b = null, float flow = 1.4f, float alpha = 1f)
+            Color? a = null, Color? b = null, float flow = 1.4f, float alpha = 1f, float grow = 1f)
         {
             int arc = Mathf.Clamp(Mathf.RoundToInt(arcDeg / 15f) * 15, 15, 360);
-            return Spawn(SurgeShape.Sheet, kind, center, Quaternion.Euler(0, yaw, 0), radius, height, rise, hold, fall, flow, 0, 1f, true, a, b, alpha, arc);
+            return Spawn(SurgeShape.Sheet, kind, center, Quaternion.Euler(0, yaw, 0), radius, height, rise, hold, fall, flow, 0, Mathf.Max(0.1f, grow), grow <= 1f, a, b,
+                alpha, arc);
         }
 
         /// <summary>圆盘（水面漩涡、白沫圈）：外半径 outer、life 秒，spin 度 / 秒地转，flow 负 = 往中心收；grow = 寿命里外半径放大到几倍</summary>
@@ -158,6 +162,32 @@ namespace Spiritfire.Game
             float rise = Mathf.Min(0.35f, life * 0.25f), fall = Mathf.Min(0.8f, life * 0.35f);
             return Spawn(SurgeShape.Disk, kind, center, Quaternion.Euler(0, Random.value * 360f, 0), outer, 1f, rise, Mathf.Max(0, life - rise - fall), fall, flow,
                 spin, grow, false, a, b, alpha);
+        }
+
+        /// <summary>
+        /// 平放的窄环带（扇翼狂风的冻风带、贴地旋转的风环）：inner..outer 米、life 秒，spin 度 / 秒地转，flow 正 = 条纹往外走
+        /// </summary>
+        public static FxHandle Annulus(Vector3 center, float inner, float outer, SurgeKind kind, float life, float spin = 120f, float flow = 0.8f,
+            Color? a = null, Color? b = null, float alpha = 0.7f)
+        {
+            if (!(outer > 0)) return FxHandle.None;
+            int frac = Mathf.Clamp(Mathf.RoundToInt(Mathf.Clamp01(inner / outer) * 20f), 1, 19) * 5;
+            float rise = Mathf.Min(0.4f, life * 0.2f), fall = Mathf.Min(0.6f, life * 0.25f);
+            return Spawn(SurgeShape.Disk, kind, center, Quaternion.Euler(0, Random.value * 360f, 0), outer, 1f, rise, Mathf.Max(0, life - rise - fall), fall, flow, spin,
+                1f, false, a, b, alpha, frac);
+        }
+
+        /// <summary>
+        /// 锥（吞吸的气流漏斗、吐息）：尖在 apex，朝 dir 张开 length 米、口径 radius；flow 正 = 条纹从口往尖走（吸进去），负 = 往外喷
+        /// </summary>
+        public static FxHandle Cone(Vector3 apex, Vector3 dir, float length, float radius, SurgeKind kind, float rise, float hold, float fall, Color? a = null,
+            Color? b = null, float flow = 2f, float alpha = 0.6f)
+        {
+            if (!Fx.Finite(apex) || !Fx.Finite(dir) || dir.sqrMagnitude < 1e-6f || !(length > 0)) return FxHandle.None;
+            dir = dir.normalized;
+            // 锥尾网格：底（v = 0，半径 1）在原点、尖（v = 1）在 +y：底放在口上、+y 朝尖
+            return Spawn(SurgeShape.Trail, kind, apex + dir * length, Quaternion.FromToRotation(Vector3.up, -dir), radius, length, rise, hold, fall, flow, 0, 1f,
+                false, a, b, alpha);
         }
 
         /// <summary>穹顶（破水前水面隆起）：rise 秒鼓起到 height、停 hold、fall 秒里塌掉</summary>
@@ -172,7 +202,7 @@ namespace Spiritfire.Game
             float alpha = 1f)
         {
             if (!follow) return FxHandle.None;
-            var h = Spawn(SurgeShape.Trail, kind, follow.position + offset, Quaternion.identity, radius, 0.01f, 0.08f, 1e4f, 0.3f, 2.4f, 0, 1f, false, a, b, alpha);
+            var h = Spawn(SurgeShape.Trail, kind, follow.position + offset, Quaternion.identity, radius, 0.01f, 0.08f, 1e4f, 0.18f, 2.4f, 0, 1f, false, a, b, alpha);
             var s = instance ? instance.LastSpawned : null;
             if (s != null && h.Alive)
             {
@@ -384,7 +414,7 @@ namespace Spiritfire.Game
             if (meshes.TryGetValue(key, out var m) && m) return m;
             m = shape switch
             {
-                SurgeShape.Disk => BuildDisk(0.22f),
+                SurgeShape.Disk => BuildDisk(arc > 0 ? arc / 100f : 0.22f),
                 SurgeShape.Sheet => BuildSheet(arc),
                 _ => BuildRevolve(shape),
             };

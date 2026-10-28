@@ -68,6 +68,7 @@ namespace Spiritfire.Game.Testing
             yield return TrailCase();
             yield return Streams();
             yield return Flare();
+            yield return Enemies();
 
             Line($"高画质同屏粒子峰值 {FxBudget.Peak}，被预算砍掉 {FxBudget.Dropped}");
             Destroy(go);
@@ -234,6 +235,100 @@ namespace Spiritfire.Game.Testing
             View(p, 12f, 1f);
             Shot(spec, "fxboss_flare");
             yield return new WaitForSeconds(0.6f);
+        }
+
+        /// <summary>
+        /// 普通怪图集里没截到的几招（要先打碎弱点才会出）：直接调它们的出招入口（反射），拍前摇和出手——
+        /// 狐巫狐火（尾尖蓄火 → 三团狐火炸开放出）、马面重拳（拳上蓄火 → 冲击球）、傩巫碎面、熔铜匠裂锅、炮仗傀儡哑炸
+        /// </summary>
+        IEnumerator Enemies()
+        {
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public;
+            bool Call(object o, string method, params object[] args)
+            {
+                var m = o?.GetType().GetMethod(method, flags);
+                if (m == null)
+                {
+                    Fail($"enemies：{o?.GetType().Name} 没有方法 {method}");
+                    return false;
+                }
+                m.Invoke(o, args);
+                return true;
+            }
+
+            EnemyAI Spawn(string id, Vector3 at)
+            {
+                var ai = EnemyRoster.Spawn(id, at, Quaternion.LookRotation(-fwd), 1f, false);
+                if (!ai) Fail($"enemies：名册里没有 {id}");
+                return ai;
+            }
+
+            // 狐巫：狐火
+            var fox = Spawn("fox_witch", At(8f, -2f));
+            yield return new WaitForSeconds(1.2f);
+            if (fox && Call(fox, "BeginCast", "foxfireWindup", 0.9f))
+            {
+                yield return new WaitForSeconds(0.55f);
+                View(fox.transform.position, 4.5f, 1.6f);
+                Shot(spec, "fxboss_enemy_foxfire_wind");
+                float t0 = Time.time;
+                while (fox && fox.State == "foxfireWindup" && Time.time - t0 < 2f) yield return null;
+                yield return new WaitForSeconds(0.06f);
+                Shot(spec, "fxboss_enemy_foxfire_cast");
+            }
+            if (fox) Destroy(fox.gameObject);
+
+            // 马面：重拳（贴着玩家，直接进出拳前摇）
+            var mm = Spawn("mamian", At(2.6f, 0));
+            yield return new WaitForSeconds(1.2f);
+            if (mm && Call(mm, "SetState", "punchWind"))
+            {
+                yield return new WaitForSeconds(0.3f);
+                View(mm.transform.position, 5f, 1.4f);
+                Shot(spec, "fxboss_enemy_punch_wind");
+                float t0 = Time.time;
+                while (mm && mm.State == "punchWind" && Time.time - t0 < 2f) yield return null;
+                yield return new WaitForSeconds(0.05f);
+                View(mm.transform.position, 5f, 1.4f);
+                Shot(spec, "fxboss_enemy_punch_hit");
+            }
+            if (mm) Destroy(mm.gameObject);
+
+            // 傩巫：碎面
+            var nuo = Spawn("nuo", At(7f, 2f));
+            yield return new WaitForSeconds(1.2f);
+            if (nuo && Call(nuo, "BreakFace"))
+            {
+                yield return new WaitForSeconds(0.08f);
+                View(nuo.transform.position, 4.5f, 1.2f);
+                Shot(spec, "fxboss_enemy_nuo_break");
+            }
+            if (nuo) Destroy(nuo.gameObject);
+
+            // 熔铜匠：裂锅
+            var founder = Spawn("founder", At(7f, -2f));
+            yield return new WaitForSeconds(1.2f);
+            if (founder && Call(founder, "CrackCrucible"))
+            {
+                yield return new WaitForSeconds(0.12f);
+                View(founder.transform.position, 5f, 2f);
+                Shot(spec, "fxboss_enemy_founder_crack");
+                yield return new WaitForSeconds(0.8f);
+                Shot(spec, "fxboss_enemy_founder_pool");
+            }
+            if (founder) Destroy(founder.gameObject);
+
+            // 炮仗傀儡：哑炸
+            var fc = Spawn("firecracker", At(9f, 0));
+            yield return new WaitForSeconds(1.2f);
+            if (fc && Call(fc, "Dud"))
+            {
+                yield return new WaitForSeconds(0.1f);
+                View(fc.transform.position, 6f, 2f);
+                Shot(spec, "fxboss_enemy_dud");
+            }
+            yield return new WaitForSeconds(1.5f);
+            if (fc) Destroy(fc.gameObject);
         }
 
         /// <summary>旁观机位：从 at 后方 back 米、上方 up 米看过去（玩家身后偏一点）</summary>

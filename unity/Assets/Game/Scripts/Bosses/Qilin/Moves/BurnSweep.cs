@@ -34,7 +34,7 @@ namespace Spiritfire.Game
         /// <summary>本次实际扫过的角度（度）</summary>
         public float Swept { get; private set; }
 
-        float acc, fxAcc, lastYaw;
+        float acc, fxAcc, lastYaw, scorchAcc;
         bool arrived, firing;
         BossBeam beam;
         TelegraphHandle warn;
@@ -210,6 +210,16 @@ namespace Spiritfire.Game
             }
             beam ??= Hazards.Beam(QilinDef.Fire);
             beam.Set(mouth, end, 0.55f);
+            // 吐息火柱：外层一道更宽的暗橙光、一股往前喷的火舌团，落点一路烧出余烬地火
+            Fx.Beam(mouth, end, new Color(1f, 0.42f, 0.08f), 1.6f, 0.08f);
+            Fx.FireStream(mouth, end, 1.3f, dt, QilinDef.Fire);
+            scorchAcc += dt;
+            if (scorchAcc >= 0.18f)
+            {
+                scorchAcc = 0;
+                FxDecals.Fire(new Vector3(end.x, Floor + 0.02f, end.z), 1.1f, 2.4f, FireBed.Ember);
+                if (Random.value < 0.4f) FlameTongues.Ground(new Vector3(end.x, Floor, end.z), 0.6f, 2, 1.2f, 0.6f);
+            }
             fxAcc += dt;
             if (fxAcc >= 0.05f)
             {

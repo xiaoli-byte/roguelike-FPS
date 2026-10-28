@@ -167,7 +167,14 @@ namespace Spiritfire.Game
             Act("dive", 1.2f);
             CuedSfx("boss_roar", 0.8f, 1.5f);
             prevTalons = Talons;
+            // 俯冲时身后拖一道冰风（锥尾体积，长度随速度）
+            var root = Brain.Model?.root ? Brain.Model.root.transform : Brain.transform;
+            diveTrail.Cancel();
+            diveTrail = Surge.Trail(root, Vector3.up * 1.5f, 2.2f, 12f, SurgeKind.Water, 3f, new Color(0.62f, 0.84f, 0.98f), Color.white, 0.55f);
         }
+
+        /// <summary>俯冲的冰风尾</summary>
+        FxHandle diveTrail;
 
         Vector3 Talons
         {
@@ -230,10 +237,13 @@ namespace Spiritfire.Game
                     kp.SetFlyVelocity(new Vector3(v.x, Mathf.Max(v.y, PullLift), v.z));
                 }
             }
+            diveTrail.Cancel();
             if (crashed)
             {
                 Crashed = true;
                 Fx.Burst(talons, KunPengDef.Ice, 24, 8f, 0.9f, 0.4f, 12f);
+                Fx.FrostShatter(talons, 2.6f);
+                Fx.IceRing(new Vector3(talons.x, Floor, talons.z), 3.5f, 10);
                 CuedSfx("boss_slam", 1f, 1.1f);
                 // 撞晕：脚本化硬直（打断招式，crash 动作，鲛珠大亮）
                 Brain.Stagger(CrashStagger, "crash");

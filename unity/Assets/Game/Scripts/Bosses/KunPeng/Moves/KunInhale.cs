@@ -28,6 +28,8 @@ namespace Spiritfire.Game
 
         Vector3 mouth;
         float pullAcc;
+        /// <summary>吞吸的气流漏斗（锥体积，条纹往口里走）</summary>
+        FxHandle funnel;
 
         public KunInhale()
         {
@@ -69,11 +71,15 @@ namespace Spiritfire.Game
         {
             KP?.HoleFx?.Suction(true, mouth, Brain.transform.eulerAngles.y);
             pullAcc = 0;
+            // 气流漏斗：从口前 20 m 收进嘴里的一团白色气流（往里走的条纹），扇区里的雪粒一路被吸过去（OnActive）
+            funnel = Surge.Cone(mouth, Brain.transform.forward, 20f, 7.5f, SurgeKind.Water, 0.35f, Mathf.Max(0.1f, active - 0.35f), 0.45f,
+                new Color(0.68f, 0.84f, 0.95f), Color.white, 2.4f, 0.42f);
         }
 
         protected override void OnActive(float dt)
         {
             KP?.PlaceKun();
+            Fx.SuckIn(mouth, Brain.transform.eulerAngles.y, SectorHalf, SectorRange, dt);
             float interval = KDef != null ? KDef.pullInterval : 0.15f;
             pullAcc += dt;
             while (pullAcc >= interval)
@@ -113,12 +119,16 @@ namespace Spiritfire.Game
         protected override void OnRecoverBegin()
         {
             KP?.HoleFx?.Suction(false);
+            funnel.Cancel();
             if (!KP) return;
             var b = KP.BiteSpot + Vector3.up * 0.3f;
             int hits0 = Hazards.PlayerHits;
             Hazards.Blast(b, BiteRadius, Dmg(32), new BossBlastOpts { maxHeight = 4f, knockback = 13f, knockUp = 6f });
             BiteHit = Hazards.PlayerHits > hits0;
             Fx.Burst(b + Vector3.up, KunPengDef.Ice, 26, 9f, 0.8f, 0.35f, 10f);
+            // 一口咬合：冰屑 + 水花往外炸
+            Fx.FrostShatter(b + Vector3.up * 0.8f, 2.4f);
+            Fx.Splash(b, 3f, Fx.NorthSea);
             Brain.Shake(0.45f, 0.35f);
             CuedSfx("enemy_melee", 1f, 0.5f);
             Sfx("boss_slam", 0.6f, 1.2f);
@@ -128,6 +138,7 @@ namespace Spiritfire.Game
 
         protected override void OnEnd(bool cancelled)
         {
+            funnel.Cancel();
             KP?.HoleFx?.Suction(false);
             KP?.HoleFx?.SetAgitation(0.35f);
         }

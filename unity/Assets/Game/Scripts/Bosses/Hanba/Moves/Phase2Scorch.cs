@@ -16,6 +16,8 @@ namespace Spiritfire.Game
     public sealed class Phase2Scorch
     {
         static readonly Color Steam = new(0.95f, 0.93f, 0.88f), CrackGlow = Hex.Rgb(0xff8a2a), VentWarn = Hex.Rgb(0xffb070);
+        /// <summary>汽柱体积的本体色（灰白）</summary>
+        static readonly Color SteamBody = new(0.72f, 0.74f, 0.72f);
         /// <summary>两个裂口之间最短多远（米）；吸干占转阶段演出的比例；一次喷发时白汽柱冒多久</summary>
         public const float VentSpacing = 5f, DrainShare = 0.8f, PlumeSeconds = 1.2f, NearPlayer = 14f;
 
@@ -189,6 +191,8 @@ namespace Spiritfire.Game
                 Warned++;
                 boss.NotifyVent();
                 Fx.Burst(p + Vector3.up * 0.2f, Steam, 4, 1.2f, 0.6f, 0.25f, -0.4f);
+                // 要喷了：泉床上一块发亮的裂口，一直亮到喷完
+                FxDecals.Fire(p + Vector3.up * 0.02f, (d?.ventRadius ?? 2.2f) * 0.6f, warn + 1.2f, FireBed.Sunfire);
                 Hazards.Later(warn, () => Erupt(p));
             }
             Bursts++;
@@ -205,6 +209,10 @@ namespace Spiritfire.Game
                 PlayerHits++;
             Fx.Burst(p + Vector3.up * 0.3f, Steam, 22, 7f, 1f, 0.45f, -3f);
             Fx.Burst(p + Vector3.up * 0.2f, CrackGlow, 8, 4f, 0.5f, 0.15f, 6f);
+            // 喷气：一根冲天的白汽柱（涌流体积，往上翻的条纹）+ 柱脚一圈汽浪和水花
+            float r = Def?.ventRadius ?? 2.2f;
+            Surge.Column(p, r * 0.45f, 6.5f, SurgeKind.Water, 0.18f, 0.6f, 0.8f, SteamBody, Color.white, 3.4f, 0.8f);
+            Fx.Splash(p + Vector3.up * 0.1f, r * 0.7f, Steam);
             CameraShake.Quake(p, 0.25f, 18f, 0.25f);
             GameAudio.PlayAt("skill_fire", p + Vector3.up * 0.5f, 0.7f, 1.7f);
             GameAudio.PlayAt("shot_beam", p + Vector3.up * 0.5f, 0.35f, 1.9f);

@@ -17,6 +17,13 @@ namespace Spiritfire.Game
     /// <summary>抛射物的外观：巨石（抛物线）/ 陨石（直线坠落、拖火尾）/ 冰块</summary>
     public enum LobKind { Boulder, Meteor, Ice }
 
+    /// <summary>
+    /// 抛射物的专属外观（特效打磨 C 路；只换外观和落地特效，不碰命中）：缺省 = 按 <see cref="LobKind"/> 的原样；
+    /// 羽刃（鹏的羽刃雨：真正的冰羽，顺着飞行方向、不翻滚，落地碎成冰碴星芒）、熔岩陨石（魔将：熔浆壳的岩球 + 火尾，落地留一滩熔铜）、
+    /// 火球（火麒麟火云雨：火芯球 + 火尾，落地一圈残火）
+    /// </summary>
+    public enum LobLook { Default, Feather, MoltenRock, Fireball }
+
     /// <summary>地刺的外观：岩刺 / 冰刺</summary>
     public enum SpikeKind { Rock, Ice }
 
@@ -136,6 +143,8 @@ namespace Spiritfire.Game
         public float scale;
         /// <summary>落地回调（落点）：留火、碎冰…</summary>
         public Action<Vector3> onLand;
+        /// <summary>专属外观（缺省 Default = 按 kind 的原样，行为不变）</summary>
+        public LobLook look;
 
         public BossLobSpec(Vector3 from, Vector3 to, float time, float arc, float radius, float damage, Color color, LobKind kind)
         {
@@ -151,6 +160,7 @@ namespace Spiritfire.Game
             element = Element.None;
             scale = 1;
             onLand = null;
+            look = LobLook.Default;
         }
     }
 
@@ -269,6 +279,10 @@ namespace Spiritfire.Game
             public Transform obj;
             public float t, trailAcc;
             public Vector3 spin;
+            /// <summary>羽刃外观（投射物外观池里借的，落地 / 清场时还回去）</summary>
+            public ProjectileView view;
+            /// <summary>熔岩陨石 / 火球的火尾（落地立刻收）</summary>
+            public FxHandle trail;
         }
 
         readonly List<WaveRun> waves = new();
@@ -791,7 +805,7 @@ namespace Spiritfire.Game
                 mark.Cancel();
                 return;
             }
-            var obj = BuildLobModel(s);
+            var obj = BuildLobModel(s, out var view);
             obj.position = s.from;
             if (mark.Alive)
             {
@@ -801,19 +815,24 @@ namespace Spiritfire.Game
                 Commit(mark);
             }
             else if (s.warn) GroundWarning(s.to, s.radius, Mathf.Max(0.2f, s.time), s.color, WarnKind.Hazard);
-            lobs.Add(new LobRun
+            var run = new LobRun
             {
-                spec = s, obj = obj,
-                spin = new Vector3((UnityEngine.Random.value - 0.5f) * 460f, 0, (UnityEngine.Random.value - 0.5f) * 460f),
-            });
+                spec = s, obj = obj, view = view,
+                spin = s.look == LobLook.Feather ? Vector3.zero : new Vector3((UnityEngine.Random.value - 0.5f) * 460f, 0, (UnityEngine.Random.value - 0.5f) * 460f),
+            };
+            if (s.look is LobLook.MoltenRock or LobLook.Fireball)
+                run.trail = Surge.Trail(obj, Vector3.zero, (s.look == LobLook.Fireball ? 0.75f : 0.65f) * obj.localScale.x, 7f, SurgeKind.Fire, s.time + 0.2f);
+            lobs.Add(run);
             LobsSpawned++;
         }
 
-        Transform BuildLobModel(in BossLobSpec s)
+        Transform BuildLobModel(in BossLobSpec s, out ProjectileView view)
         {
+            view = null;
             var root = new GameObject($"Boss Lob ({s.kind})").transform;
             float sc = Mathf.Max(0.2f, s.scale) * (0.9f + UnityEngine.Random.value * 0.25f);
             root.localScale = Vector3.one * sc;
+            if (s.look != LobLook.Default && BuildLook(s, root, sc, ref view)) return root;
             switch (s.kind)
             {
                 case LobKind.Meteor:
@@ -835,6 +854,54 @@ namespace Spiritfire.Game
             return root;
         }
 
+        /// <summary>专属外观的模型（返回 false = 做不出来，退回 kind 的原样）</summary>
+        static bool BuildLook(in BossLobSpec s, Transform root, float sc, ref ProjectileView view)
+        {
+            switch (s.look)
+            {
+                case LobLook.Feather:
+                {
+                    // 真正的羽刃：借三青鸟冰羽的外观（双片羽面 + 羽尖冰晶 + 冷光），放大到鹏的体型（约 2 m 长），顺着飞行方向
+                    view = ProjectileVisuals.Acquire("feather");
+                    if (!view) return false;
+                    var look = new ProjectileLook
+                    {
+                        color = Hex.Rgb(0x58c8ff), hostile = true, size = 3.4f * sc, coreBoost = 1.25f,
+                        trailWidth = 0.22f * sc, trailTime = 0.18f, trailColor = new Color(0.75f, 0.93f, 1f, 0.8f),
+                    };
+                    var dir = s.to - s.from + Vector3.up * s.arc * 4f;
+                    view.Setup(look, s.from, dir.sqrMagnitude > 1e-6f ? dir.normalized : Vector3.down);
+                    return true;
+                }
+                case LobLook.MoltenRock:
+                case LobLook.Fireball:
+                {
+                    var mat = FxMaterials.Get(FxMaterialKind.Surge);
+                    if (!FxMaterials.Usable(mat) || mat.shader.name != FxMaterials.ShaderSurge) return false;
+                    bool fire = s.look == LobLook.Fireball;
+                    // 熔岩陨石：熔浆壳的岩球（暗壳 + 发光熔流纹）；火球：半加法的火芯球。外面一层光晕
+                    var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Destroy(ball.GetComponent<Collider>());
+                    ball.name = fire ? "Fireball" : "Molten Rock";
+                    ball.transform.SetParent(root, false);
+                    ball.transform.localScale = fire ? Vector3.one * 1.3f : new Vector3(1.2f, 1.05f, 1.15f);
+                    var r = ball.GetComponent<Renderer>();
+                    r.sharedMaterial = mat;
+                    r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    var b = new MaterialPropertyBlock();
+                    b.SetColor("_ColorA", fire ? new Color(1.2f, 0.3f, 0.04f) : new Color(0.16f, 0.06f, 0.03f));
+                    b.SetColor("_ColorB", fire ? new Color(2.0f, 1.3f, 0.45f) : new Color(2.2f, 0.75f, 0.12f));
+                    b.SetVector("_Params", new Vector4(UnityEngine.Random.value * 10f, 1f, fire ? 3f : 1.2f, fire ? 3 : 2));
+                    b.SetVector("_Params2", new Vector4(6, 2.5f, fire ? 0.6f : 0.12f, fire ? 0.55f : 0.1f));
+                    b.SetVector("_Shape", new Vector4(1.1f, -1f, 0, 0.2f));
+                    r.SetPropertyBlock(b);
+                    FxMaterials.GlowSprite(root, fire ? 3.6f : 2.8f, fire ? new Color(1f, 0.45f, 0.12f, 0.8f) : new Color(1f, 0.32f, 0.08f, 0.6f));
+                    return true;
+                }
+            }
+            return false;
+        }
+
         bool StepLob(LobRun l, float dt)
         {
             l.t += dt;
@@ -844,6 +911,13 @@ namespace Spiritfire.Game
             {
                 l.obj.position = LobPosition(l.spec.from, l.spec.to, l.spec.arc, u);
                 l.obj.Rotate(l.spin * dt, Space.Self);
+            }
+            if (l.view)
+            {
+                // 羽刃顺着飞行方向（抛物线的切线）
+                var vel = l.spec.to - l.spec.from + Vector3.up * l.spec.arc * 4f * (1f - 2f * u);
+                l.view.Pose(l.obj ? l.obj.position : LobPosition(l.spec.from, l.spec.to, l.spec.arc, u), vel.sqrMagnitude > 1e-6f ? vel.normalized : Vector3.down,
+                    l.t, time, dt, 1f);
             }
             if (l.spec.kind == LobKind.Meteor && l.obj)
             {
@@ -856,6 +930,9 @@ namespace Spiritfire.Game
             }
             if (u < 1) return true;
             if (l.obj) Destroy(l.obj.gameObject);
+            if (l.view) l.view.Release();
+            l.view = null;
+            l.trail.Cancel();
             Land(l.spec);
             return false;
         }
@@ -864,7 +941,26 @@ namespace Spiritfire.Game
         {
             var p = s.to;
             Blast(p, s.radius, s.damage, new BossBlastOpts { maxHeight = s.radius * 0.9f, element = s.element, knockback = LobKnockback, knockUp = LobKnockUp });
-            Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);
+            switch (s.look)
+            {
+                case LobLook.Feather:
+                    // 羽刃扎进冰面：冰碴 + 星芒 + 几片雪 + 一小块霜斑（不是火焰爆炸）
+                    Fx.Play("BossFeather", p + Vector3.up * 0.2f, Vector3.up, Hex.Rgb(0x9fe0ff), Mathf.Clamp(s.radius, 0.5f, 3f));
+                    Fx.FrostPatch(p + Vector3.up * 0.02f, s.radius * 0.8f, 2.5f, 0.8f);
+                    break;
+                case LobLook.MoltenRock:
+                    Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);
+                    Fx.MoltenBurst(p + Vector3.up * 0.3f, Mathf.Clamp(s.radius * 0.7f, 0.6f, 3f), false);
+                    Fx.MoltenSplat(p, s.radius * 0.9f, 1f, 7f);
+                    break;
+                case LobLook.Fireball:
+                    Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);
+                    FlameTongues.Ground(p, s.radius * 0.6f, 5, 1.6f, 0.6f);
+                    break;
+                default:
+                    Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);
+                    break;
+            }
             var debris = s.kind == LobKind.Ice ? Hex.Rgb(0xd8f6ff) : s.kind == LobKind.Meteor ? Hex.Rgb(0xffc070) : Hex.Rgb(0xb58a5a);
             Fx.Burst(p + Vector3.up * 0.3f, debris, 14, 7f, 0.9f, 0.2f, 20f);
             CameraShake.Quake(p, 0.38f, 24f, 0.25f);
@@ -954,8 +1050,10 @@ namespace Spiritfire.Game
             foreach (var w in waves) w.ring.FadeOut();
             waves.Clear();
             foreach (var l in lobs)
-                if (l.obj)
-                    Destroy(l.obj.gameObject);
+            {
+                if (l.obj) Destroy(l.obj.gameObject);
+                if (l.view) l.view.Release();
+            }
             lobs.Clear();
             foreach (var z in zones)
                 if (z)

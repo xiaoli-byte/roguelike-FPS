@@ -89,6 +89,9 @@ namespace Spiritfire.Game
             if (Hanba) Hanba.OpenEclipse(HDef?.eclipseWeakMult ?? 3f);
             Sky?.SetDim(HDef?.eclipseDim ?? 0.12f, 0.35f);
             GameUI.ScreenFlash(DarkColor, 0.5f);
+            // 蚀开：地上一圈暗色的冲击环 + 日轮周围一圈日冕星芒
+            Fx.Ring(Brain.transform.position + Vector3.up * 0.15f, 12f, new Color(0.35f, 0.22f, 0.45f), 0.9f, false);
+            if (Ring) Fx.SunFlare(Ring.Center, 3f, new Color(1f, 0.55f, 0.25f));
             GameUI.Toast("日蚀！心口泉珠显露——集火！日轮复燃前躲进楼阁或沙丘檐下的深影", HanbaDef.Sun, window);
             Brain.Shake(0.3f, 0.3f);
             Sfx("boss_roar", 0.45f, 0.6f);
@@ -98,6 +101,8 @@ namespace Spiritfire.Game
         {
             // 颤抖：泉珠一闪一闪
             Brain.Glow(0, 0.35f + 0.25f * Mathf.Sin(StageT * 18f));
+            // 日冕：黑盘周围一圈往外飘的金红光点（外观用 UnityEngine.Random，不动局内随机流）
+            if (Ring) Fx.Corona(Ring.Center, SunRing.WorldRadius * (Ring.Risen ? Ring.risenScale : 1f), dt);
             if (Rng.Value < 0.25f) Fx.Burst(Brain.BodyCenter + Brain.transform.forward * 0.5f, new Color(0.6f, 0.86f, 1f), 1, 0.6f, 0.5f, 0.1f, -0.3f);
         }
 
@@ -130,6 +135,19 @@ namespace Spiritfire.Game
             Sfx("boss_roar", 1f, 0.8f);
             Sfx("explosion", 0.8f, 0.5f);
             SkillFx.Burst(c, FlareColor, 40, 14f, 0.9f, 0.5f, 0f);
+            // 复燃：轮心一记大星芒 + 几道从日轮直劈到地面的光（照到哪烧到哪的读感）
+            Fx.SunFlare(c, 6f);
+            var center = Brain.transform.position;
+            for (int i = 0; i < 6; i++)
+            {
+                float a = i / 6f * Mathf.PI * 2f + UnityEngine.Random.Range(-0.3f, 0.3f), rr = UnityEngine.Random.Range(4f, 11f);
+                var g = center + new Vector3(Mathf.Sin(a) * rr, 0, Mathf.Cos(a) * rr);
+                float gy = Fx.GroundY(g + Vector3.up * 6f, 14f);
+                if (float.IsNegativeInfinity(gy)) continue;
+                g.y = gy;
+                Fx.Beam(c, g, FlareColor, 0.7f, 0.35f);
+                FxDecals.Fire(g + Vector3.up * 0.02f, 1.2f, 3f, FireBed.Sunfire);
+            }
             var pv = PlayerVitals.Instance;
             if (!pv || pv.Dead || !SunExposure.Probes(out _, out var chest, out var head)) return;
             var ex = Exposure;

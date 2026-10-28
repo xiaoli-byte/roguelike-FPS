@@ -49,7 +49,9 @@ namespace Spiritfire.Game
             t += dt;
             acc += dt;
             float end = seconds * 0.88f;
-            var basePos = boss.transform.position;
+            // 炸点跟着模型走（鹏倒下时模型根从 13 m 高摔到冰面上、物体本身还停在半空：按物体位置炸会全浮在天上）
+            var root = boss.Model?.root;
+            var basePos = root ? root.transform.position : boss.transform.position;
             if (acc >= 0.2f && t < end)
             {
                 acc = 0;
@@ -63,6 +65,9 @@ namespace Spiritfire.Game
             var c = basePos + Vector3.up * height * 0.5f;
             SkillFx.Burst(c, color, 40, 12f, 1.4f, 0.5f, 10f);
             SkillFx.Ring(basePos + Vector3.up * 0.1f, 14f, color, 0.9f);
+            // 溃散那一下：一记大星芒 + 贴地尘浪（身体隐去的那一刻有个看得见的「没了」）
+            Fx.SunFlare(c, Mathf.Clamp(height * 0.9f, 2f, 7f), color);
+            Fx.Slam(new Vector3(basePos.x, basePos.y, basePos.z), Mathf.Clamp(radius * 2.5f, 3f, 8f));
             CameraShake.Quake(basePos, 0.9f, 80f, 0.8f);
             GameAudio.PlayAt("explosion", c, 1f, 0.6f);
             foreach (var r in boss.GetComponentsInChildren<Renderer>()) r.enabled = false;

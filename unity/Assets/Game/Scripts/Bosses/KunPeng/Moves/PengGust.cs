@@ -79,7 +79,19 @@ namespace Spiritfire.Game
             Brain.Face(Brain.PlayerPosition, 115f, dt);
         }
 
-        protected override void OnActiveBegin() => KP?.HoleFx?.Gust(true);
+        /// <summary>冻风带的风环（平放环带体积，飞快地转、条纹往外吹）</summary>
+        FxHandle windBand;
+
+        protected override void OnActiveBegin()
+        {
+            KP?.HoleFx?.Gust(true);
+            // 扇翼狂风：环台外缘一圈飞快旋转的白色风带（冻风带那一圈），翅膀下一团往外炸的雪雾
+            var c = AtFloor(Hole.center) + Vector3.up * 0.3f;
+            float outer = Hole.outer + 1f, inner = Mathf.Max(Hole.radius + 4f, Hole.outer - 5f);
+            windBand = Surge.Annulus(c, inner, outer, SurgeKind.Water, active, 260f, 1.4f, new Color(0.75f, 0.88f, 0.98f), Color.white, 0.45f);
+            Fx.FrostVapour(Brain.BodyCenter, 2.5f, FrostPalette.Snow);
+            Fx.Ring(c, outer, FrostPalette.IceHot, 0.8f, false);
+        }
 
         protected override void OnActive(float dt)
         {
@@ -119,13 +131,18 @@ namespace Spiritfire.Game
             Pushes++;
         }
 
-        protected override void OnRecoverBegin() => KP?.HoleFx?.Gust(false);
+        protected override void OnRecoverBegin()
+        {
+            KP?.HoleFx?.Gust(false);
+            windBand.Cancel();
+        }
 
         protected override void OnEnd(bool cancelled)
         {
             // 前摇里被打断：还没生效的冻风带作废（预警在招式组，已跟着撤回）
             if (cancelled && Band && !Band.Live && !Band.Ended) Band.Expire();
             KP?.HoleFx?.Gust(false);
+            windBand.Cancel();
             if (!KP) return;
             KP.HoverAlt = KDef != null ? KDef.pengHover : 13.5f;
             KP.Accel = KDef != null ? KDef.pengAccel : 22f;

@@ -148,6 +148,9 @@ namespace Spiritfire.Game
             });
             Brain.Shake(0.55f, 0.4f);
             Fx.Burst(Spot + Vector3.up * 0.5f, KunPengDef.Ice, 30, 9f, 0.9f, 0.4f, 12f);
+            // 落台：冰刺环 + 一圈往外推的雪浪（整圈弧幕，和冲击波同速）
+            Fx.IceRing(Spot, LandRadius, 14);
+            Surge.Sheet(Spot, 0, 3f, 360f, 1.4f, SurgeKind.Water, 0.12f, 0.55f, 0.3f, new Color(0.7f, 0.85f, 0.96f), Color.white, 2.4f, 0.8f, grow: 1f + 11f / 3f);
             CuedSfx("boss_slam", 1f, 0.9f);
             KP?.TellOnce("perch", "鹏落台歇翼——趁现在打它额头的鲛珠！", Hex.Rgb(0xffe08a));
         }
@@ -168,6 +171,9 @@ namespace Spiritfire.Game
             Hazards.Blast(Spot, TakeoffRadius, Dmg(14), new BossBlastOpts { maxHeight = 4f, knockback = 13f, knockUp = 5f });
             Fx.Ring(Spot + Vector3.up * 0.1f, 8f, KunPengDef.Gust, 0.6f);
             Fx.Burst(Spot + Vector3.up, KunPengDef.Ice, 26, 10f, 0.8f, 0.4f, 4f);
+            // 振翅起飞：翅下压出一圈贴地旋转的雪风
+            Surge.Annulus(Spot + Vector3.up * 0.2f, TakeoffRadius * 0.4f, TakeoffRadius * 1.2f, SurgeKind.Water, 0.9f, 320f, 2f, new Color(0.75f, 0.88f, 0.98f), Color.white, 0.55f);
+            Fx.FrostVapour(Spot + Vector3.up * 0.5f, 2.2f, FrostPalette.Snow);
             CuedSfx("boss_roar", 0.8f, 1.3f);
             if (!KP) return;
             KP.Perched = false;

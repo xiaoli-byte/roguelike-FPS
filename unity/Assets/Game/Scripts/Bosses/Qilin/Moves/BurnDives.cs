@@ -138,6 +138,8 @@ namespace Spiritfire.Game
                     Phase = Leg.Dive;
                     legT = 0;
                     diveFrom = Brain.transform.position;
+                    // 俯冲拖一道火尾
+                    Surge.Trail(Brain.Model?.root ? Brain.Model.root.transform : Brain.transform, Vector3.up * 1.2f, 1.1f, 8f, SurgeKind.Fire, DiveTime + 0.1f);
                     Brain.PlayAct("stomp", DiveTime + 0.35f);
                     Sfx("boss_roar", 0.8f, 1.4f);
                     break;
@@ -188,6 +190,11 @@ namespace Spiritfire.Game
             });
             Fx.Explosion(a + Vector3.up * 0.6f, 4f, QilinDef.Fire);
             Fx.Ring(a + Vector3.up * 0.1f, 8f, QilinDef.Warn, 0.7f);
+            // 踏云火环：一圈贴地往外推的火墙（整圈弧幕，和火环冲击波同速）+ 落点熔浆四溅、一圈残火
+            Surge.Sheet(a, 0, 2f, 360f, 1.5f, SurgeKind.Fire, 0.08f, Mathf.Max(0.05f, (RingRadius - 2f) / RingSpeed - 0.3f), 0.25f, null, null, 2.6f, 0.9f,
+                grow: RingRadius / 2f);
+            Fx.MoltenBurst(a + Vector3.up * 0.3f, 2.2f, false);
+            FlameTongues.Ground(a, Radius * 0.7f, 7, 1.6f, 0.7f);
             Brain.Shake(0.65f, 0.45f);
             Sfx("boss_slam");
         }

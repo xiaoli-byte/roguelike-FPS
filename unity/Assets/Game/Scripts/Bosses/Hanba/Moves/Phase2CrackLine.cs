@@ -132,6 +132,8 @@ namespace Spiritfire.Game
         {
             Fx.Burst(p + Vector3.up * 0.15f, CrackColor, 4, 2.2f, 0.6f, 0.14f, -0.5f);
             Fx.Burst(p + Vector3.up * 0.1f, HanbaDef.Sand, 3, 2.5f, 0.5f, 0.2f, 4f);
+            // 裂口：沙地上一段发亮的日火裂痕（一路亮到爆开），从缝里往上冒火星
+            FxDecals.Fire(p + Vector3.up * 0.02f, 1.05f, 3.2f, FireBed.Sunfire);
             if (sound) GameAudio.PlayAt("skill_earth", p, 0.45f, 1.4f);
         }
 
@@ -146,6 +148,9 @@ namespace Spiritfire.Game
                 TotalHits++;
             }
             Fx.Explosion(p + Vector3.up * 0.3f, BlastRadius, BlastColor);
+            // 焦裂喷火：裂口里一道火柱窜起 + 沙往外炸
+            FlameTongues.Pillar(p, 0.55f, 3.2f);
+            Fx.SandBlast(p + Vector3.up * 0.2f, 1.1f);
             if (sound)
             {
                 GameAudio.PlayAt("explosion", p + Vector3.up * 0.3f, 0.6f, 1.1f);

@@ -75,6 +75,10 @@ namespace Spiritfire.Game
         {
             var mouth = Qilin ? Qilin.MouthPoint : Brain.BodyCenter + Brain.transform.forward * 2f;
             var d = Dir(yawDeg);
+            // 麟火：一股往前喷、往上卷的火舌团（落到射程末端离地 0.8 m）
+            var tip = mouth + d * Range;
+            tip.y = Floor + 0.8f;
+            Fx.FireStream(mouth, tip, 1.1f, dt, QilinDef.Fire);
             fxAcc += dt;
             if (fxAcc >= 0.05f)
             {

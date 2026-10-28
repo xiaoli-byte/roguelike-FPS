@@ -310,6 +310,7 @@ namespace Spiritfire.Game
             hz.Lob(new BossLobSpec(from, to, 1.25f, 0f, 3f, MoveDamage(22f * k), WarlordDef.Fire, LobKind.Meteor)
             {
                 element = Element.Fire,
+                look = LobLook.MoltenRock,
                 onLand = p => hz.Zone(new BossZoneSpec(p, 2.2f, 3.5f, fireDmg, WarlordDef.Fire) { arm = 0.1f, embers = true }),
             });
             AmbientMeteors++;
@@ -455,6 +456,35 @@ namespace Spiritfire.Game
             Glow(0, 0);
             if (Channels) Channels.Recede();
             PlayAct("death", Def != null ? Def.defeat.seconds : 3f);
+            DefeatFx();
+        }
+
+        /// <summary>
+        /// 倒下的特效（特效打磨 C 路；魔将没有倒下动作片段，靠特效撑）：甲缝里的熔铜往外淌、身上冒火舌，
+        /// 隔一会儿往外甩一蓬熔铜，溃散那一下整个人化成一滩熔铜（熔铜冠 + 一大滩熔铜贴花 + 一圈残火）
+        /// </summary>
+        void DefeatFx()
+        {
+            EndDropFx();
+            var root = Model?.root ? Model.root.transform : transform;
+            float secs = Def != null ? Def.defeat.seconds : 3.2f;
+            Fx.BodyStream(root.gameObject, StreamKind.Molten, secs, 130f);
+            var s = Mathf.Max(0.01f, Model?.scale ?? 1f);
+            var f1 = FlameTongue.Attach(root, new Vector3(0, 2.8f, 0) / s, new Vector3(2.2f, 3.4f, 2.2f));
+            var f2 = FlameTongue.Attach(root, new Vector3(0.7f, 1.6f, 0.2f) / s, new Vector3(1.4f, 2.2f, 1.4f));
+            Fx.MoltenBurst(BodyCenter, 1.8f, false);
+            BossDefeatFx.On(gameObject)
+                .At(secs * 0.35f, () => Fx.MoltenBurst(BodyCenter + Vector3.up * 0.5f, 1.6f, false))
+                .At(secs * 0.62f, () => Fx.MoltenBurst(BodyCenter, 2f, false))
+                .At(secs * 0.88f, () =>
+                {
+                    var feet = transform.position;
+                    Fx.MoltenBurst(feet + Vector3.up * 0.3f, 3.4f, false);
+                    Fx.MoltenSplat(feet, 6.5f, 1f, 16f);
+                    FlameTongues.Ground(feet, 3.4f, 9, 3.5f, 0.8f);
+                    if (f1) Destroy(f1.gameObject);
+                    if (f2) Destroy(f2.gameObject);
+                });
         }
     }
 }

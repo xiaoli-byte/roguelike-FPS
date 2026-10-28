@@ -79,7 +79,10 @@ namespace Spiritfire.Game
             if (Fury)
                 foreach (float s in new[] { -1f, 1f })
                     Wave(Yaw + SideYaw * s, SideHalf, 13f, SideRange, Dmg(16), 1.1f, 8f);
-            Fx.Explosion(Impact + Vector3.up * 0.6f, 4.5f, KunPengDef.Ice);
+            // 冰的砸击（原来是染成冰蓝的火焰爆炸）：冰爆 + 冰刺环 + 水花，冰浪体积跟着冲击波前沿往外推（Wave 里）
+            Fx.FrostNova(Impact + Vector3.up * 0.6f, 4.5f);
+            Fx.IceRing(Impact, 4.5f, 14);
+            Fx.Splash(Impact, 3f, Fx.NorthSea);
             Fx.Burst(Impact + Vector3.up * 0.6f, KunPengDef.Ice, 40, 11f, 1f, 0.45f, 16f);
             Fx.Ring(Impact + Vector3.up * 0.1f, 9f, KunPengDef.Warn, 0.7f);
             Brain.Shake(0.7f, 0.5f);
@@ -103,7 +106,14 @@ namespace Spiritfire.Game
                 startRadius = 2.5f, width = width, height = 0.9f, arcYaw = yaw, arcHalf = half, knockback = knock, dust = true, dustColor = KunPengDef.Ice, spare = BlastHit,
             });
             Waves++;
+            // 冰浪：一道翻着白沫的冰水浪墙（弧幕体积），半径和冲击波前沿同速扩大
+            float life = range / speed;
+            Surge.Sheet(Impact, yaw, 2.5f, half * 2f, 1.9f, SurgeKind.Water, 0.12f, Mathf.Max(0.05f, life - 0.4f), 0.3f, IceWater, FrostPalette.IceHot, 2.8f, 0.92f,
+                grow: 1f + range / 2.5f);
         }
+
+        /// <summary>冰浪体积的本体色</summary>
+        static readonly Color IceWater = new(0.5f, 0.78f, 0.92f);
 
         protected override void OnRecoverBegin()
         {

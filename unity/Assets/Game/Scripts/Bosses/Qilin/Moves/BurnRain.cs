@@ -55,6 +55,7 @@ namespace Spiritfire.Game
             Brain.PlayAct("roar", WindupTime + active);
             Sfx("telegraph", 1f, 1.2f);
             Sfx("boss_roar", 0.7f, 1.1f);
+            Cloud(WindupTime + active + FallTime + 0.6f);
             marks.Clear();
             offsets.Clear();
             launched.Clear();
@@ -105,6 +106,16 @@ namespace Spiritfire.Game
 
         protected override void OnActiveBegin() => FireRain();
 
+        /// <summary>火云：殿顶上一层翻滚的暗红火云（平放圆盘的熔浆体积，暗壳 + 发光的火纹），火球从里面落下来</summary>
+        void Cloud(float seconds)
+        {
+            var f = Furnace;
+            var c = (f ? f.Center : OnFloor(Brain.transform.position)) + Vector3.up * 20f;
+            float r = f ? f.wallRadius * 0.85f : 16f;
+            Surge.Disk(c, r, SurgeKind.Molten, seconds, 14f, 0.25f, 1f, new Color(0.12f, 0.04f, 0.03f), new Color(1.6f, 0.45f, 0.08f), 0.85f);
+            Surge.Disk(c - Vector3.up * 1.2f, r * 0.7f, SurgeKind.Fire, seconds, -24f, -0.4f, 1f, null, null, 0.5f);
+        }
+
         protected override void OnActive(float dt)
         {
             Hold(dt);
@@ -150,7 +161,7 @@ namespace Spiritfire.Game
                     var from = new Vector3(to.x + Rng.Range(-4f, 4f), floor + Height, to.z + Rng.Range(-4f, 4f));
                     var mark = k < marks.Count && !launched[k] ? marks[k] : TelegraphHandle.None;
                     if (k < launched.Count) launched[k] = true;
-                    hz.Lob(new BossLobSpec(from, to, FallTime, 1f, Radius, dmg, QilinDef.Warn, LobKind.Meteor) { element = Element.Fire, scale = 1.1f }, mark);
+                    hz.Lob(new BossLobSpec(from, to, FallTime, 1f, Radius, dmg, QilinDef.Warn, LobKind.Meteor) { element = Element.Fire, scale = 1.1f, look = LobLook.Fireball }, mark);
                     MeteorsFired++;
                 });
             }

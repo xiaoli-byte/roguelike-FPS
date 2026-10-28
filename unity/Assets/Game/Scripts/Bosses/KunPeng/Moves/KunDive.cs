@@ -116,8 +116,17 @@ namespace Spiritfire.Game
                 startRadius = 2f, width = 1f, height = 0.85f, arcYaw = NextTheta, arcHalf = WaveHalf, knockback = 7f, dust = true, dustColor = KunPengDef.Ice,
                 spare = BlastHit,
             });
-            Fx.Explosion(Impact + Vector3.up * 0.8f, 4f, KunPengDef.Ice);
+            // 破冰探头（原来是染成冰蓝的火焰爆炸）：冰沿上冰爆 + 冰刺环；鲲出水的那片水面炸起水柱、水冠、大涟漪，冰浪跟着冲击波往外推
+            Fx.FrostNova(Impact + Vector3.up * 0.8f, 4f);
+            Fx.IceRing(Impact, 3.5f, 12);
             Fx.Burst(Impact + Vector3.up * 0.8f, KunPengDef.Ice, 36, 12f, 1f, 0.45f, 14f);
+            var water = Hole.Point(KP ? KP.Theta : NextTheta, Mathf.Max(1f, Hole.radius - 4.6f));
+            water.y = Hole.waterY;
+            Fx.WaterDisturb(water, 8f, 1.5f);
+            Fx.Splash(water, 3.6f, Fx.NorthSea);
+            Fx.WaterSpout(water, 2.2f, 9f, 0.3f, Fx.NorthSea);
+            Surge.Sheet(Impact, NextTheta, 2f, WaveHalf * 2f, 1.6f, SurgeKind.Water, 0.12f, 0.6f, 0.3f, new Color(0.5f, 0.78f, 0.92f), FrostPalette.IceHot, 2.8f, 0.9f,
+                grow: 1f + 12f / 2f);
             Brain.Shake(0.55f, 0.45f);
             CuedSfx("boss_roar", 1f, 0.9f);
         }

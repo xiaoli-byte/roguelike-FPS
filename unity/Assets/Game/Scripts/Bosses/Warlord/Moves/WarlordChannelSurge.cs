@@ -63,6 +63,9 @@ namespace Spiritfire.Game
             Brain.Shake(0.4f, 1.6f);
             Fx.Ring(c + Vector3.up * 0.1f, 12f, WarlordRef.Lava, 0.9f);
             Fx.Burst(c + Vector3.up * 0.5f, WarlordRef.Embers, 30, 8f, 0.9f, 0.2f, 4f);
+            // 跺地引渠：脚下砸出一圈尘浪 + 熔铜四溅
+            Fx.Slam(c, 4f, Hex.Rgb(0x4a3a30));
+            Fx.MoltenBurst(c + Vector3.up * 0.3f, 1.8f, false);
             Sfx("boss_slam", 1f, 0.7f);
             var ch = Channels;
             if (ch && ch.Count > 0) FloodChannels(ch);
@@ -98,6 +101,50 @@ namespace Spiritfire.Game
                     Hazards.LineWarning(from, yaw, v.size.y, v.size.x * 0.5f, fill, WarlordRef.Lava, 0.3f, WarnKind.Hazard);
                 }
                 LastWarnings++;
+                SurgeFx(v, center, fill);
+            }
+        }
+
+        /// <summary>
+        /// 熔铜渠涨的样子（只有外观）：漫上来之前渠里咕嘟冒熔泡、溅熔滴；漫过渠岸那一下沿渠从一头到另一头涌过一串熔铜浪（长条），熔池一圈往外溅
+        /// </summary>
+        void SurgeFx(LavaVolume v, Vector3 center, float fill)
+        {
+            var fwd = v.transform.forward;
+            fwd.y = 0;
+            if (fwd.sqrMagnitude < 1e-4f) fwd = Vector3.forward;
+            fwd.Normalize();
+            var right = Vector3.Cross(Vector3.up, fwd);
+            bool disc = v.shape == LavaShape.Disc;
+            float len = disc ? v.size.x : v.size.y, wid = disc ? v.size.x : v.size.x;
+            // 冒泡：涨到一半起越冒越密
+            Hazards.Repeat(0.22f, fill, () =>
+            {
+                var p = disc
+                    ? center + Quaternion.Euler(0, Random.value * 360f, 0) * Vector3.forward * (Mathf.Sqrt(Random.value) * len * 0.8f)
+                    : center + fwd * Random.Range(-0.5f, 0.5f) * len + right * Random.Range(-0.35f, 0.35f) * wid;
+                Fx.MoltenSplash(p + Vector3.up * 0.15f, Random.Range(0.6f, 1.1f));
+            });
+            if (disc)
+            {
+                Hazards.Later(Mathf.Max(0.1f, fill - 0.15f), () =>
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        float a = i / 6f * Mathf.PI * 2f + Random.Range(-0.3f, 0.3f);
+                        Fx.MoltenSplash(center + new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * len * 0.9f + Vector3.up * 0.2f, 1.3f);
+                    }
+                    Fx.Ring(center + Vector3.up * 0.1f, len * 1.2f, WarlordRef.Lava, 0.6f, false);
+                });
+                return;
+            }
+            // 长条：一串熔铜浪从渠头涌到渠尾（每 0.08 s 一个，约 4 m 一个）
+            int n = Mathf.Clamp(Mathf.RoundToInt(len / 4f), 2, 6);
+            for (int i = 0; i < n; i++)
+            {
+                var p = center + fwd * ((i + 0.5f) / n - 0.5f) * len;
+                float at = Mathf.Max(0.1f, fill - 0.35f) + i * 0.08f;
+                Hazards.Later(at, () => Fx.MoltenBurst(p + Vector3.up * 0.2f, Mathf.Clamp(wid * 0.45f, 0.8f, 1.8f), false));
             }
         }
 

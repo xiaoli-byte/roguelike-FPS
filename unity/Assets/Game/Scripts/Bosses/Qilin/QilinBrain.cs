@@ -1062,6 +1062,30 @@ namespace Spiritfire.Game
             var loco = Model?.locomotion;
             if (loco) loco.speedOverride = -1f;
             if (IsBurn && Altitude > 0.3f && gameObject.activeInHierarchy) StartCoroutine(FallToFloor());
+            DefeatFx();
+        }
+
+        /// <summary>
+        /// 倒下的特效（特效打磨 C 路）：身上的熔浆一路往下滴，落地溅一圈熔浆、留一滩熔铜，溃散那一下熔池最后喷一股熔浆、身下熔铜四溅
+        /// </summary>
+        void DefeatFx()
+        {
+            var model = Model?.root ? Model.root : gameObject;
+            float secs = Def != null ? Def.defeat.seconds : 3.4f;
+            Fx.BodyStream(model, StreamKind.Molten, secs, 110f);
+            BossDefeatFx.On(gameObject)
+                .At(0.6f, () =>
+                {
+                    var feet = OnFloor(transform.position);
+                    Fx.MoltenBurst(feet + Vector3.up * 0.3f, 2.4f, false);
+                    Fx.MoltenSplat(feet, 4.2f, 1f, 12f);
+                })
+                .At(secs * 0.88f, () =>
+                {
+                    var f = Furnace;
+                    if (f) Fx.LavaSpout(f.Center, Mathf.Max(1.2f, f.poolRadius * 0.25f), 8f, 0.4f);
+                    Fx.MoltenBurst(OnFloor(transform.position) + Vector3.up * 0.3f, 3f, false);
+                });
         }
 
         /// <summary>倒下时从半空落到地上（0.55 s 加速下落，落地震一下）</summary>

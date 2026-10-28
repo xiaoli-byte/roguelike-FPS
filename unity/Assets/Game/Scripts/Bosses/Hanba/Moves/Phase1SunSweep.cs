@@ -34,7 +34,9 @@ namespace Spiritfire.Game
         /// <summary>本次有几段光束被挡住（落在挡板上，后面是影子）</summary>
         public int Blocked { get; private set; }
 
-        float yaw, sign, speed, wind, nextHit, fxAcc, soundAcc;
+        float yaw, sign, speed, wind, nextHit, fxAcc, soundAcc, sprayAcc;
+        Vector3 lastScorch = new(float.NaN, 0, 0);
+        static readonly Color Gold = new(1f, 0.74f, 0.28f);
         BossBeam aim, beam;
 
         public Phase1SunSweep()
@@ -97,6 +99,9 @@ namespace Spiritfire.Game
             aim = null;
             beam = Hazards.Beam(BeamColor);
             if (Ring) Ring.Flash(1f);
+            // 日轮炸亮：轮心一记星芒 + 金屑（出手那一下的重音）
+            Fx.SunFlare(Ring ? Ring.Center : Brain.BodyCenter + Vector3.up * 2f, 2.4f);
+            lastScorch = new Vector3(float.NaN, 0, 0);
             Sfx("shot_beam", 1f, 0.5f);
             Brain.Shake(0.3f, 0.35f);
         }
@@ -129,6 +134,22 @@ namespace Spiritfire.Game
                 Exposure?.Burn(BurnSeconds, c);
             }
             beam?.Set(c, end, VisualRadius);
+            // 外层一道粗的金色光晕（纯外观，比判定宽）+ 落点一路烧出断续的日火裂痕、隔一段窜一簇火苗，沙被光束犁起来往两边喷
+            Fx.Beam(c, end, Gold, 1.5f, 0.08f);
+            if (float.IsNaN(lastScorch.x) || (end - lastScorch).sqrMagnitude > 0.7f * 0.7f)
+            {
+                bool flame = float.IsNaN(lastScorch.x) || Random.value < 0.35f;
+                lastScorch = end;
+                FxDecals.Fire(end + Vector3.up * 0.02f, 0.85f, 2.6f, FireBed.Sunfire);
+                if (flame) FlameTongues.Ground(end, 0.4f, 2, 1.1f, 0.55f);
+            }
+            sprayAcc += dt;
+            if (sprayAcc >= 0.14f)
+            {
+                sprayAcc = 0;
+                Fx.SandBlast(end + Vector3.up * 0.1f, 0.5f);
+                Fx.Flash(end + Vector3.up * 0.5f, Gold, 3f, 6f, 0.14f);
+            }
             fxAcc += dt;
             if (fxAcc >= 0.05f)
             {

@@ -164,7 +164,9 @@ Shader "Spiritfire/FxSurge"
                     col = lerp(_ColorA.rgb, _ColorB.rgb, core);
                     a = smoothstep(0.25, 0.65, streak + n3 * 0.2);
                 }
-                a *= edge * vfade * keep * alpha;
+                // 贴脸淡出：镜头钻进水柱 / 火尾里时不糊满屏（0.6 m 内全透明，3 m 外不淡）
+                float camDist = distance(i.positionWS, _WorldSpaceCameraPos);
+                a *= edge * vfade * keep * alpha * smoothstep(0.6, 3.0, camDist);
                 clip(a - 0.004);
                 // 雾：普通混合的部分混进雾色，加法的部分往黑里收（加法叠雾色会在远处发白）
                 col = lerp(MixFog(col, i.fog), MixFogColor(col, half3(0, 0, 0), i.fog), add);

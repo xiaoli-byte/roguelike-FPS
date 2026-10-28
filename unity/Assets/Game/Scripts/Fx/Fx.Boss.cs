@@ -114,6 +114,129 @@ namespace Spiritfire.Game
             }
         }
 
+        /// <summary>
+        /// 旱风的沙线：从 origin 朝 yaw ± halfAngle 的扇区里，一片拉丝沙流以 speed 往外飞（射程 range），后面跟几团贴地沙尘
+        /// </summary>
+        public static void SandGust(Vector3 origin, float yaw, float halfAngle, float range, float speed, Color? sand = null)
+        {
+            if (!Finite(origin)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            var c = sand ?? HanbaDef.Sand;
+            c.a = 0.9f;
+            int n = FxBudget.Allow(Mathf.RoundToInt(40 * Density), false);
+            var e = rt.GetEmitter("Spray");
+            float life = Mathf.Clamp(range / Mathf.Max(1f, speed), 0.3f, 1.2f);
+            for (int i = 0; e != null && i < n; i++)
+            {
+                float a = (yaw + Random.Range(-halfAngle, halfAngle)) * Mathf.Deg2Rad;
+                var dir = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                var p = origin + dir * Random.Range(0.5f, 2.5f) + Vector3.up * Random.Range(-0.4f, 2.2f);
+                rt.EmitOne(e, p, dir * speed * Random.Range(0.75f, 1.05f) + Vector3.up * Random.Range(0.5f, 2.5f), Random.Range(0.06f, 0.11f), life * Random.Range(0.7f, 1f), c, 0);
+            }
+            int m = FxBudget.Allow(Mathf.RoundToInt(8 * Density), false);
+            var dust = rt.GetEmitter("Dust");
+            for (int i = 0; dust != null && i < m; i++)
+            {
+                float a = (yaw + Random.Range(-halfAngle, halfAngle)) * Mathf.Deg2Rad;
+                var dir = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                rt.EmitOne(dust, origin + dir * Random.Range(1f, 3f) + Vector3.up * 0.4f, dir * speed * Random.Range(0.4f, 0.7f) + Vector3.up * 0.5f,
+                    Random.Range(0.9f, 1.6f), Random.Range(0.6f, 1.0f), c, 0);
+            }
+        }
+
+        /// <summary>
+        /// 吞吸：扇区里（mouth 朝 yaw ± halfAngle、range 米内）的雪粒和白色气流线被往 mouth 吸过去（每帧调，dt 控制数量）
+        /// </summary>
+        public static void SuckIn(Vector3 mouth, float yaw, float halfAngle, float range, float dt)
+        {
+            if (!Finite(mouth) || !(dt > 0)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            float expected = 70f * dt * Density;
+            int n = Mathf.FloorToInt(expected);
+            if (Random.value < expected - n) n++;
+            n = FxBudget.Allow(n, false);
+            var snow = rt.GetEmitter("Snow");
+            var line = rt.GetEmitter("Spray");
+            var lc = new Color(0.9f, 0.97f, 1f, 0.55f);
+            for (int i = 0; i < n; i++)
+            {
+                float a = (yaw + Random.Range(-halfAngle, halfAngle)) * Mathf.Deg2Rad;
+                float d = Random.Range(4f, range);
+                var p = mouth + new Vector3(Mathf.Sin(a) * d, 0, Mathf.Cos(a) * d);
+                p.y = mouth.y + Random.Range(-3.5f, 1.5f);
+                var to = mouth - p;
+                float speed = Random.Range(12f, 20f);
+                var v = to.normalized * speed;
+                float life = Mathf.Min(1.2f, to.magnitude / speed);
+                if ((i & 1) == 0 && snow != null) rt.EmitOne(snow, p, v, Random.Range(0.08f, 0.14f), life, FrostPalette.Snow, 0);
+                else if (line != null) rt.EmitOne(line, p, v, Random.Range(0.03f, 0.05f), life * 0.8f, lc, 0);
+            }
+        }
+
+        /// <summary>
+        /// 吐息火流（每帧调）：从 mouth 往 end 喷的一股火舌团（FlameBurst，加法、往上卷），dt 控制数量；scorch = 落点一路留焦黑的余烬地火
+        /// </summary>
+        public static void FireStream(Vector3 mouth, Vector3 end, float size, float dt, Color? color = null)
+        {
+            if (!Finite(mouth) || !Finite(end) || !(dt > 0)) return;
+            var seg = end - mouth;
+            float len = seg.magnitude;
+            if (len < 0.5f) return;
+            var dir = seg / len;
+            float expected = 70f * dt * Mathf.Lerp(0.6f, 1f, Density);
+            int n = Mathf.FloorToInt(expected);
+            if (Random.value < expected - n) n++;
+            var c = color ?? InfernoPalette.Fire;
+            for (int i = 0; i < n; i++)
+            {
+                // 速度按射程换算：0.45 s 里飞出 ≈ speed × 0.29 米
+                float speed = len / 0.29f * Random.Range(0.75f, 1.05f);
+                var jitter = Random.insideUnitSphere * 0.12f;
+                FlameJet(mouth + dir * Random.Range(0.2f, 1.2f), (dir + jitter).normalized, speed, size * Random.Range(0.7f, 1.2f), c);
+            }
+        }
+
+        /// <summary>前摇时手上 / 尾尖蓄着的一团火（每帧调）：往上窜的火舌 + 几颗光点，size ≈ 火团大小（米）</summary>
+        public static void Wisp(Vector3 at, Color color, float size, float dt)
+        {
+            if (!Finite(at) || !(dt > 0)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            float expected = 36f * dt * Mathf.Lerp(0.6f, 1f, Density);
+            int n = Mathf.FloorToInt(expected);
+            if (Random.value < expected - n) n++;
+            n = FxBudget.Allow(n, false);
+            var flame = rt.GetEmitter("Flame");
+            var mote = rt.GetEmitter("Mote");
+            for (int i = 0; i < n; i++)
+            {
+                var p = at + Random.insideUnitSphere * size * 0.25f;
+                if ((i & 3) != 3 && flame != null) rt.EmitOne(flame, p, Vector3.up * Random.Range(0.4f, 1.2f), size * Random.Range(0.6f, 1f), Random.Range(0.25f, 0.4f), color, 0);
+                else if (mote != null) rt.EmitOne(mote, p, Random.insideUnitSphere * 1.2f + Vector3.up, size * 0.25f, Random.Range(0.4f, 0.7f), color, 0);
+            }
+        }
+
+        /// <summary>日冕：center 周围半径 radius 的一圈往外飘的金红光点（每帧调，dt 控制数量）</summary>
+        public static void Corona(Vector3 center, float radius, float dt, Color? color = null)
+        {
+            if (!Finite(center) || !(dt > 0)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            float expected = 60f * dt * Density;
+            int n = Mathf.FloorToInt(expected);
+            if (Random.value < expected - n) n++;
+            n = FxBudget.Allow(n, false);
+            var e = rt.GetEmitter("Mote");
+            var c = color ?? new Color(1f, 0.62f, 0.25f);
+            for (int i = 0; e != null && i < n; i++)
+            {
+                var d = Random.onUnitSphere;
+                rt.EmitOne(e, center + d * radius * Random.Range(0.95f, 1.1f), d * Random.Range(1f, 3f), Random.Range(0.18f, 0.32f), Random.Range(0.5f, 0.9f), c, 0);
+            }
+        }
+
         /// <summary>水体体积的本体色：水花色压暗、偏青一点（体积是一整片，原色铺满会发白）</summary>
         static Color WaterBody(Color c) => new(c.r * 0.6f, c.g * 0.82f, c.b * 0.88f, 1);
     }

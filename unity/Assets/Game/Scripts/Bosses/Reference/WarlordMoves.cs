@@ -105,7 +105,15 @@ namespace Spiritfire.Game
             Brain.BeginDash(dir * WarlordRef.ChargeSpeed, 30f);
             Sfx("enemy_charge", 1f, 0.55f);
             Brain.Shake(0.2f, 0.25f);
+            // 冲锋：身后拖一道火尾（锥尾体积，长度随速度），起步脚下一蓬火星
+            runTrail.Cancel();
+            var root = Brain.Model?.root ? Brain.Model.root.transform : Brain.transform;
+            runTrail = Surge.Trail(root, Vector3.up * 1.6f, 1.3f, 7f, SurgeKind.Fire, 2.6f);
+            Fx.SandBlast(OnGround(Brain.transform.position) + Vector3.up * 0.2f, 1.2f, Hex.Rgb(0x6a5040));
         }
+
+        /// <summary>冲锋的火尾</summary>
+        FxHandle runTrail;
 
         protected override void OnActive(float dt)
         {
@@ -169,10 +177,12 @@ namespace Spiritfire.Game
             Brain.EndDash();
             Brain.Halt();
             legT = 0;
+            runTrail.Cancel();
             if (crashed)
             {
                 leg = Leg.Crash;
                 Fx.Explosion(p + dir * 1.2f + Vector3.up * 1.5f, 2f, WarlordRef.Fire);
+                Fx.MoltenBurst(p + dir * 1.2f + Vector3.up * 1.2f, 1.6f, false);
                 Brain.Shake(0.55f, 0.4f);
                 Sfx("boss_slam", 1f, 1.1f);
             }
@@ -288,6 +298,11 @@ namespace Spiritfire.Game
                 element = Element.Fire, knockback = 6, dust = true, dustColor = WarlordRef.Embers,
             });
             for (int i = -2; i <= 2; i++) Fx.Burst(c + Dir(yawDeg + i * 25.8f) * 2.8f + Vector3.up, WarlordRef.Fire, 5, 5f, 0.45f, 0.16f, -2f);
+            // 火浪：贴着冲击波前沿往外推的一道火墙（弧幕体积，半径和前沿同速扩大）+ 刀身扫过的一道大火刃
+            float life = WarlordRef.SweepRadius / 16f;
+            Surge.Sheet(c, yawDeg, 1f, WarlordRef.SweepHalf * 2f, 1.7f, SurgeKind.Fire, 0.08f, Mathf.Max(0.05f, life - 0.3f), 0.25f, null, null, 2.6f, 0.95f,
+                grow: 1f + WarlordRef.SweepRadius);
+            Fx.Slash(Brain.BodyCenter, yawDeg, 3.4f, WarlordRef.SweepHalf * 2f * Mathf.Deg2Rad, 1, 0, 0.7f, 0.3f, WarlordRef.Fire, true);
             if (bolts)
                 for (int k = -3; k <= 3; k++)
                 {
@@ -377,6 +392,7 @@ namespace Spiritfire.Game
             Hazards.Lob(new BossLobSpec(from, to, 1.25f, 0f, 3f, Dmg(22), WarlordRef.Fire, LobKind.Meteor)
             {
                 element = Element.Fire,
+                look = LobLook.MoltenRock,
                 onLand = leaveFire ? p => hz.Zone(new BossZoneSpec(p, 2.2f, 3.5f, fireDmg, WarlordRef.Fire) { arm = 0.1f, embers = true }) : null,
             });
         }
@@ -439,6 +455,10 @@ namespace Spiritfire.Game
             v.y = (dy + 0.5f * WarlordRef.LeapGravity * air * air) / air;
             Brain.BeginDash(v, WarlordRef.LeapGravity);
             Fx.Burst(from + Vector3.up * 0.2f, WarlordRef.Embers, 16, 6f, 0.6f, 0.2f, 6f);
+            // 起跳：脚下一圈尘浪，空中拖火尾
+            Fx.Slam(from, 2.5f, Hex.Rgb(0x4a3a30));
+            var root = Brain.Model?.root ? Brain.Model.root.transform : Brain.transform;
+            Surge.Trail(root, Vector3.up * 1.6f, 1.2f, 6f, SurgeKind.Fire, air + 0.1f);
             Sfx("jump", 1f, 0.5f);
         }
 
@@ -469,6 +489,11 @@ namespace Spiritfire.Game
                 startRadius = 5f, element = Element.Fire, dust = true, dustColor = WarlordRef.Embers, width = 0.9f, height = 0.85f, spare = crushed,
             });
             Fx.Explosion(p + Vector3.up * 0.5f, 4.5f, WarlordRef.Fire);
+            // 砸地：尘浪 + 熔铜四溅 + 一滩熔铜，再一圈火浪跟着冲击波往外推
+            Fx.Slam(floor, 5f, Hex.Rgb(0x4a3a30));
+            Fx.MoltenBurst(floor + Vector3.up * 0.3f, 2.6f, false);
+            Fx.MoltenSplat(floor, 4.5f, 1f, 9f);
+            Surge.Sheet(floor, 0, 5f, 360f, 1.3f, SurgeKind.Fire, 0.08f, 15f / 14f - 0.3f, 0.25f, null, null, 2.4f, 0.85f, grow: 4f);
             Brain.Shake(0.9f, 0.55f);
             Sfx("boss_slam");
             Sfx("explosion", 1f, 0.7f);
@@ -571,6 +596,11 @@ namespace Spiritfire.Game
             var c = OnGround(p);
             for (int i = -1; i <= 1; i++) Fx.Burst(c + Dir(Facing + i * 31.5f) * 2.8f + Vector3.up * 1.1f, WarlordRef.Fire, 6, 5f, 0.4f, 0.16f, -2f);
             Fx.Slash(Brain.BodyCenter, yaw, WarlordRef.ComboRange * 0.8f, WarlordRef.ComboHalf * 2f * Mathf.Deg2Rad, struck % 2 == 0 ? 1 : -1, 0, 0.5f, 0.25f, WarlordRef.Fire, true);
+            // 刃上的火：外圈再一道宽的暗红火刃 + 刃尖甩出去的火舌团
+            Fx.Slash(Brain.BodyCenter + Vector3.up * 0.1f, yaw, WarlordRef.ComboRange * 0.95f, WarlordRef.ComboHalf * 2f * Mathf.Deg2Rad, struck % 2 == 0 ? 1 : -1, 0, 0.9f, 0.3f,
+                new Color(1f, 0.32f, 0.06f), true);
+            for (int i = -1; i <= 1; i++)
+                Fx.FlameJet(Brain.BodyCenter + Dir(yaw + i * 35f) * 2.2f, Dir(yaw + i * 35f), 7f, 0.9f, WarlordRef.Fire);
             Brain.Glow(0, 0);
         }
 

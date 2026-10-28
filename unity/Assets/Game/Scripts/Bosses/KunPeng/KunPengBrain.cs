@@ -824,6 +824,12 @@ namespace Spiritfire.Game
                 {
                     landed = true;
                     Impact(hole.center, 1.6f);
+                    // 鲲没顶：冰窟水面炸起水冠、大涟漪，转起一个往下吸的漩涡（特效打磨 C 路）
+                    var w = new Vector3(hole.center.x, hole.waterY, hole.center.z);
+                    Fx.WaterDisturb(w, Mathf.Max(8f, hole.radius * 0.8f), 2f);
+                    Fx.Splash(w, 4.5f, Fx.NorthSea);
+                    Surge.Disk(w + Vector3.up * 0.06f, Mathf.Max(5f, hole.radius * 0.55f), SurgeKind.Water, 3.5f, 160f, -1.6f, 0.6f,
+                        new Color(0.36f, 0.66f, 0.82f), Color.white, 0.8f);
                 }
             }
             else

@@ -108,6 +108,11 @@ namespace Spiritfire.Game
                 element = Element.Fire, dust = true, dustColor = HanbaDef.Sand,
             });
             Waves++;
+            // 旱风的「墙」：一道贴着冲击波前沿往外推的沙幕（弧幕体积，半径和前沿同速扩大）+ 一片顺风飞出去的沙线
+            float r0 = Brain.BodyRadius + 0.5f, life = Range / Speed;
+            Surge.Sheet(o, Yaw, r0, HalfAngle * 2f, Height * 0.75f, SurgeKind.Sand, 0.12f, Mathf.Max(0.05f, life - 0.42f), 0.3f, null, null, 1.6f, 0.9f,
+                grow: 1f + Range / r0);
+            Fx.SandGust(o + Vector3.up * 0.6f, Yaw, HalfAngle, Range, Speed);
             // 沿扇区扬一片沙
             for (int i = 0; i < 6; i++)
             {

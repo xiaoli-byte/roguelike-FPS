@@ -84,6 +84,10 @@ namespace Spiritfire.Game
                 if (q.Flood != null && f) q.Flood.Start(f.QuadrantOf(Brain.PlayerPosition), true);
             }
             Fx.Burst(c + Vector3.up * 1f, QilinDef.Fire, 60, 14f, 1.2f, 0.45f, 8f);
+            // 狂怒长啸的火浪：从池沿一直推到殿墙的一圈火墙（整圈弧幕，和冲击波同速）
+            Surge.Sheet(c, 0, start, 360f, 2.2f, SurgeKind.Fire, 0.1f, Mathf.Max(0.05f, (end - start) / WaveSpeed - 0.3f), 0.3f, null, null, 2.8f, 0.9f,
+                grow: end / Mathf.Max(0.5f, start));
+            Fx.LavaSpout(c, Mathf.Max(1.2f, start * 0.3f), 9f, 0.4f);
             GameAudio.PlayAt("explosion", c, 1f, 0.55f);
             Brain.Shake(0.8f, 0.6f);
         }

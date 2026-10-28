@@ -472,6 +472,34 @@ namespace Spiritfire.Game
                 Combat.Execute(a.Health, true);
             }
             Scorch?.End();
+            DefeatFx();
+        }
+
+        /// <summary>
+        /// 倒下的特效（特效打磨 C 路）：身上的沙一路往下泻、整个人往下塌时炸起一圈沙浪，泉水回涌时泉心冒起一股水，溃散那一下金沙四散
+        /// </summary>
+        void DefeatFx()
+        {
+            var model = Model?.root ? Model.root : gameObject;
+            float secs = Def != null ? Def.defeat.seconds : 4.2f;
+            Fx.BodyStream(model, StreamKind.Sand, secs, 150f);
+            Fx.SandBlast(BodyCenter, 2.4f);
+            BossDefeatFx.On(gameObject)
+                .At(2.0f, () =>
+                {
+                    var feet = transform.position;
+                    Fx.SandBlast(feet + Vector3.up * 0.3f, 3.6f);
+                    Fx.Slam(feet, 4.5f, HanbaDef.Sand);
+                })
+                .At(2.4f, () =>
+                {
+                    var p = transform.position;
+                    if (!IntroFx.WaterSurface(p, out float y)) return;
+                    p.y = y;
+                    Fx.WaterDisturb(p, 8f, 1.4f);
+                    Fx.WaterSpout(p, 1.2f, 4.5f, 0.5f);
+                })
+                .At(secs * 0.88f, () => Fx.SandBlast(BodyCenter, 3.2f, HanbaDef.Sun));
         }
         // 注意：这里不写 OnDestroy——EnemyAI 自己的 OnDestroy（从敌人登记里移除）会被子类的同名消息挡掉
     }
