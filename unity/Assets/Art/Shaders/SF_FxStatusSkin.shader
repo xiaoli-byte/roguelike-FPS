@@ -198,10 +198,10 @@ Shader "Spiritfire/FxStatusSkin"
                 {
                     float jump = floor(t * 14.0);
                     float2 off = SkHash2(float2(jump, seed)) * 17.0;
-                    float3 q = i.local * 4.5 + off.xyx;
+                    float3 q = i.local * 6.0 + off.xyx;
                     float r = SkNoise3(q) * 0.7 + SkNoise3(q * 2.3 + 5.1) * 0.3;
                     half ridge = 1.0 - abs(r * 2.0 - 1.0);
-                    half vein = Band(ridge, 0.9, clamp(fwidth(ridge) * 1.2, 1e-3, 0.03));
+                    half vein = Band(ridge, 0.945, clamp(fwidth(ridge) * 1.2, 1e-3, 0.03));
                     half flick = step(0.35, SkHash(float2(jump, seed + 1.7)));
                     half sa = vein * shock * (0.6 + 0.4 * flick);
                     col += half3(1.1, 2.2, 3.6) * sa;
