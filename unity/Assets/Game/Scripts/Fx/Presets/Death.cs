@@ -23,7 +23,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(1.5f, 1.5f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.14f, 0.14f), color = FxColor.Hot, mix = 0.5f,
+                    size = new Vector2(0.85f, 0.85f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.12f, 0.12f), color = FxColor.Hot, mix = 0.35f,
                 },
                 new FxLayer
                 {
@@ -50,12 +50,12 @@ namespace Spiritfire.Game
                     style = "Streak", count = FxScale.Lin(8, 4, 40), maxCount = 40, shape = FxShape.Sphere,
                     speed = new Vector2(6, 13), up = 2, size = new Vector2(0.03f, 0.03f), life = new Vector2(0.2f, 0.5f),
                 },
-                // 一小团烟（深灰掺 30% 主色）
+                // 一小团烟：实心的卡通烟团（风格审查：原来是深灰的柔烟），章节环境色掺 25% 主色
                 new FxLayer
                 {
-                    style = "Smoke", count = FxScale.Lin(2, 1, 8), maxCount = 8, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.3f), spreadY = 0.67f,
-                    speed = new Vector2(0.5f, 1.6f), up = 0.6f, size = new Vector2(0.5f, 0.85f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.9f, 1.5f),
-                    color = FxColor.Fixed, fixedColor = Hex.Rgb(0x2b2623), mix = 0.3f,
+                    style = "ToonSmoke", count = FxScale.Lin(1, 0.6f, 5), maxCount = 5, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.3f), spreadY = 0.67f,
+                    speed = new Vector2(0.4f, 1.2f), up = 0.6f, size = new Vector2(0.55f, 0.8f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.7f, 1f),
+                    color = FxColor.Ground, fixedColor = Hex.Rgb(0xa4876a), mix = 0.25f,
                 },
                 // 魂火：几颗慢慢升起的光点
                 new FxLayer

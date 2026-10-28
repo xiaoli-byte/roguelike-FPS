@@ -22,7 +22,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(1.8f, 1.8f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.16f, 0.16f), color = FxColor.Hot, mix = 0.5f,
+                    size = new Vector2(1f, 1f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.14f, 0.14f), color = FxColor.Hot, mix = 0.3f,
                 },
                 new FxLayer
                 {

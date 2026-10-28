@@ -20,15 +20,16 @@ namespace Spiritfire.Game
             ScaleMax = 8f;
             Layers = new[]
             {
+                // 风格审查：闪光球（放大 3.6 倍的柔光）和白热核心原来按余波半径放大成一团 4–5 m 的纯白，改成紫色的小闪 + 小白芯，形状交给爆闪星和卡通环
                 new FxLayer
                 {
                     style = "Flash", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(0.45f, 0.45f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.32f, 0.32f),
+                    size = new Vector2(0.2f, 0.2f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.26f, 0.26f), color = FxColor.Hot, mix = 0.2f,
                 },
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(0.7f, 0.7f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.1f, 0.1f), color = FxColor.White,
+                    size = new Vector2(0.3f, 0.3f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.08f, 0.08f), color = FxColor.Hot, mix = 0.55f,
                 },
                 Tri(Element.Fire), Tri(Element.Shock), Tri(Element.Corrode),
                 new FxLayer
@@ -60,7 +61,7 @@ namespace Spiritfire.Game
                 Ember(Element.Fire), Ember(Element.Shock), Ember(Element.Corrode),
             };
             Ring = new FxRingSpec { radius = FxScale.Lin(0, 1), duration = 0.5f, heightFactor = 1.2f, band = true };
-            Light = new FxLightSpec { intensity = FxScale.Const(8), range = FxScale.Lin(4, 2), life = 0.35f, color = FxColor.Hot, mix = 0.2f, lift = 0.4f };
+            Light = new FxLightSpec { intensity = FxScale.Const(5), range = FxScale.Lin(4, 2), life = 0.35f, color = FxColor.Hot, mix = 0.2f, lift = 0.4f };
             Shake = new FxShakeSpec { strength = FxScale.Const(0.3f), range = FxScale.Const(40), duration = FxScale.Const(0.25f), durationPerK = 0 };
         }
 

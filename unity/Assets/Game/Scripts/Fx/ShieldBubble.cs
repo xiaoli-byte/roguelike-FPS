@@ -222,9 +222,10 @@ namespace Spiritfire.Game
             mr.SetPropertyBlock(block);
         }
 
-        // ───────────── 网格：戈德堡多面体（二次细分二十面体的对偶：150 个六边形 + 12 个五边形） ─────────────
+        // ───────────── 网格：戈德堡多面体（一次细分二十面体的对偶：30 个六边形 + 12 个五边形） ─────────────
+        // 风格审查：原来二次细分（150 格）的格子太碎，读成科幻的细网格；一次细分的大格是中尺度的「龟甲纹」，格边也更粗
 
-        public static Mesh Mesh => mesh ? mesh : mesh = Build(2, 0.93f);
+        public static Mesh Mesh => mesh ? mesh : mesh = Build(1, 0.9f);
 
         /// <summary>
         /// 单位球上的六边形格：每格一个扇形（格心 + 一圈角点），角点往格心收 inset 留出格缝。

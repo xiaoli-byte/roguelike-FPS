@@ -74,9 +74,10 @@ namespace Spiritfire.Game
         public static readonly Def[] Defs =
         {
             Toon(Smoke, 1, new Vector4(0.03f, 0.96f, 1.35f, 0.015f), new Vector4(0, 0, 1, 0), 1f, 1),
-            Toon(Fire, 0, new Vector4(0.02f, 0.97f, 1.9f, 0.015f), new Vector4(1.0f, 1.05f, 0.94f, 0), 1.75f, 3),
-            Toon(Flame, 0, new Vector4(0.02f, 0.5f, 2.2f, 0.015f), new Vector4(0.25f, 1.1f, 0.82f, 0), 1.6f, 3),
-            Toon(Glow, 2, new Vector4(0.02f, 0.95f, 1.0f, 0.01f), new Vector4(0.2f, 1f, 0.22f, 0), 1.35f, 5),
+            // HDR 亮度压一档（风格审查：火团 / 发光件不比旁边的手绘模型亮一截，Bloom 只吃亮芯）
+            Toon(Fire, 0, new Vector4(0.02f, 0.97f, 1.9f, 0.015f), new Vector4(1.0f, 1.05f, 0.94f, 0), 1.45f, 3),
+            Toon(Flame, 0, new Vector4(0.02f, 0.5f, 2.2f, 0.015f), new Vector4(0.25f, 1.1f, 0.82f, 0), 1.45f, 3),
+            Toon(Glow, 2, new Vector4(0.02f, 0.95f, 1.0f, 0.01f), new Vector4(0.2f, 1f, 0.22f, 0), 1.2f, 5),
             new Def
             {
                 name = Shield, shader = ShaderShield,

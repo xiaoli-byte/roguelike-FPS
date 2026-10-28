@@ -38,7 +38,7 @@ namespace Spiritfire.Game
                 {
                     flipbook = FxToon.Seq(FxToon.Smoke, FxToon.SmokeFirst), gravity = -2.4f, drag = 2.4f, grow = 1.9f, fade = FxFade.Hold, maxParticles = 220, sortOrder = 1,
                 },
-                One(1f, 1.3f), Hex.Rgb(0x5a504a));
+                One(1f, 1.3f), Hex.Rgb(0xb0906c));
             yield return new FxStylePreset("ToonFlame",
                 new FxParticle
                 {
@@ -71,7 +71,7 @@ namespace Spiritfire.Game
                     flipbook = FxToon.Seq(FxToon.Smoke, FxToon.DustRingFrame, 1), render = FxRender.Horizontal, gravity = 0, drag = 0, grow = 2.3f, fade = FxFade.Hold,
                     maxParticles = 40, sortOrder = 1,
                 },
-                One(1f, 0.8f), Hex.Rgb(0xa89274));
+                One(1f, 0.8f), Hex.Rgb(0xcfae82));
             yield return new FxStylePreset("ToonSeal",
                 new FxParticle
                 {

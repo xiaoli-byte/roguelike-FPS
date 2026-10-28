@@ -16,13 +16,15 @@ namespace Spiritfire.Game
     static class ExplosionKit
     {
         public static readonly Color HotYellow = Hex.Rgb(0xffe38a);
-        public static readonly Color SmokeBase = Hex.Rgb(0x8f8377);
-        public static readonly Color Rock = Hex.Rgb(0x3b322b);
+        /// <summary>烟 / 碎石 / 尘圈写沙寺的颜色（暖沙、赭褐，不用灰），按章节换调子走 <see cref="FxColor.Ground"/>（<see cref="FxTone"/>）</summary>
+        public static readonly Color SmokeBase = Hex.Rgb(0xc4a27a);
+        public static readonly Color Rock = Hex.Rgb(0x6e4c34);
+        public static readonly Color Dust = Hex.Rgb(0xcfae82);
 
         public static FxLayer Flash(float size, float life) => new()
         {
             style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-            size = new Vector2(size, size), sizeScale = FxScale.Lin(0, 1), life = new Vector2(life, life), color = FxColor.White,
+            size = new Vector2(size, size), sizeScale = FxScale.Lin(0, 1), life = new Vector2(life, life), color = FxColor.Hot, mix = 0.45f,
         };
 
         public static FxLayer Burst(float size, float life) => new()
@@ -48,7 +50,8 @@ namespace Spiritfire.Game
 
         public static FxLightSpec Light(float c, float k, float max, float life) => new()
         {
-            intensity = FxScale.Lin(c, k, max), range = FxScale.Lin(4, 5, 40), life = life, color = FxColor.Hot, mix = 0.25f, lift = 0.4f,
+            // 克制的光：闪光灯只交代「这里炸了」，不把亮沙地照成一片白（风格审查：强度 × 0.65）
+            intensity = FxScale.Lin(c * 0.65f, k * 0.65f, max * 0.65f), range = FxScale.Lin(4, 5, 40), life = life, color = FxColor.Hot, mix = 0.25f, lift = 0.4f,
         };
 
         public static FxShakeSpec Shake() => new()
@@ -72,7 +75,7 @@ namespace Spiritfire.Game
             ScaleMax = 12f;
             Layers = new[]
             {
-                ExplosionKit.Flash(1.6f, 0.07f),
+                ExplosionKit.Flash(0.9f, 0.07f),
                 ExplosionKit.Burst(2.8f, 0.1f),
                 ExplosionKit.Core(1, 2.2f, 0.45f, 0.5f),
                 new FxLayer
@@ -86,7 +89,7 @@ namespace Spiritfire.Game
                 {
                     style = "ToonSmoke", count = FxScale.Const(2), shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.25f), delay = 0.12f,
                     speed = new Vector2(0.3f, 0.8f), speedScale = FxScale.Pow(0.5f), up = 0.6f, size = new Vector2(1f, 1.3f), sizeScale = FxScale.Lin(0, 1),
-                    life = new Vector2(0.6f, 0.85f), color = FxColor.Fixed, fixedColor = ExplosionKit.SmokeBase, mix = 0.1f, shade = new Vector2(0.9f, 1.1f),
+                    life = new Vector2(0.6f, 0.85f), color = FxColor.Ground, fixedColor = ExplosionKit.SmokeBase, mix = 0.1f, shade = new Vector2(0.9f, 1.1f),
                 },
                 new FxLayer
                 {
@@ -97,7 +100,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Chunk", count = FxScale.Lin(3, 1.5f, 8), maxCount = 8, shape = FxShape.UpperSphere,
-                    speed = new Vector2(4, 9), up = 2.5f, size = new Vector2(0.06f, 0.13f), life = new Vector2(0.6f, 1f), color = FxColor.Fixed, fixedColor = ExplosionKit.Rock, mix = 0,
+                    speed = new Vector2(4, 9), up = 2.5f, size = new Vector2(0.06f, 0.13f), life = new Vector2(0.6f, 1f), color = FxColor.Ground, fixedColor = ExplosionKit.Rock, mix = 0,
                 },
                 new FxLayer
                 {
@@ -125,13 +128,13 @@ namespace Spiritfire.Game
             ScaleMax = 12f;
             Layers = new[]
             {
-                ExplosionKit.Flash(1.3f, 0.08f),
+                ExplosionKit.Flash(0.75f, 0.08f),
                 ExplosionKit.Burst(2.2f, 0.13f),
                 ExplosionKit.Core(1, 1.8f, 0.62f, 0.7f),
                 new FxLayer
                 {
-                    style = "ToonFire", count = FxScale.Lin(4, 0.8f, 9), maxCount = 9, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.32f), spreadY = 1.3f,
-                    speed = new Vector2(1.4f, 3.2f), speedScale = FxScale.Pow(0.5f), up = 0.9f, size = new Vector2(0.75f, 1.05f), sizeScale = FxScale.Lin(0, 1),
+                    style = "ToonFire", count = FxScale.Lin(3, 0.6f, 6), maxCount = 6, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.32f), spreadY = 1.3f,
+                    speed = new Vector2(1.4f, 3.2f), speedScale = FxScale.Pow(0.5f), up = 0.9f, size = new Vector2(0.85f, 1.15f), sizeScale = FxScale.Lin(0, 1),
                     life = new Vector2(0.42f, 0.66f), color = FxColor.RandomMix, fixedColor = ExplosionKit.HotYellow,
                 },
                 // 二段：往上窜的火团（蘑菇柱的「杆」）
@@ -144,9 +147,10 @@ namespace Spiritfire.Game
                 ExplosionKit.Ring(1.1f, 0.32f),
                 new FxLayer
                 {
-                    style = "ToonSmoke", count = FxScale.Lin(2.5f, 0.8f, 7), maxCount = 7, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.38f), delay = 0.18f,
-                    speed = new Vector2(0.5f, 1.3f), speedScale = FxScale.Pow(0.5f), up = 1.4f, size = new Vector2(0.6f, 0.85f), sizeScale = FxScale.Lin(0, 1),
-                    life = new Vector2(0.85f, 1.25f), color = FxColor.Fixed, fixedColor = ExplosionKit.SmokeBase, mix = 0.1f, shade = new Vector2(0.85f, 1.12f),
+                    // 烟：少几团、每团大一点（几团叠在一起时描边不会读成一片鹅卵石）
+                    style = "ToonSmoke", count = FxScale.Lin(1.5f, 0.5f, 4), maxCount = 4, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.38f), delay = 0.18f,
+                    speed = new Vector2(0.5f, 1.3f), speedScale = FxScale.Pow(0.5f), up = 1.4f, size = new Vector2(0.78f, 1f), sizeScale = FxScale.Lin(0, 1),
+                    life = new Vector2(0.75f, 1.05f), color = FxColor.Ground, fixedColor = ExplosionKit.SmokeBase, mix = 0.1f, shade = new Vector2(0.85f, 1.12f),
                 },
                 new FxLayer
                 {
@@ -157,7 +161,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Chunk", count = FxScale.Lin(5, 1.5f, 16), maxCount = 16, shape = FxShape.UpperSphere,
-                    speed = new Vector2(5, 13), up = 3, size = new Vector2(0.08f, 0.18f), life = new Vector2(0.8f, 1.4f), color = FxColor.Fixed, fixedColor = ExplosionKit.Rock, mix = 0,
+                    speed = new Vector2(5, 13), up = 3, size = new Vector2(0.08f, 0.18f), life = new Vector2(0.8f, 1.4f), color = FxColor.Ground, fixedColor = ExplosionKit.Rock, mix = 0,
                 },
                 new FxLayer
                 {
@@ -185,20 +189,20 @@ namespace Spiritfire.Game
             ScaleMax = 14f;
             Layers = new[]
             {
-                ExplosionKit.Flash(1.2f, 0.1f),
+                ExplosionKit.Flash(0.7f, 0.1f),
                 ExplosionKit.Burst(1.7f, 0.16f),
                 ExplosionKit.Core(2, 1.6f, 0.78f, 2f),
                 new FxLayer
                 {
-                    style = "ToonFire", count = FxScale.Lin(6, 0.6f, 12), maxCount = 12, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.4f), spreadY = 1.4f,
-                    speed = new Vector2(1.6f, 3.4f), speedScale = FxScale.Pow(0.5f), up = 1.2f, size = new Vector2(0.55f, 0.8f), sizeScale = FxScale.Lin(0, 1),
+                    style = "ToonFire", count = FxScale.Lin(4, 0.5f, 8), maxCount = 8, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.4f), spreadY = 1.4f,
+                    speed = new Vector2(1.6f, 3.4f), speedScale = FxScale.Pow(0.5f), up = 1.2f, size = new Vector2(0.65f, 0.9f), sizeScale = FxScale.Lin(0, 1),
                     life = new Vector2(0.55f, 0.85f), color = FxColor.RandomMix, fixedColor = ExplosionKit.HotYellow,
                 },
                 // 外圈一圈贴地滚出去的火团（大爆炸的「裙边」）
                 new FxLayer
                 {
-                    style = "ToonFire", count = FxScale.Const(8), shape = FxShape.Disc, spread = FxScale.Lin(0, 0.25f), delay = 0.04f,
-                    speed = new Vector2(2.2f, 3.4f), speedScale = FxScale.Pow(0.5f), up = 0.4f, size = new Vector2(0.38f, 0.5f), sizeScale = FxScale.Lin(0, 1),
+                    style = "ToonFire", count = FxScale.Const(6), shape = FxShape.Disc, spread = FxScale.Lin(0, 0.25f), delay = 0.04f,
+                    speed = new Vector2(2.2f, 3.4f), speedScale = FxScale.Pow(0.5f), up = 0.4f, size = new Vector2(0.45f, 0.6f), sizeScale = FxScale.Lin(0, 1),
                     life = new Vector2(0.45f, 0.65f), color = FxColor.RandomMix, fixedColor = ExplosionKit.HotYellow,
                 },
                 new FxLayer
@@ -212,13 +216,13 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "ToonDust", count = FxScale.Const(1), density = false, shape = FxShape.Point, offset = 0.05f, delay = 0.03f,
-                    size = new Vector2(1.05f, 1.05f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.9f, 0.9f), color = FxColor.Fixed, fixedColor = Hex.Rgb(0xa89274), mix = 0.08f,
+                    size = new Vector2(1.05f, 1.05f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.9f, 0.9f), color = FxColor.Ground, fixedColor = ExplosionKit.Dust, mix = 0.08f,
                 },
                 new FxLayer
                 {
-                    style = "ToonSmoke", count = FxScale.Lin(4, 0.5f, 9), maxCount = 9, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.4f), delay = 0.22f,
-                    speed = new Vector2(0.6f, 1.6f), speedScale = FxScale.Pow(0.5f), up = 2.4f, size = new Vector2(0.5f, 0.7f), sizeScale = FxScale.Lin(0, 1),
-                    life = new Vector2(1.1f, 1.6f), color = FxColor.Fixed, fixedColor = ExplosionKit.SmokeBase, mix = 0.1f, shade = new Vector2(0.85f, 1.12f),
+                    style = "ToonSmoke", count = FxScale.Lin(2, 0.35f, 5), maxCount = 5, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.4f), delay = 0.22f,
+                    speed = new Vector2(0.6f, 1.6f), speedScale = FxScale.Pow(0.5f), up = 2.4f, size = new Vector2(0.62f, 0.85f), sizeScale = FxScale.Lin(0, 1),
+                    life = new Vector2(0.9f, 1.3f), color = FxColor.Ground, fixedColor = ExplosionKit.SmokeBase, mix = 0.1f, shade = new Vector2(0.85f, 1.12f),
                 },
                 new FxLayer
                 {
@@ -229,7 +233,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Chunk", count = FxScale.Lin(10, 1.2f, 22), maxCount = 22, shape = FxShape.UpperSphere,
-                    speed = new Vector2(7, 16), up = 4, size = new Vector2(0.12f, 0.28f), life = new Vector2(1f, 1.6f), color = FxColor.Fixed, fixedColor = ExplosionKit.Rock, mix = 0,
+                    speed = new Vector2(7, 16), up = 4, size = new Vector2(0.12f, 0.28f), life = new Vector2(1f, 1.6f), color = FxColor.Ground, fixedColor = ExplosionKit.Rock, mix = 0,
                 },
                 new FxLayer
                 {

@@ -84,11 +84,12 @@ LIGHT = LIGHT / np.linalg.norm(LIGHT)
 
 # ───────────── 团簇（火团 / 烟团） ─────────────
 
-def make_puffs(seed, ring, center_r, ring_d, ring_r, extra_top):
+def make_puffs(seed, ring, center_r, ring_d, ring_r, extra_top, jitter=0.25, angles=None):
+    """angles：给定每个外圈团的方向（弧度），不给就均匀一圈加 ±jitter 的抖动"""
     rng = np.random.default_rng(seed)
     puffs = [dict(p=np.array([0.0, -0.06]), r=center_r, w=rng.uniform(1.4, 2.2) * rng.choice([-1, 1]), o=rng.uniform(0, 50), h=1.0)]
     for i in range(ring):
-        a = 2 * np.pi * i / ring + rng.uniform(-0.25, 0.25)
+        a = (angles[i] if angles is not None else 2 * np.pi * i / ring) + rng.uniform(-jitter, jitter)
         d = rng.uniform(*ring_d)
         dirv = np.array([np.cos(a), np.sin(a) * 0.9])
         # 往外滚：右边的团顺时针、左边的逆时针（顶面朝外翻）
@@ -101,8 +102,10 @@ def make_puffs(seed, ring, center_r, ring_d, ring_r, extra_top):
 
 
 def cluster(puffs, t, expand, grow, rise, roll, noise_amp, seed):
-    """一帧团簇：返回 形状场 D、受光 B、折缝 crease、热度 H（每团自己的白热芯，团心越靠中间越热）"""
+    """一帧团簇：返回 形状场 D、受光 B、折缝 crease、热度 H（一半按每团的团心、一半按整簇：中间最热，一簇只有一个白热芯）"""
     s_all, light_all, heat_all = [], [], []
+    centre = puffs[0]["p"] * expand(t) + np.array([0.0, rise * t])
+    span = max(np.linalg.norm(pf["p"] * expand(t)) + pf["r"] * grow(t) for pf in puffs)
     for k, pf in enumerate(puffs):
         p = pf["p"] * expand(t) + np.array([0.0, rise * t])
         r = pf["r"] * grow(t)
@@ -114,12 +117,17 @@ def cluster(puffs, t, expand, grow, rise, roll, noise_amp, seed):
         dist = np.sqrt(vx * vx + vy * vy)
         sv = 1 - dist + noise_amp * (n - 0.5)
         z = np.sqrt(np.clip(1 - dist * dist, 0, 1))
-        nx, ny = vx + 0.22 * (n - 0.5), vy + 0.22 * (n - 0.5)
+        # 法线只带一点点噪声：每团是干净的球面两段明暗（风格审查：原来 0.22 的噪声把亮暗交界啃成一片碎斑）
+        nx, ny = vx + 0.06 * (n - 0.5), vy + 0.06 * (n - 0.5)
         ln = np.sqrt(nx * nx + ny * ny + z * z) + 1e-6
         lit = np.clip((nx * LIGHT[0] + ny * LIGHT[1] + z * LIGHT[2]) / ln, 0, 1)
         # 团心热、边缘凉；离簇中心越远的团越凉
         hot = pf.get("h", 1.0)
-        heat = np.clip((1 - dist * 1.05 + 0.35 * (n - 0.5)) * 1.35, 0, 1) ** 0.8 * hot
+        # 每团自己的热芯只占一半，另一半按整簇算（离簇中心越远越凉）：一簇只有一个白热芯，不是每个小团都发白（风格审查：不读成一片泡泡）
+        lobe = np.clip((1 - dist * 1.05 + 0.2 * (n - 0.5)) * 1.35, 0, 1) ** 0.8 * hot
+        cx, cy = X - centre[0], Y - centre[1]
+        whole = np.clip(1.15 - np.sqrt(cx * cx + cy * cy) / max(1e-3, span), 0, 1)
+        heat = lobe * 0.5 + whole * lobe ** 0.35 * 0.5
         s_all.append(sv)
         light_all.append(lit)
         heat_all.append(heat)
@@ -145,17 +153,17 @@ def cluster(puffs, t, expand, grow, rise, roll, noise_amp, seed):
 def fireball(t):
     puffs = FIRE_PUFFS
     ease = lambda t: 1 - (1 - t) ** 2
-    D, B, crease, H = cluster(puffs, t, lambda t: 0.66 + 0.5 * ease(t), lambda t: 0.8 + 0.4 * ease(t), 0.06, 1.0, 0.26, 101)
+    D, B, crease, H = cluster(puffs, t, lambda t: 0.66 + 0.5 * ease(t), lambda t: 0.8 + 0.4 * ease(t), 0.06, 1.0, 0.18, 101)
     H = np.clip(H * (1 - 0.2 * t), 0, 1) * (D > 0)
-    B = B * (1 - 0.6 * crease)
+    B = B * (1 - 0.45 * crease)
     return D, H, B
 
 
 def smoke(t):
     puffs = SMOKE_PUFFS
     ease = lambda t: 1 - (1 - t) ** 1.6
-    D, B, crease, _ = cluster(puffs, t, lambda t: 0.66 + 0.4 * ease(t), lambda t: 0.8 + 0.35 * ease(t), 0.1, 0.6, 0.2, 707)
-    B = B * (1 - 0.5 * crease)
+    D, B, crease, _ = cluster(puffs, t, lambda t: 0.66 + 0.4 * ease(t), lambda t: 0.8 + 0.35 * ease(t), 0.1, 0.6, 0.14, 707)
+    B = B * (1 - 0.3 * crease)
     return D, np.zeros_like(D), B
 
 
@@ -312,8 +320,11 @@ def flame(t):
     return D, H, np.ones_like(D)
 
 
-FIRE_PUFFS = make_puffs(5, 9, 0.44, (0.26, 0.4), (0.22, 0.32), 2)
-SMOKE_PUFFS = make_puffs(9, 7, 0.46, (0.22, 0.34), (0.26, 0.34), 1)
+# 风格审查（docs/art/fx-style.md「形状先于细节」）：团数收少、每团放大——火团 1 + 5 + 1、烟团 1 + 4 + 1，一簇读成几大团，不是一片小泡泡
+# 烟团照祥云的样子摆：上面鼓起三个团头、两侧各一个、底下收平（不是均匀的一圈）
+FIRE_PUFFS = make_puffs(5, 6, 0.5, (0.3, 0.42), (0.25, 0.34), 1, jitter=0.4)
+SMOKE_PUFFS = make_puffs(9, 5, 0.5, (0.27, 0.36), (0.27, 0.36), 1, jitter=0.12,
+                         angles=[np.radians(a) for a in (172, 128, 82, 40, -8)])
 
 
 def build():

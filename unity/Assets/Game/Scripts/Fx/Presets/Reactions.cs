@@ -13,10 +13,15 @@ namespace Spiritfire.Game
     /// </summary>
     static class RxKit
     {
+        /// <summary>
+        /// 闪光：柔光球（风格审查：原来 2–3 m 的纯白柔光把整个人罩白，改成四成大、带反应色——「白」的那一下留给爆闪星的硬边亮芯）。
+        /// 写 White 的按主色混白 0.5 处理
+        /// </summary>
         public static FxLayer Flash(float size, float life, FxColor c = FxColor.White, float mix = 0, float delay = 0) => new()
         {
             style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-            size = new Vector2(size, size), sizeScale = FxScale.Lin(0, 1), life = new Vector2(life, life), color = c, mix = mix, delay = delay,
+            size = new Vector2(size * 0.4f, size * 0.4f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(life, life),
+            color = c == FxColor.White ? FxColor.Hot : c, mix = c == FxColor.White ? 0.5f : mix, delay = delay,
         };
 
         public static FxLayer One(string style, float size, float life, float mix = 0.25f, float delay = 0, float offset = 0) => new()
@@ -76,10 +81,10 @@ namespace Spiritfire.Game
                 {
                     style = "ToonSmoke", count = FxScale.Const(2), shape = FxShape.UpperSphere, spread = FxScale.Const(0.4f), delay = 0.25f,
                     speed = new Vector2(0.3f, 0.8f), up = 1f, size = new Vector2(0.9f, 1.2f), life = new Vector2(0.8f, 1.1f),
-                    color = FxColor.Fixed, fixedColor = Hex.Rgb(0x7a6e5c), mix = 0.12f,
+                    color = FxColor.Ground, fixedColor = Hex.Rgb(0xb89a74), mix = 0.12f,
                 },
             };
-            Light = new FxLightSpec { intensity = FxScale.Const(9), range = FxScale.Const(9), life = 0.35f, color = FxColor.Hot, mix = 0.3f, lift = 0.4f };
+            Light = new FxLightSpec { intensity = FxScale.Const(5.5f), range = FxScale.Const(9), life = 0.35f, color = FxColor.Hot, mix = 0.3f, lift = 0.4f };
             Shake = new FxShakeSpec { strength = FxScale.Const(0.22f), range = FxScale.Const(22), duration = FxScale.Const(0.2f), durationPerK = 0.1f };
         }
     }
@@ -124,7 +129,7 @@ namespace Spiritfire.Game
                     speed = new Vector2(0, 0.3f), size = new Vector2(0.35f, 0.55f), life = new Vector2(0.1f, 0.18f), color = FxColor.Fixed, fixedColor = blue, mix = 0,
                 },
             };
-            Light = new FxLightSpec { intensity = FxScale.Const(11), range = FxScale.Const(11), life = 0.32f, color = FxColor.Hot, mix = 0.45f, lift = 0.4f };
+            Light = new FxLightSpec { intensity = FxScale.Const(6.5f), range = FxScale.Const(11), life = 0.32f, color = FxColor.Hot, mix = 0.35f, lift = 0.4f };
             Shake = new FxShakeSpec { strength = FxScale.Const(0.26f), range = FxScale.Const(26), duration = FxScale.Const(0.22f), durationPerK = 0.1f };
         }
     }
@@ -169,7 +174,7 @@ namespace Spiritfire.Game
                     speed = new Vector2(0.2f, 0.8f), up = 0.6f, size = new Vector2(0.1f, 0.18f), life = new Vector2(0.8f, 1.4f), color = FxColor.Hot, mix = 0.3f,
                 },
             };
-            Light = new FxLightSpec { intensity = FxScale.Const(8), range = FxScale.Const(8), life = 0.35f, color = FxColor.Hot, mix = 0.3f, lift = 0.3f };
+            Light = new FxLightSpec { intensity = FxScale.Const(5), range = FxScale.Const(8), life = 0.35f, color = FxColor.Hot, mix = 0.3f, lift = 0.3f };
             Shake = new FxShakeSpec { strength = FxScale.Const(0.18f), range = FxScale.Const(20), duration = FxScale.Const(0.18f), durationPerK = 0.08f };
         }
     }
@@ -212,7 +217,7 @@ namespace Spiritfire.Game
                     size = new Vector2(1.4f, 1.4f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.3f, 0.3f), color = FxColor.White,
                 },
             };
-            Light = new FxLightSpec { intensity = FxScale.Const(6), range = FxScale.Const(7), life = 0.3f, color = FxColor.Hot, mix = 0.3f, lift = 0.2f };
+            Light = new FxLightSpec { intensity = FxScale.Const(4), range = FxScale.Const(7), life = 0.3f, color = FxColor.Hot, mix = 0.3f, lift = 0.2f };
             Shake = new FxShakeSpec { strength = FxScale.Const(0.12f), range = FxScale.Const(16), duration = FxScale.Const(0.14f), durationPerK = 0.06f };
         }
     }

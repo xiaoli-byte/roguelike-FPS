@@ -20,15 +20,16 @@ namespace Spiritfire.Game
     {
         const string Channel = "status";
         /// <summary>减速的冰白：比雷元素的天蓝（6fd8ff）白得多，靠明度和冰晶星芒区分</summary>
-        static readonly Color StunColor = Hex.Rgb(0xffe27a), FrostColor = Hex.Rgb(0xdff5ff);
+        // 风格审查：冻住的身上染冰蓝（原来近白，整只怪刷白），轮廓光也收到元素色表的冰蓝 / 鲜绿，不发白
+        static readonly Color StunColor = Hex.Rgb(0xffe27a), FrostColor = Hex.Rgb(0x9fd2f2);
         /// <summary>贴骨电弧全场每秒最多几道</summary>
         const float ArcsPerSecond = 16f;
         /// <summary>身上一个敌人最多几片火舌</summary>
         const int MaxTongues = 5;
 
         // 轮廓光（线性 HDR）：远处只看颜色就分得清
-        static readonly Color RimBurn = new(2.4f, 0.62f, 0.1f), RimShock = new(0.3f, 0.95f, 3.2f), RimCorrode = new(0.9f, 2.2f, 0.12f),
-            RimStun = new(2.2f, 1.7f, 0.25f), RimFrost = new(1.7f, 1.95f, 2.1f);
+        static readonly Color RimBurn = new(2.4f, 0.62f, 0.1f), RimShock = new(0.3f, 0.95f, 3.2f), RimCorrode = new(0.5f, 1.35f, 0.1f),
+            RimStun = new(2.2f, 1.7f, 0.25f), RimFrost = new(0.55f, 1.15f, 1.9f);
 
         static int budgetFrame = -1, budgetLeft;
         static float arcTokens;
@@ -492,7 +493,8 @@ namespace Spiritfire.Game
             float r = col ? Mathf.Clamp(Mathf.Max(col.bounds.extents.x, col.bounds.extents.z) * 0.7f, 0.3f, 0.9f) : 0.4f;
             float size = Mathf.Clamp(BodyHeight * 0.16f, 0.22f, 0.5f);
             var hot = Hex.Rgb(0xffd848);
-            starTrailAcc += dt * 30f;
+            // 星尾的光点少一点（风格审查：一串细碎的柔光点）
+            starTrailAcc += dt * 12f;
             var trail = starTrailAcc >= 1 ? rt.GetEmitter("Glow") : null;
             bool emitTrail = starTrailAcc >= 1;
             if (emitTrail) starTrailAcc -= 1;
@@ -507,7 +509,7 @@ namespace Spiritfire.Game
 
         void Frost(FxRuntime rt, float dt, float density)
         {
-            frostAcc += dt * 10f * density;
+            frostAcc += dt * 4f * density;
             int n = Take((int)frostAcc);
             frostAcc -= (int)frostAcc;
             var glow = n > 0 ? rt.GetEmitter("GlowFall") : null;
@@ -515,7 +517,7 @@ namespace Spiritfire.Game
                 rt.EmitOne(glow, RandomPoint(), new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.4f), Random.Range(-0.2f, 0.2f)),
                     Random.Range(0.06f, 0.11f), Random.Range(0.4f, 0.7f), FrostColor, 0);
             // 冰晶星芒（FX3 Twinkle）：贴在身上一闪一闪的白点，远处也读得出「结霜」
-            glintAcc += dt * 5f * density;
+            glintAcc += dt * 2f * density;
             int g = Take((int)glintAcc);
             glintAcc -= (int)glintAcc;
             var tw = g > 0 ? rt.GetEmitter("Twinkle") : null;

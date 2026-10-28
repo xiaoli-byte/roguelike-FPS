@@ -1,7 +1,7 @@
 // 状态皮（特效打磨 B 路）：挂了状态的敌人身上多画一遍的「皮」（StatusFx 把这个材质追加到身体渲染器的材质表末尾：单子网格的网格不用再蒙皮一次），
 // 沿法线往外鼓一点点（不和身体打架），近看是细节、远看是一圈状态色的轮廓光：
-//   冰（减速）：从脚往上长的冰壳——网格 uv 上的噪声 + 离地高度决定覆盖，冰面是一格格冰晶（晶格亮边）、菲涅尔泛白、零星闪点；
-//   蚀：一块块腐蚀斑（暗绿芯 + 亮酸绿边）、斑里冒泡（小圆点一亮一灭），沿世界竖直方向往下淌的蚀液条纹；
+//   冰（减速）：从脚往上长的冰壳——网格 uv 上的噪声 + 离地高度决定覆盖，冰面是一块块大切面冰晶（亮面白、暗面冰蓝，晶格边深蓝灰），前沿一道霜白；
+//   蚀：一块块腐蚀斑（墨绿芯 + 鲜绿边）、斑里冒泡（少而大的泡一亮一灭），沿世界竖直方向往下淌的蚀液条纹；
 //   雷：贴着皮肤乱窜的电纹（脊线噪声，每 1/14 s 换一次形状），亮蓝白；
 //   火：皮肤上发亮的炭火裂纹（慢慢往上爬）；
 //   眩晕：只有淡黄的轮廓光。
@@ -152,19 +152,20 @@ Shader "Spiritfire/FxStatusSkin"
                     float cover = (frost * 1.35 - h01) + (n - 0.5) * 0.55;
                     half cw = max(fwidth(cover), 1e-3) * 1.2;
                     half ice = Band(cover, 0.0, cw);
-                    float3 vo = SkVoronoi(uv * 26.0);
-                    half facet = 1.0 - saturate((vo.y - vo.x) / 0.08);
+                    // 风格审查：冰晶是块面清楚的大切面（低多边形的感觉），亮面白、暗面冰蓝，晶格边是一道深一点的蓝灰——
+                    // 原来 26 格 / uv 的细晶格 + 亮白格边 + 闪点读成一层发白的细裂纹
+                    float3 vo = SkVoronoi(uv * 9.0);
+                    half facet = 1.0 - saturate((vo.y - vo.x) / 0.07);
                     Light L = GetMainLight();
                     half ndl = saturate(dot(N, L.direction) * 0.5 + 0.5);
-                    half3 iceCol = lerp(half3(0.55, 0.8, 0.95), half3(0.92, 0.98, 1.0), saturate(fres * 1.4 + vo.z * 0.25)) * (0.65 + 0.45 * ndl);
-                    iceCol += half3(1.2, 1.6, 2.0) * facet * 0.35;
-                    // 闪点：格心偶尔一亮
-                    half glint = step(0.93, vo.z) * saturate(1.0 - vo.x * 4.0) * (0.5 + 0.5 * sin(t * 6.0 + vo.z * 40.0));
-                    iceCol += half3(2.0, 2.4, 2.8) * glint;
-                    // 前沿一道白霜
-                    half rim = Band(cover, 0.0, cw) * (1.0 - Band(cover, 0.08, cw));
-                    iceCol = lerp(iceCol, half3(1.6, 1.9, 2.2), rim * 0.8);
-                    half ia = ice * (0.5 + 0.3 * fres) * saturate(frost * 1.5);
+                    // 每块晶面自己的朝向（格随机数）+ 主光：两段色阶
+                    half face = Band(vo.z * 0.55 + ndl * 0.75, 0.76, 0.05);
+                    half3 iceCol = lerp(half3(0.33, 0.6, 0.86), half3(0.74, 0.89, 0.99), face) * (0.78 + 0.3 * ndl);
+                    iceCol = lerp(iceCol, half3(0.27, 0.42, 0.6), facet * 0.55);
+                    // 前沿一道霜白（只是一条边）
+                    half rim = Band(cover, 0.0, cw) * (1.0 - Band(cover, 0.07, cw));
+                    iceCol = lerp(iceCol, half3(1.0, 1.1, 1.2), rim * 0.6);
+                    half ia = ice * (0.56 + 0.18 * fres) * saturate(frost * 1.5);
                     col = col * (1 - ia) + iceCol * ia;
                     a = a + ia * (1 - a);
                 }
@@ -172,19 +173,22 @@ Shader "Spiritfire/FxStatusSkin"
                 // ── 蚀斑 ──
                 [branch] if (corrode > 0.001)
                 {
-                    float n = SkFbm(uv * 6.5 + float2(0, t * 0.03));
-                    float blot = n - (1.0 - corrode * 0.42);
+                    // 斑块用贴着身体的 3D 噪声（米为单位，一块十几厘米）：网格 uv 是一块块图集岛，按 uv 算的斑会被岛缝切成方块
+                    float3 qc = i.local * 4.2 + float3(seed * 2.1, t * 0.05, seed);
+                    float n = SkNoise3(qc) * 0.6 + SkNoise3(qc * 2.05 + 4.3) * 0.3 + SkNoise3(qc * 4.1 + 1.7) * 0.1;
+                    float blot = n - (1.0 - corrode * 0.36);
                     half bw = max(fwidth(blot), 1e-3) * 1.2;
                     half inside = Band(blot, 0.0, bw);
                     half edgeBand = inside * (1.0 - Band(blot, 0.05, bw));
-                    // 斑里冒泡
-                    float3 vb = SkVoronoi(uv * 30.0 + float2(0, -t * 0.4));
-                    half bub = (1.0 - Band(vb.x, 0.22, 0.03)) * step(0.55, frac(vb.z * 7.0 + t * 0.9)) * inside;
-                    // 往下淌的蚀液：世界竖直方向的条纹
-                    float drip = SkNoise(float2(uv.x * 40.0 + uv.y * 3.0, i.positionWS.y * 3.0 + t * 1.6 + seed * 5.0));
-                    half dr = Band(drip, 0.82 - corrode * 0.1, 0.03) * corrode;
-                    half3 dark = half3(0.06, 0.13, 0.03);
-                    half3 acid = half3(0.65, 1.7, 0.18);
+                    // 斑里冒泡：少而大的泡（风格审查：原来 30 格 / uv 的小泡是一层细碎的噪点）
+                    float3 vb = SkVoronoi(uv * 13.0 + float2(0, -t * 0.25));
+                    half bub = (1.0 - Band(vb.x, 0.2, 0.04)) * step(0.78, frac(vb.z * 7.0 + t * 0.6)) * inside;
+                    // 往下淌的蚀液：世界竖直方向的条纹（粗一点、少一点）
+                    float drip = SkNoise(float2(uv.x * 18.0 + uv.y * 3.0, i.positionWS.y * 2.2 + t * 1.4 + seed * 5.0));
+                    half dr = Band(drip, 0.84 - corrode * 0.08, 0.03) * corrode;
+                    // 三段：墨绿斑芯 / 鲜绿斑边 / 黄绿的泡（元素色表「蚀」），HDR 收一档，不比模型亮一截
+                    half3 dark = half3(0.05, 0.17, 0.07);
+                    half3 acid = half3(0.48, 1.15, 0.14);
                     half3 cc = lerp(dark, acid, edgeBand);
                     cc += acid * bub * 0.9;
                     half ca = saturate(inside * 0.9 + dr * 0.75) * corrode;

@@ -25,12 +25,12 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(1.5f, 1.5f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.12f, 0.12f), color = FxColor.Hot, mix = 0.6f,
+                    size = new Vector2(0.8f, 0.8f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.1f, 0.1f), color = FxColor.Hot, mix = 0.3f,
                 },
                 new FxLayer
                 {
                     style = "Flash", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(0.7f, 0.7f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.22f, 0.22f), color = FxColor.Hot, mix = 0.2f,
+                    size = new Vector2(0.4f, 0.4f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.2f, 0.2f), color = FxColor.Hot, mix = 0.1f,
                 },
                 // 护盾格：几片从球壳面上崩开（整壳碎开归 ShieldBubble）
                 new FxLayer
@@ -58,7 +58,7 @@ namespace Spiritfire.Game
                 },
             };
             Ring = new FxRingSpec { radius = FxScale.Lin(0.6f, 1.6f), duration = 0.38f, heightFactor = 3f, band = true };
-            Light = new FxLightSpec { intensity = FxScale.Const(6), range = FxScale.Lin(4, 2), life = 0.25f, color = FxColor.Hot, mix = 0.3f, lift = 0.2f };
+            Light = new FxLightSpec { intensity = FxScale.Const(3.5f), range = FxScale.Lin(4, 2), life = 0.25f, color = FxColor.Hot, mix = 0.2f, lift = 0.2f };
             Shake = new FxShakeSpec { strength = FxScale.Const(0.12f), range = FxScale.Const(14), duration = FxScale.Const(0.16f), durationPerK = 0.08f };
         }
     }

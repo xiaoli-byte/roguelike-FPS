@@ -22,7 +22,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(1.4f, 1.4f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.1f, 0.1f), color = FxColor.Hot, mix = 0.6f,
+                    size = new Vector2(0.8f, 0.8f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.09f, 0.09f), color = FxColor.Hot, mix = 0.35f,
                 },
                 new FxLayer
                 {
@@ -68,7 +68,7 @@ namespace Spiritfire.Game
                 },
             };
             Ring = new FxRingSpec { radius = FxScale.Lin(0.5f, 1.3f), duration = 0.34f, heightFactor = 3f, band = false };
-            Light = new FxLightSpec { intensity = FxScale.Const(6), range = FxScale.Lin(4, 2), life = 0.24f, color = FxColor.Hot, mix = 0.3f, lift = 0.2f };
+            Light = new FxLightSpec { intensity = FxScale.Const(3.5f), range = FxScale.Lin(4, 2), life = 0.24f, color = FxColor.Hot, mix = 0.2f, lift = 0.2f };
             Shake = new FxShakeSpec { strength = FxScale.Const(0.16f), range = FxScale.Const(14), duration = FxScale.Const(0.18f), durationPerK = 0.1f };
         }
     }

@@ -47,8 +47,8 @@ namespace Spiritfire.Game
         {
             var hp = ai.Health;
             color = ai.elite ? EliteGold : FxDirector.EnemyColor(hp);
-            // 显形前沿：HDR 敌人色 + 白热底（B 路打磨：比原来亮一档，Bloom 吃得到一圈清楚的亮边）
-            edge = new Color(color.r * 4.2f + 0.55f, color.g * 4.2f + 0.5f, color.b * 4.2f + 0.45f, 1);
+            // 显形前沿：HDR 敌人色 + 一点白热底（B 路打磨亮了一档；风格审查又压回一些：前沿是一道亮边，不是整个人发白）
+            edge = new Color(color.r * 2.8f + 0.25f, color.g * 2.8f + 0.22f, color.b * 2.8f + 0.2f, 1);
             DeathDissolve.Collect(gameObject, targets, others);
             var b = DeathDissolve.BoundsOf(targets, transform.position + Vector3.up);
             radius = Mathf.Clamp(Mathf.Max(b.extents.x, b.extents.z), 0.3f, 4f);
@@ -75,7 +75,8 @@ namespace Spiritfire.Game
                     var flat = rt.GetEmitter("RingFlat");
                     if (flat != null) rt.EmitOne(flat, ground, Vector3.zero, ringR * 0.9f, Duration + 0.15f, color, 0);
                 }
-                rt.Wall(ground, Mathf.Max(0.6f, radius * 1.1f), Mathf.Max(2.2f, height * 1.4f), color, Duration + 0.1f, false);
+                // 光墙压暗一档（风格审查：白金色的柔光柱比旁边的模型亮一截）
+                rt.Wall(ground, Mathf.Max(0.6f, radius * 1.1f), Mathf.Max(2.2f, height * 1.4f), color * 0.6f, Duration + 0.1f, false);
             }
             swirlColor = SwirlColor();
             t0 = Time.time;

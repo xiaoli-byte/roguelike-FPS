@@ -4,7 +4,7 @@
 // 顶点流（FxSetup 的 FlipbookStreams）：TEXCOORD0 = 本帧 uv.xy + 下一帧 uv.zw；TEXCOORD1 = x 帧混合、y 年龄比例（0..1）、z 稳定随机数；COLOR = 粒子色 × 透明度曲线。
 // _Mode：
 //   0 火：热度按年龄冷却（_Cool），分五段硬色阶：白热 → 黄 → 主色 → 深色（主色²）→ 烟；受光两段（亮面 / 暗面），团块边缘一圈深色描边；发光部分 HDR（Bloom 吃得到）
-//   1 烟：不发光的实心团块，粒子色是烟的底色，亮面 ×1.3、暗面 ×0.68，边缘一圈更深的描边
+//   1 烟：不发光的实心团块，粒子色是烟的底色，亮面 ×1.12、暗面 ×0.7 且偏冷，边缘一圈同色更深的描边（烟色按章节，见 FxTone）
 //   2 光：平涂发光（冲击环、爆闪星、刻符）：热度高的部分白热、其余主色，几乎纯加法（只压暗身后 25%）
 // 混合：预乘 alpha（Blend One OneMinusSrcAlpha），同一个材质里既能画实心烟、也能画发光火；贴脸 0.25–1 m 淡出。
 Shader "Spiritfire/FxToon"
@@ -117,29 +117,34 @@ Shader "Spiritfire/FxToon"
                 {
                     // 火：冷却、五段色阶
                     // 暗面往下降一档色阶（卡通火的明暗：亮面黄、暗面橙），边缘一圈再降一档
-                    half heat = saturate(t.g * _Cool.y * (1.0 - _Cool.x * age) - rim * 0.18 - (1.0 - lit) * 0.16);
+                    half heat = saturate(t.g * _Cool.y * (1.0 - _Cool.x * age) - rim * 0.06 - (1.0 - lit) * 0.16);
                     half hw = max(fwidth(heat), 1e-3) * 1.2;
                     half b1 = Band(heat, 0.12, hw), b2 = Band(heat, 0.34, hw), b3 = Band(heat, 0.6, hw), b4 = Band(heat, 0.84, hw);
                     half3 hot = lerp(tint, half3(1.0, 0.97, 0.86), 0.85);
                     half3 yel = lerp(tint, half3(1.0, 0.88, 0.36), 0.5);
-                    half3 deep = tint * tint * 0.78;
-                    half3 smk = lerp(half3(0.17, 0.15, 0.14), tint * 0.3, 0.22);
+                    // 深色一档往赭红偏（黄火团的暗部是赭、橙火团的暗部是赭红，不发橄榄绿）
+                    half3 deep = tint * tint * half3(0.78, 0.6, 0.48);
+                    // 冷下来的那一段是暖褐烟（风格审查：火的暗边 / 烟是赭红、暖褐，不用灰黑），描边是赭红的深色（不是灰线）
+                    half3 smk = lerp(half3(0.3, 0.19, 0.13), tint * 0.36, 0.25);
                     col = lerp(smk, deep, b1);
                     col = lerp(col, tint, b2);
                     col = lerp(col, yel, b3);
                     col = lerp(col, hot, b4);
                     // 受光两段（火的明暗已经在色阶里，这里只轻轻压一点）+ 描边
                     col *= lerp(0.9, 1.0, lit);
-                    col = lerp(col, lerp(smk * 0.7, deep * 0.62, b1), rim * 0.75);
+                    // 描边：火团还热的时候是赭红的深色，整团冷成烟以后才是暖褐（按年龄，不按这一点的热度：否则边缘总是落到最冷的那档，读成一圈灰线）
+                    half3 rimCol = lerp(deep * 0.75 + half3(0.06, 0.015, 0.0), smk * 0.85, saturate(age * 1.8 - 0.7));
+                    col = lerp(col, rimCol, rim * 0.6);
                     // 发光部分 HDR：主色以上提亮
                     col *= lerp(1.0, _Bright, b2 * (0.6 + 0.4 * b4));
                     opacity = lerp(1.0, _Cool.z, b1);
                 }
                 else if (_Mode < 1.5)
                 {
-                    // 烟：粒子色是底色
-                    col = tint * lerp(0.72, 1.18, lit);
-                    col = lerp(col, tint * 0.5, rim * 0.7);
+                    // 烟：粒子色是底色；暗面偏冷一点（StylizedLit 的冷暗部），描边是同色更深一档，不压成黑线
+                    col = lerp(tint * half3(0.68, 0.7, 0.8), tint * 1.12, lit);
+                    // 描边淡一点：几团烟叠在一起时，里面那几圈描边不该读成一道道裂缝（鹅卵石）
+                    col = lerp(col, tint * half3(0.6, 0.6, 0.72), rim * 0.35);
                     opacity = 1.0;
                 }
                 else
