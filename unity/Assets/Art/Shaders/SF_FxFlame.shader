@@ -144,8 +144,8 @@ Shader "Spiritfire/FxFlame"
                 // 卡通色阶：外缘一圈暗红描边 → 尖端色 → 中间色 → 底部白热芯
                 half3 col = _Tip.rgb * 0.62;
                 col = lerp(col, _Tip.rgb, SFBand(d, 0.07, aa));
-                col = lerp(col, _Mid.rgb * 1.2, SFBand(d - h * 0.25, 0.2, aa));
-                col = lerp(col, _Hot.rgb * 1.55, SFBand(d - h * 0.55, 0.3, aa));
+                col = lerp(col, _Mid.rgb * 1.2, SFBand(d - h * 0.2, 0.14, aa));
+                col = lerp(col, _Hot.rgb * 1.55, SFBand(d - h * 0.75, 0.38, aa));
                 col = MixFogColor(col, half3(0, 0, 0), i.fog);
                 // 半加法：叠色的同时压暗身后 70%（实心的卡通火苗，亮沙地前也看得出橙红）
                 return half4(col * a, a * 0.7h);

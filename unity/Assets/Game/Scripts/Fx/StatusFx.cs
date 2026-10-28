@@ -42,7 +42,13 @@ namespace Spiritfire.Game
             budgetLeft = 0;
             arcTokens = 0;
             tonguesLive = 0;
+            Lean = false;
         }
+
+        /// <summary>
+        /// 精简外观（压力测试做对照用，也可以当低配开关）：不挂状态皮、不挂身上火舌、电弧退回随机两点——即 B 路打磨之前的样子
+        /// </summary>
+        public static bool Lean;
 
         /// <summary>全场身上火舌上限：高 40 / 中 30 / 低 20</summary>
         public static int TongueCap => Mathf.Max(12, Mathf.RoundToInt(40 * FxBudget.StyleCapScale));
@@ -177,7 +183,12 @@ namespace Spiritfire.Game
             bool burn = status.Burning, shock = status.Shocked, corrode = status.Corroded, stun = status.Stunned;
             bool frost = status.SlowMult < 0.95f && !corrode;
             Showing = mask;
-            UpdateSkin(burn, shock, corrode, stun, frost, dt);
+            if (Lean)
+            {
+                skin.Hide();
+                HideTongues(false);
+            }
+            else UpdateSkin(burn, shock, corrode, stun, frost, dt);
             if (!burn && !shock && !corrode && !stun && !frost)
             {
                 ClearTint();
@@ -189,7 +200,7 @@ namespace Spiritfire.Game
             if (!rt) return;
             float density = Fx.Density;
             if (burn) Burn(rt, status.BurnStacks, dt, density);
-            else HideTongues(false);
+            if (!burn || Lean) HideTongues(false);
             if (shock) Shock(rt, status.ShockStacks, dt, density);
             if (corrode) Corrode(rt, dt, density);
             if (stun) Stun(rt, dt);
@@ -218,7 +229,8 @@ namespace Spiritfire.Game
                 {
                     flickerT = Random.Range(0.05f, 0.12f);
                     // 频闪拉开明暗：亮的那一下接近满色，暗的时候几乎不染——「一闪一闪」本身就是感电的识别特征
-                    flicker = Random.value < 0.4f ? Random.Range(0.5f, 0.75f) : Random.Range(0.05f, 0.14f);
+                    // B 路：亮的那一下也不染满（身上的电纹和蓝色轮廓光接手辨认），免得整个人刷成浅蓝、和冻住的冰白混在一起
+                    flicker = Random.value < 0.4f ? Random.Range(0.32f, 0.48f) : Random.Range(0.04f, 0.1f);
                 }
                 Add(Fx.ElementColor(Element.Shock), flicker);
             }
@@ -299,7 +311,7 @@ namespace Spiritfire.Game
 
         void Burn(FxRuntime rt, int stacks, float dt, float density)
         {
-            ShowTongues(stacks);
+            if (!Lean) ShowTongues(stacks);
             flameAcc += dt * (6f + 5f * stacks) * density;
             int n = Take((int)flameAcc);
             flameAcc -= (int)flameAcc;
@@ -403,7 +415,7 @@ namespace Spiritfire.Game
             }
             if (arcTokens < 1) return;
             arcTokens -= 1;
-            int count = BoneChain(Random.Range(3, 6));
+            int count = Lean ? 0 : BoneChain(Random.Range(3, 6));
             var c = Color.Lerp(blue, Color.white, 0.3f);
             if (count >= 2) Lightning.Chain(chain, count, c, 0.045f);
             else

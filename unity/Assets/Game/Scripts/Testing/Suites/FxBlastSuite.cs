@@ -77,6 +77,7 @@ namespace Spiritfire.Game.Testing
                 if (Run("layer")) yield return LayerBreaks();
                 if (Run("life")) yield return Flames();
                 if (Run("life")) yield return SpawnDeath();
+                if (Only == "perf") yield return Perf();
             }
             finally
             {
@@ -384,6 +385,92 @@ namespace Spiritfire.Game.Testing
             yield return Frames(60);
         }
 
+        // ───────────── 性能对照（fx-blast-perf） ─────────────
+
+        /// <summary>
+        /// 同 fx 套件的压力项（8 只全身着火感电 + 暴击连射 4 s + 3 次爆炸），高 / 低画质各跑两遍：B 路状态外观开 / 关（<see cref="StatusFx.Lean"/>），
+        /// 同一次会话里对照，排除机器忙闲的影响。记同屏粒子峰值、平均 / 最长帧时间、状态皮 / 身上火舌数
+        /// </summary>
+        IEnumerator Perf()
+        {
+            Time.captureDeltaTime = 0;
+            foreach (var level in new[] { ArtQualityLevel.High, ArtQualityLevel.Low })
+            foreach (bool lean in new[] { true, false, true, false, true, false })
+            {
+                ArtQuality.Set(level, false);
+                StatusFx.Lean = lean;
+                arena.Clear();
+                yield return new WaitForSeconds(0.5f);
+                var list = new List<EnemyAI>();
+                for (int i = 0; i < 8; i++)
+                {
+                    float ang = i * Mathf.PI * 2 / 8;
+                    var ai = Spawn(Target, new Vector3(Mathf.Cos(ang), 0, Mathf.Sin(ang)) * 3.2f, 400000);
+                    if (ai) list.Add(ai);
+                }
+                yield return new WaitForSeconds(1f);
+                foreach (var ai in list)
+                {
+                    if (!ai) continue;
+                    ai.enabled = false;
+                    for (int k = 0; k < 3; k++) EnemyStatus.Apply(ai.Health, Element.Fire, 40, 1, false);
+                    EnemyStatus.Apply(ai.Health, Element.Shock, 40, 1, false);
+                }
+                Teleport(motor, arena.Center + away * 10);
+                yield return null;
+                vitals.stats.Add("playtest_fxb_crit", Stat.CritChance, 1f);
+                FxBudget.ResetPeak();
+                weapons.Active.reserve = weapons.Active.def.reserve;
+                weapons.testFire = true;
+                yield return new WaitForSeconds(0.3f);
+                float t0 = Time.time, dtSum = 0, dtMax = 0, reapply = 0;
+                int frames = 0, booms = 0;
+                var dts = new List<float>(512);
+                while (Time.time - t0 < 4f)
+                {
+                    // 每秒补一次状态（灼烧几秒就烧完，压力窗口里一直要有火舌 / 状态皮）
+                    if (Time.time >= reapply)
+                    {
+                        reapply = Time.time + 1f;
+                        foreach (var ai in list)
+                        {
+                            if (!ai) continue;
+                            EnemyStatus.Apply(ai.Health, Element.Fire, 40, 1, false);
+                            EnemyStatus.Apply(ai.Health, Element.Shock, 40, 1, false);
+                        }
+                    }
+                    var target = list.Where(x => x).OrderBy(_ => Random.value).FirstOrDefault();
+                    if (target) Aim(motor, eye, BodyCenter(target.Health));
+                    if (booms < 3 && Time.time - t0 > 1f + booms)
+                    {
+                        booms++;
+                        var at = arena.Center + new Vector3(Random.Range(-2f, 2f), 0.5f, Random.Range(-2f, 2f));
+                        Combat.Explode(new ExplosionOptions(at, 3f, DamageInfo.Simple(0, DamageSource.Explosion, at, Vector3.up)) { noEnemies = true });
+                    }
+                    weapons.Active.reserve = weapons.Active.def.reserve;
+                    float dt = Time.unscaledDeltaTime;
+                    dtSum += dt;
+                    dtMax = Mathf.Max(dtMax, dt);
+                    dts.Add(dt);
+                    frames++;
+                    yield return null;
+                }
+                weapons.testFire = false;
+                vitals.stats.Remove("playtest_fxb_crit");
+                dts.Sort();
+                float median = dts.Count > 0 ? dts[dts.Count / 2] : 0, p95 = dts.Count > 0 ? dts[Mathf.Min(dts.Count - 1, dts.Count * 95 / 100)] : 0;
+                int skins = list.Count(x => x && x.GetComponent<StatusFx>() is { SkinShowing: true });
+                int tongues = list.Sum(x => x && x.GetComponent<StatusFx>() is { } f ? f.TonguesShowing : 0);
+                Line($"性能（画质 {ArtQuality.Label(level)}，B 路状态外观 {(lean ? "关" : "开")}）：粒子峰值 {FxBudget.Peak} / {FxBudget.ParticleCap}，" +
+                     $"帧 {frames} 个，平均 {dtSum / Mathf.Max(1, frames) * 1000:F1} ms、中位 {median * 1000:F1} ms、95% {p95 * 1000:F1} ms、最长 {dtMax * 1000:F1} ms；" +
+                     $"状态皮 {skins}，身上火舌 {tongues}");
+            }
+            StatusFx.Lean = false;
+            arena.Clear();
+            ArtQuality.Set(ArtQualityLevel.High, false);
+            Time.captureDeltaTime = 1f / 60f;
+        }
+
         // ───────────── 出生 / 死亡 ─────────────
 
         IEnumerator SpawnDeath()
@@ -462,6 +549,12 @@ namespace Spiritfire.Game.Testing
     {
         public override string Id => "fx-blast-layer";
         protected override string Only => "layer";
+    }
+
+    public sealed class FxBlastPerfSuite : FxBlastSuite
+    {
+        public override string Id => "fx-blast-perf";
+        protected override string Only => "perf";
     }
 
     public sealed class FxBlastLifeSuite : FxBlastSuite
