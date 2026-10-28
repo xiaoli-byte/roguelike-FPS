@@ -141,11 +141,66 @@ namespace Spiritfire.Game
         {
             if (!surface) return;
             var r = WorldMaterials.Surface(transform, WorldMaterialKind.Quicksand, true, "Quicksand Surface");
-            r.transform.localPosition = Vector3.up * 0.02f;
+            r.transform.localPosition = Vector3.zero;
             r.transform.localScale = new Vector3(radius, 1, radius);
+            // 流沙面贴着坑的地形铺（坑是往下凹的：平的圆片放在坑底高度会被坑壁挡掉大半，只剩坑心一小块）
+            var mf = r.GetComponent<MeshFilter>();
+            if (mf) mf.sharedMesh = DrapedDisc(transform.position, radius);
             var block = new MaterialPropertyBlock();
             block.SetVector(SwirlCenterId, new Vector4(transform.position.x, transform.position.z, coreRadius, radius));
             r.SetPropertyBlock(block);
+        }
+
+        /// <summary>
+        /// 贴地的流沙面：单位圆（局部 XZ，物体缩放 = 半径），每个顶点往下打射线落到地形上再抬 4 cm（局部 y = 米）；uv 同 WorldMaterials 的圆片（软边按 uv 圆心距）
+        /// </summary>
+        static Mesh DrapedDisc(Vector3 center, float radius)
+        {
+            const int Rings = 8, Segs = 40;
+            var verts = new List<Vector3>();
+            var uvs = new List<Vector2>();
+            var tris = new List<int>();
+            float Y(float x, float z)
+            {
+                var p = new Vector3(center.x + x * radius, center.y + 4f, center.z + z * radius);
+                return Physics.Raycast(p, Vector3.down, out var hit, 10f, Layers.WorldMask, QueryTriggerInteraction.Ignore) ? hit.point.y - center.y + 0.04f : 0.02f;
+            }
+            verts.Add(new Vector3(0, Y(0, 0), 0));
+            uvs.Add(new Vector2(0.5f, 0.5f));
+            for (int i = 1; i <= Rings; i++)
+            {
+                float rr = i / (float)Rings;
+                for (int k = 0; k < Segs; k++)
+                {
+                    float a = k * Mathf.PI * 2 / Segs;
+                    float x = Mathf.Sin(a) * rr, z = Mathf.Cos(a) * rr;
+                    verts.Add(new Vector3(x, Y(x, z), z));
+                    uvs.Add(new Vector2(x * 0.5f + 0.5f, z * 0.5f + 0.5f));
+                }
+            }
+            for (int k = 0; k < Segs; k++)
+            {
+                tris.Add(0); tris.Add(1 + k); tris.Add(1 + (k + 1) % Segs);
+            }
+            for (int i = 1; i < Rings; i++)
+            {
+                int inner = 1 + (i - 1) * Segs, outer = 1 + i * Segs;
+                for (int k = 0; k < Segs; k++)
+                {
+                    int a = inner + k, b = inner + (k + 1) % Segs, c = outer + k, d = outer + (k + 1) % Segs;
+                    tris.Add(a); tris.Add(c); tris.Add(b);
+                    tris.Add(b); tris.Add(c); tris.Add(d);
+                }
+            }
+            var m = new Mesh { name = "QuicksandDraped", hideFlags = HideFlags.DontSave };
+            m.SetVertices(verts);
+            m.SetUVs(0, uvs);
+            m.SetTriangles(tris, 0);
+            var n = new Vector3[verts.Count];
+            for (int i = 0; i < n.Length; i++) n[i] = Vector3.up;
+            m.SetNormals(n);
+            m.RecalculateBounds();
+            return m;
         }
 
         void OnEnable()

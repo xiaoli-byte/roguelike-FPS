@@ -184,13 +184,16 @@ namespace Spiritfire.Game
                 float fall = Mathf.Max(0, -motor.Velocity.y);
                 var at = new Vector3(feet.x, w.Surface, feet.z);
                 Fx.Burst(at, SplashColor, 10 + (int)Mathf.Min(14, fall * 2), 2.5f + fall * 0.3f, 0.55f, 0.12f, 9);
-                Fx.Ring(at, 0.9f, SplashColor, 0.5f, false);
+                // 水面荡开两道涟漪（Spiritfire/Water 画），不再用贴地环
+                EnvWater.Ripple(at, 1.6f + Mathf.Min(2f, fall * 0.15f), 0.8f);
+                EnvWater.Ripple(at, 2.6f + Mathf.Min(3f, fall * 0.2f), 0.45f, 2.2f);
             }
             wasInWater = inWater;
             if (inWater && Time.time >= nextRipple && MotorCore.Flat(motor.Velocity).sqrMagnitude > 1f)
             {
                 nextRipple = Time.time + 0.35f;
-                Fx.Ring(new Vector3(feet.x, w.Surface + 0.02f, feet.z), 0.6f, SplashColor, 0.7f, false);
+                // 涉水：脚边一圈圈涟漪
+                EnvWater.Ripple(new Vector3(feet.x, w.Surface, feet.z), 1.3f, 0.55f);
             }
             var safe = SafeGround.Instance;
             if (inWater && w.deepIsHazard && d >= w.deep && safe && !safe.Sinking)
