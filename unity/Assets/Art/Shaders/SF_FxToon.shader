@@ -95,7 +95,8 @@ Shader "Spiritfire/FxToon"
                 float rnd = i.custom.z;
 
                 // 硬边消散：阈值随年龄抬高（每颗粒子错开一点）
-                float thr = lerp(_Erode.x, _Erode.y, pow(age, max(0.05, _Erode.z))) + (rnd - 0.5) * 0.05;
+                // 阈值不能低于 0.02：形状场在格子外是 0，阈值一旦 ≤ 0 整张面片都会显出来（方块）
+                float thr = max(0.02, lerp(_Erode.x, _Erode.y, pow(age, max(0.05, _Erode.z))) + (rnd - 0.5) * 0.05);
                 float d = t.r;
                 float w = max(fwidth(d), 1e-3) * 1.2 + _Erode.w;
                 half mask = saturate((d - thr) / w + 0.5);

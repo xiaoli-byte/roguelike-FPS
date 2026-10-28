@@ -488,12 +488,13 @@ namespace Spiritfire.Game.Testing
             ai.enabled = false;
             var d = ai.Health;
             var c = BodyCenter(d);
-            var info = DamageInfo.Simple(99999, DamageSource.Weapon, c, (c - camPos).normalized);
+            // 侧向轻推（不朝机位倒），迸散拍在受击闪白过去之后（0.13 s）；溶解时机位跟着尸体
+            var info = DamageInfo.Simple(99999, DamageSource.Weapon, c, side);
             info.element = Element.Fire;
-            info.knockback = 4;
+            info.knockback = 0;
             Combat.DamageEnemy(d, info);
-            yield return Frames(3);
-            CamShot(camPos, c, "fxb_death_burst");
+            yield return Frames(8);
+            CamShot(camPos + back * 1.5f, c, "fxb_death_burst");
             var dd = ai ? ai.GetComponent<DeathDissolve>() : null;
             float t0 = Time.time;
             bool mid = false;
@@ -502,7 +503,8 @@ namespace Spiritfire.Game.Testing
                 if (!mid && dd && dd.Amount > 0.4f)
                 {
                     mid = true;
-                    CamShot(camPos, ai.transform.position + Vector3.up * 0.3f, "fxb_death_dissolve");
+                    var corpse = ai.transform.position;
+                    CamShot(corpse + back * 4f + side * 1.2f + Vector3.up * 1.6f, corpse + Vector3.up * 0.3f, "fxb_death_dissolve");
                 }
                 yield return null;
             }
