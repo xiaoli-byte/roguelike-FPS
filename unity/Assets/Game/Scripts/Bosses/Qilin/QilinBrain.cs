@@ -846,7 +846,7 @@ namespace Spiritfire.Game
                 Fx.Ring(floor + Vector3.up * 0.1f, 12f, QilinDef.Warn, 1f);
                 // 落地：溅一圈熔浆、地上留一滩冷却的熔铜（带出来的熔浆）
                 Fx.MoltenBurst(floor + Vector3.up * 0.3f, 2.4f, false);
-                Fx.MoltenSplat(floor, 3.6f, 1f, 10f);
+                Fx.MoltenSplat(floor, 3.6f, 1f, 6f);
                 Fx.Slam(floor, 3f, Hex.Rgb(0x4a3028));
                 Shake(0.6f, 1f);
             }
@@ -1078,7 +1078,7 @@ namespace Spiritfire.Game
                 {
                     var feet = OnFloor(transform.position);
                     Fx.MoltenBurst(feet + Vector3.up * 0.3f, 2.4f, false);
-                    Fx.MoltenSplat(feet, 4.2f, 1f, 12f);
+                    Fx.MoltenSplat(feet, 4.2f, 1f, 6f);
                 })
                 .At(secs * 0.88f, () =>
                 {

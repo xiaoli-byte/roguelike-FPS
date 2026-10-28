@@ -21,10 +21,15 @@ namespace Spiritfire.Game
     /// </summary>
     public static class SpawnThemes
     {
+        /// <summary>对照开关（性能开 / 关对照用）：true = 不画主题法阵，全部退回 B 路的通用法阵</summary>
+        public static bool Off;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => Off = false;
         /// <summary>这只敌人用哪一章的法阵</summary>
         public static SpawnTheme For(EnemyAI ai)
         {
-            if (!ai || ai is BossBrain) return SpawnTheme.None;
+            if (Off || !ai || ai is BossBrain) return SpawnTheme.None;
             var byScene = OfScene(ai.gameObject.scene.name);
             if (byScene != SpawnTheme.None) return byScene;
             return OfChapter(CodexCatalog.Lore.Chapter(CodexCatalog.EnemyId(ai.enemyId)));
@@ -105,23 +110,23 @@ namespace Spiritfire.Game
                     // 沙旋：金沙粒贴地打转往上卷 + 尘团（前 75%）
                     if (k < 0.75f)
                     {
-                        Swirl(rt, "Grit", ground, ringR, Count(26f * scale * dt), 3.2f, 1.2f, 2.6f, 0.04f, 0.08f, 0.5f, 0.8f, SandDust);
-                        Swirl(rt, "Dust", ground, ringR, Count(9f * scale * dt), 2.6f, 0.4f, 1.0f, 0.35f, 0.6f, 0.5f, 0.8f, SandDust);
+                        Swirl(rt, "Grit", ground, ringR, Count(12f * scale * dt), 3.2f, 1.2f, 2.6f, 0.07f, 0.12f, 0.45f, 0.7f, SandDust);
+                        Swirl(rt, "ToonSmoke", ground, ringR, Count(4f * scale * dt), 2.6f, 0.4f, 1.0f, 0.5f, 0.75f, 0.45f, 0.65f, Hex.Rgb(0xe6c890));
                     }
                     break;
                 case SpawnTheme.Frost:
                     // 雪旋：雪花螺旋往上飘 + 冰晶闪粒 + 贴地冷雾
                     if (k < 0.8f)
                     {
-                        Swirl(rt, "Snow", ground, ringR, Count(18f * scale * dt), 2.4f, 1.0f, 2.4f, 0.07f, 0.12f, 0.7f, 1.1f, FrostPalette.Snow);
-                        Swirl(rt, "Twinkle", ground, ringR, Count(10f * scale * dt), 1.6f, 1.5f, 3f, 0.08f, 0.14f, 0.5f, 0.8f, FrostPalette.IceHot);
-                        Swirl(rt, "FrostMist", ground, ringR, Count(3f * scale * dt), 1.2f, 0.1f, 0.3f, 0.7f, 1.1f, 0.8f, 1.2f, FrostPalette.Mist);
+                        Swirl(rt, "Snow", ground, ringR, Count(9f * scale * dt), 2.4f, 1.0f, 2.4f, 0.12f, 0.18f, 0.6f, 0.9f, FrostPalette.Snow);
+                        Swirl(rt, "Twinkle", ground, ringR, Count(4f * scale * dt), 1.6f, 1.5f, 3f, 0.14f, 0.2f, 0.45f, 0.7f, FrostPalette.IceHot);
+                        Swirl(rt, "ToonSmoke", ground, ringR, Count(3f * scale * dt), 1.2f, 0.1f, 0.3f, 0.6f, 0.9f, 0.5f, 0.7f, Hex.Rgb(0xd6e6f4));
                     }
                     break;
                 case SpawnTheme.Fire:
                     // 火星往上窜 + 法阵边上冒的火舌团
-                    Swirl(rt, "Ember", ground, ringR, Count(22f * scale * dt), 1.8f, 2.0f, 4.2f, 0.06f, 0.11f, 0.6f, 1.0f, InfernoPalette.Ember);
-                    if (k < 0.7f) Swirl(rt, "FlameBurst", ground, ringR, Count(6f * scale * dt), 0.8f, 0.6f, 1.4f, 0.3f, 0.5f, 0.3f, 0.5f, InfernoPalette.Fire);
+                    Swirl(rt, "Ember", ground, ringR, Count(10f * scale * dt), 1.8f, 2.0f, 4.2f, 0.1f, 0.16f, 0.5f, 0.8f, InfernoPalette.Ember);
+                    if (k < 0.7f) Swirl(rt, "ToonFlame", ground, ringR, Count(4f * scale * dt), 0.8f, 0.6f, 1.4f, 0.45f, 0.7f, 0.35f, 0.5f, InfernoPalette.Fire);
                     break;
             }
             return true;

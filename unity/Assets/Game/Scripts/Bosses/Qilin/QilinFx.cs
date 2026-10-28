@@ -147,8 +147,9 @@ namespace Spiritfire.Game
                 core.localScale = new Vector3(rc * 0.5f, h * 1.04f, rc * 0.5f);
                 core.localPosition = Vector3.zero;
                 float alpha = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(k / 0.25f));
-                Write(outerR, new Color(0.55f, 0.1f, 0.02f), new Color(2.1f, 0.7f, 0.12f), new Vector4(seed, alpha, 3.2f, 2), new Vector4(8, 2.6f, 0.4f, 0.15f));
-                Write(coreR, new Color(1.2f, 0.32f, 0.04f), new Color(2.0f, 1.25f, 0.4f), new Vector4(seed + 3f, alpha * 0.9f, 4.4f, 3), new Vector4(6, 2.2f, 0.5f, 0.6f));
+                // 三阶：暗紫褐壳 / 铜橙熔流 / 金黄芯；芯是半加法的火（不刷白）
+                Write(outerR, new Color(0.2f, 0.06f, 0.08f), new Color(1.7f, 0.6f, 0.1f), new Vector4(seed, alpha, 3.2f, 2), new Vector4(8, 2.6f, 0.4f, 0.08f));
+                Write(coreR, new Color(0.85f, 0.2f, 0.04f), new Color(1.35f, 0.85f, 0.3f), new Vector4(seed + 3f, alpha * 0.9f, 4.4f, 3), new Vector4(6, 2.2f, 0.5f, 0.35f));
                 return;
             }
             // Unity 圆柱原始高 2 m、中心在原点：缩放 y = 高 / 2，往上挪半个高度

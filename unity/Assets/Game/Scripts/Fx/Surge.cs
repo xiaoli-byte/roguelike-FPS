@@ -54,16 +54,19 @@ namespace Spiritfire.Game
         {
             SurgeKind.Water => new Color(0.42f, 0.76f, 0.82f, 1),
             SurgeKind.Sand => new Color(0.55f, 0.37f, 0.19f, 1),
-            SurgeKind.Molten => new Color(0.14f, 0.05f, 0.025f, 1),
-            _ => new Color(1.0f, 0.22f, 0.03f, 1),
+            // 第三章底色：暗紫褐的壳（暗部偏冷不发黑）
+            SurgeKind.Molten => new Color(0.17f, 0.06f, 0.09f, 1),
+            // 火的暗边：赭红
+            _ => new Color(0.8f, 0.19f, 0.05f, 1),
         };
 
         public static Color DefaultB(SurgeKind k) => k switch
         {
             SurgeKind.Water => new Color(0.96f, 1f, 1f, 1),
             SurgeKind.Sand => new Color(0.93f, 0.76f, 0.5f, 1),
-            SurgeKind.Molten => new Color(1.9f, 0.62f, 0.1f, 1),
-            _ => new Color(1.6f, 0.85f, 0.25f, 1),
+            // 亮芯金黄（克制：HDR 只到 1.7，主色是芯的 0.6 倍 = 铜橙）
+            SurgeKind.Molten => new Color(1.7f, 0.62f, 0.1f, 1),
+            _ => new Color(1.35f, 0.85f, 0.3f, 1),
         };
 
         internal sealed class Slot : FxSlot
@@ -104,11 +107,15 @@ namespace Spiritfire.Game
         readonly List<Slot> slots = new();
         int live;
 
+        /// <summary>对照开关（性能开 / 关对照用）：true = 不生成任何涌流体积（水柱 / 熔浆柱 / 火尾…），只剩粒子</summary>
+        public static bool Off;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
         {
             instance = null;
             meshes.Clear();
+            Off = false;
         }
 
         static Surge Get()
@@ -222,7 +229,7 @@ namespace Spiritfire.Game
         static FxHandle Spawn(SurgeShape shape, SurgeKind kind, Vector3 pos, Quaternion rot, float radius, float height, float rise, float hold, float fall, float flow,
             float spin, float grow, bool collapse, Color? a, Color? b, float alpha, int arc = 0)
         {
-            if (!Fx.Finite(pos) || !(radius > 0) || !(height > 0)) return FxHandle.None;
+            if (Off || !Fx.Finite(pos) || !(radius > 0) || !(height > 0)) return FxHandle.None;
             var self = Get();
             if (!self) return FxHandle.None;
             int cap = Fx.Density < 0.6f ? CapLow : CapHigh;
@@ -249,7 +256,8 @@ namespace Spiritfire.Game
             s.seed = Random.value * 10f;
             s.a = a ?? DefaultA(kind);
             s.b = b ?? DefaultB(kind);
-            s.add = kind == SurgeKind.Fire ? 0.6f : kind == SurgeKind.Molten ? 0.15f : 0f;
+            // 火只半加法（纯加法会叠成一片白）；熔浆几乎是普通混合
+            s.add = kind == SurgeKind.Fire ? 0.35f : kind == SurgeKind.Molten ? 0.08f : 0f;
             s.trail = false;
             s.follow = null;
             // 每种形状的条纹密度 / 软边 / 两端渐隐

@@ -889,13 +889,15 @@ namespace Spiritfire.Game
                     r.sharedMaterial = mat;
                     r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                     var b = new MaterialPropertyBlock();
-                    b.SetColor("_ColorA", fire ? new Color(1.2f, 0.3f, 0.04f) : new Color(0.16f, 0.06f, 0.03f));
-                    b.SetColor("_ColorB", fire ? new Color(2.0f, 1.3f, 0.45f) : new Color(2.2f, 0.75f, 0.12f));
+                    // 三阶色（docs/art/fx-style.md）：熔岩 = 暗紫褐壳 / 铜橙 / 金黄芯；火球 = 赭红 / 橙 / 金黄芯，半加法
+                    b.SetColor("_ColorA", fire ? new Color(0.85f, 0.2f, 0.04f) : new Color(0.17f, 0.06f, 0.09f));
+                    b.SetColor("_ColorB", fire ? new Color(1.35f, 0.85f, 0.3f) : new Color(1.7f, 0.62f, 0.1f));
                     b.SetVector("_Params", new Vector4(UnityEngine.Random.value * 10f, 1f, fire ? 3f : 1.2f, fire ? 3 : 2));
-                    b.SetVector("_Params2", new Vector4(6, 2.5f, fire ? 0.6f : 0.12f, fire ? 0.55f : 0.1f));
+                    b.SetVector("_Params2", new Vector4(6, 2.5f, fire ? 0.6f : 0.12f, fire ? 0.35f : 0.08f));
                     b.SetVector("_Shape", new Vector4(1.1f, -1f, 0, 0.2f));
                     r.SetPropertyBlock(b);
-                    FxMaterials.GlowSprite(root, fire ? 3.6f : 2.8f, fire ? new Color(1f, 0.45f, 0.12f, 0.8f) : new Color(1f, 0.32f, 0.08f, 0.6f));
+                    // 光晕克制：小一圈、淡一点，只托一下轮廓
+                    FxMaterials.GlowSprite(root, fire ? 2.6f : 2.0f, fire ? new Color(1f, 0.45f, 0.12f, 0.55f) : new Color(1f, 0.32f, 0.08f, 0.4f));
                     return true;
                 }
             }
@@ -951,7 +953,7 @@ namespace Spiritfire.Game
                 case LobLook.MoltenRock:
                     Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);
                     Fx.MoltenBurst(p + Vector3.up * 0.3f, Mathf.Clamp(s.radius * 0.7f, 0.6f, 3f), false);
-                    Fx.MoltenSplat(p, s.radius * 0.9f, 1f, 7f);
+                    Fx.MoltenSplat(p, s.radius * 0.9f, 1f, 5f);
                     break;
                 case LobLook.Fireball:
                     Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);

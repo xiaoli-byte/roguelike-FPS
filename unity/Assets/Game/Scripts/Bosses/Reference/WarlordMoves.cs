@@ -492,7 +492,7 @@ namespace Spiritfire.Game
             // 砸地：尘浪 + 熔铜四溅 + 一滩熔铜，再一圈火浪跟着冲击波往外推
             Fx.Slam(floor, 5f, Hex.Rgb(0x4a3a30));
             Fx.MoltenBurst(floor + Vector3.up * 0.3f, 2.6f, false);
-            Fx.MoltenSplat(floor, 4.5f, 1f, 9f);
+            Fx.MoltenSplat(floor, 4.5f, 1f, 6f);
             Surge.Sheet(floor, 0, 5f, 360f, 1.3f, SurgeKind.Fire, 0.08f, 15f / 14f - 0.3f, 0.25f, null, null, 2.4f, 0.85f, grow: 4f);
             Brain.Shake(0.9f, 0.55f);
             Sfx("boss_slam");

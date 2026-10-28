@@ -148,7 +148,6 @@ namespace Spiritfire.Game
             {
                 sprayAcc = 0;
                 Fx.SandBlast(end + Vector3.up * 0.1f, 0.5f);
-                Fx.Flash(end + Vector3.up * 0.5f, Gold, 3f, 6f, 0.14f);
             }
             fxAcc += dt;
             if (fxAcc >= 0.05f)

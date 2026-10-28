@@ -65,7 +65,7 @@ namespace Spiritfire.Game
                     var p = c.Spawn + new Vector3(Mathf.Sin(a) * r, 0.3f, Mathf.Cos(a) * r);
                     Fx.MoltenSplash(p, 1.1f, i % 2 == 0 ? Copper : Slag);
                 }
-                Fx.Ring(c.Spawn + Vector3.up * 0.1f, 18f, WarlordDef.Fire, 1f);
+                // 冲击环由砸地预设里的卡通粗环出（不再叠一道细白环）
                 GameUI.ScreenFlash(new Color(1f, 0.55f, 0.2f, 0.32f), 0.35f);
             }));
             cues.Add(IntroCue.SlowMo(2.68f, 0.3f, 0.35f));

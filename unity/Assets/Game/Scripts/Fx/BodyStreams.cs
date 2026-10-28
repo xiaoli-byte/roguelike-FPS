@@ -47,7 +47,8 @@ namespace Spiritfire.Game
             s.kind = kind;
             s.age = 0;
             s.duration = duration;
-            s.rate = Mathf.Max(1, rate);
+            // 风格（docs/art/fx-style.md）：少而大的水珠 / 沙团 / 熔滴，不靠成堆的细颗粒——调用方给的频率减半，个头放大
+            s.rate = Mathf.Max(1, rate * 0.5f);
             s.color = color ?? DefaultColor(kind);
             s.Collect();
             s.enabled = true;
@@ -107,9 +108,9 @@ namespace Spiritfire.Game
                 if (em == null) continue;
                 float size = kind switch
                 {
-                    StreamKind.Water => alt ? Random.Range(0.05f, 0.08f) : Random.Range(0.07f, 0.13f),
-                    StreamKind.Sand => alt ? Random.Range(0.05f, 0.09f) : Random.Range(0.04f, 0.07f),
-                    _ => alt ? Random.Range(0.06f, 0.11f) : Random.Range(0.08f, 0.15f),
+                    StreamKind.Water => alt ? Random.Range(0.08f, 0.12f) : Random.Range(0.14f, 0.22f),
+                    StreamKind.Sand => alt ? Random.Range(0.09f, 0.14f) : Random.Range(0.08f, 0.12f),
+                    _ => alt ? Random.Range(0.1f, 0.16f) : Random.Range(0.15f, 0.24f),
                 };
                 var c = color * Random.Range(0.85f, 1.1f);
                 c.a = 1;
@@ -120,12 +121,12 @@ namespace Spiritfire.Game
             if (mistAcc >= 1 && Pick(out var mp, out var mo))
             {
                 mistAcc -= 1;
-                string mist = kind switch { StreamKind.Water => "Powder", StreamKind.Sand => "Dust", _ => "Soot" };
-                var me = rt.GetEmitter(mist);
+                // 实心的卡通烟团（祥云），按章节底色：水汽冷白、沙尘暖砂、熔浆紫褐
+                var me = rt.GetEmitter("ToonSmoke");
                 if (me != null && FxBudget.Allow(1, false) > 0)
                 {
-                    var mc = kind == StreamKind.Molten ? InfernoPalette.Soot : color;
-                    rt.EmitOne(me, mp, mo * 0.4f + Vector3.down * 0.3f, Random.Range(0.35f, 0.6f), Random.Range(0.8f, 1.3f), mc, 0);
+                    var mc = kind switch { StreamKind.Water => Hex.Rgb(0xd6e6f4), StreamKind.Sand => Hex.Rgb(0xdcb880), _ => Hex.Rgb(0x4e3442) };
+                    rt.EmitOne(me, mp, mo * 0.4f + Vector3.down * 0.3f, Random.Range(0.45f, 0.7f), Random.Range(0.6f, 0.9f), mc, 0);
                 }
             }
         }

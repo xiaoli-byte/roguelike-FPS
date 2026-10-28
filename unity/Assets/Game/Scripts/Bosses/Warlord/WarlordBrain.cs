@@ -397,7 +397,7 @@ namespace Spiritfire.Game
             // 闪光压低贴地，落地的身体始终在画面里
             Fx.Slam(floor, 6f, Hex.Rgb(0x4a3a30));
             Fx.MoltenBurst(floor + Vector3.up * 0.4f, 3.2f, false);
-            Fx.MoltenSplat(floor, 6.5f, 1f, 14f);
+            Fx.MoltenSplat(floor, 6.5f, 1f, 8f);
             for (int i = 0; i < 6; i++)
             {
                 float a = i / 6f * Mathf.PI * 2 + UnityEngine.Random.Range(-0.3f, 0.3f), r = UnityEngine.Random.Range(2.6f, 5f);
@@ -405,7 +405,6 @@ namespace Spiritfire.Game
             }
             FlameTongues.Ground(floor, 3.8f, 9, 2.4f, 0.6f);
             Fx.Flash(floor + Vector3.up * 0.4f, WarlordDef.Fire, 7f, 16f, 0.3f);
-            Fx.Ring(floor + Vector3.up * 0.1f, 14f, WarlordDef.Fire, 0.9f);
             Fx.Burst(floor + Vector3.up * 0.3f, WarlordDef.Embers, 30, 10f, 1.2f, 0.2f, 12f);
             Shake(1f, 0.8f);
             PlaySfx("boss_slam");
@@ -480,7 +479,7 @@ namespace Spiritfire.Game
                 {
                     var feet = transform.position;
                     Fx.MoltenBurst(feet + Vector3.up * 0.3f, 3.4f, false);
-                    Fx.MoltenSplat(feet, 6.5f, 1f, 16f);
+                    Fx.MoltenSplat(feet, 6.5f, 1f, 8f);
                     FlameTongues.Ground(feet, 3.4f, 9, 3.5f, 0.8f);
                     if (f1) Destroy(f1.gameObject);
                     if (f2) Destroy(f2.gameObject);

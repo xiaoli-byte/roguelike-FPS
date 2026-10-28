@@ -1,11 +1,12 @@
 // 涌流体积（特效打磨 C 路：首领登场 / 招式里的水柱、水墙、水面漩涡、熔浆柱、下坠火尾、沙瀑）：程序网格（Surge.cs 生成的柱、冠、弧幕、圆盘、锥尾、穹顶）上的流动条纹。
 // 网格 uv：u 绕一圈（弧幕沿弧）0..1，v 自下而上 0..1（圆盘是由内向外）。条纹 = 两层沿 v 拉长的噪声按 _Params.z 的速度流动（正 = 往上涌，负 = 往下淌）。
 // 轮廓：视线掠过的侧边按法线 · 视线淡掉（柱子不会是一根硬边圆筒），上下两端按 _Shape.xy 渐隐；_Shape.z 是消散量（噪声阈值从稀到无，水柱塌落、火尾熄灭）。
-// 模式（_Params.w）：
-//   0 水：半透明青绿，条纹亮处翻白沫，受主光（亮面略亮、背面略暗）；
-//   1 沙：不透明一点的赭黄，细颗粒噪声啃出疏密，受主光；
-//   2 熔浆 / 熔铜：暗壳 + 发光的熔流纹（_ColorB 是 HDR 亮色），不受光；
-//   3 火：半加法的火舌条纹（同 SF_FxFlame 的混合：叠色的同时按 0.45 × 不透明度压暗身后），不受光。
+// 模式（_Params.w）——按 docs/art/fx-style.md 的手绘风格化：每种只有 3 个色阶（_ColorA 暗 / 两者之间的主色 / _ColorB 亮），阶与阶之间是窄的软阶梯，
+// 受光也只有两阶；起伏用中尺度的团块，不做细颗粒噪点：
+//   0 水：深色水身 / 浅色水身 / 白沫块，轮廓一道亮边；
+//   1 沙：暗赭 / 沙色 / 亮沙，边缘是成团的缺口；
+//   2 熔浆 / 熔铜：暗紫褐的壳 / 铜橙熔流 / 金黄亮芯，不受光；
+//   3 火：赭红边 / 橙 / 金黄芯，半加法（叠色的同时压暗身后），不受光。
 // 混合：预乘 alpha（Blend One OneMinusSrcAlpha），_Params2.w = 加法比例（0 普通混合 … 1 纯加法）。每个实例的参数走 MaterialPropertyBlock。
 Shader "Spiritfire/FxSurge"
 {
@@ -86,6 +87,9 @@ Shader "Spiritfire/FxSurge"
                 return lerp(lerp(a, b, f.x), lerp(c, d, f.x), f.y);
             }
 
+            // 软阶梯：在 edge 两侧 ±0.03 里过渡（色阶分明，但不出锯齿）
+            float SFBand(float x, float edge) { return smoothstep(edge - 0.03, edge + 0.03, x); }
+
             Varyings Vert(Attributes v)
             {
                 Varyings o = (Varyings)0;
@@ -108,10 +112,10 @@ Shader "Spiritfire/FxSurge"
                 float nu = max(1.0, round(_Params2.x)), nv = max(0.25, _Params2.y);
                 float t = _Time.y * flow;
                 float2 uv = i.uv;
-                // 两层沿 v 拉长、往 flow 方向流的噪声 → 条纹；第三层高频给沙粒 / 白沫
+                // 两层沿 v 拉长、往 flow 方向流的噪声 → 条纹；第三层是中尺度的团块（白沫块 / 沙团 / 火团的轮廓起伏，不做细颗粒）
                 float n1 = SFSurgeNoise(float2(uv.x * nu + seed * 7.0, uv.y * nv - t + seed * 3.0), nu);
                 float n2 = SFSurgeNoise(float2(uv.x * nu * 2.0 + 11.0, uv.y * nv * 1.8 - t * 1.55 + seed), nu * 2.0);
-                float n3 = SFSurgeNoise(float2(uv.x * nu * 6.0 + 3.0, uv.y * nv * 5.0 - t * 2.2 + seed * 5.0), nu * 6.0);
+                float n3 = SFSurgeNoise(float2(uv.x * nu * 3.0 + 3.0, uv.y * nv * 2.4 - t * 1.8 + seed * 5.0), nu * 3.0);
                 float streak = n1 * 0.62 + n2 * 0.38;
 
                 // 轮廓：视线掠过的侧边淡掉
@@ -123,46 +127,48 @@ Shader "Spiritfire/FxSurge"
                 // 上下两端渐隐（顶端再被条纹啃一下，像水花 / 火苗的碎边）
                 float top = saturate(_Shape.x);
                 float vfade = smoothstep(0.0, max(1e-3, _Shape.y), uv.y) * (1.0 - smoothstep(top, 1.0, uv.y + (streak - 0.5) * 0.25));
-                // 消散：噪声阈值从 0 升到 1 时一片片化掉（越往上越先化）
+                // 消散：噪声阈值从 0 升到 1 时一片片化掉（越往上越先化），硬一点的边
                 float dis = saturate(_Shape.z);
-                float keep = smoothstep(dis - 0.08, dis + 0.02, streak * 0.85 + (1.0 - uv.y) * 0.15 + 0.05);
+                float keep = SFBand(streak * 0.85 + (1.0 - uv.y) * 0.15 + 0.05, dis);
 
+                // 手绘风格化（docs/art/fx-style.md）：每种只有 3 个色阶（暗 / 主 / 亮），阶与阶之间是窄的软阶梯，受光也是两阶
                 half3 col;
                 float a;
                 float add = saturate(_Params2.w);
                 Light light = GetMainLight();
-                float lambert = saturate(dot(n, light.direction) * 0.5 + 0.5);
+                float lit = SFBand(saturate(dot(n, light.direction) * 0.5 + 0.5), 0.5);
+                half3 lo = _ColorA.rgb, hi = _ColorB.rgb, mid = lerp(lo, hi, 0.45);
                 if (mode < 0.5)
                 {
-                    // 水：条纹亮处翻白沫，底色半透明
-                    float foam = smoothstep(0.5, 0.78, streak) + smoothstep(0.7, 0.9, n3) * 0.7;
-                    col = lerp(_ColorA.rgb, _ColorB.rgb, saturate(foam));
-                    col *= lerp(0.72, 1.12, lambert);
-                    col += _ColorB.rgb * pow(1.0 - facing, 3.0) * _Shape.w;
-                    a = 0.5 + 0.42 * saturate(foam) + 0.15 * streak;
+                    // 水：深色水身 / 浅色水身 / 白沫块
+                    float t1 = SFBand(streak, 0.44), t2 = SFBand(streak + (n3 - 0.5) * 0.3, 0.64);
+                    col = lerp(lerp(lo, mid, t1), hi, t2);
+                    col *= lerp(0.84, 1.05, lit);
+                    // 轮廓一道亮边（也是一阶）
+                    col = lerp(col, hi, SFBand(1.0 - facing, 0.78) * _Shape.w);
+                    a = lerp(0.6, 0.96, t2);
                 }
                 else if (mode < 1.5)
                 {
-                    // 沙：颗粒疏密
-                    float grain = smoothstep(0.25, 0.75, n3 * 0.6 + streak * 0.6);
-                    col = lerp(_ColorA.rgb, _ColorB.rgb, grain);
-                    col *= lerp(0.65, 1.1, lambert);
-                    a = (0.35 + 0.55 * grain) * smoothstep(0.2, 0.55, streak + n3 * 0.3);
+                    // 沙：暗赭 / 沙色 / 亮沙，边缘是成团的缺口（不是细沙粒）
+                    float t1 = SFBand(streak, 0.45), t2 = SFBand(streak + (n3 - 0.5) * 0.35, 0.66);
+                    col = lerp(lerp(lo, mid, t1), hi, t2);
+                    col *= lerp(0.8, 1.04, lit);
+                    a = 0.88 * SFBand(streak + (n3 - 0.5) * 0.4, 0.34);
                 }
                 else if (mode < 2.5)
                 {
-                    // 熔浆：暗壳 + 发光熔流纹
-                    float vein = 1.0 - smoothstep(0.0, 0.07, abs(streak - 0.5));
-                    float hot = saturate(smoothstep(0.58, 0.88, streak) * 0.55 + vein * 0.85 + smoothstep(0.8, 0.95, n3) * 0.3);
-                    col = lerp(_ColorA.rgb, _ColorB.rgb, hot);
-                    a = 0.75 + 0.25 * hot;
+                    // 熔浆：暗紫褐的壳 / 铜橙熔流 / 金黄亮芯（粗而少的熔流纹）
+                    float t1 = SFBand(streak, 0.5), t2 = SFBand(streak + (n3 - 0.5) * 0.2, 0.7);
+                    col = lerp(lerp(lo, hi * 0.6, t1), hi, t2);
+                    a = lerp(0.88, 1.0, t1);
                 }
                 else
                 {
-                    // 火：芯亮、边暗红
-                    float core = smoothstep(0.45, 0.85, streak);
-                    col = lerp(_ColorA.rgb, _ColorB.rgb, core);
-                    a = smoothstep(0.25, 0.65, streak + n3 * 0.2);
+                    // 火：赭红边 / 橙 / 金黄芯，外轮廓是硬一点的火舌边
+                    float t1 = SFBand(streak, 0.44), t2 = SFBand(streak + (n3 - 0.5) * 0.2, 0.64);
+                    col = lerp(lerp(lo, mid, t1), hi, t2);
+                    a = SFBand(streak + (n3 - 0.5) * 0.25, 0.3);
                 }
                 // 贴脸淡出：镜头钻进水柱 / 火尾里时不糊满屏（0.6 m 内全透明，3 m 外不淡）
                 float camDist = distance(i.positionWS, _WorldSpaceCameraPos);

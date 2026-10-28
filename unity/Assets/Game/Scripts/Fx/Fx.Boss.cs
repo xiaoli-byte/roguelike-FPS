@@ -41,7 +41,7 @@ namespace Spiritfire.Game
                 var g = new Vector3(at.x, gy, at.z);
                 // 冠要矮而宽：落在身体外圈，不盖住砸下来的身体
                 Surge.Crown(g, radius * 0.75f, radius * 0.42f, SurgeKind.Molten, 0.75f);
-                if (decal) MoltenSplat(g, radius * 1.1f, 1f, 9f);
+                if (decal) MoltenSplat(g, radius * 1.1f, 1f, 5f);
             }
             return h;
         }
@@ -69,7 +69,7 @@ namespace Spiritfire.Game
         public static FxHandle SunFlare(Vector3 at, float size, Color? color = null) => Play("BossSunFlare", at, Vector3.up, color ?? Hex.Rgb(0xffd27a), size);
 
         /// <summary>地上一滩熔铜（白热 → 橙 → 暗壳 + 发光裂缝），radius 米、life 秒，heat = 初始余热 0..1</summary>
-        public static FxHandle MoltenSplat(Vector3 ground, float radius, float heat = 1f, float life = 9f) =>
+        public static FxHandle MoltenSplat(Vector3 ground, float radius, float heat = 1f, float life = 6f) =>
             SigilDecals.Place(SigilMode.Molten, ground + Vector3.up * 0.05f, radius, life, heat);
 
         /// <summary>出水后脚下的湿痕（压暗的湿沙，慢慢干掉）</summary>
@@ -92,25 +92,24 @@ namespace Spiritfire.Game
             sweep = sweep.normalized;
             var right = Vector3.Cross(Vector3.up, forward).normalized;
             if (right.sqrMagnitude < 0.5f) right = Vector3.right;
-            int n = FxBudget.Allow(Mathf.RoundToInt(28 * strength * Density), false);
+            int n = FxBudget.Allow(Mathf.RoundToInt(16 * strength * Density), false);
             var streak = rt.GetEmitter("Spray");
             var line = new Color(Mathf.Lerp(tint.r, 1, 0.55f), Mathf.Lerp(tint.g, 1, 0.55f), Mathf.Lerp(tint.b, 1, 0.55f), 0.32f);
             for (int i = 0; streak != null && i < n; i++)
             {
                 var p = eye + forward * Random.Range(2.5f, 10f) + right * Random.Range(-5f, 5f) + Vector3.up * Random.Range(-1.6f, 2.2f) - sweep * Random.Range(1f, 4f);
                 var v = sweep * Random.Range(18f, 30f) + Vector3.up * Random.Range(-0.5f, 1.5f);
-                rt.EmitOne(streak, p, v, Random.Range(0.025f, 0.05f), Random.Range(0.22f, 0.38f), line, 0);
+                rt.EmitOne(streak, p, v, Random.Range(0.04f, 0.07f), Random.Range(0.22f, 0.36f), line, 0);
             }
             // 几缕尘 / 雪团跟着风滚过去
-            int m = FxBudget.Allow(Mathf.RoundToInt(5 * strength * Density), false);
-            bool cold = tint.b > tint.r;
-            var dust = rt.GetEmitter(cold ? "Powder" : "Dust");
+            int m = FxBudget.Allow(Mathf.RoundToInt(3 * strength * Density), false);
+            var dust = rt.GetEmitter("ToonSmoke");
             var dc = tint;
             dc.a = 0.55f;
             for (int i = 0; dust != null && i < m; i++)
             {
                 var p = eye + forward * Random.Range(4f, 11f) + right * Random.Range(-5f, 5f) + Vector3.up * Random.Range(-2f, 0.5f) - sweep * 3f;
-                rt.EmitOne(dust, p, sweep * Random.Range(6f, 11f), Random.Range(0.7f, 1.3f), Random.Range(0.5f, 0.8f), dc, 0);
+                rt.EmitOne(dust, p, sweep * Random.Range(6f, 11f), Random.Range(0.8f, 1.3f), Random.Range(0.45f, 0.7f), dc, 0);
             }
         }
 
@@ -124,7 +123,7 @@ namespace Spiritfire.Game
             if (!rt) return;
             var c = sand ?? HanbaDef.Sand;
             c.a = 0.9f;
-            int n = FxBudget.Allow(Mathf.RoundToInt(40 * Density), false);
+            int n = FxBudget.Allow(Mathf.RoundToInt(20 * Density), false);
             var e = rt.GetEmitter("Spray");
             float life = Mathf.Clamp(range / Mathf.Max(1f, speed), 0.3f, 1.2f);
             for (int i = 0; e != null && i < n; i++)
@@ -132,16 +131,16 @@ namespace Spiritfire.Game
                 float a = (yaw + Random.Range(-halfAngle, halfAngle)) * Mathf.Deg2Rad;
                 var dir = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
                 var p = origin + dir * Random.Range(0.5f, 2.5f) + Vector3.up * Random.Range(-0.4f, 2.2f);
-                rt.EmitOne(e, p, dir * speed * Random.Range(0.75f, 1.05f) + Vector3.up * Random.Range(0.5f, 2.5f), Random.Range(0.06f, 0.11f), life * Random.Range(0.7f, 1f), c, 0);
+                rt.EmitOne(e, p, dir * speed * Random.Range(0.75f, 1.05f) + Vector3.up * Random.Range(0.5f, 2.5f), Random.Range(0.1f, 0.16f), life * Random.Range(0.7f, 1f), c, 0);
             }
-            int m = FxBudget.Allow(Mathf.RoundToInt(8 * Density), false);
-            var dust = rt.GetEmitter("Dust");
+            int m = FxBudget.Allow(Mathf.RoundToInt(4 * Density), false);
+            var dust = rt.GetEmitter("ToonSmoke");
             for (int i = 0; dust != null && i < m; i++)
             {
                 float a = (yaw + Random.Range(-halfAngle, halfAngle)) * Mathf.Deg2Rad;
                 var dir = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
                 rt.EmitOne(dust, origin + dir * Random.Range(1f, 3f) + Vector3.up * 0.4f, dir * speed * Random.Range(0.4f, 0.7f) + Vector3.up * 0.5f,
-                    Random.Range(0.9f, 1.6f), Random.Range(0.6f, 1.0f), c, 0);
+                    Random.Range(1.0f, 1.6f), Random.Range(0.5f, 0.8f), c, 0);
             }
         }
 
@@ -153,7 +152,7 @@ namespace Spiritfire.Game
             if (!Finite(mouth) || !(dt > 0)) return;
             var rt = FxRuntime.Ensure();
             if (!rt) return;
-            float expected = 70f * dt * Density;
+            float expected = 34f * dt * Density;
             int n = Mathf.FloorToInt(expected);
             if (Random.value < expected - n) n++;
             n = FxBudget.Allow(n, false);
@@ -170,8 +169,8 @@ namespace Spiritfire.Game
                 float speed = Random.Range(12f, 20f);
                 var v = to.normalized * speed;
                 float life = Mathf.Min(1.2f, to.magnitude / speed);
-                if ((i & 1) == 0 && snow != null) rt.EmitOne(snow, p, v, Random.Range(0.08f, 0.14f), life, FrostPalette.Snow, 0);
-                else if (line != null) rt.EmitOne(line, p, v, Random.Range(0.03f, 0.05f), life * 0.8f, lc, 0);
+                if ((i & 1) == 0 && snow != null) rt.EmitOne(snow, p, v, Random.Range(0.14f, 0.22f), life, FrostPalette.Snow, 0);
+                else if (line != null) rt.EmitOne(line, p, v, Random.Range(0.05f, 0.08f), life * 0.8f, lc, 0);
             }
         }
 
@@ -185,16 +184,20 @@ namespace Spiritfire.Game
             float len = seg.magnitude;
             if (len < 0.5f) return;
             var dir = seg / len;
-            float expected = 70f * dt * Mathf.Lerp(0.6f, 1f, Density);
+            // 卡通火苗（B 路的 ToonFlame 序列帧：S 形往上翻、顶端分舌、断出小火团），少而大
+            float expected = 36f * dt * Mathf.Lerp(0.6f, 1f, Density);
             int n = Mathf.FloorToInt(expected);
             if (Random.value < expected - n) n++;
+            n = FxBudget.Allow(n, false);
+            var rt = FxRuntime.Ensure();
+            var e = rt ? rt.GetEmitter("ToonFlame") : null;
             var c = color ?? InfernoPalette.Fire;
-            for (int i = 0; i < n; i++)
+            for (int i = 0; e != null && i < n; i++)
             {
-                // 速度按射程换算：0.45 s 里飞出 ≈ speed × 0.29 米
-                float speed = len / 0.29f * Random.Range(0.75f, 1.05f);
+                // 速度按射程换算：阻尼 2.5、0.5 s 里飞出 ≈ speed × 0.286 米
+                float speed = len / 0.286f * Random.Range(0.75f, 1.05f);
                 var jitter = Random.insideUnitSphere * 0.12f;
-                FlameJet(mouth + dir * Random.Range(0.2f, 1.2f), (dir + jitter).normalized, speed, size * Random.Range(0.7f, 1.2f), c);
+                rt.EmitOne(e, mouth + dir * Random.Range(0.2f, 1.2f), (dir + jitter).normalized * speed + Vector3.up * 0.6f, size * Random.Range(1.1f, 1.6f), 0.5f, c, 0);
             }
         }
 
@@ -204,16 +207,16 @@ namespace Spiritfire.Game
             if (!Finite(at) || !(dt > 0)) return;
             var rt = FxRuntime.Ensure();
             if (!rt) return;
-            float expected = 36f * dt * Mathf.Lerp(0.6f, 1f, Density);
+            float expected = 18f * dt * Mathf.Lerp(0.6f, 1f, Density);
             int n = Mathf.FloorToInt(expected);
             if (Random.value < expected - n) n++;
             n = FxBudget.Allow(n, false);
-            var flame = rt.GetEmitter("Flame");
+            var flame = rt.GetEmitter("ToonFlame");
             var mote = rt.GetEmitter("Mote");
             for (int i = 0; i < n; i++)
             {
                 var p = at + Random.insideUnitSphere * size * 0.25f;
-                if ((i & 3) != 3 && flame != null) rt.EmitOne(flame, p, Vector3.up * Random.Range(0.4f, 1.2f), size * Random.Range(0.6f, 1f), Random.Range(0.25f, 0.4f), color, 0);
+                if ((i & 3) != 3 && flame != null) rt.EmitOne(flame, p, Vector3.up * Random.Range(0.4f, 1.2f), size * Random.Range(1.0f, 1.4f), Random.Range(0.3f, 0.45f), color, 0);
                 else if (mote != null) rt.EmitOne(mote, p, Random.insideUnitSphere * 1.2f + Vector3.up, size * 0.25f, Random.Range(0.4f, 0.7f), color, 0);
             }
         }
@@ -224,7 +227,7 @@ namespace Spiritfire.Game
             if (!Finite(center) || !(dt > 0)) return;
             var rt = FxRuntime.Ensure();
             if (!rt) return;
-            float expected = 60f * dt * Density;
+            float expected = 26f * dt * Density;
             int n = Mathf.FloorToInt(expected);
             if (Random.value < expected - n) n++;
             n = FxBudget.Allow(n, false);
@@ -233,7 +236,7 @@ namespace Spiritfire.Game
             for (int i = 0; e != null && i < n; i++)
             {
                 var d = Random.onUnitSphere;
-                rt.EmitOne(e, center + d * radius * Random.Range(0.95f, 1.1f), d * Random.Range(1f, 3f), Random.Range(0.18f, 0.32f), Random.Range(0.5f, 0.9f), c, 0);
+                rt.EmitOne(e, center + d * radius * Random.Range(0.95f, 1.1f), d * Random.Range(1f, 3f), Random.Range(0.3f, 0.45f), Random.Range(0.5f, 0.8f), c, 0);
             }
         }
 

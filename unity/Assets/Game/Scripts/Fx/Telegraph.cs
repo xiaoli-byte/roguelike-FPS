@@ -1082,8 +1082,16 @@ namespace Spiritfire.Game
 
         // ───────────── 角色不染色（特效打磨 C 路） ─────────────
 
-        /// <summary>测试用：关掉角色排除（telegraph-look 拍改前 / 改后对照）</summary>
-        internal static bool OccludersOff;
+        /// <summary>对照开关：关掉角色排除（telegraph-look 拍改前 / 改后、性能开关对照用；缺省 false = 开着）</summary>
+        public static bool OccludersOff;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetOccluders()
+        {
+            OccludersOff = false;
+            occluders.Clear();
+            occCache.Clear();
+        }
 
         /// <summary>每个预警最多排除几只角色（SF_Telegraph 的 _Occ / _OccY 数组长度）</summary>
         public const int OccMax = 4;
