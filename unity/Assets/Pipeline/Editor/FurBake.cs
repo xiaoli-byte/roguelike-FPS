@@ -130,6 +130,31 @@ namespace Spiritfire.Art.Editor
 
         static readonly List<string> Log = new();
 
+        /// <summary>绑定姿势烘焙的版本：改了 <see cref="ApplyRestPose"/> 就加一，没有毛发的角色在下次 Sync 时重新导入</summary>
+        public const int RestPoseVersion = 1;
+
+        /// <summary>
+        /// 没有 fur 配置的角色也烘 UV2.xyz = 绑定姿势下的位置（模型根空间，和 <see cref="Apply"/> 写的同一套）：
+        /// 状态皮（SF_FxStatusSkin）的冰晶切面 / 蚀斑按它算，贴在皮肤上——不被网格 uv 的图集岛缝切出直边，动画、转身时也不游走。
+        /// 只写 UV2，UV3 / UV4 留空（StylizedLit 的毛发段只在有毛发的材质上开）。
+        /// </summary>
+        public static int ApplyRestPose(GameObject model)
+        {
+            int baked = 0;
+            foreach (var smr in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                var mesh = smr.sharedMesh;
+                if (!mesh || smr.name.Contains("GlowShell") || smr.bones.Length == 0) continue;
+                var toModel = model.transform.worldToLocalMatrix * smr.transform.localToWorldMatrix;
+                var verts = mesh.vertices;
+                var bind = new List<Vector3>(verts.Length);
+                foreach (var p in verts) bind.Add(toModel.MultiplyPoint3x4(p));
+                mesh.SetUVs(2, bind);
+                baked++;
+            }
+            return baked;
+        }
+
         static List<Vector4> Bake(Transform model, SkinnedMeshRenderer smr, Mesh mesh, FurSettings cfg)
         {
             var bones = smr.bones;

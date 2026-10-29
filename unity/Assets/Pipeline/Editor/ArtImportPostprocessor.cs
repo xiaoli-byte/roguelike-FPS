@@ -108,13 +108,17 @@ namespace Spiritfire.Art.Editor
             }
         }
 
-        /// <summary>有 fur 配置的角色：把毛向与毛发遮罩烘进蒙皮网格的 UV2 / UV3（<see cref="FurBake"/>）</summary>
+        /// <summary>
+        /// 有 fur 配置的角色：把毛向与毛发遮罩烘进蒙皮网格的 UV2 / UV3（<see cref="FurBake"/>）；
+        /// 其他角色只烘 UV2 = 绑定姿势位置（状态皮的冰晶 / 蚀斑用，<see cref="FurBake.ApplyRestPose"/>）
+        /// </summary>
         void OnPostprocessModel(GameObject g)
         {
             if (!InArt(assetPath) || assetPath.StartsWith(MixamoLibrary.Folder + "/")) return;
             var sc = ArtSidecar.ForModel(assetPath);
             var fur = FurSettings.From(sc);
             if (fur != null) FurBake.Apply(g, fur, sc.Id, context);
+            else if (sc is { IsCharacter: true }) FurBake.ApplyRestPose(g);
         }
 
         void OnPreprocessAnimation()

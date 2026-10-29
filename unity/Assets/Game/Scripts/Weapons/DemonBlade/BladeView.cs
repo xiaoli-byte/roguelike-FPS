@@ -672,17 +672,24 @@ namespace Spiritfire.Game
             return Quaternion.LookRotation(fc, upC) * Quaternion.Inverse(Quaternion.LookRotation(fl, upA));
         }
 
-        /// <summary>碎片：在手里的按原位显示（伸刃拉开、横向错动），刚归位的放大一下并亮一颗光点</summary>
+        /// <summary>归位闪的分段数：沿刀身每段合成一颗光点</summary>
+        const int GlintSegs = 6;
+        readonly Vector3[] segPos = new Vector3[GlintSegs];
+        readonly float[] segWeight = new float[GlintSegs], segPeak = new float[GlintSegs];
+
+        /// <summary>碎片：在手里的按原位显示（伸刃拉开、横向错动），刚归位的放大一下；归位闪按刀身分段合成几颗中等大小的光点</summary>
         void UpdateShards(in BladePose pose, BladeShards shards)
         {
             float spread = stretch - 1;
             float now = shards != null ? shards.Now : 0;
             float glowSum = 0;
-            var c0 = Color.Lerp(BladeMeshes.Purple, BladeMeshes.ShardSpark, 0.6f) * 1.4f;
+            System.Array.Clear(segWeight, 0, GlintSegs);
+            System.Array.Clear(segPeak, 0, GlintSegs);
             for (int i = 0; i < BladeShape.ShardCount; i++)
             {
                 bool shown = shards == null || shards.InHand(i);
                 var local = BladeModel.HomeLocal(i);
+                int seg = Mathf.Clamp((int)(local.y / (float)BladeShape.BladeLen * GlintSegs), 0, GlintSegs - 1);
                 local.y = BladeSwing.StretchY(local.y, stretch);
                 local.x += spread * 0.006f * Mathf.Sin(i * 7.31f + time * 3);
                 float arrive = shown && shards != null ? Mathf.Exp(-(now - shards.arrivedAt[i]) * ArriveDecay) * ArrivePeak : 0;
@@ -691,11 +698,22 @@ namespace Spiritfire.Game
                 if (arrive > 0)
                 {
                     glowSum += arrive;
-                    // 128 颗叠在刀身上：单颗收着点，整把刀一路闪过去而不是糊成一根白条
-                    var c = c0;
-                    c.a = Mathf.Min(0.6f, arrive * 0.35f);
-                    glints.Add(cur.BladePoint(local.x, local.y, ModelScale, BladeMeshes.GripY), 0.03f + 0.015f * Mathf.Min(1, arrive), c);
+                    var p = cur.BladePoint(local.x, local.y, ModelScale, BladeMeshes.GripY);
+                    segPos[seg] = segWeight[seg] > 0 ? segPos[seg] + p * arrive : p * arrive;
+                    segWeight[seg] += arrive;
+                    segPeak[seg] = Mathf.Max(segPeak[seg], arrive);
                 }
+            }
+            // 风格审查（准则 ④）：原来每块碎片各亮一颗 3 cm 的小光点，第三段伸刃时刀身上是一串细碎的粉紫点；
+            // 现在每段一颗（落在这一段亮的碎片的加权中心），大一些、少一些，整把刀仍是一段段闪过去
+            var c0 = Color.Lerp(BladeMeshes.Purple, BladeMeshes.ShardSpark, 0.6f) * 1.4f;
+            for (int s = 0; s < GlintSegs; s++)
+            {
+                if (segWeight[s] <= 0) continue;
+                float k = Mathf.Min(1, segPeak[s]);
+                var c = c0;
+                c.a = Mathf.Min(0.55f, segPeak[s] * 0.4f);
+                glints.Add(segPos[s] / segWeight[s], 0.06f + 0.035f * k, c);
             }
             arriveGlow = Mathf.Min(0.6f, glowSum * 0.012f);
         }

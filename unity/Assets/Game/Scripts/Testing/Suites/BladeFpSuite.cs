@@ -167,7 +167,8 @@ namespace Spiritfire.Game.Testing
                     AimAt();
                     int g = view.Glints ? view.Glints.LastCount : 0;
                     maxGlints = Mathf.Max(maxGlints, g);
-                    if (!shotBack && g >= 20)
+                    // 归位闪按刀身分段合成（BladeView.GlintSegs = 6 段），再加剑指指尖一颗：亮到 4 颗就是大半把刀在闪
+                    if (!shotBack && g >= 4)
                     {
                         Shot(rig.cam, "blade_fp_recall");
                         shotBack = true;
@@ -182,7 +183,7 @@ namespace Spiritfire.Game.Testing
                 if (!shotBack) Shot(rig.cam, "blade_fp_recall");
                 Line($"归位：{(allHome ? "全部回到刀身" : "没回齐")}（{Time.time - t0:F2} s），归位闪最多 {maxGlints} 颗，左手 {view.LeftHand:F2}");
                 if (!allHome) Fail("松开右键 1.5 s 内碎片没有全部归位");
-                if (maxGlints < 5) Fail($"归位闪只亮了 {maxGlints} 颗");
+                if (maxGlints < 3) Fail($"归位闪只亮了 {maxGlints} 颗（刀身分 6 段合成，应至少亮 3 段）");
                 yield return new WaitForSeconds(0.4f);
 
                 // ── 立掌 / 举手（强制手势）──

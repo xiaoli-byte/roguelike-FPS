@@ -27,6 +27,11 @@ namespace Spiritfire.Game
         /// <summary>内核向白色混的比例、光层不透明度、光晕大小（× size）、点缀光长度系数</summary>
         public float coreWhiten = 0.45f, glowOpacity = 0.5f, haloScale = 3f, accentLen = 1f;
         public AccentTint accentTint;
+        /// <summary>
+        /// 我方弹离镜头多远（米）才长到全尺寸、光层全亮（0 = 不处理）：大个的慢速弹（蛊灯）出膛时就在镜头前，
+        /// 不收的话光晕会罩住屏幕下方（特效风格准则 ⑤：准星和敌人轮廓在任何特效之上都要读得出）
+        /// </summary>
+        public float nearFade;
         /// <summary>搭部件：调 <see cref="ProjectileView.AddCore"/> / AddGlow / AddAccent / AddSolid / AddShaft / AddHalo（部件挂在 Spin 下）</summary>
         public Action<ProjectileView> build;
 
@@ -232,14 +237,20 @@ namespace Spiritfire.Game
             });
             Register(new ProjectileVisualRecipe
             {
-                // Unity 新增：蚀蛊灯的蛊灯（以半径为单位）：发光灯身 + 上下漆边，慢转、摇摆、上下浮动
-                id = "lantern", motion = ProjectileMotion.Lantern, orient = false, coreWhiten = 0.45f, glowOpacity = 0.45f, haloScale = 4f,
+                // Unity 新增：蚀蛊灯的蛊灯（以半径为单位）：漆框灯笼（上下漆圈 + 两道贴着灯身的竖向漆环拼出四根骨 + 顶上提纽，暗边）
+                // + 浅绿灯身（亮）+ 一层鲜绿的光（主色），慢转、摇摆、上下浮动。风格审查：原来是一团发光球 + 4 倍光晕，
+                // 第一人称出膛时整片半透明绿罩在屏幕下方；现在靠灯笼的大形读出来，光晕收到 2.2 倍，离镜头 2.6 m 内从小、淡长到全尺寸
+                id = "lantern", motion = ProjectileMotion.Lantern, orient = false, coreWhiten = 0.3f, glowOpacity = 0.28f, haloScale = 2.2f,
+                nearFade = 2.6f,
                 build = v =>
                 {
-                    v.AddCore(ProjectileMeshes.Sphere, V(0.55f, 0.68f, 0.55f));
-                    v.AddSolid(ProjectileMeshes.Torus, Lacquer, S(0.42f), V(0, 0.6f, 0), V(90, 0, 0));
-                    v.AddSolid(ProjectileMeshes.Torus, Lacquer, S(0.42f), V(0, -0.6f, 0), V(90, 0, 0));
-                    v.AddGlow(ProjectileMeshes.SphereLow, V(0.9f, 1.05f, 0.9f));
+                    v.AddCore(ProjectileMeshes.Sphere, V(0.5f, 0.62f, 0.5f));
+                    v.AddSolid(ProjectileMeshes.Torus, Lacquer, S(0.4f), V(0, 0.56f, 0), V(90, 0, 0));
+                    v.AddSolid(ProjectileMeshes.Torus, Lacquer, S(0.4f), V(0, -0.56f, 0), V(90, 0, 0));
+                    v.AddSolid(ProjectileMeshes.Torus, Lacquer, V(0.5f, 0.62f, 0.2f), default, V(0, 45, 0));
+                    v.AddSolid(ProjectileMeshes.Torus, Lacquer, V(0.5f, 0.62f, 0.2f), default, V(0, 135, 0));
+                    v.AddSolid(ProjectileMeshes.CylZ, Lacquer, V(0.14f, 0.14f, 0.12f), V(0, 0.68f, 0), V(90, 0, 0));
+                    v.AddGlow(ProjectileMeshes.SphereLow, V(0.7f, 0.82f, 0.7f));
                     v.AddHalo();
                 },
             });
