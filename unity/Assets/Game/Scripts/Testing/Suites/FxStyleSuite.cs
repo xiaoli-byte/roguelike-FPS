@@ -15,10 +15,15 @@ namespace Spiritfire.Game.Testing
     ///   焚雷、归墟的闪光、熔金的余韵；地上的弹孔 + 焦痕（热 / 冷）；出生显形中途、火元素击杀的迸散。
     /// 每种地面按那一章调环境色（<see cref="FxTone.Override"/>）。截图名 sty_&lt;sand|snow|lava&gt;_*，拼图由 scripts/unity/fx_style_sheets.py 排成改前 / 改后。
     /// 只核对「有没有出」：状态皮挂上、反应执行。
+    /// 收尾一轮（特效打磨 E）再加两组：元素爆炸一排（火 / 雷 / 蚀 / 金 / 紫 / 冰各炸一次，0.12 / 0.4 s）、冰爆 FrostNova（中 3 m 的 0.05 / 0.18 / 0.4 / 0.75 s +
+    /// 第一人称 + 大 6 m 一张）。只拍这两组和状态：<see cref="FxStyleColdSuite"/>（bridge.sh playtest fx-style-cold）。
     /// </summary>
-    public sealed class FxStyleSuite : PlaytestSuite
+    public class FxStyleSuite : PlaytestSuite
     {
         public override string Id => "fx-style";
+
+        /// <summary>true = 只拍元素爆炸、冰爆、状态（收尾一轮的快速对照）</summary>
+        protected virtual bool ColdOnly => false;
         public override string Scene => "Assets/Scenes/TestArena.unity";
 
         const string Target = "jerboa_blade";
@@ -71,6 +76,14 @@ namespace Spiritfire.Game.Testing
                     ClearPatches();
                     if (g != "sand") BuildPatch(g);
                     yield return Frames(10);
+                    if (ColdOnly)
+                    {
+                        yield return ElementBlasts(g);
+                        yield return FrostNovaCase(g);
+                        yield return Statuses(g);
+                        Line($"地面 {g}（第 {chapter} 章环境色）：拍完");
+                        continue;
+                    }
                     yield return Blast(g);
                     yield return FirstPersonFire(g);
                     yield return Statuses(g);
@@ -78,6 +91,8 @@ namespace Spiritfire.Game.Testing
                     yield return ReactionsCase(g);
                     yield return GroundMarks(g);
                     yield return SpawnDeath(g);
+                    yield return ElementBlasts(g);
+                    yield return FrostNovaCase(g);
                     Line($"地面 {g}（第 {chapter} 章环境色）：拍完");
                 }
             }
@@ -258,6 +273,95 @@ namespace Spiritfire.Game.Testing
             yield return Until(t0, 0.55f);
             Shot(weapons.eye, $"sty_{g}_fp_blast_late");
             yield return Frames(60);
+            arena.Clear();
+        }
+
+        // ───────────── 元素爆炸 / 冰爆（收尾一轮） ─────────────
+
+        /// <summary>元素爆炸一排：同一个位置先后各炸一次（中档 3 m），旁边站一只怪当参照；颜色就是各调用方传进来的元素色</summary>
+        IEnumerator ElementBlasts(string g)
+        {
+            arena.Clear();
+            FxDecals.ClearAll();
+            Away();
+            yield return Frames(10);
+            var refAi = Spawn(stage + side * 3.4f + back * 1.2f);
+            yield return Stand(refAi);
+            const float r = 3f;
+            var at = Ground(Stage) + Vector3.up * 0.5f;
+            var camPos = at + back * (4.5f + r * 2.6f) + Vector3.up * (1.2f + r * 0.55f);
+            var look = at + Vector3.up * r * 0.55f;
+            var list = new (string name, Color color)[]
+            {
+                ("fire", Fx.ElementColor(Element.Fire)), ("shock", Fx.ElementColor(Element.Shock)), ("corrode", Fx.ElementColor(Element.Corrode)),
+                ("gold", CombatTuning.ReactionColors[(int)Reaction.Thunderfire]), ("void", Hex.Rgb(0x9a5cff)), ("ice", FrostPalette.Ice),
+            };
+            foreach (var (name, color) in list)
+            {
+                Fx.Explosion(at, r, color);
+                float t0 = Time.time;
+                yield return Until(t0, 0.12f);
+                CamShot(camPos, look, $"sty_{g}_elem_{name}_012");
+                yield return Until(t0, 0.4f);
+                CamShot(camPos, look, $"sty_{g}_elem_{name}_040");
+                yield return Frames(100);
+                FxDecals.ClearAll();
+            }
+            arena.Clear();
+        }
+
+        /// <summary>冰爆（冰河豚自爆、鲲鹏化形 / 吐冰、MatriarchNova）：中 3 m 的时间序列 + 第一人称，大 6 m 一张</summary>
+        IEnumerator FrostNovaCase(string g)
+        {
+            arena.Clear();
+            FxDecals.ClearAll();
+            Away();
+            yield return Frames(10);
+            var refAi = Spawn(stage + side * 3.4f + back * 1.2f);
+            yield return Stand(refAi);
+            const float r = 3f;
+            var at = Ground(Stage) + Vector3.up * 0.5f;
+            var camPos = at + back * (4.5f + r * 2.6f) + Vector3.up * (1.2f + r * 0.55f);
+            var look = at + Vector3.up * r * 0.55f;
+            Fx.FrostNova(at, r);
+            float t0 = Time.time;
+            foreach (var (t, tag) in new[] { (0.05f, "005"), (0.18f, "018"), (0.4f, "040"), (0.75f, "075") })
+            {
+                yield return Until(t0, t);
+                CamShot(camPos, look, $"sty_{g}_nova_{tag}");
+            }
+            yield return Frames(120);
+            FxDecals.ClearAll();
+
+            // 大号（鲲鹏化形 6–8 m）：机位拉远
+            const float R = 6f;
+            var camFar = at + back * (4.5f + R * 2.4f) + Vector3.up * (1.5f + R * 0.6f);
+            Fx.FrostNova(at, R);
+            t0 = Time.time;
+            yield return Until(t0, 0.2f);
+            CamShot(camFar, at + Vector3.up * R * 0.4f, "sty_" + g + "_nova_big_020");
+            yield return Until(t0, 0.5f);
+            CamShot(camFar, at + Vector3.up * R * 0.4f, "sty_" + g + "_nova_big_050");
+            yield return Frames(120);
+            FxDecals.ClearAll();
+
+            // 第一人称：准星压在怪身上，冰爆在怪旁边 2.6 m
+            if (!refAi) yield break;
+            var center = BodyCenter(refAi.Health);
+            Teleport(motor, refAi.transform.position + back * 11f - side * 1.5f);
+            yield return null;
+            Aim(motor, eye, center);
+            yield return Frames(4);
+            var p = Ground(refAi.transform.position - side * 2.6f) + Vector3.up * 0.5f;
+            Fx.FrostNova(p, r);
+            t0 = Time.time;
+            yield return Until(t0, 0.12f);
+            Aim(motor, eye, center);
+            Shot(weapons.eye, $"sty_{g}_fp_nova");
+            yield return Until(t0, 0.5f);
+            Shot(weapons.eye, $"sty_{g}_fp_nova_late");
+            yield return Frames(60);
+            FxDecals.ClearAll();
             arena.Clear();
         }
 
@@ -498,5 +602,12 @@ namespace Spiritfire.Game.Testing
             arena.Clear();
             yield return Frames(10);
         }
+    }
+
+    /// <summary>fx-style 的快速对照：三种地面上只拍元素爆炸一排、冰爆、状态（bridge.sh playtest fx-style-cold）</summary>
+    public sealed class FxStyleColdSuite : FxStyleSuite
+    {
+        public override string Id => "fx-style-cold";
+        protected override bool ColdOnly => true;
     }
 }

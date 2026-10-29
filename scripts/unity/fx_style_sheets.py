@@ -7,6 +7,11 @@
     fxa_* / blade_fp_*   playtest fx-shot / blade-fp（射击核心，沙地）
     fxb_*        playtest fx-blast（爆炸序列等，沙地）
 改前用风格审查之前的代码拍一遍、改后再拍一遍。每张拼图同一机位、同一时间点上下对排。
+
+收尾一轮（S13–S17）只拼这几张：
+    python scripts/unity/fx_style_sheets.py <改前目录> <改后目录> --final [<改前图集目录> <改后图集目录>]
+    sty_*_elem_* / sty_*_nova* / sty_*_status_slow   bridge.sh playtest fx-style-cold（或 fx-style）
+    图集目录 = unity/Assets/Art/_Review/gallery（gallery-frost / gallery-kunpeng / gallery-hanba 的 jpg）
 """
 import os
 import sys
@@ -83,7 +88,72 @@ def grounds(cells):
     return [(n, [(cap, f"sty_{g}_{suf}", crop) for cap, suf, crop in cells]) for g, n in GROUNDS]
 
 
+def gallery_sheet(title, rows, before, after, out, w=480, h=270):
+    """rows = [(行标题, [(格名, 组/文件名.jpg) 或 (格名, 改前文件, 改后文件), ...]), ...]：图集截图（jpg）改前 / 改后两行
+    （喷泉这类按随机时机出现的东西，改前 / 改后可以取不同的格）"""
+    def jpg(d, rel, W, H):
+        p = os.path.join(d, rel)
+        if not os.path.exists(p):
+            im = Image.new("RGB", (W, H), (60, 20, 20))
+            ImageDraw.Draw(im).text((10, 10), f"缺 {rel}", font=F_CELL, fill=(255, 200, 200))
+            return im
+        return Image.open(p).convert("RGB").resize((W, H), Image.LANCZOS)
+    cols = max(len(c) for _, c in rows)
+    side, head, cell_h = 110, 56, h + 28
+    img = Image.new("RGB", (side + cols * w, head + len(rows) * (2 * cell_h + 14)), BG)
+    d = ImageDraw.Draw(img)
+    d.text((14, 10), title, font=F_TITLE, fill=(255, 236, 200))
+    y = head
+    for label, cells in rows:
+        for tag, src, color in (("改前", before, (200, 150, 150)), ("改后", after, (150, 220, 160))):
+            d.text((10, y + cell_h // 2 - 26), label, font=F_CELL, fill=(230, 230, 230))
+            d.text((10, y + cell_h // 2 + 2), tag, font=F_SIDE, fill=color)
+            for i, cell in enumerate(cells):
+                cap, rel = cell[0], cell[1] if len(cell) == 2 or tag == "改前" else cell[2]
+                if len(cell) == 3:
+                    cap = f"{cap} · {os.path.splitext(os.path.basename(rel))[0].replace('boss_hanba_', '')}"
+                x = side + i * w
+                d.text((x + 6, y + 2), cap, font=F_CELL, fill=(220, 220, 220))
+                img.paste(jpg(src, rel, w - 4, h), (x, y + 26))
+            y += cell_h
+        y += 14
+    img.save(out, quality=86)
+    print("写入", out, img.size)
+
+
+def final(before, after, out, gbefore=None, gafter=None):
+    """收尾一轮：元素爆炸、冰爆、冰壳（fx-style-cold），以及图集里的冰河豚自爆、鲲鹏化形 / 倒下余韵、旱魃喷泉"""
+    J = lambda name: os.path.join(out, name)
+    mid = (0.5, 0.45, 0.62)
+    elems = (("fire", "火"), ("shock", "雷"), ("corrode", "蚀"), ("gold", "金"), ("void", "紫"), ("ice", "冰"))
+    sheet("元素爆炸 · 三种地面 · 0.12 s（中档 3 m；冰分流到冰爆）",
+          grounds([(n, f"elem_{k}_012", mid) for k, n in elems]), before, after, J("S13-element-blasts.jpg"), w=330, h=186)
+    sheet("元素爆炸 · 三种地面 · 0.4 s（冷下来的团块：火赭红、雷靛蓝、蚀墨绿、金赭金、紫深紫）",
+          grounds([(n, f"elem_{k}_040", mid) for k, n in elems]), before, after, J("S14-element-blasts-late.jpg"), w=330, h=186)
+    sheet("冰爆 FrostNova · 三种地面（中 3 m 的 0.05 / 0.18 / 0.4 / 0.75 s、大 6 m、第一人称）",
+          grounds([("0.05 s", "nova_005", mid), ("0.18 s", "nova_018", mid), ("0.4 s", "nova_040", mid), ("0.75 s", "nova_075", mid),
+                   ("大 6 m · 0.2 s", "nova_big_020", None), ("第一人称 0.12 s", "fp_nova", None)]),
+          before, after, J("S15-frost-nova.jpg"), w=330, h=186)
+    sheet("状态 · 减速（冰壳）· 三种地面（近景）",
+          grounds([("冰壳近景", "status_slow", (0.5, 0.42, 0.5)), ("一排 8.5 m", "status", None)]),
+          before, after, J("S16-frost-shell.jpg"), w=560, h=315)
+    if gbefore and gafter:
+        gallery_sheet("图集 · 冰河豚自爆、鲲鹏化形 / 倒下余韵、旱魃泉床喷泉（gallery-frost / kunpeng / hanba）",
+                      [("冰河豚", [("俯冲 · 0.7 s", "frost/ice_puffer_00_2.jpg"), ("自爆 · 出手", "frost/ice_puffer_01_1.jpg"), ("自爆 · 命中", "frost/ice_puffer_01_2.jpg")]),
+                       ("鲲鹏", [("化形 · 起", "kunpeng/boss_kunpeng_form_peng_0.jpg"), ("倒下 · 溃散", "kunpeng/boss_kunpeng_death_1.jpg"),
+                                 ("倒下 · 余韵", "kunpeng/boss_kunpeng_death_2.jpg")]),
+                       ("旱魃", [("泉床喷气", "hanba/boss_hanba_hot_wind_hanba_p2_1.jpg", "hanba/boss_hanba_eclipse_hanba_p3_1.jpg"),
+                                 ("泉床喷气", "hanba/boss_hanba_sand_wraiths_hanba_p3_0.jpg", "hanba/boss_hanba_hot_wind_hanba_p3_1.jpg"),
+                                 ("焦裂 · 二阶段", "hanba/boss_hanba_scorch_crack_hanba_p2_1.jpg")])],
+                      gbefore, gafter, J("S17-gallery-frost-water.jpg"))
+
+
 def main():
+    if "--final" in sys.argv:
+        a = [x for x in sys.argv[1:] if x != "--final"]
+        os.makedirs(OUT, exist_ok=True)
+        final(a[0], a[1], OUT, a[2] if len(a) > 3 else None, a[3] if len(a) > 3 else None)
+        return
     before, after = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else OUT
     os.makedirs(out, exist_ok=True)
