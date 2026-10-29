@@ -4,6 +4,8 @@
 // 顶点流（FxSetup 的 FlipbookStreams）：TEXCOORD0 = 本帧 uv.xy + 下一帧 uv.zw；TEXCOORD1 = x 帧混合、y 年龄比例（0..1）、z 稳定随机数；COLOR = 粒子色 × 透明度曲线。
 // _Mode：
 //   0 火：热度按年龄冷却（_Cool），分五段硬色阶：白热 → 黄 → 主色 → 深色（主色²）→ 烟；受光两段（亮面 / 暗面），团块边缘一圈深色描边；发光部分 HDR（Bloom 吃得到）
+//     元素色阶（收尾一轮，docs/art/fx-style.md §2.1）：亮芯 / 暗边 / 烟按粒子色的色相整套换——暖色（红 / 橙 / 黄 / 金，以及不饱和的白、沙色）是火，
+//     算法和原来一字不差；绿 = 蚀（黄绿芯、墨绿边、墨绿烟）、蓝 = 雷（白芯、靛紫边）、紫 = 灵 / 归墟（淡紫芯、深紫边）。冰不进火团（Fx.Explosion 分流到冰爆）
 //   1 烟：不发光的实心团块，粒子色是烟的底色，亮面 ×1.12、暗面 ×0.7 且偏冷，边缘一圈同色更深的描边（烟色按章节，见 FxTone）
 //   2 光：平涂发光（冲击环、爆闪星、刻符）：热度高的部分白热、其余主色，几乎纯加法（只压暗身后 25%）
 // 混合：预乘 alpha（Blend One OneMinusSrcAlpha），同一个材质里既能画实心烟、也能画发光火；贴脸 0.25–1 m 淡出。
@@ -86,6 +88,23 @@ Shader "Spiritfire/FxToon"
                 return saturate((v - edge) / w + 0.5);
             }
 
+            // 元素权重（x 蚀、y 雷、z 灵），其余是火：按色相分段（0 红、1 黄、2 绿、3 青、4 蓝、5 品红，单位 60°），段与段之间 15° 软过渡；
+            // 饱和度低于 0.12 的（白、灰、沙）一律按火，免得淡色的亮芯换了色阶
+            half3 ElementWeights(half3 c)
+            {
+                half mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
+                half d = mx - mn;
+                half sat = d / max(mx, 1e-3);
+                half dd = max(d, 1e-4);
+                half h = mx <= c.r ? (c.g - c.b) / dd : (mx <= c.g ? 2.0 + (c.b - c.r) / dd : 4.0 + (c.r - c.g) / dd);
+                h = h < 0.0 ? h + 6.0 : h;
+                half k = smoothstep(0.12, 0.24, sat);
+                half green = smoothstep(1.0, 1.25, h) * (1.0 - smoothstep(2.6, 2.85, h));
+                half blue = smoothstep(2.6, 2.85, h) * (1.0 - smoothstep(4.0, 4.25, h));
+                half purple = smoothstep(4.0, 4.25, h) * (1.0 - smoothstep(5.35, 5.6, h));
+                return half3(green, blue, purple) * k;
+            }
+
             half4 Frag(Varyings i) : SV_Target
             {
                 half4 ta = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv.xy);
@@ -126,6 +145,29 @@ Shader "Spiritfire/FxToon"
                     half3 deep = tint * tint * half3(0.78, 0.6, 0.48);
                     // 冷下来的那一段是暖褐烟（风格审查：火的暗边 / 烟是赭红、暖褐，不用灰黑），描边是赭红的深色（不是灰线）
                     half3 smk = lerp(half3(0.3, 0.19, 0.13), tint * 0.36, 0.25);
+                    // 元素色阶：非火的部分整套换（暖色 w = 0，上面四个值原样保留）
+                    half3 we = ElementWeights(tint);
+                    half wsum = we.x + we.y + we.z;
+                    half3 rimWarm = half3(0.06, 0.015, 0.0);
+                    [branch] if (wsum > 0.001)
+                    {
+                        half wf = saturate(1.0 - wsum);
+                        // （常数是线性空间的值，注释里是显示出来的 sRGB）
+                        // 蚀：黄绿芯 (210,255,90)、鲜绿主色、墨绿暗边 (50,140,55) / 烟 (55,90,55)
+                        half3 hotG = lerp(tint, half3(0.9, 1.0, 0.55), 0.8), yelG = lerp(tint, half3(0.64, 1.0, 0.1), 0.55);
+                        half3 deepG = half3(0.03, 0.26, 0.039), smkG = half3(0.038, 0.1, 0.038);
+                        // 雷：白芯、蓝白主色、靛紫暗边 (100,110,230) / 烟 (90,85,150)——暗边和火的赭红一样「亮的深色」，冷下来的团块不压成一大块深靛
+                        half3 hotB = lerp(tint, half3(0.88, 0.96, 1.0), 0.85), yelB = lerp(tint, half3(0.58, 0.83, 1.0), 0.6);
+                        half3 deepB = half3(0.127, 0.155, 0.79), smkB = half3(0.1, 0.09, 0.3);
+                        // 灵（紫）：淡紫芯 (225,195,255)、深紫暗边 (140,70,210) / 烟 (95,70,120)
+                        half3 hotP = lerp(tint, half3(1.0, 0.88, 1.0), 0.85), yelP = lerp(tint, half3(0.75, 0.55, 1.0), 0.5);
+                        half3 deepP = half3(0.26, 0.06, 0.64), smkP = half3(0.115, 0.06, 0.19);
+                        hot = hot * wf + hotG * we.x + hotB * we.y + hotP * we.z;
+                        yel = yel * wf + yelG * we.x + yelB * we.y + yelP * we.z;
+                        deep = deep * wf + deepG * we.x + deepB * we.y + deepP * we.z;
+                        smk = smk * wf + smkG * we.x + smkB * we.y + smkP * we.z;
+                        rimWarm *= wf;
+                    }
                     col = lerp(smk, deep, b1);
                     col = lerp(col, tint, b2);
                     col = lerp(col, yel, b3);
@@ -133,7 +175,7 @@ Shader "Spiritfire/FxToon"
                     // 受光两段（火的明暗已经在色阶里，这里只轻轻压一点）+ 描边
                     col *= lerp(0.9, 1.0, lit);
                     // 描边：火团还热的时候是赭红的深色，整团冷成烟以后才是暖褐（按年龄，不按这一点的热度：否则边缘总是落到最冷的那档，读成一圈灰线）
-                    half3 rimCol = lerp(deep * 0.75 + half3(0.06, 0.015, 0.0), smk * 0.85, saturate(age * 1.8 - 0.7));
+                    half3 rimCol = lerp(deep * 0.75 + rimWarm, smk * 0.85, saturate(age * 1.8 - 0.7));
                     col = lerp(col, rimCol, rim * 0.6);
                     // 发光部分 HDR：主色以上提亮
                     col *= lerp(1.0, _Bright, b2 * (0.6 + 0.4 * b4));

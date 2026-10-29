@@ -18,6 +18,8 @@ namespace Spiritfire.Game
         Vector3 velocity, heading = Vector3.forward;
         float gravity, damage, radius, explodeRadius, explosionFalloff, life, lifetime, age, homing;
         Element element;
+        /// <summary>弹体颜色：没有元素的爆炸弹按它认爆炸的元素（雪块落地是冰爆，不是火团）</summary>
+        Color tint;
         bool fake, spirit, blockable, done;
         UnityEngine.Object source;
         Action<Vector3, bool> onImpact;
@@ -79,6 +81,7 @@ namespace Spiritfire.Game
             explodeRadius = float.IsFinite(s.explosionRadius) ? Mathf.Max(0, s.explosionRadius) : 0;
             explosionFalloff = Mathf.Clamp01(float.IsFinite(s.explosionFalloff) ? s.explosionFalloff : 0.3f);
             element = s.element;
+            tint = s.color;
             homing = float.IsFinite(s.homing) ? Mathf.Max(0, s.homing) : 0;
             fake = s.fake;
             spirit = s.spirit;
@@ -223,6 +226,8 @@ namespace Spiritfire.Game
             var o = new ExplosionOptions(at, explodeRadius, info)
             {
                 noEnemies = true, playerDamage = spirit ? 0 : damage, falloff = explosionFalloff, flatKnockback = true,
+                // 没有元素的爆炸弹用弹体自己的颜色（Fx.Explosion 按颜色认元素：狌狌的雪块 → 冰爆）
+                color = element == Element.None ? new Color(tint.r, tint.g, tint.b, 1f) : null,
             };
             // 爆炸特效（元素色）由 Combat.Explode 播（FX1）
             Combat.Explode(in o);

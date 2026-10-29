@@ -193,11 +193,10 @@ namespace Spiritfire.Game
             Play(crit ? "EnemyHitCrit" : "EnemyHit", point, Vector3.up, color, crit ? scale * 1.7f : scale);
 
         /// <summary>
-        /// 爆炸：卡通序列帧火团 / 烟柱 / 冲击环 / 碎屑 + 闪光灯、按距离震屏。radius 0.4–12 m，按半径分小 / 中 / 大三档（<see cref="ExplosionId"/>，Fx.Blast.cs）。
-        /// 预设 Presets/Explosion.cs。
+        /// 爆炸：卡通序列帧火团 / 烟柱 / 冲击环 / 碎屑 + 闪光灯、按距离震屏。radius 0.4–12 m，按半径分小 / 中 / 大三档（<see cref="ExplosionId(float)"/>，Fx.Blast.cs）。
+        /// 按颜色认元素换整套色阶（雷 / 蚀 / 金 / 紫，冰分流到冰爆；<see cref="ExplosionThemed"/>）。预设 Presets/Explosion.cs、ExplosionElements.cs。
         /// </summary>
-        public static FxHandle Explosion(Vector3 center, float radius, Color color) =>
-            Play(ExplosionId(radius), center, Vector3.up, color, radius);
+        public static FxHandle Explosion(Vector3 center, float radius, Color color) => ExplosionThemed(center, radius, color);
 
         public static FxHandle Explosion(Vector3 center, float radius) => Explosion(center, radius, ExplosionColor);
 
