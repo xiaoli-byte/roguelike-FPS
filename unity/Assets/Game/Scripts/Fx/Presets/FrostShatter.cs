@@ -4,7 +4,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 碎冰（FX3；Three.js iceShatter / iceShards 的「大块冰屑 + 细霜 + 冷雾」）：冷白闪光 + 一记冰晶星芒、六棱柱冰块翻滚落地、
-    /// 细碎冰碴、一蓬白粉雾、几颗飘着闪的冰粒、带重力的冷光碎点、淡淡的「啪」环；冷色小闪光灯。
+    /// 细碎冰碴、一两团实心的冷白雾团（收尾一轮：原来是一蓬白粉雾）、几颗飘着闪的冰粒、带重力的冷光碎点、淡淡的「啪」环；冷色小闪光灯。
     /// 规模 s = 大小（0.3–4，冰羽 / 冰块 ≈ 0.5–1，巨蟹碎壳 ≈ 1.5）；颜色 = 冰色（冰碴、闪光按 30% 混进来：坦克的冰偏白、紫冰偏紫）。
     /// 入口：<see cref="Fx.FrostShatter"/>（<see cref="FrostKit.Shatter"/> 走这里）。
     /// </summary>
@@ -23,7 +23,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(0.7f, 0.7f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.09f, 0.09f), color = FxColor.Fixed, fixedColor = Hex.Rgb(0xe0f6ff), mix = 0.2f,
+                    size = new Vector2(0.45f, 0.45f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.09f, 0.09f), color = FxColor.Fixed, fixedColor = Hex.Rgb(0xe0f6ff), mix = 0.2f,
                 },
                 new FxLayer
                 {
@@ -51,12 +51,12 @@ namespace Spiritfire.Game
                     speed = new Vector2(3f, 7f), speedScale = FxScale.Pow(0.5f), up = 1.2f, size = new Vector2(0.05f, 0.1f), sizeScale = FxScale.Pow(0.5f),
                     life = new Vector2(0.5f, 0.85f), color = FxColor.Fixed, fixedColor = FrostPalette.Shard, mix = 0.3f, shade = new Vector2(0.85f, 1.1f),
                 },
-                // 白粉雾
+                // 冷白雾团（收尾一轮：原来是一蓬柔边白粉雾，亮地面上一片白；改成一两团实心的卡通雾团，暗面蓝灰）
                 new FxLayer
                 {
-                    style = "Powder", count = new FxScale(2, 2, 1, 0, 9), maxCount = 9, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.2f),
-                    speed = new Vector2(0.5f, 1.4f), size = new Vector2(0.28f, 0.48f), sizeScale = FxScale.Lin(0, 1),
-                    life = new Vector2(0.6f, 1.0f), color = FxColor.Fixed, fixedColor = FrostPalette.Snow, mix = 0.1f,
+                    style = "ToonSmoke", count = new FxScale(1, 0.6f, 1, 0, 3), maxCount = 3, shape = FxShape.UpperSphere, spread = FxScale.Lin(0, 0.2f), delay = 0.06f,
+                    speed = new Vector2(0.4f, 1f), up = 0.5f, size = new Vector2(0.3f, 0.42f), sizeScale = FxScale.Lin(0, 1),
+                    life = new Vector2(0.35f, 0.5f), color = FxColor.Fixed, fixedColor = FrostNovaPreset.MistIce, mix = 0, shade = new Vector2(0.94f, 1.04f),
                 },
                 // 飘着闪的冰粒
                 new FxLayer

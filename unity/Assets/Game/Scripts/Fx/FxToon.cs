@@ -16,6 +16,7 @@ namespace Spiritfire.Game
         public const string ShaderToon = "Spiritfire/FxToon";
         public const string ShaderShield = "Spiritfire/FxShield";
         public const string ShaderStatusSkin = "Spiritfire/FxStatusSkin";
+        public const string ShaderCrystal = "Spiritfire/FxCrystal";
 
         /// <summary>序列帧图集（Assets/Art/Fx/T_Fx_Blast.png）</summary>
         public const string Atlas = "T_Fx_Blast";
@@ -34,6 +35,8 @@ namespace Spiritfire.Game
         public const string Shield = "M_Fx_ShieldBubble";
         /// <summary>状态皮（SF_FxStatusSkin：冰壳 / 蚀斑 / 电纹 / 炭火纹 + 状态色轮廓光）</summary>
         public const string StatusSkin = "M_Fx_StatusSkin";
+        /// <summary>冰晶碎块（SF_FxCrystal：冰爆的低多边形冰晶，亮面白 / 冰蓝 / 蓝灰三阶 + 蓝灰棱边，见 <see cref="FrostBurst"/>）</summary>
+        public const string Crystal = "M_Fx_Crystal";
 
         // ── 图集帧号（8 × 8，左上角为 0）──
         public const int FireFirst = 0, SmokeFirst = 16, FlameFirst = 48, SeqFrames = 16;
@@ -86,6 +89,21 @@ namespace Spiritfire.Game
                     m.SetOverrideTag("RenderType", "Transparent");
                     m.renderQueue = (int)RenderQueue.Transparent - 10;
                     m.enableInstancing = false;
+                },
+            },
+            new Def
+            {
+                name = Crystal, shader = ShaderCrystal,
+                setup = m =>
+                {
+                    // 冰的三阶（fx-style §2.1「冰 / 霜」：亮芯白、主色冰蓝、暗边蓝灰）
+                    m.SetColor("_Light", new Color(0.8f, 0.92f, 0.99f));
+                    m.SetColor("_Main", new Color(0.36f, 0.66f, 0.93f));
+                    m.SetColor("_Dark", new Color(0.22f, 0.36f, 0.58f));
+                    m.SetColor("_Edge", new Color(0.15f, 0.25f, 0.42f));
+                    m.SetOverrideTag("RenderType", "Opaque");
+                    m.renderQueue = (int)RenderQueue.Geometry + 50;
+                    m.enableInstancing = true;
                 },
             },
             new Def

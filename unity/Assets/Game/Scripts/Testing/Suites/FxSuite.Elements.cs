@@ -57,17 +57,19 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.3f);
             Shot(weapons.eye, "fx3_shatter_late");
 
-            // 冰爆
+            // 冰爆（收尾一轮：主形是低多边形冰晶，0.1 s 时整簇崩开；不再铺霜纹贴花，0.65 s 内全部退场）
             yield return Stage(-1, 9f, 0.8f, v => p = v);
-            int frost0 = FxDecals.ActiveOfKind(FxMaterialKind.DecalFrost);
             Fx.FrostNova(p + Vector3.up * 0.8f, 3f);
             yield return new WaitForSeconds(0.08f);
+            int crystals = FrostBurst.ActiveCount;
             Shot(weapons.eye, "fx3_nova");
-            yield return new WaitForSeconds(0.7f);
+            yield return new WaitForSeconds(0.22f);
             Shot(weapons.eye, "fx3_nova_late");
-            int frost1 = FxDecals.ActiveOfKind(FxMaterialKind.DecalFrost);
-            Line($"FX3 冰爆：霜纹贴花 {frost0} → {frost1}");
-            if (Telegraph.DecalsSupported && frost1 <= frost0) Fail("冰爆没有铺霜纹贴花");
+            yield return new WaitForSeconds(0.55f);
+            int left = FrostBurst.ActiveCount;
+            Line($"FX3 冰爆：冰晶 {crystals} 块（上限 {FrostBurst.Cap}），0.85 s 后还剩 {left} 块");
+            if (crystals == 0) Fail("冰爆没有冰晶");
+            if (left > 0) Fail($"冰爆的冰晶 0.85 s 后还剩 {left} 块（余韵拖太久）");
 
             // 冰环
             yield return Stage(0, 8f, 0.4f, v => p = v);

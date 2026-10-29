@@ -14,13 +14,15 @@ namespace Spiritfire.Game
 
         public static FxHandle FrostShatter(Vector3 at, float size = 1f) => FrostShatter(at, size, FrostPalette.Ice);
 
-        /// <summary>冰爆（冷的爆炸：闪光、白粉雾、冷雾、冰块、冰碴、雪花、冷环、霜斑、冷光、震屏；Presets/FrostNova.cs）。radius 0.6–8 m</summary>
+        /// <summary>
+        /// 冰爆（冷的爆炸）：主形是一簇低多边形冰晶从爆心长出来再崩开（<see cref="Spiritfire.Game.FrostBurst"/>），陪衬冰晶星芒、冰蓝粗环 + 冰蓝实心底、
+        /// 两三团冷白雾团、几片冰碴、冷光、震屏（Presets/FrostNova.cs）。蓄 → 爆 → 余韵 0.6 s 内交代完。radius 0.6–8 m
+        /// </summary>
         public static FxHandle FrostNova(Vector3 center, float radius, Color color)
         {
             var h = Play("FrostNova", center, Vector3.up, color, radius);
-            // 离地不高（< 1.2 r）时脚下铺一块流动霜纹
-            float gy = GroundY(center, radius * 1.2f + 0.5f);
-            if (!float.IsNegativeInfinity(gy)) FxDecals.Frost(new Vector3(center.x, gy + 0.02f, center.z), Mathf.Clamp(radius * 1.1f, 0.8f, 9f), 10f, 1.1f);
+            if (h.Alive) Spiritfire.Game.FrostBurst.Spawn(center, radius);
+            // 收尾一轮：不再铺霜纹贴花——白色的羽状霜在亮沙上是一片白噪点，冰爆炸完 0.6 s 就该退场（要留冻地的招式自己铺 FrostPatch）
             return h;
         }
 
