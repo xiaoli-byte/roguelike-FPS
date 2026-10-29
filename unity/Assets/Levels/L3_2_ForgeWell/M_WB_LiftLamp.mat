@@ -44,6 +44,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RegionMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _AmbientStrength: 1
@@ -75,11 +79,20 @@ Material:
     - _DissolveParams: {r: 0, g: 0.08, b: 9, a: 0}
     - _DissolvePlane: {r: 0, g: -0.5, b: 0, a: 0}
     - _EmissionColor: {r: 3, g: 1.3, b: 0.3, a: 1}
+    - _FlameKey: {r: 0, g: 1, b: 9, a: 0}
+    - _FlameKeyColor: {r: 1, g: 0.627, b: 0.251, a: 1}
     - _FlashColor: {r: 1, g: 1, b: 1, a: 1}
     - _GlowMaskColor0: {r: 0, g: 0, b: 0, a: 1}
     - _GlowMaskColor1: {r: 0, g: 0, b: 0, a: 1}
     - _GlowMaskColor2: {r: 0, g: 0, b: 0, a: 1}
     - _GlowMaskShimmer: {r: 0.4, g: 0.4, b: 0.4, a: 9}
+    - _RegionA: {r: 0, g: 0, b: 0, a: 0}
+    - _RegionAxisX: {r: 1, g: 0, b: 0, a: 0}
+    - _RegionAxisY: {r: 0, g: 1, b: 0, a: 0}
+    - _RegionB: {r: 0, g: 0, b: 0, a: 0}
+    - _RegionC: {r: 0, g: 0, b: 0, a: 0}
+    - _RegionCenter: {r: 0, g: 0, b: 0, a: 1}
+    - _RegionParams: {r: 0, g: 0, b: 0, a: 0}
     - _RimColor: {r: 1, g: 0.93, b: 0.8, a: 1}
     - _ShadowTint: {r: 0.62, g: 0.65999997, b: 0.86, a: 1}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
