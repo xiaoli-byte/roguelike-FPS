@@ -6,6 +6,8 @@
  *  - calm   ：90 BPM，G 宫调，木鱼 / 沙锤轻打，商店与宝藏关
  *  - combat ：132 BPM，E 羽调，推进的鼓组 + 八分贝斯 + 古筝十六分琶音 + 笛子主旋律
  *  - boss   ：150 BPM，A 调带降二级色彩，双踩、失真贝斯、太鼓、铜管 stab、古筝轮指
+ *  - hanba  ：旱魃主题（Unity I6，只在烘焙里渲）。138 BPM，D 调「西域」音阶（D Eb F# G A Bb C，带增二度），
+ *             手鼓三连的西域鼓型 + 太鼓、持续的 D 低音、铜管长音在第 5 小节一推，笛子在增二度上绕，烈日下的干热和压迫
  */
 import { Rng } from '../core/Rng';
 import { type Voice, mtof } from './Synth';
@@ -23,6 +25,8 @@ const MINOR_PENTA = [0, 3, 5, 7, 10];
 const MAJOR_PENTA = [0, 2, 4, 7, 9];
 /** 带降二级的「阴」五声（A Bb C D E G 型） */
 const DARK_PENTA = [0, 1, 3, 5, 7, 10];
+/** 「西域」音阶（D Eb F# G A Bb C）：降二级 + 增二度，旱魃主题用 */
+const HIJAZ = [0, 1, 4, 5, 7, 8, 10];
 
 function scaleNotes(root: number, intervals: readonly number[], lo: number, hi: number): number[] {
   const out: number[] = [];
@@ -375,5 +379,79 @@ export class BossTrack extends Track {
     // 笛子：第一遍只有后半，之后前半低一些、后半高亢
     const n = second ? this.melB[step - 64] : this.loop > 0 ? this.melA[step] : undefined;
     if (n) dizi(v, 0, mtof(n.m), n.len * sd, 0.6 * n.vel, n.grace);
+  }
+}
+
+// ───────────── 旱魃（Unity I6）─────────────
+
+const HANBA_BARS: BarChord[] = [
+  { root: 38, tones: [50, 54, 57, 62] }, // D（大三，西域音阶的主和弦）
+  { root: 38, tones: [50, 54, 57, 62] },
+  { root: 39, tones: [51, 55, 58, 63] }, // Eb（降二级，压迫）
+  { root: 38, tones: [50, 54, 57, 62] },
+  { root: 43, tones: [55, 58, 62, 67] }, // Gm
+  { root: 41, tones: [53, 57, 60, 65] }, // F
+  { root: 39, tones: [51, 55, 58, 63] }, // Eb
+  { root: 38, tones: [50, 54, 57, 62] }, // D
+];
+
+export class HanbaTrack extends Track {
+  readonly bpm = 138;
+  readonly level = 0.82;
+  readonly send = 0.26;
+  /** 西域手鼓（dum-tek 三连）：1 = 低音 dum（太鼓），2 = 高音 tek（木鱼） */
+  private readonly drum = [1, 0, 0, 2, 0, 0, 1, 0, 2, 0, 1, 0, 2, 0, 2, 0];
+  private readonly melA: (MelodyNote | undefined)[];
+  private readonly melB: (MelodyNote | undefined)[];
+
+  constructor() {
+    super();
+    const scale = scaleNotes(62, HIJAZ, 62, 91);
+    this.melA = genMelody(6601, scale, 74, 64, 0.58, [2, 2, 4, 4, 6, 8], 2);
+    this.melB = genMelody(6602, scale, 79, 64, 0.7, [2, 2, 2, 4, 4], 2);
+  }
+
+  play(step: number, v: Voice): void {
+    const sd = this.stepDur;
+    const bar = step >> 4;
+    const s = step & 15;
+    const bc = HANBA_BARS[bar];
+    const second = bar >= 4;
+    const fillBar = bar === 7;
+
+    // 鼓：西域手鼓型（太鼓 dum + 木鱼 tek），底下一层四分的底鼓；后半加沙锤十六分
+    const d = this.drum[s];
+    if (d === 1) taiko(v, 0, s === 0 ? 48 : 56, s === 0 ? 0.85 : 0.6);
+    if (d === 2) woodblock(v, 0, s === 8 ? 980 : 820, 0.3);
+    if ((s & 3) === 0) kick(v, 0, s === 0 ? 0.9 : 0.6);
+    if (s === 4 || s === 12) snare(v, 0, second ? 0.7 : 0.5);
+    if (second) shaker(v, 0, (s & 1) === 0 ? 0.32 : 0.18);
+    if (fillBar && s >= 10) taiko(v, 0, 58 + (s - 10) * 3, 0.5 + (s - 10) * 0.07);
+    if (step === 0) {
+      crash(v, 0, 0.5);
+      gong(v, 0, 62, 0.5, 3.2);
+    }
+
+    // 持续的 D 低音（每小节一长音，降二级那两小节跟着走）+ 八分推进
+    if (s === 0) bass(v, 0, mtof(bc.root), sd * 14, 0.7, 0.35, true);
+    if ((s & 1) === 0 && s !== 0) bass(v, 0, mtof(bc.root + ((s & 4) === 0 ? 12 : 7)), sd * 1.6, 0.42, 0.55);
+
+    // 铜管：第 5 小节一推（长音），第 7–8 小节反拍 stab
+    if (bar === 4 && s === 0) stab(v, 0, [mtof(bc.root + 24), mtof(bc.root + 31), mtof(bc.root + 34)], 1);
+    if ((bar === 6 || bar === 7) && (s === 3 || s === 11)) stab(v, 0, [mtof(bc.root + 24), mtof(bc.root + 28), mtof(bc.root + 31)], 0.75);
+
+    // 热浪铺底
+    if (s === 0) pad(v, 0, bc.tones.map((m) => mtof(m + 12)), sd * 15, 0.28, 900);
+
+    // 古筝：前半三连分解（跟手鼓同一个三连感），后半轮指
+    if (!second) {
+      if (s % 3 === 0) guzheng(v, 0, mtof(bc.tones[(s / 3) % 4] + 24), s === 0 ? 0.34 : 0.22, 0.6);
+    } else {
+      guzheng(v, 0, mtof(bc.tones[3] + 24), (s & 3) === 0 ? 0.28 : 0.15, 0.3);
+    }
+
+    // 笛子：在增二度上绕；第一遍只有后半
+    const n = second ? this.melB[step - 64] : this.loop > 0 ? this.melA[step] : undefined;
+    if (n) dizi(v, 0, mtof(n.m), n.len * sd, 0.62 * n.vel, n.grace);
   }
 }

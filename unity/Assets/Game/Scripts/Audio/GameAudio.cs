@@ -25,7 +25,7 @@ namespace Spiritfire.Game
         const int MaxVoices = 48;
         const float SilentDist = 40, NearDist = 2, BeamHold = 0.24f, FadeOut = 1.6f, FadeIn = 1.3f;
 
-        [Serializable] class SfxEntry { public string id; public int variants, enemyVariants, prio; public float gain, pitch, throttle, send; }
+        [Serializable] class SfxEntry { public string id; public int variants, enemyVariants, prio, layers; public float gain, pitch, throttle, send; }
         [Serializable] class MusicEntry { public string id; public float seconds, loopSeconds, bpm, level, send; }
         [Serializable] class Mix { public float master = 0.8f, sfx = 0.9f, music = 0.3f; }
         [Serializable] class Manifest { public string beamLoop; public Mix mix; public SfxEntry[] sfx; public MusicEntry[] music; }
@@ -34,6 +34,23 @@ namespace Spiritfire.Game
         {
             public SfxEntry meta;
             public AudioClip[] clips, enemy;
+            /// <summary>分层（I6，关键枪声 / 爆炸）：瞬态 / 主体 / 尾音各自的变体；三层同时放、各挑各的变体 = 原片段，没有分层时为 null</summary>
+            public AudioClip[][] layers;
+        }
+
+        /// <summary>分层的三层：瞬态（前 30 ms 的「咔」）、主体、尾音（混响和回声）</summary>
+        public const int LayerTransient = 0, LayerBody = 1, LayerTail = 2;
+        static readonly string[] LayerSuffix = { "_t", "_b", "_r" };
+
+        /// <summary>
+        /// 分层的距离配比（纯函数）：近处瞬态清楚；8–25 m 瞬态渐渐听不到（远处听不到「咔」）；
+        /// 尾音的距离衰减比主体缓（k^1.0 而不是 k^1.6），远处的枪声 / 爆炸主要剩轰的那一下和回声
+        /// </summary>
+        public static float LayerGain(int layer, float dist, float k)
+        {
+            float atten = Mathf.Pow(Mathf.Clamp01(k), layer == LayerTail ? 1f : 1.6f);
+            if (layer == LayerTransient) atten *= 1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(8f, 25f, dist));
+            return atten;
         }
 
         sealed class Voice
@@ -195,7 +212,16 @@ namespace Spiritfire.Game
                 return list.ToArray();
             }
             foreach (var e in m.sfx ?? Array.Empty<SfxEntry>())
-                defs[e.id] = new Def { meta = e, clips = Collect(e.id, e.variants), enemy = Collect(e.id + "@enemy", e.enemyVariants) };
+            {
+                var def = new Def { meta = e, clips = Collect(e.id, e.variants), enemy = Collect(e.id + "@enemy", e.enemyVariants) };
+                if (e.layers > 0)
+                {
+                    var ls = new AudioClip[3][];
+                    for (int k = 0; k < 3; k++) ls[k] = Collect(e.id + LayerSuffix[k], e.layers);
+                    if (ls[0].Length > 0 && ls[1].Length > 0 && ls[2].Length > 0) def.layers = ls;
+                }
+                defs[e.id] = def;
+            }
 
             sfxGroup = AudioMix.Group(AudioBus.Sfx);
             uiGroup = AudioMix.Group(AudioBus.Ui);
@@ -286,7 +312,7 @@ namespace Spiritfire.Game
                 if (!DenseAllow(id, LiveVoices(id), since, out float stack)) return;
                 gain *= stack;
             }
-            float lowpass = 0, blend = 0;
+            float lowpass = 0, blend = 0, dist = 0, k = 1, raw = gain, occl = 1;
             if (positional)
             {
                 if (!(float.IsFinite(at.x) && float.IsFinite(at.y) && float.IsFinite(at.z))) return;
@@ -294,10 +320,16 @@ namespace Spiritfire.Game
                 if (l)
                 {
                     var dv = at - l.position;
-                    float dist = dv.magnitude;
+                    dist = dv.magnitude;
                     if (dist >= SilentDist) return;
-                    float k = dist <= NearDist ? 1 : 1 - (dist - NearDist) / (SilentDist - NearDist);
+                    k = dist <= NearDist ? 1 : 1 - (dist - NearDist) / (SilentDist - NearDist);
                     gain *= Mathf.Pow(k, 1.6f);
+                    // 遮挡（I6）：隔着地形 / 建筑发闷、轻一点
+                    if (AudioOcclusion.Blocked(l.position, at))
+                    {
+                        AudioOcclusion.Apply(ref lowpass, ref occl);
+                        gain *= occl;
+                    }
                     if (dist > 0.3f)
                     {
                         // 近处声像收窄（同 Three.js：pan × min(1, dist/3) × 0.85）；远处渐闷、背后发闷
@@ -306,7 +338,7 @@ namespace Spiritfire.Game
                         float far = dist > 10 ? 900 + 17000 * Mathf.Pow(1 - dist / (SilentDist + 8), 2) : 20000;
                         float behind = front < -0.25f ? 5500 : 20000;
                         float lp = Mathf.Min(far, behind);
-                        if (lp < 19000) lowpass = lp;
+                        if (lp < 19000) lowpass = lowpass > 0 ? Mathf.Min(lowpass, lp) : lp;
                     }
                 }
             }
@@ -321,12 +353,34 @@ namespace Spiritfire.Game
                 HoldBeamInternal(volume, pitch);
                 return;
             }
+            // 分层（I6）：三层各挑一个变体同时放（3 × 3 × 3 种组合，连射不机械），按距离配比；音高各自再抖 ±1.5%
+            if (d.layers != null && !enemy)
+            {
+                bool any = false;
+                for (int layer = 0; layer < 3; layer++)
+                {
+                    float lg = raw * occl * (positional ? LayerGain(layer, dist, k) : 1);
+                    if (!(lg >= 0.003f)) continue;
+                    var lv = FreeVoice(d.meta.prio, now);
+                    if (lv == null) break;
+                    var set = d.layers[layer];
+                    float layerPitch = Mathf.Clamp(p * (1 + UnityEngine.Random.Range(-0.015f, 0.015f)), 0.25f, 3f);
+                    Emit(lv, id, set[UnityEngine.Random.Range(0, set.Length)], ui, layerPitch, lg, blend, positional, at, lowpass, d.meta.prio, now);
+                    any = true;
+                }
+                if (any) lastMap[id] = now;
+                return;
+            }
             var v = FreeVoice(d.meta.prio, now);
             if (v == null) return;
             // 只有真正发声才计入节流
             lastMap[id] = now;
             var clips = enemy ? d.enemy : d.clips;
-            var clip = clips[UnityEngine.Random.Range(0, clips.Length)];
+            Emit(v, id, clips[UnityEngine.Random.Range(0, clips.Length)], ui, p, gain, blend, positional, at, lowpass, d.meta.prio, now);
+        }
+
+        void Emit(Voice v, string id, AudioClip clip, bool ui, float p, float gain, float blend, bool positional, Vector3 at, float lowpass, int prio, float now)
+        {
             var s = v.src;
             s.Stop();
             s.clip = clip;
@@ -338,11 +392,14 @@ namespace Spiritfire.Game
             if (positional) s.transform.position = at;
             v.lp.enabled = lowpass > 0;
             if (lowpass > 0) v.lp.cutoffFrequency = lowpass;
-            v.prio = d.meta.prio;
+            v.prio = prio;
             v.start = now;
             v.end = now + clip.length / p;
             s.Play();
         }
+
+        /// <summary>某个音效是不是分层的（测试用）</summary>
+        public static bool IsLayered(string id) => Get() is { } a && a.defs.TryGetValue(id, out var d) && d.layers != null;
 
         /// <summary>空闲声道；满了抢占优先级不高于它的里面最低、最旧的（同 Three.js steal）</summary>
         Voice FreeVoice(int prio, float now)
