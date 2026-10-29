@@ -10,6 +10,8 @@
 //   node scripts/unity/dlp-unity-fix.mjs            # 扫描并写回（默认本仓库的 unity/，worktree 里就是该 worktree 的）
 //   node scripts/unity/dlp-unity-fix.mjs --check    # 只扫描，有加密文件时退出码 1
 //   node scripts/unity/dlp-unity-fix.mjs <Unity 工程目录>
+//   node scripts/unity/dlp-unity-fix.mjs --packages  连同 Library/PackageCache 一起查：包管理器（UPM，node 写的）解出来的包
+//                                                    也会是密文，打开工程时报「package.json is not valid JSON」
 import { readFileSync, statSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -18,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 const args = process.argv.slice(2);
 const checkOnly = args.includes('--check');
 const root = resolve(args.find((a) => !a.startsWith('--')) ?? resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', 'unity'));
-const dirs = ['Assets', 'Packages', 'ProjectSettings'];
+const dirs = ['Assets', 'Packages', 'ProjectSettings', ...(args.includes('--packages') ? ['Library/PackageCache'] : [])];
 
 function ps(script, input) {
   const r = spawnSync('powershell', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')],
@@ -58,16 +60,24 @@ while (($l = $in.ReadLine()) -ne $null) {
   [IO.File]::WriteAllBytes($f, [Convert]::FromBase64String($p[1])); $n++ }
 "$n"`;
 
+// 按大小分批（每批至多 100 个文件、约 48 MB 明文）：贴图 PNG / FBX 一个就有几 MB
 let written = 0;
-for (let i = 0; i < encrypted.length; i += 100) {
-  const input = encrypted.slice(i, i + 100).map((f) => {
-    const data = readFileSync(f);
-    // node 也读到密文说明不在白名单里了，写回只会把密文固化成明文文件，直接停
-    if (data.subarray(0, 12).toString('latin1').startsWith('%TSD-Header')) throw new Error(`node 读到的是密文，不写回：${f}`);
-    return Buffer.from(f, 'utf8').toString('base64') + '\t' + data.toString('base64');
-  }).join('\n') + '\n';
-  written += Number(ps(writer, input).trim());
+let batch = [];
+let bytes = 0;
+const flush = () => {
+  if (batch.length) written += Number(ps(writer, batch.join('\n') + '\n').trim());
+  batch = [];
+  bytes = 0;
+};
+for (const f of encrypted) {
+  const data = readFileSync(f);
+  // node 也读到密文说明不在白名单里了，写回只会把密文固化成明文文件，直接停
+  if (data.subarray(0, 12).toString('latin1').startsWith('%TSD-Header')) throw new Error(`node 读到的是密文，不写回：${f}`);
+  if (batch.length >= 100 || (batch.length && bytes + data.length > 48 * 1024 * 1024)) flush();
+  batch.push(Buffer.from(f, 'utf8').toString('base64') + '\t' + data.toString('base64'));
+  bytes += data.length;
 }
+flush();
 console.log(`写回 ${written} 个文件`);
 
 const after = scan();

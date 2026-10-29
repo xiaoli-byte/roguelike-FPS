@@ -39,6 +39,21 @@ unity="${UNITY_EXE:-/s/Unity Hub/Editor/6000.5.4f1/Editor/Unity.exe}"
 
 json_str() { local s="${1//\\/\\\\}"; s="${s//\"/\\\"}"; printf '"%s"' "$s"; }
 
+# 把标准输入写成明文文件 $1：有透明加密（DLP）的机器上，Git Bash 写出的文件在磁盘上是密文，编辑器读到的是
+# 「%TSD-Header…」、请求 JSON 解析失败后一直当成「还没写完」等下去；PowerShell 写出的是明文。
+# 内容和路径都走 base64（路径可能带中文，PowerShell 5.1 会把非 ASCII 的命令行 / 标准输入读坏）
+write_plain() {
+  if command -v powershell >/dev/null 2>&1 && command -v cygpath >/dev/null 2>&1; then
+    local body path script
+    body=$(base64 -w0)
+    path=$(cygpath -w "$1" | tr -d '\n' | base64 -w0)
+    script="[IO.File]::WriteAllBytes([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$path')), [Convert]::FromBase64String('$body'))"
+    powershell -NoProfile -NonInteractive -EncodedCommand "$(printf '%s' "$script" | iconv -f utf-8 -t utf-16le | base64 -w0)"
+  else
+    cat > "$1"
+  fi
+}
+
 open=$(powershell -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"Name='Unity.exe'\" | Where-Object { \$_.CommandLine -match 'roguelike-FPS\\\\unity' -and \$_.CommandLine -notmatch 'batchmode' } | Measure-Object).Count")
 if [ "$open" != "0" ]; then
   # 好几个会话共用一个编辑器：每个请求单独一个文件排队（queue/<毫秒时间戳>-<pid>-<随机数>.json），
@@ -50,8 +65,13 @@ if [ "$open" != "0" ]; then
   req="$queue/$id.json"
   args_json=""
   for a in ${args[@]+"${args[@]}"}; do args_json="${args_json:+$args_json,}$(json_str "$a")"; done
-  printf '{"id":"%s","command":%s,"args":[%s]}' "$id" "$(json_str "$cmd")" "$args_json" > "$queue/.$id.tmp"
-  mv "$queue/.$id.tmp" "$req"
+  # 有 DLP 的机器上直接写最终文件（Git Bash 的 mv 改名会让文件重新变成密文）；编辑器读到半截时 JSON 解析失败，下一秒再读，不会出错
+  if command -v powershell >/dev/null 2>&1 && command -v cygpath >/dev/null 2>&1; then
+    printf '{"id":"%s","command":%s,"args":[%s]}' "$id" "$(json_str "$cmd")" "$args_json" | write_plain "$req"
+  else
+    printf '{"id":"%s","command":%s,"args":[%s]}' "$id" "$(json_str "$cmd")" "$args_json" > "$queue/.$id.tmp"
+    mv "$queue/.$id.tmp" "$req"
+  fi
   # 等不下去（超时 / Ctrl-C）就撤回还没执行的请求，免得之后突然在编辑器里跑起来
   trap 'rm -f "$req"; exit 130' INT TERM
   ahead=0

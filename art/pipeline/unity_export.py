@@ -379,7 +379,8 @@ def export_one(asset_id: str, entry: dict, force: bool) -> str:
     fur = CFG.registry.get(asset_id, {}).get("fur")
     # 第一人称武器：语义零件改名、拆骨、挂点（见 weapon_parts）；改了也要重导
     weapon = weapon_parts(asset_id, entry, category)
-    if not force and sidecar.exists():
+    # FBX / 贴图不入库：新机器上只有入库的 sidecar，没有 FBX，不能算「没变」
+    if not force and sidecar.exists() and (out_dir / f"{asset_id}.fbx").exists():
         old = json.loads(sidecar.read_text(encoding="utf-8"))
         if (old.get("source", {}).get("sha256") == src_hash and old.get("exporterVersion") == EXPORTER_VERSION
                 and old.get("fur") == fur and old.get("weapon") == (weapon["art"] if weapon else None)):
