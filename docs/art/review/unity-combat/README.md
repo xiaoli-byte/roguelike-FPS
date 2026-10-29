@@ -1,6 +1,6 @@
 # Unity 战斗演出审阅图集
 
-生成于 2026-10-29 22:17。浏览器打开同目录的 [index.html](index.html) 体验更好（点图放大、← → 翻页）。
+生成于 2026-10-29 23:54。浏览器打开同目录的 [index.html](index.html) 体验更好（点图放大、← → 翻页）。
 
 每只怪 / 每个首领一张拼图：一行一个招式，四格依次是 **前摇**（预警最满的那一帧）、**出手**、**命中**（没打中则为收招）、**第一人称**（前摇最后一帧的玩家视角）。第三人称旁观机位里的青色胶囊是玩家站位。
 
@@ -18,7 +18,7 @@
 | B 爆炸 / 元素 / 状态 / 护盾 | 卡通爆炸三档、五种元素反应、状态外观、护盾球壳 / 破甲、火舌、出生死亡 | [B1-explosion](../fx-polish/B/B1-explosion.jpg) · [B2-reactions](../fx-polish/B/B2-reactions.jpg) · [B3-status-far](../fx-polish/B/B3-status-far.jpg) · [B3b-status-far-zoom](../fx-polish/B/B3b-status-far-zoom.jpg) · [B4-status-near](../fx-polish/B/B4-status-near.jpg) · [B5-shield-armor](../fx-polish/B/B5-shield-armor.jpg) · [B6-flames](../fx-polish/B/B6-flames.jpg) · [B7-spawn-death](../fx-polish/B/B7-spawn-death.jpg) · [B8-spawn-themes](../fx-polish/B/B8-spawn-themes.jpg) |
 | C 首领与怪物专属 + 预警 | 首领登场 / 招式 / 倒下、普通怪招式、三章出生法阵、地面预警 | [enemy-moves](../fx-polish/C/enemy-moves.jpg) · [gallery-hanba-boss_hanba](../fx-polish/C/gallery-hanba-boss_hanba.jpg) · [gallery-kunpeng-boss_kunpeng](../fx-polish/C/gallery-kunpeng-boss_kunpeng.jpg) · [gallery-qilin-boss_qilin](../fx-polish/C/gallery-qilin-boss_qilin.jpg) · [gallery-warlord-boss_warlord](../fx-polish/C/gallery-warlord-boss_warlord.jpg) · [intro-hanba](../fx-polish/C/intro-hanba.jpg) · [intro-kunpeng](../fx-polish/C/intro-kunpeng.jpg) · [intro-qilin](../fx-polish/C/intro-qilin.jpg) · [intro-warlord](../fx-polish/C/intro-warlord.jpg) · [spawn-sigils](../fx-polish/C/spawn-sigils.jpg) · [style-pass](../fx-polish/C/style-pass.jpg) · [telegraph-look](../fx-polish/C/telegraph-look.jpg) |
 | D 环境氛围 | 12 关空气粒子、火盆 / 灯笼、水面 / 流沙 / 熔岩、沙帘 | [envfx_1-1](../fx-polish/D/envfx_1-1.jpg) · [envfx_1-2](../fx-polish/D/envfx_1-2.jpg) · [envfx_1-3](../fx-polish/D/envfx_1-3.jpg) · [envfx_1-4](../fx-polish/D/envfx_1-4.jpg) · [envfx_2-1](../fx-polish/D/envfx_2-1.jpg) · [envfx_2-2](../fx-polish/D/envfx_2-2.jpg) · [envfx_2-3](../fx-polish/D/envfx_2-3.jpg) · [envfx_2-4](../fx-polish/D/envfx_2-4.jpg) · [envfx_3-1](../fx-polish/D/envfx_3-1.jpg) · [envfx_3-2](../fx-polish/D/envfx_3-2.jpg) · [envfx_3-3](../fx-polish/D/envfx_3-3.jpg) · [envfx_3-4](../fx-polish/D/envfx_3-4.jpg) |
-| 风格审查 | 按 fx-style.md 自查清单逐项过 A / B 两路，亮沙 / 雪 / 熔岩三种地面改前 / 改后（S1–S12） | [S1-explosion-grounds](../fx-polish/style/S1-explosion-grounds.jpg) · [S2-explosion-sequence](../fx-polish/style/S2-explosion-sequence.jpg) · [S3-reactions](../fx-polish/style/S3-reactions.jpg) · [S4-status](../fx-polish/style/S4-status.jpg) · [S5-shield-armor](../fx-polish/style/S5-shield-armor.jpg) · [S6-fire-grounds](../fx-polish/style/S6-fire-grounds.jpg) · [S7-muzzle](../fx-polish/style/S7-muzzle.jpg) · [S8-ground-marks](../fx-polish/style/S8-ground-marks.jpg) · [S9-holes-scorch](../fx-polish/style/S9-holes-scorch.jpg) · [S10-hits](../fx-polish/style/S10-hits.jpg) · [S11-blade](../fx-polish/style/S11-blade.jpg) · [S12-spawn-death](../fx-polish/style/S12-spawn-death.jpg) |
+| 风格审查 | 按 fx-style.md 自查清单逐项过 A / B 两路，亮沙 / 雪 / 熔岩三种地面改前 / 改后（S1–S12）；收尾一轮（S13–S17）：元素爆炸按元素换色阶、冰爆改低多边形冰晶、冰壳三阶、旱魃的泉水、鲲鹏倒下余韵 | [S1-explosion-grounds](../fx-polish/style/S1-explosion-grounds.jpg) · [S2-explosion-sequence](../fx-polish/style/S2-explosion-sequence.jpg) · [S3-reactions](../fx-polish/style/S3-reactions.jpg) · [S4-status](../fx-polish/style/S4-status.jpg) · [S5-shield-armor](../fx-polish/style/S5-shield-armor.jpg) · [S6-fire-grounds](../fx-polish/style/S6-fire-grounds.jpg) · [S7-muzzle](../fx-polish/style/S7-muzzle.jpg) · [S8-ground-marks](../fx-polish/style/S8-ground-marks.jpg) · [S9-holes-scorch](../fx-polish/style/S9-holes-scorch.jpg) · [S10-hits](../fx-polish/style/S10-hits.jpg) · [S11-blade](../fx-polish/style/S11-blade.jpg) · [S12-spawn-death](../fx-polish/style/S12-spawn-death.jpg) · [S13-element-blasts](../fx-polish/style/S13-element-blasts.jpg) · [S14-element-blasts-late](../fx-polish/style/S14-element-blasts-late.jpg) · [S15-frost-nova](../fx-polish/style/S15-frost-nova.jpg) · [S16-frost-shell](../fx-polish/style/S16-frost-shell.jpg) · [S17-gallery-frost-water](../fx-polish/style/S17-gallery-frost-water.jpg) |
 
 ## 截图说明
 
@@ -27,7 +27,7 @@
 - 第三章模型暂缓，3-3 / 3-4 场地里的方块和浅色板是白盒占位；场地柱子密，个别旁观机位被柱子挡住。
 - 「命中」= 出手后玩家第一次挨的一下（4 点以上，跳伤不算）；几只怪同时出手时可能记到别的怪头上。没打中就拍收招；辅助招（施法、换位、护甲）第三格是出手后 0.7 s 的「效果」。
 - 「第一人称」格：眼睛位置不动、视线临时转向出招者（拍完还原），看的是玩家正看着它时预警读不读得出来。
-- 本轮（2026-10-29）在特效打磨四路 + 风格审查收口之后、用合并 ff7ad722 后的代码全部重拍：七组 gallery、boss-intro（测试场 + 四个首领关）、fx；各图标题里有截图时间。
+- 本轮（2026-10-29）在特效打磨四路 + 风格审查收口之后、用合并 ff7ad722 后的代码全部重拍：七组 gallery、boss-intro（测试场 + 四个首领关）、fx；各图标题里有截图时间。收尾一轮（#14–16 及元素爆炸、旱魃泉水）之后又重拍了 gallery-frost / kunpeng / hanba / desert 和 fx 通用特效组。
 
 ## 问题清单
 
@@ -46,9 +46,13 @@
 | 11 | 低 | 特效 | 状态外观（通用） | 五种状态主要靠整体染色区分（橙 / 紫 / 绿 / 黄 / 蓝），感电和减速在近景里几乎没有粒子（电弧、冰晶）；第一人称 15 m 外只能靠颜色分辨，减速和感电的蓝紫色容易混。 | **已修：减速改冰白 + 冰晶星芒 + 细雪，和雷元素天蓝拉开；感电频闪拉开明暗、电弧更多更亮（StatusFx）；fx 回归通过、已重拍** | [fx-status](fx-status.jpg) |
 | 12 | 低 | 演出 | 鲲鹏（2-4） | 倒下演出偏短：被击杀后 1.5 s 鹏还在下坠，3.5 s 时场上已经什么都不剩（没有残骸 / 落羽 / 冰面余波），和旱魃、魔将、火麒麟的倒下演出相比收得太快。 | **已修：倒下演出 3.2 → 4.4 s，鹏 55% 砸冰面（碎冰 + 冰环 + 震屏）后趴着抽两下、鲲没顶涌冰浪，炸开后落点留 6 s 冻雾 + 霜斑（KunPengBrain）；boss-kunpeng 回归通过、已重拍** | [kunpeng-boss_kunpeng](kunpeng-boss_kunpeng.jpg) |
 | 13 | 中 | 特效风格 | 鲲鹏（2-4）化形 / 冰属性爆发 | 收口审查（fx-style ③ 元素色）：鲲 → 鹏化形那一下是一大团赭黄泥色的卡通火团。原因是 B 路的卡通爆炸只有火的色阶，传冰蓝进去，火团就混成了泥色。鲲 · 吐冰的冰块落地、MatriarchNova 也是同样的调用。 | **已修：这三处改走 FX3 冷的冰爆 Fx.FrostNova（KunPengBrain / BossHazards 的 LobKind.Ice / MatriarchMoves），其余爆炸不变。boss-kunpeng、gallery-kunpeng 回归通过，已重拍（72f14d4e）** | [kunpeng-boss_kunpeng](kunpeng-boss_kunpeng.jpg) |
-| 14 | 低 | 特效风格 | FX3 冰爆 / 冰河豚自爆（第二章） | 收口审查（fx-style ②④）：FX3 冰爆是一团柔边的白粉雾，再加白色冷环，冰河豚鼓气自爆、fx 套件的「冰爆」都是这样。亮沙上看是一大片白，读不出准则里「块面清楚的冰晶多面体」那种大形。FX3 写在风格准则之前，A / B / C / D 四路和风格审查都没有覆盖它。 | 未修：属于 FX3 整套的风格整改，不在收口范围内，这里只登记。改法建议：白雾换成冰蓝两段的卡通团块，冷环加粗，主形改成几块大冰晶 | [frost-ice_puffer](frost-ice_puffer.jpg) [fx-frost](fx-frost.jpg) |
-| 15 | 低 | 特效风格 | 状态 · 减速（冰壳，通用） | 收口审查（fx-style ②⑦）：在没有加密的机器上补跑了 fx-style（冰壳 UV2 已经生效，冰晶不再被岛缝切直边）。但三种地面上冰壳整体还是偏浅白，大切面的明暗分得不明显，整只怪读成一层光滑的浅冰蓝。 | 未修：风格审查报告里登记过的残留小偏差（亮面朝主光时偏浅），这次确认还在。建议把暗面的冰蓝压深一档、晶格放大，让切面读得出来 | [fx-status](fx-status.jpg) |
-| 16 | 低 | 测试 / 截图 | 鲲鹏（2-4）倒下 · 余韵 | 图集「余韵」这一格（倒下后 5.2 s）几乎整幅都是浅蓝白，看不到场景。旁观机位跟的是鲲沉下去的位置，镜头很可能落到了冰窟水面以下，也可能是被冻雾整个罩住了。 | 未修：先查 GalleryRecorder 的旁观机位，对象沉到水下时机位该抬到水面以上；如果是冻雾糊屏，就按 fx-style ②「雪雾偏冷白、不糊屏」收薄 | [kunpeng-boss_kunpeng](kunpeng-boss_kunpeng.jpg) |
+| 14 | 低 | 特效风格 | FX3 冰爆 / 冰河豚自爆（第二章） | 收口审查（fx-style ②④）：FX3 冰爆是一团柔边的白粉雾，再加白色冷环，冰河豚鼓气自爆、fx 套件的「冰爆」都是这样。亮沙上看是一大片白，读不出准则里「块面清楚的冰晶多面体」那种大形。FX3 写在风格准则之前，A / B / C / D 四路和风格审查都没有覆盖它。 | **已修（收尾一轮）：冰爆重做——主形是低多边形冰晶（新 FrostBurst + SF_FxCrystal：亮面白 / 冰蓝 / 蓝灰三阶 + 蓝灰棱边；一簇 5–8 根冰晶从爆心长出来 0.08 s → 0.1 s 崩开翻飞 → 最后四成寿命一面面碎掉，0.65 s 内全部退场），陪衬冰晶星芒、冰蓝卡通粗环 + 冰蓝实心底、两三团实心冷白雾团、几片冰碴；去掉白粉雾、贴地冷雾、冷白柔光球、白拉丝、雪花闪粒、白冷环 + 光墙和霜纹贴花，冷光收到四成。块数乘画质密度、过 FxBudget、同屏上限高 64 / 低 32。碎冰 FrostShatter 的白粉雾同样换成实心冷白雾团。fx、fx-elements、fx-style、frost、boss-kunpeng 回归通过，已重拍（fx-polish/style/S15、S17）** | [frost-ice_puffer](frost-ice_puffer.jpg) [fx-frost](fx-frost.jpg) [kunpeng-boss_kunpeng](kunpeng-boss_kunpeng.jpg) |
+| 15 | 低 | 特效风格 | 状态 · 减速（冰壳，通用） | 收口审查（fx-style ②⑦）：在没有加密的机器上补跑了 fx-style（冰壳 UV2 已经生效，冰晶不再被岛缝切直边）。但三种地面上冰壳整体还是偏浅白，大切面的明暗分得不明显，整只怪读成一层光滑的浅冰蓝。 | **已修（收尾一轮）：冰壳改三段硬色阶——只有最朝光的三四成晶面是亮面白、背光一半是深冰蓝、其余冰蓝，晶格边一道蓝灰暗线；颜色常数按线性空间重取（原来的值显示出来偏浅一大截）；冰壳覆盖 0.56–0.74 → 0.76–0.9（身体暖色不再透出来混成灰白）；身上染色换冰蓝、轮廓光收一档（SF_FxStatusSkin / StatusFx）。fx-style 三种地面、frost 回归通过，已重拍（style/S16）** | [fx-status](fx-status.jpg) |
+| 16 | 低 | 测试 / 截图 | 鲲鹏（2-4）倒下 · 余韵 | 图集「余韵」这一格（倒下后 5.2 s）几乎整幅都是浅蓝白，看不到场景。旁观机位跟的是鲲沉下去的位置，镜头很可能落到了冰窟水面以下，也可能是被冻雾整个罩住了。 | **已修（收尾一轮）：两个原因都有，取决于鲲鹏死在哪个形态——鹏倒在冰面上时，余韵那一格整幅浅蓝白是冻雾糊屏（霜纹浓度 1.1 的羽状白霜 + 近白冷雾团铺在浅色冰面上）；鲲倒下沉进冰窟时，旁观机位跟着模型沉到了水面以下，拍出一整幅水下的青色。FrostFogFx：霜纹浓度 1.1 → 0.6、雾团换冰蓝灰、数量少三成五（所有冻雾一起受益），鹏砸冰面的冰爆不再铺霜纹；GalleryRecorder：对象在水面以下时看水面那一点、机位抬到水面以上（L8 水体和鲲鹏冰窟都认）。boss-kunpeng、gallery-kunpeng 回归通过，已重拍（style/S17）** | [kunpeng-boss_kunpeng](kunpeng-boss_kunpeng.jpg) |
+| 17 | 中 | 特效风格 | 元素爆炸（通用） | 收口审查（fx-style ③ 元素色）：截图确认，B 路的卡通爆炸只有火的色阶——雷的蓝白传进去是黄绿芯 + 赭黄描边的泥团，蚀是黄绿 + 赭边，紫（归墟 / 碎刃）是粉紫芯 + 褐边，冰是青黄泥团。火团还在「亮黄 ↔ 主色」之间随机取色。 | **已修（收尾一轮）：Fx.Explosion 按调用方颜色认元素（Fx.BlastThemeOf），所有调用方自动覆盖；SF_FxToon 火团按色相整套换亮芯 / 暗边 / 烟（暖色走原算法，输出不变）；Presets/ExplosionElements.cs 逐层改出雷 / 蚀 / 金 / 紫四套（雷加折线电弧和电弧碎纹、蚀加黏团、金加小金星、紫加灵光，炭渣只有火有），冰分流到冰爆。fx、fx-elements、fx-style 回归通过，见 style/S13、S14** | [fx-blast](fx-blast.jpg) |
+| 18 | 低 | 特效风格 | 旱魃（1-4）水柱 / 水幕 / 泉床喷气 | C 路补审登记的小偏差：二阶段泉床喷气是灰白（0.72, 0.74, 0.72）半透明汽柱 + 加法白汽，登场破泉的水柱 / 水幕是浅青半透明，叠在亮沙上混成灰白，读成灰柱子（fx-style ②⑤、§三「水」）。 | **已修（收尾一轮）：新涌流类型 SurgeKind.Spring（SF_FxSurge 模式 4：深青水身 / 泉水主色 / 白沫块，几乎不透明，轮廓一圈白沫亮边），Fx.SpringSpout / SpringSplash 配实心白沫团、泉水色水珠、水花团涟漪圈；泉床喷气、登场破泉、倒下时泉心那一下都走它。fx-boss、boss-hanba 回归通过，已重拍（style/S17）** | [hanba-boss_hanba](hanba-boss_hanba.jpg) [intro-hanba](intro-hanba.jpg) |
+| 19 | 低 | 特效风格 | 雪狌狌（第二章）雪块落地 | 收口审查顺带发现：狌狌扔的雪块是没有元素的爆炸弹，落地时 Combat.Explode 按默认橙色播了一团卡通火焰爆炸，和雪块自己的冰碴叠在一起（fx-style ③）。 | **已修（收尾一轮）：EnemyProjectile 的无元素爆炸弹按弹体颜色认元素，雪块落地走冰爆。frost 回归通过、gallery-frost 已重拍** | [frost-xingxing](frost-xingxing.jpg) |
+| 20 | 低 | 测试 | gallery-desert / desert 套件 · 沙魇 | 偶发不合格「沙魇：玩家站在 10 m 外不动，18 s 里一次潜沙突袭都没有」：前面几段里沙魇可能刚潜过一次（5.5–7.5 s 冷却），再赶上攻击令牌排队。 | **已修（收尾一轮）：这一段开头把潜沙冷却清零（DesertEnemiesSuite）。desert、gallery-desert 回归通过** | [desert-sand_wraith](desert-sand_wraith.jpg) |
 
 招式表里有、这一轮没截到的招式：第二章 · 冰原 九尾狐巫 · 狐火；第二章 · 冰原 三青鸟 · 歇脚；第三章 · 火狱 炮仗傀儡 · 哑炸倒地；第三章 · 火狱 熔铜匠 · 裂锅；第三章 · 火狱 马面狱卒 · 重拳；第三章 · 火狱 变脸傩巫 · 碎面；第三章 · 火狱 火鼍 · 陆上扑咬
 
@@ -73,26 +77,26 @@
 
 ## 二、首领招式 · 旱魃（1-4）
 
-**旱魃** `boss_hanba` · 59 张 · 截于 2026-10-29 20:15
+**旱魃** `boss_hanba` · 55 张 · 截于 2026-10-29 23:30
 
 ![旱魃](hanba-boss_hanba.jpg)
 
-**邪飞天** `apsara` · 5 张 · 截于 2026-10-29 20:15
+**邪飞天** `apsara` · 5 张 · 截于 2026-10-29 23:30
 
 ![邪飞天](hanba-apsara.jpg)
 
-**沙魇** `sand_wraith` · 12 张 · 截于 2026-10-29 20:15
+**沙魇** `sand_wraith` · 12 张 · 截于 2026-10-29 23:30
 
 ![沙魇](hanba-sand_wraith.jpg)
 
-**蝎尾弩卫** `scorpion_archer` · 4 张 · 截于 2026-10-29 20:15
+**蝎尾弩卫** `scorpion_archer` · 4 张 · 截于 2026-10-29 23:30
 
 ![蝎尾弩卫](hanba-scorpion_archer.jpg)
 
 
 ## 二、首领招式 · 鲲鹏（2-4）
 
-**鲲鹏** `boss_kunpeng` · 39 张 · 截于 2026-10-29 22:11
+**鲲鹏** `boss_kunpeng` · 39 张 · 截于 2026-10-29 23:40
 
 ![鲲鹏](kunpeng-boss_kunpeng.jpg)
 
@@ -121,78 +125,78 @@
 
 ## 三、普通怪物 · 第一章 · 沙海
 
-**邪飞天** `apsara` · 14 张 · 截于 2026-10-29 20:41
+**邪飞天** `apsara` · 14 张 · 截于 2026-10-29 23:34
 
 ![邪飞天](desert-apsara.jpg)
 
-**火浣鼠** `fire_rat` · 10 张 · 截于 2026-10-29 20:41
+**火浣鼠** `fire_rat` · 10 张 · 截于 2026-10-29 23:34
 
 ![火浣鼠](desert-fire_rat.jpg)
 
-**跳鼠刀兵** `jerboa_blade` · 14 张 · 截于 2026-10-29 20:41
+**跳鼠刀兵** `jerboa_blade` · 14 张 · 截于 2026-10-29 23:34
 
 ![跳鼠刀兵](desert-jerboa_blade.jpg)
 
-**蜃楼蟾** `mirage_toad` · 13 张 · 截于 2026-10-29 20:41
+**蜃楼蟾** `mirage_toad` · 13 张 · 截于 2026-10-29 23:34
 
 ![蜃楼蟾](desert-mirage_toad.jpg)
 
-**沙魇** `sand_wraith` · 17 张 · 截于 2026-10-29 20:41
+**沙魇** `sand_wraith` · 17 张 · 截于 2026-10-29 23:34
 
 ![沙魇](desert-sand_wraith.jpg)
 
-**蝎尾弩卫** `scorpion_archer` · 17 张 · 截于 2026-10-29 20:41
+**蝎尾弩卫** `scorpion_archer` · 17 张 · 截于 2026-10-29 23:34
 
 ![蝎尾弩卫](desert-scorpion_archer.jpg)
 
-**三彩镇墓兽** `tomb_beast` · 15 张 · 截于 2026-10-29 20:41
+**三彩镇墓兽** `tomb_beast` · 15 张 · 截于 2026-10-29 23:34
 
 ![三彩镇墓兽](desert-tomb_beast.jpg)
 
 
 ## 三、普通怪物 · 第二章 · 冰原
 
-**九尾狐巫** `fox_witch` · 22 张 · 截于 2026-10-29 20:44（没截到：狐火）
+**九尾狐巫** `fox_witch` · 22 张 · 截于 2026-10-29 23:45（没截到：狐火）
 
 ![九尾狐巫](frost-fox_witch.jpg)
 
-**玄冰巨蟹** `frost_crab` · 18 张 · 截于 2026-10-29 20:44
+**玄冰巨蟹** `frost_crab` · 18 张 · 截于 2026-10-29 23:45
 
 ![玄冰巨蟹](frost-frost_crab.jpg)
 
-**夫诸** `fuzhu` · 13 张 · 截于 2026-10-29 20:44
+**夫诸** `fuzhu` · 13 张 · 截于 2026-10-29 23:45
 
 ![夫诸](frost-fuzhu.jpg)
 
-**冰棘豪彘** `haozhi` · 13 张 · 截于 2026-10-29 20:44
+**冰棘豪彘** `haozhi` · 13 张 · 截于 2026-10-29 23:45
 
 ![冰棘豪彘](frost-haozhi.jpg)
 
-**冰河豚** `ice_puffer` · 12 张 · 截于 2026-10-29 20:44
+**冰河豚** `ice_puffer` · 13 张 · 截于 2026-10-29 23:45
 
 ![冰河豚](frost-ice_puffer.jpg)
 
-**冰鲸** `ice_whale` · 13 张 · 截于 2026-10-29 20:44
+**冰鲸** `ice_whale` · 13 张 · 截于 2026-10-29 23:45
 
 ![冰鲸](frost-ice_whale.jpg)
 
-**冻鲛人** `jiaoren` · 17 张 · 截于 2026-10-29 20:44
+**冻鲛人** `jiaoren` · 17 张 · 截于 2026-10-29 23:45
 
 ![冻鲛人](frost-jiaoren.jpg)
 
-**冰灯水母** `lantern_jelly` · 9 张 · 截于 2026-10-29 20:44
+**冰灯水母** `lantern_jelly` · 9 张 · 截于 2026-10-29 23:45
 
 ![冰灯水母](frost-lantern_jelly.jpg)
 
-**三青鸟** `qingniao` · 14 张 · 截于 2026-10-29 20:44（没截到：歇脚）
+**三青鸟** `qingniao` · 14 张 · 截于 2026-10-29 23:45（没截到：歇脚）
 
 ![三青鸟](frost-qingniao.jpg)
 
-**雪狌狌** `xingxing` · 25 张 · 截于 2026-10-29 20:44
+**雪狌狌** `xingxing` · 25 张 · 截于 2026-10-29 23:45
 
 ![雪狌狌](frost-xingxing.jpg)
 
-**冰甲旋龟** `xuangui` · 22 张 · 截于 2026-10-29 20:44
+**冰甲旋龟** `xuangui` · 22 张 · 截于 2026-10-29 23:45
 
 ![冰甲旋龟](frost-xuangui.jpg)
 
@@ -246,38 +250,38 @@
 
 ## 四、通用战斗特效
 
-**命中 / 暴击 / 破盾破甲** `hit` · 6 张 · 截于 2026-10-29 20:58
+**命中 / 暴击 / 破盾破甲** `hit` · 6 张 · 截于 2026-10-29 23:37
 
 ![命中 / 暴击 / 破盾破甲](fx-hit.jpg)
 
-**弹着点 / 弹孔（沙 · 石 · 冰 · 金属）** `impact` · 8 张 · 截于 2026-10-29 20:58
+**弹着点 / 弹孔（沙 · 石 · 冰 · 金属）** `impact` · 8 张 · 截于 2026-10-29 23:37
 
 ![弹着点 / 弹孔（沙 · 石 · 冰 · 金属）](fx-impact.jpg)
 
-**爆炸 + 焦痕 / 枪口火焰 / 雷击** `blast` · 5 张 · 截于 2026-10-29 20:58
+**爆炸 + 焦痕 / 枪口火焰 / 雷击** `blast` · 5 张 · 截于 2026-10-29 23:37
 
 ![爆炸 + 焦痕 / 枪口火焰 / 雷击](fx-blast.jpg)
 
-**元素曳光（火 / 雷 / 蚀）** `tracer` · 6 张 · 截于 2026-10-29 20:58
+**元素曳光（火 / 雷 / 蚀）** `tracer` · 6 张 · 截于 2026-10-29 23:37
 
 ![元素曳光（火 / 雷 / 蚀）](fx-tracer.jpg)
 
-**状态外观** `status` · 6 张 · 截于 2026-10-29 20:58
+**状态外观** `status` · 6 张 · 截于 2026-10-29 23:37
 
 ![状态外观](fx-status.jpg)
 
-**出生法阵 + 显形 / 死亡迸散 + 溶解** `spawn` · 4 张 · 截于 2026-10-29 20:58
+**出生法阵 + 显形 / 死亡迸散 + 溶解** `spawn` · 4 张 · 截于 2026-10-29 23:37
 
 ![出生法阵 + 显形 / 死亡迸散 + 溶解](fx-spawn.jpg)
 
-**元素反应（熔池 / 归墟）** `reaction` · 5 张 · 截于 2026-10-29 20:58
+**元素反应（熔池 / 归墟）** `reaction` · 5 张 · 截于 2026-10-29 23:37
 
 ![元素反应（熔池 / 归墟）](fx-reaction.jpg)
 
-**FX3 冰霜专属** `frost` · 15 张 · 截于 2026-10-29 21:26
+**FX3 冰霜专属** `frost` · 15 张 · 截于 2026-10-29 23:51
 
 ![FX3 冰霜专属](fx-frost.jpg)
 
-**FX4 火狱专属** `inferno` · 17 张 · 截于 2026-10-29 21:26
+**FX4 火狱专属** `inferno` · 17 张 · 截于 2026-10-29 23:52
 
 ![FX4 火狱专属](fx-inferno.jpg)

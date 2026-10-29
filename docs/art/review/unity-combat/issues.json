@@ -138,9 +138,10 @@
     "text": "收口审查（fx-style ②④）：FX3 冰爆是一团柔边的白粉雾，再加白色冷环，冰河豚鼓气自爆、fx 套件的「冰爆」都是这样。亮沙上看是一大片白，读不出准则里「块面清楚的冰晶多面体」那种大形。FX3 写在风格准则之前，A / B / C / D 四路和风格审查都没有覆盖它。",
     "refs": [
       "frost-ice_puffer",
-      "fx-frost"
+      "fx-frost",
+      "kunpeng-boss_kunpeng"
     ],
-    "status": "未修：属于 FX3 整套的风格整改，不在收口范围内，这里只登记。改法建议：白雾换成冰蓝两段的卡通团块，冷环加粗，主形改成几块大冰晶"
+    "status": "已修（收尾一轮）：冰爆重做——主形是低多边形冰晶（新 FrostBurst + SF_FxCrystal：亮面白 / 冰蓝 / 蓝灰三阶 + 蓝灰棱边；一簇 5–8 根冰晶从爆心长出来 0.08 s → 0.1 s 崩开翻飞 → 最后四成寿命一面面碎掉，0.65 s 内全部退场），陪衬冰晶星芒、冰蓝卡通粗环 + 冰蓝实心底、两三团实心冷白雾团、几片冰碴；去掉白粉雾、贴地冷雾、冷白柔光球、白拉丝、雪花闪粒、白冷环 + 光墙和霜纹贴花，冷光收到四成。块数乘画质密度、过 FxBudget、同屏上限高 64 / 低 32。碎冰 FrostShatter 的白粉雾同样换成实心冷白雾团。fx、fx-elements、fx-style、frost、boss-kunpeng 回归通过，已重拍（fx-polish/style/S15、S17）"
   },
   {
     "severity": "低",
@@ -150,7 +151,7 @@
     "refs": [
       "fx-status"
     ],
-    "status": "未修：风格审查报告里登记过的残留小偏差（亮面朝主光时偏浅），这次确认还在。建议把暗面的冰蓝压深一档、晶格放大，让切面读得出来"
+    "status": "已修（收尾一轮）：冰壳改三段硬色阶——只有最朝光的三四成晶面是亮面白、背光一半是深冰蓝、其余冰蓝，晶格边一道蓝灰暗线；颜色常数按线性空间重取（原来的值显示出来偏浅一大截）；冰壳覆盖 0.56–0.74 → 0.76–0.9（身体暖色不再透出来混成灰白）；身上染色换冰蓝、轮廓光收一档（SF_FxStatusSkin / StatusFx）。fx-style 三种地面、frost 回归通过，已重拍（style/S16）"
   },
   {
     "severity": "低",
@@ -160,6 +161,47 @@
     "refs": [
       "kunpeng-boss_kunpeng"
     ],
-    "status": "未修：先查 GalleryRecorder 的旁观机位，对象沉到水下时机位该抬到水面以上；如果是冻雾糊屏，就按 fx-style ②「雪雾偏冷白、不糊屏」收薄"
+    "status": "已修（收尾一轮）：两个原因都有，取决于鲲鹏死在哪个形态——鹏倒在冰面上时，余韵那一格整幅浅蓝白是冻雾糊屏（霜纹浓度 1.1 的羽状白霜 + 近白冷雾团铺在浅色冰面上）；鲲倒下沉进冰窟时，旁观机位跟着模型沉到了水面以下，拍出一整幅水下的青色。FrostFogFx：霜纹浓度 1.1 → 0.6、雾团换冰蓝灰、数量少三成五（所有冻雾一起受益），鹏砸冰面的冰爆不再铺霜纹；GalleryRecorder：对象在水面以下时看水面那一点、机位抬到水面以上（L8 水体和鲲鹏冰窟都认）。boss-kunpeng、gallery-kunpeng 回归通过，已重拍（style/S17）"
+  },
+  {
+    "severity": "中",
+    "owner": "特效风格",
+    "subject": "元素爆炸（通用）",
+    "text": "收口审查（fx-style ③ 元素色）：截图确认，B 路的卡通爆炸只有火的色阶——雷的蓝白传进去是黄绿芯 + 赭黄描边的泥团，蚀是黄绿 + 赭边，紫（归墟 / 碎刃）是粉紫芯 + 褐边，冰是青黄泥团。火团还在「亮黄 ↔ 主色」之间随机取色。",
+    "refs": [
+      "fx-blast"
+    ],
+    "status": "已修（收尾一轮）：Fx.Explosion 按调用方颜色认元素（Fx.BlastThemeOf），所有调用方自动覆盖；SF_FxToon 火团按色相整套换亮芯 / 暗边 / 烟（暖色走原算法，输出不变）；Presets/ExplosionElements.cs 逐层改出雷 / 蚀 / 金 / 紫四套（雷加折线电弧和电弧碎纹、蚀加黏团、金加小金星、紫加灵光，炭渣只有火有），冰分流到冰爆。fx、fx-elements、fx-style 回归通过，见 style/S13、S14"
+  },
+  {
+    "severity": "低",
+    "owner": "特效风格",
+    "subject": "旱魃（1-4）水柱 / 水幕 / 泉床喷气",
+    "text": "C 路补审登记的小偏差：二阶段泉床喷气是灰白（0.72, 0.74, 0.72）半透明汽柱 + 加法白汽，登场破泉的水柱 / 水幕是浅青半透明，叠在亮沙上混成灰白，读成灰柱子（fx-style ②⑤、§三「水」）。",
+    "refs": [
+      "hanba-boss_hanba",
+      "intro-hanba"
+    ],
+    "status": "已修（收尾一轮）：新涌流类型 SurgeKind.Spring（SF_FxSurge 模式 4：深青水身 / 泉水主色 / 白沫块，几乎不透明，轮廓一圈白沫亮边），Fx.SpringSpout / SpringSplash 配实心白沫团、泉水色水珠、水花团涟漪圈；泉床喷气、登场破泉、倒下时泉心那一下都走它。fx-boss、boss-hanba 回归通过，已重拍（style/S17）"
+  },
+  {
+    "severity": "低",
+    "owner": "特效风格",
+    "subject": "雪狌狌（第二章）雪块落地",
+    "text": "收口审查顺带发现：狌狌扔的雪块是没有元素的爆炸弹，落地时 Combat.Explode 按默认橙色播了一团卡通火焰爆炸，和雪块自己的冰碴叠在一起（fx-style ③）。",
+    "refs": [
+      "frost-xingxing"
+    ],
+    "status": "已修（收尾一轮）：EnemyProjectile 的无元素爆炸弹按弹体颜色认元素，雪块落地走冰爆。frost 回归通过、gallery-frost 已重拍"
+  },
+  {
+    "severity": "低",
+    "owner": "测试",
+    "subject": "gallery-desert / desert 套件 · 沙魇",
+    "text": "偶发不合格「沙魇：玩家站在 10 m 外不动，18 s 里一次潜沙突袭都没有」：前面几段里沙魇可能刚潜过一次（5.5–7.5 s 冷却），再赶上攻击令牌排队。",
+    "refs": [
+      "desert-sand_wraith"
+    ],
+    "status": "已修（收尾一轮）：这一段开头把潜沙冷却清零（DesertEnemiesSuite）。desert、gallery-desert 回归通过"
   }
 ]
