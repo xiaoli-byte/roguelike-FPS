@@ -9,14 +9,20 @@
  * - 光束持续音：AudioSystem.createBeam 同款节点图，取稳态的 2 秒（各振荡 / 调制的公共周期）做无缝循环。
  * - 配乐：四首曲目各渲第 0–4 遍，裁掉第 0 遍（前奏），第 1–4 遍拼成无缝循环（A/B 段交替不断）；立体声，带混响发送。
  * - 最后写 manifest.json（各音效的混音参数、变体数、曲目时长）。
+ * - Unity I6（超越）：旱魃主题 boss_hanba、三章环境声床 amb_*（Ambience.ts）、关键枪声 / 爆炸的分层片段
+ *   <id>_t_<i> / <id>_b_<i> / <id>_r_<i>（瞬态 / 主体 / 尾音，三层相加 = 原片段，Unity 各挑各的变体、按距离配比）。
+ *   打开 audio-bake.html?only=i6 只渲这一部分（不重渲、不改动已有的音效），清单只含这一部分，
+ *   转换用 python -I scripts/audio/bake.py <输出目录> --partial 并进 Unity 现有清单。
  */
 import { SynthKit, type Recipe, type Voice } from '../audio/Synth';
 import { SFX, SFX_META, SFX_POSITIONAL } from '../audio/Sfx';
-import { BossTrack, CalmTrack, CombatTrack, MenuTrack, type Track } from '../audio/MusicTracks';
+import { BossTrack, CalmTrack, CombatTrack, HanbaTrack, MenuTrack, type Track } from '../audio/MusicTracks';
+import { AMBIENCE_IDS, AMBIENCE_SECONDS, AMBIENCE_XFADE, buildAmbience } from '../audio/Ambience';
 import type { SfxId } from '../core/types';
 
 const SR = 44100;
-const RECEIVER = 'http://127.0.0.1:8765';
+/** 接收器端口：缺省 8765，被系统保留时（Windows 的 Hyper-V 端口段，WinError 10013）用 ?port=N 换一个，接收器也传同一个端口 */
+const RECEIVER = `http://127.0.0.1:${new URLSearchParams(location.search).get('port') ?? 8765}`;
 const REVERB_RETURN = 0.85;
 const TAIL = 3.0;
 
@@ -222,9 +228,105 @@ async function renderTrack(track: Track, loops = 4): Promise<[Float32Array[], nu
   return [chs, peak];
 }
 
+/** 分层的关键音效（I6）：重枪声和爆炸（射速低，三层同时放不挤声道） */
+const LAYERED: SfxId[] = ['shot_sniper', 'shot_shotgun', 'shot_heavy', 'shot_launcher', 'explosion'];
+const LAYER_VARIANTS = 3;
+
+/**
+ * 把一个音效片段按时间窗切成三层（权重处处相加为 1，三层同时放 = 原片段）：
+ * 瞬态 0–30 ms（30–45 ms 淡出）、主体（尾音 250 ms 起淡入、320 ms 接满）、尾音；瞬态 / 主体裁掉后面的静音
+ */
+function splitLayers(d: Float32Array): [Float32Array, Float32Array, Float32Array] {
+  const at = (s: number): number => Math.round(s * SR);
+  const t0 = at(0.03), t1 = at(0.045), r0 = at(0.25), r1 = at(0.32);
+  const tr = new Float32Array(Math.min(d.length, t1));
+  const body = new Float32Array(Math.min(d.length, r1));
+  const tail = new Float32Array(d.length);
+  for (let i = 0; i < d.length; i++) {
+    const wt = i < t0 ? 1 : i < t1 ? 1 - (i - t0) / (t1 - t0) : 0;
+    const wr = i < r0 ? 0 : i < r1 ? (i - r0) / (r1 - r0) : 1;
+    const wb = Math.max(0, 1 - wt - wr);
+    if (i < tr.length) tr[i] = d[i] * wt;
+    if (i < body.length) body[i] = d[i] * wb;
+    tail[i] = d[i] * wr;
+  }
+  return [tr, body, tail];
+}
+
+/** 环境声床：渲 seconds + xfade，末尾 xfade 秒等功率交叉淡入开头 → 无缝循环 */
+async function renderAmbience(id: (typeof AMBIENCE_IDS)[number]): Promise<[Float32Array[], number]> {
+  const L = AMBIENCE_SECONDS, X = AMBIENCE_XFADE;
+  const ac = new OfflineAudioContext(2, Math.ceil((L + X) * SR), SR);
+  const kit = new SynthKit(ac as unknown as AudioContext);
+  const dry = bus(ac, kit, 0.12);
+  buildAmbience(id, ac, kit, dry, L + X);
+  const buf = await ac.startRendering();
+  const n = Math.round(L * SR), x = Math.round(X * SR);
+  const chs: Float32Array[] = [];
+  let peak = 0;
+  for (let c = 0; c < 2; c++) {
+    const src = buf.getChannelData(c);
+    const out = src.slice(0, n);
+    for (let i = 0; i < x; i++) {
+      const k = i / x;
+      out[i] = out[i] * Math.sin(k * Math.PI / 2) + src[n + i] * Math.cos(k * Math.PI / 2);
+    }
+    chs.push(out);
+  }
+  // 三章的声床统一到同一响度（RMS −24 dBFS）：配方里的层多寡不同，熔火的轰鸣天然比霜山的风响 10 dB；峰值仍不超过 0.98
+  let sum = 0, cnt = 0;
+  for (const d of chs) for (let i = 0; i < d.length; i += 4) { sum += d[i] * d[i]; cnt++; }
+  const rms = Math.sqrt(sum / Math.max(1, cnt));
+  let k = rms > 1e-6 ? AMBIENCE_RMS / rms : 1;
+  for (const d of chs) for (const v of d) peak = Math.max(peak, Math.abs(v));
+  if (peak * k > 0.98) k = 0.98 / peak;
+  for (const d of chs) for (let i = 0; i < d.length; i++) d[i] *= k;
+  return [chs, peak * k];
+}
+
+/** 声床的目标响度：−24 dBFS RMS */
+const AMBIENCE_RMS = Math.pow(10, -24 / 20);
+
+/** I6 那一部分：分层片段、旱魃主题、环境声床；写进 manifest 的 sfx[id].layers / music */
+async function bakeI6(sfxOut: Record<string, Record<string, unknown>>, musicOut: Record<string, unknown>, partial: boolean): Promise<void> {
+  for (const id of LAYERED) {
+    const meta = SFX_META[id];
+    for (let i = 0; i < LAYER_VARIANTS; i++) {
+      const [chs] = await renderSfx(SFX[id], meta.gain, meta.send);
+      const [tr, body, tail] = splitLayers(chs[0]);
+      await save(`sfx/${id}_t_${i}.wav`, wav([tr]));
+      await save(`sfx/${id}_b_${i}.wav`, wav([body]));
+      await save(`sfx/${id}_r_${i}.wav`, wav([tail]));
+    }
+    // 增量清单只写 layers（bake.py --partial 按 id 并进去，不动别的字段）
+    sfxOut[id] = partial ? { layers: LAYER_VARIANTS } : { ...(sfxOut[id] ?? {}), layers: LAYER_VARIANTS };
+    log(`分层 ${id} ×${LAYER_VARIANTS}`);
+  }
+  const hanba = new HanbaTrack();
+  const [chs, peak] = await renderTrack(hanba);
+  await save('music/boss_hanba.wav', wav(chs));
+  musicOut.boss_hanba = { seconds: chs[0].length / SR, loopSeconds: hanba.steps * hanba.stepDur, bpm: hanba.bpm, level: hanba.level, send: hanba.send, peak };
+  log(`配乐 boss_hanba：${(chs[0].length / SR).toFixed(1)} s`, 'ok');
+  for (const id of AMBIENCE_IDS) {
+    const [a, p] = await renderAmbience(id);
+    await save(`music/${id}.wav`, wav(a));
+    musicOut[id] = { seconds: a[0].length / SR, loopSeconds: AMBIENCE_SECONDS, bpm: 0, level: 1, send: 0.12, peak: p };
+    log(`声床 ${id}：${AMBIENCE_SECONDS} s`, 'ok');
+  }
+}
+
 async function main(): Promise<void> {
   const manifest: Record<string, unknown> = { sampleRate: SR, generated: new Date().toISOString(), sfx: {}, music: {} };
   const sfxOut = manifest.sfx as Record<string, unknown>;
+  if (new URLSearchParams(location.search).get('only') === 'i6') {
+    await bakeI6(sfxOut as Record<string, Record<string, unknown>>, manifest.music as Record<string, unknown>, true);
+    manifest.partial = true;
+    await save('manifest.json', JSON.stringify(manifest, null, 2));
+    await fetch(`${RECEIVER}/done`, { method: 'POST' }).catch(() => undefined);
+    log('I6 增量完成（python -I scripts/audio/bake.py <输出目录> --partial）', 'ok');
+    document.title = '音频烘焙 · 完成';
+    return;
+  }
   const ids = Object.keys(SFX) as SfxId[];
   let n = 0, hot = 0;
   for (const id of ids) {
@@ -261,6 +363,7 @@ async function main(): Promise<void> {
     musicOut[id] = { seconds: chs[0].length / SR, loopSeconds: track.steps * track.stepDur, bpm: track.bpm, level: track.level, send: track.send, peak };
     log(`配乐 ${id}：${(chs[0].length / SR).toFixed(1)} s`, 'ok');
   }
+  await bakeI6(sfxOut as Record<string, Record<string, unknown>>, musicOut, false);
   // 总线比例（AudioSystem：音效 0.9、音乐 0.5 × 0.6）
   manifest.mix = { master: 0.8, sfx: 0.9, music: 0.5 * 0.6 };
   await save('manifest.json', JSON.stringify(manifest, null, 2));

@@ -174,7 +174,7 @@
 | 修饰器注册 | 🟡 | 公开的 List；迭代时删除会抛异常 | `ModifierList<T>` 返回句柄 | S | W0-1 |
 | 伤害标签与归属 | 🟡 | instigator 是组件，不是武器实例 | `DamageTag` + `weaponUid` | S | W0-1 |
 | 战斗调试 | 🟡 | 没有实时计数 | 调试叠层 + `PreviewMultiplier` | S | C1 |
-| 顿帧（超越） | ❌ | — | `HitStop` | S | F3 |
+| 顿帧（超越） | ✅ | —（F3 `HitStop`；I7 时长 / 缩放进 `FeelProfile`，另加清场慢动作 `ClearSlowMo`） | `HitStop` | S | F3 |
 
 ### 3.3 武器
 
@@ -280,7 +280,7 @@
 
 | 英雄 | 状态 | 被动 / E / Q | 缺口 | 单元 |
 |---|---|---|---|---|
-| 燎 · 爆竹游侠（fox，红熊猫） | 🟡 | 余烬 / 燃爆雷 / 尾焰火灵 | 数值一致。缺投掷继承玩家速度、爆炸半径吃属性、地裂 / 余火 / 引信特效、出手动作 | H2 / HC3 |
+| 燎 · 爆竹游侠（fox，红熊猫） | ✅ | 余烬 / 燃爆雷 / 尾焰火灵 | —（H2 补齐投掷继承速度、半径吃属性；HC3 火灵卡通火舌、引信火苗、纸灰余火、出手动作） | H2 / HC3 |
 | 鼯 · 雷鼓机关师（falcon，鼯鼠） | ❌ | 凌空（二段跳、滞空 +15%、滑翔）/ 雷鼓信标 / 雷目 · 裁决 | 整个英雄；雷鼓信标道具 | HC1 |
 | 磐 · 工匠武僧（bear，穿山甲） | ❌ | 厚皮（破盾冲击波）/ 裂地重击 / 磐石壁垒 | 整个英雄；敌人击飞上抛 | HC2 |
 
@@ -301,8 +301,8 @@
 | SkillFx 工具包 | 🟡 | 缺 shockwave / groundCrack / burst | `SkillFx` | M | H2 |
 | 选英雄 + 3D 祭台 | ❌ | — | 见 3.12 | L | U6 |
 | 冰面惯性（超越） | ❌ | — | `SurfaceZone` | S | L8 |
-| 技能出手动作（超越） | ❌ | — | 覆盖姿态时间线 | M | HC3 |
-| 自动翻越（超越，待定） | ❌ | 会改变关卡可达规则 | 第 4 批再评估 | M | I7 |
+| 技能出手动作（超越） | ✅ | —（HC3 `CastPose`：投掷 / 召唤 / 砸地 / 举手 / 点名五种，三位英雄共用） | 覆盖姿态时间线 | M | HC3 |
+| 自动翻越（超越，待定） | ➖ | 会改变关卡可达规则 | I7 评估后不做（理由见 [feel.md](feel.md) 第三节） | M | I7 |
 
 ### 3.7 敌人框架
 
@@ -545,7 +545,7 @@
 | 音效核心 / 命中音 / 配乐 | ✅ | 75 个 id、201 个 ogg、4 首曲子 | — | — | — |
 | 音效覆盖 | ✅ | —（清单 75 个 id 都有调用点；按钮音由 UISound 挂在每层根上、走 UI 总线） | 跟着各单元接 | S | F5 + 各单元 |
 | 压低 / 混音 / 限幅 | ✅ | —（`Resources/Audio/Spiritfire.mixer`，bridge.sh audio 生成：Master 限幅 → World（快照：暂停 / 模态 0.45 + 6 kHz 低通、结算 0.8）→ SFX / Music / Ambience / Reverb，UI 直挂 Master；玩家音量 = 暴露参数；跳伤 / 雷弧同时 ≤ 3 声、叠声衰减） | AudioMixer + 快照 | M | F5 |
-| 空间音频 / 环境音（超越） | ❌ | — | 遮挡低通、混响区、环境声床 | M | I6 |
+| 空间音频 / 环境音（超越） | ✅ | —（I6：三章声床、ReverbSend 按章节 / 封闭关 / AmbienceZone、遮挡低通、关键枪声 / 爆炸分层） | 遮挡低通、混响区、环境声床 | M | I6 |
 | 画质档 | ✅ | —（`QualityProfile` 三档：渲染比例 + FSR 1.0、MSAA、阴影距离 / 级联 / 分辨率 / 软硬、附加光投影、SSAO、闪光灯数、粒子预算、毛发、lodBias、mip、地形细节；「高」= 工程原值；三档都用 PC 级，运行时改资产、编辑器退出 Play 还原。STP 不用：URP 的 TAA / STP 不支持叠加相机） | `QualityProfile` | M | F4 |
 | 后处理 | ✅ | —（关卡 VP 已修好；`GameplayVolumes`：低血量去饱和、受击色差、冲刺色差 + 暗角、慢动作，乘设置「屏幕特效」；低档 Bloom 降到 1/4） | 修复 + 玩法屏效 Volume | M | W0-8 / F4 |
 | LOD / 剔除 | 🟡 | GPU Resident Drawer 没开 | 开启 + 遮挡烘焙 | M | I4 |
@@ -585,8 +585,8 @@
 | 后坐完全回正、陡坡下滑 | ✅ | 保留 |
 | 顿帧、冰面惯性、流沙、沙暴、手柄 | ❌ | F3 / L8 / L3 / W0-6 |
 | 中途续玩、图鉴 | ✅ | I5：`RunSuspend` 续玩档；`Codex`（存档 codex 段）+ `CodexTracker` + `CodexScreen`（模型缩略图 / 剪影），见 7.6 |
-| 环境音、分层枪声、首领主题曲 | ❌ | I6 |
-| 自动翻越 | 待定 | I7 评估 |
+| 环境音、分层枪声、首领主题曲 | ✅ | I6 |
+| 自动翻越 | ➖ 不做 | I7 评估（feel.md） |
 
 ---
 
@@ -940,7 +940,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | S7 秘卷界面 | 三选一（挂轴展开、点阵、新得 / 升层、下一层预览、手柄、传说金框）；带色获得提示；触发弹字 | `G/UI/Screens/ScrollChoiceScreen.cs` `G/UI/Widgets/ScrollProcPop.cs` `G/UI/ScrollChoice.cs` | U1 S0 | 否 | M |
 | HC1 鼯 | 90 / 70 / 额外跳 1、赤铜左轮；凌空 + 滑翔；雷鼓信标；雷目 · 裁决；信标道具先占位 | `G/Skills/Heroes/Hero_Falcon.cs` `G/Skills/{FalconSkills,Glide}.cs` | H1 H2 W1 F1 | 是 | M |
 | HC2 磐 | 140 / 80 / 7.0 / 减伤 10%、碎岩霰弹；厚皮；裂地重击；磐石壁垒；敌人击飞上抛 | `G/Skills/Heroes/Hero_Bear.cs` `G/Skills/BearSkills.cs` | H1 H2 C3 E1 | 是 | M |
-| HC3 燎打磨 + 出手动作 | 爆竹、余火、引信、火灵造型；技能出手的覆盖姿态时间线（三位英雄共用） | `G/Skills/CastPose.cs` | H2 W4 F1 | 是 | S |
+| HC3 燎打磨 + 出手动作 ✅ | 爆竹、余火、引信、火灵造型；技能出手的覆盖姿态时间线（三位英雄共用） | `G/Skills/CastPose.cs` | H2 W4 F1 | 是 | S |
 | EN1 第一章对齐 + 沙魇 | 按 3.8；EnemyVariant 材质变体 | `G/Enemies/{JerboaBlade,ScorpionArcher,MirageToad,FireRat,TombBeast,Apsara}AI.cs` `G/Enemies/EnemyVariant.cs` `G/Enemies/Defs/Desert/*` | E1 E3 E4 C4 F1 | 是 | M |
 | EN2a 冻鲛人 + 雪狌狌 | AI + PackCoordinator + 攀爬用的 NavMeshLink + 补采样 | `G/Enemies/{Defs,AI}/Frost/{Jiaoren,Xingxing}*` `G/Enemies/PackCoordinator.cs` `S/bake/SK_Enemy_{Jiaoren,SnowXingxing}.mjs` | E1 E4 C3 C4 E5 | 是 | M |
 | EN2b 旋龟 + 巨蟹 | 正面格挡、旋壳反弹、过热翻身、钳夺、横扫、断钳 | `…/Frost/{XuanGui,FrostCrab}*` `S/bake/SK_Enemy_{XuanGui,FrostCrab}.mjs` | E2 E4 L8 E5 | 是 | M |
@@ -998,8 +998,8 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | I3 平衡 | 武器秒伤带；首领 60–120 s；每章收入对得上商店价格；魂晶 vs 天赋总价 11300；逐关难度；随机元素加入后 1-1 复测 | `docs/balance.md` `G/Testing/Suites/{BossSoak,EconomyProjection}Suite.cs`（改 EconomyConfig / CombatTuning 数值） | I1 | 是 | M |
 | I4 性能 | GPU 遮挡；1-3 烘焙遮挡；地形分块 LOD；远景 impostor；按固定机位采基线（docs/performance.md 协议）；预算写进 L5 | `P/Editor/Levels/LevelKit.Perf.cs` `A/Settings/**` | I1 | 是 | M |
 | I5 中途续玩与图鉴（超越） | 每关开头写 run.json，主菜单「继续征程」；武器 / 秘卷 / 敌人 / 灵宠图鉴 | `G/Core/RunSuspend.cs` `G/Progression/Codex.cs` `G/UI/Screens/CodexScreen.cs` | R2 U5 | 否 | M |
-| I6 音频超越 | 各章环境声床；关键枪声 / 爆炸改分层（瞬态、主体、尾音）；旱魃主题曲；遮挡低通 + 混响区 | `G/Audio/{AmbienceZone,AudioOcclusion}.cs` `A/Game/Resources/Audio/Ambience/**` | F5 | 是 | M |
-| I7 手感终调 | FeelProfile SO 定稿（顿帧、击杀慢动作、屏效、震屏曲线）；手柄瞄准辅助；评估自动翻越（要做的话同步改 unity-maps 和验收规则） | `G/Core/FeelProfile.cs` `docs/feel.md` | I2 | 是 | M |
+| I6 音频超越 ✅ | 各章环境声床；关键枪声 / 爆炸改分层（瞬态、主体、尾音）；旱魃主题曲；遮挡低通 + 混响区 | `G/Audio/{AmbienceZone,AudioOcclusion}.cs` `A/Game/Resources/Audio/Music/amb_*.ogg` `src/audio/Ambience.ts` | F5 | 是 | M |
+| I7 手感终调 ✅ | FeelProfile SO 定稿（顿帧、击杀慢动作、屏效、震屏曲线）；手柄瞄准辅助；评估自动翻越（要做的话同步改 unity-maps 和验收规则） | `G/Core/FeelProfile.cs` `docs/feel.md` | I2 | 是 | M |
 
 ---
 

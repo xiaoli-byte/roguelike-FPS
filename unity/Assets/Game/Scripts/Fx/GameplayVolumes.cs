@@ -126,7 +126,7 @@ namespace Spiritfire.Game
             });
             dash = Make("Dash", DashPriority, p =>
             {
-                p.Add<ChromaticAberration>().intensity.Override(DashAberration);
+                p.Add<ChromaticAberration>().intensity.Override(FeelProfile.Active.dashAberration);
                 var v = p.Add<Vignette>();
                 v.intensity.Override(0.3f);
                 v.smoothness.Override(0.5f);
@@ -141,9 +141,9 @@ namespace Spiritfire.Game
                 v.intensity.Override(0.34f);
                 v.smoothness.Override(0.5f);
                 v.color.Override(Color.black);
-                p.Add<ChromaticAberration>().intensity.Override(SlowAberration);
+                p.Add<ChromaticAberration>().intensity.Override(FeelProfile.Active.slowAberration);
             });
-            hurt = Make("Hurt", HurtPriority, p => p.Add<ChromaticAberration>().intensity.Override(HurtAberration));
+            hurt = Make("Hurt", HurtPriority, p => p.Add<ChromaticAberration>().intensity.Override(FeelProfile.Active.hurtAberration));
             quality = Make("Quality Post", QualityPriority, p => qualityBloom = p.Add<Bloom>());
         }
 

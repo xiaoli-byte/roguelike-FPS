@@ -12,6 +12,7 @@
   共享文件里别人的 hunk 用 `git add -p` 排除。别人的半成品留在工作区，不要替别人提交或回退。
 - **提交前先验证**：TS 改动跑 `npm run typecheck`（涉及构建时跑 `npm run build`）；Unity C# 改动跑 `python scripts/unity/csc_check.py`。
 - **推送前**先 `git fetch origin`；远端有新提交时 `git pull --rebase --autostash origin master`，再推送。
+- **拉取后**如果 `unity/` 有更新，跑 `node scripts/unity/dlp-unity-fix.mjs`：本机 DLP 会把 Git 写出的 `.cs` / `.json` 等存成密文，Unity 读不了（`%TSD-Header-###%`）。`--check` 只检查。
 - 单个文件不能超过 GitHub 的 100 MB 上限。可再生的中间产物按 `.gitignore` 留在本机，新增大体积目录先确认是否该入库。
 - 提交信息沿用现有风格：`feat(scope): 简述`，scope 如 `unity`、`plateau`、`pets`、`art`。
 

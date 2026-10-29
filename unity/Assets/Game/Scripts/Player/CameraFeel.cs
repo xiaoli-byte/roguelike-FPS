@@ -323,11 +323,11 @@ namespace Spiritfire.Game
                 Spring(ref punch.z, ref punchVel.z, h);
             }
 
-            // ── 震屏：trauma² × 设置，6 轴噪声 ──
+            // ── 震屏：trauma ^ 指数（FeelProfile，定稿 2 = trauma²）× 设置，6 轴噪声 ──
             shakeClock += dt;
             if (shakeClock > 1000f) shakeClock -= 1000f;
             Vector3 shPos = Vector3.zero, shRot = Vector3.zero;
-            float amp = Mathf.Min(ShakeAmpMax, CameraShake.Current * Mathf.Max(0, shakeSetting));
+            float amp = Mathf.Min(ShakeAmpMax, FeelProfile.Active.ShakeAmplitude(CameraShake.Trauma) * Mathf.Max(0, shakeSetting));
             if (amp > 1e-4f)
             {
                 float tp = shakeClock * ShakePosFreq, tr = shakeClock * ShakeRotFreq;

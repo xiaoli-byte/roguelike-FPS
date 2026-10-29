@@ -134,6 +134,9 @@ namespace Spiritfire.Art
             }
         }
 
+        /// <summary>这一帧右摇杆在转视角（手柄瞄准辅助只在这时介入，鼠标不受影响）</summary>
+        public static bool StickLooking => lookStick.ReadValue<Vector2>().sqrMagnitude > 0.0004f;
+
         /// <summary>指针位置（屏幕像素）</summary>
         public static Vector2 PointerPosition
         {

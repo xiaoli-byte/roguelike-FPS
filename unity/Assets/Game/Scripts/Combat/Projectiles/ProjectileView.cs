@@ -51,7 +51,7 @@ namespace Spiritfire.Game
         Light lamp;
         Color color;
         bool hostile;
-        float size = 1, phase, coreBoost = 1, haloBase = 1, dieAt = -1;
+        float size = 1, phase, coreBoost = 1, haloBase = 1, dieAt = -1, nearK = 1;
         Vector3 accentScale = Vector3.one, glowScale = Vector3.one;
         Stack<ProjectileView> home;
 
@@ -185,6 +185,13 @@ namespace Spiritfire.Game
             }
             transform.SetPositionAndRotation(pos, Orientation(heading));
             transform.localScale = Vector3.one * size;
+            nearK = 1;
+            if (NearFades)
+            {
+                float k = NearK(pos);
+                transform.localScale *= Mathf.Lerp(0.45f, 1f, k);
+                ApplyNear(k);
+            }
 
             if (look.trailWidth > 0)
             {
@@ -346,7 +353,34 @@ namespace Spiritfire.Game
                     SetHalo(1 + amp * Mathf.Sin(age * 6 + phase));
                     break;
             }
+            if (NearFades)
+            {
+                float k = NearK(pos);
+                grow *= Mathf.Lerp(0.45f, 1f, k);
+                ApplyNear(k);
+            }
             transform.localScale = Vector3.one * (size * grow * fade);
+        }
+
+        bool NearFades => Recipe.nearFade > 0 && !hostile;
+
+        /// <summary>离镜头的远近：0.5 m 内 = 0，recipe.nearFade 外 = 1（见 <see cref="ProjectileVisualRecipe.nearFade"/>）</summary>
+        float NearK(Vector3 pos)
+        {
+            var cam = Camera.main;
+            if (!cam) return 1;
+            float d = Vector3.Distance(cam.transform.position, pos);
+            return Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0.5f, Recipe.nearFade, d));
+        }
+
+        /// <summary>近处光晕缩小、光层变淡（颜色只在变化够大时重刷，飞远后就不再每帧刷）</summary>
+        void ApplyNear(float k)
+        {
+            if (halo) halo.localScale *= Mathf.Lerp(0.2f, 1f, k);
+            if (Mathf.Abs(k - nearK) < 0.03f && (k < 1 || nearK >= 1)) return;
+            nearK = k;
+            PaintRole(Role.Glow, k);
+            PaintRole(Role.Halo, k);
         }
 
         void SetHalo(float k)

@@ -15,7 +15,8 @@ namespace Spiritfire.Art
     ///   · 持续开火颤动（光束 / 机炮 / 蓄力，<see cref="firing"/> + <see cref="jitter"/>）、空仓抖动（<see cref="DryKick"/>）；
     ///   · 换弹姿态：整匣换弹按包络（进 0–15%、出 82–100%）叠 <see cref="reloadTiltRot"/> / <see cref="reloadTiltPos"/>；弹匣入位那一刻（<see cref="seatAt"/>）枪身一顿；
     ///     逐发装填时整体左倾、每压一发（<see cref="ShellBump"/>）往下一磕；
-    ///   · 切枪收放：<see cref="lower"/> 下沉 + 枪口下压。
+    ///   · 切枪收放：<see cref="lower"/> 下沉 + 枪口下压；
+    ///   · 技能出手：<see cref="OverlayPos"/> / <see cref="OverlayRot"/>（Spiritfire.Game 的 CastPose 按技能播时间线写入，三位英雄共用）。
     /// 输入：武器（Spiritfire.Game 的 WeaponController）每帧写 <see cref="aim"/> / <see cref="lower"/> / <see cref="reloading"/> 等字段；
     /// 移动读同一玩家身上的 <see cref="PlayerMotor"/>（展示场景没有 motor 时按相机位移估速度）。
     /// </summary>
@@ -46,6 +47,15 @@ namespace Spiritfire.Art
         /// <summary>持续开火（光束 / 机炮 / 蓄力中）与颤动幅度（米）</summary>
         [System.NonSerialized] public bool firing;
         [System.NonSerialized] public float jitter = 0.003f;
+
+        /// <summary>
+        /// 技能出手的叠加姿态（全局：同一时间只有一个玩家枪模；约定同 <see cref="reloadTiltPos"/> / <see cref="reloadTiltRot"/>：
+        /// 位置 x 右 y 上 z 朝后（米），旋转 x 抬枪口 / y 左摆 / z 右侧上翻（弧度））。由 CastPose 每帧写，放完归零
+        /// </summary>
+        public static Vector3 OverlayPos, OverlayRot;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => OverlayPos = OverlayRot = Vector3.zero;
 
         // Three.js 常数
         const float BobAmp = 0.011f, BobRoll = 0.018f, Breath = 0.0032f, SwayClampX = 0.05f, SwayClampY = 0.04f;
@@ -245,6 +255,12 @@ namespace Spiritfire.Art
             rx += reloadTiltRot.x * reloadT + shellTiltRot.x * shellT - shellBump * 0.06f;
             ry += reloadTiltRot.y * reloadT + shellTiltRot.y * shellT;
             rz += reloadTiltRot.z * reloadT + shellTiltRot.z * shellT;
+            x += OverlayPos.x;
+            y += OverlayPos.y;
+            z += OverlayPos.z;
+            rx += OverlayRot.x;
+            ry += OverlayRot.y;
+            rz += OverlayRot.z;
 
             var basePos = aimOffset != Vector3.zero ? Vector3.Lerp(hipOffset, aimOffset, a) : hipOffset;
             transform.localPosition = basePos + new Vector3(x, y, -z);

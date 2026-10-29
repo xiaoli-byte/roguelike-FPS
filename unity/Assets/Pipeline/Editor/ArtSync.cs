@@ -94,6 +94,8 @@ namespace Spiritfire.Art.Editor
                 string stamp = $"{(string)sc.raw["source"]?["sha256"]}:{(string)sc.raw["exported"]}:{ArtImportPostprocessor.Version}:{sc.EffectiveRigType}";
                 // 毛发配置变了也要重新导入（FurBake 在导入时烘 UV2 / UV3）；没有毛发的资产戳记保持原样，不会全体重导
                 if (sc.Fur != null) stamp += $":fur{FurStamp(sc.Fur)}";
+                // 没有毛发的角色导入时烘绑定姿势位置（FurBake.ApplyRestPose）：算法版本变了也要重新导入
+                else if (sc.IsCharacter) stamp += $":rest{FurBake.RestPoseVersion}";
                 if (mi.userData == stamp) continue;
                 mi.userData = stamp;
                 foreach (var tex in AssetDatabase.FindAssets("t:Texture2D", new[] { sc.Dir + "/Textures" }))
