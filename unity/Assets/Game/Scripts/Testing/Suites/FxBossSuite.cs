@@ -138,6 +138,18 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.7f);
             Shot(spec, "fxboss_water_fall");
             yield return new WaitForSeconds(1.2f);
+
+            // 月牙泉的风格化水（收尾一轮：旱魃的泉床喷泉、破泉——泉水色 + 白沫块，不是灰白的汽柱）
+            int s0 = Surge.ActiveCount;
+            Fx.SpringSpout(At(12f, -3f), 1f, 6.5f, 0.6f, 3.4f);
+            Fx.SpringSplash(At(12f, 3f), 2.4f);
+            if (Surge.ActiveCount < s0 + 2) Fail($"spring：泉水体积只多了 {Surge.ActiveCount - s0} 个");
+            yield return new WaitForSeconds(0.3f);
+            View(At(12f, 0), 15f, 7f);
+            Shot(spec, "fxboss_spring_rise");
+            yield return new WaitForSeconds(0.5f);
+            Shot(spec, "fxboss_spring_hold");
+            yield return new WaitForSeconds(1.4f);
         }
 
         IEnumerator Molten()

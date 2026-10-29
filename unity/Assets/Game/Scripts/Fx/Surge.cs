@@ -16,6 +16,8 @@ namespace Spiritfire.Game
         Molten,
         /// <summary>火：半加法的火舌条纹</summary>
         Fire,
+        /// <summary>泉（月牙泉的风格化水：深青水身 / 泉水主色 / 白沫块，几乎不透明、轮廓一圈白沫亮边；旱魃的水柱、水幕、喷泉）</summary>
+        Spring,
     }
 
     /// <summary>涌流体积的网格形状</summary>
@@ -53,6 +55,8 @@ namespace Spiritfire.Game
         public static Color DefaultA(SurgeKind k) => k switch
         {
             SurgeKind.Water => new Color(0.42f, 0.76f, 0.82f, 1),
+            // 月牙泉的深水色（1-4 水面 SF_Water 的浅 / 深之间），着色器提亮一档当主色
+            SurgeKind.Spring => new Color(0.11f, 0.4f, 0.5f, 1),
             SurgeKind.Sand => new Color(0.55f, 0.37f, 0.19f, 1),
             // 第三章底色：暗紫褐的壳（暗部偏冷不发黑）
             SurgeKind.Molten => new Color(0.17f, 0.06f, 0.09f, 1),
@@ -63,6 +67,7 @@ namespace Spiritfire.Game
         public static Color DefaultB(SurgeKind k) => k switch
         {
             SurgeKind.Water => new Color(0.96f, 1f, 1f, 1),
+            SurgeKind.Spring => new Color(0.94f, 0.99f, 1f, 1),
             SurgeKind.Sand => new Color(0.93f, 0.76f, 0.5f, 1),
             // 亮芯金黄（克制：HDR 只到 1.7，主色是芯的 0.6 倍 = 铜橙）
             SurgeKind.Molten => new Color(1.7f, 0.62f, 0.1f, 1),

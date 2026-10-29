@@ -497,7 +497,7 @@ namespace Spiritfire.Game
                     if (!IntroFx.WaterSurface(p, out float y)) return;
                     p.y = y;
                     Fx.WaterDisturb(p, 8f, 1.4f);
-                    Fx.WaterSpout(p, 1.2f, 4.5f, 0.5f);
+                    Fx.SpringSpout(p, 1.2f, 4.5f, 0.5f);
                 })
                 .At(secs * 0.88f, () => Fx.SandBlast(BodyCenter, 3.2f, HanbaDef.Sun));
         }

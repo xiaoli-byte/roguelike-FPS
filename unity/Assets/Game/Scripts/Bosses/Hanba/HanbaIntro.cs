@@ -56,7 +56,7 @@ namespace Spiritfire.Game
                 if (HasSpring(c)) c.Bag["churn"] = Fx.WaterChurn(Surface(c), 4.5f, 1.7f, 1.1f);
             }));
             cues.Add(IntroCue.Call(1.6f, "spring dome", c =>
-                Surge.Dome(Surface(c), 2.4f, 1.3f, HasSpring(c) ? SurgeKind.Water : SurgeKind.Sand, 0.55f, 0.05f, 0.25f, HasSpring(c) ? WaterBody : null, null)));
+                Surge.Dome(Surface(c), 2.4f, 1.3f, HasSpring(c) ? SurgeKind.Spring : SurgeKind.Sand, 0.55f, 0.05f, 0.25f, null, null)));
             cues.Add(IntroCue.Shake(0.7f, 0.2f, 0.8f));
             cues.Add(IntroCue.Sfx(1.2f, "boss_roar", IntroAnchors.Spawn, 0.45f, 0.5f));
             cues.Add(IntroCue.Shake(1.8f, 0.35f, 0.6f));
@@ -70,8 +70,9 @@ namespace Spiritfire.Game
                 if (spring)
                 {
                     Fx.WaterDisturb(w, 9f, 2f);
-                    Fx.Splash(w, 3.2f, Water);
-                    Fx.WaterSpout(w, 1.7f, 9.5f, 0.9f, Water);
+                    // 月牙泉的风格化水（收尾一轮：泉水色 + 白沫，不是灰白）
+                    Fx.SpringSplash(w, 3.2f);
+                    Fx.SpringSpout(w, 1.7f, 9.5f, 0.9f);
                 }
                 else
                 {
@@ -81,8 +82,8 @@ namespace Spiritfire.Game
                 // 三面水幕 / 沙幕围着她往上涌（升起的 1.6 s 里一直在，塌下去时正好露出整个人）
                 float y0 = c.Random(0, 360f);
                 for (int i = 0; i < 3; i++)
-                    Surge.Sheet(w, y0 + i * 120f + c.Random(-15f, 15f), 2.4f, 95f, 5.2f, spring ? SurgeKind.Water : SurgeKind.Sand,
-                        0.35f, 0.75f, 0.8f, spring ? WaterBody : null, null, 2.2f, 0.85f);
+                    Surge.Sheet(w, y0 + i * 120f + c.Random(-15f, 15f), 2.4f, 95f, 5.2f, spring ? SurgeKind.Spring : SurgeKind.Sand,
+                        0.35f, 0.75f, 0.8f, null, null, 2.2f, 0.85f);
                 Fx.Burst(at, HanbaDef.Sand, 24, 6f, 1.2f, 0.4f, 3f);
                 Fx.Ring(c.Spawn + Vector3.up * 0.1f, 8f, HanbaDef.Sand, 0.8f);
                 GameAudio.PlayAt("boss_slam", at, 0.7f, 0.6f);
@@ -131,9 +132,6 @@ namespace Spiritfire.Game
                 c.Overlay(Gold, Mathf.Clamp01(1f - fade) * 0.55f);
             };
         }
-
-        /// <summary>水体体积的本体色（水花色压暗偏青）</summary>
-        static readonly Color WaterBody = new(0.48f, 0.74f, 0.74f, 1);
 
         /// <summary>泉心的水面（有水体时）/ 出生点</summary>
         static Vector3 Surface(BossIntroContext c)

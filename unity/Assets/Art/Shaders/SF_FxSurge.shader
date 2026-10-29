@@ -7,6 +7,8 @@
 //   1 沙：暗赭 / 沙色 / 亮沙，边缘是成团的缺口；
 //   2 熔浆 / 熔铜：暗紫褐的壳 / 铜橙熔流 / 金黄亮芯，不受光；
 //   3 火：赭红边 / 橙 / 金黄芯，半加法（叠色的同时压暗身后），不受光。
+//   4 泉（收尾一轮：旱魃的月牙泉水柱 / 水幕 / 喷泉）：深青水身 / 泉水主色（_ColorA 提亮一档）/ 白沫块，几乎不透明（半透明的青绿叠在亮沙上会混成灰白），
+//     轮廓一圈白沫亮边。
 // 混合：预乘 alpha（Blend One OneMinusSrcAlpha），_Params2.w = 加法比例（0 普通混合 … 1 纯加法）。每个实例的参数走 MaterialPropertyBlock。
 Shader "Spiritfire/FxSurge"
 {
@@ -163,12 +165,23 @@ Shader "Spiritfire/FxSurge"
                     col = lerp(lerp(lo, hi * 0.6, t1), hi, t2);
                     a = lerp(0.88, 1.0, t1);
                 }
-                else
+                else if (mode < 3.5)
                 {
                     // 火：赭红边 / 橙 / 金黄芯，外轮廓是硬一点的火舌边
                     float t1 = SFBand(streak, 0.44), t2 = SFBand(streak + (n3 - 0.5) * 0.2, 0.64);
                     col = lerp(lerp(lo, mid, t1), hi, t2);
                     a = SFBand(streak + (n3 - 0.5) * 0.25, 0.3);
+                }
+                else
+                {
+                    // 泉：深青水身 / 泉水主色 / 白沫块（中尺度的团块），轮廓一圈白沫亮边；几乎不透明
+                    half3 main = saturate(lo * 1.75 + 0.03);
+                    float t1 = SFBand(streak, 0.4), t2 = SFBand(streak + (n3 - 0.5) * 0.34, 0.68);
+                    col = lerp(lerp(lo, main, t1), hi, t2);
+                    col *= lerp(0.86, 1.04, lit);
+                    float foamRim = SFBand(1.0 - facing, 0.7) * max(_Shape.w, 0.35);
+                    col = lerp(col, hi, foamRim);
+                    a = lerp(0.86, 0.97, max(t2, foamRim));
                 }
                 // 贴脸淡出：镜头钻进水柱 / 火尾里时不糊满屏（0.6 m 内全透明，3 m 外不淡）
                 float camDist = distance(i.positionWS, _WorldSpaceCameraPos);

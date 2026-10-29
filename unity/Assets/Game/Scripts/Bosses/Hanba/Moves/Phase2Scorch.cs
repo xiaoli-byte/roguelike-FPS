@@ -10,14 +10,12 @@ namespace Spiritfire.Game
     ///   · 龟裂：沿泉床最低处（各段水的底面中心，没有泉水时取场地中心一圈）铺一串发光的裂缝（不挡路、不挡子弹的细条），隔一段亮一个裂口——喷气裂缝的位置。
     ///   · 喷气：每 <see cref="HanbaDef.ventEvery"/> 秒（按阶段）挑 <see cref="HanbaDef.ventCount"/> 个裂口（离玩家最近、14 m 以内的那个必选，其余随机且互相隔开 5 m），
     ///     先亮 <see cref="HanbaDef.ventWarn"/> 秒圆形地面预警（危险物组：打断招式也照常兑现），再喷：半径 <see cref="HanbaDef.ventRadius"/>、
-    ///     4 m 高以内的人被灼伤并掀起来（不看掩体——从脚下冒出来），白汽柱再冒 1.2 s。
+    ///     4 m 高以内的人被灼伤并掀起来（不看掩体——从脚下冒出来），泉水喷柱再喷 1.2 s。
     /// 躲法：看地面预警走开；喷气把人掀起来时正好躲开贴地的旱风热浪。
     /// </summary>
     public sealed class Phase2Scorch
     {
         static readonly Color Steam = new(0.95f, 0.93f, 0.88f), CrackGlow = Hex.Rgb(0xff8a2a), VentWarn = Hex.Rgb(0xffb070);
-        /// <summary>汽柱体积的本体色（灰白）</summary>
-        static readonly Color SteamBody = new(0.72f, 0.74f, 0.72f);
         /// <summary>两个裂口之间最短多远（米）；吸干占转阶段演出的比例；一次喷发时白汽柱冒多久</summary>
         public const float VentSpacing = 5f, DrainShare = 0.8f, PlumeSeconds = 1.2f, NearPlayer = 14f;
 
@@ -207,16 +205,16 @@ namespace Spiritfire.Game
             float dmg = boss.MoveDamage(d?.ventDamage ?? 0.6f);
             if (Hazards.Blast(p, d?.ventRadius ?? 2.2f, dmg, new BossBlastOpts { maxHeight = 4f, knockUp = 7.5f, element = Element.Fire, ignoreCover = true }))
                 PlayerHits++;
-            Fx.Burst(p + Vector3.up * 0.3f, Steam, 22, 7f, 1f, 0.45f, -3f);
             Fx.Burst(p + Vector3.up * 0.2f, CrackGlow, 8, 4f, 0.5f, 0.15f, 6f);
-            // 喷气：一根冲天的白汽柱（涌流体积，往上翻的条纹）+ 柱脚一圈汽浪和水花
+            // 喷泉：泉床裂口里冲出一根月牙泉水柱（收尾一轮：原来是灰白半透明的汽柱，亮沙上读成一根灰柱子；
+            // 改成风格化的泉水——深青水身 / 泉水主色 / 白沫块，柱顶一蓬白沫团和水珠，柱脚一圈水花团 + 白沫涟漪圈）
             float r = Def?.ventRadius ?? 2.2f;
-            Surge.Column(p, r * 0.45f, 6.5f, SurgeKind.Water, 0.18f, 0.6f, 0.8f, SteamBody, Color.white, 3.4f, 0.8f);
-            Fx.Splash(p + Vector3.up * 0.1f, r * 0.7f, Steam);
+            Fx.SpringSpout(p, r * 0.45f, 6.5f, 0.6f, 3.4f);
             CameraShake.Quake(p, 0.25f, 18f, 0.25f);
             GameAudio.PlayAt("skill_fire", p + Vector3.up * 0.5f, 0.7f, 1.7f);
             GameAudio.PlayAt("shot_beam", p + Vector3.up * 0.5f, 0.35f, 1.9f);
-            Hazards.Repeat(0.12f, PlumeSeconds, () => Fx.Burst(p + Vector3.up * Random.Range(0.6f, 3.2f), Steam, 3, 1.4f, 0.8f, 0.5f, -2.5f));
+            // 喷着的时候柱顶再翻几蓬白沫
+            Hazards.Repeat(0.3f, PlumeSeconds, () => Fx.Play("SpringSplash", p + Vector3.up * Random.Range(4.2f, 5.6f), Vector3.up, Fx.SpringMain, 0.6f));
         }
 
         /// <summary>首领倒下：裂缝熄掉（裂口的预警 / 喷发由危险物清场取消）</summary>
