@@ -17,6 +17,11 @@ namespace Spiritfire.Game
         /// <summary>雾团数（测试用）</summary>
         public int Puffs { get; private set; }
 
+        // 收尾一轮（fx-style ②「雪雾偏冷白，不要纯白糊屏」）：原来霜纹浓度 1.1、雾团是近白的 Mist、同时约 5 + 1.5r 团，
+        // 冰面 / 雪地上整片发白（鲲鹏倒下的余韵那一格几乎整幅浅蓝白）。现在霜纹淡一半、雾团偏冰蓝灰、数量少三成五
+        const float DecalDensity = 0.6f, MistRate = 0.65f;
+        static readonly Color MistTint = new(0.66f, 0.79f, 0.92f);
+
         /// <summary>给 host 加冻雾外观：ground = 雾心（地面），radius、duration 同冻雾</summary>
         public static FrostFogFx Attach(GameObject host, Vector3 ground, float radius, float duration)
         {
@@ -27,9 +32,9 @@ namespace Spiritfire.Game
             f.duration = Mathf.Max(0.5f, duration);
             f.zone = host.GetComponent<HazardZone>();
             f.swirl = Random.value < 0.5f ? -1 : 1;
-            f.decal = FxDecals.Frost(ground + Vector3.up * 0.02f, f.radius, f.duration + 0.4f, 1.1f);
+            f.decal = FxDecals.Frost(ground + Vector3.up * 0.02f, f.radius, f.duration + 0.4f, DecalDensity);
             // 一开始就铺几团，不要等雾慢慢续上
-            f.mistAcc = 3 + f.radius;
+            f.mistAcc = (3 + f.radius) * MistRate;
             return f;
         }
 
@@ -44,8 +49,8 @@ namespace Spiritfire.Game
             var rt = FxRuntime.Ensure();
             if (!rt) return;
             float dens = Fx.Density;
-            // 冷雾：同时约 5 + 1.5r 团，平均寿命 2.1 s
-            mistAcc += dt * (5 + 1.5f * radius) / 2.1f * dens;
+            // 冷雾：同时约 (5 + 1.5r) × 0.65 团，平均寿命 2.1 s
+            mistAcc += dt * (5 + 1.5f * radius) / 2.1f * dens * MistRate;
             var mist = mistAcc >= 1 ? rt.GetEmitter("FrostMist") : null;
             while (mistAcc >= 1)
             {
@@ -57,7 +62,7 @@ namespace Spiritfire.Game
                 var tangent = new Vector3(-o.y, 0, o.x) * swirl;
                 var v = outward * 0.12f + tangent * 0.25f + Vector3.up * Random.Range(0f, 0.08f);
                 float life = Mathf.Min(Random.Range(1.7f, 2.6f), left + 0.6f);
-                rt.EmitOne(mist, p, v, radius * Random.Range(0.42f, 0.62f), life, FrostPalette.Mist, 0);
+                rt.EmitOne(mist, p, v, radius * Random.Range(0.42f, 0.62f), life, MistTint, 0);
                 Puffs++;
             }
             twinkleAcc += dt * (4 + 2 * radius) * dens;

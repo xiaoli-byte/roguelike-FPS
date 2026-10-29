@@ -761,7 +761,13 @@ namespace Spiritfire.Game.Testing
                     pos = look + side * db + dir * db * 0.22f + Vector3.up * (1.2f + sz * 0.3f + dist * 0.08f);
                     break;
             }
+            // 对象沉到水下（鲲没顶、倒下时沉进冰窟）：看水面那一点，机位抬到水面以上——
+            // 机位跟着沉下去会拍出一整幅水下的青色（图集「余韵」那一格，问题清单 #16）
+            float wl = WaterTop(look);
+            if (!float.IsNegativeInfinity(wl)) look.y = wl + 0.3f;
             pos = Unblock(pos, look, side);
+            float wp = WaterTop(pos);
+            if (!float.IsNegativeInfinity(wp)) pos.y = Mathf.Max(pos.y, wp + 1.2f + sz * 0.25f);
             spec.transform.position = pos;
             spec.transform.LookAt(look);
             standIn.transform.position = PlayerFeet + Vector3.up * 0.9f;
@@ -771,6 +777,21 @@ namespace Spiritfire.Game.Testing
             spec.Render();
             spec.targetTexture = prev;
             standIn.SetActive(false);
+        }
+
+        /// <summary>p 在水面以下时返回那片水的水面高度（L8 水体，或鲲鹏冰窟的水面），否则 −∞</summary>
+        static float WaterTop(Vector3 p)
+        {
+            float top = float.NegativeInfinity;
+            if (WaterVolume.At(p, out float depth) is { } w && depth > 0) top = w.Surface;
+            foreach (var h in IceHole.All)
+            {
+                if (!h) continue;
+                var d = p - h.Center;
+                d.y = 0;
+                if (d.magnitude < h.radius && p.y < h.WaterY) top = Mathf.Max(top, h.WaterY);
+            }
+            return top;
         }
 
         /// <summary>机位被墙 / 地形挡住时换到另一侧、再升高，最后贴到遮挡物前面；不钻到地面以下</summary>
