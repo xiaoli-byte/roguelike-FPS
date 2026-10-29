@@ -42,6 +42,14 @@ namespace Spiritfire.Art
         /// <summary>设置里的鼠标灵敏度（倍数）与反转 Y：由玩法层（GameSettings）写入，这个程序集不认识设置表</summary>
         public static float Sensitivity = 1f;
         public static bool InvertY;
+        /// <summary>
+        /// 手柄瞄准辅助（I7，玩法层的 AimAssist 写入）：只在右摇杆转视角的帧调用；参数 = 这一帧的视角增量（度：x 往右、y 往上）与视点，
+        /// 返回改过的增量（准星压在敌人身上时减速、往目标拉一点）。鼠标输入不经过它
+        /// </summary>
+        public static Func<Vector2, Transform, Vector2> StickAssist;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStickAssist() => StickAssist = null;
         /// <summary>开镜时由武器调低（按视角缩放比例），视角灵敏度与画面缩放一致</summary>
         [NonSerialized] public float lookScale = 1f;
         public float coyoteTime = 0.1f, jumpBuffer = 0.12f;
@@ -274,6 +282,7 @@ namespace Spiritfire.Art
             {
                 var d = GameInput.LookDelta * (lookSpeed * lookScale * Sensitivity);
                 if (InvertY) d.y = -d.y;
+                if (StickAssist != null && eye && GameInput.StickLooking) d = StickAssist(d, eye);
                 yaw += d.x;
                 float dPitch = -d.y;
                 pitch = Mathf.Clamp(pitch + dPitch, -88f, 88f);

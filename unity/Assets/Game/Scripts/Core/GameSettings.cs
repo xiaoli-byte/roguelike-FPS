@@ -88,6 +88,8 @@ namespace Spiritfire.Game
 
         public static readonly SettingDef Sensitivity = Add(new SettingDef("sensitivity", "鼠标灵敏度", GroupControls, SettingType.Float, 1f, 0.2f, 3f, 0.05f));
         public static readonly SettingDef InvertY = Add(new SettingDef("invertY", "反转 Y 轴", GroupControls, SettingType.Bool, 0, 0, 1, 1));
+        /// <summary>手柄瞄准辅助（只对右摇杆，见 AimAssist；默认开）</summary>
+        public static readonly SettingDef AimAssist = Add(new SettingDef("aimAssist", "手柄瞄准辅助", GroupControls, SettingType.Bool, 1, 0, 1, 1));
         public static readonly SettingDef Fov = Add(new SettingDef("fov", "视野", GroupVideo, SettingType.Float, 80f, 60f, 110f, 1f));
         public static readonly SettingDef Quality = Add(new SettingDef("quality", "画质", GroupVideo, SettingType.Choice, (float)ArtQualityLevel.High, 0, 2, 1,
             new[] { ArtQuality.Label(ArtQualityLevel.Low), ArtQuality.Label(ArtQualityLevel.Medium), ArtQuality.Label(ArtQualityLevel.High) },

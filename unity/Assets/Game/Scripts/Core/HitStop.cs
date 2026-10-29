@@ -138,15 +138,17 @@ namespace Spiritfire.Game
         static bool ByPlayer(DamageSource s) =>
             s is DamageSource.Weapon or DamageSource.Skill or DamageSource.Melee or DamageSource.Explosion or DamageSource.Scroll;
 
+        // 内置来源的时长 / 缩放读 FeelProfile（I7 定稿；上面的常数是它的默认值）
         void OnKilled(in KillEvent e)
         {
             if (!e.enemy || !ByPlayer(e.info.source)) return;
+            var f = FeelProfile.Active;
             Request(e.enemy.rank switch
             {
-                Rank.Boss => BossKillStop,
-                Rank.Elite => EliteKillStop,
-                _ => KillStop,
-            });
+                Rank.Boss => f.bossKillStop,
+                Rank.Elite => f.eliteKillStop,
+                _ => f.killStop,
+            }, f.hitStopScale);
         }
 
         void OnDamaged(in HitEvent e)
@@ -155,12 +157,12 @@ namespace Spiritfire.Game
             if (e.info.source != DamageSource.Weapon && e.info.source != DamageSource.Melee) return;
             var d = e.enemy;
             float pool = Mathf.Max(1, d.maxHealth + d.maxArmor + d.maxShield);
-            if (e.result.total >= pool * HeavyCritFraction) Request(CritStop);
+            if (e.result.total >= pool * HeavyCritFraction) Request(FeelProfile.Active.critStop, FeelProfile.Active.hitStopScale);
         }
 
         void OnReacted(in ReactionEvent e)
         {
-            if (e.depth == 0 && e.hits > 0) Request(ReactionStop);
+            if (e.depth == 0 && e.hits > 0) Request(FeelProfile.Active.reactionStop, FeelProfile.Active.hitStopScale);
         }
     }
 }
