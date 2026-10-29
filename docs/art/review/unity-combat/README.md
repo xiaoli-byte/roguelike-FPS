@@ -1,10 +1,24 @@
 # Unity 战斗演出审阅图集
 
-生成于 2026-10-26 22:49。浏览器打开同目录的 [index.html](index.html) 体验更好（点图放大、← → 翻页）。
+生成于 2026-10-29 21:03。浏览器打开同目录的 [index.html](index.html) 体验更好（点图放大、← → 翻页）。
 
 每只怪 / 每个首领一张拼图：一行一个招式，四格依次是 **前摇**（预警最满的那一帧）、**出手**、**命中**（没打中则为收招）、**第一人称**（前摇最后一帧的玩家视角）。第三人称旁观机位里的青色胶囊是玩家站位。
 
 重新生成：`bash scripts/unity/bridge.sh playtest gallery-<desert|frost|inferno|hanba|kunpeng|warlord|qilin>`、`playtest boss-intro`、`playtest fx`，然后 `python scripts/unity/combat_gallery.py`。
+
+## 特效打磨（2026-10-29）
+
+四路特效打磨（A 射击核心、B 爆炸 / 元素 / 状态 / 护盾、C 首领与怪物专属 + 预警、D 环境氛围）和一轮风格审查都已完成，本图集是打磨之后用合并后的代码重拍的。特效按 fx-style.md 的准则做：形状先于细节、每个特效 2–3 个色阶、中尺度东方纹样、克制的光、第一人称读感优先；烟尘按章节换暖沙 / 冷白 / 紫褐。各路改前 / 改后对比：
+
+准则：[docs/art/fx-style.md](../../fx-style.md) · 审查报告：[fx-polish/style-audit.md](../fx-polish/style-audit.md)
+
+| 路 | 内容 | 改前 / 改后对比图 |
+|---|---|---|
+| A 射击核心 | 枪口火焰、抛壳、曳光、弹孔 / 焦痕、命中层、暴击、碎刃刀光 | [blade](../fx-polish/A/blade.jpg) · [crit](../fx-polish/A/crit.jpg) · [hits](../fx-polish/A/hits.jpg) · [holes](../fx-polish/A/holes.jpg) · [muzzle-3p-1](../fx-polish/A/muzzle-3p-1.jpg) · [muzzle-3p-2](../fx-polish/A/muzzle-3p-2.jpg) · [muzzle-all-after](../fx-polish/A/muzzle-all-after.jpg) · [muzzle-fp-1](../fx-polish/A/muzzle-fp-1.jpg) · [muzzle-fp-2](../fx-polish/A/muzzle-fp-2.jpg) · [scorch](../fx-polish/A/scorch.jpg) · [shells](../fx-polish/A/shells.jpg) · [tracer](../fx-polish/A/tracer.jpg) |
+| B 爆炸 / 元素 / 状态 / 护盾 | 卡通爆炸三档、五种元素反应、状态外观、护盾球壳 / 破甲、火舌、出生死亡 | [B1-explosion](../fx-polish/B/B1-explosion.jpg) · [B2-reactions](../fx-polish/B/B2-reactions.jpg) · [B3-status-far](../fx-polish/B/B3-status-far.jpg) · [B3b-status-far-zoom](../fx-polish/B/B3b-status-far-zoom.jpg) · [B4-status-near](../fx-polish/B/B4-status-near.jpg) · [B5-shield-armor](../fx-polish/B/B5-shield-armor.jpg) · [B6-flames](../fx-polish/B/B6-flames.jpg) · [B7-spawn-death](../fx-polish/B/B7-spawn-death.jpg) · [B8-spawn-themes](../fx-polish/B/B8-spawn-themes.jpg) |
+| C 首领与怪物专属 + 预警 | 首领登场 / 招式 / 倒下、普通怪招式、三章出生法阵、地面预警 | [enemy-moves](../fx-polish/C/enemy-moves.jpg) · [gallery-hanba-boss_hanba](../fx-polish/C/gallery-hanba-boss_hanba.jpg) · [gallery-kunpeng-boss_kunpeng](../fx-polish/C/gallery-kunpeng-boss_kunpeng.jpg) · [gallery-qilin-boss_qilin](../fx-polish/C/gallery-qilin-boss_qilin.jpg) · [gallery-warlord-boss_warlord](../fx-polish/C/gallery-warlord-boss_warlord.jpg) · [intro-hanba](../fx-polish/C/intro-hanba.jpg) · [intro-kunpeng](../fx-polish/C/intro-kunpeng.jpg) · [intro-qilin](../fx-polish/C/intro-qilin.jpg) · [intro-warlord](../fx-polish/C/intro-warlord.jpg) · [spawn-sigils](../fx-polish/C/spawn-sigils.jpg) · [style-pass](../fx-polish/C/style-pass.jpg) · [telegraph-look](../fx-polish/C/telegraph-look.jpg) |
+| D 环境氛围 | 12 关空气粒子、火盆 / 灯笼、水面 / 流沙 / 熔岩、沙帘 | [envfx_1-1](../fx-polish/D/envfx_1-1.jpg) · [envfx_1-2](../fx-polish/D/envfx_1-2.jpg) · [envfx_1-3](../fx-polish/D/envfx_1-3.jpg) · [envfx_1-4](../fx-polish/D/envfx_1-4.jpg) · [envfx_2-1](../fx-polish/D/envfx_2-1.jpg) · [envfx_2-2](../fx-polish/D/envfx_2-2.jpg) · [envfx_2-3](../fx-polish/D/envfx_2-3.jpg) · [envfx_2-4](../fx-polish/D/envfx_2-4.jpg) · [envfx_3-1](../fx-polish/D/envfx_3-1.jpg) · [envfx_3-2](../fx-polish/D/envfx_3-2.jpg) · [envfx_3-3](../fx-polish/D/envfx_3-3.jpg) · [envfx_3-4](../fx-polish/D/envfx_3-4.jpg) |
+| 风格审查 | 按 fx-style.md 自查清单逐项过 A / B 两路，亮沙 / 雪 / 熔岩三种地面改前 / 改后（S1–S12） | [S1-explosion-grounds](../fx-polish/style/S1-explosion-grounds.jpg) · [S2-explosion-sequence](../fx-polish/style/S2-explosion-sequence.jpg) · [S3-reactions](../fx-polish/style/S3-reactions.jpg) · [S4-status](../fx-polish/style/S4-status.jpg) · [S5-shield-armor](../fx-polish/style/S5-shield-armor.jpg) · [S6-fire-grounds](../fx-polish/style/S6-fire-grounds.jpg) · [S7-muzzle](../fx-polish/style/S7-muzzle.jpg) · [S8-ground-marks](../fx-polish/style/S8-ground-marks.jpg) · [S9-holes-scorch](../fx-polish/style/S9-holes-scorch.jpg) · [S10-hits](../fx-polish/style/S10-hits.jpg) · [S11-blade](../fx-polish/style/S11-blade.jpg) · [S12-spawn-death](../fx-polish/style/S12-spawn-death.jpg) |
 
 ## 截图说明
 
@@ -13,7 +27,7 @@
 - 第三章模型暂缓，3-3 / 3-4 场地里的方块和浅色板是白盒占位；场地柱子密，个别旁观机位被柱子挡住。
 - 「命中」= 出手后玩家第一次挨的一下（4 点以上，跳伤不算）；几只怪同时出手时可能记到别的怪头上。没打中就拍收招；辅助招（施法、换位、护甲）第三格是出手后 0.7 s 的「效果」。
 - 「第一人称」格：眼睛位置不动、视线临时转向出招者（拍完还原），看的是玩家正看着它时预警读不读得出来。
-- 第二、三章专属特效（FX3 abb8842a、FX4 26ea0002）提交之后才截的第二、三章普通怪；各图标题里有截图时间。
+- 本轮（2026-10-29）在特效打磨四路 + 风格审查收口之后、用合并 ff7ad722 后的代码全部重拍：七组 gallery、boss-intro（测试场 + 四个首领关）、fx；各图标题里有截图时间。
 
 ## 问题清单
 
@@ -32,238 +46,234 @@
 | 11 | 低 | 特效 | 状态外观（通用） | 五种状态主要靠整体染色区分（橙 / 紫 / 绿 / 黄 / 蓝），感电和减速在近景里几乎没有粒子（电弧、冰晶）；第一人称 15 m 外只能靠颜色分辨，减速和感电的蓝紫色容易混。 | **已修：减速改冰白 + 冰晶星芒 + 细雪，和雷元素天蓝拉开；感电频闪拉开明暗、电弧更多更亮（StatusFx）；fx 回归通过、已重拍** | [fx-status](fx-status.jpg) |
 | 12 | 低 | 演出 | 鲲鹏（2-4） | 倒下演出偏短：被击杀后 1.5 s 鹏还在下坠，3.5 s 时场上已经什么都不剩（没有残骸 / 落羽 / 冰面余波），和旱魃、魔将、火麒麟的倒下演出相比收得太快。 | **已修：倒下演出 3.2 → 4.4 s，鹏 55% 砸冰面（碎冰 + 冰环 + 震屏）后趴着抽两下、鲲没顶涌冰浪，炸开后落点留 6 s 冻雾 + 霜斑（KunPengBrain）；boss-kunpeng 回归通过、已重拍** | [kunpeng-boss_kunpeng](kunpeng-boss_kunpeng.jpg) |
 
-招式表里有、这一轮没截到的招式：第二章 · 冰原 九尾狐巫 · 狐火；第二章 · 冰原 三青鸟 · 歇脚；第三章 · 火狱 炮仗傀儡 · 哑炸倒地；第三章 · 火狱 熔铜匠 · 裂锅；第三章 · 火狱 马面狱卒 · 重拳；第三章 · 火狱 变脸傩巫 · 碎面
+招式表里有、这一轮没截到的招式：第二章 · 冰原 九尾狐巫 · 狐火；第二章 · 冰原 三青鸟 · 歇脚；第三章 · 火狱 炮仗傀儡 · 哑炸倒地；第三章 · 火狱 熔铜匠 · 裂锅；第三章 · 火狱 马面狱卒 · 重拳；第三章 · 火狱 变脸傩巫 · 碎面；第三章 · 火狱 火鼍 · 陆上扑咬
 
 ## 一、首领登场演出
 
-**旱魃 · 1-4 鸣沙山月牙泉** `hanba` · 8 张 · 截于 2026-10-25 19:07
+**旱魃 · 1-4 鸣沙山月牙泉** `hanba` · 8 张 · 截于 2026-10-29 21:00
 
 ![旱魃 · 1-4 鸣沙山月牙泉](intro-hanba.jpg)
 
-**鲲鹏 · 2-4 北冥** `kunpeng` · 8 张 · 截于 2026-10-25 19:57
+**鲲鹏 · 2-4 北冥** `kunpeng` · 8 张 · 截于 2026-10-29 21:01
 
 ![鲲鹏 · 2-4 北冥](intro-kunpeng.jpg)
 
-**熔心魔将 · 3-3 熔铸坊** `warlord` · 8 张 · 截于 2026-10-25 20:04
+**熔心魔将 · 3-3 熔铸坊** `warlord` · 8 张 · 截于 2026-10-29 21:01
 
 ![熔心魔将 · 3-3 熔铸坊](intro-warlord.jpg)
 
-**火麒麟 · 3-4 祝融殿** `qilin` · 8 张 · 截于 2026-10-25 20:12
+**火麒麟 · 3-4 祝融殿** `qilin` · 8 张 · 截于 2026-10-29 21:02
 
 ![火麒麟 · 3-4 祝融殿](intro-qilin.jpg)
 
 
 ## 二、首领招式 · 旱魃（1-4）
 
-**旱魃** `boss_hanba` · 59 张 · 截于 2026-10-26 22:15
+**旱魃** `boss_hanba` · 59 张 · 截于 2026-10-29 20:15
 
 ![旱魃](hanba-boss_hanba.jpg)
 
-**邪飞天** `apsara` · 5 张 · 截于 2026-10-26 22:15
+**邪飞天** `apsara` · 5 张 · 截于 2026-10-29 20:15
 
 ![邪飞天](hanba-apsara.jpg)
 
-**沙魇** `sand_wraith` · 12 张 · 截于 2026-10-26 22:15
+**沙魇** `sand_wraith` · 12 张 · 截于 2026-10-29 20:15
 
 ![沙魇](hanba-sand_wraith.jpg)
 
-**蝎尾弩卫** `scorpion_archer` · 4 张 · 截于 2026-10-26 22:15
+**蝎尾弩卫** `scorpion_archer` · 4 张 · 截于 2026-10-29 20:15
 
 ![蝎尾弩卫](hanba-scorpion_archer.jpg)
 
 
 ## 二、首领招式 · 鲲鹏（2-4）
 
-**鲲鹏** `boss_kunpeng` · 39 张 · 截于 2026-10-26 22:09
+**鲲鹏** `boss_kunpeng` · 39 张 · 截于 2026-10-29 20:19
 
 ![鲲鹏](kunpeng-boss_kunpeng.jpg)
 
 
 ## 二、首领招式 · 熔心魔将（3-3）
 
-**熔心魔将** `boss_warlord` · 55 张 · 截于 2026-10-26 22:25
+**熔心魔将** `boss_warlord` · 59 张 · 截于 2026-10-29 20:25
 
 ![熔心魔将](warlord-boss_warlord.jpg)
 
 
 ## 二、首领招式 · 火麒麟（3-4）
 
-**火麒麟** `boss_qilin` · 47 张 · 截于 2026-10-26 22:18
+**火麒麟** `boss_qilin` · 47 张 · 截于 2026-10-29 20:27
 
 ![火麒麟](qilin-boss_qilin.jpg)
 
-**神火飞鸦** `fire_crow` · 4 张 · 截于 2026-10-26 22:18
+**神火飞鸦** `fire_crow` · 4 张 · 截于 2026-10-29 20:27
 
 ![神火飞鸦](qilin-fire_crow.jpg)
 
-**炭童** `tantong` · 8 张 · 截于 2026-10-26 22:18
+**炭童** `tantong` · 8 张 · 截于 2026-10-29 20:27
 
 ![炭童](qilin-tantong.jpg)
 
 
 ## 三、普通怪物 · 第一章 · 沙海
 
-**邪飞天** `apsara` · 14 张 · 截于 2026-10-26 22:22
+**邪飞天** `apsara` · 14 张 · 截于 2026-10-29 20:41
 
 ![邪飞天](desert-apsara.jpg)
 
-**火浣鼠** `fire_rat` · 10 张 · 截于 2026-10-26 22:22
+**火浣鼠** `fire_rat` · 10 张 · 截于 2026-10-29 20:41
 
 ![火浣鼠](desert-fire_rat.jpg)
 
-**跳鼠刀兵** `jerboa_blade` · 14 张 · 截于 2026-10-26 22:22
+**跳鼠刀兵** `jerboa_blade` · 14 张 · 截于 2026-10-29 20:41
 
 ![跳鼠刀兵](desert-jerboa_blade.jpg)
 
-**蜃楼蟾** `mirage_toad` · 13 张 · 截于 2026-10-26 22:22
+**蜃楼蟾** `mirage_toad` · 13 张 · 截于 2026-10-29 20:41
 
 ![蜃楼蟾](desert-mirage_toad.jpg)
 
-**蜃景** `mirage_toad_decoy` · 4 张 · 截于 2026-10-26 22:22
-
-![蜃景](desert-mirage_toad_decoy.jpg)
-
-**沙魇** `sand_wraith` · 17 张 · 截于 2026-10-26 22:22
+**沙魇** `sand_wraith` · 17 张 · 截于 2026-10-29 20:41
 
 ![沙魇](desert-sand_wraith.jpg)
 
-**蝎尾弩卫** `scorpion_archer` · 17 张 · 截于 2026-10-26 22:22
+**蝎尾弩卫** `scorpion_archer` · 17 张 · 截于 2026-10-29 20:41
 
 ![蝎尾弩卫](desert-scorpion_archer.jpg)
 
-**三彩镇墓兽** `tomb_beast` · 15 张 · 截于 2026-10-26 22:22
+**三彩镇墓兽** `tomb_beast` · 15 张 · 截于 2026-10-29 20:41
 
 ![三彩镇墓兽](desert-tomb_beast.jpg)
 
 
 ## 三、普通怪物 · 第二章 · 冰原
 
-**九尾狐巫** `fox_witch` · 22 张 · 截于 2026-10-26 22:28（没截到：狐火）
+**九尾狐巫** `fox_witch` · 22 张 · 截于 2026-10-29 20:44（没截到：狐火）
 
 ![九尾狐巫](frost-fox_witch.jpg)
 
-**玄冰巨蟹** `frost_crab` · 17 张 · 截于 2026-10-26 22:28
+**玄冰巨蟹** `frost_crab` · 18 张 · 截于 2026-10-29 20:44
 
 ![玄冰巨蟹](frost-frost_crab.jpg)
 
-**夫诸** `fuzhu` · 13 张 · 截于 2026-10-26 22:28
+**夫诸** `fuzhu` · 13 张 · 截于 2026-10-29 20:44
 
 ![夫诸](frost-fuzhu.jpg)
 
-**冰棘豪彘** `haozhi` · 13 张 · 截于 2026-10-26 22:28
+**冰棘豪彘** `haozhi` · 13 张 · 截于 2026-10-29 20:44
 
 ![冰棘豪彘](frost-haozhi.jpg)
 
-**冰河豚** `ice_puffer` · 12 张 · 截于 2026-10-26 22:28
+**冰河豚** `ice_puffer` · 12 张 · 截于 2026-10-29 20:44
 
 ![冰河豚](frost-ice_puffer.jpg)
 
-**冰鲸** `ice_whale` · 13 张 · 截于 2026-10-26 22:28
+**冰鲸** `ice_whale` · 13 张 · 截于 2026-10-29 20:44
 
 ![冰鲸](frost-ice_whale.jpg)
 
-**冻鲛人** `jiaoren` · 17 张 · 截于 2026-10-26 22:28
+**冻鲛人** `jiaoren` · 17 张 · 截于 2026-10-29 20:44
 
 ![冻鲛人](frost-jiaoren.jpg)
 
-**冰灯水母** `lantern_jelly` · 9 张 · 截于 2026-10-26 22:28
+**冰灯水母** `lantern_jelly` · 9 张 · 截于 2026-10-29 20:44
 
 ![冰灯水母](frost-lantern_jelly.jpg)
 
-**三青鸟** `qingniao` · 14 张 · 截于 2026-10-26 22:28（没截到：歇脚）
+**三青鸟** `qingniao` · 14 张 · 截于 2026-10-29 20:44（没截到：歇脚）
 
 ![三青鸟](frost-qingniao.jpg)
 
-**雪狌狌** `xingxing` · 25 张 · 截于 2026-10-26 22:28
+**雪狌狌** `xingxing` · 25 张 · 截于 2026-10-29 20:44
 
 ![雪狌狌](frost-xingxing.jpg)
 
-**冰甲旋龟** `xuangui` · 22 张 · 截于 2026-10-26 22:28
+**冰甲旋龟** `xuangui` · 22 张 · 截于 2026-10-29 20:44
 
 ![冰甲旋龟](frost-xuangui.jpg)
 
 
 ## 三、普通怪物 · 第三章 · 火狱
 
-**毕方** `bifang` · 17 张 · 截于 2026-10-26 22:33
+**毕方** `bifang` · 17 张 · 截于 2026-10-29 20:49
 
 ![毕方](inferno-bifang.jpg)
 
-**神火飞鸦** `fire_crow` · 9 张 · 截于 2026-10-26 22:33
+**神火飞鸦** `fire_crow` · 9 张 · 截于 2026-10-29 20:49
 
 ![神火飞鸦](inferno-fire_crow.jpg)
 
-**炮仗傀儡** `firecracker` · 14 张 · 截于 2026-10-26 22:33（没截到：哑炸倒地）
+**炮仗傀儡** `firecracker` · 14 张 · 截于 2026-10-29 20:49（没截到：哑炸倒地）
 
 ![炮仗傀儡](inferno-firecracker.jpg)
 
-**熔铜匠** `founder` · 14 张 · 截于 2026-10-26 22:33（没截到：裂锅）
+**熔铜匠** `founder` · 14 张 · 截于 2026-10-29 20:49（没截到：裂锅）
 
 ![熔铜匠](inferno-founder.jpg)
 
-**祸斗** `huodou` · 17 张 · 截于 2026-10-26 22:33
+**祸斗** `huodou` · 17 张 · 截于 2026-10-29 20:49
 
 ![祸斗](inferno-huodou.jpg)
 
-**熔炉铁牛** `iron_ox` · 16 张 · 截于 2026-10-26 22:33
+**熔炉铁牛** `iron_ox` · 16 张 · 截于 2026-10-29 20:49
 
 ![熔炉铁牛](inferno-iron_ox.jpg)
 
-**马面狱卒** `mamian` · 16 张 · 截于 2026-10-26 22:33（没截到：重拳）
+**马面狱卒** `mamian` · 17 张 · 截于 2026-10-29 20:49（没截到：重拳）
 
 ![马面狱卒](inferno-mamian.jpg)
 
-**变脸傩巫** `nuo` · 14 张 · 截于 2026-10-26 22:33（没截到：碎面）
+**变脸傩巫** `nuo` · 14 张 · 截于 2026-10-29 20:49（没截到：碎面）
 
 ![变脸傩巫](inferno-nuo.jpg)
 
-**炭童** `tantong` · 17 张 · 截于 2026-10-26 22:33
+**炭童** `tantong` · 17 张 · 截于 2026-10-29 20:49
 
 ![炭童](inferno-tantong.jpg)
 
-**炭童** `tantong_reborn` · 9 张 · 截于 2026-10-26 22:33
+**炭童** `tantong_reborn` · 9 张 · 截于 2026-10-29 20:49
 
 ![炭童](inferno-tantong_reborn.jpg)
 
-**火鼍** `tuo` · 28 张 · 截于 2026-10-26 22:33
+**火鼍** `tuo` · 24 张 · 截于 2026-10-29 20:49（没截到：陆上扑咬）
 
 ![火鼍](inferno-tuo.jpg)
 
 
 ## 四、通用战斗特效
 
-**命中 / 暴击 / 破盾破甲** `hit` · 6 张 · 截于 2026-10-26 22:45
+**命中 / 暴击 / 破盾破甲** `hit` · 6 张 · 截于 2026-10-29 20:58
 
 ![命中 / 暴击 / 破盾破甲](fx-hit.jpg)
 
-**弹着点 / 弹孔（沙 · 石 · 冰 · 金属）** `impact` · 8 张 · 截于 2026-10-26 22:45
+**弹着点 / 弹孔（沙 · 石 · 冰 · 金属）** `impact` · 8 张 · 截于 2026-10-29 20:58
 
 ![弹着点 / 弹孔（沙 · 石 · 冰 · 金属）](fx-impact.jpg)
 
-**爆炸 + 焦痕 / 枪口火焰 / 雷击** `blast` · 5 张 · 截于 2026-10-26 22:45
+**爆炸 + 焦痕 / 枪口火焰 / 雷击** `blast` · 5 张 · 截于 2026-10-29 20:58
 
 ![爆炸 + 焦痕 / 枪口火焰 / 雷击](fx-blast.jpg)
 
-**元素曳光（火 / 雷 / 蚀）** `tracer` · 6 张 · 截于 2026-10-26 22:45
+**元素曳光（火 / 雷 / 蚀）** `tracer` · 6 张 · 截于 2026-10-29 20:58
 
 ![元素曳光（火 / 雷 / 蚀）](fx-tracer.jpg)
 
-**状态外观** `status` · 6 张 · 截于 2026-10-26 22:45
+**状态外观** `status` · 6 张 · 截于 2026-10-29 20:58
 
 ![状态外观](fx-status.jpg)
 
-**出生法阵 + 显形 / 死亡迸散 + 溶解** `spawn` · 4 张 · 截于 2026-10-26 22:45
+**出生法阵 + 显形 / 死亡迸散 + 溶解** `spawn` · 4 张 · 截于 2026-10-29 20:58
 
 ![出生法阵 + 显形 / 死亡迸散 + 溶解](fx-spawn.jpg)
 
-**元素反应（熔池 / 归墟）** `reaction` · 5 张 · 截于 2026-10-26 22:45
+**元素反应（熔池 / 归墟）** `reaction` · 5 张 · 截于 2026-10-29 20:58
 
 ![元素反应（熔池 / 归墟）](fx-reaction.jpg)
 
-**FX3 冰霜专属** `frost` · 15 张 · 截于 2026-10-26 22:45
+**FX3 冰霜专属** `frost` · 15 张 · 截于 2026-10-29 20:58
 
 ![FX3 冰霜专属](fx-frost.jpg)
 
-**FX4 火狱专属** `inferno` · 17 张 · 截于 2026-10-26 22:46
+**FX4 火狱专属** `inferno` · 17 张 · 截于 2026-10-29 20:59
 
 ![FX4 火狱专属](fx-inferno.jpg)

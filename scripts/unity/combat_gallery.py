@@ -297,13 +297,37 @@ def build_fx():
 
 SEV = {"高": "#e5484d", "中": "#f5a524", "低": "#8b8d98"}
 
+# 总览页开头的「特效打磨」一段：准则 + 审查报告 + 各路改前 / 改后对比图（docs/art/review/fx-polish/<路>/*.jpg，按文件名排）
+FX_POLISH_DATE = "2026-10-29"
+FX_POLISH = ROOT / "docs/art/review/fx-polish"
+FX_POLISH_LANES = [
+    ("A", "A 射击核心", "枪口火焰、抛壳、曳光、弹孔 / 焦痕、命中层、暴击、碎刃刀光"),
+    ("B", "B 爆炸 / 元素 / 状态 / 护盾", "卡通爆炸三档、五种元素反应、状态外观、护盾球壳 / 破甲、火舌、出生死亡"),
+    ("C", "C 首领与怪物专属 + 预警", "首领登场 / 招式 / 倒下、普通怪招式、三章出生法阵、地面预警"),
+    ("D", "D 环境氛围", "12 关空气粒子、火盆 / 灯笼、水面 / 流沙 / 熔岩、沙帘"),
+    ("style", "风格审查", "按 fx-style.md 自查清单逐项过 A / B 两路，亮沙 / 雪 / 熔岩三种地面改前 / 改后（S1–S12）"),
+]
+FX_POLISH_TEXT = ("四路特效打磨（A 射击核心、B 爆炸 / 元素 / 状态 / 护盾、C 首领与怪物专属 + 预警、D 环境氛围）和一轮风格审查都已完成，"
+                  "本图集是打磨之后用合并后的代码重拍的。特效按 fx-style.md 的准则做：形状先于细节、每个特效 2–3 个色阶、"
+                  "中尺度东方纹样、克制的光、第一人称读感优先；烟尘按章节换暖沙 / 冷白 / 紫褐。各路改前 / 改后对比：")
+
+
+def fx_polish_links():
+    """[(路标题, 说明, [(图名, 相对 unity-combat 的路径)])]"""
+    out = []
+    for key, title, desc in FX_POLISH_LANES:
+        d = FX_POLISH / key
+        files = sorted(d.glob("*.jpg"), key=lambda p: [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", p.stem)]) if d.is_dir() else []
+        out.append((title, desc, [(p.stem, f"../fx-polish/{key}/{p.name}") for p in files]))
+    return out
+
 NOTES = [
     "三章普通怪都在测试场（TestArena）截：沙地、红色刷怪台、悬浮的武器架是测试场的东西，不是本章地形（红色圆台不是预警，别和红 / 橙色预警混看）；首领在各自的真实关卡里截。",
     "普通和精英同时刷在刷怪台上，冰鲸、玄冰巨蟹这类大体型的两只会互相穿插——是测试摆位，不是游戏问题。",
     "第三章模型暂缓，3-3 / 3-4 场地里的方块和浅色板是白盒占位；场地柱子密，个别旁观机位被柱子挡住。",
     "「命中」= 出手后玩家第一次挨的一下（4 点以上，跳伤不算）；几只怪同时出手时可能记到别的怪头上。没打中就拍收招；辅助招（施法、换位、护甲）第三格是出手后 0.7 s 的「效果」。",
     "「第一人称」格：眼睛位置不动、视线临时转向出招者（拍完还原），看的是玩家正看着它时预警读不读得出来。",
-    "第二、三章专属特效（FX3 abb8842a、FX4 26ea0002）提交之后才截的第二、三章普通怪；各图标题里有截图时间。",
+    "本轮（2026-10-29）在特效打磨四路 + 风格审查收口之后、用合并 ff7ad722 后的代码全部重拍：七组 gallery、boss-intro（测试场 + 四个首领关）、fx；各图标题里有截图时间。",
 ]
 
 
@@ -343,7 +367,15 @@ background:#000c;color:var(--fg);font-size:14px}
              "四格依次是<b style='color:#f0b43c'>前摇</b>（预警最满的那一帧）、<b style='color:#f57832'>出手</b>、<b style='color:#eb4646'>命中</b>"
              "（没打中则为收招）、<b style='color:#5aa0f5'>第一人称</b>（前摇最后一帧的玩家视角）。第三人称旁观机位里的<b style='color:#5af2ff'>青色胶囊</b>是玩家站位。"
              "点图放大，← → 翻页，Esc 关闭。</div></header>")
-    h.append("<nav><a href='#issues'>问题清单</a>" + "".join(f"<a href='#{k}'>{t.split('、', 1)[1]}</a>" for k, t, _ in sections) + "</nav><main>")
+    h.append("<nav><a href='#fx-polish'>特效打磨</a><a href='#issues'>问题清单</a>" + "".join(f"<a href='#{k}'>{t.split('、', 1)[1]}</a>" for k, t, _ in sections) + "</nav><main>")
+    # 特效打磨
+    h.append(f"<h2 id='fx-polish'>特效打磨（{FX_POLISH_DATE}）</h2><p>{html.escape(FX_POLISH_TEXT)}</p><p>"
+             "准则：<a href='../../fx-style.md'>docs/art/fx-style.md</a> · 审查报告：<a href='../fx-polish/style-audit.md'>fx-polish/style-audit.md</a></p>"
+             "<table><tr><th>路</th><th>内容</th><th>改前 / 改后对比图</th></tr>")
+    for title, desc, files in fx_polish_links():
+        links = " · ".join(f"<a href='{html.escape(p)}'>{html.escape(n)}</a>" for n, p in files) or "<span class='dim'>（无）</span>"
+        h.append(f"<tr><td>{html.escape(title)}</td><td class='dim'>{html.escape(desc)}</td><td>{links}</td></tr>")
+    h.append("</table>")
     # 概况
     h.append("<h2 id='summary'>截图概况</h2><table><tr><th>分组</th><th>拼图</th><th>截图</th><th>截图时间</th></tr>")
     names = {"intro": "首领登场", "fx": "通用特效", **{g: v[0] for g, v in GROUPS.items()}}
@@ -394,7 +426,12 @@ addEventListener('keydown',e=>{if(k<0)return;if(e.key==='ArrowRight')show(k+1);e
          "第三人称旁观机位里的青色胶囊是玩家站位。", "",
          "重新生成：`bash scripts/unity/bridge.sh playtest gallery-<desert|frost|inferno|hanba|kunpeng|warlord|qilin>`、`playtest boss-intro`、`playtest fx`，"
          "然后 `python scripts/unity/combat_gallery.py`。", "",
-         "## 截图说明", ""] + [f"- {n}" for n in NOTES] + ["",
+         f"## 特效打磨（{FX_POLISH_DATE}）", "", FX_POLISH_TEXT, "",
+         "准则：[docs/art/fx-style.md](../../fx-style.md) · 审查报告：[fx-polish/style-audit.md](../fx-polish/style-audit.md)", "",
+         "| 路 | 内容 | 改前 / 改后对比图 |", "|---|---|---|"]
+    for title, desc, files in fx_polish_links():
+        m.append(f"| {title} | {desc} | {' · '.join(f'[{n}]({p})' for n, p in files) or '（无）'} |")
+    m += ["", "## 截图说明", ""] + [f"- {n}" for n in NOTES] + ["",
          "## 问题清单", "", "| # | 严重 | 归属 | 对象 | 问题 | 状态 | 见图 |", "|---|---|---|---|---|---|---|"]
     for i, it in enumerate(issues, 1):
         refs = " ".join(f"[{r}]({r}.jpg)" for r in it.get("refs", []))

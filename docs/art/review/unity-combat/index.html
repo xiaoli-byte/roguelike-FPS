@@ -16,20 +16,27 @@ figcaption b{color:var(--fg)}figcaption .lack{color:#f5a524}
 #lb img{display:block;margin:0 auto;max-width:none;width:min(1660px,100%)}#lb .bar{position:fixed;left:0;right:0;bottom:0;padding:8px 16px;
 background:#000c;color:var(--fg);font-size:14px}
 </style></head><body>
-<header><h1>Unity 战斗演出审阅图集</h1><div class='dim'>生成于 2026-10-26 22:49 · 每只怪 / 每个首领一张拼图：一行一个招式，四格依次是<b style='color:#f0b43c'>前摇</b>（预警最满的那一帧）、<b style='color:#f57832'>出手</b>、<b style='color:#eb4646'>命中</b>（没打中则为收招）、<b style='color:#5aa0f5'>第一人称</b>（前摇最后一帧的玩家视角）。第三人称旁观机位里的<b style='color:#5af2ff'>青色胶囊</b>是玩家站位。点图放大，← → 翻页，Esc 关闭。</div></header>
-<nav><a href='#issues'>问题清单</a><a href='#intro'>首领登场演出</a><a href='#hanba'>首领招式 · 旱魃（1-4）</a><a href='#kunpeng'>首领招式 · 鲲鹏（2-4）</a><a href='#warlord'>首领招式 · 熔心魔将（3-3）</a><a href='#qilin'>首领招式 · 火麒麟（3-4）</a><a href='#desert'>普通怪物 · 第一章 · 沙海</a><a href='#frost'>普通怪物 · 第二章 · 冰原</a><a href='#inferno'>普通怪物 · 第三章 · 火狱</a><a href='#fx'>通用战斗特效</a></nav><main>
-<h2 id='summary'>截图概况</h2><table><tr><th>分组</th><th>拼图</th><th>截图</th><th>截图时间</th></tr>
-<tr><td>首领登场</td><td>4</td><td>32</td><td>2026-10-25 19:07 / 2026-10-25 20:12</td></tr>
-<tr><td>首领 · 旱魃（1-4）</td><td>4</td><td>80</td><td>2026-10-26 22:15</td></tr>
-<tr><td>首领 · 鲲鹏（2-4）</td><td>1</td><td>39</td><td>2026-10-26 22:09</td></tr>
-<tr><td>首领 · 熔心魔将（3-3）</td><td>1</td><td>55</td><td>2026-10-26 22:25</td></tr>
-<tr><td>首领 · 火麒麟（3-4）</td><td>3</td><td>59</td><td>2026-10-26 22:18</td></tr>
-<tr><td>第一章 · 沙海</td><td>8</td><td>104</td><td>2026-10-26 22:22</td></tr>
-<tr><td>第二章 · 冰原</td><td>11</td><td>177</td><td>2026-10-26 22:28</td></tr>
-<tr><td>第三章 · 火狱</td><td>11</td><td>171</td><td>2026-10-26 22:33</td></tr>
-<tr><td>通用特效</td><td>9</td><td>72</td><td>2026-10-26 22:45 / 2026-10-26 22:46</td></tr>
+<header><h1>Unity 战斗演出审阅图集</h1><div class='dim'>生成于 2026-10-29 21:03 · 每只怪 / 每个首领一张拼图：一行一个招式，四格依次是<b style='color:#f0b43c'>前摇</b>（预警最满的那一帧）、<b style='color:#f57832'>出手</b>、<b style='color:#eb4646'>命中</b>（没打中则为收招）、<b style='color:#5aa0f5'>第一人称</b>（前摇最后一帧的玩家视角）。第三人称旁观机位里的<b style='color:#5af2ff'>青色胶囊</b>是玩家站位。点图放大，← → 翻页，Esc 关闭。</div></header>
+<nav><a href='#fx-polish'>特效打磨</a><a href='#issues'>问题清单</a><a href='#intro'>首领登场演出</a><a href='#hanba'>首领招式 · 旱魃（1-4）</a><a href='#kunpeng'>首领招式 · 鲲鹏（2-4）</a><a href='#warlord'>首领招式 · 熔心魔将（3-3）</a><a href='#qilin'>首领招式 · 火麒麟（3-4）</a><a href='#desert'>普通怪物 · 第一章 · 沙海</a><a href='#frost'>普通怪物 · 第二章 · 冰原</a><a href='#inferno'>普通怪物 · 第三章 · 火狱</a><a href='#fx'>通用战斗特效</a></nav><main>
+<h2 id='fx-polish'>特效打磨（2026-10-29）</h2><p>四路特效打磨（A 射击核心、B 爆炸 / 元素 / 状态 / 护盾、C 首领与怪物专属 + 预警、D 环境氛围）和一轮风格审查都已完成，本图集是打磨之后用合并后的代码重拍的。特效按 fx-style.md 的准则做：形状先于细节、每个特效 2–3 个色阶、中尺度东方纹样、克制的光、第一人称读感优先；烟尘按章节换暖沙 / 冷白 / 紫褐。各路改前 / 改后对比：</p><p>准则：<a href='../../fx-style.md'>docs/art/fx-style.md</a> · 审查报告：<a href='../fx-polish/style-audit.md'>fx-polish/style-audit.md</a></p><table><tr><th>路</th><th>内容</th><th>改前 / 改后对比图</th></tr>
+<tr><td>A 射击核心</td><td class='dim'>枪口火焰、抛壳、曳光、弹孔 / 焦痕、命中层、暴击、碎刃刀光</td><td><a href='../fx-polish/A/blade.jpg'>blade</a> · <a href='../fx-polish/A/crit.jpg'>crit</a> · <a href='../fx-polish/A/hits.jpg'>hits</a> · <a href='../fx-polish/A/holes.jpg'>holes</a> · <a href='../fx-polish/A/muzzle-3p-1.jpg'>muzzle-3p-1</a> · <a href='../fx-polish/A/muzzle-3p-2.jpg'>muzzle-3p-2</a> · <a href='../fx-polish/A/muzzle-all-after.jpg'>muzzle-all-after</a> · <a href='../fx-polish/A/muzzle-fp-1.jpg'>muzzle-fp-1</a> · <a href='../fx-polish/A/muzzle-fp-2.jpg'>muzzle-fp-2</a> · <a href='../fx-polish/A/scorch.jpg'>scorch</a> · <a href='../fx-polish/A/shells.jpg'>shells</a> · <a href='../fx-polish/A/tracer.jpg'>tracer</a></td></tr>
+<tr><td>B 爆炸 / 元素 / 状态 / 护盾</td><td class='dim'>卡通爆炸三档、五种元素反应、状态外观、护盾球壳 / 破甲、火舌、出生死亡</td><td><a href='../fx-polish/B/B1-explosion.jpg'>B1-explosion</a> · <a href='../fx-polish/B/B2-reactions.jpg'>B2-reactions</a> · <a href='../fx-polish/B/B3-status-far.jpg'>B3-status-far</a> · <a href='../fx-polish/B/B3b-status-far-zoom.jpg'>B3b-status-far-zoom</a> · <a href='../fx-polish/B/B4-status-near.jpg'>B4-status-near</a> · <a href='../fx-polish/B/B5-shield-armor.jpg'>B5-shield-armor</a> · <a href='../fx-polish/B/B6-flames.jpg'>B6-flames</a> · <a href='../fx-polish/B/B7-spawn-death.jpg'>B7-spawn-death</a> · <a href='../fx-polish/B/B8-spawn-themes.jpg'>B8-spawn-themes</a></td></tr>
+<tr><td>C 首领与怪物专属 + 预警</td><td class='dim'>首领登场 / 招式 / 倒下、普通怪招式、三章出生法阵、地面预警</td><td><a href='../fx-polish/C/enemy-moves.jpg'>enemy-moves</a> · <a href='../fx-polish/C/gallery-hanba-boss_hanba.jpg'>gallery-hanba-boss_hanba</a> · <a href='../fx-polish/C/gallery-kunpeng-boss_kunpeng.jpg'>gallery-kunpeng-boss_kunpeng</a> · <a href='../fx-polish/C/gallery-qilin-boss_qilin.jpg'>gallery-qilin-boss_qilin</a> · <a href='../fx-polish/C/gallery-warlord-boss_warlord.jpg'>gallery-warlord-boss_warlord</a> · <a href='../fx-polish/C/intro-hanba.jpg'>intro-hanba</a> · <a href='../fx-polish/C/intro-kunpeng.jpg'>intro-kunpeng</a> · <a href='../fx-polish/C/intro-qilin.jpg'>intro-qilin</a> · <a href='../fx-polish/C/intro-warlord.jpg'>intro-warlord</a> · <a href='../fx-polish/C/spawn-sigils.jpg'>spawn-sigils</a> · <a href='../fx-polish/C/style-pass.jpg'>style-pass</a> · <a href='../fx-polish/C/telegraph-look.jpg'>telegraph-look</a></td></tr>
+<tr><td>D 环境氛围</td><td class='dim'>12 关空气粒子、火盆 / 灯笼、水面 / 流沙 / 熔岩、沙帘</td><td><a href='../fx-polish/D/envfx_1-1.jpg'>envfx_1-1</a> · <a href='../fx-polish/D/envfx_1-2.jpg'>envfx_1-2</a> · <a href='../fx-polish/D/envfx_1-3.jpg'>envfx_1-3</a> · <a href='../fx-polish/D/envfx_1-4.jpg'>envfx_1-4</a> · <a href='../fx-polish/D/envfx_2-1.jpg'>envfx_2-1</a> · <a href='../fx-polish/D/envfx_2-2.jpg'>envfx_2-2</a> · <a href='../fx-polish/D/envfx_2-3.jpg'>envfx_2-3</a> · <a href='../fx-polish/D/envfx_2-4.jpg'>envfx_2-4</a> · <a href='../fx-polish/D/envfx_3-1.jpg'>envfx_3-1</a> · <a href='../fx-polish/D/envfx_3-2.jpg'>envfx_3-2</a> · <a href='../fx-polish/D/envfx_3-3.jpg'>envfx_3-3</a> · <a href='../fx-polish/D/envfx_3-4.jpg'>envfx_3-4</a></td></tr>
+<tr><td>风格审查</td><td class='dim'>按 fx-style.md 自查清单逐项过 A / B 两路，亮沙 / 雪 / 熔岩三种地面改前 / 改后（S1–S12）</td><td><a href='../fx-polish/style/S1-explosion-grounds.jpg'>S1-explosion-grounds</a> · <a href='../fx-polish/style/S2-explosion-sequence.jpg'>S2-explosion-sequence</a> · <a href='../fx-polish/style/S3-reactions.jpg'>S3-reactions</a> · <a href='../fx-polish/style/S4-status.jpg'>S4-status</a> · <a href='../fx-polish/style/S5-shield-armor.jpg'>S5-shield-armor</a> · <a href='../fx-polish/style/S6-fire-grounds.jpg'>S6-fire-grounds</a> · <a href='../fx-polish/style/S7-muzzle.jpg'>S7-muzzle</a> · <a href='../fx-polish/style/S8-ground-marks.jpg'>S8-ground-marks</a> · <a href='../fx-polish/style/S9-holes-scorch.jpg'>S9-holes-scorch</a> · <a href='../fx-polish/style/S10-hits.jpg'>S10-hits</a> · <a href='../fx-polish/style/S11-blade.jpg'>S11-blade</a> · <a href='../fx-polish/style/S12-spawn-death.jpg'>S12-spawn-death</a></td></tr>
 </table>
-<h2 id='notes'>截图说明</h2><ul class='dim'><li>三章普通怪都在测试场（TestArena）截：沙地、红色刷怪台、悬浮的武器架是测试场的东西，不是本章地形（红色圆台不是预警，别和红 / 橙色预警混看）；首领在各自的真实关卡里截。</li><li>普通和精英同时刷在刷怪台上，冰鲸、玄冰巨蟹这类大体型的两只会互相穿插——是测试摆位，不是游戏问题。</li><li>第三章模型暂缓，3-3 / 3-4 场地里的方块和浅色板是白盒占位；场地柱子密，个别旁观机位被柱子挡住。</li><li>「命中」= 出手后玩家第一次挨的一下（4 点以上，跳伤不算）；几只怪同时出手时可能记到别的怪头上。没打中就拍收招；辅助招（施法、换位、护甲）第三格是出手后 0.7 s 的「效果」。</li><li>「第一人称」格：眼睛位置不动、视线临时转向出招者（拍完还原），看的是玩家正看着它时预警读不读得出来。</li><li>第二、三章专属特效（FX3 abb8842a、FX4 26ea0002）提交之后才截的第二、三章普通怪；各图标题里有截图时间。</li></ul>
+<h2 id='summary'>截图概况</h2><table><tr><th>分组</th><th>拼图</th><th>截图</th><th>截图时间</th></tr>
+<tr><td>首领登场</td><td>4</td><td>32</td><td>2026-10-29 21:00 / 2026-10-29 21:02</td></tr>
+<tr><td>首领 · 旱魃（1-4）</td><td>4</td><td>80</td><td>2026-10-29 20:15</td></tr>
+<tr><td>首领 · 鲲鹏（2-4）</td><td>1</td><td>39</td><td>2026-10-29 20:19</td></tr>
+<tr><td>首领 · 熔心魔将（3-3）</td><td>1</td><td>59</td><td>2026-10-29 20:25</td></tr>
+<tr><td>首领 · 火麒麟（3-4）</td><td>3</td><td>59</td><td>2026-10-29 20:27</td></tr>
+<tr><td>第一章 · 沙海</td><td>7</td><td>100</td><td>2026-10-29 20:41</td></tr>
+<tr><td>第二章 · 冰原</td><td>11</td><td>178</td><td>2026-10-29 20:44</td></tr>
+<tr><td>第三章 · 火狱</td><td>11</td><td>168</td><td>2026-10-29 20:49</td></tr>
+<tr><td>通用特效</td><td>9</td><td>72</td><td>2026-10-29 20:58 / 2026-10-29 20:59</td></tr>
+</table>
+<h2 id='notes'>截图说明</h2><ul class='dim'><li>三章普通怪都在测试场（TestArena）截：沙地、红色刷怪台、悬浮的武器架是测试场的东西，不是本章地形（红色圆台不是预警，别和红 / 橙色预警混看）；首领在各自的真实关卡里截。</li><li>普通和精英同时刷在刷怪台上，冰鲸、玄冰巨蟹这类大体型的两只会互相穿插——是测试摆位，不是游戏问题。</li><li>第三章模型暂缓，3-3 / 3-4 场地里的方块和浅色板是白盒占位；场地柱子密，个别旁观机位被柱子挡住。</li><li>「命中」= 出手后玩家第一次挨的一下（4 点以上，跳伤不算）；几只怪同时出手时可能记到别的怪头上。没打中就拍收招；辅助招（施法、换位、护甲）第三格是出手后 0.7 s 的「效果」。</li><li>「第一人称」格：眼睛位置不动、视线临时转向出招者（拍完还原），看的是玩家正看着它时预警读不读得出来。</li><li>本轮（2026-10-29）在特效打磨四路 + 风格审查收口之后、用合并 ff7ad722 后的代码全部重拍：七组 gallery、boss-intro（测试场 + 四个首领关）、fx；各图标题里有截图时间。</li></ul>
 <h2 id='issues'>问题清单</h2><p class='dim'>截图时发现的明显问题。严重程度：高 = 影响读招 / 明显穿帮；中 = 看得出不对；低 = 打磨项。「状态」写的是修复进度和修法（已修的条目对应的拼图已重拍）。</p>
 <table><tr><th>#</th><th>严重</th><th>归属</th><th>对象</th><th>问题</th><th>状态</th><th>见图</th></tr>
 <tr><td>1</td><td><span class='sev' style='background:#e5484d'>高</span></td><td>物理 / 击退</td><td>冰甲旋龟（第二章）</td><td>旋壳撞飞玩家后，玩家视角一度落到地面以下：第一人称里地形消失、能看到地面网格条的背面衬在天空上，旁观机位里玩家替身也不见了；约 0.6 s 后才回到地面（这段时间测试套件没有挪玩家）。需单独复现确认是击飞把角色控制器推进了地面。</td><td style='color:#46a758'>已修：击退本身不穿地（knockback 套件扫了 19 种冲量）；根因是角色控制器的重叠恢复——敌人根节点的角色胶囊没有刚体、算静态碰撞体，压到玩家时控制器沿最短方向把人推出去，朝下时不扫掠、直接推进地形。PlayerMotor 加防穿地托回（帧初胶囊中心到现在脚底之间隔着一层朝上的地面、且胶囊和世界几何重叠时，把人放回那层地面），压顶 / 平台 / 升降台 / 移动平台 / 台边 / 台阶 / 陡坡 / 薄桥 / 大位移都不误救；knockback、frost、arena、slice11、map-3-2、boss-kunpeng 回归通过、已重拍（图集套件里真遇到一次被挤进地下 1.6 m，已当帧托回）</td><td><a href='#frost-xuangui'>frost-xuangui</a></td></tr>
@@ -45,76 +52,75 @@ background:#000c;color:var(--fg);font-size:14px}
 <tr><td>11</td><td><span class='sev' style='background:#8b8d98'>低</span></td><td>特效</td><td>状态外观（通用）</td><td>五种状态主要靠整体染色区分（橙 / 紫 / 绿 / 黄 / 蓝），感电和减速在近景里几乎没有粒子（电弧、冰晶）；第一人称 15 m 外只能靠颜色分辨，减速和感电的蓝紫色容易混。</td><td style='color:#46a758'>已修：减速改冰白 + 冰晶星芒 + 细雪，和雷元素天蓝拉开；感电频闪拉开明暗、电弧更多更亮（StatusFx）；fx 回归通过、已重拍</td><td><a href='#fx-status'>fx-status</a></td></tr>
 <tr><td>12</td><td><span class='sev' style='background:#8b8d98'>低</span></td><td>演出</td><td>鲲鹏（2-4）</td><td>倒下演出偏短：被击杀后 1.5 s 鹏还在下坠，3.5 s 时场上已经什么都不剩（没有残骸 / 落羽 / 冰面余波），和旱魃、魔将、火麒麟的倒下演出相比收得太快。</td><td style='color:#46a758'>已修：倒下演出 3.2 → 4.4 s，鹏 55% 砸冰面（碎冰 + 冰环 + 震屏）后趴着抽两下、鲲没顶涌冰浪，炸开后落点留 6 s 冻雾 + 霜斑（KunPengBrain）；boss-kunpeng 回归通过、已重拍</td><td><a href='#kunpeng-boss_kunpeng'>kunpeng-boss_kunpeng</a></td></tr>
 </table>
-<p class='dim'>招式表里有、这一轮没截到的招式（剧本没逼出来或被打断）：第二章 · 冰原 九尾狐巫 · 狐火；第二章 · 冰原 三青鸟 · 歇脚；第三章 · 火狱 炮仗傀儡 · 哑炸倒地；第三章 · 火狱 熔铜匠 · 裂锅；第三章 · 火狱 马面狱卒 · 重拳；第三章 · 火狱 变脸傩巫 · 碎面</p>
+<p class='dim'>招式表里有、这一轮没截到的招式（剧本没逼出来或被打断）：第二章 · 冰原 九尾狐巫 · 狐火；第二章 · 冰原 三青鸟 · 歇脚；第三章 · 火狱 炮仗傀儡 · 哑炸倒地；第三章 · 火狱 熔铜匠 · 裂锅；第三章 · 火狱 马面狱卒 · 重拳；第三章 · 火狱 变脸傩巫 · 碎面；第三章 · 火狱 火鼍 · 陆上扑咬</p>
 <h2 id='intro'>一、首领登场演出</h2><div class='grid'>
-<figure id='intro-hanba'><img loading='lazy' src='intro-hanba.jpg' alt='旱魃 · 1-4 鸣沙山月牙泉'><figcaption><b>旱魃 · 1-4 鸣沙山月牙泉</b> <span class='dim'>hanba · 8 张 · 截于 2026-10-25 19:07</span></figcaption></figure>
-<figure id='intro-kunpeng'><img loading='lazy' src='intro-kunpeng.jpg' alt='鲲鹏 · 2-4 北冥'><figcaption><b>鲲鹏 · 2-4 北冥</b> <span class='dim'>kunpeng · 8 张 · 截于 2026-10-25 19:57</span></figcaption></figure>
-<figure id='intro-warlord'><img loading='lazy' src='intro-warlord.jpg' alt='熔心魔将 · 3-3 熔铸坊'><figcaption><b>熔心魔将 · 3-3 熔铸坊</b> <span class='dim'>warlord · 8 张 · 截于 2026-10-25 20:04</span></figcaption></figure>
-<figure id='intro-qilin'><img loading='lazy' src='intro-qilin.jpg' alt='火麒麟 · 3-4 祝融殿'><figcaption><b>火麒麟 · 3-4 祝融殿</b> <span class='dim'>qilin · 8 张 · 截于 2026-10-25 20:12</span></figcaption></figure>
+<figure id='intro-hanba'><img loading='lazy' src='intro-hanba.jpg' alt='旱魃 · 1-4 鸣沙山月牙泉'><figcaption><b>旱魃 · 1-4 鸣沙山月牙泉</b> <span class='dim'>hanba · 8 张 · 截于 2026-10-29 21:00</span></figcaption></figure>
+<figure id='intro-kunpeng'><img loading='lazy' src='intro-kunpeng.jpg' alt='鲲鹏 · 2-4 北冥'><figcaption><b>鲲鹏 · 2-4 北冥</b> <span class='dim'>kunpeng · 8 张 · 截于 2026-10-29 21:01</span></figcaption></figure>
+<figure id='intro-warlord'><img loading='lazy' src='intro-warlord.jpg' alt='熔心魔将 · 3-3 熔铸坊'><figcaption><b>熔心魔将 · 3-3 熔铸坊</b> <span class='dim'>warlord · 8 张 · 截于 2026-10-29 21:01</span></figcaption></figure>
+<figure id='intro-qilin'><img loading='lazy' src='intro-qilin.jpg' alt='火麒麟 · 3-4 祝融殿'><figcaption><b>火麒麟 · 3-4 祝融殿</b> <span class='dim'>qilin · 8 张 · 截于 2026-10-29 21:02</span></figcaption></figure>
 </div>
 <h2 id='hanba'>二、首领招式 · 旱魃（1-4）</h2><div class='grid'>
-<figure id='hanba-boss_hanba'><img loading='lazy' src='hanba-boss_hanba.jpg' alt='旱魃'><figcaption><b>旱魃</b> <span class='dim'>boss_hanba · 59 张 · 截于 2026-10-26 22:15</span></figcaption></figure>
-<figure id='hanba-apsara'><img loading='lazy' src='hanba-apsara.jpg' alt='邪飞天'><figcaption><b>邪飞天</b> <span class='dim'>apsara · 5 张 · 截于 2026-10-26 22:15</span></figcaption></figure>
-<figure id='hanba-sand_wraith'><img loading='lazy' src='hanba-sand_wraith.jpg' alt='沙魇'><figcaption><b>沙魇</b> <span class='dim'>sand_wraith · 12 张 · 截于 2026-10-26 22:15</span></figcaption></figure>
-<figure id='hanba-scorpion_archer'><img loading='lazy' src='hanba-scorpion_archer.jpg' alt='蝎尾弩卫'><figcaption><b>蝎尾弩卫</b> <span class='dim'>scorpion_archer · 4 张 · 截于 2026-10-26 22:15</span></figcaption></figure>
+<figure id='hanba-boss_hanba'><img loading='lazy' src='hanba-boss_hanba.jpg' alt='旱魃'><figcaption><b>旱魃</b> <span class='dim'>boss_hanba · 59 张 · 截于 2026-10-29 20:15</span></figcaption></figure>
+<figure id='hanba-apsara'><img loading='lazy' src='hanba-apsara.jpg' alt='邪飞天'><figcaption><b>邪飞天</b> <span class='dim'>apsara · 5 张 · 截于 2026-10-29 20:15</span></figcaption></figure>
+<figure id='hanba-sand_wraith'><img loading='lazy' src='hanba-sand_wraith.jpg' alt='沙魇'><figcaption><b>沙魇</b> <span class='dim'>sand_wraith · 12 张 · 截于 2026-10-29 20:15</span></figcaption></figure>
+<figure id='hanba-scorpion_archer'><img loading='lazy' src='hanba-scorpion_archer.jpg' alt='蝎尾弩卫'><figcaption><b>蝎尾弩卫</b> <span class='dim'>scorpion_archer · 4 张 · 截于 2026-10-29 20:15</span></figcaption></figure>
 </div>
 <h2 id='kunpeng'>二、首领招式 · 鲲鹏（2-4）</h2><div class='grid'>
-<figure id='kunpeng-boss_kunpeng'><img loading='lazy' src='kunpeng-boss_kunpeng.jpg' alt='鲲鹏'><figcaption><b>鲲鹏</b> <span class='dim'>boss_kunpeng · 39 张 · 截于 2026-10-26 22:09</span></figcaption></figure>
+<figure id='kunpeng-boss_kunpeng'><img loading='lazy' src='kunpeng-boss_kunpeng.jpg' alt='鲲鹏'><figcaption><b>鲲鹏</b> <span class='dim'>boss_kunpeng · 39 张 · 截于 2026-10-29 20:19</span></figcaption></figure>
 </div>
 <h2 id='warlord'>二、首领招式 · 熔心魔将（3-3）</h2><div class='grid'>
-<figure id='warlord-boss_warlord'><img loading='lazy' src='warlord-boss_warlord.jpg' alt='熔心魔将'><figcaption><b>熔心魔将</b> <span class='dim'>boss_warlord · 55 张 · 截于 2026-10-26 22:25</span></figcaption></figure>
+<figure id='warlord-boss_warlord'><img loading='lazy' src='warlord-boss_warlord.jpg' alt='熔心魔将'><figcaption><b>熔心魔将</b> <span class='dim'>boss_warlord · 59 张 · 截于 2026-10-29 20:25</span></figcaption></figure>
 </div>
 <h2 id='qilin'>二、首领招式 · 火麒麟（3-4）</h2><div class='grid'>
-<figure id='qilin-boss_qilin'><img loading='lazy' src='qilin-boss_qilin.jpg' alt='火麒麟'><figcaption><b>火麒麟</b> <span class='dim'>boss_qilin · 47 张 · 截于 2026-10-26 22:18</span></figcaption></figure>
-<figure id='qilin-fire_crow'><img loading='lazy' src='qilin-fire_crow.jpg' alt='神火飞鸦'><figcaption><b>神火飞鸦</b> <span class='dim'>fire_crow · 4 张 · 截于 2026-10-26 22:18</span></figcaption></figure>
-<figure id='qilin-tantong'><img loading='lazy' src='qilin-tantong.jpg' alt='炭童'><figcaption><b>炭童</b> <span class='dim'>tantong · 8 张 · 截于 2026-10-26 22:18</span></figcaption></figure>
+<figure id='qilin-boss_qilin'><img loading='lazy' src='qilin-boss_qilin.jpg' alt='火麒麟'><figcaption><b>火麒麟</b> <span class='dim'>boss_qilin · 47 张 · 截于 2026-10-29 20:27</span></figcaption></figure>
+<figure id='qilin-fire_crow'><img loading='lazy' src='qilin-fire_crow.jpg' alt='神火飞鸦'><figcaption><b>神火飞鸦</b> <span class='dim'>fire_crow · 4 张 · 截于 2026-10-29 20:27</span></figcaption></figure>
+<figure id='qilin-tantong'><img loading='lazy' src='qilin-tantong.jpg' alt='炭童'><figcaption><b>炭童</b> <span class='dim'>tantong · 8 张 · 截于 2026-10-29 20:27</span></figcaption></figure>
 </div>
 <h2 id='desert'>三、普通怪物 · 第一章 · 沙海</h2><div class='grid'>
-<figure id='desert-apsara'><img loading='lazy' src='desert-apsara.jpg' alt='邪飞天'><figcaption><b>邪飞天</b> <span class='dim'>apsara · 14 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
-<figure id='desert-fire_rat'><img loading='lazy' src='desert-fire_rat.jpg' alt='火浣鼠'><figcaption><b>火浣鼠</b> <span class='dim'>fire_rat · 10 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
-<figure id='desert-jerboa_blade'><img loading='lazy' src='desert-jerboa_blade.jpg' alt='跳鼠刀兵'><figcaption><b>跳鼠刀兵</b> <span class='dim'>jerboa_blade · 14 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
-<figure id='desert-mirage_toad'><img loading='lazy' src='desert-mirage_toad.jpg' alt='蜃楼蟾'><figcaption><b>蜃楼蟾</b> <span class='dim'>mirage_toad · 13 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
-<figure id='desert-mirage_toad_decoy'><img loading='lazy' src='desert-mirage_toad_decoy.jpg' alt='蜃景'><figcaption><b>蜃景</b> <span class='dim'>mirage_toad_decoy · 4 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
-<figure id='desert-sand_wraith'><img loading='lazy' src='desert-sand_wraith.jpg' alt='沙魇'><figcaption><b>沙魇</b> <span class='dim'>sand_wraith · 17 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
-<figure id='desert-scorpion_archer'><img loading='lazy' src='desert-scorpion_archer.jpg' alt='蝎尾弩卫'><figcaption><b>蝎尾弩卫</b> <span class='dim'>scorpion_archer · 17 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
-<figure id='desert-tomb_beast'><img loading='lazy' src='desert-tomb_beast.jpg' alt='三彩镇墓兽'><figcaption><b>三彩镇墓兽</b> <span class='dim'>tomb_beast · 15 张 · 截于 2026-10-26 22:22</span></figcaption></figure>
+<figure id='desert-apsara'><img loading='lazy' src='desert-apsara.jpg' alt='邪飞天'><figcaption><b>邪飞天</b> <span class='dim'>apsara · 14 张 · 截于 2026-10-29 20:41</span></figcaption></figure>
+<figure id='desert-fire_rat'><img loading='lazy' src='desert-fire_rat.jpg' alt='火浣鼠'><figcaption><b>火浣鼠</b> <span class='dim'>fire_rat · 10 张 · 截于 2026-10-29 20:41</span></figcaption></figure>
+<figure id='desert-jerboa_blade'><img loading='lazy' src='desert-jerboa_blade.jpg' alt='跳鼠刀兵'><figcaption><b>跳鼠刀兵</b> <span class='dim'>jerboa_blade · 14 张 · 截于 2026-10-29 20:41</span></figcaption></figure>
+<figure id='desert-mirage_toad'><img loading='lazy' src='desert-mirage_toad.jpg' alt='蜃楼蟾'><figcaption><b>蜃楼蟾</b> <span class='dim'>mirage_toad · 13 张 · 截于 2026-10-29 20:41</span></figcaption></figure>
+<figure id='desert-sand_wraith'><img loading='lazy' src='desert-sand_wraith.jpg' alt='沙魇'><figcaption><b>沙魇</b> <span class='dim'>sand_wraith · 17 张 · 截于 2026-10-29 20:41</span></figcaption></figure>
+<figure id='desert-scorpion_archer'><img loading='lazy' src='desert-scorpion_archer.jpg' alt='蝎尾弩卫'><figcaption><b>蝎尾弩卫</b> <span class='dim'>scorpion_archer · 17 张 · 截于 2026-10-29 20:41</span></figcaption></figure>
+<figure id='desert-tomb_beast'><img loading='lazy' src='desert-tomb_beast.jpg' alt='三彩镇墓兽'><figcaption><b>三彩镇墓兽</b> <span class='dim'>tomb_beast · 15 张 · 截于 2026-10-29 20:41</span></figcaption></figure>
 </div>
 <h2 id='frost'>三、普通怪物 · 第二章 · 冰原</h2><div class='grid'>
-<figure id='frost-fox_witch'><img loading='lazy' src='frost-fox_witch.jpg' alt='九尾狐巫'><figcaption><b>九尾狐巫</b> <span class='dim'>fox_witch · 22 张 · 截于 2026-10-26 22:28</span><br><span class='lack'>没截到：狐火</span></figcaption></figure>
-<figure id='frost-frost_crab'><img loading='lazy' src='frost-frost_crab.jpg' alt='玄冰巨蟹'><figcaption><b>玄冰巨蟹</b> <span class='dim'>frost_crab · 17 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-fuzhu'><img loading='lazy' src='frost-fuzhu.jpg' alt='夫诸'><figcaption><b>夫诸</b> <span class='dim'>fuzhu · 13 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-haozhi'><img loading='lazy' src='frost-haozhi.jpg' alt='冰棘豪彘'><figcaption><b>冰棘豪彘</b> <span class='dim'>haozhi · 13 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-ice_puffer'><img loading='lazy' src='frost-ice_puffer.jpg' alt='冰河豚'><figcaption><b>冰河豚</b> <span class='dim'>ice_puffer · 12 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-ice_whale'><img loading='lazy' src='frost-ice_whale.jpg' alt='冰鲸'><figcaption><b>冰鲸</b> <span class='dim'>ice_whale · 13 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-jiaoren'><img loading='lazy' src='frost-jiaoren.jpg' alt='冻鲛人'><figcaption><b>冻鲛人</b> <span class='dim'>jiaoren · 17 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-lantern_jelly'><img loading='lazy' src='frost-lantern_jelly.jpg' alt='冰灯水母'><figcaption><b>冰灯水母</b> <span class='dim'>lantern_jelly · 9 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-qingniao'><img loading='lazy' src='frost-qingniao.jpg' alt='三青鸟'><figcaption><b>三青鸟</b> <span class='dim'>qingniao · 14 张 · 截于 2026-10-26 22:28</span><br><span class='lack'>没截到：歇脚</span></figcaption></figure>
-<figure id='frost-xingxing'><img loading='lazy' src='frost-xingxing.jpg' alt='雪狌狌'><figcaption><b>雪狌狌</b> <span class='dim'>xingxing · 25 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
-<figure id='frost-xuangui'><img loading='lazy' src='frost-xuangui.jpg' alt='冰甲旋龟'><figcaption><b>冰甲旋龟</b> <span class='dim'>xuangui · 22 张 · 截于 2026-10-26 22:28</span></figcaption></figure>
+<figure id='frost-fox_witch'><img loading='lazy' src='frost-fox_witch.jpg' alt='九尾狐巫'><figcaption><b>九尾狐巫</b> <span class='dim'>fox_witch · 22 张 · 截于 2026-10-29 20:44</span><br><span class='lack'>没截到：狐火</span></figcaption></figure>
+<figure id='frost-frost_crab'><img loading='lazy' src='frost-frost_crab.jpg' alt='玄冰巨蟹'><figcaption><b>玄冰巨蟹</b> <span class='dim'>frost_crab · 18 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-fuzhu'><img loading='lazy' src='frost-fuzhu.jpg' alt='夫诸'><figcaption><b>夫诸</b> <span class='dim'>fuzhu · 13 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-haozhi'><img loading='lazy' src='frost-haozhi.jpg' alt='冰棘豪彘'><figcaption><b>冰棘豪彘</b> <span class='dim'>haozhi · 13 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-ice_puffer'><img loading='lazy' src='frost-ice_puffer.jpg' alt='冰河豚'><figcaption><b>冰河豚</b> <span class='dim'>ice_puffer · 12 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-ice_whale'><img loading='lazy' src='frost-ice_whale.jpg' alt='冰鲸'><figcaption><b>冰鲸</b> <span class='dim'>ice_whale · 13 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-jiaoren'><img loading='lazy' src='frost-jiaoren.jpg' alt='冻鲛人'><figcaption><b>冻鲛人</b> <span class='dim'>jiaoren · 17 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-lantern_jelly'><img loading='lazy' src='frost-lantern_jelly.jpg' alt='冰灯水母'><figcaption><b>冰灯水母</b> <span class='dim'>lantern_jelly · 9 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-qingniao'><img loading='lazy' src='frost-qingniao.jpg' alt='三青鸟'><figcaption><b>三青鸟</b> <span class='dim'>qingniao · 14 张 · 截于 2026-10-29 20:44</span><br><span class='lack'>没截到：歇脚</span></figcaption></figure>
+<figure id='frost-xingxing'><img loading='lazy' src='frost-xingxing.jpg' alt='雪狌狌'><figcaption><b>雪狌狌</b> <span class='dim'>xingxing · 25 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
+<figure id='frost-xuangui'><img loading='lazy' src='frost-xuangui.jpg' alt='冰甲旋龟'><figcaption><b>冰甲旋龟</b> <span class='dim'>xuangui · 22 张 · 截于 2026-10-29 20:44</span></figcaption></figure>
 </div>
 <h2 id='inferno'>三、普通怪物 · 第三章 · 火狱</h2><div class='grid'>
-<figure id='inferno-bifang'><img loading='lazy' src='inferno-bifang.jpg' alt='毕方'><figcaption><b>毕方</b> <span class='dim'>bifang · 17 张 · 截于 2026-10-26 22:33</span></figcaption></figure>
-<figure id='inferno-fire_crow'><img loading='lazy' src='inferno-fire_crow.jpg' alt='神火飞鸦'><figcaption><b>神火飞鸦</b> <span class='dim'>fire_crow · 9 张 · 截于 2026-10-26 22:33</span></figcaption></figure>
-<figure id='inferno-firecracker'><img loading='lazy' src='inferno-firecracker.jpg' alt='炮仗傀儡'><figcaption><b>炮仗傀儡</b> <span class='dim'>firecracker · 14 张 · 截于 2026-10-26 22:33</span><br><span class='lack'>没截到：哑炸倒地</span></figcaption></figure>
-<figure id='inferno-founder'><img loading='lazy' src='inferno-founder.jpg' alt='熔铜匠'><figcaption><b>熔铜匠</b> <span class='dim'>founder · 14 张 · 截于 2026-10-26 22:33</span><br><span class='lack'>没截到：裂锅</span></figcaption></figure>
-<figure id='inferno-huodou'><img loading='lazy' src='inferno-huodou.jpg' alt='祸斗'><figcaption><b>祸斗</b> <span class='dim'>huodou · 17 张 · 截于 2026-10-26 22:33</span></figcaption></figure>
-<figure id='inferno-iron_ox'><img loading='lazy' src='inferno-iron_ox.jpg' alt='熔炉铁牛'><figcaption><b>熔炉铁牛</b> <span class='dim'>iron_ox · 16 张 · 截于 2026-10-26 22:33</span></figcaption></figure>
-<figure id='inferno-mamian'><img loading='lazy' src='inferno-mamian.jpg' alt='马面狱卒'><figcaption><b>马面狱卒</b> <span class='dim'>mamian · 16 张 · 截于 2026-10-26 22:33</span><br><span class='lack'>没截到：重拳</span></figcaption></figure>
-<figure id='inferno-nuo'><img loading='lazy' src='inferno-nuo.jpg' alt='变脸傩巫'><figcaption><b>变脸傩巫</b> <span class='dim'>nuo · 14 张 · 截于 2026-10-26 22:33</span><br><span class='lack'>没截到：碎面</span></figcaption></figure>
-<figure id='inferno-tantong'><img loading='lazy' src='inferno-tantong.jpg' alt='炭童'><figcaption><b>炭童</b> <span class='dim'>tantong · 17 张 · 截于 2026-10-26 22:33</span></figcaption></figure>
-<figure id='inferno-tantong_reborn'><img loading='lazy' src='inferno-tantong_reborn.jpg' alt='炭童'><figcaption><b>炭童</b> <span class='dim'>tantong_reborn · 9 张 · 截于 2026-10-26 22:33</span></figcaption></figure>
-<figure id='inferno-tuo'><img loading='lazy' src='inferno-tuo.jpg' alt='火鼍'><figcaption><b>火鼍</b> <span class='dim'>tuo · 28 张 · 截于 2026-10-26 22:33</span></figcaption></figure>
+<figure id='inferno-bifang'><img loading='lazy' src='inferno-bifang.jpg' alt='毕方'><figcaption><b>毕方</b> <span class='dim'>bifang · 17 张 · 截于 2026-10-29 20:49</span></figcaption></figure>
+<figure id='inferno-fire_crow'><img loading='lazy' src='inferno-fire_crow.jpg' alt='神火飞鸦'><figcaption><b>神火飞鸦</b> <span class='dim'>fire_crow · 9 张 · 截于 2026-10-29 20:49</span></figcaption></figure>
+<figure id='inferno-firecracker'><img loading='lazy' src='inferno-firecracker.jpg' alt='炮仗傀儡'><figcaption><b>炮仗傀儡</b> <span class='dim'>firecracker · 14 张 · 截于 2026-10-29 20:49</span><br><span class='lack'>没截到：哑炸倒地</span></figcaption></figure>
+<figure id='inferno-founder'><img loading='lazy' src='inferno-founder.jpg' alt='熔铜匠'><figcaption><b>熔铜匠</b> <span class='dim'>founder · 14 张 · 截于 2026-10-29 20:49</span><br><span class='lack'>没截到：裂锅</span></figcaption></figure>
+<figure id='inferno-huodou'><img loading='lazy' src='inferno-huodou.jpg' alt='祸斗'><figcaption><b>祸斗</b> <span class='dim'>huodou · 17 张 · 截于 2026-10-29 20:49</span></figcaption></figure>
+<figure id='inferno-iron_ox'><img loading='lazy' src='inferno-iron_ox.jpg' alt='熔炉铁牛'><figcaption><b>熔炉铁牛</b> <span class='dim'>iron_ox · 16 张 · 截于 2026-10-29 20:49</span></figcaption></figure>
+<figure id='inferno-mamian'><img loading='lazy' src='inferno-mamian.jpg' alt='马面狱卒'><figcaption><b>马面狱卒</b> <span class='dim'>mamian · 17 张 · 截于 2026-10-29 20:49</span><br><span class='lack'>没截到：重拳</span></figcaption></figure>
+<figure id='inferno-nuo'><img loading='lazy' src='inferno-nuo.jpg' alt='变脸傩巫'><figcaption><b>变脸傩巫</b> <span class='dim'>nuo · 14 张 · 截于 2026-10-29 20:49</span><br><span class='lack'>没截到：碎面</span></figcaption></figure>
+<figure id='inferno-tantong'><img loading='lazy' src='inferno-tantong.jpg' alt='炭童'><figcaption><b>炭童</b> <span class='dim'>tantong · 17 张 · 截于 2026-10-29 20:49</span></figcaption></figure>
+<figure id='inferno-tantong_reborn'><img loading='lazy' src='inferno-tantong_reborn.jpg' alt='炭童'><figcaption><b>炭童</b> <span class='dim'>tantong_reborn · 9 张 · 截于 2026-10-29 20:49</span></figcaption></figure>
+<figure id='inferno-tuo'><img loading='lazy' src='inferno-tuo.jpg' alt='火鼍'><figcaption><b>火鼍</b> <span class='dim'>tuo · 24 张 · 截于 2026-10-29 20:49</span><br><span class='lack'>没截到：陆上扑咬</span></figcaption></figure>
 </div>
 <h2 id='fx'>四、通用战斗特效</h2><div class='grid'>
-<figure id='fx-hit'><img loading='lazy' src='fx-hit.jpg' alt='命中 / 暴击 / 破盾破甲'><figcaption><b>命中 / 暴击 / 破盾破甲</b> <span class='dim'>hit · 6 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-impact'><img loading='lazy' src='fx-impact.jpg' alt='弹着点 / 弹孔（沙 · 石 · 冰 · 金属）'><figcaption><b>弹着点 / 弹孔（沙 · 石 · 冰 · 金属）</b> <span class='dim'>impact · 8 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-blast'><img loading='lazy' src='fx-blast.jpg' alt='爆炸 + 焦痕 / 枪口火焰 / 雷击'><figcaption><b>爆炸 + 焦痕 / 枪口火焰 / 雷击</b> <span class='dim'>blast · 5 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-tracer'><img loading='lazy' src='fx-tracer.jpg' alt='元素曳光（火 / 雷 / 蚀）'><figcaption><b>元素曳光（火 / 雷 / 蚀）</b> <span class='dim'>tracer · 6 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-status'><img loading='lazy' src='fx-status.jpg' alt='状态外观'><figcaption><b>状态外观</b> <span class='dim'>status · 6 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-spawn'><img loading='lazy' src='fx-spawn.jpg' alt='出生法阵 + 显形 / 死亡迸散 + 溶解'><figcaption><b>出生法阵 + 显形 / 死亡迸散 + 溶解</b> <span class='dim'>spawn · 4 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-reaction'><img loading='lazy' src='fx-reaction.jpg' alt='元素反应（熔池 / 归墟）'><figcaption><b>元素反应（熔池 / 归墟）</b> <span class='dim'>reaction · 5 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-frost'><img loading='lazy' src='fx-frost.jpg' alt='FX3 冰霜专属'><figcaption><b>FX3 冰霜专属</b> <span class='dim'>frost · 15 张 · 截于 2026-10-26 22:45</span></figcaption></figure>
-<figure id='fx-inferno'><img loading='lazy' src='fx-inferno.jpg' alt='FX4 火狱专属'><figcaption><b>FX4 火狱专属</b> <span class='dim'>inferno · 17 张 · 截于 2026-10-26 22:46</span></figcaption></figure>
+<figure id='fx-hit'><img loading='lazy' src='fx-hit.jpg' alt='命中 / 暴击 / 破盾破甲'><figcaption><b>命中 / 暴击 / 破盾破甲</b> <span class='dim'>hit · 6 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-impact'><img loading='lazy' src='fx-impact.jpg' alt='弹着点 / 弹孔（沙 · 石 · 冰 · 金属）'><figcaption><b>弹着点 / 弹孔（沙 · 石 · 冰 · 金属）</b> <span class='dim'>impact · 8 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-blast'><img loading='lazy' src='fx-blast.jpg' alt='爆炸 + 焦痕 / 枪口火焰 / 雷击'><figcaption><b>爆炸 + 焦痕 / 枪口火焰 / 雷击</b> <span class='dim'>blast · 5 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-tracer'><img loading='lazy' src='fx-tracer.jpg' alt='元素曳光（火 / 雷 / 蚀）'><figcaption><b>元素曳光（火 / 雷 / 蚀）</b> <span class='dim'>tracer · 6 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-status'><img loading='lazy' src='fx-status.jpg' alt='状态外观'><figcaption><b>状态外观</b> <span class='dim'>status · 6 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-spawn'><img loading='lazy' src='fx-spawn.jpg' alt='出生法阵 + 显形 / 死亡迸散 + 溶解'><figcaption><b>出生法阵 + 显形 / 死亡迸散 + 溶解</b> <span class='dim'>spawn · 4 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-reaction'><img loading='lazy' src='fx-reaction.jpg' alt='元素反应（熔池 / 归墟）'><figcaption><b>元素反应（熔池 / 归墟）</b> <span class='dim'>reaction · 5 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-frost'><img loading='lazy' src='fx-frost.jpg' alt='FX3 冰霜专属'><figcaption><b>FX3 冰霜专属</b> <span class='dim'>frost · 15 张 · 截于 2026-10-29 20:58</span></figcaption></figure>
+<figure id='fx-inferno'><img loading='lazy' src='fx-inferno.jpg' alt='FX4 火狱专属'><figcaption><b>FX4 火狱专属</b> <span class='dim'>inferno · 17 张 · 截于 2026-10-29 20:59</span></figcaption></figure>
 </div>
 </main><div id="lb"><img><div class="bar"></div></div><script>
 const imgs=[...document.querySelectorAll('figure img')],lb=document.getElementById('lb'),big=lb.querySelector('img'),bar=lb.querySelector('.bar');let k=-1;
