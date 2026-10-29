@@ -12,7 +12,11 @@ namespace Spiritfire.Game
         /// <summary>燎的技能伤害：火元素、必定灼烧</summary>
         public static DamageInfo SkillHit(float amount) => SkillFx.SkillHit(amount, Element.Fire, 1f);
 
-        /// <summary>火团外观：发白的热核 + 光晕（尾焰火灵、火星）</summary>
+        /// <summary>
+        /// 火灵外观（HC3，按 docs/art/fx-style.md）：一团卡通火苗（SF_FxFlame 火舌：白热芯 / 橙 / 赭红尖三段，往上翻、顶端分舌）
+        /// 底下一颗小小的金色热核。原来是发白的热核 + 5 倍柔光晕，读成一团发光球（准则：形状先于细节、不用发光团）。
+        /// 火舌按世界尺寸画（不随父物体缩放），出场的缩放 / 淡入由调用方用 <see cref="FlameTongue.Set(float)"/> 给
+        /// </summary>
         public static GameObject Orb(float size)
         {
             var go = new GameObject("Foxfire");
@@ -22,8 +26,9 @@ namespace Spiritfire.Game
             core.transform.localScale = Vector3.one * size;
             var r = core.GetComponent<Renderer>();
             r.sharedMaterial = FxMaterials.Unlit;
-            FxMaterials.Tint(r, FireCore * 1.3f);
-            FxMaterials.GlowSprite(go.transform, size * 5f, new Color(Fire.r, Fire.g, Fire.b, 0.8f));
+            FxMaterials.Tint(r, FireCore);
+            FlameTongue.Attach(go.transform, Vector3.down * size * 0.4f, new Vector3(size * 2.6f, size * 3.4f, 1f),
+                Hex.Rgb(0xfff1c0), Hex.Rgb(0xff8a24), Hex.Rgb(0xc8401a));
             return go;
         }
     }
@@ -71,13 +76,15 @@ namespace Spiritfire.Game
             return true;
         }
 
-        /// <summary>Three.js grenadeImpactFx：火星两层、贴地时地面裂纹、扩散环、0.9 s 的余火</summary>
+        /// <summary>
+        /// Three.js grenadeImpactFx 的 Unity 版：爆炸本体（火团 / 祥云烟 / 闪光）由 Combat.Explode 的 Fx.Explosion 出，这里只补
+        /// 少量大颗火星、贴地时的地面裂纹、扩散环和余火。HC3 风格整改：去掉叠在爆炸上的 6 倍枪口闪光（亮沙上白成一团）、
+        /// 两层 48 颗细火星减到 12 颗大一点的，余火从零碎火星团换成纸灰地火（爆竹的红纸灰、边缘还在烧）+ 几簇卡通火苗
+        /// </summary>
         static void ImpactFx(Vector3 point, float r)
         {
             GameAudio.PlayAt("skill_fire", point, 0.9f);
-            ShotFx.Instance?.MuzzleFlash(point + Vector3.up * 0.5f, 6f);
-            SkillFx.Burst(point, SkillFx.Ember, 34, 9, 0.9f, 0.09f, 0.6f);
-            SkillFx.Burst(point, SkillFx.FireCore, 14, 5, 0.45f, 0.14f);
+            SkillFx.Burst(point, SkillFx.Ember, 12, 7, 0.7f, 0.13f, 0.6f);
             float gy = Physics.Raycast(point + Vector3.up * 0.35f, Vector3.down, out var hit, 3f, Layers.WorldMask, QueryTriggerInteraction.Ignore)
                 ? hit.point.y
                 : point.y - 10;
@@ -85,25 +92,14 @@ namespace Spiritfire.Game
             var feet = nearGround ? new Vector3(point.x, gy, point.z) : point;
             if (nearGround) SkillFx.GroundCrack(feet, r * 0.55f, LiaoSkills.Fire, 1.4f);
             SkillFx.Ring(feet, r, LiaoSkills.Fire, 0.4f);
-            Afterburn(point, Mathf.Max(gy + 0.2f, point.y), r);
+            if (nearGround) Afterburn(feet, r);
         }
 
-        /// <summary>余火：落点附近每 0.18 s 飘一小团火星，共 5 次</summary>
-        static async void Afterburn(Vector3 at, float y, float r)
+        /// <summary>余火：落点一摊纸灰地火（1.6 s）+ 四簇卡通火苗（0.9 s，同 Three.js 的余火时长）</summary>
+        static void Afterburn(Vector3 feet, float r)
         {
-            try
-            {
-                for (int n = 0; n < 5; n++)
-                {
-                    await Awaitable.WaitForSecondsAsync(0.18f);
-                    var p = new Vector3(at.x + (Random.value - 0.5f) * r * 0.9f, y, at.z + (Random.value - 0.5f) * r * 0.9f);
-                    SkillFx.Burst(p, SkillFx.Ember, 5, 1.6f, 0.6f, 0.07f, 1.5f);
-                }
-            }
-            catch (System.OperationCanceledException)
-            {
-                // 退出 Play / 卸载时挂起的等待被取消：余火不放了
-            }
+            FxDecals.Fire(feet + Vector3.up * 0.02f, r * 0.5f, 1.6f, FireBed.PaperAsh);
+            FlameTongues.Ground(feet, r * 0.4f, 4, 0.9f, 0.6f, Hex.Rgb(0xfff1c0), Hex.Rgb(0xff8a24), Hex.Rgb(0xc8401a));
         }
 
         /// <summary>朱红纸筒 + 金色封口 + 冒火星的引信（沿飞行方向）</summary>
@@ -127,10 +123,11 @@ namespace Spiritfire.Game
             Part(PrimitiveType.Cylinder, Vector3.zero, new Vector3(0.15f, 0.13f, 0.15f), new Color(0.78f, 0.14f, 0.1f));
             Part(PrimitiveType.Cylinder, Vector3.up * 0.12f, new Vector3(0.158f, 0.02f, 0.158f), new Color(0.85f, 0.64f, 0.25f));
             Part(PrimitiveType.Cylinder, Vector3.down * 0.12f, new Vector3(0.158f, 0.02f, 0.158f), new Color(0.85f, 0.64f, 0.25f));
+            // 引信头一小簇卡通火苗（原来是 0.35 m 的柔光片，HC3 按特效风格准则换成和火灵同一套的火舌）
             var spark = new GameObject("Spark").transform;
             spark.SetParent(root, false);
             spark.localPosition = Vector3.up * 0.2f;
-            FxMaterials.GlowSprite(spark, 0.35f, LiaoSkills.FireCore);
+            FlameTongue.Attach(spark, Vector3.zero, new Vector3(0.22f, 0.26f, 1f), Hex.Rgb(0xfff1c0), Hex.Rgb(0xffa030), Hex.Rgb(0xd8401a));
         }
     }
 
@@ -197,6 +194,9 @@ namespace Spiritfire.Game
                 if (!orbs[i]) continue;
                 orbs[i].transform.position = OrbPosition(i, t);
                 orbs[i].transform.localScale = Vector3.one * grow * (0.9f + 0.15f * Mathf.Sin(t * 12 + i * 2.1f));
+                // 火舌按世界尺寸画、不跟父物体缩放：出场时用亮度淡入
+                var tongue = orbs[i].GetComponentInChildren<FlameTongue>();
+                if (tongue) tongue.Set(grow);
             }
             while (launched < Count && t >= First + launched * Interval) Launch(launched++);
             if (launched >= Count) End(SkillEnd.Natural);
