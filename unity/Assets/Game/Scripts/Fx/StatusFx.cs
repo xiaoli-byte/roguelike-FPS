@@ -22,6 +22,8 @@ namespace Spiritfire.Game
         /// <summary>减速的冰白：比雷元素的天蓝（6fd8ff）白得多，靠明度和冰晶星芒区分</summary>
         // 风格审查：冻住的身上染冰蓝（原来近白，整只怪刷白），轮廓光也收到元素色表的冰蓝 / 鲜绿，不发白
         static readonly Color StunColor = Hex.Rgb(0xffe27a), FrostColor = Hex.Rgb(0x9fd2f2);
+        /// <summary>减速时身上的染色：冰蓝（收尾一轮：原来用浅冰白 FrostColor 染，冰壳底下透出来整只发白）</summary>
+        static readonly Color FrostTint = Hex.Rgb(0x5fa6dc);
         /// <summary>贴骨电弧全场每秒最多几道</summary>
         const float ArcsPerSecond = 16f;
         /// <summary>身上一个敌人最多几片火舌</summary>
@@ -29,7 +31,7 @@ namespace Spiritfire.Game
 
         // 轮廓光（线性 HDR）：远处只看颜色就分得清
         static readonly Color RimBurn = new(2.4f, 0.62f, 0.1f), RimShock = new(0.3f, 0.95f, 3.2f), RimCorrode = new(0.5f, 1.35f, 0.1f),
-            RimStun = new(2.2f, 1.7f, 0.25f), RimFrost = new(0.55f, 1.15f, 1.9f);
+            RimStun = new(2.2f, 1.7f, 0.25f), RimFrost = new(0.38f, 0.86f, 1.6f);
 
         static int budgetFrame = -1, budgetLeft;
         static float arcTokens;
@@ -237,7 +239,7 @@ namespace Spiritfire.Game
             }
             if (corrode) Add(Fx.ElementColor(Element.Corrode), 0.2f + 0.05f * Mathf.Sin(t * 4f));
             if (stun) Add(StunColor, 0.14f + 0.06f * Mathf.Sin(t * 9f));
-            if (frost) Add(FrostColor, 0.3f);
+            if (frost) Add(FrostTint, 0.3f);
             if (w <= 0)
             {
                 ClearTint();
