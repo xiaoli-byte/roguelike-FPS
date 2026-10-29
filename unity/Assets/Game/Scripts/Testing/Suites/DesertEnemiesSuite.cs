@@ -652,6 +652,10 @@ namespace Spiritfire.Game.Testing
         IEnumerator Wraith()
         {
             Teleport(motor, arena.Center + away * 10f);
+            // 潜沙冷却清零：前面几段里沙魇可能刚潜过一次（5.5–7.5 s 冷却），再赶上攻击令牌排队，18 s 里偶尔等不到一次突袭（gallery-desert 偶发不合格）
+            foreach (var w in group.Select(m => m.ai).OfType<SandWraithAI>())
+                if (w)
+                    SetPrivate(w, "burrowCd", 0f);
             // 潜沙突袭全套（玩家站着不动：破沙要打中）；潜行中打不到（Track 里逐帧看）
             int hits0 = group.Select(m => m.ai).OfType<SandWraithAI>().Sum(w => w.EruptHits);
             yield return Until(() => Seen("erupt") && Seen("recover") && group.Select(m => m.ai).OfType<SandWraithAI>().Sum(w => w ? w.EruptHits : 0) > hits0, 18f);
