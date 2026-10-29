@@ -960,7 +960,9 @@ namespace Spiritfire.Game
                     FlameTongues.Ground(p, s.radius * 0.6f, 5, 1.6f, 0.6f);
                     break;
                 default:
-                    Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);
+                    // 冰块（鲲 · 吐冰）走冷的冰爆；卡通爆炸是火的色阶，传冰蓝进去会成一团赭黄泥色
+                    if (s.kind == LobKind.Ice) Fx.FrostNova(p + Vector3.up * 0.4f, Mathf.Clamp(s.radius, 0.6f, 8f), s.color);
+                    else Fx.Explosion(p + Vector3.up * 0.4f, s.radius, s.color);
                     break;
             }
             var debris = s.kind == LobKind.Ice ? Hex.Rgb(0xd8f6ff) : s.kind == LobKind.Meteor ? Hex.Rgb(0xffc070) : Hex.Rgb(0xb58a5a);

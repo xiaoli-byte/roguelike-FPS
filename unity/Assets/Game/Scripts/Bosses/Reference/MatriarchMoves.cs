@@ -65,7 +65,8 @@ namespace Spiritfire.Game
             Hazards.Blast(center, 7.5f, Dmg(22), new BossBlastOpts { maxHeight = 3.5f, knockback = 10, knockUp = 4 });
             Fx.Ring(center + Vector3.up * 0.1f, 8f, MatriarchRef.Warn, 0.6f);
             var body = Brain.BodyCenter;
-            Fx.Explosion(body, 3f, MatriarchRef.Shard);
+            // 冷的冰爆（FX3）：卡通爆炸是火的色阶，传冰蓝进去会成一团赭黄泥色
+            Fx.FrostNova(body, 3f, MatriarchRef.Shard);
             Fx.Burst(body, Hex.Rgb(0xd8f6ff), 30, 11f, 0.9f, 0.2f, 6f);
             Brain.Shake(0.5f, 0.4f);
             Sfx("explosion", 1f, 1.3f);

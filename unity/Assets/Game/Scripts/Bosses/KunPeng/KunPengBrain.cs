@@ -688,7 +688,8 @@ namespace Spiritfire.Game
             if (Crossed(1.3f))
             {
                 var at = c + Vector3.up * 1.5f;
-                Fx.Explosion(at, Mathf.Max(6f, Hole.radius * 0.6f), KunPengDef.Ice);
+                // 冷的冰爆（FX3）：卡通爆炸是火的色阶，传冰蓝进去会成一团赭黄泥色
+                Fx.FrostNova(at, Mathf.Clamp(Hole.radius * 0.6f, 6f, 8f), KunPengDef.Ice);
                 Fx.Burst(at, KunPengDef.Ice, 60, 16f, 1.4f, 0.6f, 12f);
                 Fx.Burst(c + Vector3.up * 4f, Color.white, 40, 10f, 1.6f, 0.8f, -2f);
                 CameraShake.Quake(c, 0.85f, 90f, 1f);
