@@ -120,5 +120,46 @@
       "kunpeng-boss_kunpeng"
     ],
     "status": "已修：倒下演出 3.2 → 4.4 s，鹏 55% 砸冰面（碎冰 + 冰环 + 震屏）后趴着抽两下、鲲没顶涌冰浪，炸开后落点留 6 s 冻雾 + 霜斑（KunPengBrain）；boss-kunpeng 回归通过、已重拍"
+  },
+  {
+    "severity": "中",
+    "owner": "特效风格",
+    "subject": "鲲鹏（2-4）化形 / 冰属性爆发",
+    "text": "收口审查（fx-style ③ 元素色）：鲲 → 鹏化形那一下是一大团赭黄泥色的卡通火团。原因是 B 路的卡通爆炸只有火的色阶，传冰蓝进去，火团就混成了泥色。鲲 · 吐冰的冰块落地、MatriarchNova 也是同样的调用。",
+    "refs": [
+      "kunpeng-boss_kunpeng"
+    ],
+    "status": "已修：这三处改走 FX3 冷的冰爆 Fx.FrostNova（KunPengBrain / BossHazards 的 LobKind.Ice / MatriarchMoves），其余爆炸不变。boss-kunpeng、gallery-kunpeng 回归通过，已重拍（72f14d4e）"
+  },
+  {
+    "severity": "低",
+    "owner": "特效风格",
+    "subject": "FX3 冰爆 / 冰河豚自爆（第二章）",
+    "text": "收口审查（fx-style ②④）：FX3 冰爆是一团柔边的白粉雾，再加白色冷环，冰河豚鼓气自爆、fx 套件的「冰爆」都是这样。亮沙上看是一大片白，读不出准则里「块面清楚的冰晶多面体」那种大形。FX3 写在风格准则之前，A / B / C / D 四路和风格审查都没有覆盖它。",
+    "refs": [
+      "frost-ice_puffer",
+      "fx-frost"
+    ],
+    "status": "未修：属于 FX3 整套的风格整改，不在收口范围内，这里只登记。改法建议：白雾换成冰蓝两段的卡通团块，冷环加粗，主形改成几块大冰晶"
+  },
+  {
+    "severity": "低",
+    "owner": "特效风格",
+    "subject": "状态 · 减速（冰壳，通用）",
+    "text": "收口审查（fx-style ②⑦）：在没有加密的机器上补跑了 fx-style（冰壳 UV2 已经生效，冰晶不再被岛缝切直边）。但三种地面上冰壳整体还是偏浅白，大切面的明暗分得不明显，整只怪读成一层光滑的浅冰蓝。",
+    "refs": [
+      "fx-status"
+    ],
+    "status": "未修：风格审查报告里登记过的残留小偏差（亮面朝主光时偏浅），这次确认还在。建议把暗面的冰蓝压深一档、晶格放大，让切面读得出来"
+  },
+  {
+    "severity": "低",
+    "owner": "测试 / 截图",
+    "subject": "鲲鹏（2-4）倒下 · 余韵",
+    "text": "图集「余韵」这一格（倒下后 5.2 s）几乎整幅都是浅蓝白，看不到场景。旁观机位跟的是鲲沉下去的位置，镜头很可能落到了冰窟水面以下，也可能是被冻雾整个罩住了。",
+    "refs": [
+      "kunpeng-boss_kunpeng"
+    ],
+    "status": "未修：先查 GalleryRecorder 的旁观机位，对象沉到水下时机位该抬到水面以上；如果是冻雾糊屏，就按 fx-style ②「雪雾偏冷白、不糊屏」收薄"
   }
 ]
