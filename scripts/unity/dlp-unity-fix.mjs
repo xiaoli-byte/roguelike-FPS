@@ -12,6 +12,8 @@
 //   node scripts/unity/dlp-unity-fix.mjs <Unity 工程目录>
 //   node scripts/unity/dlp-unity-fix.mjs --packages  连同 Library/PackageCache 一起查：包管理器（UPM，node 写的）解出来的包
 //                                                    也会是密文，打开工程时报「package.json is not valid JSON」
+//   node scripts/unity/dlp-unity-fix.mjs --peel      逐层剥：Unity 读到密文（它读不了）又原样存回去的文件是两层加密，
+//                                                    node 剥掉一层还是「%TSD-Header」；照样写回、再扫，直到剥干净（最多 4 遍）
 import { readFileSync, statSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -44,6 +46,7 @@ Get-ChildItem -Recurse -File -Force -LiteralPath ${dirs.map((d) => `'${d}'`).joi
   return { total: lines.length, encrypted };
 }
 
+const peel = args.includes('--peel');
 const { total, encrypted } = scan();
 console.log(`扫描 ${total} 个文件，${encrypted.length} 个被加密`);
 if (checkOnly) {
@@ -60,27 +63,37 @@ while (($l = $in.ReadLine()) -ne $null) {
   [IO.File]::WriteAllBytes($f, [Convert]::FromBase64String($p[1])); $n++ }
 "$n"`;
 
-// 按大小分批（每批至多 100 个文件、约 48 MB 明文）：贴图 PNG / FBX 一个就有几 MB
-let written = 0;
-let batch = [];
-let bytes = 0;
-const flush = () => {
-  if (batch.length) written += Number(ps(writer, batch.join('\n') + '\n').trim());
-  batch = [];
-  bytes = 0;
-};
-for (const f of encrypted) {
-  const data = readFileSync(f);
-  // node 也读到密文说明不在白名单里了，写回只会把密文固化成明文文件，直接停
-  if (data.subarray(0, 12).toString('latin1').startsWith('%TSD-Header')) throw new Error(`node 读到的是密文，不写回：${f}`);
-  if (batch.length >= 100 || (batch.length && bytes + data.length > 48 * 1024 * 1024)) flush();
-  batch.push(Buffer.from(f, 'utf8').toString('base64') + '\t' + data.toString('base64'));
-  bytes += data.length;
+// 按大小分批（每批至多 100 个文件、约 48 MB 明文）：贴图 PNG / FBX 一个就有几 MB；返回写回的个数
+function rewrite(files) {
+  let written = 0;
+  let batch = [];
+  let bytes = 0;
+  const flush = () => {
+    if (batch.length) written += Number(ps(writer, batch.join('\n') + '\n').trim());
+    batch = [];
+    bytes = 0;
+  };
+  for (const f of files) {
+    const data = readFileSync(f);
+    // node 也读到密文：不加 --peel 时直接停（可能是 node 不在白名单里了，写回只会把密文固化）；--peel 时当作两层加密，剥一层
+    if (!peel && data.subarray(0, 12).toString('latin1').startsWith('%TSD-Header')) throw new Error(`node 读到的是密文，不写回：${f}（两层加密时加 --peel）`);
+    if (batch.length >= 100 || (batch.length && bytes + data.length > 48 * 1024 * 1024)) flush();
+    batch.push(Buffer.from(f, 'utf8').toString('base64') + '\t' + data.toString('base64'));
+    bytes += data.length;
+  }
+  flush();
+  return written;
 }
-flush();
-console.log(`写回 ${written} 个文件`);
 
-const after = scan();
-console.log(`复查：还有 ${after.encrypted.length} 个被加密`);
-after.encrypted.slice(0, 20).forEach((f) => console.log('  ' + relative(root, f)));
-process.exit(after.encrypted.length ? 1 : 0);
+let pending = encrypted;
+for (let pass = 1; ; pass++) {
+  const n = rewrite(pending);
+  const after = scan();
+  console.log(`${pass > 1 || peel ? `第 ${pass} 遍：` : ''}写回 ${n} 个文件，复查还有 ${after.encrypted.length} 个被加密`);
+  if (after.encrypted.length === 0) process.exit(0);
+  if (!peel || pass >= 4 || after.encrypted.length >= pending.length) {
+    after.encrypted.slice(0, 20).forEach((f) => console.log('  ' + relative(root, f)));
+    process.exit(1);
+  }
+  pending = after.encrypted;
+}
