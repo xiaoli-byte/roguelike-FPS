@@ -181,7 +181,11 @@ namespace Spiritfire.Game.Testing
             var lava = GameObject.CreatePrimitive(PrimitiveType.Plane);
             lava.name = "STY Lava";
             lava.transform.position = Ground(Stage) + Vector3.up * 0.045f - back * 1.5f;
-            lava.transform.localScale = new Vector3(1.3f, 1, 1.3f);
+            // 熔岩着色器要的形状数据（局部米坐标、半宽半长、流向）烘在顶点里：用 LavaVolume 的熔岩面网格，
+            // 不能直接用 Unity 的平面（uv1 全 0 = 整片都算岸边，满池亮橙、看不到暗壳亮缝）
+            var mesh = LavaVolume.BuildMesh(LavaShape.Box, new Vector2(13f, 13f), false, new Vector2(0.35f, 0.15f));
+            lava.GetComponent<MeshFilter>().sharedMesh = mesh;
+            if (lava.TryGetComponent<MeshCollider>(out var mc)) mc.sharedMesh = mesh;
             var r = lava.GetComponent<MeshRenderer>();
             Material m = null;
 #if UNITY_EDITOR
