@@ -202,7 +202,7 @@
 | 弹药经济 | 🟡 | 缺应急补给、换关补给、无限弹药 | 计数器 | S | W1 |
 | 武器事件 | 🟡 | 只有 Fired / Changed | 进 `GameEvents` | S | W0-2 |
 | 武器音效 | ✅ | 只差机炮预热、蓄力音 | — | S | WC2 / WC3 |
-| 秒伤基准 | 🟡 | — | `WeaponDpsSuite` 输出 CSV | S | WC8 |
+| 秒伤基准 | ✅ | —（I3：按裸秒伤判 Three.js 秒伤带，18 把都在 ±20% 内；另报实战秒伤和倍率，见 [balance.md](balance.md) 第二节） | `WeaponDpsSuite` 输出 CSV | S | WC8 / I3 |
 
 18 把（数值见 `src/weapons/WeaponDefs.ts`）：
 
@@ -475,7 +475,7 @@
 | 生涯统计 | ❌ | — | `CareerStats` | S | R2 |
 | 主菜单、操作说明 | ❌ | — | 3D 远景主菜单 | M | U5 |
 | 调试作弊 | ❌ | — | `DevCommands` | M | W0-5 |
-| 经济数值表 | 🟡 | 常数散在各处 | `EconomyConfig` + 投影表 | S | R1 / I3 |
+| 经济数值表 | ✅ | —（I3：`EconomyConfig` 公式；`playtest economy` 扫 12 关场景投影每章收入、商店、魂晶、逐关难度，见 [balance.md](balance.md)） | `EconomyConfig` + 投影表 | S | R1 / I3 |
 
 天赋（全部 ❌，每项 5 级，费用 60 / 120 / 200 / 300 / 450 魂晶，单元 R2）：
 
@@ -995,7 +995,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 |---|---|---|---|---|---|
 | I1 十二关串联 | 主菜单 → 选英雄 → 1-1 … 3-4 → 胜利结算可以走通；关间结算卡；构建设置按 RunPlan；demo 开关（demoEnd = 1-4） | `G/Core/RunPlan.cs` `P/Editor/Levels/BuildOrder.cs` | 全部 M / BS、U5、U6 | 是 | M |
 | I2 整局自动化通关 | 见 7.5 | `G/Testing/Suites/FullRunSuite.cs` `G/Testing/Bot/*` | I1 | 是 | L |
-| I3 平衡 | 武器秒伤带；首领 60–120 s；每章收入对得上商店价格；魂晶 vs 天赋总价 11300；逐关难度；随机元素加入后 1-1 复测 | `docs/balance.md` `G/Testing/Suites/{BossSoak,EconomyProjection}Suite.cs`（改 EconomyConfig / CombatTuning 数值） | I1 | 是 | M |
+| I3 平衡 ✅ | 秒伤带统一按裸秒伤判（扩充 6 把的带是公式值，之前拿含元素克制 / 蚀化易伤 / 余烬的实际掉血去比，误报 5 把带外），18 把都在带内，唯一离群赤蛟霰铳每粒 11 → 10；`boss-soak` 用各章代表配装真打四个首领，改前 35–40 游戏秒（估算 42–48 s），旧定档模型漏了技能、灼烧、秘卷和余烬，耐久按实测提到 1.75–2.7 倍，改后估算 72–79 s，四个模型改从 `BossBalance` 取参考秒伤；3-3 魔将只走到第 2 阶段是阶段门槛能被跳过（越线后等招式收尾的 ≤ 2 s 照常掉血），加生命下限后每个阶段都打得到；`economy` 扫 12 关场景：必经到店灵石 = 核心篮子 1.3–1.7 倍、整店 0.64 倍，全清最多买下整店，魂晶全清 1190、点满天赋 9.5 次，都不改，只修首领灵石捡不到（倒下后吸取）和投影缺省值；逐关难度基本平，2-1 偏重记给地图单元；1-1 的武器宝箱都是指定 id，不受随机元素影响 | `docs/balance.md` `G/Testing/Suites/{BossSoak,EconomyProjection}Suite.cs` `G/Bosses/BossBalance.cs`（改 `Damageable` / `BossBrain` 阶段门槛、四个首领定档、`Weapon_Magmashot`、`EconomyConfig` / `LootDirector`；`CombatTuning` 不改） | I1 | 是 | M |
 | I4 性能 | GPU 遮挡；1-3 烘焙遮挡；地形分块 LOD；远景 impostor；按固定机位采基线（docs/performance.md 协议）；预算写进 L5 | `P/Editor/Levels/LevelKit.Perf.cs` `A/Settings/**` | I1 | 是 | M |
 | I5 中途续玩与图鉴（超越） | 每关开头写 run.json，主菜单「继续征程」；武器 / 秘卷 / 敌人 / 灵宠图鉴 | `G/Core/RunSuspend.cs` `G/Progression/Codex.cs` `G/UI/Screens/CodexScreen.cs` | R2 U5 | 否 | M |
 | I6 音频超越 ✅ | 各章环境声床；关键枪声 / 爆炸改分层（瞬态、主体、尾音）；旱魃主题曲；遮挡低通 + 混响区 | `G/Audio/{AmbienceZone,AudioOcclusion}.cs` `A/Game/Resources/Audio/Music/amb_*.ogg` `src/audio/Ambience.ts` | F5 | 是 | M |
@@ -1075,11 +1075,11 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 
 | 类别 | 标准 |
 |---|---|
-| 每把武器 | `playtest weapons`：WeaponDpsSuite CSV 落在 Three.js 秒伤带内（考虑 ×spreadScale 说明）；零件动画、换弹、元素着色截图归档 |
+| 每把武器 | `playtest weapons`：WeaponDpsSuite CSV 的裸秒伤（I3 口径，不含元素克制 / 易伤 / 被动）落在 Three.js 秒伤带内（考虑 ×spreadScale 说明）；零件动画、换弹、元素着色截图归档 |
 | 每卷秘卷 | 每个钩子至少一条 EditMode 测试（参照 tests/scroll-*.test.mjs 的写法）；`playtest scrolls` 依次授予全部 118 卷各 1 层和满层，60 s 没有异常 |
 | 每种敌人 | TestArena 刷出普通和精英，60 s 内每个状态都到达过、每个片段都存在、没有异常；断言的数值（hp、伤害、范围）与 Three.js DEF 一致 |
 | 每张图 | `bridge.sh level <id>` 全部检查通过（NavMesh、视线、坡度、锚点净空、越界、预算、没有 Placeholder）；`playtest map-<id>` 机器人清完全部必清场地并走出出口 |
-| 每个首领 | `playtest boss-<id>`：每个招式放一次、强制越过每个阈值、90 s soak（不出场、状态值有限）；用模拟秒伤算击杀用时，落在 60–120 s |
+| 每个首领 | `playtest boss-<id>`：每个招式放一次、强制越过每个阈值、90 s soak（不出场、状态值有限）；用模拟秒伤算击杀用时，落在 60–120 s；`playtest boss-soak` 用代表配装真打一遍，估算用时 60–120 s、每个阶段都走到（I3，参考秒伤取 `BossBalance` 的浸泡实测） |
 
 ### 7.5 第 4 批：整局自动化通关（I2）
 
