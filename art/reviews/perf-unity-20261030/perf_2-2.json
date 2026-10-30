@@ -1,0 +1,319 @@
+{
+ "level": "2-2",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 玉阶月台",
+   "eye": [
+    -4,
+    1.71,
+    4
+   ],
+   "target": [
+    2,
+    4.77,
+    50
+   ]
+  },
+  {
+   "name": "玉阶月台 → 九门外庭",
+   "eye": [
+    2,
+    5.27,
+    50
+   ],
+   "target": [
+    6,
+    12,
+    104
+   ]
+  },
+  {
+   "name": "九门外庭 → 开明兽庭",
+   "eye": [
+    6,
+    12.5,
+    104
+   ],
+   "target": [
+    0,
+    24.85,
+    202
+   ]
+  },
+  {
+   "name": "开明兽庭 → 玉京殿前",
+   "eye": [
+    0,
+    25.35,
+    202
+   ],
+   "target": [
+    0,
+    26.4,
+    282
+   ]
+  },
+  {
+   "name": "玉京殿前 → 出口",
+   "eye": [
+    0,
+    26.9,
+    282
+   ],
+   "target": [
+    0,
+    26.4,
+    298.8
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 玉阶月台",
+   "mode": "项目设置",
+   "frameP50": 16.654,
+   "frameP95": 18.449,
+   "mainP50": 7.865,
+   "mainP95": 10.127,
+   "renderP95": 6.139,
+   "gpuP50": 3.372,
+   "gpuP95": 7.566,
+   "drawCalls": 4077,
+   "batches": 0,
+   "setPass": 128,
+   "triangles": 3278527,
+   "gcBytes": 11592.63
+  },
+  {
+   "view": "玉阶月台 → 九门外庭",
+   "mode": "项目设置",
+   "frameP50": 16.683,
+   "frameP95": 18.088,
+   "mainP50": 7.746,
+   "mainP95": 9.68,
+   "renderP95": 4.094,
+   "gpuP50": 3.202,
+   "gpuP95": 6.24,
+   "drawCalls": 3789,
+   "batches": 0,
+   "setPass": 142,
+   "triangles": 3271852,
+   "gcBytes": 11594.38
+  },
+  {
+   "view": "九门外庭 → 开明兽庭",
+   "mode": "项目设置",
+   "frameP50": 16.616,
+   "frameP95": 19.04,
+   "mainP50": 7.581,
+   "mainP95": 9.964,
+   "renderP95": 4.418,
+   "gpuP50": 3.242,
+   "gpuP95": 7.762,
+   "drawCalls": 3233,
+   "batches": 0,
+   "setPass": 133,
+   "triangles": 2875494,
+   "gcBytes": 11770.57
+  },
+  {
+   "view": "开明兽庭 → 玉京殿前",
+   "mode": "项目设置",
+   "frameP50": 16.679,
+   "frameP95": 18.614,
+   "mainP50": 6.654,
+   "mainP95": 8.984,
+   "renderP95": 3.42,
+   "gpuP50": 2.566,
+   "gpuP95": 5.956,
+   "drawCalls": 1786,
+   "batches": 0,
+   "setPass": 94,
+   "triangles": 1527439,
+   "gcBytes": 11591.95
+  },
+  {
+   "view": "玉京殿前 → 出口",
+   "mode": "项目设置",
+   "frameP50": 16.651,
+   "frameP95": 18.009,
+   "mainP50": 5.965,
+   "mainP95": 7.39,
+   "renderP95": 2.467,
+   "gpuP50": 2.562,
+   "gpuP95": 6.189,
+   "drawCalls": 666,
+   "batches": 0,
+   "setPass": 78,
+   "triangles": 448154.5,
+   "gcBytes": 11592.43
+  },
+  {
+   "view": "出生点 → 玉阶月台",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.634,
+   "frameP95": 18.165,
+   "mainP50": 7.408,
+   "mainP95": 8.761,
+   "renderP95": 3.783,
+   "gpuP50": 3.296,
+   "gpuP95": 5.672,
+   "drawCalls": 3764,
+   "batches": 0,
+   "setPass": 122,
+   "triangles": 6538914,
+   "gcBytes": 11591.67
+  },
+  {
+   "view": "玉阶月台 → 九门外庭",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.666,
+   "frameP95": 18.348,
+   "mainP50": 7.45,
+   "mainP95": 9.275,
+   "renderP95": 4.695,
+   "gpuP50": 3.043,
+   "gpuP95": 5.242,
+   "drawCalls": 3530,
+   "batches": 0,
+   "setPass": 136,
+   "triangles": 6016301,
+   "gcBytes": 11592.43
+  },
+  {
+   "view": "九门外庭 → 开明兽庭",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.672,
+   "frameP95": 18.433,
+   "mainP50": 7.271,
+   "mainP95": 8.896,
+   "renderP95": 4.48,
+   "gpuP50": 3.223,
+   "gpuP95": 5.976,
+   "drawCalls": 3032,
+   "batches": 0,
+   "setPass": 128,
+   "triangles": 4963611,
+   "gcBytes": 11592.43
+  },
+  {
+   "view": "开明兽庭 → 玉京殿前",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.659,
+   "frameP95": 18.199,
+   "mainP50": 6.573,
+   "mainP95": 8.129,
+   "renderP95": 3.418,
+   "gpuP50": 2.984,
+   "gpuP95": 6.649,
+   "drawCalls": 1691,
+   "batches": 0,
+   "setPass": 91,
+   "triangles": 2446724,
+   "gcBytes": 11747.07
+  },
+  {
+   "view": "玉京殿前 → 出口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.696,
+   "frameP95": 18.401,
+   "mainP50": 5.852,
+   "mainP95": 7.276,
+   "renderP95": 2.438,
+   "gpuP50": 2.351,
+   "gpuP95": 6.771,
+   "drawCalls": 654,
+   "batches": 0,
+   "setPass": 76,
+   "triangles": 578143.1,
+   "gcBytes": 11592.43
+  },
+  {
+   "view": "出生点 → 玉阶月台",
+   "mode": "关 GRD",
+   "frameP50": 16.7,
+   "frameP95": 18.086,
+   "mainP50": 6.824,
+   "mainP95": 8.169,
+   "renderP95": 5.135,
+   "gpuP50": 3.445,
+   "gpuP95": 6.74,
+   "drawCalls": 3452,
+   "batches": 0,
+   "setPass": 132,
+   "triangles": 6541914,
+   "gcBytes": 11848.43
+  },
+  {
+   "view": "玉阶月台 → 九门外庭",
+   "mode": "关 GRD",
+   "frameP50": 16.666,
+   "frameP95": 19.064,
+   "mainP50": 6.774,
+   "mainP95": 8.73,
+   "renderP95": 5.04,
+   "gpuP50": 3.319,
+   "gpuP95": 7.144,
+   "drawCalls": 3223,
+   "batches": 0,
+   "setPass": 144,
+   "triangles": 6040143,
+   "gcBytes": 11848.43
+  },
+  {
+   "view": "九门外庭 → 开明兽庭",
+   "mode": "关 GRD",
+   "frameP50": 16.67,
+   "frameP95": 18.264,
+   "mainP50": 6.595,
+   "mainP95": 8.359,
+   "renderP95": 4.955,
+   "gpuP50": 3.279,
+   "gpuP95": 7.441,
+   "drawCalls": 2746,
+   "batches": 0,
+   "setPass": 136,
+   "triangles": 4975525,
+   "gcBytes": 11848.43
+  },
+  {
+   "view": "开明兽庭 → 玉京殿前",
+   "mode": "关 GRD",
+   "frameP50": 16.681,
+   "frameP95": 18.376,
+   "mainP50": 5.912,
+   "mainP95": 7.619,
+   "renderP95": 4.271,
+   "gpuP50": 3.084,
+   "gpuP95": 7.107,
+   "drawCalls": 1597,
+   "batches": 0,
+   "setPass": 97,
+   "triangles": 2463680,
+   "gcBytes": 11846.63
+  },
+  {
+   "view": "玉京殿前 → 出口",
+   "mode": "关 GRD",
+   "frameP50": 16.663,
+   "frameP95": 18.271,
+   "mainP50": 5.337,
+   "mainP95": 7.307,
+   "renderP95": 2.871,
+   "gpuP50": 2.343,
+   "gpuP95": 3.884,
+   "drawCalls": 654,
+   "batches": 0,
+   "setPass": 78,
+   "triangles": 589139.9,
+   "gcBytes": 12003.8
+  }
+ ]
+}

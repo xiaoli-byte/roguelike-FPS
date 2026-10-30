@@ -1,0 +1,258 @@
+{
+ "level": "3-3",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 中央铸床",
+   "eye": [
+    100,
+    4.16,
+    7
+   ],
+   "target": [
+    100,
+    4.18,
+    64
+   ]
+  },
+  {
+   "name": "中央铸床 → 东铸床",
+   "eye": [
+    100,
+    4.68,
+    64
+   ],
+   "target": [
+    166,
+    1.18,
+    62
+   ]
+  },
+  {
+   "name": "东铸床 → 熔心魔将",
+   "eye": [
+    166,
+    1.68,
+    62
+   ],
+   "target": [
+    152,
+    0.6,
+    164
+   ]
+  },
+  {
+   "name": "熔心魔将 → 鼓风正殿",
+   "eye": [
+    152,
+    1.1,
+    164
+   ],
+   "target": [
+    48,
+    1.17,
+    152
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 中央铸床",
+   "mode": "项目设置",
+   "frameP50": 16.692,
+   "frameP95": 18.19,
+   "mainP50": 6.879,
+   "mainP95": 9.137,
+   "renderP95": 4.455,
+   "gpuP50": 2.755,
+   "gpuP95": 7.011,
+   "drawCalls": 1633.196,
+   "batches": 0,
+   "setPass": 101.075,
+   "triangles": 861155.8,
+   "gcBytes": 11402.1
+  },
+  {
+   "view": "中央铸床 → 东铸床",
+   "mode": "项目设置",
+   "frameP50": 16.638,
+   "frameP95": 17.973,
+   "mainP50": 6.372,
+   "mainP95": 7.786,
+   "renderP95": 2.882,
+   "gpuP50": 2.775,
+   "gpuP95": 6.687,
+   "drawCalls": 936.363,
+   "batches": 0,
+   "setPass": 85,
+   "triangles": 546584.8,
+   "gcBytes": 11402.17
+  },
+  {
+   "view": "东铸床 → 熔心魔将",
+   "mode": "项目设置",
+   "frameP50": 16.649,
+   "frameP95": 17.726,
+   "mainP50": 6.573,
+   "mainP95": 7.881,
+   "renderP95": 3.924,
+   "gpuP50": 2.579,
+   "gpuP95": 6.305,
+   "drawCalls": 1246,
+   "batches": 0,
+   "setPass": 88,
+   "triangles": 676990.5,
+   "gcBytes": 11402.53
+  },
+  {
+   "view": "熔心魔将 → 鼓风正殿",
+   "mode": "项目设置",
+   "frameP50": 16.688,
+   "frameP95": 18.319,
+   "mainP50": 6.514,
+   "mainP95": 7.685,
+   "renderP95": 4.041,
+   "gpuP50": 2.765,
+   "gpuP95": 7.175,
+   "drawCalls": 1227.887,
+   "batches": 0,
+   "setPass": 90,
+   "triangles": 727441.9,
+   "gcBytes": 11580.2
+  },
+  {
+   "view": "出生点 → 中央铸床",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.629,
+   "frameP95": 18.668,
+   "mainP50": 6.488,
+   "mainP95": 8.582,
+   "renderP95": 4.057,
+   "gpuP50": 2.83,
+   "gpuP95": 7.146,
+   "drawCalls": 1546.3,
+   "batches": 0,
+   "setPass": 95.088,
+   "triangles": 1196046,
+   "gcBytes": 11402.17
+  },
+  {
+   "view": "中央铸床 → 东铸床",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.641,
+   "frameP95": 18.626,
+   "mainP50": 6.078,
+   "mainP95": 7.611,
+   "renderP95": 3.344,
+   "gpuP50": 2.726,
+   "gpuP95": 6.749,
+   "drawCalls": 903.513,
+   "batches": 0,
+   "setPass": 82,
+   "triangles": 612097,
+   "gcBytes": 11402.53
+  },
+  {
+   "view": "东铸床 → 熔心魔将",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.692,
+   "frameP95": 19.173,
+   "mainP50": 6.393,
+   "mainP95": 8.645,
+   "renderP95": 3.936,
+   "gpuP50": 3.508,
+   "gpuP95": 7.42,
+   "drawCalls": 1188,
+   "batches": 0,
+   "setPass": 83,
+   "triangles": 866707.6,
+   "gcBytes": 11402.17
+  },
+  {
+   "view": "熔心魔将 → 鼓风正殿",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.602,
+   "frameP95": 18.105,
+   "mainP50": 6.371,
+   "mainP95": 7.897,
+   "renderP95": 3.664,
+   "gpuP50": 4.336,
+   "gpuP95": 8.477,
+   "drawCalls": 1174.504,
+   "batches": 0,
+   "setPass": 87.333,
+   "triangles": 990804.3,
+   "gcBytes": 11401.03
+  },
+  {
+   "view": "出生点 → 中央铸床",
+   "mode": "关 GRD",
+   "frameP50": 16.666,
+   "frameP95": 17.855,
+   "mainP50": 5.921,
+   "mainP95": 7.213,
+   "renderP95": 3.26,
+   "gpuP50": 2.814,
+   "gpuP95": 6.473,
+   "drawCalls": 1498.342,
+   "batches": 0,
+   "setPass": 115.067,
+   "triangles": 1196044,
+   "gcBytes": 11658.17
+  },
+  {
+   "view": "中央铸床 → 东铸床",
+   "mode": "关 GRD",
+   "frameP50": 16.662,
+   "frameP95": 18.509,
+   "mainP50": 5.492,
+   "mainP95": 7.304,
+   "renderP95": 2.67,
+   "gpuP50": 2.605,
+   "gpuP95": 6.543,
+   "drawCalls": 844.608,
+   "batches": 0,
+   "setPass": 94,
+   "triangles": 612104.4,
+   "gcBytes": 11658.17
+  },
+  {
+   "view": "东铸床 → 熔心魔将",
+   "mode": "关 GRD",
+   "frameP50": 16.665,
+   "frameP95": 18.322,
+   "mainP50": 5.748,
+   "mainP95": 7.899,
+   "renderP95": 2.866,
+   "gpuP50": 3.23,
+   "gpuP95": 7.762,
+   "drawCalls": 1168,
+   "batches": 0,
+   "setPass": 102,
+   "triangles": 866739.5,
+   "gcBytes": 11658.53
+  },
+  {
+   "view": "熔心魔将 → 鼓风正殿",
+   "mode": "关 GRD",
+   "frameP50": 16.729,
+   "frameP95": 18.279,
+   "mainP50": 5.883,
+   "mainP95": 8.009,
+   "renderP95": 2.533,
+   "gpuP50": 4.864,
+   "gpuP95": 8.448,
+   "drawCalls": 1114.754,
+   "batches": 0,
+   "setPass": 106,
+   "triangles": 990819.4,
+   "gcBytes": 11658.17
+  }
+ ]
+}

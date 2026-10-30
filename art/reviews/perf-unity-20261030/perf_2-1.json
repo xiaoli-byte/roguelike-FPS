@@ -1,0 +1,380 @@
+{
+ "level": "2-1",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 冰河",
+   "eye": [
+    0,
+    5.67,
+    -4
+   ],
+   "target": [
+    0,
+    2.6,
+    74
+   ]
+  },
+  {
+   "name": "冰河 → 东岸台地",
+   "eye": [
+    0,
+    3.1,
+    74
+   ],
+   "target": [
+    46,
+    11.2,
+    92
+   ]
+  },
+  {
+   "name": "东岸台地 → 冰桥",
+   "eye": [
+    46,
+    11.7,
+    92
+   ],
+   "target": [
+    0,
+    21.2,
+    158
+   ]
+  },
+  {
+   "name": "冰桥 → 冰柱林",
+   "eye": [
+    0,
+    21.7,
+    158
+   ],
+   "target": [
+    34,
+    37.3,
+    206
+   ]
+  },
+  {
+   "name": "冰柱林 → 瀑顶冰潭",
+   "eye": [
+    34,
+    37.8,
+    206
+   ],
+   "target": [
+    0,
+    46.2,
+    236
+   ]
+  },
+  {
+   "name": "瀑顶冰潭 → 出口",
+   "eye": [
+    0,
+    46.7,
+    236
+   ],
+   "target": [
+    0,
+    48.8,
+    278.8
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 冰河",
+   "mode": "项目设置",
+   "frameP50": 16.696,
+   "frameP95": 18.901,
+   "mainP50": 7.531,
+   "mainP95": 10.208,
+   "renderP95": 4.181,
+   "gpuP50": 3.199,
+   "gpuP95": 5.943,
+   "drawCalls": 2750.262,
+   "batches": 0,
+   "setPass": 160.767,
+   "triangles": 1547573,
+   "gcBytes": 11408.33
+  },
+  {
+   "view": "冰河 → 东岸台地",
+   "mode": "项目设置",
+   "frameP50": 16.685,
+   "frameP95": 18.556,
+   "mainP50": 6.501,
+   "mainP95": 8.122,
+   "renderP95": 2.985,
+   "gpuP50": 2.754,
+   "gpuP95": 6.594,
+   "drawCalls": 1517,
+   "batches": 0,
+   "setPass": 85,
+   "triangles": 1220635,
+   "gcBytes": 11410.53
+  },
+  {
+   "view": "东岸台地 → 冰桥",
+   "mode": "项目设置",
+   "frameP50": 16.679,
+   "frameP95": 18.276,
+   "mainP50": 6.925,
+   "mainP95": 8.576,
+   "renderP95": 4.962,
+   "gpuP50": 3.088,
+   "gpuP95": 5.734,
+   "drawCalls": 2516,
+   "batches": 0,
+   "setPass": 144,
+   "triangles": 1659061,
+   "gcBytes": 11409.65
+  },
+  {
+   "view": "冰桥 → 冰柱林",
+   "mode": "项目设置",
+   "frameP50": 16.628,
+   "frameP95": 18.16,
+   "mainP50": 6.394,
+   "mainP95": 7.888,
+   "renderP95": 4.48,
+   "gpuP50": 3.113,
+   "gpuP95": 6.19,
+   "drawCalls": 1567,
+   "batches": 0,
+   "setPass": 101,
+   "triangles": 1137666,
+   "gcBytes": 11602.86
+  },
+  {
+   "view": "冰柱林 → 瀑顶冰潭",
+   "mode": "项目设置",
+   "frameP50": 16.673,
+   "frameP95": 18.153,
+   "mainP50": 6.237,
+   "mainP95": 7.718,
+   "renderP95": 3.78,
+   "gpuP50": 2.63,
+   "gpuP95": 6.25,
+   "drawCalls": 1420,
+   "batches": 0,
+   "setPass": 79,
+   "triangles": 875873.6,
+   "gcBytes": 11410.43
+  },
+  {
+   "view": "瀑顶冰潭 → 出口",
+   "mode": "项目设置",
+   "frameP50": 16.701,
+   "frameP95": 17.954,
+   "mainP50": 6.085,
+   "mainP95": 7.491,
+   "renderP95": 3.608,
+   "gpuP50": 2.544,
+   "gpuP95": 6.925,
+   "drawCalls": 1175,
+   "batches": 0,
+   "setPass": 82,
+   "triangles": 664484.6,
+   "gcBytes": 11408.07
+  },
+  {
+   "view": "出生点 → 冰河",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.705,
+   "frameP95": 17.926,
+   "mainP50": 7.056,
+   "mainP95": 8.451,
+   "renderP95": 5.363,
+   "gpuP50": 3.287,
+   "gpuP95": 6.913,
+   "drawCalls": 2654.317,
+   "batches": 0,
+   "setPass": 150.683,
+   "triangles": 2240909,
+   "gcBytes": 11408.97
+  },
+  {
+   "view": "冰河 → 东岸台地",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.683,
+   "frameP95": 17.955,
+   "mainP50": 6.126,
+   "mainP95": 7.156,
+   "renderP95": 3.498,
+   "gpuP50": 2.544,
+   "gpuP95": 6.322,
+   "drawCalls": 1479,
+   "batches": 0,
+   "setPass": 81,
+   "triangles": 1456520,
+   "gcBytes": 11408.97
+  },
+  {
+   "view": "东岸台地 → 冰桥",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.622,
+   "frameP95": 18.569,
+   "mainP50": 6.781,
+   "mainP95": 8.617,
+   "renderP95": 4.373,
+   "gpuP50": 2.848,
+   "gpuP95": 6.631,
+   "drawCalls": 2440,
+   "batches": 0,
+   "setPass": 134,
+   "triangles": 2223416,
+   "gcBytes": 11409
+  },
+  {
+   "view": "冰桥 → 冰柱林",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.673,
+   "frameP95": 20.106,
+   "mainP50": 6.191,
+   "mainP95": 9.886,
+   "renderP95": 2.665,
+   "gpuP50": 2.767,
+   "gpuP95": 5.357,
+   "drawCalls": 1522,
+   "batches": 0,
+   "setPass": 93,
+   "triangles": 1483430,
+   "gcBytes": 11559.7
+  },
+  {
+   "view": "冰柱林 → 瀑顶冰潭",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.666,
+   "frameP95": 19.507,
+   "mainP50": 6.257,
+   "mainP95": 9.299,
+   "renderP95": 3.049,
+   "gpuP50": 2.539,
+   "gpuP95": 5.338,
+   "drawCalls": 1395,
+   "batches": 0,
+   "setPass": 75,
+   "triangles": 1067262,
+   "gcBytes": 11408.67
+  },
+  {
+   "view": "瀑顶冰潭 → 出口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.598,
+   "frameP95": 17.776,
+   "mainP50": 5.856,
+   "mainP95": 7.128,
+   "renderP95": 2.782,
+   "gpuP50": 2.491,
+   "gpuP95": 6.14,
+   "drawCalls": 1165,
+   "batches": 0,
+   "setPass": 79,
+   "triangles": 736135.3,
+   "gcBytes": 11408.75
+  },
+  {
+   "view": "出生点 → 冰河",
+   "mode": "关 GRD",
+   "frameP50": 16.633,
+   "frameP95": 18.269,
+   "mainP50": 6.678,
+   "mainP95": 8.472,
+   "renderP95": 4.346,
+   "gpuP50": 3.6,
+   "gpuP95": 7.269,
+   "drawCalls": 2595.233,
+   "batches": 0,
+   "setPass": 162.708,
+   "triangles": 2240910,
+   "gcBytes": 11664.97
+  },
+  {
+   "view": "冰河 → 东岸台地",
+   "mode": "关 GRD",
+   "frameP50": 16.686,
+   "frameP95": 18.473,
+   "mainP50": 5.601,
+   "mainP95": 7.651,
+   "renderP95": 2.459,
+   "gpuP50": 2.693,
+   "gpuP95": 5.376,
+   "drawCalls": 1422,
+   "batches": 0,
+   "setPass": 91,
+   "triangles": 1456517,
+   "gcBytes": 11666.07
+  },
+  {
+   "view": "东岸台地 → 冰桥",
+   "mode": "关 GRD",
+   "frameP50": 16.688,
+   "frameP95": 18.115,
+   "mainP50": 6.243,
+   "mainP95": 7.867,
+   "renderP95": 3.126,
+   "gpuP50": 2.905,
+   "gpuP95": 5.338,
+   "drawCalls": 2362,
+   "batches": 0,
+   "setPass": 144,
+   "triangles": 2228879,
+   "gcBytes": 11664.97
+  },
+  {
+   "view": "冰桥 → 冰柱林",
+   "mode": "关 GRD",
+   "frameP50": 16.651,
+   "frameP95": 17.915,
+   "mainP50": 5.497,
+   "mainP95": 6.606,
+   "renderP95": 2.578,
+   "gpuP50": 2.717,
+   "gpuP95": 6.064,
+   "drawCalls": 1480,
+   "batches": 0,
+   "setPass": 91,
+   "triangles": 1504218,
+   "gcBytes": 11816
+  },
+  {
+   "view": "冰柱林 → 瀑顶冰潭",
+   "mode": "关 GRD",
+   "frameP50": 16.722,
+   "frameP95": 18.231,
+   "mainP50": 5.416,
+   "mainP95": 7.404,
+   "renderP95": 2.459,
+   "gpuP50": 2.526,
+   "gpuP95": 6.122,
+   "drawCalls": 1385,
+   "batches": 0,
+   "setPass": 79,
+   "triangles": 1073200,
+   "gcBytes": 11664.37
+  },
+  {
+   "view": "瀑顶冰潭 → 出口",
+   "mode": "关 GRD",
+   "frameP50": 16.583,
+   "frameP95": 18.77,
+   "mainP50": 5.182,
+   "mainP95": 7.203,
+   "renderP95": 2.363,
+   "gpuP50": 2.521,
+   "gpuP95": 7.007,
+   "drawCalls": 1162,
+   "batches": 0,
+   "setPass": 75,
+   "triangles": 736126.6,
+   "gcBytes": 11663.83
+  }
+ ]
+}

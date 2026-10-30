@@ -1,0 +1,319 @@
+{
+ "level": "3-2",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 熔瀑",
+   "eye": [
+    13.59,
+    22.25,
+    -71.22
+   ],
+   "target": [
+    33.76,
+    6.33,
+    -29.76
+   ]
+  },
+  {
+   "name": "熔瀑 → 炼渣回廊",
+   "eye": [
+    33.76,
+    6.83,
+    -29.76
+   ],
+   "target": [
+    72.79,
+    19.03,
+    -11.53
+   ]
+  },
+  {
+   "name": "炼渣回廊 → 井底炉坛",
+   "eye": [
+    72.79,
+    19.53,
+    -11.53
+   ],
+   "target": [
+    0,
+    1.23,
+    32
+   ]
+  },
+  {
+   "name": "井底炉坛 → 出口",
+   "eye": [
+    0,
+    1.73,
+    32
+   ],
+   "target": [
+    0,
+    15.2,
+    80
+   ]
+  },
+  {
+   "name": "出口 → 风口",
+   "eye": [
+    0,
+    15.7,
+    80
+   ],
+   "target": [
+    -51.03,
+    13.05,
+    34.68
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 熔瀑",
+   "mode": "项目设置",
+   "frameP50": 16.661,
+   "frameP95": 17.77,
+   "mainP50": 6.94,
+   "mainP95": 8.195,
+   "renderP95": 5.242,
+   "gpuP50": 3.038,
+   "gpuP95": 6.371,
+   "drawCalls": 1479,
+   "batches": 0,
+   "setPass": 140,
+   "triangles": 1303656,
+   "gcBytes": 11651.3
+  },
+  {
+   "view": "熔瀑 → 炼渣回廊",
+   "mode": "项目设置",
+   "frameP50": 16.663,
+   "frameP95": 17.824,
+   "mainP50": 6.528,
+   "mainP95": 7.885,
+   "renderP95": 3.966,
+   "gpuP50": 2.819,
+   "gpuP95": 7.264,
+   "drawCalls": 973.404,
+   "batches": 0,
+   "setPass": 85.25,
+   "triangles": 971798.9,
+   "gcBytes": 11651.47
+  },
+  {
+   "view": "炼渣回廊 → 井底炉坛",
+   "mode": "项目设置",
+   "frameP50": 16.696,
+   "frameP95": 17.932,
+   "mainP50": 7.165,
+   "mainP95": 8.852,
+   "renderP95": 5.084,
+   "gpuP50": 3.058,
+   "gpuP95": 6.571,
+   "drawCalls": 1463.508,
+   "batches": 0,
+   "setPass": 164,
+   "triangles": 1294300,
+   "gcBytes": 11830.07
+  },
+  {
+   "view": "井底炉坛 → 出口",
+   "mode": "项目设置",
+   "frameP50": 16.671,
+   "frameP95": 18.836,
+   "mainP50": 6.432,
+   "mainP95": 8.361,
+   "renderP95": 2.757,
+   "gpuP50": 2.899,
+   "gpuP95": 7.116,
+   "drawCalls": 965,
+   "batches": 0,
+   "setPass": 106,
+   "triangles": 1083126,
+   "gcBytes": 11650.83
+  },
+  {
+   "view": "出口 → 风口",
+   "mode": "项目设置",
+   "frameP50": 16.605,
+   "frameP95": 18.56,
+   "mainP50": 7.052,
+   "mainP95": 9.415,
+   "renderP95": 3.299,
+   "gpuP50": 3.02,
+   "gpuP95": 7.393,
+   "drawCalls": 1338.504,
+   "batches": 0,
+   "setPass": 159.992,
+   "triangles": 1119844,
+   "gcBytes": 11650.73
+  },
+  {
+   "view": "出生点 → 熔瀑",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.654,
+   "frameP95": 20.059,
+   "mainP50": 6.788,
+   "mainP95": 9.687,
+   "renderP95": 3.026,
+   "gpuP50": 2.855,
+   "gpuP95": 5.794,
+   "drawCalls": 1394,
+   "batches": 0,
+   "setPass": 133,
+   "triangles": 2123422,
+   "gcBytes": 11651.1
+  },
+  {
+   "view": "熔瀑 → 炼渣回廊",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.715,
+   "frameP95": 19.196,
+   "mainP50": 6.346,
+   "mainP95": 8.792,
+   "renderP95": 2.383,
+   "gpuP50": 2.706,
+   "gpuP95": 6.086,
+   "drawCalls": 931.192,
+   "batches": 0,
+   "setPass": 80.508,
+   "triangles": 1481009,
+   "gcBytes": 11650.33
+  },
+  {
+   "view": "炼渣回廊 → 井底炉坛",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.639,
+   "frameP95": 19.506,
+   "mainP50": 6.84,
+   "mainP95": 9.007,
+   "renderP95": 4.449,
+   "gpuP50": 2.881,
+   "gpuP95": 5.843,
+   "drawCalls": 1374.475,
+   "batches": 0,
+   "setPass": 156,
+   "triangles": 2173039,
+   "gcBytes": 11651.1
+  },
+  {
+   "view": "井底炉坛 → 出口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.657,
+   "frameP95": 18.178,
+   "mainP50": 6.345,
+   "mainP95": 7.929,
+   "renderP95": 2.383,
+   "gpuP50": 2.881,
+   "gpuP95": 5.68,
+   "drawCalls": 925,
+   "batches": 0,
+   "setPass": 102,
+   "triangles": 1512006,
+   "gcBytes": 11807.23
+  },
+  {
+   "view": "出口 → 风口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.684,
+   "frameP95": 18.223,
+   "mainP50": 6.728,
+   "mainP95": 8.139,
+   "renderP95": 3.138,
+   "gpuP50": 2.92,
+   "gpuP95": 6.991,
+   "drawCalls": 1256.508,
+   "batches": 0,
+   "setPass": 153,
+   "triangles": 1916950,
+   "gcBytes": 11651.47
+  },
+  {
+   "view": "出生点 → 熔瀑",
+   "mode": "关 GRD",
+   "frameP50": 16.651,
+   "frameP95": 18.735,
+   "mainP50": 6.192,
+   "mainP95": 8.732,
+   "renderP95": 3.089,
+   "gpuP50": 3.084,
+   "gpuP95": 6.956,
+   "drawCalls": 1354,
+   "batches": 0,
+   "setPass": 157,
+   "triangles": 2126427,
+   "gcBytes": 11907.1
+  },
+  {
+   "view": "熔瀑 → 炼渣回廊",
+   "mode": "关 GRD",
+   "frameP50": 16.667,
+   "frameP95": 18.635,
+   "mainP50": 5.507,
+   "mainP95": 7.375,
+   "renderP95": 2.543,
+   "gpuP50": 2.823,
+   "gpuP95": 5.802,
+   "drawCalls": 900.779,
+   "batches": 0,
+   "setPass": 96.45,
+   "triangles": 1480992,
+   "gcBytes": 11907.1
+  },
+  {
+   "view": "炼渣回廊 → 井底炉坛",
+   "mode": "关 GRD",
+   "frameP50": 16.683,
+   "frameP95": 18.685,
+   "mainP50": 6.175,
+   "mainP95": 8.282,
+   "renderP95": 3.264,
+   "gpuP50": 3.088,
+   "gpuP95": 7.589,
+   "drawCalls": 1324.633,
+   "batches": 0,
+   "setPass": 173,
+   "triangles": 2173080,
+   "gcBytes": 11907.1
+  },
+  {
+   "view": "井底炉坛 → 出口",
+   "mode": "关 GRD",
+   "frameP50": 16.603,
+   "frameP95": 17.899,
+   "mainP50": 5.567,
+   "mainP95": 6.994,
+   "renderP95": 3.266,
+   "gpuP50": 2.987,
+   "gpuP95": 5.565,
+   "drawCalls": 911,
+   "batches": 0,
+   "setPass": 116,
+   "triangles": 1512011,
+   "gcBytes": 11907.1
+  },
+  {
+   "view": "出口 → 风口",
+   "mode": "关 GRD",
+   "frameP50": 16.626,
+   "frameP95": 18.085,
+   "mainP50": 6.288,
+   "mainP95": 7.555,
+   "renderP95": 3.494,
+   "gpuP50": 2.957,
+   "gpuP95": 6.358,
+   "drawCalls": 1211.725,
+   "batches": 0,
+   "setPass": 167,
+   "triangles": 1917056,
+   "gcBytes": 12063.23
+  }
+ ]
+}

@@ -1,0 +1,75 @@
+{
+ "level": "3-4",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 火麒麟",
+   "eye": [
+    -24,
+    1.65,
+    -84
+   ],
+   "target": [
+    0,
+    0.2,
+    0
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 火麒麟",
+   "mode": "项目设置",
+   "frameP50": 16.64,
+   "frameP95": 18.586,
+   "mainP50": 8.202,
+   "mainP95": 10.212,
+   "renderP95": 4.299,
+   "gpuP50": 3.938,
+   "gpuP95": 7.772,
+   "drawCalls": 1885,
+   "batches": 0,
+   "setPass": 351.1,
+   "triangles": 1947472,
+   "gcBytes": 11796.57
+  },
+  {
+   "view": "出生点 → 火麒麟",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.628,
+   "frameP95": 18.071,
+   "mainP50": 7.886,
+   "mainP95": 9.608,
+   "renderP95": 6.013,
+   "gpuP50": 3.769,
+   "gpuP95": 6.816,
+   "drawCalls": 1818.008,
+   "batches": 0,
+   "setPass": 344.967,
+   "triangles": 2602721,
+   "gcBytes": 11796.37
+  },
+  {
+   "view": "出生点 → 火麒麟",
+   "mode": "关 GRD",
+   "frameP50": 16.659,
+   "frameP95": 18.389,
+   "mainP50": 6.933,
+   "mainP95": 8.471,
+   "renderP95": 6.07,
+   "gpuP50": 3.533,
+   "gpuP95": 6.805,
+   "drawCalls": 1965,
+   "batches": 0,
+   "setPass": 363.613,
+   "triangles": 2619042,
+   "gcBytes": 12052.37
+  }
+ ]
+}

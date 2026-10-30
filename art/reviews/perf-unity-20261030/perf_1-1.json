@@ -1,0 +1,319 @@
+{
+ "level": "1-1",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 黑戈壁砾石滩",
+   "eye": [
+    26,
+    1.22,
+    38
+   ],
+   "target": [
+    80,
+    1.37,
+    58
+   ]
+  },
+  {
+   "name": "黑戈壁砾石滩 → 雅丹石阵",
+   "eye": [
+    80,
+    1.87,
+    58
+   ],
+   "target": [
+    120,
+    0.95,
+    100
+   ]
+  },
+  {
+   "name": "雅丹石阵 → 烽燧台地",
+   "eye": [
+    120,
+    1.45,
+    100
+   ],
+   "target": [
+    180,
+    7.04,
+    142
+   ]
+  },
+  {
+   "name": "烽燧台地 → 驼队残骸营地",
+   "eye": [
+    180,
+    7.54,
+    142
+   ],
+   "target": [
+    220,
+    -1.12,
+    74
+   ]
+  },
+  {
+   "name": "驼队残骸营地 → 出口",
+   "eye": [
+    220,
+    -0.62,
+    74
+   ],
+   "target": [
+    248.82,
+    1.09,
+    57.79
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 黑戈壁砾石滩",
+   "mode": "项目设置",
+   "frameP50": 16.638,
+   "frameP95": 18.683,
+   "mainP50": 7.14,
+   "mainP95": 9.3,
+   "renderP95": 3.143,
+   "gpuP50": 2.892,
+   "gpuP95": 7.504,
+   "drawCalls": 1685.533,
+   "batches": 0,
+   "setPass": 142.921,
+   "triangles": 2503950,
+   "gcBytes": 11599.27
+  },
+  {
+   "view": "黑戈壁砾石滩 → 雅丹石阵",
+   "mode": "项目设置",
+   "frameP50": 16.612,
+   "frameP95": 17.967,
+   "mainP50": 6.669,
+   "mainP95": 8.151,
+   "renderP95": 3.231,
+   "gpuP50": 2.618,
+   "gpuP95": 6.446,
+   "drawCalls": 1650,
+   "batches": 0,
+   "setPass": 100,
+   "triangles": 1479679,
+   "gcBytes": 11599.07
+  },
+  {
+   "view": "雅丹石阵 → 烽燧台地",
+   "mode": "项目设置",
+   "frameP50": 16.666,
+   "frameP95": 18.225,
+   "mainP50": 6.311,
+   "mainP95": 7.893,
+   "renderP95": 2.76,
+   "gpuP50": 2.612,
+   "gpuP95": 6.968,
+   "drawCalls": 1379.642,
+   "batches": 0,
+   "setPass": 76.642,
+   "triangles": 1466854,
+   "gcBytes": 11599.43
+  },
+  {
+   "view": "烽燧台地 → 驼队残骸营地",
+   "mode": "项目设置",
+   "frameP50": 16.699,
+   "frameP95": 19.015,
+   "mainP50": 6.394,
+   "mainP95": 8.31,
+   "renderP95": 3.356,
+   "gpuP50": 2.687,
+   "gpuP95": 6.66,
+   "drawCalls": 759,
+   "batches": 0,
+   "setPass": 69,
+   "triangles": 984829.7,
+   "gcBytes": 11778.03
+  },
+  {
+   "view": "驼队残骸营地 → 出口",
+   "mode": "项目设置",
+   "frameP50": 16.65,
+   "frameP95": 18.544,
+   "mainP50": 5.881,
+   "mainP95": 7.556,
+   "renderP95": 2.821,
+   "gpuP50": 0.67,
+   "gpuP95": 2.491,
+   "drawCalls": 477,
+   "batches": 0,
+   "setPass": 65,
+   "triangles": 736287.3,
+   "gcBytes": 11599.07
+  },
+  {
+   "view": "出生点 → 黑戈壁砾石滩",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.652,
+   "frameP95": 17.712,
+   "mainP50": 6.804,
+   "mainP95": 7.927,
+   "renderP95": 4.384,
+   "gpuP50": 3.004,
+   "gpuP95": 7.255,
+   "drawCalls": 1592,
+   "batches": 0,
+   "setPass": 136.321,
+   "triangles": 3035414,
+   "gcBytes": 11599.07
+  },
+  {
+   "view": "黑戈壁砾石滩 → 雅丹石阵",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.643,
+   "frameP95": 17.94,
+   "mainP50": 6.511,
+   "mainP95": 7.97,
+   "renderP95": 2.916,
+   "gpuP50": 2.782,
+   "gpuP95": 6.451,
+   "drawCalls": 1578,
+   "batches": 0,
+   "setPass": 95,
+   "triangles": 1871124,
+   "gcBytes": 11599.07
+  },
+  {
+   "view": "雅丹石阵 → 烽燧台地",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.686,
+   "frameP95": 18.29,
+   "mainP50": 6.136,
+   "mainP95": 7.75,
+   "renderP95": 3.589,
+   "gpuP50": 2.591,
+   "gpuP95": 5.092,
+   "drawCalls": 1329,
+   "batches": 0,
+   "setPass": 72,
+   "triangles": 1749374,
+   "gcBytes": 11598.7
+  },
+  {
+   "view": "烽燧台地 → 驼队残骸营地",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.646,
+   "frameP95": 18.292,
+   "mainP50": 5.823,
+   "mainP95": 8.044,
+   "renderP95": 3.169,
+   "gpuP50": 2.388,
+   "gpuP95": 5.311,
+   "drawCalls": 736,
+   "batches": 0,
+   "setPass": 66,
+   "triangles": 1082507,
+   "gcBytes": 11598.7
+  },
+  {
+   "view": "驼队残骸营地 → 出口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.678,
+   "frameP95": 18.373,
+   "mainP50": 5.571,
+   "mainP95": 7.445,
+   "renderP95": 2.771,
+   "gpuP50": 0.6,
+   "gpuP95": 1.097,
+   "drawCalls": 469.733,
+   "batches": 0,
+   "setPass": 62.733,
+   "triangles": 764844.2,
+   "gcBytes": 11754.83
+  },
+  {
+   "view": "出生点 → 黑戈壁砾石滩",
+   "mode": "关 GRD",
+   "frameP50": 16.61,
+   "frameP95": 18.159,
+   "mainP50": 6.191,
+   "mainP95": 7.753,
+   "renderP95": 4.806,
+   "gpuP50": 3.131,
+   "gpuP95": 6.737,
+   "drawCalls": 1532,
+   "batches": 0,
+   "setPass": 150.317,
+   "triangles": 3035415,
+   "gcBytes": 11855.07
+  },
+  {
+   "view": "黑戈壁砾石滩 → 雅丹石阵",
+   "mode": "关 GRD",
+   "frameP50": 16.656,
+   "frameP95": 17.828,
+   "mainP50": 5.729,
+   "mainP95": 6.818,
+   "renderP95": 4.072,
+   "gpuP50": 3.018,
+   "gpuP95": 5.94,
+   "drawCalls": 1528,
+   "batches": 0,
+   "setPass": 111,
+   "triangles": 1876124,
+   "gcBytes": 11855.43
+  },
+  {
+   "view": "雅丹石阵 → 烽燧台地",
+   "mode": "关 GRD",
+   "frameP50": 16.671,
+   "frameP95": 18.438,
+   "mainP50": 5.411,
+   "mainP95": 7.223,
+   "renderP95": 3.08,
+   "gpuP50": 2.706,
+   "gpuP95": 5.449,
+   "drawCalls": 1266.371,
+   "batches": 0,
+   "setPass": 84.371,
+   "triangles": 1749380,
+   "gcBytes": 11854.27
+  },
+  {
+   "view": "烽燧台地 → 驼队残骸营地",
+   "mode": "关 GRD",
+   "frameP50": 16.688,
+   "frameP95": 18.336,
+   "mainP50": 5.161,
+   "mainP95": 7.221,
+   "renderP95": 3.099,
+   "gpuP50": 2.298,
+   "gpuP95": 5.393,
+   "drawCalls": 730,
+   "batches": 0,
+   "setPass": 76,
+   "triangles": 1082506,
+   "gcBytes": 11854.67
+  },
+  {
+   "view": "驼队残骸营地 → 出口",
+   "mode": "关 GRD",
+   "frameP50": 16.709,
+   "frameP95": 19.073,
+   "mainP50": 5.295,
+   "mainP95": 7.689,
+   "renderP95": 3.062,
+   "gpuP50": 1.415,
+   "gpuP95": 3.432,
+   "drawCalls": 467,
+   "batches": 0,
+   "setPass": 72,
+   "triangles": 764836.1,
+   "gcBytes": 11855.07
+  }
+ ]
+}
