@@ -25,12 +25,13 @@ namespace Spiritfire.Game
         public static void EliteCh3Crescent(Vector3 center, float yawDeg, float radius, float arc, int dir, float height = 1.1f)
         {
             if (!Finite(center)) return;
-            WarlordCrescent(center + Vector3.up * height, yawDeg, radius, arc, dir, 0f, 0.8f, 0f, 0.3f);
+            // 月牙厚 1.3 m、活 0.36 s：亮沙地上要压得出来（第一次实拍 0.8 m 在侧面几乎只剩一条线）
+            WarlordCrescent(center + Vector3.up * height, yawDeg, radius, arc, dir, 0f, 1.3f, 0f, 0.36f);
             for (int i = 0; i < 4; i++)
             {
                 float a = (yawDeg + (i - 1.5f) / 4f * arc * Mathf.Rad2Deg) * Mathf.Deg2Rad;
                 var d = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
-                WarlordShards(center + d * radius + Vector3.up * (height * 0.7f), d + Vector3.up * 0.4f, 0.6f, 0f);
+                WarlordShards(center + d * radius + Vector3.up * (height * 0.7f), d + Vector3.up * 0.4f, 0.6f, 0f, i == 0);
             }
             WarlordSmoke(center, radius * 0.35f, 2);
         }
@@ -59,7 +60,7 @@ namespace Spiritfire.Game
             {
                 float a = a0 + i / (float)n * Mathf.PI * 2f;
                 var d = new Vector3(Mathf.Sin(a), 0.7f, Mathf.Cos(a));
-                WarlordShards(ground + new Vector3(d.x, 0, d.z) * radius * 0.5f + Vector3.up * 0.15f, d, 0.7f, 0f);
+                WarlordShards(ground + new Vector3(d.x, 0, d.z) * radius * 0.5f + Vector3.up * 0.15f, d, 0.7f, 0f, i == 0);
             }
         }
     }

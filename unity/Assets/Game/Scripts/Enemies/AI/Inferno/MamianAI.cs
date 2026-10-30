@@ -626,7 +626,7 @@ namespace Spiritfire.Game
             if (strike != null)
             {
                 strike.Release(-0.09f, -7f, 0.06f);
-                Fx.EliteCh3Crescent(transform.position, Facing * Mathf.Rad2Deg, r * 0.92f, Mathf.PI * 1.9f, -1, 0.9f * Size);
+                Fx.EliteCh3Crescent(transform.position, Facing * Mathf.Rad2Deg, r * 0.92f, Mathf.PI * 1.9f, -1, 0.7f * Size);
             }
             if (!vitals || vitals.Dead) return;
             var to = PlayerPos - transform.position;

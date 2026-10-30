@@ -100,7 +100,7 @@ namespace Spiritfire.Game.Testing
             Write();
         }
 
-        /// <summary>开一组：stage() 返回 'W'（前摇）/ 'A'（出手）/ 其余；subject() 出招者身体中心；size 体型（米）</summary>
+        /// <summary>开一组：stage() 返回 'W'（前摇）/ 'H'（前摇结束、还没到释放帧）/ 'A'（出手）/ 其余；subject() 出招者身体中心；size 体型（米）</summary>
         public void Arm(string label, string filePrefix, Func<char> stage, Func<Vector3> subject, float size, float recoverDelay = 0.35f)
         {
             this.label = label;
@@ -168,6 +168,8 @@ namespace Spiritfire.Game.Testing
                         haveHold = true;
                         return;
                     }
+                    // 'H'：前摇已经结束、还在等释放帧（动作的刀到比判定晚一两帧）——预警那一格留在前摇最后一帧（预警填得最满），不再覆盖
+                    if (s == 'H') return;
                     if (haveHold)
                     {
                         Save(hold, new Shot { move = prefix, label = label, beat = Beats[1], order = 1 }, prefix + "_1");
@@ -421,8 +423,7 @@ namespace Spiritfire.Game.Testing
             foreach (var (at, beat, i) in new[] { (0.3f, "倒下", 0), (secs * 0.45f, "溃散", 1), (secs * 0.85f, "化铜", 2), (secs + 0.8f, "余韵", 3) })
             {
                 while (Time.time - d0 < at) yield return null;
-                // 倒下看玩家的第一人称（侧面机位在神范台边上常被柱子挡住）
-                cam.Single("倒下", beat, i, $"death_{i}", center, 4f, true, move: "death");
+                cam.Single("倒下", beat, i, $"death_{i}", center, 4f, move: "death");
             }
             Line($"节拍条：{cam.Count} 张");
             guard?.Dispose();
@@ -463,8 +464,9 @@ namespace Spiritfire.Game.Testing
                 if (boss.Current != move) return boss.Releases > releases ? 'A' : '-';
                 if (move.Stage == MoveStage.Windup) return 'W';
                 if (move.Stage != MoveStage.Active) return boss.Releases > releases ? 'A' : '-';
-                // 释放帧 = 魔将放出这一招的表现那一帧（片段的 hit / impact / cast 事件；跃击是落地、冲锋是起跑）：之前都算「蓄」
-                return boss.Releases > releases ? 'A' : 'W';
+                // 释放帧 = 魔将放出这一招的表现那一帧（片段的 hit / impact / cast 事件；跃击是落地、冲锋是起跑）；
+                // 前摇结束到释放帧之间是 'H'（跃击的腾空也在这里；预警那一格停在前摇最后一帧）
+                return boss.Releases > releases ? 'A' : 'H';
             }, () => boss.BodyCenter, 4f, recoverDelay);
             float t0 = Time.time;
             if (force)

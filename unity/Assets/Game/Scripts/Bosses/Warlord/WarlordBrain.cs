@@ -484,7 +484,7 @@ namespace Spiritfire.Game
                 float a = yawDeg + i * 38f;
                 var d = new Vector3(Mathf.Sin(a * Mathf.Deg2Rad), 0, Mathf.Cos(a * Mathf.Deg2Rad));
                 var side = Vector3.Cross(Vector3.up, d) * dir;
-                Fx.WarlordShards(ground + d * 3.6f + Vector3.up * 0.9f, -side + Vector3.up * 0.3f, 0.8f, Fk);
+                Fx.WarlordShards(ground + d * 3.6f + Vector3.up * 0.9f, -side + Vector3.up * 0.3f, 0.8f, Fk, i == 0);
             }
             Fx.WarlordSmoke(ground + transform.forward * 0.6f, 1.2f, 3);
         }
@@ -511,7 +511,6 @@ namespace Spiritfire.Game
                 float gy = Fx.GroundY(at + Vector3.up * 2f, 4f);
                 at.y = float.IsNegativeInfinity(gy) ? feet.y : gy;
                 Fx.WarlordImpact(at, 2.6f, Fk);
-                Fx.Explosion(at + Vector3.up * 0.35f, 1.7f, WarlordPalette.CopperAt(Fk));
                 Fx.WarlordCleave(at, fwd, 4.4f, Fk);
                 PlaySfx("boss_slam", 0.9f, 1.15f);
             }
@@ -524,7 +523,7 @@ namespace Spiritfire.Game
                 Fx.WarlordCrescent(BodyCenter + Vector3.up * 0.35f, yawDeg, WarlordRef.ComboRange * 0.85f * grow, WarlordRef.ComboHalf * 2f * Mathf.Deg2Rad, dir,
                     -38f * Mathf.Deg2Rad, 1.2f, Fk, 0.28f);
                 var tipAt = Blade ? Blade.Tip : BodyCenter + fwd * 3f;
-                Fx.WarlordShards(tipAt, fwd + Vector3.up * 0.4f, 0.7f, Fk);
+                Fx.WarlordShards(tipAt, fwd + Vector3.up * 0.4f, 0.7f, Fk, false);
             }
         }
 

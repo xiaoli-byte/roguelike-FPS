@@ -27,7 +27,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 熔心魔将的招式特效入口（首领与精英动作 · 特效调优 W 路；设计单 docs/art/vfx/warlord.md）。只管外观，不碰判定：
     /// 判定、危险物、预警都在招式里（Reference/WarlordMoves.cs、Warlord/Moves），这里由 <see cref="WarlordBrain"/> 在释放帧那一刻调。
-    /// 粒子走 <see cref="Burst"/> / 预设（都过 <see cref="FxBudget"/>），刀光走 <see cref="SlashArc"/> 池，大剑拖影见 <see cref="WarlordBlade"/>。
+    /// 粒子走 <see cref="Burst"/> / 预设（都过 <see cref="FxBudget"/>），刀光是自己的月牙 <see cref="WarlordArc"/>（池化），大剑拖影见 <see cref="WarlordBlade"/>。
     /// fury = 0..1 狂怒换挡程度（色阶从熔铜转白热铜）。
     /// </summary>
     public static partial class Fx
@@ -42,11 +42,13 @@ namespace Spiritfire.Game
             float pitchDeg = 0f) =>
             WarlordArc.Spawn(center, yawDeg, radius, arc, dir, tilt, width, life, fury, pitchDeg);
 
-        /// <summary>点缀 · 方块铜渣：沿 dir 甩出去的几块方铜渣（铁片预设，铜色）+ 一小撮拉丝火星</summary>
-        public static void WarlordShards(Vector3 at, Vector3 dir, float size, float fury)
+        /// <summary>
+        /// 点缀 · 方块铜渣：沿 dir 甩出去的几块方铜渣（铁片预设，铜色）+ 一小撮拉丝火星。chunk = false 只放火星（一圈里只让一处放铁片预设，省粒子系统）
+        /// </summary>
+        public static void WarlordShards(Vector3 at, Vector3 dir, float size, float fury, bool chunk = true)
         {
             if (!Finite(at)) return;
-            Basalt(at, 0.55f * size, Color.Lerp(WarlordPalette.Slag, WarlordPalette.Deep, 0.35f));
+            if (chunk) Basalt(at, 0.55f * size, Color.Lerp(WarlordPalette.Slag, WarlordPalette.Deep, 0.35f));
             var d = dir.sqrMagnitude > 1e-4f ? dir.normalized : Vector3.up;
             Burst(at + d * 0.3f, WarlordPalette.CopperAt(fury), Mathf.RoundToInt(7 * size), 7f * Mathf.Sqrt(size), 0.35f, 0.08f, 10f);
         }
@@ -59,17 +61,19 @@ namespace Spiritfire.Game
         public static void WarlordImpact(Vector3 ground, float radius, float fury)
         {
             if (!Finite(ground)) return;
-            Burst(ground + Vector3.up * 0.3f, WarlordPalette.Smoke, Mathf.RoundToInt(6 + radius * 2f), 3.5f + radius, 0.7f, 0.55f, -0.8f);
+            Burst(ground + Vector3.up * 0.3f, WarlordPalette.Smoke, Mathf.RoundToInt(3 + radius), 3.5f + radius, 0.7f, 0.6f, -0.8f);
             MoltenBurst(ground + Vector3.up * 0.3f, radius * 0.5f, false, WarlordPalette.CopperAt(fury));
             MoltenSplat(ground, radius * 0.85f, 1f, 6f);
             Ring(ground + Vector3.up * 0.08f, radius * 1.15f, WarlordPalette.DeepAt(fury), 0.42f);
-            int n = Mathf.Clamp(Mathf.RoundToInt(radius * 1.4f), 4, 8);
+            // 方铜渣：中心一蓬铁片预设（一个粒子系统），外圈每个方向只甩火星
+            Basalt(ground + Vector3.up * 0.2f, 0.35f * radius, Color.Lerp(WarlordPalette.Slag, WarlordPalette.Deep, 0.35f));
+            int n = Mathf.Clamp(Mathf.RoundToInt(radius), 4, 6);
             float a0 = Random.value * Mathf.PI * 2f;
             for (int i = 0; i < n; i++)
             {
                 float a = a0 + i / (float)n * Mathf.PI * 2f;
                 var d = new Vector3(Mathf.Sin(a), 0.6f, Mathf.Cos(a));
-                WarlordShards(ground + new Vector3(d.x, 0, d.z) * radius * 0.45f + Vector3.up * 0.2f, d, 0.9f, fury);
+                WarlordShards(ground + new Vector3(d.x, 0, d.z) * radius * 0.45f + Vector3.up * 0.2f, d, 0.6f, fury, false);
             }
             Flash(ground + Vector3.up * 0.5f, WarlordPalette.CopperAt(fury), 6f, radius * 2.4f, 0.22f);
         }
@@ -97,7 +101,7 @@ namespace Spiritfire.Game
                 seq.At(i * 0.04f, () =>
                 {
                     MoltenSplat(p, 0.9f * s, 1f, 4f);
-                    WarlordShards(p + Vector3.up * 0.15f, Vector3.up + dir * 0.4f, s, fury);
+                    WarlordShards(p + Vector3.up * 0.15f, Vector3.up + dir * 0.4f, s, fury, k >= 0.99f);
                     FlameTongues.Ground(p, 0.5f * s, 2, 0.7f, 0.45f * s, WarlordPalette.HotAt(fury), WarlordPalette.CopperAt(fury), WarlordPalette.DeepAt(fury));
                 });
             }
@@ -347,14 +351,14 @@ namespace Spiritfire.Game
                     var cU = WarlordPalette.Under;
                     cU.a = soft * (k == 0 ? 0.35f : k == 3 ? 0.75f : 0.88f);
                     cu[v] = cU;
-                    // 本体：内缘赭红 → 外缘熔铜（两阶），刀头一段偏亮
-                    var cB = k <= 1 ? deep : copper;
-                    cB = Color.Lerp(cB, hot, lead * 0.35f * (k / 3f));
-                    cB.a = soft * (k == 0 ? 0f : k == 1 ? 0.78f : k == 2 ? 0.95f : 0.4f);
+                    // 本体：内缘赭红 → 外缘熔铜（两阶实色，普通混合；不提亮，免得在泛光里冲成奶白），刀头一段略偏亮
+                    var cB = k <= 1 ? deep : copper * 0.9f;
+                    cB = Color.Lerp(cB, copper, lead * 0.4f * (k / 3f));
+                    cB.a = soft * (k == 0 ? 0f : k == 1 ? 0.85f : k == 2 ? 0.95f : 0.55f);
                     cb[v] = cB;
-                    // 刃口：外缘白热，刀头一段更亮
+                    // 刃口：只在最外一圈（厚度的外 14%）白热，刀头一段更亮
                     var cE = hot;
-                    cE.a = soft * (k == 3 ? 0.9f : k == 2 ? 0.55f + 0.45f * lead : 0f);
+                    cE.a = soft * (k == 3 ? 0.85f : k == 2 ? 0.12f + 0.3f * lead : 0f);
                     ce[v] = cE;
                 }
             }
@@ -403,7 +407,7 @@ namespace Spiritfire.Game
     public sealed class WarlordBlade : MonoBehaviour
     {
         static readonly int EmissionId = Shader.PropertyToID("_EmissionColor"), EmissionMapId = Shader.PropertyToID("_EmissionMap"),
-            RimColorId = Shader.PropertyToID("_RimColor"), RimStrengthId = Shader.PropertyToID("_RimStrength"), BaseColorId = Shader.PropertyToID("_BaseColor");
+            RimColorId = Shader.PropertyToID("_RimColor"), RimStrengthId = Shader.PropertyToID("_RimStrength");
 
         const int MaxSamples = 40, Rows = 4;
         /// <summary>带子的四圈：沿剑身的位置（握点 → 剑尖 = 0..1）、亮刃亮度、白热程度、暗衬浓度</summary>
@@ -497,7 +501,12 @@ namespace Spiritfire.Game
                     if (off > 4f) Debug.Log($"[WarlordBlade] 绑定姿势对出来的剑身和剑尖骨差 {off:F1}°，已校正");
                 }
             }
-            renderers = GetComponentsInChildren<Renderer>(true);
+            // 只有大剑自己的网格（拖影挂在特效根下、火舌挂在握点骨上，都不在这里）
+            var list = new List<Renderer>();
+            foreach (var r in GetComponentsInChildren<Renderer>(true))
+                if (r is MeshRenderer or SkinnedMeshRenderer && !r.GetComponent<FlameTongue>())
+                    list.Add(r);
+            renderers = list.ToArray();
             block = new MaterialPropertyBlock();
             var mat = meshNode ? meshNode.sharedMaterial : null;
             if (mat)
@@ -519,8 +528,7 @@ namespace Spiritfire.Game
             var emit = Color.Lerp(new Color(0.35f, 0.12f, 0.03f), copper * 2.6f, glow) + hot * (Fury * 0.6f);
             foreach (var r in renderers)
             {
-                if (!r || r is ParticleSystemRenderer) continue;
-                if (r == addR || r == underR || r.GetComponent<FlameTongue>()) continue;
+                if (!r) continue;
                 r.GetPropertyBlock(block);
                 if (emissionMask) block.SetTexture(EmissionMapId, emissionMask);
                 block.SetColor(EmissionId, emit);
