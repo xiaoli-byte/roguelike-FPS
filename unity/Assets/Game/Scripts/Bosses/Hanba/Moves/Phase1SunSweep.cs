@@ -11,6 +11,11 @@ namespace Spiritfire.Game
     ///     判定：每帧把本帧扫过的角度按落点每 0.5 m 一段细分，任一段光束（带 0.85 m 半径的线段）碰到玩家胶囊就灼伤一下（每 0.45 s 至多一次），
     ///     额外叠 1 层日晒；低帧率一帧扫过几米也不会跳过玩家。
     ///   收招 1 s：泉珠露出（施法后摇，<see cref="HanbaBrain"/> 开弱点）。
+    /// 动作与特效（docs/art/vfx/hanba.md「日轮扫射」）：片段 121 帧——起手右手往下后方一收、下蹲 → 高举召日、上浮（过冲）→ 蓄力顶点 →
+    ///   2 帧劈向光束落点（beamStart = 释放帧，片段 36 帧）→ 持续段整个人跟着光束转、手一直指着落点 → 过冲 → 收。
+    ///   前摇：日轮八根辐条往轮毂聚光（<see cref="Fx.HanbaRingGather"/>），光束第一下落点一圈收紧的灼点印正好在释放帧收完（<see cref="Fx.HanbaFocusSeal"/>）；
+    ///   释放帧：顿帧 0.07 s + 轮毂 / 落点爆闪（<see cref="Fx.HanbaSunStrike"/>）+ 震屏；持续段：落点的白金热芯、顺着扫的方向甩出金丝和沙线（<see cref="Fx.HanbaBeamEdge"/>）；
+    ///   收招：光束 0.18 s 收细熄灭、沿光束往上飘一串金点（<see cref="Fx.HanbaBeamFade"/>）。
     /// 躲法：躲进影子（光束照不到挡板后面）、径向拉开到光束够不到的距离、冲刺穿过光束。
     /// </summary>
     public sealed class Phase1SunSweep : HanbaMove
@@ -20,7 +25,11 @@ namespace Spiritfire.Game
         public const float Arc = 110f, Speed = 48f, MinRange = 7f, MaxRange = 26f, HitRadius = 0.85f, VisualRadius = 0.45f, HitEvery = 0.45f, SubStep = 0.5f;
         /// <summary>每次灼伤的伤害倍率、额外日晒秒数</summary>
         public const float DamageMult = 0.85f, BurnSeconds = 0.5f;
-        static readonly Color BeamColor = Hex.Rgb(0xfff0b8), AimColor = Hex.Rgb(0xffc060), ScorchColor = Hex.Rgb(0xffb050);
+        static readonly Color BeamColor = Hex.Rgb(0xfff0b8), AimColor = Hex.Rgb(0xffc060);
+        /// <summary>片段 sunSweep 121 帧，beamStart / hit 在 36 帧（hanba_anims.py）：整段按「出手事件落在前摇结束」拉伸</summary>
+        public const float ClipHit = 36f / 121f;
+        /// <summary>光束收招时收细熄灭的时长（秒）</summary>
+        const float FadeSeconds = 0.18f;
 
         public override string Id => MoveId;
         public override string Name => "日轮扫射";
@@ -34,8 +43,8 @@ namespace Spiritfire.Game
         /// <summary>本次有几段光束被挡住（落在挡板上，后面是影子）</summary>
         public int Blocked { get; private set; }
 
-        float yaw, sign, speed, wind, nextHit, fxAcc, soundAcc, sprayAcc;
-        Vector3 lastScorch = new(float.NaN, 0, 0);
+        float yaw, sign, speed, wind, nextHit, soundAcc, sprayAcc;
+        Vector3 lastScorch = new(float.NaN, 0, 0), lastEnd;
         static readonly Color Gold = new(1f, 0.74f, 0.28f);
         BossBeam aim, beam;
 
@@ -77,8 +86,10 @@ namespace Spiritfire.Game
             WarnLine(o, o + Dir(StartYaw) * Range, 2.2f, wind);
             Hazards.SectorWarning(o, StartYaw + sign * Arc * 0.5f, Arc * 0.5f, Range + 2f, wind, HanbaDef.Warn);
             CountWarning();
-            // 片段 3.2 s，beamStart / hit 在 37.5%：整段拉伸到 wind ÷ 0.375，出手事件正好落在前摇结束
-            Act("sunSweep", wind / 0.375f);
+            // 灼点印：光束第一下落点一圈收紧的刻符环，倒计时和预警同一刻收完
+            Fx.HanbaFocusSeal(EndPoint(StartYaw, out _), 1.6f, wind);
+            // 片段 121 帧，beamStart / hit 在 36 帧：整段拉伸到 wind ÷ ClipHit，出手事件正好落在前摇结束
+            ActAt("sunSweep", ClipHit, wind);
             Sfx("telegraph", 1f, 0.9f);
             Sfx("enemy_charge", 0.9f, 0.6f);
         }
@@ -91,6 +102,9 @@ namespace Spiritfire.Game
             float u = Mathf.Clamp01(StageT / Mathf.Max(0.01f, wind));
             Brain.Glow(0, u);
             if (aim != null && Ring) aim.Set(Ring.Center, EndPoint(StartYaw, out _), 0.03f + 0.05f * u);
+            // 日轮聚光：光点沿八根辐条收进轮毂，越到顶点越密越亮
+            RingFrame(out var hub, out var right, out var up, out float radius);
+            Fx.HanbaRingGather(hub, right, up, radius, u * u, dt);
         }
 
         protected override void OnActiveBegin()
@@ -99,11 +113,16 @@ namespace Spiritfire.Game
             aim = null;
             beam = Hazards.Beam(BeamColor);
             if (Ring) Ring.Flash(1f);
-            // 日轮炸亮：轮心一记星芒 + 金屑（出手那一下的重音）
-            Fx.SunFlare(Ring ? Ring.Center : Brain.BodyCenter + Vector3.up * 2f, 2.4f);
+            // 释放帧：轮毂 / 落点爆闪 + 顿帧 + 震屏 + 音效，同一帧（这一帧就是动画的 beamStart）
+            RingFrame(out var hub, out _, out _, out float radius);
+            var first = EndPoint(yaw, out _);
+            Fx.SunFlare(hub, 2.4f);
+            Fx.HanbaSunStrike(hub, first, radius);
             lastScorch = new Vector3(float.NaN, 0, 0);
+            lastEnd = first;
             Sfx("shot_beam", 1f, 0.5f);
-            Brain.Shake(0.3f, 0.35f);
+            Sfx("explosion", 0.35f, 1.5f);
+            Impact(0.07f, 0.35f, 0.35f, cue: "beamStart");
         }
 
         protected override void OnActive(float dt)
@@ -134,6 +153,9 @@ namespace Spiritfire.Game
                 Exposure?.Burn(BurnSeconds, c);
             }
             beam?.Set(c, end, VisualRadius);
+            // 犁地的前沿：落点热芯 + 顺着扫的方向甩金丝和沙线（看得出往哪边扫、扫多快）
+            Fx.HanbaBeamEdge(end, end - lastEnd, dt);
+            lastEnd = end;
             // 外层一道粗的金色光晕（纯外观，比判定宽）+ 落点一路烧出断续的日火裂痕、隔一段窜一簇火苗，沙被光束犁起来往两边喷
             Fx.Beam(c, end, Gold, 1.5f, 0.08f);
             if (float.IsNaN(lastScorch.x) || (end - lastScorch).sqrMagnitude > 0.7f * 0.7f)
@@ -144,17 +166,10 @@ namespace Spiritfire.Game
                 if (flame) FlameTongues.Ground(end, 0.4f, 2, 1.1f, 0.55f);
             }
             sprayAcc += dt;
-            if (sprayAcc >= 0.14f)
+            if (sprayAcc >= 0.18f)
             {
                 sprayAcc = 0;
                 Fx.SandBlast(end + Vector3.up * 0.1f, 0.5f);
-            }
-            fxAcc += dt;
-            if (fxAcc >= 0.05f)
-            {
-                fxAcc = 0;
-                Fx.Burst(end + Vector3.up * 0.1f, ScorchColor, 3, 3.5f, 0.4f, 0.14f, -1f);
-                Fx.Burst(end, HanbaDef.Sand, 2, 2.5f, 0.5f, 0.16f, 3f);
             }
             soundAcc += dt;
             if (soundAcc >= 0.35f)
@@ -168,10 +183,31 @@ namespace Spiritfire.Game
 
         protected override void OnRecoverBegin()
         {
-            Hazards.ReleaseBeam(beam);
-            beam = null;
+            // 光束不一下子消失：收招开头 0.18 s 里收细（判定已经停了），之后才放掉
+            var c = Ring ? Ring.Center : Brain.BodyCenter + Vector3.up * 2f;
+            Fx.HanbaBeamFade(c, lastEnd);
             if (Ring) Ring.Idle();
             Brain.Glow(0, 0);
+        }
+
+        protected override void OnRecover(float dt)
+        {
+            if (beam == null) return;
+            if (StageT >= FadeSeconds)
+            {
+                Hazards.ReleaseBeam(beam);
+                beam = null;
+                return;
+            }
+            var c = Ring ? Ring.Center : Brain.BodyCenter + Vector3.up * 2f;
+            float k = 1f - StageT / FadeSeconds;
+            beam.Set(c, lastEnd, VisualRadius * k * k);
+        }
+
+        /// <summary>fx:raise（手举到顶那一下）：日轮先亮一下，像被手点着</summary>
+        protected override void OnFxCue(string cue)
+        {
+            if (cue == "raise" && Ring) Ring.Flash(0.45f);
         }
 
         /// <summary>

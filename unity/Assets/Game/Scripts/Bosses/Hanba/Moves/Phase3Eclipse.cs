@@ -16,6 +16,10 @@ namespace Spiritfire.Game
     ///     躲在楼阁里、沙丘檐下深影里的人只看到一下闪光。
     ///     收招段泉珠照常露出（施法后摇，伤害不再 ×3）。
     /// 被打断（死亡）时日轮复原、窗口关闭，不放强光。
+    /// 动作与特效（docs/art/vfx/hanba.md「日蚀」）：起手先含胸、双手捂住心口 → 2 帧把双臂甩到身后、挺胸露出泉珠（eclipseStart = 释放帧，顿帧 0.06 s）→ 颤抖 →
+    ///   窗口快结束时往里一缩、攥拳（fx:gather：强光的前兆，脚下一圈收紧的灼点印、光点往身上收）→ 2 帧双臂上扬、仰天（flare）→ 过冲。
+    ///   窗口里：黑盘外圈八根辐条尖按顺时针一颗颗亮起金珠（日冕倒计时，<see cref="Fx.HanbaCoronaBead"/>：亮满八颗就是强光），
+    ///   心口泉珠两颗绕着转的青白光点（<see cref="Fx.HanbaPearlMark"/>：打这里）；复燃：顿帧 0.09 s + 日轮巨型爆闪、身上「啪」、脚下金环（<see cref="Fx.HanbaFlare"/>）。
     /// </summary>
     public sealed class Phase3Eclipse : HanbaMove
     {
@@ -39,6 +43,10 @@ namespace Spiritfire.Game
 
         float window, openAt;
         bool open;
+        int beads;
+        float beadAcc;
+        /// <summary>日冕倒计时珠的颗数：窗口开时亮第一颗，之后每 (窗口 + 复燃前的那一小段) ÷ 8 亮一颗，亮满八颗就复燃</summary>
+        public const int Beads = 8;
 
         public Phase3Eclipse()
         {
@@ -63,6 +71,8 @@ namespace Spiritfire.Game
             active = window;
             Flared = open = false;
             if (Ring) Ring.SetBlaze(0.05f, 0.3f);
+            beads = 0;
+            beadAcc = 0;
         }
 
         protected override void OnTelegraph()
@@ -93,8 +103,9 @@ namespace Spiritfire.Game
             Fx.Ring(Brain.transform.position + Vector3.up * 0.15f, 12f, new Color(0.35f, 0.22f, 0.45f), 0.9f, false);
             if (Ring) Fx.SunFlare(Ring.Center, 3f, new Color(1f, 0.55f, 0.25f));
             GameUI.Toast("日蚀！心口泉珠显露——集火！日轮复燃前躲进楼阁或沙丘檐下的深影", HanbaDef.Sun, window);
-            Brain.Shake(0.3f, 0.3f);
             Sfx("boss_roar", 0.45f, 0.6f);
+            // 释放帧（双臂甩到身后、挺胸露出泉珠那一下）：顿帧 + 震屏，同一帧
+            Impact(0.06f, 0.3f, 0.3f, cue: "eclipseStart");
         }
 
         protected override void OnActive(float dt)
@@ -103,7 +114,36 @@ namespace Spiritfire.Game
             Brain.Glow(0, 0.35f + 0.25f * Mathf.Sin(StageT * 18f));
             // 日冕：黑盘周围一圈往外飘的金红光点（外观用 UnityEngine.Random，不动局内随机流）
             if (Ring) Fx.Corona(Ring.Center, SunRing.WorldRadius * (Ring.Risen ? Ring.risenScale : 1f), dt);
-            if (Rng.Value < 0.25f) Fx.Burst(Brain.BodyCenter + Brain.transform.forward * 0.5f, new Color(0.6f, 0.86f, 1f), 1, 0.6f, 0.5f, 0.1f, -0.3f);
+            // 日冕倒计时：八根辐条尖顺时针一颗颗亮金珠，亮着的每 0.12 s 续一次，一直亮到复燃
+            float total = window + FlareAfter;
+            bool lit = false;
+            while (beads < Beads && StageT >= beads * total / Beads)
+            {
+                beads++;
+                lit = true;
+            }
+            beadAcc += dt;
+            if (lit || beadAcc >= 0.12f)
+            {
+                beadAcc = 0;
+                RingFrame(out var hub, out var right, out var up, out float radius);
+                for (int k = 0; k < beads; k++)
+                {
+                    float a = Mathf.PI * 0.5f - k * Mathf.PI * 2f / Beads;
+                    Fx.HanbaCoronaBead(hub + (right * Mathf.Cos(a) + up * Mathf.Sin(a)) * radius * 1.08f, radius * 0.11f, lit && k == beads - 1);
+                }
+            }
+            // 泉珠「打这里」：两颗绕着转的青白光点
+            var pearl = Hanba ? Hanba.Pearl : Brain.BodyCenter + Brain.transform.forward * 0.5f;
+            Fx.HanbaPearlMark(pearl + Brain.transform.forward * 0.12f, Brain.transform.right, Vector3.up, StageT, dt);
+        }
+
+        /// <summary>fx:gather（窗口快结束、她往里一缩）：脚下一圈收紧的灼点印 + 光点往身上收，收完就是复燃</summary>
+        protected override void OnFxCue(string cue)
+        {
+            if (cue != "gather" || Flared) return;
+            float left = Mathf.Max(0.15f, Lead + window + FlareAfter - T);
+            Fx.HanbaFlareGather(OnGround(Brain.transform.position), Brain.BodyCenter, WarnRadius * 0.8f, left);
         }
 
         protected override bool ActiveDone => StageT >= window;
@@ -131,7 +171,10 @@ namespace Spiritfire.Game
             }
             var c = Ring ? Ring.Center : Brain.BodyCenter + Vector3.up * 3f;
             Sky?.Flash(HDef?.flareBright ?? 2.4f, 0.12f, 0.9f);
-            Brain.Shake(0.7f, 0.6f, 90f);
+            // 复燃 = 日蚀真正的释放帧：顿帧 + 大震屏 + 日轮巨型爆闪 / 身上「啪」/ 脚下金环，同一帧（动画的 flare）
+            Impact(0.09f, 0.7f, 0.6f, 90f, "flare");
+            RingFrame(out _, out _, out _, out float ringRadius);
+            Fx.HanbaFlare(c, ringRadius, Brain.BodyCenter, OnGround(Brain.transform.position), WarnRadius);
             Sfx("boss_roar", 1f, 0.8f);
             Sfx("explosion", 0.8f, 0.5f);
             SkillFx.Burst(c, FlareColor, 40, 14f, 0.9f, 0.5f, 0f);

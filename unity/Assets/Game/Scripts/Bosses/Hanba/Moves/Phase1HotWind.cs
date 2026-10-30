@@ -9,6 +9,10 @@ namespace Spiritfire.Game
     ///     打中：灼伤 + 水平 15 m/s 推开 + 扬沙（沙色闪屏）+ 热浪烤身（额外叠 2 层日晒）。二阶段起（节奏 &gt; 1）0.35 s 后补一道余波（半伤、推力减半）。
     ///   收招 0.9 s：泉珠露出。
     /// 被推进光柱里正好被晒：配合日晒机制逼走位。
+    /// 动作与特效（docs/art/vfx/hanba.md「旱风」）：片段 84 帧——起手双臂身前一抱、含胸 → 甩到身后、后仰上浮（极限）→ 蓄力顶点 →
+    ///   2 帧推掌、整个人往前一送（hit = 释放帧，片段 30 帧）→ 过冲 → 推掌停到热浪扫完 → 收。
+    ///   前摇：身前两侧的沙被往她脚下吸（<see cref="Fx.HanbaGaleInhale"/>，吸气越到顶点越猛）；
+    ///   释放帧：顿帧 0.06 s + 掌前爆闪、一道贴地的月牙热浪前沿（<see cref="Fx.HanbaGaleFront"/>）+ 沙幕往外推 + 震屏。
     /// </summary>
     public sealed class Phase1HotWind : HanbaMove
     {
@@ -16,6 +20,8 @@ namespace Spiritfire.Game
         /// <summary>扇区半径、半角（度）、扩散速度、环带厚度、可命中的高度、推力、伤害倍率、额外日晒秒数</summary>
         public const float Range = 22f, HalfAngle = 38f, Speed = 26f, Width = 3f, Height = 4.5f, Knockback = 15f, DamageMult = 1f, BurnSeconds = 1f;
         static readonly Color HeatColor = Hex.Rgb(0xffc070);
+        /// <summary>片段 droughtGale 84 帧，hit 在 30 帧（hanba_anims.py）</summary>
+        public const float ClipHit = 30f / 84f;
 
         public override string Id => MoveId;
         public override string Name => "旱风";
@@ -63,8 +69,8 @@ namespace Spiritfire.Game
         {
             Hazards.SectorWarning(OnGround(Brain.transform.position), Yaw, HalfAngle, Range, wind, HanbaDef.Sand);
             CountWarning();
-            // 片段 2.4 s，hit 在 1.0 s（41.7%）：整段拉伸到 wind ÷ 0.4167
-            Act("droughtGale", wind * 2.4f);
+            // 片段 84 帧，hit 在 30 帧：整段拉伸到 wind ÷ ClipHit，出手事件正好落在前摇结束
+            ActAt("droughtGale", ClipHit, wind);
             Sfx("telegraph", 1f, 0.8f);
         }
 
@@ -80,12 +86,10 @@ namespace Spiritfire.Game
                 Yaw += Mathf.Clamp(d, -12f, 12f) * Mathf.Min(1f, dt * 4f);
                 TurnToward(Yaw, 180f, dt);
             }
-            Brain.Glow(0, Mathf.Clamp01(StageT / Mathf.Max(0.01f, wind)));
-            if (Rng.Value < 0.35f)
-            {
-                var p = Brain.transform.position + Dir(Yaw + Rng.Range(-HalfAngle, HalfAngle)) * Rng.Range(2f, 6f);
-                Fx.Burst(OnGround(p) + Vector3.up * 0.3f, HanbaDef.Sand, 2, 1.5f, 0.6f, 0.2f, -0.5f);
-            }
+            float u = Mathf.Clamp01(StageT / Mathf.Max(0.01f, wind));
+            Brain.Glow(0, u);
+            // 吸气：身前两侧的沙往她脚下收（外观用 UnityEngine.Random，不动局内随机流）
+            Fx.HanbaGaleInhale(OnGround(Brain.transform.position), Yaw, HalfAngle, u, dt);
         }
 
         protected override void OnActiveBegin()
@@ -93,7 +97,10 @@ namespace Spiritfire.Game
             SetFacing(Yaw);
             Gust(Damage(DamageMult), Knockback);
             if (Ring) Ring.Flash(0.9f);
-            Brain.Shake(0.45f, 0.4f, 40f);
+            // 释放帧：掌前爆闪 + 月牙热浪前沿 + 顿帧 + 震屏（同一帧：动画的 hit）
+            var palms = Vector3.Lerp(Hanba ? Hanba.Hand(true) : Brain.BodyCenter, Hanba ? Hanba.Hand(false) : Brain.BodyCenter, 0.5f);
+            Fx.HanbaGaleFront(OnGround(Brain.transform.position) + Dir(Yaw) * (Brain.BodyRadius + 0.8f), palms, Yaw, HalfAngle);
+            Impact(0.06f, 0.45f, 0.4f, 40f, "hit");
             Sfx("boss_roar", 0.55f, 1.45f);
             Sfx("explosion", 0.4f, 0.6f);
         }

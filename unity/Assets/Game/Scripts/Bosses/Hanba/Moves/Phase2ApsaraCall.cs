@@ -63,8 +63,8 @@ namespace Spiritfire.Game
         protected override void OnTelegraph()
         {
             WarnCircle(Spot, 1.8f, wind, Gold);
-            // 片段 3 s，summon 在 1.8 s（60%）：整段拉伸到 wind ÷ 0.6
-            Act("apsaraCall", wind / 0.6f);
+            // 片段 90 帧，summon 在 54 帧（60%）：整段拉伸到 wind ÷ 0.6，出手事件正好落在前摇结束（提前约 1 帧）
+            ActAt("apsaraCall", 0.6f, wind);
             Sfx("telegraph", 1f, 1.15f);
             Sfx("pipa_roll", 0.6f, 0.7f);
         }
@@ -84,7 +84,9 @@ namespace Spiritfire.Game
             if (Last) Summoned++;
             if (Ring) Ring.Flash(0.8f);
             SkillFx.Burst(Spot + Vector3.up * 1.2f, Gold, 26, 6f, 1f, 0.3f, 2f);
-            Brain.Shake(0.35f, 0.35f);
+            // 释放帧（双臂向两侧上方展开）：心口一记金色「啪」环 + 顿帧 + 震屏，同一帧（动画的 summon）
+            Fx.HanbaHeartBloom(Hanba ? Hanba.Pearl : Brain.BodyCenter);
+            Impact(0.05f, 0.35f, 0.35f, cue: "summon");
             Sfx("pipa_bloom", 0.9f, 0.7f);
             Sfx("boss_roar", 0.5f, 1.35f);
         }

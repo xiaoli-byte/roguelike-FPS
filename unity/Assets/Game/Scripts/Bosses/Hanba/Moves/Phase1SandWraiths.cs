@@ -51,8 +51,8 @@ namespace Spiritfire.Game
         protected override void OnTelegraph()
         {
             WarnCircle(OnGround(Brain.transform.position), Brain.BodyRadius + 2.5f, wind, HanbaDef.Sand);
-            // 片段 2.8 s，summon 在 1.6 s（57%）：整段拉伸到 wind ÷ 0.5714
-            Act("summonWraiths", wind * 1.75f);
+            // 片段 84 帧，summon 在 48 帧：整段拉伸到 wind ÷ (48 / 84)，出手事件正好落在前摇结束（提前约 1 帧）
+            ActAt("summonWraiths", 48f / 84f, wind);
             Sfx("telegraph", 1f, 0.7f);
         }
 
@@ -96,8 +96,9 @@ namespace Spiritfire.Game
             TotalQueued += LastQueued;
             if (Ring) Ring.Flash(0.8f);
             SkillFx.Burst(Brain.BodyCenter, HanbaDef.Sand, 24, 6f, 0.9f, 0.35f, 3f);
-            Fx.Ring(OnGround(Brain.transform.position) + Vector3.up * 0.1f, 6f, HanbaDef.Sand, 0.6f);
-            Brain.Shake(0.35f, 0.35f);
+            // 释放帧（掌心砸向地面）：脚下压出去的沙尘团 + 沙色冲击环 + 顿帧 + 震屏，同一帧（动画的 summon）
+            Fx.HanbaSummonPress(OnGround(Brain.transform.position));
+            Impact(0.06f, 0.35f, 0.35f, cue: "summon");
             Sfx("boss_roar", 0.5f, 1.3f);
         }
     }

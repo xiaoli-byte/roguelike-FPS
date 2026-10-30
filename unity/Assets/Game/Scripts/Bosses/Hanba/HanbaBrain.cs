@@ -159,6 +159,7 @@ namespace Spiritfire.Game
             if (Def == null || !rigged) return;
             float dt = Time.deltaTime;
             Hover(dt);
+            TickHold(dt);
             if (Dead) return;
             Weakpoint(dt);
             TrackWraiths();
@@ -313,7 +314,15 @@ namespace Spiritfire.Game
                     foreach (var t in info.triggers)
                         if (t != trigger)
                             anim.ResetTrigger(t);
-                    anim.SetTrigger(trigger);
+                    // 还在上一段的过渡里（收招回待机的 0.2 s、PlayLocomotion 的交叉淡入）时，任意状态的触发要等过渡走完才生效——
+                    // 整段动作晚开 0.15 s，出手姿势就落在判定之后（beats-hanba 实测旱风 / 召沙魇 / 焦裂晚 9 帧）。这时直接切进去
+                    int hash = Animator.StringToHash(state);
+                    if (anim.IsInTransition(0) && anim.HasState(0, hash))
+                    {
+                        anim.ResetTrigger(trigger);
+                        anim.CrossFadeInFixedTime(hash, 0.1f, 0, 0f);
+                    }
+                    else anim.SetTrigger(trigger);
                     LastActPath = "trigger";
                     return;
                 }
@@ -348,6 +357,105 @@ namespace Spiritfire.Game
         }
 
         void OnOwnMoveEnded(BossBrain b, BossMove m) => ClearActTriggers();
+
+        // ───────────── 释放帧的顿帧（只顿她自己的动作）─────────────
+
+        float holdLeft, holdDebt;
+
+        /// <summary>本次顿帧累计次数（测试用）</summary>
+        public int ImpactHolds { get; private set; }
+
+        /// <summary>
+        /// 释放帧的顿帧：只把她自己的 Animator 压到 ×0.05 停 seconds 秒（极限姿势「咬」住一下），之后以 ×1.6 追回欠下的时间——
+        /// 后面的动画事件（beamEnd / flare / palmOut…）照样落在原来的时刻附近，不拖慢招式；全局时间不动（敌人出招不该让玩家的手感顿住）
+        /// </summary>
+        public void ImpactHold(float seconds)
+        {
+            if (!anim || Dead || !(seconds > 0)) return;
+            holdLeft = Mathf.Max(holdLeft, Mathf.Min(0.12f, seconds));
+            ImpactHolds++;
+        }
+
+        string holdCue;
+        float holdCueSeconds, holdCueWait;
+
+        /// <summary>
+        /// 等出手事件 cue 到了再顿帧（出手按时间兜底先到、动作还差一两帧时用）；最多等 maxWait 秒，等不到（代理模型没有事件）就地顿
+        /// </summary>
+        public void ImpactHoldOn(string cue, float seconds, float maxWait = 0.12f)
+        {
+            if (!anim || Dead || !(seconds > 0)) return;
+            holdCue = cue;
+            holdCueSeconds = seconds;
+            holdCueWait = maxWait;
+        }
+
+        void TickHold(float dt)
+        {
+            if (!anim) return;
+            if (holdCue != null && (holdCueWait -= dt) <= 0)
+            {
+                holdCue = null;
+                ImpactHold(holdCueSeconds);
+            }
+            if (Dead)
+            {
+                holdLeft = holdDebt = 0;
+                anim.speed = 1f;
+                return;
+            }
+            if (holdLeft > 0)
+            {
+                holdLeft -= dt;
+                holdDebt += dt * 0.95f;
+                anim.speed = 0.05f;
+                return;
+            }
+            if (holdDebt > 0)
+            {
+                const float CatchUp = 1.6f;
+                holdDebt -= dt * (CatchUp - 1f);
+                anim.speed = holdDebt > 0 ? CatchUp : 1f;
+                if (holdDebt <= 0) holdDebt = 0;
+            }
+            else if (anim.speed != 1f) anim.speed = 1f;
+        }
+
+        // ───────────── 特效挂点 ─────────────
+
+        Transform pearlBone;
+        bool pearlSearched;
+
+        /// <summary>手掌（人形骨骼的 RightHand / LeftHand；代理、占位体没有时取身体中线前上方）</summary>
+        public Vector3 Hand(bool right)
+        {
+            var a = Model?.animator;
+            if (a && a.isHuman)
+            {
+                var t = a.GetBoneTransform(right ? HumanBodyBones.RightHand : HumanBodyBones.LeftHand);
+                if (t) return t.position;
+            }
+            return BodyCenter + transform.forward * 0.8f + transform.right * (right ? 0.6f : -0.6f) + Vector3.up * 0.8f;
+        }
+
+        /// <summary>心口的泉珠（socket_core；没有时取身体中心前方）</summary>
+        public Vector3 Pearl
+        {
+            get
+            {
+                if (!pearlSearched && Model?.root)
+                {
+                    pearlSearched = true;
+                    foreach (var t in Model.root.GetComponentsInChildren<Transform>(true))
+                        if (t.name == "socket_core" || t.name.EndsWith("socket_core"))
+                        {
+                            pearlBone = t;
+                            break;
+                        }
+                }
+                return pearlBone ? pearlBone.position : BodyCenter + transform.forward * 0.5f + Vector3.up * 0.6f;
+            }
+        }
 
         /// <summary>收招 / 被打断后清掉没被消费的触发器，免得下一次进招式间隙时又跳回招式动作</summary>
         void ClearActTriggers()
@@ -397,6 +505,11 @@ namespace Spiritfire.Game
         protected override void OnAnimEvent(string evt)
         {
             if (evt == "roar" && !IntroDone) IntroRoar();
+            if (holdCue != null && evt == holdCue)
+            {
+                holdCue = null;
+                ImpactHold(holdCueSeconds);
+            }
         }
 
         /// <summary>

@@ -13,6 +13,11 @@ namespace Spiritfire.Game
     ///     蔓延与爆炸挂在危险物时钟上：招式被打断（转阶段、硬直）后，已经裂开的照样爆。
     ///   收招 0.9 s：泉珠露出。
     /// 躲法：看长条预警横移出去；裂缝蔓延比人跑得快，别顺着线跑。
+    /// 动作与特效（docs/art/vfx/hanba.md「焦裂」）：片段 150 帧——起手右手往下后方一甩 → 扬到头顶、上浮后仰（过冲）→ 蓄力顶点五指成爪 →
+    ///   2 帧俯冲按掌（hit = 释放帧，片段 36 帧，下沉 0.66 m）→ 压缩过冲 → 掌一直按在地上推着裂缝走（出手段）→ 拔掌（fx:palmOut）→ 起身。
+    ///   前摇：扬起的手里攥着一团越来越大的日火（<see cref="Fx.HanbaPalmCharge"/>），按掌处一圈收紧的灼点印（倒计时）；
+    ///   释放帧：顿帧 0.08 s + 掌下爆闪、贴地冲击环、龟裂星、崩起的石块、矮宽尘团（<see cref="Fx.HanbaPalmSlam"/>）+ 震屏；
+    ///   持续段：每裂开一段，裂缝最前头一颗白金火头往前甩火星（<see cref="Fx.HanbaCrackHead"/>）；收招：拔掌的沙尘和掉下来的火星。
     /// </summary>
     public sealed class Phase2CrackLine : HanbaMove
     {
@@ -21,6 +26,8 @@ namespace Spiritfire.Game
         public const float CrackSpeed = 18f, Step = 1.5f, ExplodeDelay = 0.45f, ChainGap = 0.035f, BlastRadius = 1.7f, DamageMult = 1.25f,
             HalfWidth = 1.3f, MinLength = 14f, MaxLength = 28f, FanAngle = 28f;
         static readonly Color CrackColor = Hex.Rgb(0xff8a2a), BlastColor = Hex.Rgb(0xffa040);
+        /// <summary>片段 crackPalm 150 帧，hit 在 36 帧（hanba_anims.py；按掌之后一直按到裂缝爆完）</summary>
+        public const float ClipHit = 36f / 150f;
 
         public override string Id => MoveId;
         public override string Name => "焦裂";
@@ -89,8 +96,10 @@ namespace Spiritfire.Game
                 Hazards.LineWarning(origin, a, Length, HalfWidth, wind, HanbaDef.Warn, ActiveSeconds(Length) - 0.1f);
                 CountWarning();
             }
-            // 片段 2.8 s，hit 在 1.2 s（42.86%）：整段拉伸到 wind ÷ 0.4286
-            Act("crackPalm", wind / 0.4286f);
+            // 按掌处的灼点印：和预警同一刻收完
+            Fx.HanbaFocusSeal(origin, 1.4f, wind);
+            // 片段 150 帧，hit 在 36 帧：整段拉伸到 wind ÷ ClipHit，出手事件正好落在前摇结束
+            ActAt("crackPalm", ClipHit, wind);
             Sfx("telegraph", 1f, 0.75f);
         }
 
@@ -98,15 +107,17 @@ namespace Spiritfire.Game
 
         protected override void OnWindup(float dt)
         {
-            Brain.Glow(0, Mathf.Clamp01(StageT / Mathf.Max(0.01f, wind)));
-            if (Rng.Value < 0.3f) Fx.Burst(origin + Vector3.up * 0.2f, CrackColor, 2, 1.2f, 0.5f, 0.12f, -0.6f);
+            float u = Mathf.Clamp01(StageT / Mathf.Max(0.01f, wind));
+            Brain.Glow(0, u);
+            // 扬起的手攥着一团日火（起手那一拍手还在往下收，先不点火）
+            if (u > 0.18f) Fx.HanbaPalmCharge(Hanba ? Hanba.Hand(true) : Brain.BodyCenter + Vector3.up, (u - 0.18f) / 0.82f, dt);
         }
 
         protected override void OnActiveBegin()
         {
-            Fx.Burst(origin + Vector3.up * 0.3f, HanbaDef.Sand, 20, 6f, 0.9f, 0.35f, 5f);
-            Fx.Ring(origin + Vector3.up * 0.1f, 3.5f, CrackColor, 0.5f);
-            Brain.Shake(0.5f, 0.4f, 40f);
+            // 释放帧：掌下爆闪 + 冲击环 + 龟裂星 + 石块 + 尘团 + 顿帧 + 震屏（同一帧：动画的 hit）
+            Fx.HanbaPalmSlam(origin, yaw);
+            Impact(0.08f, 0.55f, 0.4f, 40f, "hit");
             Sfx("boss_slam", 0.9f, 0.9f);
             if (Ring) Ring.Flash(0.8f);
             foreach (var a in yaws) Spread(a);
@@ -123,14 +134,15 @@ namespace Spiritfire.Game
                 var p = Ground(origin + dir * Mathf.Min(Length, i * Step));
                 float at = i * Step / CrackSpeed;
                 bool sound = i % 4 == 1;
-                Hazards.Later(at, () => Split(p, sound));
+                Hazards.Later(at, () => Split(p, dir, sound));
                 Hazards.Later(end + i * ChainGap, () => Explode(p, sound));
             }
         }
 
-        static void Split(Vector3 p, bool sound)
+        static void Split(Vector3 p, Vector3 dir, bool sound)
         {
-            Fx.Burst(p + Vector3.up * 0.15f, CrackColor, 4, 2.2f, 0.6f, 0.14f, -0.5f);
+            Fx.HanbaCrackHead(p, dir);
+            Fx.Burst(p + Vector3.up * 0.15f, CrackColor, 3, 2.2f, 0.6f, 0.14f, -0.5f);
             Fx.Burst(p + Vector3.up * 0.1f, HanbaDef.Sand, 3, 2.5f, 0.5f, 0.2f, 4f);
             // 裂口：沙地上一段发亮的日火裂痕（一路亮到爆开），从缝里往上冒火星
             FxDecals.Fire(p + Vector3.up * 0.02f, 1.05f, 3.2f, FireBed.Sunfire);
@@ -159,6 +171,12 @@ namespace Spiritfire.Game
         }
 
         protected override void OnActive(float dt) => Brain.Glow(0, 1f - Mathf.Clamp01(StageT / 0.6f));
+
+        /// <summary>fx:palmOut（收招第一拍把掌拔出来）：掌下一小团沙、掌上掉火星</summary>
+        protected override void OnFxCue(string cue)
+        {
+            if (cue == "palmOut") Fx.HanbaPalmOut(Hanba ? Hanba.Hand(true) : Brain.BodyCenter, origin);
+        }
 
         /// <summary>贴地：从首领脚下高度往上 20 m 往下找（裂缝会爬上沙丘坡、下到泉床）</summary>
         Vector3 Ground(Vector3 p)

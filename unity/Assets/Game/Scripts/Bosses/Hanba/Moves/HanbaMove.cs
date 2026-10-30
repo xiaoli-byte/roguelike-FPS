@@ -54,6 +54,7 @@ namespace Spiritfire.Game
         protected sealed override void OnStart()
         {
             PaceNow = Hanba ? Hanba.Pace : 1f;
+            seen.Clear();
             Prepare();
         }
 
@@ -66,6 +67,16 @@ namespace Spiritfire.Game
             if (Hanba) Hanba.Act(state, seconds);
             else Brain.PlayAct(state, seconds);
         }
+
+        /// <summary>出手事件比按时间兜底的出手早到多少（秒，约 1 帧）：动作先到释放帧、判定跟着事件走，和预警倒计时差不到 1 帧</summary>
+        public const float AnimLead = 1f / 60f;
+
+        /// <summary>
+        /// 播招式动作，让出手事件（在片段里的位置 = hitFraction）落在 hitAt 秒（前摇结束）之前 <see cref="AnimLead"/>：
+        /// 片段整段拉伸到 (hitAt − 提前量) ÷ hitFraction。触发要等下一次 Animator 更新才生效，事件正好提前一帧，就不会让出手先按时间兜底、动作晚到
+        /// </summary>
+        protected void ActAt(string state, float hitFraction, float hitAt) =>
+            Act(state, Mathf.Max(0.1f, hitAt - AnimLead) / Mathf.Max(0.01f, hitFraction));
 
         /// <summary>本次出招的实际前摇（秒，<see cref="Windup"/> 算出的；测试比较各阶段的节奏）</summary>
         public float WindNow { get; private set; }
@@ -118,6 +129,49 @@ namespace Spiritfire.Game
         }
 
         protected void Sfx(string id, float volume = 1f, float pitch = 1f) => Brain.PlaySfx(id, volume, pitch);
+
+        // ───────────── 动作配合（docs/art/vfx/hanba.md）─────────────
+
+        /// <summary>
+        /// 片段里的特效节拍事件（events.json 的 fx:raise / fx:palmOut / fx:gather…，"fx:shake" 和 sfx 由首领框架处理）：
+        /// 记给 Cue，再交给子类的 <see cref="OnFxCue"/>——特效跟动作的关键姿势走，不靠代码里另算的时间
+        /// </summary>
+        readonly System.Collections.Generic.HashSet<string> seen = new();
+
+        public override void OnAnimEvent(string name)
+        {
+            base.OnAnimEvent(name);
+            if (!string.IsNullOrEmpty(name)) seen.Add(name);
+            if (!string.IsNullOrEmpty(name) && name.StartsWith("fx:", System.StringComparison.Ordinal) && name != "fx:shake") OnFxCue(name.Substring(3));
+        }
+
+        /// <summary>片段里的特效节拍（去掉 "fx:" 前缀）</summary>
+        protected virtual void OnFxCue(string cue) { }
+
+        /// <summary>
+        /// 释放帧的分量：她自己的动作顿 hold 秒（<see cref="HanbaBrain.ImpactHold"/>）+ 震屏；和出手判定、特效、音效在同一帧。
+        /// cue = 这一下的出手事件名：出手是按时间兜底先到的（动作还差一两帧才到极限姿势）时，顿帧等事件到了再顿——顿住的一定是极限姿势
+        /// </summary>
+        protected void Impact(float hold, float shake, float shakeSeconds = 0.4f, float range = 60f, string cue = null)
+        {
+            if (Hanba)
+            {
+                if (cue != null && !seen.Contains(cue)) Hanba.ImpactHoldOn(cue, hold);
+                else Hanba.ImpactHold(hold);
+            }
+            if (shake > 0) Brain.Shake(shake, shakeSeconds, range);
+        }
+
+        /// <summary>日轮的两根轴（轮面内）与世界半径（升顶后放大）</summary>
+        protected void RingFrame(out Vector3 hub, out Vector3 right, out Vector3 up, out float radius)
+        {
+            var r = Ring;
+            hub = r ? r.Center : Brain.BodyCenter + Vector3.up * 2f;
+            var t = r ? r.Ring : null;
+            right = t ? t.right : Brain.transform.right;
+            up = t ? t.up : Vector3.up;
+            radius = SunRing.WorldRadius * (r && r.Risen ? Mathf.Max(1f, r.risenScale) : 1f);
+        }
 
         static RunRng fallbackRng;
 

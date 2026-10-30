@@ -13,8 +13,12 @@ namespace Spiritfire.Game
     ///     天空盒用一份运行时副本改曝光（不碰材质资产），组件销毁时把原来的天空盒和环境光还回去。复燃的强光只亮主光。
     ///   · 复原（<see cref="Restore"/>）：回到第一次接手时的仰角和亮度（旱魃倒下后影子慢慢回来）。
     /// 日晒判定（<see cref="SunExposure"/>）每次都读主光的当前朝向（<see cref="SunShaft.ToSun"/>），这里改了朝向，判定和真实阴影同时跟上。
+    /// 和天气共存：露天大图的 <see cref="WeatherDirector"/> 每帧（Update）按天气重写主光亮度和雾色，以前日蚀压暗 / 复燃猛亮在 1-4 一帧都留不住
+    /// （beats-hanba 实测日蚀窗口里主光一直是 1.60）。现在亮度和雾色在 LateUpdate（执行顺序 500，天气之后）最后写一次：
+    /// 这一帧有别人写过就以它写的为底（沙暴照样压暗太阳），没人写过就沿用上次的底，再乘上本驱动的倍率——不会一帧帧累乘。
     /// </summary>
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(500)]
     public sealed class HanbaSunDriver : MonoBehaviour
     {
         Light sun;
@@ -23,6 +27,10 @@ namespace Spiritfire.Game
         float fromElev, toElev, azimuth, moveT, moveSeconds;
         float dim = 1f, dimFrom = 1f, dimTo = 1f, dimT, dimSeconds, flashBack = -1f, flashHold;
         bool moving, dimming;
+        // 最后写一次（LateUpdate）用：上一帧写出去的值和那时的底；底 = 天气（或关卡）这一帧给的值
+        float lastWritten = float.NaN, lightBase = 1f;
+        Color lastFog, fogBase;
+        bool fogTracked;
 
         /// <summary>主光压到最暗（倍率 0）时环境亮度留几成</summary>
         public const float EnvFloor = 0.3f;
@@ -74,6 +82,8 @@ namespace Spiritfire.Game
             sun = l;
             originalRot = l.transform.rotation;
             originalIntensity = l.intensity;
+            lightBase = originalIntensity;
+            lastWritten = float.NaN;
             originalElevation = ElevationOf(-l.transform.forward);
             toElev = originalElevation;
         }
@@ -170,8 +180,39 @@ namespace Spiritfire.Game
 
         void Apply()
         {
-            if (sun) sun.intensity = originalIntensity * dim;
+            WriteLight();
             ApplyEnv(EnvAt(dim));
+        }
+
+        /// <summary>天气在 Update 里重写了主光 / 雾色：这里在它之后再按倍率写一次</summary>
+        void LateUpdate()
+        {
+            if (!sun) return;
+            WriteLight();
+            WriteFog();
+        }
+
+        /// <summary>主光亮度 = 底 × 倍率；这一帧别人写过（和上次写出去的不一样）就换底，没人写过沿用旧底（不累乘）</summary>
+        void WriteLight()
+        {
+            if (!sun) return;
+            float cur = sun.intensity;
+            if (float.IsNaN(lastWritten)) lightBase = originalIntensity;
+            else if (Mathf.Abs(cur - lastWritten) > 1e-4f) lightBase = cur;
+            if (float.IsNaN(lastWritten) && Mathf.Approximately(dim, 1f)) return;
+            sun.intensity = lastWritten = lightBase * dim;
+        }
+
+        /// <summary>雾色同理：环境压暗着（envNow &lt; 1）时每帧按「这一帧的底 × 倍率」写；回到 1 时写回底就不再管</summary>
+        void WriteFog()
+        {
+            if (envNow >= 0.999f && !fogTracked) return;
+            var cur = RenderSettings.fogColor;
+            if (!fogTracked || cur != lastFog) fogBase = cur;
+            var fog = fogBase * envNow;
+            fog.a = fogBase.a;
+            RenderSettings.fogColor = lastFog = fog;
+            fogTracked = envNow < 0.999f;
         }
 
         /// <summary>环境跟着主光暗下去 / 亮回来（第一次压暗时才记原值）</summary>
@@ -194,9 +235,7 @@ namespace Spiritfire.Game
             // 渐变 / 单色环境光改颜色后引擎会重算球谐；直接再给一份缩过的球谐，两条路都盖住（天空盒环境光只有这一条路）
             RenderSettings.ambientProbe = origProbe * k;
             RenderSettings.reflectionIntensity = origReflection * k;
-            var fog = origFog * k;
-            fog.a = origFog.a;
-            RenderSettings.fogColor = fog;
+            // 雾色不在这里写：天气每帧重写雾色，统一在 LateUpdate 的 WriteFog 里按「这一帧的底 × 倍率」写
             if (skyCopy) skyCopy.SetFloat(ExposureId, origExposure * k);
         }
 
@@ -231,6 +270,8 @@ namespace Spiritfire.Game
             if (ours)
             {
                 ApplyEnv(1f);
+                if (fogTracked) RenderSettings.fogColor = fogBase;
+                fogTracked = false;
                 if (skyCopy) RenderSettings.skybox = origSky;
             }
             if (skyCopy) Destroy(skyCopy);

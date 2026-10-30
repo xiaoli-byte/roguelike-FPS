@@ -375,13 +375,23 @@ namespace Spiritfire.Game.Testing
                 }
             }
             events.Clear();
-            float start = Time.time, activeAt = -1, recoverAt = -1;
+            FxBudget.ResetPeak();
+            float start = Time.time, activeAt = -1, recoverAt = -1, frameSum = 0, frameMax = 0;
+            int frames = 0;
+            var sky = HanbaSunDriver.Find();
+            var sun = sky ? sky.GetComponent<Light>() : null;
+            float sun0 = sun ? sun.intensity : -1f, sunMin = sun0;
             var hm = move as HanbaMove;
             bool[] taken = new bool[8];
             float size = 6f;
             while (boss && !boss.Dead && boss.Current == move && Time.time - start < 16f)
             {
                 KeepPlayerAlive();
+                float ms = Time.unscaledDeltaTime * 1000f;
+                frameSum += ms;
+                frameMax = Mathf.Max(frameMax, ms);
+                frames++;
+                if (sun) sunMin = Mathf.Min(sunMin, sun.intensity);
                 float wind = hm != null && hm.WindNow > 0 ? hm.WindNow : Mathf.Max(0.3f, move.windup);
                 var c = boss.BodyCenter + Vector3.up * 0.8f;
                 switch (move.Stage)
@@ -389,7 +399,7 @@ namespace Spiritfire.Game.Testing
                     case MoveStage.Windup:
                         if (!taken[0] && move.StageT >= wind * 0.1f) Take(0, "起手", c, size);
                         if (!taken[1] && move.StageT >= wind * 0.5f) Take(1, "预警", c, size);
-                        if (!taken[2] && move.StageT >= wind * 0.92f)
+                        if (!taken[2] && move.StageT >= wind * 0.85f)
                         {
                             Take(2, "蓄力顶点", c, size);
                             SnapEye(id, label, 7, "第一人称", boss.BodyCenter + Vector3.up * 0.6f, "蓄力顶点 · 玩家视角");
@@ -424,6 +434,8 @@ namespace Spiritfire.Game.Testing
             string align = ev.evt == null ? "没收到事件（按时间兜底）" : $"{(ev.t - activeAt) * 60f:+0.0;-0.0} 帧（60 fps）";
             Line($"{label}：前摇 {(hm != null ? hm.WindNow : move.windup):F2} s，出手段 {(recoverAt > 0 && activeAt > 0 ? recoverAt - activeAt : 0):F2} s，" +
                  $"出手事件「{cue}」对释放帧 {align}，事件 {string.Join(" ", events.Select(e => $"{e.evt}@{e.t - start:F2}"))}");
+            Line($"  {label} 性能：同屏粒子峰值 {FxBudget.Peak}（预算砍掉 {FxBudget.Dropped}），帧时间均值 {(frames > 0 ? frameSum / frames : 0):F1} ms / 最长 {frameMax:F1} ms（含截图帧），" +
+                 $"她的顿帧累计 {boss.ImpactHolds} 次" + (sun ? $"，主光 {sun0:F2} → 最暗 {sunMin:F2}，太阳仰角 {sky.Elevation:F0}°" : "，没有主光驱动"));
 
             void Take(int k, string beat, Vector3 center, float sz, string note = null)
             {
@@ -495,8 +507,8 @@ namespace Spiritfire.Game.Testing
             });
             yield return One("mirage_toad", "蜃楼蟾 · 精英连吐", "toad_spit", 16f, new[]
             {
-                new Beat("puff", 0.08f, "起手", 0), new Beat("puff", 0.5f, "预警", 1), new Beat("puff", 0.9f, "蓄力顶点", 2, true),
-                new Beat("spit", 0.02f, "释放帧", 3), new Beat("recover", 0.3f, "持续段", 4), new Beat("recover", 0.68f, "收招", 6),
+                new Beat("puff", 0.08f, "起手", 0), new Beat("puff", 0.45f, "预警", 1), new Beat("puff", 0.8f, "蓄力顶点", 2, true),
+                new Beat("spit", 0.02f, "释放帧", 3), new Beat("recover", 0.25f, "持续段", 4), new Beat("recover", 0.5f, "收招", 6),
             });
             arena.Clear();
             Teardown(Tag);
