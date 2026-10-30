@@ -116,6 +116,9 @@ namespace Spiritfire.Art.Editor
         {
             EnsureLayer(FirstPersonLayer, 6);
             EnsureLayer(CharacterLayer, 7);
+            // I4：按图层剔除距离的两层（Spiritfire.Game.CullLayers，运行时按编号用，名字只是给人看）
+            EnsureLayer(Spiritfire.Game.CullLayers.DetailName, Spiritfire.Game.CullLayers.Detail);
+            EnsureLayer(Spiritfire.Game.CullLayers.ScatterName, Spiritfire.Game.CullLayers.Scatter);
             var assets = new HashSet<UniversalRenderPipelineAsset> { GraphicsSettings.defaultRenderPipeline as UniversalRenderPipelineAsset };
             for (int i = 0; i < QualitySettings.count; i++)
                 assets.Add(QualitySettings.GetRenderPipelineAssetAt(i) as UniversalRenderPipelineAsset);
@@ -126,17 +129,19 @@ namespace Spiritfire.Art.Editor
                 asset.shadowCascadeCount = 4;
                 asset.msaaSampleCount = 4;
                 asset.supportsHDR = true;
-                // I4：GPU Resident Drawer（关卡几何走 BatchRendererGroup 实例化）+ GPU 遮挡剔除；要求 Forward+ 和下面的 Keep All
-                asset.gpuResidentDrawerMode = GPUResidentDrawerMode.InstancedDrawing;
-                asset.gpuResidentDrawerEnableOcclusionCullingInCameras = true;
+                // I4（docs/performance-unity.md「GPU 常驻绘制与 GPU 遮挡剔除」）：两台机器实测 GPU 上都没收益、主线程反而贵 0.6–2 ms（这个项目的瓶颈在主线程），
+                // GRD 也不认按图层的剔除距离 → 都关。要重新对照用 playtest perf-grd（测完还原）
+                asset.gpuResidentDrawerMode = GPUResidentDrawerMode.Disabled;
+                asset.gpuResidentDrawerEnableOcclusionCullingInCameras = false;
                 EditorUtility.SetDirty(asset);
             }
-            // Graphics 设置的 BatchRendererGroup Variants = Keep All（编辑器 API 只读，走序列化字段）
-            const int keepAll = (int)UnityEditor.Rendering.BatchRendererGroupStrippingMode.KeepAll;
-            if (UnityEditor.Rendering.EditorGraphicsSettings.batchRendererGroupShaderStrippingMode != (UnityEditor.Rendering.BatchRendererGroupStrippingMode)keepAll)
+            // Graphics 设置的 BatchRendererGroup Variants 回到默认（有 Entities Graphics 才保留）：GRD 关着就不用 Keep All，打包少编一批 DOTS 实例化变体。
+            // 编辑器 API 只读，走序列化字段。要在编辑器里对照 GRD 时临时改成 Keep All（perf-grd 会提示）
+            const int stripDefault = (int)UnityEditor.Rendering.BatchRendererGroupStrippingMode.KeepIfEntitiesGraphics;
+            if (UnityEditor.Rendering.EditorGraphicsSettings.batchRendererGroupShaderStrippingMode != (UnityEditor.Rendering.BatchRendererGroupStrippingMode)stripDefault)
             {
                 var gs = new SerializedObject(GraphicsSettings.GetGraphicsSettings());
-                gs.FindProperty("m_BrgStripping").intValue = keepAll;
+                gs.FindProperty("m_BrgStripping").intValue = stripDefault;
                 gs.ApplyModifiedPropertiesWithoutUndo();
             }
             AssetDatabase.SaveAssets();
