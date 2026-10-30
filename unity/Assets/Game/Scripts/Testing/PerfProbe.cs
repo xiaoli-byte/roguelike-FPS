@@ -135,9 +135,21 @@ namespace Spiritfire.Game.Testing
             public float frameAvg, frameP50, frameP95, frameWorst;
             public readonly Dictionary<string, double> avg = new();
             public readonly Dictionary<string, double> p95 = new();
+            public readonly Dictionary<string, double> p50 = new();
 
             public double Get(string name) => avg.TryGetValue(name, out var v) ? v : -1;
             public double GetP95(string name) => p95.TryGetValue(name, out var v) ? v : -1;
+            public double GetP50(string name) => p50.TryGetValue(name, out var v) ? v : -1;
+
+            /// <summary>主线程（CPU Main Thread Frame Time，不含编辑器自己的那段）P50 / P95</summary>
+            public double MainP50 => GetP50("CPU Main Thread Frame Time");
+            public double MainP95 => GetP95("CPU Main Thread Frame Time");
+            public double RenderP95 => GetP95("CPU Render Thread Frame Time");
+            /// <summary>GPU 帧时 P50 / P95（帧时统计；拿不到 = −1）</summary>
+            public double GpuP50 => Positive(GetP50("GPU Frame Time")) ?? -1;
+            public double GpuP95 => Positive(GetP95("GPU Frame Time")) ?? -1;
+            /// <summary>每帧 GC 分配（字节，平均）</summary>
+            public double GcBytes => Get("GC Allocated In Frame");
 
             /// <summary>主线程 ms：优先「CPU Main Thread Frame Time」，没有就「Main Thread」</summary>
             public double MainMs => Positive(Get("CPU Main Thread Frame Time")) ?? Positive(Get("Main Thread")) ?? -1;
@@ -237,6 +249,7 @@ namespace Spiritfire.Game.Testing
                 var sorted = t.values.OrderBy(x => x).ToArray();
                 s.avg[t.name] = t.values.Average() * k;
                 s.p95[t.name] = sorted[Mathf.Clamp(Mathf.CeilToInt(sorted.Length * 0.95f) - 1, 0, sorted.Length - 1)] * k;
+                s.p50[t.name] = sorted[(sorted.Length - 1) / 2] * k;
                 if (t.time) s.timeNames.Add(t.name);
             }
             return s;
