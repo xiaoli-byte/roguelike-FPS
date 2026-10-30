@@ -143,16 +143,17 @@ namespace Spiritfire.Game
 
         // ───────────── 定档模型（EditMode 测试守着）─────────────
 
-        /// <summary>实际输出时间占比（躲招、换位；同 <see cref="BossBalance.Uptime"/>）</summary>
-        public const float Uptime = BossBalance.Uptime;
+        /// <summary>输出时间占比（躲招、换位）：取 I3 参考曲线（<see cref="BalanceModel"/>，= <see cref="BossBalance.Uptime"/>）</summary>
+        public const float Uptime = BalanceModel.Uptime;
         /// <summary>无属性打护甲的倍率（DamageTable：0.75）</summary>
         public const float ArmorMult = 0.75f;
 
         /// <summary>
-        /// 定档用的模拟秒伤：3-4 首领浸泡的实测（<see cref="BossBalance.Soak"/>，约 480，不含砸鼎崩裂）× 输出率 0.8，换难度按难度等比；3-4（3.08）约 384。
-        /// 只用来定首领耐久的量级（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」；I3 之前是 75 ×（1 + 1.15 ×（难度 − 1））× 0.75 ≈ 191），不是武器平衡的依据
+        /// 定档用的模拟秒伤 = I3 参考曲线 <see cref="BalanceModel.ReferenceDps"/>（按首领浸泡实测校准：90 ×（1 + 1.15 ×（难度 − 1））× 1.6 × 0.8）；
+        /// 3-4（3.08）约 391，和这里的浸泡实测（<see cref="BossBalance.Soak"/>：可选中时约 480 × 输出率 0.8 ≈ 384）差 2%。1-4（1.48）约 179。
+        /// 只用来定首领耐久的量级（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」；I3 之前是 75 ×（1 + 1.15 ×（难度 − 1））× 0.75 ≈ 191，只有实测的一半），不是武器平衡的依据
         /// </summary>
-        public static float ReferenceDps(float difficulty) => BossBalance.Dps("3-4") * Mathf.Max(0.5f, difficulty) / StageDifficulty * Uptime;
+        public static float ReferenceDps(float difficulty) => BalanceModel.ReferenceDps(difficulty);
 
         /// <summary>
         /// 模拟击杀用时（秒，登场结束到倒下）= 一阶段 + 换形演出（<see cref="TransitionSeconds"/>，不可选中）+ 二阶段：

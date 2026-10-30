@@ -292,7 +292,12 @@ namespace Spiritfire.Game
             if (LootDirector.Instance)
                 foreach (var v in LootDirector.Instance.scrolls.All.Values) scrolls += v;
             var run = RunState.Current;
-            if (run != null) run.stagesCleared++;
+            if (run != null)
+            {
+                run.stagesCleared++;
+                // 开放大图的清关魂晶（首领场 / 3-3 已在首领倒下时发过，不重复）
+                EconomyConfig.CreditStageEssence(run, "stage_clear");
+            }
             if (Stage != null) GameEvents.RaiseStageCleared(Stage);
             // 最后一关（终章首领）通关 = 这一局胜利结束：结算
             bool final = Stage != null && RunPlan.IsFinal(Stage);

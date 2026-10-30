@@ -212,7 +212,7 @@ namespace Spiritfire.Game.Testing
             inst.mag = R.magCap;
             float magTime = MagTime(def, R), reload = ReloadTime(def, R);
             float cycle = melee || R.magCap <= 0 ? MinWindow : def.spinup + magTime + reload;
-            float theory = def.IsBlade ? R.meleeDps : melee || R.magCap <= 0 || cycle <= 0 ? R.dps : R.magCap * R.perShot / Mathf.Max(0.01f, magTime + reload);
+            float theory = SustainedTheory(def, R, melee);
             wantReloads = melee || R.magCap <= 0 ? 0 : Mathf.Clamp(Mathf.CeilToInt(MinWindow / Mathf.Max(0.5f, cycle)), 1, 2);
             float limit = wantReloads > 0 ? Mathf.Min(MaxWindow, wantReloads * cycle * 1.5f + 2f) : MinWindow;
             bool hold = !(FireModes.Create(def) is SemiMode);
@@ -263,6 +263,17 @@ namespace Spiritfire.Game.Testing
             current = null;
             arena.Clear();
             yield return new WaitForSeconds(0.2f);
+        }
+
+        /// <summary>
+        /// 整轮理论秒伤（普通、身体、不含暴击）：弹匣 × 每发伤害 ÷（打空 + 换弹）；碎刃 = 斩击理论秒伤；近战接管 / 没有弹匣的按描述器秒伤。
+        /// EditMode 的 BalanceModelTests 用它离线核对武器秒伤带（I3）
+        /// </summary>
+        public static float SustainedTheory(WeaponDef def, ResolvedWeapon R, bool melee)
+        {
+            if (def.IsBlade) return R.meleeDps;
+            float magTime = MagTime(def, R), reload = ReloadTime(def, R);
+            return melee || R.magCap <= 0 || magTime + reload <= 0 ? R.dps : R.magCap * R.perShot / Mathf.Max(0.01f, magTime + reload);
         }
 
         /// <summary>打空一匣的时间（游戏秒）：弹匣 × 每发间隔（点射按每轮、蓄力按蓄满 + 冷却）</summary>

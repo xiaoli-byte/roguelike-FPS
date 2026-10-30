@@ -254,7 +254,7 @@ namespace Spiritfire.Game
             if (!essenceGiven)
             {
                 essenceGiven = true;
-                run.CreditEssence(EconomyConfig.EssencePerStage, "boss_clear");
+                EconomyConfig.CreditStageEssence(run, "boss_clear", true);
             }
             SpawnChest(def);
             SealGates(false);

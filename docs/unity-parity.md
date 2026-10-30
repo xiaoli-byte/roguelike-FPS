@@ -475,7 +475,7 @@
 | 生涯统计 | ❌ | — | `CareerStats` | S | R2 |
 | 主菜单、操作说明 | ❌ | — | 3D 远景主菜单 | M | U5 |
 | 调试作弊 | ❌ | — | `DevCommands` | M | W0-5 |
-| 经济数值表 | ✅ | —（I3：`EconomyConfig` 公式；`playtest economy` 扫 12 关场景投影每章收入、商店、魂晶、逐关难度，见 [balance.md](balance.md)） | `EconomyConfig` + 投影表 | S | R1 / I3 |
+| 经济数值表 | ✅ | —（I3：`EconomyConfig.Project` 按各关实际编制（`BalanceModel.Stages`，EditMode 对照场景文件）；`playtest economy` 直接扫 12 关场景投影每章收入、商店、魂晶、逐关难度，两者差 2% 以内，见 [balance.md](balance.md)） | `EconomyConfig` + 投影表 | S | R1 / I3 |
 
 天赋（全部 ❌，每项 5 级，费用 60 / 120 / 200 / 300 / 450 魂晶，单元 R2）：
 
@@ -995,7 +995,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 |---|---|---|---|---|---|
 | I1 十二关串联 | 主菜单 → 选英雄 → 1-1 … 3-4 → 胜利结算可以走通；关间结算卡；构建设置按 RunPlan；demo 开关（demoEnd = 1-4） | `G/Core/RunPlan.cs` `P/Editor/Levels/BuildOrder.cs` | 全部 M / BS、U5、U6 | 是 | M |
 | I2 整局自动化通关 | 见 7.5 | `G/Testing/Suites/FullRunSuite.cs` `G/Testing/Bot/*` | I1 | 是 | L |
-| I3 平衡 ✅ | 秒伤带统一按裸秒伤判（扩充 6 把的带是公式值，之前拿含元素克制 / 蚀化易伤 / 余烬的实际掉血去比，误报 5 把带外），18 把都在带内，唯一离群赤蛟霰铳每粒 11 → 10；`boss-soak` 用各章代表配装真打四个首领，改前 35–40 游戏秒（估算 42–48 s），旧定档模型漏了技能、灼烧、秘卷和余烬，耐久按实测提到 1.75–2.7 倍，改后估算 72–79 s，四个模型改从 `BossBalance` 取参考秒伤；3-3 魔将只走到第 2 阶段是阶段门槛能被跳过（越线后等招式收尾的 ≤ 2 s 照常掉血），加生命下限后每个阶段都打得到；`economy` 扫 12 关场景：必经到店灵石 = 核心篮子 1.3–1.7 倍、整店 0.64 倍，全清最多买下整店，魂晶全清 1190、点满天赋 9.5 次，都不改，只修首领灵石捡不到（倒下后吸取）和投影缺省值；逐关难度基本平，2-1 偏重记给地图单元；1-1 的武器宝箱都是指定 id，不受随机元素影响 | `docs/balance.md` `G/Testing/Suites/{BossSoak,EconomyProjection}Suite.cs` `G/Bosses/BossBalance.cs`（改 `Damageable` / `BossBrain` 阶段门槛、四个首领定档、`Weapon_Magmashot`、`EconomyConfig` / `LootDirector`；`CombatTuning` 不改） | I1 | 是 | M |
+| I3 平衡 ✅ | 两台机器各做了一份，已合并：EditMode 的平衡模型 `BalanceModel`（九张大图按场景统计的编制、装备计划、三家补给营、魂晶）+ 实机套件 `boss-soak` / `economy` / `weapon-dps`，参考秒伤曲线按首领浸泡实测校准（旧曲线只有实测的一半）。秒伤带统一按裸口径（不含元素克制、易伤、被动）：离线整轮理论 ±30% 拦定义回归，实测裸秒伤 ±20% 是正式判定，18 把都在带内，唯一离群赤蛟霰铳每粒 11 → 10；首领按实测重定耐久（1.75–2.7 倍），浸泡估算 72–79 s，四个首领的定档模型和参考曲线都对得上；3-3 魔将跳阶段是越线后等招式收尾的 ≤ 2 s 照常掉血，加阶段门槛后每段都打满；经济不改价格，补发开放大图漏掉的每关 +10 魂晶、首领倒下后吸取掉落物；魂晶约 9.5 次通关升满天赋；逐关难度基本平，2-1 偏重记给地图单元；1-1 的武器奖励掷不到随机元素 | `docs/balance.md` `G/Core/BalanceModel.cs` `G/Bosses/BossBalance.cs` `G/Testing/Suites/{BossSoak,EconomyProjection}Suite.cs` `Tests/BalanceModelTests.cs`（改 `Damageable` / `BossBrain` 阶段门槛、四个首领定档、`Weapon_Magmashot`、`EconomyConfig` / `LootDirector` / `GameSession`；`CombatTuning` 不改） | I1 | 是 | M |
 | I4 性能 | GPU 遮挡；1-3 烘焙遮挡；地形分块 LOD；远景 impostor；按固定机位采基线（docs/performance.md 协议）；预算写进 L5 | `P/Editor/Levels/LevelKit.Perf.cs` `A/Settings/**` | I1 | 是 | M |
 | I5 中途续玩与图鉴（超越） | 每关开头写 run.json，主菜单「继续征程」；武器 / 秘卷 / 敌人 / 灵宠图鉴 | `G/Core/RunSuspend.cs` `G/Progression/Codex.cs` `G/UI/Screens/CodexScreen.cs` | R2 U5 | 否 | M |
 | I6 音频超越 ✅ | 各章环境声床；关键枪声 / 爆炸改分层（瞬态、主体、尾音）；旱魃主题曲；遮挡低通 + 混响区 | `G/Audio/{AmbienceZone,AudioOcclusion}.cs` `A/Game/Resources/Audio/Music/amb_*.ogg` `src/audio/Ambience.ts` | F5 | 是 | M |
