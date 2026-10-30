@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using static Spiritfire.Game.WeaponDef;
 
 namespace Spiritfire.Game
