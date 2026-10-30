@@ -17,7 +17,8 @@ namespace Spiritfire.Game.Testing
     ///   出生：显形中、收尾两张，0.8 s 内显形完成；死亡：迸散一张，尸体溶解中一张，回收前溶完；
     ///   状态：灼烧 / 感电 / 蚀化 / 眩晕 / 减速 五只靶子各一张近景，外观组件挂上并显示对应状态；
     ///   熔池（熔金）/ 归墟（收束 + 爆开）各一张；
-    ///   压力：8 只敌人全身着火感电 + 暴击连射 4 s + 3 次爆炸，记高 / 低画质下的同屏粒子峰值、被预算砍掉的数量、帧时间；
+    ///   压力：8 只敌人全身着火感电 + 暴击连射 4 s + 3 次爆炸，记高 / 低画质下的同屏粒子峰值、被预算砍掉的数量、帧时间
+    ///     （PerfProbe：整帧 / 主线程 PlayerLoop / GPU 分开报，截图帧不计；拆解见 bridge.sh playtest perf-fx）；
     ///   FX3 冰霜 / FX4 火狱逐项一张（见 FxSuite.Elements.cs；只跑这两段用 bridge.sh playtest fx-elements）。
     /// </summary>
     public partial class FxSuite : PlaytestSuite
@@ -640,8 +641,11 @@ namespace Spiritfire.Game.Testing
                 FxBudget.ResetPeak();
                 weapons.Active.reserve = weapons.Active.def.reserve;
                 weapons.testFire = true;
-                float t0 = Time.time, dtSum = 0, dtMax = 0;
-                int frames = 0, booms = 0;
+                // 帧时间用 PerfProbe（I4，docs/performance-unity.md）：截图那一帧和它后面一帧（物理补步）不计；
+                // 分开报编辑器里的整帧、游戏自己的主线程（PlayerLoop）、GPU——这个压力项是主线程瓶颈，画质档主要省 GPU，只看整帧会以为低档没生效
+                using var probe = new PerfProbe();
+                float t0 = Time.time;
+                int frames = 0, booms = 0, skip = 0;
                 while (Time.time - t0 < 4f)
                 {
                     var target = list.Where(x => x).OrderBy(_ => Random.value).FirstOrDefault();
@@ -652,18 +656,23 @@ namespace Spiritfire.Game.Testing
                         var at = arena.Center + new Vector3(Random.Range(-2f, 2f), 0.5f, Random.Range(-2f, 2f));
                         Combat.Explode(new ExplosionOptions(at, 3f, DamageInfo.Simple(0, DamageSource.Explosion, at, Vector3.up)) { noEnemies = true });
                     }
-                    if (frames == 90) Shot(weapons.eye, $"fx_stress_{level.ToString().ToLowerInvariant()}");
+                    if (frames == 90)
+                    {
+                        Shot(weapons.eye, $"fx_stress_{level.ToString().ToLowerInvariant()}");
+                        skip = 2;
+                    }
                     weapons.Active.reserve = weapons.Active.def.reserve;
-                    float dt = Time.unscaledDeltaTime;
-                    dtSum += dt;
-                    dtMax = Mathf.Max(dtMax, dt);
                     frames++;
                     yield return null;
+                    if (skip > 0) skip--;
+                    else probe.Sample();
                 }
                 weapons.testFire = false;
                 vitals.stats.Remove("playtest_fx_crit");
+                var perf = probe.Result();
                 Line($"压力（画质 {ArtQuality.Label(level)}）：同屏粒子峰值 {FxBudget.Peak} / 上限 {FxBudget.ParticleCap}，被预算砍掉 {FxBudget.Dropped} 颗，" +
-                     $"贴花 {FxDecals.ActiveCount}，帧 {frames} 个，平均 {dtSum / Mathf.Max(1, frames) * 1000:F1} ms、最长 {dtMax * 1000:F1} ms");
+                     $"贴花 {FxDecals.ActiveCount}，帧 {frames} 个（计 {perf.frames} 个，截图帧不计），整帧平均 {perf.frameAvg:F1} ms、P95 {perf.frameP95:F1} ms、最长 {perf.frameWorst:F1} ms；" +
+                     $"主线程 PlayerLoop {perf.PlayerLoopMs:F1} ms、渲染线程 {perf.RenderMs:F1} ms、GPU {(perf.GpuMs > 0 ? $"{perf.GpuMs:F1} ms" : "—")}（整帧里其余是编辑器自己的开销）");
                 if (FxBudget.Peak > FxBudget.ParticleCap * 1.15f) Fail($"同屏粒子 {FxBudget.Peak} 超过上限 {FxBudget.ParticleCap} 的 115%");
                 arena.Clear();
                 yield return new WaitForSeconds(1.5f);

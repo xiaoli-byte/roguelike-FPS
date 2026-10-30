@@ -352,7 +352,10 @@ namespace Spiritfire.Game
         {
             var s = new Slot();
             s.anchor = HudArt.El("sf-ebar-anchor", root);
+            // 每帧改位移 / 透明度 / 缩放 / 血条比例：交给着色器（I4：不然每帧重排顶点）
+            s.anchor.usageHints = UsageHints.DynamicTransform | UsageHints.DynamicColor;
             s.bar = HudArt.El("sf-ebar", s.anchor);
+            s.bar.usageHints = UsageHints.DynamicTransform;
             HudArt.Origin(s.bar, 50, 100);
             s.nameRow = HudArt.El("sf-ebar__name", s.bar);
             s.affix = HudArt.Text("sf-ebar__affix", s.nameRow);
@@ -366,6 +369,7 @@ namespace Spiritfire.Game
                 var glow = HudArt.El("sf-ebar__glow", b);
                 HudArt.Paint(glow, HudArt.Glow, Badges[i].color);
                 glow.style.opacity = 0;
+                glow.usageHints = UsageHints.DynamicColor;
                 HudArt.Text("sf-ebar__glyph", b, Badges[i].glyph, UIFontRole.Title);
                 s.stacks[i] = HudArt.Text("sf-ebar__stacks", b, "", UIFontRole.Number);
                 s.badges[i] = b;
@@ -381,6 +385,7 @@ namespace Spiritfire.Game
             s.hpTrail = HudArt.Fill(s.hpRow);
             s.hpTrail.style.backgroundColor = HudArt.Trail;
             s.hpFill = HudArt.Fill(s.hpRow, null, UITheme.HpHi);
+            s.hpFill.usageHints = s.hpTrail.usageHints = s.shieldFill.usageHints = s.armorFill.usageHints = UsageHints.DynamicTransform;
             s.anchor.style.display = DisplayStyle.None;
             return s;
         }

@@ -76,7 +76,10 @@ namespace Spiritfire.Game
             {
                 var anchor = HudArt.El("sf-dn-anchor", root);
                 anchor.style.display = DisplayStyle.None;
+                // 每帧改位移 / 缩放 / 透明度：交给着色器（I4：不然每帧重排顶点，密集战斗时 UI 重绘 1 ms 以上）
+                anchor.usageHints = UsageHints.DynamicTransform;
                 var label = HudArt.Text("sf-dn", anchor, "", UIFontRole.Number);
+                label.usageHints = UsageHints.DynamicTransform | UsageHints.DynamicColor;
                 pool[i] = new DN { anchor = anchor, label = label, font = UIFontRole.Number };
             }
             return root;

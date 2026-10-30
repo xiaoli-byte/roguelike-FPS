@@ -46,6 +46,9 @@ namespace Spiritfire.Game
         float nextRefresh;
         bool recording;
         ProfilerRecorder drawCalls, batches, setPass, triangles, vertices, gcAlloc;
+        /// <summary>Unity 6.5 起「Draw Calls Count / Batches Count」没了，绘制调用按路径分开计（SRP Batcher / 普通 / 实例化 / BRG…），这里相加</summary>
+        readonly ProfilerRecorder[] drawParts = new ProfilerRecorder[PerfProbeNames.Length];
+        static readonly string[] PerfProbeNames = Spiritfire.Game.Testing.PerfProbe.DrawCallNames;
 
         readonly StringBuilder sb = new(256);
         string text = "";
@@ -91,6 +94,13 @@ namespace Spiritfire.Game
             }
             s.drawCalls = Last(drawCalls);
             s.batches = Last(batches);
+            if (s.drawCalls < 0)
+            {
+                long sum = -1;
+                foreach (var r in drawParts)
+                    if (r.Valid) sum = Mathf.Max(0, (int)sum) + r.LastValue;
+                s.drawCalls = sum;
+            }
             s.setPass = Last(setPass);
             s.triangles = Last(triangles);
             s.vertices = Last(vertices);
@@ -125,6 +135,7 @@ namespace Spiritfire.Game
             triangles = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Triangles Count");
             vertices = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Vertices Count");
             gcAlloc = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Allocated In Frame");
+            for (int i = 0; i < drawParts.Length; i++) drawParts[i] = ProfilerRecorder.StartNew(ProfilerCategory.Render, PerfProbeNames[i]);
             recording = true;
         }
 
@@ -136,6 +147,7 @@ namespace Spiritfire.Game
             triangles.Dispose();
             vertices.Dispose();
             gcAlloc.Dispose();
+            for (int i = 0; i < drawParts.Length; i++) drawParts[i].Dispose();
             recording = false;
         }
 
