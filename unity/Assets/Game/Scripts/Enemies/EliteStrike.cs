@@ -9,7 +9,7 @@ namespace Spiritfire.Game
     ///     蓄力时压低 / 后仰（<see cref="Charge"/>），释放帧一下拉长 / 前冲（<see cref="Release"/>），之后靠欠阻尼弹簧回弹过冲（follow-through），
     ///     连射的每一发、落地一震再踢一下（<see cref="Kick"/>），收招 / 打断回正（<see cref="Relax"/>）。幅度夹在 ±16% / ±16° 以内，脚底不离地；
     ///   · 局部顿帧：释放帧只把它自己的 Animator 压到 ×0.05 停几十毫秒，再以 ×1.6 追回，后面的动作不拖时间（全局时间不动）；
-    ///   · 金光：<see cref="EnemyBody"/> 覆盖色通道 <see cref="Channel"/>——蓄力时淡淡泛金、释放帧一闪到满、0.3 s 内退掉（精英 = 金，fx-style §2.1）。
+    ///   · 金光：<see cref="EnemyBody"/> 覆盖色通道 <see cref="Channel"/>——蓄力时淡淡泛金（≤ 8%）、释放帧一闪（24%）、0.3 s 内退掉（精英 = 金，fx-style §2.1）。
     /// 用法（AI 里，只在精英上生效；普通敌人 <see cref="For"/> 返回 null，调用处用 ?. 或 if 判一下即可）：
     /// <code>
     /// // 起手（进前摇那一帧）：拿到分量层（第一次调用时挂上），顺手出一颗起手金芒（Fx.EliteCue）
@@ -37,6 +37,8 @@ namespace Spiritfire.Game
         public static readonly Color Gold = Hex.Rgb(0xffc233), Core = Hex.Rgb(0xfff3d0), Ochre = Hex.Rgb(0xa8742a);
         /// <summary>姿态弹簧：频率（Hz）与阻尼比（欠阻尼 → 回弹时过冲一点，就是 follow-through）</summary>
         const float Freq = 7.5f, Zeta = 0.38f, MaxSquash = 0.16f, MaxPitch = 16f;
+        /// <summary>金光的最大覆盖量（释放帧那一闪）</summary>
+        const float OverlayMax = 0.24f;
 
         EnemyAI ai;
         EnemyBody body;
@@ -72,7 +74,7 @@ namespace Spiritfire.Game
 
         /// <summary>
         /// 蓄力：前摇里每帧调。t = 前摇进度 0..1（越到顶点压得越狠，前段慢后段紧）；squashAt = 顶点压多扁（0.1 = 矮 10%、横向胖 5.5%，
-        /// 负数 = 拉高，人立而起那种）；leanAt = 顶点前倾角（度，正 = 前倾 / 低头，负 = 后仰）。金光随进度从 0.12 涨到 0.42。
+        /// 负数 = 拉高，人立而起那种）；leanAt = 顶点前倾角（度，正 = 前倾 / 低头，负 = 后仰）。金光随进度涨（顶点约 8% 覆盖）。
         /// 只改目标，姿态由弹簧追过去
         /// </summary>
         public void Charge(float t, float squashAt, float leanAt)
@@ -80,7 +82,7 @@ namespace Spiritfire.Game
             float e = Ease(t);
             squashTarget = Mathf.Clamp(squashAt * e, -MaxSquash, MaxSquash);
             pitchTarget = Mathf.Clamp(leanAt * e, -MaxPitch, MaxPitch);
-            glowTarget = 0.12f + 0.3f * e;
+            glowTarget = 0.1f + 0.25f * e;
         }
 
         /// <summary>
@@ -137,7 +139,8 @@ namespace Spiritfire.Game
             Spring(ref squash, ref squashV, squashTarget, dt);
             Spring(ref pitch, ref pitchV, pitchTarget, dt);
             glow = Mathf.MoveTowards(glow, glowTarget, dt * (glow > glowTarget ? 3.2f : 2f));
-            if (body) body.SetOverlay(Channel, Gold, glow * 0.42f);
+            // 覆盖色压着用：蓄力顶点约 8%、释放帧 24%（再高整只就被刷成一块金色，三彩釉、甲壳的本色都没了）
+            if (body) body.SetOverlay(Channel, Gold, glow * OverlayMax);
             TickHold(dt, false);
             if (!poseLayer || !model) return;
             if (!hasRest)

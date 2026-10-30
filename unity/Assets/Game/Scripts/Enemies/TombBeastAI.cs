@@ -16,6 +16,10 @@ namespace Spiritfire.Game
     ///   碎陶（同 TS）：每掉 12% 生命背上崩落一把三彩陶片；撞墙撞晕时背上喷日火柱；死时整只陶身炸碎、日火冲天、地上留焦痕
     ///   背上的日火（FX4，同 TS buildCrackFire / updateCrackFire）：龟裂里一簇火舌（<see cref="FlameTongue"/>，挂在 crack 骨上），
     ///         随旺度（平时 0.3、狂暴 0.75、蓄力 / 冲锋 / 撞晕时跟着发光通道到 1）蹿高变亮、往上飘火星；冲锋犁出的日火裂痕是 FX4 的日火地火
+    ///   精英的出手分量（docs/art/vfx/elites-ch1.md，数值 / 时机不变）：
+    ///     冲锋——刨地时压低、低头顶角（<see cref="EliteStrike.Charge"/>），头上一颗金芒、金点往角上收；起冲那一下拉长前冲 + 顿帧 + 金色爆闪 + 加重震屏，
+    ///       冲锋中蹄下甩金屑（<see cref="Fx.EliteTrail"/>）；刹车时后坐一下；撞墙整只压扁一下；
+    ///     踏地——人立而起（后仰、拉高）蓄力，砸下是释放帧：压扁前冲 + 顿帧 + 地上多一圈金环、崩起石块（<see cref="Fx.EliteSlam"/>）、加重震屏
     /// </summary>
     public sealed class TombBeastAI : EnemyAI
     {
@@ -37,6 +41,11 @@ namespace Spiritfire.Game
         public int ShardsShed => shards;
         Telegraph.LineHandle lane;
         bool enraged, chargeHit, recharge, alerted;
+        /// <summary>精英的出手分量层（普通的为 null）</summary>
+        EliteStrike strike;
+
+        /// <summary>头角的位置（精英金芒、蓄力金点）</summary>
+        Vector3 Horn => transform.position + (transform.forward * 1.25f + Vector3.up * 1.15f) * Size;
         Vector3 chargeDir;
 
         /// <summary>龟裂里的日火火舌（同 TS CRACK_TONGUES：网格坐标，x = 生物左侧）</summary>
@@ -243,6 +252,12 @@ namespace Spiritfire.Game
                         lane?.Move(from, from + transform.forward * ChargeLength, ChargeHalfWidth * 2 * Size);
                     }
                     chargeDir = transform.forward;
+                    if (strike)
+                    {
+                        // 精英：压低、低头顶角，金点往角上收
+                        strike.Charge(t, 0.12f, 7f);
+                        Fx.EliteCharge(Horn, 1.4f * Size, t, dt);
+                    }
                     // 刨地：每 0.3 s 扬一把沙、轻轻一震
                     if (t > 0.25f && Time.time - pawFxAt > 0.3f)
                     {
@@ -256,6 +271,7 @@ namespace Spiritfire.Game
                 }
                 case "charge":
                     ChargeStep(dt);
+                    if (strike && state == "charge") Fx.EliteTrail(transform.position, chargeDir, Size, dt);
                     break;
                 case "dazed":
                     // 撞晕：头顶冒金星（反击窗口，格挡已放下）
@@ -293,9 +309,17 @@ namespace Spiritfire.Game
                 }
                 case "stompWindup":
                     FacePlayer(115, dt);
+                    // 精英：人立而起（后仰、拉高），金点往前爪收
+                    if (strike)
+                    {
+                        float t = Mathf.Clamp01(stateTime / Mathf.Max(0.05f, windTime));
+                        strike.Charge(t, -0.08f, -13f);
+                        Fx.EliteCharge(transform.position + (transform.forward * 1f + Vector3.up * 0.8f) * Size, 1.2f * Size, t, dt);
+                    }
                     if (stateTime >= windTime) Stomp();
                     break;
                 case "stomp":
+                    if (stateTime >= 0.2f) strike?.Relax();
                     if (stateTime >= 0.55f)
                     {
                         RollCooldown(2f, 2.8f);
@@ -316,6 +340,8 @@ namespace Spiritfire.Game
             Stop();
             Roar(0.7f);
             PlayTimed("chargeWindup", windTime, 0.1f);
+            strike ??= EliteStrike.For(this);
+            if (strike) Fx.EliteCue(Horn, Size);
             SetState("chargeWindup");
             var from = transform.position + transform.forward * 1.2f * Size;
             lane = Telegraph.Line(from, from + transform.forward * ChargeLength, ChargeHalfWidth * 2 * Size, windTime + 0.3f, new Color(1f, 0.35f, 0.15f));
@@ -333,6 +359,13 @@ namespace Spiritfire.Game
             Charges++;
             Sfx("enemy_charge", 1f, 0.6f);
             CameraShake.Quake(transform.position, 0.3f, 20f, 0.25f);
+            // 精英的释放帧：拉长前冲 + 顿帧 + 角前金色爆闪 + 加重一点震屏（同一帧）
+            if (strike)
+            {
+                strike.Release(-0.12f, 9f, 0.06f);
+                Fx.EliteRelease(Horn, chargeDir, Size * 1.2f);
+                CameraShake.Quake(transform.position, 0.25f, 20f, 0.2f);
+            }
         }
 
         void ChargeStep(float dt)
@@ -375,6 +408,12 @@ namespace Spiritfire.Game
                 // 背上的龟裂喷出日火柱（撞晕 = 反击窗口）
                 DesertKit.FlamePillar(Crack, 0.45f * Size, 2.2f * Size);
                 body.Rig?.Hit(-chargeDir, 1f);
+                if (strike)
+                {
+                    // 精英撞墙：整只压扁一下、往后弹
+                    strike.Kick(0.15f, -10f, 1f);
+                    strike.Relax();
+                }
                 PlayLocomotion();
                 SetState("dazed");
                 return;
@@ -384,11 +423,18 @@ namespace Spiritfire.Game
                 recharge = (elite || enraged) && !recharge;
                 Play("brake", 0.06f);
                 SetState("brake");
+                // 精英刹车：往后一坐（惯性带着上身过冲），然后回正
+                if (strike)
+                {
+                    strike.Kick(0.08f, -9f, 0.4f);
+                    strike.Relax();
+                }
             }
         }
 
         void EndCharge()
         {
+            strike?.Relax();
             EndManualMotion();
             chargeCd = Random.Range(5f, 7f);
             PlayLocomotion();
@@ -400,6 +446,8 @@ namespace Spiritfire.Game
             windTime = Windup(StompWindup, 0.5f);
             Stop();
             PlayTimed("stompWindup", windTime, 0.08f);
+            strike ??= EliteStrike.For(this);
+            if (strike) Fx.EliteCue(transform.position + (transform.forward * 1f + Vector3.up * 1.2f) * Size, Size);
             Sfx("telegraph", 0.8f, 0.5f);
             Telegraph.Circle(transform.position, WaveRadius, windTime, new Color(1f, 0.5f, 0.2f, 0.6f));
             SetState("stompWindup");
@@ -422,6 +470,13 @@ namespace Spiritfire.Game
             DesertKit.FlamePillar(ground, 0.6f * Size, 2f * Size);
             DesertKit.Scorch(ground, StompCore * Size, 7f);
             DesertKit.FireRing(ground, WaveRadius);
+            // 精英的释放帧：砸下去压扁前冲 + 顿帧 + 一圈金环、崩起石块 + 加重震屏（同一帧）
+            if (strike)
+            {
+                strike.Release(0.14f, 10f, 0.07f);
+                Fx.EliteSlam(ground, StompCore * Size * 2f);
+                CameraShake.Quake(transform.position, 0.35f, 26f, 0.3f);
+            }
             // 冲击波：数值见 StompWave（EditMode 测试锁着），往外推的击退在这里补上（同 TS WAVE_KNOCK）
             var wave = StompWave(transform.position, Size, Damage, this);
             wave.knockback = WaveKnock;

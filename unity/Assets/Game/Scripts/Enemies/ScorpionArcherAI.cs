@@ -15,6 +15,9 @@ namespace Spiritfire.Game
     ///   读招：上弦最后 0.15 s 弩尖金光一闪（同 TS）；弩矢是「arrow」外观（金色箭杆 + 拖尾）
     ///   遁沙：沉沙 / 钻出时扬沙，沙下潜行每 0.6 m 落一段沙痕（3 s 后抹平）+ 沙浪；钻出近处（8 m 内）震屏 0.18
     ///   被打断（眩晕 / 玩家阵亡 / 清场）：立刻钻回地面（修掉了玩家阵亡时卡在沙下隐身的问题），冷却重摇 1.2–2 s
+    ///   精英的出手分量（docs/art/vfx/elites-ch1.md，数值 / 时机不变）：上弦一开始弩口一颗金芒（<see cref="Fx.EliteCue"/>），上弦时压低后仰拉弦
+    ///     （<see cref="EliteStrike.Charge"/>），后半段弩口沿五支的扇形甩金色弦光（<see cref="Fx.EliteVolleyRays"/>：读得出五支、扇形）；
+    ///     第一发是释放帧（拉长前冲 + 顿帧 + 金色爆闪），之后每一发弩口金星、身子被后坐踢一下；钳击同样蓄力 / 释放
     /// </summary>
     public sealed class ScorpionArcherAI : EnemyAI
     {
@@ -33,6 +36,10 @@ namespace Spiritfire.Game
         public int Burrows { get; private set; }
         public int SightMoves { get; private set; }
         bool snapHit, emergeHit, ambush;
+        /// <summary>精英的出手分量层（普通的为 null）</summary>
+        EliteStrike strike;
+        /// <summary>精英齐射扇形相邻两支的夹角（弧度，和 FireBolt 里一致）</summary>
+        const float FanStep = 0.09f;
         Vector3 tunnelTarget;
         Transform model;
         float sink;
@@ -75,6 +82,8 @@ namespace Spiritfire.Game
                     if (d < SnapRange * Size && cooldown <= 0.6f && RequestAttack(AttackTokens.Kind.Melee, SnapWindup + 0.6f))
                     {
                         snapHit = false;
+                        strike ??= EliteStrike.For(this);
+                        if (strike) Fx.EliteCue(transform.position + (transform.forward * 1.1f + Vector3.up * 0.9f) * Size, Size * 0.7f);
                         Sfx("telegraph", 0.6f, 1.3f);
                         Stop();
                         PlayTimed("snapWindup", Windup(SnapWindup, 0.2f), 0.06f);
@@ -106,6 +115,13 @@ namespace Spiritfire.Game
                     Glow = 0.35f + 0.65f * Mathf.Clamp01(stateTime / Mathf.Max(0.05f, aimTime));
                     Stop();
                     FacePlayer(290, dt);
+                    if (strike)
+                    {
+                        // 精英：压低后仰拉弦，后半段弩口甩出五道金色弦光
+                        float u = Mathf.Clamp01(stateTime / Mathf.Max(0.05f, aimTime));
+                        strike.Charge(u, 0.08f, -9f);
+                        if (u > 0.45f) Fx.EliteVolleyRays(Muzzle(), PlayerPos - transform.position, FanStep, 5, (u - 0.45f) / 0.55f, dt);
+                    }
                     // 弩尖金光一闪：还有 0.15 s 就放箭
                     if (!flashed && stateTime >= aimTime - 0.15f)
                     {
@@ -128,6 +144,12 @@ namespace Spiritfire.Game
                         shotTimer = 0;
                         Play("fire", 0.04f);
                         SetState("fire");
+                        // 精英的释放帧：拉长前冲 + 顿帧 + 金色爆闪（和第一发同一帧）
+                        if (strike)
+                        {
+                            strike.Release(-0.1f, 7f, 0.05f);
+                            Fx.EliteRelease(Muzzle(), PlayerPos + Vector3.up * 1.1f - Muzzle(), Size * 0.8f);
+                        }
                     }
                     break;
                 case "fire":
@@ -211,10 +233,16 @@ namespace Spiritfire.Game
                 case "snapWindup":
                     FacePlayer(400, dt);
                     SetGlow(2, Mathf.Clamp01(stateTime / SnapWindup));
+                    strike?.Charge(stateTime / Mathf.Max(0.05f, Windup(SnapWindup, 0.2f)), 0.1f, -10f);
                     if (stateTime >= Windup(SnapWindup, 0.2f))
                     {
                         Play("snap", 0.04f);
                         SetState("snap");
+                        if (strike)
+                        {
+                            strike.Release(-0.08f, 11f, 0.05f);
+                            Fx.EliteRelease(transform.position + (transform.forward * 1.1f + Vector3.up * 0.9f) * Size, transform.forward, Size * 0.8f);
+                        }
                     }
                     break;
                 case "snap":
@@ -232,6 +260,7 @@ namespace Spiritfire.Game
                     break;
                 case "recover":
                     Glow = 0.25f;
+                    strike?.Relax();
                     KeepRange(MinRange, MaxRange, moveSpeed * 0.6f, strafeSign);
                     FaceAimTravel(230, dt, 0.35f);
                     if (stateTime >= recoverTime / Mathf.Sqrt(auraAttackRate))
@@ -274,6 +303,7 @@ namespace Spiritfire.Game
         /// <summary>同 TS cancelAttack：潜沙途中被打断（玩家阵亡、清场、坠落回收）立刻回到地面；冷却重摇</summary>
         protected override void CancelAttack()
         {
+            strike?.Relax();
             if (state is "dive" or "tunnel" or "emerge") Resurface();
             SetGlow(2, 0);
             ambush = false;
@@ -303,6 +333,9 @@ namespace Spiritfire.Game
             aimTime = Windup(time, 0.3f);
             flashed = false;
             Sfx("telegraph", 0.5f, 1.6f);
+            // 精英：上弦一开始弩口一颗金芒（要出五连了）
+            strike ??= EliteStrike.For(this);
+            if (strike) Fx.EliteCue(Muzzle(), Size * 0.7f);
             Stop();
             PlayTimed("aim", aimTime, 0.08f);
             SetState("aim");
@@ -341,6 +374,12 @@ namespace Spiritfire.Game
                 color = Hex.Rgb(0xffd27a), visual = "arrow", scale = 1.3f, source = this, spirit = Taunted,
             });
             BoltsFired++;
+            // 精英：每一发弩口金星 + 后坐踢一下（第一发是释放帧，已经打满了）
+            if (strike)
+            {
+                Fx.EliteMuzzle(from, dir);
+                if (index > 0) strike.Kick(-0.03f, -3f, 0.7f);
+            }
         }
 
         /// <summary>钻出点：玩家 13–20 m 外、可走、从那里看得见玩家</summary>

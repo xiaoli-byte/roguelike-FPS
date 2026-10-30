@@ -21,6 +21,9 @@ namespace Spiritfire.Game
     ///         落地爆炸（边缘剩一半、掀开玩家）+ 冲击环 + 「炽沙」余火 1.9 m、2.6 s、每 0.5 s 一跳 12% 伤害（地火，祸斗能吃）+ 焦痕；
     ///         幻影火珠：冷白半透明 orb、没有预警圈、飞到 55% 碎成冷光
     ///   被打断（眩晕 / 玩家阵亡）：已经吐出的火珠照样落地；冷却重摇 1.5–2.5 s（同 TS cancelAttack）
+    ///   精英的出手分量（docs/art/vfx/elites-ch1.md，数值 / 时机不变；分身没有）：鼓囊一开始喉囊一颗金芒，鼓囊时整只往下蹲、后仰吸气
+    ///     （<see cref="EliteStrike.Charge"/>），金点往喉囊收；第一颗是释放帧（拉长前探 + 顿帧 + 嘴前金色爆闪），第二颗再踢一下；
+    ///     精英的火珠落地多一圈金环、崩起石块（<see cref="Fx.EliteSlam"/>）、加重一点震屏
     /// </summary>
     public sealed class MirageToadAI : EnemyAI
     {
@@ -48,6 +51,8 @@ namespace Spiritfire.Game
         Transform sac, hopBone;
         float hopRest, hopAir;
         CreatureLocomotion loco;
+        /// <summary>精英的出手分量层（普通的、分身为 null）</summary>
+        EliteStrike strike;
         readonly List<MirageToadAI> decoys = new();
         Renderer[] ghost;
         float flickerSeed;
@@ -195,6 +200,8 @@ namespace Spiritfire.Game
                             Stop();
                             PlayTimed("puff", windTime, 0.08f);
                             SetState("puff");
+                            if (!isDecoy) strike ??= EliteStrike.For(this);
+                            if (strike) Fx.EliteCue(Mouth(), Size);
                         }
                         else cooldown = Random.Range(0.5f, 1f);
                     }
@@ -203,6 +210,13 @@ namespace Spiritfire.Game
                 case "puff":
                     Glow = 0.3f + 0.7f * Mathf.Clamp01(stateTime / windTime);
                     FacePlayer(230, dt);
+                    if (strike)
+                    {
+                        // 精英：往下蹲、后仰吸气，金点往喉囊收
+                        float u = Mathf.Clamp01(stateTime / Mathf.Max(0.05f, windTime));
+                        strike.Charge(u, 0.12f, -7f);
+                        if (u > 0.3f) Fx.EliteCharge(Mouth(), 1.3f * Size, (u - 0.3f) / 0.7f, dt);
+                    }
                     if (Random.value < dt * (6 + stateTime / windTime * 20)) ShotFx.Instance?.Impact(Mouth(), Vector3.up, !isDecoy, 0.4f);
                     if (stateTime >= windTime)
                     {
@@ -240,6 +254,7 @@ namespace Spiritfire.Game
                 case "recover":
                     Glow = 0.2f;
                     FacePlayer(140, dt);
+                    strike?.Relax();
                     if (stateTime >= recoverTime / Mathf.Sqrt(auraAttackRate))
                     {
                         ReleaseAttack();
@@ -263,6 +278,7 @@ namespace Spiritfire.Game
         protected override void CancelAttack()
         {
             Glow = 0;
+            strike?.Relax();
             if (state is "puff" or "spit" or "mirage" or "recover") RollCooldown(1.5f, 2.5f);
         }
 
@@ -325,18 +341,25 @@ namespace Spiritfire.Game
             float dmg = Damage;
             float size = Size;
             var self = this;
-            bool spirit = Taunted;
+            bool spirit = Taunted, gold = strike;
+            // 精英：第一颗是释放帧（拉长前探 + 顿帧 + 嘴前金色爆闪），第二颗再踢一下
+            if (strike)
+            {
+                if (index == 0) strike.Release(-0.12f, 8f, 0.05f);
+                else strike.Kick(-0.06f, 5f, 0.8f);
+                Fx.EliteRelease(from, v, Size * (index == 0 ? 1f : 0.7f));
+            }
             EnemyProjectile.Spawn(new EnemyProjectileSpec(from, v, dmg, 0.32f * k, T + 1.5f)
             {
                 gravity = BallGravity, explosionRadius = BallRadius, explosionFalloff = 0.5f, element = Element.Fire,
                 color = new Color(1f, 0.55f, 0.18f), visual = "flame", scale = 1.6f, source = this, spirit = Taunted,
-                onImpact = (at, _) => FireballLanded(self, at, dmg, size, spirit),
+                onImpact = (at, _) => FireballLanded(self, at, dmg, size, spirit, gold),
             });
             Spits++;
         }
 
         /// <summary>真火珠落地（爆炸伤害由投射物结算）：火团、冲击环、按距离震屏、「炽沙」余火（地火）、焦痕</summary>
-        static void FireballLanded(MirageToadAI owner, Vector3 at, float damage, float size, bool spirit)
+        static void FireballLanded(MirageToadAI owner, Vector3 at, float damage, float size, bool spirit, bool gold = false)
         {
             var ground = DesertKit.OnGround(at);
             if (ground.y > at.y) ground.y = at.y;
@@ -348,6 +371,12 @@ namespace Spiritfire.Game
             // 被嘲讽时吐向灵体诱饵：不留伤人的余火
             if (!spirit) FireZone.Spawn(ground, BurnRadius * size, BurnTime, damage * BurnRatio);
             DesertKit.Scorch(ground, BallRadius * 0.6f, 7f);
+            // 精英的火珠：落地多一圈金环、崩起石块、加重一点震屏
+            if (gold)
+            {
+                Fx.EliteSlam(ground, BallRadius);
+                CameraShake.Quake(at, 0.3f, BallRadius * 3.2f, 0.25f);
+            }
             if (owner) owner.Blasts++;
         }
 
