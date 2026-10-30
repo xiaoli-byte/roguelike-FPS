@@ -194,6 +194,8 @@ namespace Spiritfire.Game
                     r.AnimEvent -= OnRigEvent;
             rigs.Clear();
             active.Remove(this);
+            // 阶段门槛只在本脑启用时由 Update 每帧写：停用 / 销毁（销毁前也会先停用）时撤掉，免得下限留在 Damageable 上打不死
+            if (hp) hp.healthFloor = 0;
         }
 
         protected override void Start()
@@ -296,7 +298,14 @@ namespace Spiritfire.Game
             Summons.Tick(Time.deltaTime);
             // 基类出生 0.7 s 后会把不可选中关掉：首领按自己的规则（登场 / 转换 / 子类的潜水之类）每帧重写
             hp.untargetable = state == "spawn" || !IntroDone || transition != null || ExtraUntargetable;
+            hp.healthFloor = PhaseGateFloor;
         }
+
+        /// <summary>
+        /// 阶段门槛（I3，docs/balance.md）：还有没走的阶段时，生命层最多打到下一道阈值（略低半点，让阈值判定成立），越线后停在线上等转换演出；
+        /// 最后一道阈值的转换开始后才能被打死。没有它时越线后等招式收尾的那 ≤ phaseWait 秒照样掉血，高输出会把一整段打穿（3-3 魔将只走到第 2 阶段就倒下）
+        /// </summary>
+        float PhaseGateFloor => def != null && hp && !Dead && Phase < def.phases.Count && def.phases[Phase] is { } pd ? Mathf.Max(0, hp.maxHealth * pd.at - 0.5f) : 0;
 
         /// <summary>子类额外的不可选中（鲲潜在水下…）</summary>
         protected virtual bool ExtraUntargetable => false;

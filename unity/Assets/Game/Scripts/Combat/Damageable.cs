@@ -26,6 +26,11 @@ namespace Spiritfire.Game
         [NonSerialized] public float damageTakenMult = 1f;
         /// <summary>元素状态的承伤倍率（蚀化 ×1.2），由 EnemyStatus 每帧写入；和光环那一份分开，免得互相覆盖</summary>
         [NonSerialized] public float statusTakenMult = 1f;
+        /// <summary>
+        /// 生命层下限（0 = 没有）：经伤害管线最多把生命打到这个值（首领的阶段门槛，见 <see cref="BossBrain"/>）。
+        /// 单次基础伤害不低于最大生命的（处决、调试 / 测试的一刀）不受限制；<see cref="Kill"/> 也不受限制
+        /// </summary>
+        [NonSerialized] public float healthFloor;
 
         /// <summary>承伤修饰器（正面格挡、护体…）：返回倍率，全部相乘；乘积 &lt; 0.5 记为格挡</summary>
         public readonly ModifierList<Incoming> Incoming = new();
@@ -118,9 +123,13 @@ namespace Spiritfire.Game
             if (!skipShield) left = Eat(ref shield, left, DamageCalc.LayerMultiplier(info.element, DamageLayer.Shield), ref r.shield, ref r, DamageLayer.Shield);
             left = Eat(ref armor, left, DamageCalc.LayerMultiplier(info.element, DamageLayer.Armor), ref r.armor, ref r, DamageLayer.Armor);
             float healthMult = DamageCalc.LayerMultiplier(info.element, DamageLayer.Health);
-            float overflow = Eat(ref health, left, healthMult, ref r.health, ref r, DamageLayer.Health);
+            float floor = healthFloor > 0 && info.amount < maxHealth ? Mathf.Min(healthFloor, health) : 0;
+            float above = health - floor;
+            float overflow = Eat(ref above, left, healthMult, ref r.health, ref r, DamageLayer.Health);
+            health = floor + above;
             r.total = r.shield + r.armor + r.health;
-            r.effective = r.total + (overflow > 0 && r.health > 0 ? overflow * healthMult : 0);
+            // 溢出（击杀时的过量伤害）只在真打穿生命层时算；被生命下限挡下的部分不是伤害，不进伤害数字
+            r.effective = r.total + (overflow > 0 && r.health > 0 && floor <= 0 ? overflow * healthMult : 0);
             r.shieldBroken = hadShield && !skipShield && shield <= 0;
             r.armorBroken = hadArmor && armor <= 0;
             if (health <= 0 && !Dead)
