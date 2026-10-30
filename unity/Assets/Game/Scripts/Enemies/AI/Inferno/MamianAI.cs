@@ -355,6 +355,7 @@ namespace Spiritfire.Game
         {
             strike ??= EliteStrike.For(this);
             glinted = false;
+            if (strike != null) Fx.EliteCue(Root, Size);
             spinTime = Windup(SpinTime, 0.6f);
             spinPhase = 0;
             Stop();
@@ -393,6 +394,7 @@ namespace Spiritfire.Game
             if (strike != null)
             {
                 strike.Release(-0.1f, 11f, 0.05f);
+                Fx.EliteRelease(HookPos, hookVel, Size);
                 Fx.EliteCh3Burst(HookPos, hookVel, 0.9f);
             }
         }
@@ -604,6 +606,7 @@ namespace Spiritfire.Game
         {
             strike ??= EliteStrike.For(this);
             glinted = false;
+            if (strike != null) Fx.EliteCue(Root, Size);
             Stop();
             sweepHit = false;
             HookPos = Root;
@@ -626,6 +629,7 @@ namespace Spiritfire.Game
             if (strike != null)
             {
                 strike.Release(-0.09f, -7f, 0.06f);
+                Fx.EliteRelease(Root, Vector3.zero, Size);
                 Fx.EliteCh3Crescent(transform.position, Facing * Mathf.Rad2Deg, r * 0.92f, Mathf.PI * 1.9f, -1, 0.7f * Size);
             }
             if (!vitals || vitals.Dead) return;

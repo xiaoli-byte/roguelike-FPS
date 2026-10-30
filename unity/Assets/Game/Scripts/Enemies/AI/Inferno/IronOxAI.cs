@@ -323,6 +323,7 @@ namespace Spiritfire.Game
         {
             strike ??= EliteStrike.For(this);
             glinted = false;
+            if (strike != null) Fx.EliteCue(mouth.position, Size);
             Stop();
             inhaleTime = elite ? InhaleTimeElite : InhaleTime;
             DoorDamage = 0;
@@ -427,6 +428,7 @@ namespace Spiritfire.Game
             if (strike != null)
             {
                 strike.Release(-0.1f, 9f, 0.06f);
+                Fx.EliteRelease(from, transform.forward, Size);
                 Fx.EliteCh3Burst(from, transform.forward, 1.4f);
             }
             // 熔铁团：朝两排铁渣墙飞出去（落地时刻 = 立墙时刻）
@@ -479,6 +481,7 @@ namespace Spiritfire.Game
         {
             strike ??= EliteStrike.For(this);
             glinted = false;
+            if (strike != null) Fx.EliteCue(Local(0, 0.4f, 1.9f), Size);
             windTime = Windup(TossWindup, 0.35f);
             Stop();
             Struck = false;
@@ -506,6 +509,7 @@ namespace Spiritfire.Game
             if (strike != null)
             {
                 strike.Release(-0.12f, -12f, 0.07f);
+                Fx.EliteSlam(p, 1.8f * Size);
                 Fx.EliteCh3Impact(p, 1.8f * Size);
             }
             GameAudio.PlayAt("boss_slam", p, 0.9f, 0.8f);

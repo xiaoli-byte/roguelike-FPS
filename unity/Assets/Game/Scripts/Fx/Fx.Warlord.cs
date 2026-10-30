@@ -19,6 +19,12 @@ namespace Spiritfire.Game
         /// <summary>紫褐烟（第三章烟色）、暗月牙（刀光底下的暗衬，偏紫不发黑）、铁渣（方块碎屑）</summary>
         public static readonly Color Smoke = Hex.Rgb(0x4e3442), Under = new(0.13f, 0.045f, 0.06f), Slag = Hex.Rgb(0x3a2a26);
 
+        /// <summary>
+        /// 写进网格顶点色的颜色要先转成线性：工程是线性色彩空间，粒子着色器把顶点色当线性值用——直接写 sRGB 的铜橙（0.54 的绿）会显示成 0.76，
+        /// 整弯月牙冲成奶白（第一次实拍就是这样；通用刀光 SlashArc 也有同样的问题）
+        /// </summary>
+        public static Color Vertex(Color c) => FxVertexColor.Linear(c);
+
         public static Color HotAt(float fury) => Color.Lerp(Hot, FuryHot, fury);
         public static Color CopperAt(float fury) => Color.Lerp(Copper, FuryCopper, fury);
         public static Color DeepAt(float fury) => Color.Lerp(Deep, FuryDeep, fury);
@@ -88,7 +94,7 @@ namespace Spiritfire.Game
             dir.y = 0;
             if (dir.sqrMagnitude < 1e-4f) return;
             dir.Normalize();
-            int n = Mathf.Clamp(Mathf.RoundToInt(length / 1.1f), 2, 6);
+            int n = Mathf.Clamp(Mathf.RoundToInt(length / 1.5f), 2, 4);
             var seq = WarlordFxSequence.Start();
             if (!seq) return;
             for (int i = 0; i < n; i++)
@@ -102,7 +108,7 @@ namespace Spiritfire.Game
                 {
                     MoltenSplat(p, 0.9f * s, 1f, 4f);
                     WarlordShards(p + Vector3.up * 0.15f, Vector3.up + dir * 0.4f, s, fury, k >= 0.99f);
-                    FlameTongues.Ground(p, 0.5f * s, 2, 0.7f, 0.45f * s, WarlordPalette.HotAt(fury), WarlordPalette.CopperAt(fury), WarlordPalette.DeepAt(fury));
+                    if (k >= 0.99f) FlameTongues.Ground(p, 0.6f, 3, 0.7f, 0.45f, WarlordPalette.HotAt(fury), WarlordPalette.CopperAt(fury), WarlordPalette.DeepAt(fury));
                 });
             }
         }
@@ -327,9 +333,10 @@ namespace Spiritfire.Game
             float head = Mathf.Lerp(0.4f, 1.12f, 1f - Mathf.Pow(1f - Mathf.Clamp01(t / 0.4f), 2.4f));
             float tail = Mathf.Clamp01((t - 0.35f) / 0.65f) * 1.15f;
             float grow = 1f + 0.08f * t;
-            var hot = WarlordPalette.HotAt(fury);
-            var copper = WarlordPalette.CopperAt(fury);
-            var deep = WarlordPalette.DeepAt(fury);
+            var hot = WarlordPalette.Vertex(WarlordPalette.HotAt(fury));
+            var copper = WarlordPalette.Vertex(WarlordPalette.CopperAt(fury));
+            var deep = WarlordPalette.Vertex(WarlordPalette.DeepAt(fury));
+            var underC = WarlordPalette.Vertex(WarlordPalette.Under);
             for (int i = 0; i <= Segments; i++)
             {
                 float u = i / (float)Segments;
@@ -348,11 +355,11 @@ namespace Spiritfire.Game
                     float ru = (radius + width * 0.12f - thick * 1.18f * (1f - RowAt[k])) * grow;
                     pu[v] = new Vector3(sn * ru, 0, cs * ru);
                     // 暗衬：整弯压暗，外缘最浓
-                    var cU = WarlordPalette.Under;
+                    var cU = underC;
                     cU.a = soft * (k == 0 ? 0.35f : k == 3 ? 0.75f : 0.88f);
                     cu[v] = cU;
                     // 本体：内缘赭红 → 外缘熔铜（两阶实色，普通混合；不提亮，免得在泛光里冲成奶白），刀头一段略偏亮
-                    var cB = k <= 1 ? deep : copper * 0.9f;
+                    var cB = k <= 1 ? deep : copper;
                     cB = Color.Lerp(cB, copper, lead * 0.4f * (k / 3f));
                     cB.a = soft * (k == 0 ? 0f : k == 1 ? 0.85f : k == 2 ? 0.95f : 0.55f);
                     cb[v] = cB;
@@ -666,8 +673,9 @@ namespace Spiritfire.Game
         void PaintTrail(float fade)
         {
             float now = Time.time, len = Length;
-            var hot = WarlordPalette.HotAt(Fury);
-            var tint = WarlordPalette.CopperAt(Fury);
+            var hot = WarlordPalette.Vertex(WarlordPalette.HotAt(Fury));
+            var tint = WarlordPalette.Vertex(WarlordPalette.CopperAt(Fury));
+            var under = WarlordPalette.Vertex(WarlordPalette.Under);
             int count = samples.Count;
             for (int i = 0; i < MaxSamples; i++)
             {
@@ -684,7 +692,7 @@ namespace Spiritfire.Game
                     var c = Color.Lerp(tint, hot, RowHot[k] * head);
                     c.a = Mathf.Clamp01(a * 1.2f);
                     colAdd[v] = c;
-                    var u = WarlordPalette.Under;
+                    var u = under;
                     u.a = Mathf.Clamp01(life * RowUnder[k] * 0.7f);
                     colUnder[v] = u;
                 }

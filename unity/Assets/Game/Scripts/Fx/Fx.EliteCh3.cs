@@ -4,7 +4,9 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 第三章精英的熔铜点缀（首领与精英动作 · 特效调优 W 路；设计单 docs/art/vfx/elites-ch3.md）：
-    /// 叠在三章共用的出手分量层 <see cref="EliteStrike"/>（squash / stretch、局部顿帧、精英金光）之上，只在精英身上放，招式数值和时机不变。
+    /// 叠在三章共用的出手分量层 <see cref="EliteStrike"/>（squash / stretch、局部顿帧、精英金光）和通用金色点缀（H 路 Fx.EliteCh1.cs：
+    /// 起手金芒 <see cref="EliteCue"/>、释放帧金色爆闪 <see cref="EliteRelease"/>、落地金环 <see cref="EliteSlam"/>）之上，只在精英身上放，招式数值和时机不变。
+    /// 分工：闪光、「啪」环、金丝由金色那一套出，这里不再重复，只放第三章才有的形状。
     /// 第三章的母题跟熔心魔将同一套：熔铜（铜橙）、方块铜渣 / 铁片、紫褐烟、暗月牙托亮刃（<see cref="WarlordPalette"/>），
     /// 和精英的金色（全局精英词缀、金环，Q 路 / EliteStrike）分开：金 = 「这是精英」，铜 = 「这是第三章的力道」。
     /// 每个点缀都是一两个大形 + 少量方块碎屑，0.3–0.5 s 内交代完；粒子走 <see cref="Fx.Burst"/> / 预设（<see cref="FxBudget"/>）。
@@ -36,24 +38,21 @@ namespace Spiritfire.Game
             WarlordSmoke(center, radius * 0.35f, 2);
         }
 
-        /// <summary>出手的那一喷（甩钩、齐射、喷吐）：铜色一闪 + 顺着 dir 喷出的拉丝火星 + 一团紫褐烟；paper = 再撒一把红纸屑（炮仗傀儡）</summary>
+        /// <summary>出手的那一喷（甩钩、齐射、喷吐；和 EliteRelease 同一帧）：顺着 dir 喷出的铜色拉丝火星 + 一团紫褐烟；paper = 再撒一把红纸屑（炮仗傀儡）</summary>
         public static void EliteCh3Burst(Vector3 at, Vector3 dir, float size = 1f, bool paper = false)
         {
             if (!Finite(at)) return;
             var d = dir.sqrMagnitude > 1e-4f ? dir.normalized : Vector3.up;
-            Flash(at, WarlordPalette.Copper, 5f * size, 5f * size, 0.16f);
-            Burst(at + d * 0.3f, WarlordPalette.Hot, Mathf.RoundToInt(10 * size), 9f, 0.3f, 0.06f, 4f);
-            Ring(at - Vector3.up * 0.02f, 1.3f * size, WarlordPalette.Copper, 0.25f, false);
+            Burst(at + d * 0.3f, WarlordPalette.Copper, Mathf.RoundToInt(10 * size), 9f, 0.3f, 0.06f, 4f);
             WarlordSmoke(at + d * 0.5f, 0.5f * size, 2);
             if (paper) Burst(at + Vector3.up * 0.3f, Hex.Rgb(0xd8241c), Mathf.RoundToInt(12 * size), 4.5f, 1.1f, 0.12f, 3.5f);
         }
 
-        /// <summary>砸地 / 掀地的释放帧：一圈压暗的铜色粗环 + 一圈方铜渣往外崩 + 紫褐尘团（WarlordImpact 的小号，不留贴花）</summary>
+        /// <summary>砸地 / 掀地的释放帧（和 EliteSlam 同一帧）：一圈方铜渣往外崩 + 紫褐尘团（WarlordImpact 的小号，不留贴花；金环由 EliteSlam 出）</summary>
         public static void EliteCh3Impact(Vector3 ground, float radius)
         {
             if (!Finite(ground)) return;
             WarlordSmoke(ground + Vector3.up * 0.3f, radius * 0.6f, 3);
-            Ring(ground + Vector3.up * 0.08f, radius * 1.2f, WarlordPalette.Deep, 0.35f);
             int n = Mathf.Clamp(Mathf.RoundToInt(radius * 2f), 3, 6);
             float a0 = Random.value * Mathf.PI * 2f;
             for (int i = 0; i < n; i++)

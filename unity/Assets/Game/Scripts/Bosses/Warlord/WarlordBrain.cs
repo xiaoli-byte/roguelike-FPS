@@ -587,9 +587,8 @@ namespace Spiritfire.Game
                 var tip = Blade ? Blade.Tip : floor + transform.forward * 2f;
                 tip.y = floor.y;
                 Fx.WarlordImpact(floor, onMark ? 4.6f : 3.4f, Fk);
-                // 剑插地处一团熔铜火团（放在身前剑尖上，不盖住落地的身体）
-                Fx.Explosion(tip + Vector3.up * 0.4f, 2.2f, WarlordPalette.CopperAt(Fk));
-                Fx.MoltenSplash(tip + Vector3.up * 0.2f, 1.2f, WarlordPalette.CopperAt(Fk));
+                // 剑插地处一团熔铜冠（放在身前剑尖上，不盖住落地的身体）
+                Fx.MoltenBurst(tip + Vector3.up * 0.3f, 1.4f, false, WarlordPalette.CopperAt(Fk));
             });
         }
 
@@ -609,7 +608,6 @@ namespace Spiritfire.Game
             var tip = Blade ? Blade.Tip : ground + transform.forward * 1.2f;
             tip.y = ground.y;
             Fx.WarlordImpact(tip, 2.4f, Fk);
-            Fx.Explosion(tip + Vector3.up * 0.35f, 1.5f, WarlordPalette.CopperAt(Fk));
         });
 
         /// <summary>动画事件：拖影起止、起手烧亮、冲锋踏步、咆哮换挡、倒下的跪地 / 扑倒；hit 用来量释放帧和判定差多少</summary>

@@ -251,6 +251,7 @@ namespace Spiritfire.Game
                         stompDone = false;
                         strike ??= EliteStrike.For(this);
                         glinted = false;
+                        if (strike != null) Fx.EliteCue(transform.position + Vector3.up * 0.4f * Size, Size);
                         Stop();
                         PlayTimed("stomp", StompTime + 0.35f);
                         Sfx("telegraph", 0.6f, 1.3f);
@@ -272,6 +273,7 @@ namespace Spiritfire.Game
                             fuseTime = Windup(FuseTime, 0.8f);
                             strike ??= EliteStrike.For(this);
                             glinted = false;
+                            if (strike != null) Fx.EliteCue(Muzzle, Size);
                             Stop();
                             PlayTimed("brace", braceTime);
                             Sfx("telegraph", 0.7f, 0.9f);
@@ -553,6 +555,7 @@ namespace Spiritfire.Game
             if (strike != null)
             {
                 strike.Release(0.08f, -10f, 0.06f);
+                Fx.EliteRelease(m, Vector3.up + transform.forward * 0.4f, Size);
                 Fx.EliteCh3Burst(m, Vector3.up + transform.forward * 0.4f, 1.2f, true);
                 CameraShake.Quake(m, 0.12f, 20f, 0.2f);
             }
@@ -618,6 +621,7 @@ namespace Spiritfire.Game
             if (strike != null)
             {
                 strike.Release(0.12f, 6f, 0.06f);
+                Fx.EliteSlam(transform.position, 1.6f * Size);
                 Fx.EliteCh3Impact(transform.position, 1.6f * Size);
             }
             CameraShake.Quake(at, 0.1f, 14f, 0.2f);
