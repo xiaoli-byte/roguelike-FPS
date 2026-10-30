@@ -1,54 +1,37 @@
 {
   "schema": 1,
-  "about": "火麒麟 · 焚身的动画事件叠加表（同玄鳞，少了饮熔 drink）。at = 片段内归一化时刻；时刻取 Qilin.ts 的切换 / 判定时刻",
+  "about": "火麒麟 · 焚身的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。rear / scalesFire / paw / tuck / stomp / breath 是手工关键帧（art/source/characters/SK_Boss_Qilin/anim/qilin_anims.py 生成这几项，别手改），其余状态是原生采样片段、时刻取 Qilin.ts 的切换 / 判定时刻（手写）。hit / projectile = 释放帧（招式用 Cue 接住：事件和按时间兜底先到者算，两者按设计落在同一帧）；fx:q* = 只管外观的姿势节拍（QilinBrain.OnAnimEvent → Fx.Qilin*：人立顶点鳞光、刨蹄火星、蜷身聚火）；breathStart = 开始喷火。音效和震屏一律由招式 / 首领代码在同一帧自己出（采样片段原来叠的 sfx: / fx:shake 也去掉了：代码里本来就有，叠着会同一下响两次）。设计单 docs/art/vfx/qilin.md",
   "clips": {
     "rear": [
-      { "at": 0.0, "name": "fx:groundWarning" },
-      { "at": 0.0, "name": "sfx:boss_roar" }
+      { "at": 0.7, "name": "fx:qRearPeak" },
+      { "at": 0.9667, "name": "hit" }
     ],
     "scalesFire": [
-      { "at": 0.03, "name": "projectile" },
-      { "at": 0.03, "name": "fx:shake" },
-      { "at": 0.03, "name": "sfx:enemy_shot" },
-      { "at": 0.33, "name": "ring2" }
+      { "at": 0.0, "name": "projectile" }
     ],
     "breath": [
-      { "at": 0.0, "name": "fx:sectorWarning" },
-      { "at": 0.0, "name": "sfx:enemy_charge" },
-      { "at": 0.333, "name": "breathStart" }
+      { "at": 0.3158, "name": "breathStart" }
     ],
     "stun": [
-      { "at": 0.0, "name": "fx:shake" },
-      { "at": 0.0, "name": "sfx:boss_slam" }
     ],
     "pant": [
-      { "at": 0.03, "name": "hit" },
-      { "at": 0.03, "name": "fx:shake" },
-      { "at": 0.03, "name": "sfx:boss_slam" },
-      { "at": 0.857, "name": "fx:groundWarning" }
+      { "at": 0.03, "name": "hit" }
     ],
     "tuck": [
-      { "at": 0.0, "name": "fx:groundWarning" },
-      { "at": 0.0, "name": "sfx:telegraph" }
+      { "at": 0.5926, "name": "fx:qCoil" }
     ],
     "leap": [
-      { "at": 0.0, "name": "fx:groundWarning" },
-      { "at": 0.0, "name": "sfx:boss_roar" }
     ],
     "stomp": [
-      { "at": 0.0, "name": "sfx:boss_roar" },
-      { "at": 0.4, "name": "hit" },
-      { "at": 0.4, "name": "fx:explosion" },
-      { "at": 0.4, "name": "fx:shake" },
-      { "at": 0.4, "name": "sfx:boss_slam" }
+      { "at": 0.4615, "name": "hit" }
     ],
     "roar": [
-      { "at": 0.0, "name": "sfx:boss_roar" },
       { "at": 0.29, "name": "cast" }
     ],
     "paw": [
-      { "at": 0.0, "name": "fx:lineWarning" },
-      { "at": 0.0, "name": "sfx:telegraph" }
+      { "at": 0.4333, "name": "fx:qPaw" },
+      { "at": 0.7, "name": "fx:qPaw" },
+      { "at": 0.9667, "name": "hit" }
     ]
   }
 }
