@@ -80,6 +80,21 @@ namespace Spiritfire.Game
 
         // ───────────── 公式 ─────────────
 
+        /// <summary>
+        /// 清关魂晶 +<see cref="EssencePerStage"/>：首领倒下结算时发（<see cref="BossEncounter"/>，force，每场首领一次，3-3 的领主也是），
+        /// 开放大图在出口结算时发（<see cref="GameSession.CompleteStage"/>）——本关已经发过（首领场 / 有领主的大图）就不再发。
+        /// 发过的关记在本局标记上，重来本关从进关快照恢复时一起回滚。返回是否发了
+        /// </summary>
+        public static bool CreditStageEssence(RunState run, string source, bool force = false)
+        {
+            if (run == null) return false;
+            string key = "stage_essence:" + run.stageCode;
+            if (!force && run.Flag(key) != 0) return false;
+            run.SetFlag(key, 1);
+            run.CreditEssence(EssencePerStage, source);
+            return true;
+        }
+
         /// <summary>当前章（0 起；没开局按 0）</summary>
         public static int Chapter => RunState.Current != null ? Mathf.Max(0, RunState.Current.chapter - 1) : 0;
 
@@ -212,30 +227,15 @@ namespace Spiritfire.Game
 
         // ───────────── 投影 ─────────────
 
-        /// <summary>投影的假设（缺省值来自 1-1：4 个据点约 32 只、2 只精英；第 4 批 I3 按实际地图回填）</summary>
+        /// <summary>投影的可调假设：编制按各关实际遭遇（<see cref="BalanceModel.Stages"/>），这里只留表里没有的</summary>
         public struct ProjectionInputs
         {
-            /// <summary>每张开放大图的击杀数（第一章）、其中精英数</summary>
-            public float killsPerField, elitesPerField;
-            /// <summary>每章敌人数量的增长（× (1 + 值 × 章)）</summary>
-            public float killGrowthPerChapter;
-            /// <summary>首领场里的杂兵击杀数</summary>
-            public float killsPerBossStage;
-            /// <summary>普通敌人击杀灵石的平均基数（缺省：按名册里普通敌人 coins 区间中点平均）</summary>
-            public float avgKillCoins;
-            /// <summary>每张开放大图的灵石宝箱数、其中精英场的比例</summary>
-            public float coinChestsPerField, eliteChestShare;
-            /// <summary>首领灵石中点</summary>
-            public float bossCoins;
+            /// <summary>首领场里随首领出来的杂兵击杀数</summary>
+            public int killsPerBossStage;
             /// <summary>灵石获取加成（0 = 无）</summary>
             public float coinGainPct;
 
-            public static ProjectionInputs Default => new()
-            {
-                killsPerField = 32, elitesPerField = 2, killGrowthPerChapter = 0.25f, killsPerBossStage = 8,
-                avgKillCoins = AverageRosterCoins(), coinChestsPerField = 0.5f, eliteChestShare = 0.3f,
-                bossCoins = (BossCoinsMin + BossCoinsMax) * 0.5f, coinGainPct = 0,
-            };
+            public static ProjectionInputs Default => new() { killsPerBossStage = BalanceModel.BossStageAdds, coinGainPct = 0 };
         }
 
         /// <summary>一章的收入估算</summary>
@@ -248,56 +248,28 @@ namespace Spiritfire.Game
             public float RareWeapons => Total / (WeaponPrice[Rarity.Rare] * ShopChapterMult(chapter));
         }
 
-        /// <summary>名册里普通敌人 coins 区间中点的平均（没有名册时 3）</summary>
-        public static float AverageRosterCoins()
-        {
-            float sum = 0;
-            int n = 0;
-            foreach (var d in Registry<EnemyDef>.All)
-            {
-                if (d.rank != Rank.Normal || d.coins.y <= 0) continue;
-                sum += (d.coins.x + d.coins.y) * 0.5f;
-                n++;
-            }
-            return n > 0 ? sum / n : 3f;
-        }
-
         /// <summary>
-        /// 按 RunPlan 的关卡表估每章收入（期望值，不含商店消费、灵宠、调试）：
-        ///   击杀 = (普通 × 平均灵石 + 精英 × 平均灵石 × 3) × (1 + 0.15 × 章)；宝箱 = 灵石宝箱数 × 90 × (1 + 0.35 × 章) × 精英份额加成；
-        ///   首领 = 中点 × (1 + 0.15 × 章)；魂晶 = 普通 1 / 精英 5 / 首领 60 + 每关 10。全部 × 灵石获取。
+        /// 按 RunPlan 的关卡表估每章收入（期望值，不含商店消费、灵宠、调试）：逐关用 <see cref="BalanceModel.Estimate"/>——
+        ///   击杀 = 各关实际编制的灵石区间中点（精英 × 3）× (1 + 0.15 × 章)；窖藏 = 灵石窖藏数 × 90 × (1 + 0.35 × 章)；
+        ///   首领（含 3-3 的领主）= 灵石中点 × (1 + 0.15 × 章)；魂晶 = 各敌人定义（精英 × 5）+ 首领 60 + 每关 10。灵石 × 灵石获取。
         /// </summary>
         public static List<ChapterIncome> Project(ProjectionInputs p)
         {
             var rows = new Dictionary<int, ChapterIncome>();
+            float gain = Mathf.Max(0.05f, 1 + p.coinGainPct);
             foreach (var s in RunPlan.Stages)
             {
                 int ch = s.chapter - 1;
                 rows.TryGetValue(ch, out var r);
                 r.chapter = ch;
-                float grow = 1 + p.killGrowthPerChapter * ch;
-                float gain = Mathf.Max(0.05f, 1 + p.coinGainPct);
-                if (s.IsBoss)
-                {
-                    r.bossStages++;
-                    float adds = p.killsPerBossStage * grow;
-                    r.kills += adds + 1;
-                    r.killCoins += adds * p.avgKillCoins * KillChapterMult(ch) * gain;
-                    r.bossCoins += p.bossCoins * KillChapterMult(ch) * gain;
-                    r.essence += adds * KillResolver.DefaultEssence + KillResolver.BossEssence;
-                }
-                else
-                {
-                    r.fieldStages++;
-                    float elites = p.elitesPerField * grow;
-                    float normals = Mathf.Max(0, p.killsPerField * grow - elites);
-                    r.kills += normals + elites;
-                    r.killCoins += (normals + elites * EliteKillCoinMult) * p.avgKillCoins * KillChapterMult(ch) * gain;
-                    float chestAvg = (ChestCoinsMin + ChestCoinsMax) * 0.5f * RewardChapterMult(ch) * (1 + p.eliteChestShare * (EliteChestCoinMult - 1));
-                    r.chestCoins += p.coinChestsPerField * chestAvg * gain;
-                    r.essence += normals * KillResolver.DefaultEssence + elites * KillResolver.DefaultEssence * KillResolver.EliteEssenceMult;
-                }
-                r.essence += EssencePerStage;
+                var e = BalanceModel.Estimate(s, p.killsPerBossStage);
+                if (s.IsBoss) r.bossStages++;
+                else r.fieldStages++;
+                r.kills += e.kills;
+                r.killCoins += e.killCoins * gain;
+                r.chestCoins += e.cacheCoins * gain;
+                r.bossCoins += e.bossCoins * gain;
+                r.essence += e.essence;
                 rows[ch] = r;
             }
             var list = new List<ChapterIncome>(rows.Values);
@@ -311,9 +283,8 @@ namespace Spiritfire.Game
         public static string FormatProjection(List<ChapterIncome> rows, ProjectionInputs p)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"[Economy] 每章收入投影（每图 {p.killsPerField:0} 杀 / 精英 {p.elitesPerField:0}，每章敌人 +{p.killGrowthPerChapter:P0}，" +
-                          $"平均击杀灵石 {p.avgKillCoins:0.0}，每图灵石宝箱 {p.coinChestsPerField:0.##}，灵石获取 +{p.coinGainPct:P0}）");
-            sb.AppendLine("章 | 大图+首领 | 击杀 | 击杀灵石 | 宝箱灵石 | 首领灵石 | 合计 | 累计 | 稀有武器价 | 可买稀有武器 | 魂晶");
+            sb.AppendLine($"[Economy] 每章收入投影（各关实际编制，首领场杂兵 {p.killsPerBossStage} 只，灵石获取 +{p.coinGainPct:P0}）");
+            sb.AppendLine("章 | 大图+首领 | 击杀 | 击杀灵石 | 窖藏灵石 | 首领灵石 | 合计 | 累计 | 稀有武器价 | 可买稀有武器 | 魂晶");
             float cumulative = 0;
             foreach (var r in rows)
             {

@@ -141,18 +141,16 @@ namespace Spiritfire.Game
 
         // ───────────── 定档模型（EditMode 测试守着）─────────────
 
-        /// <summary>武器秒伤带的中位（D11：身体 60–90，取 75）</summary>
-        public const float BaseDps = 75f;
-        /// <summary>难度每 +1 的装备成长（品质、强化、秘卷、天赋合计）与实际输出时间占比（躲招、换弹、换位）</summary>
-        public const float DpsGrowth = 1.15f, Uptime = 0.75f;
+        /// <summary>武器秒伤带的中位、难度每 +1 的装备成长、输出时间占比：都取 I3 的参考曲线（<see cref="BalanceModel"/>）</summary>
+        public const float BaseDps = BalanceModel.BaseDps, DpsGrowth = BalanceModel.GearGrowth, Uptime = BalanceModel.Uptime;
         /// <summary>无属性打护甲的倍率（DamageTable：0.75）</summary>
         public const float ArmorMult = 0.75f;
 
         /// <summary>
-        /// 定档用的模拟秒伤：75 ×（1 + 1.15 ×（难度 − 1））× 0.75。1-4（1.48）约 87、3-4（3.08）约 191。
+        /// 定档用的模拟秒伤 = I3 参考曲线 <see cref="BalanceModel.ReferenceDps"/>：75 ×（1 + 1.15 ×（难度 − 1））× 0.75。1-4（1.48）约 87、3-4（3.08）约 191。
         /// 只用来定首领耐久的量级（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」），不是武器平衡的依据
         /// </summary>
-        public static float ReferenceDps(float difficulty) => BaseDps * (1 + DpsGrowth * (Mathf.Max(1f, difficulty) - 1)) * Uptime;
+        public static float ReferenceDps(float difficulty) => BalanceModel.ReferenceDps(difficulty);
 
         /// <summary>
         /// 模拟击杀用时（秒，登场结束到倒下）= 一阶段 + 换形演出（<see cref="TransitionSeconds"/>，不可选中）+ 二阶段：

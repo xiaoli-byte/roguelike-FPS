@@ -475,7 +475,7 @@
 | 生涯统计 | ❌ | — | `CareerStats` | S | R2 |
 | 主菜单、操作说明 | ❌ | — | 3D 远景主菜单 | M | U5 |
 | 调试作弊 | ❌ | — | `DevCommands` | M | W0-5 |
-| 经济数值表 | 🟡 | 常数散在各处 | `EconomyConfig` + 投影表 | S | R1 / I3 |
+| 经济数值表 | ✅ | 常数散在各处 | `EconomyConfig` + 投影表（按各关实际编制，见 [balance.md](balance.md)） | S | R1 / I3 |
 
 天赋（全部 ❌，每项 5 级，费用 60 / 120 / 200 / 300 / 450 魂晶，单元 R2）：
 
@@ -995,7 +995,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 |---|---|---|---|---|---|
 | I1 十二关串联 | 主菜单 → 选英雄 → 1-1 … 3-4 → 胜利结算可以走通；关间结算卡；构建设置按 RunPlan；demo 开关（demoEnd = 1-4） | `G/Core/RunPlan.cs` `P/Editor/Levels/BuildOrder.cs` | 全部 M / BS、U5、U6 | 是 | M |
 | I2 整局自动化通关 | 见 7.5 | `G/Testing/Suites/FullRunSuite.cs` `G/Testing/Bot/*` | I1 | 是 | L |
-| I3 平衡 | 武器秒伤带；首领 60–120 s；每章收入对得上商店价格；魂晶 vs 天赋总价 11300；逐关难度；随机元素加入后 1-1 复测 | `docs/balance.md` `G/Testing/Suites/{BossSoak,EconomyProjection}Suite.cs`（改 EconomyConfig / CombatTuning 数值） | I1 | 是 | M |
+| I3 平衡 ✅ | 武器秒伤带；首领 60–120 s；每章收入对得上商店价格；魂晶 vs 天赋总价 11300；逐关难度；随机元素加入后 1-1 复测。落地成 EditMode 的平衡模型（场景实测编制 + 一条参考秒伤曲线），开放大图清关补发 +10 魂晶；weapon-dps / full-run / boss-* 的实测复核见 balance.md 第九节 | `docs/balance.md` `G/Core/BalanceModel.cs` `Tests/BalanceModelTests.cs`（`EconomyConfig.Project` 改按实际编制） | I1 | 是 | M |
 | I4 性能 | GPU 遮挡；1-3 烘焙遮挡；地形分块 LOD；远景 impostor；按固定机位采基线（docs/performance.md 协议）；预算写进 L5 | `P/Editor/Levels/LevelKit.Perf.cs` `A/Settings/**` | I1 | 是 | M |
 | I5 中途续玩与图鉴（超越） | 每关开头写 run.json，主菜单「继续征程」；武器 / 秘卷 / 敌人 / 灵宠图鉴 | `G/Core/RunSuspend.cs` `G/Progression/Codex.cs` `G/UI/Screens/CodexScreen.cs` | R2 U5 | 否 | M |
 | I6 音频超越 ✅ | 各章环境声床；关键枪声 / 爆炸改分层（瞬态、主体、尾音）；旱魃主题曲；遮挡低通 + 混响区 | `G/Audio/{AmbienceZone,AudioOcclusion}.cs` `A/Game/Resources/Audio/Music/amb_*.ogg` `src/audio/Ambience.ts` | F5 | 是 | M |
