@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using static Spiritfire.Game.WeaponDef;
 
 namespace Spiritfire.Game
@@ -18,7 +18,9 @@ namespace Spiritfire.Game
             {
                 id = "magmashot", name = "赤蛟霰铳", category = "霰弹枪", kind = WeaponKind.Shotgun, prefab = "SK_Weapon_Magmashot",
                 mode = FireMode.Semi, reload = ReloadStyle.Shell, sfx = "shot_shotgun", sfxVolume = 1.0f,
-                damage = 11, pellets = 8, pelletCone = 0.09f, fireRate = 2.5f, mag = 2, reserve = 36,
+                // I3（docs/balance.md 第 2 节）：TS 每粒 11；Unity 双管实测裸秒伤 89（设计 80），实战对生命层（火 ×1.25、自带蚀化 ×1.2）141，
+                // 比其余武器的实战中位高四成——每粒 10 让裸秒伤回到设计的 80 左右
+                damage = 10, pellets = 8, pelletCone = 0.09f, fireRate = 2.5f, mag = 2, reserve = 36,
                 reloadTime = 1.4f, shellTime = 0.55f, reloadStart = 0.3f,
                 spreadTs = new SpreadParams(0.01f, 0.005f, 0.015f, 0.035f, 0.12f),
                 recoilPitch = 0.06f, recoilYaw = 0.014f,

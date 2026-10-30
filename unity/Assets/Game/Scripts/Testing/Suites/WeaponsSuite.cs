@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -20,7 +20,7 @@ namespace Spiritfire.Game.Testing
     ///     全自动 / 光束 / 预热 / 点射 / 齐射 / 蓄力按住扳机，半自动隔帧点按，换弹中不扣（逐发装填不被打断）；狙击开镜打（TS 实测口径：必须开镜）；
     ///   · 计时从扣扳机起、到第 k 次换弹完成止（k 按一轮「打空一匣 + 换弹」的估算凑够约 6 s，最多 2 轮），即整轮持续秒伤；
     ///     伤害只算这把枪（weaponUid）打在木桩上的直接 / 爆炸伤害（不含灼烧 / 蚀化跳伤与反应），按暴击倍率另算「不含暴击」；
-    ///     与 Three.js 秒伤带比较（TS 实测 / arsenal-expansion 设计值，不含暴击；考虑 D11 散布 ×0.4，Unity 打得更准、应略高）：
+    ///     另记请求的基础伤害之和（裸秒伤：不含暴击、元素克制、蚀化易伤、英雄被动），用裸秒伤和 Three.js 秒伤带比较（同 WeaponDpsSuite 的表与口径；考虑 D11 散布 ×0.4，Unity 打得更准、应略高）：
     ///     ±20% 内记 ✓，带外记 ⚠（不算不合格，平衡单元复核）；一点伤害都没打出来算不合格；
     ///   · 专项：点射一扣 = burstCount 发；狙击开镜后零散布、遮罩亮、准星收、枪模隐藏，换弹即退镜、枪模复原；
     ///     预热武器开火时移速 −moveSlow、停火后复原、枪管骨骼在转；齐射武器同时在飞 ≥ 2 枚；火焰锥不生成投射物、能穿透烧到后排第二只木桩；
@@ -44,17 +44,10 @@ namespace Spiritfire.Game.Testing
         const float BandTolerance = 0.2f;
 
         /// <summary>
-        /// Three.js 秒伤基准（普通稀有度、无加成、身体、含换弹、不含暴击）：src/weapons/WeaponDefs.ts 头注释的 120 s 实测
-        /// （左轮 82、冲锋枪 91、步枪 90、点射 86、霰弹 90、弩 82、光束 74、机炮 90、蜂群 82、榴弹 111（火对生命 ×1.25）、狙击 107），
-        /// 武器库扩充的 docs/arsenal-expansion.md 8.1 设计值（喷火 69.1 / 目标、雷蛊 71.3、霰铳 80、三才 66.3、贯虹满蓄 86.1、蛊灯 62.9），
-        /// 碎刃按 D11 的近战约 105。没有登记的武器按通用带 60–90
+        /// Three.js 秒伤基准：同 <see cref="WeaponDpsSuite.TsDps"/>（裸秒伤口径：普通、无加成、身体、含换弹、不含暴击、不含元素克制；I3 统一，docs/balance.md 第 2 节）。
+        /// 没有登记的武器按通用带 60–90
         /// </summary>
-        static readonly Dictionary<string, float> TsDps = new()
-        {
-            ["revolver"] = 82, ["smg"] = 91, ["rifle"] = 90, ["burst"] = 86, ["shotgun"] = 90, ["sniper"] = 107, ["launcher"] = 111,
-            ["crossbow"] = 82, ["beam"] = 74, ["minigun"] = 90, ["swarm"] = 82, ["flamer"] = 69.1f, ["stormpod"] = 71.3f,
-            ["magmashot"] = 80, ["trinity"] = 66.3f, ["railgun"] = 86.1f, ["lantern"] = 62.9f, ["demon_blade"] = 105,
-        };
+        static Dictionary<string, float> TsDps => WeaponDpsSuite.TsDps;
 
         ArenaSpawner arena;
         GameObject systems;
@@ -69,7 +62,7 @@ namespace Spiritfire.Game.Testing
         // ── 当前这把枪的计数（事件回调写）──
         WeaponInstance current;
         readonly Dictionary<Damageable, float> dealtBy = new();
-        float dealt, dealtNoCrit;
+        float dealt, dealtNoCrit, dealtRaw;
         int hits, crits, fired, reloads, wantReloads, blocked, weakHits;
         float windowEnd = -1;
 
@@ -122,7 +115,7 @@ namespace Spiritfire.Game.Testing
 
                 var defs = WeaponLibrary.All.ToList();
                 Line($"武器 {defs.Count} 把（注册表顺序）：{string.Join("、", defs.Select(d => d.id))}；英雄 {hero.name}，木桩 {DummyId}（无甲、生命 ×{DummyHpMult}），{Distance} m");
-                csv.Add("id,name,mode,window_s,damage,dps,dps_nocrit,hits,crits,shots,ts_dps,ratio,in_band,errors,blocked,weak");
+                csv.Add("id,name,mode,window_s,damage,dps,dps_nocrit,hits,crits,shots,raw_dps,ts_dps,ratio,in_band,errors,blocked,weak");
                 speed = TimeScaleArbiter.Request(this, 1, TimeScaleArbiter.Priority.HitStop - 50);
                 foreach (var def in defs) yield return WeaponCase(def, speed);
 
@@ -166,6 +159,7 @@ namespace Spiritfire.Game.Testing
             dealtBy.TryGetValue(e.enemy, out var sum);
             dealtBy[e.enemy] = sum + t;
             dealt += t;
+            dealtRaw += Mathf.Max(0, e.info.amount);
             hits++;
             if (e.result.crit)
             {
@@ -192,7 +186,7 @@ namespace Spiritfire.Game.Testing
         {
             current = w;
             dealtBy.Clear();
-            dealt = dealtNoCrit = 0;
+            dealt = dealtNoCrit = dealtRaw = 0;
             hits = crits = fired = reloads = blocked = weakHits = 0;
             windowEnd = -1;
         }
@@ -306,18 +300,18 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(1.2f);
             speed.Scale = 1;
 
-            float dps = dealt / window, dpsNoCrit = dealtNoCrit / window;
+            float dps = dealt / window, dpsNoCrit = dealtNoCrit / window, dpsRaw = dealtRaw / window;
             // 专项（火焰穿透）会重置计数：CSV 用这一刻的值
             var row = string.Join(",", def.id, def.name, FireModes.Create(def).Id, F(window), F(dealt), F(dps), F(dpsNoCrit), hits, crits, fired);
             int blocked0 = blocked, weak0 = weakHits;
             bool known = TsDps.TryGetValue(def.id, out float ts);
             float lo = known ? ts * (1 - BandTolerance) : 60, hi = known ? ts * (1 + BandTolerance) : 90;
-            bool inBand = dpsNoCrit >= lo && dpsNoCrit <= hi;
+            bool inBand = dpsRaw >= lo && dpsRaw <= hi;
             string band = known ? $"TS {ts:0.#}（±20%：{lo:0}–{hi:0}）" : $"通用带 {lo:0}–{hi:0}";
-            Line($"秒伤：{dps:F1}（不含暴击 {dpsNoCrit:F1}），{band} {(inBand ? "✓" : "⚠ 带外")}；" +
+            Line($"秒伤：裸 {dpsRaw:F1}，实战 {dps:F1}（不含暴击 {dpsNoCrit:F1}），{band} {(inBand ? "✓" : "⚠ 带外")}（判裸秒伤）；" +
                  $"窗口 {window:F1} s（{reloads} 次换弹 / 估一轮 {cycle:F1} s），命中 {hits}（暴击 {crits}），开火 {fired}" +
                  (blocked > 0 || weakHits > 0 ? $"；⚠ 被格挡 {blocked}、弱点 {weakHits}" : ""));
-            if (!inBand) outOfBand.Add($"{def.id} {dpsNoCrit:F0}");
+            if (!inBand) outOfBand.Add($"{def.id} {dpsRaw:F0}");
             if (!(dealt > 0)) Fail($"{def.name}：{window:F1} s 里一点伤害都没打到木桩上（开火 {fired} 次）");
             if (blocked > 0) Fail($"{def.name}：木桩格挡了 {blocked} / {hits} 下（承伤修饰没撤干净），秒伤不可信");
 
@@ -353,7 +347,7 @@ namespace Spiritfire.Game.Testing
             int errs = logErrors - err0;
             Line($"{def.name}：报错 {errs}{(errs > 0 ? $"（最后一条：{lastError}）" : "")}");
             if (errs > 0) Fail($"{def.name}：期间有 {errs} 条运行时报错（最后一条：{lastError}）");
-            csv.Add(string.Join(",", row, known ? F(ts) : "", known ? F(dpsNoCrit / ts) : "", inBand ? 1 : 0, errs, blocked0, weak0));
+            csv.Add(string.Join(",", row, F(dpsRaw), known ? F(ts) : "", known ? F(dpsRaw / ts) : "", inBand ? 1 : 0, errs, blocked0, weak0));
             current = null;
             arena.Clear();
             yield return new WaitForSeconds(0.2f);

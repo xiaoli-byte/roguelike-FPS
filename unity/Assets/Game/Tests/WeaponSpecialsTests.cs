@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using Spiritfire.Art;
 using UnityEngine;
@@ -135,7 +135,7 @@ namespace Spiritfire.Game.Tests
 
             var magma = Def("magmashot");
             Assert.AreEqual(WeaponKind.Shotgun, magma.kind);
-            Assert.AreEqual(11f, magma.damage);
+            Assert.AreEqual(10f, magma.damage, "I3：TS 11 → 10（docs/balance.md 第 2 节）");
             Assert.AreEqual(8, magma.pellets);
             Assert.AreEqual(0.09f, magma.pelletCone);
             Assert.AreEqual(2, magma.mag);
