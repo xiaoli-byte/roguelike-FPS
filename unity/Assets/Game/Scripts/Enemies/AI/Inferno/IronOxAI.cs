@@ -62,6 +62,9 @@ namespace Spiritfire.Game
         Renderer coreGlow;
         TelegraphHandle fan, sector;
         IDisposable armour;
+        /// <summary>精英出手分量层（三章共用，普通铁牛为 null）与这一招的铜芒放过没有（docs/art/vfx/elites-ch3.md）</summary>
+        EliteStrike strike;
+        bool glinted;
         static readonly List<EnemyAI> near = new();
 
         protected override void Awake()
@@ -171,6 +174,8 @@ namespace Spiritfire.Game
                     float t = Mathf.Clamp01(stateTime / inhaleTime);
                     SetGlow(1, 0.4f + 0.6f * t);
                     Glow = 0.4f + 0.6f * t;
+                    // 精英：吸气时昂首鼓胸（拔高、后仰），喷吐前摇再一头扎下去
+                    strike?.Charge(t, -0.08f, -8f);
                     fan.SetYaw(Facing * Mathf.Rad2Deg);
                     pullAcc += dt;
                     while (pullAcc >= PullGap)
@@ -204,6 +209,13 @@ namespace Spiritfire.Game
                     break;
                 case "spitWindup":
                     Stop();
+                    // 精英：低头压低（蓄满一口熔铁），顶点嘴边一点铜芒
+                    strike?.Charge(stateTime / Mathf.Max(0.05f, windTime), 0.12f, 12f);
+                    if (strike != null && !glinted && stateTime >= windTime * 0.8f)
+                    {
+                        glinted = true;
+                        Fx.EliteCh3Glint(mouth.position, 1.4f);
+                    }
                     if (stateTime >= windTime) Spit();
                     break;
                 case "spit":
@@ -224,6 +236,13 @@ namespace Spiritfire.Game
                     Stop();
                     TurnTo(YawToTarget, 1.4f, dt);
                     sector.SetYaw(Facing * Mathf.Rad2Deg);
+                    // 精英：牛头压到最低（角尖贴地），顶点角尖一点铜芒
+                    strike?.Charge(stateTime / Mathf.Max(0.05f, windTime), 0.13f, 13f);
+                    if (strike != null && !glinted && stateTime >= windTime * 0.8f)
+                    {
+                        glinted = true;
+                        Fx.EliteCh3Glint(Local(0, 0.4f, 1.9f), 1.3f);
+                    }
                     if (stateTime >= windTime) Toss();
                     break;
                 case "toss":
@@ -253,6 +272,7 @@ namespace Spiritfire.Game
 
         void ToAdvance()
         {
+            strike?.Relax();
             Loco();
             SetState("advance");
             HideWarnings();
@@ -301,6 +321,8 @@ namespace Spiritfire.Game
 
         void BeginInhale()
         {
+            strike ??= EliteStrike.For(this);
+            glinted = false;
             Stop();
             inhaleTime = elite ? InhaleTimeElite : InhaleTime;
             DoorDamage = 0;
@@ -350,6 +372,8 @@ namespace Spiritfire.Game
         /// <summary>呛火：炉膛回火爆炸，跪倒 2.5 s，炉门敞开（最好的输出窗口）；这次吸气作废</summary>
         void Choke()
         {
+            strike?.Kick(0.1f, 10f, 0.4f);
+            strike?.Relax();
             HideWarnings();
             ReleaseAttack();
             Stop();
@@ -399,6 +423,12 @@ namespace Spiritfire.Game
             var from = mouth.position;
             GameAudio.PlayAt("skill_fire", from, 1f, 0.6f);
             Quake(0.35f, StepShakeRange, 0.3f);
+            // 精英：喷出那一帧脖子一伸、往前顶，局部顿帧；嘴边一喷铜火
+            if (strike != null)
+            {
+                strike.Release(-0.1f, 9f, 0.06f);
+                Fx.EliteCh3Burst(from, transform.forward, 1.4f);
+            }
             // 熔铁团：朝两排铁渣墙飞出去（落地时刻 = 立墙时刻）
             foreach (var (dd, lats) in SlagRows)
                 foreach (float lat in lats)
@@ -447,6 +477,8 @@ namespace Spiritfire.Game
 
         void BeginToss()
         {
+            strike ??= EliteStrike.For(this);
+            glinted = false;
             windTime = Windup(TossWindup, 0.35f);
             Stop();
             Struck = false;
@@ -470,6 +502,12 @@ namespace Spiritfire.Game
             Fx.Basalt(p, 1.2f * Size, InfernoKit.Iron);
             Fx.Burst(p, InfernoKit.Ember, 10, 6, 0.5f, 0.07f * Size, 8);
             Fx.Ring(p, 2.2f, InfernoKit.LavaColor, 0.3f);
+            // 精英：角往上一挑那一帧整个前身扬起、拉长，局部顿帧；掀起处一圈铜色粗环 + 方铜渣崩开
+            if (strike != null)
+            {
+                strike.Release(-0.12f, -12f, 0.07f);
+                Fx.EliteCh3Impact(p, 1.8f * Size);
+            }
             GameAudio.PlayAt("boss_slam", p, 0.9f, 0.8f);
             Quake(0.45f, StepShakeRange, 0.3f);
             if (vitals && !vitals.Dead && DistToPlayer <= TossReach + InfernoKit.PlayerRadius && FacingDot > 0.45f && VerticalReach(2.2f))
@@ -487,6 +525,7 @@ namespace Spiritfire.Game
 
         protected override void CancelAttack()
         {
+            strike?.Relax();
             HideWarnings();
             if (state == "choke") return;
             if (state is not ("advance" or IdleState or "spawn"))

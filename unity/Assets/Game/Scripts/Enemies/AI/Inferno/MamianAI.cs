@@ -58,6 +58,9 @@ namespace Spiritfire.Game
         readonly Vector3[] pts = new Vector3[9];
         /// <summary>FX4 的铁链网格（LineRenderer 只留着当「链子在不在外面」的开关，不画）</summary>
         FxChain links;
+        /// <summary>精英出手分量层（三章共用，普通马面为 null）与这一招的铜芒放过没有（docs/art/vfx/elites-ch3.md）</summary>
+        EliteStrike strike;
+        bool glinted;
 
         protected override void Awake()
         {
@@ -148,6 +151,13 @@ namespace Spiritfire.Game
                     float t = Mathf.Clamp01(stateTime / spinTime);
                     Glow = 0.35f + 0.65f * t;
                     spinPhase += dt * (9 + 12 * t);
+                    // 精英：甩圈越转越快时整个人往后仰、拔高（人立甩链），顶点钩头一点铜芒
+                    strike?.Charge(t, -0.07f, -9f);
+                    if (strike != null && !glinted && t >= 0.85f)
+                    {
+                        glinted = true;
+                        Fx.EliteCh3Glint(SpinHookPoint(), 1.2f);
+                    }
                     if (stateTime >= spinTime) ThrowHook();
                     break;
                 }
@@ -188,6 +198,7 @@ namespace Spiritfire.Game
                     Stop();
                     FacePlayer(3 * Mathf.Rad2Deg, dt);
                     Glow = 0.2f;
+                    strike?.Relax();
                     if (stateTime >= RecoverTime / Mathf.Sqrt(Mathf.Max(0.1f, auraAttackRate)))
                     {
                         ReleaseAttack();
@@ -199,6 +210,13 @@ namespace Spiritfire.Game
                     Stop();
                     FacePlayer(3 * Mathf.Rad2Deg, dt);
                     spinPhase += dt * 14;
+                    // 精英：压低身子、往前拧（蓄一圈抡链），顶点一点铜芒
+                    strike?.Charge(stateTime / SweepWind, 0.13f, 10f);
+                    if (strike != null && !glinted && stateTime >= SweepWind * 0.85f)
+                    {
+                        glinted = true;
+                        Fx.EliteCh3Glint(Root, 1.2f);
+                    }
                     if (stateTime >= SweepWind)
                     {
                         sweepHit = false;
@@ -335,6 +353,8 @@ namespace Spiritfire.Game
 
         void BeginSpin()
         {
+            strike ??= EliteStrike.For(this);
+            glinted = false;
             spinTime = Windup(SpinTime, 0.6f);
             spinPhase = 0;
             Stop();
@@ -369,6 +389,12 @@ namespace Spiritfire.Game
             Act("throw", 0.05f);
             SetState("throw");
             Sfx("skill_throw", 0.9f, 0.75f);
+            // 精英：掷出那一帧整个人前扑、拉长，局部顿帧；钩头离手处一喷铜火
+            if (strike != null)
+            {
+                strike.Release(-0.1f, 11f, 0.05f);
+                Fx.EliteCh3Burst(HookPos, hookVel, 0.9f);
+            }
         }
 
         /// <summary>钩头飞行：先撞墙就落空；碰到玩家（冲刺中不算）就钩住</summary>
@@ -576,6 +602,8 @@ namespace Spiritfire.Game
 
         void BeginSweep()
         {
+            strike ??= EliteStrike.For(this);
+            glinted = false;
             Stop();
             sweepHit = false;
             HookPos = Root;
@@ -594,6 +622,12 @@ namespace Spiritfire.Game
             sweepWarn = default;
             float r = SweepRadius * SizeK;
             Fx.Ring(transform.position + Vector3.up * 0.1f, r, InfernoKit.Ember, 0.35f);
+            // 精英：抡出去那一帧拉长、往回甩（链子把人带着转），局部顿帧；一整圈暗月牙托亮刃的铜色刀光 + 方铜渣
+            if (strike != null)
+            {
+                strike.Release(-0.09f, -7f, 0.06f);
+                Fx.EliteCh3Crescent(transform.position, Facing * Mathf.Rad2Deg, r * 0.92f, Mathf.PI * 1.9f, -1, 0.9f * Size);
+            }
             if (!vitals || vitals.Dead) return;
             var to = PlayerPos - transform.position;
             float feet = to.y;
@@ -670,6 +704,7 @@ namespace Spiritfire.Game
 
         protected override void CancelAttack()
         {
+            strike?.Relax();
             sweepWarn.FadeOut();
             sweepWarn = default;
             if (state == "drag")

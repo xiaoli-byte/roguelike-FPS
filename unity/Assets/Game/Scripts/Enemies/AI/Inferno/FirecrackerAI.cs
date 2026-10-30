@@ -56,6 +56,13 @@ namespace Spiritfire.Game
         };
 
         /// <summary>预警 / 火药的颜色（同 TS INFERNO）</summary>
+        /// <summary>精英出手分量层（三章共用，普通傀儡为 null）与这一招的铜芒放过没有（docs/art/vfx/elites-ch3.md）</summary>
+        EliteStrike strike;
+        bool glinted;
+
+        /// <summary>地老鼠已经放出去了（这次跺脚的释放帧过了；节拍条套件用）</summary>
+        public bool RatsOut => state == "stomp" && stompDone;
+
         public static readonly Color Warn = Hex.Rgb(0xff1f4f), FireColor = Hex.Rgb(0xff8a2a), Hot = Hex.Rgb(0xffd27a), Paper = Hex.Rgb(0xd8241c),
             Gold = Hex.Rgb(0xffc850), Soot = Hex.Rgb(0x2a1a14);
 
@@ -242,6 +249,8 @@ namespace Spiritfire.Game
                     if (ratCd <= 0 && d < RatRange && Mathf.Abs(PlayerPos.y - transform.position.y) <= 2 && RequestAttack(AttackTokens.Kind.Melee, StompTime + 0.6f))
                     {
                         stompDone = false;
+                        strike ??= EliteStrike.For(this);
+                        glinted = false;
                         Stop();
                         PlayTimed("stomp", StompTime + 0.35f);
                         Sfx("telegraph", 0.6f, 1.3f);
@@ -261,6 +270,8 @@ namespace Spiritfire.Game
                         {
                             braceTime = Windup(BraceTime, 0.25f);
                             fuseTime = Windup(FuseTime, 0.8f);
+                            strike ??= EliteStrike.For(this);
+                            glinted = false;
                             Stop();
                             PlayTimed("brace", braceTime);
                             Sfx("telegraph", 0.7f, 0.9f);
@@ -275,6 +286,8 @@ namespace Spiritfire.Game
                     Stop();
                     FacePlayer(143, dt);
                     Glow = 0.25f;
+                    // 精英：扎马更低（前摇 = 扎马 + 引信，扎马占前 25%）
+                    strike?.Charge(0.25f * stateTime / Mathf.Max(0.01f, braceTime), 0.13f, -5f);
                     if (stateTime >= braceTime)
                     {
                         PlayTimed("fuse", fuseTime);
@@ -289,6 +302,13 @@ namespace Spiritfire.Game
                     FacePlayer(115, dt);
                     float t = Mathf.Clamp01(stateTime / fuseTime);
                     Glow = 0.3f + 0.7f * t;
+                    // 精英：引信烧到底的过程里越压越低、往后仰（顶住后坐），顶点箱口一点铜芒
+                    strike?.Charge(0.25f + 0.75f * t, 0.13f, -9f);
+                    if (strike != null && !glinted && t >= 0.85f)
+                    {
+                        glinted = true;
+                        Fx.EliteCh3Glint(Muzzle, 1.1f);
+                    }
                     if (stateTime >= fuseTime)
                     {
                         PickVolleyTargets(elite ? RocketsElite : Rockets);
@@ -316,8 +336,20 @@ namespace Spiritfire.Game
                         stompDone = true;
                         ScatterRats();
                     }
+                    if (!stompDone && strike != null)
+                    {
+                        // 精英：抬腿蓄力（拔高、后仰），顶点脚下一点铜芒
+                        float st = stateTime / Mathf.Max(0.05f, Windup(StompTime, 0.3f));
+                        strike.Charge(st, -0.08f, -7f);
+                        if (!glinted && st >= 0.85f)
+                        {
+                            glinted = true;
+                            Fx.EliteCh3Glint(transform.position + Vector3.up * 0.3f, 1f);
+                        }
+                    }
                     if (stateTime >= StompTime + 0.35f)
                     {
+                        strike?.Relax();
                         ReleaseAttack();
                         ratCd = Random.Range(RatCdMin, RatCdMax);
                         PlayLocomotion();
@@ -328,6 +360,7 @@ namespace Spiritfire.Game
                     Stop();
                     FacePlayer(115, dt);
                     Glow = 0.15f;
+                    strike?.Relax();
                     if (stateTime >= RecoverTime / Mathf.Sqrt(Mathf.Max(0.1f, auraAttackRate)))
                     {
                         ReleaseAttack();
@@ -516,6 +549,13 @@ namespace Spiritfire.Game
             Fx.Burst(m, Gold, 26, 9, 0.6f, 0.07f, 6);
             Fx.Burst(m, Soot, 10, 2.5f, 1.1f, 0.4f, -1.5f);
             CameraShake.Quake(m, 0.12f, 20f, 0.25f);
+            // 精英：齐射那一帧被后坐顶得往后一仰、压扁，局部顿帧；箱口一喷铜火 + 一把红纸屑
+            if (strike != null)
+            {
+                strike.Release(0.08f, -10f, 0.06f);
+                Fx.EliteCh3Burst(m, Vector3.up + transform.forward * 0.4f, 1.2f, true);
+                CameraShake.Quake(m, 0.12f, 20f, 0.2f);
+            }
             GameAudio.PlayAt("shot_launcher", m, 0.9f, 1.3f);
             GameAudio.PlayAt("explosion", m, 0.4f, 1.8f);
         }
@@ -574,6 +614,12 @@ namespace Spiritfire.Game
             float yaw = transform.eulerAngles.y * Mathf.Deg2Rad;
             FirecrackerRats.Spawn(at, Rats, RatLife, RatSpeed, RatRadius, Damage * RatMult, this, yaw);
             Fx.Burst(at, Gold, 16, 4, 0.4f, 0.05f, 4);
+            // 精英：一脚跺下去压扁、前顿，局部顿帧；脚下铜色粗环 + 方铜渣崩一圈
+            if (strike != null)
+            {
+                strike.Release(0.12f, 6f, 0.06f);
+                Fx.EliteCh3Impact(transform.position, 1.6f * Size);
+            }
             CameraShake.Quake(at, 0.1f, 14f, 0.2f);
             GameAudio.PlayAt("enemy_melee", at, 0.8f, 0.7f);
         }
@@ -582,6 +628,7 @@ namespace Spiritfire.Game
 
         protected override void CancelAttack()
         {
+            strike?.Relax();
             if (fuseSpark) fuseSpark.gameObject.SetActive(false);
             // 已经射出去的火箭照样落下（预警随火箭兑现）
             if (!Dead && state is "brace" or "fuse" or "volley" or "stomp")
