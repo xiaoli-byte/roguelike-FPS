@@ -22,6 +22,7 @@ namespace Spiritfire.Game
     ///   降分辨率的档改用 FSR 1.0（空间放大 + RCAS 锐化，支持相机叠加）。UI Toolkit 不受渲染比例影响，始终原生分辨率。</item>
     /// <item>后处理不整体关：色调映射是关卡观感的一部分，关了 HDR 直接过曝。低档只把 Bloom 降到四分之一分辨率、少迭代，关掉 SSAO。</item>
     /// <item>地形：基础图距离不动（关卡故意设 2000 m，保证始终走自定义地形着色器），只降细节密度 / 距离和像素误差。</item>
+    /// <item>按图层剔除（I4，<see cref="CullLayers"/>）：小件 / 散布两层的距离。高档小件 120 m、散布到雾终点，中 / 低往近收。</item>
     /// </list>
     /// </summary>
     public sealed class QualityProfile
@@ -78,6 +79,10 @@ namespace Spiritfire.Game
         public float terrainDetailDistance;
         /// <summary>地形网格像素误差；0 = 不覆盖</summary>
         public float terrainPixelError;
+        /// <summary>小件图层（<see cref="CullLayers.Detail"/>）的剔除距离（米）</summary>
+        public float detailCullDistance;
+        /// <summary>散布图层（<see cref="CullLayers.Scatter"/>）的剔除距离 = 雾终点 × 这个比例（1 = 雾完全吞掉之后才剔）</summary>
+        public float scatterCullFog;
 
         // ── 后处理 ──
         /// <summary>Bloom 降到四分之一分辨率（否则沿用关卡的 Half）</summary>
@@ -92,6 +97,7 @@ namespace Spiritfire.Game
             shadowDistance = 45, shadowCascades = 1, shadowResolution = 1024, softShadows = false, additionalLightShadows = false, fxLights = 3, ssao = false,
             particleDensity = 0.45f, particleCap = 1500, styleCapScale = 0.5f, decalCap = 40, statusEmitPerFrame = 24,
             fur = FurTier.None, lodBias = 1f, textureMipLimit = 1, terrainDetailDensity = 0.5f, terrainDetailDistance = 90, terrainPixelError = 6,
+            detailCullDistance = 60, scatterCullFog = 0.65f,
             bloomQuarter = true, bloomMaxIterations = 4,
         };
 
@@ -102,6 +108,7 @@ namespace Spiritfire.Game
             shadowDistance = 70, shadowCascades = 2, shadowResolution = 2048, softShadows = true, additionalLightShadows = false, fxLights = 6, ssao = true,
             particleDensity = 0.75f, particleCap = 3000, styleCapScale = 0.75f, decalCap = 80, statusEmitPerFrame = 48,
             fur = FurTier.Fins, lodBias = 1.5f, textureMipLimit = 0, terrainDetailDensity = 0.75f, terrainDetailDistance = 150, terrainPixelError = 4,
+            detailCullDistance = 90, scatterCullFog = 0.85f,
             bloomQuarter = false, bloomMaxIterations = 0,
         };
 
@@ -113,6 +120,7 @@ namespace Spiritfire.Game
             shadowDistance = 90, shadowCascades = 4, shadowResolution = 2048, softShadows = true, additionalLightShadows = true, fxLights = 8, ssao = true,
             particleDensity = 1f, particleCap = 5000, styleCapScale = 1f, decalCap = 140, statusEmitPerFrame = 80,
             fur = FurTier.Shells, lodBias = 2f, textureMipLimit = 0, terrainDetailDensity = 1f, terrainDetailDistance = 0, terrainPixelError = 0,
+            detailCullDistance = 120, scatterCullFog = 1f,
             bloomQuarter = false, bloomMaxIterations = 0,
         };
 
