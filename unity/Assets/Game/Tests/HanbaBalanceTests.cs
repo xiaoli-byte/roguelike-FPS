@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ namespace Spiritfire.Game.Tests
 {
     /// <summary>
     /// 旱魃定档与击杀用时（BS2，docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」）：
-    ///   · 定档：1-4 难度 1.48 下 4400 生命 + 2200 护盾，阈值 60% / 30%，二、三阶段的第一招是飞天之殇、日蚀；BS2 的三招在对的阶段才可用；
+    ///   · 定档：1-4 难度 1.48 下 HanbaDef.TierHp 生命 + TierShield 护盾（I3 按首领浸泡重定），阈值 60% / 30%，二、三阶段的第一招是飞天之殇、日蚀；BS2 的三招在对的阶段才可用；
     ///   · 时间轴：日蚀窗口 = 片段 eclipseStart → eclipseEnd（3 s，不吃节奏），焦裂的出手时长覆盖蔓延 + 逐段爆开；
     ///   · 模拟（<see cref="HanbaBalance"/>）：秒伤带下沿 / 中位 / 上沿三种打法，各 16 个种子的平均击杀用时都在 60–120 s，单个种子也不离谱（50–130 s）；
     ///     打法越强越快；每场都走过三个阶段、至少一次飞天之殇和一次日蚀；同一种子结果可复现。
@@ -20,8 +20,8 @@ namespace Spiritfire.Game.Tests
         {
             var d = Def;
             var v = d.VitalsAt(HanbaDef.StageDifficulty);
-            Assert.AreEqual(4400f, v.hp, 1f);
-            Assert.AreEqual(2200f, v.shield, 1f);
+            Assert.AreEqual(HanbaDef.TierHp, v.hp, 1f);
+            Assert.AreEqual(HanbaDef.TierShield, v.shield, 1f);
             Assert.AreEqual(0f, v.armor, 1e-3f);
             CollectionAssert.AreEqual(new[] { HanbaDef.ScorchedAt, HanbaDef.RedEarthAt }, d.BarTicks.ToArray());
             Assert.IsEmpty(d.Validate(), string.Join("；", d.Validate()));

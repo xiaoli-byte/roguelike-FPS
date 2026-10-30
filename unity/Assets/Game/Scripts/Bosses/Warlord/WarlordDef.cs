@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Spiritfire.Game
 {
@@ -12,8 +12,9 @@ namespace Spiritfire.Game
     ///     熔铜渠涨落（<see cref="WarlordChannelSurge"/>，替代 TS 的方场熔岩涌动：神范台的十字浅渠和熔池漫上渠岸，<see cref="FoundryChannels"/>）。
     ///   阶段（D23：血条刻度就是这两道阈值）：50% 引动熔铜渠（转换后第一招就是涨落）；20% 狂怒——喘息 / 前摇缩短、陨石冷却 7 s、战斗中持续落零星陨石、连斩 4 斩。
     ///   弱点：角盔（部件骨架的 j_0_1_24_8 锚点，半径 0.45 m）；另有肩甲、膝甲两组命中区（TS hitShapes）。
-    ///   数值：3-3 的难度 2.92 下定档 9000 生命 + 2300 护盾 + 2500 护甲（TS 原值 4000 / 1000 / 1100 × 难度会超过 120 s 的目标——
-    ///     领主战不是章末首领，按 <see cref="WarlordBalance"/> 的模拟秒伤定在 85–100 s，EditMode 测试 WarlordBalanceTests 守着 60–120 s）。
+    ///   数值：3-3 的难度 2.92 下定档 18000 生命 + 4600 护盾 + 5000 护甲（I3 按首领浸泡实测秒伤重定：BS6 的 9000 / 2300 / 2500 是按「约 200 秒伤」估的，
+    ///     代表配装实测可选中时约 435 秒伤，36 s 就倒下；翻倍后浸泡估算约 85 s，<see cref="WarlordBalance"/> 约 90 s，EditMode 测试 WarlordBalanceTests 守着 60–120 s。
+    ///     TS 原值 4000 / 1000 / 1100 × 难度在实测秒伤下不到 60 s）。
     /// </summary>
     [Defs(13)]
     public sealed class WarlordDef : BossDef
@@ -25,6 +26,8 @@ namespace Spiritfire.Game
         public const float ChannelsAt = 0.5f, FuryAt = 0.2f;
         /// <summary>3-3 的难度（RunPlan：1 + 0.8 × 2 + 0.16 × 2）</summary>
         public const float StageDifficulty = 2.92f;
+        /// <summary>3-3 难度下的定档（I3，见类注释）</summary>
+        public const float TierHp = 18000f, TierShield = 4600f, TierArmor = 5000f;
         /// <summary>部件骨架的弱点锚点（角盔）与头骨</summary>
         public const string WeakBone = "j_0_1_24_8", HeadBone = "j_0_1_24";
 
@@ -49,8 +52,8 @@ namespace Spiritfire.Game
             title = "熔火深渊的统帅";
             brain = typeof(WarlordBrain);
             // 难度 1 的参考值 = 定档 ÷ 2.92（定档表优先，见 VitalsAt）
-            vitals = new BossVitals(3080, 790, 860);
-            tiers.Add(new BossVitalsTier(StageDifficulty, new BossVitals(9000, 2300, 2500)));
+            vitals = new BossVitals(6160, 1580, 1710);
+            tiers.Add(new BossVitalsTier(StageDifficulty, new BossVitals(TierHp, TierShield, TierArmor)));
             damage = 24f;
             speed = 4.6f;
             element = Element.Fire;

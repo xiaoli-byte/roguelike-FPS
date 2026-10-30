@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Spiritfire.Game
 {
@@ -29,9 +29,9 @@ namespace Spiritfire.Game
         public const string FuryMark = "kun_fury", RageMark = "peng_rage";
         /// <summary>转换演出时长与换形时刻（Three.js transitionDuration 4.6，冰雾最浓的 1.55 s）</summary>
         public const float TransitionSeconds = 4.6f, TransitionSwap = 1.55f;
-        /// <summary>2-4 的难度（D1：1 + 0.8 × 1 + 0.16 × 3）与定档</summary>
+        /// <summary>2-4 的难度（D1：1 + 0.8 × 1 + 0.16 × 3）与定档（I3 按首领浸泡实测重定，见 <see cref="KunPengBalance"/>）</summary>
         public const float StageDifficulty = 2.28f;
-        public const float TierHp = 8000f, TierShield = 2400f;
+        public const float TierHp = 16000f, TierShield = 4800f;
 
         public static readonly Color Warn = Hex.Rgb(0x7fd8ff), Ice = Hex.Rgb(0xd8f6ff), Pearl = Hex.Rgb(0x7ff0ff), Gust = Hex.Rgb(0xbfe9ff);
 
@@ -240,20 +240,21 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 鲲鹏的定档（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」）：
-    ///   章末参考秒伤（2-4，难度 2.28）= 基础 75（Three.js 秒伤带 60–90 的中值，D11）× 1.6（第一章首领宝箱保底史诗）× (1 + 0.12 × 3)（第二章三关各强化一次）
-    ///     × 0.8 命中率（鲲在冰窟里探头、鹏大半时间在 13.5 m 高空）× 1.1（约一成命中落在鲛珠上，弱点暴击 ×2）≈ 144；
+    /// 鲲鹏的定档（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」；I3 重定，docs/balance.md 第 3 节）：
+    ///   章末参考秒伤（2-4，难度 2.28）= 首领浸泡实测（<see cref="BossBalance.Soak"/>：史诗 +2 裂风步枪 + 利刃 ×3 / 鹰目 ×2 / 屠巨 + 燎的技能，可选中时约 405）
+    ///     × 0.8 命中率（鲲在冰窟里探头、鹏大半时间在 13.5 m 高空；躲招）≈ 324；
     ///   有效耐久 = 生命 + 护盾 + 化鹏时重凝的六成护盾（一阶段护盾先破，再打生命层到 50%）；
     ///   不可选中 = 登场 3 s + 转换 4.6 s + 一阶段的潜袭（每次约 1.5 s 在水下，一阶段约 3 次）。
-    /// Three.js 的 4000 + 1200 × 2.28 在参考秒伤下约 106 s，贴着上限、秒伤低一点就超时，所以定档收到 8000 + 2400（≈ × 2.0），约 94 s，±15% 秒伤都在 60–120 s 里
+    /// BS3 按「75 × 1.6 × 1.36 × 0.8 × 1.1 ≈ 144」定的 8000 + 2400 在实测秒伤下 35 s 就倒下（浸泡估算 42 s），I3 翻倍到 16000 + 4800：
+    /// 模型约 85 s、浸泡估算约 78–83 s，±15% 秒伤都在 60–120 s 里
     /// </summary>
     public static class KunPengBalance
     {
-        public const float BaseDps = 75f, Rarity = 1.6f, Upgrades = 3, HitRate = 0.8f, WeakBonus = 1.1f;
+        public const float HitRate = BossBalance.Uptime;
         public const float DivesPhase1 = 3, DiveUnderwater = 1.5f;
 
         /// <summary>章末参考秒伤（见类注释）</summary>
-        public static float ReferenceDps => BaseDps * Rarity * (1 + WeaponLibrary.UpgradeStep * Upgrades) * HitRate * WeakBonus;
+        public static float ReferenceDps => BossBalance.Dps("2-4") * HitRate;
 
         /// <summary>一场里不可选中的总秒数</summary>
         public static float UntargetableSeconds(BossDef def)

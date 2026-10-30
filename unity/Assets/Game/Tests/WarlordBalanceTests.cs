@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -43,11 +43,13 @@ namespace Spiritfire.Game.Tests
         public void Vitals_TierAtStageDifficulty()
         {
             var v = Def.VitalsAt(WarlordDef.StageDifficulty);
-            Assert.AreEqual(9000f, v.hp, 0.5f);
-            Assert.AreEqual(2300f, v.shield, 0.5f);
-            Assert.AreEqual(2500f, v.armor, 0.5f);
+            Assert.AreEqual(WarlordDef.TierHp, v.hp, 0.5f);
+            Assert.AreEqual(WarlordDef.TierShield, v.shield, 0.5f);
+            Assert.AreEqual(WarlordDef.TierArmor, v.armor, 0.5f);
             // 难度 1 的参考值 ≈ 定档 ÷ 2.92（没有定档表时同样的比例）
-            Assert.AreEqual(9000f / WarlordDef.StageDifficulty, Def.vitals.hp, 15f);
+            Assert.AreEqual(WarlordDef.TierHp / WarlordDef.StageDifficulty, Def.vitals.hp, 15f);
+            Assert.AreEqual(WarlordDef.TierShield / WarlordDef.StageDifficulty, Def.vitals.shield, 15f);
+            Assert.AreEqual(WarlordDef.TierArmor / WarlordDef.StageDifficulty, Def.vitals.armor, 15f);
         }
 
         [Test]
@@ -83,21 +85,22 @@ namespace Spiritfire.Game.Tests
         }
 
         [Test]
-        public void KillTime_TsValuesTimesDifficulty_WouldOvershoot()
+        public void KillTime_TsValuesTimesDifficulty_WouldUndershoot()
         {
-            // 不定档、直接用 TS 原值 × 难度：超过 120 s（TS 注释里魔将战本来就偏长）——定档的理由
+            // 不定档、直接用 TS 原值 × 难度：按 I3 浸泡实测的秒伤不到 60 s（BS6 按「约 200 秒伤」估时会超过 120 s，所以当时往下定档）——重定档的理由
             var raw = new BossDef { id = "boss_warlord_raw", name = "魔将（TS 原值）", vitals = new BossVitals(4000, 1000, 1100) };
             raw.phases.AddRange(Def.phases);
             float t = WarlordBalance.KillSeconds(raw, WarlordDef.StageDifficulty);
             TestContext.WriteLine($"TS 原值 × 2.92：{t:F1} s");
-            Assert.Greater(t, WarlordBalance.MaxSeconds);
+            Assert.Less(t, WarlordBalance.MinSeconds);
         }
 
         [Test]
         public void ReferenceDps_ScalesWithDifficulty()
         {
-            Assert.AreEqual(100f, WarlordBalance.ReferenceDps(1.48f), 0.01f);
-            Assert.AreEqual(100f * 2.92f / 1.48f, WarlordBalance.ReferenceDps(2.92f), 0.01f);
+            // 锚在 3-3 的浸泡实测（BossBalance.Soak），换难度等比
+            Assert.AreEqual(BossBalance.Dps("3-3"), WarlordBalance.ReferenceDps(WarlordDef.StageDifficulty), 0.01f);
+            Assert.AreEqual(BossBalance.Dps("3-3") * 1.48f / 2.92f, WarlordBalance.ReferenceDps(1.48f), 0.01f);
             // 三层依次：只有生命层时就是 hp ÷ (秒伤 × 层倍率)
             Assert.AreEqual(10f, WarlordBalance.LayerSeconds(new BossVitals(1000), 100f, Element.None), 1e-3f);
             Assert.AreEqual(1000f / (100f * 0.75f), WarlordBalance.LayerSeconds(new BossVitals(0, 0, 1000), 100f, Element.None), 1e-3f);

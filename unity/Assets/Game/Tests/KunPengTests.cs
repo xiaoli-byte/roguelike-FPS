@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -87,7 +87,7 @@ namespace Spiritfire.Game.Tests
         {
             var d = Def;
             float dps = KunPengBalance.ReferenceDps;
-            Assert.AreEqual(143.6f, dps, 0.5f, "章末参考秒伤 = 75 × 1.6 × 1.36 × 0.8 × 1.1");
+            Assert.AreEqual(BossBalance.Dps("2-4") * 0.8f, dps, 0.5f, "章末参考秒伤 = 2-4 浸泡实测 × 0.8 命中率");
             float t = KunPengBalance.KillSeconds(d, KunPengDef.StageDifficulty, dps);
             Assert.That(t, Is.InRange(60f, 120f), $"参考秒伤 {dps:F0} 下击杀用时 {t:F0} s");
             foreach (float k in new[] { 0.85f, 1.15f })
@@ -96,11 +96,12 @@ namespace Spiritfire.Game.Tests
                 Assert.That(tk, Is.InRange(60f, 120f), $"秒伤 × {k} 下击杀用时 {tk:F0} s");
             }
             // 有效耐久含化鹏时重凝的六成护盾；不可选中含登场、转换、潜袭
-            Assert.AreEqual(8000f + 2400f + 2400f * 0.6f, KunPengBalance.EffectiveHp(d, KunPengDef.StageDifficulty), 1f);
+            Assert.AreEqual(KunPengDef.TierHp + KunPengDef.TierShield * 1.6f, KunPengBalance.EffectiveHp(d, KunPengDef.StageDifficulty), 1f);
             Assert.AreEqual(3f + 4.6f + 3 * 1.5f, KunPengBalance.UntargetableSeconds(d), 1e-3f);
-            // Three.js 原值 × 难度在参考秒伤下贴着上限（定档的理由）
+            // Three.js 原值 × 难度在浸泡实测的参考秒伤下不到 60 s（I3 重定档的理由；BS3 按 144 秒伤估时贴着 120 s 上限）
             float ts = (4000f + 1200f * 1.6f) * KunPengDef.StageDifficulty / dps + KunPengBalance.UntargetableSeconds(d);
-            Assert.Greater(ts, t, "定档比 Three.js 原值 × 难度短");
+            Assert.Less(ts, t, "定档比 Three.js 原值 × 难度长");
+            Assert.Less(ts, 60f, $"Three.js 原值 × 难度 {ts:F0} s");
         }
 
         // ───────────── 平切口 ─────────────

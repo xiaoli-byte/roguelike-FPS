@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Spiritfire.Game
 {
@@ -14,9 +14,10 @@ namespace Spiritfire.Game
     ///     吐息扫象限（<see cref="BurnSweep"/>，躲柱子 / 倒鼎后面）、火云雨 + 神火飞鸦（<see cref="BurnRain"/>）；15% 狂怒（<see cref="BurnRage"/>：长啸、火浪、熔流重开且更快）。
     ///   弱点：角根的火珠（pearl 骨，半径 0.3 × 1.25）；焚身另有胸口火心（命中区 heart，只在焚身启用）。命中区：头、颈、胸、背、臀五个球（长身子不是一根竖胶囊能盖住的）。
     /// 数值（D23 血条刻度 = 85% / 70% 饮熔线 + 55% 换形）：Three.js 是 5000 生命 + 1500 护甲 × 难度（3-4 难度 3.08 时 15400 + 4620）。
-    /// 按模拟秒伤定档（<see cref="ReferenceDps"/>、<see cref="EstimateKillSeconds"/>：一阶段 + 5.2 s 换形演出 + 二阶段按 <see cref="BurnDpsFactor"/> 折算）：
-    /// 饮熔回满鳞甲两次都不打断时 Three.js 的数值要 3 分钟以上，所以 3.08 定档 10500 生命 + 2400 护甲：
-    /// 两次都砸中约 75 s、砸中一次约 95 s、一次都不打约 115 s，都落在 60–120 s（QilinTests 守着）。
+    /// 按模拟秒伤定档（<see cref="ReferenceDps"/>、<see cref="EstimateKillSeconds"/>：一阶段 + 5.2 s 换形演出 + 二阶段按 <see cref="BurnDpsFactor"/> 折算）。
+    /// BS4 / BS5 按「75 ×（1 + 1.15 ×（难度 − 1））× 0.75 ≈ 191」定的 10500 生命 + 2400 护甲，在 I3 首领浸泡的实测秒伤（可选中时约 480，<see cref="BossBalance.Soak"/>）下
+    /// 34 s 就倒下（浸泡估算 42 s）；I3 重定 28000 生命 + 2400 护甲（护甲不加：饮熔回满鳞甲的惩罚已经够重）：
+    /// 两次都砸中约 84 s、砸中一次约 97 s、一次都不打约 109 s，都落在 60–120 s（QilinTests 守着）；浸泡（会砸一次）估算约 64–91 s。
     /// 动作：E5 的 AC_SK_Boss_Qilin(Burn)（招式状态 rear / scalesFire / breath / drink / stun / pant / tuck / leap / stomp / roar / paw），
     /// 招式按状态名交叉淡入并拉伸到实际时长（框架 PlayAct），出手跟 events.json 的事件走，没有就按时间兜底。
     /// 焚身缺的动作（踏云奔跑、俯冲、起飞、空中吐息）先用 Locomotion 的奔跑步态 + tuck / stomp / breath 代替，位移由代码驱动（见 docs/unity-parity.md BS5）。
@@ -33,8 +34,9 @@ namespace Spiritfire.Game
         public const float TransformAt = 0.55f;
         public const string DrinkMarkA = "drink85", DrinkMarkB = "drink70";
         public static readonly float[] DrinkAt = { 0.85f, 0.7f };
-        /// <summary>3-4 的难度（D1：1 + 0.8 × 2 + 0.16 × 3）</summary>
+        /// <summary>3-4 的难度（D1：1 + 0.8 × 2 + 0.16 × 3）与定档（I3，见类注释）</summary>
         public const float StageDifficulty = 3.08f;
+        public const float TierHp = 28000f, TierArmor = 2400f;
         /// <summary>鼎角砸中：硬直秒数、受伤倍率（鳞甲崩裂）</summary>
         public const float StunSeconds = 4f, CrackTakenMult = 2f;
 
@@ -73,8 +75,8 @@ namespace Spiritfire.Game
             title = "祝融炉心 · 守炉神兽";
             brain = typeof(QilinBrain);
             // 难度 1 的参考值 = 定档 ÷ 3.08（定档表优先，见 VitalsAt）；Three.js 原值 5000 + 1500 护甲
-            vitals = new BossVitals(3410, 0, 780);
-            tiers.Add(new BossVitalsTier(StageDifficulty, new BossVitals(10500, 0, 2400)));
+            vitals = new BossVitals(9090, 0, 780);
+            tiers.Add(new BossVitalsTier(StageDifficulty, new BossVitals(TierHp, 0, TierArmor)));
             damage = 16f;
             speed = 6.5f;
             element = Element.Fire;
@@ -141,18 +143,16 @@ namespace Spiritfire.Game
 
         // ───────────── 定档模型（EditMode 测试守着）─────────────
 
-        /// <summary>武器秒伤带的中位（D11：身体 60–90，取 75）</summary>
-        public const float BaseDps = 75f;
-        /// <summary>难度每 +1 的装备成长（品质、强化、秘卷、天赋合计）与实际输出时间占比（躲招、换弹、换位）</summary>
-        public const float DpsGrowth = 1.15f, Uptime = 0.75f;
+        /// <summary>实际输出时间占比（躲招、换位；同 <see cref="BossBalance.Uptime"/>）</summary>
+        public const float Uptime = BossBalance.Uptime;
         /// <summary>无属性打护甲的倍率（DamageTable：0.75）</summary>
         public const float ArmorMult = 0.75f;
 
         /// <summary>
-        /// 定档用的模拟秒伤：75 ×（1 + 1.15 ×（难度 − 1））× 0.75。1-4（1.48）约 87、3-4（3.08）约 191。
-        /// 只用来定首领耐久的量级（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」），不是武器平衡的依据
+        /// 定档用的模拟秒伤：3-4 首领浸泡的实测（<see cref="BossBalance.Soak"/>，约 480，不含砸鼎崩裂）× 输出率 0.8，换难度按难度等比；3-4（3.08）约 384。
+        /// 只用来定首领耐久的量级（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」；I3 之前是 75 ×（1 + 1.15 ×（难度 − 1））× 0.75 ≈ 191），不是武器平衡的依据
         /// </summary>
-        public static float ReferenceDps(float difficulty) => BaseDps * (1 + DpsGrowth * (Mathf.Max(1f, difficulty) - 1)) * Uptime;
+        public static float ReferenceDps(float difficulty) => BossBalance.Dps("3-4") * Mathf.Max(0.5f, difficulty) / StageDifficulty * Uptime;
 
         /// <summary>
         /// 模拟击杀用时（秒，登场结束到倒下）= 一阶段 + 换形演出（<see cref="TransitionSeconds"/>，不可选中）+ 二阶段：

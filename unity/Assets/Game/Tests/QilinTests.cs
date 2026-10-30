@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -62,11 +62,11 @@ namespace Spiritfire.Game.Tests
         {
             var def = new QilinDef();
             var v = def.VitalsAt(QilinDef.StageDifficulty);
-            Assert.AreEqual(10500f, v.hp, 0.5f);
-            Assert.AreEqual(2400f, v.armor, 0.5f);
+            Assert.AreEqual(QilinDef.TierHp, v.hp, 0.5f);
+            Assert.AreEqual(QilinDef.TierArmor, v.armor, 0.5f);
             Assert.AreEqual(0f, v.shield, 1e-3f);
             float dps = QilinDef.ReferenceDps(QilinDef.StageDifficulty);
-            Assert.AreEqual(190.8f, dps, 0.5f);
+            Assert.AreEqual(BossBalance.Dps("3-4") * BossBalance.Uptime, dps, 0.5f, "3-4 浸泡实测 × 输出率");
             float two = QilinDef.EstimateKillSeconds(v, dps, 2), one = QilinDef.EstimateKillSeconds(v, dps, 1), none = QilinDef.EstimateKillSeconds(v, dps, 0);
             Assert.That(two, Is.InRange(60f, 120f), $"砸中两次 {two:F0} s");
             Assert.That(one, Is.InRange(60f, 120f), $"砸中一次 {one:F0} s");
@@ -85,15 +85,15 @@ namespace Spiritfire.Game.Tests
             Assert.That(rot, Is.InRange(18f, 32f), $"焚身一轮 {rot:F1} s");
             Assert.AreEqual(BurnPant.Rest, pant, 1e-4f, "一轮里落地喘息 3.5 s");
             Assert.Greater(crows, 0f);
-            // Three.js 原值（5000 + 1500 护甲 × 难度）两次都不打要将近 3 分钟：这就是定档的理由
+            // Three.js 原值（5000 + 1500 护甲 × 难度）护甲是定档的近两倍：不打锁扣时饮熔回满鳞甲拖得更长——护甲按定档 2400 不跟着加
             var ts = new BossVitals(5000, 0, 1500).Scaled(QilinDef.StageDifficulty);
-            Assert.Greater(QilinDef.EstimateKillSeconds(ts, dps, 0), 150f);
-            Assert.Greater(QilinDef.EstimateKillSeconds(ts, dps, 1), 120f, "Three.js 原值砸中一次也超过 2 分钟");
+            Assert.Greater(QilinDef.EstimateKillSeconds(ts, dps, 0) - QilinDef.EstimateKillSeconds(ts, dps, 2), two > 0 ? none - two : 0f,
+                "Three.js 的护甲下，打不打锁扣的差距比定档更大");
             // 锁扣：110 × 难度，一两秒打得碎
             float lockHp = QilinLock.BaseHp * QilinDef.StageDifficulty;
-            Assert.That(lockHp / dps, Is.InRange(1f, 3f), $"锁扣 {lockHp:F0} 血、{lockHp / dps:F1} s");
-            // 旱魃那一档也用同一个模型校一下：1-4 的 6600 在 60–120 s 里
-            float hanba = (4400 + 2200) / QilinDef.ReferenceDps(1.48f);
+            Assert.That(lockHp / dps, Is.InRange(0.5f, 3f), $"锁扣 {lockHp:F0} 血、{lockHp / dps:F1} s");
+            // 旱魃那一档也用同一个模型校一下：1-4 的定档在 60–120 s 里
+            float hanba = (HanbaDef.TierHp + HanbaDef.TierShield) / QilinDef.ReferenceDps(1.48f);
             Assert.That(hanba, Is.InRange(60f, 120f), $"旱魃 {hanba:F0} s");
         }
 

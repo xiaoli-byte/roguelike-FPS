@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Spiritfire.Game
 {
@@ -15,7 +15,8 @@ namespace Spiritfire.Game
     ///     前一阶段的招式都留着，按 <see cref="pace"/> 变快（前摇 ÷ 节奏、扫得更快、沙魇 4 只、旱风补余波、焦裂三条成扇），喘息按 restScale 缩短。
     ///   弱点：心口的泉珠（socket_core，正式美术的半径约 0.12 m），只在招式后摇（施法后摇）、硬直和日蚀窗口露出（<see cref="HanbaBrain"/> 开关弱点球与泉珠发光壳）；
     ///     其余时间只能打身体。
-    ///   数值：1-4 的难度 1.48 下定档 4400 生命 + 2200 护盾（docs/unity-parity.md BS2）。按模拟秒伤（<see cref="HanbaBalance"/>，EditMode 测试 HanbaBalanceTests）
+    ///   数值：1-4 的难度 1.48 下定档 7700 生命 + 3850 护盾（BS2 定的 4400 + 2200 按「约 100 秒伤」估，I3 首领浸泡实测代表配装可选中时约 200 秒伤，
+    ///     40 s 就倒下，按实测重定 ×1.75：浸泡估算约 67–79 s，模拟的下沿打法约 115 s）。按模拟秒伤（<see cref="HanbaBalance"/>，EditMode 测试 HanbaBalanceTests）
     ///     算击杀用时：1-4 预期装备下秒伤带下沿 / 中位 / 上沿三种打法都落在 60–120 s。
     ///   演出：登场名字卡（框架）+ 长啸那一下震屏、日轮炸亮、短慢动作；转阶段打阶段名卡 + 慢动作 + 震屏；倒下时日轮坠落碎裂、身体落地、泉眼复涌、
     ///     太阳回到午后（<see cref="HanbaCinematics"/>、<see cref="HanbaSunDriver"/>）。
@@ -33,8 +34,8 @@ namespace Spiritfire.Game
         public const float ScorchedAt = 0.6f, RedEarthAt = 0.3f;
         /// <summary>1-4 的难度（定档就定在这里）</summary>
         public const float StageDifficulty = 1.48f;
-        /// <summary>1-4 的定档：生命 / 护盾（docs/unity-parity.md BS2「定档约 4.4k + 2.2k」，HanbaBalanceTests 按模拟秒伤复核）</summary>
-        public const float TierHp = 4400f, TierShield = 2200f;
+        /// <summary>1-4 的定档：生命 / 护盾（BS2「约 4.4k + 2.2k」→ I3 按首领浸泡实测 ×1.75，docs/balance.md 第 3 节；HanbaBalanceTests 按模拟秒伤复核）</summary>
+        public const float TierHp = 7700f, TierShield = 3850f;
 
         public static readonly Color Sun = Hex.Rgb(0xffe2a0), Sand = Hex.Rgb(0xd9b27a), Warn = Hex.Rgb(0xffa23d);
 

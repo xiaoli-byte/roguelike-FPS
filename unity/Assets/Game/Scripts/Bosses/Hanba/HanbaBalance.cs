@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,9 +15,9 @@ namespace Spiritfire.Game
     ///     必暴 ×2，日蚀窗口里再 × <see cref="HanbaDef.eclipseWeakMult"/>；其余打身体，随机暴击 ×2。
     ///   · 召沙魇：出手后 <see cref="Profile.addsSeconds"/> 秒里有 <see cref="Profile.addsShare"/> 的火力分去打沙魇。
     ///   · 飞天之殇：出手后 <see cref="Profile.pipaSeconds"/> 秒里火力全在琵琶上（旱魃护体 ×0.2，按 0 算）；琵琶碎后踉跄 wardBreakStagger 秒、承伤 × wardBreakTaken、泉珠露出。
-    ///   · 玩家：身体秒伤 <see cref="Profile.bodyDps"/>（不含暴击）× 输出占比 <see cref="Profile.aim"/>（躲招、找影子、转火的时间扣掉）。
+    ///   · 玩家：身体秒伤 <see cref="Profile.bodyDps"/>（不含暴击，含技能 / 灼烧 / 被动 / 增伤秘卷 <see cref="KitAt14"/>）× 输出占比 <see cref="Profile.aim"/>（躲招、找影子、转火的时间扣掉）。
     /// 结果是登场结束到倒下的秒数（同 <see cref="BossBrain.FightTime"/>）。
-    /// 三档打法（1-4 的预期装备：精良 + 一次强化 ≈ ×1.3，D11 的 Three.js 身体秒伤带 60–90）：
+    /// 三档打法（1-4 的预期装备：精良 + 一次强化 ≈ ×1.3，D11 的 Three.js 身体秒伤带 60–90，再 × <see cref="KitAt14"/>）：
     ///   下沿 = 秒伤带下沿、打得一般；中位 = 带中间、打得正常；上沿 = 带上沿、打得好。三档都要落在 60–120 s。
     /// </summary>
     public static class HanbaBalance
@@ -26,6 +26,11 @@ namespace Spiritfire.Game
         public const float TargetMin = 60f, TargetMax = 120f;
         /// <summary>D11 的身体秒伤带（Three.js，不含暴击）与 1-4 的预期装备倍率（精良 ×1.15 × 一次强化 ×1.12）</summary>
         public const float BodyDpsLow = 60f, BodyDpsHigh = 90f, GearAt14 = 1.3f;
+        /// <summary>
+        /// 武器之外的输出（I3 首领浸泡校准，docs/balance.md 第 3 节）：增伤秘卷（利刃 ×2 ≈ ×1.12）× 技能 / 灼烧跳伤 / 余烬（浸泡里武器只占 66–73% ≈ ×1.5）≈ 1.68。
+        /// 上沿打法（90 × 1.3 × 1.68 ≈ 197 身体秒伤 + 随机暴击）≈ 浸泡实测的可选中时约 220（<see cref="BossBalance.Soak"/>）
+        /// </summary>
+        public const float KitAt14 = 1.68f;
         /// <summary>弱点必暴、随机暴击的暴伤倍率</summary>
         public const float CritMult = 2f;
 
@@ -53,21 +58,21 @@ namespace Spiritfire.Game
         /// <summary>下沿：秒伤带下沿的武器、打得一般</summary>
         public static Profile Low => new()
         {
-            name = "下沿", bodyDps = BodyDpsLow * GearAt14, aim = 0.8f, crit = 0.05f, weakShare = 0.18f, eclipseShare = 0.35f,
+            name = "下沿", bodyDps = BodyDpsLow * GearAt14 * KitAt14, aim = 0.8f, crit = 0.05f, weakShare = 0.18f, eclipseShare = 0.35f,
             addsShare = 0.28f, addsSeconds = 9f, pipaSeconds = 5.5f,
         };
 
         /// <summary>中位：带中间的武器、打得正常</summary>
         public static Profile Mid => new()
         {
-            name = "中位", bodyDps = (BodyDpsLow + BodyDpsHigh) * 0.5f * GearAt14, aim = 0.82f, crit = 0.07f, weakShare = 0.22f, eclipseShare = 0.45f,
+            name = "中位", bodyDps = (BodyDpsLow + BodyDpsHigh) * 0.5f * GearAt14 * KitAt14, aim = 0.82f, crit = 0.07f, weakShare = 0.22f, eclipseShare = 0.45f,
             addsShare = 0.25f, addsSeconds = 8f, pipaSeconds = 4.5f,
         };
 
         /// <summary>上沿：秒伤带上沿的武器、打得好</summary>
         public static Profile High => new()
         {
-            name = "上沿", bodyDps = BodyDpsHigh * GearAt14, aim = 0.84f, crit = 0.08f, weakShare = 0.26f, eclipseShare = 0.5f,
+            name = "上沿", bodyDps = BodyDpsHigh * GearAt14 * KitAt14, aim = 0.84f, crit = 0.08f, weakShare = 0.26f, eclipseShare = 0.5f,
             addsShare = 0.22f, addsSeconds = 7f, pipaSeconds = 3.5f,
         };
 
