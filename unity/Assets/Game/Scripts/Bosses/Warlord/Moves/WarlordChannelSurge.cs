@@ -63,9 +63,13 @@ namespace Spiritfire.Game
             Brain.Shake(0.4f, 1.6f);
             Fx.Ring(c + Vector3.up * 0.1f, 12f, WarlordRef.Lava, 0.9f);
             Fx.Burst(c + Vector3.up * 0.5f, WarlordRef.Embers, 30, 8f, 0.9f, 0.2f, 4f);
-            // 跺地引渠：脚下砸出一圈尘浪 + 熔铜四溅
-            Fx.Slam(c, 4f, Hex.Rgb(0x4a3a30));
-            Fx.MoltenBurst(c + Vector3.up * 0.3f, 1.8f, false);
+            // 插剑引渠：剑尖处熔铜冠 + 方铜渣 + 紫褐尘浪、顿帧（领主战由 WarlordBrain 在这一帧放）；没有它时砸一圈尘浪 + 熔铜四溅
+            if (Brain is WarlordBrain lord) lord.PlantStrike(c);
+            else
+            {
+                Fx.Slam(c, 4f, Hex.Rgb(0x4a3a30));
+                Fx.MoltenBurst(c + Vector3.up * 0.3f, 1.8f, false);
+            }
             Sfx("boss_slam", 1f, 0.7f);
             var ch = Channels;
             if (ch && ch.Count > 0) FloodChannels(ch);

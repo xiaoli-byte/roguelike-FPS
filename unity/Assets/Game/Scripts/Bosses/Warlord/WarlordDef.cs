@@ -30,6 +30,8 @@ namespace Spiritfire.Game
         public const float TierHp = 18000f, TierShield = 4600f, TierArmor = 5000f;
         /// <summary>部件骨架的弱点锚点（角盔）与头骨</summary>
         public const string WeakBone = "j_0_1_24_8", HeadBone = "j_0_1_24";
+        /// <summary>熔心大剑的握点骨（大剑挂件挂在这里）与剑尖骨（WarlordBlade 校朝向、拖影取剑长）</summary>
+        public const string GripBone = "j_0_1_21_1_5", TipBone = "j_0_1_21_1_5_11";
 
         // ───────────── 运行时层 ─────────────
 
