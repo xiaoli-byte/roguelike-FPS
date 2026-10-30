@@ -146,15 +146,17 @@ namespace Spiritfire.Art.Editor.Levels
     }
 
     /// <summary>
-    /// 面数 / 批次预算（粗估，I4 按 docs/performance.md 的固定机位基线收紧）：
-    /// view* = 主线机位里最重的一个画面（视锥剔除 + LOD 选择，不含阴影、地形、遮挡剔除）；scene* = 全场景 LOD0 合计。
+    /// 面数 / 批次预算（粗估）：view* = 主线机位里最重的一个画面（视锥剔除 + LOD 选择，不含阴影、地形、遮挡剔除）；scene* = 全场景 LOD0 合计。
+    /// I4 按 2026-10-30 全部关卡重建时的粗估收紧（docs/performance.md「Unity 固定机位基线」）：最重的是 2-2 昆仑玉阶，
+    /// 机位 165 万面、315 次绘制，全场景 171 万面（玉石挡墙一项 103 万）；3-1 / 3-2 当时有白盒占位，换正式件会涨一些，所以全场景留到 300 万。
+    /// 实机帧时与绘制调用的预算在运行时的 Spiritfire.Game.PerfBudget（perf 冒烟套件比对）。
     /// </summary>
     public struct Budget
     {
         public int viewTriangles, viewDrawCalls;
         public int sceneTriangles;
 
-        public static Budget Default => new() { viewTriangles = 2_500_000, viewDrawCalls = 2_500, sceneTriangles = 10_000_000 };
+        public static Budget Default => new() { viewTriangles = 2_000_000, viewDrawCalls = 500, sceneTriangles = 3_000_000 };
     }
 
     /// <summary>占位件（LevelKit.PlaceOrBox 放的白盒、名字带 Placeholder / 占位的物体）怎么判</summary>

@@ -1,0 +1,75 @@
+{
+ "level": "1-4",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 旱魃",
+   "eye": [
+    21.75,
+    17.7,
+    71.9
+   ],
+   "target": [
+    -2,
+    -0.21,
+    4
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 旱魃",
+   "mode": "项目设置",
+   "frameP50": 16.68,
+   "frameP95": 18.715,
+   "mainP50": 6.839,
+   "mainP95": 9.069,
+   "renderP95": 3.911,
+   "gpuP50": 2.879,
+   "gpuP95": 6.6,
+   "drawCalls": 1326.029,
+   "batches": 0,
+   "setPass": 115,
+   "triangles": 979694.1,
+   "gcBytes": 11594.9
+  },
+  {
+   "view": "出生点 → 旱魃",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.667,
+   "frameP95": 17.837,
+   "mainP50": 6.373,
+   "mainP95": 7.599,
+   "renderP95": 2.479,
+   "gpuP50": 3.107,
+   "gpuP95": 6.152,
+   "drawCalls": 1181.196,
+   "batches": 0,
+   "setPass": 111,
+   "triangles": 1234036,
+   "gcBytes": 11595.07
+  },
+  {
+   "view": "出生点 → 旱魃",
+   "mode": "关 GRD",
+   "frameP50": 16.633,
+   "frameP95": 18.813,
+   "mainP50": 5.71,
+   "mainP95": 7.549,
+   "renderP95": 3.303,
+   "gpuP50": 2.856,
+   "gpuP95": 6.462,
+   "drawCalls": 941.471,
+   "batches": 0,
+   "setPass": 129,
+   "triangles": 1234151,
+   "gcBytes": 11851.07
+  }
+ ]
+}

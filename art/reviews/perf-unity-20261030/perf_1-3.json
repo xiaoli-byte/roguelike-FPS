@@ -1,0 +1,319 @@
+{
+ "level": "1-3",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 灌沙城门",
+   "eye": [
+    4,
+    11.91,
+    194
+   ],
+   "target": [
+    44,
+    4.8,
+    150
+   ]
+  },
+  {
+   "name": "灌沙城门 → 三路长街",
+   "eye": [
+    44,
+    5.3,
+    150
+   ],
+   "target": [
+    104,
+    3.24,
+    144
+   ]
+  },
+  {
+   "name": "三路长街 → 集市井台",
+   "eye": [
+    104,
+    3.74,
+    144
+   ],
+   "target": [
+    162,
+    0.27,
+    100
+   ]
+  },
+  {
+   "name": "集市井台 → 寺院前庭",
+   "eye": [
+    162,
+    0.77,
+    100
+   ],
+   "target": [
+    100,
+    1.2,
+    70
+   ]
+  },
+  {
+   "name": "寺院前庭 → 出口",
+   "eye": [
+    100,
+    1.7,
+    70
+   ],
+   "target": [
+    155.2,
+    -8.91,
+    22
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 灌沙城门",
+   "mode": "项目设置",
+   "frameP50": 16.617,
+   "frameP95": 19.2,
+   "mainP50": 8.386,
+   "mainP95": 10.525,
+   "renderP95": 4.521,
+   "gpuP50": 3.994,
+   "gpuP95": 6.555,
+   "drawCalls": 2801.621,
+   "batches": 0,
+   "setPass": 206,
+   "triangles": 2065251,
+   "gcBytes": 11621.37
+  },
+  {
+   "view": "灌沙城门 → 三路长街",
+   "mode": "项目设置",
+   "frameP50": 16.712,
+   "frameP95": 18.323,
+   "mainP50": 6.753,
+   "mainP95": 8.676,
+   "renderP95": 2.822,
+   "gpuP50": 3.039,
+   "gpuP95": 6.408,
+   "drawCalls": 1941,
+   "batches": 0,
+   "setPass": 77,
+   "triangles": 2246674,
+   "gcBytes": 11621.17
+  },
+  {
+   "view": "三路长街 → 集市井台",
+   "mode": "项目设置",
+   "frameP50": 16.612,
+   "frameP95": 18.366,
+   "mainP50": 6.661,
+   "mainP95": 8.605,
+   "renderP95": 4.391,
+   "gpuP50": 2.846,
+   "gpuP95": 5.542,
+   "drawCalls": 1763.625,
+   "batches": 0,
+   "setPass": 117.625,
+   "triangles": 2472548,
+   "gcBytes": 11621.53
+  },
+  {
+   "view": "集市井台 → 寺院前庭",
+   "mode": "项目设置",
+   "frameP50": 16.668,
+   "frameP95": 20,
+   "mainP50": 7.909,
+   "mainP95": 10.911,
+   "renderP95": 7.649,
+   "gpuP50": 3.911,
+   "gpuP95": 7.75,
+   "drawCalls": 2238.358,
+   "batches": 0,
+   "setPass": 303,
+   "triangles": 2400582,
+   "gcBytes": 11786.87
+  },
+  {
+   "view": "寺院前庭 → 出口",
+   "mode": "项目设置",
+   "frameP50": 16.63,
+   "frameP95": 18.907,
+   "mainP50": 7.355,
+   "mainP95": 10.096,
+   "renderP95": 6.336,
+   "gpuP50": 3.711,
+   "gpuP95": 7.374,
+   "drawCalls": 1577.383,
+   "batches": 0,
+   "setPass": 286,
+   "triangles": 2135822,
+   "gcBytes": 11621.17
+  },
+  {
+   "view": "出生点 → 灌沙城门",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.64,
+   "frameP95": 18.393,
+   "mainP50": 7.711,
+   "mainP95": 9.538,
+   "renderP95": 6.564,
+   "gpuP50": 3.771,
+   "gpuP95": 7.673,
+   "drawCalls": 2623.046,
+   "batches": 0,
+   "setPass": 200,
+   "triangles": 4081648,
+   "gcBytes": 11609.74
+  },
+  {
+   "view": "灌沙城门 → 三路长街",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.657,
+   "frameP95": 17.808,
+   "mainP50": 6.338,
+   "mainP95": 7.879,
+   "renderP95": 4.142,
+   "gpuP50": 2.652,
+   "gpuP95": 5.809,
+   "drawCalls": 1824,
+   "batches": 0,
+   "setPass": 73,
+   "triangles": 3546795,
+   "gcBytes": 11621.17
+  },
+  {
+   "view": "三路长街 → 集市井台",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.69,
+   "frameP95": 18.342,
+   "mainP50": 6.516,
+   "mainP95": 7.887,
+   "renderP95": 3.395,
+   "gpuP50": 2.967,
+   "gpuP95": 6.036,
+   "drawCalls": 1676.167,
+   "batches": 0,
+   "setPass": 114.167,
+   "triangles": 3468711,
+   "gcBytes": 11609.37
+  },
+  {
+   "view": "集市井台 → 寺院前庭",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.667,
+   "frameP95": 17.937,
+   "mainP50": 7.579,
+   "mainP95": 9.155,
+   "renderP95": 5.539,
+   "gpuP50": 3.597,
+   "gpuP95": 7.458,
+   "drawCalls": 2154.421,
+   "batches": 0,
+   "setPass": 299,
+   "triangles": 3297334,
+   "gcBytes": 11609.37
+  },
+  {
+   "view": "寺院前庭 → 出口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.691,
+   "frameP95": 19.939,
+   "mainP50": 7.024,
+   "mainP95": 10.487,
+   "renderP95": 4.703,
+   "gpuP50": 3.264,
+   "gpuP95": 6.964,
+   "drawCalls": 1528.608,
+   "batches": 0,
+   "setPass": 283,
+   "triangles": 2756854,
+   "gcBytes": 11777.3
+  },
+  {
+   "view": "出生点 → 灌沙城门",
+   "mode": "关 GRD",
+   "frameP50": 16.676,
+   "frameP95": 19.204,
+   "mainP50": 7.074,
+   "mainP95": 10.226,
+   "renderP95": 4.629,
+   "gpuP50": 3.602,
+   "gpuP95": 8.229,
+   "drawCalls": 2580.475,
+   "batches": 0,
+   "setPass": 205,
+   "triangles": 4084526,
+   "gcBytes": 11877.53
+  },
+  {
+   "view": "灌沙城门 → 三路长街",
+   "mode": "关 GRD",
+   "frameP50": 16.697,
+   "frameP95": 17.938,
+   "mainP50": 6.078,
+   "mainP95": 7.561,
+   "renderP95": 3.378,
+   "gpuP50": 2.824,
+   "gpuP95": 6.39,
+   "drawCalls": 1751,
+   "batches": 0,
+   "setPass": 89,
+   "triangles": 3546796,
+   "gcBytes": 11865.37
+  },
+  {
+   "view": "三路长街 → 集市井台",
+   "mode": "关 GRD",
+   "frameP50": 16.606,
+   "frameP95": 18.254,
+   "mainP50": 5.938,
+   "mainP95": 7.519,
+   "renderP95": 3.565,
+   "gpuP50": 2.926,
+   "gpuP95": 7.087,
+   "drawCalls": 1619,
+   "batches": 0,
+   "setPass": 126,
+   "triangles": 3475453,
+   "gcBytes": 11877.17
+  },
+  {
+   "view": "集市井台 → 寺院前庭",
+   "mode": "关 GRD",
+   "frameP50": 16.643,
+   "frameP95": 18.686,
+   "mainP50": 6.893,
+   "mainP95": 8.589,
+   "renderP95": 4.689,
+   "gpuP50": 3.702,
+   "gpuP95": 7.027,
+   "drawCalls": 2092.192,
+   "batches": 0,
+   "setPass": 300,
+   "triangles": 3297318,
+   "gcBytes": 11864.97
+  },
+  {
+   "view": "寺院前庭 → 出口",
+   "mode": "关 GRD",
+   "frameP50": 16.645,
+   "frameP95": 18.118,
+   "mainP50": 6.219,
+   "mainP95": 8.191,
+   "renderP95": 4.47,
+   "gpuP50": 3.162,
+   "gpuP95": 7.049,
+   "drawCalls": 1506.421,
+   "batches": 0,
+   "setPass": 282,
+   "triangles": 2764949,
+   "gcBytes": 11865.37
+  }
+ ]
+}

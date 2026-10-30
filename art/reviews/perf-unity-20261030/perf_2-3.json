@@ -1,0 +1,319 @@
+{
+ "level": "2-3",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 湖心冰光",
+   "eye": [
+    0,
+    5.28,
+    -88
+   ],
+   "target": [
+    0,
+    1.2,
+    -10
+   ]
+  },
+  {
+   "name": "湖心冰光 → 瑶台",
+   "eye": [
+    0,
+    1.7,
+    -10
+   ],
+   "target": [
+    0,
+    5.4,
+    78
+   ]
+  },
+  {
+   "name": "瑶台 → 出口",
+   "eye": [
+    0,
+    5.9,
+    78
+   ],
+   "target": [
+    0,
+    9,
+    95.4
+   ]
+  },
+  {
+   "name": "出口 → 西岸祭坛",
+   "eye": [
+    0,
+    9.5,
+    95.4
+   ],
+   "target": [
+    -104,
+    3.91,
+    4
+   ]
+  },
+  {
+   "name": "西岸祭坛 → 东岸船坞",
+   "eye": [
+    -104,
+    4.41,
+    4
+   ],
+   "target": [
+    96,
+    2.93,
+    -6
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 湖心冰光",
+   "mode": "项目设置",
+   "frameP50": 16.677,
+   "frameP95": 19.369,
+   "mainP50": 7.583,
+   "mainP95": 10.197,
+   "renderP95": 4.923,
+   "gpuP50": 3.328,
+   "gpuP95": 7.22,
+   "drawCalls": 2104.946,
+   "batches": 0,
+   "setPass": 123,
+   "triangles": 1545761,
+   "gcBytes": 11614.1
+  },
+  {
+   "view": "湖心冰光 → 瑶台",
+   "mode": "项目设置",
+   "frameP50": 16.69,
+   "frameP95": 18.226,
+   "mainP50": 7.015,
+   "mainP95": 8.965,
+   "renderP95": 4.444,
+   "gpuP50": 3.175,
+   "gpuP95": 6.161,
+   "drawCalls": 1689,
+   "batches": 0,
+   "setPass": 110,
+   "triangles": 1195931,
+   "gcBytes": 11614.72
+  },
+  {
+   "view": "瑶台 → 出口",
+   "mode": "项目设置",
+   "frameP50": 16.646,
+   "frameP95": 18.104,
+   "mainP50": 6.324,
+   "mainP95": 8.145,
+   "renderP95": 3.291,
+   "gpuP50": 2.611,
+   "gpuP95": 6.848,
+   "drawCalls": 1257,
+   "batches": 0,
+   "setPass": 80,
+   "triangles": 690725.8,
+   "gcBytes": 11612.43
+  },
+  {
+   "view": "出口 → 西岸祭坛",
+   "mode": "项目设置",
+   "frameP50": 16.67,
+   "frameP95": 18.551,
+   "mainP50": 7.614,
+   "mainP95": 9.235,
+   "renderP95": 5.548,
+   "gpuP50": 3.319,
+   "gpuP95": 7.721,
+   "drawCalls": 1816,
+   "batches": 0,
+   "setPass": 182.138,
+   "triangles": 2175437,
+   "gcBytes": 11790.1
+  },
+  {
+   "view": "西岸祭坛 → 东岸船坞",
+   "mode": "项目设置",
+   "frameP50": 16.615,
+   "frameP95": 18.66,
+   "mainP50": 7.603,
+   "mainP95": 9.995,
+   "renderP95": 6.254,
+   "gpuP50": 3.19,
+   "gpuP95": 7.243,
+   "drawCalls": 1963,
+   "batches": 0,
+   "setPass": 188.396,
+   "triangles": 2170682,
+   "gcBytes": 11612.43
+  },
+  {
+   "view": "出生点 → 湖心冰光",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.655,
+   "frameP95": 18.607,
+   "mainP50": 6.9,
+   "mainP95": 8.396,
+   "renderP95": 3.186,
+   "gpuP50": 2.833,
+   "gpuP95": 7.107,
+   "drawCalls": 1989.512,
+   "batches": 0,
+   "setPass": 119,
+   "triangles": 2596670,
+   "gcBytes": 11611.37
+  },
+  {
+   "view": "湖心冰光 → 瑶台",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.661,
+   "frameP95": 18.567,
+   "mainP50": 6.772,
+   "mainP95": 9.561,
+   "renderP95": 3.181,
+   "gpuP50": 2.987,
+   "gpuP95": 6.488,
+   "drawCalls": 1641,
+   "batches": 0,
+   "setPass": 106,
+   "triangles": 1684103,
+   "gcBytes": 11613.98
+  },
+  {
+   "view": "瑶台 → 出口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.683,
+   "frameP95": 18.993,
+   "mainP50": 6.62,
+   "mainP95": 9.318,
+   "renderP95": 2.405,
+   "gpuP50": 2.488,
+   "gpuP95": 5.126,
+   "drawCalls": 1253,
+   "batches": 0,
+   "setPass": 77,
+   "triangles": 738734.9,
+   "gcBytes": 11612.43
+  },
+  {
+   "view": "出口 → 西岸祭坛",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.68,
+   "frameP95": 18.635,
+   "mainP50": 7.429,
+   "mainP95": 9.456,
+   "renderP95": 3.353,
+   "gpuP50": 2.98,
+   "gpuP95": 7.005,
+   "drawCalls": 1738,
+   "batches": 0,
+   "setPass": 178.142,
+   "triangles": 2886853,
+   "gcBytes": 11612.43
+  },
+  {
+   "view": "西岸祭坛 → 东岸船坞",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.658,
+   "frameP95": 18.073,
+   "mainP50": 7.29,
+   "mainP95": 8.613,
+   "renderP95": 3.404,
+   "gpuP50": 3.007,
+   "gpuP95": 6.433,
+   "drawCalls": 1830,
+   "batches": 0,
+   "setPass": 183.096,
+   "triangles": 3357516,
+   "gcBytes": 11768.57
+  },
+  {
+   "view": "出生点 → 湖心冰光",
+   "mode": "关 GRD",
+   "frameP50": 16.634,
+   "frameP95": 18.634,
+   "mainP50": 6.544,
+   "mainP95": 8.563,
+   "renderP95": 3.546,
+   "gpuP50": 3.232,
+   "gpuP95": 7.22,
+   "drawCalls": 1884.508,
+   "batches": 0,
+   "setPass": 127,
+   "triangles": 2596673,
+   "gcBytes": 11868.43
+  },
+  {
+   "view": "湖心冰光 → 瑶台",
+   "mode": "关 GRD",
+   "frameP50": 16.694,
+   "frameP95": 18.671,
+   "mainP50": 6.015,
+   "mainP95": 7.88,
+   "renderP95": 3.797,
+   "gpuP50": 3.11,
+   "gpuP95": 5.715,
+   "drawCalls": 1612,
+   "batches": 0,
+   "setPass": 110,
+   "triangles": 1690075,
+   "gcBytes": 11870.18
+  },
+  {
+   "view": "瑶台 → 出口",
+   "mode": "关 GRD",
+   "frameP50": 16.646,
+   "frameP95": 18.74,
+   "mainP50": 5.514,
+   "mainP95": 7.685,
+   "renderP95": 2.989,
+   "gpuP50": 2.494,
+   "gpuP95": 6.339,
+   "drawCalls": 1256,
+   "batches": 0,
+   "setPass": 79,
+   "triangles": 762738.9,
+   "gcBytes": 11868.13
+  },
+  {
+   "view": "出口 → 西岸祭坛",
+   "mode": "关 GRD",
+   "frameP50": 16.666,
+   "frameP95": 18.227,
+   "mainP50": 6.587,
+   "mainP95": 8.754,
+   "renderP95": 4.926,
+   "gpuP50": 3.063,
+   "gpuP95": 7.389,
+   "drawCalls": 1684,
+   "batches": 0,
+   "setPass": 184.121,
+   "triangles": 2894853,
+   "gcBytes": 11868.8
+  },
+  {
+   "view": "西岸祭坛 → 东岸船坞",
+   "mode": "关 GRD",
+   "frameP50": 16.655,
+   "frameP95": 18.234,
+   "mainP50": 6.683,
+   "mainP95": 8.193,
+   "renderP95": 5.664,
+   "gpuP50": 3.042,
+   "gpuP95": 7.032,
+   "drawCalls": 1721,
+   "batches": 0,
+   "setPass": 193.008,
+   "triangles": 3357526,
+   "gcBytes": 11867.67
+  }
+ ]
+}

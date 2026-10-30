@@ -548,7 +548,7 @@
 | 空间音频 / 环境音（超越） | ✅ | —（I6：三章声床、ReverbSend 按章节 / 封闭关 / AmbienceZone、遮挡低通、关键枪声 / 爆炸分层） | 遮挡低通、混响区、环境声床 | M | I6 |
 | 画质档 | ✅ | —（`QualityProfile` 三档：渲染比例 + FSR 1.0、MSAA、阴影距离 / 级联 / 分辨率 / 软硬、附加光投影、SSAO、闪光灯数、粒子预算、毛发、lodBias、mip、地形细节；「高」= 工程原值；三档都用 PC 级，运行时改资产、编辑器退出 Play 还原。STP 不用：URP 的 TAA / STP 不支持叠加相机） | `QualityProfile` | M | F4 |
 | 后处理 | ✅ | —（关卡 VP 已修好；`GameplayVolumes`：低血量去饱和、受击色差、冲刺色差 + 暗角、慢动作，乘设置「屏幕特效」；低档 Bloom 降到 1/4） | 修复 + 玩法屏效 Volume | M | W0-8 / F4 |
-| LOD / 剔除 | 🟡 | GPU Resident Drawer 没开 | 开启 + 遮挡烘焙 | M | I4 |
+| LOD / 剔除 | ✅ | —（I4：PC 管线开 GPU Resident Drawer + GPU 遮挡剔除，BRG 变体 Keep All，十二关三角面平均 −26%；烘焙遮挡评估后不做，见 performance.md） | 开启 + 遮挡烘焙 | M | I4 |
 | 运行时分配 | 🟡 | 每次都 new GameObject / MPB | 池化 | S | F1 / C4 |
 | 性能叠层 | 🟡 | 只打印一行 fps | `PerfOverlay` | S | L5 |
 | 美术运行时接入 | ✅ | Unity 更好 | — | — | — |
@@ -996,7 +996,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | I1 十二关串联 | 主菜单 → 选英雄 → 1-1 … 3-4 → 胜利结算可以走通；关间结算卡；构建设置按 RunPlan；demo 开关（demoEnd = 1-4） | `G/Core/RunPlan.cs` `P/Editor/Levels/BuildOrder.cs` | 全部 M / BS、U5、U6 | 是 | M |
 | I2 整局自动化通关 | 见 7.5 | `G/Testing/Suites/FullRunSuite.cs` `G/Testing/Bot/*` | I1 | 是 | L |
 | I3 平衡 ✅ | 武器秒伤带；首领 60–120 s；每章收入对得上商店价格；魂晶 vs 天赋总价 11300；逐关难度；随机元素加入后 1-1 复测。落地成 EditMode 的平衡模型（场景实测编制 + 一条参考秒伤曲线），开放大图清关补发 +10 魂晶；weapon-dps / full-run / boss-* 的实测复核见 balance.md 第九节 | `docs/balance.md` `G/Core/BalanceModel.cs` `Tests/BalanceModelTests.cs`（`EconomyConfig.Project` 改按实际编制） | I1 | 是 | M |
-| I4 性能 | GPU 遮挡；1-3 烘焙遮挡；地形分块 LOD；远景 impostor；按固定机位采基线（docs/performance.md 协议）；预算写进 L5 | `P/Editor/Levels/LevelKit.Perf.cs` `A/Settings/**` | I1 | 是 | M |
+| I4 性能 ✅ | GPU 遮挡；1-3 烘焙遮挡；地形分块 LOD；远景 impostor；按固定机位采基线（docs/performance.md 协议）；预算写进 L5。落地：PC 管线开 GRD + GPU 遮挡剔除（ConfigureProject 写入、RenderPerfSettingsTests 守住）；`playtest perf` 固定机位套件，十二关三档对照（三角面平均 −26%，GPU P95 最重 7.8 ms，编辑器主线程 +1 ms）；运行时预算 `PerfBudget` + L5 静态预算收紧到 200 万面 / 500 次绘制 / 全场景 300 万。1-3 烘焙遮挡、远景 impostor 按实测评估后不做，地形分块 LOD 已由 I1 分块 + 画质档 pixelError 覆盖（理由见 performance.md「评估后没做的几项」） | `G/Testing/Suites/PerfSuite.cs` `G/Testing/PerfBudget.cs` `P/Editor/ShowcaseSceneBuilder.cs`（ConfigureProject）`P/Editor/Levels/LevelChecks/LevelSpec.cs` `A/Settings/PC_RPAsset.asset` `Tests/RenderPerfSettingsTests.cs` `art/reviews/perf-unity-20261030/` | I1 | 是 | M |
 | I5 中途续玩与图鉴（超越） | 每关开头写 run.json，主菜单「继续征程」；武器 / 秘卷 / 敌人 / 灵宠图鉴 | `G/Core/RunSuspend.cs` `G/Progression/Codex.cs` `G/UI/Screens/CodexScreen.cs` | R2 U5 | 否 | M |
 | I6 音频超越 ✅ | 各章环境声床；关键枪声 / 爆炸改分层（瞬态、主体、尾音）；旱魃主题曲；遮挡低通 + 混响区 | `G/Audio/{AmbienceZone,AudioOcclusion}.cs` `A/Game/Resources/Audio/Music/amb_*.ogg` `src/audio/Ambience.ts` | F5 | 是 | M |
 | I7 手感终调 ✅ | FeelProfile SO 定稿（顿帧、击杀慢动作、屏效、震屏曲线）；手柄瞄准辅助；评估自动翻越（要做的话同步改 unity-maps 和验收规则） | `G/Core/FeelProfile.cs` `docs/feel.md` | I2 | 是 | M |

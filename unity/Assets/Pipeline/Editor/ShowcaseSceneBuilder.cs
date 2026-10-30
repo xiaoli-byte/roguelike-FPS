@@ -126,7 +126,18 @@ namespace Spiritfire.Art.Editor
                 asset.shadowCascadeCount = 4;
                 asset.msaaSampleCount = 4;
                 asset.supportsHDR = true;
+                // I4：GPU Resident Drawer（关卡几何走 BatchRendererGroup 实例化）+ GPU 遮挡剔除；要求 Forward+ 和下面的 Keep All
+                asset.gpuResidentDrawerMode = GPUResidentDrawerMode.InstancedDrawing;
+                asset.gpuResidentDrawerEnableOcclusionCullingInCameras = true;
                 EditorUtility.SetDirty(asset);
+            }
+            // Graphics 设置的 BatchRendererGroup Variants = Keep All（编辑器 API 只读，走序列化字段）
+            const int keepAll = (int)UnityEditor.Rendering.BatchRendererGroupStrippingMode.KeepAll;
+            if (UnityEditor.Rendering.EditorGraphicsSettings.batchRendererGroupShaderStrippingMode != (UnityEditor.Rendering.BatchRendererGroupStrippingMode)keepAll)
+            {
+                var gs = new SerializedObject(GraphicsSettings.GetGraphicsSettings());
+                gs.FindProperty("m_BrgStripping").intValue = keepAll;
+                gs.ApplyModifiedPropertiesWithoutUndo();
             }
             AssetDatabase.SaveAssets();
         }

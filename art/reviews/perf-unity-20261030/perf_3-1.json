@@ -1,0 +1,319 @@
+{
+ "level": "3-1",
+ "width": 1920,
+ "height": 1080,
+ "warmup": 30,
+ "frames": 240,
+ "quality": "PC",
+ "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+ "cpu": "Intel(R) Core(TM) Ultra 9 290HX Plus",
+ "views": [
+  {
+   "name": "出生点 → 税关墩",
+   "eye": [
+    0,
+    8.7,
+    -101
+   ],
+   "target": [
+    -58,
+    3.39,
+    -22
+   ]
+  },
+  {
+   "name": "税关墩 → 镇湖鼎台",
+   "eye": [
+    -58,
+    3.89,
+    -22
+   ],
+   "target": [
+    2,
+    3.39,
+    22
+   ]
+  },
+  {
+   "name": "镇湖鼎台 → 锚链墩",
+   "eye": [
+    2,
+    3.89,
+    22
+   ],
+   "target": [
+    62,
+    3.39,
+    -4
+   ]
+  },
+  {
+   "name": "锚链墩 → 宫门码头",
+   "eye": [
+    62,
+    3.89,
+    -4
+   ],
+   "target": [
+    0,
+    3.6,
+    108
+   ]
+  },
+  {
+   "name": "宫门码头 → 出口",
+   "eye": [
+    0,
+    4.1,
+    108
+   ],
+   "target": [
+    0,
+    3.6,
+    124.6
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "view": "出生点 → 税关墩",
+   "mode": "项目设置",
+   "frameP50": 16.655,
+   "frameP95": 18.072,
+   "mainP50": 6.787,
+   "mainP95": 8.325,
+   "renderP95": 4.181,
+   "gpuP50": 2.582,
+   "gpuP95": 6.164,
+   "drawCalls": 1085,
+   "batches": 0,
+   "setPass": 115,
+   "triangles": 686984.8,
+   "gcBytes": 11413
+  },
+  {
+   "view": "税关墩 → 镇湖鼎台",
+   "mode": "项目设置",
+   "frameP50": 16.652,
+   "frameP95": 18.306,
+   "mainP50": 6.816,
+   "mainP95": 8.157,
+   "renderP95": 3.103,
+   "gpuP50": 2.776,
+   "gpuP95": 7.075,
+   "drawCalls": 1276.417,
+   "batches": 0,
+   "setPass": 121.283,
+   "triangles": 704262.2,
+   "gcBytes": 11474.06
+  },
+  {
+   "view": "镇湖鼎台 → 锚链墩",
+   "mode": "项目设置",
+   "frameP50": 16.61,
+   "frameP95": 18.099,
+   "mainP50": 6.582,
+   "mainP95": 8.271,
+   "renderP95": 3.566,
+   "gpuP50": 2.635,
+   "gpuP95": 7.244,
+   "drawCalls": 1317.738,
+   "batches": 0,
+   "setPass": 102,
+   "triangles": 792003.7,
+   "gcBytes": 11591.63
+  },
+  {
+   "view": "锚链墩 → 宫门码头",
+   "mode": "项目设置",
+   "frameP50": 16.701,
+   "frameP95": 19.319,
+   "mainP50": 6.792,
+   "mainP95": 8.912,
+   "renderP95": 3.458,
+   "gpuP50": 2.515,
+   "gpuP95": 6.268,
+   "drawCalls": 1092.887,
+   "batches": 0,
+   "setPass": 106.525,
+   "triangles": 733296.1,
+   "gcBytes": 11411.8
+  },
+  {
+   "view": "宫门码头 → 出口",
+   "mode": "项目设置",
+   "frameP50": 16.627,
+   "frameP95": 18.288,
+   "mainP50": 6.307,
+   "mainP95": 8.099,
+   "renderP95": 2.774,
+   "gpuP50": 2.565,
+   "gpuP95": 4.684,
+   "drawCalls": 685.379,
+   "batches": 0,
+   "setPass": 85,
+   "triangles": 1046647,
+   "gcBytes": 11412.43
+  },
+  {
+   "view": "出生点 → 税关墩",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.683,
+   "frameP95": 17.888,
+   "mainP50": 6.431,
+   "mainP95": 7.535,
+   "renderP95": 2.707,
+   "gpuP50": 2.832,
+   "gpuP95": 6.968,
+   "drawCalls": 1027,
+   "batches": 0,
+   "setPass": 112,
+   "triangles": 1142035,
+   "gcBytes": 11411.63
+  },
+  {
+   "view": "税关墩 → 镇湖鼎台",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.648,
+   "frameP95": 17.774,
+   "mainP50": 6.473,
+   "mainP95": 7.801,
+   "renderP95": 2.923,
+   "gpuP50": 2.872,
+   "gpuP95": 7.005,
+   "drawCalls": 1150.608,
+   "batches": 0,
+   "setPass": 116.021,
+   "triangles": 1182121,
+   "gcBytes": 11411.67
+  },
+  {
+   "view": "镇湖鼎台 → 锚链墩",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.699,
+   "frameP95": 19.497,
+   "mainP50": 6.435,
+   "mainP95": 8.882,
+   "renderP95": 3.354,
+   "gpuP50": 2.753,
+   "gpuP95": 7.049,
+   "drawCalls": 1220.558,
+   "batches": 0,
+   "setPass": 99.896,
+   "triangles": 1021899,
+   "gcBytes": 15420.03
+  },
+  {
+   "view": "锚链墩 → 宫门码头",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.699,
+   "frameP95": 19.013,
+   "mainP50": 6.347,
+   "mainP95": 8.594,
+   "renderP95": 3.62,
+   "gpuP50": 2.86,
+   "gpuP95": 7.143,
+   "drawCalls": 1037.654,
+   "batches": 0,
+   "setPass": 103.654,
+   "triangles": 1109738,
+   "gcBytes": 11471.53
+  },
+  {
+   "view": "宫门码头 → 出口",
+   "mode": "GRD 不开遮挡",
+   "frameP50": 16.661,
+   "frameP95": 18.597,
+   "mainP50": 6.076,
+   "mainP95": 7.778,
+   "renderP95": 2.904,
+   "gpuP50": 2.372,
+   "gpuP95": 6.558,
+   "drawCalls": 675.183,
+   "batches": 0,
+   "setPass": 84.4,
+   "triangles": 1200447,
+   "gcBytes": 11472.29
+  },
+  {
+   "view": "出生点 → 税关墩",
+   "mode": "关 GRD",
+   "frameP50": 16.657,
+   "frameP95": 18.683,
+   "mainP50": 6.016,
+   "mainP95": 7.827,
+   "renderP95": 3.756,
+   "gpuP50": 2.887,
+   "gpuP95": 6.363,
+   "drawCalls": 1019,
+   "batches": 0,
+   "setPass": 129,
+   "triangles": 1146927,
+   "gcBytes": 11668.43
+  },
+  {
+   "view": "税关墩 → 镇湖鼎台",
+   "mode": "关 GRD",
+   "frameP50": 16.648,
+   "frameP95": 18.199,
+   "mainP50": 5.879,
+   "mainP95": 7.189,
+   "renderP95": 3.181,
+   "gpuP50": 3.009,
+   "gpuP95": 6.391,
+   "drawCalls": 986.054,
+   "batches": 0,
+   "setPass": 128.583,
+   "triangles": 1184018,
+   "gcBytes": 11668.43
+  },
+  {
+   "view": "镇湖鼎台 → 锚链墩",
+   "mode": "关 GRD",
+   "frameP50": 16.62,
+   "frameP95": 17.821,
+   "mainP50": 5.673,
+   "mainP95": 6.975,
+   "renderP95": 3.781,
+   "gpuP50": 2.849,
+   "gpuP95": 6.352,
+   "drawCalls": 980.033,
+   "batches": 0,
+   "setPass": 114.167,
+   "triangles": 1026406,
+   "gcBytes": 11667.67
+  },
+  {
+   "view": "锚链墩 → 宫门码头",
+   "mode": "关 GRD",
+   "frameP50": 16.652,
+   "frameP95": 18.144,
+   "mainP50": 5.767,
+   "mainP95": 7.245,
+   "renderP95": 3.996,
+   "gpuP50": 3.821,
+   "gpuP95": 8.111,
+   "drawCalls": 942.604,
+   "batches": 0,
+   "setPass": 114.558,
+   "triangles": 1109897,
+   "gcBytes": 11668.43
+  },
+  {
+   "view": "宫门码头 → 出口",
+   "mode": "关 GRD",
+   "frameP50": 16.672,
+   "frameP95": 19.406,
+   "mainP50": 5.525,
+   "mainP95": 8.204,
+   "renderP95": 3.371,
+   "gpuP50": 5.328,
+   "gpuP95": 7.023,
+   "drawCalls": 644.854,
+   "batches": 0,
+   "setPass": 89.458,
+   "triangles": 1199343,
+   "gcBytes": 12124.29
+  }
+ ]
+}
