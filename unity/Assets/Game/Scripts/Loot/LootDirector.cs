@@ -86,6 +86,8 @@ namespace Spiritfire.Game
                 // 首领包：弹药、生命各两份，抛得更远
                 for (int i = 0; i < EconomyConfig.BossPackAmmo; i++) Pickup.Spawn(Pickup.Kind.Ammo, pos, EconomyConfig.AmmoPickupFrac, 1.8f);
                 for (int i = 0; i < EconomyConfig.BossPackHealth; i++) Pickup.Spawn(Pickup.Kind.Health, pos, 0, 1.8f);
+                // 首领关要到走进出口才算本关完成（那时才吸），首领灵石抛得远、玩家开完首领宝箱就走，常常没捡（I3：整局冒烟里首领关进账 0–9）——倒下后落地展示一下就吸
+                Pickup.Vacuum(EconomyConfig.BossVacuumDelay);
             }
             else
             {

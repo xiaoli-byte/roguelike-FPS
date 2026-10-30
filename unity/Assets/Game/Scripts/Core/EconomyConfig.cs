@@ -65,6 +65,8 @@ namespace Spiritfire.Game
         public const int CoinPieceValue = 3, MaxCoinPieces = 14, MaxCoinPiecesLarge = 22, LargeCoinAmount = 60;
         /// <summary>清场后吸取的延迟（秒，另加 0–0.4 s 随机）、已清场后才掉出的灵石落地展示的时间</summary>
         public const float VacuumDelay = 0.8f, LateVacuumDelay = 1.1f;
+        /// <summary>首领倒下后多久把场上掉落物吸向玩家（秒，另加 0–0.4 s 随机；首领灵石抛撒 <see cref="BossCoinToss"/> 落地约 1 s）</summary>
+        public const float BossVacuumDelay = 1.6f;
 
         // ───────────── 商店参照（R3 落地商店时用）─────────────
 
@@ -212,7 +214,12 @@ namespace Spiritfire.Game
 
         // ───────────── 投影 ─────────────
 
-        /// <summary>投影的假设（缺省值来自 1-1：4 个据点约 32 只、2 只精英；第 4 批 I3 按实际地图回填）</summary>
+        /// <summary>
+        /// 投影的假设。缺省值是 I3 按实际地图回填的（EconomyProjectionSuite 扫 12 关场景，docs/balance.md 第 4 节）：
+        /// 第一章三张大图平均 40 只（精英约 2.7）、每图约 0.67 个灵石宝箱；第二 / 三章大图比第一章多 15–18% 的敌人（每章约 +10%）；首领关没有杂兵场地；
+        /// 普通击杀的灵石基数按出场频率加权约 3.0（名册平均 <see cref="AverageRosterCoins"/> 约 4.3 偏高：灵石多的重型怪出场少）。
+        /// 之前（R1）按 1-1 的据点估的「每图 32 只、每章 +25%、首领关 8 只杂兵、每图 0.5 个灵石宝箱」，整局比扫场景多约两成
+        /// </summary>
         public struct ProjectionInputs
         {
             /// <summary>每张开放大图的击杀数（第一章）、其中精英数</summary>
@@ -221,7 +228,7 @@ namespace Spiritfire.Game
             public float killGrowthPerChapter;
             /// <summary>首领场里的杂兵击杀数</summary>
             public float killsPerBossStage;
-            /// <summary>普通敌人击杀灵石的平均基数（缺省：按名册里普通敌人 coins 区间中点平均）</summary>
+            /// <summary>普通敌人击杀灵石的平均基数（缺省按扫场景的出场频率加权；名册里普通敌人 coins 区间中点的平均见 <see cref="AverageRosterCoins"/>）</summary>
             public float avgKillCoins;
             /// <summary>每张开放大图的灵石宝箱数、其中精英场的比例</summary>
             public float coinChestsPerField, eliteChestShare;
@@ -232,8 +239,8 @@ namespace Spiritfire.Game
 
             public static ProjectionInputs Default => new()
             {
-                killsPerField = 32, elitesPerField = 2, killGrowthPerChapter = 0.25f, killsPerBossStage = 8,
-                avgKillCoins = AverageRosterCoins(), coinChestsPerField = 0.5f, eliteChestShare = 0.3f,
+                killsPerField = 40, elitesPerField = 2.7f, killGrowthPerChapter = 0.1f, killsPerBossStage = 0,
+                avgKillCoins = 3f, coinChestsPerField = 0.67f, eliteChestShare = 0.3f,
                 bossCoins = (BossCoinsMin + BossCoinsMax) * 0.5f, coinGainPct = 0,
             };
         }
