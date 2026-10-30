@@ -22,6 +22,7 @@ namespace Spiritfire.Game.Testing
     ///   · 每行同时给出三个对照：描述器的「秒伤 约 N」（<see cref="WeaponDescriber"/>，不含换弹）、按解析数值算的整轮理论秒伤（弹匣 × 每发伤害 ÷（打空 + 换弹）；碎刃 = 斩击理论秒伤）、
     ///     Three.js 秒伤带（±20%；原 11 把是 TS 无头实测、榴弹去掉火对生命的 ×1.25，扩充的 6 把是 arsenal-expansion 8.1 的设计值）。
     /// 判定：一点伤害都没打出来、木桩格挡了、期间有运行时报错 → 不合格；裸秒伤不在 Three.js 带内、或裸秒伤 / 整轮理论偏出 0.6–1.5 → ⚠（平衡复核，不算不合格）。
+    /// 同一张带、同一个裸口径，EditMode 的 BalanceModelTests 另用 <see cref="SustainedTheory"/> 离线核对整轮理论值 ±30%（不进 Play，只拦定义改错）。
     /// 测量期间时间 ×2（秒伤按游戏时间算）。
     /// </summary>
     public sealed class WeaponDpsSuite : PlaytestSuite

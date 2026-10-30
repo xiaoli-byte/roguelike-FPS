@@ -5,9 +5,12 @@ namespace Spiritfire.Game
     /// <summary>
     /// 首领战的平衡口径（I3，docs/balance.md 第 3 节）：击杀用时目标 60–120 s；参考秒伤 = 首领浸泡（Testing/Suites/BossSoakSuite，bridge.sh playtest boss-soak）里
     /// 代表配装打首领、首领可选中时的实测秒伤（武器 + 技能 + 灼烧等持续伤害 + 英雄被动，含随机暴击，不打弱点）。
-    /// 各首领的定档模型（<see cref="HanbaBalance"/> / <see cref="KunPengBalance"/> / <see cref="WarlordBalance"/> / <see cref="QilinDef.EstimateKillSeconds"/>）
-    /// 都从这里取参考秒伤，再按自己的机制折算（输出率、空中命中、饮熔回甲、护体……），EditMode 测试守着 60–120 s。
-    /// 改了配装、武器 / 技能 / 秘卷数值后：跑 boss-soak，把每个首领「可选中时秒伤」抄回 <see cref="Soak"/>，再看各模型的测试。
+    /// 两处用它：
+    ///   · 全局的参考秒伤曲线 <see cref="BalanceModel.ReferenceDps"/>（九张大图、装备计划、补给营、四个首领在同一条曲线上）按这张表拟合，
+    ///     BalanceModelTests.ReferenceCurve_MatchesBossSoak 守着曲线和实测差 ±15% 以内；火麒麟的定档模型直接用这条曲线；
+    ///   · 旱魃 / 鲲鹏 / 魔将的定档模型（<see cref="HanbaBalance"/> / <see cref="KunPengBalance"/> / <see cref="WarlordBalance"/>）取自己那一关的实测，
+    ///     再按自己的机制折算（输出率、空中命中、护体……），EditMode 测试守着 60–120 s。
+    /// 改了配装、武器 / 技能 / 秘卷数值后：跑 boss-soak，把每个首领「可选中时秒伤」抄回 <see cref="Soak"/>，再看 BalanceModelTests 和各首领模型的测试。
     /// 定档之前的模型按 Three.js 秒伤带中位 75 × 装备倍率估秒伤（旱魃约 100、魔将约 200），不算技能、持续伤害、增伤秘卷和英雄被动，
     /// 比实测低一半：四个首领在代表配装下都只要 35–40 s（估算 42–48 s），I3 按实测把定档耐久提到约 1.75–2.7 倍。
     /// </summary>

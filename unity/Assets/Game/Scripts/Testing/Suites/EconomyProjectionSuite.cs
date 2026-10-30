@@ -338,15 +338,19 @@ namespace Spiritfire.Game.Testing
             if (!okC) Fail($"点满天赋要 {clears:F1} 次全清，不在 {ClearsRange.x}–{ClearsRange.y}");
             csv.Add($"essence,{talentTotal},{F(clear)},{F(clearReq)},{F(clears)},{F(clearsReq)}");
 
-            // ── 回填 EconomyConfig.ProjectionInputs 的参考 ──
-            var fields = scans.Where(x => !x.stage.IsBoss && x.stage.chapter == 1).ToList();
-            if (fields.Count > 0)
-                Line($"第一章大图平均（回填 ProjectionInputs）：击杀 {fields.Average(x => x.normals + x.elites):F1}、精英 {fields.Average(x => x.elites):F1}、灵石宝箱 {fields.Average(x => x.coinChests):F2}");
-            var bossFields = scans.Where(x => x.stage.IsBoss).ToList();
-            if (bossFields.Count > 0) Line($"首领关的杂兵（不算首领召唤）：平均 {bossFields.Average(x => x.normals + x.elites):F1} 只");
-            var p = EconomyConfig.ProjectionInputs.Default;
-            float model = EconomyConfig.Project(p).Sum(r => r.Total), scanned = scans.Sum(x => x.Income);
-            Line($"EconomyConfig.Project() 缺省投影整局 {model:F0} 灵石 vs 扫场景 {scanned:F0}（×{scanned / Mathf.Max(1, model):F2}）");
+            // ── 和 EditMode 的平衡模型对一对（BalanceModel.Stages 是按场景统计的静态编制表，EconomyConfig.Project 用它）──
+            var model = BalanceModel.EstimateRun();
+            var off = new List<string>();
+            foreach (var s in scans)
+            {
+                var m = model.FirstOrDefault(e => e.stage == s.stage);
+                if (s.stage.IsBoss || m.stage == null) continue;
+                if (m.kills != s.normals + s.elites) off.Add($"{s.stage.code} 模型 {m.kills} 只 / 场景 {s.normals + s.elites} 只");
+            }
+            Line(off.Count == 0 ? "BalanceModel 编制表：九张大图的只数和场景一致 ✓" : $"BalanceModel 编制表和场景对不上：{string.Join("、", off)}（跑 EditMode BalanceModelTests 拿新行）");
+            if (off.Count > 0) Fail("BalanceModel.Stages 和场景里的遭遇对不上");
+            float projected = EconomyConfig.Project().Sum(r => r.Total), scanned = scans.Sum(x => x.Income);
+            Line($"EconomyConfig.Project()（按 BalanceModel 编制，首领场另算 {BalanceModel.BossStageAdds} 只杂兵）整局 {projected:F0} 灵石 vs 扫场景 {scanned:F0}（×{scanned / Mathf.Max(1, projected):F2}）");
         }
 
         static string F(float v) => v.ToString("0.###", CultureInfo.InvariantCulture);

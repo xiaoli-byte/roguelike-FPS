@@ -136,7 +136,9 @@ namespace Spiritfire.Game.Tests
         // ───────────── 武器秒伤带 ─────────────
 
         /// <summary>
-        /// 理论值不含弹道下坠、散布脱靶、爆炸衰减、预热，只拦明显的回归（定义改错、倍率漏乘）；秒伤带以 playtest weapon-dps 的实测为准
+        /// 秒伤带一律是裸口径（普通、身体、含换弹、不含暴击、不含元素克制 / 易伤 / 被动；榴弹的 Three.js 实测 111 已折成 88.8，见 WeaponDpsSuite.TsDps）。
+        /// 这里离线核对整轮理论值 ±30%：理论值不含弹道下坠、散布脱靶、爆炸衰减、预热、第一发不用等，只拦明显的回归（定义改错、倍率漏乘）；
+        /// 正式判定是 playtest weapon-dps 的实测裸秒伤 ±20%
         /// </summary>
         const float TheoryTolerance = 0.3f;
 
@@ -153,8 +155,8 @@ namespace Spiritfire.Game.Tests
                 var inst = new WeaponInstance(def);
                 var r = WeaponStatsResolver.Resolve(inst, stats);
                 bool melee = def.IsBlade || WeaponTakeovers.Find(inst) != null;
-                // 木桩只有生命层：Three.js 秒伤带里算了元素打生命的倍率（榴弹「火对生命 × 1.25」）
-                float theory = Testing.WeaponDpsSuite.SustainedTheory(def, r, melee) * HealthMult(def);
+                // 裸口径：不乘元素打生命层的倍率（秒伤带也是裸的，同 weapon-dps 的判法）
+                float theory = Testing.WeaponDpsSuite.SustainedTheory(def, r, melee);
                 bool known = Testing.WeaponDpsSuite.TsDps.TryGetValue(def.id, out float ts);
                 lines.Add($"{def.id}：整轮理论 {theory:0.0}{(known ? $"，Three.js {ts:0.#}（×{theory / ts:0.00}）" : "")}");
                 Assert.Greater(theory, 0, def.id);
@@ -164,20 +166,12 @@ namespace Spiritfire.Game.Tests
             }
             float mean = sum / Mathf.Max(1, n);
             lines.Add($"平均 {mean:0.0}（参考曲线的基础 {BalanceModel.BaseDps}）");
-            string table = "[Balance] 武器整轮理论秒伤（普通品质、身体、打生命层）\n" + string.Join("\n", lines);
+            string table = "[Balance] 武器整轮理论秒伤（普通品质、身体、裸口径）\n" + string.Join("\n", lines);
             TestContext.WriteLine(table);
             Debug.Log(table);
             Assert.IsEmpty(off, $"整轮理论秒伤偏出 Three.js 秒伤带 ±{TheoryTolerance:P0}：" + string.Join("、", off));
-            Assert.That(mean, Is.InRange(BalanceModel.BaseDps * 0.85f, BalanceModel.BaseDps * 1.25f), "武器平均秒伤和参考曲线的基础 75 对得上");
-        }
-
-        /// <summary>打生命层的元素倍率（轮换元素的武器取轮换里的平均，三相：火 / 雷 / 蚀）</summary>
-        static float HealthMult(WeaponDef def)
-        {
-            if (def.cycle is not { Length: > 0 } cycle) return DamageTable.LayerMult(def.element, DamageLayer.Health);
-            float sum = 0;
-            foreach (var e in cycle) sum += DamageTable.LayerMult(e, DamageLayer.Health);
-            return sum / cycle.Length;
+            // 参考曲线的基础是主力武器裂风步枪的实测裸秒伤 90；18 把的整轮理论平均约 79（理论值不算第一发不用等，实测平均约 86）
+            Assert.That(mean, Is.InRange(BalanceModel.BaseDps * 0.85f, BalanceModel.BaseDps * 1.15f), "武器平均秒伤和参考曲线的基础对得上");
         }
 
         // ───────────── 难度 ─────────────
@@ -186,9 +180,26 @@ namespace Spiritfire.Game.Tests
         public void ReferenceCurve_MatchesQilinAnchor()
         {
             Assert.AreEqual(QilinDef.ReferenceDps(QilinDef.StageDifficulty), BalanceModel.ReferenceDps(QilinDef.StageDifficulty), 0.01f, "火麒麟的定档曲线就是参考曲线");
-            Assert.AreEqual(BalanceModel.BaseDps * BalanceModel.Uptime, BalanceModel.ReferenceDps(1f), 1e-4f);
+            Assert.AreEqual(BalanceModel.BaseDps * BalanceModel.KitMult * BalanceModel.Uptime, BalanceModel.ReferenceDps(1f), 1e-4f);
+            Assert.AreEqual(BossBalance.Uptime, BalanceModel.Uptime, 1e-6f, "输出占比和首领浸泡的估算同一个数");
             for (float d = 1f; d < 3.2f; d += 0.16f)
                 Assert.Greater(BalanceModel.GearMult(d) / d, 0.99f, $"难度 {d:0.00}：装备成长不落后于敌人耐久");
+        }
+
+        /// <summary>
+        /// 参考曲线按首领浸泡校准（I3）：四个首领在代表配装下「可选中时」的实测秒伤（BossBalance.Soak，boss-soak 两次平均）
+        /// 和曲线的 TargetableDps 差 ±15% 以内。改了武器 / 技能 / 秘卷 / 装备成长后先跑 boss-soak，再看这里
+        /// </summary>
+        [Test]
+        public void ReferenceCurve_MatchesBossSoak()
+        {
+            foreach (var (stage, d, dps) in BossBalance.Soak)
+            {
+                Assert.AreEqual(RunPlan.Get(stage).difficulty, d, 1e-4f, $"{stage} 的难度");
+                float ratio = BalanceModel.TargetableDps(d) / dps;
+                TestContext.WriteLine($"{stage}：曲线 {BalanceModel.TargetableDps(d):0}，浸泡实测 {dps:0}（×{ratio:0.00}）");
+                Assert.That(ratio, Is.InRange(0.85f, 1.15f), $"{stage}：参考曲线和首领浸泡的实测对不上");
+            }
         }
 
         [Test]

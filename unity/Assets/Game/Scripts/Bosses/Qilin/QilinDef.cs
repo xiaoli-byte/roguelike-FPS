@@ -16,8 +16,9 @@ namespace Spiritfire.Game
     /// 数值（D23 血条刻度 = 85% / 70% 饮熔线 + 55% 换形）：Three.js 是 5000 生命 + 1500 护甲 × 难度（3-4 难度 3.08 时 15400 + 4620）。
     /// 按模拟秒伤定档（<see cref="ReferenceDps"/>、<see cref="EstimateKillSeconds"/>：一阶段 + 5.2 s 换形演出 + 二阶段按 <see cref="BurnDpsFactor"/> 折算）。
     /// BS4 / BS5 按「75 ×（1 + 1.15 ×（难度 − 1））× 0.75 ≈ 191」定的 10500 生命 + 2400 护甲，在 I3 首领浸泡的实测秒伤（可选中时约 480，<see cref="BossBalance.Soak"/>）下
-    /// 34 s 就倒下（浸泡估算 42 s）；I3 重定 28000 生命 + 2400 护甲（护甲不加：饮熔回满鳞甲的惩罚已经够重）：
-    /// 两次都砸中约 84 s、砸中一次约 97 s、一次都不打约 109 s，都落在 60–120 s（QilinTests 守着）；浸泡（会砸一次）估算约 64–91 s。
+    /// 34 s 就倒下（浸泡估算 42 s）；I3 重定 28000 生命 + 2400 护甲（护甲不加：饮熔回满鳞甲的惩罚已经够重）。
+    /// 定档曲线 = I3 参考曲线（<see cref="BalanceModel.ReferenceDps"/>，按浸泡校准，3-4 约 391）：
+    /// 两次都砸中约 83 s、砸中一次约 95 s、一次都不打约 107 s，都落在 60–120 s（QilinTests 守着）；浸泡（会砸一次）实测估算 72 s。
     /// 动作：E5 的 AC_SK_Boss_Qilin(Burn)（招式状态 rear / scalesFire / breath / drink / stun / pant / tuck / leap / stomp / roar / paw），
     /// 招式按状态名交叉淡入并拉伸到实际时长（框架 PlayAct），出手跟 events.json 的事件走，没有就按时间兜底。
     /// 焚身缺的动作（踏云奔跑、俯冲、起飞、空中吐息）先用 Locomotion 的奔跑步态 + tuck / stomp / breath 代替，位移由代码驱动（见 docs/unity-parity.md BS5）。

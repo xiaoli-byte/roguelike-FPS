@@ -66,7 +66,8 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(QilinDef.TierArmor, v.armor, 0.5f);
             Assert.AreEqual(0f, v.shield, 1e-3f);
             float dps = QilinDef.ReferenceDps(QilinDef.StageDifficulty);
-            Assert.AreEqual(BossBalance.Dps("3-4") * BossBalance.Uptime, dps, 0.5f, "3-4 浸泡实测 × 输出率");
+            Assert.AreEqual(BalanceModel.ReferenceDps(QilinDef.StageDifficulty), dps, 0.01f, "火麒麟的定档曲线就是 I3 参考曲线");
+            Assert.That(dps / (BossBalance.Dps("3-4") * BossBalance.Uptime), Is.InRange(0.9f, 1.1f), "参考曲线和 3-4 浸泡实测 × 输出率对得上");
             float two = QilinDef.EstimateKillSeconds(v, dps, 2), one = QilinDef.EstimateKillSeconds(v, dps, 1), none = QilinDef.EstimateKillSeconds(v, dps, 0);
             Assert.That(two, Is.InRange(60f, 120f), $"砸中两次 {two:F0} s");
             Assert.That(one, Is.InRange(60f, 120f), $"砸中一次 {one:F0} s");

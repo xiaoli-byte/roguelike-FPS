@@ -8,8 +8,10 @@ namespace Spiritfire.Game
     /// I3 平衡模型（docs/balance.md；EditMode 测试 BalanceModelTests 守着）：把经济、魂晶、首领用时、逐关难度放到同一组假设上算。
     ///   · 编制：<see cref="Stages"/> 是 9 张开放大图的实际遭遇（从场景里的 EncounterSite 统计，测试逐关对照场景文件），
     ///     首领场只算首领本身 + <see cref="BossStageAdds"/> 只杂兵；
-    ///   · 参考秒伤：<see cref="ReferenceDps"/> = 秒伤带中位 75 × 装备倍率（1 + 1.15 ×（难度 − 1））× 输出占比 0.75——
-    ///     敌人耐久 × 难度，玩家的品质、强化、秘卷跟着长，长得比难度略快；四个首领、九张大图都用这一条曲线核对；
+    ///   · 参考秒伤：<see cref="ReferenceDps"/> = 武器裸秒伤 90 × 装备倍率（1 + 1.15 ×（难度 − 1））× 武器之外 1.6 × 输出占比 0.8——
+    ///     敌人耐久 × 难度，玩家的品质、强化、秘卷跟着长，长得比难度略快；四个首领、九张大图都用这一条曲线核对。
+    ///     曲线按首领浸泡（BossSoakSuite）的实测校准：四个首领可选中时的实测秒伤（<see cref="BossBalance.Soak"/>）和 <see cref="TargetableDps"/> 差 ±12% 以内
+    ///     （BalanceModelTests 守着 ±15%）；校准前是「秒伤带中位 75 × 装备倍率 × 0.75」，没算技能、灼烧跳伤、英雄被动和暴击，只有实测的一半；
     ///   · 装备计划：<see cref="Gear"/> 是每个首领前「正常玩」能拿到的武器（宝箱保底的品质、沿途的强化奖励、补给营里花钱的强化），
     ///     它的倍率要贴着参考曲线（±15%），花钱的那部分要在补给营的预算里；
     ///   · 补给营：三家店（1-3 末段、2-4 门外、3-4 门外）的预算 = 上一家店之后挣到的灵石，要够买计划里的强化和一瓶药，又买不下整店的货。
@@ -19,23 +21,38 @@ namespace Spiritfire.Game
     {
         // ───────────── 参考秒伤 ─────────────
 
-        /// <summary>武器秒伤带的中位（D11：Three.js 身体秒伤 60–90，含换弹、不含暴击）</summary>
-        public const float BaseDps = 75f;
-        /// <summary>难度每 +1 的装备成长（品质、强化、秘卷合计）、真正在输出的时间占比（躲招、换弹、换位、转火扣掉）</summary>
-        public const float GearGrowth = 1.15f, Uptime = 0.75f;
-        /// <summary>首领击杀用时（docs/unity-parity.md 7.4）、一张开放大图纯输出的目标带（秒：少于 70 s 整张图打得太薄，多于 150 s 拖沓）</summary>
-        public const float BossMinSeconds = 60f, BossMaxSeconds = 120f, FieldMinSeconds = 70f, FieldMaxSeconds = 150f;
+        /// <summary>
+        /// 主力武器的裸秒伤（普通、身体、含换弹、不含暴击、不含元素克制）：裂风步枪实测 89.4（weapon-dps），首领浸泡用的就是它；
+        /// 18 把的实测裸秒伤中位约 86，Three.js 秒伤带 60–90 的上沿。校准前取带中位 75
+        /// </summary>
+        public const float BaseDps = 90f;
+        /// <summary>难度每 +1 的装备成长（品质、强化、秘卷合计）；真正在输出的时间占比（躲招、换位、转火扣掉，同 <see cref="BossBalance.Uptime"/>，校准前 0.75）</summary>
+        public const float GearGrowth = 1.15f, Uptime = BossBalance.Uptime;
+        /// <summary>
+        /// 武器之外的输出（I3 首领浸泡拟合）：技能、灼烧等持续伤害、英雄被动（浸泡里武器伤害只占 66–82%）× 随机暴击（暴击率 9–13%）。
+        /// 四个首领的实测 ÷（90 × 装备倍率）= 1.58 / 1.82 / 1.51 / 1.57，几何平均 1.61
+        /// </summary>
+        public const float KitMult = 1.6f;
+        /// <summary>
+        /// 首领击杀用时（docs/unity-parity.md 7.4）、一张开放大图纯输出的目标带（秒）。大图的带按 1-1 锚定：1-1 是第一张图、节奏的标杆，
+        /// slice11 实测四处遭遇合计 45 s（5 / 8 / 12 / 20 s），本模型算 1-1 约 48 s；其余大图在 1-1 的 0.75–1.6 倍以内（少于 35 s 打得太薄，多于 75 s 拖沓）。
+        /// 校准前的带是 70–150 s，同样是 1-1 的 0.7–1.5 倍，只是秒伤低估了一半
+        /// </summary>
+        public const float BossMinSeconds = 60f, BossMaxSeconds = 120f, FieldMinSeconds = 35f, FieldMaxSeconds = 75f;
         /// <summary>装备计划贴着参考曲线的容差、首领用时要扛住的秒伤偏差（构筑好坏）</summary>
         public const float GearTolerance = 0.15f, DpsSpread = 0.15f;
 
         /// <summary>某难度下的装备倍率：1 + 1.15 ×（难度 − 1）</summary>
         public static float GearMult(float difficulty) => 1 + GearGrowth * (Mathf.Max(1f, difficulty) - 1);
 
-        /// <summary>某难度下的身体秒伤（装备后、不含暴击）</summary>
+        /// <summary>某难度下主力武器的身体秒伤（装备后、不含暴击、不含技能）</summary>
         public static float BodyDps(float difficulty) => BaseDps * GearMult(difficulty);
 
-        /// <summary>某难度下的参考秒伤（实际打在目标上的平均秒伤）：1-4 约 87、2-4 约 139、3-3 约 180、3-4 约 191</summary>
-        public static float ReferenceDps(float difficulty) => BodyDps(difficulty) * Uptime;
+        /// <summary>某难度下目标可选中、一直在打时的秒伤（武器 + 技能 + 持续伤害 + 被动 + 暴击）：对应首领浸泡的「可选中时秒伤」，1-4 约 223、2-4 约 356、3-3 约 462、3-4 约 488</summary>
+        public static float TargetableDps(float difficulty) => BodyDps(difficulty) * KitMult;
+
+        /// <summary>某难度下的参考秒伤（实际打在目标上的平均秒伤，扣掉躲招换位）：1-4 约 179、2-4 约 285、3-3 约 370、3-4 约 391</summary>
+        public static float ReferenceDps(float difficulty) => TargetableDps(difficulty) * Uptime;
 
         // ───────────── 编制表 ─────────────
 
@@ -329,7 +346,12 @@ namespace Spiritfire.Game
                     }
                     sum += e.Coins * gain;
                 }
-                else if (s.code == camp.after) counting = true;
+                else if (s.code == camp.after)
+                {
+                    counting = true;
+                    // 上一家店在首领门外（2-4）：那一关的首领灵石是逛完店之后才挣的，算进下一家店的预算
+                    if (s.IsBoss) sum += e.bossCoins * gain;
+                }
             }
             return sum;
         }
@@ -441,6 +463,9 @@ namespace Spiritfire.Game
                 float budget = CampBudget(c), shelf = ShelfValue(c);
                 sb.AppendLine($"{c.at} | {budget:0} | {CampPlanned(c)} | {shelf:0} | {budget / shelf:P0}");
             }
+            sb.AppendLine("[Balance] 参考曲线 vs 首领浸泡 | 难度 | 曲线可选中时秒伤 | 浸泡实测 | 曲线 / 实测");
+            foreach (var (stage, d, dps) in BossBalance.Soak)
+                sb.AppendLine($"{stage} | {d:0.00} | {TargetableDps(d):0} | {dps:0} | {TargetableDps(d) / dps:0.00}");
             sb.AppendLine("[Balance] 首领 | 难度 | 参考秒伤 | 击杀用时（秒伤 × 0.85 / 1 / 1.15）");
             foreach (var id in BossIds)
             {
