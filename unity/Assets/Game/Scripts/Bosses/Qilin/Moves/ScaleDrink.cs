@@ -95,7 +95,7 @@ namespace Spiritfire.Game
             Brain.PlayAct("drink", QDef?.drinkSeconds ?? 4f);
             Hazards.Blast(Spot, LandRadius, Dmg(24), new BossBlastOpts { maxHeight = 3f, knockback = 9f, knockUp = 5f });
             Brain.Shake(0.5f, 0.4f);
-            Fx.Burst(Spot + Vector3.up * 0.4f, QilinDef.Ember, 26, 8f, 0.8f, 0.3f, 10f);
+            Fx.QilinStamp(Spot, LandRadius * 0.7f);
             Sfx("boss_slam", 1f, 0.9f);
             SummonTantong();
             if (Qilin && Quadrant >= 0) Qilin.BeginSip(Quadrant);
@@ -154,7 +154,8 @@ namespace Spiritfire.Game
                 q.DrinksFinished++;
                 if (q.Sipping) q.EndSip();
             }
-            Fx.Burst(Brain.BodyCenter, QilinDef.Fire, 40, 9f, 0.9f, 0.4f, 4f);
+            // 鳞甲回满：鳞缝一齐亮起暗金鳞光（同人立顶点的鳞光）
+            Fx.QilinRearPeak(Brain.BodyCenter + Vector3.up, q ? q.HeadPoint + Vector3.up * 0.5f : Brain.BodyCenter + Vector3.up * 3f);
             Sfx("boss_roar", 1f, 0.95f);
             GameUI.Toast("火麒麟饮完熔岩——鳞甲回满，火鬃更旺了", Hex.Rgb(0xff9a4a), 3f);
             EndActive();

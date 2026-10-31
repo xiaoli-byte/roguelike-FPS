@@ -10,6 +10,8 @@ namespace Spiritfire.Game
     ///   吐息 2.6 s：一道窄火（半角 8.6°）从象限一侧匀速扫到另一侧，每 0.15 s 判一次：在火里、口到玩家胸口不被挡 → 9（火）。
     ///   石柱和池中的倒鼎挡得住——躲到它们后面；或者翻过渠躲到隔壁象限。
     /// 落点、扫的方向由 <see cref="Plan"/> 算（纯计算，EditMode 测试守着）。
+    /// Q 路（2026-10-31）：蓄势 1.2 s 是手 K 片段 breath 的吸气段（仰头扩胸，第 36 / 114 帧前探张口 = 开扫），火星往口里吸、口前火苗越聚越大（<see cref="Fx.QilinGather"/>）；
+    /// 开扫那一帧口前白热一闪 + 往前喷一团火（<see cref="Fx.QilinBreathIgnite"/>）。
     /// </summary>
     public sealed class BurnSweep : QilinMove
     {
@@ -164,6 +166,7 @@ namespace Spiritfire.Game
             if (StageT < Tele)
             {
                 TurnToward(Yaw0, 229f, dt);
+                Fx.QilinGather(Qilin ? Qilin.MouthPoint : Brain.BodyCenter + Brain.transform.forward * 2f, 2.6f, StageT / Tele, dt);
                 return;
             }
             if (!firing)
@@ -172,6 +175,7 @@ namespace Spiritfire.Game
                 lastYaw = Yaw0;
                 SetFacing(Yaw0);
                 Sfx("skill_fire", 1f, 0.6f);
+                Fx.QilinBreathIgnite(Qilin ? Qilin.MouthPoint : Brain.BodyCenter + Brain.transform.forward * 2f, Dir(Yaw0));
             }
             float k = Mathf.Clamp01((StageT - Tele) / SweepTime);
             float yaw = Yaw0 + Mathf.DeltaAngle(Yaw0, Yaw1) * k;

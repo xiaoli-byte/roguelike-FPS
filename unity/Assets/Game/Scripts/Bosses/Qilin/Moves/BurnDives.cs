@@ -10,6 +10,9 @@ namespace Spiritfire.Game
     ///   落地收势 0.45 s，然后下一次。
     /// 位移：飞的段落走踏云积分（<see cref="QilinBrain.FlyTo"/>），俯冲一段直接驱动位置（<see cref="QilinBrain.SkyPlace"/>）。
     /// 手感：落点只在起飞那一刻定一次、不追踪；预警圈填满的那一刻正好砸到。
+    /// Q 路（2026-10-31，docs/art/vfx/qilin.md「踏云俯冲」）：蓄势是手 K 片段 tuck（收腿 → 蜷成一团、弓背低头盯着落点、尾巴 S 形卷起），火星往胸口吸（<see cref="Fx.QilinGather"/>）；
+    /// 俯冲是 stomp（反向预备 → 伸展拖影 → 第 12 / 26 帧前蹄砸地），片段按「砸到的时刻 / 0.4615」拉伸，砸地姿势正好落在 0.3 s 的落地帧上；
+    /// 落地是白热芯一闪 + 一圈火云团贴地滚出去（<see cref="Fx.QilinCloudImpact"/>，祥云化火云），装饰性的 8 m 环去掉了（真正要跳的是火环）。
     /// </summary>
     public sealed class BurnDives : QilinMove
     {
@@ -21,6 +24,9 @@ namespace Spiritfire.Game
         public const float Lead = 0.5f, Radius = 4.2f, RingSpeed = 13f, RingRadius = 15f, BlastDamage = 30f, RingDamage = 16f;
 
         public enum Leg { Rise, Tele, Dive, Recover, Done }
+
+        /// <summary>stomp 片段里砸地那一帧的归一化时刻（qilin_anims.py：第 12 / 26 帧）</summary>
+        public const float StompHitAt = 12f / 26f;
 
         public override string Id => MoveId;
         public override string Name => "踏云俯冲";
@@ -122,7 +128,7 @@ namespace Spiritfire.Game
                     legT = 0;
                     if (q) q.Brake();
                     WarnCircle(Target, Radius, TeleTime);
-                    Brain.PlayAct("tuck", TeleTime);
+                    Brain.PlayAct("tuck", TeleTime, 0.08f);
                     Sfx("telegraph", 1f, 1f);
                     break;
                 }
@@ -134,13 +140,14 @@ namespace Spiritfire.Game
                         q.SkyTarget = QilinBrain.HighAlt;
                     }
                     TurnToward(YawToPlayer, 170f, dt);
+                    Fx.QilinGather(q ? q.ChestPoint : Brain.BodyCenter, 3.5f, Mathf.Clamp01(legT / TeleTime), dt);
                     if (legT < TeleTime) break;
                     Phase = Leg.Dive;
                     legT = 0;
                     diveFrom = Brain.transform.position;
                     // 俯冲拖一道火尾
                     Surge.Trail(Brain.Model?.root ? Brain.Model.root.transform : Brain.transform, Vector3.up * 1.2f, 1.1f, 8f, SurgeKind.Fire, DiveTime + 0.1f);
-                    Brain.PlayAct("stomp", DiveTime + 0.35f);
+                    Brain.PlayAct("stomp", DiveTime / StompHitAt, 0.04f);
                     Sfx("boss_roar", 0.8f, 1.4f);
                     break;
                 case Leg.Dive:
@@ -189,7 +196,7 @@ namespace Spiritfire.Game
                 startRadius = 2f, width = 1f, height = 0.85f, knockback = 6f, element = Element.Fire, dust = true, dustColor = QilinDef.Ember, spare = hit,
             });
             Fx.Explosion(a + Vector3.up * 0.6f, 4f, QilinDef.Fire);
-            Fx.Ring(a + Vector3.up * 0.1f, 8f, QilinDef.Warn, 0.7f);
+            Fx.QilinCloudImpact(a, Radius, RingRadius, (RingRadius - 2f) / RingSpeed);
             // 踏云火环：一圈贴地往外推的火墙（整圈弧幕，和火环冲击波同速）+ 落点熔浆四溅、一圈残火
             Surge.Sheet(a, 0, 2f, 360f, 1.5f, SurgeKind.Fire, 0.08f, Mathf.Max(0.05f, (RingRadius - 2f) / RingSpeed - 0.3f), 0.25f, null, null, 2.6f, 0.9f,
                 grow: RingRadius / 2f);

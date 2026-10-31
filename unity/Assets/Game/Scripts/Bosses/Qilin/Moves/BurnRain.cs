@@ -106,14 +106,15 @@ namespace Spiritfire.Game
 
         protected override void OnActiveBegin() => FireRain();
 
-        /// <summary>火云：殿顶上一层翻滚的暗红火云（平放圆盘的熔浆体积，暗壳 + 发光的火纹），火球从里面落下来</summary>
+        /// <summary>
+        /// 火云：殿顶一圈环形的暗紫褐火云带 + 下面挂着的大火云团（<see cref="Fx.QilinFireClouds"/>）。Q 路：原来是两张整片旋转的圆盘，第一人称一抬头整屏都是橙色的星形火盘、
+        /// 落下来的火球反而看不见；改成中间空着的环带，火球从云带内沿落下来
+        /// </summary>
         void Cloud(float seconds)
         {
             var f = Furnace;
-            var c = (f ? f.Center : OnFloor(Brain.transform.position)) + Vector3.up * 20f;
-            float r = f ? f.wallRadius * 0.85f : 16f;
-            Surge.Disk(c, r, SurgeKind.Molten, seconds, 14f, 0.25f, 1f, new Color(0.12f, 0.04f, 0.03f), new Color(1.6f, 0.45f, 0.08f), 0.85f);
-            Surge.Disk(c - Vector3.up * 1.2f, r * 0.7f, SurgeKind.Fire, seconds, -24f, -0.4f, 1f, null, null, 0.5f);
+            var c = f ? f.Center : OnFloor(Brain.transform.position);
+            Fx.QilinFireClouds(c, f ? f.wallRadius : 18f, seconds);
         }
 
         protected override void OnActive(float dt)

@@ -12,6 +12,9 @@ namespace Spiritfire.Game
     /// 位移全程走脚本位移（BeginDash：跨过齐地的熔岩渠、撞墙就停），收招交还导航。
     /// 撞墙判定从头的前沿往前扫（<see cref="WallAhead"/>）：麒麟身子长，只从角色胶囊中心探的话头会先扎进柱子 / 墙里；奔驰中碰到石柱顺着柱面滑过去。
     /// 吊着 / 斜挂的巨鼎没有碰撞体，冲撞线穿过它时在头碰上鼎之前刹住（<see cref="ClearOfCauldron"/>），预警线也画到那里为止。
+    /// Q 路（2026-10-31，docs/art/vfx/qilin.md「踏火奔驰 · 冲撞」）：刨蹄是手 K 片段 paw（重心后坐、低头亮角、右前蹄刨两下、臀部下蹲蓄力），
+    /// 每一刨由动画事件 fx:qPaw 甩出暗金火星和玄武岩尘；冲出去那一帧后蹄蹬出尘环（<see cref="Fx.QilinChargeLaunch"/>），冲撞全程身后拖一道火尾；
+    /// 撞柱是玄铁鳞屑 + 金色眩晕星（<see cref="Fx.QilinCrash"/>）。
     /// </summary>
     public sealed class ScaleGallop : QilinMove
     {
@@ -122,8 +125,12 @@ namespace Spiritfire.Game
                         // 重新起一段脚本位移：清掉奔驰时的撞墙标记，冲撞只认这一程撞没撞上
                         float speed0 = QDef?.chargeSpeed ?? 30f;
                         Brain.BeginDash(chargeDir * speed0, 30f);
-                        Brain.PlayAct("Locomotion");
+                        Brain.PlayAct("Locomotion", 0, 0.05f);
                         Sfx("boss_roar", 0.9f, 1.3f);
+                        // 后蹄一蹬：尘环 + 身后两团尘云；冲撞全程身后拖一道火尾（踏火）
+                        Fx.QilinChargeLaunch(OnFloor(p), chargeDir);
+                        var body = Brain.Model?.root ? Brain.Model.root.transform : Brain.transform;
+                        Surge.Trail(body, Vector3.up * 2.4f, 0.9f, 7f, SurgeKind.Fire, Mathf.Min(2.4f, ChargeLength / Mathf.Max(1f, speed0)) + 0.1f, null, null, 0.75f);
                     }
                     break;
                 case Leg.Charge:
@@ -152,7 +159,7 @@ namespace Spiritfire.Game
                         Crashes++;
                         Brain.PlayAct("stun", 1.6f);
                         var h = Qilin ? Qilin.HeadPoint : Brain.BodyCenter;
-                        Fx.Burst(h, Hex.Rgb(0x4a4040), 30, 8f, 1f, 0.4f, 14f);
+                        Fx.QilinCrash(h);
                         Brain.Shake(0.6f, 0.4f);
                         Sfx("boss_slam", 1f, 0.9f);
                         Qilin?.Tell("crash", "火麒麟一头撞上石柱，晕了——快打角根的火珠！", Hex.Rgb(0xffe08a));
@@ -245,7 +252,7 @@ namespace Spiritfire.Game
             Brain.SetDashVelocity(Vector3.zero);
             var from = OnFloor(p);
             line = WarnLine(from, from + chargeDir * ChargeLength, 4f, 1f);
-            Brain.PlayAct("paw", 1f);
+            Brain.PlayAct("paw", 1f, 0.08f);
             Sfx("telegraph");
             Qilin?.Tell("charge", "地上亮线——火麒麟要横穿象限冲撞，侧移躲开！");
         }
@@ -289,7 +296,7 @@ namespace Spiritfire.Game
             var at = Qilin.HoofPoint(printSide++);
             Qilin.DropPrint(at);
             Prints++;
-            if (printSide % 2 == 1) Fx.Burst(at + Vector3.up * 0.2f, QilinDef.Ember, 4, 3f, 0.4f, 0.15f, 6f);
+            if (printSide % 2 == 1) Fx.Burst(at + Vector3.up * 0.2f, QilinPalette.Gold, 3, 3f, 0.4f, 0.14f, 6f);
         }
 
         /// <summary>奔驰时撞到跑道上的玩家：24 + 往外掀开，1 s 一次</summary>

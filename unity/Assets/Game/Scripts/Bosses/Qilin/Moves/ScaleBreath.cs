@@ -7,6 +7,8 @@ namespace Spiritfire.Game
     ///   前摇 0.8 s：转向玩家、张口，面前扇形预警（半角 24°、14 m）；
     ///   出手 1.6 s：短距离吐火，口部朝玩家慢慢转（28.6°/s），每 0.15 s 判一次：在扇形里、口到玩家胸口不被挡（石柱挡得住）→ 6（火）。
     /// 焚身的吐息是另一招（<see cref="BurnSweep"/>：落到熔池对岸扫一个象限）。
+    /// Q 路（2026-10-31）：手 K 片段 breath（吸气仰头扩胸 → 预警倒计时最后两帧蓄满 → 前探张口），前摇里火星往口里吸、口前一团越来越大的火苗（<see cref="Fx.QilinGather"/>），
+    /// 出手第一帧口前白热一闪（<see cref="Fx.QilinBreathIgnite"/>，和片段的 breathStart 同一帧）。
     /// </summary>
     public class ScaleBreath : QilinMove
     {
@@ -58,9 +60,18 @@ namespace Spiritfire.Game
             Sfx("enemy_charge", 0.9f, 0.6f);
         }
 
-        protected override void OnWindup(float dt) => Brain.Halt();
+        protected override void OnWindup(float dt)
+        {
+            Brain.Halt();
+            var mouth = Qilin ? Qilin.MouthPoint : Brain.BodyCenter + Brain.transform.forward * 2f;
+            Fx.QilinGather(mouth, 2.2f, Mathf.Clamp01(StageT / Mathf.Max(0.05f, WindupTime)), dt);
+        }
 
-        protected override void OnActiveBegin() => Sfx("skill_fire", 0.9f, 0.7f);
+        protected override void OnActiveBegin()
+        {
+            Sfx("skill_fire", 0.9f, 0.7f);
+            Fx.QilinBreathIgnite(Qilin ? Qilin.MouthPoint : Brain.BodyCenter + Brain.transform.forward * 2f, Dir(yaw));
+        }
 
         protected override void OnActive(float dt)
         {

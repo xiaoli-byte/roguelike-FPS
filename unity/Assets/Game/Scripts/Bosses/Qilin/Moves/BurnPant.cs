@@ -7,6 +7,7 @@ namespace Spiritfire.Game
     ///   降落 0.8 s：落点 = 脚下最近的能站的地面（人形导航网格、非熔岩区，涨着的熔流已从网格上挖掉；不落进熔池 / 倒鼎、不压石柱），亮 5 m 预警圈；
     ///   落地：5 m 内 16 + 掀开；喘 3.5 s——胸口火心大亮（光晕 + 点光），角根火珠也亮，贴着地面最好打；
     ///   起飞前 0.8 s 脚下亮 6 m 预警圈（TS 0.5 s，这里放宽一点，贴脸输出的人来得及退）→ 起飞：6 m 内 12（火）+ 击退，回到 4.5 m 踏云。
+    /// Q 路（2026-10-31）：降落用手 K 的 stomp，按「降落时长 / 砸地时刻」拉伸，前蹄砸地的姿势落在落地那一帧；落地、起飞都是一圈火云团（<see cref="Fx.QilinCloudImpact"/>）。
     /// </summary>
     public sealed class BurnPant : QilinMove
     {
@@ -47,7 +48,7 @@ namespace Spiritfire.Game
         protected override void OnTelegraph()
         {
             WarnCircle(Spot, LandRadius, WindupTime);
-            Brain.PlayAct("stomp", WindupTime + 0.2f);
+            Brain.PlayAct("stomp", WindupTime / BurnDives.StompHitAt, 0.08f);
         }
 
         protected override void OnWindup(float dt)
@@ -73,7 +74,7 @@ namespace Spiritfire.Game
             Landed++;
             Brain.PlayAct("pant", active);
             Hazards.Blast(Spot, LandRadius, Dmg(LandDamage), new BossBlastOpts { maxHeight = 3f, knockback = 8f, knockUp = 4f });
-            Fx.Burst(Spot + Vector3.up * 0.3f, QilinDef.Ember, 26, 8f, 0.8f, 0.3f, 10f);
+            Fx.QilinCloudImpact(Spot, LandRadius * 0.7f, LandRadius * 1.6f, 0.6f);
             Brain.Shake(0.45f, 0.35f);
             Sfx("boss_slam", 1f, 1.1f);
             Qilin?.Tell("pant", "焚身落地喘息——胸口火心大亮，现在是输出时机！", Hex.Rgb(0xffe08a));
@@ -105,8 +106,7 @@ namespace Spiritfire.Game
             Takeoffs++;
             Brain.PlayAct("tuck", recover);
             Hazards.Blast(feet, TakeoffRadius, Dmg(TakeoffDamage), new BossBlastOpts { maxHeight = 4f, knockback = 12f, knockUp = 5f, element = Element.Fire });
-            Fx.Ring(feet + Vector3.up * 0.1f, 7f, QilinDef.Warn, 0.6f);
-            Fx.Burst(feet + Vector3.up * 0.5f, QilinDef.Fire, 30, 9f, 0.7f, 0.35f, 2f);
+            Fx.QilinCloudImpact(feet, TakeoffRadius * 0.5f, TakeoffRadius * 1.3f, 0.5f);
             Sfx("boss_roar", 0.8f, 1.3f);
         }
 

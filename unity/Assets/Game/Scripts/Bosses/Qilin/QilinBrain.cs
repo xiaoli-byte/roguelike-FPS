@@ -22,7 +22,9 @@ namespace Spiritfire.Game
     ///     俯冲落地 / 喘息降落这类直接驱动位置的段落用 <see cref="SkyPlace"/>。
     ///   · 熔流轮转（<see cref="QilinFlood"/>）由这里推进；狂怒（15%）时排上 <see cref="BurnRage"/>（长啸、火浪、熔流重开且更快）。
     ///   · 胸口火心：焚身胸前一团光晕 + 点光，喘息时大亮（<see cref="HeartBright"/>，二阶段主要的输出窗口）。
-    ///   · 倒下时还在空中就落到地上（溃散演出在地面炸）。
+    ///   · 倒下时还在空中就落到地上（溃散演出在地面炸）；溃散之后「净火归瑞」：淡金光点和暖白祥云从身上升起（<see cref="Fx.QilinPurify"/>）。
+    ///   · Q 路特效（2026-10-31，docs/art/vfx/qilin.md）：张鳞的鳞冠（<see cref="Crown"/>）、动画事件 fx:q* 的姿势节拍（<see cref="OnAnimEvent"/>）、
+    ///     鳞甲崩裂时全身一闪一闪的金色裂光、焚身蹄下的火云团。
     /// 动作：E5 的 AC_SK_Boss_Qilin(Burn) 按状态名交叉淡入、拉伸到实际时长（框架 PlayAct；缺状态只警告一次，代理 / 占位体照常出招）。
     /// </summary>
     public class QilinBrain : BossBrain
@@ -93,6 +95,13 @@ namespace Spiritfire.Game
         Transform heartFx;
         Light heartLight;
         Renderer heartSprite;
+        QilinScaleCrown crown;
+        Transform pearl;
+        float glintAcc;
+        int glintNext;
+
+        /// <summary>张鳞的鳞冠（第一次用时建，跟着首领销毁）</summary>
+        public QilinScaleCrown Crown => crown ? crown : crown = QilinScaleCrown.Create(transform.parent);
 
         static readonly string[] CrackZones = { "head", "neck", "chest", "back", "hips" };
         static readonly string[] HoofBones = { "fhoof_L", "hhoof_R", "fhoof_R", "hhoof_L" };
@@ -170,6 +179,7 @@ namespace Spiritfire.Game
             if (Effects) Destroy(Effects.gameObject);
             Flood?.Dispose();
             if (heartFx) Destroy(heartFx.gameObject);
+            if (crown) Destroy(crown.gameObject);
         }
 
         /// <summary>当前模型的骨骼：四蹄（蹄印）、下颌（吐息）、头、胸、臀（冲撞判定）。代理 / 占位体找不到时为 null，招式退回按身体估算</summary>
@@ -177,6 +187,7 @@ namespace Spiritfire.Game
         {
             for (int i = 0; i < 4; i++) hooves[i] = Model?.FindBone(HoofBones[i]);
             jaw = Model?.FindBone("jaw");
+            pearl = Model?.FindBone("pearl");
             head = Model?.FindBone("head");
             chest = Model?.FindBone("chest");
             hips = Model?.FindBone("hips");
@@ -399,8 +410,7 @@ namespace Spiritfire.Game
             CauldronHits++;
             hp.armor = 0;
             var h = HeadPoint;
-            Fx.Burst(h, QilinDef.ScaleDark, 40, 10f, 1.2f, 0.35f, 16f);
-            Fx.Burst(h, QilinDef.Hot, 30, 9f, 0.8f, 0.3f, 6f);
+            Fx.QilinScaleShatter(Vector3.Lerp(h, BodyCenter + Vector3.up, 0.5f), 1f);
             GameAudio.PlayAt("shield_break", h, 1f, 0.6f);
             PlaySfx("boss_roar", 1f, 0.65f);
             GameUI.Toast("巨鼎砸中火麒麟！鳞甲崩裂——全身都是弱点、伤害翻倍，4 秒！", Hex.Rgb(0xffe08a), 3.5f);
@@ -454,6 +464,7 @@ namespace Spiritfire.Game
             {
                 CrackLeft -= dt;
                 if (CrackLeft <= 0) EndCrack();
+                else CrackGlints(dt);
             }
             // 火珠：平时微光；人立、被砸晕、鳞甲崩裂、喘息时大亮
             bool bright = Staggered || Cracked || HeartBright || (Current is ScaleBlades && Current.Stage == MoveStage.Windup);
@@ -689,19 +700,59 @@ namespace Spiritfire.Game
             return feet;
         }
 
-        /// <summary>焚身在空中时蹄下冒火云</summary>
+        /// <summary>焚身在空中时蹄下冒火云（祥云化火云：紫褐云团 + 一缕火苗，每 0.11 s 两只蹄子轮流）</summary>
         void HoofClouds(float dt)
         {
             if (!Airborne) return;
             cloudAcc += dt;
-            if (cloudAcc < 0.08f) return;
+            if (cloudAcc < 0.11f) return;
             cloudAcc = 0;
-            for (int i = 0; i < 4; i++)
+            for (int k = 0; k < 2; k++)
             {
-                if (Random.value < 0.4f) continue;
-                var h = hooves[i];
-                var at = h ? h.position : transform.position + Vector3.up * 0.4f;
-                Fx.Burst(at, Random.value < 0.35f ? QilinDef.Hot : QilinDef.Fire, 2, 1.2f, 0.55f, 0.35f + Random.value * 0.3f, 1.2f);
+                var h = hooves[(glintNext++) & 3];
+                Fx.QilinHoofCloud(h ? h.position : transform.position + Vector3.up * 0.4f);
+            }
+        }
+
+        /// <summary>鳞甲崩裂期间：五个受击球的骨骼上轮流闪金色裂光（读作「全身都是弱点」），每 0.07 s 一颗</summary>
+        void CrackGlints(float dt)
+        {
+            glintAcc += dt;
+            if (glintAcc < 0.07f) return;
+            glintAcc = 0;
+            var bone = (glintNext++ % 5) switch
+            {
+                0 => head,
+                1 => chest,
+                2 => hips,
+                3 => Model?.FindBone("neck_1"),
+                _ => Model?.FindBone("spine"),
+            };
+            var at = bone ? bone.position : BodyCenter;
+            Fx.QilinCrackGlint(at + Random.insideUnitSphere * 0.7f);
+        }
+
+        /// <summary>
+        /// 动画事件的姿势节拍（只管外观；出手由招式的 Cue 接住）：fx:qRearPeak 人立顶点鳞光、fx:qPaw 刨蹄火星、fx:qCoil 蜷身聚火；
+        /// 登场里 rear 的 hit（落地长啸后前蹄砸地）补一下砸地尘
+        /// </summary>
+        protected override void OnAnimEvent(string evt)
+        {
+            switch (evt)
+            {
+                case "fx:qRearPeak":
+                    Fx.QilinRearPeak(ChestPoint, pearl ? pearl.position : HeadPoint + Vector3.up * 0.5f);
+                    break;
+                case "fx:qPaw":
+                    Fx.QilinPaw(HoofPoint(2), -transform.forward);
+                    break;
+                case "fx:qCoil":
+                    Fx.QilinCoil(ChestPoint);
+                    break;
+                case "hit" when !IntroDone:
+                    Fx.QilinStamp(OnFloor(transform.position) + transform.forward * 1.6f, 2.6f);
+                    Shake(0.4f, 0.3f);
+                    break;
             }
         }
 
@@ -945,9 +996,8 @@ namespace Spiritfire.Game
             ApplyOffset(p - transform.position);
             if (Crossed(2.4f))
             {
-                // 玄铁鳞片炸飞
-                Fx.Burst(p + Vector3.up * 2f, QilinDef.ScaleDark, 60, 14f, 1.4f, 0.4f, 14f);
-                Fx.Burst(p + Vector3.up * 2f, QilinDef.Hot, 40, 10f, 1f, 0.35f, 4f);
+                // 玄铁鳞片炸飞（鳞甲崩裂的大号版）
+                Fx.QilinScaleShatter(p + Vector3.up * 2f, 1.8f);
                 Shake(0.6f, 0.8f);
             }
             if (Crossed(3.6f)) PlayAct("leap", 1f);
@@ -1085,7 +1135,9 @@ namespace Spiritfire.Game
                     var f = Furnace;
                     if (f) Fx.LavaSpout(f.Center, Mathf.Max(1.2f, f.poolRadius * 0.25f), 8f, 0.4f);
                     Fx.MoltenBurst(OnFloor(transform.position) + Vector3.up * 0.3f, 3f, false);
-                });
+                })
+                // 净火归瑞：火熄之后淡金光点、暖白祥云从身上升起——仁兽被地火所染，倒下即归正（设计单「倒下」）
+                .At(secs * 0.97f, () => Fx.QilinPurify(OnFloor(transform.position) + Vector3.up * 2.2f, 3.2f));
         }
 
         /// <summary>倒下时从半空落到地上（0.55 s 加速下落，落地震一下）</summary>

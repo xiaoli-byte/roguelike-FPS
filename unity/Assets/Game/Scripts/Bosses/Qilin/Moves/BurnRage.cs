@@ -7,6 +7,7 @@ namespace Spiritfire.Game
     ///   飞到熔池上空靠玩家一侧 7.5 m 高人立长啸 1.3 s（池边亮一圈预警环、熔岩柱涌起）→ 熔岩柱冲天，一圈火浪从池边扫到殿墙（14 m/s，14（火）+ 击退，跳起来躲）；
     ///   熔流从玩家所在的象限重新开闸，之后按狂怒的数值轮（涨 4 s、隔 0.3 s）。
     /// 狂怒本身（框架）：喘息 × 0.72（连同焚身的 0.9 ≈ TS 的 0.65）、前摇 × 0.85、伤害 × 1.15；俯冲蓄势 0.7 s、火云雨 14 颗。
+    /// Q 路（2026-10-31）：长啸用手 K 片段 rear（焚身幅度更大），按前摇时长拉伸，最后一帧前蹄踏下 = 火浪放出（rear 的 hit 事件，<see cref="BossMove.Cue"/> 接住）。
     /// </summary>
     public sealed class BurnRage : QilinMove
     {
@@ -46,11 +47,14 @@ namespace Spiritfire.Game
             float r0 = f ? f.poolRadius : 4f;
             Hazards.AnnulusWarning(c, r0, r0 + 1.6f, WindupTime, QilinDef.Warn);
             CountWarning();
-            Brain.PlayAct("rear", WindupTime + 0.2f);
+            Brain.PlayAct("rear", WindupTime, 0.08f);
             Sfx("boss_roar", 1f, 0.75f);
             Brain.Shake(0.5f, WindupTime);
             Qilin?.Tell("rage", "焚身狂怒——火浪要从熔池扫过整座殿，跳起来躲！熔流轮转也更快了", Hex.Rgb(0xff7a4a));
         }
+
+        /// <summary>火浪放出：rear 片段踏下那一帧的 hit 事件，没有片段按前摇时长</summary>
+        protected override bool WindupDone => Cue("hit", WindupTime);
 
         protected override void OnWindup(float dt)
         {

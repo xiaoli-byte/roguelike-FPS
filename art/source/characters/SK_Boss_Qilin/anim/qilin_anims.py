@@ -168,7 +168,7 @@ CLIPS = {
     # 冲撞前刨蹄（1.0 s）：重心后坐、低头亮角 → 右前蹄刨两下 → 蓄力压低（臀部下蹲、头和角对准玩家）→ 冲出去
     "paw": {"frames": 30, "keys": [(0, BASE), (5, WEIGHT_BACK), (9, PAW_UP), (13, PAW_SCRAPE), (17, PAW_UP), (21, PAW_SCRAPE), (25, LOAD),
                                    (30, LOAD_HOLD)],
-            "events": [(13, "fx:qPaw"), (21, "fx:qPaw"), (29, "hit")]},
+            "events": [(13, "fx:qPaw"), (21, "fx:qPaw"), (29.7, "hit")]},
     # 俯冲蓄势（0.9 s，狂怒 0.7 s）：收腿 → 蜷成一团、弓背、低头盯着落点、尾巴 S 形卷起 → 顶点微缩
     "tuck": {"frames": 27, "keys": [(0, P(plant=None)), (6, GATHER), (16, COIL), (22, COIL_HOLD), (27, COIL)],
              "events": [(16, "fx:qCoil")]},
@@ -317,7 +317,8 @@ def write_events(path: Path):
         evs = clips[name]
         if isinstance(evs, list):
             body = ",\n".join("      " + json.dumps(e, ensure_ascii=False).replace("{", "{ ").replace("}", " }").replace('":', '":') for e in evs)
-            lines.append(f'    {json.dumps(name)}: [\n{body}\n    ]' + ("," if i < len(names) - 1 else ""))
+            arr = f'[\n{body}\n    ]' if evs else "[\n    ]"
+            lines.append(f'    {json.dumps(name)}: {arr}' + ("," if i < len(names) - 1 else ""))
         else:
             lines.append(f'    {json.dumps(name)}: {json.dumps(evs, ensure_ascii=False)}' + ("," if i < len(names) - 1 else ""))
     lines += ["  }", "}"]
