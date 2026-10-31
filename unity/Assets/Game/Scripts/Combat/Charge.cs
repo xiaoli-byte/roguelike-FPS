@@ -415,7 +415,7 @@ namespace Spiritfire.Game
             Lightning.Chain(chain, Mathf.Min(n, 3), ArcColor, 0.035f);
         }
 
-        /// <summary>传电的电弧（紫红，两点闪电）</summary>
-        internal static void ArcFx(Vector3 from, Vector3 to) => Lightning.Spawn(from, to, ArcColor, 0.05f);
+        /// <summary>传电的电弧：第四章的三层雷刃（靛紫暗衬 / 紫红身 / 粉白芯，E 路 <see cref="Fx.PlateauBolt"/>），和电网、比翼电弧同一种形</summary>
+        internal static void ArcFx(Vector3 from, Vector3 to) => Fx.PlateauBolt(from, to, 0.05f, 0.2f, 1);
     }
 }

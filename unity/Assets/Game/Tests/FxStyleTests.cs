@@ -14,7 +14,9 @@ namespace Spiritfire.Game.Tests
         {
             var sand = Hex.Rgb(0xc4a27a);
             Assert.That(FxTone.Ground(sand, 1), Is.EqualTo(sand), "第一章（沙寺）原样用定义里的暖沙色");
-            Assert.That(FxTone.Ground(sand, 4), Is.EqualTo(sand), "没有专门调色的章节按第一章");
+            Assert.That(FxTone.Ground(sand, 5), Is.EqualTo(sand), "没有专门调色的章节按第一章");
+            var plateau = FxTone.Ground(sand, 4);
+            Assert.That(Mathf.Abs(plateau.r - plateau.g), Is.LessThan(Mathf.Abs(sand.r - sand.g)), "雪域的尘是灰褐，比沙寺的暖沙色灰");
             var frost = FxTone.Ground(sand, 2);
             Assert.That(frost.b, Is.GreaterThan(frost.r), "霜山的烟尘偏冷（蓝 > 红）");
             Assert.That(Mathf.Max(frost.r, frost.g, frost.b), Is.LessThan(0.98f), "雪雾偏冷白，但不到纯白");

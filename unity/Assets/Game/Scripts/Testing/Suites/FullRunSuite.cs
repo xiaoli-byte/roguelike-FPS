@@ -23,6 +23,8 @@ namespace Spiritfire.Game.Testing
     /// 测试加速（见 <see cref="RunBot"/>）：玩家对小怪伤害 × 6（RunBot.DamageMult）、对首领 × 1 不加速（RunBot.BossDamageMult：阶段转换 / 不可选中窗口 / 招式按真实血量走完）、游戏时间 × 4、登场演出关掉、致命一击拦下回满（记「倒下」）、备弹补满、
     ///   场地 60 / 首领 150 游戏秒没打完补刀（记一条）、场地之间传送（路径完整性照算照记；走路可达性由各图 map-* 套件验）。
     /// 全程用调试档（SaveService.ForceDev），不碰正式存档；试玩开关强制关（完整版 12 关）。
+    /// 第四章（雪域天路）的整局自动通关是第二期（docs/unity-ch4-port.md 第 3 节「扩展 FullRunSuite」）：在那之前这里把路线限在前三章
+    /// （<see cref="RunPlan.SceneReady"/> 只认前三章的场景），3-4 火麒麟倒下照旧是胜利结算——第四章的场景已经生成也不往下走。
     ///
     /// 一次试玩超过 600 s 的上限时按章分段跑（<see cref="FullRunCh1Suite"/> → <see cref="FullRunCh2Suite"/> → <see cref="FullRunCh3Suite"/>）：
     ///   第一段从主菜单选英雄出征，打完 1-4 继续进到 2-1 就绪，把 2-1 的进关快照和前面各关成绩写进接力档（<see cref="RunRelay"/>）；
@@ -55,6 +57,8 @@ namespace Spiritfire.Game.Testing
             string demo = RunPlan.DemoEnd;
             SaveService.ForceDev = true;
             RunPlan.DemoEnd = null;
+            var ready = RunPlan.SceneReady;
+            RunPlan.SceneReady = s => s.chapter <= 3 && SceneFlow.CanLoad(s);
             started = Time.realtimeSinceStartup;
             bot = new RunBot(Runner, Line, Fail, (c, n) => Shot(c, n));
             try
@@ -66,6 +70,7 @@ namespace Spiritfire.Game.Testing
                 bot.Uninstall();
                 SaveService.ForceDev = forceDev;
                 RunPlan.DemoEnd = demo;
+                RunPlan.SceneReady = ready;
             }
         }
 

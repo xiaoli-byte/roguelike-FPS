@@ -112,7 +112,7 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(stages.Sum(e => e.essence), rows.Sum(r => r.essence), 0.5f, "整局魂晶 = 逐关估算之和");
             foreach (var r in rows)
                 if (ChapterRosterReady(r.chapter))
-                    Assert.Greater(r.kills, 100, $"第 {r.chapter + 1} 章击杀数按实际编制（三张大图 35–52 只 + 首领场；第四章两张大图）");
+                    Assert.Greater(r.kills, 30 * r.fieldStages + 9, $"第 {r.chapter + 1} 章击杀数按实际编制（每张大图 35–52 只 + 首领场；第四章第一期两张大图）");
             TestContext.WriteLine(EconomyConfig.FormatProjection(rows, EconomyConfig.ProjectionInputs.Default));
         }
 
@@ -256,8 +256,10 @@ namespace Spiritfire.Game.Tests
             string report = BalanceModel.Report();
             TestContext.WriteLine(report);
             Debug.Log(report);
-            Assert.That(win, Is.InRange(1000f, 1400f), "通关一局的魂晶");
-            Assert.That(BalanceModel.TalentTotal / win, Is.InRange(7f, 12f), "约十次通关升满全部天赋");
+            // 通关魂晶按这一局会走的关（RunPlan.Playable）算：前三章 12 关时 1000–1400；第四章建好几关就多几关，按每关平均核对
+            int route = RunPlan.Playable.Count;
+            Assert.That(win / route, Is.InRange(1000f / 12, 1400f / 12), $"通关一局的魂晶（{route} 关，合计 {win:0}）");
+            Assert.That(BalanceModel.TalentTotal / win, Is.InRange(6f, 12f), "约十次通关升满全部天赋（四章整局约七次）");
             Assert.GreaterOrEqual(die14, TalentDef.Costs[0] * 3, "第一局死在旱魃也能点三个一级天赋");
             Assert.Greater(BalanceModel.RunEssence("2-4"), die14);
         }

@@ -344,12 +344,11 @@ namespace Spiritfire.Game.Tests
             var def = new EnemyDef();
             Assert.AreEqual(0f, def.poise);
             Assert.AreEqual(0f, def.hitch);
+            // 第四章的雷魅：出现在第四章编制里的 + 游猎的穷奇（E 路登记，韧性由它们定）
+            var ch4 = new HashSet<string>(BalanceModel.Stages.Where(l => RunPlan.Get(l.code)?.chapter == 4).SelectMany(l => l.squads).Select(q => q.enemy)) { "qiongqi" };
             foreach (var d in EnemyRoster.All)
             {
-                if (d == null || d.ai == null || d.ai.Namespace != typeof(EnemyAI).Namespace) continue;
-                bool ch4 = d.ai.FullName != null && d.ai.FullName.Contains("Plateau");
-                if (ch4) continue;
-                if (CodexCatalog.Lore.Chapter(CodexCatalog.EnemyId(d.id)) == 4) continue;
+                if (d == null || ch4.Contains(d.id)) continue;
                 Assert.AreEqual(0f, d.poise, $"{d.id}：前三章的敌人不用韧性（行为不变）");
                 Assert.AreEqual(0f, d.hitch, d.id);
             }
