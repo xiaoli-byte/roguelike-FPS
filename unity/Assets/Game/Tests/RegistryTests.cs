@@ -16,7 +16,7 @@ namespace Spiritfire.Game.Tests
         static readonly Dictionary<Type, int> Expected = new()
         {
             [typeof(WeaponDef)] = 18, // 原 6 + WC1/WC2 6 + WC3/WC4 5 + 碎刃（= TS 18）
-            [typeof(EnemyDef)] = 31, // 第一章 7 + 沙魇（EN1）+ 冰 11 + 火 12（含炭童复燃 / 余烬两条变体）
+            [typeof(EnemyDef)] = 40, // 分章见 EnemiesPerChapter：第一章 8 + 第二章 11 + 第三章 12 + 第四章 9
             [typeof(ScrollDef)] = 119, // 16 + S1 攻击 18 + S2 元素 10 + S3/S4 功能 · 传说 · 英雄 31 + S5 反应 24 + S6 战术 20（TS 118 + 破绽）
             [typeof(HeroDef)] = 3,
         };
@@ -42,6 +42,32 @@ namespace Spiritfire.Game.Tests
         {
             var all = All(kind);
             Assert.AreEqual(Expected[kind], all.Count, $"{kind.Name} 注册了 {all.Count} 条：{string.Join("、", all.Select(d => d.Id))}");
+        }
+
+        /// <summary>
+        /// 敌人分章核对（[Defs] 序号：第一章 100 起、第二章 200 起、第三章 300 起、第四章 400 起）：
+        /// 第一章 7 + 沙魇（EN1）、冰 11、火 12（含炭童复燃 / 余烬两条变体）、第四章雷魅 8 + 雷牦。加一章的敌人只改这一章的数
+        /// </summary>
+        static readonly Dictionary<int, int> EnemiesPerChapter = new() { [1] = 8, [2] = 11, [3] = 12, [4] = 9 };
+
+        [Test]
+        public void EnemiesPerChapterMatch()
+        {
+            var got = new Dictionary<int, List<string>>();
+            foreach (var (type, order) in DefsScanner.Types)
+            {
+                if (!typeof(IDefSource<EnemyDef>).IsAssignableFrom(type) || type.IsAbstract) continue;
+                var src = (IDefSource<EnemyDef>)Activator.CreateInstance(type);
+                int ch = order / 100;
+                if (!got.TryGetValue(ch, out var list)) got[ch] = list = new List<string>();
+                list.AddRange(src.Create().Select(d => d.id));
+            }
+            foreach (var (ch, n) in EnemiesPerChapter)
+            {
+                var ids = got.TryGetValue(ch, out var l) ? l : new List<string>();
+                Assert.AreEqual(n, ids.Count, $"第{ch}章敌人注册了 {ids.Count} 条：{string.Join("、", ids)}");
+            }
+            Assert.AreEqual(EnemiesPerChapter.Values.Sum(), Registry<EnemyDef>.All.Count, "敌人总数和分章之和对不上（有序号不在 100–499 的定义？）");
         }
 
         [TestCaseSource(nameof(Kinds))]
