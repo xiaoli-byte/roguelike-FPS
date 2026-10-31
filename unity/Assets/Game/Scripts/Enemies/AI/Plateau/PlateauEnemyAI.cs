@@ -156,7 +156,8 @@ namespace Spiritfire.Game
             }
         }
 
-        void LateUpdate()
+        /// <summary>动画之后：发光骨骼的光晕（子类覆写时先调 base）</summary>
+        protected virtual void LateUpdate()
         {
             if (!glowSprite) return;
             float g = Dead ? 0 : body.GlowLevel(0);

@@ -463,6 +463,34 @@ namespace Spiritfire.Game
             }
         }
 
+        /// <summary>强制出招（试玩套件 / 节拍条）：slam 前先把雷球攒满</summary>
+        public void Force(string id)
+        {
+            Notice(false);
+            switch (id)
+            {
+                case "slam":
+                    SetOrbCharge(3);
+                    Begin(PlateauMoves.AoyinSlam);
+                    break;
+                case "gore":
+                    Begin(PlateauMoves.AoyinGore);
+                    break;
+                case "goreL":
+                    Begin(GoreL);
+                    break;
+                default:
+                    hasForced = false;
+                    Begin(PlateauMoves.AoyinStampede);
+                    break;
+            }
+        }
+
+        /// <summary>蓑毛某片的命中区中心（试玩套件：往那里打火）</summary>
+        public Vector3 FurPoint(string id) => zones.TryGetValue(id, out var z) && z ? z.transform.position : Center;
+
+        public static IReadOnlyList<string> FurZoneIds => FurZones;
+
         protected override void OnDeath(DamageInfo info, PlateauDeath kind)
         {
             armour?.Dispose();

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "about": "第四章穷奇的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻，照 docs/art/ch4-move-events.json 抄（网页 moves.ts 的 moveTable 导出；状态名 = 招式 id）。warn = 起手画预警、glint = 出手前 0.25 s 白星、hit / release / land / 自定义 = 释放帧，PlateauMoveRunner 事件先到就先出、没收到按时间轴兜底。设计单 docs/art/vfx/foes-ch4.md",
+  "clips": {
+    "glide": [
+      { "at": 0, "name": "warn" },
+      { "at": 0.145, "name": "glint" },
+      { "at": 0.226, "name": "hit" },
+      { "at": 0.742, "name": "land" },
+      { "at": 1, "name": "end" }
+    ],
+    "spin": [
+      { "at": 0, "name": "warn" },
+      { "at": 0.294, "name": "hit" },
+      { "at": 1, "name": "end" }
+    ],
+    "claw": [
+      { "at": 0, "name": "warn" },
+      { "at": 0.31, "name": "hit1" },
+      { "at": 0.483, "name": "hit2" },
+      { "at": 1, "name": "end" }
+    ],
+    "absorb": [
+      { "at": 0, "name": "warn" },
+      { "at": 0.444, "name": "eat" },
+      { "at": 1, "name": "end" }
+    ]
+  }
+}

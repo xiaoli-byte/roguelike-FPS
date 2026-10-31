@@ -1546,13 +1546,13 @@ MonoBehaviour:
   assetId: SK_Enemy_Jufu
   assetClass: enemy_standard
   category: characters
-  rigType: humanoid
+  rigType: generic
   bindSource: enemy
   bindId: jufu
   bindAttachment: 
   lodDistance:
   - 0
-  moveSpeed: 0
+  moveSpeed: 5
   designBounds:
     m_Center: {x: 0, y: 0.95, z: 0}
     m_Extent: {x: 0.5202492, y: 0.95, z: 0.36617005}
@@ -1929,7 +1929,7 @@ Animator:
   m_GameObject: {fileID: 6704593412563171647}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8b74702d5731e364797919df987014a8, type: 3}
-  m_Controller: {fileID: 9100000, guid: f2c7744fda884554ca55dddbc72b730a, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2667aadcc84796b4b9d24e0cf6877a9b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
