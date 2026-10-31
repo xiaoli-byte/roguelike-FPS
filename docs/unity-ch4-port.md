@@ -77,7 +77,7 @@
 
 **风场** `World/WindField.cs`
 - `WindSample WindField.Sample(Vector3)`（`dir` 水平单位向量、`strength` 0..1）；`WindAttractor AddAttractor(center, radius, strength = 1, core = 30)`（正 = 吸、负 = 推，字段随时改，Dispose 撤）。
-- `Override`（4-2 峡谷风）、`BaseDir / BaseStrength`（null = 读 WeatherDirector 盛行风）、`PlayerPush`（m/s²）、`PlayerSpeedK`（顺 / 逆风 ±，飞廉擂台 0.25）、`SpeedMult(at, moveDir)`、`ApplyTo(ParticleSystem, gain)`（桑烟 / 风痕）、`Sway(at, time)`（经幡 / 草的摆幅）、`Reset()`（换关自动）。着色器全局 `_WindAttract`（xyz 中心、w = 半径 × 符号）。
+- `Override`（4-2 峡谷风）、`BaseDir / BaseStrength`（null = 读 WeatherDirector 盛行风）、`PlayerPush`（m/s，吹着走：扫掠 Move、不进速度；阵风由招式自己 AddImpulse）、`PlayerSpeedK`（顺 / 逆风 ±，飞廉擂台 0.25）、`SpeedMult(at, moveDir)`、`ApplyTo(ParticleSystem, gain)`（桑烟 / 风痕）、`Sway(at, time)`（经幡 / 草的摆幅）、`Reset()`（换关自动）。着色器全局 `_WindAttract`（xyz 中心、w = 半径 × 符号）。
 
 **破防条** `Bosses/BreakBar.cs`
 - `BossDef.breakBar = new BreakBarDef { max, growth = 0.25f, seconds = 4, takenMult = 1.3f, pose, label, weakFill = 1, reactionFill = 1.5f, fillWhen }`（null = 没有，前三章不变）。

@@ -60,7 +60,8 @@ namespace Spiritfire.Game
     /// 风场（第四章，docs/unity-ch4-port.md 第 2 节契约「天气与风」）：基础风向 + 吸引点（<see cref="WindAttractor"/>）；4-2 峡谷风顺河吹用 <see cref="Override"/>。
     ///   · 采样：<see cref="Sample"/> 给经幡、草、粒子、桑烟、风痕用（水平风向 + 强度 0..1）；越靠近吸引点风越强、方向越朝它（网页版 wind.ts windAt）。
     ///   · 基础风：没设 <see cref="BaseDir"/> 时读 <see cref="WeatherDirector"/> 的盛行风（windDir / baseWind），都没有时为 (−0.82, −0.57) × 0.25。
-    ///   · 推玩家：<see cref="PlayerPush"/>（m/s²，0 = 不推）× 玩家处的风强沿风向持续推；顺风走快、逆风走慢 <see cref="PlayerSpeedK"/>（飞廉擂台 0.25）。
+    ///   · 推玩家：<see cref="PlayerPush"/>（m/s，0 = 不推）× 玩家处的风强沿风向持续吹着走（扫掠 Move，不进速度、不和地面摩擦抵消；冲刺中不推）；
+    ///     顺风走快、逆风走慢 <see cref="PlayerSpeedK"/>（飞廉擂台 0.25）。阵风那种一下子的推力（飞廉狂风 9 m/s）由招式自己 AddImpulse。
     ///   · 着色器：每帧写全局 <c>_WindAttract</c>（xyz = 最强吸引点中心，w = 半径；没有时 w = 0），配合 WeatherDirector 写的 <c>_WindDir</c>。
     /// 换关时清空吸引点、覆盖和推力。
     /// </summary>
@@ -76,7 +77,7 @@ namespace Spiritfire.Game
         public static float? BaseStrength;
         /// <summary>整张图的风场覆盖（4-2 峡谷风）：给了就不再按基础风 + 吸引点算</summary>
         public static Func<Vector3, WindSample> Override;
-        /// <summary>推玩家的加速度（m/s²，乘玩家处的风强；0 = 不推）</summary>
+        /// <summary>把玩家吹着走的速度（m/s，乘玩家处的风强；0 = 不推）</summary>
         public static float PlayerPush;
         /// <summary>顺风走快 / 逆风走慢的比例（0.25 = ±25%，乘风强；0 = 不影响步速）</summary>
         public static float PlayerSpeedK;
@@ -217,13 +218,18 @@ namespace Spiritfire.Game
         }
     }
 
-    /// <summary>风场的每帧工作（<see cref="WindField"/> 有吸引点 / 推力时挂到 Fx 根物体上）：推玩家、改步速、写着色器全局量</summary>
+    /// <summary>
+    /// 风场的每帧工作（<see cref="WindField"/> 有吸引点 / 推力时挂到 Fx 根物体上）：吹着玩家走、改步速、写着色器全局量。
+    /// 排在 PlayerMotor 之前（同 PlatformCarrier）：吹走的位移是扫掠的 CharacterController.Move，不进玩家速度，防穿地拿到的帧初位置已经是吹完的
+    /// </summary>
+    [DefaultExecutionOrder(-30)]
     public sealed class WindRunner : MonoBehaviour
     {
         static readonly int AttractId = Shader.PropertyToID("_WindAttract");
         static WindRunner instance;
         IDisposable speedMod;
         PlayerMotor motor;
+        CharacterController cc;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => instance = null;
@@ -254,6 +260,7 @@ namespace Spiritfire.Game
                 speedMod?.Dispose();
                 speedMod = null;
                 motor = m;
+                cc = null;
             }
             if (!motor || vitals.Dead) return;
             if (WindField.PlayerSpeedK > 0 && speedMod == null)
@@ -266,7 +273,9 @@ namespace Spiritfire.Game
             if (WindField.PlayerPush > 0 && !motor.Dashing)
             {
                 var w = WindField.Sample(motor.transform.position);
-                motor.AddImpulse(w.dir * (WindField.PlayerPush * w.strength * Time.deltaTime));
+                var d = w.dir * (WindField.PlayerPush * w.strength * Time.deltaTime);
+                if (!cc) cc = motor.GetComponent<CharacterController>();
+                if (cc && cc.enabled && d.sqrMagnitude > 1e-10f) cc.Move(d);
             }
         }
     }
