@@ -7,7 +7,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 旱魃的行为（<see cref="HanbaDef"/>；首领框架 <see cref="BossBrain"/> 的子类，招式在 Hanba/Moves/）。在框架之上加这几层：
     ///   · 运行时姿态层：整体悬浮 <see cref="HanbaDef.hover"/> + 上下起伏（模型根节点抬高，角色胶囊跟着抬），关掉脚步 IK（悬浮着不踩地）；
-    ///     日轮（<see cref="SunRing"/>）旋转、炽度；残衣 / 长发 / 袖垂片是 CreatureRig 的弹簧骨（ART2 的人形片段丢了这些骨的曲线，全靠这层）。
+    ///     日轮（<see cref="SunRing"/>）旋转、炽度；残衣 / 长发 / 袖垂片是 CreatureRig 的弹簧骨（以人形片段里这些骨的关键帧为目标：手 K 的长发回垂由片段给，惯性、过冲由这层给）。
     ///   · 日晒（<see cref="SunExposure"/>）：登场后每 0.1 s 判定一次玩家，光柱 + 日轮直射，参数取自定义。
     ///   · 泉珠弱点：只在招式后摇（收招段 + <see cref="HanbaDef.weakGrace"/>）、硬直和日蚀窗口（<see cref="OpenEclipse"/>）露出——开弱点球、点亮泉珠发光壳
     ///     （SK_Boss_Hanba_GlowShell）；其余时间弱点球关着，只能打身体。日蚀窗口里打在泉珠上的伤害再 × <see cref="HanbaDef.eclipseWeakMult"/>。

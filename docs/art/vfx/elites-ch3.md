@@ -71,7 +71,7 @@
    |---|---|---|
    | 抡 / 扫 | `EliteRelease`（四散） | `EliteCh3Crescent`：暗月牙托亮刃的铜色刀光（厚 1.3 m），外缘方铜渣、脚下紫褐尘 |
    | 喷 / 射 | `EliteRelease`（顺着出手方向） | `EliteCh3Burst`：顺着出手方向的铜色拉丝火星、紫褐烟；炮仗傀儡多撒一把红纸屑 |
-   | 砸 / 掀 | `EliteSlam` | `EliteCh3Impact`：一圈方铜渣往外崩 + 紫褐尘团 |
+   | 砸 / 掀 | `EliteSlam` | `EliteCh3Impact`：一圈方铜渣往外崩 + 紫褐尘团 + 一块小号的方形裂纹贴花（2026-10-31 第二批收尾 C 路，4 s，见 [glow-masks-crack-ch3.md](glow-masks-crack-ch3.md) §3） |
 
 ### 2.3 色阶、预警与预算
 
