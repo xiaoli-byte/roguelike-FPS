@@ -12,6 +12,10 @@ namespace Spiritfire.Game
     /// 死亡时金环收拢、闪一下再消失（0.3 s），不是一下子没了。
     /// 环是根节点下两块贴地面片（不投影、没有碰撞体），材质全场共用、颜色走 MaterialPropertyBlock。只在 Play 里建面片；EditMode 里组件照常挂上（记下半径与词缀）。
     /// 低画质档（粒子密度 &lt; 0.6）不转、不呼吸（静止的纹样一样读得出来），省掉每帧写属性块。
+    /// 飞行 / 悬浮的精英（<see cref="FlyingEnemyAI"/>、定义里标了 flying 的，第二批收尾 D 路）：金环和纹样不跟着飞到半空，每帧从身上往下打一条射线，
+    /// 贴着打到的地面（顺着地面法线）画——像它投在地上的影子；脚下 <see cref="GroundProbe"/> m 内没有地面就不画。
+    /// 飞行体自己只留一圈小的金色悬浮标识（<see cref="HoverK"/> × 金环半径，离地不到 <see cref="HoverMin"/> m 时不画，和地上的金环重合）；
+    /// 远处读「哪种精英」交给头顶印章（<see cref="EliteSeal"/>）。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class EliteAura : MonoBehaviour
@@ -25,16 +29,32 @@ namespace Spiritfire.Game
         const float GoldHdr = 1.35f, SigilHdr = 1.45f;
         /// <summary>死亡收拢的时长（秒）</summary>
         const float CollapseTime = 0.3f;
+        /// <summary>飞行精英：往下找地面的最远距离（米）、悬浮标识的大小（× 金环半径，夹在 0.22–0.45 m）、离地多高才画悬浮标识（米）</summary>
+        public const float GroundProbe = 60f, HoverK = 0.4f, HoverMin = 0.8f;
 
         static Material ringMat;
         static readonly Material[] sigilMats = new Material[5];
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
         Damageable hp;
-        Renderer ring, accent;
-        Transform ringT, accentT;
+        Renderer ring, accent, hoverMark;
+        Transform ringT, accentT, hoverT;
         MaterialPropertyBlock block;
         float spin, sigilSpin, pulse, deadAt = -1, seed;
+        Vector3 groundP, groundN = Vector3.up;
+
+        /// <summary>飞行 / 悬浮的精英：金环投到地面（<see cref="Attach"/> 时按 AI 类型和定义认）</summary>
+        public bool Hovering { get; private set; }
+        /// <summary>飞行精英这一帧脚下找到了地面（金环画在地上）</summary>
+        public bool GroundFound { get; private set; } = true;
+        /// <summary>离脚下地面多高（米；不是飞行精英或没找到地面时为 0）</summary>
+        public float Altitude { get; private set; }
+        /// <summary>金环此刻的世界位置（测试 / 套件读）</summary>
+        public Vector3 RingPosition => ringT ? ringT.position : transform.position;
+        /// <summary>金环此刻画没画</summary>
+        public bool RingVisible => ring && ring.enabled;
+        /// <summary>飞行体上的小悬浮标识此刻画没画</summary>
+        public bool HoverMarkVisible => hoverMark && hoverMark.enabled;
 
         /// <summary>环半径（设计尺寸，根节点的缩放会再乘上去）</summary>
         public float Radius { get; private set; }
@@ -55,9 +75,15 @@ namespace Spiritfire.Game
             a = ai.gameObject.AddComponent<EliteAura>();
             a.hp = ai.Health;
             a.Radius = Mathf.Max(0.2f, bodyRadius) * RadiusMult;
+            a.Hovering = IsHover(ai);
             a.Build();
             return a;
         }
+
+        /// <summary>飞行 / 悬浮的敌人：飞行 AI，或定义里标了 flying（邪飞天按导航偏移浮在半空）</summary>
+        public static bool IsHover(EnemyAI ai) => ai && IsHover(ai is FlyingEnemyAI, ai.enemyId);
+
+        public static bool IsHover(bool flyingAi, string enemyId) => flyingAi || EnemyRoster.Get(enemyId) is { flying: true };
 
         /// <summary>词缀色（null = 去掉内圈）。纹样由 <see cref="SetSigil(string, Color)"/> 定；只给了颜色、没定纹样时先用六角框占位</summary>
         public void SetAccent(Color? c)
@@ -110,7 +136,27 @@ namespace Spiritfire.Game
             ringT = ring.transform;
             accent = Quad("Elite Affix Sigil", Radius * SigilK, 0.06f, null);
             accentT = accent.transform;
+            if (Hovering)
+            {
+                hoverMark = Quad("Elite Hover Mark", Mathf.Clamp(Radius * HoverK, 0.22f, 0.45f), 0.05f, RingMaterial);
+                hoverT = hoverMark.transform;
+            }
             Refresh();
+        }
+
+        /// <summary>飞行精英：从身上往下找地面（地形 / 建筑；角色不算）</summary>
+        bool ProbeGround()
+        {
+            var p = transform.position;
+            if (Physics.Raycast(p + Vector3.up * 0.5f, Vector3.down, out var hit, GroundProbe, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+            {
+                groundP = hit.point;
+                groundN = hit.normal.y > 0.2f ? hit.normal : Vector3.up;
+                Altitude = Mathf.Max(0, p.y - hit.point.y);
+                return true;
+            }
+            Altitude = 0;
+            return false;
         }
 
         Renderer Quad(string quadName, float radius, float lift, Material mat)
@@ -142,9 +188,14 @@ namespace Spiritfire.Game
             if (dead && deadAt < 0) deadAt = t;
             float collapse = deadAt >= 0 ? Mathf.Clamp01((t - deadAt) / CollapseTime) : 0f;
             bool show = collapse < 1f;
-            ring.enabled = show;
-            bool sigilOn = show && accent && accent.gameObject.activeSelf;
+            // 飞行精英：金环画在脚下的地面上，找不到地面就不画；飞行体上只留小悬浮标识
+            bool onGround = true;
+            if (Hovering) GroundFound = onGround = show && ProbeGround();
+            ring.enabled = show && onGround;
+            bool sigilOn = show && onGround && accent && accent.gameObject.activeSelf;
             if (accent) accent.enabled = sigilOn;
+            bool markOn = Hovering && show && (!onGround || Altitude > HoverMin);
+            if (hoverMark) hoverMark.enabled = markOn;
             if (!show) return;
             bool lite = Fx.Density < 0.6f;
             pulse = Mathf.Max(0, pulse - dt * 3f);
@@ -153,7 +204,10 @@ namespace Spiritfire.Game
             float shrink = collapse > 0 ? Mathf.Lerp(1f, 0.35f, collapse * collapse) : 1f;
             float flash = collapse > 0 ? Mathf.Sin(Mathf.Clamp01(collapse * 1.6f) * Mathf.PI) : 0f;
             if (!lite) spin += dt * 9f;
-            ringT.localRotation = Quaternion.Euler(90, seed + spin, 0);
+            // 贴地：顺着地面法线躺平（飞行精英每帧重新放；地上走的仍是根节点下的局部姿态）
+            var tilt = Hovering ? Quaternion.FromToRotation(Vector3.up, groundN) : Quaternion.identity;
+            if (Hovering) ringT.SetPositionAndRotation(groundP + groundN * 0.05f, tilt * Quaternion.Euler(90, seed + spin, 0));
+            else ringT.localRotation = Quaternion.Euler(90, seed + spin, 0);
             ringT.localScale = new Vector3(Radius * 2 * shrink, Radius * 2 * shrink, 1);
             float breath = lite ? 1f : 0.88f + 0.12f * Mathf.Sin(t * 2.4f + seed);
             var g = new Color(Gold.r * GoldHdr, Gold.g * GoldHdr, Gold.b * GoldHdr, breath * (1f - collapse) + flash * 0.4f);
@@ -163,6 +217,14 @@ namespace Spiritfire.Game
             block.Clear();
             block.SetColor(BaseColorId, g);
             ring.SetPropertyBlock(block);
+            if (markOn)
+            {
+                // 悬浮标识：飞行体脚下一圈小金环，水平（不跟着机身侧倾），同色同呼吸
+                float hr = Mathf.Clamp(Radius * HoverK, 0.22f, 0.45f) * 2 * shrink;
+                hoverT.SetPositionAndRotation(transform.position + Vector3.up * 0.05f, Quaternion.Euler(90, seed - spin * 2f, 0));
+                hoverT.localScale = new Vector3(hr, hr, 1);
+                hoverMark.SetPropertyBlock(block);
+            }
             if (!sigilOn || !Accent.HasValue) return;
 
             // 词缀纹样：各自的转法（形状语言 + 节奏，见设计单）
@@ -202,7 +264,8 @@ namespace Spiritfire.Game
             }
             if (!lite) sigilSpin += dt * (rate + SpinBoost);
             float s = Radius * SigilK * 2f * shrink * scale * (1f + 0.22f * pulse);
-            accentT.localRotation = Quaternion.Euler(90, seed * 0.5f - sigilSpin, 0);
+            if (Hovering) accentT.SetPositionAndRotation(groundP + groundN * 0.06f, tilt * Quaternion.Euler(90, seed * 0.5f - sigilSpin, 0));
+            else accentT.localRotation = Quaternion.Euler(90, seed * 0.5f - sigilSpin, 0);
             accentT.localScale = new Vector3(s, s, 1);
             var c = Accent.Value;
             float k = SigilHdr * Mathf.Max(0.2f, Level) * glow * (1f + pulse);

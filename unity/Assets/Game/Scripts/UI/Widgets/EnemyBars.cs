@@ -11,6 +11,7 @@ namespace Spiritfire.Game
     ///   内容：精英名（标题字体、鎏金；带词缀时前面一枚词缀色标签）、状态小标（灼 / 雷 / 蚀 / 晕，带层数）、护盾 / 护甲细条、生命条（延迟掉血拖尾，精英加粗描金）。
     ///   元素反应提示：身上两种元素状态 = 可反应（小标 1.2 s 呼吸发光），三种 = 归墟就绪（紫光、0.6 s 急促）。
     ///   位置：投影头顶（碰撞体顶上 + 0.3 m），按距离缩放（13 / 距离，夹在 0.62–1.12，精英 ×1.12）；被墙挡住时半透明（每条约 0.13 s 测一次），40–45 m 渐隐。
+    ///   精英头顶印章（第二批收尾 D 路，<see cref="EliteSeal"/>）：精英血条顶上一枚鎏金印章，套金环同款的词缀纹样——6 m 内不画、9 m 淡满，远处保持 30–35 像素。
     /// 词缀（EN4）：<see cref="AffixOf"/> 返回词缀 id，<see cref="AffixLabels"/> 给名字和颜色（同 Three.js AFFIX_LABELS），词缀单元登记即可。
     /// </summary>
     [HudWidget("enemy-bars", Order = 0)]
@@ -48,6 +49,7 @@ namespace Spiritfire.Game
         {
             public VisualElement anchor, bar, nameRow, status, shieldRow, shieldFill, armorRow, armorFill, hpRow, hpFill, hpTrail;
             public Label nameText, affix;
+            public EliteSeal seal;
             public readonly VisualElement[] badges = new VisualElement[4], glows = new VisualElement[4];
             public readonly Label[] stacks = new Label[4];
             public readonly int[] stackV = new int[4];
@@ -70,6 +72,9 @@ namespace Spiritfire.Game
 
         /// <summary>某个敌人有没有头顶血条（测试用）</summary>
         public bool Has(EnemyAI e) => e && byEnemy.ContainsKey(e);
+
+        /// <summary>某个精英头顶的印章（没有血条 / 不是精英为 null；测试用）</summary>
+        public EliteSeal SealOf(EnemyAI e) => e && byEnemy.TryGetValue(e, out var s) && s.elite ? s.seal : null;
 
         protected override VisualElement Build()
         {
@@ -155,6 +160,7 @@ namespace Spiritfire.Game
                 }
                 SyncLayers(slot, d, now, trailStep);
                 SyncStatus(slot, d, now);
+                if (slot.elite) slot.seal.Tick(dist, scale, p, size, slot.bar.resolvedStyle.height);
             }
 
             // 回收本帧没用到的
@@ -336,6 +342,7 @@ namespace Spiritfire.Game
                 s.nameText.text = name;
             }
             HudArt.Show(s.nameRow, name.Length > 0 || hasAffix);
+            s.seal.Bind(e, s.elite);
             s.anchor.style.display = DisplayStyle.Flex;
             return s;
         }
@@ -344,6 +351,7 @@ namespace Spiritfire.Game
         {
             s.enemy = null;
             s.col = null;
+            s.seal.Unbind();
             s.anchor.style.display = DisplayStyle.None;
             poolList.Add(s);
         }
@@ -386,6 +394,7 @@ namespace Spiritfire.Game
             s.hpTrail.style.backgroundColor = HudArt.Trail;
             s.hpFill = HudArt.Fill(s.hpRow, null, UITheme.HpHi);
             s.hpFill.usageHints = s.hpTrail.usageHints = s.shieldFill.usageHints = s.armorFill.usageHints = UsageHints.DynamicTransform;
+            s.seal = new EliteSeal(s.bar);
             s.anchor.style.display = DisplayStyle.None;
             return s;
         }
