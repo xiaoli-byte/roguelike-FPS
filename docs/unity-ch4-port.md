@@ -46,6 +46,59 @@
 
 **F 路的第一笔提交必须先把以上接口建好**：类型、方法签名、中文注释，能编译，最小实现即可。提交后通知 main，main 转给各路。在那之前，其他路先写设计单、移植 AI 逻辑，调到这些接口的地方先留桩。
 
+### 2.1 已落地的接口（F 路，2026-10-31；骨架 10567d94，签名冻结，要改先通知 main）
+
+命名空间都是 `Spiritfire.Game`。和上表的出入：落雷叫 `LightningStrike`（`Fx/Lightning.cs` 已有同名的闪电弧池），高原雷暴是单独的 `PlateauStorm`（入口仍在 WeatherDirector）。
+
+**带电** `Combat/Charge.cs`
+- `bool Charge.Apply(Damageable d, float seconds, Object source = null)`：带电，可续（取剩余与新给的较大者，不累加）。死了 / 不可选中 / 秒数非法返回 false。
+- `bool Charge.IsCharged(d)`、`float Charge.Remaining(d)`（常驻 = +∞）、`void Charge.Clear(d)`（只清计时的）。
+- `IDisposable Charge.Hold(d, source)`：常驻带电（夔一直带电、举父举雷石、连鼓灵雷心），Dispose 撤这一份，多来源可叠。
+- `int Charge.Arc(Damageable from, float radius = 8, int maxHops = 4)`：向 r 内最近 2 个非首领同伴传电（带电 6 s + 6 雷伤 + 紫红电弧），跳数逐级 +1，超过 maxHops 不传。带电的怪死时**自动**调。
+- 反应：`GameReactionEnv.Has(d, Shock)` 读带电 → 火 = 焚雷、蚀 = 封脉；带电不吃雷殛的 3 层眩晕和弹射。事件 `Charge.Charged(d)`、`Charge.Arced(from, to)`。
+- 外观（`ChargeState`，自动挂）：材质轮廓光换成紫红按噼啪节奏闪 + 贴骨短电弧（全场每秒 14 道 × 画质密度），不染整只。
+
+**导体** `World/Conductor.cs`（组件，位置 = 底座）
+- 字段：`height`（顶高，6）、`attractRadius`（5）、`canCharge`、`chargePerStrike`（1；导雷石柱 0.34）、`drainPerSecond`（0.1 = 经幡杆带电 10 s；石柱 0）、`chargedAt`、`splashRadius` / `splashDamage`（2 m / 12）、`charge`（0..1）。
+- `Top`、`Base`、`Charged`、`Strikes`、`AddCharge(k)`、`float Discharge()`（清零、返回放掉的量，效果由调用方做）、`OnStruck(in StrikeInfo)`（场地机关也能直接劈）。
+- 事件：`Struck(Conductor, StrikeInfo)`、`Discharged(Conductor, float)`、静态 `AnyStruck`。查询：`Conductor.Best(point, exclude)` / `Best(point, among, exclude)`（引雷）、`NearestCharged(point, r)`（夔落在带电杆 4 m 内回劈）、`All`。
+- 带电时顶上噼啪（短紫红电弧 + 偶尔紫光，80 m 外不画）；具体发光件（铜顶、雷晶）由场景件读 `charge`。
+
+**落雷** `World/LightningStrike.cs`
+- `StrikeHandle LightningStrike.Strike(Vector3 pos, float warn, float radius, float damage, Object source)`；`Strike(pos, in StrikeOptions)`（`warn / radius / damage / source / ignoreConductors / exclude / chargeFoes / foeDamage / noTelegraph / height / onLanded`）。
+- 调用时就定落点：r 内有更高的导体就劈导体（预警画在导体底下），伤害换成导体溅电；否则玩家走 `Combat.BlastPlayer`（雷属性，边缘 60%，墙后 / 冲刺无敌不挨）。
+- 预警两层：正红危险填充（`TelegraphTone.Danger`）+ 外沿 0.35 m 紫红雷标（`TelegraphTone.Thunder`，身份层、不算危险），同时填满即劈。劈下：三段折线雷 + 粉白芯 + 火花 / 冲击环 / 闪光 / 震屏。
+- `StrikeHandle`：`Alive / Point / Conductor / TimeLeft / Cancel()`。`LightningStrike.Redirect(pos)` 只问不劈、静态事件 `Landed(StrikeInfo)`、`ClearAll()`（换关自动）。
+
+**高原雷暴** `World/PlateauStorm.cs`（入口 `WeatherDirector.BeginPlateauStorm(PlateauStormSpec)` = `PlateauStorm.Begin`）
+- 返回票 `PlateauStorm.Ticket`（`End()` 退场、`Level`、`Stage`）；多来源取最大强度。
+- spec：`aroundPlayer / center`、`strikeMin / strikeMax`、`intervalMin / intervalMax`、`warn / strikeRadius / damage`（缺省 0 = 只是天气）、`chargeFoes`（8）、`strikesFrom`（0.6）、`fadeIn`（3）/ `fadeOut`（4）、`darken`（0.8）/ `rain`、**`enterWhen`**（入场条件）、`onEnter`、**`onExit`**（退场回调）、`onStrike`、`source`。
+- 光照与雾按 batch2「天气覆盖」在 LateUpdate（执行顺序 510）以「这一帧的底 × 倍率」写；环境光 / 反射压暗；运行时 Volume（曝光 −0.35、对比 +6、饱和 −28、偏冷）；跟相机的斜雨。静态 `Level / Flash / Active / StopAll()`。
+
+**风场** `World/WindField.cs`
+- `WindSample WindField.Sample(Vector3)`（`dir` 水平单位向量、`strength` 0..1）；`WindAttractor AddAttractor(center, radius, strength = 1, core = 30)`（正 = 吸、负 = 推，字段随时改，Dispose 撤）。
+- `Override`（4-2 峡谷风）、`BaseDir / BaseStrength`（null = 读 WeatherDirector 盛行风）、`PlayerPush`（m/s²）、`PlayerSpeedK`（顺 / 逆风 ±，飞廉擂台 0.25）、`SpeedMult(at, moveDir)`、`ApplyTo(ParticleSystem, gain)`（桑烟 / 风痕）、`Sway(at, time)`（经幡 / 草的摆幅）、`Reset()`（换关自动）。着色器全局 `_WindAttract`（xyz 中心、w = 半径 × 符号）。
+
+**破防条** `Bosses/BreakBar.cs`
+- `BossDef.breakBar = new BreakBarDef { max, growth = 0.25f, seconds = 4, takenMult = 1.3f, pose, label, weakFill = 1, reactionFill = 1.5f, fillWhen }`（null = 没有，前三章不变）。
+- BossBrain 自动按弱点（`info.weakpoint`）/ 反应伤害填，满了 `Stagger(seconds, pose, takenMult)`（霸体招也破），子类覆写 `protected virtual void OnBreak(int count)`。运行时 `brain.Break`（`Fill / Broken / BrokenLeft / Breaks / Add(v) / Break() / Broke / Recovered`）。
+- 首领血条下一道金条（`IBreakBarSource`），破防中满格闪、受击层显示破防名。
+
+**领主梯度** `Bosses/LordScaling.cs`
+- `BossDef.lordLevel = "4-1"`：BossBrain 生成时血 × `HpMult`、`RestScale` × `RecoveryMult`，倒下自动记账（`RunState.flags` 的 `lord.<图>.<首领>`）。招式自己的收招段乘 `Brain.Lord.RecoveryMult`，n = 2 的变体看 `Brain.Lord.ExtraVariant`。
+- `LordScaling.For(levelId / def)`、`Defeated`、`IsDefeated`、`RecordDefeat`。`BossDef.phaseCinematic = false`：转阶段把 `BossPhaseDef.toast` 当横幅出（「三 · 风雨」），不走 Toast。
+
+**受击四层** `Enemies/HitReaction.cs`、`Enemies/Poise.cs`、`EnemyAI`
+- `EnemyDef.poise`（韧性，0 = 不用，前三章全是 0）、`staggerSeconds`（0.6）、`hitch`（轻怪顿一下，0.12）。> 0 时 EnemyRoster 自动挂 `Poise`：韧性伤害 = 伤害 × 弱点 2 / 爆炸·反应 3（持续伤害 0），每秒回落一半（2 s 窗口，`PoiseMeter`）。
+- 统一入口：`EnemyAI.HitStagger(seconds, from, cause)`、`HitStun(seconds, cause, why)`、`Hitch(seconds)`；`HitStaggered / HitStaggerLeft`；事件 `HitLayerEntered(EnemyAI, HitLayer, float)`；静态转发 `HitReaction.Stagger / Stun`。
+- 子类只覆写表现：`SuperArmor`、`OnHitStagger`、`OnHitStaggerEnd`、`OnHitStun`（缺省：元素眩晕 + 受伤 × 1.25 到醒来）。首领上两个入口转成 `BossBrain.Stagger`。
+
+**章节主题**
+- `RunPlan`：4-1 `L4_1_Zheduo` → 4-2 `L4_2_Dadu` → 4-4 `L4_4_Haizi`（关序 3、难度 3.88、补给营）；场景没建好的关跳过（`RunPlan.Ready` / `SceneReady`），`Final` / `IsLast` = 最后一个建好的关。
+- `SpawnThemes` 第四章「雷纹」（`SigilMode.Thunder`，SF_FxSigil 模式 5）；`FxTone` 第四章灰褐；`WeatherProfiles.WhiteoutFor("Plateau")` = 风雪；`ShowcaseTheme.Plateau` → 关卡的 `VP_Plateau.asset`。
+- `BalanceModel`：4-1 / 4-2 编制（按据点配怪，场景生成后以场景为准）、`LordsOf`、4-4 装备计划与补给营；`AttackTokens` 第四章沿用第三章的上限。
+- 材质：`ArtPrefabBuilder.NonMetalAssets`（7 雷魅 + 5 领主建材质时 `_Metallic = 0`）。
+
 ## 3. 分路
 
 ### 第一期（2026-10-31 开工）
