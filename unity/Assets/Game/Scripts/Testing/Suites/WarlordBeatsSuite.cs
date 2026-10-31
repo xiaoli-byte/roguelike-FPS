@@ -125,6 +125,19 @@ namespace Spiritfire.Game.Testing
             Save(scratch, new Shot { move = move ?? label, label = label, beat = beat, order = order, note = note }, file);
         }
 
+        /// <summary>指定机位拍一张（色样对照这类不跟人走的镜头，不放玩家替身）</summary>
+        public void Pose(string label, string beat, int order, string file, Vector3 from, Vector3 lookAt, string move = null, string note = null)
+        {
+            if (!Ready()) return;
+            spec.transform.position = from;
+            spec.transform.LookAt(lookAt);
+            var prev = spec.targetTexture;
+            spec.targetTexture = scratch;
+            spec.Render();
+            spec.targetTexture = prev;
+            Save(scratch, new Shot { move = move ?? label, label = label, beat = beat, order = order, note = note }, file);
+        }
+
         bool Ready()
         {
             if (!weapons) weapons = FindAnyObjectByType<WeaponController>();
@@ -490,13 +503,13 @@ namespace Spiritfire.Game.Testing
         }
 
         /// <summary>
-        /// 性能对照（同一会话）：旧、新、旧、新交替四轮，每轮横扫 / 连斩 / 跃击各出一次——旧 = 调优前的通用出手特效（<see cref="WarlordBrain.LegacyFx"/>），
+        /// 性能对照（同一会话）：旧、新交替六轮，每轮横扫 / 连斩 / 跃击各出一次——旧 = 调优前的通用出手特效（<see cref="WarlordBrain.LegacyFx"/>），
         /// 新 = 熔铜出手特效；记每招期间的平均 / 最慢帧（毫秒，不受时间缩放）和特效粒子峰值（<see cref="FxBudget.Peak"/>），交替是为了抵掉编辑器帧时间的漂移
         /// </summary>
         IEnumerator PerfCompare()
         {
             var total = new Dictionary<bool, (float sum, int frames)>();
-            foreach (bool legacy in new[] { true, false, true, false })
+            foreach (bool legacy in new[] { true, false, true, false, true, false })
             {
                 WarlordBrain.LegacyFx = legacy;
                 float sum = 0, worst = 0;
@@ -684,6 +697,124 @@ namespace Spiritfire.Game.Testing
             }
             arena.Clear();
             vitals.stats.Remove("beats_elite3");
+        }
+    }
+
+
+    /// <summary>
+    /// 通用刀光 SlashArc 顶点色转线性的改前 / 改后（bridge.sh playtest beats-slash；测试场）：同一会话里切 <see cref="SlashArc.LegacyGammaColors"/>，
+    /// 把各章刀光按出招处的参数原样摆在固定机位前拍（真打时刀光小、又常被玩家替身挡住，看不出颜色）：
+    ///   第一章跳鼠刀兵交叉斩（JerboaBladeAI.CrossSlashFx）、第二章雪狌狌抓挠（XingxingAI 的 swipe）、
+    ///   第三章熔心魔将参考招式的焰刃连斩（WarlordMoves 的 combo；第三章普通敌人没有用 SlashArc 的），
+    ///   另加玩家妖刀第三段的伸刃横扫（BladeView.OnStrike，非敌方刀光，同样受影响）。
+    /// 每道拍三格：受击者视角（刀头扫到一半 / 整弯亮满）+ 斜上方 45°（整弯亮满）。
+    /// 改前写 Assets/Art/_Review/beats/slash/before，改后写 …/after，拼图交给 scripts/unity/beat_strips.py。
+    /// </summary>
+    public sealed class SlashLinearBeatsSuite : PlaytestSuite
+    {
+        public override string Id => "beats-slash";
+        public override string Scene => "Assets/Scenes/TestArena.unity";
+
+        /// <summary>一道（或一组同时出的）刀光：参数照抄出招处；eye = 受击者 / 玩家眼睛相对刀光中心的位置（前方米数、高度差）</summary>
+        sealed class Swatch
+        {
+            public string id, label;
+            public float height, reach, eyeFwd, eyeUp, duration;
+            public bool hostile, playerView;
+            public Action<Vector3, float> spawn;
+        }
+
+        static Swatch[] Swatches() => new[]
+        {
+            new Swatch
+            {
+                id = "ch1_jerboa_blade", label = "第一章 · 跳鼠刀兵 交叉斩", height = 0.55f, reach = 1.1f, eyeFwd = 2.2f, eyeUp = 1.05f, duration = 0.2f, hostile = true,
+                spawn = (c, yaw) =>
+                {
+                    foreach (int s in new[] { 1, -1 })
+                        SlashArc.Spawn(c, yaw, 1.1f, 1.7f, s, s * 0.75f, 0.3f, 0.2f, new Color(1f, 0.77f, 0.42f), true);
+                },
+            },
+            new Swatch
+            {
+                id = "ch2_xingxing", label = "第二章 · 雪狌狌 抓挠", height = 0.75f, reach = 1.1f, eyeFwd = 2.4f, eyeUp = 0.85f, duration = 0.22f, hostile = true,
+                spawn = (c, yaw) => Fx.Slash(c, yaw, 1.1f, 1.9f, 1, 0.35f, 0.32f, 0.22f, Hex.Rgb(0xbfeaff), true),
+            },
+            new Swatch
+            {
+                id = "ch3_warlord_ref", label = "第三章 · 熔心魔将参考招式 焰刃连斩", height = 2.1f, reach = WarlordRef.ComboRange * 0.95f, eyeFwd = 5.6f, eyeUp = -0.5f, duration = 0.3f, hostile = true,
+                spawn = (c, yaw) =>
+                {
+                    Fx.Slash(c, yaw, WarlordRef.ComboRange * 0.8f, WarlordRef.ComboHalf * 2f * Mathf.Deg2Rad, 1, 0, 0.5f, 0.25f, WarlordRef.Fire, true);
+                    Fx.Slash(c + Vector3.up * 0.1f, yaw, WarlordRef.ComboRange * 0.95f, WarlordRef.ComboHalf * 2f * Mathf.Deg2Rad, 1, 0, 0.9f, 0.3f,
+                        new Color(1f, 0.32f, 0.06f), true);
+                },
+            },
+            new Swatch
+            {
+                id = "player_blade", label = "玩家 · 妖刀第三段伸刃横扫（非敌方）", height = 1.3f, reach = 3.2f, eyeFwd = -0.6f, eyeUp = 0.3f, duration = 0.24f, playerView = true,
+                spawn = (c, yaw) => Fx.Slash(c, yaw, 3.2f, 2.6f, 1, 0.04f, 0.5f, 0.24f, Color.Lerp(BladeMeshes.Purple, Color.white, 0.15f) * 1.2f),
+            },
+        };
+
+        protected override IEnumerator Steps()
+        {
+            yield return new WaitForSecondsRealtime(1f);
+            var weapons = FindAnyObjectByType<WeaponController>();
+            var motor = FindAnyObjectByType<PlayerMotor>();
+            var arena = ArenaSpawner.Instance ? ArenaSpawner.Instance : FindAnyObjectByType<ArenaSpawner>();
+            if (!weapons || !motor || !arena)
+            {
+                Fail("缺少测试场组件");
+                yield break;
+            }
+            WeaponController.TestMode = true;
+            Interactor.TestMode = true;
+            HeroSkills.TestMode = true;
+            PetOwner.TestMode = true;
+            weapons.testFire = false;
+            arena.Clear();
+            var away = arena.playerSpawn ? arena.playerSpawn.position - arena.Center : -arena.transform.forward;
+            away.y = 0;
+            away = away.sqrMagnitude > 1e-4f ? away.normalized : Vector3.back;
+            var east = Vector3.Cross(Vector3.up, away);
+            // 刀光摆在场地侧边的空地上，刀光朝 away（受击者站在 away 方向），玩家挪远免得入镜
+            var spot = arena.Center + east * 12f;
+            if (Physics.Raycast(spot + Vector3.up * 30f, Vector3.down, out var hit, 60f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) spot = hit.point;
+            Teleport(motor, arena.Center - east * 14f);
+            yield return new WaitForSeconds(0.5f);
+            float yaw = Mathf.Atan2(away.x, away.z) * Mathf.Rad2Deg;
+            string root = Path.Combine(ShotDir ?? "Assets/Art/_Review", "beats", "slash");
+            var camB = Runner.gameObject.AddComponent<WBeatCam>();
+            camB.Begin("slash-before", Path.Combine(root, "before"));
+            var camA = Runner.gameObject.AddComponent<WBeatCam>();
+            camA.Begin("slash-after", Path.Combine(root, "after"));
+            foreach (var s in Swatches())
+                foreach (bool legacy in new[] { true, false })
+                {
+                    SlashArc.LegacyGammaColors = legacy;
+                    var cam = legacy ? camB : camA;
+                    yield return new WaitForSeconds(0.45f);
+                    var c = spot + Vector3.up * s.height;
+                    var eye = c + away * s.eyeFwd + Vector3.up * s.eyeUp;
+                    // 受击者看向出招者的胸口（玩家妖刀：看向正前方略低）
+                    var look = s.playerView ? c + away * 3f - Vector3.up * 0.35f : c + Vector3.up * 0.15f;
+                    // 斜上方：从受击者那一侧的右前上方看整弯（离得远近按刀光半径缩放）
+                    var obliqueLook = c + away * s.reach * 0.6f;
+                    var oblique = obliqueLook + east * (s.reach * 0.9f + 1.2f) + away * (s.reach * 0.4f + 0.6f) + Vector3.up * (s.reach * 0.55f + 1.2f);
+                    float life = s.duration * (s.hostile ? 1.25f : 1f);
+                    s.spawn(c, yaw);
+                    float t0 = Time.time;
+                    while (Time.time - t0 < life * 0.22f) yield return null;
+                    cam.Pose(s.label, s.playerView ? "玩家视角 · 扫到一半" : "受击视角 · 扫到一半", 0, $"slash_{s.id}_0", eye, look, $"slash_{s.id}");
+                    while (Time.time - t0 < life * 0.45f) yield return null;
+                    cam.Pose(s.label, s.playerView ? "玩家视角 · 整弯亮满" : "受击视角 · 整弯亮满", 1, $"slash_{s.id}_1", eye, look, $"slash_{s.id}");
+                    cam.Pose(s.label, "斜上方 · 整弯亮满", 2, $"slash_{s.id}_2", oblique, obliqueLook, $"slash_{s.id}");
+                    Line($"{s.id}（{(legacy ? "改前" : "改后")}）：拍在 {(Time.time - t0) / life:P0} 寿命");
+                }
+            SlashArc.LegacyGammaColors = false;
+            Line($"刀光对照：改前 {camB.Count} 张、改后 {camA.Count} 张");
+            if (camA.Count != camB.Count || camA.Count == 0) Fail("改前 / 改后张数对不上");
         }
     }
 }

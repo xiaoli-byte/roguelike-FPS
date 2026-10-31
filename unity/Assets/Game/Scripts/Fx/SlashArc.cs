@@ -11,6 +11,8 @@ namespace Spiritfire.Game
     /// 池化（上限 24 道）：网格顶点数固定，复用时只重写顶点位置 / 颜色，不再每刀 new 一个 GameObject + Mesh。
     /// 敌方刀光（hostile）：刀带加宽 1.5 倍、刃口略提亮（仍是暖色，不冲成白）、多留 25% 时长，并在下面垫一道普通混合的暗月牙
     /// （自己的一份顶点色：整条刀带都压暗，放大 12%）——纯加法的刀光在亮沙 / 雪地上几乎加不出亮度，暗月牙把亮刃托出来（审阅图集问题清单：交叉斩刀光太淡）。
+    /// 顶点色按线性写（<see cref="FxVertexColor"/>）：工程是线性色彩空间，粒子材质把顶点色当线性值用，以前直接写 sRGB 颜色，
+    /// 中间调被抬亮、整道刀光偏奶白（VFX 调优 W 路，2026-10-31；改前 / 改后见 docs/art/review/boss-vfx/W/slash-linear-*.jpg）。
     /// </summary>
     public sealed class SlashArc : MonoBehaviour, IFxSlot
     {
@@ -21,6 +23,11 @@ namespace Spiritfire.Game
         static readonly float[] RowHot = { 0f, 0.1f, 1f, 0.6f };
 
         static readonly List<SlashArc> pool = new();
+
+        /// <summary>对照开关（节拍条套件拍改前 / 改后用，游戏里永远是 false）：为真时照旧直接写 sRGB 顶点色</summary>
+        internal static bool LegacyGammaColors;
+
+        static Color Vtx(Color c) => LegacyGammaColors ? c : FxVertexColor.Linear(c);
 
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
         /// <summary>敌方刀光的刃口亮度倍率、暗边颜色（乘顶点色；alpha = 暗边浓度）</summary>
@@ -189,7 +196,9 @@ namespace Spiritfire.Game
         void Paint(float head, float fade)
         {
             int rows = Rows.Length;
-            var hot = new Color(1f, 0.97f, 0.88f);
+            var hot = Vtx(new Color(1f, 0.97f, 0.88f));
+            var tintV = Vtx(tint);
+            var underV = Vtx(UnderColor);
             for (int i = 0; i <= Segments; i++)
             {
                 float behind = head - i / (float)Segments;
@@ -198,12 +207,12 @@ namespace Spiritfire.Game
                 for (int k = 0; k < rows; k++)
                 {
                     float a = tail * RowEdge[k] * fade;
-                    var c = Color.Lerp(tint, hot, RowHot[k] * heat);
+                    var c = Color.Lerp(tintV, hot, RowHot[k] * heat);
                     c.a = Mathf.Clamp01(a * 1.3f);
                     colors[i * rows + k] = c;
                     if (hostile)
                     {
-                        var u = UnderColor;
+                        var u = underV;
                         u.a = Mathf.Clamp01(tail * fade * UnderRow[k] * 0.8f);
                         underColors[i * rows + k] = u;
                     }
@@ -239,6 +248,10 @@ namespace Spiritfire.Game
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() => pool.Clear();
+        static void ResetStatics()
+        {
+            pool.Clear();
+            LegacyGammaColors = false;
+        }
     }
 }
