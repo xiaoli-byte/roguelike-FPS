@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "about": "熔心魔将的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。招式片段是手工关键帧，本文件和 FBX 都由 art/source/characters/SK_Boss_Warlord/anim/warlord_anims.py 生成，别手改；at = 片段内归一化时刻。hit = 释放帧（刀到 / 落地 / 插剑；顿帧、震屏、出手特效由招式判定那一刻触发，这个事件用来量动作和判定差几帧），smear / smearEnd = 大剑拖影起止，fx:windup = 起手（焰刃开始烧亮），step = 冲锋踏步（拖刀火星），brake = 刹停，impact = 撞墙，takeoff = 起跳，cast = 举剑号令天火，gather / roar = 咆哮的缩身 / 炸开，kneel / collapse = 倒下的跪地 / 扑倒；fx:*Warning 只是标注预警从哪一帧画（预警由招式画）",
+  "about": "熔心魔将的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。招式片段是手工关键帧，本文件和 FBX 都由 art/source/characters/SK_Boss_Warlord/anim/warlord_anims.py 生成，别手改；at = 片段内归一化时刻。hit = 释放帧（刀到 / 落地 / 插剑；顿帧、震屏、出手特效由招式判定那一刻触发，这个事件用来量动作和判定差几帧），smear / smearEnd = 大剑拖影起止，fx:windup = 起手（焰刃开始烧亮），step = 冲锋踏步（拖刀火星），brake = 刹停，impact = 撞墙，takeoff = 起跳，cast = 举剑号令天火，gather / roar = 咆哮的缩身 / 炸开，kneel / collapse = 倒下的跪地 / 扑倒，glare = 登场落地后抬头怒视（角盔一亮）；Idle / Walk / Move 也是手工关键帧（双手持剑），speed = 录制速度（混合树阈值）；fx:*Warning 只是标注预警从哪一帧画（预警由招式画）",
   "clips": {
     "sweepReady": {
       "events": [
@@ -416,6 +416,55 @@
         {
           "at": 0.875,
           "name": "sfx:boss_slam"
+        }
+      ],
+      "loop": false
+    },
+    "Idle": {
+      "events": [],
+      "loop": true
+    },
+    "Walk": {
+      "events": [
+        {
+          "at": 0.0192,
+          "name": "sfx:footstep"
+        },
+        {
+          "at": 0.5192,
+          "name": "sfx:footstep"
+        }
+      ],
+      "loop": true,
+      "speed": 2.3
+    },
+    "Move": {
+      "events": [
+        {
+          "at": 0.0227,
+          "name": "sfx:footstep"
+        },
+        {
+          "at": 0.5227,
+          "name": "sfx:footstep"
+        }
+      ],
+      "loop": true,
+      "speed": 4.6
+    },
+    "introLand": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "hit"
+        },
+        {
+          "at": 0.0417,
+          "name": "smearEnd"
+        },
+        {
+          "at": 0.75,
+          "name": "glare"
         }
       ],
       "loop": false

@@ -22,7 +22,7 @@
   grip         右拳（大剑握点）放到两肩中点偏移 (right, fwd, up) 米处（两骨 IK，肘朝外下）：双手持剑的姿势用它，免得左手够不着
   edge         剑刃朝哪（角色坐标，挥砍时 = 刀头运动方向）：绕剑身轴转到最接近的那面刃
   grip_L       左手握到剑柄上（两骨 IK，肘朝外下）
-  feet         {"R": (right, fwd), "L": ...}：脚掌落点相对静止站位的偏移（米），两骨 IK 让脚踩回地面；air = True 时腿按 legs 给的角度悬空
+  feet         {"R": (right, fwd[, up]), "L": ...}：脚掌落点相对静止站位的偏移（米），两骨 IK 让脚踩回地面（up = 摆动腿抬脚高度）；air = True 时腿按 legs 给的角度悬空
   legs         悬空时的 (大腿前抬, 小腿后屈)（度）
   cape         披风后扬（度）
 """
@@ -80,7 +80,12 @@ def P(**kw) -> dict:
     return kw
 
 
-BASE = P()
+# 第二批 B 路（2026-10-31）：底姿换成「双手斜持下段」——采样待机的第 0 帧是单手平端、剑尖直指前方（正面看剑缩成一个点，持剑姿势不对）。
+# 现在右拳握在剑格、左手握剑首，双手收在右胯前，剑身从右胯斜指左前下方、剑尖离地约半米：正面看是一道从右胯斜到左下的长对角线。
+# 所有招式片段的首尾帧都是这个底姿（和新的待机 / 步态之间过渡不跳）
+GUARD = P(drop=0.1, pitch=6, twist=-8, head=(4, 6), grip=(0.22, 0.38, -0.8), sword=(-0.62, 0.6, -0.5), edge=(0, 0.25, -1), grip_L=True,
+          feet={"R": (0.1, -0.16), "L": (-0.06, 0.22)}, cape=2)
+BASE = GUARD
 # 横扫：右后蓄刀（拧腰、下沉）→ 刀头从右后绕过身前扫到左前（刃口领先）→ 左下沉刀收势（惩罚窗口）
 SWEEP_LOAD = P(drop=0.12, pitch=-4, twist=-20, head=(0, 14), arm_R=(0.6, -0.1, -0.75), fore_R=(0.55, -0.45, -0.6), sword=(0.6, -0.75, -0.15),
                feet={"L": (0, 0.12)})
@@ -211,6 +216,55 @@ DEATH_SLUMP = dict(DEATH_KNEEL, drop=0.92, pitch=30, head=(42, 0), roll=-7)
 DEATH_FALL = P(drop=1.3, fwd=0.35, pitch=62, roll=-12, head=(30, -10), arm_R=(0.5, 0.6, -0.6), fore_R=(0.45, 0.6, -0.65), sword=(0.75, 0.6, -0.25),
                arm_L=(-0.4, 0.55, -0.73), fore_L=(-0.3, 0.6, -0.74), feet={"R": (0.1, -0.85), "L": (-0.05, -0.55)}, cape=10)
 
+# ───────────── 第二批 B 路：待机 / 慢走 / 疾行（双手持大剑）、登场落地停顿 ─────────────
+# 待机：两次呼吸（吸：身子微起、剑尖抬一点）+ 一次重心换到右腿、头往右扫一眼，3 s 一循环
+GUARD_IN = dict(GUARD, drop=0.06, pitch=4, head=(2, 6), sword=(-0.6, 0.62, -0.46), cape=0)
+GUARD_SHIFT = dict(GUARD, drop=0.13, pitch=7, twist=-14, roll=2, head=(6, 16), sword=(-0.62, 0.58, -0.53), cape=4)
+# 疾行的持剑：双手把剑斜举在身前（剑身从右胯斜指左上方、刃朝前）——正面看是一道越过左肩的大斜线，冲过来的读感
+CARRY = dict(grip=(0.18, 0.4, -0.5), sword=(-0.55, 0.32, 0.77), edge=(0, 1, 0), grip_L=True)
+# 登场落地：单膝跪地、双手握剑插进身前地里、低头（停顿）→ 抬头怒视（角盔对着玩家）→ 起身到咆哮的缩身姿势（咆哮从那一帧接着播）
+IL_IMPACT = P(drop=0.92, pitch=30, roll=-4, head=(24, 0), grip=(0.08, 0.62, -0.22), sword=(0.04, 0.72, -0.69), edge=(1, 0, 0), grip_L=True,
+              feet={"R": (0.12, -0.62), "L": (-0.06, 0.45)}, cape=10)
+# 披风挂在上身上：上身前压 pitch 度时披风跟着往后翘 pitch 度，cape = pitch 才是自然下垂。落地那一下披风还被下坠的风掀着（翘 20–30°），停顿里落下来、略过头再回
+IL_SQUASH = dict(IL_IMPACT, drop=1.0, pitch=34, head=(30, 0), cape=4)
+IL_HOLD = dict(IL_IMPACT, drop=0.96, pitch=32, head=(28, 0), cape=28)
+IL_HOLD_B = dict(IL_IMPACT, drop=0.95, pitch=31, head=(26, 2), cape=33)
+IL_GLARE = dict(IL_IMPACT, drop=0.88, pitch=22, head=(-12, 0), cape=20)
+
+
+def step_pose(phi: float, base: dict, stride: float, lift: float, beta: float, drop: float, bob: float, twist: float, twist_amp: float,
+              pitch: float, cape: float, swing: float) -> dict:
+    """
+    步态第 phi（0–1）处的姿势：右脚 phi = 0 落地（踩在前方 stride 米）、左脚晚半拍；支撑段（beta）脚掌匀速往后滑到 -stride（= 身体匀速前进），
+    摆动段抬脚 lift 米、余弦缓动回到前方。上身：支撑中段最低（drop + bob）、一个周期起伏两次；肩反拧（右脚在前时上身往右拧）、头反向找平；
+    披风滞后起伏；剑随步子上下点一点（swing）
+    """
+    feet = {}
+    for side, off in (("R", 0.0), ("L", 0.5)):
+        psi = (phi - off) % 1.0
+        if psi < beta:
+            fwd, up = stride - 2 * stride * psi / beta, 0.0
+        else:
+            u = (psi - beta) / (1 - beta)
+            fwd, up = -stride + 2 * stride * (0.5 - 0.5 * math.cos(math.pi * u)), lift * math.sin(math.pi * u)
+        feet[side] = (0.0, fwd, up)
+    c2 = math.cos(4 * math.pi * (phi - beta / 2))
+    tw = twist - twist_amp * math.cos(2 * math.pi * phi)
+    sw = base["sword"]
+    sword = (sw[0], sw[1], sw[2] + swing * math.cos(4 * math.pi * (phi - beta / 2 - 0.08)))
+    return dict(base, drop=drop + bob * c2, pitch=pitch + 1.5 * c2, twist=tw, roll=2.5 * math.sin(2 * math.pi * phi),
+                head=(base.get("head", (0, 0))[0] - 1.5 * c2, -0.6 * (tw - twist)), sword=sword, feet=feet,
+                cape=cape + 5 * math.cos(4 * math.pi * (phi - beta / 2 - 0.12)))
+
+
+def gait_clip(frames: int, speed: float, **kw) -> dict:
+    keys = [(f, step_pose(f / frames, **kw)) for f in range(0, frames + 1, 2)]
+    if keys[-1][0] != frames:
+        keys.append((frames, keys[0][1]))
+    # 脚步声在两次落地（右脚 phi = 0、左脚 0.5）
+    return {"frames": frames, "loop": True, "speed": speed, "keys": keys, "events": [(0.5, "sfx:footstep"), (frames / 2 + 0.5, "sfx:footstep")]}
+
+
 # ───────────── 片段：frames = 总帧数（30 fps）；keys = [(帧, 姿势)]；events = [(帧, 事件名)]；next = 连段的下一个状态 ─────────────
 # 时长对齐招式时间轴（WarlordMoves / WarlordBrain.Act 按实际前摇拉伸 ActScale）：释放帧落在拉伸后的出手时刻
 CLIPS = {
@@ -279,10 +333,24 @@ CLIPS = {
     "death": {"frames": 96, "keys": [(0, BASE), (6, DEATH_RECOIL), (24, DEATH_STAGGER), (40, DEATH_KNEEL), (70, DEATH_SLUMP), (84, DEATH_FALL),
                                      (96, DEATH_FALL)],
               "events": [(0, "sfx:boss_roar"), (40, "kneel"), (40, "fx:shake"), (84, "collapse"), (84, "fx:shake"), (84, "sfx:boss_slam")]},
+    # ── 第二批 B 路 ──
+    # 待机（3 s 循环）：替换采样待机（单手平端、剑尖直指前方）
+    "Idle": {"frames": 90, "loop": True, "keys": [(0, GUARD), (22, GUARD_IN), (45, GUARD), (67, GUARD_SHIFT), (90, GUARD)], "events": []},
+    # 慢走 2.3 m/s（26 帧一个周期、步长 1.2 m，支撑 60%）：斜持下段，剑尖随步子起伏；原地转身时混合树也播它（小碎步）
+    "Walk": gait_clip(26, 2.3, base=GUARD, stride=0.6, lift=0.22, beta=0.6, drop=0.17, bob=0.04, twist=-8, twist_amp=7, pitch=8, cape=0, swing=0.05),
+    # 疾行 4.6 m/s（22 帧、步长 1.32 m，支撑 42%：有腾空）：双手斜举、上身前压 14°、披风后扬
+    "Move": gait_clip(22, 4.6, base=dict(GUARD, head=(-2, 0), **CARRY), stride=0.66, lift=0.32, beta=0.42, drop=0.24, bob=0.07, twist=-12,
+                      twist_amp=9, pitch=14, cape=-10, swing=0.06),
+    # 登场落地的停顿（0.8 s，按「落地 → 咆哮」的间隔拉伸）：f0 落地单膝跪地插剑（hit）→ f3 再一沉 → f9 / f14 停住、披风落下 → f18 抬头怒视（glare）→
+    # f24 起身到咆哮的缩身姿势（WarlordBrain 让咆哮从缩身那一帧接着播）
+    "introLand": {"frames": 24, "keys": [(0, IL_IMPACT), (3, IL_SQUASH), (9, IL_HOLD), (14, IL_HOLD_B), (18, IL_GLARE), (24, ROAR_GATHER)],
+                  "events": [(0, "hit"), (1, "smearEnd"), (18, "glare")]},
 }
 
 # 仍用采样片段的状态：事件照旧（关键帧片段的事件由上面的表生成）
 SAMPLED_EVENTS = {}
+# 只在审核图里渲的对照姿势（不导出）：改前的底姿 = 采样待机第 0 帧（单手平端、剑尖直指前方）
+REVIEW_EXTRA = {"sampledIdle0": {"frames": 0, "keys": [(0, P())], "events": []}}
 
 
 # ───────────── Blender ─────────────
@@ -439,7 +507,8 @@ def build(arm, p: dict):
         feet = p.get("feet", {})
         for s in ("R", "L"):
             off = feet.get(s, (0.0, 0.0))
-            sole = REST_SOLE[s] + Vector((-off[0], -off[1], 0))
+            # 第三个分量 = 抬脚高度（米；步态的摆动腿）
+            sole = REST_SOLE[s] + Vector((-off[0], -off[1], off[2] if len(off) > 2 else 0.0))
             two_bone(arm, "thigh_" + s, "shin_" + s, sole, Vector((0, -1, 0.15)))
     if p.get("cape"):
         rot_about_head(arm, BONE["cape"], Quaternion((1, 0, 0), math.radians(-p["cape"])))
@@ -491,7 +560,7 @@ def export_fbx(arm, act, name: str, frames: int, out_dir: Path):
 
 
 def write_events(path: Path):
-    """关键帧片段的事件表 + 连段 next；仍用采样的状态（Idle / Walk / Move）沿用原叠加表里的条目"""
+    """关键帧片段的事件表 + 连段 next / 循环 / 录制速度；表里没有的状态沿用原叠加表里的条目"""
     old = {}
     if path.exists():
         try:
@@ -503,13 +572,17 @@ def write_events(path: Path):
         e = {"events": [{"at": round(f / c["frames"], 4), "name": n} for f, n in c["events"]], "loop": bool(c.get("loop"))}
         if c.get("next"):
             e["next"] = c["next"]
+        # 步态的录制速度（混合树阈值；手工片段替换采样片段时采样数据里的 speed 不会带过来）
+        if c.get("speed"):
+            e["speed"] = c["speed"]
         clips[name] = e
     doc = {"schema": 1,
            "about": ("熔心魔将的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。招式片段是手工关键帧，本文件和 FBX 都由 "
                      "art/source/characters/SK_Boss_Warlord/anim/warlord_anims.py 生成，别手改；at = 片段内归一化时刻。"
                      "hit = 释放帧（刀到 / 落地 / 插剑；顿帧、震屏、出手特效由招式判定那一刻触发，这个事件用来量动作和判定差几帧），smear / smearEnd = 大剑拖影起止，"
                      "fx:windup = 起手（焰刃开始烧亮），step = 冲锋踏步（拖刀火星），brake = 刹停，impact = 撞墙，takeoff = 起跳，cast = 举剑号令天火，"
-                     "gather / roar = 咆哮的缩身 / 炸开，kneel / collapse = 倒下的跪地 / 扑倒；fx:*Warning 只是标注预警从哪一帧画（预警由招式画）"),
+                     "gather / roar = 咆哮的缩身 / 炸开，kneel / collapse = 倒下的跪地 / 扑倒，glare = 登场落地后抬头怒视（角盔一亮）；"
+                     "Idle / Walk / Move 也是手工关键帧（双手持剑），speed = 录制速度（混合树阈值）；fx:*Warning 只是标注预警从哪一帧画（预警由招式画）"),
            "clips": clips}
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -561,13 +634,15 @@ def setup_review(arm):
     return scene
 
 
-def render_reviews(arm, out: Path):
+def render_reviews(arm, out: Path, only=None):
     out.mkdir(parents=True, exist_ok=True)
     scene = setup_review(arm)
     files = []
-    for name, clip in CLIPS.items():
+    for name, clip in list(CLIPS.items()) + list(REVIEW_EXTRA.items()):
+        if only and name not in only:
+            continue
         for frame, p in clip["keys"]:
-            if p is BASE and frame:
+            if p is BASE and frame and name != "Idle":
                 continue
             build(arm, p)
             for cname in scene["cams"]:
@@ -582,9 +657,10 @@ def render_reviews(arm, out: Path):
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     review = Path(argv[argv.index("--review") + 1]) if "--review" in argv else None
+    only = set(argv[argv.index("--only") + 1].split(",")) if "--only" in argv else None
     arm = load_rig(keep_mesh=review is not None)
     if review:
-        render_reviews(arm, review)
+        render_reviews(arm, review, only)
         print("WARLORD_REVIEW " + str(review))
         return
     arm.matrix_world = Matrix.Rotation(math.pi, 4, "Z") @ arm.matrix_world

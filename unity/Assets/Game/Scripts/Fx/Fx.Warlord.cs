@@ -153,6 +153,34 @@ namespace Spiritfire.Game
             Flash(chest, WarlordPalette.FuryCopper, 10f, 14f, 0.35f);
         }
 
+        /// <summary>
+        /// 登场落地 · 熔铜落地（第二批 B 路，设计单 §12.3；取代通用砸地 <see cref="Slam"/>：它的白色放射裂纹读成旱魃的日轮、尘浪是第一章的沙色）。
+        /// 主形 = 重击落地（贴地粗环 + 熔铜冠 + 熔铜贴花 + 方铜渣，<see cref="WarlordImpact"/>）+ 从落点往四向一节一节崩开的「十」字熔铜裂口
+        /// （神范台十字浅渠的母题，每 0.04 s 一节，<see cref="WarlordCleave"/>）；次级 = 外圈一道紫褐尘浪粗环、一圈紫褐烟团；点缀 = 方铜渣、火星（裂口里带）。
+        /// fwd = 魔将朝向（十字的一条臂对着他面朝的方向，也就是对着玩家）
+        /// </summary>
+        public static void WarlordLanding(Vector3 ground, float radius, Vector3 fwd, float fury)
+        {
+            if (!Finite(ground)) return;
+            WarlordImpact(ground, radius, fury);
+            Ring(ground + Vector3.up * 0.06f, radius * 1.6f, WarlordPalette.Smoke, 0.6f);
+            WarlordSmoke(ground + Vector3.up * 0.3f, radius * 0.7f, 6);
+            fwd.y = 0;
+            if (fwd.sqrMagnitude < 1e-4f) fwd = Vector3.forward;
+            fwd.Normalize();
+            var right = Vector3.Cross(Vector3.up, fwd);
+            foreach (var d in new[] { fwd, right, -fwd, -right })
+                WarlordCleave(ground + d * (radius * 0.25f), d, radius * 0.85f, fury);
+        }
+
+        /// <summary>登场抬头怒视（动画事件 glare）：角盔（弱点）一亮——白热铜的一闪 + 一撮往上飘的铜火星，读作「看这里」</summary>
+        public static void WarlordGlare(Vector3 helm, float fury)
+        {
+            if (!Finite(helm)) return;
+            Flash(helm, WarlordPalette.HotAt(fury), 5f, 4f, 0.2f);
+            Burst(helm, WarlordPalette.CopperAt(fury), 10, 3f, 0.5f, 0.1f, -3f);
+        }
+
         /// <summary>紫褐烟团（收招、刹停、落地后的余韵）：几团慢慢往上飘、很快淡掉的烟</summary>
         public static void WarlordSmoke(Vector3 at, float radius, int count = 4)
         {

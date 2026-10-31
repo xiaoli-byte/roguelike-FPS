@@ -359,22 +359,18 @@ namespace Spiritfire.Game.Testing
                 arena = BossArena.CreateRuntime(motor.transform.position + fwd.normalized * 22f, 20f, fwd, WarlordDef.Id);
             }
             Place(arena.PlayerEntryPoint);
+            cam = Runner.gameObject.AddComponent<WBeatCam>();
+            cam.Begin("warlord", Path.Combine(ShotDir ?? "Assets/Art/_Review", "beats", "warlord"));
             boss = Bosses.Spawn(WarlordDef.Id, arena, WarlordDef.StageDifficulty) as WarlordBrain;
             if (!boss)
             {
                 Fail("魔将生成失败");
                 yield break;
             }
-            float i0 = Time.time;
-            while (!boss.IntroDone && Time.time - i0 < boss.Def.intro.seconds + 3f)
-            {
-                Aim(motor, eye, boss.BodyCenter);
-                yield return null;
-            }
+            yield return Intro();
             guard = boss.Health.Incoming.Add((in IncomingHit h) => 0f);
-            cam = Runner.gameObject.AddComponent<WBeatCam>();
-            cam.Begin("warlord", Path.Combine(ShotDir ?? "Assets/Art/_Review", "beats", "warlord"));
             Line($"魔将：模型 {boss.Model?.source}，动作控制器 {(boss.Model?.root ? boss.Model.root.GetComponentInChildren<Animator>()?.runtimeAnimatorController?.name : "无")}");
+            yield return Locomotion();
 
             yield return Beat("warlord_sweep", "横扫 · 一阶段", 8f);
             yield return Beat("warlord_combo", "连斩 · 一阶段", 3.5f);
@@ -445,6 +441,139 @@ namespace Spiritfire.Game.Testing
         }
 
         void Single(string label, string beat, int order, string file, string move) => cam.Single(label, beat, order, file, boss.BodyCenter, 4f, move: move);
+
+        // ───────────── 第二批 B 路：登场落地停顿、待机 / 行走 / 转向（docs/art/vfx/warlord.md §12）─────────────
+
+        /// <summary>招式间隙多留 seconds 秒不出招（只给节拍条用：BossBrain 的私有计时）</summary>
+        void HoldRest(float seconds) =>
+            typeof(BossBrain).GetField("restLeft", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(boss, seconds);
+
+        /// <summary>登场：下坠 → 落地（释放帧）→ 停顿 → 抬头起身 → 咆哮；镜头跟模型（下坠时模型根节点在半空，胶囊在地上）</summary>
+        IEnumerator Intro()
+        {
+            const string mv = "intro", label = "登场 · 落地停顿";
+            var d = boss.WDef;
+            float i0 = Time.time, landAt = -1, secs = boss.Def.intro.seconds;
+            float drop = d != null ? d.dropFraction : 0.4f, roarAfter = d != null ? (d.roarAt - d.dropFraction) * secs : 0.78f;
+            bool[] took = new bool[8];
+            float headPause = float.NaN, headRoar = float.NaN;
+            float Head() => boss.Model?.Head ? boss.Model.Head.position.y - boss.transform.position.y : float.NaN;
+            while (boss && !boss.IntroDone && Time.time - i0 < secs + 3f)
+            {
+                var c = boss.BodyCenter + Vector3.up * boss.DropNow;
+                Aim(motor, eye, c);
+                if (!took[0] && Time.time - i0 >= secs * drop * 0.6f) Shot(0, "起手", "下坠（陨火）", c);
+                if (boss.Landed && landAt < 0) landAt = Time.time;
+                if (landAt >= 0)
+                {
+                    float t = Time.time - landAt;
+                    if (!took[2] && t >= 0.02f) Shot(2, "释放帧", "落地（熔铜落地）", c);
+                    if (!took[3] && t >= 0.3f)
+                    {
+                        headPause = Head();
+                        Shot(3, "持续段", "停顿", c);
+                        cam.Single(label, "第一人称", 7, "intro_7", c, 4f, true, "停顿 · 玩家视角", mv);
+                    }
+                    if (!took[4] && t >= roarAfter - 0.12f) Shot(4, "蓄力顶点", "抬头起身", c);
+                    if (!took[5] && t >= roarAfter + 0.45f)
+                    {
+                        headRoar = Head();
+                        Shot(5, "收招", "咆哮", c);
+                    }
+                }
+                yield return null;
+            }
+            Line($"登场：落地 {(landAt >= 0 ? $"{landAt - i0:F2} s" : "（没落地）")}，最后一个动作 {boss.LastAct}（{boss.LastActPath}）；" +
+                 $"头离地 停顿 {headPause:F2} m / 咆哮 {headRoar:F2} m");
+
+            void Shot(int k, string beat, string note, Vector3 c)
+            {
+                took[k] = true;
+                cam.Single(label, beat, k, $"intro_{k}", c, 4f, false, note, mv);
+            }
+        }
+
+        /// <summary>
+        /// 待机（站定两拍）→ 慢走（2.3 m/s，朝玩家）→ 疾行（4.6 m/s）→ 原地转向（120°/s）：招式间隙的走位由 <see cref="WarlordBrain.IdleHook"/> 接管，
+        /// 同时把招式间隙拖长（不出招）；拍完交还
+        /// </summary>
+        IEnumerator Locomotion()
+        {
+            const string mv = "loco", label = "待机 · 行走 · 转向（双手持大剑）";
+            yield return WaitIdle();
+            if (!boss || boss.Dead) yield break;
+            ReadyPlayer(16f);
+            string mode = "stand";
+            boss.IdleHook = dt =>
+            {
+                var to = motor.transform.position - boss.transform.position;
+                to.y = 0;
+                switch (mode)
+                {
+                    case "walk":
+                    case "run":
+                        boss.MoveToward(motor.transform.position, mode == "walk" ? 0.5f : 1f);
+                        if (to.sqrMagnitude > 0.01f)
+                            boss.transform.rotation = Quaternion.RotateTowards(boss.transform.rotation, Quaternion.LookRotation(to), 240f * dt);
+                        break;
+                    case "turn":
+                        boss.Halt();
+                        boss.transform.Rotate(0, 120f * dt, 0, Space.World);
+                        break;
+                    default:
+                        boss.Halt();
+                        boss.Face(motor.transform.position, 90f, dt);
+                        break;
+                }
+                return true;
+            };
+            float speed = 0;
+            IEnumerator Hold(float seconds)
+            {
+                float s = Time.time;
+                while (Time.time - s < seconds && boss && !boss.Dead)
+                {
+                    HoldRest(2f);
+                    KeepAlive();
+                    var loco = boss.Model?.locomotion;
+                    if (loco) speed = Mathf.Max(speed, loco.PlanarSpeed);
+                    yield return null;
+                }
+            }
+            void Shot(int k, string beat, string note, bool fp = false) =>
+                cam.Single(label, beat, k, $"loco_{k}", boss.BodyCenter, 4f, fp, note, mv);
+
+            yield return Hold(1.0f);
+            Shot(0, "待机", "双手持剑");
+            // 剑尖离地多高、在身前还是身侧（米，角色坐标）：采样待机是平端（剑尖在前方 3 m 多、齐腰高），双手斜持下段剑尖低、偏左前
+            if (boss.Blade)
+            {
+                var tip = boss.transform.InverseTransformPoint(boss.Blade.Tip);
+                Line($"待机持剑：剑尖 右 {tip.x:F2} / 前 {tip.z:F2} / 高 {tip.y:F2} m");
+            }
+            yield return Hold(0.9f);
+            Shot(1, "待机", "0.9 s 后（呼吸）");
+            mode = "walk";
+            yield return Hold(0.9f);
+            Shot(2, "行走", "慢走 2.3 m/s");
+            yield return Hold(0.3f);
+            Shot(3, "行走", "慢走 · 半步之后");
+            float walk = speed;
+            speed = 0;
+            mode = "run";
+            yield return Hold(0.9f);
+            Shot(4, "疾行", "疾行 4.6 m/s");
+            Shot(7, "第一人称", "疾行逼近 · 玩家视角", true);
+            float run = speed;
+            mode = "turn";
+            yield return Hold(0.5f);
+            Shot(5, "转向", "原地转身 120°/s");
+            yield return Hold(0.35f);
+            Shot(6, "转向", "转身 · 0.35 s 后");
+            boss.IdleHook = null;
+            HoldRest(0.3f);
+            Line($"待机 / 行走 / 转向：慢走最高 {walk:F1} m/s、疾行最高 {run:F1} m/s；累计 {cam.Count} 张");
+        }
 
         IEnumerator Timed(string label, string file, params float[] at)
         {

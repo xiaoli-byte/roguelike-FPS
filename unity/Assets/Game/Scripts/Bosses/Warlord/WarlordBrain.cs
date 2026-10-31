@@ -21,6 +21,9 @@ namespace Spiritfire.Game
     ///     释放帧（招式的判定时刻）由招式调 <see cref="SweepStrike"/> 等，在这一帧把顿帧（动作冻 0.05–0.09 s）、震屏、出手特效对齐；
     ///     片段里的 hit 事件只用来量「动作的释放帧和判定差多少」（<see cref="LastHitSkew"/>，节拍条套件记下来）。
     ///   · 狂怒换挡（20%）：咆哮炸开那一帧白热冲击环，之后铠甲 / 边光 / 剑身转白热铜，两肩冒火舌、背后飘紫褐烟（<see cref="FuryLook"/>）。
+    ///   · 第二批 B 路（2026-10-31，设计单 §12）：待机 / 慢走 / 疾行改成双手持剑的手 K 循环（底姿换成斜持下段，所有招式首尾帧跟着换）；
+    ///     登场落地播专属的 introLand（单膝跪地插剑 → 停顿 → 抬头怒视、角盔一亮 → 起身到咆哮的缩身帧，咆哮从那一帧接着播），落地特效换成熔铜落地
+    ///     （<see cref="Fx.WarlordLanding"/>）；招式间隙转身时头先转、上身跟一半（<see cref="LateUpdate"/>）。
     /// 受击片段等 ART8；硬直时播 Hit 缺片段只警告一次。
     /// </summary>
     public class WarlordBrain : BossBrain
@@ -42,6 +45,17 @@ namespace Spiritfire.Game
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => LegacyFx = false;
+
+        /// <summary>
+        /// 节拍条 / 演示用：接管招式间隙的走位（每帧调，返回 true = 这一帧已经自己走了；为 null 或返回 false = 框架的走位）。游戏里永远是 null
+        /// </summary>
+        public Func<float, bool> IdleHook { get; set; }
+
+        protected override void Idle(float dt)
+        {
+            if (IdleHook != null && IdleHook(dt)) return;
+            base.Idle(dt);
+        }
         /// <summary>场地上的熔铜渠（没有为 null：熔铜渠涨落退回环带写法）</summary>
         public FoundryChannels Channels { get; private set; }
         /// <summary>最近一次 <see cref="Act"/> 的状态名与走的路径（"trigger" / "crossfade"）、累计触发次数（测试 / 调试）</summary>
@@ -77,7 +91,15 @@ namespace Spiritfire.Game
         public int Holds { get; private set; }
         public string LastStrike { get; private set; }
 
-        float strikeAt = -1f, holdUntil = -1f, smokeAcc, dragAcc, hitSeenAt = -1f;
+        float strikeAt = -1f, holdUntil = -1f, smokeAcc, dragAcc, hitSeenAt = -1f, leadYaw;
+        Transform torsoBone, headBone;
+
+        /// <summary>登场落地的停顿片段（warlord_anims.py 的 introLand；状态机里没有时退回跃击的 land）</summary>
+        public const string IntroLandState = "introLand";
+        /// <summary>咆哮片段里缩身那一帧（12 / 72）：登场停顿的最后一帧就是这个姿势，咆哮从这里接着播</summary>
+        public const float RoarGatherAt = 12f / 72f;
+        /// <summary>转身时「目光领先」的程度（度 / (度每秒)）与上限（度）：头先转、上身跟一半</summary>
+        const float LeadPerRate = 0.16f, LeadMax = 26f;
         /// <summary>等片段释放帧（hit / impact / cast 事件）再放的出手特效</summary>
         System.Action pendingFx;
         int pendingFrame;
@@ -179,6 +201,30 @@ namespace Spiritfire.Game
             }
             LastActPath = "crossfade";
             PlayAct(state, seconds);
+        }
+
+        /// <summary>状态机里有没有这个状态（代理 / 占位体、还没重建状态机时没有）</summary>
+        bool HasAnimState(string state) => anim && anim.isActiveAndEnabled && anim.runtimeAnimatorController && anim.HasState(0, Animator.StringToHash(state));
+
+        /// <summary>
+        /// 从片段的 offset（0–1）处交叉淡入一个状态，整段仍按 seconds 拉伸（触发器只能从头播）：登场停顿的最后一帧就是咆哮的缩身姿势，咆哮从缩身那一帧接着播，
+        /// 不再先弹回站姿再蹲下去。没有这个状态时退回 <see cref="Act"/>
+        /// </summary>
+        void ActFrom(string state, float seconds, float offset, float fade = 0.1f)
+        {
+            if (!HasAnimState(state))
+            {
+                Act(state, seconds);
+                return;
+            }
+            var info = AnimInfo(anim);
+            float len = info.clips.TryGetValue(state, out var l) ? l : 0;
+            if (info.actScale) anim.SetFloat(ActScaleId, len > 0 && seconds > 0.05f ? Mathf.Clamp(len / seconds, 0.4f, 2.5f) : 1f);
+            ClearActTriggers();
+            anim.CrossFadeInFixedTime(state, fade, 0, Mathf.Clamp01(offset) * len);
+            LastAct = state;
+            LastActPath = "crossfade";
+            ActsFired++;
         }
 
         (HashSet<string> triggers, Dictionary<string, float> clips, bool actScale) AnimInfo(Animator a)
@@ -397,6 +443,28 @@ namespace Spiritfire.Game
             smokeAcc = 0;
             var back = BodyCenter - transform.forward * (BodyRadius * 0.6f) + Vector3.up * 1.0f;
             Fx.Burst(back + UnityEngine.Random.insideUnitSphere * 0.5f, WarlordPalette.Smoke, 1, 0.5f, 1.1f, 0.7f, -1.4f);
+        }
+
+        /// <summary>
+        /// 转身时目光领先（第二批 B 路「含转向」）：招式间隙里按偏航角速度把头往要转的方向先拧过去、上身跟一半（绕世界竖轴，叠在动画之上），
+        /// 原地转身的小碎步（混合树播慢走）配上「头先转、身后跟」才读得出是在转向；出招、硬直、登场、转阶段时不叠
+        /// </summary>
+        void LateUpdate()
+        {
+            if (!rigged || Def == null || Model?.root == null) return;
+            var loco = Model.locomotion;
+            bool free = !Dead && IntroDone && Current == null && !Staggered && !Transitioning;
+            float rate = loco && free ? loco.YawRate * Mathf.Rad2Deg : 0f;
+            leadYaw = Mathf.Lerp(leadYaw, Mathf.Clamp(rate * LeadPerRate, -LeadMax, LeadMax), 1f - Mathf.Exp(-8f * Time.deltaTime));
+            if (Mathf.Abs(leadYaw) < 0.2f) return;
+            if (!torsoBone || !headBone)
+                foreach (var t in Model.root.GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name == WarlordDef.TorsoBone) torsoBone = t;
+                    else if (t.name == WarlordDef.HeadBone) headBone = t;
+                }
+            if (torsoBone) torsoBone.rotation = Quaternion.AngleAxis(leadYaw * 0.45f, Vector3.up) * torsoBone.rotation;
+            if (headBone) headBone.rotation = Quaternion.AngleAxis(leadYaw * 0.55f, Vector3.up) * headBone.rotation;
         }
 
         // ───────────── 释放帧：顿帧 + 震屏 + 出手特效 ─────────────
@@ -646,6 +714,10 @@ namespace Spiritfire.Game
                 case "kneel":
                     if (Dead) DefeatKneel();
                     break;
+                case "glare":
+                    // 登场落地后抬头怒视：角盔（弱点）一亮
+                    if (!IntroDone) Fx.WarlordGlare(HeadPoint + Vector3.up * 0.3f, Fk);
+                    break;
                 case "collapse":
                     if (Dead) DefeatCollapse();
                     break;
@@ -732,7 +804,9 @@ namespace Spiritfire.Game
             if (t >= d.roarAt && !roared)
             {
                 roared = true;
-                Act("roar", 1.2f);
+                // 登场停顿的最后一帧是咆哮的缩身姿势：从缩身那一帧接着播（没有停顿片段时照旧从头播）
+                if (HasAnimState(IntroLandState)) ActFrom("roar", 1.2f, RoarGatherAt);
+                else Act("roar", 1.2f);
                 PlaySfx("boss_roar");
                 Shake(0.45f, 0.8f);
                 RoarFx();
@@ -785,21 +859,22 @@ namespace Spiritfire.Game
             Landed = true;
             SetDrop(0);
             var floor = transform.position;
-            Act("land", 0.8f);
+            // 落地停顿（第二批 B 路）：单膝跪地插剑 → 停住 → 抬头怒视 → 起身到咆哮的缩身帧，按「落地 → 咆哮」的间隔拉伸；没有这个片段退回跃击的 land
+            var d = WDef;
+            float pause = d != null && Def != null ? Mathf.Max(0.35f, (d.roarAt - d.dropFraction) * Def.intro.seconds) : 0.78f;
+            if (HasAnimState(IntroLandState)) Act(IntroLandState, pause);
+            else Act("land", 0.8f);
             Hold(0.1f);
             EndDropFx();
-            // 看得清的砸地（不再是一团盖住全身的通用爆炸光）：贴地尘浪 + 碎石 + 裂痕、熔铜冠 + 四溅的熔铜、一大滩熔铜贴花、一圈残火，
-            // 闪光压低贴地，落地的身体始终在画面里
-            Fx.Slam(floor, 6f, Hex.Rgb(0x4a3a30));
-            Fx.MoltenBurst(floor + Vector3.up * 0.4f, 3.2f, false);
-            Fx.MoltenSplat(floor, 6.5f, 1f, 8f);
+            // 熔铜落地（Fx.Warlord.cs）：重击落地（粗环、熔铜冠、熔铜贴花、方铜渣）+ 往四向崩开的「十」字熔铜裂口 + 紫褐尘浪，
+            // 取代通用砸地（白色放射裂纹读成旱魃的日轮、灰尘浪是沙色）；外圈再甩几滴熔铜、一圈残火，闪光压低贴地，落地的身体始终在画面里
+            Fx.WarlordLanding(floor, 6f, transform.forward, Fk);
             for (int i = 0; i < 6; i++)
             {
                 float a = i / 6f * Mathf.PI * 2 + UnityEngine.Random.Range(-0.3f, 0.3f), r = UnityEngine.Random.Range(2.6f, 5f);
                 Fx.MoltenSplash(floor + new Vector3(Mathf.Sin(a) * r, 0.2f, Mathf.Cos(a) * r), 1.3f);
             }
             FlameTongues.Ground(floor, 3.8f, 9, 2.4f, 0.6f);
-            Fx.Flash(floor + Vector3.up * 0.4f, WarlordDef.Fire, 7f, 16f, 0.3f);
             Fx.Burst(floor + Vector3.up * 0.3f, WarlordDef.Embers, 30, 10f, 1.2f, 0.2f, 12f);
             Shake(1f, 0.8f);
             PlaySfx("boss_slam");
