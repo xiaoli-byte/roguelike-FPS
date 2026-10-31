@@ -12,6 +12,9 @@ namespace Spiritfire.Game
     ///   初速度 = 抛出方向 2.2–3.4 m/s + 往上一点 + 玩家自己的速度（跑动时不会往后飞）；1.5 倍重力，和地形碰撞弹跳（反弹 0.28–0.42），
     ///   头 0.55 s 翻滚、之后停转躺在地上，2.6 s 后缩没。碰撞时按落地速度叮一声（GameAudio 的 pickup_coin 升调，0.05 s 内只响一次）。
     ///   限量：同屏上限 48 × 画质系数（低档 24），满了新抛的丢掉；机炮隔一发抛一枚。能量类、弓弩、发射器、喷火、转轮 / 折开换弹的不抛。
+    ///   顶点色按线性写（第二批收尾 D 路）：M_Fx_Shell 是 URP Particles/Lit，网格粒子实例化时按 unity_ParticleUseMeshColors 直接读网格顶点色、当线性值用。
+    ///   原来按 sRGB 写的铜黄（1, 0.74, 0.26）实际显示成发白的奶油色，在亮沙上只靠一点明度差；现在按屏幕上想要的颜色重新取色、过 <see cref="FxVertexColor.Linear"/>：
+    ///   亮金 #ffd95e + 深铜底缘 #8a5a16 + 近黑口部（饱和度和明暗都和沙地拉开），霰弹壳朱红 #e03a22（色样对比：docs/art/review/batch2/D/shell-*.jpg，playtest shell-swatch）。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class ShellCasings : MonoBehaviour
@@ -203,9 +206,9 @@ namespace Spiritfire.Game
             const int sides = 8;
             float r = Ratio[(int)kind];
             bool hull = kind == ShellKind.Hull;
-            var brass = new Color(1f, 0.74f, 0.26f);
-            var brassDark = new Color(0.78f, 0.5f, 0.16f);
-            var red = new Color(0.8f, 0.13f, 0.08f);
+            var brass = FxVertexColor.Linear(Hex.Rgb(0xffd95e));
+            var brassDark = FxVertexColor.Linear(Hex.Rgb(0x8a5a16));
+            var red = FxVertexColor.Linear(Hex.Rgb(0xe03a22));
             // 截面环：z、半径、颜色
             var rings = new List<(float z, float rad, Color c)>
             {
@@ -260,7 +263,7 @@ namespace Spiritfire.Game
             // 底面（实心）与口部（暗：读作开口；霰弹壳是压褶封口）
             Cap(rings[0].z, rings[0].rad, -1, brassDark);
             var top = rings[rings.Count - 1];
-            Cap(top.z, top.rad, 1, hull ? new Color(0.5f, 0.07f, 0.05f) : new Color(0.22f, 0.14f, 0.07f));
+            Cap(top.z, top.rad, 1, FxVertexColor.Linear(hull ? Hex.Rgb(0x8c1e12) : Hex.Rgb(0x2a1a0c)));
             var m = new Mesh { name = $"Shell {kind}", hideFlags = HideFlags.DontSave };
             m.SetVertices(verts);
             m.SetNormals(norms);
