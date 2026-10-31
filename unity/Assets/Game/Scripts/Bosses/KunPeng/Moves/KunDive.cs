@@ -9,6 +9,8 @@ namespace Spiritfire.Game
     ///   出手 0.3 s：破冰而出（hit 事件）——爆点重击（26，击退 10 / 上抛 8）+ 向外 ± 69° 的冰浪（14）；可选中；
     ///   收招 0.7 s：浮出水面（2.0–2.7 s 升起）。
     /// 环台上没有安全的角落：玩家离鲲越远（方位差 &gt; 69°）越爱出这一招（权重 4，否则 1.6）。
+    /// 特效（K 路，docs/art/vfx/kunpeng.md 第 3 节）：破冰前 0.45 s 那片水面隆起一个穹顶（<see cref="Fx.KunBreachDome"/>：「要从这里出来」）；
+    /// 释放帧冰沿崩起一圈冰板（<see cref="Fx.KunBreach"/>）+ 水柱 + 北冥浪墙（<see cref="Fx.KunWave"/>），顿帧 0.06 s。
     /// </summary>
     public sealed class KunDive : KunPengMove
     {
@@ -25,6 +27,9 @@ namespace Spiritfire.Game
         public bool BlastHit { get; private set; }
 
         float bubbleAcc;
+        bool domed;
+        /// <summary>破冰前多久水面开始隆起（秒）</summary>
+        public const float DomeLead = 0.45f;
 
         public KunDive()
         {
@@ -50,7 +55,7 @@ namespace Spiritfire.Game
             Act("sink", WindupTime);
             CuedSfx("boss_slam", 0.6f, 0.6f);
             bubbleAcc = 0;
-            Relocated = BlastHit = false;
+            Relocated = BlastHit = domed = false;
             NextTheta = KP ? KP.Theta : 0;
             Impact = AtFloor(Hole.Point(NextTheta, Hole.radius + 1.5f));
         }
@@ -82,6 +87,13 @@ namespace Spiritfire.Game
                     p.y = Hole.waterY + 0.3f;
                     Fx.Burst(p, KunPengDef.Ice, 5, 4f, 0.6f, 0.3f, 6f);
                 }
+            }
+            if (!domed && StageT >= WindupTime - DomeLead)
+            {
+                domed = true;
+                var w = Hole.Point(NextTheta, Mathf.Max(1f, Hole.radius - 4.6f));
+                w.y = Hole.waterY;
+                Fx.KunBreachDome(w, 4.2f, DomeLead);
             }
             if (!Relocated && StageT >= RelocateAt)
             {
@@ -119,14 +131,14 @@ namespace Spiritfire.Game
             // 破冰探头（原来是染成冰蓝的火焰爆炸）：冰沿上冰爆 + 冰刺环；鲲出水的那片水面炸起水柱、水冠、大涟漪，冰浪跟着冲击波往外推
             Fx.FrostNova(Impact + Vector3.up * 0.8f, 4f);
             Fx.IceRing(Impact, 3.5f, 12);
-            Fx.Burst(Impact + Vector3.up * 0.8f, KunPengDef.Ice, 36, 12f, 1f, 0.45f, 14f);
+            Fx.KunBreach(Impact, NextTheta);
             var water = Hole.Point(KP ? KP.Theta : NextTheta, Mathf.Max(1f, Hole.radius - 4.6f));
             water.y = Hole.waterY;
             Fx.WaterDisturb(water, 8f, 1.5f);
             Fx.Splash(water, 3.6f, Fx.NorthSea);
             Fx.WaterSpout(water, 2.2f, 9f, 0.3f, Fx.NorthSea);
-            Surge.Sheet(Impact, NextTheta, 2f, WaveHalf * 2f, 1.6f, SurgeKind.Water, 0.12f, 0.6f, 0.3f, new Color(0.5f, 0.78f, 0.92f), FrostPalette.IceHot, 2.8f, 0.9f,
-                grow: 1f + 12f / 2f);
+            Fx.KunWave(Impact, NextTheta, WaveHalf * 2f, 2f, 12f, 12f, 1.8f);
+            KP?.ImpactHold(0.06f);
             Brain.Shake(0.55f, 0.45f);
             CuedSfx("boss_roar", 1f, 0.9f);
         }

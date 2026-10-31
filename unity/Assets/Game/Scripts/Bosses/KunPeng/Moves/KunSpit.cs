@@ -9,6 +9,7 @@ namespace Spiritfire.Game
     ///   出手：朝玩家 0.6 s 后的位置和两侧（± 3.2 m，鲲怒时再加一块 6.2 m）各吐一块抛物线冰弹（1.15 s 落地、拱高 7 m、落点 2.6 m、16 伤），
     ///     落点都有预警，都夹在环台上（冰窟外 1 m、外缘内 1.5 m）；
     ///   收招 0.5 s。
+    /// 特效（K 路，docs/art/vfx/kunpeng.md 第 4 节）：前摇里口里一颗冰晶星越来越亮（挂在头骨上），出手口前一记冰晶星 + 一束往前喷的冰屑（<see cref="Fx.KunSpit"/>）。
     /// </summary>
     public sealed class KunSpit : KunPengMove
     {
@@ -35,6 +36,21 @@ namespace Spiritfire.Game
         }
 
         public override float Weight(BossBrain b) => b.DistanceToPlayer > MinRange ? weight : 0;
+
+        /// <summary>口里的冰珠（前摇里变大变亮，出手后熄）</summary>
+        FrostGlint orb;
+
+        void Orb(float level)
+        {
+            if (!orb)
+            {
+                if (!(level > 0.01f)) return;
+                var head = Brain.Model?.FindBone("head");
+                if (!head) return;
+                orb = FrostGlint.Attach(head, head.InverseTransformPoint(KP ? KP.Muzzle : head.position), 1.6f, Fx.KunCore);
+            }
+            if (orb) orb.Set(level, 0.5f + level * 1.2f);
+        }
 
         protected override void OnStart()
         {
@@ -81,6 +97,7 @@ namespace Spiritfire.Game
 
         protected override void OnWindup(float dt)
         {
+            Orb(Mathf.Clamp01(StageT / Mathf.Max(0.1f, WindupTime)));
             if (KP)
             {
                 KP.TurnKunToward(69f, dt);
@@ -108,9 +125,16 @@ namespace Spiritfire.Game
             for (int i = targets.Count; i < marks.Count; i++) marks[i].Cancel();
             marks.Clear();
             Sfx("enemy_shot", 0.9f, 0.6f);
+            Fx.KunSpit(from, targets.Count > 0 ? targets[0] - from : Brain.transform.forward);
+            Orb(0);
         }
 
-        protected override void OnEnd(bool cancelled) => marks.Clear();
+        protected override void OnEnd(bool cancelled)
+        {
+            marks.Clear();
+            if (orb) Object.Destroy(orb.gameObject);
+            orb = null;
+        }
 
         protected override void OnActive(float dt) => KP?.PlaceKun();
         protected override void OnRecover(float dt) => KP?.PlaceKun();

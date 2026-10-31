@@ -9,6 +9,9 @@ namespace Spiritfire.Game
     ///     （冰柱 / 矮墙 / 祭台挡得住气流；冰窟边缘段不挡——气流从冰沿上方吹过来）；出手 2.2 s 时冰沿亮 5.5 m 的扑咬预警（0.8 s）；
     ///   收招 0.7 s（3.9–4.6）：一口咬在冰沿上（bite 片段接在 inhale 后面，hit 事件），被拉到冰沿的人吃重击并被甩开（32，击退 13 / 上抛 6）。
     /// 拉力：Three.js 每 0.18 s 一下 3.4 m/s × k；这里每 0.15 s 一下、最多 2.95 m/s（见 <see cref="KunPengDef.pullImpulse"/>），单位时间的拉力相同、不会一直失控。
+    /// 动作 / 特效（K 路，docs/art/vfx/kunpeng.md 第 2 节）：inhale / bite 是手 K 片段——抽身仰头、鳃鳍张开（吸气）→ 0.9 s 低头张口对准扇形、身子随气流左右摆
+    /// → 3.5 s 往后收头蓄咬（biteWind）→ bite 第 1 帧一口咬合（释放帧，顿帧 0.07 s）。吸气时口前冷雾往回收 + 冰晶星（<see cref="Fx.KunInhaleCue"/>），
+    /// 气流的风线改成螺旋往口里收（KunPengFx），咬合 = 上下两道敌方月牙合拢（<see cref="Fx.KunBite"/>）。
     /// </summary>
     public sealed class KunInhale : KunPengMove
     {
@@ -30,6 +33,23 @@ namespace Spiritfire.Game
         float pullAcc;
         /// <summary>吞吸的气流漏斗（锥体积，条纹往口里走）</summary>
         FxHandle funnel;
+        bool biteWound;
+        /// <summary>收头蓄咬在出手段里的时刻（inhale 第 105 帧 = 3.5 s，出手段 2.6 s；没有 biteWind 事件时按它兜底）</summary>
+        const float BiteWindAt = 2.6f;
+
+        public override void OnAnimEvent(string name)
+        {
+            base.OnAnimEvent(name);
+            if (name == "biteWind") BiteWind();
+        }
+
+        /// <summary>收头蓄咬：口里一记冰晶星（「要咬了」）</summary>
+        void BiteWind()
+        {
+            if (biteWound || Stage != MoveStage.Active) return;
+            biteWound = true;
+            Fx.FrostGlint(KP ? KP.Muzzle : mouth, 2.4f);
+        }
 
         public KunInhale()
         {
@@ -51,7 +71,7 @@ namespace Spiritfire.Game
             mouth = KP ? KP.MouthPoint : Brain.BodyCenter;
             pullAcc = 0;
             Pulses = BlockedPulses = 0;
-            BiteHit = false;
+            BiteHit = biteWound = false;
         }
 
         protected override void OnTelegraph()
@@ -63,6 +83,8 @@ namespace Spiritfire.Game
             CuedSfx("telegraph", 1f, 0.7f);
             Sfx("enemy_charge", 0.9f, 0.5f);
             KP?.TellOnce("inhale", "鲲在吞吸——离开它面前的扇形，或者躲到冰柱后面！", Hex.Rgb(0x8fe3ff));
+            if (KP) Fx.KunRear(null, KP.WaterUnderKun, WindupTime + 0.6f, 5f);
+            Fx.KunInhaleCue(mouth, Brain.transform.forward);
         }
 
         protected override void OnWindup(float dt) => KP?.PlaceKun();
@@ -88,6 +110,7 @@ namespace Spiritfire.Game
                 Pull();
             }
             if (StageAt(BiteWarnAt) && KP) WarnCircle(AtFloor(KP.BiteSpot), BiteRadius, Mathf.Max(0.2f, active - BiteWarnAt));
+            if (!biteWound && StageT >= BiteWindAt + 0.05f) BiteWind();
         }
 
         /// <summary>扇形里、气流够得着（没被掩体挡住）的玩家往口部拉一下</summary>
@@ -125,10 +148,11 @@ namespace Spiritfire.Game
             int hits0 = Hazards.PlayerHits;
             Hazards.Blast(b, BiteRadius, Dmg(32), new BossBlastOpts { maxHeight = 4f, knockback = 13f, knockUp = 6f });
             BiteHit = Hazards.PlayerHits > hits0;
-            Fx.Burst(b + Vector3.up, KunPengDef.Ice, 26, 9f, 0.8f, 0.35f, 10f);
-            // 一口咬合：冰屑 + 水花往外炸
+            // 一口咬合（释放帧）：上下两道月牙合拢 + 爆闪 + 冰屑、水花往外炸；顿帧和震屏同一帧
+            Fx.KunBite(b, Brain.transform.eulerAngles.y);
             Fx.FrostShatter(b + Vector3.up * 0.8f, 2.4f);
             Fx.Splash(b, 3f, Fx.NorthSea);
+            KP.ImpactHold(0.07f);
             Brain.Shake(0.45f, 0.35f);
             CuedSfx("enemy_melee", 1f, 0.5f);
             Sfx("boss_slam", 0.6f, 1.2f);

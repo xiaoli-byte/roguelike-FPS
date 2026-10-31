@@ -1,16 +1,28 @@
 {
   "schema": 1,
-  "about": "鹏的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻；时刻取 KunPeng.ts 的切换 / 判定时刻。俯冲 dive 的擦中判定是整段的线段检测（hitOpen 起），不是单帧",
+  "about": "鹏的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。swoopReady / swoopHold / dive / gust / roar 是手工关键帧（art/source/characters/SK_Boss_Peng/anim/peng_anims.py 生成这四条，别手改），其余是采样片段的手写叠加。hitOpen = 俯冲擦中判定起（整段线段检测），strike = 掠过玩家的扑击极限姿势，flap = 扇翼的每一下下扇（狂风的风浪按它发），gustStart = 狂风生效，cocked = 俯冲蓄满，spread = 化鹏长啸时双翼一字展开",
   "clips": {
-    "swoopReady": [
-      { "at": 0.0, "name": "sfx:enemy_alert" },
-      { "at": 0.62, "name": "fx:lineWarning" },
-      { "at": 0.62, "name": "sfx:telegraph" }
-    ],
-    "dive": [
-      { "at": 0.0, "name": "sfx:boss_roar" },
-      { "at": 0.05, "name": "hitOpen" }
-    ],
+    "swoopReady": {
+      "events": [
+        { "at": 0.0, "name": "sfx:enemy_alert" },
+        { "at": 0.6111, "name": "fx:lineWarning" },
+        { "at": 0.6111, "name": "sfx:telegraph" },
+        { "at": 0.8333, "name": "cocked" }
+      ],
+      "next": "swoopHold",
+      "loop": false,
+      "keyframed": true
+    },
+    "dive": {
+      "events": [
+        { "at": 0.0, "name": "sfx:boss_roar" },
+        { "at": 0.0556, "name": "hitOpen" },
+        { "at": 0.3889, "name": "strike" },
+        { "at": 0.6111, "name": "flap" }
+      ],
+      "loop": false,
+      "keyframed": true
+    },
     "crash": [
       { "at": 0.04, "name": "fx:shake" },
       { "at": 0.04, "name": "sfx:boss_slam" }
@@ -25,11 +37,23 @@
       { "at": 0.02, "name": "fx:ring" },
       { "at": 0.02, "name": "sfx:boss_roar" }
     ],
-    "gust": [
-      { "at": 0.42, "name": "fx:zoneWarning" },
-      { "at": 0.42, "name": "sfx:telegraph" },
-      { "at": 0.83, "name": "gustStart" }
-    ],
+    "gust": {
+      "events": [
+        { "at": 0.0, "name": "sfx:telegraph" },
+        { "at": 0.1724, "name": "fx:zoneWarning" },
+        { "at": 0.3103, "name": "apex" },
+        { "at": 0.3448, "name": "gustStart" },
+        { "at": 0.3448, "name": "flap" },
+        { "at": 0.4425, "name": "flap" },
+        { "at": 0.5402, "name": "flap" },
+        { "at": 0.6379, "name": "flap" },
+        { "at": 0.7356, "name": "flap" },
+        { "at": 0.8333, "name": "flap" },
+        { "at": 0.931, "name": "flap" }
+      ],
+      "loop": false,
+      "keyframed": true
+    },
     "spread": [
       { "at": 0.0, "name": "sfx:telegraph" },
       { "at": 0.375, "name": "projectile" },
@@ -43,9 +67,18 @@
       { "at": 0.742, "name": "projectile" },
       { "at": 0.788, "name": "projectile" }
     ],
-    "roar": [
-      { "at": 0.0, "name": "sfx:boss_roar" },
-      { "at": 0.0, "name": "fx:shake" }
-    ]
+    "roar": {
+      "events": [
+        { "at": 0.6944, "name": "spread" },
+        { "at": 0.6944, "name": "fx:shake" }
+      ],
+      "loop": false,
+      "keyframed": true
+    },
+    "swoopHold": {
+      "events": [],
+      "loop": true,
+      "keyframed": true
+    }
   }
 }

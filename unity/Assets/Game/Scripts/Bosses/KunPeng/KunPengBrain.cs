@@ -173,6 +173,7 @@ namespace Spiritfire.Game
         protected override void Update()
         {
             base.Update();
+            TickHold(Time.deltaTime);
             if (Def == null || !rigged || Dead) return;
             float dt = Time.deltaTime;
             if (IsKun) StepKun(dt);
@@ -530,8 +531,20 @@ namespace Spiritfire.Game
                     foreach (var t in info.triggers)
                         if (t != trigger)
                             anim.ResetTrigger(t);
-                    anim.SetTrigger(trigger);
-                    LastActPath = "trigger";
+                    // 还在上一段的过渡里（收招回待机、PlayLocomotion 的交叉淡入）时，任意状态的触发要等过渡走完才生效——
+                    // 整段动作晚开几帧，出手姿势就落在判定之后（同 HanbaBrain.Act）。这时直接切进去
+                    int hash = Animator.StringToHash(state);
+                    if (anim.IsInTransition(0) && anim.HasState(0, hash))
+                    {
+                        anim.ResetTrigger(trigger);
+                        anim.CrossFadeInFixedTime(hash, 0.1f, 0, 0f);
+                        LastActPath = "crossfade-in-transition";
+                    }
+                    else
+                    {
+                        anim.SetTrigger(trigger);
+                        LastActPath = "trigger";
+                    }
                     return;
                 }
             }
@@ -575,9 +588,70 @@ namespace Spiritfire.Game
             foreach (var t in AnimInfo(anim).triggers) anim.ResetTrigger(t);
         }
 
+        // ───────────── 释放帧的顿帧（只顿首领自己的动作）─────────────
+
+        float holdLeft, holdDebt;
+
+        /// <summary>本场顿帧次数（测试用）</summary>
+        public int ImpactHolds { get; private set; }
+
+        /// <summary>
+        /// 释放帧的顿帧：只把首领自己的 Animator 压到 ×0.05 停 seconds 秒（极限姿势「咬」住一下），之后以 ×1.6 追回欠下的时间——
+        /// 后面的动画事件照样落在原来的时刻附近，不拖慢招式；全局时间不动（同 HanbaBrain.ImpactHold）。震屏由调用方同一帧给
+        /// </summary>
+        public void ImpactHold(float seconds)
+        {
+            if (!anim || Dead || !(seconds > 0)) return;
+            holdLeft = Mathf.Max(holdLeft, Mathf.Min(0.12f, seconds));
+            ImpactHolds++;
+        }
+
+        void TickHold(float dt)
+        {
+            if (!anim) return;
+            if (Dead)
+            {
+                if (holdLeft > 0 || holdDebt > 0 || anim.speed != 1f) anim.speed = 1f;
+                holdLeft = holdDebt = 0;
+                return;
+            }
+            if (holdLeft > 0)
+            {
+                holdLeft -= dt;
+                holdDebt += dt * 0.95f;
+                anim.speed = 0.05f;
+                return;
+            }
+            if (holdDebt > 0)
+            {
+                const float CatchUp = 1.6f;
+                holdDebt -= dt * (CatchUp - 1f);
+                anim.speed = holdDebt > 0 ? CatchUp : 1f;
+                if (holdDebt <= 0) holdDebt = 0;
+            }
+            else if (anim.speed != 1f) anim.speed = 1f;
+        }
+
+        /// <summary>两侧翼尖（鹏的 wing_*_3 骨；代理 / 占位体按身体两侧估）</summary>
+        public Vector3 WingTip(bool left)
+        {
+            var t = Model?.FindBone(left ? "wing_L_3" : "wing_R_3");
+            if (t) return t.position;
+            return BodyCenter + transform.right * (left ? -1f : 1f) * BodyRadius * 1.6f + Vector3.up * BodyRadius * 0.5f;
+        }
+
+        /// <summary>鲲身下的水面点（起手水退、潜袭冒头的那片水）</summary>
+        public Vector3 WaterUnderKun => new(transform.position.x, Hole.waterY, transform.position.z);
+
         // ───────────── 框架钩子 ─────────────
 
         protected override bool UsesNavMesh => false;
+
+        protected override void OnAnimEvent(string evt)
+        {
+            // 化鹏长啸的展翅（roar 片段 50 帧）：转换演出里由动画驱动展翅爆发；没有事件的代理按 3.6 s 兜底（TransitionTick）
+            if (evt == "spread" && Transitioning && IsPeng) SpreadBurst();
+        }
 
         protected override bool ExtraUntargetable => Submerged;
 
@@ -662,6 +736,7 @@ namespace Spiritfire.Game
         protected override void OnPhase(int phase)
         {
             transPrev = -1f;
+            spreadDone = false;
             Submerged = false;
             ClearActTriggers();
             HoleFx?.Suction(false);
@@ -670,8 +745,12 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 化鹏（Three.js transitionTick）：鲲边吼边沉（0.6–1.4 s）→ 1.3 s 冰海炸开（整圈冰浪 + 冰屑冲天）→ 冰雾 1.2–1.55 s 涌满、保持到 2.6 s、4.0 s 散尽，
-        /// 框架在最浓的 1.55 s 换模型 → 鹏从雾里升起（1.55–4.0 s），3.6 s 一声长啸
+        /// 化鹏（Three.js transitionTick；设计单 docs/art/vfx/kunpeng.md 第 8 节，全场高潮）：
+        ///   0.6–1.4 s 鲲边吼边沉，冰窟成了一个往里卷的**北冥漩涡**（水面着色器的旋涡 + 漩涡圆盘）→
+        ///   1.3 s **水击三千里**（释放帧）：白热爆闪、冰沿一圈水柱、冰板外抛、整圈浪墙推到外缘（判定的整圈冰浪不变）→
+        ///   1.4 s 冰窟中心拔起**扶摇柱**（两层水风柱 + 螺旋上升的风线，到 3.4 s）；框架在 1.55 s 换模型（鲲已完全沉在水下，柱子挡在中心）→
+        ///   鹏从水下 14 m 在柱里升起（roar 片段：茧 → 舒展 → 反向预备）→ 约 3.6 s **展翅**（roar 的 spread 事件；没有事件按 3.6 s 兜底）：
+        ///   顿帧、柱子炸散成一圈快转的风环 + 径向风线 + 雪羽，长啸。冰雾只在 1.2–2.6 s 起一层偏冷的蓝灰（最浓 0.35），不再整幅冷白
         /// </summary>
         protected override void TransitionTick(float t, float dt)
         {
@@ -679,19 +758,25 @@ namespace Spiritfire.Game
             transPrev = t;
             bool Crossed(float x) => was < x && t >= x;
             var c = Hole.center;
+            var water = new Vector3(c.x, Hole.waterY, c.z);
             if (IsKun)
             {
                 PlaceKun();
                 AimKunAtPlayer(0.6f);
                 Sunk = KunPengMath.Span(t, 0.6f, 1.4f);
             }
+            if (Crossed(0.6f))
+            {
+                // 北冥漩涡：鲲往下沉，水面跟着卷
+                Fx.KunVortex(water, Mathf.Max(4f, Hole.radius * 0.85f), 1.4f);
+                HoleFx?.SwirlTo(0.75f, 0.5f);
+            }
             if (Crossed(1.3f))
             {
                 var at = c + Vector3.up * 1.5f;
-                // 冷的冰爆（FX3）：卡通爆炸是火的色阶，传冰蓝进去会成一团赭黄泥色
+                // 「水击三千里」（释放帧）：冷的冰爆（FX3）+ 水柱、冰板、整圈浪墙（视觉）；判定照旧是 BossHazards 的整圈冰浪
                 Fx.FrostNova(at, Mathf.Clamp(Hole.radius * 0.6f, 6f, 8f), KunPengDef.Ice);
-                Fx.Burst(at, KunPengDef.Ice, 60, 16f, 1.4f, 0.6f, 12f);
-                Fx.Burst(c + Vector3.up * 4f, Color.white, 40, 10f, 1.6f, 0.8f, -2f);
+                Fx.KunWaterStrike(new Vector3(c.x, Hole.FloorY, c.z), Hole.waterY, Hole.radius, Hole.outer);
                 CameraShake.Quake(c, 0.85f, 90f, 1f);
                 BossHazards.For(this).Wave(new BossWaveSpec(new Vector3(c.x, Hole.FloorY, c.z), 16f, Hole.outer + 2f, MoveDamage(10f / Mathf.Max(1f, Def.damage)), KunPengDef.Warn)
                 {
@@ -700,26 +785,54 @@ namespace Spiritfire.Game
                 GameAudio.PlayAt("explosion", c, 1f, 0.55f);
                 GameAudio.PlayAt("shield_break", c, 1f, 0.5f);
             }
+            if (Crossed(1.4f))
+            {
+                // 扶摇柱：一直留到展翅（最多到 3.9 s），展翅时 Cancel 进入塌落
+                (updraftOuter, updraftInner) = Fx.KunPengUpdraft(water, 34f, 2.5f);
+                HoleFx?.SwirlTo(0.5f, 1.2f);
+            }
+            // 柱身外绕一股螺旋上升的风线（扶摇）
+            if (t > 1.4f && t < 3.4f && !spreadDone) Fx.PengSpiralUp(water, 6f, 40f, dt);
             float fog = t < 1.2f ? 0 : t < 1.55f ? (t - 1.2f) / 0.35f : t < 2.6f ? 1 : Mathf.Max(0, 1 - (t - 2.6f) / 1.4f);
             HoleFx?.Flash(fog);
             if (IsPeng)
             {
-                RiseOffset = -14f * (1 - KunPengMath.EaseOutCubic(KunPengMath.Span(t, KunPengDef.TransitionSwap, 4f)));
+                RiseOffset = -14f * (1 - KunPengMath.EaseOutCubic(KunPengMath.Span(t, KunPengDef.TransitionSwap, 3.4f)));
                 Face(PlayerPosition, 86f, dt);
                 HoverAlt = (KDef != null ? KDef.pengOverHole : 11.5f) + 1f;
             }
-            if (Crossed(3.6f))
+            // 展翅兜底：片段没有 spread 事件（代理 / 占位体）时按 3.6 s
+            if (Crossed(3.6f) && IsPeng && !spreadDone) SpreadBurst();
+            if (Crossed(3.65f))
             {
                 PlaySfx("boss_roar", 1f, 1.45f);
                 Shake(0.4f, 0.8f);
-                Fx.Burst(BodyCenter, KunPengDef.Ice, 30, 10f, 1f, 0.4f, 0f);
             }
+        }
+
+        FxHandle updraftOuter, updraftInner;
+        bool spreadDone;
+
+        /// <summary>化而为鸟的展翅（释放帧）：顿帧、扶摇柱炸散成风环 + 风线 + 雪羽、白闪</summary>
+        void SpreadBurst()
+        {
+            if (spreadDone) return;
+            spreadDone = true;
+            updraftOuter.Cancel();
+            updraftInner.Cancel();
+            Fx.PengSpreadBurst(BodyCenter);
+            ImpactHold(0.08f);
+            Shake(0.5f, 0.5f);
+            HoleFx?.SwirlTo(0f, 1.5f);
         }
 
         protected override void OnTransitionEnd(BossPhaseDef phase)
         {
             RiseOffset = 0;
             HoleFx?.Flash(0);
+            HoleFx?.SwirlTo(0f, 1f);
+            updraftOuter.Cancel();
+            updraftInner.Cancel();
             if (IsPeng) HoverAlt = KDef != null ? KDef.pengHover : 13.5f;
         }
 
@@ -767,6 +880,8 @@ namespace Spiritfire.Game
                 HoleFx.Gust(false);
                 HoleFx.Flash(0);
                 HoleFx.SetAgitation(1f);
+                // 鲲沉入冰窟：水面卷成漩涡（KunPengDeath 没顶时再加漩涡圆盘和水冠）
+                if (IsKun) HoleFx.SwirlTo(0.75f, 1.4f);
                 HoleFx.ReleaseAfter(Def != null ? Def.defeat.seconds + Def.defeat.despawnAfter : 5f);
             }
             GameUI.Toast(IsKun ? "北冥之鲲沉入了冰海" : "鹏坠入北冥——冰海重归平静", Hex.Rgb(0xbfe9ff), 3.2f);

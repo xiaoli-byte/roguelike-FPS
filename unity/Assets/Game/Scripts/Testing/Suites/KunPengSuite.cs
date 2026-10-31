@@ -513,8 +513,10 @@ namespace Spiritfire.Game.Testing
             }
             var outward = Flat(p0 - h.center).normalized;
             float dot = Vector3.Dot(gust.LastPush, outward);
-            Line($"  扇翼狂风：推了 {gust.Pushes} 下（被掩体挡 {gust.BlockedPushes} 下），方向与向外的夹角余弦 {dot:F2}，冻风带 {(gust.Band ? "✓" : "✗")}，被推开 {Vector3.Distance(Flat(motor.transform.position), p0):F1} m");
+            Line($"  扇翼狂风：推了 {gust.Pushes} 下（被掩体挡 {gust.BlockedPushes} 下），方向与向外的夹角余弦 {dot:F2}，冻风带 {(gust.Band ? "✓" : "✗")}，被推开 {Vector3.Distance(Flat(motor.transform.position), p0):F1} m，" +
+                 $"下扇 {gust.Flaps} 下（K 路：每一下一圈风环，出手 3.4 s 里应 ≥ 5 下），首领顿帧累计 {boss.ImpactHolds} 次");
             if (gust.Pushes < 5) Fail($"扇翼狂风只推了 {gust.Pushes} 下");
+            if (gust.Flaps < 5) Fail($"扇翼狂风只下扇了 {gust.Flaps} 下（flap 事件 / 周期兜底都没跟上）");
             else if (dot < 0.5f) Fail("扇翼狂风没把玩家往外缘推");
             if (!gust.Band) Fail("扇翼狂风没有放冻风带");
         }

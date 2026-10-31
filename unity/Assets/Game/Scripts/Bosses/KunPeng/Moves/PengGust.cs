@@ -10,6 +10,9 @@ namespace Spiritfire.Game
     ///   出手 3.4 s（2.0–5.4）：贴地风痕（<see cref="KunPengFx.Gust"/>），每 0.15 s 把玩家往外缘推一下（冰柱 / 矮墙 / 祭台背后不受风；冰窟边缘段不挡）；
     ///   收招 0.4 s。
     /// 推力同吞吸（每下最多 2.95 m/s，单位时间与 Three.js 每 0.18 s 3.6 m/s 相同），把人吹进冻风带里——躲到柱子后面。
+    /// 动作 / 特效（K 路，docs/art/vfx/kunpeng.md 第 5 节）：gust 是手 K 片段、按整招 5.8 s 播——后仰收翅 → 两下慢扇爬升 → 1.8 s 举翅到顶（apex，翼尖冰晶星）
+    /// → 2.0 s 第一下猛扇（释放帧，顿帧 0.06 s）→ 之后每 17 帧（0.57 s）一下（flap 事件）。每一下下扇：翼刃拖影、身下一圈贴地风环、螺旋往外的风线、卷起的雪
+    /// （<see cref="Fx.PengFlap"/>）——扇一下推一下，节奏看得见。代理 / 占位体没有 flap 事件，按同样的周期兜底。
     /// </summary>
     public sealed class PengGust : KunPengMove
     {
@@ -25,7 +28,12 @@ namespace Spiritfire.Game
         public HazardZone Band { get; private set; }
         public Vector3 LastPush { get; private set; }
 
-        float pushAcc, shakeAcc;
+        float pushAcc, shakeAcc, lastFlap = -99f;
+        bool apexed;
+        /// <summary>下扇周期（片段 17 帧）、蓄力顶点（片段 54 帧）</summary>
+        public const float FlapPeriod = 17f / 30f, ApexAt = 1.8f;
+        /// <summary>本次下扇了几下（测试用）</summary>
+        public int Flaps { get; private set; }
 
         public PengGust()
         {
@@ -41,8 +49,11 @@ namespace Spiritfire.Game
 
         protected override void OnStart()
         {
-            // 扇翼片段 2.4 s 本身是循环的扇动，按原速播（整招 5.8 s 拉伸会慢到 0.4 倍）
-            Act("gust", 2.4f);
+            // 手 K 的扇翼片段就是整招（前摇 2.0 + 出手 3.4 + 收招 0.4 = 5.8 s），按整招时长播：2.0 s 第一下猛扇对齐出手
+            Act("gust", windup + active + recover);
+            apexed = false;
+            lastFlap = -99f;
+            Flaps = 0;
             if (KP)
             {
                 KP.HoverAlt = (KDef != null ? KDef.pengOverHole : 11.5f) + 1f;
@@ -69,8 +80,35 @@ namespace Spiritfire.Game
             KP?.TellOnce("gust", "鹏扇起狂风——躲到冰柱后面，别被吹到环台外缘的冻风带里！", Hex.Rgb(0xbfe9ff));
         }
 
+        public override void OnAnimEvent(string name)
+        {
+            base.OnAnimEvent(name);
+            if (name == "apex") Apex();
+            else if (name == "flap" && Stage == MoveStage.Active) Flap(false);
+        }
+
+        /// <summary>举翅到顶：两侧翼尖各一颗冰晶星</summary>
+        void Apex()
+        {
+            if (apexed || Stage != MoveStage.Windup) return;
+            apexed = true;
+            if (KP) Fx.PengWingGlints(KP.WingTip(true), KP.WingTip(false), 2f);
+        }
+
+        /// <summary>一下下扇的风（事件驱动；离上一下不到 0.2 s 的重复事件忽略）</summary>
+        void Flap(bool strong)
+        {
+            if (Time.time - lastFlap < 0.2f) return;
+            lastFlap = Time.time;
+            Flaps++;
+            var p = Brain.transform.position;
+            var ground = new Vector3(p.x, Hole.found && Hole.OverHole(p) ? Hole.waterY : Floor, p.z);
+            Fx.PengFlap(Brain.BodyCenter, ground, Brain.transform.eulerAngles.y, 4.5f, strong);
+        }
+
         protected override void OnWindup(float dt)
         {
+            if (!apexed && StageT >= ApexAt) Apex();
             if (KP)
             {
                 if (StageT < FlyIn) KP.FlyTo(Hole.center, 14f, 1f);
@@ -90,11 +128,17 @@ namespace Spiritfire.Game
             float outer = Hole.outer + 1f, inner = Mathf.Max(Hole.radius + 4f, Hole.outer - 5f);
             windBand = Surge.Annulus(c, inner, outer, SurgeKind.Water, active, 260f, 1.4f, new Color(0.75f, 0.88f, 0.98f), Color.white, 0.45f);
             Fx.FrostVapour(Brain.BodyCenter, 2.5f, FrostPalette.Snow);
-            Fx.Ring(c, outer, FrostPalette.IceHot, 0.8f, false);
+            // 释放帧：第一下猛扇（和片段的 gustStart / flap 同一帧），顿帧 + 震屏
+            lastFlap = -99f;
+            Flap(true);
+            KP?.ImpactHold(0.06f);
+            Brain.Shake(0.3f, 0.35f);
         }
 
         protected override void OnActive(float dt)
         {
+            // 兜底：片段没有 flap 事件（代理 / 占位体 / 采样片段）时按周期扇
+            if (Time.time - lastFlap > FlapPeriod * 1.35f) Flap(false);
             KP?.Hover();
             Brain.Face(Brain.PlayerPosition, 115f, dt);
             float interval = KDef != null ? KDef.pullInterval : 0.15f;

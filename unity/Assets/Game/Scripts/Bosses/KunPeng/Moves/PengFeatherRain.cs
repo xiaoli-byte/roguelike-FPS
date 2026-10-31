@@ -82,8 +82,9 @@ namespace Spiritfire.Game
             target = AtFloor(target);
             if (Hole.found) target = Hole.ClampToRing(target);
             Hazards.Lob(new BossLobSpec(tip, target, Flight, 1.5f, Radius, Dmg(15), KunPengDef.Warn, LobKind.Ice) { scale = 0.7f, look = LobLook.Feather });
-            // 翼尖甩出羽刃的那一下：一记冰晶星芒
+            // 翼尖甩出羽刃的那一下：一记冰晶星芒 + 顺着出手方向一条短风线（羽刃破风）
             Fx.FrostGlint(tip, 1.2f);
+            Fx.PengFeatherLaunch(tip, target);
             CountWarning();
             TotalFired++;
             if (i % 3 == 0) Sfx("enemy_shot", 0.5f, 1.3f);

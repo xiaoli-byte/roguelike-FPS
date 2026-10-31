@@ -13,6 +13,9 @@ namespace Spiritfire.Game
     ///   才算撞，擦边不算；硬直 1.8 s（<see cref="BossBrain.Stagger"/>，crash 动作，鲛珠大亮——额外的输出窗口），招式就此打断。
     ///   瞄线时沿线模拟一遍：陡面在玩家之前（玩家把柱子夹在自己和鹏之间）= 引撞，照常俯冲、一头撞上；
     ///   陡面在玩家之后 = 线截到它前面（<see cref="KunPengMath.TrimSwoop"/>），掠过玩家就拉起，不会撞玩家身后的柱子。站在开阔处的玩家要靠侧移 / 冲刺躲。
+    /// 动作 / 特效（K 路，docs/art/vfx/kunpeng.md 第 6 节）：swoopReady / dive 是手 K 片段——后仰抬头 → 前倾锁定 → 双翼高举后掠、收爪翘尾（cocked，翼尖冰晶星）
+    /// → dive 第 0 帧整只压成一支箭（释放帧：破空白环，<see cref="Fx.PengSwoopLaunch"/>）→ 掠过玩家的扑击姿势（strike：左右两道爪风月牙，<see cref="Fx.PengStrike"/>）
+    /// → 随势下扇一记、拉起。俯冲中翼尖拉出两条风线、贴地时身下扬起 V 形雪浪（<see cref="Fx.PengSwoopTrail"/>）。擦中 / 撞柱各有顿帧。
     /// </summary>
     public sealed class PengSwoop : KunPengMove
     {
@@ -49,8 +52,8 @@ namespace Spiritfire.Game
         Sub sub;
         float subT, travel, trailAcc;
         int left;
-        bool hit;
-        Vector3 prevTalons;
+        bool hit, cocked, struck;
+        Vector3 prevTalons, prevTipL, prevTipR;
         static readonly RaycastHit[] probeHits = new RaycastHit[16];
 
         public PengSwoop()
@@ -82,6 +85,7 @@ namespace Spiritfire.Game
             sub = Sub.Aim;
             subT = 0;
             Act("swoopReady", 2.4f);
+            cocked = false;
             var player = Brain.PlayerPosition;
             int side = KunPengMath.SwoopSide(Hole, player, Brain.transform.position, Rng.Sign());
             var (from, yaw, len) = KunPengMath.SwoopLine(Hole, player, side);
@@ -129,6 +133,7 @@ namespace Spiritfire.Game
                     return;
                 }
                 case Sub.Tele:
+                    if (!cocked && subT >= TeleSeconds * 0.45f) Cock();
                     // 瞄准超时没飞到起点时，预警期间接着往起点靠（俯冲沿画出来的线走）
                     kp?.FlyTo(From, 22f, 1f);
                     kp?.SetFacing(Mathf.MoveTowardsAngle(Brain.transform.eulerAngles.y, Yaw, 286f * dt));
@@ -145,6 +150,31 @@ namespace Spiritfire.Game
                     if (subT >= 0.6f) BeginAim();
                     return;
             }
+        }
+
+        public override void OnAnimEvent(string name)
+        {
+            base.OnAnimEvent(name);
+            if (name == "cocked" && sub == Sub.Tele) Cock();
+            else if (name == "strike" && sub == Sub.Dive) Strike();
+            else if (name == "flap" && sub != Sub.Aim && KP)
+                Fx.PengFlap(Brain.BodyCenter, AtFloor(Brain.transform.position), Brain.transform.eulerAngles.y, 4f, false);
+        }
+
+        /// <summary>蓄满：双翼翼尖各一颗冰晶星（预警里的「要冲了」）</summary>
+        void Cock()
+        {
+            if (cocked) return;
+            cocked = true;
+            if (KP) Fx.PengWingGlints(KP.WingTip(true), KP.WingTip(false), 1.8f);
+        }
+
+        /// <summary>掠过玩家的扑击：左右两道爪风月牙（每一趟一次）</summary>
+        void Strike()
+        {
+            if (struck) return;
+            struck = true;
+            Fx.PengStrike(Talons, Yaw);
         }
 
         void BeginDive()
@@ -167,6 +197,14 @@ namespace Spiritfire.Game
             Act("dive", 1.2f);
             CuedSfx("boss_roar", 0.8f, 1.5f);
             prevTalons = Talons;
+            struck = false;
+            if (KP)
+            {
+                prevTipL = KP.WingTip(true);
+                prevTipR = KP.WingTip(false);
+            }
+            // 释放帧（破空）：一支箭冲下来那一刻的白环 + 往后甩的风线
+            Fx.PengSwoopLaunch(Brain.BodyCenter, Dir(Yaw) + Vector3.down * 0.4f);
             // 俯冲时身后拖一道冰风（锥尾体积，长度随速度）
             var root = Brain.Model?.root ? Brain.Model.root.transform : Brain.transform;
             diveTrail.Cancel();
@@ -212,10 +250,26 @@ namespace Spiritfire.Game
                 Hits++;
                 Hazards.Hurt(Dmg(30), Element.None, Brain.transform.position);
                 if (kp && kp.Motor) kp.Motor.AddImpulse(dir * 12f + Vector3.up * 6f);
+                Strike();
+                kp?.ImpactHold(0.05f);
                 Brain.Shake(0.5f, 0.35f);
                 Sfx("enemy_melee", 1f, 0.7f);
             }
             prevTalons = talons;
+            if (kp)
+            {
+                var tl = kp.WingTip(true);
+                var tr = kp.WingTip(false);
+                Fx.PengSwoopTrail(tl, tr, prevTipL, prevTipR, talons, kp.FlyVelocity, Brain.transform.position.y - Floor, dt);
+                prevTipL = tl;
+                prevTipR = tr;
+            }
+            // 扑击兜底（片段第 14 帧 strike；没有事件时按玩家在线上的位置）：玩家在前方 2.5 m 以内就扫爪风
+            if (!struck && PlayerFeet(out var pf))
+            {
+                var rel = pf - Brain.transform.position;
+                if (Vector3.Dot(new Vector3(rel.x, 0, rel.z), dir) < 2.5f && new Vector3(rel.x, 0, rel.z).magnitude < 8f) Strike();
+            }
             trailAcc += dt;
             if (trailAcc >= 0.05f)
             {
@@ -245,6 +299,8 @@ namespace Spiritfire.Game
                 Fx.FrostShatter(talons, 2.6f);
                 Fx.IceRing(new Vector3(talons.x, Floor, talons.z), 3.5f, 10);
                 CuedSfx("boss_slam", 1f, 1.1f);
+                kp?.ImpactHold(0.09f);
+                Brain.Shake(0.55f, 0.4f);
                 // 撞晕：脚本化硬直（打断招式，crash 动作，鲛珠大亮）
                 Brain.Stagger(CrashStagger, "crash");
                 return;

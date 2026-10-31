@@ -1,29 +1,49 @@
 {
   "schema": 1,
-  "about": "鲲的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻；时刻取 KunPeng.ts 招式里的切换 / 判定时刻，落地类判定对到采样姿势落定的那一帧（约 0.1 s）",
+  "about": "鲲的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。slamWind / slam / inhale / bite 是手工关键帧（art/source/characters/SK_Boss_Kun/anim/kun_anims.py 生成这四条，别手改；对象形式带 next 连段），其余是采样片段的手写叠加；hit = 出手 / 判定，apex = 蓄力顶点，wave2 = 鲲怒第二道冰浪，pushOff = 撑起，suctionStart = 吞吸气流起，biteWind = 收头蓄咬",
   "clips": {
-    "inhale": [
-      { "at": 0.0, "name": "fx:sectorWarning" },
-      { "at": 0.0, "name": "sfx:telegraph" },
-      { "at": 0.23, "name": "suctionStart" },
-      { "at": 0.795, "name": "fx:groundWarning" }
-    ],
-    "bite": [
-      { "at": 0.14, "name": "hit" },
-      { "at": 0.14, "name": "fx:shake" },
-      { "at": 0.14, "name": "sfx:enemy_melee" }
-    ],
-    "slamWind": [
-      { "at": 0.0, "name": "fx:groundWarning" },
-      { "at": 0.0, "name": "sfx:boss_roar" }
-    ],
-    "slam": [
-      { "at": 0.12, "name": "hit" },
-      { "at": 0.12, "name": "fx:explosion" },
-      { "at": 0.12, "name": "fx:shake" },
-      { "at": 0.12, "name": "sfx:boss_slam" },
-      { "at": 0.53, "name": "wave2" }
-    ],
+    "inhale": {
+      "events": [
+        { "at": 0.0, "name": "fx:sectorWarning" },
+        { "at": 0.0, "name": "sfx:telegraph" },
+        { "at": 0.2308, "name": "suctionStart" },
+        { "at": 0.7949, "name": "fx:groundWarning" },
+        { "at": 0.8974, "name": "biteWind" }
+      ],
+      "next": "bite",
+      "loop": false,
+      "keyframed": true
+    },
+    "bite": {
+      "events": [
+        { "at": 0.0476, "name": "hit" },
+        { "at": 0.0476, "name": "fx:shake" },
+        { "at": 0.0476, "name": "sfx:enemy_melee" }
+      ],
+      "loop": false,
+      "keyframed": true
+    },
+    "slamWind": {
+      "events": [
+        { "at": 0.0, "name": "fx:groundWarning" },
+        { "at": 0.2424, "name": "sfx:boss_roar" },
+        { "at": 0.5758, "name": "apex" }
+      ],
+      "next": "slam",
+      "loop": false,
+      "keyframed": true
+    },
+    "slam": {
+      "events": [
+        { "at": 0.0, "name": "hit" },
+        { "at": 0.0, "name": "fx:shake" },
+        { "at": 0.0, "name": "sfx:boss_slam" },
+        { "at": 0.3333, "name": "wave2" },
+        { "at": 0.6905, "name": "pushOff" }
+      ],
+      "loop": false,
+      "keyframed": true
+    },
     "spit": [
       { "at": 0.0, "name": "sfx:enemy_charge" },
       { "at": 0.54, "name": "projectile" }

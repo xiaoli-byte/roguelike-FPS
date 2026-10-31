@@ -9,6 +9,10 @@ namespace Spiritfire.Game
     ///     鲲怒时两侧两道（16）、0.45 s 后再补一道（wave2 事件，18 m/s）。头趴在环台上的这 0.85 s 额头鲛珠离地最近、大亮，是一阶段最好的输出窗口；
     ///   收招 0.55 s：抬头收回。
     /// 冰浪对刚被落点重击打中的玩家不再伤害（BossWaveSpec.spare：不连吃两段）。
+    /// 动作 / 特效（K 路，docs/art/vfx/kunpeng.md 第 1 节）：slamWind / slam 是手 K 片段——往后一抽 → 人立（脊椎后弯、仰头、鳍张开）→ 顶点颤一下（apex）
+    /// → 4 帧下砸拖影 → slam 第 1 帧 hit：头砸上环台（释放帧，顿帧 0.08 s）→ 趴着 0.85 s → 撑起（pushOff）。
+    /// 起手身上泻水、身下水退（<see cref="Fx.KunRear"/>），前摇里落点的冰屑往回收（<see cref="Fx.KunSlamGather"/>），顶点一记冰晶星；
+    /// 释放帧 = 「水击三千里」：冰晶星 + 水冠 + 冰板扇（<see cref="Fx.KunSlamImpact"/>）+ 双层浪墙和浪头白沫（<see cref="Fx.KunWave"/>）。
     /// </summary>
     public sealed class KunSlam : KunPengMove
     {
@@ -25,7 +29,9 @@ namespace Spiritfire.Game
         public int Waves { get; private set; }
         public bool BlastHit { get; private set; }
 
-        bool wave2;
+        bool wave2, apexed, pushed;
+        /// <summary>蓄力顶点在前摇里的时刻（slamWind 第 19 帧 / 33 帧 × 前摇；没有 apex 事件时按它兜底）</summary>
+        const float ApexAt = 19f / 33f;
 
         public KunSlam()
         {
@@ -47,7 +53,30 @@ namespace Spiritfire.Game
             Impact = AtFloor(Brain.transform.position + Dir(Yaw) * reach);
             Fury = KP && KP.KunFury;
             Waves = 0;
-            BlastHit = wave2 = false;
+            BlastHit = wave2 = apexed = pushed = false;
+        }
+
+        public override void OnAnimEvent(string name)
+        {
+            base.OnAnimEvent(name);
+            if (name == "apex") Apex();
+            else if (name == "pushOff") PushOff();
+        }
+
+        void Apex()
+        {
+            if (apexed || Stage != MoveStage.Windup) return;
+            apexed = true;
+            Fx.KunSlamApex(Impact, BlastRadius);
+        }
+
+        /// <summary>撑起：头离开台面带起一圈水帘、冰屑往下掉</summary>
+        void PushOff()
+        {
+            if (pushed) return;
+            pushed = true;
+            Surge.Crown(Impact, 1.6f, 1.6f, SurgeKind.Water, 0.55f, Fx.KunWater, Fx.KunFoam, 0.9f);
+            Fx.FrostShatter(Impact + Vector3.up * 0.8f, 1.2f);
         }
 
         protected override void OnTelegraph()
@@ -63,11 +92,17 @@ namespace Spiritfire.Game
                 }
             Act("slamWind", WindupTime);
             CuedSfx("boss_roar", 0.8f, 0.8f);
+            if (KP) Fx.KunRear(Brain.Model?.root, KP.WaterUnderKun, WindupTime);
         }
 
         protected override bool WindupDone => Cue("hit", WindupTime);
 
-        protected override void OnWindup(float dt) => KP?.PlaceKun();
+        protected override void OnWindup(float dt)
+        {
+            KP?.PlaceKun();
+            Fx.KunSlamGather(Impact, BlastRadius, StageT / Mathf.Max(0.1f, WindupTime), dt);
+            if (!apexed && StageT >= WindupTime * ApexAt + 0.05f) Apex();
+        }
 
         protected override void OnActiveBegin()
         {
@@ -79,12 +114,10 @@ namespace Spiritfire.Game
             if (Fury)
                 foreach (float s in new[] { -1f, 1f })
                     Wave(Yaw + SideYaw * s, SideHalf, 13f, SideRange, Dmg(16), 1.1f, 8f);
-            // 冰的砸击（原来是染成冰蓝的火焰爆炸）：冰爆 + 冰刺环 + 水花，冰浪体积跟着冲击波前沿往外推（Wave 里）
-            Fx.FrostNova(Impact + Vector3.up * 0.6f, 4.5f);
+            // 释放帧（水击三千里）：冰晶星 + 爆闪 + 冷光、北冥水冠、冰板扇、贴地冲击环、霜斑；冰刺环；浪墙在 Wave 里。顿帧和震屏同一帧
+            Fx.KunSlamImpact(Impact, Yaw, WaveHalf);
             Fx.IceRing(Impact, 4.5f, 14);
-            Fx.Splash(Impact, 3f, Fx.NorthSea);
-            Fx.Burst(Impact + Vector3.up * 0.6f, KunPengDef.Ice, 40, 11f, 1f, 0.45f, 16f);
-            Fx.Ring(Impact + Vector3.up * 0.1f, 9f, KunPengDef.Warn, 0.7f);
+            KP?.ImpactHold(0.08f);
             Brain.Shake(0.7f, 0.5f);
             CuedSfx("boss_slam");
             Sfx("explosion", 0.8f, 0.7f);
@@ -106,21 +139,21 @@ namespace Spiritfire.Game
                 startRadius = 2.5f, width = width, height = 0.9f, arcYaw = yaw, arcHalf = half, knockback = knock, dust = true, dustColor = KunPengDef.Ice, spare = BlastHit,
             });
             Waves++;
-            // 冰浪：一道翻着白沫的冰水浪墙（弧幕体积），半径和冲击波前沿同速扩大
-            float life = range / speed;
-            Surge.Sheet(Impact, yaw, 2.5f, half * 2f, 1.9f, SurgeKind.Water, 0.12f, Mathf.Max(0.05f, life - 0.4f), 0.3f, IceWater, FrostPalette.IceHot, 2.8f, 0.92f,
-                grow: 1f + range / 2.5f);
+            // 北冥浪墙：前沿一堵翻白沫的浪头 + 后面低一层的深青浪身，和冲击波前沿同速往外推，浪头一路翻白沫、甩碎冰
+            Fx.KunWave(Impact, yaw, half * 2f, 2.5f, range, speed, half > 20f ? 2.6f : 2f);
         }
-
-        /// <summary>冰浪体积的本体色</summary>
-        static readonly Color IceWater = new(0.5f, 0.78f, 0.92f);
 
         protected override void OnRecoverBegin()
         {
             if (KP) KP.PearlBright = false;
         }
 
-        protected override void OnRecover(float dt) => KP?.PlaceKun();
+        protected override void OnRecover(float dt)
+        {
+            KP?.PlaceKun();
+            // 撑起兜底（片段第 29 帧 = 收招 0.12 s；代理没有 pushOff 事件）
+            if (!pushed && StageT >= 0.15f) PushOff();
+        }
 
         protected override void OnEnd(bool cancelled)
         {
