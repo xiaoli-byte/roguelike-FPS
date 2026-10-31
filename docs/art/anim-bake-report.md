@@ -147,3 +147,19 @@ export default {
 1. **骨骼缩放不采**（与原管线一样只记朝向和位置）：帝江 swell 的皮囊胀大 1.5 倍、夔捶胸时鼓面一震，要在 Unity 玩法里缩骨骼。
 2. **出手段长度可变的招**（踩踏、滑翔：撞到东西 / 落地就提前收）：片段按上限录；玩法提前收招时用 `CrossFadeInFixedTime(状态, 过渡, 0, 收招起点秒)` 跳到片段的收招段。
 3. 连鼓灵（SM_EnemyPart_Liangu*）是静态部件组装、没有骨架，不走采样：鼓环转动、骨槌敲鼓由玩法驱动（手 K 的骨槌曲线见 E 路设计单）。
+
+### 7.1 第四章雷魅的手 K 招牌招式（E 路）
+
+采样打底之上，设计单 [vfx/foes-ch4.md](vfx/foes-ch4.md) 标「招牌」的招式用 Blender 手 K 覆盖（`Anim/Keyframed/<招式>.fbx`，同名优先；FBX 不入库，重跑脚本生成）：
+
+| 资产 | 片段 | 脚本 |
+|---|---|---|
+| 天狗 | `pounce`（42 帧：伏低 → 蹬出拉长 → 腾空 → 前爪先着地压缩 → 滑一下低头） | `art/source/characters/SK_Enemy_Tiangou/anim/tiangou_anims.py` |
+| 獓狠 / 雷牦 | `stampede`（156 帧：刨地两下 → 压到最低 → 一蹬起步 → 13 m/s 对角步态 → 打滑转身）、`slam`（81 帧：人立 → 顶点微颤 → 前蹄砸地 → 压缩） | `SK_Enemy_Aoyin/anim/aoyin_anims.py` |
+| 举父 | `throw`（57 帧：弯腰抠石 → 举过头 → 往后弓 → 甩出 → 双臂垂下） | `SK_Enemy_Jufu/anim/jufu_anims.py` |
+| 穷奇 | `glide`（93 帧：伏低张翼 → 起飞下扇 → 平展滑翔微起伏 → 落地扑杀包翼 → 低头） | `SK_Enemy_Qiongqi/anim/qiongqi_anims.py` |
+| 蛮蛮 | `sweep`（90 帧：大扇拔高 → 翅膀高举到顶 → 放平掠过小颤 → 大扇爬升；一对两只同帧出） | `SK_Enemy_Manman/anim/manman_anims.py` |
+| 连鼓灵 | 骨槌击鼓（没有骨架、没有 Animator：抬 → 砸 → 弹的四条曲线生成 C# `LianguKeys.cs`，玩法每帧按它摆骨槌、鼓环、鼓面） | `SM_EnemyPart_LianguCore/anim/liangu_anims.py` |
+
+- 共用部分 `art/source/characters/_plateau/plateau_keys.py`：姿势写成模型空间的转动（X = 左、Y = 上、Z = 前，和 poses.ts 同一套轴，方便对照采样打底的姿势），导入 / 导出设置同 qilin_anims.py；`--review <目录>` 出每个关键帧的侧视 / 3/4 视审核图。
+- 片段时长 = 招式总长，关键姿势落在设计单节拍表的帧上；事件照 ch4-move-events.json 写回 events.json（脚本只改自己那几项）。
