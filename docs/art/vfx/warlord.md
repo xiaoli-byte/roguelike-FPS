@@ -492,7 +492,19 @@
 - 节拍条：[review/batch2/B/](../review/batch2/B/) 的 `warlord-intro.jpg`、`warlord-loco.jpg`（招式间隙的节拍条机位离得远，持剑姿势看关键姿势总览 `warlord-keyposes.jpg` 更清楚，第一行是改前的平端底姿），
   `warlord-warlord_sweep_p1.jpg`、`warlord-warlord_combo_p1.jpg`（起手第一帧从新底姿出发）。
 
-### 12.5 还缺的美术
+### 12.5 本体甲缝熔铜（发光遮罩；C 路发现的老问题）
+
+- **问题**：`WarlordBrain.UpdateLook` 一直往本体的属性块里写 `_EmissionColor`（平时余烬、前摇 × 3.5、狂怒再加一档），但 `M_Boss_Warlord` 没开 `_EMISSION` 关键字，
+  属性块又开不了关键字——那层自发光**从来没显示过**，读招轮廓只剩边光在撑（§8 表里「余烬自发光」那一行实际上是空的）。
+- **改成**：照大剑（C 路 `WarlordBlade`）的做法走 SF_StylizedLit 的发光遮罩，不需要材质开关：
+  - 遮罩 `Resources/Fx/GlowMasks/T_Boss_Warlord_E.png`（`art/pipeline/tools/emission_mask.py` 的 `warlord`）：R = 玄铁甲缝里的熔铜纹（饱和的橙、亮；甲边暗金描边、披风暗红不算，占 UV 1.8%），
+    G = 熔铜纹里最亮的芯（胸口地火之心、肩甲熔口，0.7%）；
+  - 强度（`SeamGlow` / `CoreGlow`）：甲缝平时 0.45（一点余烬）、前摇按 18 rad/s 跳着烧到 ~2、狂怒常亮 +0.9；熔铜芯平时 0.12，前摇 +1.4、狂怒 +1.8 转白热；
+    颜色走 `WarlordPalette`（甲缝熔铜 → 狂怒亮铜，芯白热铜 → 狂怒近白）；倒下后 2 s 内熄掉（溃散时甲缝里淌的熔铜由 `BodyStream` 接着演）。
+- 对比：[review/batch2/B/warlord-furyglow.jpg](../review/batch2/B/warlord-furyglow.jpg)——`beats-warlord` 在狂怒换挡前、后各拍一对近景，同一帧关掉 / 打开（`WarlordBrain.BodyGlowOff`，只给套件用）。
+- 冲锋刹停：剑尖犁地刹住的熔铜沟换成一小块第三章方形裂纹（`Fx.Ch3Crack` 1.3 m，C 路的裂纹贴花），和跃击 / 竖劈的大裂纹同一套语言；撞墙的冲击点在墙上半空，不留地面裂纹。
+
+### 12.6 还缺的美术
 
 - 疾行时双手斜举在正面读得最好，但横移（招式间隙沿距离带侧移）时身体只偏 36°（`FaceAimTravel`），剑的斜线在侧移里会显得有点「端着走」；要更好得补一段横移步态（Strafe 混合）。
 - 受击片段 `Hit` 仍是 W 路的通用后仰（首尾帧已换成新底姿）。

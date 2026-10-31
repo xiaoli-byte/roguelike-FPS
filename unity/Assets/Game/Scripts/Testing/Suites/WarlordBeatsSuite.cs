@@ -395,6 +395,7 @@ namespace Spiritfire.Game.Testing
             ReadyPlayer(9f);
             yield return null;
             Single("狂怒换挡", "换挡前", 0, "fury_pre", "fury");
+            yield return GlowPair("换挡前", 0);
             boss.Health.health = boss.Health.maxHealth * (WarlordDef.FuryAt - 0.01f);
             t0 = Time.time;
             while (!boss.Transitioning && Time.time - t0 < 4f) yield return null;
@@ -403,6 +404,7 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(1.2f);
             Single("狂怒换挡", "换挡后", 4, "fury_post", "fury");
             cam.Single("狂怒换挡", "第一人称", 5, "fury_post_fp", boss.BodyCenter, 4f, true, move: "fury");
+            yield return GlowPair("换挡后", 2);
             yield return WaitIdle();
             yield return Beat("warlord_combo", "连斩 · 狂怒（四斩）", 3.5f, 1.0f);
             yield return Beat("warlord_charge", "冲锋 · 狂怒（连冲）", 14f);
@@ -442,7 +444,29 @@ namespace Spiritfire.Game.Testing
 
         void Single(string label, string beat, int order, string file, string move) => cam.Single(label, beat, order, file, boss.BodyCenter, 4f, move: move);
 
-        // ───────────── 第二批 B 路：登场落地停顿、待机 / 行走 / 转向（docs/art/vfx/warlord.md §12）─────────────
+        // ───────────── 第二批 B 路：登场落地停顿、待机 / 行走 / 转向、本体甲缝熔铜（docs/art/vfx/warlord.md §12）─────────────
+
+        /// <summary>
+        /// 本体甲缝熔铜（发光遮罩）的改前 / 改后：同一个姿势关掉（<see cref="WarlordBrain.BodyGlowOff"/>，= 改前 _EmissionColor 没显示）、
+        /// 打开各拍一张近景（正面偏右 6.5 m、胸口高度），order / order + 1
+        /// </summary>
+        IEnumerator GlowPair(string beat, int order)
+        {
+            if (!boss || boss.Dead) yield break;
+            var fwd = boss.transform.forward;
+            var c = boss.BodyCenter + Vector3.up * 0.5f;
+            var from = c + fwd * 6.5f + boss.transform.right * 2.2f + Vector3.up * 0.4f;
+            WarlordBrain.BodyGlowOff = true;
+            yield return null;
+            yield return null;
+            cam.Pose("本体甲缝熔铜（发光遮罩）", $"{beat} · 改前", order, $"furyglow_{order}", from, c, "furyglow", "没有甲缝熔铜（_EmissionColor 没开关）");
+            WarlordBrain.BodyGlowOff = false;
+            yield return null;
+            yield return null;
+            cam.Pose("本体甲缝熔铜（发光遮罩）", $"{beat} · 改后", order + 1, $"furyglow_{order + 1}", from, c, "furyglow",
+                $"甲缝 {boss.SeamGlow:F2} / 熔铜芯 {boss.CoreGlow:F2}");
+            Line($"本体甲缝熔铜 · {beat}：遮罩 {(boss.BodyMasked ? "有" : "没找到")}，甲缝 {boss.SeamGlow:F2}、熔铜芯 {boss.CoreGlow:F2}（狂怒程度 {boss.FuryLook:F2}）");
+        }
 
         /// <summary>招式间隙多留 seconds 秒不出招（只给节拍条用：BossBrain 的私有计时）</summary>
         void HoldRest(float seconds) =>

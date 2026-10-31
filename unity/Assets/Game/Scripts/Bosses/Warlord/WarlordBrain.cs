@@ -30,9 +30,12 @@ namespace Spiritfire.Game
     {
         static readonly int ActScaleId = Animator.StringToHash("ActScale");
         static readonly int RimColorId = Shader.PropertyToID("_RimColor"), RimStrengthId = Shader.PropertyToID("_RimStrength"),
-            EmissionId = Shader.PropertyToID("_EmissionColor");
+            GlowMaskId = Shader.PropertyToID("_GlowMask"), Glow0Id = Shader.PropertyToID("_GlowMaskColor0"), Glow1Id = Shader.PropertyToID("_GlowMaskColor1"),
+            GlowShimmerId = Shader.PropertyToID("_GlowMaskShimmer");
+        /// <summary>本体发光遮罩的贴图名（Resources/Fx/GlowMasks/T_Boss_Warlord_E.png：R = 甲缝熔铜纹、G = 熔铜纹里最亮的芯，emission_mask.py 的 warlord）</summary>
+        public const string BodyMaskKey = "T_Boss_Warlord";
         /// <summary>读招轮廓：平时的边光色 / 强度、前摇时的白热边光、余烬自发光（前摇时 × 3.5）</summary>
-        static readonly Color RimRest = new(1f, 0.6f, 0.3f), RimHot = new(1f, 0.93f, 0.75f), Ember = new(0.16f, 0.045f, 0.01f);
+        static readonly Color RimRest = new(1f, 0.6f, 0.3f), RimHot = new(1f, 0.93f, 0.75f);
         const float RimRestStrength = 1.05f, RimHotStrength = 1.9f;
 
         public WarlordDef WDef => Def as WarlordDef;
@@ -43,8 +46,11 @@ namespace Spiritfire.Game
         /// </summary>
         public static bool LegacyFx;
 
+        /// <summary>对照开关（节拍条套件拍「本体甲缝熔铜」改前 / 改后用，游戏里永远是 false）：为真时本体发光遮罩两层都写 0（= 改前：_EmissionColor 一直没显示）</summary>
+        public static bool BodyGlowOff;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() => LegacyFx = false;
+        static void ResetStatics() => LegacyFx = BodyGlowOff = false;
 
         /// <summary>
         /// 节拍条 / 演示用：接管招式间隙的走位（每帧调，返回 true = 这一帧已经自己走了；为 null 或返回 false = 框架的走位）。游戏里永远是 null
@@ -81,6 +87,12 @@ namespace Spiritfire.Game
         MaterialPropertyBlock lookBlock;
         /// <summary>前摇亮度（0..1，进前摇快升、出前摇慢落；测试 / 调试读）</summary>
         public float WindupGlow { get; private set; }
+        /// <summary>本体发光遮罩此刻两层的强度（甲缝熔铜纹 / 熔铜芯，线性倍率；测试 / 节拍条读）与遮罩有没有找到</summary>
+        public float SeamGlow { get; private set; }
+        public float CoreGlow { get; private set; }
+        public bool BodyMasked => bodyMask;
+        Texture2D bodyMask;
+        float bodyLife = 1f;
 
         /// <summary>熔心大剑（挂上了才有）</summary>
         public WarlordBlade Blade { get; private set; }
@@ -363,9 +375,11 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 读招轮廓：边光 / 自发光写进模型渲染器的属性块（先 Get 再 Set，和 EnemyBody 的闪白 / 着色共存）。
-        /// 前摇中：WindupGlow 0.25 s 升满，边光从暖金转白热、强度 1.05 → 1.9，余烬自发光按 18 rad/s 跳动烧亮；倒下后退回材质原值。
-        /// 狂怒换挡后：平时的边光就是白热铜、余烬自发光常亮一档（前摇照样再跳亮）。大剑、火舌有自己的属性块，不在这里写
+        /// 读招轮廓：边光 / 甲缝熔铜写进模型渲染器的属性块（先 Get 再 Set，和 EnemyBody 的闪白 / 着色共存）。
+        /// 前摇中：WindupGlow 0.25 s 升满，边光从暖金转白热、强度 1.05 → 1.9，甲缝熔铜按 18 rad/s 跳动烧亮；倒下后 2 s 内熄掉。
+        /// 狂怒换挡后：平时的边光就是白热铜、甲缝熔铜常亮一档、最亮的芯（胸口地火之心、肩甲熔口）转白热（前摇照样再跳亮）。大剑、火舌有自己的属性块，不在这里写。
+        /// 第二批 B 路：甲缝熔铜原来写 _EmissionColor，但 M_Boss_Warlord 没开 _EMISSION 关键字（属性块开不了关键字），那层自发光从来没显示过；
+        /// 现在照大剑的做法走 SF_StylizedLit 的发光遮罩（_GlowMask = T_Boss_Warlord_E：R 甲缝熔铜纹、G 熔铜芯），不需要材质开关
         /// </summary>
         void UpdateLook(float dt)
         {
@@ -377,6 +391,17 @@ namespace Spiritfire.Game
                     if (r is SkinnedMeshRenderer or MeshRenderer && !r.GetComponentInParent<WarlordBlade>() && !r.GetComponent<FlameTongue>())
                         list.Add(r);
                 lookRenderers = list.ToArray();
+                bodyMask = null;
+                foreach (var r in lookRenderers)
+                {
+                    var mat = r ? r.sharedMaterial : null;
+                    var bc = mat && mat.HasProperty("_BaseMap") ? mat.GetTexture("_BaseMap") : null;
+                    if (bc && bc.name.StartsWith(BodyMaskKey, System.StringComparison.Ordinal) && mat.HasProperty(GlowMaskId))
+                    {
+                        bodyMask = GlowMask.LoadMask(BodyMaskKey);
+                        break;
+                    }
+                }
             }
             bool windup = !Dead && Current != null && Current.Stage == MoveStage.Windup;
             WindupGlow = Mathf.MoveTowards(WindupGlow, windup ? 1f : 0f, dt * (windup ? 4f : 2.5f));
@@ -384,6 +409,13 @@ namespace Spiritfire.Game
             var rimRest = Color.Lerp(RimRest, WarlordPalette.FuryCopper, FuryLook);
             var rimHot = Color.Lerp(RimHot, WarlordPalette.FuryHot, FuryLook);
             float rest = Mathf.Lerp(RimRestStrength, 1.45f, FuryLook);
+            bodyLife = Dead ? Mathf.MoveTowards(bodyLife, 0f, dt / 2f) : 1f;
+            // 甲缝熔铜：平时一点余烬（0.45）、前摇跳着烧亮、狂怒常亮一档；熔铜芯平时几乎不亮，前摇 / 狂怒转白热
+            SeamGlow = bodyMask && !BodyGlowOff ? (0.45f + 1.5f * pulse + 0.9f * FuryLook) * bodyLife : 0f;
+            CoreGlow = bodyMask && !BodyGlowOff ? (0.12f + 1.4f * pulse + 1.8f * FuryLook) * bodyLife : 0f;
+            // 层色转线性再乘强度、按向量写（同 GlowMask：SetColor 会把 > 1 的值再做一遍伽马换算）
+            var seam = (Vector4)(WarlordPalette.CopperAt(FuryLook).linear * SeamGlow);
+            var core = (Vector4)(WarlordPalette.HotAt(FuryLook).linear * CoreGlow);
             lookBlock ??= new MaterialPropertyBlock();
             foreach (var r in lookRenderers)
             {
@@ -392,13 +424,18 @@ namespace Spiritfire.Game
                 if (Dead)
                 {
                     lookBlock.SetFloat(RimStrengthId, 0.45f);
-                    lookBlock.SetColor(EmissionId, Color.black);
                 }
                 else
                 {
                     lookBlock.SetColor(RimColorId, Color.Lerp(rimRest, rimHot, pulse));
                     lookBlock.SetFloat(RimStrengthId, Mathf.Lerp(rest, RimHotStrength, pulse));
-                    lookBlock.SetColor(EmissionId, Ember * (1f + 2.5f * pulse + 1.2f * FuryLook));
+                }
+                if (bodyMask)
+                {
+                    lookBlock.SetTexture(GlowMaskId, bodyMask);
+                    lookBlock.SetVector(Glow0Id, seam);
+                    lookBlock.SetVector(Glow1Id, core);
+                    lookBlock.SetVector(GlowShimmerId, new Vector4(0.35f, 0.25f, 0f, 6f));
                 }
                 r.SetPropertyBlock(lookBlock);
             }
@@ -628,7 +665,8 @@ namespace Spiritfire.Game
             var tip = Blade ? Blade.Tip : p + dir * 1.5f;
             tip.y = p.y + 0.1f;
             Fx.Burst(tip, WarlordPalette.HotAt(Fk), 16, 8f, 0.35f, 0.08f, 12f);
-            Fx.MoltenSplat(new Vector3(tip.x, p.y, tip.z), 1.2f, 1f, 4f);
+            // 剑尖犁地刹住的那一下：一小块第三章方形裂纹（C 路的 Ch3Crack；贴不上时退回熔铜贴花），和跃击 / 竖劈的大裂纹同一套语言
+            Fx.Ch3Crack(new Vector3(tip.x, p.y, tip.z), 1.3f, Fk, 4f);
             Fx.WarlordSmoke(p + dir * 0.8f, 1.1f, 3);
             Shake(0.3f, 0.25f);
         }

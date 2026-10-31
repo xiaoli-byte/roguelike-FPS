@@ -136,6 +136,19 @@ PROFILES: dict[str, dict] = {
             [{"radial": {"axis": 2, "max": 1.6, "soft": 0.12}}],
         ],
     },
+    # 熔心魔将本体（第二批 B 路；材质没开 _EMISSION，原来 WarlordBrain 写的 _EmissionColor 从来没显示过）：
+    #   0 玄铁甲缝里的熔铜纹（饱和的橙、亮）——平时一点余烬、前摇烧亮、狂怒常亮；1 熔铜纹里最亮的芯（近黄白：胸口地火之心、肩甲的熔口）——狂怒白热。
+    #   甲边的暗金描边（饱和度低）、披风的暗红（明度低）都不算
+    "warlord": {
+        "glb": "characters/SK_Boss_Warlord",
+        "bc": "Art/Characters/SK_Boss_Warlord/Textures/T_Boss_Warlord_BC.png",
+        "layers": [
+            [{"hue": (0.055, 0.05), "minSat": 0.62, "minVal": 0.66}],
+            [{"hue": (0.08, 0.06), "minSat": 0.45, "minVal": 0.9}],
+            [],
+        ],
+        "grow": [1, 1, 0],
+    },
     # 熔心魔将的熔心大剑（SM_BossWeapon_Greatsword）：0 剑脊熔铜纹（剑面中间那几道熔痕和分叉）、1 刃口（剑面靠边 24 纹素的熔铜带 + 剑身侧面的窄条）。
     #   剑格、剑柄、配重的金铜色不算（只认剑身：握点以下 0.32 m）
     "warlord_sword": {
