@@ -48,10 +48,14 @@ namespace Spiritfire.Game
             if (paper) Burst(at + Vector3.up * 0.3f, Hex.Rgb(0xd8241c), Mathf.RoundToInt(12 * size), 4.5f, 1.1f, 0.12f, 3.5f);
         }
 
-        /// <summary>砸地 / 掀地的释放帧（和 EliteSlam 同一帧）：一圈方铜渣往外崩 + 紫褐尘团（WarlordImpact 的小号，不留贴花；金环由 EliteSlam 出）</summary>
+        /// <summary>
+        /// 砸地 / 掀地的释放帧（和 EliteSlam 同一帧）：一圈方铜渣往外崩 + 紫褐尘团 + 一块小号的方形裂纹（WarlordImpact 的小号；金环由 EliteSlam 出）。
+        /// 裂纹（第二批收尾 C 路）比魔将的短命、余热低一档：精英砸得多，地上不留一片
+        /// </summary>
         public static void EliteCh3Impact(Vector3 ground, float radius)
         {
             if (!Finite(ground)) return;
+            Ch3Crack(ground, radius * 1.25f, 0f, 4f, 0.8f, false);
             WarlordSmoke(ground + Vector3.up * 0.3f, radius * 0.6f, 3);
             int n = Mathf.Clamp(Mathf.RoundToInt(radius * 2f), 3, 6);
             float a0 = Random.value * Mathf.PI * 2f;

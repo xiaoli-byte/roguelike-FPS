@@ -60,8 +60,20 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 重击落地（跃击落点 / 竖劈入地）：主形 = 贴地卡通粗环（压暗的铜色）+ 熔铜冠；次级 = 一滩熔铜贴花 + 一圈紫褐尘团；点缀 = 一圈方铜渣往外崩、火星。
-        /// 不用通用砸地预设（它的裂纹贴花是一圈白色放射纹，读成旱魃的日轮），第三章的地裂交给熔铜贴花。
+        /// 第三章的地裂（第二批收尾 C 路）：方形裂纹贴花（<see cref="CrackDecals"/>：方坑 + 方折主裂纹 + 一圈方石板缝，铜橙裂光、紫褐焦边，
+        /// 从坑心往外蔓延、慢慢冷成暗铜缝）。radius = 裂纹最远处的半径（米）；fallback = 贴不上（关了 / 材质缺失）时退回一滩熔铜贴花（以前的样子）
+        /// </summary>
+        public static FxHandle Ch3Crack(Vector3 ground, float radius, float fury = 0f, float life = 6f, float heat = 1f, bool fallback = true)
+        {
+            if (!Finite(ground)) return FxHandle.None;
+            var h = CrackDecals.Place(ground, radius / 0.9f, life, heat, fury);
+            return h.Alive || !fallback ? h : MoltenSplat(ground, radius * 0.77f, heat, life);
+        }
+
+        /// <summary>
+        /// 重击落地（跃击落点 / 竖劈入地）：主形 = 贴地卡通粗环（压暗的铜色）+ 熔铜冠；次级 = 方形裂纹贴花（<see cref="Ch3Crack"/>）+ 一圈紫褐尘团；
+        /// 点缀 = 一圈方铜渣往外崩、火星。
+        /// 不用通用砸地预设（它的裂纹贴花是一圈白色放射纹，读成旱魃的日轮）；第三章的地裂以前借熔铜贴花，现在是自己的方形裂纹（坑里那一汪就是熔铜）。
         /// 闪光压低贴地，不盖住砸下来的身体
         /// </summary>
         public static void WarlordImpact(Vector3 ground, float radius, float fury)
@@ -69,7 +81,7 @@ namespace Spiritfire.Game
             if (!Finite(ground)) return;
             Burst(ground + Vector3.up * 0.3f, WarlordPalette.Smoke, Mathf.RoundToInt(3 + radius), 3.5f + radius, 0.7f, 0.6f, -0.8f);
             MoltenBurst(ground + Vector3.up * 0.3f, radius * 0.5f, false, WarlordPalette.CopperAt(fury));
-            MoltenSplat(ground, radius * 0.85f, 1f, 6f);
+            Ch3Crack(ground, radius * 1.1f, fury);
             Ring(ground + Vector3.up * 0.08f, radius * 1.15f, WarlordPalette.DeepAt(fury), 0.42f);
             // 方铜渣：中心一蓬铁片预设（一个粒子系统），外圈每个方向只甩火星
             Basalt(ground + Vector3.up * 0.2f, 0.35f * radius, Color.Lerp(WarlordPalette.Slag, WarlordPalette.Deep, 0.35f));
