@@ -125,8 +125,8 @@ namespace Spiritfire.Game
             return k;
         }
 
-        /// <summary>被劈中（<see cref="LightningStrike"/> 调）：充电、计数、发事件</summary>
-        internal void OnStruck(in StrikeInfo info)
+        /// <summary>被劈中（<see cref="LightningStrike"/> 调；场地机关想直接「劈」一个导体也可以调）：充电、计数、发事件</summary>
+        public void OnStruck(in StrikeInfo info)
         {
             Strikes++;
             LastStruckAt = Time.time;
@@ -154,13 +154,17 @@ namespace Spiritfire.Game
         /// 引雷：落点 point 在哪个导体的引雷半径内（水平距离）、且导体顶比落点高 1 m 以上——多个时取顶最高的；没有返回 null。
         /// exclude 可以排除一个（雷从这个导体放出来时不再劈回它自己）
         /// </summary>
-        public static Conductor Best(Vector3 point, Conductor exclude = null)
+        public static Conductor Best(Vector3 point, Conductor exclude = null) => Best(point, all, exclude);
+
+        /// <summary>同 <see cref="Best(Vector3, Conductor)"/>，只在给定的候选里挑（4-2 铁索桥只引到桥上的桩；测试）</summary>
+        public static Conductor Best(Vector3 point, IEnumerable<Conductor> among, Conductor exclude = null)
         {
             Conductor best = null;
             float bestY = float.NegativeInfinity;
-            foreach (var c in all)
+            if (among == null) return null;
+            foreach (var c in among)
             {
-                if (!c || c == exclude || !c.isActiveAndEnabled) continue;
+                if (!c || c == exclude || !c.gameObject.activeInHierarchy || !c.enabled) continue;
                 var b = c.transform.position;
                 float dx = b.x - point.x, dz = b.z - point.z;
                 if (dx * dx + dz * dz > c.attractRadius * c.attractRadius) continue;

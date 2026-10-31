@@ -214,10 +214,33 @@ namespace Spiritfire.Game
         Transform[] bones;
         MaterialPropertyBlock block;
         bool rimOn;
-        float pulse, nextPulse, seed = UnityEngine.Random.value * 10f;
+        // 相位种子：第一次画的时候取（字段初始化里不能调 Random，MonoBehaviour 构造时会报错）
+        float pulse, nextPulse, seed = -1f;
 
         /// <summary>带电中（计时 &gt; 0 或有常驻持有）</summary>
-        public bool Active => hp && !hp.Dead && (left > 0 || holds.Count > 0);
+        public bool Active => Hp && !Hp.Dead && (left > 0 || holds.Count > 0);
+
+        /// <summary>宿主（第一次用时取，不靠 Awake：EditMode、生成时物体还停用着也成立）</summary>
+        Damageable Hp
+        {
+            get
+            {
+                if (!hp) Bind();
+                return hp;
+            }
+        }
+
+        bool bound;
+
+        /// <summary>取宿主并订阅它的死亡（只订一次）</summary>
+        void Bind()
+        {
+            if (bound) return;
+            hp = GetComponent<Damageable>();
+            if (!hp) return;
+            bound = true;
+            hp.Died += OnDied;
+        }
         /// <summary>剩余秒数（常驻 +∞）</summary>
         public float Remaining => !Active ? 0 : holds.Count > 0 ? float.PositiveInfinity : left;
         /// <summary>这份电是第几跳传来的（自己带的 / 落雷带的为 0）</summary>
@@ -231,15 +254,12 @@ namespace Spiritfire.Game
         {
             var s = d.GetComponent<ChargeState>();
             if (!s) s = d.gameObject.AddComponent<ChargeState>();
+            s.Bind();
             if (!d.GetComponent<EnemyStatus>()) d.gameObject.AddComponent<EnemyStatus>();
             return s;
         }
 
-        void Awake()
-        {
-            hp = GetComponent<Damageable>();
-            if (hp) hp.Died += OnDied;
-        }
+        void Awake() => Bind();
 
         void OnDestroy()
         {
@@ -277,7 +297,7 @@ namespace Spiritfire.Game
             left = 0;
             holds.Clear();
             RimOff();
-            if (was && hp && !hp.IsBoss) Charge.Arc(hp);
+            if (was && Hp && !Hp.IsBoss) Charge.Arc(Hp);
         }
 
         void Update()
@@ -336,6 +356,7 @@ namespace Spiritfire.Game
                 if (TakeArc()) BodyArc();
             }
             pulse = Mathf.Max(0, pulse - dt * 14f);
+            if (seed < 0) seed = UnityEngine.Random.value * 10f;
             float jitter = 0.85f + 0.15f * Mathf.Sin(Time.time * 47f + seed);
             var c = Color.Lerp(RimBase * jitter, RimPeak, pulse);
             float st = Mathf.Lerp(RimStrengthBase * jitter, RimStrengthPeak, pulse);

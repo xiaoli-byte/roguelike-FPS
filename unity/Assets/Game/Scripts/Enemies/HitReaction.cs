@@ -31,6 +31,41 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
+    /// 韧性计量（纯逻辑，<see cref="Poise"/> 用；EditMode 可测）：累计韧性伤害，每秒回落韧性值的 <see cref="HitReaction.PoiseDecayPerSecond"/>（= 2 秒窗口），
+    /// 超过韧性就清零并返回「破了」。韧性 ≤ 0 或 +∞ 时永远不破
+    /// </summary>
+    public struct PoiseMeter
+    {
+        public float poise;
+        public float value;
+
+        public PoiseMeter(float poise)
+        {
+            this.poise = poise;
+            value = 0;
+        }
+
+        /// <summary>能不能破（韧性有限且 &gt; 0）</summary>
+        public readonly bool Breakable => poise > 0 && !float.IsPositiveInfinity(poise);
+
+        /// <summary>加一次韧性伤害；破了返回 true（并清零）</summary>
+        public bool Add(float amount)
+        {
+            if (!Breakable || !(amount > 0) || !float.IsFinite(amount)) return false;
+            value += amount;
+            if (value < poise) return false;
+            value = 0;
+            return true;
+        }
+
+        /// <summary>回落 dt 秒</summary>
+        public void Tick(float dt)
+        {
+            if (value > 0 && Breakable && dt > 0) value = Mathf.Max(0, value - poise * HitReaction.PoiseDecayPerSecond * dt);
+        }
+    }
+
+    /// <summary>
     /// 受击四层的统一入口（第四章；docs/unity-ch4-port.md 第 2 节契约）。数值和韧性规则在这里，状态和表现在 <see cref="EnemyAI"/>：
     ///   · 硬直：<see cref="EnemyAI.HitStagger"/>(秒, 来向, 原因) —— 打断招式、撤预警、停摆 seconds 秒；霸体（<see cref="EnemyAI.SuperArmor"/>）时不进。
     ///   · 眩晕：<see cref="EnemyAI.HitStun"/>(秒, 原因) —— 走元素眩晕（头顶晕圈、AI 停摆，精英 ×0.75），期间受伤 × <see cref="StunTakenMult"/>。

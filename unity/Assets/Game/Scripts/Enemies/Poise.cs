@@ -19,10 +19,10 @@ namespace Spiritfire.Game
 
         Damageable hp;
         EnemyAI ai;
-        float acc;
+        PoiseMeter meter;
 
         /// <summary>当前累计的韧性伤害</summary>
-        public float Accumulated => acc;
+        public float Accumulated => meter.value;
         /// <summary>韧性破过几次（测试用）</summary>
         public int Breaks { get; private set; }
 
@@ -51,7 +51,8 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            if (acc > 0 && poise > 0) acc = Mathf.Max(0, acc - poise * HitReaction.PoiseDecayPerSecond * Time.deltaTime);
+            meter.poise = poise;
+            meter.Tick(Time.deltaTime);
         }
 
         void OnDamaged(DamageInfo info, DamageResult r)
@@ -59,10 +60,8 @@ namespace Spiritfire.Game
             if (r.killed || r.total <= 0 || !ai || !hp || hp.Dead) return;
             bool dot = info.source == DamageSource.Status && !info.reaction && (info.tags & DamageTag.Reaction) == 0;
             if (hitch > 0 && !dot) ai.Hitch(hitch);
-            if (!(poise > 0) || float.IsPositiveInfinity(poise)) return;
-            acc += HitReaction.PoiseDamage(info, r.total);
-            if (acc < poise) return;
-            acc = 0;
+            meter.poise = poise;
+            if (!meter.Add(HitReaction.PoiseDamage(info, r.total))) return;
             var from = info.direction.sqrMagnitude > 1e-6f ? transform.position - info.direction.normalized * 3f : info.point;
             if (ai.HitStagger(staggerSeconds, from, HitCause.Poise)) Breaks++;
         }
