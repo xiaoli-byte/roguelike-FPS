@@ -41,7 +41,8 @@ namespace Spiritfire.Game
             return id switch
             {
                 StatusId.Burn => s.Burning,
-                StatusId.Shock => s.Shocked,
+                // 第四章：带电（Charge）就反应而言等同带雷殛
+                StatusId.Shock => s.Shocked || Charge.IsCharged(d),
                 StatusId.Corrode => s.Corroded,
                 _ => s.TryGet(id, out _),
             };

@@ -24,7 +24,7 @@ namespace Spiritfire.Game
     /// 血条（U3）经 <see cref="IBossBarSource"/> 读 <see cref="Title"/>、<see cref="Subtitle"/>、<see cref="BarTicks"/>（刻度来自 BossDef）。
     /// 生成走 <see cref="Bosses.Spawn(string, BossArena, float, Transform)"/>（首领不在敌人名册里）。
     /// </summary>
-    public class BossBrain : EnemyAI, IStunPolicy, IBossBarSource
+    public class BossBrain : EnemyAI, IStunPolicy, IBossBarSource, IBreakBarSource
     {
         // 由 Bosses.Spawn 在激活之前填写
         [NonSerialized] internal BossDef def;
@@ -57,6 +57,10 @@ namespace Spiritfire.Game
         public bool Staggered => staggerLeft > 0;
         /// <summary>登场结束后的战斗时长（秒）</summary>
         public float FightTime { get; private set; }
+        /// <summary>破防条（第四章领主；<see cref="BossDef.breakBar"/> 为 null 时没有）</summary>
+        public BreakBar Break { get; private set; }
+        /// <summary>领主梯度（第四章 4-1；<see cref="BossDef.lordLevel"/> 为空时是 0 档，倍率都是 1）</summary>
+        public LordTier Lord { get; private set; }
         /// <summary>距离计时狂怒还有多久（没有计时狂怒 / 已狂怒为 −1）</summary>
         public float EnrageTimeLeft => def != null && def.enrageAfter > 0 && !Enraged ? Mathf.Max(0, def.enrageAfter - FightTime) : -1;
 
@@ -87,7 +91,7 @@ namespace Spiritfire.Game
             get
             {
                 float k = Phase > 0 && def != null && Phase - 1 < def.phases.Count && def.phases[Phase - 1] != null ? def.phases[Phase - 1].restScale : 1f;
-                return k * (Enraged && def != null ? def.enrageRestScale : 1f);
+                return k * (Enraged && def != null ? def.enrageRestScale : 1f) * Lord.RecoveryMult;
             }
         }
 
@@ -172,6 +176,7 @@ namespace Spiritfire.Game
             Summons = new Summons(this);
             hp.rank = Rank.Boss;
             hp.Died += OnBossDied;
+            hp.Damaged += OnBossDamaged;
             knockbackResist = 1;
         }
 
@@ -223,6 +228,12 @@ namespace Spiritfire.Game
             }
             float l = Mathf.Max(0.5f, float.IsFinite(lvl) && lvl > 0 ? lvl : 1f);
             var v = def.VitalsAt(l);
+            // 领主梯度（C4-6）：第 n 个打的领主血 × (1 + 0.15 n)；不按梯度的首领是 0 档（× 1）
+            Lord = LordScaling.For(def);
+            v.hp *= Lord.HpMult;
+            if (Break != null) Break.Broke -= OnBreakBarBroke;
+            Break = def.breakBar != null ? new BreakBar(def.breakBar) : null;
+            if (Break != null) Break.Broke += OnBreakBarBroke;
             hp.rank = Rank.Boss;
             // 基类会 × 难度：先除回去，基类乘完正好落在定档值上（生成事件里看到的就是最终数值），之后再精确写一遍
             hp.maxHealth = v.hp / l;
@@ -296,6 +307,11 @@ namespace Spiritfire.Game
             base.Update();
             if (Dead || def == null) return;
             Summons.Tick(Time.deltaTime);
+            if (Break != null)
+            {
+                Break.Locked = !IntroDone || transition != null;
+                Break.Tick(Time.deltaTime);
+            }
             // 基类出生 0.7 s 后会把不可选中关掉：首领按自己的规则（登场 / 转换 / 子类的潜水之类）每帧重写
             hp.untargetable = state == "spawn" || !IntroDone || transition != null || ExtraUntargetable;
             hp.healthFloor = PhaseGateFloor;
@@ -624,6 +640,7 @@ namespace Spiritfire.Game
         {
             AbortMove();
             if (staggerLeft > 0) EndStagger(false);
+            Break?.Cancel();
             if (advances) Phase++;
             transition = new TransitionRun
             {
@@ -635,7 +652,12 @@ namespace Spiritfire.Game
             PlayAct(pd.anim, pd.seconds);
             if (!string.IsNullOrEmpty(pd.sfx)) GameAudio.PlayAt(pd.sfx, transform.position + Vector3.up * 2f, 1f);
             if (pd.shake > 0) CameraShake.Quake(transform.position, pd.shake, 60f, 0.9f);
-            if (!string.IsNullOrEmpty(pd.toast)) GameUI.Toast(pd.toast, def.color);
+            // 4-1 三领主（phaseCinematic = false）：转阶段只出横幅「三 · 风雨」，不接管镜头
+            if (!string.IsNullOrEmpty(pd.toast))
+            {
+                if (def.phaseCinematic) GameUI.Toast(pd.toast, def.color);
+                else GameUI.Banner(pd.toast, null, Mathf.Clamp(pd.seconds, 1.6f, 3f));
+            }
             Summons.DespawnPhaseBound();
             SetState(TransitionStateName);
             if (advances)
@@ -943,12 +965,56 @@ namespace Spiritfire.Game
 
         // ───────────── 倒下 ─────────────
 
+        // ───────────── 破防条（第四章领主）─────────────
+
+        /// <summary>伤害喂破防条：打弱点、反应伤害按 <see cref="BreakBarDef"/> 的倍率填；fillWhen 不满足时不填</summary>
+        void OnBossDamaged(DamageInfo info, DamageResult r)
+        {
+            if (Break == null || Dead || r.total <= 0) return;
+            var bd = def?.breakBar;
+            if (bd?.fillWhen != null)
+                try
+                {
+                    if (!bd.fillWhen(this)) return;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    return;
+                }
+            Break.Add(Break.FillFrom(info, r.total));
+        }
+
+        /// <summary>破防：打断招式（霸体招也打断）、倒地 / 跪下 seconds 秒、受伤 × takenMult，再交给子类（放开弱点、场地反应）</summary>
+        void OnBreakBarBroke(BreakBar bar, int count)
+        {
+            var bd = bar.def;
+            if (!Stagger(bd.seconds, bd.pose, bd.takenMult))
+            {
+                bar.Cancel();
+                return;
+            }
+            Guard(() => OnBreak(count));
+        }
+
+        /// <summary>破防的那一刻（第 count 次，从 1 起）：子类放开弱点、场地机关（珠碎风停、噎住打断涨水）</summary>
+        protected virtual void OnBreak(int count) { }
+
+        /// <summary>受击四层的硬直落到首领身上（回劈、机关）：转成首领自己的硬直</summary>
+        protected override bool OnHitStagger(float seconds, Vector3 from, HitCause cause) => Stagger(seconds);
+
+        /// <summary>受击四层的眩晕落到首领身上（撞冰脊、反制）：转成首领自己的硬直（不吃元素眩晕的首领衰减）</summary>
+        protected override bool OnHitStun(float seconds, HitCause cause, string why) => Stagger(seconds, "Hit", HitReaction.StunTakenMult);
+
+        BreakBar IBreakBarSource.BarBreak => Break;
+
         void OnBossDied(DamageInfo info)
         {
             // 基类已经：移出敌人登记、打断招式（CancelAttack）、清加成、停导航、停用本组件
             AbortMove();
             transition = null;
             EndStagger(false);
+            Break?.Cancel();
             Summons.DespawnAll();
             active.Remove(this);
             if (Model?.rig) Model.rig.daze = 0;

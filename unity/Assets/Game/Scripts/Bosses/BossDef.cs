@@ -262,6 +262,18 @@ namespace Spiritfire.Game
         /// <summary>同时在场（含正在预警）的召唤物上限</summary>
         public int summonCap = 6;
 
+        // ───────────── 第四章：破防条 / 领主梯度 / 转阶段演出 ─────────────
+
+        /// <summary>破防条（<see cref="BreakBar"/>；null = 没有，前三章的首领都不设）</summary>
+        public BreakBarDef breakBar;
+        /// <summary>领主梯度属于哪张图（关卡 id，如「4-1」；<see cref="LordScaling"/>）：不为空时开打按这张图里已打败的领主数加血、缩收招，倒下时记一次</summary>
+        public string lordLevel;
+        /// <summary>
+        /// 转阶段的演出接管镜头（缺省 true，前三章照旧）。false = 只在屏幕下方出阶段横幅（<see cref="BossPhaseDef.toast"/>，如「三 · 风雨」），
+        /// 不接管镜头、不打断节奏（4-1 三领主，C4-6）
+        /// </summary>
+        public bool phaseCinematic = true;
+
         // ───────────── 奖励 / 登场 / 溃散 ─────────────
 
         public BossRewards rewards = new();

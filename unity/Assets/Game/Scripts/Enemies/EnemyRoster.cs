@@ -93,6 +93,8 @@ namespace Spiritfire.Game
             ai.moveSpeed = def.speed;
             ai.damage = def.damage;
             ai.knockbackResist = def.knockbackResist;
+            // 第四章受击四层：有韧性 / 顿一下的敌人挂韧性组件（前三章都是 0，不挂）
+            Poise.Attach(go, def);
             go.SetActive(true);
             ai.Spawn(difficulty, elite);
             // 精英：金环、名字前缀、词缀（EN4）；词缀出错也不能让生成失败

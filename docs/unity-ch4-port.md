@@ -37,11 +37,11 @@
 | 契约 | 内容 | 位置（建议） |
 |---|---|---|
 | 带电 | 状态「带电」：持续秒数，可叠时长；就反应而言等同带雷殛，火一碰就是焚雷；打爆带电的怪，电会放到 r 内的同伴身上（连锁，有上限）。API：`Charge.Apply(Damageable, seconds, source)`、`Charge.IsCharged(Damageable)`、`Charge.Arc(from, radius, maxHops)`；身上的噼啪视觉走边缘光 | `Combat/Charge*.cs` |
-| 导体与落雷 | `Conductor` 组件：高度、引雷半径、能否充电、充电量 0..1、`Struck` 事件、`Discharge()`。`Lightning.Strike(pos, warn, radius, damage, source)`：预警 → 落雷，落点 r 内有更高的导体就劈导体，导体底下 2 m 溅电。经幡杆、拉则、碉楼、雷桩、导雷石柱、铁索桥都挂 Conductor | `World/Conductor.cs`、`World/Lightning.cs` |
+| 导体与落雷 | `Conductor` 组件：高度、引雷半径、能否充电、充电量 0..1、`Struck` 事件、`Discharge()`。`LightningStrike.Strike(pos, warn, radius, damage, source)`：预警 → 落雷，落点 r 内有更高的导体就劈导体，导体底下 2 m 溅电。经幡杆、拉则、碉楼、雷桩、导雷石柱、铁索桥都挂 Conductor | `World/Conductor.cs`、`World/LightningStrike.cs` |
 | 破防条 | 领主血条下的金条：打弱点、反应伤害往里填，满了就破防，倒地 / 跪下 3.5–5 s、受伤 +30%、弱点全露；之后清空，下一次多要 25%。BossDef 里配阈值和破防姿势名；UI 在首领血条下 | `Bosses/BreakBar.cs` + BossBrain 接入 + `UI` 首领血条 |
 | 领主梯度 | 见 C4-6：`LordScaling.For(levelId)` 返回第几个、各项倍率；转阶段只出横幅时 `BossDef.phaseCinematic = false` | `Bosses/LordScaling.cs` |
 | 受击四层 | 闪白 + 数字 → 抖动（韧性未破）→ 硬直（韧性破）→ 眩晕（反制 / 破防）。韧性写在 EnemyDef；硬直、眩晕调 AI 的统一入口 | `Enemies/` 现有受击路径扩展 |
-| 天气与风 | WeatherDirector 加「高原雷暴」：压暗、雨、按间隔落雷（走 Lightning，导体引雷），有入场条件和退场回调（夔、大鹗用）。WindField：基础风向 + 吸引点（飞廉），驱动经幡、草、粒子、玩家推力；4-2 峡谷风顺河吹 | `World/WeatherDirector.cs`、`World/WindField.cs` |
+| 天气与风 | WeatherDirector 加「高原雷暴」（`WeatherDirector.BeginPlateauStorm` → `World/PlateauStorm.cs`）：压暗、雨、按间隔落雷（走 LightningStrike，导体引雷），有入场条件和退场回调（夔、大鹗用）。WindField：基础风向 + 吸引点（飞廉），驱动经幡、草、粒子、玩家推力；4-2 峡谷风顺河吹 | `World/WeatherDirector.cs`、`World/WindField.cs` |
 | 章节主题 | RunPlan 第四章；SpawnThemes 第四章出生法阵；VP_Plateau；BalanceModel / EconomyConfig 第四章编制；敌人注册 | 各自现有文件 |
 
 **F 路的第一笔提交必须先把以上接口建好**：类型、方法签名、中文注释，能编译，最小实现即可。提交后通知 main，main 转给各路。在那之前，其他路先写设计单、移植 AI 逻辑，调到这些接口的地方先留桩。
@@ -52,7 +52,7 @@
 
 | 路 | 内容 | 拥有的文件 |
 |---|---|---|
-| **F 地基** | 第 2 节全部契约；RunPlan 第四章；fx-style 第四章底色；材质改非金属；平衡模型第四章 | `Combat/Charge*`、`World/{Conductor,Lightning,WindField}*`、`Bosses/{BreakBar,LordScaling}*`；共享改动：`BossBrain`、`BossDef`、`WeatherDirector`、`RunPlan`、`BuildOrder`、`SpawnThemes`、`TelegraphTone`、`EconomyConfig`、`BalanceModel`、首领血条 UI |
+| **F 地基** | 第 2 节全部契约；RunPlan 第四章；fx-style 第四章底色；材质改非金属；平衡模型第四章 | `Combat/Charge*`、`World/{Conductor,LightningStrike,PlateauStorm,WindField}*`、`Bosses/{BreakBar,LordScaling}*`；共享改动：`BossBrain`、`BossDef`、`WeatherDirector`、`RunPlan`、`BuildOrder`、`SpawnThemes`、`TelegraphTone`、`EconomyConfig`、`BalanceModel`、首领血条 UI |
 | **M1 地图 4-1** | 600 × 500 m 开放盆地；7 据点 + 出生 + 垭口；天路、牧道、河谷、山脊高路；冰川河、圣湖、冰湖；地标白盒；风雪软边界；6 座灵火坛（3 处开垭口）；风场吸向飞廉；7 处遇敌 + 穷奇游猎线；三领主擂台的锚点和场地件位置；先写 `maps/4-1.md` | `Pipeline/Editor/Levels/Level_4_1.cs`、`LevelKit.Plateau.cs`（新分部）、`docs/level-design/maps/4-1.md`、4-1 地图套件 |
 | **E 雷魅** | 八只雷魅 + 雷牦 + 穷奇的 AI、受击、四种死法、带电互动（电网、比翼电弧、雷标、雷石电场）；采样配置 + 招牌招式手 K；特效；穷奇按精英走 EliteStrike；先写设计单 | `Enemies/AI/Plateau/**`、第四章 EnemyDef、`scripts/unity/bake/SK_Enemy_{Marmot,Tiangou,Aoyin,Jufu,Manman,Dijiang,Qiongqi}.mjs`、连鼓灵部件组装、`Fx/Fx.Plateau.cs`、`docs/art/vfx/foes-ch4.md`、`plateau-foes` / `beats-ch4-foes` 套件 |
 | **B1 4-1 三领主** | 夔、飞廉、化蛇：BossDef / Brain / Moves；登场按 ch4-boss-intros.json 进 BossIntroDirector；场地机制（经幡杆回劈、风场与龙卷 / 火龙卷、湖面涨水与湿身导电）；破防；死亡演出；手 K + 特效；先写设计单 | `Bosses/{Kui,Feilian,Huashe}/**`、`Fx/Fx.{Kui,Feilian,Huashe}.cs`、`art/source/characters/SK_Boss_{Kui,Feilian,Huashe}/anim/**`、`docs/art/vfx/{kui,feilian,huashe}.md`、`boss-kui` / `boss-feilian` / `boss-huashe` 套件 |

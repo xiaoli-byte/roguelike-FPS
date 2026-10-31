@@ -45,6 +45,11 @@ namespace Spiritfire.Game
         Danger,
         /// <summary>原色：传进来的颜色原样用（灵宠 / 友方技能、出生点、增益圈这类不是「会挨打」的提示，冲击环、持续区域的默认）</summary>
         Own,
+        /// <summary>
+        /// 雷（第四章，C4-4）：落雷、电弧、电场、雷标。和 <see cref="Danger"/> 一样算危险预警（暗衬边、普通混合、乘色、脚底提示），
+        /// 只是主色换成 <see cref="TelegraphPalette.Thunder"/> 的紫红雷光——草甸、雪地上的一般危险仍是正红，两者色相拉开
+        /// </summary>
+        Thunder,
     }
 
     /// <summary>
@@ -60,6 +65,11 @@ namespace Spiritfire.Game
         public static readonly Color Crimson = Hex.Rgb(0xff1c24);
         /// <summary>电光品红：火狱（第三章）——熔岩和火光是橙红，赤红会混进去</summary>
         public static readonly Color Magenta = Hex.Rgb(0xff2bd6);
+        /// <summary>
+        /// 紫红雷光：第四章的雷（<see cref="TelegraphTone.Thunder"/>）。色相约 296°，和正红（358°）拉开 60° 以上，
+        /// 在青绿草甸、白雪上都跳得出来；邪火紫红也是第四章的腐化色（fx-style §2.2），但腐化装饰不走预警，不会混
+        /// </summary>
+        public static readonly Color Thunder = Hex.Rgb(0xe03cf0);
         /// <summary>危险预警的暗衬边（alpha = 强度）</summary>
         public static readonly Color DangerBacking = new(0.05f, 0f, 0.025f, 0.62f);
         /// <summary>测试 / 演示时强制指定危险色（null = 按关卡）</summary>
@@ -76,6 +86,9 @@ namespace Spiritfire.Game
         /// 赤红 ≈ (1, 0.2, 0.22)：亮沙、冰雪乘完是正红；品红 ≈ (1, 0.25, 0.86)
         /// </summary>
         public static Color DangerMultiply => MultiplyFor(Danger);
+
+        /// <summary>某个危险配色的主色：雷 = <see cref="Thunder"/>，其余 = 当前关卡的 <see cref="Danger"/></summary>
+        public static Color DangerFor(TelegraphTone tone) => tone == TelegraphTone.Thunder ? Thunder : Danger;
 
         public static Color MultiplyFor(Color d)
         {
@@ -130,7 +143,7 @@ namespace Spiritfire.Game
         public bool linear;
 
         /// <summary>实际配色（Auto 按样式解析）</summary>
-        public readonly bool Danger => tone == TelegraphTone.Danger || tone == TelegraphTone.Auto && style == TelegraphStyle.Warning;
+        public readonly bool Danger => tone == TelegraphTone.Danger || tone == TelegraphTone.Thunder || tone == TelegraphTone.Auto && style == TelegraphStyle.Warning;
     }
 
     /// <summary>
@@ -819,7 +832,7 @@ namespace Spiritfire.Game
         static Color MainColor(in TelegraphSpec sp)
         {
             if (!sp.Danger) return sp.color;
-            var d = TelegraphPalette.Danger;
+            var d = TelegraphPalette.DangerFor(sp.tone);
             d.a = sp.color.a <= 0 ? 0 : Mathf.Max(0.85f, Mathf.Min(1f, sp.color.a));
             return d;
         }
@@ -829,7 +842,7 @@ namespace Spiritfire.Game
             if (!s.shaderMat) return;
             s.mat.SetColor(ColorId, MainColor(s.spec));
             s.mat.SetColor(Color2Id, s.spec.Danger ? TelegraphPalette.DangerBacking : TelegraphPalette.BackingFor(s.spec.color));
-            var mul = TelegraphPalette.DangerMultiply;
+            var mul = TelegraphPalette.MultiplyFor(TelegraphPalette.DangerFor(s.spec.tone));
             s.mat.SetVector(MulId, UsesMultiply(s) ? new Vector4(1, mul.r, mul.g, mul.b) : new Vector4(0, 1, 1, 1));
         }
 

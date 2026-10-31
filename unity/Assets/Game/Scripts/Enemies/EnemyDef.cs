@@ -54,6 +54,15 @@ namespace Spiritfire.Game
         public Element element;
         /// <summary>不随机给它的精英词缀（与自身机制重复的，TS Affixes.EXCLUDE）</summary>
         public string[] affixExclusions = Array.Empty<string>();
+        /// <summary>
+        /// 韧性（第四章受击四层，combat 1.1；<see cref="Poise"/>）：2 秒内累计的韧性伤害超过它就硬直（<see cref="EnemyAI.HitStagger"/>）。
+        /// 韧性伤害 = 实际伤害 × 弱点 2 / 爆炸、反应 3 / 其余 1，持续伤害不算。0 = 不用韧性（前三章的敌人都是 0，行为不变）；+∞ = 不硬直
+        /// </summary>
+        public float poise;
+        /// <summary>韧性破时的硬直秒数（0.4–0.9）</summary>
+        public float staggerSeconds = 0.6f;
+        /// <summary>轻怪每挨一枪顿一下（秒；啸獭、帝江 0.12）：AI 停这么久、不打断招式。0 = 不顿</summary>
+        public float hitch;
         /// <summary>设计尺寸（放大前）：碰撞半径、身高、弱点中心离地高度（TS radius / height / headY）</summary>
         public float radius = 0.4f, height = 1.8f, weakHeight;
 

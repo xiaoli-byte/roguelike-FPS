@@ -232,6 +232,12 @@ namespace Spiritfire.Game
             return d;
         }
 
+        /// <summary>
+        /// 高原雷暴（第四章）：压暗、下雨、按间隔落雷（导体引雷），带入场条件和退场回调。转给 <see cref="PlateauStorm.Begin"/>——
+        /// 雷暴不占区域风暴的位置，光照和雾在它的 LateUpdate 里按「这一帧的底 × 倍率」最后写（batch2「天气覆盖」）。返回票，End 退场
+        /// </summary>
+        public static PlateauStorm.Ticket BeginPlateauStorm(PlateauStormSpec spec = null) => PlateauStorm.Begin(spec);
+
         /// <summary>离 at 最近的区域风暴立刻进入某个阶段（调试命令、冒烟测试）；没有区域返回 null</summary>
         public Region ForceNearest(Vector3 at, StormPhase phase, float t = 0)
         {

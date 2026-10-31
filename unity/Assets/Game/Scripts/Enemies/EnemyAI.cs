@@ -150,6 +150,9 @@ namespace Spiritfire.Game
 
         void OnDied(DamageInfo info)
         {
+            stunTaken?.Dispose();
+            stunTaken = null;
+            hitStaggerLeft = hitchLeft = 0;
             EnemyRegistry.Unregister(this);
             InterruptAttack();
             Buffs.Clear();
@@ -215,8 +218,34 @@ namespace Spiritfire.Game
             if (wasStunned)
             {
                 wasStunned = false;
+                stunTaken?.Dispose();
+                stunTaken = null;
                 PlayLocomotion();
                 SetState(InitialState);
+            }
+            // 受击四层（第四章）：硬直中停摆；轻怪挨一枪顿一下。前三章的敌人从不进这两个分支
+            if (hitStaggerLeft > 0)
+            {
+                hitStaggerLeft -= dt;
+                body.SetGlow(0, 0);
+                if (hitStaggerLeft <= 0)
+                {
+                    hitStaggerLeft = 0;
+                    try
+                    {
+                        OnHitStaggerEnd();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
+                }
+                return;
+            }
+            if (hitchLeft > 0)
+            {
+                hitchLeft -= dt;
+                return;
             }
             // 玩家阵亡：待机（同 TS StandardEnemy.think 的 !player.alive 分支）；复活后从初始状态重新开始。首领登场演出期间同样待机（登场中的首领除外）
             if ((vitals && vitals.Dead) || BossIntroDirector.HoldsEnemy(this))
@@ -242,6 +271,110 @@ namespace Spiritfire.Game
             try
             {
                 CancelAttack();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
+        // ───────────── 受击四层（第四章，combat 1.1；HitReaction）─────────────
+
+        float hitStaggerLeft, hitchLeft;
+        IDisposable stunTaken;
+
+        /// <summary>硬直 / 眩晕 / 顿一下开始（敌人, 哪一层, 秒数）：特效、音效、试玩套件听它</summary>
+        public event Action<EnemyAI, HitLayer, float> HitLayerEntered;
+        /// <summary>硬直剩余秒数（不在硬直为 0）</summary>
+        public float HitStaggerLeft => hitStaggerLeft;
+        /// <summary>正在硬直（受击四层的硬直，不是元素眩晕）</summary>
+        public bool HitStaggered => hitStaggerLeft > 0;
+        /// <summary>霸体：此刻硬直打不断（招式标了霸体、大招）。缺省 false；子类按当前招式覆写</summary>
+        public virtual bool SuperArmor => false;
+
+        /// <summary>
+        /// 硬直（韧性破、回劈、机关）：统一入口。死了 / 出生中 / 霸体时返回 false；否则交给 <see cref="OnHitStagger"/>（缺省：打断招式、撤预警、停下、播 Hit，
+        /// 停摆 seconds 秒，到点 <see cref="OnHitStaggerEnd"/>），成功时发 <see cref="HitLayerEntered"/>。from = 打来的方向上的一点（表现用）
+        /// </summary>
+        public bool HitStagger(float seconds, Vector3 from, HitCause cause = HitCause.Poise)
+        {
+            if (Dead || state == "spawn" || !(seconds > 0) || !float.IsFinite(seconds) || SuperArmor) return false;
+            bool ok;
+            try
+            {
+                ok = OnHitStagger(seconds, from, cause);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                ok = false;
+            }
+            if (ok) RaiseHitLayer(HitLayer.Stagger, seconds);
+            return ok;
+        }
+
+        /// <summary>
+        /// 眩晕（反制、破防、封脉）：统一入口。死了 / 出生中返回 false；否则交给 <see cref="OnHitStun"/>（缺省：元素眩晕——头顶晕圈、AI 停摆、精英 ×0.75；
+        /// 期间受伤 × <see cref="HitReaction.StunTakenMult"/>），成功时发 <see cref="HitLayerEntered"/>
+        /// </summary>
+        public bool HitStun(float seconds, HitCause cause, string why = null)
+        {
+            if (Dead || state == "spawn" || !(seconds > 0) || !float.IsFinite(seconds)) return false;
+            bool ok;
+            try
+            {
+                ok = OnHitStun(seconds, cause, why);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                ok = false;
+            }
+            if (ok) RaiseHitLayer(HitLayer.Stun, seconds);
+            return ok;
+        }
+
+        /// <summary>顿一下（轻怪每挨一枪）：AI 停 seconds 秒、不打断招式（已经在顿的取较长）</summary>
+        public void Hitch(float seconds)
+        {
+            if (Dead || state == "spawn" || !(seconds > 0) || !float.IsFinite(seconds)) return;
+            bool was = hitchLeft > 0;
+            hitchLeft = Mathf.Max(hitchLeft, seconds);
+            if (!was) RaiseHitLayer(HitLayer.Flinch, seconds);
+        }
+
+        /// <summary>硬直的表现与状态（子类覆写表现；返回 false = 不进）。缺省：脚本位移就地收住、停下、打断招式、播 Hit、停摆 seconds 秒</summary>
+        protected virtual bool OnHitStagger(float seconds, Vector3 from, HitCause cause)
+        {
+            if (manual && !launched) EndManualMotion();
+            Stop();
+            InterruptAttack();
+            hitStaggerLeft = Mathf.Max(hitStaggerLeft, seconds);
+            Play("Hit", 0.05f);
+            return true;
+        }
+
+        /// <summary>硬直结束：缺省回到初始状态</summary>
+        protected virtual void OnHitStaggerEnd()
+        {
+            PlayLocomotion();
+            SetState(InitialState);
+        }
+
+        /// <summary>眩晕的表现与状态（子类覆写表现；返回 false = 没晕上）。缺省：元素眩晕 + 受伤 +25%（醒来时撤掉）</summary>
+        protected virtual bool OnHitStun(float seconds, HitCause cause, string why)
+        {
+            if (!EnemyStatus.Stun(hp, seconds)) return false;
+            stunTaken ??= hp.Incoming.Add((in IncomingHit h) => HitReaction.StunTakenMult);
+            return true;
+        }
+
+        void RaiseHitLayer(HitLayer layer, float seconds)
+        {
+            if (HitLayerEntered == null) return;
+            try
+            {
+                HitLayerEntered(this, layer, seconds);
             }
             catch (Exception e)
             {
