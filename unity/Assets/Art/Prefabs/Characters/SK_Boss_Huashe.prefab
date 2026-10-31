@@ -366,7 +366,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8634391439329339907}
   - component: {fileID: 2079072663582938590}
-  - component: {fileID: 2018817550936428652}
   - component: {fileID: 232804595288787927}
   m_Layer: 7
   m_Name: Model
@@ -402,7 +401,7 @@ Animator:
   m_GameObject: {fileID: 1242342252792385599}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f4a25e2543e0ab749becb6bc633fcb64, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f8b3afd9ceeddb048b22e7ea24cf6c92, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -414,21 +413,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2018817550936428652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1242342252792385599}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16a251f6cae7de54295271aa704ed75b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.ProceduralIdle
-  amplitude: 1
-  speed: 1
-  phase: 0
 --- !u!114 &232804595288787927
 MonoBehaviour:
   m_ObjectHideFlags: 0

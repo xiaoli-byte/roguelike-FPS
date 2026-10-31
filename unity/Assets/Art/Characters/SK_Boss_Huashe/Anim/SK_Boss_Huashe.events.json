@@ -1,0 +1,24 @@
+{
+  "about": "SK_Boss_Huashe 的出手事件（归一化时刻 0–1），照 docs/art/ch4-move-events.json 的 clips 抄（去掉 warn / end）；手 K 片段的节拍事件由 art/source/characters/SK_Boss_Huashe/anim/*_anims.py 并进来。NativeClipBuilder 写成 OnAnimEvent。",
+  "clips": {
+    "spit": [
+      { "at": 0.2368, "name": "release" },
+      { "at": 0.4145, "name": "release" },
+      { "at": 0.5855, "name": "release" }
+    ],
+    "lunge": [
+      { "at": 0.2015, "name": "glint" },
+      { "at": 0.3134, "name": "hit" }
+    ],
+    "wingslap": [
+      { "at": 0.4444, "name": "hit" }
+    ],
+    "dive": [
+      { "at": 0.4121, "name": "glint" },
+      { "at": 0.4945, "name": "hit" }
+    ],
+    "tailsweep": [
+      { "at": 0.35, "name": "hit" }
+    ]
+  }
+}

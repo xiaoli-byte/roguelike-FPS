@@ -1,0 +1,89 @@
+{
+  "about": "SK_Boss_Feilian 的出手事件（归一化时刻 0–1），照 docs/art/ch4-move-events.json 的 clips 抄（去掉 warn / end）；手 K 片段的节拍事件由 art/source/characters/SK_Boss_Feilian/anim/*_anims.py 并进来。NativeClipBuilder 写成 OnAnimEvent。",
+  "clips": {
+    "gust": [
+      {
+        "at": 0.3125,
+        "name": "glint"
+      },
+      {
+        "at": 0.4167,
+        "name": "hit"
+      }
+    ],
+    "charge": [
+      {
+        "at": 0.1458,
+        "name": "fx:fPaw"
+      },
+      {
+        "at": 0.1719,
+        "name": "glint"
+      },
+      {
+        "at": 0.1979,
+        "name": "fx:fPaw"
+      },
+      {
+        "at": 0.25,
+        "name": "hit"
+      }
+    ],
+    "blades": [
+      {
+        "at": 0.4615,
+        "name": "release"
+      }
+    ],
+    "tornado": [
+      {
+        "at": 0.5556,
+        "name": "release"
+      }
+    ],
+    "wheel": [
+      {
+        "at": 0.1111,
+        "name": "fx:fPaw"
+      },
+      {
+        "at": 0.131,
+        "name": "glint"
+      },
+      {
+        "at": 0.1508,
+        "name": "fx:fPaw"
+      },
+      {
+        "at": 0.1905,
+        "name": "hit"
+      }
+    ],
+    "stormburst": [
+      {
+        "at": 0.6466,
+        "name": "glint"
+      },
+      {
+        "at": 0.6897,
+        "name": "hit"
+      }
+    ],
+    "sidestep": [
+      {
+        "at": 0.2222,
+        "name": "fx:fLeap"
+      },
+      {
+        "at": 0.8889,
+        "name": "fx:fLand"
+      }
+    ],
+    "down": [
+      {
+        "at": 0.1,
+        "name": "fx:fFall"
+      }
+    ]
+  }
+}
