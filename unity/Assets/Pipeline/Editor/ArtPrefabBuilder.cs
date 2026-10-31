@@ -62,6 +62,21 @@ namespace Spiritfire.Art.Editor
 
         public static bool IsGlow(string materialName) => materialName.Contains("_Glow");
 
+        /// <summary>
+        /// 一律按非金属建材质的资产（第四章 C4-5，docs/unity-ch4-port.md）：雷魅 7 只 + 领主 5 个的 Tripo 模型金属度因子是 1、ORM 的金属通道也接近 1，
+        /// 照原样建出来是整只金属——带电的轮廓光、雷光、雪地反光一照就整片染色（网页版带电时整只被染成紫红）。
+        /// 这里在建材质时把 _Metallic 写成 0（不管 sidecar 的 metallic 因子），每次 sync 重建都按这条走，不会回退；带电改走边缘光（ChargeState）。
+        /// 前三章的资产不在表里，材质不变
+        /// </summary>
+        public static readonly System.Collections.Generic.HashSet<string> NonMetalAssets = new()
+        {
+            "SK_Enemy_Marmot", "SK_Enemy_Tiangou", "SK_Enemy_Aoyin", "SK_Enemy_Jufu", "SK_Enemy_Manman", "SK_Enemy_Dijiang", "SK_Enemy_Qiongqi",
+            "SK_Boss_Kui", "SK_Boss_Feilian", "SK_Boss_Huashe", "SK_Boss_Dae", "SK_Boss_Leize",
+        };
+
+        /// <summary>这个资产的材质要不要强制非金属</summary>
+        public static bool ForceNonMetal(ArtSidecar sc) => sc != null && !string.IsNullOrEmpty(sc.Id) && NonMetalAssets.Contains(sc.Id);
+
         public static Material BuildMaterial(ArtSidecar sc, JObject m)
         {
             string name = (string)m["name"];
@@ -89,7 +104,7 @@ namespace Spiritfire.Art.Editor
             var orm = LoadTex(sc, tex, "ORM");
             mat.SetTexture("_ORMMap", orm);
             if (orm) mat.EnableKeyword("_ORMMAP");
-            mat.SetFloat("_Metallic", (float?)m["metallic"] ?? 0f);
+            mat.SetFloat("_Metallic", ForceNonMetal(sc) ? 0f : (float?)m["metallic"] ?? 0f);
             mat.SetFloat("_Roughness", (float?)m["roughness"] ?? 1f);
             mat.SetFloat("_OcclusionStrength", (bool?)m["hasOcclusion"] == true ? 1f : 0f);
 
