@@ -79,7 +79,7 @@ namespace Spiritfire.Game
     /// <see cref="Next"/> 到此为止：打完 1-4 的首领直接走胜利链 → 整局结算（BossEncounter.Decide / GameSession.CompleteStage 都读 IsFinal），
     /// 构建设置里之后的关卡场景不打进包（BuildOrder）。来源（先到先得）：代码里赋值（测试）→ 命令行 <c>-demoEnd 1-4</c> / <c>-demoEnd=1-4</c> /
     /// <c>-demo</c>（= <see cref="DemoDefault"/>）→ 编译符号 <c>SPIRITFIRE_DEMO</c>（= <see cref="DemoDefault"/>，打试玩包用；编辑器菜单
-    /// Spiritfire/构建设置/试玩版 开关它）。<see cref="Stages"/> 永远是完整的 12 关（构建顺序、经济投影用）。
+    /// Spiritfire/构建设置/试玩版 开关它）。<see cref="Stages"/> 永远是整表（构建顺序、经济投影用）。
     /// </summary>
     public static class RunPlan
     {

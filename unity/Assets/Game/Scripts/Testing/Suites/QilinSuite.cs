@@ -24,7 +24,7 @@ namespace Spiritfire.Game.Testing
     ///     踏云俯冲三踏（落点预警、火环、落点在殿内）→ 自动接落地喘息（落在能站的地面、火心大亮、起飞）；吐息扫象限（从对岸扫满整个象限）；
     ///     火云雨 + 神火飞鸦（火球落满、飞鸦从高处出）；焚身浸泡 40 s（踏云不出殿、不钻地、不插柱子、招式不卡死）；
     ///     15% 狂怒：狂怒长啸（火浪）、熔流以狂怒数值重开、喘息倍率 0.65；
-    ///   · 击杀 → 溃散 → 结算：3-4 是最后一关 → 胜利链（不立出口）；熔流退回、半空倒下的落到地上。
+    ///   · 击杀 → 溃散 → 结算：去向按 RunPlan——3-4 是这一局的最后一关（第四章还没建好）→ 胜利链；第四章建好之后 → 出口去 4-1；熔流退回、半空倒下的落到地上。
     /// 运行时报错由宿主记不合格（PlaytestRunner）。
     /// </summary>
     public sealed class QilinSuite : PlaytestSuite
@@ -1033,9 +1033,12 @@ namespace Spiritfire.Game.Testing
             if (!floodGone || !dry) Fail("火麒麟倒下后熔流没有退");
             if (boss.Altitude > 0.6f) Fail($"火麒麟在半空倒下没有落到地上（离地 {boss.Altitude:F1} m）");
             if (defeatedEvents - defeated0 != 1) Fail($"BossDefeated 派发了 {defeatedEvents - defeated0} 次（应 1 次）");
+            // 去向以 RunPlan 为准：第四章没建好时 3-4 是这一局的最后一关（胜利链），建好之后打完火麒麟去 4-1（出口）
             var stage = RunPlan.ForScene(Scene);
+            if (stage == null) Fail("3-4 的场景不在 RunPlan 里");
             bool final = stage != null && RunPlan.IsFinal(stage);
-            if (!final) Fail("3-4 不是 RunPlan 的最后一关");
+            var want = final ? BossEncounter.Outcome.Victory : BossEncounter.Outcome.NextStage;
+            Line($"RunPlan：3-4 {(final ? "是这一局的最后一关" : $"之后是 {RunPlan.Next(stage)?.Label}")}，应走 {want}");
             if (!enc)
             {
                 Line("没有 BossEncounter：不查结算");
@@ -1048,7 +1051,8 @@ namespace Spiritfire.Game.Testing
             Line($"结算：{enc.State}（{Time.time - s0:F1} s），宝箱「{(chest ? chest.EffectiveReward : "（没有）")}」档位 {chest?.tier}，去向 {enc.Result}，熔铁闸 {(enc.GatesSealed ? "还立着" : "落回去了")}，溃散 {enc.Dispersed} 只");
             if (enc.State != BossEncounter.Phase.Settled) Fail("火麒麟倒下后没有结算");
             if (!chest) Fail("结算没有落首领宝箱");
-            if (enc.Result != BossEncounter.Outcome.Victory) Fail($"3-4 打完的去向是 {enc.Result}（最后一关应为胜利链）");
+            if (enc.Result != want) Fail($"3-4 打完的去向是 {enc.Result}（RunPlan 要 {want}）");
+            if (!final && !enc.OpenedExit) Fail("不是最后一关，结算后没有立出口去下一关");
             if (enc.GatesSealed) Fail("结算后熔铁闸没有落回去");
             yield return new WaitForSeconds(0.5f);
             Shot(weapons.eye, "qilin_settled");
