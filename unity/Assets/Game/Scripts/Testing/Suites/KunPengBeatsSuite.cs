@@ -13,9 +13,11 @@ namespace Spiritfire.Game.Testing
 {
     /// <summary>
     /// 鲲鹏的招式节拍条（K 路特效 / 动作调优，bridge.sh playtest beats-kunpeng；设计单 docs/art/vfx/kunpeng.md）：
-    /// 逐个强制出招（首领不掉血），每招按设计单的节拍各拍一张——
-    ///   起手（前摇开始 0.12 s）/ 预警（前摇 75%，蓄力顶点前）/ 释放帧（出手段第 2 帧：亮芯第一帧到峰值）/ 收招（收招段 0.15 s）/ 第一人称（释放帧同一刻，视线转向首领）；
-    /// 俯冲掠台的「释放帧」取掠到玩家身边那一刻（出手 0.3 s）。另外按时刻拍化形（4.6 s 里 8 张）、鹏倒下、鲲倒下（沉进冰窟）。
+    /// 逐个强制出招（首领不掉血），每招按设计单的节拍各拍一张（格子顺序 = 下面的序号）——
+    ///   0 起手（前摇开始 0.12 s）/ 2 预警（预警画出 0.3 s 后、前摇 60% 以后）/ 3 蓄力顶点（前摇最后 0.2 s，前摇可变的落台不拍）/ 4 释放帧（出手段第 2 帧：亮芯第一帧到峰值）/
+    ///   5 持续段（出手段 ≥ 0.8 s 的招式）/ 8 收招（收招段 0.15 s）/ 9 第一人称（释放帧同一刻，视线转向首领）；1、6、7 留给各招自己的节拍（潜袭的下潜、落台的起飞前摇 / 起飞，<see cref="Beat"/>）。
+    /// 俯冲掠台的「释放帧」取掠到玩家身边那一刻（出手 0.3 s）。另外按时刻拍化形（4.6 s 里 8 张）、鹏倒下（失衡 / 翼折 / 坠落 / 落地 / 余韵 / 归冥）、鲲倒下（沉进冰窟）。
+    /// 除了释放帧事件，还记落台的起飞事件（liftoff 对收招段开始）和鹏倒下的动画事件（对倒下演出的触地时刻）。
     /// 截图在 Assets/Art/_Review/beats/kunpeng/（jpg + manifest.json），拼图由 scripts/unity/vfx_beats.py 生成到 docs/art/review/boss-vfx/K/。
     /// 只旁观、不判合格（除了招式没出 / 卡死）。
     /// </summary>
@@ -225,6 +227,23 @@ namespace Spiritfire.Game.Testing
 
         const float MoveTimeout = 16f;
 
+        /// <summary>一招自己的额外节拍：stage 段内 t 秒拍一张，序号 order（1 / 6 / 7）</summary>
+        readonly struct Beat
+        {
+            public readonly MoveStage stage;
+            public readonly float t;
+            public readonly string label;
+            public readonly int order;
+
+            public Beat(MoveStage stage, float t, string label, int order)
+            {
+                this.stage = stage;
+                this.t = t;
+                this.label = label;
+                this.order = order;
+            }
+        }
+
         WeaponController weapons;
         PlayerMotor motor;
         PlayerVitals vitals;
@@ -297,7 +316,7 @@ namespace Spiritfire.Game.Testing
             // 鲲：猛砸（正前 8 m 的落点上）、吞吸（扇形里 14 m）、潜袭（对面）、吐冰（远处）
             yield return OneMove(KunSlam.MoveId, () => Place(Ring(boss.Theta + 6f, h.radius + 3.6f)));
             yield return OneMove(KunInhale.MoveId, () => Place(Ring(boss.Theta + 8f, h.radius + 9.5f)));
-            yield return OneMove(KunDive.MoveId, () => Place(Ring(boss.Theta + 110f, h.MidRing)));
+            yield return OneMove(KunDive.MoveId, () => Place(Ring(boss.Theta + 110f, h.MidRing)), extras: new[] { new Beat(MoveStage.Windup, 0.4f, "下潜", 1) });
             yield return OneMove(KunSpit.MoveId, () => Place(Ring(boss.Theta + 35f, h.outer - 4f)));
 
             // 化形
@@ -307,8 +326,9 @@ namespace Spiritfire.Game.Testing
             yield return OneMove(PengGust.MoveId, () => Place(Ring(20f, h.MidRing)), force: false, releaseAfter: 0.15f);
             yield return OneMove(PengSwoop.MoveId, () => Place(Ring(Mathf.Abs(Mathf.DeltaAngle(h.Angle(boss.transform.position), 0f)) > 90f ? 0f : 180f, h.radius + 9f)),
                 releaseAfter: 0.3f);
-            yield return OneMove(PengFeatherRain.MoveId, () => Place(Ring(40f, h.MidRing)), releaseAfter: 0.25f);
-            yield return OneMove(PengPerch.MoveId, () => Place(Ring(90f, h.MidRing)));
+            yield return OneMove(PengFeatherRain.MoveId, () => Place(Ring(40f, h.MidRing)), releaseAfter: 0.25f, closeUp: true);
+            yield return OneMove(PengPerch.MoveId, () => Place(Ring(90f, h.MidRing)),
+                extras: new[] { new Beat(MoveStage.Active, 4.5f, "起飞前摇", 6), new Beat(MoveStage.Recover, 0.06f, "起飞", 7) }, recoverAt: 0.45f, closeUp: true);
 
             // 鹏倒下
             yield return Death(boss, "death_peng", "鹏 · 倒下");
@@ -356,9 +376,10 @@ namespace Spiritfire.Game.Testing
 
         /// <summary>
         /// 强制出一招并按节拍拍：起手 / 预警 / 释放帧 / 收招 / 第一人称。setup 摆玩家；force = false 时等它自己出（化形后的第一招）；
-        /// releaseAfter = 释放帧在出手段开始后多久拍（默认第 2 帧）
+        /// releaseAfter = 释放帧在出手段开始后多久拍（默认第 2 帧）；extras = 这招自己的节拍；recoverAt = 收招那张在收招段几秒拍；
+        /// closeUp = 旁观机位只框首领（鹏盘旋的位置不定，和玩家同框时常常只剩一个小点）
         /// </summary>
-        IEnumerator OneMove(string id, Action setup, bool force = true, float releaseAfter = 0f)
+        IEnumerator OneMove(string id, Action setup, bool force = true, float releaseAfter = 0f, Beat[] extras = null, float recoverAt = 0.15f, bool closeUp = false)
         {
             var m = boss ? boss.MoveById(id) : null;
             if (m == null)
@@ -389,8 +410,10 @@ namespace Spiritfire.Game.Testing
             string strip = m.Name;
             float warnAt = -1;
             bool b0 = false, b1 = false, b2 = false, b3 = false, b5 = false;
-            int activeFrames = 0, frames = 0, surgePeak = 0, releaseFrame = -1, eventFrame = -1;
-            float eventAt = -1;
+            bool b4 = false;
+            var extraDone = new bool[extras?.Length ?? 0];
+            int activeFrames = 0, frames = 0, surgePeak = 0, releaseFrame = -1, eventFrame = -1, liftFrame = -1, recoverFrame = -1;
+            float eventAt = -1, liftAt = -1, recoverAt0 = -1;
             string releaseEvt = null;
             var rig = boss.Model?.rig;
             Action<string> onEvt = e =>
@@ -401,9 +424,16 @@ namespace Spiritfire.Game.Testing
                     eventAt = Time.time;
                     releaseEvt = e;
                 }
+                if (liftFrame < 0 && e == "liftoff")
+                {
+                    liftFrame = Time.frameCount;
+                    liftAt = Time.time;
+                }
             };
             if (rig) rig.AnimEvent += onEvt;
             float activeAt = -1, frameSum = 0;
+            string clipAt = null;
+            bool both = !closeUp;
             FxBudget.ResetPeak();
             t0 = Time.time;
             while (boss && !boss.Dead && boss.Current == m && Time.time - t0 < MoveTimeout)
@@ -414,20 +444,34 @@ namespace Spiritfire.Game.Testing
                 frameSum += Time.unscaledDeltaTime;
                 surgePeak = Mathf.Max(surgePeak, Surge.ActiveCount);
                 var c = boss.BodyCenter;
+                // 落台的前摇长短不定（接近 ≤ 3 s + 下降 0.9 s）：预警按画出来 0.3 s 后拍，不拍蓄力顶点
+                bool variableWindup = m is PengPerch;
+                for (int i = 0; i < extraDone.Length; i++)
+                {
+                    var x = extras[i];
+                    if (extraDone[i] || m.Stage != x.stage || m.StageT < x.t) continue;
+                    extraDone[i] = true;
+                    cam.Spec(id, strip, x.label, x.order, c, 9f, both, note: $"{StageName(m.Stage)} {m.StageT:F2} s");
+                }
                 if (m.Stage == MoveStage.Windup)
                 {
                     float w = Mathf.Max(0.2f, m.WindupTime);
                     if (!b0 && m.StageT >= Mathf.Min(0.12f, w * 0.2f))
                     {
                         b0 = true;
-                        cam.Spec(id, strip, "起手", 0, c, 9f, note: $"前摇 {m.StageT:F2} / {m.WindupTime:F2} s");
+                        cam.Spec(id, strip, "起手", 0, c, 9f, both, note: $"前摇 {m.StageT:F2} / {m.WindupTime:F2} s");
                     }
                     int warnedNow = m is KunPengMove km ? km.Warned : m.TelegraphCount;
                     if (warnAt < 0 && warnedNow > warned0) warnAt = Time.time;
-                    if (!b1 && warnAt >= 0 && Time.time - warnAt >= 0.3f && m.StageT >= Mathf.Min(w * 0.6f, 2.4f))
+                    if (!b1 && warnAt >= 0 && Time.time - warnAt >= 0.3f && (variableWindup || m.StageT >= Mathf.Min(w * 0.6f, 2.4f)))
                     {
                         b1 = true;
-                        cam.Spec(id, strip, "预警", 1, c, 9f, note: $"前摇 {m.StageT:F2} / {m.WindupTime:F2} s");
+                        cam.Spec(id, strip, "预警", 2, c, 9f, both, note: $"前摇 {m.StageT:F2} / {m.WindupTime:F2} s");
+                    }
+                    if (!b4 && !variableWindup && w >= 0.6f && m.StageT >= Mathf.Max(w * 0.8f, w - 0.2f))
+                    {
+                        b4 = true;
+                        cam.Spec(id, strip, "蓄力顶点", 3, c, 9f, both, note: $"前摇 {m.StageT:F2} / {m.WindupTime:F2} s");
                     }
                 }
                 if (m.Stage == MoveStage.Active)
@@ -436,34 +480,49 @@ namespace Spiritfire.Game.Testing
                     {
                         activeAt = Time.time;
                         releaseFrame = Time.frameCount;
+                        // 出手段开始这一帧，片段（上一帧的动画求值）走到哪：和设计的释放帧时刻对照
+                        var an = boss.Model?.animator;
+                        if (an && an.isActiveAndEnabled)
+                        {
+                            var st = an.IsInTransition(0) ? an.GetNextAnimatorStateInfo(0) : an.GetCurrentAnimatorStateInfo(0);
+                            clipAt = $"{st.normalizedTime * st.length:F2} / {st.length:F2} s（×{an.speed:F2}）";
+                        }
                     }
                     activeFrames++;
                     bool due = releaseAfter > 0 ? Time.time - activeAt >= releaseAfter : activeFrames >= 2;
-                    // 持续段（出手段长于 1.5 s 的招式：吞吸、狂风、俯冲、落台）：出手 1.2 s
-                    if (!b5 && b2 && m.active > 1.5f && m.StageT >= 1.2f)
+                    // 持续段（出手段 ≥ 0.8 s 的招式）：出手 1.2 s，短一些的取出手段 55%（羽刃雨的振翅洒羽）
+                    if (!b5 && b2 && m.active >= 0.8f && m.StageT >= Mathf.Min(1.2f, m.active * 0.55f))
                     {
                         b5 = true;
-                        cam.Spec(id, strip, "持续段", 5, c, 9f, note: $"出手 {m.StageT:F2} s");
+                        cam.Spec(id, strip, "持续段", 5, c, 9f, both, note: $"出手 {m.StageT:F2} s");
                     }
                     if (!b2 && due)
                     {
                         b2 = true;
-                        cam.Spec(id, strip, "释放帧", 2, c, 9f, note: $"出手 {m.StageT:F2} s");
-                        cam.Eye(id, strip, "第一人称", 4, c, $"出手 {m.StageT:F2} s，距玩家 {Vector3.Distance(Flat(c), Flat(motor.transform.position)):F1} m");
+                        cam.Spec(id, strip, "释放帧", 4, c, 9f, both, note: $"出手 {m.StageT:F2} s");
+                        cam.Eye(id, strip, "第一人称", 9, c, $"出手 {m.StageT:F2} s，距玩家 {Vector3.Distance(Flat(c), Flat(motor.transform.position)):F1} m");
                     }
                 }
-                if (m.Stage == MoveStage.Recover && !b3 && m.StageT >= 0.15f)
+                if (m.Stage == MoveStage.Recover && recoverFrame < 0)
+                {
+                    recoverFrame = Time.frameCount;
+                    recoverAt0 = Time.time;
+                }
+                if (m.Stage == MoveStage.Recover && !b3 && m.StageT >= recoverAt)
                 {
                     b3 = true;
-                    cam.Spec(id, strip, "收招", 3, c, 9f, note: $"收招 {m.StageT:F2} s");
+                    cam.Spec(id, strip, "收招", 8, c, 9f, both, note: $"收招 {m.StageT:F2} s");
                 }
                 yield return null;
             }
             if (rig) rig.AnimEvent -= onEvt;
-            if (!b3 && boss) cam.Spec(id, strip, "收招", 3, boss.BodyCenter, 9f, note: m.Cancelled ? "被打断 / 撞柱" : "招式结束");
+            if (!b3 && boss) cam.Spec(id, strip, "收招", 8, boss.BodyCenter, 9f, both, note: m.Cancelled ? "被打断 / 撞柱" : "招式结束");
             string align = eventFrame >= 0 && releaseFrame >= 0
                 ? $"出手事件 {releaseEvt} 比出手段开始{(eventFrame >= releaseFrame ? "晚" : "早")} {Mathf.Abs(eventAt - activeAt) * 1000f:F0} ms（{Mathf.Abs(eventFrame - releaseFrame)} 个编辑器帧）"
                 : "没收到出手事件";
+            if (clipAt != null) align += $"；出手那一帧片段走到 {clipAt}";
+            if (liftFrame >= 0 && recoverFrame >= 0)
+                align += $"；起飞事件 liftoff 比收招段开始{(liftFrame >= recoverFrame ? "晚" : "早")} {Mathf.Abs(liftAt - recoverAt0) * 1000f:F0} ms（{Mathf.Abs(liftFrame - recoverFrame)} 个编辑器帧）";
             Line($"{strip}：{(b0 ? "起手 " : "")}{(b1 ? "预警 " : "")}{(b2 ? "释放帧 " : "")}{(b3 ? "收招" : "")}（{Time.time - t0:F1} s）；{align}；动作 {boss?.LastAct}（{boss?.LastActPath}），顿帧累计 {boss?.ImpactHolds}；" +
                  $"粒子峰值 {FxBudget.Peak}、涌流体积峰值 {surgePeak}、平均帧 {(frames > 0 ? frameSum / frames * 1000f : 0):F1} ms（含截图帧）");
             if (boss && boss.Staggered)
@@ -532,25 +591,52 @@ namespace Spiritfire.Game.Testing
             float secs = b.Def != null ? b.Def.defeat.seconds : 4.4f;
             var ground = new Vector3(b.transform.position.x, b.Hole.FloorY, b.transform.position.z);
             var anchor = b.IsKun ? new Vector3(b.Hole.center.x, b.Hole.FloorY + 3f, b.Hole.center.z) : b.BodyCenter;
-            float[] at = { 0.3f, secs * 0.3f, secs * 0.56f, secs * 0.8f, secs + 0.3f, secs + 2.2f };
+            var water = new Vector3(b.Hole.center.x, b.Hole.waterY, b.Hole.center.z);
+            bool kun = b.IsKun;
+            // 鲲：沉、没顶、余韵；鹏：失衡 / 翼折 / 坠落 / 落地 / 余韵（设计单的节拍）/ 溃散后归冥、冰海平静
+            float[] at = kun
+                ? new[] { 0.3f, secs * 0.3f, secs * 0.56f, secs * 0.8f, secs + 0.3f, secs + 2.2f }
+                : new[] { 0.15f, 0.55f, 1.4f, 2.47f, 3.2f, secs + 0.4f, secs + 1.6f };
+            string[] beat = kun ? null : new[] { "失衡", "翼折", "坠落", "落地", "余韵", "归冥", "冰海平静" };
+            var events = new List<string>();
+            var rig = b.Model?.rig;
+            float d0 = Time.time;
+            Action<string> onEvt = e => events.Add($"{e} {Time.time - d0:F2} s");
+            if (rig) rig.AnimEvent += onEvt;
             int k = 0;
             t0 = Time.time;
             while (k < at.Length && Time.time - t0 < secs + 4f)
             {
                 KeepAlive();
-                // 鲲沉进冰窟：一直看冰窟中心上方（模型中心沉到水下会把机位拖到冰沿碎冰里）；鹏看模型，炸开后看落点
-                var c = b && b.IsKun ? anchor : b && b.Model != null && b.Model.root ? Center(b.Model.root, anchor) : anchor;
-                if (k >= 4 && !(b && b.IsKun)) c = ground + Vector3.up * 2f;
+                // 鲲沉进冰窟：一直看冰窟中心上方（模型中心沉到水下会把机位拖到冰沿碎冰里）；鹏看模型，溃散后看落点和冰窟之间
+                var c = kun ? anchor : b && b.Model != null && b.Model.root ? Center(b.Model.root, anchor) : anchor;
+                float size = kun ? 13f : 8f;
+                if (!kun && Time.time - t0 >= secs * 0.88f)
+                {
+                    c = Vector3.Lerp(ground, water, 0.45f) + Vector3.up * 2f;
+                    size = 14f;
+                }
                 Aim(motor, eye, c);
                 if (Time.time - t0 >= at[k])
                 {
-                    cam.Spec(key, strip, $"{at[k]:F1} s", k, c, 13f);
+                    cam.Spec(key, strip, beat != null ? $"{beat[k]} {at[k]:F2} s" : $"{at[k]:F1} s", k, c, size);
                     if (k == 3) cam.Eye(key, strip + " · 第一人称", $"第一人称 {at[k]:F1} s", 20 + k, c);
                     k++;
                 }
                 yield return null;
             }
+            if (rig) rig.AnimEvent -= onEvt;
+            var death = b ? b.GetComponent<KunPengDeath>() : null;
+            Line($"{strip}：拍了 {k} 张；动画事件 {(events.Count > 0 ? string.Join("、", events) : "（没有）")}" + (death ? $"；{death.Report}" : ""));
         }
+
+        static string StageName(MoveStage s) => s switch
+        {
+            MoveStage.Windup => "前摇",
+            MoveStage.Active => "出手",
+            MoveStage.Recover => "收招",
+            _ => s.ToString(),
+        };
 
         static Vector3 Center(GameObject root, Vector3 fallback)
         {

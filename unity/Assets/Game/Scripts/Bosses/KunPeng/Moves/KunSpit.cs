@@ -10,6 +10,8 @@ namespace Spiritfire.Game
     ///     落点都有预警，都夹在环台上（冰窟外 1 m、外缘内 1.5 m）；
     ///   收招 0.5 s。
     /// 特效（K 路，docs/art/vfx/kunpeng.md 第 4 节）：前摇里口里一颗冰晶星越来越亮（挂在头骨上），出手口前一记冰晶星 + 一束往前喷的冰屑（<see cref="Fx.KunSpit"/>）。
+    /// 动作（第二批 A 路，第 13 节的节拍表）：spit 是手 K 片段（1.3 s = 前摇 0.7 + 出手 0.1 + 收招 0.5）——起手往后一抽 → 仰头挺胸蓄冰珠（口前冷雾冰屑往嘴里收，
+    /// <see cref="Fx.KunSpitGather"/>）→ 第 16 帧 apex 冰珠最亮「叮」（<see cref="Fx.KunSpitApex"/>）→ 2 帧拖影 → 第 21 帧 projectile 头往前一送喷出（= 前摇结束）→ 后坐回弹。
     /// </summary>
     public sealed class KunSpit : KunPengMove
     {
@@ -55,6 +57,7 @@ namespace Spiritfire.Game
         protected override void OnStart()
         {
             Lobs = 0;
+            apexed = false;
             Act("spit", WindupTime + active + recover);
             CuedSfx("enemy_charge", 1f, 0.7f);
         }
@@ -95,9 +98,24 @@ namespace Spiritfire.Game
             }
         }
 
+        bool apexed;
+
+        public override void OnAnimEvent(string name)
+        {
+            base.OnAnimEvent(name);
+            if (name == "apex" && !apexed && Stage == MoveStage.Windup)
+            {
+                apexed = true;
+                Fx.KunSpitApex(KP ? KP.Muzzle : Brain.BodyCenter + Vector3.up * 2f);
+            }
+        }
+
         protected override void OnWindup(float dt)
         {
-            Orb(Mathf.Clamp01(StageT / Mathf.Max(0.1f, WindupTime)));
+            float k = Mathf.Clamp01(StageT / Mathf.Max(0.1f, WindupTime));
+            Orb(k);
+            // 蓄冰珠：口前冷雾、冰屑往嘴里收（最后 0.1 s 拖影 + 喷出前停）
+            if (StageT < WindupTime - 0.1f) Fx.KunSpitGather(KP ? KP.Muzzle : Brain.BodyCenter + Vector3.up * 2f, Brain.transform.forward, k, dt);
             if (KP)
             {
                 KP.TurnKunToward(69f, dt);

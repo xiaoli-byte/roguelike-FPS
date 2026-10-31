@@ -9,6 +9,9 @@ namespace Spiritfire.Game
     ///     落点都夹在环台上、都有预警（危险物组：招式被打断后照常落地），1.05 s 后落地炸开（2.1 m、15 伤）；
     ///   收招 0.6 s：回到盘旋高度。
     /// 羽刃的外观先用冰块抛射（BossHazards.Lob 的 Ice，缩小、拱高很低——近乎直线斜落），等专门的羽刃特效时只改这里。
+    /// 动作（第二批 A 路，docs/art/vfx/kunpeng.md 第 14 节）：三段手 K 片段——spread（前摇 0.9 s：上收 → 第 13 帧一记猛扇升空 flap → 展翅到洒羽的架势）
+    /// → spreadShed（循环 13 帧 ≈ 4 枚：哪边出羽哪边翼尖往下一甩、身子往那边一歪，右左交替，和 <see cref="Fire"/> 的翼尖顺序一致）→ spreadEnd（收招 0.6 s：收翼回盘旋）。
+    /// 羽刃仍按时间出（每 0.11 s 一枚，数量 / 落点不变）；片段里的 projectile 事件和它对齐在 1 帧以内。
     /// </summary>
     public sealed class PengFeatherRain : KunPengMove
     {
@@ -45,7 +48,8 @@ namespace Spiritfire.Game
                 KP.HoverAlt = RainAlt;
                 KP.MovesSincePerch++;
             }
-            Act("spread", WindupTime + Count * Interval + recover);
+            // 前摇片段 0.9 s 播完接循环的振翅洒羽（spreadShed），收招时 spreadEnd
+            Act("spread", WindupTime);
             CuedSfx("telegraph", 1f, 1.3f);
         }
 
@@ -53,7 +57,16 @@ namespace Spiritfire.Game
         {
             KP?.Hover();
             Brain.Face(Brain.PlayerPosition, 115f, dt);
+            // 升空那一记猛扇（片段 flap 事件，代理按时间）：身下一圈风环、风线、卷起的雪
+            if (Cue("flap", 0.43f))
+            {
+                var c = Brain.BodyCenter;
+                float floor = Hole.found ? Hole.FloorY : Brain.transform.position.y - (KP ? KP.HoverAlt : 13.5f);
+                Fx.PengFlap(c, new Vector3(c.x, floor, c.z), Brain.transform.eulerAngles.y, 4.2f, false);
+            }
         }
+
+        protected override void OnRecoverBegin() => Act("spreadEnd", recover);
 
         protected override bool ActiveDone => Fired >= Count && StageT >= Count * Interval;
 

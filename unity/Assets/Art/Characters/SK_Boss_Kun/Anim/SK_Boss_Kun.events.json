@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "about": "鲲的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。slamWind / slam / inhale / bite 是手工关键帧（art/source/characters/SK_Boss_Kun/anim/kun_anims.py 生成这四条，别手改；对象形式带 next 连段），其余是采样片段的手写叠加；hit = 出手 / 判定，apex = 蓄力顶点，wave2 = 鲲怒第二道冰浪，pushOff = 撑起，suctionStart = 吞吸气流起，biteWind = 收头蓄咬",
+  "about": "鲲的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。slamWind / slam / inhale / bite / sink / erupt / spit 是手工关键帧（art/source/characters/SK_Boss_Kun/anim/kun_anims.py 生成这七条，别手改；对象形式带 next 连段），其余是采样片段的手写叠加；hit = 出手 / 判定，apex = 蓄力顶点，wave2 = 鲲怒第二道冰浪，pushOff = 撑起，suctionStart = 吞吸气流起，biteWind = 收头蓄咬，plunge = 潜袭一头扎进水里，breach = 潜袭破水而出，projectile = 吐冰出手",
   "clips": {
     "inhale": {
       "events": [
@@ -44,25 +44,39 @@
       "loop": false,
       "keyframed": true
     },
-    "spit": [
-      { "at": 0.0, "name": "sfx:enemy_charge" },
-      { "at": 0.54, "name": "projectile" }
-    ],
+    "spit": {
+      "events": [
+        { "at": 0.0, "name": "sfx:enemy_charge" },
+        { "at": 0.4103, "name": "apex" },
+        { "at": 0.5385, "name": "projectile" }
+      ],
+      "loop": false,
+      "keyframed": true
+    },
     "roar": [
       { "at": 0.0, "name": "sfx:boss_roar" },
       { "at": 0.0, "name": "fx:shake" }
     ],
-    "sink": [
-      { "at": 0.0, "name": "sfx:boss_slam" },
-      { "at": 0.25, "name": "submerged" },
-      { "at": 0.35, "name": "fx:groundWarning" },
-      { "at": 0.8, "name": "relocate" }
-    ],
-    "erupt": [
-      { "at": 0.05, "name": "hit" },
-      { "at": 0.05, "name": "fx:explosion" },
-      { "at": 0.05, "name": "fx:shake" },
-      { "at": 0.05, "name": "sfx:boss_roar" }
-    ]
+    "sink": {
+      "events": [
+        { "at": 0.0, "name": "sfx:telegraph" },
+        { "at": 0.2167, "name": "plunge" },
+        { "at": 0.2167, "name": "sfx:boss_slam" },
+        { "at": 0.8, "name": "breach" },
+        { "at": 0.9, "name": "apex" }
+      ],
+      "next": "erupt",
+      "loop": false,
+      "keyframed": true
+    },
+    "erupt": {
+      "events": [
+        { "at": 0.0333, "name": "hit" },
+        { "at": 0.0333, "name": "sfx:boss_roar" },
+        { "at": 0.7, "name": "pushOff" }
+      ],
+      "loop": false,
+      "keyframed": true
+    }
   }
 }

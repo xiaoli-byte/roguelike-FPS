@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "about": "鹏的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。swoopReady / swoopHold / dive / gust / roar 是手工关键帧（art/source/characters/SK_Boss_Peng/anim/peng_anims.py 生成这四条，别手改），其余是采样片段的手写叠加。hitOpen = 俯冲擦中判定起（整段线段检测），strike = 掠过玩家的扑击极限姿势，flap = 扇翼的每一下下扇（狂风的风浪按它发），gustStart = 狂风生效，cocked = 俯冲蓄满，spread = 化鹏长啸时双翼一字展开",
+  "about": "鹏的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。swoopReady / swoopHold / dive / gust / roar / spread / spreadShed / spreadEnd / perch / perchRest / takeoff / death / deathRest 是手工关键帧（art/source/characters/SK_Boss_Peng/anim/peng_anims.py 生成，别手改），其余是采样片段的手写叠加。hitOpen = 俯冲擦中判定起（整段线段检测），strike = 掠过玩家的扑击极限姿势，flap = 扇翼的每一下下扇（狂风的风浪按它发），gustStart = 狂风生效，cocked = 俯冲蓄满，spread = 化鹏长啸时双翼一字展开，projectile = 羽刃雨每一枚出手的甩翼，hit = 落台触地，fold = 敛翼，liftoff = 起飞猛扇离台（收招段开始），wingBreak = 倒下时翼折，flail = 坠落中乱扑，land = 倒下触地，lastCry = 最后抬头一声，still = 不动了",
   "clips": {
     "swoopReady": {
       "events": [
@@ -27,16 +27,26 @@
       { "at": 0.04, "name": "fx:shake" },
       { "at": 0.04, "name": "sfx:boss_slam" }
     ],
-    "perch": [
-      { "at": 0.04, "name": "hit" },
-      { "at": 0.04, "name": "fx:shake" },
-      { "at": 0.04, "name": "sfx:boss_slam" }
-    ],
-    "takeoff": [
-      { "at": 0.02, "name": "hit" },
-      { "at": 0.02, "name": "fx:ring" },
-      { "at": 0.02, "name": "sfx:boss_roar" }
-    ],
+    "perch": {
+      "events": [
+        { "at": 0.2593, "name": "flap" },
+        { "at": 0.5, "name": "hit" },
+        { "at": 0.5, "name": "sfx:boss_slam" },
+        { "at": 0.8519, "name": "fold" }
+      ],
+      "next": "perchRest",
+      "loop": false,
+      "keyframed": true
+    },
+    "takeoff": {
+      "events": [
+        { "at": 0.5, "name": "liftoff" },
+        { "at": 0.5, "name": "sfx:boss_roar" },
+        { "at": 0.7917, "name": "flap" }
+      ],
+      "loop": false,
+      "keyframed": true
+    },
     "gust": {
       "events": [
         { "at": 0.0, "name": "sfx:telegraph" },
@@ -54,19 +64,15 @@
       "loop": false,
       "keyframed": true
     },
-    "spread": [
-      { "at": 0.0, "name": "sfx:telegraph" },
-      { "at": 0.375, "name": "projectile" },
-      { "at": 0.421, "name": "projectile" },
-      { "at": 0.467, "name": "projectile" },
-      { "at": 0.513, "name": "projectile" },
-      { "at": 0.558, "name": "projectile" },
-      { "at": 0.604, "name": "projectile" },
-      { "at": 0.65, "name": "projectile" },
-      { "at": 0.696, "name": "projectile" },
-      { "at": 0.742, "name": "projectile" },
-      { "at": 0.788, "name": "projectile" }
-    ],
+    "spread": {
+      "events": [
+        { "at": 0.0, "name": "sfx:telegraph" },
+        { "at": 0.4815, "name": "flap" }
+      ],
+      "next": "spreadShed",
+      "loop": false,
+      "keyframed": true
+    },
     "roar": {
       "events": [
         { "at": 0.6944, "name": "spread" },
@@ -76,6 +82,44 @@
       "keyframed": true
     },
     "swoopHold": {
+      "events": [],
+      "loop": true,
+      "keyframed": true
+    },
+    "spreadShed": {
+      "events": [
+        { "at": 0.0, "name": "projectile" },
+        { "at": 0.25, "name": "projectile" },
+        { "at": 0.5, "name": "projectile" },
+        { "at": 0.75, "name": "projectile" }
+      ],
+      "loop": true,
+      "keyframed": true
+    },
+    "spreadEnd": {
+      "events": [],
+      "loop": false,
+      "keyframed": true
+    },
+    "perchRest": {
+      "events": [],
+      "loop": true,
+      "keyframed": true
+    },
+    "death": {
+      "events": [
+        { "at": 0.1, "name": "wingBreak" },
+        { "at": 0.2833, "name": "flail" },
+        { "at": 0.4833, "name": "flail" },
+        { "at": 0.6, "name": "land" },
+        { "at": 0.7333, "name": "lastCry" },
+        { "at": 0.9, "name": "still" }
+      ],
+      "next": "deathRest",
+      "loop": false,
+      "keyframed": true
+    },
+    "deathRest": {
       "events": [],
       "loop": true,
       "keyframed": true

@@ -7,7 +7,8 @@ namespace Spiritfire.Game.Tests
     /// <summary>
     /// 鲲鹏（BS3；port tests/frost-boss.test.mjs 里与场景无关的部分）：定义自检（两个形态、50% 换形、4.6 s 演出 1.55 s 换模型、血条刻度、八招的形态归属与 Three.js 时长）、
     /// 定档与击杀用时（模拟秒伤，docs/unity-parity.md 7.4：60–120 s，±15% 秒伤也在里面）、平切口上限（Three.js kunCutCeiling）、冰窟几何（方位 / 圆周点 / 夹到环台 / 虚拟冰窟）、
-    /// 俯冲掠台的路线（两端都在环台上、沿切线、过玩家方位），以及 EnemyBody.Rebind（换形后受伤体的 Animator 换到新模型上）。
+    /// 俯冲掠台的路线（两端都在环台上、沿切线、过玩家方位），以及 EnemyBody.Rebind（换形后受伤体的 Animator 换到新模型上）；
+    /// 第二批 A 路：潜袭的沉浮曲线、手 K 片段（潜袭 / 吐冰 / 羽刃雨 / 落台 / 起飞 / 鹏倒下）的事件和招式时间轴对齐在 1 帧以内。
     /// </summary>
     public sealed class KunPengTests
     {
@@ -257,6 +258,93 @@ namespace Spiritfire.Game.Tests
             {
                 Object.DestroyImmediate(root);
             }
+        }
+
+        // ───────────── 第二批 A 路：手 K 片段和招式时间轴对齐（docs/art/vfx/kunpeng.md 第 12–17 节，误差 ≤ 1 帧）─────────────
+
+        const float Frame = 1f / 30f;
+
+        static string EventsJson(string asset) =>
+            System.IO.File.ReadAllText($"{Application.dataPath}/Art/Characters/{asset}/Anim/{asset}.events.json");
+
+        /// <summary>events.json 里一个状态的条目（kunpeng_keys.write_events 写的对象形式：events / next / loop）</summary>
+        static (System.Collections.Generic.List<(float at, string name)> events, string next, bool loop) Clip(string json, string clip)
+        {
+            var m = System.Text.RegularExpressions.Regex.Match(json, "\"" + clip + "\"\\s*:\\s*\\{(.*?)\\n    \\}", System.Text.RegularExpressions.RegexOptions.Singleline);
+            Assert.IsTrue(m.Success, $"events.json 里没有 {clip} 的对象条目");
+            var body = m.Groups[1].Value;
+            var evs = System.Text.RegularExpressions.Regex.Matches(body, "\\{\\s*\"at\":\\s*([0-9.]+),\\s*\"name\":\\s*\"([^\"]+)\"\\s*\\}")
+                .Select(x => (float.Parse(x.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture), x.Groups[2].Value)).ToList();
+            var next = System.Text.RegularExpressions.Regex.Match(body, "\"next\":\\s*\"([^\"]+)\"");
+            bool loop = System.Text.RegularExpressions.Regex.IsMatch(body, "\"loop\":\\s*true");
+            return (evs, next.Success ? next.Groups[1].Value : null, loop);
+        }
+
+        static float At((System.Collections.Generic.List<(float at, string name)> events, string next, bool loop) c, string name)
+        {
+            var e = c.events.FirstOrDefault(x => x.name == name);
+            Assert.IsNotNull(e.name, $"片段里没有 {name} 事件");
+            return e.at;
+        }
+
+        [Test]
+        public void DiveSunk_UnderwaterUntilBreach_FullyOutAtTheBite()
+        {
+            var dive = new KunDive();
+            Assert.AreEqual(0f, KunDive.SunkAt(KunDive.SinkFrom), 1e-4f, "起手那一抽露在水面上");
+            Assert.AreEqual(1f, KunDive.SunkAt(KunDive.SinkTo), 1e-4f, "0.8 s 沉到底");
+            Assert.AreEqual(1f, KunDive.SunkAt(KunDive.BreachAt - 0.01f), 1e-4f, "破水前整只在水下（换位看不见）");
+            Assert.Less(KunDive.RelocateAt, KunDive.BreachAt - KunDive.DomeLead + 1e-4f, "换位不晚于水面隆起（隆起在新方位）");
+            Assert.Less(KunDive.SunkAt(KunDive.BreachAt + 0.15f), 0.2f, "破水 0.15 s 后头已经出水");
+            Assert.AreEqual(0f, KunDive.SunkAt(dive.windup - Frame), 1e-4f, "扑咬（出手）前一帧整只出水");
+        }
+
+        [Test]
+        public void KeyframedClips_EventsLandOnTheMoveTimeline_WithinOneFrame()
+        {
+            string kun = EventsJson(KunPengDef.KunPrefab);
+            string peng = EventsJson(KunPengDef.PengPrefab);
+            void Near(float actual, float want, string what) => Assert.AreEqual(want, actual, Frame + 1e-3f, what);
+
+            // 潜袭：sink = 整段前摇，erupt 接在后面（出手 + 收招），第 1 帧咬合
+            var dive = new KunDive();
+            var sink = Clip(kun, "sink");
+            Assert.AreEqual("erupt", sink.next, "sink 接 erupt");
+            Near(At(sink, "plunge") * dive.windup, KunDive.PlungeAt, "下潜水花");
+            Near(At(sink, "breach") * dive.windup, KunDive.BreachAt, "破水");
+            Near(dive.windup + At(Clip(kun, "erupt"), "hit") * (dive.active + dive.recover), dive.windup, "扑咬 = 前摇结束");
+
+            // 吐冰：一段 1.3 s，projectile = 前摇结束
+            var spit = new KunSpit();
+            Near(At(Clip(kun, "spit"), "projectile") * (spit.windup + spit.active + spit.recover), spit.windup, "吐冰出手");
+
+            // 羽刃雨：spread（前摇）→ spreadShed 循环，每 4 枚一圈，狂怒 14 枚累计不差 1 帧
+            var spread = Clip(peng, "spread");
+            Assert.AreEqual("spreadShed", spread.next);
+            var shed = Clip(peng, "spreadShed");
+            Assert.IsTrue(shed.loop, "振翅洒羽是循环态");
+            var shots = shed.events.Where(e => e.name == "projectile").Select(e => e.at).ToArray();
+            Assert.AreEqual(4, shots.Length, "一圈 4 枚");
+            for (int i = 0; i < 4; i++) Assert.AreEqual(i * 0.25f, shots[i], 1e-3f);
+            const float ShedLoop = 13f / 30f;
+            Assert.AreEqual(PengFeatherRain.RageFeathers * PengFeatherRain.Interval, PengFeatherRain.RageFeathers / 4f * ShedLoop, Frame,
+                "循环一圈 = 4 × 0.11 s，狂怒最后一枚的累计偏差 < 1 帧");
+
+            // 落台：perch 从下降开始播，触地 = 下降结束；之后循环栖落；起飞片段在起飞预警时播，离台 = 收招段开始
+            var perch = Clip(peng, "perch");
+            Assert.AreEqual("perchRest", perch.next);
+            Near(At(perch, "hit") * PengPerch.PerchClip, PengPerch.DescendSeconds, "落台触地");
+            Assert.IsTrue(Clip(peng, "perchRest").loop, "栖落是循环态");
+            Near(At(Clip(peng, "takeoff"), "liftoff") * PengPerch.TakeoffClip, PengPerch.RestSeconds - PengPerch.TakeoffWarnAt, "起飞离台");
+
+            // 倒下：翼折 / 触地 / 最后一声和 KunPengDeath 的时间轴一致，之后循环趴着
+            var death = Clip(peng, "death");
+            Assert.AreEqual("deathRest", death.next);
+            Near(At(death, "wingBreak") * KunPengDeath.ClipSeconds, KunPengDeath.BreakTime, "翼折");
+            Near(At(death, "land") * KunPengDeath.ClipSeconds, KunPengDeath.LandTime, "触地");
+            Near(At(death, "lastCry") * KunPengDeath.ClipSeconds, KunPengDeath.CryTime, "最后一声");
+            Assert.Less(KunPengDeath.LandTime, new KunPengDef().defeat.seconds * 0.88f, "溃散隐去之前已经落地");
+            Assert.IsTrue(Clip(peng, "deathRest").loop, "倒下之后循环趴着");
         }
     }
 }

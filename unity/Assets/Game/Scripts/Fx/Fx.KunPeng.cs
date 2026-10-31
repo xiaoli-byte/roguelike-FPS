@@ -383,6 +383,216 @@ namespace Spiritfire.Game
             Tracer(tip, tip + d.normalized * Mathf.Min(4f, d.magnitude * 0.3f), KunCore, 0.06f);
         }
 
+        // ───────────── 第二批 A 路：潜袭 / 吐冰 / 羽刃雨 / 落台 / 起飞 / 鹏倒下（设计单第 12–17 节）─────────────
+
+        /// <summary>
+        /// 潜袭 · 下潜（plunge 事件）：鲲侧身一头扎进水里的那一下——一圈往外翻的水冠 + 白沫团 + 大涟漪（块面：整片水被压下去再翻上来）
+        /// </summary>
+        public static void KunPlunge(Vector3 water, float size = 1f)
+        {
+            if (!Finite(water)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            Surge.Crown(water, 2.6f * size, 3.2f * size, SurgeKind.Water, 0.75f, KunWater, KunFoam);
+            Splash(water, 3.2f * size, NorthSea);
+            WaterDisturb(water, 7f * size, 1.4f);
+            KpOne(rt, "ToonRing", water + Vector3.up * 0.08f, Vector3.zero, 6f * size, 0.45f, KpAlpha(KunFoam, 0.9f));
+            KpMany(rt, "ToonSmoke", 6, i =>
+            {
+                var d = KpDir(Random.Range(0f, 360f));
+                return (water + d * Random.Range(1.5f, 3f) + Vector3.up * 0.3f, d * Random.Range(2f, 4f) + Vector3.up * 1.2f, Random.Range(1.1f, 1.6f) * size,
+                    Random.Range(0.5f, 0.7f));
+            }, KpAlpha(KunFoam, 0.85f));
+        }
+
+        /// <summary>
+        /// 潜袭 · 破水而出（breach 事件，扑咬前 0.4 s）：穹顶炸开——一根往上冲的水柱（鲲就在柱子里出来）+ 水冠 + 白沫 + 碎冰；
+        /// 原来这几样放在扑咬那一帧，那时鲲还整只沉在水下，玩家只看得到一团水
+        /// </summary>
+        public static void KunBreachOut(Vector3 water, float size = 1f)
+        {
+            if (!Finite(water)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            Surge.Column(water, 3f * size, 10f * size, SurgeKind.Water, 0.16f, 0.22f, 0.6f, KunWater, KunFoam, 2.6f);
+            Surge.Crown(water, 3.4f * size, 3.6f * size, SurgeKind.Water, 0.8f, KunWater, KunFoam);
+            Splash(water, 3.8f * size, NorthSea);
+            WaterDisturb(water, 8f * size, 1.6f);
+            KpMany(rt, "ShardIce", 10, i =>
+            {
+                var d = Random.onUnitSphere;
+                d.y = Mathf.Abs(d.y) + 0.8f;
+                return (water + Vector3.up * 0.5f, d.normalized * Random.Range(6f, 11f), Random.Range(0.14f, 0.22f), Random.Range(0.45f, 0.7f));
+            }, KunIce);
+        }
+
+        /// <summary>
+        /// 潜袭 · 潜游：水下的鲲从原来的方位顺着冰窟游到破冰的那一侧——水面上一道往前推的 V 形白沫尾迹 + 一路的暗涌（<see cref="KunSwimWake"/>）。
+        /// center = 冰窟中心（水面高），ring = 游的那一圈半径，fromYaw → toYaw（相对圆心的方位，度），seconds 秒游完
+        /// </summary>
+        public static void KunSwim(Vector3 center, float ring, float fromYaw, float toYaw, float seconds) => KunSwimWake.Run(center, ring, fromYaw, toYaw, seconds);
+
+        /// <summary>吐冰 · 蓄冰珠（前摇每帧调）：口前一锥冷雾和冰屑往嘴里收，k = 前摇进度（越到出手越密）</summary>
+        public static void KunSpitGather(Vector3 mouth, Vector3 forward, float k, float dt)
+        {
+            if (!Finite(mouth) || !(dt > 0)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            forward.y = 0;
+            forward = forward.sqrMagnitude > 1e-4f ? forward.normalized : Vector3.forward;
+            var side = Vector3.Cross(Vector3.up, forward);
+            int n = KpCount(Mathf.Lerp(10f, 40f, Mathf.Clamp01(k)), dt);
+            var shard = rt.GetEmitter("ShardIce");
+            for (int i = 0; shard != null && i < n; i++)
+            {
+                var p = mouth + forward * Random.Range(2.5f, 5f) + side * Random.Range(-2.5f, 2.5f) + Vector3.up * Random.Range(-1.5f, 1.5f);
+                rt.EmitOne(shard, p, (mouth - p) * Random.Range(2.2f, 2.8f), Random.Range(0.1f, 0.16f), Random.Range(0.3f, 0.4f), KunIce, 0);
+            }
+            if (Random.value < dt * 6f)
+                KpMany(rt, "ToonSmoke", 1, i =>
+                {
+                    var p = mouth + forward * Random.Range(3f, 5f) + Random.insideUnitSphere * 1.2f;
+                    return (p, (mouth - p) * 1.6f, Random.Range(0.9f, 1.3f), Random.Range(0.45f, 0.6f));
+                }, KpAlpha(KunMist, 0.55f));
+        }
+
+        /// <summary>吐冰 · 蓄力顶点（apex 事件）：口里冰珠到最亮的那一下「叮」：一颗冰晶星 + 一圈小白环</summary>
+        public static void KunSpitApex(Vector3 mouth)
+        {
+            if (!Finite(mouth)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            KpOne(rt, "IceStar", mouth, Vector3.zero, 2.4f, 0.22f, KunCore);
+            KpOne(rt, "RingPop", mouth, Vector3.zero, 2.8f, 0.2f, KpAlpha(KunCore, 0.9f));
+        }
+
+        /// <summary>落台 · 敛翼（fold 事件）：收翅时从两翼抖落的雪 + 一小团冷白雪雾</summary>
+        public static void PengFoldShake(Vector3 tipL, Vector3 tipR, Vector3 ground)
+        {
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            foreach (var tip in new[] { tipL, tipR })
+            {
+                if (!Finite(tip)) continue;
+                KpMany(rt, "Snow", 7, i => (tip + Random.insideUnitSphere * 1.2f, Vector3.down * Random.Range(2f, 4f) + Random.insideUnitSphere * 1.5f,
+                    Random.Range(0.22f, 0.34f), Random.Range(0.8f, 1.2f)), KunCore);
+            }
+            if (Finite(ground))
+                KpMany(rt, "ToonSmoke", 3, i =>
+                {
+                    var d = KpDir(Random.Range(0f, 360f));
+                    return (ground + d * Random.Range(1f, 2.2f) + Vector3.up * 0.3f, d * 1.2f + Vector3.up * 0.5f, Random.Range(1.2f, 1.6f), Random.Range(0.5f, 0.7f));
+                }, KpAlpha(KunMist, 0.6f));
+        }
+
+        /// <summary>起飞 · 蓄力（起飞前摇每帧调）：脚下一圈的雪和短风线往爪下收、往上卷，k = 蓄力进度；和起飞预警一起读「它要从这里起来」</summary>
+        public static void PengTakeoffGather(Vector3 ground, float radius, float k, float dt)
+        {
+            if (!Finite(ground) || !(dt > 0)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            var snow = rt.GetEmitter("Snow");
+            int n = KpCount(Mathf.Lerp(10f, 34f, Mathf.Clamp01(k)), dt);
+            for (int i = 0; snow != null && i < n; i++)
+            {
+                var d = KpDir(Random.Range(0f, 360f));
+                var p = ground + d * radius * Random.Range(0.75f, 1.05f) + Vector3.up * 0.2f;
+                var tangent = KpDir(Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg + 90f);
+                rt.EmitOne(snow, p, (ground - p) * Random.Range(1.2f, 1.6f) + tangent * 3f + Vector3.up * Random.Range(1f, 2.5f), Random.Range(0.18f, 0.28f),
+                    Random.Range(0.5f, 0.7f), KunCore, 0);
+            }
+            if (Random.value < dt * Mathf.Lerp(3f, 9f, Mathf.Clamp01(k)) * Mathf.Lerp(0.5f, 1f, Density) && FxBudget.Allow(1, false) > 0)
+            {
+                float a = Random.Range(0f, 360f), r0 = radius * Random.Range(0.8f, 1.1f);
+                var p0 = ground + KpDir(a) * r0 + Vector3.up * 0.35f;
+                var p1 = ground + KpDir(a + 18f) * r0 * 0.6f + Vector3.up * 0.5f;
+                Tracer(p0, p1, PengLine, 0.1f);
+            }
+        }
+
+        /// <summary>鹏倒下 · 翼折（wingBreak 事件）：左翼中弹折断的那一下——一记冰晶星 + 碎冰羽往外崩 + 一团雪羽 + 冷白雾</summary>
+        public static void PengWingBreak(Vector3 wing)
+        {
+            if (!Finite(wing)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            KpOne(rt, "IceStar", wing, Vector3.zero, 2.4f, 0.2f, KunCore);
+            KpOne(rt, "ToonBurst", wing, Vector3.zero, 2f, 0.1f, KunCore);
+            KpMany(rt, "ShardIce", 12, i => (wing, Random.onUnitSphere * Random.Range(5f, 10f), Random.Range(0.14f, 0.24f), Random.Range(0.45f, 0.7f)), KunIce);
+            KpMany(rt, "Snow", 14, i => (wing + Random.insideUnitSphere * 0.8f, Random.insideUnitSphere * 5f + Vector3.down * 1.5f, Random.Range(0.28f, 0.42f),
+                Random.Range(1f, 1.5f)), KunCore);
+            KpMany(rt, "ToonSmoke", 2, i => (wing, Random.insideUnitSphere * 1.5f, Random.Range(1.2f, 1.6f), Random.Range(0.4f, 0.55f)), KpAlpha(KunMist, 0.6f));
+        }
+
+        /// <summary>鹏倒下 · 坠落（每帧调）：折了的那只翅膀一路掉雪羽，乱扑（flail 事件，burst = true）时一把撒出去</summary>
+        public static void PengFeatherShed(Vector3 wing, float dt, bool burst = false)
+        {
+            if (!Finite(wing)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            var snow = rt.GetEmitter("Snow");
+            if (snow == null) return;
+            int n = burst ? FxBudget.Allow(Mathf.RoundToInt(10 * Density), false) : KpCount(22f, dt);
+            for (int i = 0; i < n; i++)
+                rt.EmitOne(snow, wing + Random.insideUnitSphere * 1.2f, Random.insideUnitSphere * (burst ? 4f : 1.5f) + Vector3.up * Random.Range(1f, 3f),
+                    Random.Range(0.26f, 0.4f), Random.Range(1.2f, 1.8f), KunCore, 0);
+        }
+
+        /// <summary>
+        /// 鹏倒下 · 落地（land 事件）：砸在冰面上 = 一圈贴地风环 + 雪羽往四周拍出去 + 冷白雪雾；坠进北冥 = 水冠 + 水柱 + 大涟漪 + 往下吸的小漩涡
+        /// （碎冰、冰环、震屏、闷响由 KunPengDeath 同一帧出）
+        /// </summary>
+        public static void PengCrash(Vector3 ground, bool water)
+        {
+            if (!Finite(ground)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            if (water)
+            {
+                Surge.Crown(ground, 3.2f, 4.5f, SurgeKind.Water, 0.9f, KunWater, KunFoam);
+                Surge.Column(ground, 2.2f, 7f, SurgeKind.Water, 0.15f, 0.2f, 0.6f, KunWater, KunFoam, 2.4f);
+                Splash(ground, 4.5f, NorthSea);
+                WaterDisturb(ground, 10f, 2f);
+                KunVortex(ground, 5f, 2.4f);
+            }
+            else
+            {
+                KpOne(rt, "ToonRing", ground + Vector3.up * 0.1f, Vector3.zero, 10f, 0.5f, PengWind);
+                KpOne(rt, "RingFlat", ground + Vector3.up * 0.12f, Vector3.zero, 13f, 0.6f, KpAlpha(PengLine, 0.85f));
+            }
+            KpMany(rt, "Snow", 22, i =>
+            {
+                var d = KpDir(Random.Range(0f, 360f));
+                return (ground + d * Random.Range(1f, 3f) + Vector3.up * 0.6f, d * Random.Range(4f, 9f) + Vector3.up * Random.Range(2f, 5f), Random.Range(0.28f, 0.42f),
+                    Random.Range(1f, 1.6f));
+            }, KunCore);
+            KpMany(rt, "ToonSmoke", 5, i =>
+            {
+                var d = KpDir(Random.Range(0f, 360f));
+                return (ground + d * Random.Range(1.5f, 3f) + Vector3.up * 0.4f, d * Random.Range(2f, 3.5f) + Vector3.up * 0.6f, Random.Range(1.6f, 2.2f),
+                    Random.Range(0.6f, 0.85f));
+            }, KpAlpha(KunMist, 0.75f));
+        }
+
+        /// <summary>鹏倒下 · 最后一声（lastCry 事件）：抬头朝北冥的那一下，额头鲛珠一记冷光 + 一小圈雪雾</summary>
+        public static void PengLastCry(Vector3 head)
+        {
+            if (!Finite(head)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            FrostGlint(head, 1.8f);
+            Flash(head, KunIce, 3f, 8f, 0.25f);
+            KpMany(rt, "ToonSmoke", 3, i => (head + Random.insideUnitSphere * 0.6f, Vector3.up * 1.2f + Random.insideUnitSphere, Random.Range(1f, 1.4f), Random.Range(0.6f, 0.8f)),
+                KpAlpha(KunMist, 0.55f));
+        }
+
+        /// <summary>
+        /// 鹏倒下 · 归冥（溃散之后）：「化而为鸟」倒着走一遍——身子散成的雪羽顺着一股往下旋的风流回冰窟，落进北冥的那一刻水面转起一个小漩涡、
+        /// 一圈涟漪荡开、一点冷光沉下去，之后冰海平静（<see cref="PengReturnRun"/>）。from = 溃散的位置，water = 冰窟中心的水面点
+        /// </summary>
+        public static void PengReturnToSea(Vector3 from, Vector3 water, float holeRadius, Action onArrive = null) =>
+            PengReturnRun.Run(from, water, holeRadius, onArrive);
+
         // ───────────── 化形 ─────────────
 
         /// <summary>北冥漩涡（鲲沉的时候）：冰窟水面一个往里卷的大漩涡圆盘</summary>
@@ -513,6 +723,164 @@ namespace Spiritfire.Game
                 if (shard != null && Random.value < 0.6f)
                     rt.EmitOne(shard, p, d * speed * 0.7f + Vector3.up * Random.Range(3f, 6f), Random.Range(0.14f, 0.22f), Random.Range(0.35f, 0.5f), Fx.KunIce, 0);
             }
+        }
+    }
+
+    /// <summary>
+    /// 潜袭的潜游尾迹（<see cref="Fx.KunSwim"/>）：水下的鲲从 fromYaw 顺着冰窟的一圈游到 toYaw（走短的那一边），水面上的头部一路推出 V 形的白沫
+    /// （两侧往外散的白沫团 + 正上方一圈白沫环）和一路暗涌（EnvWater 扰动）。一次潜袭一个，不进对象池；数量乘画质密度、过预算
+    /// </summary>
+    public sealed class KunSwimWake : MonoBehaviour
+    {
+        Vector3 center;
+        float ring, from, delta, seconds, t, acc;
+
+        public static void Run(Vector3 center, float ring, float fromYaw, float toYaw, float seconds)
+        {
+            if (!Application.isPlaying || !Fx.Finite(center) || !(seconds > 0.05f)) return;
+            var go = new GameObject("KunPeng Swim Wake");
+            var w = go.AddComponent<KunSwimWake>();
+            w.center = center;
+            w.ring = Mathf.Max(1f, ring);
+            w.from = fromYaw;
+            w.delta = Mathf.DeltaAngle(fromYaw, toYaw);
+            w.seconds = seconds;
+        }
+
+        Vector3 At(float k)
+        {
+            float a = (from + delta * k) * Mathf.Deg2Rad;
+            return center + new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * ring;
+        }
+
+        void Update()
+        {
+            float dt = Time.deltaTime;
+            t += dt;
+            float k = Mathf.Clamp01(t / seconds);
+            // 先快后慢（冲到那一侧、减速停住），停住后再留 0.15 s 收尾
+            float e = 1 - (1 - k) * (1 - k);
+            var head = At(e);
+            if (t >= seconds + 0.15f)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            acc += dt;
+            if (acc < 0.05f || k >= 1f) return;
+            acc = 0;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            var ahead = At(Mathf.Min(1f, e + 0.02f)) - head;
+            ahead.y = 0;
+            var f = ahead.sqrMagnitude > 1e-4f ? ahead.normalized : Vector3.forward;
+            var side = Vector3.Cross(Vector3.up, f);
+            var foam = rt.GetEmitter("ToonSmoke");
+            int n = FxBudget.Allow(Mathf.RoundToInt(4 * Fx.Density), false);
+            for (int i = 0; foam != null && i < n; i++)
+            {
+                float s = i % 2 == 0 ? 1f : -1f;
+                var p = head - f * Random.Range(0.5f, 2f) + side * s * Random.Range(0.8f, 1.8f) + Vector3.up * 0.25f;
+                rt.EmitOne(foam, p, side * s * Random.Range(2f, 4f) - f * 1.5f + Vector3.up * 0.6f, Random.Range(0.9f, 1.4f), Random.Range(0.5f, 0.75f),
+                    new Color(Fx.KunFoam.r, Fx.KunFoam.g, Fx.KunFoam.b, 0.85f), 0);
+            }
+            var ring = rt.GetEmitter("RingFlat");
+            if (ring != null && FxBudget.Allow(1, false) > 0)
+                rt.EmitOne(ring, head + Vector3.up * 0.08f, Vector3.zero, Random.Range(3.5f, 4.5f), 0.5f, new Color(Fx.KunFoam.r, Fx.KunFoam.g, Fx.KunFoam.b, 0.7f), 0);
+            Fx.WaterDisturb(head, 3.5f, 0.8f);
+        }
+    }
+
+    /// <summary>
+    /// 鹏倒下后的归冥（<see cref="Fx.PengReturnToSea"/>）：1.3 s 里一股雪羽 + 风线从溃散处起、先往上扬再往冰窟中心落（绕着路径打旋），
+    /// 到了水面：小漩涡、涟漪、一点冷光沉下去，回调 onArrive（KunPengDeath 用它把冰窟水面的翻涌收到平静）。离冰窟很近（坠进北冥）时直接在水面收尾
+    /// </summary>
+    public sealed class PengReturnRun : MonoBehaviour
+    {
+        const float Flight = 1.3f;
+        Vector3 from, water, mid;
+        float t, acc, holeRadius;
+        bool arrived;
+        Action onArrive;
+
+        public static void Run(Vector3 from, Vector3 water, float holeRadius, Action onArrive)
+        {
+            if (!Application.isPlaying || !Fx.Finite(from) || !Fx.Finite(water)) return;
+            var go = new GameObject("KunPeng Return To Sea");
+            var r = go.AddComponent<PengReturnRun>();
+            r.from = from;
+            r.water = water;
+            r.holeRadius = Mathf.Max(3f, holeRadius);
+            r.onArrive = onArrive;
+            var flat = new Vector2(water.x - from.x, water.z - from.z).magnitude;
+            r.mid = Vector3.Lerp(from, water, 0.5f) + Vector3.up * Mathf.Clamp(flat * 0.35f, 2f, 7f);
+            if (flat < 3f) r.t = Flight;
+        }
+
+        Vector3 Path(float k)
+        {
+            float u = 1 - k;
+            return u * u * from + 2 * u * k * mid + k * k * water;
+        }
+
+        void Update()
+        {
+            float dt = Time.deltaTime;
+            t += dt;
+            if (!arrived && t >= Flight)
+            {
+                arrived = true;
+                Arrive();
+            }
+            if (t >= Flight + 0.2f)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            if (arrived) return;
+            acc += dt;
+            if (acc < 0.04f) return;
+            acc = 0;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            float k = Mathf.Clamp01(t / Flight);
+            var head = Path(k);
+            var next = Path(Mathf.Min(1f, k + 0.04f));
+            var fwd = next - head;
+            var f = fwd.sqrMagnitude > 1e-4f ? fwd.normalized : Vector3.down;
+            var side = Vector3.Cross(Vector3.up, f).sqrMagnitude > 1e-4f ? Vector3.Cross(Vector3.up, f).normalized : Vector3.right;
+            var up = Vector3.Cross(f, side);
+            var snow = rt.GetEmitter("Snow");
+            int n = FxBudget.Allow(Mathf.RoundToInt(5 * Fx.Density), false);
+            float spin = t * 900f;
+            for (int i = 0; snow != null && i < n; i++)
+            {
+                float a = (spin + i * 72f) * Mathf.Deg2Rad;
+                var off = (side * Mathf.Cos(a) + up * Mathf.Sin(a)) * Random.Range(0.6f, 1.4f);
+                rt.EmitOne(snow, head + off, f * Random.Range(6f, 10f) + off * 2f, Random.Range(0.24f, 0.36f), Random.Range(0.4f, 0.6f), Fx.KunCore, 0);
+            }
+            if (FxBudget.Allow(1, false) > 0)
+            {
+                float a = spin * 1.3f * Mathf.Deg2Rad;
+                var off = (side * Mathf.Cos(a) + up * Mathf.Sin(a)) * 1.1f;
+                Fx.Tracer(head + off, next + off * 0.8f, Fx.PengWind, 0.1f);
+            }
+        }
+
+        void Arrive()
+        {
+            var rt = FxRuntime.Ensure();
+            Fx.KunVortex(water, Mathf.Min(6f, holeRadius * 0.4f), 2.2f);
+            Fx.WaterDisturb(water, Mathf.Max(8f, holeRadius * 0.7f), 1.2f);
+            Fx.FrostGlint(water + Vector3.up * 0.4f, 2.2f);
+            if (rt)
+            {
+                var e = rt.GetEmitter("ToonRing");
+                if (e != null && FxBudget.Allow(1, true) > 0) rt.EmitOne(e, water + Vector3.up * 0.08f, Vector3.zero, Mathf.Max(8f, holeRadius * 0.8f), 1.2f,
+                    new Color(Fx.KunFoam.r, Fx.KunFoam.g, Fx.KunFoam.b, 0.7f), 0);
+            }
+            try { onArrive?.Invoke(); }
+            catch (Exception e) { Debug.LogException(e); }
         }
     }
 }

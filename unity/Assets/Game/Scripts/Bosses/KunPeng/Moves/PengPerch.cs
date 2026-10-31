@@ -10,6 +10,10 @@ namespace Spiritfire.Game
     ///     落点亮 5 m 的预警（0.9 s）；
     ///   出手 4.8 s：落地冲击（18，击退 9）+ 一圈 11 m 的冰浪（10）；收翼歇着（act_perch），额头的鲛珠离地近、大亮；4.0 s 时脚下亮 7 m 的起飞预警（0.8 s）；
     ///   收招 0.8 s：起飞翼风冲击（7 m、14 伤、击退 13），回到盘旋高度（act_takeoff）。
+    /// 动作（第二批 A 路，docs/art/vfx/kunpeng.md 第 15、16 节）：手 K 片段——perch 从下降开始播（抬翅、刹风一扇 flap、伸爪 → 第 27 帧 = 0.9 s 触地 hit = 出手段开始
+    /// → 压一下回弹 → 第 46 帧敛翼 fold）→ perchRest 循环栖落（低头盯人、鲛珠离地近）；起飞预警亮起（出手 4.0 s）时播 takeoff：蹲下、双翼高举后掠蓄力
+    /// （脚下的雪往爪下收，<see cref="Fx.PengTakeoffGather"/>）→ 第 24 帧 = 4.8 s 一记猛扇离台（liftoff 事件 = 收招段开始，起飞翼风判定同一帧）→ 第二扇 → 回盘旋。
+    /// 触地、离台都跟片段事件走，兜底按原来的时间。
     /// </summary>
     public sealed class PengPerch : KunPengMove
     {
@@ -27,7 +31,10 @@ namespace Spiritfire.Game
         public bool Landed { get; private set; }
 
         Sub sub;
-        float subT;
+        float subT, descendT0 = -1f, activeT0 = -1f;
+        bool takeoffArmed;
+        /// <summary>perch / takeoff 片段的长度（Act 按它设 ActScale = 1：片段事件就落在设计的时刻）</summary>
+        public const float PerchClip = 1.8f, TakeoffClip = 1.6f;
 
         public PengPerch()
         {
@@ -77,6 +84,8 @@ namespace Spiritfire.Game
         {
             sub = Sub.Approach;
             subT = 0;
+            descendT0 = activeT0 = -1f;
+            takeoffArmed = false;
             Landed = false;
             Spot = PickSpot(out bool flat);
             SpotFlat = flat;
@@ -120,12 +129,30 @@ namespace Spiritfire.Game
                 Hazards.GroundWarning(Spot, LandRadius, DescendSeconds, KunPengDef.Warn);
                 CountWarning();
                 Sfx("telegraph", 1f, 0.9f);
+                // 落台片段从下降开始播：0.9 s 的刹风、伸爪，第 27 帧触地（hit）
+                descendT0 = T;
+                Act("perch", PerchClip);
                 return;
             }
             Brain.Face(Brain.PlayerPosition, 115f, dt);
             kp?.FlyTo(Spot, 6f, 0.3f);
-            if (subT >= DescendSeconds) EndWindup();
+            if (Cue("flap", descendT0 + 0.47f))
+            {
+                var c = Brain.BodyCenter;
+                Fx.PengFlap(c, new Vector3(c.x, Spot.y, c.z), Brain.transform.eulerAngles.y, 4f, false);
+            }
+            // 触地跟片段的 hit 事件走（0.9 s）；兜底晚 1.5 帧——落地的顿帧会把 Animator 压到 ×0.05，兜底先到的话事件要等顿帧放开才来
+            if (Cue("hit", descendT0 + DescendSeconds + 0.05f)) EndWindup();
         }
+
+        public override void OnAnimEvent(string name)
+        {
+            base.OnAnimEvent(name);
+            if (name == "fold" && Stage == MoveStage.Active && KP) Fx.PengFoldShake(KP.WingTip(true), KP.WingTip(false), Spot);
+        }
+
+        /// <summary>离台跟 takeoff 片段的 liftoff 事件走（起飞预警亮起后 0.8 s），兜底 4.8 s</summary>
+        protected override bool ActiveDone => takeoffArmed ? Cue("liftoff", activeT0 + RestSeconds) : StageT >= RestSeconds;
 
         protected override void OnActiveBegin()
         {
@@ -140,7 +167,7 @@ namespace Spiritfire.Game
                 kp.HoverAlt = Spot.y - Floor;
                 kp.MovesSincePerch = 0;
             }
-            Act("perch", 2.4f);
+            activeT0 = T;
             Hazards.Blast(Spot, LandRadius, Dmg(18), new BossBlastOpts { maxHeight = 3f, knockback = 9f, knockUp = 4f });
             Hazards.Wave(new BossWaveSpec(Spot, 12f, 11f, Dmg(10), KunPengDef.Warn)
             {
@@ -161,15 +188,21 @@ namespace Spiritfire.Game
         {
             KP?.Hover();
             Brain.Face(Brain.PlayerPosition, 46f, dt);
+            // 起飞蓄力：脚下的雪和风线往爪下收
+            if (takeoffArmed) Fx.PengTakeoffGather(Spot, TakeoffRadius * 0.8f, Mathf.Clamp01((StageT - TakeoffWarnAt) / Mathf.Max(0.1f, RestSeconds - TakeoffWarnAt)), dt);
             if (!StageAt(TakeoffWarnAt)) return;
             Hazards.GroundWarning(Spot, TakeoffRadius, Mathf.Max(0.2f, RestSeconds - TakeoffWarnAt), KunPengDef.Warn);
             CountWarning();
             Sfx("telegraph", 1f, 1.1f);
+            // 起飞片段：0.8 s 的蹲身蓄力，第 24 帧 liftoff 离台 = 收招段开始
+            takeoffArmed = true;
+            Act("takeoff", TakeoffClip);
         }
 
         protected override void OnRecoverBegin()
         {
-            Act("takeoff", recover);
+            // 起飞片段在起飞预警亮起时就开始播了（蹲身蓄力），这一帧是它的 liftoff；没走到预警（被提前结束）时补播
+            if (!takeoffArmed) Act("takeoff", recover);
             Hazards.Blast(Spot, TakeoffRadius, Dmg(14), new BossBlastOpts { maxHeight = 4f, knockback = 13f, knockUp = 5f });
             Fx.Ring(Spot + Vector3.up * 0.1f, 8f, KunPengDef.Gust, 0.6f);
             Fx.Burst(Spot + Vector3.up, KunPengDef.Ice, 26, 10f, 0.8f, 0.4f, 4f);

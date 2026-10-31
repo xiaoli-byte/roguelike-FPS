@@ -893,26 +893,59 @@ namespace Spiritfire.Game
     /// <summary>
     /// 鲲鹏的倒下演出（行为组件倒下后就停用了，模型动画交给它；Three.js animateDeath）：
     ///   鲲：仰头长啸后沉回冰窟（0.25 → 0.8 的比例里沉到底），没顶时冰窟里涌一圈冰浪；
-    ///   鹏：收翼坠落（模型往下掉到地面高度、往前栽，55% 时砸到冰面：碎冰 + 冰环 + 震屏），之后趴着抽两下，逻辑位置钉住。
-    /// 最后 12% 由 <see cref="BossDefeatSequence"/> 炸开并隐去模型；炸开那一刻在落点留一片冻雾 + 霜斑（6 s，余韵——原来 3.5 s 后场上什么都不剩）。
+    ///   鹏（第二批 A 路，docs/art/vfx/kunpeng.md 第 17 节）：正式模型播手 K 的 death 片段——中弹失衡 → 第 0.4 s 翼折（wingBreak）→ 右翼乱扑、头朝下栽
+    ///     → 2.4 s 胸口先着地（land）→ 弹一下落定 → 2.93 s 最后抬头朝北冥一声（lastCry）→ 不动（deathRest 循环）；
+    ///     往下掉是这里按时间写的（0.2 s 起加速下坠，2.4 s 正好落到脚下的地面 / 水面），触地的碎冰、冰环、震屏、闷响跟片段的 land 事件走（兜底按时间）。
+    ///     死在冰窟上空就坠进北冥：水冠、水柱、小漩涡，之后沉下去。代理 / 占位体没有 death 状态时照旧：收翼坠落、55% 砸到冰面、趴着抽两下。
+    /// 最后 12% 由 <see cref="BossDefeatSequence"/> 炸开并隐去模型；炸开那一刻在落点留一片冻雾 + 霜斑（6 s，余韵）；
+    /// 鹏另外「归冥」：雪羽顺着一股往下旋的风流回冰窟、水面转起小漩涡后平静（<see cref="Fx.PengReturnToSea"/>，化形倒着走一遍）。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class KunPengDeath : MonoBehaviour
     {
+        static readonly int DeathState = Animator.StringToHash("death");
+        static readonly int ActScaleId = Animator.StringToHash("ActScale");
+
         BossModel model;
         BossDefeatSequence sequence;
-        bool kun, landed, lingered;
-        float seconds, t, drop, startY, startPitch;
+        KunPengBrain brain;
+        CreatureRig rig;
+        Animator anim;
+        CreatureRagdoll ragdoll;
+        bool kun, landed, lingered, broke, cried;
+        float seconds, t, drop, startY, startPitch, groundY;
         IceHoleInfo hole;
 
-        /// <summary>鹏砸到冰面 / 鲲没顶的比例；之后趴着 / 沉在底</summary>
+        /// <summary>鹏砸到冰面 / 鲲没顶的比例（代理 / 没有 death 片段时）；之后趴着 / 沉在底</summary>
         const float LandAt = 0.55f, SunkAt = 0.8f;
+        /// <summary>手 K death 片段的节拍（秒，30 fps 的第 12 / 72 / 88 帧）：翼折、触地、最后一声；0.2 s 起往下掉</summary>
+        public const float BreakTime = 0.4f, LandTime = 2.4f, CryTime = 2.93f, FallFrom = 0.2f;
+        /// <summary>death 片段长度（120 帧）</summary>
+        public const float ClipSeconds = 4f;
+        /// <summary>坠进北冥后往下沉多深（米）</summary>
+        const float SinkDepth = 7f;
 
         public bool Running => model != null && t < seconds;
+
+        /// <summary>触地 / 没顶的时刻（倒下后几秒，没到时 −1）</summary>
+        public float LandedAt { get; private set; } = -1f;
+        /// <summary>触地是动画事件（land）触发的还是按时间兜底的</summary>
+        public string LandSource { get; private set; } = "—";
+        /// <summary>播的是手 K 的 death 片段（正式模型的鹏）</summary>
+        public bool Keyframed { get; private set; }
+        /// <summary>鹏死在冰窟上空、坠进了北冥</summary>
+        public bool IntoWater { get; private set; }
+
+        /// <summary>节拍条用的一行小结</summary>
+        public string Report => kun
+            ? $"没顶 {LandedAt:F2} s（按时间）"
+            : $"触地 {LandedAt:F2} s（{LandSource}，模型落到地面的时刻 {(Keyframed ? LandTime : LandAt * seconds):F2} s），{(IntoWater ? "坠进北冥" : "砸在冰面")}，" +
+              $"片段 {(Keyframed ? "手 K death" : "代理 / 采样 roar")}";
 
         public void Begin(KunPengBrain b, BossModel m, bool isKun, float duration, IceHoleInfo h)
         {
             model = m;
+            brain = b;
             kun = isKun;
             seconds = Mathf.Max(0.2f, duration);
             hole = h;
@@ -921,14 +954,77 @@ namespace Spiritfire.Game
             float s = Mathf.Max(0.01f, m.scale);
             startY = m.root.transform.localPosition.y * s;
             startPitch = m.root.transform.localEulerAngles.x;
-            drop = Mathf.Max(0, b.transform.position.y - hole.FloorY);
-            if (m.animator && m.animator.HasState(0, Animator.StringToHash("roar"))) m.animator.CrossFadeInFixedTime("roar", 0.15f);
+            var pos = b.transform.position;
+            groundY = hole.FloorY;
+            if (!kun)
+            {
+                IntoWater = hole.found && hole.Distance(pos) < hole.radius - 0.5f;
+                if (IntoWater) groundY = hole.waterY;
+                else if (Physics.Raycast(pos + Vector3.up * 0.5f, Vector3.down, out var hit, 80f, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+                    groundY = Mathf.Max(hole.FloorY, hit.point.y);
+            }
+            drop = Mathf.Max(0, pos.y + startY - groundY);
+            anim = m.animator;
+            ragdoll = b.GetComponent<CreatureRagdoll>();
+            Keyframed = !kun && anim && anim.HasState(0, DeathState) && !(ragdoll && ragdoll.Active);
+            if (anim && anim.enabled)
+            {
+                // 首领顿帧停在一半时倒下：Animator 的速度留在 ×0.05（行为组件已经停用，没人追回）
+                anim.speed = 1f;
+                anim.SetFloat(ActScaleId, 1f);
+            }
+            if (Keyframed) PlayDeath();
+            else if (anim && anim.HasState(0, Animator.StringToHash("roar"))) anim.CrossFadeInFixedTime("roar", 0.15f);
+            rig = m.rig;
+            if (rig && !kun) rig.AnimEvent += OnAnimEvent;
+        }
+
+        void OnDestroy()
+        {
+            if (rig) rig.AnimEvent -= OnAnimEvent;
+        }
+
+        /// <summary>
+        /// 播 death 片段：没有布娃娃的敌人倒下时 EnemyBody 会把 Animator 关掉（尸体定格），death 片段要把它重新打开，从倒下后的这一刻（t）接着播；
+        /// 首领顿帧停在一半时倒下的 ×0.05 速度、招式的 ActScale 都复位
+        /// </summary>
+        void PlayDeath()
+        {
+            if (!anim) return;
+            bool wasOff = !anim.enabled;
+            anim.enabled = true;
+            anim.speed = 1f;
+            anim.SetFloat(ActScaleId, 1f);
+            if (wasOff) anim.Play(DeathState, 0, Mathf.Clamp01(t / ClipSeconds));
+            else anim.CrossFadeInFixedTime(DeathState, 0.08f, 0, t);
+        }
+
+        /// <summary>death 片段的事件（倒下后首领的 OnRigEvent 不再转发，这里自己接）</summary>
+        void OnAnimEvent(string evt)
+        {
+            if (kun || model == null) return;
+            switch (evt)
+            {
+                case "wingBreak": WingBreak(); break;
+                case "flail": Fx.PengFeatherShed(Bone("wing_R_2"), 0, true); break;
+                case "land": Land("事件 land"); break;
+                case "lastCry": LastCry(); break;
+            }
+        }
+
+        readonly System.Collections.Generic.Dictionary<string, Transform> bones = new();
+
+        Vector3 Bone(string name)
+        {
+            if (!bones.TryGetValue(name, out var b)) bones[name] = b = model?.FindBone(name);
+            return b ? b.position : model != null && model.root ? model.root.transform.position + Vector3.up * 3f : transform.position;
         }
 
         void Update()
         {
             if (model == null || !model.root) return;
-            t += Time.deltaTime;
+            float dt = Time.deltaTime;
+            t += dt;
             float k = Mathf.Clamp01(t / seconds);
             var mr = model.root.transform;
             float s = Mathf.Max(0.01f, model.scale);
@@ -939,6 +1035,8 @@ namespace Spiritfire.Game
                 if (!landed && k >= SunkAt)
                 {
                     landed = true;
+                    LandedAt = t;
+                    LandSource = "按时间";
                     Impact(hole.center, 1.6f);
                     // 鲲没顶：冰窟水面炸起水冠、大涟漪，转起一个往下吸的漩涡（特效打磨 C 路）
                     var w = new Vector3(hole.center.x, hole.waterY, hole.center.z);
@@ -948,25 +1046,84 @@ namespace Spiritfire.Game
                         new Color(0.36f, 0.66f, 0.82f), Color.white, 0.8f);
                 }
             }
+            else if (Keyframed)
+            {
+                // 倒下的同一帧 EnemyBody 可能在这之后才关 Animator：关了就重新打开、从这一刻接着播
+                if (anim && !anim.enabled) PlayDeath();
+                // 失衡那一下还在原地，0.2 s 起加速往下掉，2.4 s 正好落到地面（= 片段第 72 帧的 land）；坠进北冥的之后再沉下去
+                float u = KunPengMath.Span(t, FallFrom, LandTime);
+                float y = startY - drop * u * u;
+                if (IntoWater) y -= SinkDepth * KunPengMath.EaseInOut(KunPengMath.Span(t, LandTime + 0.4f, seconds * 0.88f));
+                mr.localPosition = new Vector3(0, y / s, 0);
+                mr.localRotation = Quaternion.identity;
+                // 片段事件没来（掉帧跳过）时按时间兜底
+                if (!broke && t >= BreakTime + 0.1f) WingBreak();
+                if (!landed && t >= LandTime + 0.05f) Land("按时间兜底");
+                if (!cried && t >= CryTime + 0.1f) LastCry();
+                // 翼折之后一路掉雪羽
+                if (broke && !landed) Fx.PengFeatherShed(Bone("wing_L_2"), dt);
+            }
             else
             {
                 float f = KunPengMath.Span(k, 0f, LandAt);
-                mr.localPosition = new Vector3(0, -drop * f * f / s, 0);
+                mr.localPosition = new Vector3(0, (startY - drop * f * f) / s, 0);
                 // 坠落时往前栽；落地后趴着，头一抬一落地抽两下
                 float twitch = landed ? Mathf.Sin((k - LandAt) * 22f) * 4f * (1 - KunPengMath.Span(k, LandAt, 0.85f)) : 0;
                 mr.localRotation = Quaternion.Euler(startPitch + Mathf.Min(k, LandAt) / LandAt * Mathf.Rad2Deg + twitch, 0,
                     Mathf.Sin(k * 9f) * 0.2f * (1 - f) * Mathf.Rad2Deg);
-                if (!landed && k >= LandAt)
-                {
-                    landed = true;
-                    Impact(new Vector3(transform.position.x, hole.FloorY, transform.position.z), 1f);
-                }
+                if (!landed && k >= LandAt) Land("按时间");
             }
             if (!lingered && sequence && sequence.Finished)
             {
                 lingered = true;
-                Linger(kun ? hole.center : new Vector3(transform.position.x, hole.FloorY, transform.position.z));
+                if (kun) Linger(hole.center);
+                else
+                {
+                    var g = Ground(Bone("chest"));
+                    if (!IntoWater) Linger(g);
+                    // 归冥：身子散成的雪羽顺着往下旋的风流回冰窟，水面转起小漩涡、之后平静
+                    var fx = brain ? brain.HoleFx : null;
+                    Fx.PengReturnToSea(g + Vector3.up * 1.5f, new Vector3(hole.center.x, hole.waterY, hole.center.z), hole.radius,
+                        () => { if (fx) fx.SetAgitation(0f); });
+                }
             }
+        }
+
+        Vector3 Ground(Vector3 p) => new(p.x, groundY, p.z);
+
+        void WingBreak()
+        {
+            if (broke) return;
+            broke = true;
+            var w = Bone("wing_L_2");
+            Fx.PengWingBreak(w);
+            GameAudio.PlayAt("shield_break", w, 0.9f, 0.75f);
+        }
+
+        void LastCry()
+        {
+            if (cried || !landed) return;
+            cried = true;
+            var head = Bone("pearl");
+            Fx.PengLastCry(head);
+            GameAudio.PlayAt("boss_roar", head, 0.45f, 1.45f);
+        }
+
+        /// <summary>鹏触地：碎冰、冰环、震屏、闷响 + 贴地风环和雪羽（坠进北冥是水冠、水柱、小漩涡）</summary>
+        void Land(string source)
+        {
+            if (landed) return;
+            landed = true;
+            LandedAt = t;
+            LandSource = source;
+            var g = Ground(Keyframed ? Bone("chest") : transform.position);
+            if (IntoWater)
+            {
+                CameraShake.Quake(g, 0.6f, 70f, 0.5f);
+                GameAudio.PlayAt("boss_slam", g, 1f, 0.7f);
+            }
+            else Impact(g, 1f);
+            if (Keyframed) Fx.PengCrash(g, IntoWater);
         }
 
         /// <summary>鹏砸上冰面 / 鲲没顶：碎冰、冰环、震屏、闷响</summary>
