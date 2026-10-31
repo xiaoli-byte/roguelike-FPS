@@ -4,7 +4,8 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 迅捷（TS swift）：移速、攻速 ×1.5（加成通道 <see cref="Channel"/>，和光环等其他通道相乘）。
-    /// 外观：身上淡淡一层青色，腰间两团青色风旋反向绕身（半径 1.35 × 身体半径），跑快了（&gt; 3 m/s）身后拖青色残影。
+    /// 外观：身上淡淡一层青色，腰间两团青色风旋反向绕身（半径 1.35 × 身体半径），跑快了（&gt; 3 m/s）身后拖青色风线（<see cref="Fx.EliteWindStreak"/>）；
+    /// 金环里三道卷云钩逆时针快转（Q 路，docs/art/vfx/elite-affixes.md）。
     /// </summary>
     [Defs(10)]
     public sealed class EliteAffix_Swift : EliteAffix
@@ -50,8 +51,10 @@ namespace Spiritfire.Game
                 trailTimer -= dt;
                 if (trailTimer <= 0 && new Vector2(v.x, v.z).magnitude > 3 && Application.isPlaying)
                 {
-                    trailTimer = 0.14f;
-                    Fx.Burst(Host.Local(0, Host.height * 0.4f, 0), Affix.Color, 2, 0.6f, 0.35f, 0.06f, 0);
+                    trailTimer = 0.12f;
+                    // 风线（流线）：身后拖两三根青色拉丝，不再是发光团
+                    float s = Host.transform.lossyScale.x;
+                    Fx.EliteWindStreak(Host.Local(0, Host.height * 0.45f, 0), -v, Host.radius * s * 1.2f, Affix.Color);
                 }
             }
 

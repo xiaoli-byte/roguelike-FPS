@@ -10,7 +10,7 @@ namespace Spiritfire.Game
     ///   取词（<see cref="Resolve"/>，同 TS）：只有精英带词缀（首领不带）；写死的词缀登记过、又不在这种敌人的排除表（<see cref="EnemyDef.affixExclusions"/>）里就用它，
     ///     否则从没被排除的词缀里均匀随机一个（<see cref="Roll"/>）。
     ///   装上（<see cref="Dress"/>，<see cref="EnemyRoster.Spawn(string, Vector3, Quaternion, float, bool, SpawnOptions)"/> 在 AI.Spawn 之后调）：
-    ///     精英脚下的金环（<see cref="EliteAura"/>，带词缀时内圈是词缀色）、名字前缀（「精英·迅捷 跳鼠刀兵」/ 没有词缀「精英·跳鼠刀兵」）、
+    ///     精英脚下的金环（<see cref="EliteAura"/>，带词缀时内圈是词缀纹样：迅捷卷云钩、坚盾六角甲、爆裂火药星、狂暴锯齿牙）、名字前缀（「精英·迅捷 跳鼠刀兵」/ 没有词缀「精英·跳鼠刀兵」）、
     ///     词缀运行时（<see cref="EliteAffixRuntime"/>）。
     ///   接线（<see cref="Install"/>，进入 Play 时自动）：遭遇的 <see cref="SquadAffixes.Source"/> = 本登记；头顶血条的 <see cref="EnemyBars.AffixOf"/> 读运行时。
     /// </summary>
@@ -83,7 +83,7 @@ namespace Spiritfire.Game
             var aura = EliteAura.Attach(ai, def != null ? def.radius : 0.4f);
             var affix = Get(id);
             if (affix == null) return null;
-            if (aura) aura.SetAccent(affix.Color);
+            if (aura) aura.SetSigil(affix.Id, affix.Color);
             var rt = ai.gameObject.AddComponent<EliteAffixRuntime>();
             rt.Install(ai, affix);
             return id;
@@ -123,6 +123,8 @@ namespace Spiritfire.Game
             foreach (var a in All)
                 if (!EnemyBars.AffixLabels.ContainsKey(a.Id))
                     EnemyBars.AffixLabels[a.Id] = (a.Name, a.Color, a.Hint);
+            // 金环与词缀纹样的程序贴图先生成好（第一只精英出生时不卡）
+            if (Application.isPlaying) EliteSigilTextures.WarmUp();
         }
     }
 }

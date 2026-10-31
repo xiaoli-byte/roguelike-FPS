@@ -5,7 +5,9 @@ namespace Spiritfire.Game
     /// <summary>
     /// 爆裂（TS volatile）：死后 1 s 原地爆炸——死亡位置正下方的地面 / 台面上立刻亮出 4.5 m 预警圈（飞行单位死在半空也一样），
     /// 1 s 后在离地 0.8 m 处炸开，对玩家 26 × 伤害倍率的火伤（边缘 50%，按死亡那一刻的倍率）。只伤玩家，别贴身击杀；清场不炸。
-    /// 外观：三颗橙色余烬绕身转（半径 1.35 × 身体半径），身上的橙色一明一暗地脉动。
+    /// 外观：三颗橙色余烬绕身转（半径 1.35 × 身体半径），身上的橙色一明一暗地脉动；脚下金环里是跳动的火药星（<see cref="EliteAura"/>）。
+    /// 死亡「蓄 → 爆」（Q 路，docs/art/vfx/elite-affixes.md）：死亡那一刻身上一闪（起手）→ 预警圈与火药星同一帧起：星纹一边收缩一边越转越快、火星往圆心吸（蓄）
+    /// → 最后 0.12 s 白热闪烁（顶点）→ 圈填满的同一帧炸开：伤害、爆炸、星芒甩出的尖刺在同一个回调里出（<see cref="Fx.EliteFuse"/>）。
     /// </summary>
     [Defs(30)]
     public sealed class EliteAffix_Volatile : EliteAffix
@@ -65,12 +67,22 @@ namespace Spiritfire.Game
                 var c = BlastCenter;
                 float dmg = BlastDamage;
                 var src = Host.ai;
-                if (Application.isPlaying) Telegraph.Circle(ground, Radius, Fuse, color);
+                EliteFuseFx fuseFx = null;
+                if (Application.isPlaying)
+                {
+                    // 预警圈和引信演出同一帧起、同一个时长：圈填满的那一帧就是炸开的那一帧（设计单 elite-affixes.md「爆裂」节拍表）
+                    Telegraph.Circle(ground, Radius, Fuse, color);
+                    fuseFx = Fx.EliteFuse(ground, Radius, Fuse, color, Host.Center);
+                }
                 GameAudio.PlayAt("telegraph", ground, 0.8f);
                 HazardClock.Delay(Fuse, () =>
                 {
                     if (EnemyRegistry.Purging) return;
-                    if (Application.isPlaying) Fx.Explosion(c, Radius, color);
+                    if (Application.isPlaying)
+                    {
+                        if (fuseFx) fuseFx.Detonate();
+                        Fx.Explosion(c, Radius, color);
+                    }
                     GameAudio.PlayAt("explosion", c);
                     Blast.Player(c, Radius, dmg, Element.Fire, src ? src : null, 0.5f, 0.7f);
                 });
