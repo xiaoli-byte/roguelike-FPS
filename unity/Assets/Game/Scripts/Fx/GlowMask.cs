@@ -12,6 +12,9 @@ namespace Spiritfire.Game
     /// （MaterialPropertyBlock；遮罩贴图也走 MPB，不改共享材质）。强度公式照 Three.js 各敌人的 glow.strength。
     /// 同一只敌人身上的挂件（狐巫的铜镜）按各自贴图找各自的遮罩和配色。
     /// 挂法：敌人 AI 在 Awake 里 <see cref="Attach"/>；没有登记配色、找不到遮罩贴图时什么都不做。
+    /// 首领（第二批收尾 C 路）：旱魃本体的龟裂白金裂光 + 背后日轮（轮体 / 火焰芒 / 轮毂三层），跟日轮炽度走、日蚀时轮熄裂亮、
+    /// 复燃那一帧由招式 <see cref="Flash"/> 点到峰值再落回；倒下后 1.5 s 内慢慢熄掉（<see cref="life"/>）。
+    /// 魔将大剑不挂这里（它不是敌人 AI，挂件自己写同一组属性，见 WarlordBlade；遮罩用 <see cref="LoadMask"/> 取）。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class GlowMask : MonoBehaviour
@@ -72,6 +75,17 @@ namespace Spiritfire.Game
             // 铜镜：0 青玉镶嵌（同 Three.js 玉钮：常亮、前摇更亮）；1 镜面蓄光（照妖镜聚光时亮起，同 Three.js mirrorGlow）
             ["T_EnemyPart_FoxWitchMirror"] = new Layers(Hex.Rgb(0x5ff6e8), Hex.Rgb(0xeaffff), Color.black, new Vector3(0.3f, 0.45f, 0), m =>
                 new Vector3((0.5f + 1.2f * m.Level(0)) * m.Alive(0), 1.9f * m.Level(1) * m.Alive(0), 0)),
+            // 旱魃本体：0 皮肤龟裂透出的白金光——平时微亮、随日轮炽度和前摇（发光通道 0）起伏；日蚀时日轮熄灭、裂光反而烧亮（暖白金对冷黑盘）；复燃到峰值
+            ["T_Boss_Hanba"] = new Layers(Hex.Rgb(0xffe4a0), Color.black, Color.black, new Vector3(0.35f, 0, 0), m =>
+                new Vector3((0.35f + 0.55f * m.RingBlaze + 0.4f * m.Level(0) + 1.25f * m.eclipse + 2.6f * m.Flash01) * m.life, 0, 0)),
+            // 日轮：0 轮体白金（克制：平时只比受光的底色亮一点，聚光时整面发亮）、1 外缘火焰芒（日蚀时只剩它，是黑盘后面的一圈日冕）、
+            //   2 轮毂与八辐（聚光最亮）；日蚀时 0 / 2 熄灭，复燃三层一起到峰值
+            ["T_BossPart_HanbaSunRing"] = new Layers(Hex.Rgb(0xffe9b8), Hex.Rgb(0xffb444), Hex.Rgb(0xfff4dc), new Vector3(0.15f, 0.45f, 0.2f), m =>
+            {
+                float b = m.RingBlaze, lit = 1f - m.eclipse, f = m.Flash01;
+                // 复燃的峰值压一档：轮体只加 0.9、火焰芒 1.5、轮毂 2.0——再亮整只轮子就在泛光里糊成一块白，看不出八辐和火焰芒
+                return new Vector3((0.1f + 0.55f * b) * lit + 0.9f * f, (0.18f + 0.9f * b) * lit + 0.9f * m.eclipse + 1.5f * f, (0.1f + 1.2f * b) * lit + 2f * f) * m.life;
+            }),
         };
 
         sealed class Entry
@@ -87,7 +101,31 @@ namespace Spiritfire.Game
         EnemyBody body;
         internal EnemyAI ai;
         internal float age, screech, bristle, charge;
+        /// <summary>旱魃：日蚀程度（日轮熄着 = 1，平滑过渡）；活着 1、倒下后 1.5 s 内落到 0</summary>
+        internal float eclipse, life = 1f;
+        float flash, flashHold, flashDecay = 1f;
         float rescanAt;
+
+        /// <summary>复燃一类的峰值（<see cref="Flash"/> 那一刻 1，停 hold 秒后 decay 秒内平滑落回 0）</summary>
+        internal float Flash01 => flash * flash * (3f - 2f * flash);
+
+        /// <summary>旱魃日轮当前的炽度（不是旱魃 / 没有日轮时按平时的 0.35）</summary>
+        internal float RingBlaze => ai is HanbaBrain h && h.Ring ? h.Ring.Blaze : 0.35f;
+
+        /// <summary>
+        /// 把 owner 身上的发光遮罩一下点到峰值（三层按配色里的 Flash01 项）：停 hold 秒，再 decay 秒内落回。owner 没挂遮罩时什么都不做。
+        /// 旱魃日蚀的复燃（Phase3Eclipse.Flare）在释放帧调
+        /// </summary>
+        public static void Flash(Component owner, float hold = 0.12f, float decay = 0.9f)
+        {
+            if (!owner || !owner.TryGetComponent(out GlowMask g)) return;
+            g.flash = 1f;
+            g.flashHold = Mathf.Max(0, hold);
+            g.flashDecay = Mathf.Max(0.05f, decay);
+        }
+
+        /// <summary>此刻的峰值余量（测试用，0..1）</summary>
+        public float FlashLevel => Flash01;
         int rendererCount = -1;
 
         /// <summary>这只敌人身上挂了几张遮罩（测试用）</summary>
@@ -147,6 +185,9 @@ namespace Spiritfire.Game
             rescanAt = age + 0.5f;
         }
 
+        /// <summary>按贴图名（BC 去掉 _BC）取 _E 遮罩（缓存；没有时警告一次、返回 null）——不挂 GlowMask 的挂件（魔将大剑）也走这里</summary>
+        public static Texture2D LoadMask(string key) => Mask(key);
+
         static Texture2D Mask(string key)
         {
             if (maskCache.TryGetValue(key, out var t) && t) return t;
@@ -177,6 +218,10 @@ namespace Spiritfire.Game
             screech = Damp(screech, st == "screech" ? 1 : 0, 12, dt);
             bristle = Damp(bristle, st == "bristle" ? 1 : 0, 20, dt);
             charge = Damp(charge, st == "charge" ? 1 : st == "scrape" ? 0.6f : 0, 10, dt);
+            eclipse = Damp(eclipse, ai is HanbaBrain hb && hb.Ring && hb.Ring.Eclipsed ? 1 : 0, 10, dt);
+            life = ai && ai.Dead ? Mathf.MoveTowards(life, 0, dt / 1.5f) : 1f;
+            if (flashHold > 0) flashHold -= dt;
+            else if (flash > 0) flash = Mathf.Max(0, flash - dt / flashDecay);
             foreach (var e in entries)
             {
                 if (!e.r) continue;
@@ -188,6 +233,21 @@ namespace Spiritfire.Game
                 block.SetVector(Color1Id, (Vector4)(e.layers.c1.linear * Mathf.Max(0, s.y)));
                 block.SetVector(Color2Id, (Vector4)(e.layers.c2.linear * Mathf.Max(0, s.z)));
                 block.SetVector(ShimmerId, new Vector4(e.layers.shimmer.x, e.layers.shimmer.y, e.layers.shimmer.z, 9f));
+                e.r.SetPropertyBlock(block);
+            }
+        }
+
+        /// <summary>停用时把三层颜色清零（属性块里留着上一帧的值会一直亮着；审阅截图拿它切改前 / 改后）</summary>
+        void OnDisable()
+        {
+            if (block == null) return;
+            foreach (var e in entries)
+            {
+                if (!e.r) continue;
+                e.r.GetPropertyBlock(block);
+                block.SetVector(Color0Id, Vector4.zero);
+                block.SetVector(Color1Id, Vector4.zero);
+                block.SetVector(Color2Id, Vector4.zero);
                 e.r.SetPropertyBlock(block);
             }
         }

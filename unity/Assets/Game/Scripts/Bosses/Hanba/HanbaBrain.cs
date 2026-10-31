@@ -105,6 +105,8 @@ namespace Spiritfire.Game
             Ring = GetComponent<SunRing>();
             if (!Ring) Ring = gameObject.AddComponent<SunRing>();
             Ring.Bind(this);
+            // 龟裂的白金裂光、日轮三层自发光（_E 遮罩；正式模型才有，代理 / 白盒日轮没有登记配色，什么都不做）
+            GlowMask.Attach(this);
             Exposure = GetComponent<SunExposure>();
             if (!Exposure) Exposure = gameObject.AddComponent<SunExposure>();
             Exposure.owner = this;

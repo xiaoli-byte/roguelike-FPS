@@ -13,7 +13,12 @@ R / G / B = 发光层 0 / 1 / 2 的范围（0..1，线性），运行时 GlowMas
   2. 在 UV 空间光栅化：每个纹素得到它在网格上的资产空间位置与法线（UV 与 Unity 的 FBX 一致，PNG 不翻转：v 从上往下）。
   3. 颜色取 Unity 里那张 BC 贴图（unity_export 从同一个 GLB 解出来的 PNG，像素相同），按规则算每层的范围
      （同 Three.js layerGlsl 的 smoothstep 写法；多条规则取最大），再往 UV 岛外扩几个纹素（防 mip / 接缝漏边）。
-  4. 写 unity/Assets/Game/Resources/Fx/GlowMasks/<BC 名去掉 _BC>_E.png（1024²，RGB 8 位）。--preview 另存一张叠在 BC 上的预览到 _tmp。
+  4. 写 unity/Assets/Game/Resources/Fx/GlowMasks/<BC 名去掉 _BC>_E.png（默认 1024²，配置可写 size，RGB 8 位）。--preview 另存一张叠在 BC 上的预览到 _tmp。
+
+第二批收尾 C 路（2026-10-31）加了首领用的三份：旱魃本体（龟裂）、日轮（轮体 / 火焰芒 / 轮毂）、熔心魔将大剑（剑脊熔铜纹 / 刃口），
+和三种新规则（见下面「规则」）：thin（细线：龟裂这种画在暗皮肤上的细金线，和同色的大块衣料分开）、radial（到某根轴的距离：日轮的环带）、
+edge（UV 岛内离岛边多少纹素：剑面靠边的那一圈就是刃口）、normalAbs（法线某个分量的绝对值：剑身侧面的窄条）；
+每层还可以 grow 往外长几个纹素（细线发光要比画上去的线宽一点）。
 
 本文件同时是 Blender 端的解码脚本（在 Blender 里运行时只做第 1 步）。
 """
@@ -38,7 +43,20 @@ DILATE = 6
 # 每条规则（同 Three.js FrostGlowLayer）：hue = (中心, 半宽)（sRGB 色相 0..1）、minSat / maxSat / minVal / maxVal、
 # box = {min, max, soft, absX}（资产空间软边盒，absX = 左右对称只写 x ≥ 0 一侧）、sphere = {center, radius}、
 # fadeY = (y0, y1)（y0 处全亮、y1 处熄灭）、facing = {dir, min}（法线与 dir 的夹角余弦下限，软边 0.15）。
-# layers[i] = 第 i 层（R / G / B）的规则表，取最大。层色 / 强度在 Unity 侧（GlowMask.cs），这里只管「哪里亮」。
+# 第二批收尾加的：
+#   radial = {axis, min?, max?, soft}：到资产空间某根轴（0 / 1 / 2 = x / y / z）的距离（米）在 [min, max] 里；
+#   edge = {min?, max?, soft}：UV 岛内离岛边的距离（遮罩纹素）在 [min, max] 里（max = 靠边的一圈，min = 岛心）；
+#   normalAbs = {axis, min?, max?, soft}：法线某个分量的绝对值在 [min, max] 里；
+#   thin = {hue, minSat, minVal, open, grey: {maxSat, maxVal, radius, min}}：在 BC 原始分辨率上找「细线」——颜色按 hue / minSat / minVal 认，
+#     再减去 open × open 的开运算（大块同色衣料被开运算保留下来、减掉；只剩比 open 窄的线），而且周围 radius 纹素里「暗皮肤」
+#     （饱和度 ≤ maxSat、明度 ≤ maxVal）占比 ≥ min（去掉大色块边缘的毛刺）；结果按最大值缩到遮罩尺寸。
+# layers[i] = 第 i 层（R / G / B）的规则表，取最大；grow[i] = 第 i 层在 UV 岛内往外长几个纹素（缺省 0）。
+# size = 遮罩边长（缺省 1024；4096 底色、线很细的旱魃用 2048）。
+# 层色 / 强度在 Unity 侧（GlowMask.cs），这里只管「哪里亮」。
+
+# 魔将大剑：剑身（资产空间：握点在原点、剑尖朝 −y 到 −2.83 m）的熔铜色——橙到金黄、饱和、亮
+_SWORD_MOLTEN = {"hue": (0.07, 0.09), "minSat": 0.56, "minVal": 0.62,
+                 "box": {"min": (-9, -9, -9), "max": (9, -0.32, 9), "soft": 0.04}}
 
 PROFILES: dict[str, dict] = {
     # 三青鸟（Qingniao.ts applyFrostGlow）：0 胸口霜晶、1 翼展外侧的羽尖冰刃、2 尾羽末端的冰羽
@@ -90,6 +108,43 @@ PROFILES: dict[str, dict] = {
         "layers": [
             [{"hue": (0.5, 0.06), "minSat": 0.5, "minVal": 0.55}],
             [{"maxSat": 0.12, "minVal": 0.86, "facing": {"dir": (0, 0, 1), "min": 0.55}}],
+            [],
+        ],
+    },
+    # 旱魃本体（docs/art/boss-hanba.md：炭黑龟裂皮肤透金光；Three.js 版没有）：0 皮肤上的龟裂细金线（白金裂光：平时微亮、日蚀时烧亮、复燃到峰值）。
+    #   残衣是大块的金黄 / 橙红色块，和裂纹同色——靠 thin 只留下暗皮肤里比 9 纹素（4096 底色）窄的线
+    "hanba": {
+        "glb": "characters/SK_Boss_Hanba",
+        "bc": "Art/Characters/SK_Boss_Hanba/Textures/T_Boss_Hanba_BC.png",
+        "size": 2048,
+        "layers": [
+            [{"thin": {"hue": (0.105, 0.065), "minSat": 0.44, "minVal": 0.64, "open": 9,
+                       "grey": {"maxSat": 0.47, "maxVal": 0.67, "radius": 10, "min": 0.4}}}],
+            [],
+            [],
+        ],
+        "grow": [1, 0, 0],
+    },
+    # 日轮（轮面朝 ±z，轮心在原点，外半径 3 m）：0 轮体（整面白金，亮的地方更亮，凹槽 / 铆钉留暗）、1 外缘火焰芒（日蚀时只剩它：日冕）、
+    #   2 轮毂与八辐（聚光、复燃时最亮）
+    "hanba_ring": {
+        "glb": "attachments/SM_BossPart_HanbaSunRing",
+        "bc": "Art/Attachments/SM_BossPart_HanbaSunRing/Textures/T_BossPart_HanbaSunRing_BC.png",
+        "layers": [
+            [{"minVal": 0.82}],
+            [{"radial": {"axis": 2, "min": 2.35, "soft": 0.12}}],
+            [{"radial": {"axis": 2, "max": 1.6, "soft": 0.12}}],
+        ],
+    },
+    # 熔心魔将的熔心大剑（SM_BossWeapon_Greatsword）：0 剑脊熔铜纹（剑面中间那几道熔痕和分叉）、1 刃口（剑面靠边 24 纹素的熔铜带 + 剑身侧面的窄条）。
+    #   剑格、剑柄、配重的金铜色不算（只认剑身：握点以下 0.32 m）
+    "warlord_sword": {
+        "glb": "attachments/SM_BossWeapon_Greatsword",
+        "bc": "Art/Attachments/SM_BossWeapon_Greatsword/Textures/T_BossWeapon_Greatsword_BC.png",
+        "layers": [
+            [{**_SWORD_MOLTEN, "edge": {"min": 24, "soft": 4}, "normalAbs": {"axis": 2, "min": 0.55, "soft": 0.1}}],
+            [{**_SWORD_MOLTEN, "edge": {"max": 24, "soft": 4}},
+             {**_SWORD_MOLTEN, "normalAbs": {"axis": 2, "max": 0.55, "soft": 0.1}}],
             [],
         ],
     },
@@ -240,12 +295,71 @@ def hsv_image(bc_path: Path, size: int):
     return np.stack([h, s, mx], 2), rgb
 
 
-def rule_mask(rule: dict, hsv, P, N):
-    """一条规则的范围（同 Three.js layerGlsl）"""
+def band(x, lo, hi, soft):
+    """x 在 [lo, hi] 里为 1，两侧 soft 宽的软边；lo / hi 为 None 表示那一侧不限"""
+    import numpy as np
+
+    m = np.ones_like(x)
+    if lo is not None:
+        m = m * smoothstep(lo - soft, lo + soft, x)
+    if hi is not None:
+        m = m * (1 - smoothstep(hi - soft, hi + soft, x))
+    return m
+
+
+def thin_map(bc_path: Path, spec: dict, size: int):
+    """细线：在 BC 原始分辨率上认颜色、减掉开运算留下的大色块、要求周围是暗皮肤，再按最大值缩到 size"""
+    import numpy as np
+    from PIL import Image
+    from scipy import ndimage as ndi
+
+    full = Image.open(bc_path).size[0]
+    hsv, _ = hsv_image(bc_path, full)
+    h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
+    c, w = spec["hue"]
+    dist = np.abs(((h - c + 0.5) % 1.0) - 0.5)
+    col = (1 - smoothstep(w * 0.6, w, dist)) * smoothstep(spec["minSat"] - 0.06, spec["minSat"] + 0.06, s) \
+        * smoothstep(spec["minVal"] - 0.06, spec["minVal"] + 0.06, v)
+    k = int(spec.get("open", 9))
+    blobs = ndi.binary_opening(col > 0.5, structure=np.ones((k, k), bool))
+    line = col * ~blobs
+    g = spec["grey"]
+    grey = (1 - smoothstep(g["maxSat"] - 0.05, g["maxSat"] + 0.05, s)) * (1 - smoothstep(g["maxVal"] - 0.05, g["maxVal"] + 0.05, v))
+    around = ndi.uniform_filter(grey, 2 * int(g["radius"]) + 1)
+    line = line * smoothstep(g["min"] - 0.1, g["min"] + 0.1, around)
+    f = full // size
+    if f >= 1 and f * size == full:
+        return line.reshape(size, f, size, f).max(axis=(1, 3)).astype(np.float32)
+    return np.asarray(Image.fromarray((line * 255).astype(np.uint8)).resize((size, size), Image.Resampling.BOX), np.float32) / 255.0
+
+
+def rule_mask(rule: dict, hsv, P, N, ctx: dict | None = None):
+    """一条规则的范围（同 Three.js layerGlsl）；ctx = 这张遮罩的附加量（edt：UV 岛内离岛边的纹素距离；thin：细线图，按规则缓存）"""
     import numpy as np
 
     h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
     m = np.ones_like(h)
+    ctx = ctx or {}
+    if "thin" in rule:
+        key = repr(sorted(rule["thin"].items()))
+        if key not in ctx.setdefault("thin", {}):
+            ctx["thin"][key] = thin_map(ctx["bc"], rule["thin"], h.shape[0])
+        m *= ctx["thin"][key]
+    if "radial" in rule:
+        rd = rule["radial"]
+        ax = int(rd["axis"])
+        others = [i for i in range(3) if i != ax]
+        r = np.sqrt(P[..., others[0]] ** 2 + P[..., others[1]] ** 2)
+        m *= band(r, rd.get("min"), rd.get("max"), rd.get("soft", 0.05))
+    if "edge" in rule:
+        ed = rule["edge"]
+        if "edt" not in ctx:
+            from scipy import ndimage as ndi
+            ctx["edt"] = ndi.distance_transform_edt(ctx["cov"]).astype(np.float32)
+        m *= band(ctx["edt"], ed.get("min"), ed.get("max"), ed.get("soft", 2))
+    if "normalAbs" in rule:
+        na = rule["normalAbs"]
+        m *= band(np.abs(N[..., int(na["axis"])]), na.get("min"), na.get("max"), na.get("soft", 0.1))
     if "hue" in rule:
         c, w = rule["hue"]
         dist = np.abs(((h - c + 0.5) % 1.0) - 0.5)
@@ -313,13 +427,19 @@ def bake(key: str, preview: bool) -> Path:
     if not bc.exists():
         raise SystemExit(f"{key}：找不到 Unity 贴图 {bc}（先跑 unity_export）")
     npz = dump_mesh(key, glb)
-    P, N, cov = rasterize(npz, MASK_SIZE)
-    hsv, rgb = hsv_image(bc, MASK_SIZE)
-    out = np.zeros((MASK_SIZE, MASK_SIZE, 3), np.float32)
+    size = int(prof.get("size", MASK_SIZE))
+    P, N, cov = rasterize(npz, size)
+    hsv, rgb = hsv_image(bc, size)
+    out = np.zeros((size, size, 3), np.float32)
+    ctx = {"bc": bc, "cov": cov}
     for li, rules in enumerate(prof["layers"][:3]):
         for r in rules:
-            out[..., li] = np.maximum(out[..., li], rule_mask(r, hsv, P, N))
+            out[..., li] = np.maximum(out[..., li], rule_mask(r, hsv, P, N, ctx))
     out *= cov[..., None]
+    for li, g in enumerate(prof.get("grow", [])[:3]):
+        if g > 0:
+            from scipy import ndimage as ndi
+            out[..., li] = ndi.maximum_filter(out[..., li], size=2 * int(g) + 1) * cov
     out = dilate(out, cov, DILATE)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     name = Path(prof["bc"]).stem
@@ -333,7 +453,7 @@ def bake(key: str, preview: bool) -> Path:
         tint = np.array([[1.0, 0.25, 0.1], [0.1, 1.0, 0.3], [0.25, 0.45, 1.0]], np.float32)
         glow = np.clip(out @ tint, 0, 1)
         pv = np.clip(rgb * 0.45 + glow * 0.9, 0, 1)
-        Image.fromarray((pv * 255).astype(np.uint8)).resize((512, 512)).save(WORK / f"{key}_preview.png")
+        Image.fromarray((pv * 255).astype(np.uint8)).resize((1024, 1024) if size > 1024 else (512, 512)).save(WORK / f"{key}_preview.png")
     return path
 
 

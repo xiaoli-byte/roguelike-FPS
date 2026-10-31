@@ -34,6 +34,8 @@ namespace Spiritfire.Game
         public const string PrefabId = "SM_BossPart_HanbaSunRing", SocketName = "socket_sunring";
         /// <summary>正式日轮的世界半径（米，直径 6 m）</summary>
         public const float WorldRadius = 3f;
+        /// <summary>日蚀黑盘的颜色（sRGB）：冷的靛紫黑</summary>
+        public static readonly Color DiscColor = new(0.035f, 0.04f, 0.1f);
 
         [Tooltip("平时的转速（度 / 秒）")] public float spinSpeed = 20f;
         [Tooltip("平时的炽度（0–1）")] public float idleBlaze = 0.35f;
@@ -445,7 +447,8 @@ namespace Spiritfire.Game
                 disc.SetParent(Pivot, false);
                 discR = go.GetComponent<Renderer>();
                 discR.sharedMaterial = FxMaterials.Unlit;
-                FxMaterials.Tint(discR, new Color(0.03f, 0.02f, 0.015f));
+                // 冷黑（偏靛紫，不是暖黑）：和身上烧亮的白金裂光、黑盘后面的金色日冕拉开冷暖
+                FxMaterials.Tint(discR, DiscColor);
             }
             if (disc) disc.gameObject.SetActive(on);
             if (on) PlaceDisc();
@@ -454,9 +457,11 @@ namespace Spiritfire.Game
         void PlaceDisc()
         {
             if (!disc || !ring) return;
-            float world = WorldRadius * 1.25f * (Risen ? Mathf.Lerp(1f, risenScale, RiseProgress) : 1f);
+            float k = Risen ? Mathf.Lerp(1f, risenScale, RiseProgress) : 1f;
+            float world = WorldRadius * 1.25f * k;
             float s = Mathf.Max(1e-3f, disc.parent ? disc.parent.lossyScale.x : 1f);
-            disc.position = Center + Facing * 0.15f;
+            // 立在轮毂正面之前（轮毂两面凸起、半厚约 0.6 m：只往前挪 0.15 m 时轮毂会从黑盘中间穿出来一块金色圆面）
+            disc.position = Center + Facing * (ringHalfW * k + 0.05f);
             disc.rotation = Quaternion.FromToRotation(Vector3.up, Facing);
             disc.localScale = new Vector3(world * 2f / s, 0.05f / s, world * 2f / s);
         }

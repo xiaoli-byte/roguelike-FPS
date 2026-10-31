@@ -171,6 +171,8 @@ namespace Spiritfire.Game
             }
             var c = Ring ? Ring.Center : Brain.BodyCenter + Vector3.up * 3f;
             Sky?.Flash(HDef?.flareBright ?? 2.4f, 0.12f, 0.9f);
+            // 龟裂裂光 + 日轮三层自发光同一帧点到峰值，和天色一起落回
+            GlowMask.Flash(Brain, 0.12f, 0.9f);
             // 复燃 = 日蚀真正的释放帧：顿帧 + 大震屏 + 日轮巨型爆闪 / 身上「啪」/ 脚下金环，同一帧（动画的 flare）
             Impact(0.09f, 0.7f, 0.6f, 90f, "flare");
             RingFrame(out _, out _, out _, out float ringRadius);
