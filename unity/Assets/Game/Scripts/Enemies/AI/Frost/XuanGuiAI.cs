@@ -19,6 +19,10 @@ namespace Spiritfire.Game
     ///   近身也转：在 8 m 内被啄满 2 次或贴身累计 4 s、旋转冷却好时，喷鼻息后退 0.9 s（2.6 m/s，退到 6 m 或撞墙就开转），再照常缩壳旋转。
     /// 弱点：平时是身后的蛇头（snake 骨 + 模型空间 (0, 1.52, −1.6)），过热时是壳顶散热孔（body 骨 + (0, 1.63, 0.25)）。
     /// 状态：advance → peckWindup → peck；advance → biteWindup → bite；advance →（backoff →）retract → spin → overheat → rightself → advance
+    /// 精英（K 路，docs/art/vfx/elites-ch2.md 第 2 节；数值与时机不变）：
+    ///   缩壳旋转——起手金芒 + 精英印，缩壳时整只往下压（<see cref="EliteStrike.Charge"/>）、绕身的冰晶星隔一颗换成金、金点往壳心收；
+    ///   起转（释放帧）一下弹开（局部顿帧）+ 贴地大金环、冰刺环、冷光（<see cref="Fx.Ch2EliteSpinBurst"/>），旋转中身后甩金屑，撞墙反弹踢一下；
+    ///   冰喙猛啄——缩颈时往后仰压，啄下去一下前冲拉长（顿帧）+ 金色爆闪 + 啄点冰崩（<see cref="Fx.Ch2EliteIceSlam"/>）。
     /// </summary>
     public sealed class XuanGuiAI : EnemyAI
     {
@@ -43,6 +47,8 @@ namespace Spiritfire.Game
         Vector3 snakeOffset, ventOffset;
         Renderer[] shellRenderers = System.Array.Empty<Renderer>(), bodyRenderers = System.Array.Empty<Renderer>();
         bool shellOut;
+        /// <summary>精英出手的分量层（普通版为 null）</summary>
+        EliteStrike strike;
         Quaternion shellRest = Quaternion.identity;
 
         /// <summary>最近一次啄 / 咬 / 撞是否打中了玩家（测试与调试用）</summary>
@@ -205,6 +211,7 @@ namespace Spiritfire.Game
                     Stop();
                     FacePlayer(2.2f * Mathf.Rad2Deg, dt);
                     Glow = 0.4f + 0.6f * Mathf.Clamp01(stateTime / windTime);
+                    strike?.Charge(Mathf.Clamp01(stateTime / windTime), 0.08f, -10f);
                     if (stateTime >= windTime) Peck();
                     break;
                 case "peck":
@@ -245,7 +252,14 @@ namespace Spiritfire.Game
                     if (Mathf.Floor(stateTime / 0.12f) != Mathf.Floor((stateTime - dt) / 0.12f))
                     {
                         float a = stateTime * 9;
-                        Fx.FrostGlint(Local(Mathf.Sin(a) * 1.2f, 0.5f, Mathf.Cos(a) * 1.25f), 0.45f * Size, FrostKit.Spike);
+                        // 精英：绕身的冰晶星隔一颗换成金
+                        bool gold = strike && Mathf.FloorToInt(stateTime / 0.12f) % 2 == 1;
+                        Fx.FrostGlint(Local(Mathf.Sin(a) * 1.2f, 0.5f, Mathf.Cos(a) * 1.25f), (gold ? 0.6f : 0.45f) * Size, gold ? EliteStrike.Gold : FrostKit.Spike);
+                    }
+                    if (strike)
+                    {
+                        strike.Charge(t, 0.14f, 4f);
+                        Fx.EliteCharge(Local(0, 0.8f, 0), 1.5f * Size, t, dt);
                     }
                     if (stateTime >= windTime) StartSpin();
                     break;
@@ -287,6 +301,7 @@ namespace Spiritfire.Game
 
         void ToAdvance()
         {
+            strike?.Relax();
             ReleaseAttack();
             PlayLocomotion();
             SetState("advance");
@@ -302,6 +317,11 @@ namespace Spiritfire.Game
             Act("peckWindup", windTime, 0.08f);
             SetState("peckWindup");
             GameAudio.PlayAt("telegraph", Local(0, 1f, 1.6f), 0.6f, 0.8f);
+            if (elite)
+            {
+                strike ??= EliteStrike.For(this);
+                Fx.EliteCue(Local(0, 1f, 1.8f), 0.8f * Size);
+            }
         }
 
         void Peck()
@@ -311,6 +331,13 @@ namespace Spiritfire.Game
             var p = Local(0, 0.9f, 2.1f);
             GameAudio.PlayAt("enemy_melee", p, 0.9f, 0.6f);
             FrostKit.Shatter(p, 0.4f * Size, FrostKit.TankIce, 6, 4f);
+            if (strike)
+            {
+                strike.Release(-0.1f, 12f, 0.05f);
+                Fx.EliteRelease(p, transform.forward, 0.8f * Size);
+                float gy = FrostKit.GroundAt(p, transform.position.y, 0.5f, 3f);
+                Fx.Ch2EliteIceSlam(new Vector3(p.x, float.IsFinite(gy) ? gy : transform.position.y, p.z), 1.1f * Size);
+            }
             if (DistToPlayer <= PeckReach + 0.35f && FacingDot() > 0.5f && VerticalReach(2f) && HitTarget(Damage * PeckMult, p))
             {
                 struck = true;
@@ -384,6 +411,12 @@ namespace Spiritfire.Game
             SetState("retract");
             GameAudio.PlayAt("telegraph", transform.position, 0.9f, 0.55f);
             GameAudio.PlayAt("enemy_charge", transform.position, 0.6f, 1.3f);
+            if (elite)
+            {
+                strike ??= EliteStrike.For(this);
+                Fx.EliteCue(Local(0, 1.2f, 0), Size);
+                Fx.Ch2EliteSeal(transform.position, 1.1f * Size);
+            }
         }
 
         /// <summary>预警：脚下一圈（旋壳的大小）+ 朝当前方向一条直线（只预告起步方向，反弹要自己看）</summary>
@@ -412,6 +445,14 @@ namespace Spiritfire.Game
             SwapToShell(true);
             Sfx("enemy_charge", 1f, 0.7f);
             FrostKit.Quake(transform.position, 0.3f, StepShakeRange, 0.25f);
+            if (strike)
+            {
+                // 起转（释放帧）：一下弹开 + 局部顿帧、贴地大金环、冰刺环、冷光、金色爆闪
+                strike.Release(-0.08f, 0f, 0.05f);
+                Fx.Ch2EliteSpinBurst(transform.position, 1.1f * Size);
+                Fx.EliteRelease(Local(0, 0.8f, 0), Vector3.zero, Size);
+                FrostKit.Quake(transform.position, 0.45f, StepShakeRange, 0.3f);
+            }
         }
 
         /// <summary>身体 ↔ 旋壳：换的一瞬间用一团冰雾盖住（没有旋壳挂件时只出特效，身体照常播 spin）</summary>
@@ -445,6 +486,7 @@ namespace Spiritfire.Game
             float sp = SpinSpeedAt(stateTime, elite) * SpeedMult;
             var dir = FrostKit.YawDir(spinYaw);
             var before = transform.position;
+            if (strike) Fx.EliteTrail(transform.position, dir, Size, dt);
             bool navWall = FrostKit.NavStep(agent, dir * (sp * dt), out var navNormal, 0.1f);
             // 碰撞体墙（导航网格只按代理半径收边，壳比代理宽）：身体中心高度往前探壳半径
             float rad = 1.0f * Size;
@@ -490,6 +532,7 @@ namespace Spiritfire.Game
                 FrostKit.Shatter(p, Size, FrostKit.TankIce, 14, 7f);
                 GameAudio.PlayAt("boss_slam", p, 0.8f, 1.1f);
                 FrostKit.Quake(transform.position, 0.45f, StepShakeRange, 0.25f);
+                strike?.Kick(0.1f, -8f);
                 if (SpinStopsAt(bounces, elite))
                 {
                     EndSpin();
@@ -507,6 +550,7 @@ namespace Spiritfire.Game
         /// </summary>
         void EndSpin()
         {
+            strike?.Relax();
             ReleaseAttack();
             Stop();
             SwapToShell(false);
@@ -534,6 +578,7 @@ namespace Spiritfire.Game
         /// </summary>
         protected override void CancelAttack()
         {
+            strike?.Relax();
             warn.Cancel();
             SetGlow(1, 0);
             if (state is "spin" or "overheat" or "rightself")

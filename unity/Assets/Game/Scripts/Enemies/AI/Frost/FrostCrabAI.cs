@@ -15,6 +15,10 @@ namespace Spiritfire.Game
     ///     任何方向都能横扫。碎钳演出 0.9 s 不格挡。
     /// 弱点：背后发光的鳃缝（vent 骨 + 模型空间 (0, 1.0, −0.95)）。
     /// 状态：advance → grabWindup → grab → grabRecover → advance；advance → sweepWindup → sweep → advance；（低于 35%）→ shellBreak → advance
+    /// 精英（K 路，docs/art/vfx/elites-ch2.md 第 3 节；数值与时机不变）：
+    ///   夹击——起手金芒 + 精英印，抬钳时整只后仰压低（<see cref="EliteStrike.Charge"/>）、金点往钳尖收；夹下去一下往前砸（压扁、前冲、局部顿帧 0.07 s）+ 金色爆闪 +
+    ///     一对剪刀月牙合拢（<see cref="Fx.Ch2EliteScissor"/>）+ 钳下冰崩（<see cref="Fx.Ch2EliteIceSlam"/>）；
+    ///   接招横扫——小钳一扬时往一侧拧，推出去那一下拉长（顿帧）+ 地波外多一圈金环（<see cref="Fx.Ch2EliteSweepRing"/>）。
     /// </summary>
     public sealed class FrostCrabAI : EnemyAI
     {
@@ -33,6 +37,10 @@ namespace Spiritfire.Game
         readonly WarnScope warn = new("frost_crab");
         TelegraphHandle sector;
         Transform claw;
+        /// <summary>精英出手的分量层（普通版为 null）</summary>
+        EliteStrike strike;
+        /// <summary>巨钳尖（金点往这里收、剪刀月牙在这里合拢）</summary>
+        Vector3 ClawTip => Local(0.55f, 1f, 2f);
 
         /// <summary>巨钳已碎（血量低于 35%）</summary>
         public bool Broken => broken;
@@ -196,6 +204,11 @@ namespace Spiritfire.Game
                     sector.MoveTo(transform.position);
                     sector.SetYaw(transform.eulerAngles.y);
                     if (t > 0.7f) sector.SetColor(Color.Lerp(FrostKit.WarnTank, Color.white, 0.5f + 0.5f * Mathf.Sin(stateTime * 40)));
+                    if (strike)
+                    {
+                        strike.Charge(t, 0.1f, -10f);
+                        Fx.EliteCharge(ClawTip, 1.3f * Size, t, dt);
+                    }
                     if (stateTime >= windTime) Grab();
                     break;
                 }
@@ -223,6 +236,7 @@ namespace Spiritfire.Game
                 case "sweepWindup":
                     Stop();
                     Glow = 0.3f + 0.5f * Mathf.Clamp01(stateTime / windTime);
+                    strike?.Charge(Mathf.Clamp01(stateTime / windTime), 0.08f, 6f);
                     if (stateTime >= windTime) Sweep();
                     break;
                 case "sweep":
@@ -242,6 +256,7 @@ namespace Spiritfire.Game
 
         void ToAdvance()
         {
+            strike?.Relax();
             ReleaseAttack();
             PlayLocomotion();
             SetState("advance");
@@ -287,6 +302,12 @@ namespace Spiritfire.Game
             Act("grabWindup", windTime, 0.08f);
             SetState("grabWindup");
             GameAudio.PlayAt("telegraph", Local(0.6f, 1.4f, 1.2f), 0.9f, 0.6f);
+            if (elite)
+            {
+                strike ??= EliteStrike.For(this);
+                Fx.EliteCue(ClawTip, Size);
+                Fx.Ch2EliteSeal(transform.position, 1.2f * Size);
+            }
         }
 
         void Grab()
@@ -298,6 +319,15 @@ namespace Spiritfire.Game
             GameAudio.PlayAt("boss_slam", p, 0.8f, 1.2f);
             FrostKit.Shatter(p, Size * 0.8f, 10, 5f);
             FrostKit.Quake(transform.position, 0.4f, StepShakeRange, 0.25f);
+            if (strike)
+            {
+                // 释放帧：往前砸（压扁、前冲）+ 局部顿帧、金色爆闪、剪刀月牙合拢、钳下冰崩
+                strike.Release(0.12f, 12f, 0.07f);
+                Fx.EliteRelease(p, transform.forward, Size);
+                Fx.Ch2EliteScissor(p, transform.eulerAngles.y, Size);
+                float gy = FrostKit.GroundAt(p, transform.position.y, 0.5f, 3f);
+                Fx.Ch2EliteIceSlam(new Vector3(p.x, float.IsFinite(gy) ? gy : transform.position.y, p.z), 1.3f * Size);
+            }
             if (DistToPlayer <= GrabReach + 0.35f && FacingDot() > GrabCos && VerticalReach(2.2f) && HitTarget(Damage * GrabMult, p))
             {
                 struck = true;
@@ -320,6 +350,11 @@ namespace Spiritfire.Game
             Act("sweepWindup", windTime, 0.08f);
             SetState("sweepWindup");
             GameAudio.PlayAt("telegraph", Local(-0.6f, 1f, 1f), 0.8f, 1.1f);
+            if (elite)
+            {
+                strike ??= EliteStrike.For(this);
+                Fx.EliteCue(Local(-0.6f, 1f, 1f), 0.8f * Size);
+            }
         }
 
         void Sweep()
@@ -334,6 +369,12 @@ namespace Spiritfire.Game
             GroundWave.Spawn(SweepWave(ground, Damage * SweepMult, this));
             // FX3：横扫在内圈翻起一圈雪雾 / 冰碴 + 霜斑（不立冰刺：伤害是往外推的地波，别让人以为冰刺那圈才疼）
             Fx.Play("FrostRingBurst", ground, Vector3.up, FrostKit.TankIce, SweepInner * 1.3f);
+            if (strike)
+            {
+                strike.Release(-0.08f, 0f, 0.05f);
+                Fx.EliteRelease(Local(-0.6f, 1f, 1f), Vector3.zero, 0.8f * Size);
+                Fx.Ch2EliteSweepRing(ground, SweepInner * 2.2f);
+            }
             sweepCd = Random.Range(4f, 5f);
         }
 
@@ -359,6 +400,7 @@ namespace Spiritfire.Game
 
         protected override void CancelAttack()
         {
+            strike?.Relax();
             warn.Cancel();
             if (Dead || state is "advance" or IdleState or "shellBreak" or "spawn") return;
             PlayLocomotion();

@@ -14,6 +14,8 @@ namespace Spiritfire.Game
     ///   跳跃换位：玩家逼近到 6.5 m（精英 ×1.15）内、高差 ≤ 2.5 m → 后腿一蹲 0.2 s，腾空 0.8 s 落到背离玩家约 10 m 外的可走点
     ///         （落点要比现在离玩家远 4 m 以上、1.4 m 高的直线不被挡），冷却 4–6 s；落地 0.3 s 后很快就能再蓄力
     /// 跳跃走脚本位移（<see cref="EnemyAI.BeginManualMotion"/>，重力 26），落地交还导航。
+    /// 精英（K 路，docs/art/vfx/elites-ch2.md 第 1 节；数值与时机不变）：起手金芒 + 蹄下精英印，蓄力时压低前倾（<see cref="EliteStrike.Charge"/>）、金点往角间收；
+    /// 释放帧被冰光往后一顶（拉长、后仰、局部顿帧 0.06 s）+ 金色爆闪，冰光里再穿一线金芯（<see cref="Fx.Ch2EliteBeamCore"/>），离玩家近时轻震屏。
     /// </summary>
     public sealed class FuzhuAI : EnemyAI
     {
@@ -36,6 +38,8 @@ namespace Spiritfire.Game
         FrostGlint focusGlint;
         float glintLevel;
         readonly SightSeeker seeker = new();
+        /// <summary>精英出手的分量层（普通版为 null）</summary>
+        EliteStrike strike;
         static RaycastHit[] rayBuf = new RaycastHit[16];
 
         protected override string InitialState => "move";
@@ -153,6 +157,11 @@ namespace Spiritfire.Game
                     if (!locked) FacePlayer(258, dt);
                     UpdateAim(locked, dt);
                     ChargeFx(t, dt);
+                    if (strike)
+                    {
+                        strike.Charge(t, 0.12f, 9f);
+                        Fx.EliteCharge(Muzzle, 1.1f * Size, t, dt);
+                    }
                     if (stateTime >= chargeTime) Fire();
                     break;
                 }
@@ -162,6 +171,7 @@ namespace Spiritfire.Game
                     Glow = 0.25f;
                     if (stateTime >= recoverTime / Mathf.Sqrt(Mathf.Max(0.1f, auraAttackRate)))
                     {
+                        strike?.Relax();
                         ReleaseAttack();
                         RollCooldown(3.6f, 5f);
                         PlayLocomotion();
@@ -225,6 +235,12 @@ namespace Spiritfire.Game
             PlayTimed("charge", chargeTime, 0.08f);
             // 前蹄一跺：蓄力开始
             FrostKit.SnowPuff(transform.TransformPoint(new Vector3(0.1f, 0.05f, 0.3f)), 0.6f * Size, 5);
+            if (elite)
+            {
+                strike ??= EliteStrike.For(this);
+                Fx.EliteCue(Muzzle, Size);
+                Fx.Ch2EliteSeal(transform.position, 0.9f * Size);
+            }
         }
 
         /// <summary>瞄准：跟踪段更新方向（玩家胸口 + 0.2 s 提前量）；每 0.1 s 重测射程，瞄准线沿冰光的地面投影铺到被挡住的地方</summary>
@@ -284,6 +300,14 @@ namespace Spiritfire.Game
             for (int i = 1; i <= n; i++) Fx.Play("Twinkle", from + dir * (dist * i / (n + 1)), Vector3.up, i % 3 == 0 ? CoreColor : SparkColor, 0.3f * k);
             FrostKit.Shatter(end, 0.7f * k, ShardColor, 14, 5);
             Fx.FrostGlint(from, 1.3f * k, CoreColor);
+            if (strike)
+            {
+                // 释放帧：被冰光往后一顶（拉长、后仰）+ 局部顿帧、金色爆闪、冰光里的金芯；离玩家近时轻震屏
+                strike.Release(-0.1f, -9f, 0.06f);
+                Fx.EliteRelease(from, dir, Size);
+                Fx.Ch2EliteBeamCore(from, end);
+                FrostKit.Quake(from, 0.25f, 18f, 0.2f);
+            }
             GameAudio.PlayAt("shot_beam", from, 0.9f, 1.35f);
             // 冻地从前蹄处开始（冰光从头顶射出，脚下的地面不结冰），只铺在和起点差不多高的地面上
             var g0 = transform.TransformPoint(StripFrom);
@@ -351,6 +375,7 @@ namespace Spiritfire.Game
 
         protected override void CancelAttack()
         {
+            strike?.Relax();
             aimLane.Cancel();
             if (!Dead && state is "charge" or "recover") RollCooldown(1.5f, 2.5f);
         }
