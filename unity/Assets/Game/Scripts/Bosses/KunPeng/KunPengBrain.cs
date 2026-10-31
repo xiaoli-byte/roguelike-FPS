@@ -52,6 +52,8 @@ namespace Spiritfire.Game
         public float CutTop { get; private set; } = float.NegativeInfinity;
         /// <summary>当前模型的片段里烘了「绕水线升降」的宿主运动（正式美术的鲲）</summary>
         public bool BakedHost { get; private set; }
+        /// <summary>活着时 Animator 在播（倒下演出据此决定要不要把被 EnemyBody 关掉的 Animator 重新打开播 death）</summary>
+        public bool AnimatorLive { get; private set; }
 
         // ───────────── 鹏 ─────────────
 
@@ -225,6 +227,8 @@ namespace Spiritfire.Game
         /// </summary>
         void LateUpdate()
         {
+            // 活着的最后一帧 Animator 在不在播（倒下时 EnemyBody 会关掉它；本来就关着的——片段缺失的代理——倒下也不重新打开）
+            if (!Dead) AnimatorLive = anim && anim.isActiveAndEnabled && anim.runtimeAnimatorController;
             if (Def == null || !rigged || Dead || Model == null || !Model.root) return;
             if (!modelInfo.TryGetValue(Model, out var info))
             {
@@ -966,7 +970,7 @@ namespace Spiritfire.Game
             drop = Mathf.Max(0, pos.y + startY - groundY);
             anim = m.animator;
             ragdoll = b.GetComponent<CreatureRagdoll>();
-            Keyframed = !kun && anim && anim.HasState(0, DeathState) && !(ragdoll && ragdoll.Active);
+            Keyframed = !kun && b.AnimatorLive && anim && anim.HasState(0, DeathState) && !(ragdoll && ragdoll.Active);
             if (anim && anim.enabled)
             {
                 // 首领顿帧停在一半时倒下：Animator 的速度留在 ×0.05（行为组件已经停用，没人追回）
