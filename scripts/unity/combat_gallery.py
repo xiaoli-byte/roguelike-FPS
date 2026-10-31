@@ -313,14 +313,39 @@ FX_POLISH_TEXT = ("四路特效打磨（A 射击核心、B 爆炸 / 元素 / 状
                   "中尺度东方纹样、克制的光、第一人称读感优先；烟尘按章节换暖沙 / 冷白 / 紫褐。各路改前 / 改后对比：")
 
 
-def fx_polish_links():
+def fx_polish_links(root=FX_POLISH, lanes=FX_POLISH_LANES):
     """[(路标题, 说明, [(图名, 相对 unity-combat 的路径)])]"""
     out = []
-    for key, title, desc in FX_POLISH_LANES:
-        d = FX_POLISH / key
+    for key, title, desc in lanes:
+        d = root / key
         files = sorted(d.glob("*.jpg"), key=lambda p: [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", p.stem)]) if d.is_dir() else []
-        out.append((title, desc, [(p.stem, f"../fx-polish/{key}/{p.name}") for p in files]))
+        out.append((title, desc, [(p.stem, f"../{root.name}/{key}/{p.name}") for p in files]))
     return out
+
+# 总览页开头的「首领与精英动作调优」一段：各路设计单（docs/art/vfx/*.md）+ 改前 / 改后节拍条（docs/art/review/boss-vfx/<路>/*.jpg）
+BOSS_VFX_DATE = "2026-10-31"
+BOSS_VFX = ROOT / "docs/art/review/boss-vfx"
+BOSS_VFX_LANES = [
+    ("H", "H 旱魃 + 第一章精英", "日轮扫射 / 旱风 / 焦裂 / 日蚀 / 召沙魇 / 飞天之殇手 K 重排节拍、出手对齐到半帧内、1-4 日蚀真正压暗；"
+                              "蝎尾弩卫 / 三彩镇墓兽 / 蜃楼蟾的精英出手（EliteStrike + 金色点缀）", ["hanba", "elites-ch1"]),
+    ("K", "K 鲲鹏 + 第二章精英", "鲲猛砸 / 吞吸、鹏扇翼狂风 / 俯冲手 K，化形「水击三千里 → 扶摇」，冻雾不再糊屏；夫诸 / 冰甲旋龟 / 玄冰巨蟹的精英出手",
+     ["kunpeng", "elites-ch2"]),
+    ("W", "W 熔心魔将 + 第三章精英", "挂上熔心大剑，横扫 / 连斩 / 冲锋 / 跃击手 K，熔铜暗月牙刀光、狂怒换挡；马面狱卒 / 炮仗傀儡 / 熔炉铁牛的精英出手；"
+                                "通用刀光顶点色按线性写（slash-linear-*）", ["warlord", "elites-ch3"]),
+    ("Q", "Q 火麒麟 + 精英词缀", "玄鳞 / 焚身各 6 段手 K（人立、张鳞、刨蹄、蜷身、砸地、吐息），鳞冠、火云雨环形云带、净火归瑞；"
+                             "精英金环改墨底鎏金带，迅捷 / 坚盾 / 爆裂 / 狂暴四种纹样，爆裂死亡蓄 → 爆对齐预警", ["qilin", "elite-affixes"]),
+]
+BOSS_VFX_TEXT = ("四路并行，按各首领 / 精英的设定和世界观重做攻击动作与攻击特效：每个招式先写设计单（设定母题 → 形状语言、读感目标、"
+                 "起手 → 预警 → 蓄力 → 释放帧 → 持续 → 收招 → 余韵的节拍表并对到动作关键姿势、主形 / 次级 / 点缀三层特效），"
+                 "招牌招式改 Blender 手 K 关键帧，顿帧、震屏、音效、特效由动画事件在释放帧同一帧触发。三章精英共用 EliteStrike 出手分量层。"
+                 "各路改前 / 改后节拍条：")
+
+
+def boss_vfx_rows():
+    """[(路标题, 说明, [(设计单名, 相对 unity-combat 的路径)], [(图名, 路径)])]"""
+    lanes = [(k, t, d) for k, t, d, _ in BOSS_VFX_LANES]
+    return [(title, desc, [(n, f"../../vfx/{n}.md") for n in docs], files)
+            for (title, desc, files), (_, _, _, docs) in zip(fx_polish_links(BOSS_VFX, lanes), BOSS_VFX_LANES)]
 
 NOTES = [
     "三章普通怪都在测试场（TestArena）截：沙地、红色刷怪台、悬浮的武器架是测试场的东西，不是本章地形（红色圆台不是预警，别和红 / 橙色预警混看）；首领在各自的真实关卡里截。",
@@ -330,6 +355,7 @@ NOTES = [
     "「第一人称」格：眼睛位置不动、视线临时转向出招者（拍完还原），看的是玩家正看着它时预警读不读得出来。",
     "本轮（2026-10-29）在特效打磨四路 + 风格审查收口之后、用合并 ff7ad722 后的代码全部重拍：七组 gallery、boss-intro（测试场 + 四个首领关）、fx；各图标题里有截图时间。"
     "收尾一轮（#14–16 及元素爆炸、旱魃泉水）之后又重拍了 gallery-frost / kunpeng / hanba / desert 和 fx 通用特效组。",
+    "首领与精英动作调优（2026-10-31）之后七组 gallery 全部重拍：kunpeng / frost 由 K 路拍，hanba / desert / warlord / inferno / qilin 在通用刀光顶点色修复之后重拍。",
 ]
 
 
@@ -369,7 +395,15 @@ background:#000c;color:var(--fg);font-size:14px}
              "四格依次是<b style='color:#f0b43c'>前摇</b>（预警最满的那一帧）、<b style='color:#f57832'>出手</b>、<b style='color:#eb4646'>命中</b>"
              "（没打中则为收招）、<b style='color:#5aa0f5'>第一人称</b>（前摇最后一帧的玩家视角）。第三人称旁观机位里的<b style='color:#5af2ff'>青色胶囊</b>是玩家站位。"
              "点图放大，← → 翻页，Esc 关闭。</div></header>")
-    h.append("<nav><a href='#fx-polish'>特效打磨</a><a href='#issues'>问题清单</a>" + "".join(f"<a href='#{k}'>{t.split('、', 1)[1]}</a>" for k, t, _ in sections) + "</nav><main>")
+    h.append("<nav><a href='#boss-vfx'>首领与精英动作</a><a href='#fx-polish'>特效打磨</a><a href='#issues'>问题清单</a>" + "".join(f"<a href='#{k}'>{t.split('、', 1)[1]}</a>" for k, t, _ in sections) + "</nav><main>")
+    # 首领与精英动作调优
+    h.append(f"<h2 id='boss-vfx'>首领与精英动作调优（{BOSS_VFX_DATE}）</h2><p>{html.escape(BOSS_VFX_TEXT)}</p>"
+             "<table><tr><th>路</th><th>内容</th><th>设计单</th><th>改前 / 改后节拍条</th></tr>")
+    for title, desc, docs, files in boss_vfx_rows():
+        doc_links = " · ".join(f"<a href='{html.escape(p)}'>{html.escape(n)}.md</a>" for n, p in docs)
+        links = " · ".join(f"<a href='{html.escape(p)}'>{html.escape(n)}</a>" for n, p in files) or "<span class='dim'>（无）</span>"
+        h.append(f"<tr><td>{html.escape(title)}</td><td class='dim'>{html.escape(desc)}</td><td>{doc_links}</td><td>{links}</td></tr>")
+    h.append("</table>")
     # 特效打磨
     h.append(f"<h2 id='fx-polish'>特效打磨（{FX_POLISH_DATE}）</h2><p>{html.escape(FX_POLISH_TEXT)}</p><p>"
              "准则：<a href='../../fx-style.md'>docs/art/fx-style.md</a> · 审查报告：<a href='../fx-polish/style-audit.md'>fx-polish/style-audit.md</a></p>"
@@ -428,7 +462,11 @@ addEventListener('keydown',e=>{if(k<0)return;if(e.key==='ArrowRight')show(k+1);e
          "第三人称旁观机位里的青色胶囊是玩家站位。", "",
          "重新生成：`bash scripts/unity/bridge.sh playtest gallery-<desert|frost|inferno|hanba|kunpeng|warlord|qilin>`、`playtest boss-intro`、`playtest fx`，"
          "然后 `python scripts/unity/combat_gallery.py`。", "",
-         f"## 特效打磨（{FX_POLISH_DATE}）", "", FX_POLISH_TEXT, "",
+         f"## 首领与精英动作调优（{BOSS_VFX_DATE}）", "", BOSS_VFX_TEXT, "",
+         "| 路 | 内容 | 设计单 | 改前 / 改后节拍条 |", "|---|---|---|---|"]
+    for title, desc, docs, files in boss_vfx_rows():
+        m.append(f"| {title} | {desc} | {' · '.join(f'[{n}.md]({p})' for n, p in docs)} | {' · '.join(f'[{n}]({p})' for n, p in files) or '（无）'} |")
+    m += ["", f"## 特效打磨（{FX_POLISH_DATE}）", "", FX_POLISH_TEXT, "",
          "准则：[docs/art/fx-style.md](../../fx-style.md) · 审查报告：[fx-polish/style-audit.md](../fx-polish/style-audit.md)", "",
          "| 路 | 内容 | 改前 / 改后对比图 |", "|---|---|---|"]
     for title, desc, files in fx_polish_links():
