@@ -38,6 +38,9 @@
 //     inPlace        片段不带离地高度（攀爬这类玩法自己抬升根节点的动作）
 //   expect         应该有片段的状态（报告用：采样后缺哪个写进 notes）
 //   skip           { 状态: 原因 }：已知采不到的状态（写进 notes）
+// 第四章（src/world/plateau/play 的程序化姿势表，雷魅与领主）：
+//   plateau        { gait, moves, state, lead, alias, idle, gaits, loops, … }：不跑 AI，按招式时间轴推 AnimState 采样，
+//                  字段说明见 bake/_plateau.mjs 文件头（有这个字段的配置不再要求 src/enemies 里注册过）
 // Boss（两形态各一份配置）：
 //   boss, form, defId, theme, idle, acts, next, gait
 //   seconds        { 招式: 秒 }：每段录多久（按游戏里这一段实际持续的时长；默认 2.4）
@@ -677,6 +680,7 @@ for (const f of readdirSync(fileURLToPath(BAKE_DIR)).filter((n) => n.endsWith('.
 const want = process.argv.slice(2);
 const targets = Object.entries(manifest)
   .filter(([id, e]) => e.skeleton?.mode === 'native' && e.bind?.source === 'enemy' && !e.bind.attachment && id.startsWith('SK_Enemy_'))
+  .filter(([id]) => !configs[id]?.plateau) // 第四章：走下面的 plateau 采样（bake/_plateau.mjs）
   .map(([id, e]) => ({ id, defId: e.bind.id, entry: e }))
   .filter((t) => want.length === 0 || want.includes(t.defId) || want.includes(t.id));
 
@@ -717,6 +721,24 @@ for (const [bossId, forms] of Object.entries(bossGroups)) {
   } catch (err) {
     failed++;
     console.log(`${bossId}: ✘ ${err.stack?.split(String.fromCharCode(10)).slice(0, 5).join(' | ')}`);
+  }
+}
+// 第四章（雷魅、领主）：plateau/play 的程序化姿势表，不跑 AI，按招式时间轴推 AnimState 采样（bake/_plateau.mjs）
+{
+  const plateau = Object.entries(configs).filter(([asset, c]) => c.plateau && manifest[asset]?.skeleton?.mode === 'native'
+    && (want.length === 0 || want.includes(asset) || want.includes(manifest[asset].bind?.id)));
+  if (plateau.length) {
+    const { bakePlateau } = await import(new URL('_plateau.mjs', BAKE_DIR).href);
+    const H = { FPS, SIM_DT, SAMPLE_EVERY, sample, findLoop, clipFrom, buildSkeleton };
+    for (const [asset, c] of plateau) {
+      try {
+        const t0 = Date.now();
+        write({ id: asset, defId: manifest[asset].bind?.id ?? asset }, await bakePlateau(asset, manifest[asset], c, H), t0);
+      } catch (err) {
+        failed++;
+        console.log(`${asset}: ✘ ${err.stack?.split(String.fromCharCode(10)).slice(0, 5).join(' | ')}`);
+      }
+    }
   }
 }
 // 英雄：原生骨骼的选人演出

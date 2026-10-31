@@ -88,3 +88,62 @@ bash scripts/unity/bridge.sh sheets      # 可选：动作审核图 Assets/Art/_
 5. **持续型状态没有自动退出**：swim、perched、brawl 进去后一直循环，玩法必须 CrossFade 出去（EN2c / EN3b / EN3c 注意）。
 6. **熔心魔将的骨架指纹**：程序化模型（WarlordModel.ts）一改关节位置，采样器就拒绝采（与运行时同规则），要重新导出 GLB。
 7. 采样时 host 自身的旋转已经随参照系算进骨骼姿势（旋龟翻身、火鼍下潜），但 Unity 侧没有单独的 host 节点：整体位移仍是玩法的事。
+
+## 7. 第四章：plateau/play 姿势表的采样适配（2026-10-31，E 路）
+
+第四章的雷魅和领主（`src/world/plateau/play/`、`gorge/`、`haizi/`）不走 `src/enemies` 的注册表，没有能在 Node 里跑的敌人 AI：
+动作全在 `anim.ts` 的 `CreatureAnimator`（步态 + 受击 / 硬直 / 眩晕层）和 `poses.ts` 的招式姿势表里，输入只是一份 `AnimState`（move / phase / flap / … / pose / stage / k）加连续时间 t。
+所以第四章不跑 AI，改成**按招式时间轴推 AnimState** 采样：
+
+- 共用工具 `scripts/unity/bake/_plateau.mjs`（下划线开头 = 工具不是配置），雷魅（E 路）和领主（B 路）都用它；
+  `bake-native-anims.mjs` 主流程只加了一个分支：配置里有 `plateau` 字段的资产走它（不再要求 `getEnemyEntry` 注册过），其余照旧。
+- 骨架、参照系、找循环点、切片段与原来完全同一套（`buildSkeleton` / `sample` / `findLoop` / `clipFrom` 由主流程传进去），输出同样的 `native-anim.json`。
+- 招式秒数默认取 `docs/art/ch4-move-events.json` 的 `moves`（windup / active / recover），每招录一段 = 三段之和，状态名 = 招式 id。
+- 根节点位移不录（rootY 一律 0）：位置、朝向、离地高度全由玩法驱动；hips 的局部平移（蹲、跪、人立抬升）照常在骨骼姿势里。
+- 采样器不产出动画事件：出手时刻写在 `Anim/<资产>.events.json`，照 `ch4-move-events.json` 的 `clips` 抄。
+
+| 配置字段 | 作用 |
+|---|---|
+| `gait` / `model` | anim.ts 的步态；姿势表的键（默认 = 资产 ID） |
+| `moves` / `only` / `skip` | 招式表补充或覆盖（演出姿势、表里没有的姿势）；只录 / 不录哪些 |
+| `state` | 按段覆盖 AnimState：`{ <招式>: { all, windup, active, recover } }`；`phaseRate`（弧度 / 秒）让这一段跑步态（冲撞、扑击） |
+| `seconds` / `lead` | 按秒定长；连段后半先把前一招放够 n 秒（不录）再录 |
+| `alias` | 同一姿势录成另一个片段名（獓狠 `goreL` = `gore` 往左甩，`side = −1`） |
+| `idle` / `gaits` | 待机循环（可覆盖 AnimState，如蛮蛮悬停 `flap = 1`）；Walk / Move 步态循环（`speed` 写进片段做混合树阈值，相位按 speed / stride × π 推进；`gaits: null` = 不录） |
+| `loops` | 持续循环（眩晕、落地追啄、飞走、潜游……）：`loop = true`，Unity 里不自动退出 |
+| `hit` / `stun` / `stagger` | 默认都录：Hit（hurt 冲一下）、stun（anim.stun = 1 循环）、stagger（硬直踉跄） |
+
+领主配置示例（夔没有走路，只有蹦跳和拄拳荡身；捶胸 drum / drum5 按 t 的正弦走；roar / rise / kneel 这类演出姿势已在 ch4-move-events.json 的表里，同样按表录；
+飞廉的低头冲撞在出手段跑步态）。这两份已在本机试采通过（夔 15 段、飞廉 15 段，各 0.1–0.2 s），配置本身归 B 路：
+
+```js
+// scripts/unity/bake/SK_Boss_Kui.mjs
+export default { plateau: { gait: 'kui', gaits: null, lead: { leapChain: ['leap', 1.2] } } };
+
+// scripts/unity/bake/SK_Boss_Feilian.mjs
+export default {
+  plateau: {
+    gait: 'quad', speed: 24, stride: 2.4,
+    gaits: { Walk: { speed: 7, move: 0.6 }, Move: { speed: 24, move: 1 } },
+    state: { charge: { active: { move: 1, phaseRate: (24 / 2.4) * Math.PI } } },
+    // 化蛇的待机游动波：idle: { seconds: [2.6, 3.0] }（serpent 步态按 t 摆，周期 2π / 2.2 ≈ 2.86 s）
+  },
+};
+```
+
+第四章雷魅的采样结果（`node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs SK_Enemy_Marmot …`，七个资产共约 2 s）：
+
+| 资产 | 片段 |
+|---|---|
+| 啸獭 SK_Enemy_Marmot | Idle Walk Move scream bite burrow stun↻ Hit stagger |
+| 天狗 SK_Enemy_Tiangou | Idle Walk Move howl pounce stun↻ Hit stagger |
+| 獓狠 SK_Enemy_Aoyin（雷牦共用） | Idle Walk Move stampede gore goreL slam stun↻ Hit stagger |
+| 举父 SK_Enemy_Jufu | Idle Walk Move climb throw shove fall stun↻ Hit stagger |
+| 蛮蛮 SK_Enemy_Manman | Idle Walk Move sweep bolt hop↻ stun↻ Hit stagger |
+| 帝江 SK_Enemy_Dijiang | Idle Walk Move swell stun↻ Hit（太轻，不硬直） |
+| 穷奇 SK_Enemy_Qiongqi | Idle Walk Move glide spin claw absorb flee↻ stun↻ Hit stagger |
+
+已知限制：
+1. **骨骼缩放不采**（与原管线一样只记朝向和位置）：帝江 swell 的皮囊胀大 1.5 倍、夔捶胸时鼓面一震，要在 Unity 玩法里缩骨骼。
+2. **出手段长度可变的招**（踩踏、滑翔：撞到东西 / 落地就提前收）：片段按上限录；玩法提前收招时用 `CrossFadeInFixedTime(状态, 过渡, 0, 收招起点秒)` 跳到片段的收招段。
+3. 连鼓灵（SM_EnemyPart_Liangu*）是静态部件组装、没有骨架，不走采样：鼓环转动、骨槌敲鼓由玩法驱动（手 K 的骨槌曲线见 E 路设计单）。
