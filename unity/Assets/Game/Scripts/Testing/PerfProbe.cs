@@ -74,7 +74,10 @@ namespace Spiritfire.Game.Testing
         readonly List<Track> tracks = new();
         readonly List<float> frameMs = new(512);
 
-        public PerfProbe()
+        public PerfProbe() : this(null) { }
+
+        /// <summary>extra：在 <see cref="Names"/> 之外再记的计数器 / 标记（比如按相机名的 URP 采样「Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera」）</summary>
+        public PerfProbe(IEnumerable<string> extra)
         {
             var handles = new List<ProfilerRecorderHandle>();
             ProfilerRecorderHandle.GetAvailable(handles);
@@ -84,7 +87,8 @@ namespace Spiritfire.Game.Testing
                 var d = ProfilerRecorderHandle.GetDescription(h);
                 if (!byName.ContainsKey(d.Name)) byName[d.Name] = h;
             }
-            foreach (var n in Names)
+            var names = extra == null ? Names : Names.Concat(extra).Distinct();
+            foreach (var n in names)
             {
                 if (!byName.TryGetValue(n, out var h)) continue;
                 var d = ProfilerRecorderHandle.GetDescription(h);

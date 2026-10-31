@@ -583,6 +583,9 @@ namespace Spiritfire.Art.Editor
             vmData.renderType = CameraRenderType.Overlay;
             vmData.renderShadows = false;
             vmData.renderPostProcessing = true;
+            // 第一人称层没有采样深度图的着色器；渲染它时 SSAO / 贴花也不跑（Spiritfire.Game.ViewmodelCameraTrim）
+            vmData.requiresDepthOption = CameraOverrideOption.Off;
+            vmData.requiresColorOption = CameraOverrideOption.Off;
             data.cameraStack.Add(vm);
 
             fpRig = BuildFirstPerson(t, camGo.transform, fpLayer);
