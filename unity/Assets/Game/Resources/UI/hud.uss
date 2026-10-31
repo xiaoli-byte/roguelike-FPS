@@ -1211,6 +1211,18 @@
     margin-bottom: 0;
 }
 
+/* 破防条（第四章领主）：生命条下一道细金条；破防中整条底色变亮、金条闪（BossBar.Tick 调 opacity） */
+.sf-boss__row--break {
+    height: 4px;
+    margin-top: 3px;
+    margin-bottom: 0;
+    background-color: rgba(244, 216, 147, 0.1);
+}
+
+.sf-boss__row--break.is-broken {
+    background-color: rgba(255, 226, 150, 0.45);
+}
+
 .sf-boss__tick {
     position: absolute;
     top: 0;

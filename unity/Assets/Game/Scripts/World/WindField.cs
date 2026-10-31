@@ -164,6 +164,33 @@ namespace Spiritfire.Game
             return new WindSample(dir, Mathf.Clamp01(strength));
         }
 
+        /// <summary>
+        /// 给粒子（桑烟、风痕、雪尘）加风：在粒子系统的位置采样，写 Force over Lifetime（世界空间，m/s² = 风向 × 强度 × gain）。
+        /// 每帧或每隔几帧调一次即可；粒子系统没开 forceOverLifetime 时自动打开
+        /// </summary>
+        public static void ApplyTo(ParticleSystem ps, float gain = 6f)
+        {
+            if (!ps) return;
+            var w = Sample(ps.transform.position);
+            var f = ps.forceOverLifetime;
+            if (!f.enabled) f.enabled = true;
+            f.space = ParticleSystemSimulationSpace.World;
+            var v = w.Vector * gain;
+            f.x = new ParticleSystem.MinMaxCurve(v.x);
+            f.y = new ParticleSystem.MinMaxCurve(0);
+            f.z = new ParticleSystem.MinMaxCurve(v.z);
+        }
+
+        /// <summary>
+        /// 经幡 / 草这类摆动物件的偏转：返回风向上的摆幅（0..1，= 强度 × (0.75 + 0.25 × 阵风)），阵风用位置错开相位，一片经幡不会齐刷刷一起摆
+        /// </summary>
+        public static float Sway(Vector3 at, float time)
+        {
+            var w = Sample(at);
+            float gust = Mathf.Sin(time * 1.7f + at.x * 0.11f + at.z * 0.07f) * 0.5f + Mathf.Sin(time * 3.9f + at.z * 0.23f) * 0.5f;
+            return Mathf.Clamp01(w.strength * (0.75f + 0.25f * gust));
+        }
+
         /// <summary>最强的吸引点（着色器用）；没有为 null</summary>
         public static WindAttractor Strongest
         {

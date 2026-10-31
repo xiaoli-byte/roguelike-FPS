@@ -124,6 +124,7 @@ namespace Spiritfire.Game
                 info.tags = DamageTag.Chain;
                 info.noCrit = true;
                 Combat.DamageEnemy(t, info);
+                if (n == 1) StatusAudio.Zap(c);
                 if (Arced != null)
                     try
                     {
@@ -173,18 +174,47 @@ namespace Spiritfire.Game
     /// <summary>
     /// 挂在带电单位上的状态（<see cref="Charge"/> 自动挂）：计时、常驻持有、第几跳传来的；死亡时放电（<see cref="Charge.Arc"/>）。
     /// 第一次带电时补一个 <see cref="EnemyStatus"/>（反应判定要求单位身上有状态宿主，见 <see cref="ReactionSystem.TryReact"/>）。
+    /// 外观（C4-5「带电改用边缘光」）：不染整只，只把材质的轮廓光（SF_StylizedLit 的 _RimColor / _RimStrength，MaterialPropertyBlock）换成紫红雷光，
+    /// 强度按「噼啪」节奏闪——底亮 + 不规则的短脉冲（每 0.08–0.3 s 一下）；脉冲时沿骨骼链贴身跳一道短电弧（<see cref="Lightning.Chain"/>，全场每秒限量）。
+    /// 不带电时把轮廓光写回材质自己的值。首领也走同一套（夔一直带电）。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class ChargeState : MonoBehaviour
     {
-        /// <summary>紫红雷光（邪火紫红，C4-4；电弧、边缘光）</summary>
-        public static readonly Color ArcColor = new(1f, 0.35f, 0.85f);
+        /// <summary>紫红雷光（邪火紫红，C4-4）：电弧线色</summary>
+        public static readonly Color ArcColor = new(1f, 0.35f, 0.9f);
+        /// <summary>轮廓光（线性 HDR）：底亮、脉冲峰</summary>
+        public static readonly Color RimBase = new(1.6f, 0.32f, 1.55f), RimPeak = new(3.4f, 1.1f, 3.6f);
+        public const float RimStrengthBase = 0.9f, RimStrengthPeak = 1.9f;
+        /// <summary>贴身电弧全场每秒最多几道</summary>
+        public const float ArcsPerSecond = 14f;
+
+        static readonly int RimColorId = Shader.PropertyToID("_RimColor"), RimStrengthId = Shader.PropertyToID("_RimStrength");
+        static float arcTokens;
+        static int arcFrame = -1;
+        static readonly Vector3[] chain = new Vector3[4];
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
+        {
+            arcTokens = 0;
+            arcFrame = -1;
+        }
 
         Damageable hp;
         float left;
         int hop;
         UnityEngine.Object lastSource;
         readonly List<Charge.Handle> holds = new();
+
+        // 外观
+        Renderer[] rends;
+        Color[] baseRim;
+        float[] baseRimStrength;
+        Transform[] bones;
+        MaterialPropertyBlock block;
+        bool rimOn;
+        float pulse, nextPulse, seed = UnityEngine.Random.value * 10f;
 
         /// <summary>带电中（计时 &gt; 0 或有常驻持有）</summary>
         public bool Active => hp && !hp.Dead && (left > 0 || holds.Count > 0);
@@ -194,6 +224,8 @@ namespace Spiritfire.Game
         public int Hop => hop;
         /// <summary>最近一次让它带电的来源</summary>
         public UnityEngine.Object Source => lastSource;
+        /// <summary>轮廓光正亮着（测试用）</summary>
+        public bool RimShowing => rimOn;
 
         internal static ChargeState Ensure(Damageable d)
         {
@@ -213,6 +245,8 @@ namespace Spiritfire.Game
         {
             if (hp) hp.Died -= OnDied;
         }
+
+        void OnDisable() => RimOff();
 
         internal void Add(float seconds, UnityEngine.Object source, int fromHop)
         {
@@ -242,16 +276,125 @@ namespace Spiritfire.Game
             bool was = left > 0 || holds.Count > 0;
             left = 0;
             holds.Clear();
+            RimOff();
             if (was && hp && !hp.IsBoss) Charge.Arc(hp);
         }
 
         void Update()
         {
-            if (left > 0) left = Mathf.Max(0, left - Time.deltaTime);
-            if (!Active && holds.Count == 0 && left <= 0) enabled = false;
+            float dt = Time.deltaTime;
+            if (left > 0) left = Mathf.Max(0, left - dt);
+            if (!Active)
+            {
+                RimOff();
+                if (holds.Count == 0 && left <= 0) enabled = false;
+                return;
+            }
+            Crackle(dt);
         }
 
-        /// <summary>传电的电弧（紫红；骨架阶段先用通用闪电弧）</summary>
+        // ───────────── 外观：轮廓光的噼啪 + 贴身短电弧 ─────────────
+
+        void Collect()
+        {
+            if (rends != null) return;
+            var list = new List<Renderer>();
+            foreach (var r in GetComponentsInChildren<Renderer>(true))
+            {
+                if (r is not SkinnedMeshRenderer && r is not MeshRenderer) continue;
+                var m = r.sharedMaterial;
+                if (m && m.HasProperty(RimColorId) && m.HasProperty(RimStrengthId)) list.Add(r);
+            }
+            rends = list.ToArray();
+            baseRim = new Color[rends.Length];
+            baseRimStrength = new float[rends.Length];
+            for (int i = 0; i < rends.Length; i++)
+            {
+                var m = rends[i].sharedMaterial;
+                baseRim[i] = m.GetColor(RimColorId);
+                baseRimStrength[i] = m.GetFloat(RimStrengthId);
+            }
+            var set = new HashSet<Transform>();
+            foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+                foreach (var b in smr.bones)
+                    if (b && b != smr.rootBone)
+                        set.Add(b);
+            bones = new Transform[set.Count];
+            set.CopyTo(bones);
+            block ??= new MaterialPropertyBlock();
+        }
+
+        void Crackle(float dt)
+        {
+            Collect();
+            // 噼啪：不规则的短脉冲（亮一下 0.05–0.09 s 衰减），之间是底亮的轻微抖动
+            nextPulse -= dt;
+            if (nextPulse <= 0)
+            {
+                nextPulse = UnityEngine.Random.Range(0.08f, 0.3f);
+                pulse = 1f;
+                if (TakeArc()) BodyArc();
+            }
+            pulse = Mathf.Max(0, pulse - dt * 14f);
+            float jitter = 0.85f + 0.15f * Mathf.Sin(Time.time * 47f + seed);
+            var c = Color.Lerp(RimBase * jitter, RimPeak, pulse);
+            float st = Mathf.Lerp(RimStrengthBase * jitter, RimStrengthPeak, pulse);
+            for (int i = 0; i < rends.Length; i++)
+            {
+                var r = rends[i];
+                if (!r) continue;
+                r.GetPropertyBlock(block);
+                block.SetColor(RimColorId, c);
+                block.SetFloat(RimStrengthId, st);
+                r.SetPropertyBlock(block);
+            }
+            rimOn = true;
+        }
+
+        void RimOff()
+        {
+            if (!rimOn || rends == null) return;
+            rimOn = false;
+            for (int i = 0; i < rends.Length; i++)
+            {
+                var r = rends[i];
+                if (!r) continue;
+                r.GetPropertyBlock(block);
+                block.SetColor(RimColorId, baseRim[i]);
+                block.SetFloat(RimStrengthId, baseRimStrength[i]);
+                r.SetPropertyBlock(block);
+            }
+        }
+
+        /// <summary>全场贴身电弧的令牌（每秒 <see cref="ArcsPerSecond"/> × 画质密度）</summary>
+        static bool TakeArc()
+        {
+            if (arcFrame != Time.frameCount)
+            {
+                arcFrame = Time.frameCount;
+                arcTokens = Mathf.Min(3f, arcTokens + Time.deltaTime * ArcsPerSecond * Fx.Density);
+            }
+            if (arcTokens < 1f) return false;
+            arcTokens -= 1f;
+            return true;
+        }
+
+        /// <summary>沿一根骨头往上 2–3 节父骨跳一道短电弧</summary>
+        void BodyArc()
+        {
+            if (bones == null || bones.Length == 0) return;
+            var b = bones[UnityEngine.Random.Range(0, bones.Length)];
+            int n = 0;
+            for (var t = b; t && n < chain.Length; t = t.parent)
+            {
+                chain[n++] = t.position;
+                if (t == transform) break;
+            }
+            if (n < 2) return;
+            Lightning.Chain(chain, Mathf.Min(n, 3), ArcColor, 0.035f);
+        }
+
+        /// <summary>传电的电弧（紫红，两点闪电）</summary>
         internal static void ArcFx(Vector3 from, Vector3 to) => Lightning.Spawn(from, to, ArcColor, 0.05f);
     }
 }

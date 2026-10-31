@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Spiritfire.Art;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Spiritfire.Game
 {
@@ -48,6 +50,8 @@ namespace Spiritfire.Game
     ///   · 落雷走 <see cref="LightningStrike"/>（导体引雷、紫红预警），强度 ≥ <see cref="PlateauStormSpec.strikesFrom"/> 时按间隔落；每道雷劈下时天空闪一下。
     ///   · 光照与雾：按 batch2「天气覆盖」做法——<see cref="WeatherDirector"/> 每帧（Update）按区域天气写主光和雾，这里在 LateUpdate（执行顺序 510，
     ///     天气和旱魃太阳驱动之后）以「这一帧的底 × 倍率」最后再写一次：这一帧有人写过就以它为底，没人写过沿用上次的底，不会一帧帧累乘。
+    ///   · 环境：环境光 / 反射跟着压暗（主光只剩两成时环境留一半多，晴空的环境光不压的话看不出雷暴）；一个运行时 Volume（ColorAdjustments：
+    ///     压曝光、降饱和、偏冷青灰）权重 = 强度。都在强度回到 0 时还原。
     ///   · 雨：跟着相机的斜雨丝粒子（强度 × 雨量）。
     /// 场景里一个（第一次 Begin 时挂到 Fx 根物体上），换关时全部票作废（不回调）。
     /// </summary>
@@ -95,6 +99,20 @@ namespace Spiritfire.Game
         bool fogTracked;
         Light sun;
         ParticleSystem rainPs;
+        // 环境光 / 反射（第一次压暗时记原值）与雷暴的后处理
+        bool envCaptured;
+        float envNow = 1f, origReflection;
+        Color origSkyCol, origEquator, origGround, origAmbient;
+        SphericalHarmonicsL2 origProbe;
+        AmbientMode origMode;
+        Volume volume;
+        VolumeProfile volumeProfile;
+
+        /// <summary>雷暴满强度时的后处理（ColorAdjustments）：曝光、对比、饱和、滤色</summary>
+        public const float PostExposure = -0.35f, Contrast = 6f, Saturation = -28f;
+        public static readonly Color ColorFilter = new(0.86f, 0.9f, 1f);
+        /// <summary>主光压到底时环境光留几成</summary>
+        public const float EnvFloor = 0.45f;
 
         /// <summary>场上的雷暴（没有为 null）</summary>
         public static PlateauStorm Instance => instance;
@@ -156,6 +174,7 @@ namespace Spiritfire.Game
         void OnDestroy()
         {
             if (instance == this) instance = null;
+            if (volumeProfile) Destroy(volumeProfile);
         }
 
         void ResetAll()
@@ -292,13 +311,79 @@ namespace Spiritfire.Game
             RenderSettings.fogEndDistance = lastFogEnd = Mathf.Lerp(fogEndBase, Mathf.Min(fogEndBase, StormFogEnd), k);
             RenderSettings.fogStartDistance = lastFogStart = Mathf.Min(lastFogEnd - 1, Mathf.Lerp(fogStartBase, Mathf.Min(fogStartBase, StormFogStart), k));
             fogTracked = true;
-            float rain = 0;
-            foreach (var t in tickets) rain = Mathf.Max(rain, t.spec.rain * t.Level);
+            float rain = 0, dk = 0;
+            foreach (var t in tickets)
+            {
+                rain = Mathf.Max(rain, t.spec.rain * t.Level);
+                dk = Mathf.Max(dk, t.spec.darken * t.Level);
+            }
             UpdateRain(rain);
+            ApplyEnv(Mathf.Lerp(1f, EnvFloor, Mathf.Clamp01(dk / 0.8f)) + flash * 0.35f);
+            UpdateVolume(k);
+        }
+
+        void UpdateVolume(float k)
+        {
+            if (k <= 0.001f)
+            {
+                if (volume) volume.weight = 0;
+                return;
+            }
+            if (!volume)
+            {
+                var go = new GameObject("Plateau Storm · Volume");
+                go.transform.SetParent(transform, false);
+                volume = go.AddComponent<Volume>();
+                volume.isGlobal = true;
+                volume.priority = 55;
+                volumeProfile = ScriptableObject.CreateInstance<VolumeProfile>();
+                volumeProfile.name = "VP_PlateauStorm (runtime)";
+                volumeProfile.hideFlags = HideFlags.DontSave;
+                var ca = volumeProfile.Add<ColorAdjustments>(true);
+                ca.postExposure.Override(PostExposure);
+                ca.contrast.Override(Contrast);
+                ca.saturation.Override(Saturation);
+                ca.colorFilter.Override(ColorFilter);
+                volume.sharedProfile = volumeProfile;
+            }
+            volume.weight = k;
+        }
+
+        /// <summary>环境光 / 反射 × k（第一次压暗时记原值；回到 1 时写回原值）</summary>
+        void ApplyEnv(float k)
+        {
+            if (Mathf.Abs(k - envNow) < 1e-3f) return;
+            if (!envCaptured)
+            {
+                envCaptured = true;
+                origMode = RenderSettings.ambientMode;
+                origSkyCol = RenderSettings.ambientSkyColor;
+                origEquator = RenderSettings.ambientEquatorColor;
+                origGround = RenderSettings.ambientGroundColor;
+                origAmbient = RenderSettings.ambientLight;
+                origProbe = RenderSettings.ambientProbe;
+                origReflection = RenderSettings.reflectionIntensity;
+            }
+            envNow = k;
+            switch (origMode)
+            {
+                case AmbientMode.Trilight:
+                    RenderSettings.ambientSkyColor = origSkyCol * k;
+                    RenderSettings.ambientEquatorColor = origEquator * k;
+                    RenderSettings.ambientGroundColor = origGround * k;
+                    break;
+                case AmbientMode.Flat:
+                    RenderSettings.ambientLight = origAmbient * k;
+                    break;
+            }
+            RenderSettings.ambientProbe = origProbe * k;
+            RenderSettings.reflectionIntensity = origReflection * k;
         }
 
         void RestoreWorld()
         {
+            if (envCaptured && Mathf.Abs(envNow - 1f) > 1e-3f) ApplyEnv(1f);
+            if (volume) volume.weight = 0;
             if (sun && !float.IsNaN(lastSun) && Mathf.Abs(sun.intensity - lastSun) < 1e-4f) sun.intensity = sunBase;
             lastSun = float.NaN;
             if (fogTracked)

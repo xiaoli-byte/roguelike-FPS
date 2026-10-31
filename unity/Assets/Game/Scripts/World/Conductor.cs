@@ -14,6 +14,8 @@ namespace Spiritfire.Game
     ///   · 放电：<see cref="Discharge"/> 清空电量并返回放掉的量，效果（回劈夔、劈雷神、电铁索）由调用方做。
     ///   · 事件：<see cref="Struck"/>（被雷劈中，带落雷信息）、<see cref="Discharged"/>（放电）；静态 <see cref="AnyStruck"/> 给场地脚本统一监听。
     /// 组件位置 = 导体底座（地面）；顶点 = 底座 + 上 × <see cref="height"/>（<see cref="Top"/>）。
+    /// 外观：带电时顶上噼啪——每 0.12–0.4 s 一道从顶往下的短紫红电弧（电量越满越密），偶尔闪一下紫光；离相机 80 m 外不画。
+    /// 具体的发光体（经幡杆的铜顶、导雷石柱的雷晶）由场景件自己读 <see cref="charge"/> 做。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class Conductor : MonoBehaviour
@@ -73,9 +75,30 @@ namespace Spiritfire.Game
 
         void OnDisable() => all.Remove(this);
 
+        float crackle;
+        static readonly Vector3[] crackleWay = new Vector3[3];
+
         void Update()
         {
             if (charge > 0 && drainPerSecond > 0) charge = Mathf.Max(0, charge - drainPerSecond * Time.deltaTime);
+            if (Charged) Crackle(Time.deltaTime);
+        }
+
+        /// <summary>带电的噼啪：顶上往下的短电弧 + 偶尔一闪紫光（电量越满越密）</summary>
+        void Crackle(float dt)
+        {
+            crackle -= dt;
+            if (crackle > 0) return;
+            crackle = Mathf.Lerp(0.4f, 0.12f, charge) * UnityEngine.Random.Range(0.7f, 1.3f);
+            var cam = Camera.main;
+            var top = Top;
+            if (cam && (cam.transform.position - top).sqrMagnitude > 80f * 80f) return;
+            var down = top + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), -UnityEngine.Random.Range(0.8f, Mathf.Max(1f, height * 0.4f)), UnityEngine.Random.Range(-0.5f, 0.5f));
+            crackleWay[0] = top;
+            crackleWay[1] = Vector3.Lerp(top, down, 0.5f) + UnityEngine.Random.insideUnitSphere * 0.25f;
+            crackleWay[2] = down;
+            Lightning.Chain(crackleWay, 3, TelegraphPalette.Thunder, 0.04f);
+            if (UnityEngine.Random.value < 0.3f) FxLightPool.Flash(top, TelegraphPalette.Thunder, 3f, 6f, 0.1f);
         }
 
         /// <summary>充电（夹到 0..1）；不能带电的导体忽略</summary>

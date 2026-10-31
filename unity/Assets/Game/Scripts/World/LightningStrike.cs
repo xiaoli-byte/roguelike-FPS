@@ -77,7 +77,9 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 落雷（第四章，combat 1.3；docs/unity-ch4-port.md 第 2 节契约）：预警 → 劈下。天狗雷标、夔捶胸、高原雷暴、雷神拍腹都走这里。
-    ///   · 预警：地面圆形预警，配色 <see cref="TelegraphTone.Thunder"/>（紫红雷光，和正红的一般危险分开），填满的那一刻劈下。
+    ///   · 预警（C4-4）：会挨打的范围是正红的危险填充（<see cref="TelegraphTone.Danger"/>），外沿叠一圈紫红雷标（<see cref="TelegraphTone.Thunder"/> 身份层，
+    ///     读「这是雷」），两层同时填满 = 劈下。
+    ///   · 劈下：天上三段折线雷（上粗下细，末段叠白芯）+ 落点电火花、冲击环、紫白闪光、短震屏、雷声（第二期换成烘焙的雷声）。
     ///   · 引雷：调用时就定落点——落点在某个 <see cref="Conductor"/> 的引雷半径内、导体顶更高，雷改劈导体（预警也画在导体底下），
     ///     伤害换成导体底下的溅电（<see cref="Conductor.splashRadius"/> / <see cref="Conductor.splashDamage"/>），导体充电、发 <see cref="Conductor.Struck"/>。
     ///   · 伤害：玩家走 <see cref="Combat.BlastPlayer"/>（雷属性，墙后不挨、冲刺无敌帧闪得过，边缘衰减到 60%）；
@@ -91,6 +93,10 @@ namespace Spiritfire.Game
         public const float DefaultWarn = 1.2f, DefaultRadius = 3.2f, DefaultDamage = 18f, DefaultHeight = 60f;
         /// <summary>同时待劈的落雷上限（满了先劈掉最老的，免得天雷阵堆积）</summary>
         public const int MaxPending = 48;
+        /// <summary>雷标（紫红身份环）的宽度（米）</summary>
+        public const float MarkWidth = 0.35f;
+        /// <summary>落雷的亮芯（粉白 #fff2fb）</summary>
+        public static readonly Color Core = Hex.Rgb(0xfff2fb);
 
         /// <summary>一道雷劈下来了</summary>
         public static event Action<StrikeInfo> Landed;
@@ -103,7 +109,7 @@ namespace Spiritfire.Game
             public Conductor conductor;
             public StrikeOptions opts;
             public float warn, age;
-            public TelegraphHandle tele;
+            public TelegraphHandle tele, mark;
         }
 
         static LightningStrike instance;
@@ -189,11 +195,17 @@ namespace Spiritfire.Game
             p.point = p.conductor ? p.conductor.Base : p.aimed;
             p.warn = Mathf.Max(0, float.IsFinite(o.warn) ? o.warn : 0);
             p.age = 0;
-            p.tele = TelegraphHandle.None;
+            p.tele = p.mark = TelegraphHandle.None;
             if (!o.noTelegraph && p.warn > 0)
             {
                 float r = p.conductor ? p.conductor.splashRadius : p.opts.radius;
-                p.tele = Telegraph.Circle(p.point, r, p.warn, TelegraphPalette.Thunder, TelegraphTone.Thunder);
+                // 危险填充：正红（会挨打的地方）；雷标：外沿一圈紫红细环（身份层），同时填满
+                p.tele = Telegraph.Circle(p.point, r, p.warn, Color.white, TelegraphTone.Danger);
+                p.mark = Telegraph.Spawn(new TelegraphSpec
+                {
+                    shape = TelegraphShape.Annulus, style = TelegraphStyle.Warning, center = p.point, radius = r + MarkWidth, inner = r,
+                    duration = p.warn, color = TelegraphPalette.Thunder, tone = TelegraphTone.Thunder,
+                });
             }
             pending.Add(p);
             var h = new StrikeHandle(p);
@@ -212,7 +224,11 @@ namespace Spiritfire.Game
         {
             var p = pending[i];
             pending.RemoveAt(i);
-            if (cancel) p.tele.Cancel();
+            if (cancel)
+            {
+                p.tele.Cancel();
+                p.mark.Cancel();
+            }
             p.active = false;
             p.conductor = null;
             p.opts.source = null;
@@ -248,7 +264,7 @@ namespace Spiritfire.Game
             Release(i, false);
             Count++;
 
-            Bolt(end, o.height);
+            Bolt(end, info.point, info.radius, o.height);
             if (info.damage > 0) info.playerDamage = Combat.BlastPlayer(info.point + Vector3.up * 0.3f, info.radius, info.damage, 0.6f, Element.Shock, o.source);
             if (o.chargeFoes > 0 || o.foeDamage > 0) HitFoes(info.point, info.radius, o);
             if (c) c.OnStruck(info);
@@ -293,14 +309,25 @@ namespace Spiritfire.Game
             foes.Clear();
         }
 
-        /// <summary>天上劈下来的闪电（骨架：两段通用闪电弧 + 落点闪光）</summary>
-        static void Bolt(Vector3 end, float height)
+        /// <summary>
+        /// 天上劈下来的闪电：三段折线（上粗下细，每段端点随机错开，读出「之」字）+ 末段叠一道粉白细芯；
+        /// 落点：电火花、贴地冲击环（落点半径）、紫白闪光、短震屏、雷声
+        /// </summary>
+        static void Bolt(Vector3 end, Vector3 ground, float radius, float height)
         {
-            var top = end + new Vector3(UnityEngine.Random.Range(-6f, 6f), height, UnityEngine.Random.Range(-6f, 6f));
-            var mid = Vector3.Lerp(top, end, 0.55f) + new Vector3(UnityEngine.Random.Range(-3f, 3f), 0, UnityEngine.Random.Range(-3f, 3f));
-            Lightning.Spawn(top, mid, TelegraphPalette.Thunder, 0.32f);
-            Lightning.Spawn(mid, end, TelegraphPalette.Thunder, 0.26f);
-            FxLightPool.Flash(end + Vector3.up, Color.Lerp(TelegraphPalette.Thunder, Color.white, 0.45f), 14f, 18f, 0.18f);
+            var top = end + new Vector3(UnityEngine.Random.Range(-8f, 8f), height, UnityEngine.Random.Range(-8f, 8f));
+            var a = Vector3.Lerp(top, end, 0.38f) + new Vector3(UnityEngine.Random.Range(-4f, 4f), 0, UnityEngine.Random.Range(-4f, 4f));
+            var b = Vector3.Lerp(top, end, 0.74f) + new Vector3(UnityEngine.Random.Range(-2.2f, 2.2f), 0, UnityEngine.Random.Range(-2.2f, 2.2f));
+            var c = TelegraphPalette.Thunder;
+            Lightning.Spawn(top, a, c, 0.3f);
+            Lightning.Spawn(a, b, c, 0.26f);
+            Lightning.Spawn(b, end, c, 0.22f);
+            Lightning.Spawn(b, end, Core, 0.08f);
+            Fx.Burst(end, Color.Lerp(c, Core, 0.4f), 14, 7f, 0.35f, 0.12f, 4f);
+            Fx.Ring(ground + Vector3.up * 0.05f, Mathf.Max(1.2f, radius), c, 0.3f);
+            FxLightPool.Flash(end + Vector3.up, Color.Lerp(c, Color.white, 0.45f), 14f, 18f, 0.18f);
+            GameAudio.PlayAt("shock_zap", end, 1f, 0.55f);
+            CameraShake.Quake(end, 0.22f, 26f, 0.3f);
         }
 
         /// <summary>贴地：向下打一条射线找地面（找不到就原样）</summary>

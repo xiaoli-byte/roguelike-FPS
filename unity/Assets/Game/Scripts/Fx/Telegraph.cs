@@ -46,8 +46,8 @@ namespace Spiritfire.Game
         /// <summary>原色：传进来的颜色原样用（灵宠 / 友方技能、出生点、增益圈这类不是「会挨打」的提示，冲击环、持续区域的默认）</summary>
         Own,
         /// <summary>
-        /// 雷（第四章，C4-4）：落雷、电弧、电场、雷标。和 <see cref="Danger"/> 一样算危险预警（暗衬边、普通混合、乘色、脚底提示），
-        /// 只是主色换成 <see cref="TelegraphPalette.Thunder"/> 的紫红雷光——草甸、雪地上的一般危险仍是正红，两者色相拉开
+        /// 雷的身份层（第四章，C4-4）：落雷的雷标、电弧线、电场的边。主色固定 <see cref="TelegraphPalette.Thunder"/> 紫红 + 靛紫暗衬，普通混合；
+        /// <b>不算</b>危险预警（不进脚底提示、不用乘色）——会挨打的地方仍由 <see cref="Danger"/> 的正红填充，紫红细而亮地叠在上面读「这是雷」，两者分得开
         /// </summary>
         Thunder,
     }
@@ -66,10 +66,12 @@ namespace Spiritfire.Game
         /// <summary>电光品红：火狱（第三章）——熔岩和火光是橙红，赤红会混进去</summary>
         public static readonly Color Magenta = Hex.Rgb(0xff2bd6);
         /// <summary>
-        /// 紫红雷光：第四章的雷（<see cref="TelegraphTone.Thunder"/>）。色相约 296°，和正红（358°）拉开 60° 以上，
-        /// 在青绿草甸、白雪上都跳得出来；邪火紫红也是第四章的腐化色（fx-style §2.2），但腐化装饰不走预警，不会混
+        /// 紫红雷光：第四章的雷（<see cref="TelegraphTone.Thunder"/> 身份层；fx-style §2.2 第四章腐化色，与 E / B1 设计单同一个主色 #ff4fd8）。
+        /// 色相约 318°，和正红（358°）拉开 40°，明度更高；只画细亮的符印 / 边，不铺填充
         /// </summary>
-        public static readonly Color Thunder = Hex.Rgb(0xe03cf0);
+        public static readonly Color Thunder = Hex.Rgb(0xff4fd8);
+        /// <summary>雷身份层的暗衬边：靛紫 #4a1a6e（alpha = 强度）</summary>
+        public static readonly Color ThunderBacking = new(0.29f, 0.1f, 0.43f, 0.55f);
         /// <summary>危险预警的暗衬边（alpha = 强度）</summary>
         public static readonly Color DangerBacking = new(0.05f, 0f, 0.025f, 0.62f);
         /// <summary>测试 / 演示时强制指定危险色（null = 按关卡）</summary>
@@ -87,7 +89,7 @@ namespace Spiritfire.Game
         /// </summary>
         public static Color DangerMultiply => MultiplyFor(Danger);
 
-        /// <summary>某个危险配色的主色：雷 = <see cref="Thunder"/>，其余 = 当前关卡的 <see cref="Danger"/></summary>
+        /// <summary>某个配色的固定主色：雷身份层 = <see cref="Thunder"/>，其余 = 当前关卡的 <see cref="Danger"/></summary>
         public static Color DangerFor(TelegraphTone tone) => tone == TelegraphTone.Thunder ? Thunder : Danger;
 
         public static Color MultiplyFor(Color d)
@@ -143,7 +145,7 @@ namespace Spiritfire.Game
         public bool linear;
 
         /// <summary>实际配色（Auto 按样式解析）</summary>
-        public readonly bool Danger => tone == TelegraphTone.Danger || tone == TelegraphTone.Thunder || tone == TelegraphTone.Auto && style == TelegraphStyle.Warning;
+        public readonly bool Danger => tone == TelegraphTone.Danger || tone == TelegraphTone.Auto && style == TelegraphStyle.Warning;
     }
 
     /// <summary>
@@ -831,8 +833,14 @@ namespace Spiritfire.Game
         /// <summary>实际用的主色：危险配色 = 当前关卡的危险色（alpha 沿用传进来的；0 = 隐形，其余不低于 0.85——危险预警不许画得淡）</summary>
         static Color MainColor(in TelegraphSpec sp)
         {
+            if (sp.tone == TelegraphTone.Thunder)
+            {
+                var t = TelegraphPalette.Thunder;
+                t.a = sp.color.a <= 0 ? 0 : Mathf.Max(0.85f, Mathf.Min(1f, sp.color.a));
+                return t;
+            }
             if (!sp.Danger) return sp.color;
-            var d = TelegraphPalette.DangerFor(sp.tone);
+            var d = TelegraphPalette.Danger;
             d.a = sp.color.a <= 0 ? 0 : Mathf.Max(0.85f, Mathf.Min(1f, sp.color.a));
             return d;
         }
@@ -841,8 +849,9 @@ namespace Spiritfire.Game
         {
             if (!s.shaderMat) return;
             s.mat.SetColor(ColorId, MainColor(s.spec));
-            s.mat.SetColor(Color2Id, s.spec.Danger ? TelegraphPalette.DangerBacking : TelegraphPalette.BackingFor(s.spec.color));
-            var mul = TelegraphPalette.MultiplyFor(TelegraphPalette.DangerFor(s.spec.tone));
+            s.mat.SetColor(Color2Id, s.spec.tone == TelegraphTone.Thunder ? TelegraphPalette.ThunderBacking
+                : s.spec.Danger ? TelegraphPalette.DangerBacking : TelegraphPalette.BackingFor(s.spec.color));
+            var mul = TelegraphPalette.DangerMultiply;
             s.mat.SetVector(MulId, UsesMultiply(s) ? new Vector4(1, mul.r, mul.g, mul.b) : new Vector4(0, 1, 1, 1));
         }
 
