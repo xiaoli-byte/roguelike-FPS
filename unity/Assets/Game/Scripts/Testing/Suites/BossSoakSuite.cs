@@ -21,6 +21,8 @@ namespace Spiritfire.Game.Testing
     ///   · 计时：登场结束 → 倒下（游戏秒，时间 ×3）。不可选中的秒数单独记；估算的实际用时 = 可选中秒数 ÷ 输出率 <see cref="Uptime"/>（躲招、换位）+ 不可选中秒数。
     /// 判定：估算用时在 60–120 s、每个阶段都走到（BossPhase 事件数 = 阶段数 − 1）、300 游戏秒内倒下、期间没有运行时报错；否则不合格。
     /// 结果另写 CSV（结果文件同目录的 boss_soak.csv）。
+    /// 换英雄（第二批收尾 D 路）：boss-soak-falcon / boss-soak-bear 用 <see cref="HeroId"/> 指定英雄——本局英雄改掉、带着本局重进那一关重新组装玩家，
+    /// 其余完全一样；CSV 写 boss_soak_&lt;英雄&gt;.csv（docs/balance.md 4.6）。
     /// </summary>
     public class BossSoakSuite : PlaytestSuite
     {
@@ -84,6 +86,12 @@ namespace Spiritfire.Game.Testing
         /// <summary>这一趟打哪几个（子套件只打一个）</summary>
         protected virtual IEnumerable<Case> Selected => Cases;
 
+        /// <summary>用哪位英雄打（null = 关卡原来的英雄，缺省燎）；换英雄时带着本局重进那一关，按新英雄重新组装玩家</summary>
+        protected virtual string HeroId => null;
+
+        /// <summary>CSV 文件名（换英雄的子套件各写各的，不覆盖燎的那份）</summary>
+        string CsvFile => HeroId == null ? CsvName : $"boss_soak_{HeroId}.csv";
+
         // ───────────── 运行状态 ─────────────
 
         sealed class Result
@@ -126,7 +134,7 @@ namespace Spiritfire.Game.Testing
             try
             {
                 var list = Selected.ToList();
-                Line($"首领浸泡：{list.Count} 个首领，输出率 {Uptime:P0}，目标 {MinSeconds:F0}–{MaxSeconds:F0} s，时间 ×{TimeScale}");
+                Line($"首领浸泡：{list.Count} 个首领，英雄 {(HeroId == null ? "按关卡" : HeroLibrary.Get(HeroId)?.name ?? HeroId)}，输出率 {Uptime:P0}，目标 {MinSeconds:F0}–{MaxSeconds:F0} s，时间 ×{TimeScale}");
                 foreach (var c in list) yield return RunCase(c);
                 Summary();
                 WriteCsv();
@@ -203,7 +211,20 @@ namespace Spiritfire.Game.Testing
                 Fail("SceneFlow / 玩家没就绪");
                 yield break;
             }
-            if (flow.Current != stage)
+            // 换英雄：本局的英雄改掉，再带着本局重进这一关（SceneFlow.Arrive 按 RunState.heroId 组装玩家）
+            bool heroWrong = false;
+            if (HeroId != null)
+            {
+                if (HeroLibrary.Get(HeroId) == null)
+                {
+                    Fail($"没有英雄 {HeroId}");
+                    yield break;
+                }
+                var run = RunState.Current ?? (RunState.Current = RunState.Ensure(stage, HeroId));
+                run.heroId = HeroId;
+                heroWrong = flow.Player.hero == null || flow.Player.hero.id != HeroId;
+            }
+            if (flow.Current != stage || heroWrong)
             {
                 speed?.Dispose();
                 speed = null;
@@ -502,7 +523,7 @@ namespace Spiritfire.Game.Testing
             if (string.IsNullOrEmpty(ResultPath)) return;
             try
             {
-                var path = Path.Combine(Path.GetDirectoryName(ResultPath) ?? "", CsvName);
+                var path = Path.Combine(Path.GetDirectoryName(ResultPath) ?? "", CsvFile);
                 File.WriteAllText(path, string.Join("\n", csv) + "\n", new UTF8Encoding(true));
                 Line($"CSV：{path}（{csv.Count - 1} 行）");
             }
@@ -511,6 +532,20 @@ namespace Spiritfire.Game.Testing
                 Fail($"CSV 写不出来：{e.Message}");
             }
         }
+    }
+
+    /// <summary>四个首领换鼯（雷隼）打一遍（bridge.sh playtest boss-soak-falcon；CSV boss_soak_falcon.csv）</summary>
+    public sealed class BossSoakFalconSuite : BossSoakSuite
+    {
+        public override string Id => "boss-soak-falcon";
+        protected override string HeroId => "falcon";
+    }
+
+    /// <summary>四个首领换磐（岩熊）打一遍（bridge.sh playtest boss-soak-bear；CSV boss_soak_bear.csv）</summary>
+    public sealed class BossSoakBearSuite : BossSoakSuite
+    {
+        public override string Id => "boss-soak-bear";
+        protected override string HeroId => "bear";
     }
 
     /// <summary>只浸泡旱魃（1-4）</summary>
