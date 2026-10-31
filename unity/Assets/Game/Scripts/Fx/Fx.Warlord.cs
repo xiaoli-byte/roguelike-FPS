@@ -405,7 +405,10 @@ namespace Spiritfire.Game
     /// <summary>
     /// 熔心大剑（SM_BossWeapon_Greatsword，Unity 侧原来没挂上：部件骨架没有 socket_greatsword）+ 焰刃的常驻特效（设计单 §2）：
     ///   · 挂件：按蒙皮的绑定姿势（bindpose）把大剑对到握点骨 j_0_1_21_1_5 上（两份资产同一套导出，资产空间一致）；再按剑尖骨校一次朝向；
-    ///   · 焰刃：剑身自发光用自己的底色贴图当遮罩（熔痕亮、黑铁暗），亮度 = <see cref="Heat"/>（前摇烧亮）与 <see cref="Fury"/>（狂怒常亮白热）；
+    ///   · 焰刃：剑身自发光走正式的 _E 发光遮罩（第二批收尾 C 路：art/pipeline/tools/emission_mask.py 的 warlord_sword，
+    ///     R = 剑脊熔铜纹、G = 刃口；剑格 / 剑柄 / 配重不亮），写 SF_StylizedLit 的发光遮罩段（_GlowMask / _GlowMaskColor0..1，默认全黑跳过）。
+    ///     平时剑脊留一点余烬、刃口几乎不亮；前摇（<see cref="Heat"/>）烧亮，狂怒（<see cref="Fury"/>）剑脊转亮铜、刃口白热。
+    ///     （原来借底色贴图当 _EmissionMap，但大剑材质没开 _EMISSION 关键字，属性块开不了关键字——那层自发光其实一直没画出来。）
     ///     边光同步转白热；剑尖滴铜火星；狂怒时剑身两片火舌；
     ///   · 拖影（次级 · 暗月牙托亮刃，跟着真实的刀走）：<see cref="Smear"/> 起到 <see cref="EndSmear"/> 止，每帧记下剑身，
     ///     相邻两帧之间按握点插 3 份弧线（转角 slerp），画成两层带子：普通混合的暗衬（整条刀带压暗）+ 加法的亮刃（靠剑尖那一半最亮），0.2 s 内淡掉。
@@ -413,8 +416,12 @@ namespace Spiritfire.Game
     /// </summary>
     public sealed class WarlordBlade : MonoBehaviour
     {
-        static readonly int EmissionId = Shader.PropertyToID("_EmissionColor"), EmissionMapId = Shader.PropertyToID("_EmissionMap"),
+        static readonly int GlowMaskId = Shader.PropertyToID("_GlowMask"), Glow0Id = Shader.PropertyToID("_GlowMaskColor0"),
+            Glow1Id = Shader.PropertyToID("_GlowMaskColor1"), GlowShimmerId = Shader.PropertyToID("_GlowMaskShimmer"),
             RimColorId = Shader.PropertyToID("_RimColor"), RimStrengthId = Shader.PropertyToID("_RimStrength");
+
+        /// <summary>剑身发光遮罩的贴图名（BC 去掉 _BC；Resources/Fx/GlowMasks/&lt;名&gt;_E.png）</summary>
+        public const string MaskKey = "T_BossWeapon_Greatsword";
 
         const int MaxSamples = 40, Rows = 4;
         /// <summary>带子的四圈：沿剑身的位置（握点 → 剑尖 = 0..1）、亮刃亮度、白热程度、暗衬浓度</summary>
@@ -426,6 +433,12 @@ namespace Spiritfire.Game
         public Transform grip, tip;
         /// <summary>前摇烧亮程度（0..1，WarlordBrain 每帧写）与狂怒换挡（0..1）</summary>
         public float Heat, Fury;
+        [Tooltip("剑身走 _E 发光遮罩（关掉 = 只有边光；审阅截图切改前 / 改后用）")] public bool maskGlow = true;
+        /// <summary>此刻写出去的剑脊 / 刃口发光强度（线性倍率，测试用）</summary>
+        public float SpineGlow { get; private set; }
+        public float EdgeGlow { get; private set; }
+        /// <summary>剑身拿到了正式的发光遮罩</summary>
+        public bool HasMask => emissionMask;
         /// <summary>剑长（米，握点 → 剑尖）</summary>
         public float Length { get; private set; } = 2.7f;
         /// <summary>拖影正在记录 / 还有没淡完的段</summary>
@@ -434,7 +447,7 @@ namespace Spiritfire.Game
 
         Renderer[] renderers;
         MaterialPropertyBlock block;
-        Texture emissionMask;
+        Texture2D emissionMask;
         Color rimBase = new(1f, 0.95f, 0.85f);
         float rimStrengthBase = 0.3f, emberAcc;
         readonly FlameTongue[] flames = new FlameTongue[2];
@@ -518,7 +531,9 @@ namespace Spiritfire.Game
             var mat = meshNode ? meshNode.sharedMaterial : null;
             if (mat)
             {
-                emissionMask = mat.HasProperty("_BaseMap") ? mat.GetTexture("_BaseMap") : mat.mainTexture;
+                // 正式遮罩只配正式大剑的贴图（白盒 / 别的贴图没有遮罩：只走边光）
+                var bc = mat.HasProperty("_BaseMap") ? mat.GetTexture("_BaseMap") : mat.mainTexture;
+                if (bc && bc.name.StartsWith(MaskKey, System.StringComparison.Ordinal) && mat.HasProperty(GlowMaskId)) emissionMask = GlowMask.LoadMask(MaskKey);
                 if (mat.HasProperty(RimColorId)) rimBase = mat.GetColor(RimColorId);
                 if (mat.HasProperty(RimStrengthId)) rimStrengthBase = mat.GetFloat(RimStrengthId);
             }
@@ -531,14 +546,22 @@ namespace Spiritfire.Game
             float glow = Mathf.Clamp01(Mathf.Max(Heat, Fury * 0.75f));
             var hot = WarlordPalette.HotAt(Fury);
             var copper = WarlordPalette.CopperAt(Fury);
-            // 自发光：底色贴图当遮罩（熔痕橙、黑铁暗），常态也留一点余烬；前摇 / 狂怒烧亮（HDR）
-            var emit = Color.Lerp(new Color(0.35f, 0.12f, 0.03f), copper * 2.6f, glow) + hot * (Fury * 0.6f);
+            // 剑身发光遮罩：剑脊熔铜纹平时留一点余烬（熔铜橙），前摇烧亮、狂怒转亮铜带一点白；刃口平时几乎不亮，前摇烧成白热铜、狂怒常亮白热。
+            // 层色转线性再乘强度、按向量写（同 GlowMask：SetColor 会把 > 1 的强度也做一遍伽马换算）
+            bool lit = maskGlow && emissionMask;
+            SpineGlow = lit ? 0.3f + 1.7f * glow + 0.5f * Fury : 0;
+            EdgeGlow = lit ? 0.1f + 1.5f * glow + 1.2f * Fury : 0;
+            var spine = (Vector4)(Color.Lerp(copper, hot, 0.3f * Fury).linear * SpineGlow);
+            var edge = (Vector4)(Color.Lerp(copper, hot, 0.45f + 0.55f * Fury).linear * EdgeGlow);
             foreach (var r in renderers)
             {
                 if (!r) continue;
                 r.GetPropertyBlock(block);
-                if (emissionMask) block.SetTexture(EmissionMapId, emissionMask);
-                block.SetColor(EmissionId, emit);
+                if (emissionMask) block.SetTexture(GlowMaskId, emissionMask);
+                block.SetVector(Glow0Id, spine);
+                block.SetVector(Glow1Id, edge);
+                // 剑脊的熔铜沿剑身流动闪烁，刃口稳一点
+                block.SetVector(GlowShimmerId, new Vector4(0.4f, 0.15f, 0f, 7f));
                 block.SetColor(RimColorId, Color.Lerp(rimBase, hot, glow));
                 block.SetFloat(RimStrengthId, Mathf.Lerp(rimStrengthBase, 1.6f, glow));
                 r.SetPropertyBlock(block);
