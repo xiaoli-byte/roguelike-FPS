@@ -15,6 +15,8 @@ namespace Spiritfire.Game
     ///   · 侧看补宽（特效打磨 A 路）：第二、三段出刀时刀身大多朝前，刀身扫过的那块面几乎侧对镜头，屏幕上只剩一道细线——
     ///     按「扫掠面法线 · 视线」算侧对程度，越侧对越把内沿往屏幕上垂直于挥动方向的一侧推开（最多刀长 × <see cref="FxTrailSpec.screenWiden"/>），
     ///     一条刀光里朝同一侧推（不来回翻）；正对镜头的第一段几乎不变。
+    /// 顶点色按线性写（第二批收尾 D 路，同 <see cref="SlashArc"/>）：材质是 URP Particles/Unlit（M_Fx_AlphaBlend / M_Fx_Additive），网格顶点色直接当线性值乘进去，
+    /// 以前直接写 sRGB 的紫 / 暖白，中间调被抬亮，带身成了一片淡紫、刃口发奶白；现在刀光色、暖白先过 <see cref="FxVertexColor.Linear"/>，强度系数（HDR 倍率）照乘。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BladeTrail : MonoBehaviour
@@ -204,6 +206,9 @@ namespace Spiritfire.Game
         /// <summary>重写网格；没有相连的两点（画不出带子）返回 false</summary>
         bool Rebuild(Color color)
         {
+            // 顶点色是线性值：调色板上的 sRGB 色先转线性（暖白同理），亮度倍率在线性空间里乘
+            color = FxVertexColor.Linear(color);
+            var warm = FxVertexColor.Linear(WarmWhite);
             float widenMax = 0, sideSign = 0;
             int stripStart = 0, stripEnd = 0;
             for (int i = 0; i < count; i++)
@@ -224,7 +229,7 @@ namespace Spiritfire.Game
                 float life = Mathf.Clamp01(1 - s.age / Mathf.Max(0.01f, spec.life));
                 float head = Mathf.Clamp01(1 - s.age / Mathf.Max(0.005f, spec.headTime));
                 float fade = life * life;
-                var hot = Color.Lerp(color, WarmWhite, Mathf.Clamp01(spec.hotMix + spec.headHotMix * head));
+                var hot = Color.Lerp(color, warm, Mathf.Clamp01(spec.hotMix + spec.headHotMix * head));
                 float k = spec.bodyIntensity * (0.55f + 0.45f * s.bright);
                 int v = i * Stride;
                 float a = fade * spec.bodyAlpha * s.bright * Mathf.Lerp(0.55f, 1f, bw);

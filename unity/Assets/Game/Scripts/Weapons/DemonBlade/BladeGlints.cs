@@ -7,6 +7,8 @@ namespace Spiritfire.Game
     /// 第一人称视图里的小光点（WC7）：刚归位的碎片闪一下（归位闪）、剑指指尖的灵光、判定帧刃口的白热一闪。
     /// 每帧 <see cref="Begin"/> → 若干 <see cref="Add"/>（父物体局部坐标，近似相机空间）→ <see cref="End"/>：拼成一块面向镜头的方片网格，
     /// 柔光贴图（M_Fx_Glow，加色、没有贴脸淡出），顶点色带每颗的亮度；FirstPerson 层，跟刀模同一台枪模相机画。
+    /// 顶点色按线性写（第二批收尾 D 路，同 <see cref="SlashArc"/>）：M_Fx_Glow 是 URP Particles/Unlit，网格顶点色直接当线性值用；
+    /// 调用方给的是「sRGB 色 × HDR 倍率」，这里拆开：色相部分（最大分量归一）转线性，倍率原样乘回去（<see cref="Vertex"/>）。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BladeGlints : MonoBehaviour
@@ -84,8 +86,17 @@ namespace Spiritfire.Game
             verts[v + 1] = center + new Vector3(h, -h, 0);
             verts[v + 2] = center + new Vector3(h, h, 0);
             verts[v + 3] = center + new Vector3(-h, h, 0);
-            colors[v] = colors[v + 1] = colors[v + 2] = colors[v + 3] = color;
+            colors[v] = colors[v + 1] = colors[v + 2] = colors[v + 3] = Vertex(color);
             count++;
+        }
+
+        /// <summary>「sRGB 色 × HDR 倍率」→ 线性顶点色：最大分量 &gt; 1 时先除掉倍率再转线性、再乘回（倍率本来就是线性的亮度）；alpha 不变</summary>
+        public static Color Vertex(Color c)
+        {
+            float m = Mathf.Max(c.r, Mathf.Max(c.g, c.b));
+            if (m <= 1f) return FxVertexColor.Linear(c);
+            var l = FxVertexColor.Linear(new Color(c.r / m, c.g / m, c.b / m, c.a));
+            return new Color(l.r * m, l.g * m, l.b * m, c.a);
         }
 
         public void End()
