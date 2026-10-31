@@ -149,6 +149,16 @@ namespace Spiritfire.Game.Testing
                 Fail($"天路标记只有 {marks.Count} 个（构建器应每 15 m 摆一个 Route_Road_*）");
                 yield break;
             }
+            // 天路过了垭口还往北下坡出图（网页 ROAD 最后两个节点在经幡门外的风雪里）：只走到离经幡门最近的那个标记
+            var gate = GameObject.Find("Route_Gate");
+            if (gate)
+            {
+                int last = 0;
+                for (int i = 1; i < marks.Count; i++)
+                    if (Flat(marks[i] - gate.transform.position) < Flat(marks[last] - gate.transform.position)) last = i;
+                if (last < marks.Count - 1) Line($"天路标记 {marks.Count} 个，走到第 {last + 1} 个（离经幡门 {Flat(marks[last] - gate.transform.position):F1} m），后面 {marks.Count - 1 - last} 个在垭口外");
+                marks = marks.Take(last + 1).ToList();
+            }
             var auto = sites.ToDictionary(s => s, s => s.autoTrigger);
             foreach (var s in sites) s.autoTrigger = false;
             Teleport(motor, marks[0]);
@@ -194,7 +204,7 @@ namespace Spiritfire.Game.Testing
             var end = motor.transform.position;
             float toPass = Flat(end - marks[^1]);
             Line($"走到垭口：{Time.time - t0:F0} s、{walked:F0} m（{marks.Count} 个标记），高度 {lowest:F1} → {highest:F1}，卡住 {stalls - stalls0} 次，离终点 {toPass:F1} m");
-            if (stalls - stalls0 > 2) Fail($"沿天路走卡住 {stalls - stalls0} 次（天路应全程不卡：网页行走测试也是）");
+            if (stalls - stalls0 > 0) Fail($"沿天路走卡住 {stalls - stalls0} 次（天路应全程不卡：网页行走测试也是）");
             if (toPass > 3) Fail("没走到天路终点");
         }
 
