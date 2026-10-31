@@ -18,6 +18,8 @@ namespace Spiritfire.Game
         Molten = 3,
         /// <summary>湿痕（出水后脚下的深色湿沙，慢慢干掉）</summary>
         Wet = 4,
+        /// <summary>雷纹（第四章出生法阵：紫红外环 + 折线雷纹 + 四枚雷齿 + 粉白雷心，靛紫暗底）</summary>
+        Thunder = 5,
     }
 
     /// <summary>

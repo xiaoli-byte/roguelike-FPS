@@ -338,6 +338,46 @@ Shader "Spiritfire/FxSigil"
             return float4(rgb, a);
         }
 
+        // ───────────── 模式 5：雷纹（第四章「雪域天路」：靛紫暗底 + 紫红外环 + 一圈折线雷纹 + 四枚雷齿 + 粉白雷心） ─────────────
+        // 母题：邪火紫红雷光（fx-style §2.2 第四章腐化色）。中尺度纹样、线粗而少：外环、折线环（12 折，读「雷」）、四枚向心的三角雷齿（慢转）、
+        // 雷心是粉白实心圆 + 紫红环。三阶：粉白芯 / 紫红 / 靛紫暗衬
+        float4 ShadeThunder(float2 q, float4 P)
+        {
+            float grow, vis, flash;
+            SGTiming(P.x, grow, vis, flash);
+            q /= grow;
+            float time = _Time.y;
+            float d = length(q);
+            float aa = max(fwidth(d), 1e-4);
+            float ang = atan2(q.y, q.x);
+            const float3 TH_MAIN = float3(0.95, 0.22, 0.8);
+            const float3 TH_CORE = float3(1.0, 0.93, 0.98);
+            const float3 TH_DARK = float3(0.16, 0.05, 0.26);
+            // 底：靛紫暗底（压暗地面一层，雪地上也托得住紫红线）
+            float3 rgb = TH_DARK;
+            float a = (1.0 - smoothstep(0.92, 0.92 + aa, d)) * 0.3;
+            SGLayer(rgb, a, d - 0.92, 0.032, aa, TH_MAIN, 0.03);
+            // 折线雷纹：半径在 0.62–0.76 之间按角度走三角波（12 折），慢慢转
+            float rot = time * 0.3 + P.z;
+            float tri = abs(frac((ang + rot) / SG_TAU * 12.0) * 2.0 - 1.0);
+            float zr = 0.62 + 0.14 * tri;
+            // 折线的法向距离近似：径向差 × 斜率修正（折线两段的斜率一样，按一个常数折算）
+            float zd = (d - zr) * 0.62;
+            SGLayer(rgb, a, zd, 0.022, aa, TH_MAIN, 0.02);
+            // 四枚雷齿：外环往里的三角（尖朝心），反向慢转
+            float rot2 = -time * 0.45 - P.z;
+            float sa = frac((ang + rot2) / SG_TAU * 4.0) - 0.5;
+            float sr = (0.9 - d) / 0.2;
+            float tooth = step(0.0, sr) * step(sr, 1.0) * (1.0 - smoothstep((1.0 - sr) * 0.13, (1.0 - sr) * 0.13 + aa * 5.0, abs(sa)));
+            SGFill(rgb, a, tooth, 0, TH_MAIN);
+            // 雷心：粉白实心 + 紫红环（呼吸一下）
+            float pulse = 0.5 + 0.5 * sin(time * 6.0 + P.z * 3.0);
+            SGFill(rgb, a, 1.0 - smoothstep(0.12, 0.12 + aa, d), 1.0 - smoothstep(0.16, 0.16 + aa, d), lerp(TH_MAIN, TH_CORE, 0.6 + 0.4 * pulse));
+            SGLayer(rgb, a, d - 0.27, 0.022, aa, TH_MAIN, 0.02);
+            if (P.w > 0.5) SGLayer(rgb, a, d - 1.0, 0.03, aa, SG_GOLD * 1.15, 0.02);
+            return SGFinish(rgb, a, flash, vis, d);
+        }
+
         struct Attributes
         {
             float4 positionOS : POSITION;
@@ -391,7 +431,8 @@ Shader "Spiritfire/FxSigil"
             else if (mode < 1.5) c = ShadeFrost(q, P);
             else if (mode < 2.5) c = ShadeFire(q, P);
             else if (mode < 3.5) c = ShadeMolten(q, P);
-            else c = ShadeWet(q, P);
+            else if (mode < 4.5) c = ShadeWet(q, P);
+            else c = ShadeThunder(q, P);
             float edge = smoothstep(0.3, 0.55, facing) * (1.0 - smoothstep(0.36, 0.5, abs(ds.y)));
             return c * (fade * edge);
         }

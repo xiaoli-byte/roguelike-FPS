@@ -76,10 +76,10 @@ namespace Spiritfire.Game
         /// <summary>按 id 取预设（返回同一个实例，别改；要改先 Clone）；没有返回 null</summary>
         public static WeatherProfile Get(string id) => id != null && Map.TryGetValue(id, out var p) ? p : null;
 
-        /// <summary>软边界白化用哪套：按章节主题（ShowcaseTheme.key：Desert / Frost / Inferno）</summary>
+        /// <summary>软边界白化用哪套：按章节主题（ShowcaseTheme.key：Desert / Frost / Inferno / Plateau；雪域的软边界是风雪）</summary>
         public static string WhiteoutFor(string theme) => theme switch
         {
-            "Frost" => WhiteoutFrost,
+            "Frost" or "Plateau" => WhiteoutFrost,
             "Inferno" => WhiteoutInferno,
             _ => WhiteoutDesert,
         };

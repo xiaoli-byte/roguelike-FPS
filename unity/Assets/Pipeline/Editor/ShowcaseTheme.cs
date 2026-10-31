@@ -138,6 +138,36 @@ namespace Spiritfire.Art.Editor
             groundPattern = GroundPattern.LavaCracks,
         };
 
+        /// <summary>
+        /// 第四章 · 雪域天路（docs/unity-ch4-port.md；fx-style §2.2 第四章底色）：高原的强日光、深蓝天、青绿草甸、白雪、白墙赭红、五色经幡。
+        /// 关卡构建器 <c>ShowcaseSceneBuilder.BuildLighting(ShowcaseTheme.Plateau, Dir)</c> 生成本关的 VP_Plateau.asset。
+        /// 后处理（2026-10-31 F 路，按前三章的数值体系推定，还没在 4-1 场景里对照截图；第一人称渲染一路改成单遍后处理后统一再对一次）：
+        ///   曝光 −0.3（雪地反光强，同第二章一档）、对比 18（高原空气透、明暗硬）、饱和 +8（草甸、经幡、深蓝天要鲜）、色温 −6（偏冷但不青）、
+        ///   Bloom 0.5 / 阈值 1.0（雪面不糊、只让雷光和灵火发光）、暗角 0.18。
+        /// 不在 <see cref="All"/> 里：展示广场没有第四章的建筑套件（第一期只有夔的残鼓），不生成 Showcase_Plateau
+        /// </summary>
+        public static readonly ShowcaseTheme Plateau = new()
+        {
+            key = "Plateau", title = "第四章 · 雪域天路",
+            actors = new[]
+            {
+                ("SK_Enemy_Marmot", 0f), ("SK_Enemy_Tiangou", 0f), ("SK_Hero_RedPanda", 0f), ("SK_Enemy_Jufu", 0f),
+                ("SK_Enemy_Aoyin", 0f), ("SK_Enemy_Dijiang", 0.35f),
+            },
+            armR = "SM_Arms_RedPandaR", armL = "SM_Arms_RedPandaL", boss = "SK_Boss_Kui",
+            // 高原：太阳高而白、天顶深蓝；草甸和雪的反弹让环境光地面一侧偏亮绿灰
+            sunColor = new(1f, 0.97f, 0.92f), sunIntensity = 1.6f, sunEuler = new(48, 210, 0),
+            gradientSky = true, skyTop = new(0.07f, 0.2f, 0.55f), skyHorizon = new(0.62f, 0.76f, 0.92f), skyBottom = new(0.52f, 0.58f, 0.6f), skyExposure = 1.1f,
+            ambientSky = new(0.38f, 0.52f, 0.8f), ambientEquator = new(0.56f, 0.6f, 0.64f), ambientGround = new(0.34f, 0.38f, 0.27f),
+            // 空气稀薄：雾远而淡，偏天蓝（远山贡嘎要看得见）
+            fogColor = new(0.7f, 0.8f, 0.92f), fogStart = 60, fogEnd = 420,
+            fireColor = new(1f, 0.6f, 0.3f), fireIntensity = 5f,
+            postExposure = -0.3f, contrast = 18, saturation = 8, temperature = -6, bloomTint = new(0.94f, 0.96f, 1f),
+            bloomIntensity = 0.5f, bloomThreshold = 1f, vignette = 0.18f,
+            groundA = new(0.34f, 0.46f, 0.22f), groundB = new(0.5f, 0.58f, 0.3f), groundShadowTint = new(0.5f, 0.58f, 0.86f),
+            groundPattern = GroundPattern.Drifts,
+        };
+
         public static readonly ShowcaseTheme[] All = { Desert, Frost, Inferno };
     }
 }

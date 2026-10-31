@@ -29,7 +29,7 @@ namespace Spiritfire.Game
         public readonly StageKind kind;
         /// <summary>章（1 起）</summary>
         public readonly int chapter;
-        /// <summary>章内关序（0 起，首领场 = 3）</summary>
+        /// <summary>章内关序（0 起，首领场 = 3；第四章第一期没有 4-3，4-4 的关序仍是 3）</summary>
         public readonly int index;
         /// <summary>在整张表里的位置（0 起）</summary>
         public readonly int order;
@@ -68,7 +68,12 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 整局的关卡规划（代码表，D1–D4）：3 章 × (3 张开放大图 + 1 个首领场) = 12 关，主线顺序固定。
+    /// 整局的关卡规划（代码表，D1–D4）：3 章 × (3 张开放大图 + 1 个首领场) = 12 关，主线顺序固定；
+    /// 第四章「雪域天路」接在第三章之后（C4-1，docs/unity-ch4-port.md），第一期是 4-1 → 4-2 → 4-4（4-3 雪域宫堡第二期再插），整表 15 关。
+    ///
+    /// 场景还没建好的关（第四章分期建）：<see cref="Ready"/> 为假的关不在路线上——<see cref="Next"/> 跳过它、<see cref="Final"/> /
+    /// <see cref="IsLast"/> 落在最后一个建好的关上，所以第四章一关都没生成时整局照旧在 3-4 胜利结算，建好几关就走到几关。
+    /// 判定缺省用 <see cref="SceneFlow.CanLoad(StageSpec)"/>（构建设置里有，或编辑器里磁盘上有场景文件），测试可以换 <see cref="SceneReady"/>。
     ///
     /// 试玩开关（I1）：<see cref="DemoEnd"/> 设成某一关（缺省 null = 完整版）后，这一关就是「最后一关」——<see cref="IsFinal"/> 为真、
     /// <see cref="Next"/> 到此为止：打完 1-4 的首领直接走胜利链 → 整局结算（BossEncounter.Decide / GameSession.CompleteStage 都读 IsFinal），
@@ -78,7 +83,7 @@ namespace Spiritfire.Game
     /// </summary>
     public static class RunPlan
     {
-        public const int Chapters = 3, StagesPerChapter = 4;
+        public const int Chapters = 4, StagesPerChapter = 4;
         public const float ChapterSlope = 0.8f, StageSlope = 0.16f;
         /// <summary>试玩版缺省到哪一关（第一章首领 · 旱魃）</summary>
         public const string DemoDefault = "1-4";
@@ -94,9 +99,33 @@ namespace Spiritfire.Game
         {
             demoEnd = null;
             demoResolved = false;
+            SceneReady = null;
         }
 
-        /// <summary>全部关卡（主线顺序，完整版 12 关，不受试玩开关影响）</summary>
+        /// <summary>某一关的场景能不能进（null = <see cref="SceneFlow.CanLoad(StageSpec)"/>）。测试换成固定规则，用完设回 null</summary>
+        public static Func<StageSpec, bool> SceneReady;
+
+        /// <summary>这一关的场景已经建好、能进（见类注释）</summary>
+        public static bool Ready(StageSpec s)
+        {
+            if (s == null) return false;
+            var f = SceneReady;
+            return f != null ? f(s) : SceneFlow.CanLoad(s);
+        }
+
+        /// <summary>完整版的最后一关：表里最后一个建好的关（一个都没建好时是表的最后一关）</summary>
+        public static StageSpec LastReady
+        {
+            get
+            {
+                for (int i = stages.Length - 1; i >= 0; i--)
+                    if (Ready(stages[i]))
+                        return stages[i];
+                return stages[stages.Length - 1];
+            }
+        }
+
+        /// <summary>全部关卡（主线顺序，整表 15 关，不受试玩开关和场景有没有建好影响：构建顺序、经济投影用）</summary>
         public static IReadOnlyList<StageSpec> Stages => stages;
         public static StageSpec First => stages[0];
 
@@ -121,27 +150,28 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>试玩开关开着（DemoEnd 指向表里的一关，而且不是完整版的最后一关）</summary>
-        public static bool IsDemo => Get(DemoEnd) is { } s && s.order < stages.Length - 1;
+        /// <summary>试玩开关开着（DemoEnd 指向表里的一关，而且在完整版的最后一关之前）</summary>
+        public static bool IsDemo => Get(DemoEnd) is { } s && s.order < LastReady.order;
 
-        /// <summary>这一局的最后一关：试玩版 = DemoEnd，完整版 = 3-4</summary>
-        public static StageSpec Final => IsDemo ? Get(DemoEnd) : stages[stages.Length - 1];
+        /// <summary>这一局的最后一关：试玩版 = DemoEnd，完整版 = 最后一个建好的关（第四章建好之前是 3-4）</summary>
+        public static StageSpec Final => IsDemo ? Get(DemoEnd) : LastReady;
 
-        /// <summary>这一局要走的关卡（第一关 … <see cref="Final"/>）</summary>
+        /// <summary>这一局要走的关卡（第一关 … <see cref="Final"/>，跳过还没建好的关）</summary>
         public static IReadOnlyList<StageSpec> Playable
         {
             get
             {
-                int n = Final.order + 1;
-                if (n == stages.Length) return stages;
-                var list = new StageSpec[n];
-                Array.Copy(stages, list, n);
+                int end = Final.order;
+                var list = new List<StageSpec>(end + 1);
+                for (int i = 0; i <= end && i < stages.Length; i++)
+                    if (i == end || Ready(stages[i]))
+                        list.Add(stages[i]);
                 return list;
             }
         }
 
-        /// <summary>这一关在不在这一局的路线上（试玩版里 DemoEnd 之后的关卡不在）</summary>
-        public static bool InPlay(StageSpec s) => s != null && s.order <= Final.order;
+        /// <summary>这一关在不在这一局的路线上（试玩版里 DemoEnd 之后的关卡、还没建好的关卡不在）</summary>
+        public static bool InPlay(StageSpec s) => s != null && s.order <= Final.order && (s.order == Final.order || Ready(s));
 
         /// <summary>命令行 / 编译符号 → 试玩终点（纯函数，EditMode 可测）</summary>
         public static string ResolveDemoEnd(string[] args)
@@ -167,14 +197,22 @@ namespace Spiritfire.Game
         /// <summary>难度 = 1 + 0.8 ×（章 − 1）+ 0.16 × 关序（章从 1 起，关序从 0 起）</summary>
         public static float Difficulty(int chapter, int index) => 1 + ChapterSlope * (chapter - 1) + StageSlope * index;
 
-        /// <summary>下一关；这一局的最后一关（<see cref="IsFinal"/>，试玩版 = DemoEnd）之后返回 null</summary>
-        public static StageSpec Next(StageSpec s) => s != null && !IsFinal(s) && s.order + 1 < stages.Length ? stages[s.order + 1] : null;
+        /// <summary>下一关（跳过还没建好的关）；这一局的最后一关（<see cref="IsFinal"/>，试玩版 = DemoEnd）之后返回 null</summary>
+        public static StageSpec Next(StageSpec s)
+        {
+            if (s == null || IsFinal(s)) return null;
+            int end = Final.order;
+            for (int i = s.order + 1; i <= end && i < stages.Length; i++)
+                if (i == end || Ready(stages[i]))
+                    return stages[i];
+            return null;
+        }
 
-        /// <summary>这一局的最后一关（完整版 3-4；试玩版 DemoEnd）：打完 = 胜利结算</summary>
+        /// <summary>这一局的最后一关（完整版 = 最后一个建好的关；试玩版 DemoEnd）：打完 = 胜利结算</summary>
         public static bool IsFinal(StageSpec s) => s != null && s.order >= Final.order;
 
-        /// <summary>完整版的最后一关（3-4：击败全部首领）</summary>
-        public static bool IsLast(StageSpec s) => s != null && s.order == stages.Length - 1;
+        /// <summary>完整版的最后一关（最后一个建好的关：击败全部首领）</summary>
+        public static bool IsLast(StageSpec s) => s != null && s.order >= LastReady.order;
 
         /// <summary>按编号取（「1-2」）；没有则 null</summary>
         public static StageSpec Get(string code)
@@ -197,13 +235,14 @@ namespace Spiritfire.Game
 
         static StageSpec[] Build()
         {
-            const string Ch1 = "赤沙古道", Ch2 = "昆仑雪墟", Ch3 = "祝融火狱";
+            const string Ch1 = "赤沙古道", Ch2 = "昆仑雪墟", Ch3 = "祝融火狱", Ch4 = "雪域天路";
             var list = new List<StageSpec>();
-            void Add(int chapter, string title, string chapterName, string scene, StageKind kind = StageKind.Field, bool supply = false)
+            void Add(int chapter, string title, string chapterName, string scene, StageKind kind = StageKind.Field, bool supply = false, int at = -1)
             {
                 int index = 0;
                 foreach (var s in list)
                     if (s.chapter == chapter) index++;
+                if (at >= 0) index = at;
                 bool boss = kind == StageKind.Boss;
                 list.Add(new StageSpec(list.Count, chapter, index, title, chapterName, $"Assets/Scenes/{scene}.unity", kind,
                     boss ? "boss" : "calm", boss ? "weapon" : "scroll", supply));
@@ -223,6 +262,10 @@ namespace Spiritfire.Game
             Add(3, "铸神井", Ch3, "L3_2_ForgeWell");
             Add(3, "铸范大坊", Ch3, "L3_3_Foundry");
             Add(3, "祝融炉心 · 火麒麟", Ch3, "L3_4_Zhurong", StageKind.Boss, true);
+            // 第四章（C4-1 / C4-2：4-1 三领主开放盆地、4-2 大鹗三江口；4-3 雪域宫堡第二期再插，4-4 关序仍是 3；补给营在 4-4 神山海子的门槛外）
+            Add(4, "折多垭口·天路草甸", Ch4, "L4_1_Zheduo");
+            Add(4, "大渡河·铁索桥峡谷", Ch4, "L4_2_Dadu");
+            Add(4, "神山海子 · 雷泽雷神", Ch4, "L4_4_Haizi", StageKind.Boss, true, 3);
             return list.ToArray();
         }
     }

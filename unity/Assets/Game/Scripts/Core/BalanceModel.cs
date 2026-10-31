@@ -102,8 +102,12 @@ namespace Spiritfire.Game
         static Squad S(string enemy, int count, int elites = 0) => new(enemy, count, elites);
 
         /// <summary>
-        /// 九张开放大图的实际编制（2026-10-30 按场景统计；BalanceModelTests 逐关对照场景文件，改了遭遇要同步这里）。
-        /// 首领场（1-4 / 2-4 / 3-4）不在表里；3-3 末尾的熔心魔将另算（<see cref="LordOf"/>）
+        /// 开放大图的实际编制（前三章九张 2026-10-30 按场景统计；BalanceModelTests 逐关对照场景文件，改了遭遇要同步这里）。
+        /// 首领场（1-4 / 2-4 / 3-4 / 4-4）不在表里；3-3 末尾的熔心魔将、4-1 三领主、4-2 大鹗另算（<see cref="LordsOf"/>）。
+        /// 第四章（2026-10-31，F 路）按 chuanzang-combat-v1 5.1 / docs/level-design/maps/4-1.md 第 5 节的据点配怪、chuanzang-v1 3.7 的 4-2 遇敌先写好：
+        ///   4-1：① 举父 2 天狗 3 连鼓灵；② 啸獭 6 帝江 3；③ 獓狠 雷牦 2 帝江 2；④ 蛮蛮 2 天狗 3 连鼓灵；⑤ 举父 2 啸獭 4 蛮蛮 2；⑥ 连鼓灵 天狗 4 帝江 2；⑦ 獓狠 雷牦 举父；
+        ///   4-2：① 举父 2 天狗 3 连鼓灵；② 蛮蛮 2 帝江 3 连鼓灵；③ 天狗 3 举父；④ 獓狠 雷牦 2 举父；⑤ 啸獭 6 帝江 3 蛮蛮 2；⑦ 天狗 4 连鼓灵。
+        /// 游猎的穷奇不是遭遇场地，不在表里。场景生成之后以场景为准（测试会把场景的统计行打出来）
         /// </summary>
         public static readonly StageLoad[] Stages =
         {
@@ -119,7 +123,22 @@ namespace Spiritfire.Game
             new("3-2", 1, 1, 1, S("firecracker", 4), S("tantong", 20), S("mamian", 6, 1), S("huodou", 10), S("bifang", 2), S("fire_crow", 6), S("iron_ox", 1, 1)),
             new("3-3", 1, 0, 1, S("tuo", 1), S("tantong", 20), S("firecracker", 4), S("mamian", 2), S("founder", 1), S("bifang", 1), S("huodou", 4), S("nuo", 1), S("fire_crow", 3),
                 S("iron_ox", 2, 1)),
+            new("4-1", 1, 1, 1, S("jufu", 5), S("tiangou", 10), S("liangu", 3), S("marmot", 10), S("dijiang", 7), S("aoyin", 2), S("leiyak", 3), S("manman", 4)),
+            new("4-2", 1, 1, 1, S("jufu", 4), S("tiangou", 10), S("liangu", 3), S("manman", 4), S("dijiang", 6), S("aoyin", 1), S("leiyak", 2), S("marmot", 6)),
         };
+
+        /// <summary>第四章首领 / 领主的 id（定义由 B1 / B2 路落地；没落地之前 <see cref="Bosses.Get"/> 为 null，奖励按缺省算）</summary>
+        public const string KuiId = "boss_kui", FeilianId = "boss_feilian", HuasheId = "boss_huashe", DaeId = "boss_dae", LeizeId = "boss_leize";
+
+        /// <summary>这一行编制里的敌人都已经在名册里（第四章的雷魅由 E 路登记；没登记全之前，按编制核对的测试跳过这一行）</summary>
+        public static bool RosterReady(StageLoad load)
+        {
+            if (load == null) return false;
+            foreach (var q in load.squads)
+                if (EnemyRoster.Get(q.enemy) == null)
+                    return false;
+            return true;
+        }
 
         /// <summary>首领场里随首领出来的杂兵（召唤的沙魇、炭童、飞鸦……）按这么多只普通单位算</summary>
         public const int BossStageAdds = 8;
@@ -134,11 +153,22 @@ namespace Spiritfire.Game
             return null;
         }
 
-        /// <summary>首领场的首领 id（1-4 旱魃、2-4 鲲鹏、3-4 火麒麟）；开放大图 null</summary>
-        public static string BossOf(StageSpec s) => s == null || !s.IsBoss ? null : s.chapter switch { 1 => HanbaDef.Id, 2 => KunPengDef.Id, _ => QilinDef.Id };
+        /// <summary>首领场的首领 id（1-4 旱魃、2-4 鲲鹏、3-4 火麒麟、4-4 雷泽雷神）；开放大图 null</summary>
+        public static string BossOf(StageSpec s) => s == null || !s.IsBoss ? null : s.chapter switch { 1 => HanbaDef.Id, 2 => KunPengDef.Id, 4 => LeizeId, _ => QilinDef.Id };
 
-        /// <summary>开放大图末尾的领主（3-3 熔心魔将）；没有为 null</summary>
+        /// <summary>开放大图末尾的领主（3-3 熔心魔将）；没有为 null。第四章一张图可能有几个领主，用 <see cref="LordsOf"/></summary>
         public static string LordOf(StageSpec s) => s != null && s.code == "3-3" ? WarlordDef.Id : null;
+
+        static readonly string[] NoLords = { }, Lords33 = { WarlordDef.Id }, Lords41 = { KuiId, FeilianId, HuasheId }, Lords42 = { DaeId };
+
+        /// <summary>开放大图里的领主（3-3 熔心魔将；4-1 夔、飞廉、化蛇；4-2 大鹗）；没有为空</summary>
+        public static string[] LordsOf(StageSpec s) => s?.code switch
+        {
+            "3-3" => Lords33,
+            "4-1" => Lords41,
+            "4-2" => Lords42,
+            _ => NoLords,
+        };
 
         // ───────────── 逐关估算 ─────────────
 
@@ -173,7 +203,7 @@ namespace Spiritfire.Game
                 var load = Load(s.code);
                 if (load != null) AddField(ref e, load, s.difficulty, killMult);
                 e.cacheCoins = (load?.coinCaches ?? 0) * (EconomyConfig.ChestCoinsMin + EconomyConfig.ChestCoinsMax) * 0.5f * EconomyConfig.RewardChapterMult(ch);
-                if (LordOf(s) is { } lord) AddBoss(ref e, lord, ch);
+                foreach (var lord in LordsOf(s)) AddBoss(ref e, lord, ch);
                 e.fieldSeconds = e.fieldEhp / ReferenceDps(s.difficulty);
             }
             e.essence += EconomyConfig.EssencePerStage;
@@ -242,7 +272,7 @@ namespace Spiritfire.Game
             return n > 0 ? sum / n : 3f;
         }
 
-        /// <summary>整局 12 关的估算（主线顺序）</summary>
+        /// <summary>整表的估算（主线顺序，含还没建好的第四章）</summary>
         public static List<StageEstimate> EstimateRun(int bossStageAdds = BossStageAdds)
         {
             var list = new List<StageEstimate>();
@@ -263,12 +293,18 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>打到某一关（含）为止的魂晶：通关 = 最后一关 + 胜利奖励；阵亡 = 前面清掉的关 + 这一关的一半击杀（不含清关 +10）</summary>
+        /// <summary>
+        /// 打到某一关（含）为止的魂晶：通关 = 最后一关 + 胜利奖励；阵亡 = 前面清掉的关 + 这一关的一半击杀（不含清关 +10）。
+        /// 只算这一局真的会走的关（<see cref="RunPlan.Playable"/>：第四章的场景建好一关算一关）——第四章整局接上之后魂晶要重新定档
+        /// </summary>
         public static float RunEssence(string diedAt = null)
         {
             float sum = 0;
+            var route = new HashSet<string>();
+            foreach (var s in RunPlan.Playable) route.Add(s.code);
             foreach (var e in EstimateRun())
             {
+                if (!route.Contains(e.stage.code)) continue;
                 if (diedAt != null && e.stage.code == diedAt) return sum + (e.essence - EconomyConfig.EssencePerStage) * 0.5f;
                 sum += e.essence;
             }
@@ -308,6 +344,8 @@ namespace Spiritfire.Game
             new("2-4", Rarity.Epic, 4, 1, 0.05f, "旱魃保底史诗；2-1 / 2-2 / 2-3 三次强化奖励 + 2-4 门外补给营买一级；第二章两三张伤害秘卷"),
             new("3-3", Rarity.Legendary, 3, 0, 0.1f, "鲲鹏保底传说；3-1 / 3-2 / 3-3 三次强化奖励（3-3 的窖藏在领主战之前）"),
             new("3-4", Rarity.Legendary, 4, 1, 0.1f, "3-4 门外补给营再买一级"),
+            // 第四章：强化在 3-4 之后就到满级（5），之后只能靠秘卷追难度曲线——4-4 前约落后曲线 8%（第二期再看第四章要不要新品质 / 秘卷补）
+            new("4-4", Rarity.Legendary, 5, 1, 0.3f, "4-1 / 4-2 两次强化奖励 + 4-4 门外补给营买到满级；第三、四章累计的伤害秘卷"),
         };
 
         /// <summary>一家补给营：在哪一关、预算从哪一关之后算起、为哪个首领备战（对应 <see cref="Gear"/> 的 before）</summary>
@@ -325,8 +363,8 @@ namespace Spiritfire.Game
             public int Chapter => (RunPlan.Get(at)?.chapter ?? 1) - 1;
         }
 
-        /// <summary>三家补给营（RunPlan.supplyCamp）：1-3 末段（预算含 1-3，为旱魃备战）、2-4 门外和 3-4 门外（预算不含本关首领）</summary>
-        public static readonly Camp[] Camps = { new("1-3", null, "1-4"), new("2-4", "1-3", "2-4"), new("3-4", "2-4", "3-4") };
+        /// <summary>四家补给营（RunPlan.supplyCamp）：1-3 末段（预算含 1-3，为旱魃备战）、2-4 / 3-4 / 4-4 门外（预算不含本关首领）</summary>
+        public static readonly Camp[] Camps = { new("1-3", null, "1-4"), new("2-4", "1-3", "2-4"), new("3-4", "2-4", "3-4"), new("4-4", "3-4", "4-4") };
 
         /// <summary>到这家店时，上一家店之后挣到的灵石（期望，不含上一家店剩下的）</summary>
         public static float CampBudget(Camp camp, float coinGainPct = 0)

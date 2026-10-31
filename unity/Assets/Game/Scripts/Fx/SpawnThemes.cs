@@ -2,13 +2,14 @@ using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    /// <summary>出生法阵的章节主题：无（通用法阵）/ 沙（第一章）/ 冰（第二章）/ 火（第三章）</summary>
+    /// <summary>出生法阵的章节主题：无（通用法阵）/ 沙（第一章）/ 冰（第二章）/ 火（第三章）/ 雷（第四章）</summary>
     public enum SpawnTheme
     {
         None,
         Sand,
         Frost,
         Fire,
+        Thunder,
     }
 
     /// <summary>
@@ -17,7 +18,9 @@ namespace Spiritfire.Game
     /// 接口约定（SpawnMaterialize 调用）：
     ///   <see cref="For"/> 选主题；<see cref="Begin"/> 返回 true = 主题法阵已经画了，通用 FxDecals.Rune 不再画；
     ///   <see cref="Tick"/> 返回 true = 本章已经出了地表卷尘，通用沙旋跳过；<see cref="Finale"/> 叠加在 SpawnFinale 之后。
-    /// 主题选择：敌人所在场景名 L1_ / L2_ / L3_ → 沙 / 冰 / 火；测试场等其它场景按敌人在图鉴里登记的章节；首领、附属单位、未登记 → None。
+    /// 主题选择：敌人所在场景名 L1_ / L2_ / L3_ / L4_ → 沙 / 冰 / 火 / 雷；测试场等其它场景按敌人在图鉴里登记的章节；首领、附属单位、未登记 → None。
+    /// 第四章「雷」（邪火紫红雷光，fx-style §2.2）：雷纹法阵（<see cref="SigilMode.Thunder"/>）+ 法阵亮起时一圈贴地短电弧、显形中紫红电火花往上窜、
+    /// 显形完成时一道竖直的细落雷 + 高原灰褐尘环。
     /// </summary>
     public static class SpawnThemes
     {
@@ -47,6 +50,7 @@ namespace Spiritfire.Game
             1 => SpawnTheme.Sand,
             2 => SpawnTheme.Frost,
             3 => SpawnTheme.Fire,
+            4 => SpawnTheme.Thunder,
             _ => SpawnTheme.None,
         };
 
@@ -56,15 +60,20 @@ namespace Spiritfire.Game
             SpawnTheme.Sand => SandGold,
             SpawnTheme.Frost => FrostPalette.Ice,
             SpawnTheme.Fire => InfernoPalette.Fire,
+            SpawnTheme.Thunder => ThunderMain,
             _ => Fx.EnemyColor,
         };
 
         static readonly Color SandGold = Hex.Rgb(0xffb050), SandDust = Hex.Rgb(0xd2a66a);
+        /// <summary>第四章：紫红主色 / 粉白亮芯 / 高原灰褐尘（fx-style §2.2）</summary>
+        static readonly Color ThunderMain = Hex.Rgb(0xff4fd8), ThunderCore = Hex.Rgb(0xfff2fb), PlateauDust = Hex.Rgb(0x9a8a6c);
+        static readonly Vector3[] arcWay = new Vector3[3];
 
         static SigilMode ModeOf(SpawnTheme theme) => theme switch
         {
             SpawnTheme.Sand => SigilMode.Sand,
             SpawnTheme.Frost => SigilMode.Frost,
+            SpawnTheme.Thunder => SigilMode.Thunder,
             _ => SigilMode.Fire,
         };
 
@@ -93,8 +102,23 @@ namespace Spiritfire.Game
                     FlameTongues.Ground(ground, ringR * 0.95f, Mathf.Clamp(Mathf.RoundToInt(ringR * 4), 4, 9), duration, Mathf.Clamp(ringR * 0.28f, 0.3f, 0.7f));
                     Fx.Ring(ground + Vector3.up * 0.05f, ringR * 1.2f, InfernoPalette.Fire, 0.45f, false);
                     break;
+                case SpawnTheme.Thunder:
+                    // 法阵亮起：外缘三道贴地短电弧（沿圆周折一下）+ 紫红亮环
+                    for (int i = 0; i < 3; i++) RimArc(ground, ringR * 1.05f, Random.value * Mathf.PI * 2);
+                    Fx.Ring(ground + Vector3.up * 0.05f, ringR * 1.2f, ThunderMain, 0.45f, false);
+                    break;
             }
             return true;
+        }
+
+        /// <summary>沿法阵外缘的一道贴地短电弧（从角度 a 起，弧长约 50°，中间往外折一下）</summary>
+        static void RimArc(Vector3 ground, float r, float a)
+        {
+            float b = a + 0.45f, c = a + 0.9f;
+            arcWay[0] = ground + new Vector3(Mathf.Cos(a) * r, 0.12f, Mathf.Sin(a) * r);
+            arcWay[1] = ground + new Vector3(Mathf.Cos(b) * r * 1.12f, 0.2f, Mathf.Sin(b) * r * 1.12f);
+            arcWay[2] = ground + new Vector3(Mathf.Cos(c) * r, 0.12f, Mathf.Sin(c) * r);
+            Lightning.Chain(arcWay, 3, ThunderMain, 0.04f);
         }
 
         /// <summary>每帧（k = 显形进度 0..1）：本章的地表卷尘 / 雪旋 / 火星。返回 true = 已经出了卷尘，调用方跳过通用沙旋</summary>
@@ -128,6 +152,12 @@ namespace Spiritfire.Game
                     Swirl(rt, "Ember", ground, ringR, Count(10f * scale * dt), 1.8f, 2.0f, 4.2f, 0.1f, 0.16f, 0.5f, 0.8f, InfernoPalette.Ember);
                     if (k < 0.7f) Swirl(rt, "ToonFlame", ground, ringR, Count(4f * scale * dt), 0.8f, 0.6f, 1.4f, 0.45f, 0.7f, 0.35f, 0.5f, InfernoPalette.Fire);
                     break;
+                case SpawnTheme.Thunder:
+                    // 紫红电火花往上窜（短、快）+ 前 70% 贴地的高原灰褐尘；偶尔外缘再噼啪一下
+                    Swirl(rt, "StreakLight", ground, ringR, Count(8f * scale * dt), 1.4f, 2.5f, 5f, 0.03f, 0.05f, 0.12f, 0.25f, ThunderMain);
+                    if (k < 0.7f) Swirl(rt, "ToonSmoke", ground, ringR, Count(3f * scale * dt), 1.6f, 0.2f, 0.6f, 0.45f, 0.7f, 0.45f, 0.65f, PlateauDust);
+                    if (Random.value < dt * 2.5f) RimArc(ground, ringR, Random.value * Mathf.PI * 2);
+                    break;
             }
             return true;
         }
@@ -152,6 +182,11 @@ namespace Spiritfire.Game
                 case SpawnTheme.Fire:
                     Fx.Play("Ember", center, Vector3.up, InfernoPalette.Fire, size * 0.5f);
                     EmitRing(rt, "Cinder", center, size * 0.35f, Mathf.RoundToInt(10 * Fx.Density), 3.5f, 1.8f, 0.06f, 0.8f, InfernoPalette.Ember);
+                    break;
+                case SpawnTheme.Thunder:
+                    // 一道竖直的细落雷劈在身上（亮芯第一帧到顶）+ 高原灰褐尘环往外泼
+                    Lightning.Spawn(center + Vector3.up * (size * 2.2f + 3f), center, ThunderCore, 0.06f);
+                    EmitRing(rt, "ToonSmoke", center - Vector3.up * size * 0.4f, size * 0.45f, Mathf.RoundToInt(8 * Fx.Density), 2.6f, 0.6f, 0.5f, 0.6f, PlateauDust);
                     break;
             }
         }
