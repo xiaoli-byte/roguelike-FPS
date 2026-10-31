@@ -41,6 +41,8 @@ ASSETS = {"xuan": "SK_Boss_Qilin", "burn": "SK_Boss_QilinBurn"}
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 FORM = argv[argv.index("--form") + 1] if "--form" in argv else "xuan"
 REVIEW = Path(argv[argv.index("--review") + 1]) if "--review" in argv else None
+# --only a,b：审核图只渲这几段（迭代姿势时省时间）
+ONLY = set(argv[argv.index("--only") + 1].split(",")) if "--only" in argv else None
 ASSET = ASSETS[FORM]
 GLB = ROOT / f"public/assets/characters/{ASSET}.glb"
 UNITY = ROOT / f"unity/Assets/Art/Characters/{ASSET}/Anim"
@@ -144,6 +146,139 @@ BLOW = P(pitch=6, chest=4, neck1=18, neck2=8, head=22, jaw=30, fl=(-12, -4, 0), 
 BLOW_B = P(pitch=5, chest=4, neck1=17, neck2=8, head=20, jaw=24, neck_yaw=3, fl=(-12, -4, 0), hl=(-6, 10, -4), tail=(-4, 4, 6), tail_yaw=(0, -6, 6))
 
 
+# ───────────── 第二批 B 路（2026-10-31，设计单 §2.9–2.12）：跃起、饮熔、硬直、喘息、焚身踏云步态 ─────────────
+# 跃起（玄鳞：先在地上蹲 0.28 s 再起跳，ScaleDrink 的抛物线也晚 0.28 s 起；焚身：从熔岩柱里冲出来已在半空）
+# plant="level"：四蹄都踩地，身体俯仰由前后腿的长短自动补（apply）；"ground"：趴 / 跪，腿上最低点落地
+LEAP_CROUCH = P(pitch=-8, chest=4, neck1=10, head=20, fl=(-18, 22, -4), hl=(-14, 22, -10), tail=(-10, 0, 0), plant="level")
+LEAP_PUSH = P(pitch=-22, spine=-2, neck1=8, head=6, fl=(-52, -44, 74, 42), hl=(30, 28, 34), tail=(14, 6, -4), plant=None)
+LEAP_RISE = P(pitch=-14, neck1=14, head=14, fl=(-70, -60, 95, 50), hl=(24, 22, 30), tail=(22, 10, -6), plant=None)
+LEAP_APEX = P(pitch=0, spine=4, chest=3, neck1=16, head=26, fl=(-62, -56, 86, 46), hl=(-50, 58, -24), tail=(28, -10, -16),
+              tail_yaw=(0, 8, -10), plant=None)
+LEAP_DESCEND = P(pitch=14, neck1=10, head=26, fl=(-42, -38, -24), hl=(-30, 40, -14), tail=(34, -16, -24), tail_yaw=(0, -8, 10), plant=None)
+LEAP_REACH = P(pitch=18, neck1=6, head=20, fl=(-30, -26, -18), hl=(-16, 26, -10), tail=(38, -14, -24), plant=None)
+LEAP_LAND = P(pitch=8, chest=5, neck1=12, head=28, jaw=6, fl=(-12, 8, -2), hl=(-20, 36, -18), tail=(40, -16, -26), tail_yaw=(0, 10, -12))
+# 饮熔：落地缓冲 → 前腿往前撑开、前身压低、脖子伸长探向熔池 → 一口一口地吞（下颌一张一合、喉部一缩、尾巴慢摆）→ 喝完抬头鳞光
+# （前腿撑开压低前身、后腿几乎伸直：前后腿一短一长，level 解出来前身往下压）
+DRINK_RECOIL = P(pitch=2, neck1=4, head=10, fl=(-10, 4, 2), hl=(-6, 10, -4), tail=(30, -8, -16), tail_yaw=(0, -6, 8), plant="level")
+DRINK_REACH = P(pitch=14, chest=10, neck1=38, neck2=24, head=80, jaw=10, fl=(-52, -26, 30), hl=(8, -20, 12), tail=(10, 4, 6), plant="level")
+DRINK_SIP_A = P(pitch=15, chest=11, neck1=40, neck2=26, head=84, jaw=18, fl=(-54, -28, 32), hl=(8, -20, 12), tail=(8, 4, 6), tail_yaw=(4, 8, -6),
+                plant="level")
+DRINK_SIP_B = P(pitch=13, spine=-3, chest=7, neck1=33, neck2=18, head=72, jaw=3, fl=(-50, -24, 28), hl=(8, -20, 12), tail=(10, 6, 4),
+                tail_yaw=(-4, -8, 6), plant="level")
+DRINK_DONE = P(pitch=-6, chest=-3, neck1=2, head=-14, jaw=18, fl=(-8, 2, -2), hl=(-12, 20, -10), tail=(26, 10, -8), tail_yaw=(0, -10, 12), plant="level")
+# 硬直（鼎角砸在背上）：一砸、四腿一软 → 前腿跪地、后腿折起，瘫在地上 → 晕眩摇头 → 前腿撑起、甩头起身
+STUN_HIT = P(pitch=8, chest=6, neck1=18, neck_yaw=14, head=30, head_yaw=20, jaw=18, fl=(-14, 30, -20), hl=(6, -14, 8), tail=(30, 14, -10), plant="level")
+STUN_BUCKLE = P(pitch=10, spine=4, chest=6, neck1=22, neck_yaw=10, head=38, head_yaw=14, jaw=12, fl=(-6, 10, 40, 20), hl=(-26, 46, -30),
+                tail=(10, 4, 0), plant="ground")
+STUN_DOWN = P(pitch=6, spine=5, chest=6, neck1=26, neck2=10, neck_yaw=8, head=42, head_yaw=14, jaw=10, fl=(-6, 4, 88, 40), hl=(-40, 76, -56),
+              tail=(-14, -6, 4), tail_yaw=(6, -4, 2), plant="ground")
+STUN_SETTLE = dict(STUN_DOWN, pitch=8, head=48, lift=-0.06)
+DAZE_A = dict(STUN_DOWN, neck_yaw=12, head=38, head_yaw=18, jaw=8, tail_yaw=(6, -4, 2))
+DAZE_B = dict(STUN_DOWN, neck_yaw=-10, head=48, head_yaw=-16, jaw=14, tail_yaw=(-4, 6, -4))
+STUN_STRUGGLE = P(pitch=-4, spine=2, chest=4, neck1=12, head=20, jaw=6, fl=(-20, -10, 24, 10), hl=(-32, 56, -36), tail=(6, 4, 0), plant="ground")
+STUN_SHAKE_A = P(pitch=2, neck1=6, neck_yaw=-10, head=10, head_yaw=20, jaw=8, fl=(-8, 6, 0), hl=(-8, 12, -6), tail=(16, 8, -4), tail_yaw=(0, -10, 12),
+                 plant="level")
+STUN_SHAKE_B = P(pitch=2, neck1=6, neck_yaw=10, head=12, head_yaw=-18, jaw=4, fl=(-6, 4, 0), hl=(-6, 10, -4), tail=(14, 6, -4), tail_yaw=(0, 10, -12),
+                 plant="level")
+# 喘息（焚身三踏之后落地）：砸地 → 前腿撑开、头垂到地、胸口一起一伏地喘（每 16 帧一口）→ 抬头盯玩家 → 压低蓄力准备起飞
+PANT_SAG = P(pitch=10, spine=10, chest=10, neck1=36, neck2=16, head=64, jaw=18, fl=(-42, -18, 22), hl=(6, -18, 10), tail=(-18, -6, 4),
+             tail_yaw=(4, -4, 4), plant="level")
+PANT_IN = P(pitch=6, spine=4, chest=0, neck1=26, neck2=12, head=48, jaw=28, fl=(-36, -14, 18), hl=(2, -8, 4), tail=(-14, -4, 4), tail_yaw=(-3, 4, -2),
+            plant="level")
+PANT_OUT = P(pitch=11, spine=11, chest=11, neck1=38, neck2=16, head=68, jaw=10, fl=(-44, -20, 24), hl=(8, -22, 12), tail=(-18, -6, 6),
+             tail_yaw=(3, -4, 4), plant="level")
+PANT_LOOK = P(pitch=2, chest=3, neck1=14, head=18, jaw=8, fl=(-20, -4, 8), hl=(-8, 12, -6), tail=(6, 4, 0), plant="level")
+PANT_GATHER = P(pitch=4, chest=4, neck1=10, head=24, fl=(-14, 18, -6), hl=(-16, 26, -12), tail=(22, 10, -6), tail_yaw=(0, 6, -8), plant="level")
+PANT_GATHER_HOLD = P(pitch=6, chest=5, neck1=11, head=28, fl=(-16, 20, -6), hl=(-18, 30, -14), tail=(26, 12, -8), tail_yaw=(0, -6, 8), plant="level")
+
+
+def leap_clip() -> dict:
+    """跃起（ScaleDrink 前摇 1.0 s / 化焚身 3.6 s 跃回岸上 1.0 s）：最后一帧前蹄落地 = 饮熔第 0 帧（玄鳞接 drink，next）"""
+    if FORM == "burn":
+        keys = [(0, LEAP_PUSH), (6, LEAP_RISE), (14, LEAP_APEX), (21, LEAP_DESCEND), (26, LEAP_REACH), (30, LEAP_LAND)]
+        return {"frames": 30, "keys": keys, "events": [(29.5, "hit")]}
+    # 第 8 帧起跳 = ScaleDrink.CrouchFrac（0.28）：代码的抛物线在这一帧离地，最高点在第 19 帧前后
+    keys = [(0, BASE), (5, LEAP_CROUCH), (8, LEAP_PUSH), (12, LEAP_RISE), (18, LEAP_APEX), (23, LEAP_DESCEND), (27, LEAP_REACH), (30, LEAP_LAND)]
+    return {"frames": 30, "keys": keys, "events": [(8, "fx:qLeap"), (29.5, "hit")], "next": "drink"}
+
+
+def drink_clip() -> dict:
+    """饮熔（4.0 s = 120 帧，按 drinkSeconds 拉伸）：落地缓冲 → 探向熔池 → 每 10 帧一口 → 第 116 帧抬头（喝完的鳞光、长啸在 4.0 s）"""
+    keys = [(0, LEAP_LAND), (5, DRINK_RECOIL), (14, DRINK_REACH)]
+    f, k = 22, 0
+    while f <= 100:
+        keys.append((f, DRINK_SIP_A if k % 2 == 0 else DRINK_SIP_B))
+        f, k = f + 10, k + 1
+    keys += [(108, DRINK_REACH), (116, DRINK_DONE), (120, DRINK_DONE)]
+    return {"frames": 120, "keys": keys, "events": [(1, "hit")]}
+
+
+def stun_clip() -> dict:
+    """
+    硬直（鼎角砸晕 4.0 s = 120 帧；撞柱 1.6 s、倒下也用它，按时长拉伸）：f3 一砸 → f8 四腿一软 → f14 瘫倒（extreme）→ f20 再往下一沉 →
+    f28–f96 晕眩摇头（每 12 帧左右换一次）→ f100 前腿撑起 → f110 / f116 甩头 → f120 站定。倒下时只播到 72%（QilinBrain：躺着不起来）
+    """
+    keys = [(0, BASE), (3, STUN_HIT), (8, STUN_BUCKLE), (14, STUN_DOWN), (20, STUN_SETTLE)]
+    f, k = 28, 0
+    while f <= 92:
+        keys.append((f, DAZE_A if k % 2 == 0 else DAZE_B))
+        f, k = f + 12, k + 1
+    keys += [(100, STUN_STRUGGLE), (110, STUN_SHAKE_A), (116, STUN_SHAKE_B), (120, SETTLE)]
+    return {"frames": 120, "keys": keys, "events": [(3, "fx:qStunHit"), (14, "fx:qStunDown")]}
+
+
+def pant_clip() -> dict:
+    """喘息（3.5 s = 105 帧）：砸地 → 垮下去 → 每 16 帧一口（吸：胸抬口张 / 呼：胸塌头垂）→ f76 抬头盯玩家 → f84 起压低蓄力（起飞预警在 f81）"""
+    keys = [(0, SLAM_HOLD), (8, PANT_SAG)]
+    f = 14
+    while f <= 62:
+        keys += [(f, PANT_IN), (f + 8, PANT_OUT)]
+        f += 16
+    keys += [(76, PANT_LOOK), (86, PANT_GATHER), (100, PANT_GATHER_HOLD), (105, PANT_GATHER_HOLD)]
+    return {"frames": 105, "keys": keys, "events": [(3, "hit")]}
+
+
+def _lerp_cyc(samples: list, u: float) -> tuple:
+    """周期样条：samples = [(相位, 值元组)]（相位 0–1 递增），u 任意实数；相邻样本之间余弦缓动插值"""
+    u %= 1.0
+    n = len(samples)
+    for i in range(n):
+        p0, v0 = samples[i]
+        p1, v1 = samples[(i + 1) % n]
+        span = (p1 - p0) % 1.0 or 1.0
+        d = (u - p0) % 1.0
+        if d <= span + 1e-9:
+            t = d / span
+            t = 0.5 - 0.5 * math.cos(math.pi * t)
+            return tuple(a + (b - a) * t for a, b in zip(v0, v1))
+    return samples[0][1]
+
+
+# 踏云步态（焚身专属的空中奔跑，循环 24 帧 = 0.8 s，录制速度沿用 Move 的 16 m/s）：四蹄成对踏云的「跳跃式奔驰」——
+# 后蹄对踏（ψ = 0，后右晚 0.06）→ 前身扬起、前腿高高蜷起、后腿往后蹬直（飞驰）→ 前腿前探 → 前蹄对踏（ψ = 0.5）→ 前身一沉、后腿收到腹下 → 再踏。
+# 每条腿：踏云起点（蹄在身下）→ 往后蹬到底 → 收起（掌骨往后折）→ 高蜷 → 前探 → 回到踏云起点
+GAIT_FRONT = [(0.0, (-12, -8, -4)), (0.16, (26, 16, 34)), (0.34, (-14, -24, 78)), (0.56, (-56, -52, 86)), (0.80, (-46, -40, -18))]
+GAIT_HIND = [(0.0, (-32, 32, -14)), (0.16, (32, 28, 36)), (0.36, (22, 52, 12)), (0.56, (-40, 62, -20)), (0.80, (-48, 42, -26))]
+GAIT_LEGS = {"fl": (GAIT_FRONT, 0.50), "fr": (GAIT_FRONT, 0.56), "hl": (GAIT_HIND, 0.0), "hr": (GAIT_HIND, 0.06)}
+
+
+def gait_pose(phi: float) -> dict:
+    """踏云步态第 phi（0–1）处的姿势：身体跟着蹬踏起伏俯仰，脖子、头、尾巴按相位滞后跟随（没有鬃毛骨骼，「鬃尾随风」靠头颈和三节尾巴的滞后）"""
+    s = lambda lag: math.sin(2 * math.pi * (phi - lag))
+    legs = {k: tuple(v) + (None,) for k, (samples, off) in GAIT_LEGS.items() for v in [_lerp_cyc(samples, phi - off)]}
+    pitch = -7 * math.sin(2 * math.pi * (phi + 0.05))
+    return P(pitch=pitch, spine=4 * s(-0.3), chest=3 * s(-0.25), neck1=10 + 7 * s(0.07), neck2=4 + 4 * s(0.2), head=12 + 3 * s(0.25), jaw=5 + 3 * s(0.3),
+             neck_yaw=2 * s(0.1), head_yaw=-1.5 * s(0.2), fl=legs["fl"], fr=legs["fr"], hl=legs["hl"], hr=legs["hr"],
+             tail=(24 + 8 * s(0.15), 6 + 10 * s(0.3), -4 + 12 * s(0.45)), tail_yaw=(6 * s(0.1), 10 * s(0.25), 14 * s(0.4)),
+             lift=0.14 * math.sin(2 * math.pi * phi), plant=None)
+
+
+def gait_clip() -> dict:
+    frames = 24
+    keys = [(f, gait_pose(f / frames)) for f in range(0, frames + 1, 2)]
+    return {"frames": frames, "keys": keys, "loop": True, "speed": 16, "events": [(1, "fx:qCloudH"), (13, "fx:qCloudF")]}
+
+
 def breath_clip(frames: int, start: int) -> dict:
     """吐息：吸气（仰头扩胸）→ 预警倒计时最后两帧蓄满 → start 帧前探张口喷火 → 持续段下颌一张一合 → 收口落定"""
     keys = [(0, BASE), (start - 8, INHALE), (start - 2, INHALE_HOLD), (start, BLOW)]
@@ -177,7 +312,20 @@ CLIPS = {
               "events": [(12, "hit")]},
     # 吐息（玄鳞麟火 0.8 + 1.6 s、焚身扫象限 1.2 + 2.6 s）：吸气 → 喷火 → 收口
     "breath": BREATH,
+    # ── 第二批 B 路 ──
+    # 跃起（玄鳞：ScaleDrink 前摇 1.0 s，先蹲 0.2 s 再起跳 → 接饮熔；焚身：化焚身时从熔岩柱跃回岸上）
+    "leap": leap_clip(),
+    # 硬直（鼎角砸晕 4 s；撞柱 1.6 s、倒下也用）
+    "stun": stun_clip(),
+    # 喘息（焚身三踏之后落地 3.5 s；玄鳞的同名采样片段一并换掉）
+    "pant": pant_clip(),
 }
+if FORM == "xuan":
+    # 饮熔（4 s，落地那一帧接跃起的最后一帧）
+    CLIPS["drink"] = drink_clip()
+else:
+    # 焚身专属的空中踏云步态：替换焚身 Locomotion 里的 Move 槽位（焚身在地上从不奔跑；Walk 仍是采样的地面慢步，原地转身用）
+    CLIPS["Move"] = gait_clip()
 
 
 # ───────────── Blender ─────────────
@@ -208,8 +356,50 @@ def hoof_heads(arm, names) -> list:
     return [arm.pose.bones[n].head.copy() for n in names]
 
 
+HOOVES_F, HOOVES_H = ("fhoof_L", "fhoof_R"), ("hhoof_L", "hhoof_R")
+LEG_BONES = [b for side in "LR" for b in FRONT[side] + HIND[side]]
+REST_LOW = [0.0]
+
+
+def leg_low(arm) -> float:
+    """四条腿上最低的一点（骨头首尾，Blender 世界高度）"""
+    return min(min(arm.pose.bones[b].head.z, arm.pose.bones[b].tail.z) for b in LEG_BONES)
+
+
 def apply(arm, pose: dict) -> list:
-    """执行一个关键姿势，返回解算后的 [骨, 轴, 角度] / [骨, "loc", 位移]（审核用）"""
+    """
+    执行一个关键姿势，返回解算后的 [骨, 轴, 角度] / [骨, "loc", 位移]（审核用）。
+    plant = "level"（第二批 B 路）：四蹄都踩地——前后腿屈得不一样长时，自动补身体俯仰，让前后蹄同时贴地
+    （"all" 只让最低的那只贴地：后腿深蹲、前腿直立时后蹄会悬空一米多；早先的 LOAD / STAMP 就是这样）。姿势里的 pitch 是起点，解出来的是补过的
+    """
+    if pose["plant"] == "ground":
+        # 趴 / 跪（第二批 B 路）：腿上最低的一点（膝、跗、蹄尖）落到静止时最低点的高度——瘫倒的姿势不钻地、不悬空；lift 是额外的偏移
+        reset(arm)
+        done = _apply(arm, dict(pose, plant=None, lift=0.0))
+        dz = REST_LOW[0] - leg_low(arm) + pose["lift"]
+        pb = arm.pose.bones["hips"]
+        pb.matrix = Matrix.Translation(Vector((0, 0, dz))) @ pb.matrix
+        bpy.context.view_layer.update()
+        done.append(["hips", "loc", [0, 0, round(dz, 4)]])
+        return done
+    if pose["plant"] == "level":
+        extra = 0.0
+        for _ in range(6):
+            reset(arm)
+            done = _apply(arm, dict(pose, plant="all", pitch=pose["pitch"] + extra / AMP))
+            hf = sum(arm.pose.bones[n].head.z - REST_HOOF[n].z for n in HOOVES_F) / 2
+            hh = sum(arm.pose.bones[n].head.z - REST_HOOF[n].z for n in HOOVES_H) / 2
+            span = abs(sum(arm.pose.bones[n].head.y for n in HOOVES_H) / 2 - sum(arm.pose.bones[n].head.y for n in HOOVES_F) / 2)
+            if abs(hh - hf) < 0.015:
+                break
+            # 后蹄高 → 前身抬（pitch 往负）：绕臀部转，前蹄抬起、后蹄落下，再由「最低的贴地」整体放下去
+            extra -= math.degrees(math.atan2(hh - hf, max(0.5, span)))
+        done.append(["level", "pitch", round(pose["pitch"] * AMP + extra, 2)])
+        return done
+    return _apply(arm, pose)
+
+
+def _apply(arm, pose: dict) -> list:
     done = []
     for bone, kind, v in ops_of(pose):
         pb = arm.pose.bones[bone]
@@ -279,6 +469,9 @@ def bake_clip(arm, name: str, clip: dict):
     for fc in fcurves(act):
         for kp in fc.keyframe_points:
             kp.handle_left_type = kp.handle_right_type = "AUTO_CLAMPED"
+        # 循环片段（踏云步态）：首尾按周期接上（Cycles 修改器让自动柄按周期算，首尾切线一致，循环接缝不顿）
+        if clip.get("loop"):
+            fc.modifiers.new("CYCLES")
     return act, resolved
 
 
@@ -298,10 +491,11 @@ def export_fbx(arm, act, name: str, frames: int, out_dir: Path):
 
 
 ABOUT = ("火麒麟 · {form}的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。"
-         "rear / scalesFire / paw / tuck / stomp / breath 是手工关键帧（art/source/characters/SK_Boss_Qilin/anim/qilin_anims.py 生成这几项，别手改），"
+         "{clips} 是手工关键帧（art/source/characters/SK_Boss_Qilin/anim/qilin_anims.py 生成这几项，别手改），"
          "其余状态是原生采样片段、时刻取 Qilin.ts 的切换 / 判定时刻（手写）。"
          "hit / projectile = 释放帧（招式用 Cue 接住：事件和按时间兜底先到者算，两者按设计落在同一帧）；"
-         "fx:q* = 只管外观的姿势节拍（QilinBrain.OnAnimEvent → Fx.Qilin*：人立顶点鳞光、刨蹄火星、蜷身聚火）；breathStart = 开始喷火。"
+         "fx:q* = 只管外观的姿势节拍（QilinBrain.OnAnimEvent → Fx.Qilin*：人立顶点鳞光、刨蹄火星、蜷身聚火、起跳尘、硬直砸中 / 瘫倒、踏云的后蹄 / 前蹄踏出火云）；"
+         "breathStart = 开始喷火。对象写法的条目带 next（连段）/ loop / speed（Move 的录制速度 = 混合树阈值）。"
          "音效和震屏一律由招式 / 首领代码在同一帧自己出（采样片段原来叠的 sfx: / fx:shake 也去掉了：代码里本来就有，叠着会同一下响两次）。设计单 docs/art/vfx/qilin.md")
 
 
@@ -309,9 +503,12 @@ def write_events(path: Path):
     doc = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"schema": 1, "clips": {}}
     clips = doc.get("clips", {})
     for name, c in CLIPS.items():
-        clips[name] = [{"at": round(min(1.0, f / c["frames"]), 4), "name": n} for f, n in c["events"]]
+        evs = [{"at": round(min(1.0, f / c["frames"]), 4), "name": n} for f, n in c["events"]]
+        extra = {k: c[k] for k in ("next", "loop", "speed") if k in c}
+        # 连段 / 循环 / 录制速度要写成对象（数组简写只有事件）：手工片段替换采样片段时，采样数据里的 next / speed 不会带过来
+        clips[name] = dict({"events": evs}, **extra) if extra else evs
     # 和手写的叠加表同一种排版：一个事件一行
-    lines = ["{", '  "schema": 1,', f'  "about": {json.dumps(ABOUT.format(form="焚身" if FORM == "burn" else "玄鳞"), ensure_ascii=False)},', '  "clips": {']
+    lines = ["{", '  "schema": 1,', f'  "about": {json.dumps(ABOUT.format(form="焚身" if FORM == "burn" else "玄鳞", clips=" / ".join(CLIPS)), ensure_ascii=False)},', '  "clips": {']
     names = list(clips)
     for i, name in enumerate(names):
         evs = clips[name]
@@ -320,7 +517,13 @@ def write_events(path: Path):
             arr = f'[\n{body}\n    ]' if evs else "[\n    ]"
             lines.append(f'    {json.dumps(name)}: {arr}' + ("," if i < len(names) - 1 else ""))
         else:
-            lines.append(f'    {json.dumps(name)}: {json.dumps(evs, ensure_ascii=False)}' + ("," if i < len(names) - 1 else ""))
+            # 对象写法（events + next / loop / speed）：事件照样一行一个
+            ev = evs.get("events", [])
+            body = ",\n".join("        " + json.dumps(e, ensure_ascii=False).replace("{", "{ ").replace("}", " }") for e in ev)
+            parts = [f'      "events": [\n{body}\n      ]' if ev else '      "events": []']
+            parts += [f'      {json.dumps(k)}: {json.dumps(v, ensure_ascii=False)}' for k, v in evs.items() if k != "events"]
+            obj = "{\n" + ",\n".join(parts) + "\n    }"
+            lines.append(f'    {json.dumps(name)}: {obj}' + ("," if i < len(names) - 1 else ""))
     lines += ["  }", "}"]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -349,6 +552,8 @@ def review(arm, out: Path):
     centre = Vector((0, -0.4, 2.6))
     tiles = []
     for name, clip in CLIPS.items():
+        if ONLY and name not in ONLY:
+            continue
         for frame, pose in clip["keys"]:
             reset(arm)
             apply(arm, pose)
@@ -369,9 +574,24 @@ def main():
     reset(arm)
     for n in ("fhoof_L", "fhoof_R", "hhoof_L", "hhoof_R"):
         REST_HOOF[n] = arm.pose.bones[n].head.copy()
+    REST_LOW[0] = leg_low(arm)
     if REVIEW:
         review(arm, REVIEW)
         print("QILIN_REVIEW " + str(REVIEW))
+        return
+    if "--hooves" in argv:
+        # 调姿势用：每个关键姿势四只蹄子离地多高（米；踩地的姿势应该都接近 0，差太多就是腿长对不上、有蹄子悬空 / 钻地）
+        for name, clip in CLIPS.items():
+            if ONLY and name not in ONLY:
+                continue
+            for frame, pose in clip["keys"]:
+                reset(arm)
+                done = apply(arm, pose)
+                zs = [arm.pose.bones[n].head.z - REST_HOOF[n].z for n in ("fhoof_L", "fhoof_R", "hhoof_L", "hhoof_R")]
+                # 腿上最低的一点（膝 / 跗 / 蹄尖，绝对高度，地面 = 0）：跪地 / 瘫倒的姿势应该在 0 上下
+                low = leg_low(arm) - REST_LOW[0]
+                lv = [d[2] for d in done if d[0] == "level"]
+                print("QILIN_HOOVES", name, frame, " ".join(f"{z:+.2f}" for z in zs), f"low {low:+.2f}", f"pitch {lv[0]}" if lv else "")
         return
     # 导出前顶层物体绕 Z 转 180°（同 bl_unity_export：Unity 里角色朝 +Z）；只写在物体上，骨骼的局部动画不受影响
     arm.matrix_world = Matrix.Rotation(math.pi, 4, "Z") @ arm.matrix_world

@@ -260,6 +260,23 @@ namespace Spiritfire.Game
             if (Random.value < 0.6f) QOne(rt, "ToonFlame", hoof, Vector3.up * 0.4f, Random.Range(0.5f, 0.75f), 0.3f, QilinPalette.Fire * 1.2f);
         }
 
+        /// <summary>
+        /// 踏云步态的一踏（第二批 B 路，动画事件 fx:qCloudH / fx:qCloudF）：蹄子往下一蹬，脚下一团紫褐火云被踩扁、往后拖开（云身 + 橙红亮边两团），
+        /// 每对蹄子只有领头那只带一缕往上窜的火苗。back = 奔跑的反方向（云往身后拖）。一对蹄子 ≤ 5 颗粒子，0.4 s 踏一次
+        /// </summary>
+        public static void QilinCloudStep(Vector3 hoof, Vector3 back, bool lead)
+        {
+            if (!Finite(hoof)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            back.y = 0;
+            back = back.sqrMagnitude > 1e-4f ? back.normalized : Vector3.back;
+            QOne(rt, "ToonSmoke", hoof + Vector3.down * 0.2f, back * 3.2f + Vector3.down * 1.4f, Random.Range(1.2f, 1.5f), Random.Range(0.5f, 0.62f), QilinPalette.Cloud);
+            QOne(rt, "ToonSmoke", hoof + Vector3.down * 0.35f + back * 0.3f, back * 4.5f + Vector3.down * 0.6f, Random.Range(0.8f, 1.05f), 0.42f,
+                Color.Lerp(QilinPalette.Cloud, QilinPalette.CloudLit, 0.5f));
+            if (lead) QOne(rt, "ToonFlame", hoof, Vector3.up * 1.2f - back * 0.6f, Random.Range(0.6f, 0.8f), 0.28f, QilinPalette.Fire * 1.25f);
+        }
+
         /// <summary>吐息开口（breathStart / 吐息第一帧）：口前白热一闪 + 往前喷的一团火</summary>
         public static void QilinBreathIgnite(Vector3 mouth, Vector3 dir)
         {

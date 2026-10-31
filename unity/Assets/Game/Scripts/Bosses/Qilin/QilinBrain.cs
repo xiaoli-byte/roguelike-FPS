@@ -25,6 +25,8 @@ namespace Spiritfire.Game
     ///   · 倒下时还在空中就落到地上（溃散演出在地面炸）；溃散之后「净火归瑞」：淡金光点和暖白祥云从身上升起（<see cref="Fx.QilinPurify"/>）。
     ///   · Q 路特效（2026-10-31，docs/art/vfx/qilin.md）：张鳞的鳞冠（<see cref="Crown"/>）、动画事件 fx:q* 的姿势节拍（<see cref="OnAnimEvent"/>）、
     ///     鳞甲崩裂时全身一闪一闪的金色裂光、焚身蹄下的火云团。
+    ///   · 第二批 B 路（2026-10-31，设计单 §2.9–2.12）：跃起 / 饮熔 / 硬直 / 喘息改成手 K；焚身在空中播专属的踏云步态（焚身 Locomotion 的 Move 槽位），
+    ///     蹄下火云跟着步态的 fx:qCloudH / fx:qCloudF 事件踏出来（后蹄对踏、前蹄对踏），没在播步态时才按时间兜底；倒下时硬直片段只播到瘫倒、躺着不起来。
     /// 动作：E5 的 AC_SK_Boss_Qilin(Burn) 按状态名交叉淡入、拉伸到实际时长（框架 PlayAct；缺状态只警告一次，代理 / 占位体照常出招）。
     /// </summary>
     public class QilinBrain : BossBrain
@@ -91,7 +93,9 @@ namespace Spiritfire.Game
 
         Vector3 skyVel, desiredVel;
         bool hasDesired, skyPlaced;
-        float orbit, orbitTimer, orbitDir = 1, cloudAcc;
+        float orbit, orbitTimer, orbitDir = 1, cloudAcc, gaitStepAt = -10f;
+        /// <summary>踏云步态踏出的火云次数（测试 / 节拍条读）</summary>
+        public int GaitSteps { get; private set; }
         Transform heartFx;
         Light heartLight;
         Renderer heartSprite;
@@ -534,7 +538,7 @@ namespace Spiritfire.Game
             if (skyPlaced)
             {
                 skyPlaced = false;
-                if (loco) loco.speedOverride = Airborne ? loco.maxClipSpeed * 0.9f : -1f;
+                if (loco) loco.speedOverride = Airborne ? loco.maxClipSpeed : -1f;
                 return;
             }
             var want = hasDesired ? desiredVel : Vector3.zero;
@@ -563,7 +567,8 @@ namespace Spiritfire.Game
             p = KeepInHall(p);
             if (float.IsFinite(p.x) && float.IsFinite(p.y) && float.IsFinite(p.z)) transform.position = p;
             else skyVel = Vector3.zero;
-            if (loco) loco.speedOverride = Airborne ? loco.maxClipSpeed * 0.9f : -1f;
+            // 空中按 Move 的录制速度播：焚身的 Move 槽位是踏云步态（混合树里纯 Move，不再混进地面慢步）
+            if (loco) loco.speedOverride = Airborne ? loco.maxClipSpeed : -1f;
         }
 
         /// <summary>夹在殿墙以内（身体半径 + 0.5 m）</summary>
@@ -700,10 +705,13 @@ namespace Spiritfire.Game
             return feet;
         }
 
-        /// <summary>焚身在空中时蹄下冒火云（祥云化火云：紫褐云团 + 一缕火苗，每 0.11 s 两只蹄子轮流）</summary>
+        /// <summary>
+        /// 焚身在空中时蹄下冒火云（祥云化火云：紫褐云团 + 一缕火苗）：踏云步态在播时由它的 fx:qCloudH / fx:qCloudF 事件按蹬踏踏出来（<see cref="GaitStep"/>），
+        /// 0.5 s 内没收到步态事件（在播蜷身、吐息这类片段）才按时间兜底：每 0.11 s 两只蹄子轮流
+        /// </summary>
         void HoofClouds(float dt)
         {
-            if (!Airborne) return;
+            if (!Airborne || Time.time - gaitStepAt < 0.5f) return;
             cloudAcc += dt;
             if (cloudAcc < 0.11f) return;
             cloudAcc = 0;
@@ -711,6 +719,23 @@ namespace Spiritfire.Game
             {
                 var h = hooves[(glintNext++) & 3];
                 Fx.QilinHoofCloud(h ? h.position : transform.position + Vector3.up * 0.4f);
+            }
+        }
+
+        /// <summary>踏云步态的一踏：一对蹄子（hind = 后蹄 / 否则前蹄）各踏出一团被踩扁、往后拖的火云</summary>
+        void GaitStep(bool hind)
+        {
+            if (!IsBurn || !Airborne) return;
+            gaitStepAt = Time.time;
+            GaitSteps++;
+            var back = skyVel;
+            back.y = 0;
+            back = back.sqrMagnitude > 0.25f ? -back.normalized : -transform.forward;
+            for (int k = 0; k < 2; k++)
+            {
+                // hooves：0 左前、1 右后、2 右前、3 左后
+                var h = hooves[hind ? (k == 0 ? 1 : 3) : (k == 0 ? 0 : 2)];
+                Fx.QilinCloudStep(h ? h.position : transform.position + Vector3.up * 0.4f, back, k == 0);
             }
         }
 
@@ -752,6 +777,25 @@ namespace Spiritfire.Game
                 case "hit" when !IntroDone:
                     Fx.QilinStamp(OnFloor(transform.position) + transform.forward * 1.6f, 2.6f);
                     Shake(0.4f, 0.3f);
+                    break;
+                // ── 第二批 B 路 ──
+                case "fx:qCloudH":
+                    GaitStep(true);
+                    break;
+                case "fx:qCloudF":
+                    GaitStep(false);
+                    break;
+                case "fx:qLeap":
+                    // 饮熔起跳：后蹄一蹬，脚下一圈玄武岩尘
+                    Fx.QilinStamp(OnFloor(transform.position) - transform.forward * 1.2f, 2.2f);
+                    break;
+                case "fx:qStunHit":
+                    // 鼎角砸在背上那一下：背上一闪金色裂光（鳞甲崩裂的主形由 CornerHit 放）
+                    Fx.QilinCrackGlint(BodyCenter + Vector3.up * 1.4f);
+                    break;
+                case "fx:qStunDown":
+                    // 四腿一软瘫到地上：身下一圈尘
+                    if (!Dead) Fx.QilinStamp(OnFloor(transform.position), 3.2f);
                     break;
             }
         }
@@ -1104,7 +1148,8 @@ namespace Spiritfire.Game
                 if (l)
                     l.Purge();
             if (Effects) Effects.Burst(0.5f);
-            PlayAct("stun", Def != null ? Def.defeat.seconds : 3.4f);
+            // 倒下：硬直片段只播到瘫倒的晕眩段（片段 72% = 第 86 帧，后面是撑起来、甩头起身），到时长就冻住——躺着溃散，不站起来
+            PlayAct("stun", (Def != null ? Def.defeat.seconds : 3.4f) / StunLieUntil);
             // 焚身：熔流退回地下、火心熄灭；还在半空就落到地上（本组件已停用，协程照跑）
             Flood?.Stop();
             HeartBright = false;
@@ -1123,7 +1168,12 @@ namespace Spiritfire.Game
             var model = Model?.root ? Model.root : gameObject;
             float secs = Def != null ? Def.defeat.seconds : 3.4f;
             Fx.BodyStream(model, StreamKind.Molten, secs, 110f);
+            var animator = anim;
             BossDefeatFx.On(gameObject)
+                .At(secs * 0.97f, () =>
+                {
+                    if (animator) animator.speed = 0f;
+                })
                 .At(0.6f, () =>
                 {
                     var feet = OnFloor(transform.position);
@@ -1161,6 +1211,9 @@ namespace Spiritfire.Game
         }
 
         // ───────────── 工具 ─────────────
+
+        /// <summary>倒下时硬直片段播到哪里（归一化）：之后是撑起身子（qilin_anims.py 的 stun：第 86 / 120 帧还在晕眩段）</summary>
+        public const float StunLieUntil = 0.72f;
 
         public static float Span(float t, float a, float b) => Mathf.Clamp01((t - a) / Mathf.Max(1e-4f, b - a));
         public static float EaseInOut(float k) => k * k * (3f - 2f * k);

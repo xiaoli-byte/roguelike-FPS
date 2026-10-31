@@ -12,6 +12,8 @@ namespace Spiritfire.Game.Testing
     /// 登场、玄鳞的张鳞 / 踏火奔驰冲撞 / 麟火、化焚身、焚身的踏云俯冲 / 吐息扫象限 / 火云雨、倒下各拍一行（起手 / 预警 / 蓄力顶点 / 释放帧 / 持续段 / 收招 + 第一人称），
     /// 同时记下释放帧和动画出手事件差几帧、每招的同屏粒子峰值。机位、截图、拼图沿用 H 路的 <see cref="HBeatSuite"/>（scripts/unity/beat_strips.py → docs/art/review/boss-vfx/Q/）。
     /// 只旁观、不改玩法：首领不掉血（Incoming → 0），玩家血量垫高；倒下那一行最后才放开、处决。
+    /// 第二批 B 路（2026-10-31）加了四行：跃起 → 饮熔、鼎角砸晕的 4 s 硬直（饮熔 1.6 s 时打碎身后的锁扣）、焚身招式间隙的踏云步态（一个步态周期拍 6 格）、
+    /// 三踏之后的落地喘息；化焚身多拍一格跃回岸上的腾空。拼图在 docs/art/review/batch2/B/。
     /// </summary>
     public sealed class QilinBeatsSuite : HBeatSuite
     {
@@ -36,6 +38,7 @@ namespace Spiritfire.Game.Testing
                 yield return Capture(ScaleBlades.MoveId, "张鳞", 10f);
                 yield return Gallop();
                 yield return Capture(ScaleBreath.MoveId, "麟火", 9f);
+                yield return DrinkAndStun();
                 yield return Transition();
                 // 换形换了模型：动画事件要挂到焚身的骨架上
                 if (boss && boss.Model?.rig)
@@ -43,6 +46,7 @@ namespace Spiritfire.Game.Testing
                     boss.Model.rig.AnimEvent -= OnEvent;
                     boss.Model.rig.AnimEvent += OnEvent;
                 }
+                yield return SkyGait();
                 yield return Dives();
                 yield return Capture(BurnSweep.MoveId, "吐息扫象限", 0f);
                 yield return Capture(BurnRain.MoveId, "火云雨", 10f);
@@ -301,7 +305,8 @@ namespace Spiritfire.Game.Testing
             FxBudget.ResetPeak();
             var beats = new (float at, string beat, string note)[]
             {
-                (0.5f, "起手", "跃向熔池"), (1.45f, "预警", "熔岩柱冲天"), (2.45f, "释放帧", "玄铁鳞甲炸飞"), (3.3f, "持续段", "焚身从熔岩里冲出"), (4.7f, "收招", "落岸"),
+                (0.5f, "起手", "跃向熔池"), (1.45f, "预警", "熔岩柱冲天"), (2.45f, "释放帧", "玄铁鳞甲炸飞"), (3.3f, "持续段", "焚身从熔岩里冲出"),
+                (4.05f, "持续段", "跃回岸上（腾空）"), (4.7f, "收招", "落岸"),
             };
             int k = 0;
             while (boss.Transitioning && Time.time - s0 < 8f)
@@ -376,8 +381,213 @@ namespace Spiritfire.Game.Testing
                 }
             }
             Report(label, "hit", activeAt, start);
-            // 三踏和喘息让它自己走完
+            // 三踏让它自己走完，之后的落地喘息拍一行
+            yield return Pant();
             yield return WaitIdle();
+        }
+
+        // ───────────── 第二批 B 路：饮熔、鼎角砸晕的硬直、落地喘息、焚身踏云步态（docs/art/vfx/qilin.md §2.9–2.12）─────────────
+
+        /// <summary>招式间隙多留 seconds 秒不出招（只给节拍条用：BossBrain 的私有计时）</summary>
+        void HoldRest(float seconds) =>
+            typeof(BossBrain).GetField("restLeft", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(boss, seconds);
+
+        /// <summary>把玩家放到 target 往 dir 方向 dist 米处（贴人形导航网格、非熔岩；放不下就转着找），看向 target：侧面机位才框得住整个身子</summary>
+        void PlaceBeside(Vector3 target, Vector3 dir, float dist)
+        {
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-4f) dir = Vector3.forward;
+            dir.Normalize();
+            foreach (float yaw in new[] { 0f, 25f, -25f, 50f, -50f, 90f, -90f, 180f })
+            {
+                var spot = arena.Clamp(boss.OnFloor(target) + Quaternion.Euler(0, yaw, 0) * dir * dist, 2f);
+                if (!NavMesh.SamplePosition(spot, out var hit, 3f, LavaField.WalkerFilter(LavaField.DryAreaMask)) || LavaField.IsLavaAt(hit.position)) continue;
+                Teleport(motor, hit.position);
+                Aim(motor, eye, target);
+                return;
+            }
+        }
+
+        /// <summary>跃起 → 饮熔（起手 / 腾空 / 前蹄探地 / 落地 / 低头 / 饮熔），饮熔 1.6 s 时打碎它身后的锁扣 → 鼎角砸中 → 4 s 硬直另拍一行</summary>
+        IEnumerator DrinkAndStun()
+        {
+            const string id = ScaleDrink.MoveId, label = "跃起 → 饮熔", sid = "corner_stun", slabel = "鼎角砸晕 · 硬直 4 s";
+            var move = boss.Moves.FirstOrDefault(m => m.Id == id);
+            if (move == null)
+            {
+                Fail("没有招式 drink");
+                yield break;
+            }
+            yield return WaitIdle();
+            ReadyPlayer(14f);
+            yield return Force(id, label);
+            if (move is ScaleDrink sd && boss.Furnace)
+            {
+                // 站在饮熔点外侧 9 m（背对熔池）：侧面机位沿外环切向看过来，正好是麒麟的侧面，吊鼎在背景里、不挡身子
+                PlaceBeside(sd.Spot, sd.Spot - boss.Furnace.Center, 9f);
+            }
+            events.Clear();
+            FxBudget.ResetPeak();
+            float start = Time.time, activeAt = -1, stunAt = -1, hipsStand = float.NaN, hipsSip = float.NaN, hipsDaze = float.NaN;
+            bool[] taken = new bool[8], st = new bool[8];
+            bool shattered = false;
+            // 臀骨离殿内地面多高（米）：站着 / 饮熔 / 瘫倒对比，证明手 K 的低头、瘫倒真的播上了（截图太远时看不清）
+            float Hips() => boss.Model?.FindBone("hips") is { } h ? h.position.y - boss.FloorY : float.NaN;
+            hipsStand = Hips();
+            while (boss && !boss.Dead && Time.time - start < 18f)
+            {
+                KeepPlayerAlive();
+                var c = boss.BodyCenter + Vector3.up * 0.6f;
+                if (boss.Current == move)
+                {
+                    float wind = Mathf.Max(0.3f, move.WindupTime);
+                    if (move.Stage == MoveStage.Windup)
+                    {
+                        if (!taken[0] && move.StageT >= 0.12f) Take(id, label, taken, 0, "起手", "蹲身蓄跳");
+                        if (!taken[1] && move.StageT >= wind * 0.5f) Take(id, label, taken, 1, "预警", "腾空");
+                        if (!taken[2] && move.StageT >= wind * 0.88f) Take(id, label, taken, 2, "蓄力顶点", "前蹄探地");
+                    }
+                    else if (move.Stage == MoveStage.Active)
+                    {
+                        if (activeAt < 0) activeAt = Time.time;
+                        float t = Time.time - activeAt;
+                        if (!taken[3] && t >= 0.03f) Take(id, label, taken, 3, "释放帧", "落地");
+                        if (!taken[4] && t >= 0.5f) Take(id, label, taken, 4, "持续段", "低头");
+                        if (!taken[5] && t >= 1.4f)
+                        {
+                            hipsSip = Hips();
+                            Take(id, label, taken, 5, "持续段", "饮熔");
+                            SnapEye(id, label, 7, "第一人称", c, "饮熔 · 玩家视角");
+                        }
+                        if (!shattered && t >= 1.6f)
+                        {
+                            shattered = true;
+                            var l = boss.LockAt(boss.DrinkQuadrant);
+                            if (l) l.Shatter();
+                            else Line("饮熔：身后没有锁扣，拍不到鼎角砸晕");
+                        }
+                    }
+                }
+                if (boss.Staggered)
+                {
+                    if (stunAt < 0) stunAt = Time.time;
+                    float t = Time.time - stunAt;
+                    if (!st[3] && t >= 0.05f) Take(sid, slabel, st, 3, "释放帧", "鼎角砸中");
+                    if (!st[4] && t >= 0.7f) Take(sid, slabel, st, 4, "持续段", "瘫倒");
+                    if (!st[5] && t >= 2.0f)
+                    {
+                        hipsDaze = Hips();
+                        Take(sid, slabel, st, 5, "持续段", "晕眩摇头");
+                        SnapEye(sid, slabel, 7, "第一人称", c, "硬直 · 玩家视角");
+                    }
+                    if (!st[6] && t >= 3.55f) Take(sid, slabel, st, 6, "收招", "挣扎起身");
+                }
+                else if (stunAt >= 0 || (shattered && boss.Current != move)) break;
+                yield return null;
+            }
+            Line($"饮熔 → 鼎角砸晕：臀骨离地 站着 {hipsStand:F2} m / 饮熔 {hipsSip:F2} m / 瘫倒 {hipsDaze:F2} m");
+            Line($"饮熔 → 鼎角砸晕：砸中 {boss.CauldronHits} 次，{(stunAt >= 0 ? $"硬直 {Time.time - stunAt:F1} s" : "没进硬直")}；" +
+                 $"事件 {string.Join(" ", events.Select(e => $"{e.evt}@{e.t - start:F2}"))}；同屏粒子峰值 {FxBudget.Peak}");
+
+            void Take(string mv, string lb, bool[] arr, int k, string beat, string note)
+            {
+                arr[k] = true;
+                Snap(mv, lb, k, beat, boss.BodyCenter + Vector3.up * 0.6f, 7f, note);
+            }
+        }
+
+        /// <summary>焚身招式间隙绕殿踏云：一个步态周期（0.8 s）均匀拍 6 格 + 第一人称；同时数蹄下火云是不是跟着蹄子的节拍出</summary>
+        IEnumerator SkyGait()
+        {
+            const string id = "sky_gait", label = "焚身 · 踏云步态（招式间隙绕殿）";
+            yield return WaitIdle();
+            if (!boss || boss.Dead || !boss.IsBurn) yield break;
+            ReadyPlayer(0);
+            Teleport(motor, arena.PlayerEntryPoint);
+            float t0 = Time.time;
+            while (boss && !boss.Dead && Time.time - t0 < 3.5f && !(boss.Airborne && boss.SkyVelocity.magnitude > 6f))
+            {
+                HoldRest(3f);
+                KeepPlayerAlive();
+                yield return null;
+            }
+            float settle = Time.time;
+            while (Time.time - settle < 0.6f)
+            {
+                HoldRest(3f);
+                yield return null;
+            }
+            events.Clear();
+            for (int i = 0; i < 6 && boss && !boss.Dead; i++)
+            {
+                HoldRest(3f);
+                KeepPlayerAlive();
+                var c = boss.BodyCenter + Vector3.up * 0.5f;
+                // 玩家站在它奔跑方向前方 12 m 的地面上：侧面机位正好从侧面看步态
+                PlaceBeside(boss.transform.position, boss.SkyVelocity.sqrMagnitude > 1f ? boss.SkyVelocity : boss.transform.forward, 12f);
+                Aim(motor, eye, c);
+                Snap(id, label, i, "持续段", c, 7f, $"第 {i + 1} / 6 拍");
+                float s = Time.time;
+                while (Time.time - s < 0.8f / 6f) yield return null;
+            }
+            if (boss && !boss.Dead) SnapEye(id, label, 7, "第一人称", boss.BodyCenter + Vector3.up * 0.5f, "踏云 · 玩家视角");
+            Line($"踏云步态：离地 {(boss ? boss.Altitude : 0):F1} m、速度 {(boss ? boss.SkyVelocity.magnitude : 0):F1} m/s、步态踏出火云 {(boss ? boss.GaitSteps : 0)} 次；" +
+                 $"步态事件 {string.Join(" ", events.Where(e => e.evt.StartsWith("fx:qCloud")).Select(e => $"{e.evt}@{e.t - t0:F2}"))}");
+            HoldRest(0.3f);
+        }
+
+        /// <summary>落地喘息（三踏之后自动排上）：降落 / 前蹄探地 / 落地 / 喘（吸、呼）/ 起飞前蓄势 + 第一人称</summary>
+        IEnumerator Pant()
+        {
+            const string id = BurnPant.MoveId, label = "落地喘息";
+            float t0 = Time.time;
+            while (boss && !boss.Dead && boss.Current is not BurnPant && Time.time - t0 < 14f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            var move = boss ? boss.Current as BurnPant : null;
+            if (move == null)
+            {
+                Line("落地喘息：没等到");
+                yield break;
+            }
+            PlaceBeside(move.Spot, motor.transform.position - move.Spot, 10f);
+            events.Clear();
+            float start = Time.time, activeAt = -1;
+            bool[] taken = new bool[8];
+            while (boss && !boss.Dead && boss.Current == move && Time.time - start < 10f)
+            {
+                KeepPlayerAlive();
+                var c = boss.BodyCenter + Vector3.up * 0.5f;
+                switch (move.Stage)
+                {
+                    case MoveStage.Windup:
+                        if (!taken[0] && move.StageT >= 0.1f) Take(0, "起手", "降落");
+                        if (!taken[1] && move.StageT >= move.WindupTime * 0.85f) Take(1, "预警", "前蹄探地");
+                        break;
+                    case MoveStage.Active:
+                        if (activeAt < 0) activeAt = Time.time;
+                        float t = Time.time - activeAt;
+                        if (!taken[3] && t >= 0.03f) Take(3, "释放帧", "落地");
+                        if (!taken[4] && t >= 1.0f)
+                        {
+                            Take(4, "持续段", "喘息 · 1.0 s");
+                            SnapEye(id, label, 7, "第一人称", c, "喘息 · 玩家视角");
+                        }
+                        if (!taken[5] && t >= 1.3f) Take(5, "持续段", "喘息 · 1.3 s");
+                        if (!taken[6] && t >= BurnPant.Rest - 0.35f) Take(6, "收招", "起飞前蓄势");
+                        break;
+                }
+                yield return null;
+
+                void Take(int k, string beat, string note)
+                {
+                    taken[k] = true;
+                    Snap(id, label, k, beat, boss.BodyCenter + Vector3.up * 0.5f, 7f, note);
+                }
+            }
+            Line($"落地喘息：事件 {string.Join(" ", events.Select(e => $"{e.evt}@{e.t - start:F2}"))}");
         }
 
         IEnumerator Defeat()

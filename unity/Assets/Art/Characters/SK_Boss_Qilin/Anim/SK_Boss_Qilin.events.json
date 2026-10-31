@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "about": "火麒麟 · 玄鳞的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。rear / scalesFire / paw / tuck / stomp / breath 是手工关键帧（art/source/characters/SK_Boss_Qilin/anim/qilin_anims.py 生成这几项，别手改），其余状态是原生采样片段、时刻取 Qilin.ts 的切换 / 判定时刻（手写）。hit / projectile = 释放帧（招式用 Cue 接住：事件和按时间兜底先到者算，两者按设计落在同一帧）；fx:q* = 只管外观的姿势节拍（QilinBrain.OnAnimEvent → Fx.Qilin*：人立顶点鳞光、刨蹄火星、蜷身聚火）；breathStart = 开始喷火。音效和震屏一律由招式 / 首领代码在同一帧自己出（采样片段原来叠的 sfx: / fx:shake 也去掉了：代码里本来就有，叠着会同一下响两次）。设计单 docs/art/vfx/qilin.md",
+  "about": "火麒麟 · 玄鳞的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻。rear / scalesFire / paw / tuck / stomp / breath / leap / stun / pant / drink 是手工关键帧（art/source/characters/SK_Boss_Qilin/anim/qilin_anims.py 生成这几项，别手改），其余状态是原生采样片段、时刻取 Qilin.ts 的切换 / 判定时刻（手写）。hit / projectile = 释放帧（招式用 Cue 接住：事件和按时间兜底先到者算，两者按设计落在同一帧）；fx:q* = 只管外观的姿势节拍（QilinBrain.OnAnimEvent → Fx.Qilin*：人立顶点鳞光、刨蹄火星、蜷身聚火、起跳尘、硬直砸中 / 瘫倒、踏云的后蹄 / 前蹄踏出火云）；breathStart = 开始喷火。对象写法的条目带 next（连段）/ loop / speed（Move 的录制速度 = 混合树阈值）。音效和震屏一律由招式 / 首领代码在同一帧自己出（采样片段原来叠的 sfx: / fx:shake 也去掉了：代码里本来就有，叠着会同一下响两次）。设计单 docs/art/vfx/qilin.md",
   "clips": {
     "rear": [
       { "at": 0.7, "name": "fx:qRearPeak" },
@@ -10,21 +10,28 @@
       { "at": 0.0, "name": "projectile" }
     ],
     "drink": [
-      { "at": 0.04, "name": "hit" }
+      { "at": 0.0083, "name": "hit" }
     ],
     "breath": [
       { "at": 0.3333, "name": "breathStart" }
     ],
     "stun": [
+      { "at": 0.025, "name": "fx:qStunHit" },
+      { "at": 0.1167, "name": "fx:qStunDown" }
     ],
     "pant": [
-      { "at": 0.03, "name": "hit" }
+      { "at": 0.0286, "name": "hit" }
     ],
     "tuck": [
       { "at": 0.5926, "name": "fx:qCoil" }
     ],
-    "leap": [
-    ],
+    "leap": {
+      "events": [
+        { "at": 0.2667, "name": "fx:qLeap" },
+        { "at": 0.9833, "name": "hit" }
+      ],
+      "next": "drink"
+    },
     "stomp": [
       { "at": 0.4615, "name": "hit" }
     ],

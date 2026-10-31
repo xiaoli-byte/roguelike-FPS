@@ -11,11 +11,15 @@ namespace Spiritfire.Game
     ///   这 4 s 里打碎那个锁扣 → 鼎角坠下 → 砸中（<see cref="QilinBrain"/> 的 CornerHit：硬直 4 s、鳞甲崩裂），饮熔被打断；
     ///   锁扣碎了、鼎角还在落时饮熔等它砸下来（最多多等 2 s）；
     ///   喝完：鳞甲回满、伤害 × 1.08、火鬃满。
+    /// 第二批 B 路（2026-10-31，设计单 §2.9）：跃起 / 饮熔是手 K 片段（leap → drink 连段）；前摇前 28% 先在原地蹲身蓄跳（片段 f0–f8），
+    /// 抛物线在剩下的 72% 里跳完（落地时刻、落点、伤害都不变）——起跳那一帧后蹄还在地上，不再是一开始就腾空、在半空里做下蹲。
     /// </summary>
     public sealed class ScaleDrink : QilinMove
     {
         public const string MoveId = "drink";
         public const float LeapHeight = 6f, LandRadius = 4.5f;
+        /// <summary>前摇里先蹲身蓄跳的比例（leap 片段第 8 / 30 帧起跳）</summary>
+        public const float CrouchFrac = 0.28f;
 
         public override string Id => MoveId;
         public override string Name => "饮熔";
@@ -78,8 +82,9 @@ namespace Spiritfire.Game
 
         protected override void OnWindup(float dt)
         {
-            // 抛物线跃向池边（直接驱动位置：脚本位移速度为 0，不受导航推挤）
-            float k = QilinBrain.EaseInOut(Mathf.Clamp01(StageT / Mathf.Max(0.05f, WindupTime)));
+            // 先在原地蹲身蓄跳，再抛物线跃向池边（直接驱动位置：脚本位移速度为 0，不受导航推挤）
+            float wind = Mathf.Max(0.05f, WindupTime), crouch = wind * CrouchFrac;
+            float k = QilinBrain.EaseInOut(Mathf.Clamp01((StageT - crouch) / Mathf.Max(0.05f, wind - crouch)));
             var p = Vector3.Lerp(from, Spot, k);
             p.y += Mathf.Sin(Mathf.PI * k) * LeapHeight;
             Brain.transform.position = p;
