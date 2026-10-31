@@ -73,7 +73,8 @@ def K(frame, ops, base=("Idle", 0)):
 
 
 # ───────────── 片段（30 fps；底姿是采样待机第 0 帧：root 前倾 2.9°、双翼半收）─────────────
-GUST_DOWN = [60, 77, 94, 111, 128, 145, 162]  # 扇翼狂风每一下下扇（释放帧），周期 17 帧 ≈ 0.57 s
+# 扇翼狂风每一下下扇（释放帧），周期 17 帧 ≈ 0.57 s；第一下 60 帧 = 2.0 s = 前摇结束（PengGust 的出手段等 gustStart 事件，兜底 2.0 s）
+GUST_DOWN = [60, 77, 94, 111, 128, 145, 162]
 
 
 def gust_keys():
@@ -129,7 +130,7 @@ CLIPS = {
     ], "events": [(0, "sfx:boss_roar"), (2, "hitOpen"), (14, "strike"), (22, "flap")]},
     # 扇翼狂风（整招 5.8 s = 前摇 2.0 + 出手 3.4 + 收招 0.4；PengGust 按整招时长播）：见 gust_keys
     "gust": {"frames": 174, "keys": gust_keys(),
-             "events": [(0, "sfx:telegraph"), (30, "fx:zoneWarning"), (54, "apex"), (60, "gustStart")] + [(d, "flap") for d in GUST_DOWN]},
+             "events": [(0, "sfx:telegraph"), (30, "fx:zoneWarning"), (54, "apex"), (GUST_DOWN[0], "gustStart")] + [(d, "flap") for d in GUST_DOWN]},
     # 化而为鸟（转换演出 1.55 s 换形后的 3.05 s，ActScale ≈ 0.79）：雾里收拢成茧（翼合抱、低头、收爪）→ 升起中慢慢舒展
     #   → 50 帧（≈ 3.6 s 长啸）双翼一字展开、挺胸仰头、尾羽炸开 = 全场高潮 → 稳住
     "roar": {"frames": 72, "keys": [

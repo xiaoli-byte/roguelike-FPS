@@ -72,4 +72,14 @@
 ## 4. 预算与验收
 
 - 每一下精英点缀约 20–40 颗粒子（金点按前摇时长 × 每秒 8–30 颗），全部 × 画质密度、过 `FxBudget`；大形（爆闪、金环、月牙）各 1 个，essential。
-- 回归：`frost`、`gallery-frost`、`fx`、`fx-style`、`telegraph-look`；节拍条 `beats-frost-elite`。实测见文末（实现完回填）。
+- 回归：`frost`、`gallery-frost`、`fx`、`fx-style`、`telegraph-look`；节拍条 `beats-frost-elite`。
+
+## 5. 实测（2026-10-31，`beats-frost-elite`）
+
+- **时机没变**：改前 / 改后实测前摇——夫诸冰光 1.21 / 1.21 s，旋龟起转 0.80 / 0.80 s，猛啄 0.45 / 0.45 s，巨蟹夹击 0.61 / 0.60 s，接招横扫 0.57 / 0.50 s
+  （横扫两次都在 0.5 s 的设计值附近，差的是节拍条进拍时刻；代码里前摇、伤害、范围一行没动）。
+- **图**：`docs/art/review/boss-vfx/K/elite-<招式>.jpg`（fuzhu_beam / xuangui_spin / xuangui_peck / crab_grab / crab_sweep）：
+  上一行改前、下一行改后，前五格和改前同一机位（框住精英和玩家），后三格是改后加拍的近景（起手 / 预警 / 释放帧），看得清精英印、压低 / 前冲和金芯。
+- **回归**：`frost`、`gallery-frost`（`docs/art/review/boss-vfx/K/gallery-frost-{fuzhu,xuangui,frost_crab}.jpg`）、`fx`、`fx-style`、`fx-style-cold`、`telegraph-look` 全过；
+  `perf-fx` 压力项高档主线程 7.59 → 7.12 ms、低档 6.78 → 6.40 ms（没有变差）。
+- 测试场是亮沙地面：金环靠暗衬的冰白内环托着，亮沙上读得出；第二章实际地面是雪和冰面，金色在冷色上更跳。

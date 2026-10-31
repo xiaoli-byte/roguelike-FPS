@@ -106,6 +106,12 @@ namespace Spiritfire.Game
             Fx.PengFlap(Brain.BodyCenter, ground, Brain.transform.eulerAngles.y, 4.5f, strong);
         }
 
+        /// <summary>
+        /// 出手段等片段的第一下猛扇（gustStart，gust 第 60 帧 = 2.0 s）：判定、风环、顿帧都落在猛扇的极限姿势上；没有事件（代理 / 占位体）按前摇时长兜底。
+        /// 冻风带的生效时刻不变（BossHazards.Zone 的 arm = 前摇）
+        /// </summary>
+        protected override bool WindupDone => Cue("gustStart", WindupTime);
+
         protected override void OnWindup(float dt)
         {
             if (!apexed && StageT >= ApexAt) Apex();
