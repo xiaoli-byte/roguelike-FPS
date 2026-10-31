@@ -120,6 +120,9 @@ namespace Spiritfire.Game.Testing
 
         public int Count => manifest?.shots.Count ?? 0;
 
+        /// <summary>某个对象的某一招已经拍了几格（逼招等它拍满用）</summary>
+        public int ShotsOf(string subject, string label) => manifest == null ? 0 : manifest.shots.Count(s => s.subject == subject && s.label == label);
+
         public void Begin(string group, string outDir, string scene, Action<string> logger)
         {
             dir = outDir;

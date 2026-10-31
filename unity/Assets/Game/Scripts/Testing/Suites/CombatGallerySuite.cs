@@ -123,6 +123,69 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.3f);
         }
 
+        /// <summary>
+        /// 逼招（第二批收尾 D 路）：自由对打逼不出来的招式——要先打碎弱点（狐巫铜镜、马面锁扣、熔铜匠坩埚）、要在引信烧着时打火药仓（炮仗傀儡）、
+        /// 要贴身站着不动（火鼍陆上扑咬、马面空手重拳）、要飞够十几秒（三青鸟歇脚）。刷一只普通的，玩家站在 dist 米外看着它、不还手；
+        /// poke 每帧调一次（参数：这只怪、开始后的秒数；返回 true = 已经推过一把，不再调），直到这一招拍满 4 格（前摇 / 第一人称 / 出手 / 命中·收招·效果）或超时。
+        /// 前面已经拍满的跳过；超时没拍满记不合格（这几招要稳定截到）。
+        /// </summary>
+        protected IEnumerator Provoke(string id, string label, float dist, float timeout, System.Func<EnemyAI, float, bool> poke = null)
+        {
+            if (!ArenaSpawner.IsRegistered(id))
+            {
+                Line($"逼招 {id} · {label}：名册里没有，跳过");
+                yield break;
+            }
+            if (Rec.ShotsOf(id, label) >= 4)
+            {
+                Line($"逼招 {id} · {label}：前面已经拍到，跳过");
+                yield break;
+            }
+            arena.Clear();
+            AttackTokens.Reset();
+            PackCoordinator.Reset();
+            yield return new WaitForSeconds(0.3f);
+            Teleport(motor, arena.Center + away * dist);
+            yield return null;
+            var ai = arena.Spawn(id, false, Vector3.zero);
+            if (!ai)
+            {
+                Fail($"逼招 {id} · {label}：刷不出来");
+                yield break;
+            }
+            // 垫血：打弱点逼招那一下不会把它打死
+            ai.Health.maxHealth *= 5f;
+            ai.Health.ResetVitals();
+            float t0 = Time.time;
+            bool poked = poke == null;
+            while (Time.time - t0 < timeout && ai && !ai.Dead && Rec.ShotsOf(id, label) < 4)
+            {
+                Aim(motor, weapons.eye.transform, BodyCenter(ai.Health));
+                if (vitals.health < vitals.MaxHealth * 0.5f) vitals.Heal(99999);
+                weapons.testFire = false;
+                if (!poked) poked = poke(ai, Time.time - t0);
+                yield return null;
+            }
+            int n = Rec.ShotsOf(id, label);
+            Line($"逼招 {id} · {label}：{(n >= 4 ? "拍到" : "没拍满")}（{Time.time - t0:F1} s，{n} 格，最后状态 {(ai ? ai.State : "已回收")}）");
+            if (n < 4) Fail($"逼招 {id} · {label}：{timeout:F0} s 内没拍满（{n} 格）");
+            arena.Clear();
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        /// <summary>打一下弱点（命中点在弱点中心、从玩家眼睛方向打来；命中区按命中点认，弱点区的 Damaged 照常发）</summary>
+        protected void HitWeak(EnemyAI ai, float amount)
+        {
+            if (!ai || !ai.Health) return;
+            var body = ai.GetComponent<EnemyBody>();
+            var p = body && body.WeakPoint ? body.WeakPoint.position : BodyCenter(ai.Health);
+            var from = weapons.eye.transform.position;
+            var dir = p - from;
+            var info = DamageInfo.Simple(amount, DamageSource.Weapon, p, dir.sqrMagnitude > 1e-4f ? dir.normalized : Vector3.forward);
+            info.weakpoint = true;
+            Combat.DamageEnemy(ai.Health, info);
+        }
+
         /// <summary>死亡巡检：每种刷一只普通的 → 出生法阵 / 显形 → 处决 → 迸散 + 溶解</summary>
         protected IEnumerator DeathParade(IEnumerable<string> ids)
         {
@@ -189,6 +252,14 @@ namespace Spiritfire.Game.Testing
             yield return FreeFight("haozhi", 26f);
             yield return FreeFight("ice_whale", 28f);
             yield return FreeFight("lantern_jelly", 26f, "xingxing", "xingxing");
+            // 逼招：狐火只在铜镜碎了（沉默）以后放；三青鸟飞满 11–14 s 才歇脚
+            yield return Provoke("fox_witch", "狐火", 12f, 16f, (ai, t) =>
+            {
+                if (t < 1.8f) return false;
+                HitWeak(ai, ai.Health.maxHealth * FoxWitchAI.MirrorBreak * 1.15f);
+                return true;
+            });
+            yield return Provoke("qingniao", "歇脚", 12f, 34f);
             yield return DeathParade(GalleryAttacks.Frost);
         }
     }
@@ -208,6 +279,40 @@ namespace Spiritfire.Game.Testing
             yield return FreeFight("fire_crow", 24f, "fire_crow", "fire_crow");
             yield return FreeFight("founder", 26f, "huodou", "tantong");
             yield return FreeFight("nuo", 26f, "huodou", "tantong");
+            // 逼招：这五招都要玩家「做点什么」或贴身站着，自由对打里逼不出来
+            // 哑炸倒地：引信烧着（fuse）时打中火药仓
+            yield return Provoke("firecracker", "哑炸倒地", 10f, 20f, (ai, t) =>
+            {
+                if (ai.State != "fuse" || ai is not FirecrackerAI fc) return false;
+                var p = fc.BellyCenter;
+                var info = DamageInfo.Simple(5f, DamageSource.Weapon, p, (p - weapons.eye.transform.position).normalized);
+                info.weakpoint = true;
+                Combat.DamageEnemy(ai.Health, info);
+                return true;
+            });
+            // 裂锅：坩埚挨够 30% 生命的弱点伤害
+            yield return Provoke("founder", "裂锅", 8f, 12f, (ai, t) =>
+            {
+                if (t < 1.8f) return false;
+                HitWeak(ai, ai.Health.maxHealth * FounderAI.CrucibleBreak * 1.15f);
+                return true;
+            });
+            // 重拳：打断锁扣缴械，之后它空手走过来，玩家站着不动
+            yield return Provoke("mamian", "重拳", 6f, 18f, (ai, t) =>
+            {
+                if (t < 1.5f) return false;
+                HitWeak(ai, ai.Health.maxHealth * MamianAI.LockBreak * 1.15f);
+                return true;
+            });
+            // 碎面：面具挨够伤害（直接走碎面入口：面具只认正面、被袖子挡时不算）
+            yield return Provoke("nuo", "碎面", 8f, 10f, (ai, t) =>
+            {
+                if (t < 1.8f || ai.State is "enter" or "spawn" || ai is not NuoAI nuo) return false;
+                nuo.BreakFace();
+                return true;
+            });
+            // 陆上扑咬：没有熔岩时火鼍在岸上打，玩家站在它正前方 3 m
+            yield return Provoke("tuo", "陆上扑咬", 3f, 16f);
             yield return DeathParade(GalleryAttacks.Inferno);
         }
     }
