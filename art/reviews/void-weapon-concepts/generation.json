@@ -1,0 +1,16 @@
+{
+  "provider": "local_blender",
+  "blender_version": "5.2.2 LTS",
+  "renderer": "BLENDER_EEVEE",
+  "size": [2048, 1024],
+  "script": "art/reviews/void-weapon-concepts/render_concepts.py",
+  "style_source": "art/pipeline/pipeline.toml [concept].style",
+  "note": "Cloud image generation was unavailable, so the four selection images are local 3D concept renders rather than ImageGen paintovers. They are selection concepts, not approved production model sheets.",
+  "images": [
+    "A-void-reliquary.png",
+    "B-ruin-orrery.png",
+    "C-devourer-maw.png",
+    "D-horizon-lance.png"
+  ],
+  "contact_sheet": "void-weapon-contact-sheet.png"
+}
