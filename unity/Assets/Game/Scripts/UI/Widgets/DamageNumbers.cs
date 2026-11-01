@@ -136,6 +136,7 @@ namespace Spiritfire.Game
             var r = e.result;
             if (DamageCalc.IsExecute(info)) return;
             var t = e.enemy;
+            if (t && t.prop) return;
             var pos = info.point;
             if (pos == Vector3.zero && t) pos = ProjectileTargeting.Center(t) + Vector3.up * 0.35f;
             if (!float.IsFinite(pos.x + pos.y + pos.z)) return;

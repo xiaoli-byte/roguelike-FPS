@@ -49,6 +49,7 @@ namespace Spiritfire.Game
             hp.maxHealth = 1e6f;
             hp.ResetVitals();
             hp.noReward = true;
+            hp.prop = true;   // 打柱子只为点火：不冒伤害数字、不吸血
             hp.displayName = "龙卷风柱";
             hp.Damaged += OnDamaged;
             look = FeilianSpiral.Create(transform.position, Radius * 0.55f, Radius * 1.9f, Height, 280f, transform);

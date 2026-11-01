@@ -716,10 +716,37 @@ def idle_clip() -> dict:
     return {"frames": IDLE_FRAMES, "keys": keys, "loop": True, "events": [], "review": [0, 18, 36, 54]}
 
 
+_SWAP = {"fl": "fr", "fr": "fl", "hl": "hr", "hr": "hl"}
+
+
+def mirror_pose(p: dict) -> dict:
+    """左右镜像（生物的左 ↔ 右）：侧倾 / 绕 Z 的转角 / 尾巴横摆 / 整体外撇取反，四条腿左右对调（踩地组合、蹄子落点偏移跟着换）"""
+    q = dict(p)
+    for k in ("roll", "chest_yaw", "neck_yaw", "head_yaw", "splay"):
+        q[k] = -p[k]
+    q["tail_yaw"] = tuple(-x for x in p["tail_yaw"])
+    for a, b in _SWAP.items():
+        q[a] = p[b]
+    pl = p["plant"]
+    if pl and pl not in PLANTS and pl not in ("low", "mesh"):
+        q["plant"] = "+".join(_SWAP.get(part, part) for part in pl.split("+"))
+    q["reach"] = {_SWAP.get(k, k): v for k, v in (p.get("reach") or {}).items()}
+    return q
+
+
+def mirror_clip(clip: dict) -> dict:
+    """整段镜像（帧数、缓动、事件、审核帧不变）：往左跳的侧跃、往右绕的回旋冲撞"""
+    keys = [(k[0], mirror_pose(k[1])) + tuple(k[2:]) for k in clip["keys"]]
+    return dict(clip, keys=keys)
+
+
 CLIPS = {
     "roar": roar_clip(),
     "sidestep": sidestep_clip(),
+    # 镜像片段（状态名 = 招式 id + L / R）：侧跃往生物的左跳；回旋冲撞往右绕（往右倾、左前蹄刨冰）
+    "sidestepL": mirror_clip(sidestep_clip()),
     "wheel": charge_clip(126, 88, lean=18.0, look=14.0),
+    "wheelR": mirror_clip(charge_clip(126, 88, lean=18.0, look=14.0)),
     "down": down_clip(),
     "gust": gust_clip(),
     "charge": charge_clip(96, 64),

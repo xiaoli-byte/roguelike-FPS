@@ -746,6 +746,76 @@ namespace Spiritfire.Game.Testing
             if (fei.Crashes == c0) Fail("低头冲撞撞上巨石没有晕");
             boulder.SetActive(false);
             yield return WaitIdle();
+            yield return MirrorCase();
+        }
+
+        /// <summary>镜像片段：侧跃左右都跳到、回旋冲撞左右都绕到，每次播的片段和实际方向对得上（往左跳 = sidestepL，往右绕 = wheelR）</summary>
+        IEnumerator MirrorCase()
+        {
+            var seen = new HashSet<string>();
+            int bad = 0;
+            // 左右随机：每种最多试 8 次（都偏一边的概率 < 1%）
+            for (int i = 0; i < 16 && seen.Count < 4; i++)
+            {
+                bool wheel = i % 2 == 1;
+                string id = wheel ? FeilianWheel.MoveId : FeilianSidestep.MoveId;
+                yield return WaitIdle();
+                // 每次从擂台中心出（回旋冲撞贴着擂台边会马上停）
+                var agent = boss.GetComponent<NavMeshAgent>();
+                if (agent && agent.enabled && agent.isOnNavMesh) agent.Warp(arena.Center);
+                else boss.transform.position = arena.Center;
+                boss.transform.rotation = Quaternion.Euler(0, i * 47f, 0);
+                Front(wheel ? 14f : 12f);
+                yield return null;
+                var move = boss.MoveById(id);
+                var p0 = boss.transform.position;
+                var right = boss.transform.right;
+                float t0 = Time.time, turned = 0, lastYaw = boss.transform.eulerAngles.y;
+                bool ok;
+                while (!(ok = boss.ForceMove(id)) && Time.time - t0 < 3f) yield return null;
+                if (!ok)
+                {
+                    Fail($"镜像：强制出 {id} 失败");
+                    yield break;
+                }
+                string clip = null;
+                bool played = false;
+                while (boss && !boss.Dead && boss.Current == move && Time.time - t0 < 6f)
+                {
+                    KeepPlayerAlive();
+                    clip = move is FeilianWheel w ? (w.Right ? "wheelR" : "wheel") : ((FeilianSidestep)move).Left ? "sidestepL" : "sidestep";
+                    played |= Playing(clip);
+                    if (move.Stage == MoveStage.Active) turned += Mathf.DeltaAngle(lastYaw, boss.transform.eulerAngles.y);
+                    lastYaw = boss.transform.eulerAngles.y;
+                    yield return null;
+                }
+                bool dirOk;
+                string how;
+                if (move is FeilianWheel fw)
+                {
+                    dirOk = fw.Right ? turned > 10f : turned < -10f;
+                    how = $"出手段转了 {turned:+0;-0}°";
+                }
+                else
+                {
+                    float dx = Vector3.Dot(boss.transform.position - p0, right);
+                    dirOk = ((FeilianSidestep)move).Left ? dx < -2f : dx > 2f;
+                    how = $"往右挪 {dx:+0.0;-0.0} m";
+                }
+                seen.Add(clip);
+                Line($"镜像 {move.Name}：片段 {clip} {(played ? "✓ 在播" : "✗ 没播")}，{how} {(dirOk ? "✓" : "✗ 方向不对")}");
+                if (!played || !dirOk) bad++;
+            }
+            Line($"镜像片段：播到 {string.Join(" / ", seen.OrderBy(s => s))}（应 4 种）");
+            if (seen.Count < 4) Fail("侧跃 / 回旋冲撞没有左右两个方向都出到");
+            if (bad > 0) Fail($"镜像片段和实际方向对不上 {bad} 次");
+        }
+
+        bool Playing(string state)
+        {
+            var a = boss.Model?.animator;
+            if (!a) return false;
+            return a.GetCurrentAnimatorStateInfo(0).IsName(state) || (a.IsInTransition(0) && a.GetNextAnimatorStateInfo(0).IsName(state));
         }
 
         protected override IEnumerator PhaseMechanics(int phase)
@@ -761,7 +831,16 @@ namespace Spiritfire.Game.Testing
                 if (t)
                 {
                     var hp = t.GetComponent<Damageable>();
+                    // 打柱子只为点火：不冒伤害数字
+                    var numbers = Hud.Instance ? Hud.Instance.Widget<DamageNumbers>() : null;
+                    int n0 = numbers != null ? numbers.Spawned : 0;
+                    Combat.DamageEnemy(hp, new DamageInfo { amount = 30f, element = Element.None, source = DamageSource.Weapon, point = t.transform.position + Vector3.up * 2f, direction = Vector3.forward });
                     Combat.DamageEnemy(hp, new DamageInfo { amount = 30f, element = Element.Fire, source = DamageSource.Explosion, point = t.transform.position + Vector3.up * 2f, direction = Vector3.forward });
+                    yield return null;
+                    yield return null;
+                    int dn = numbers != null ? numbers.Spawned - n0 : -1;
+                    Line($"龙卷挨打：伤害数字 {(dn == 0 ? "✓ 没冒" : dn < 0 ? "（没有 HUD，没量）" : $"✗ 冒了 {dn} 个")}（prop {hp.prop}）");
+                    if (dn > 0 || !hp.prop) Fail("龙卷风柱被打冒了伤害数字");
                     Guard(false);
                     float h0 = boss.Health.health, t0 = Time.time;
                     while (t && t.BurnHits == 0 && Time.time - t0 < 8f)

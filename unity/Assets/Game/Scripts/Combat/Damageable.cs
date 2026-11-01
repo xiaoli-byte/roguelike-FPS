@@ -17,6 +17,8 @@ namespace Spiritfire.Game
         public Rank rank;
         /// <summary>不给击杀奖励、不计入场地击杀（蜃景分身等召唤物）</summary>
         public bool noReward;
+        /// <summary>场地机关（飞廉的龙卷风柱）：挨打照常结算、照发 Damaged（机关自己用来判断点火等），但不冒伤害数字、不吸血</summary>
+        [NonSerialized] public bool prop;
         [NonSerialized] public float health, armor, shield;
         /// <summary>无法被选中（遁地、出生、死亡中）：子弹穿过、显示「免疫」</summary>
         [NonSerialized] public bool untargetable;

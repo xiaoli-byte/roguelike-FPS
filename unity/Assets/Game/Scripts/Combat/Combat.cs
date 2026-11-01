@@ -210,7 +210,7 @@ namespace Spiritfire.Game
                 // 旧事件的监听者（伤害数字、命中音、灵宠记仇、冒烟统计）不认标签：处决不转发，首领倒下时残余爪牙不会一齐冒数字、刷音效
                 if (!execute) enemyDamaged.Raise(target, info, r);
             }
-            if (!purge && r.total > 0)
+            if (!purge && r.total > 0 && !target.prop)
                 try
                 {
                     Lifesteal(in info, r.total);

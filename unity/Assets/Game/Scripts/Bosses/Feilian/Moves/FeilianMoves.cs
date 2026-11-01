@@ -148,8 +148,11 @@ namespace Spiritfire.Game
             Brain.Halt();
             TurnToward(yaw, 286f, dt);
             Glint(WindupTime - 0.25f);
-            if (StageAt(14f / 30f) || StageAt(19f / 30f)) Fx.FeilianPaw(LordB.BonePos("fhoof_R"), -Brain.transform.forward);
+            if (StageAt(14f / 30f) || StageAt(19f / 30f)) Fx.FeilianPaw(LordB.BonePos(PawHoof), -Brain.transform.forward);
         }
+
+        /// <summary>刨冰的那只前蹄（镜像片段换左前蹄）</summary>
+        protected virtual string PawHoof => "fhoof_R";
 
         protected override bool WindupDone => Cue("hit", WindupTime);
 
@@ -252,14 +255,32 @@ namespace Spiritfire.Game
         }
     }
 
-    /// <summary>回旋冲撞（wheel，二阶段起，0.8 / ≤ 2.2 / 1.2，冷却 6 s）：同冲撞，冲出去再绕回来一次（2.2 s 转 150°），整身往弧心倾（手 K：往左倾）</summary>
+    /// <summary>
+    /// 回旋冲撞（wheel，二阶段起，0.8 / ≤ 2.2 / 1.2，冷却 6 s）：同冲撞，冲出去再绕回来一次（2.2 s 转 150°），整身往弧心倾。
+    /// 往哪边绕随机（网页 wheelDir）：往左绕播 wheel（往左倾、右前蹄刨冰），往右绕播镜像片段 wheelR
+    /// </summary>
     public sealed class FeilianWheel : FeilianCharge
     {
         public new const string MoveId = "wheel";
         public override string Id => MoveId;
         public override string Name => "回旋冲撞";
-        /// <summary>出手段一共转多少（弧度，网页 2.6）；手 K 片段只做了往左倾，所以固定往左绕</summary>
+        /// <summary>出手段一共转多少（弧度，网页 2.6）</summary>
         public const float Sweep = 2.6f;
+
+        /// <summary>这一次往右绕（片段 wheelR）；false = 往左（wheel）</summary>
+        public bool Right { get; private set; }
+
+        protected override string Clip => Right ? MoveId + "R" : MoveId;
+        protected override string PawHoof => Right ? "fhoof_L" : "fhoof_R";
+
+        /// <summary>出手段每秒转多少度（往左绕为负 = yaw 减小）</summary>
+        float Rate => (Right ? 1f : -1f) * Sweep / active * Mathf.Rad2Deg;
+
+        protected override void Prepare()
+        {
+            base.Prepare();
+            Right = Rng.Chance(0.5f);
+        }
 
         public FeilianWheel()
         {
@@ -274,7 +295,7 @@ namespace Spiritfire.Game
         {
             // 弧形冲撞线：按出手段第一秒的弧画三段
             var o = Brain.transform.position;
-            float y = yaw, rate = -Sweep / active * Mathf.Rad2Deg;
+            float y = yaw, rate = Rate;
             for (int i = 0; i < 3; i++)
             {
                 var a = o;
@@ -289,7 +310,7 @@ namespace Spiritfire.Game
         protected override void OnActiveBegin()
         {
             base.OnActiveBegin();
-            turnRate = -Sweep / active * Mathf.Rad2Deg;
+            turnRate = Rate;
         }
     }
 
@@ -388,12 +409,24 @@ namespace Spiritfire.Game
             return f && d != null && f.RecentDamage > d.sidestepDamage * f.WebScale ? weight : 0f;
         }
 
+        /// <summary>这一次往左跳（片段 sidestepL，镜像）；false = 往右（sidestep）</summary>
+        public bool Left { get; private set; }
+
+        protected override string Clip => Left ? MoveId + "L" : MoveId;
+
         protected override void Prepare()
         {
             Brain.Halt();
             from = Brain.transform.position;
-            to = from + Brain.transform.right * Distance;
-            if (Brain.Arena && !Brain.Arena.Contains(to, 2f)) to = from - Brain.transform.right * Distance;
+            // 网页：左右随机；那一边出了擂台就跳另一边
+            Left = Rng.Chance(0.5f);
+            var side = Brain.transform.right * (Left ? -1f : 1f);
+            to = from + side * Distance;
+            if (Brain.Arena && !Brain.Arena.Contains(to, 2f))
+            {
+                Left = !Left;
+                to = from - side * Distance;
+            }
             to = OnGround(Brain.ClampToArena(to));
         }
 

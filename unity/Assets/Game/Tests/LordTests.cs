@@ -138,6 +138,22 @@ namespace Spiritfire.Game.Tests
             }
         }
 
+        /// <summary>镜像片段（飞廉往左跳的侧跃、往右绕的回旋冲撞）的事件和原片段一模一样（状态名 = 招式 id + L / R）</summary>
+        [Test]
+        public void EventsJson_MirroredClipsMatchOriginals()
+        {
+            string path = Path.Combine(Application.dataPath, "Art/Characters/SK_Boss_Feilian/Anim/SK_Boss_Feilian.events.json");
+            string text = File.ReadAllText(path);
+            string Block(string state)
+            {
+                var m = Regex.Match(text, "\"" + state + "\"\\s*:\\s*(\\[[^\\]]*\\])");
+                Assert.That(m.Success, $"events.json 里没有 {state}");
+                return Regex.Replace(m.Groups[1].Value, "\\s+", "");
+            }
+            Assert.AreEqual(Block("sidestep"), Block("sidestepL"), "sidestepL 的事件和 sidestep 一样");
+            Assert.AreEqual(Block("wheel"), Block("wheelR"), "wheelR 的事件和 wheel 一样");
+        }
+
         static string AssetToBoss(string asset) => asset switch
         {
             "SK_Boss_Kui" => KuiDef.Id,
