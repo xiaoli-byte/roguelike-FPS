@@ -1,0 +1,29 @@
+{
+  "design": {
+    "key": "inferno_boss_warlord",
+    "name": "熔心魔将",
+    "height_m": 4.2,
+    "chapter": "inferno",
+    "group": "领主",
+    "layout": "humanoid",
+    "role": "3-3 铸范大坊领主（Unity 资产 SK_Boss_Warlord）；熔心大剑另建 SM_BossWeapon_Greatsword（inferno_boss_warlord_sword）",
+    "brief": "A towering molten-copper demon warlord forged from cooled volcanic basalt and molten copper in the fire god Zhurong's foundry, a heavy two-handed greatsword swordsman about 4.2 m tall (horn tips): very broad shoulders, deep barrel chest, big armoured gauntlets, blocky sabatons, sturdy short legs, a compact head inside a big horned helm. Dark purple-grey basalt armour plates (about 60%), burnished copper trims, rivets, round ring bosses and crescent horns (about 25%), ink-black front and back tabards and belt tassels (about 10%); molten-orange lines only in the armour seams, the eye slit and the round furnace-heart ring in the chest.",
+    "style_note": "pipeline.toml [concept].style, written out in the prompt: polished stylized cartoon 3D game art, toy-like chunky simplified masses, clean bevelled edges, flat-ish hand-painted colours, two or three dominant colour blocks; no photorealism, micro-grain, dense tiny cracks or fine engraving.",
+    "status": "selected",
+    "note": "2026-11-01 重建（用户：旧部件模型和画风格格不入；重点首领，招式更像剑士）。设计说明 docs/art/boss-warlord.md"
+  },
+  "generation": {
+    "provider": "tripo_studio",
+    "model": "GPT Image 2.5",
+    "size": [
+      1792,
+      1024
+    ],
+    "upscaled_4k": false,
+    "references": [],
+    "variants": 4,
+    "selected_variant": 3,
+    "note": "MANDATORY 三条放最前（布料全墨色 / 只要灰底 / 不要文字）。选第 3 张：灰底、暗紫玄武岩 + 铜 + 墨三块色、胸口和腰带两个铜环、外翻层叠肩甲、月牙双角。被用户选定的设定图（v001 第 2 张）取代，不用",
+    "date": "2026-11-01"
+  }
+}

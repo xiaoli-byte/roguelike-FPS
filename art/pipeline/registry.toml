@@ -632,48 +632,52 @@ spread = { armL = [-0.6, 0, -1.5], armR = [-0.6, 0, 1.5], foreL = [0, 0, 0], for
 raise = { armL = [-2.8, 0, -0.35], armR = [-2.8, 0, 0.35], foreL = [-0.2, 0, 0], foreR = [-0.2, 0, 0], head = [-0.35, 0, 0] }
 
 [assets.SK_Boss_Warlord]
-# blockout_exclude：不进身体资产、运行时保持原样的 rig 字段（大剑垂到脚下以下且带熔火发光角色，保留程序化（后续可单做静态资产））
-blockout_exclude = ["sword"]
+# 熔心魔将（3-3 铸范大坊领主）。2026-11-01 重建：旧的程序化部件模型（rig.mode = parts，j_* 关节）换成 Tripo 本体，见 docs/art/boss-warlord.md。
+# 设计稿 / 四视图 art/source/characters/_design/inferno/inferno_boss_warlord/（Tripo Studio 的 GPT Image 2.5 出图，特效分离的底态）；
+# Tripo 原件 art/source/_tripo_inbox/<UTC>_SK_Boss_Warlord.glb。面数 45k 是本资产的例外（用户 2026-11-01 定 40–50k），boss 档默认仍是 30k。
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Warlord（creature_rigs/SK_Boss_Warlord.json），不走 assetctl build 的部件骨架。
+# 语义人形命名（Unity 建 Humanoid）+ 肩甲 pauldron + 战裙 / 缨穗弹簧链；挂点 socket_sword / socket_sword_tip（右手握点 / 剑尖）、
+# socket_core（胸口地火之心，弱点）、socket_helm（角盔）、socket_pauldron_L/R（肩甲顶）。熔心大剑是独立挂件 SM_BossWeapon_Greatsword。
+source_provider = "tripo"
+matid_hint = "Basalt armour plates, copper trims, cloth tabards, tassels and the heart are all painted NON-METAL (blue). Nothing on it is metal."
 display = "熔心魔将"
 kind = "skeletal"
 class = "boss"
 rig = "parts"
-rig_rigid = true
-rig_sigma = 0.012
+rig_sigma = 0.02
 blockout = { source = "enemy", id = "boss_warlord" }
 material = { roughness = 0.8, metallic = 0.0 }
 keep_glow = "all"
 brief = """
-A molten-hearted demon warlord boss: heavy black iron plate armour with dark bronze-gold trim, glowing
-orange lava cracks running through the armour, a glowing molten core in the chest, a horned great-helm
-with glowing orange eyes, dark bone spikes on the shoulders, a long tattered crimson cape. Both hands are
-EMPTY armoured gauntlets (his greatsword is a separate asset - do not paint any sword or weapon).
-His armored gauntlets each show a separate plated thumb and four articulated plated fingers, open and slightly spread, not clenched fists; his feet are complete armored sabatons with a clear sole.
+The Molten-Heart Warlord (熔心魔将), forged from cooled volcanic basalt and molten copper in the fire god Zhurong's foundry:
+a towering heavy greatsword swordsman about 4.2 m tall (horn tips), very broad shoulders, a deep barrel chest, big
+armoured gauntlets and blocky sabatons. Dark purple-grey basalt armour plates with burnished copper trims, rivets, round
+ring bosses on the chest and belt and crescent copper horns on the helm; ink-black front and back tabards and tassels at
+the belt. Molten-orange lines only in the armour seams, the eye slit and the round furnace heart in the chest (weak spot).
+His greatsword is a separate model.
 """
 
-# ROM 测试姿势：取自 src/enemies/bosses/Warlord.ts 的姿势表（armS / elbowS = 持剑手，armO / elbowO = 空手；大剑保留程序化）
-[assets.SK_Boss_Warlord.rom]
-overhead = { armS = [-3.0, 0, -0.15], elbowS = [0, 0, 0], armO = [-0.4, 0, 0.9], head = [-0.4, 0, 0], torso = [-0.15, 0, 0] }
-leap = { legL = [-0.9, 0, 0], legR = [-0.9, 0, 0], kneeL = [1.3, 0, 0], kneeR = [1.3, 0, 0], armS = [-2.8, 0, 0], elbowS = [-0.2, 0, 0], torso = [-0.25, 0, 0], cape = [0.6, 0, 0] }
-sweep_r = { torso = [0, 1.0, 0], armS = [-0.6, 0, -1.3], elbowS = [-0.1, 0, 0], kneeL = [0.3, 0, 0], kneeR = [0.3, 0, 0] }
-sweep_l = { torso = [0, -0.9, 0], armS = [-0.7, 0, -1.2], elbowS = [-0.2, 0, 0], kneeL = [0.3, 0, 0], kneeR = [0.3, 0, 0] }
-land = { legL = [-0.5, 0, 0], legR = [-0.5, 0, 0], kneeL = [1.0, 0, 0], kneeR = [1.0, 0, 0], torso = [0.6, 0, 0], armS = [-1.2, 0, 0], elbowS = [0, 0, 0], armO = [-0.4, 0, 0.6] }
-lunge = { legL = [-0.45, 0, 0], legR = [0.35, 0, 0], kneeL = [0.55, 0, 0], kneeR = [0.55, 0, 0], torso = [0.5, 0, 0], armS = [0.9, 0, 0], elbowS = [-0.2, 0, 0], armO = [-0.8, 0, 0.4], cape = [0.9, 0, 0] }
-
 [assets.SM_BossWeapon_Greatsword]
+# 熔心大剑（熔心魔将的双手大剑，独立挂件，挂本体 socket_sword）。2026-11-01 重建：旧的 Hunyuan 件换成 Tripo 件（用户：大剑单独用 Tripo 建模），见 docs/art/boss-warlord.md。
+# 多视图 art/source/characters/_design/inferno/inferno_boss_warlord_sword/（照用户设定图，特效分离的底态）；Tripo 原件 art/source/_tripo_inbox/<UTC>_SM_BossWeapon_Greatsword.glb。
+# 资产空间约定不变（WarlordBlade）：原点 = 右手握点（剑格上沿），剑身朝 -y、剑首朝 +y，剑面朝前；reference_floor = 剑尖到握点的距离（取负）。
+source_provider = "tripo"
 display = "熔心大剑"
 kind = "static"
 class = "boss_attachment"
+presentation = false
 blockout = { source = "enemy", id = "boss_warlord", attachment = "greatsword" }
-# 多视图高模：剑身扁平，单视图只能猜厚度；侧视图约束剑身和护手的厚度
-highpoly_mode = "multiview"
-material = { roughness = 0.7, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+reference_mode = "bounds_only"
+reference_dimensions = [0.75, 3.2, 0.3]
+reference_floor = -2.295
+material = { roughness = 0.8, metallic = 0.0 }
 keep_glow = "all"
+matid_hint = "The rock blade, iron guard, copper caps and rings, leather grip and the red tassel are all painted NON-METAL (blue)."
 brief = """
-A huge two-handed demonic greatsword for a molten-hearted warlord boss: a long straight broad blade of
-blackened, hammered iron with glowing orange-hot molten cracks running down its centre and glowing molten
-edges, a heavy dark iron crossguard with sharp gold spiked tips, a grip wrapped in pale bone and dark leather,
-a faceted gold pommel. Brutal, heavy, readable silhouette.
+The Molten-Heart Warlord's colossal two-handed great sword, about 3.2 m long: a very broad thick blade of rough dark
+purple-grey rock with irregular chipped edges and a broken-wedge tip, lava cracks along the blade; a straight dark iron
+cross guard with copper end caps and a copper ring at its centre, another copper ring around the blade root; a long grip
+wrapped in dark leather with copper bands; a big round copper ring pommel with a short dark-red tassel.
 """
 
 # ───────────── 第一人称武器（通用部件骨架 · 刚体；同一资产也用于掉落模型）─────────────

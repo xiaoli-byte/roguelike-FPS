@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 15660,
+    "verts": 7830
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.95711,
+    "iou": 0.774,
+    "iou_per_view": {
+      "front": 0.797,
+      "left": 0.741,
+      "back": 0.868,
+      "right": 0.678
+    },
+    "size_m": [
+      0.749,
+      0.274,
+      3.2
+    ],
+    "reference_m": [
+      0.75,
+      0.3,
+      3.2
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "provider",
+  "ao": {
+    "mean": 0.25,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "lava_cracked_sword_3d_model_basecolor",
+    "normal": "lava_cracked_sword_3d_model_normal",
+    "metal_rough": "lava_cracked_sword_3d_model_rm",
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_BossWeapon_Greatsword_LOD0",
+      "tris": 15660,
+      "verts": 7830,
+      "uv_min": [
+        0.0005267217056825757,
+        0.0016590356826782227
+      ],
+      "uv_max": [
+        0.966974139213562,
+        0.9954145550727844
+      ],
+      "uv_utilization": 0.199,
+      "bbox_min": [
+        -0.3745,
+        -0.1371,
+        -2.295
+      ],
+      "bbox_max": [
+        0.3745,
+        0.1371,
+        0.905
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_BossWeapon_Greatsword/04_export/SM_BossWeapon_Greatsword_v005.glb",
+    "bytes": 775240
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 21.7,
+  "_seconds": 23.3
+}

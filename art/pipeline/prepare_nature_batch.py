@@ -50,6 +50,10 @@ def reference_data(spec) -> tuple[dict, dict]:
     # Attachments whose socket is their middle (a drum orbiting a core, a floating core): reference_origin = "center"
     # puts the box around the origin instead of standing it on the floor; bl_build_tripo fits the mesh into this box.
     floor = -height / 2 if spec.raw.get("reference_origin") == "center" else 0.0
+    # Hand-held weapons whose socket is the grip: reference_floor = the box bottom below the origin (the blade tip of a
+    # sword hanging tip-down, e.g. -2.6 m), so the grip lands on the origin (SM_BossWeapon_Greatsword, docs/art/boss-warlord.md).
+    if "reference_floor" in spec.raw:
+        floor = float(spec.raw["reference_floor"])
     bounds = {"min": [-width / 2, floor, -depth / 2], "max": [width / 2, floor + height, depth / 2]}
     meta = {"schema": 1, "assetId": spec.id, "source": {"kind": "scene", "id": spec.blockout["id"]},
             "reference_mode": "bounds_only", "bounds": bounds, "joints": [],

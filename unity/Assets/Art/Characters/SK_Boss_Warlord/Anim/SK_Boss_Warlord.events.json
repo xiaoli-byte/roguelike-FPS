@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "about": "熔心魔将的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。招式片段是手工关键帧，本文件和 FBX 都由 art/source/characters/SK_Boss_Warlord/anim/warlord_anims.py 生成，别手改；at = 片段内归一化时刻。hit = 释放帧（刀到 / 落地 / 插剑；顿帧、震屏、出手特效由招式判定那一刻触发，这个事件用来量动作和判定差几帧），smear / smearEnd = 大剑拖影起止，fx:windup = 起手（焰刃开始烧亮），step = 冲锋 / 突刺踏步，brake = 刹停，impact = 撞墙 / 横竖两刀的竖劈 / 回旋二连的第二圈，takeoff = 起跳，cast = 举剑号令天火，dash = 居合拔刀突进（居合的 hit = 收刀「咔」），gather / roar = 咆哮的缩身 / 炸开，kneel / collapse = 倒下的跪地 / 扑倒，glare = 登场落地后抬头怒视（角盔一亮）；Idle / Walk / Move 也是手工关键帧（双手持剑），speed = 录制速度（混合树阈值）；fx:*Warning 只是标注预警从哪一帧画（预警由招式画）",
+  "about": "熔心魔将（人形骨架）的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。片段是手工关键帧，本文件和 FBX 都由 art/source/characters/SK_Boss_Warlord/anim/warlord_anims_humanoid.py 生成（姿势 / 片段表在 warlord_poses.py），别手改；at = 片段内归一化时刻。hit / impact = 释放帧（刀到 / 落地 / 插剑 / 收刀 / 竖劈 / 第二圈），smear / smearEnd = 大剑拖影起止，dash = 居合拔刀突进，fx:windup = 起手，step = 踏步，brake = 刹停，takeoff = 起跳，cast = 号令天火，gather / roar = 咆哮，kneel / collapse = 倒下，glare = 登场抬头；speed = 步态录制速度（混合树阈值）；fx:*Warning 只是标注预警从哪一帧画",
   "clips": {
     "sweepReady": {
       "events": [

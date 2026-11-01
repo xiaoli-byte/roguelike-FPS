@@ -72,6 +72,8 @@ namespace Spiritfire.Art.Editor
         {
             "SK_Enemy_Marmot", "SK_Enemy_Tiangou", "SK_Enemy_Aoyin", "SK_Enemy_Jufu", "SK_Enemy_Manman", "SK_Enemy_Dijiang", "SK_Enemy_Qiongqi",
             "SK_Boss_Kui", "SK_Boss_Feilian", "SK_Boss_Huashe", "SK_Boss_Dae", "SK_Boss_Leize",
+            // 熔心魔将重建（2026-11-01，docs/art/boss-warlord.md）：Tripo 本体与熔心大剑，岩甲 / 铜饰都按非金属画
+            "SK_Boss_Warlord", "SM_BossWeapon_Greatsword",
         };
 
         /// <summary>这个资产的材质要不要强制非金属</summary>

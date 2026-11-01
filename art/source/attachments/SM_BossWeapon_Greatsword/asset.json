@@ -5,7 +5,7 @@
   "class": "boss_attachment",
   "stages": {
     "blockout": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -63,11 +63,110 @@
             ]
           },
           "blender_seconds": 6.1
+        },
+        {
+          "version": 2,
+          "created": "2026-11-01 21:24:59",
+          "files": {
+            "BO_SM_BossWeapon_Greatsword_v002.json": {
+              "path": "00_blockout/BO_SM_BossWeapon_Greatsword_v002.json",
+              "sha256": "c5c589f66bab25ea93429fb930cd4fba8cb6105430f38d3d5436ff787b0fb976"
+            },
+            "BO_SM_BossWeapon_Greatsword_v002_views.json": {
+              "path": "00_blockout/BO_SM_BossWeapon_Greatsword_v002_views.json",
+              "sha256": "4f21e7d3ab8d4311b879ee7ae50a9666a17188b750543c65a4e5b1ba387dd00f"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "boss_warlord"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.45,
+              -2.55,
+              -0.15
+            ],
+            "max": [
+              0.45,
+              0.6500000000000004,
+              0.15
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 3,
+          "created": "2026-11-01 21:30:48",
+          "files": {
+            "BO_SM_BossWeapon_Greatsword_v003.json": {
+              "path": "00_blockout/BO_SM_BossWeapon_Greatsword_v003.json",
+              "sha256": "8958783601ad700205a670e184c42f2526ae727e9fd8123342db37c6cfb6c695"
+            },
+            "BO_SM_BossWeapon_Greatsword_v003_views.json": {
+              "path": "00_blockout/BO_SM_BossWeapon_Greatsword_v003_views.json",
+              "sha256": "601d7db093a26cad75f61376ad50acbff679cf922460d7775bb2837156d1c2b0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "boss_warlord"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.375,
+              -2.55,
+              -0.15
+            ],
+            "max": [
+              0.375,
+              0.6500000000000004,
+              0.15
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 4,
+          "created": "2026-11-01 21:33:45",
+          "files": {
+            "BO_SM_BossWeapon_Greatsword_v004.json": {
+              "path": "00_blockout/BO_SM_BossWeapon_Greatsword_v004.json",
+              "sha256": "a285d43390dddbaa1228013bf77f75e43c89770ec03e12612fba92a5513cf6aa"
+            },
+            "BO_SM_BossWeapon_Greatsword_v004_views.json": {
+              "path": "00_blockout/BO_SM_BossWeapon_Greatsword_v004_views.json",
+              "sha256": "9793a365fff2062eeb1da56839b94f7e5b80076d9dbe264cb867a9379adc03ca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "boss_warlord"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.375,
+              -2.295,
+              -0.15
+            ],
+            "max": [
+              0.375,
+              0.9050000000000002,
+              0.15
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
         }
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -174,6 +273,273 @@
             "by": "claude(AI初审)",
             "note": "剑身锻铁 + 熔岩裂纹与剑刃、金色尖刺护手、骨缠握柄，与督军板甲风格一致；细长物体 IoU 0.64–0.66 偏低，叠图仅剑尖略短",
             "time": "2026-10-03 19:52:32"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-01 21:27:27",
+          "files": {
+            "CN_SM_BossWeapon_Greatsword_v002_front.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v002_front.png",
+              "sha256": "8b442bdeb919ca9b991153090c382e36d6a1fc8778867a27d410eeffa6cd4f7e"
+            },
+            "CN_SM_BossWeapon_Greatsword_v002_left.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v002_left.png",
+              "sha256": "de71f6176a830d74b015c0172b9b51cb5c8150bb90ca00218a793199e31e0836"
+            },
+            "CN_SM_BossWeapon_Greatsword_v002_back.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v002_back.png",
+              "sha256": "7efbe868a3e5e4b6828f52c9c59845cdfafcd5863b918cfec1256b8cb7788cf1"
+            },
+            "CN_SM_BossWeapon_Greatsword_v002_right.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v002_right.png",
+              "sha256": "663f4f58dc9c9dbeba1d85e3245df8d03f3f3e1eeebe8a12dae19d2ffe27d2a1"
+            },
+            "CN_SM_BossWeapon_Greatsword_v002_sheet.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v002_sheet.png",
+              "sha256": "ff8eb3117ebe798f9730f2e28045b73ffb913a9937995aa47d4a2535f143731e"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "design turnaround",
+          "design_key": "inferno_boss_warlord_sword",
+          "design_turnaround": "art/source/characters/_design/inferno/inferno_boss_warlord_sword/TV_inferno_boss_warlord_sword_v003.png",
+          "source_sha256": "466e611a464eac9f78fd4493b0b802d06551705cd254b9aa6e18bed07cea5e7f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 1.0521124445175076,
+              "offset": [
+                149,
+                55
+              ],
+              "size": [
+                214,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0557571758495545,
+              "offset": [
+                216,
+                55
+              ],
+              "size": [
+                80,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.053324555628703,
+              "offset": [
+                149,
+                55
+              ],
+              "size": [
+                214,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.053324555628703,
+              "offset": [
+                216,
+                55
+              ],
+              "size": [
+                80,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Kimi",
+            "note": "",
+            "time": "2026-11-01 21:27:50"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-01 21:30:56",
+          "files": {
+            "CN_SM_BossWeapon_Greatsword_v003_front.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v003_front.png",
+              "sha256": "8b442bdeb919ca9b991153090c382e36d6a1fc8778867a27d410eeffa6cd4f7e"
+            },
+            "CN_SM_BossWeapon_Greatsword_v003_left.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v003_left.png",
+              "sha256": "de71f6176a830d74b015c0172b9b51cb5c8150bb90ca00218a793199e31e0836"
+            },
+            "CN_SM_BossWeapon_Greatsword_v003_back.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v003_back.png",
+              "sha256": "7efbe868a3e5e4b6828f52c9c59845cdfafcd5863b918cfec1256b8cb7788cf1"
+            },
+            "CN_SM_BossWeapon_Greatsword_v003_right.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v003_right.png",
+              "sha256": "663f4f58dc9c9dbeba1d85e3245df8d03f3f3e1eeebe8a12dae19d2ffe27d2a1"
+            },
+            "CN_SM_BossWeapon_Greatsword_v003_sheet.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v003_sheet.png",
+              "sha256": "ff8eb3117ebe798f9730f2e28045b73ffb913a9937995aa47d4a2535f143731e"
+            }
+          },
+          "from_blockout": 3,
+          "generator": "design turnaround",
+          "design_key": "inferno_boss_warlord_sword",
+          "design_turnaround": "art/source/characters/_design/inferno/inferno_boss_warlord_sword/TV_inferno_boss_warlord_sword_v003.png",
+          "source_sha256": "466e611a464eac9f78fd4493b0b802d06551705cd254b9aa6e18bed07cea5e7f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 1.0521124445175076,
+              "offset": [
+                149,
+                55
+              ],
+              "size": [
+                214,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0557571758495545,
+              "offset": [
+                216,
+                55
+              ],
+              "size": [
+                80,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.053324555628703,
+              "offset": [
+                149,
+                55
+              ],
+              "size": [
+                214,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.053324555628703,
+              "offset": [
+                216,
+                55
+              ],
+              "size": [
+                80,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Kimi",
+            "note": "",
+            "time": "2026-11-01 21:30:56"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-11-01 21:33:54",
+          "files": {
+            "CN_SM_BossWeapon_Greatsword_v004_front.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v004_front.png",
+              "sha256": "8b442bdeb919ca9b991153090c382e36d6a1fc8778867a27d410eeffa6cd4f7e"
+            },
+            "CN_SM_BossWeapon_Greatsword_v004_left.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v004_left.png",
+              "sha256": "de71f6176a830d74b015c0172b9b51cb5c8150bb90ca00218a793199e31e0836"
+            },
+            "CN_SM_BossWeapon_Greatsword_v004_back.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v004_back.png",
+              "sha256": "7efbe868a3e5e4b6828f52c9c59845cdfafcd5863b918cfec1256b8cb7788cf1"
+            },
+            "CN_SM_BossWeapon_Greatsword_v004_right.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v004_right.png",
+              "sha256": "663f4f58dc9c9dbeba1d85e3245df8d03f3f3e1eeebe8a12dae19d2ffe27d2a1"
+            },
+            "CN_SM_BossWeapon_Greatsword_v004_sheet.png": {
+              "path": "01_concept/CN_SM_BossWeapon_Greatsword_v004_sheet.png",
+              "sha256": "ff8eb3117ebe798f9730f2e28045b73ffb913a9937995aa47d4a2535f143731e"
+            }
+          },
+          "from_blockout": 4,
+          "generator": "design turnaround",
+          "design_key": "inferno_boss_warlord_sword",
+          "design_turnaround": "art/source/characters/_design/inferno/inferno_boss_warlord_sword/TV_inferno_boss_warlord_sword_v003.png",
+          "source_sha256": "466e611a464eac9f78fd4493b0b802d06551705cd254b9aa6e18bed07cea5e7f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 1.0521124445175076,
+              "offset": [
+                149,
+                55
+              ],
+              "size": [
+                214,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0557571758495545,
+              "offset": [
+                216,
+                55
+              ],
+              "size": [
+                80,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.053324555628703,
+              "offset": [
+                149,
+                55
+              ],
+              "size": [
+                214,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.053324555628703,
+              "offset": [
+                216,
+                55
+              ],
+              "size": [
+                80,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Kimi",
+            "note": "",
+            "time": "2026-11-01 21:33:55"
           }
         }
       ]
@@ -284,7 +650,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 6,
       "versions": [
         {
           "version": 1,
@@ -336,11 +702,141 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 1.8
+        },
+        {
+          "version": 2,
+          "created": "2026-11-01 21:14:44",
+          "files": {
+            "HP_SM_BossWeapon_Greatsword_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v002_source.glb",
+              "sha256": "821a775c1138e64774123d77754b94426913f69ae49118fe227793da939f2b69"
+            },
+            "HP_SM_BossWeapon_Greatsword_v002.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v002.glb",
+              "sha256": "336ead26aa1ea9bd5541c9aafb9177422c741b3fdd67dd4da2f4ef2991e9abbc"
+            },
+            "HP_SM_BossWeapon_Greatsword_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v002_graph.json",
+              "sha256": "d7996a71b5476d83ac302595074a67993bfb9a648881ef86111087a26c764349"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/models",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 18136,
+          "source_sha256": "821a775c1138e64774123d77754b94426913f69ae49118fe227793da939f2b69"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-01 21:21:07",
+          "files": {
+            "HP_SM_BossWeapon_Greatsword_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v003_source.glb",
+              "sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
+            },
+            "HP_SM_BossWeapon_Greatsword_v003.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v003.glb",
+              "sha256": "e0d98f9070a2dd5ecdc13726223f6545eb826ce4066bc73a6636c654a7c5f3d6"
+            },
+            "HP_SM_BossWeapon_Greatsword_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v003_graph.json",
+              "sha256": "9945191548d8695449055ec37bb479fd0736a1f72c3a772310a78322be8817bb"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/models",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15660,
+          "source_sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
+        },
+        {
+          "version": 4,
+          "created": "2026-11-01 21:29:41",
+          "files": {
+            "HP_SM_BossWeapon_Greatsword_v004_source.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v004_source.glb",
+              "sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
+            },
+            "HP_SM_BossWeapon_Greatsword_v004.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v004.glb",
+              "sha256": "e0d98f9070a2dd5ecdc13726223f6545eb826ce4066bc73a6636c654a7c5f3d6"
+            },
+            "HP_SM_BossWeapon_Greatsword_v004_graph.json": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v004_graph.json",
+              "sha256": "d7656541cb08be8d148bbdfcdaa4e984cedbcd6e14d3cf0ff933985be81eb915"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/models",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15660,
+          "source_sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
+        },
+        {
+          "version": 5,
+          "created": "2026-11-01 21:30:59",
+          "files": {
+            "HP_SM_BossWeapon_Greatsword_v005_source.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v005_source.glb",
+              "sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
+            },
+            "HP_SM_BossWeapon_Greatsword_v005.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v005.glb",
+              "sha256": "e0d98f9070a2dd5ecdc13726223f6545eb826ce4066bc73a6636c654a7c5f3d6"
+            },
+            "HP_SM_BossWeapon_Greatsword_v005_graph.json": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v005_graph.json",
+              "sha256": "74d71b0b00ebc3d8380476997a328a750c814da8ea2c85a4b2e3982255ea5c4e"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/models",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15660,
+          "source_sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
+        },
+        {
+          "version": 6,
+          "created": "2026-11-01 21:33:58",
+          "files": {
+            "HP_SM_BossWeapon_Greatsword_v006_source.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v006_source.glb",
+              "sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
+            },
+            "HP_SM_BossWeapon_Greatsword_v006.glb": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v006.glb",
+              "sha256": "e0d98f9070a2dd5ecdc13726223f6545eb826ce4066bc73a6636c654a7c5f3d6"
+            },
+            "HP_SM_BossWeapon_Greatsword_v006_graph.json": {
+              "path": "02_highpoly/HP_SM_BossWeapon_Greatsword_v006_graph.json",
+              "sha256": "9096dfc4f85568f3cbe935fedc212695fdd9a37eac9c89e1d3dbf9d8b4503042"
+            }
+          },
+          "from_concept": 4,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/models",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15660,
+          "source_sha256": "8f78dd2f6b9ca2e183b344d05c477b3b7e8e955ccaff568cecc58e4b6c964a39"
         }
       ]
     },
     "build": {
-      "current": 2,
+      "current": 5,
       "versions": [
         {
           "version": 1,
@@ -451,11 +947,163 @@
           "export_kb": 379.0,
           "seconds": 19.4,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-01 21:30:03",
+          "files": {
+            "SM_BossWeapon_Greatsword_v003.blend": {
+              "path": "03_work/SM_BossWeapon_Greatsword_v003.blend",
+              "sha256": "fafdc758fd99d052f878a7df613a465e0340aa1f7d4b3160e4228f2ff91a2d1c"
+            },
+            "SM_BossWeapon_Greatsword_v003.glb": {
+              "path": "04_export/SM_BossWeapon_Greatsword_v003.glb",
+              "sha256": "d6b2a2c8fd4e9e018d838c8357d94628bd432cde5adcee76df4159d768f54f96"
+            },
+            "SM_BossWeapon_Greatsword_v003_metrics.json": {
+              "path": "03_work/SM_BossWeapon_Greatsword_v003_metrics.json",
+              "sha256": "edee71de9b917663a6b4053ad1ddda279ef99399456c91132d07dea825b4f9d7"
+            },
+            "T_BossWeapon_Greatsword_BC.png": {
+              "path": "03_work/textures_v003/T_BossWeapon_Greatsword_BC.png",
+              "sha256": "ce3e99a1e3236f828d770337b4deca4533e6706d93a5ed417cd315a676b11e85"
+            },
+            "T_BossWeapon_Greatsword_N.png": {
+              "path": "03_work/textures_v003/T_BossWeapon_Greatsword_N.png",
+              "sha256": "8a8438ea72da733352730019de24c7af3e95340a153b6fa72e3dc6c4fa7f3abb"
+            },
+            "T_BossWeapon_Greatsword_ORM.png": {
+              "path": "03_work/textures_v003/T_BossWeapon_Greatsword_ORM.png",
+              "sha256": "8c07d0785239fd173afb35a27c519153126b66a418d5520dc7b071df4df4fb24"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 4,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.774,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15660,
+              "verts": 7830
+            }
+          ],
+          "export_kb": 757.0,
+          "seconds": 21.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "尺寸 X 轴"
+          ]
+        },
+        {
+          "version": 4,
+          "created": "2026-11-01 21:31:18",
+          "files": {
+            "SM_BossWeapon_Greatsword_v004.blend": {
+              "path": "03_work/SM_BossWeapon_Greatsword_v004.blend",
+              "sha256": "007b476af3849a0130cf3046c7ce610166173fbc85fc8440ec1bf02b42cb9877"
+            },
+            "SM_BossWeapon_Greatsword_v004.glb": {
+              "path": "04_export/SM_BossWeapon_Greatsword_v004.glb",
+              "sha256": "d6b2a2c8fd4e9e018d838c8357d94628bd432cde5adcee76df4159d768f54f96"
+            },
+            "SM_BossWeapon_Greatsword_v004_metrics.json": {
+              "path": "03_work/SM_BossWeapon_Greatsword_v004_metrics.json",
+              "sha256": "c302d9ecb41b123456f7d28a0bb3d69dec97adfbb6256c391a59dce766e2ec00"
+            },
+            "T_BossWeapon_Greatsword_BC.png": {
+              "path": "03_work/textures_v004/T_BossWeapon_Greatsword_BC.png",
+              "sha256": "ce3e99a1e3236f828d770337b4deca4533e6706d93a5ed417cd315a676b11e85"
+            },
+            "T_BossWeapon_Greatsword_N.png": {
+              "path": "03_work/textures_v004/T_BossWeapon_Greatsword_N.png",
+              "sha256": "8a8438ea72da733352730019de24c7af3e95340a153b6fa72e3dc6c4fa7f3abb"
+            },
+            "T_BossWeapon_Greatsword_ORM.png": {
+              "path": "03_work/textures_v004/T_BossWeapon_Greatsword_ORM.png",
+              "sha256": "8c07d0785239fd173afb35a27c519153126b66a418d5520dc7b071df4df4fb24"
+            }
+          },
+          "from": {
+            "blockout": 3,
+            "concept": 3,
+            "highpoly": 5,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.774,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15660,
+              "verts": 7830
+            }
+          ],
+          "export_kb": 757.0,
+          "seconds": 18.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 5,
+          "created": "2026-11-01 21:34:22",
+          "files": {
+            "SM_BossWeapon_Greatsword_v005.blend": {
+              "path": "03_work/SM_BossWeapon_Greatsword_v005.blend",
+              "sha256": "1d7ac5afa6ed09c367219c20160c1e2334538816b2159c6285e2396329c45ef5"
+            },
+            "SM_BossWeapon_Greatsword_v005.glb": {
+              "path": "04_export/SM_BossWeapon_Greatsword_v005.glb",
+              "sha256": "3e06873ba14ceec43eea5744fffe55201aa66d6e4c1f8f1774ad71f374086cab"
+            },
+            "SM_BossWeapon_Greatsword_v005_metrics.json": {
+              "path": "03_work/SM_BossWeapon_Greatsword_v005_metrics.json",
+              "sha256": "89f71cde6e97f250859adaa059d554f971c1455296d29e468d27d5ec86cba241"
+            },
+            "T_BossWeapon_Greatsword_BC.png": {
+              "path": "03_work/textures_v005/T_BossWeapon_Greatsword_BC.png",
+              "sha256": "ce3e99a1e3236f828d770337b4deca4533e6706d93a5ed417cd315a676b11e85"
+            },
+            "T_BossWeapon_Greatsword_N.png": {
+              "path": "03_work/textures_v005/T_BossWeapon_Greatsword_N.png",
+              "sha256": "8a8438ea72da733352730019de24c7af3e95340a153b6fa72e3dc6c4fa7f3abb"
+            },
+            "T_BossWeapon_Greatsword_ORM.png": {
+              "path": "03_work/textures_v005/T_BossWeapon_Greatsword_ORM.png",
+              "sha256": "4c3c39a72e612e723820274860bb6782eeae6e8539628bd66e8ce823bf96ca25"
+            }
+          },
+          "from": {
+            "blockout": 4,
+            "concept": 4,
+            "highpoly": 6,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.774,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15660,
+              "verts": 7830
+            }
+          ],
+          "export_kb": 757.1,
+          "seconds": 23.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 2,
+      "current": 5,
       "versions": [
         {
           "version": 1,
@@ -486,11 +1134,56 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-01 21:30:03",
+          "files": {
+            "SM_BossWeapon_Greatsword_v003_validation_v003.json": {
+              "path": "05_review/SM_BossWeapon_Greatsword_v003_validation_v003.json",
+              "sha256": "55a24cee673375165672d0c07d2a35a71d00683c8f427e0436c1edc1f3b2c08a"
+            }
+          },
+          "from_build": 3,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-11-01 21:31:18",
+          "files": {
+            "SM_BossWeapon_Greatsword_v004_validation_v004.json": {
+              "path": "05_review/SM_BossWeapon_Greatsword_v004_validation_v004.json",
+              "sha256": "3804699433707069d38fdc889c50342baebbfa70f88af63cb23960f82b78253d"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-11-01 21:34:22",
+          "files": {
+            "SM_BossWeapon_Greatsword_v005_validation_v005.json": {
+              "path": "05_review/SM_BossWeapon_Greatsword_v005_validation_v005.json",
+              "sha256": "3804699433707069d38fdc889c50342baebbfa70f88af63cb23960f82b78253d"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 2,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -529,11 +1222,49 @@
             "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
             "time": "2026-10-03 20:37:48"
           }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-01 21:31:25",
+          "files": {
+            "SM_BossWeapon_Greatsword_v004_review_v003.png": {
+              "path": "05_review/SM_BossWeapon_Greatsword_v004_review_v003.png",
+              "sha256": "0013b038dbf2e7681c05a82bc2a7072bf364f76c9d51322329088dc9c238dd4a"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Kimi",
+            "note": "",
+            "time": "2026-11-01 21:31:38"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-11-01 21:34:29",
+          "files": {
+            "SM_BossWeapon_Greatsword_v005_review_v004.png": {
+              "path": "05_review/SM_BossWeapon_Greatsword_v005_review_v004.png",
+              "sha256": "1ca7655fb4dff2ca094b7b26ce6c0d1660751d7c0de04b9cc92bbdf2a203d331"
+            }
+          },
+          "from_build": 5,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Kimi",
+            "note": "",
+            "time": "2026-11-01 21:34:30"
+          }
         }
       ]
     },
     "publish": {
-      "current": 2,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -557,6 +1288,30 @@
             }
           },
           "from_build": 2,
+          "url": "assets/attachments/SM_BossWeapon_Greatsword.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-01 21:31:38",
+          "files": {
+            "SM_BossWeapon_Greatsword.glb": {
+              "path": "@root/public/assets/attachments/SM_BossWeapon_Greatsword.glb",
+              "sha256": "d6b2a2c8fd4e9e018d838c8357d94628bd432cde5adcee76df4159d768f54f96"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/attachments/SM_BossWeapon_Greatsword.glb"
+        },
+        {
+          "version": 4,
+          "created": "2026-11-01 21:34:30",
+          "files": {
+            "SM_BossWeapon_Greatsword.glb": {
+              "path": "@root/public/assets/attachments/SM_BossWeapon_Greatsword.glb",
+              "sha256": "3e06873ba14ceec43eea5744fffe55201aa66d6e4c1f8f1774ad71f374086cab"
+            }
+          },
+          "from_build": 5,
           "url": "assets/attachments/SM_BossWeapon_Greatsword.glb"
         }
       ]

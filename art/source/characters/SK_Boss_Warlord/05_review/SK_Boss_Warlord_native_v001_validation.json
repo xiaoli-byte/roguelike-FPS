@@ -1,0 +1,282 @@
+{
+  "asset": "SK_Boss_Warlord",
+  "version": 1,
+  "glb": "art/source/characters/SK_Boss_Warlord/04_export/SK_Boss_Warlord_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.8,
+      "自定义骨架：64 根骨骼（热扩散权重，68112 个顶点未覆盖）": 1.9,
+      "贴图（BC + AO/ORM）": 12.1,
+      "LOD0 52860 面（不减面）与蒙皮上限": 1.0,
+      "导出 1860 KB": 3.2
+    },
+    "source": {
+      "verts": 68112,
+      "tris": 52860,
+      "scale": 5.960914760914761
+    },
+    "regions": {
+      "heat_unweighted_verts": 68112,
+      "weights": "segments",
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 0,
+        "spine": 0,
+        "chest": 0,
+        "neck": 0,
+        "head": 10928,
+        "shoulder_L": 204,
+        "arm_L": 398,
+        "forearm_L": 1820,
+        "hand_L": 739,
+        "pauldron_L": 1782,
+        "thumb_1_L": 404,
+        "thumb_2_L": 381,
+        "index_1_L": 292,
+        "index_2_L": 381,
+        "middle_1_L": 17,
+        "middle_2_L": 355,
+        "ring_1_L": 46,
+        "ring_2_L": 571,
+        "pinky_1_L": 678,
+        "pinky_2_L": 588,
+        "thigh_L": 138,
+        "shin_L": 896,
+        "foot_L": 234,
+        "toe_L": 584,
+        "skirt_L1": 679,
+        "skirt_L2": 72,
+        "tassel_L1": 1022,
+        "tassel_L2": 999,
+        "shoulder_R": 212,
+        "arm_R": 381,
+        "forearm_R": 1811,
+        "hand_R": 722,
+        "pauldron_R": 1826,
+        "thumb_1_R": 398,
+        "thumb_2_R": 370,
+        "index_1_R": 293,
+        "index_2_R": 380,
+        "middle_1_R": 16,
+        "middle_2_R": 337,
+        "ring_1_R": 51,
+        "ring_2_R": 604,
+        "pinky_1_R": 665,
+        "pinky_2_R": 624,
+        "thigh_R": 145,
+        "shin_R": 909,
+        "foot_R": 211,
+        "toe_R": 609,
+        "skirt_R1": 662,
+        "skirt_R2": 77,
+        "tassel_R1": 1058,
+        "tassel_R2": 996,
+        "skirt_F1": 1098,
+        "skirt_F2": 6,
+        "skirt_F3": 298,
+        "skirt_B1": 279,
+        "skirt_B2": 21,
+        "skirt_B3": 456
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "index_1_L",
+      "index_1_R",
+      "index_2_L",
+      "index_2_R",
+      "middle_1_L",
+      "middle_1_R",
+      "middle_2_L",
+      "middle_2_R",
+      "neck",
+      "pauldron_L",
+      "pauldron_R",
+      "pinky_1_L",
+      "pinky_1_R",
+      "pinky_2_L",
+      "pinky_2_R",
+      "ring_1_L",
+      "ring_1_R",
+      "ring_2_L",
+      "ring_2_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "skirt_B1",
+      "skirt_B2",
+      "skirt_B3",
+      "skirt_F1",
+      "skirt_F2",
+      "skirt_F3",
+      "skirt_L1",
+      "skirt_L2",
+      "skirt_R1",
+      "skirt_R2",
+      "socket_core",
+      "socket_helm",
+      "socket_pauldron_L",
+      "socket_pauldron_R",
+      "socket_sword",
+      "socket_sword_tip",
+      "spine",
+      "tassel_L1",
+      "tassel_L2",
+      "tassel_R1",
+      "tassel_R2",
+      "thigh_L",
+      "thigh_R",
+      "thumb_1_L",
+      "thumb_1_R",
+      "thumb_2_L",
+      "thumb_2_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.58,
+      "provider_pbr": [],
+      "roughness_mean": 0.8,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Boss_Warlord_LOD0": {
+          "max_influences": 3,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Boss_Warlord_LOD0",
+        "tris": 52860,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.998046875
+        ]
+      }
+    ],
+    "glb_kb": 1860,
+    "_seconds": 21.5
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1860 KB / 6000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Boss_Warlord_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "52860 (class reference 30000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "4.200 m (design 4.2 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Boss_Warlord']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Warlord_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Warlord_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "64 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Boss_Warlord_LOD0 influences",
+      "max 3"
+    ],
+    [
+      "pass",
+      "SK_Boss_Warlord_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Warlord_LOD0 UV range",
+      "[0.002, 0.002]..[0.998, 0.998]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "68112 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}
