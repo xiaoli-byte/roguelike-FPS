@@ -18,8 +18,8 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 螺旋带柱（风涡柱、龙卷风柱、火龙卷）：几条往上收紧再外翻的螺旋带，暗边垫底（普通混合）+ 亮带（普通混合，芯更亮），整体自转。
-    /// 一张程序网格（不发粒子），底部每帧卷几团雪 / 火星（过预算）。fire = 火龙卷配色 + 柱身爬火舌
+    /// 螺旋带柱（风涡柱、龙卷风柱、火龙卷、迅捷精英龙卷）：几条往上收紧再外翻的螺旋带，暗边垫底（普通混合）+ 亮带（普通混合，芯更亮），整体自转。
+    /// 一张程序网格（不发粒子），可按需让底部每帧卷几团雪 / 火星（过预算）。fire = 火龙卷配色 + 柱身爬火舌
     /// </summary>
     public sealed class FeilianSpiral : MonoBehaviour
     {
@@ -29,16 +29,16 @@ namespace Spiritfire.Game
         Mesh top, under;
         static MaterialPropertyBlock block;
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
-        float height, r0, r1, spin, alpha = 1f, fade = 1f, fadeTarget = 1f, puffAcc;
-        bool fire;
+        float height, r0, r1, spin, alpha = 1f, fade = 1f, fadeTarget = 1f, puffAcc, ribbonWidth = 1f;
+        bool fire, ambient;
 
         public bool Fire => fire;
         public float Height => height;
         /// <summary>整体透明度（0..1，渐隐 / 渐显）</summary>
         public float Alpha => alpha;
 
-        /// <summary>建一根柱：底半径 r0、顶半径 r1、高 h；spinDeg = 每秒自转（负 = 反向）</summary>
-        public static FeilianSpiral Create(Vector3 ground, float r0, float r1, float h, float spinDeg, Transform parent = null)
+        /// <summary>建一根柱：底半径 r0、顶半径 r1、高 h；spinDeg = 每秒自转（负 = 反向）；ambient = 柱脚自动卷雪 / 火；ribbonWidth = 风带厚度倍率</summary>
+        public static FeilianSpiral Create(Vector3 ground, float r0, float r1, float h, float spinDeg, Transform parent = null, bool ambient = true, float ribbonWidth = 1f)
         {
             var go = new GameObject("FeilianSpiral");
             go.transform.SetParent(parent, true);
@@ -48,6 +48,8 @@ namespace Spiritfire.Game
             s.r1 = r1;
             s.height = h;
             s.spin = spinDeg;
+            s.ambient = ambient;
+            s.ribbonWidth = Mathf.Max(0.1f, ribbonWidth);
             s.Build();
             s.fade = 0;
             s.fadeTarget = 1;
@@ -94,7 +96,7 @@ namespace Spiritfire.Game
                     float r = Mathf.Lerp(r0, r1, u * u) * (1f + 0.15f * Mathf.Sin(u * Mathf.PI));
                     float a = a0 + u * Mathf.PI * 3.2f;
                     var c = new Vector3(Mathf.Sin(a) * r, y, Mathf.Cos(a) * r);
-                    float w = Mathf.Lerp(0.5f, 1.4f, u) * (und ? 1.45f : 1f);
+                    float w = Mathf.Lerp(0.5f, 1.4f, u) * (und ? 1.45f : 1f) * ribbonWidth;
                     verts.Add(c + Vector3.up * w * 0.5f);
                     verts.Add(c - Vector3.up * w * 0.5f);
                     uv.Add(new Vector2(u, 1));
@@ -197,7 +199,7 @@ namespace Spiritfire.Game
             }
             // 底部卷雪 / 火：每秒 8 团（过预算）
             puffAcc += dt;
-            if (puffAcc < 0.12f || k < 0.2f) return;
+            if (!ambient || puffAcc < 0.12f || k < 0.2f) return;
             puffAcc = 0;
             var p = transform.position + Random.insideUnitSphere * r0;
             p.y = transform.position.y + 0.3f;

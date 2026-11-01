@@ -148,6 +148,18 @@ namespace Spiritfire.Game.Tests
         }
 
         [Test]
+        public void SwiftTornadoSweepCatchesCrossedPlayersButRespectsHeightAndRadius()
+        {
+            var from = new Vector3(0, 0, 0);
+            var to = new Vector3(0, 0, 4);
+            Assert.IsTrue(EliteTornado.SweepOverlaps(from, to, new Vector3(0.4f, 0, 2), 0.35f), "一帧跨过玩家也要命中");
+            Assert.IsTrue(EliteTornado.SweepOverlaps(from, to, new Vector3(1.5f, 0, 2), 0.35f), "龙卷半径与玩家胶囊半径相加");
+            Assert.IsFalse(EliteTornado.SweepOverlaps(from, to, new Vector3(2f, 0, 2), 0.35f), "横向躲开");
+            Assert.IsFalse(EliteTornado.SweepOverlaps(from, to, new Vector3(0, EliteTornado.Height + 0.2f, 2), 0.35f), "高过风柱");
+            Assert.IsFalse(EliteTornado.SweepOverlaps(from, to, new Vector3(0, -2.1f, 2), 0.35f), "深坑下方");
+        }
+
+        [Test]
         public void ShieldedAddsSixtyPercentShieldAndRegensOutOfCombat()
         {
             var h = Host(260);

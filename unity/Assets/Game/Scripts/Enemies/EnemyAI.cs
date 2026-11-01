@@ -72,6 +72,8 @@ namespace Spiritfire.Game
         public float Damage => damage * DamageMult;
         public bool Dead => hp && hp.Dead;
         public string State => state;
+        /// <summary>词缀招式接管期间，基础 AI 不再同时出手；由词缀控制器设置与解除。</summary>
+        public bool AffixAttackBusy { get; internal set; }
         /// <summary>被嘲讽中（目标是灵宠诱饵）</summary>
         public bool Taunted => taunt && Time.time < tauntUntil;
         /// <summary>当前目标：被嘲讽时是诱饵，否则是玩家</summary>
@@ -257,6 +259,11 @@ namespace Spiritfire.Game
             {
                 PlayLocomotion();
                 SetState(InitialState);
+            }
+            if (AffixAttackBusy)
+            {
+                Stop();
+                return;
             }
             Think(dt);
         }
