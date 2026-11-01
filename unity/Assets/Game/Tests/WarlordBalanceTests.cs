@@ -7,21 +7,28 @@ namespace Spiritfire.Game.Tests
     /// <summary>
     /// 熔心魔将（BS6）的定义与击杀用时（docs/unity-parity.md 7.4「用模拟秒伤算击杀用时，落在 60–120 s」）：
     /// 3-3 难度 2.92 的定档、四种元素构筑、参考秒伤 ±15–20% 的构筑都落在 60–120 s；血条刻度 = 两道阶段阈值，20% 狂怒，二阶段第一招是熔铜渠涨落；
-    /// 招式清单是 B1 的五个参考招式 + 熔铜渠涨落，定义自检通过。
+    /// 招式清单是剑士化 v2 的五个剑术招式 + 保留的横扫 / 跃击 / 陨石雨（二阶段起）+ 熔铜渠涨落，狂怒后第一招是回旋二连，定义自检通过。
     /// </summary>
     public sealed class WarlordBalanceTests
     {
         static readonly WarlordDef Def = new();
 
         [Test]
-        public void Definition_ValidatesAndUsesReferenceMoves()
+        public void Definition_ValidatesAndUsesSwordMoves()
         {
             var errs = Def.Validate();
             Assert.IsEmpty(errs, string.Join("；", errs));
             var ids = Def.moves.Select(m => m().Id).ToArray();
-            CollectionAssert.AreEqual(new[] { "warlord_charge", "warlord_sweep", "warlord_meteor", "warlord_leap", "warlord_combo", WarlordChannelSurge.MoveId }, ids);
+            CollectionAssert.AreEqual(new[]
+            {
+                WarlordBladeCombo.MoveId, WarlordIai.MoveId, WarlordSwordWave.MoveId, WarlordThrust.MoveId, WarlordSpin.MoveId,
+                "warlord_sweep", "warlord_leap", "warlord_meteor", WarlordChannelSurge.MoveId,
+            }, ids);
             Assert.IsFalse(Def.moves.Any(m => m().Id == "warlord_lava"), "方场熔岩涌动在 3-3 改成了熔铜渠涨落（D5）");
-            Assert.IsTrue(Def.moves.Take(5).All(m => m().windupAnim == null), "参考招式的前摇动作名是样机的，魔将的动作由 WarlordBrain 触发");
+            Assert.IsFalse(Def.moves.Any(m => m().Id == "warlord_charge"), "烈焰冲锋换成了突刺冲锋（剑士化 v2）");
+            Assert.IsTrue(Def.moves.All(m => m().windupAnim == null), "魔将的动作由招式 / WarlordBrain 触发，不走框架的 windupAnim");
+            Assert.AreEqual(1, Def.moves.Select(m => m()).First(m => m.Id == "warlord_meteor").minPhase, "陨石雨二阶段起才出（一阶段只教剑术）");
+            Assert.AreEqual(1, Def.moves.Select(m => m()).First(m => m.Id == WarlordSpin.MoveId).minPhase, "回旋斩二阶段起");
             Assert.AreEqual(WarlordDef.Id, Def.id);
             Assert.AreEqual("SK_Boss_Warlord", Def.FirstForm.prefab);
         }
@@ -33,7 +40,7 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(0.2f, Def.enrageBelow, 1e-5f, "20% 狂怒");
             Assert.AreEqual(0f, Def.enrageAfter);
             Assert.AreEqual(WarlordChannelSurge.MoveId, Def.phases[0].firstMove, "越过 50% 后第一招是熔铜渠涨落");
-            Assert.AreEqual("warlord_meteor", Def.phases[1].firstMove);
+            Assert.AreEqual(WarlordSpin.MoveId, Def.phases[1].firstMove, "狂怒后第一招是回旋二连（熔铜长刃亮相）");
             // 三阶段喘息 ≈ TS 的 0.6（阶段 × 狂怒）
             Assert.AreEqual(0.6f, Def.phases[1].restScale * Def.enrageRestScale, 0.02f);
             Assert.AreEqual(0, Def.summonCap);

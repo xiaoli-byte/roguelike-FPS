@@ -13,8 +13,9 @@ namespace Spiritfire.Game.Testing
     ///   · 定义：自检、血条刻度 = 50% / 20%、3-3 难度下的定档、模拟击杀用时（<see cref="WarlordBalance"/>，60–120 s）；
     ///   · 开战：领主战跳过「先肃清铸坊」直接解锁 → 玩家走到入场点 → 熔铁闸封桥 → 登场预警 → 魔将从高处砸进场地（不可选中）→ 登场结束；
     ///     模型来源（美术 / 代理 / 占位）、熔铜渠片数；场景没重建（没有领主战）时在场地上直接刷一只，记一行提示；
-    ///   · 招式（首领不掉血）：六招各强制出一次——走到出手、正常收招、画过预警、出招中霸体、动作走 act_ 触发器还是交叉淡入；
-    ///       冲锋留下火焰地带、横扫放出火浪、陨石雨落满一轮、跃击落地放冲击波、连斩至少三段动作、熔铜渠涨落引动了熔铜渠并铺满渠岸预警；
+    ///   · 招式（首领不掉血）：九招各强制出一次——走到出手、正常收招、画过预警、出招中霸体、动作走 act_ 触发器还是交叉淡入、释放帧表现放了几次；
+    ///       剑士化 v2：连斩至少三刀（末刀下劈）、居合出了刀光、剑气飞出去并飞完 / 撞墙、突刺留下火焰地带并收刀横斩、回旋斩转了一圈；
+    ///       横扫放出火浪、陨石雨落满一轮、跃击落地放冲击波、熔铜渠涨落引动了熔铜渠并铺满渠岸预警；
     ///     熔铜渠：渠岸上的点平时不是熔岩、漫上来后是熔岩，站在渠岸上的玩家被下沉托回，高位停够后退回；
     ///   · 阶段：生命层降到 49% → BossPhase(1)、转换中不可选中、转换后第一招是熔铜渠涨落；
     ///   · 狂怒：降到 19% → 立刻狂怒（原因 health）、BossPhase(2)、陨石雨冷却 ≤ 7 s、零星陨石开始落；
@@ -224,8 +225,10 @@ namespace Spiritfire.Game.Testing
 
         static float ReadyDistance(BossMove m) => m switch
         {
-            WarlordCombo => 3.5f,
-            WarlordCharge => 14f,
+            WarlordBladeCombo or WarlordCombo => 3.5f,
+            WarlordSpin => 4.5f,
+            WarlordIai => 8f,
+            WarlordThrust or WarlordCharge or WarlordSwordWave => 14f,
             WarlordSweep => 8f,
             _ => 11f,
         };
@@ -236,7 +239,9 @@ namespace Spiritfire.Game.Testing
             ReadyPlayer(ReadyDistance(move));
             PlayerStatus.Instance?.ClearAll();
             yield return null;
-            int warn0 = move.TelegraphCount + hz.WarningsDrawn, act0 = move.TimesActive, acts0 = boss.ActsFired;
+            int warn0 = move.TelegraphCount + hz.WarningsDrawn, act0 = move.TimesActive, acts0 = boss.ActsFired, rel0 = boss.Releases;
+            var runner = boss.GetComponent<WarlordWaveRunner>();
+            int waveEnd0 = runner ? runner.Ended : 0;
             int waves0 = hz.WavesSpawned, lobs0 = hz.LobsSpawned;
             float t0 = Time.time;
             bool forced = false;
@@ -261,7 +266,7 @@ namespace Spiritfire.Game.Testing
                 }
                 KeepPlayerAlive();
                 // 连斩：玩家贴着魔将（像真人一样站在刀口里）
-                if (move is WarlordCombo && boss.DistanceToPlayer > 4.5f) ReadyPlayer(3.5f);
+                if (move is WarlordCombo or WarlordBladeCombo && boss.DistanceToPlayer > 4.5f) ReadyPlayer(3.5f);
                 Aim(motor, eye, boss.BodyCenter);
                 if (!shot && move.Stage == MoveStage.Active)
                 {
@@ -272,7 +277,19 @@ namespace Spiritfire.Game.Testing
                 yield return null;
             }
             bool ended = boss.Current != move;
-            int warned = move.TelegraphCount + hz.WarningsDrawn - warn0, fired = boss.ActsFired - acts0;
+            int warned = move.TelegraphCount + hz.WarningsDrawn - warn0, fired = boss.ActsFired - acts0, released = boss.Releases - rel0;
+            // 剑气：等飞出去的剑气飞完 / 撞墙
+            runner = boss.GetComponent<WarlordWaveRunner>();
+            if (move is WarlordSwordWave)
+            {
+                float w0 = Time.time;
+                while (runner && runner.Alive > 0 && Time.time - w0 < 4f)
+                {
+                    KeepPlayerAlive();
+                    yield return null;
+                }
+            }
+            int wavesEnded = (runner ? runner.Ended : 0) - waveEnd0;
             string extra = move switch
             {
                 WarlordCharge c => $"，留火 {c.Trails} 片、撞中 {c.Hits} 次",
@@ -280,14 +297,21 @@ namespace Spiritfire.Game.Testing
                 WarlordMeteor => $"，陨石 {hz.LobsSpawned - lobs0} 颗",
                 WarlordLeap l => $"，落在预警圈里 {(l.LastOnMark ? "✓" : "✗")}、冲击波 {hz.WavesSpawned - waves0} 道",
                 WarlordCombo c => $"，砍中 {c.Hits} 刀",
+                WarlordBladeCombo bc => $"，{bc.Struck} / {bc.Count} 刀、砍中 {bc.Hits} 刀",
+                WarlordIai ia => $"，刀光 {ia.Cuts} 次（线长 {ia.LastLength:F1} m、按刀 {ia.LastWindup:F2} s、纳刀 {ia.LastSheathe:F2} s）、砍中 {ia.Hits} 次",
+                WarlordSwordWave sw => $"，剑气 {sw.Launched} 道、飞完 / 撞墙 {wavesEnded} 道（撞墙累计 {runner?.Walls ?? 0}）、打中 {runner?.Hits ?? 0} 次累计",
+                WarlordThrust th => $"，留火 {th.Trails} 片、刺中 {th.Hits} 次、收刀横斩 {th.Cuts} 次（砍中 {th.CutHits}）、撞墙 {th.Crashes} 次（最后一次跑了 {th.LastRun:F1} m）",
+                WarlordSpin sp => $"，转了 {sp.Spins} 圈、砍中 {sp.Hits} 次",
                 WarlordChannelSurge s => $"，引动熔铜渠 {s.Floods} 次（环带兜底 {s.Fallbacks}）、渠岸预警 {s.LastWarnings} 条、高位 {s.LastHold:F0} s",
                 _ => "",
             };
             Line($"招式 {move.Name}（{move.Id}）：{string.Join("→", stages)}，{(ended ? $"{Time.time - t0:F1} s 收招" : "✗ 超时")}{(move.Cancelled ? "（被打断）" : "")}，" +
-                 $"前摇 {move.WindupTime:F2} s，预警 {warned} 个，动作 {fired} 次 {string.Join(" → ", acts)}，出招中霸体 {(immune ? "✓" : "✗")}{extra}");
+                 $"前摇 {move.WindupTime:F2} s，预警 {warned} 个，动作 {fired} 次 {string.Join(" → ", acts)}，释放帧 {released} 次（片段事件比判定 {boss.LastHitSkew * 1000f:+0;-0;0} ms），" +
+                 $"出招中霸体 {(immune ? "✓" : "✗")}{extra}");
             if (!ended) Fail($"招式 {move.Id} {MoveTimeout:F0} s 没有结束（卡在 {move.Stage}）");
             if (move.TimesActive <= act0) Fail($"招式 {move.Id} 没有走到出手段");
             if (move.Cancelled) Fail($"招式 {move.Id} 被打断了（没有外力时应正常收招）");
+            if (move is WarlordSwordMove && released < 1) Fail($"招式 {move.Id} 没有放释放帧的表现（顿帧 + 刀光）");
             if (warned <= 0) Fail($"招式 {move.Id} 没有画预警");
             if (!immune) Fail($"招式 {move.Id} 出招中可以被眩晕（霸体）");
             if (fired <= 0) Fail($"招式 {move.Id} 没有播动作（WarlordBrain.Act 没被调用）");
@@ -307,6 +331,22 @@ namespace Spiritfire.Game.Testing
                     break;
                 case WarlordCombo when fired < 3:
                     Fail($"焰刃连斩只触发了 {fired} 段动作（应 3 段 slashA / slashB 交替）");
+                    break;
+                case WarlordBladeCombo bc when bc.Struck < 3 || fired < bc.Count:
+                    Fail($"焰刃连斩只出了 {bc.Struck} 刀、{fired} 段动作（应 {bc.Count} 刀，末刀下劈）");
+                    break;
+                case WarlordIai ia when ia.Cuts < 1:
+                    Fail("居合一闪没有出刀光");
+                    break;
+                case WarlordSwordWave sw when sw.Launched < 1 || wavesEnded < sw.Launched:
+                    Fail($"熔铜剑气甩出 {sw.Launched} 道、只有 {wavesEnded} 道飞完（剑气卡住了？）");
+                    break;
+                // 起跑就撞上掩体（神范台、桥栏）是正常的撞墙硬直，不留火
+                case WarlordThrust th when th.Cuts + th.Crashes < 1 || th.Trails < 1 && th.Crashes == 0:
+                    Fail($"突刺冲锋留火 {th.Trails} 片、收刀横斩 {th.Cuts} 次、撞墙 {th.Crashes} 次（应刹住后横斩或撞墙硬直；没撞墙时应留火）");
+                    break;
+                case WarlordSpin sp when sp.Spins < 1:
+                    Fail("回旋斩没有转");
                     break;
                 case WarlordChannelSurge s:
                     if (channels && channels.Count > 0 && s.Floods < 1) Fail("熔铜渠涨落没有引动场地上的熔铜渠");
@@ -417,6 +457,8 @@ namespace Spiritfire.Game.Testing
         {
             yield return WaitIdle();
             int events0 = phaseEvents.Count, ambient0 = boss.AmbientMeteors;
+            string first = null;
+            void OnStart(BossBrain b, BossMove m) => first ??= m.Id;
             SetHealthFraction(WarlordDef.FuryAt - 0.01f);
             float t0 = Time.time;
             while (!boss.Enraged && Time.time - t0 < 1.5f) yield return null;
@@ -425,6 +467,7 @@ namespace Spiritfire.Game.Testing
             bool phase2 = phaseEvents.Count > events0 && phaseEvents[^1] == 2;
             float tr0 = Time.time;
             while (boss.Transitioning && Time.time - tr0 < 6f) yield return null;
+            boss.MoveStarted += OnStart;
             var meteor = boss.MoveById("warlord_meteor");
             float w0 = Time.time;
             while (Time.time - w0 < 8f)
@@ -433,9 +476,12 @@ namespace Spiritfire.Game.Testing
                 Aim(motor, eye, boss.BodyCenter);
                 yield return null;
             }
+            boss.MoveStarted -= OnStart;
             int ambient = boss.AmbientMeteors - ambient0;
-            Line($"越过 {WarlordDef.FuryAt:P0}：狂怒 {(enraged ? $"✓（{boss.EnrageReason}）" : "✗")}，BossPhase(2) {(phase2 ? "✓" : "✗")}，" +
-                 $"陨石雨冷却 {meteor?.cooldown:F0} s，8 s 内零星陨石 {ambient} 颗，铠甲炽热 {boss.Fury:F2}");
+            Line($"越过 {WarlordDef.FuryAt:P0}：狂怒 {(enraged ? $"✓（{boss.EnrageReason}）" : "✗")}，BossPhase(2) {(phase2 ? "✓" : "✗")}，狂怒后第一招 {first ?? "（没出）"}，" +
+                 $"陨石雨冷却 {meteor?.cooldown:F0} s，8 s 内零星陨石 {ambient} 颗，铠甲炽热 {boss.Fury:F2}，熔铜长刃伸出剑尖 {(boss.Blade ? boss.Blade.LongBlade : 0f):P0}");
+            if (first != WarlordSpin.MoveId) Fail($"狂怒后第一招是 {first ?? "（没出）"}（应为回旋二连 {WarlordSpin.MoveId}）");
+            if (boss.Blade && boss.Blade.LongBlade < 0.2f) Fail("狂怒换挡后大剑没有燃成熔铜长刃");
             if (!enraged) Fail("生命层跌破 20% 没有立刻狂怒（原因应为 health）");
             if (!phase2) Fail("生命层跌破 20% 没有进入三阶段");
             if (meteor == null || meteor.cooldown > 7.01f) Fail("狂怒后陨石雨冷却没有缩到 7 s");

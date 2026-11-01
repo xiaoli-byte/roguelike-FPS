@@ -984,7 +984,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | M34 3-4 祝融炉心 | 铸神前殿补给营 + 单桥；圆殿、熔池、吊鼎、4 条链和锁扣、4 条渠、外环跑道；熔铁闸封门 | `Level_3_4.cs` `L3_4_Zhurong.unity` `maps/3-4.md` | L7 B2 L6 ART6 | 是 | M |
 | BS4 火麒麟 · 玄鳞 + 锁扣砸鼎 | 踏火奔驰、张鳞、麟火、饮熔（召炭童、回甲）；打对锁扣 → 鼎角砸晕 4 s + 鳞甲崩裂 ×2；巨鼎物理 + Timeline | `G/Bosses/Qilin/{QilinBrain,QilinDef,QilinLock,QilinCauldron}.cs` `G/Bosses/Qilin/Moves/Scale*.cs` | B1 M34 L6 L7 EN3a | 是 | L |
 | BS5 火麒麟 · 焚身 | 转换：断链，鼎坠下成为掩体；踏云俯冲火环、吐息扫象限、熔流轮转（运行时改 NavMesh）、火云雨 + 飞鸦、狂怒；最终胜利链 | `G/Bosses/Qilin/Moves/Burn*.cs` | BS4 EN3d | 是 | L |
-| BS6 熔心魔将（3-3 领主） | 冲锋留火、横扫、陨石雨、跃击、连斩、熔铜渠涨落、20% 狂怒 | `G/Bosses/Warlord/**` | B1 ART8 | 是 | M |
+| BS6 熔心魔将（3-3 领主） | 冲锋留火、横扫、陨石雨、跃击、连斩、熔铜渠涨落、20% 狂怒；2026-11-01 剑士化 v2（`docs/art/vfx/warlord.md` 第 13 章）：焰刃连斩 3 / 4 / 5 刀（上挑接下劈）、居合一闪、熔铜剑气（狂怒十字）、突刺冲锋（替代烈焰冲锋，留火保留）、回旋斩（狂怒二连）、陨石雨改二阶段起、狂怒熔铜长刃 | `G/Bosses/Warlord/**` | B1 ART8 | 是 | M |
 | U5 主菜单 / 天赋 / 结算 | Boot → 主菜单（3D 远景、标题、魂晶、生涯、操作说明、退出）；天赋面板；结算（计数滚动、chips、再来一局）；阵亡慢动作 → 结算 | `G/UI/Screens/{MainMenu,Talent,Summary,Controls}Screen.cs` `G/Core/RunEnd.cs` `P/Editor/Levels/MenuSceneBuilder.cs` `A/Scenes/MainMenu.unity` | U1 R2 L1 | 是 | M |
 | U6 选英雄 + 3D 祭台 | 名录 + 详情 + 属性条 + 初始武器卡；祭台、光柱、符文环、氛围粒子、拖拽惯性、Show → Idle、Timeline 出场道具 | `G/UI/Screens/HeroSelectScreen.cs` `G/UI/HeroStage/*` `A/Scenes/HeroSelect.unity` | U1 HC1 HC2 ART7 | 是 | L |
 | U7 罗盘 / 全图 | 罗盘条显示目标和已发现地点；M 键全图（用 L5 的俯视截图）；LevelMeta 由构建器写入 | `G/UI/Widgets/CompassStrip.cs` `G/UI/Screens/MapScreen.cs` `G/Core/LevelMeta.cs` | U1 L5 L2 | 否 | M |

@@ -24,6 +24,11 @@ namespace Spiritfire.Game
     ///   · 第二批 B 路（2026-10-31，设计单 §12）：待机 / 慢走 / 疾行改成双手持剑的手 K 循环（底姿换成斜持下段，所有招式首尾帧跟着换）；
     ///     登场落地播专属的 introLand（单膝跪地插剑 → 停顿 → 抬头怒视、角盔一亮 → 起身到咆哮的缩身帧，咆哮从那一帧接着播），落地特效换成熔铜落地
     ///     （<see cref="Fx.WarlordLanding"/>）；招式间隙转身时头先转、上身跟一半（<see cref="LateUpdate"/>）。
+    ///   · 剑士化 v2（2026-11-01，设计单第 13 章）：招式换成重剑剑术——焰刃连斩（三 / 四 / 五刀，含上挑接下劈）、居合一闪、熔铜剑气、突刺冲锋（替代烈焰冲锋）、
+    ///     回旋斩（二阶段起，狂怒二连）；横扫、跃击、陨石雨（二阶段起）、熔铜渠涨落保留。招式自己调 <see cref="Act"/> 起动作（<see cref="WarlordSwordMove"/>），
+    ///     释放帧调 <see cref="BladeStroke"/> / <see cref="IaiCut"/> / <see cref="WaveSwing"/> / <see cref="ThrustCut"/> / <see cref="SpinStrike"/>，
+    ///     同样等片段的 hit / impact 事件再放顿帧 + 震屏 + 刀光；状态机里没有这个状态（代理 / 新骨架还没写到）时当帧就放（<see cref="Release"/>）。
+    ///     狂怒换挡后大剑燃成熔铜长刃（<see cref="WarlordBlade"/>），刀光多一层残月（<see cref="Fx.WarlordCrescent"/> 的 echo）。
     /// 受击片段等 ART8；硬直时播 Hit 缺片段只警告一次。
     /// </summary>
     public class WarlordBrain : BossBrain
@@ -121,6 +126,10 @@ namespace Spiritfire.Game
         public string FallbackLog { get; private set; } = "";
         /// <summary>放过几次释放帧的表现（顿帧 + 出手特效；冲锋起跑也算）：节拍条套件按它拍「释放帧」那一格</summary>
         public int Releases { get; private set; }
+        /// <summary>
+        /// 每次放释放帧的表现时（测试 / 节拍条订阅）：招式名、片段事件减判定时刻（秒）、是不是按时间兜底放的、状态机里有没有这个片段（没有 = 当帧就放）
+        /// </summary>
+        public event Action<string, float, bool, bool> ReleaseFired;
         bool furyShifted, defeatKneel, defeatCollapse;
         readonly FlameTongue[] furyFlames = new FlameTongue[3];
         Transform[] furyAnchors;
@@ -131,8 +140,10 @@ namespace Spiritfire.Game
         {
             base.Spawn(lvl, isElite);
             if (Def == null) return;
-            // 部件骨架没有 lookBones，也没有名字含 head 的骨：头骨指到角盔（参考招式的「眼睛」、弱点兜底都用它）
-            if (Model != null && Model.source == BossModelSource.Art && string.IsNullOrEmpty(Model.weakFallback)) Model.weakFallback = WarlordDef.HeadBone;
+            LegacyRig = Model != null && Model.source == BossModelSource.Art && !Model.FindBone(WarlordDef.GripBone) && Model.FindBone(WarlordDef.Legacy.GripBone);
+            // 头骨（参考招式的「眼睛」、弱点兜底）：新骨架 head；旧部件骨架没有 lookBones、也没有名字含 head 的骨，指到角盔骨
+            if (Model != null && Model.source == BossModelSource.Art && string.IsNullOrEmpty(Model.weakFallback)) Model.weakFallback = Bone(WarlordDef.HeadBone, WarlordDef.Legacy.HeadBone);
+            if (LegacyRig) FitLegacyRig();
             Channels = FoundryChannels.For(Arena);
             MoveStarted -= OnOwnMoveStarted;
             MoveStarted += OnOwnMoveStarted;
@@ -148,18 +159,53 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 熔心大剑：EnemyCatalog 里 bind = boss_warlord / greatsword 的挂件，按绑定姿势挂到握点骨 j_0_1_21_1_5（部件骨架没有 socket_greatsword，
-        /// Bosses.AttachParts 挂不上；美术模型才挂，代理 / 占位没有这根骨）
+        /// 旧部件骨架（j_*）：新模型落地前的过渡。弱点、命中区按新骨名找不到，框架挂到了兜底的骨上——这里挪回旧骨：
+        /// 弱点退回角盔（j_0_1_24_8），肩甲 / 膝甲命中区挂回 j_0_1_13 / _18、j_0_0_11_1 / _12_1
+        /// </summary>
+        public bool LegacyRig { get; private set; }
+
+        string Bone(string modern, string legacy) => LegacyRig ? legacy : modern;
+
+        Transform FindExact(string name)
+        {
+            if (Model?.root == null || string.IsNullOrEmpty(name)) return null;
+            foreach (var t in Model.root.GetComponentsInChildren<Transform>(true))
+                if (t.name == name)
+                    return t;
+            return null;
+        }
+
+        void FitLegacyRig()
+        {
+            var weak = FindExact(WarlordDef.Legacy.WeakBone);
+            var f = Def.FirstForm;
+            if (weak && body)
+            {
+                body.SetWeakPoint(weak, Vector3.zero, Mathf.Max(0.05f, f != null ? f.weakRadius : 0.45f));
+                body.SetWeakPointActive(true);
+            }
+            foreach (var zd in Def.hitZones)
+            {
+                var bone = FindExact(WarlordDef.Legacy.ZoneBone(zd?.id));
+                if (!bone) continue;
+                foreach (var t in Model.root.GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name != "Zone_" + zd.id) continue;
+                    t.SetParent(bone, false);
+                    t.localPosition = Vector3.zero;
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 熔心大剑：EnemyCatalog 里 bind = boss_warlord / greatsword 的挂件，挂到握点 socket_sword（新骨架：单位变换就是剑尖朝下、剑面朝前；
+        /// 旧部件骨架按蒙皮的绑定姿势挂到 j_0_1_21_1_5）。挂点故意不叫 socket_greatsword（Bosses.AttachParts 会再挂一把）；美术模型才挂，代理 / 占位没有这根骨
         /// </summary>
         void AttachBlade()
         {
             if (Blade || Model?.root == null || Model.source != BossModelSource.Art) return;
-            Transform grip = null, tip = null;
-            foreach (var t in Model.root.GetComponentsInChildren<Transform>(true))
-            {
-                if (t.name == WarlordDef.GripBone) grip = t;
-                else if (t.name == WarlordDef.TipBone) tip = t;
-            }
+            Transform grip = FindExact(Bone(WarlordDef.GripBone, WarlordDef.Legacy.GripBone)), tip = FindExact(Bone(WarlordDef.TipBone, WarlordDef.Legacy.TipBone));
             if (!grip) return;
             GameObject prefab = null;
             foreach (var part in EnemyCatalog.Attachments)
@@ -192,6 +238,7 @@ namespace Spiritfire.Game
             if (string.IsNullOrEmpty(state)) return;
             LastAct = state;
             ActsFired++;
+            ResetHold();
             if (anim && anim.isActiveAndEnabled && anim.runtimeAnimatorController)
             {
                 var info = AnimInfo(anim);
@@ -208,12 +255,24 @@ namespace Spiritfire.Game
                             anim.ResetTrigger(t);
                     anim.SetTrigger(trigger);
                     LastActPath = "trigger";
+                    actMissing = false;
                     return;
                 }
             }
             LastActPath = "crossfade";
+            // 状态机里没有这个状态（代理 / 占位体、新骨架还没写到这一招）：不会有片段事件，释放帧当帧就放
+            actMissing = !HasAnimState(state);
             PlayAct(state, seconds);
         }
+
+        /// <summary>最近一次 <see cref="Act"/> 的状态在状态机里不存在（释放帧不等片段事件）</summary>
+        bool actMissing;
+
+        /// <summary>
+        /// 交叉淡入一个动作（从头播，整段按 seconds 拉伸）：上一段片段可能正在退回待机（退场过渡里 AnyState 触发器进不来，会把这一段拖后几帧）时用——
+        /// 居合回身再斩、突刺刹住后的横斩 / 第二次突刺的起手。没有这个状态时同 <see cref="Act"/>（当帧就放释放帧）
+        /// </summary>
+        public void ActCrossfade(string state, float seconds) => ActFrom(state, seconds, 0f, 0.1f);
 
         /// <summary>状态机里有没有这个状态（代理 / 占位体、还没重建状态机时没有）</summary>
         bool HasAnimState(string state) => anim && anim.isActiveAndEnabled && anim.runtimeAnimatorController && anim.HasState(0, Animator.StringToHash(state));
@@ -233,9 +292,11 @@ namespace Spiritfire.Game
             float len = info.clips.TryGetValue(state, out var l) ? l : 0;
             if (info.actScale) anim.SetFloat(ActScaleId, len > 0 && seconds > 0.05f ? Mathf.Clamp(len / seconds, 0.4f, 2.5f) : 1f);
             ClearActTriggers();
+            ResetHold();
             anim.CrossFadeInFixedTime(state, fade, 0, Mathf.Clamp01(offset) * len);
             LastAct = state;
             LastActPath = "crossfade";
+            actMissing = false;
             ActsFired++;
         }
 
@@ -306,7 +367,46 @@ namespace Spiritfire.Game
             Act("chargeReady", 0.65f * WindupScale);
         }
 
-        void OnOwnMoveEnded(BossBrain b, BossMove m) => ClearActTriggers();
+        void OnOwnMoveEnded(BossBrain b, BossMove m)
+        {
+            ClearActTriggers();
+            // 收招后的喘息就是破绽窗口：胸口的地火之心烧亮（弱点露出来）
+            if (m != null && !m.Cancelled && m.ReachedActive && !Dead) Expose(Mathf.Min(1.2f, m.recovery * RestScale));
+        }
+
+        /// <summary>
+        /// 破绽窗口：胸口地火之心（弱点 socket_core；旧骨架是熔铜芯那一层）在 seconds 秒里烧亮、一跳一跳（<see cref="UpdateLook"/> 的熔铜芯），
+        /// 开头在弱点上一闪 + 一撮火星，读作「打这里」。收招喘息、突刺撞墙硬直时由框架 / 招式调
+        /// </summary>
+        public void Expose(float seconds)
+        {
+            if (seconds <= 0.05f || Dead) return;
+            bool fresh = Time.time >= exposeUntil;
+            exposeUntil = Mathf.Max(exposeUntil, Time.time + seconds);
+            Exposures++;
+            if (fresh) Fx.WarlordGlare(WeakPoint, Fk);
+        }
+
+        float exposeUntil = -1f, strikeFlare;
+        /// <summary>破绽窗口开了几次、此刻开着没有（测试读）</summary>
+        public int Exposures { get; private set; }
+        public bool Exposed => Time.time < exposeUntil && !Dead;
+
+        /// <summary>弱点的位置：新骨架 socket_core，旧骨架胸口（甲缝熔铜芯）</summary>
+        Vector3 WeakPoint
+        {
+            get
+            {
+                if (!LegacyRig && Model?.root != null)
+                {
+                    coreBone ??= FindExact(WarlordDef.WeakBone);
+                    if (coreBone) return coreBone.position;
+                }
+                return BodyCenter + Vector3.up * 0.6f + transform.forward * (BodyRadius * 0.6f);
+            }
+        }
+
+        Transform coreBone;
 
         /// <summary>连斩第 k 刀（共 count 刀）的动作：袈裟 slashA / 逆袈裟 slashB 交替，最后一刀双手竖劈 slashC</summary>
         public static string SlashState(int k, int count) => k >= count - 1 ? "slashC" : k % 2 == 0 ? "slashA" : "slashB";
@@ -366,9 +466,11 @@ namespace Spiritfire.Game
             // 兜底：0.15 s 且至少 4 帧还没等到片段事件（只按秒算的话，掉帧时一帧就超时）
             if (pendingFx != null && (Dead || Time.time - strikeAt > 0.15f && Time.frameCount - pendingFrame >= 4)) FlushRelease(true);
             UpdateHold();
+            // 剑身熔岩裂纹：前摇烧亮、出刀那一下（释放帧）再一跳，0.35 s 退回去
+            strikeFlare = Mathf.MoveTowards(strikeFlare, 0f, dt / 0.35f);
             if (Blade)
             {
-                Blade.Heat = Dead ? 0 : WindupGlow;
+                Blade.Heat = Dead ? 0 : Mathf.Max(WindupGlow, strikeFlare);
                 Blade.Fury = FuryLook;
             }
             UpdateFuryFlames(dt);
@@ -412,7 +514,9 @@ namespace Spiritfire.Game
             bodyLife = Dead ? Mathf.MoveTowards(bodyLife, 0f, dt / 2f) : 1f;
             // 甲缝熔铜：平时一点余烬（0.45）、前摇跳着烧亮、狂怒常亮一档；熔铜芯平时几乎不亮，前摇 / 狂怒转白热
             SeamGlow = bodyMask && !BodyGlowOff ? (0.45f + 1.5f * pulse + 0.9f * FuryLook) * bodyLife : 0f;
-            CoreGlow = bodyMask && !BodyGlowOff ? (0.12f + 1.4f * pulse + 1.8f * FuryLook) * bodyLife : 0f;
+            // 破绽窗口：熔铜芯（胸口地火之心）按 9 rad/s 一跳一跳地烧亮
+            float exposed = Exposed ? 0.65f + 0.35f * Mathf.Sin(Time.time * 9f) : 0f;
+            CoreGlow = bodyMask && !BodyGlowOff ? (0.12f + 1.4f * pulse + 1.8f * FuryLook + 1.6f * exposed) * bodyLife : 0f;
             // 层色转线性再乘强度、按向量写（同 GlowMask：SetColor 会把 > 1 的值再做一遍伽马换算）
             var seam = (Vector4)(WarlordPalette.CopperAt(FuryLook).linear * SeamGlow);
             var core = (Vector4)(WarlordPalette.HotAt(FuryLook).linear * CoreGlow);
@@ -442,7 +546,8 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 狂怒常驻：两肩（肩甲挂点 j_0_1_13 / j_0_1_18，网格里没有顶点、正好当挂点）各一片白热火舌、角盔顶一小片；背后隔一会儿飘一团紫褐烟
+        /// 狂怒常驻：两肩（肩甲顶挂点 socket_pauldron_L / R；旧部件骨架是肩甲骨 j_0_1_13 / j_0_1_18）各一片白热火舌、角盔顶（socket_helm / 旧角盔骨）一小片；
+        /// 背后隔一会儿飘一团紫褐烟
         /// </summary>
         void UpdateFuryFlames(float dt)
         {
@@ -456,13 +561,11 @@ namespace Spiritfire.Game
             }
             if (furyAnchors == null)
             {
-                furyAnchors = new Transform[3];
-                foreach (var t in Model.root.GetComponentsInChildren<Transform>(true))
+                furyAnchors = new[]
                 {
-                    if (t.name == "j_0_1_13") furyAnchors[0] = t;
-                    else if (t.name == "j_0_1_18") furyAnchors[1] = t;
-                    else if (t.name == WarlordDef.WeakBone) furyAnchors[2] = t;
-                }
+                    FindExact(Bone(WarlordDef.PauldronL, WarlordDef.Legacy.PauldronL)), FindExact(Bone(WarlordDef.PauldronR, WarlordDef.Legacy.PauldronR)),
+                    FindExact(Bone(WarlordDef.HelmBone, WarlordDef.Legacy.WeakBone)),
+                };
             }
             for (int i = 0; i < furyFlames.Length; i++)
             {
@@ -494,33 +597,57 @@ namespace Spiritfire.Game
             float rate = loco && free ? loco.YawRate * Mathf.Rad2Deg : 0f;
             leadYaw = Mathf.Lerp(leadYaw, Mathf.Clamp(rate * LeadPerRate, -LeadMax, LeadMax), 1f - Mathf.Exp(-8f * Time.deltaTime));
             if (Mathf.Abs(leadYaw) < 0.2f) return;
-            if (!torsoBone || !headBone)
-                foreach (var t in Model.root.GetComponentsInChildren<Transform>(true))
-                {
-                    if (t.name == WarlordDef.TorsoBone) torsoBone = t;
-                    else if (t.name == WarlordDef.HeadBone) headBone = t;
-                }
+            if (!torsoBone) torsoBone = FindExact(Bone(WarlordDef.TorsoBone, WarlordDef.Legacy.TorsoBone));
+            if (!headBone) headBone = FindExact(Bone(WarlordDef.HeadBone, WarlordDef.Legacy.HeadBone));
             if (torsoBone) torsoBone.rotation = Quaternion.AngleAxis(leadYaw * 0.45f, Vector3.up) * torsoBone.rotation;
             if (headBone) headBone.rotation = Quaternion.AngleAxis(leadYaw * 0.55f, Vector3.up) * headBone.rotation;
         }
 
         // ───────────── 释放帧：顿帧 + 震屏 + 出手特效 ─────────────
 
-        /// <summary>顿帧：动作冻住 seconds 秒（只冻魔将自己的 Animator，不动全局时间），叠在震屏、特效同一帧</summary>
+        /// <summary>顿帧时 Animator 的倍速、顿完追回欠下时间的倍速</summary>
+        const float HoldSpeed = 0.04f, CatchUp = 1.6f;
+        float holdDebt;
+
+        /// <summary>
+        /// 顿帧：动作冻住 seconds 秒（只冻魔将自己的 Animator，不动全局时间），叠在震屏、特效同一帧；顿完以 ×1.6 追回欠下的时间（剑士化 v2 起，同旱魃），
+        /// 同一段片段里后面的出手事件（横竖两刀的竖劈、回旋二连的第二圈）仍然对得上判定。新的动作一起，顿帧和追赶都作废（新片段按原速对时）
+        /// </summary>
         void Hold(float seconds)
         {
             if (!anim || seconds <= 0) return;
-            holdUntil = Mathf.Max(holdUntil, Time.time + seconds);
-            anim.speed = 0.04f;
+            float until = Time.time + seconds;
+            float added = holdUntil > Time.time ? Mathf.Max(0, until - holdUntil) : seconds;
+            holdUntil = Mathf.Max(holdUntil, until);
+            holdDebt += added * (1f - HoldSpeed);
+            anim.speed = HoldSpeed;
             Holds++;
         }
 
         void UpdateHold()
         {
-            if (holdUntil < 0 || !anim) return;
-            if (Time.time < holdUntil && !Dead) return;
-            holdUntil = -1f;
+            if (!anim) return;
+            if (holdUntil >= 0)
+            {
+                if (Time.time < holdUntil && !Dead) return;
+                holdUntil = -1f;
+                anim.speed = holdDebt > 0.001f && !Dead ? CatchUp : 1f;
+                return;
+            }
+            if (holdDebt <= 0) return;
+            holdDebt -= Time.deltaTime * (CatchUp - 1f);
+            if (holdDebt > 0 && !Dead) return;
+            holdDebt = 0;
             anim.speed = 1f;
+        }
+
+        /// <summary>新动作起手：顿帧 / 追赶作废，按原速播</summary>
+        void ResetHold()
+        {
+            if (holdUntil < 0 && holdDebt <= 0) return;
+            holdUntil = -1f;
+            holdDebt = 0;
+            if (anim) anim.speed = 1f;
         }
 
         /// <summary>记一次判定时刻（和片段的 hit 事件比对齐）</summary>
@@ -539,13 +666,15 @@ namespace Spiritfire.Game
         {
             MarkStrike(what);
             pendingFx = null;
-            bool rigged = anim && anim.runtimeAnimatorController && Model != null && Model.source == BossModelSource.Art;
+            bool rigged = anim && anim.runtimeAnimatorController && Model != null && Model.source == BossModelSource.Art && !actMissing;
             if (!rigged || hitSeenAt >= 0 && Time.time - hitSeenAt < 0.1f)
             {
                 LastHitSkew = rigged ? hitSeenAt - strikeAt : 0f;
                 hitSeenAt = -1f;
                 Releases++;
+                strikeFlare = 1f;
                 fx();
+                ReleaseFired?.Invoke(what, LastHitSkew, false, rigged);
                 return;
             }
             pendingFx = fx;
@@ -564,7 +693,9 @@ namespace Spiritfire.Game
             }
             else LastHitSkew = Time.time - strikeAt;
             Releases++;
+            strikeFlare = 1f;
             fx();
+            ReleaseFired?.Invoke(LastStrike, fallback ? float.NaN : LastHitSkew, fallback, true);
         }
 
         float Fk => FuryLook;
@@ -651,6 +782,8 @@ namespace Spiritfire.Game
             if (crashed)
             {
                 Act("crash", 1f);
+                // 撞墙硬直 = 破绽窗口
+                Expose(1f);
                 Release("crash", () =>
                 {
                     Hold(0.08f);
@@ -716,6 +849,142 @@ namespace Spiritfire.Game
             Fx.WarlordImpact(tip, 2.4f, Fk);
         });
 
+        // ───────────── 剑士化 v2（设计单第 13 章）：释放帧 ─────────────
+
+        /// <summary>剑上的点：大剑挂上了用剑尖 / 握点之间按 k 插（0 = 握点、1 = 剑尖），没挂就身前</summary>
+        Vector3 BladeAt(float k, Vector3 fwd) => Blade ? Vector3.Lerp(Blade.Grip, Blade.Tip, k) : BodyCenter + fwd * (1f + 2f * k);
+
+        /// <summary>
+        /// 连斩一刀的释放帧（<see cref="WarlordBladeCombo"/>，state = slashA / slashB / slashUp / slashC）：
+        /// 袈裟 / 逆袈裟 = 斜月牙（右端高，dir 跟刀向），上挑 = 从左下往右上翻起的月牙 + 往上甩的火星，下劈 = 竖月牙 + 刀落处重击 + 沿预警长条一节一节崩开的裂地线。
+        /// 刀越往后越大（每刀 +7%），狂怒多一层残月。顿帧：没砍中 0.045 / 砍中 0.06 / 上挑 0.07 / 下劈 0.1 s
+        /// </summary>
+        public void BladeStroke(string state, int index, int count, float yawDeg, bool hit, float laneLength) =>
+            Release(state, () => BladeStrokeFx(state, index, count, yawDeg, hit, laneLength));
+
+        void BladeStrokeFx(string state, int index, int count, float yawDeg, bool hit, float laneLength)
+        {
+            var feet = transform.position;
+            var fwd = new Vector3(Mathf.Sin(yawDeg * Mathf.Deg2Rad), 0, Mathf.Cos(yawDeg * Mathf.Deg2Rad));
+            float grow = (1f + 0.07f * index) * (Fk > 0.5f ? WarlordSword.FuryReach : 1f);
+            switch (state)
+            {
+                case "slashC":
+                {
+                    Hold(0.1f);
+                    Shake(0.75f, 0.42f);
+                    Fx.WarlordCrescent(feet + Vector3.up * 2.4f + fwd * 0.5f, yawDeg, 3.4f * grow, 105f * Mathf.Deg2Rad, 1, -Mathf.PI * 0.5f, 1.4f, Fk, 0.32f);
+                    var at = feet + fwd * 3.2f;
+                    float gy = Fx.GroundY(at + Vector3.up * 2f, 4f);
+                    at.y = float.IsNegativeInfinity(gy) ? feet.y : gy;
+                    Fx.WarlordImpact(at, 2.6f, Fk);
+                    if (laneLength > 3.6f) Fx.WarlordCleaveLine(at, fwd, laneLength - 3.2f, Fk);
+                    PlaySfx("boss_slam", 0.9f, 1.15f);
+                    break;
+                }
+                case "slashUp":
+                {
+                    Hold(0.07f);
+                    Shake(0.4f, 0.25f);
+                    // 上挑：月牙从身前左下翻到右上（tilt 正 = 右端低 → 取负的大倾角让刀头朝上）
+                    Fx.WarlordCrescent(BodyCenter + fwd * 0.6f + Vector3.up * 0.1f, yawDeg, 3.7f * grow, 120f * Mathf.Deg2Rad, -1, 64f * Mathf.Deg2Rad, 1.2f, Fk, 0.3f);
+                    Fx.WarlordShards(BladeAt(0.9f, fwd), Vector3.up + fwd * 0.3f, 0.8f, Fk, false);
+                    Fx.WarlordSmoke(feet + fwd * 1.6f, 1f, 2);
+                    break;
+                }
+                default:
+                {
+                    Hold(hit ? 0.06f : 0.045f);
+                    Shake(hit ? 0.35f : 0.25f, 0.22f);
+                    int dir = state == "slashA" ? 1 : -1;
+                    Fx.WarlordCrescent(BodyCenter + Vector3.up * 0.35f, yawDeg, WarlordBladeCombo.SlashRange * 0.85f * grow, WarlordBladeCombo.SlashHalf * 2f * Mathf.Deg2Rad, dir,
+                        -38f * Mathf.Deg2Rad, 1.25f, Fk, 0.3f);
+                    Fx.WarlordShards(BladeAt(1f, fwd), fwd + Vector3.up * 0.4f, 0.7f, Fk, false);
+                    break;
+                }
+            }
+        }
+
+        /// <summary>居合拔刀（前摇结束、突进开始）：一道白热的「一闪」直线 + 起步的紫褐尘、剑身拖影（不顿帧：顿帧留给收刀那一下）</summary>
+        public void IaiDraw(Vector3 from, Vector3 dir, float dash)
+        {
+            Blade?.Smear(WarlordSword.IaiDash + 0.08f);
+            Fx.WarlordIaiDraw(from, dir, dash, Fk);
+            Shake(0.25f, 0.18f);
+        }
+
+        /// <summary>居合收刀「咔」的释放帧：整条线上的刀光现形（迟到的刀光）——顿帧 0.1 s、重震、沿线一道长刀光 + 火星 + 方铜渣</summary>
+        public void IaiCut(Vector3 from, Vector3 dir, float length, float halfWidth, bool hit) => Release("iai", () =>
+        {
+            Hold(0.1f);
+            Shake(hit ? 0.65f : 0.5f, 0.35f);
+            Fx.WarlordIaiCut(from, dir, length, halfWidth, Fk);
+            PlaySfx("explosion", 0.6f, 1.4f);
+        });
+
+        /// <summary>
+        /// 剑气出手的释放帧（<see cref="WarlordSwordWave"/>；what = waveSlash / waveCross / waveCross2）：刀口一弯月牙（竖剑气竖着、横剑气平放）+ 一闪，顿帧 0.06 s。
+        /// 飞出去的剑气本身由 <see cref="WarlordWaveRunner"/> 在判定那一刻放
+        /// </summary>
+        public void WaveSwing(string what, float yawDeg, bool vertical, bool fury) => Release(what, () =>
+        {
+            Hold(0.06f);
+            Shake(0.35f, 0.25f);
+            var fwd = new Vector3(Mathf.Sin(yawDeg * Mathf.Deg2Rad), 0, Mathf.Cos(yawDeg * Mathf.Deg2Rad));
+            if (vertical)
+                Fx.WarlordCrescent(transform.position + Vector3.up * 2.2f + fwd * 0.8f, yawDeg, 3f, 100f * Mathf.Deg2Rad, 1, -Mathf.PI * 0.5f, 1.2f, Fk, 0.26f);
+            else
+                Fx.WarlordCrescent(transform.position + Vector3.up * 1.1f, yawDeg, 3.6f, 130f * Mathf.Deg2Rad, 1, 0f, 1.3f, Fk, 0.26f, 10f);
+            Fx.WarlordShards(BladeAt(1f, fwd), fwd + Vector3.up * 0.3f, 0.6f, Fk, false);
+        });
+
+        /// <summary>突刺起跑：突刺片段（按跑程定长）、剑尖往前一道细长的刺光、剑身拖影一路跟着；起步紫褐尘。身后的火尾由招式放</summary>
+        public void ThrustRun(Vector3 dir, float runSeconds, bool fx)
+        {
+            MarkStrike("thrust");
+            Releases++;
+            // 片段比跑程长 0.35 s：刹住那一刻 thrust 还没开始退回待机，横斩的起手不会被退场过渡拖后
+            Act("thrust", Mathf.Clamp(runSeconds + 0.35f, 0.6f, 1.8f));
+            if (!fx) return;
+            Blade?.Smear(Mathf.Clamp(runSeconds, 0.3f, 1.2f));
+            Fx.WarlordThrustFlare(Blade ? Blade.Tip : BodyCenter + dir * 2.6f, dir, Fk);
+            Fx.WarlordSmoke(transform.position + Vector3.up * 0.3f, 1f, 3);
+            Shake(0.3f, 0.25f);
+        }
+
+        /// <summary>突刺刹住：剑尖犁地一扇火星 + 一小块方形裂纹 + 紫褐尘，同时起收刀横斩的动作（按横斩的预警拉伸）</summary>
+        public void ThrustStop(Vector3 p, Vector3 dir, float cutSeconds)
+        {
+            ActCrossfade("thrustCut", cutSeconds / WarlordSword.ThrustCutHitAt);
+            var tip = Blade ? Blade.Tip : p + dir * 1.5f;
+            tip.y = p.y + 0.1f;
+            Fx.Burst(tip, WarlordPalette.HotAt(Fk), 14, 8f, 0.35f, 0.08f, 12f);
+            Fx.Ch3Crack(new Vector3(tip.x, p.y, tip.z), 1.2f, Fk, 4f);
+            Fx.WarlordSmoke(p + dir * 0.8f, 1.1f, 3);
+            Shake(0.3f, 0.25f);
+        }
+
+        /// <summary>收刀横斩的释放帧：一弯平放的大月牙（腰高、朝玩家低头），顿帧 0.06 s</summary>
+        public void ThrustCut(float yawDeg, bool hit, float range) => Release("thrustCut", () =>
+        {
+            Hold(hit ? 0.07f : 0.05f);
+            Shake(hit ? 0.45f : 0.3f, 0.25f);
+            Fx.WarlordCrescent(transform.position + Vector3.up * 1.35f, yawDeg, range * 0.82f, WarlordThrust.CutHalf * 2f * Mathf.Deg2Rad, 1, 0f, 1.4f, Fk, 0.3f, 12f);
+            Fx.WarlordSmoke(transform.position + transform.forward * 0.6f, 1f, 2);
+        });
+
+        /// <summary>
+        /// 回旋斩的释放帧（k = 0 第一圈 / 1 二连的第二圈）：一整圈的月牙（刀头 0.12 s 绕一圈）+ 贴地粗环 + 方铜渣一圈往外甩，顿帧 0.07 / 0.09 s。
+        /// 第二圈是外环（inner 以内安全），月牙更大更薄
+        /// </summary>
+        public void SpinStrike(int k, bool twice, float radius, float inner, bool hit) =>
+            Release(k == 0 ? twice ? "spinTwice" : "spin" : "spinTwice2", () =>
+            {
+                Hold(k == 0 ? 0.07f : 0.09f);
+                Shake(k == 0 ? 0.5f : 0.65f, 0.3f);
+                Fx.WarlordSpinRing(transform.position, radius, inner, transform.eulerAngles.y, Fk, k == 1);
+            });
+
         /// <summary>动画事件：拖影起止、起手烧亮、冲锋踏步、咆哮换挡、倒下的跪地 / 扑倒；hit 用来量释放帧和判定差多少</summary>
         protected override void OnAnimEvent(string evt)
         {
@@ -734,7 +1003,7 @@ namespace Spiritfire.Game
                     else hitSeenAt = Time.time;
                     break;
                 case "step":
-                    if (Current is WarlordCharge)
+                    if (Current is WarlordCharge or WarlordThrust)
                     {
                         Fx.Burst(transform.position + Vector3.up * 0.15f, WarlordPalette.Smoke, 2, 1.2f, 0.6f, 0.5f, -0.6f);
                         Shake(0.12f, 0.12f);
@@ -766,16 +1035,25 @@ namespace Spiritfire.Game
         protected override void Passive(float dt)
         {
             DirectMoveActs();
-            if (Current is WarlordCharge c && c.Running)
+            if (Current is WarlordCharge { Running: true } || Current is WarlordThrust { Running: true })
             {
                 // 拖刀：剑尖犁地，一路往后甩铜火星
                 dragAcc += dt;
                 if (dragAcc >= 0.045f)
                 {
                     dragAcc = 0;
-                    var tip = Blade ? Blade.Tip : transform.position - transform.forward * 2f;
-                    tip.y = transform.position.y + 0.1f;
-                    Fx.Burst(tip, WarlordPalette.CopperAt(Fk), 3, 4.5f, 0.3f, 0.07f, 9f);
+                    if (Current is WarlordThrust)
+                    {
+                        // 突刺：剑尖在前，火星往两侧后方甩
+                        var tip = Blade ? Blade.Tip : transform.position + transform.forward * 2.6f + Vector3.up * 1.4f;
+                        Fx.Burst(tip, WarlordPalette.HotAt(Fk), 3, 5f, 0.25f, 0.07f, 4f);
+                    }
+                    else
+                    {
+                        var tip = Blade ? Blade.Tip : transform.position - transform.forward * 2f;
+                        tip.y = transform.position.y + 0.1f;
+                        Fx.Burst(tip, WarlordPalette.CopperAt(Fk), 3, 4.5f, 0.3f, 0.07f, 9f);
+                    }
                 }
             }
             else if (!Blade)
@@ -923,7 +1201,7 @@ namespace Spiritfire.Game
         {
             if (!Landed) Land();
             SetDrop(0);
-            GameUI.Toast("熔火深渊的统帅——角盔是弱点", Hex.Rgb(0xff7a2a));
+            GameUI.Toast(LegacyRig ? "熔火深渊的统帅——角盔是弱点" : "熔火深渊的统帅——胸口的地火之心是弱点", Hex.Rgb(0xff7a2a));
         }
 
         protected override void OnPhase(int phase)
@@ -977,6 +1255,7 @@ namespace Spiritfire.Game
         {
             ClearActTriggers();
             holdUntil = -1f;
+            holdDebt = 0;
             if (anim) anim.speed = 1f;
             Blade?.EndSmear();
             SetDrop(0);

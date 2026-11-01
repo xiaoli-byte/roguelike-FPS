@@ -313,6 +313,9 @@ namespace Spiritfire.Game.Testing
     /// <summary>
     /// 熔心魔将的节拍条（bridge.sh playtest beats-warlord；3-3 神范台）：首领不掉血，按设计单的招牌招式逐个强制出招，
     /// 每招拍起手 / 预警 / 释放帧 / 收招 / 第一人称（<see cref="WBeatCam"/>）；再拍 50% 转阶段、20% 狂怒的换挡、倒下。
+    /// 剑士化 v2（设计单第 13 章）：一阶段连斩 / 居合 / 剑气 / 突刺 / 横扫 / 跃击，二阶段连斩（上挑接下劈）/ 横竖剑气 / 回旋斩，
+    /// 狂怒回旋二连（狂怒后第一招，等它自己出）/ 五刀连斩 / 十字剑气 / 居合回身 / 突刺；性能对照换成剑术招式（通用刀光 vs 墨笔剑光），
+    /// 对时记每一次释放帧（<see cref="WarlordBrain.ReleaseFired"/>，不截图的对照段）。
     /// 截图在 Assets/Art/_Review/beats/warlord/。只看画面、不判合格（招式本身由 boss-warlord 套件守着）。
     /// </summary>
     public sealed class WarlordBeatsSuite : PlaytestSuite
@@ -372,11 +375,13 @@ namespace Spiritfire.Game.Testing
             Line($"魔将：模型 {boss.Model?.source}，动作控制器 {(boss.Model?.root ? boss.Model.root.GetComponentInChildren<Animator>()?.runtimeAnimatorController?.name : "无")}");
             yield return Locomotion();
 
+            // 收招那一格：连斩拍末刀下劈（第一刀之后 1.5 s）、剑气拍飞在半路、突刺拍收刀横斩
+            yield return Beat("warlord_combo", "连斩 · 一阶段（袈裟 → 逆袈裟 → 下劈）", 3.5f, 1.5f);
+            yield return Beat("warlord_iai", "居合一闪 · 一阶段", 8f, 0.12f);
+            yield return Beat("warlord_wave", "熔铜剑气 · 一阶段（竖剑气）", 14f, 0.4f);
+            yield return Beat("warlord_thrust", "突刺冲锋 · 一阶段", 14f, 0.95f);
             yield return Beat("warlord_sweep", "横扫 · 一阶段", 8f);
-            yield return Beat("warlord_combo", "连斩 · 一阶段", 3.5f);
             yield return Beat("warlord_leap", "跃击 · 一阶段", 11f);
-            yield return Beat("warlord_charge", "冲锋 · 一阶段", 14f);
-            yield return Beat("warlord_meteor", "陨石雨 · 一阶段", 11f, 1.45f);
 
             // 50%：转阶段（引动熔铜渠），转换后第一招就是涨落
             yield return WaitIdle();
@@ -388,7 +393,9 @@ namespace Spiritfire.Game.Testing
             while (boss.Transitioning && Time.time - t0 < 10f) yield return null;
             yield return Beat("warlord_channels", "熔铜渠涨落 · 二阶段", 11f, 2.8f, force: false);
             yield return WaitChannelsDry();
-            yield return Beat("warlord_sweep", "横扫 · 二阶段（反手再扫）", 8f, 1.3f);
+            yield return Beat("warlord_combo", "连斩 · 二阶段（上挑接下劈）", 3.5f, 1.25f);
+            yield return Beat("warlord_wave", "熔铜剑气 · 二阶段（横 → 竖）", 14f, 0.55f);
+            yield return Beat("warlord_spin", "回旋斩 · 二阶段", 4.5f, 0.12f);
 
             // 20%：狂怒换挡
             yield return WaitIdle();
@@ -400,15 +407,18 @@ namespace Spiritfire.Game.Testing
             t0 = Time.time;
             while (!boss.Transitioning && Time.time - t0 < 4f) yield return null;
             yield return Timed("狂怒换挡", "fury", 0.3f, 1.0f, 1.9f);
+            // 狂怒后第一招（回旋二连）转换一结束就出：先挂好节拍条再等它
+            yield return Beat("warlord_spin", "回旋二连 · 狂怒（狂怒后第一招）", 4.5f, 0.55f, force: false, waitIdle: false);
             while (boss.Transitioning && Time.time - t0 < 10f) yield return null;
-            yield return new WaitForSeconds(1.2f);
+            yield return new WaitForSeconds(0.6f);
             Single("狂怒换挡", "换挡后", 4, "fury_post", "fury");
             cam.Single("狂怒换挡", "第一人称", 5, "fury_post_fp", boss.BodyCenter, 4f, true, move: "fury");
             yield return GlowPair("换挡后", 2);
             yield return WaitIdle();
-            yield return Beat("warlord_combo", "连斩 · 狂怒（四斩）", 3.5f, 1.0f);
-            yield return Beat("warlord_charge", "冲锋 · 狂怒（连冲）", 14f);
-            yield return Beat("warlord_leap", "跃击 · 狂怒", 11f);
+            yield return Beat("warlord_combo", "连斩 · 狂怒（五刀）", 3.5f, 1.55f);
+            yield return Beat("warlord_wave", "十字剑气 · 狂怒", 14f, 0.75f);
+            yield return Beat("warlord_iai", "居合一闪 · 狂怒（回身再斩）", 9f, 0.12f);
+            yield return Beat("warlord_thrust", "突刺冲锋 · 狂怒", 14f, 0.8f);
 
             yield return PerfCompare();
 
@@ -453,6 +463,9 @@ namespace Spiritfire.Game.Testing
         IEnumerator GlowPair(string beat, int order)
         {
             if (!boss || boss.Dead) yield break;
+            // 破绽窗口里熔铜芯会一跳一跳地亮（剑士化 v2）：等它关了再拍，改前 / 改后只差发光遮罩
+            float e0 = Time.time;
+            while (boss.Exposed && Time.time - e0 < 2f) yield return null;
             var fwd = boss.transform.forward;
             var c = boss.BodyCenter + Vector3.up * 0.5f;
             var from = c + fwd * 6.5f + boss.transform.right * 2.2f + Vector3.up * 0.4f;
@@ -611,9 +624,9 @@ namespace Spiritfire.Game.Testing
         }
 
         /// <summary>强制一招（force = false：等它自己出，阶段第一招），拍五拍</summary>
-        IEnumerator Beat(string moveId, string label, float distance, float recoverDelay = 0.35f, bool force = true)
+        IEnumerator Beat(string moveId, string label, float distance, float recoverDelay = 0.35f, bool force = true, bool waitIdle = true)
         {
-            yield return WaitIdle();
+            if (waitIdle) yield return WaitIdle();
             if (!boss || boss.Dead) yield break;
             var move = boss.MoveById(moveId);
             if (move == null)
@@ -621,8 +634,8 @@ namespace Spiritfire.Game.Testing
                 Line($"{label}：没有招式 {moveId}");
                 yield break;
             }
-            ReadyPlayer(distance);
-            yield return null;
+            if (waitIdle) ReadyPlayer(distance);
+            if (waitIdle) yield return null;
             int started = move.TimesStarted;
             int releases = boss.Releases;
             cam.Arm(label, $"{moveId}_p{boss.Phase + 1}", () =>
@@ -642,7 +655,7 @@ namespace Spiritfire.Game.Testing
             while (!cam.Idle && Time.time - t0 < 14f)
             {
                 KeepAlive();
-                if (move is WarlordCombo && boss.DistanceToPlayer > 4.5f) ReadyPlayer(3.5f);
+                if (move is WarlordCombo or WarlordBladeCombo && boss.DistanceToPlayer > 4.5f) ReadyPlayer(3.5f);
                 Aim(motor, eye, boss.BodyCenter);
                 yield return null;
             }
@@ -652,28 +665,42 @@ namespace Spiritfire.Game.Testing
                 cam.Abort();
             }
             else Line($"{label}：✓ 累计 {cam.Count} 张；释放帧 {boss.LastStrike}，片段事件比判定 {boss.LastHitSkew * 1000f:+0;-0;0} ms（截图帧慢，仅供参考），顿帧累计 {boss.Holds} 次，" +
-                      $"大剑 {(boss.Blade ? $"已挂（剑长 {boss.Blade.Length:F2} m，拖影 {boss.Blade.SmearCount} 次）" : "没挂")}");
+                      $"大剑 {(boss.Blade ? $"已挂（剑长 {boss.Blade.Length:F2} m，拖影 {boss.Blade.SmearCount} 次，熔铜长刃 {boss.Blade.LongBlade:P0}）" : "没挂")}");
+            // 剑气：等飞完再拍下一招（下一招的起手里不留上一招的剑气）
+            var runner = boss.GetComponent<WarlordWaveRunner>();
+            float wf = Time.time;
+            while (runner && runner.Alive > 0 && Time.time - wf < 3f) yield return null;
         }
 
         /// <summary>
-        /// 性能对照（同一会话）：旧、新交替六轮，每轮横扫 / 连斩 / 跃击各出一次——旧 = 调优前的通用出手特效（<see cref="WarlordBrain.LegacyFx"/>），
-        /// 新 = 熔铜出手特效；记每招期间的平均 / 最慢帧（毫秒，不受时间缩放）和特效粒子峰值（<see cref="FxBudget.Peak"/>），交替是为了抵掉编辑器帧时间的漂移
+        /// 性能对照（同一会话，狂怒阶段：五刀连斩 / 十字剑气 / 回旋二连 / 居合回身，最重的那一套）：旧、新交替六轮——
+        /// 旧 = 通用出手特效（<see cref="WarlordBrain.LegacyFx"/>：通用刀光、剑气是不跟随的通用弧），新 = 墨笔剑光（月牙 + 残月 + 飞行剑气 + 熔铜长刃）；
+        /// 记每招期间的平均 / 最慢帧（毫秒，不受时间缩放）和特效粒子峰值（<see cref="FxBudget.Peak"/>），交替是为了抵掉编辑器帧时间的漂移。
+        /// 对时：新特效那几轮记下每一次释放帧（<see cref="WarlordBrain.ReleaseFired"/>）
         /// </summary>
         IEnumerator PerfCompare()
         {
             var total = new Dictionary<bool, (float sum, int frames)>();
+            void OnRelease(string what, float skew, bool fallback, bool clip)
+            {
+                if (WarlordBrain.LegacyFx) return;
+                if (fallback) fallbacks.Add(what);
+                else if (!clip) noClip.Add(what);
+                else skews.Add((what, skew));
+            }
+            boss.ReleaseFired += OnRelease;
             foreach (bool legacy in new[] { true, false, true, false, true, false })
             {
                 WarlordBrain.LegacyFx = legacy;
                 float sum = 0, worst = 0;
                 int frames = 0, peak = 0;
-                foreach (var id in new[] { "warlord_sweep", "warlord_combo", "warlord_leap" })
+                foreach (var id in new[] { "warlord_combo", "warlord_wave", "warlord_spin", "warlord_iai" })
                 {
                     yield return WaitIdle();
                     if (!boss || boss.Dead) yield break;
                     var move = boss.MoveById(id);
                     if (move == null) continue;
-                    ReadyPlayer(id == "warlord_combo" ? 3.5f : id == "warlord_sweep" ? 8f : 11f);
+                    ReadyPlayer(id == "warlord_combo" ? 3.5f : id == "warlord_spin" ? 4.5f : id == "warlord_iai" ? 9f : 14f);
                     yield return new WaitForSeconds(0.3f);
                     FxBudget.ResetPeak();
                     float t0 = Time.time;
@@ -688,22 +715,26 @@ namespace Spiritfire.Game.Testing
                         frames++;
                         yield return null;
                     }
-                    yield return new WaitForSeconds(0.6f);
+                    yield return new WaitForSeconds(id == "warlord_wave" ? 1.4f : 0.6f);
                     peak = Mathf.Max(peak, FxBudget.Peak);
-                    if (!legacy) skews.Add($"{boss.LastStrike} {boss.LastHitSkew * 1000f:+0;-0;0} ms");
                 }
-                string what = legacy ? "调优前的通用出手特效" : "熔铜出手特效";
+                string what = legacy ? "通用出手特效" : "墨笔剑光";
                 Line($"性能对照（{what}）：{frames} 帧，平均 {sum / Mathf.Max(1, frames):F2} ms、最慢 {worst:F1} ms，粒子峰值 {peak}（画质 {QualityProfile.Current.label}）");
                 var tt = total.TryGetValue(legacy, out var x) ? x : (0f, 0);
                 total[legacy] = (tt.Item1 + sum, tt.Item2 + frames);
             }
             WarlordBrain.LegacyFx = false;
+            boss.ReleaseFired -= OnRelease;
             float oldMs = total[true].sum / Mathf.Max(1, total[true].frames), newMs = total[false].sum / Mathf.Max(1, total[false].frames);
             Line($"性能对照合计：旧 {oldMs:F2} ms → 新 {newMs:F2} ms（{(newMs / Mathf.Max(0.01f, oldMs) - 1f) * 100f:+0.0;-0.0}%）");
-            Line($"释放帧对齐（不截图时，片段 hit / impact / cast 事件减招式判定时刻）：{string.Join("、", skews)}；事件没来按判定兜底 {boss.FxFallbacks} 次（{boss.FallbackLog}）");
+            float worstSkew = skews.Count > 0 ? skews.Max(x => Mathf.Abs(x.skew)) : 0f;
+            Line($"释放帧对齐（不截图时，片段 hit / impact 事件减招式判定时刻，{skews.Count} 次）：最大 {worstSkew * 1000f:F0} ms；" +
+                 string.Join("、", skews.GroupBy(x => x.what).Select(g => $"{g.Key} {string.Join(" / ", g.Select(x => $"{x.skew * 1000f:+0;-0;0}"))} ms")) +
+                 $"；按判定兜底 {fallbacks.Count} 次（{string.Join(" ", fallbacks)}）；状态机里没有片段、当帧就放 {noClip.Count} 次（{string.Join(" ", noClip.Distinct())}）");
         }
 
-        readonly List<string> skews = new();
+        readonly List<(string what, float skew)> skews = new();
+        readonly List<string> fallbacks = new(), noClip = new();
 
         IEnumerator WaitIdle()
         {

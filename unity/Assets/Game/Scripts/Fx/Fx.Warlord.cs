@@ -33,7 +33,8 @@ namespace Spiritfire.Game
     /// <summary>
     /// 熔心魔将的招式特效入口（首领与精英动作 · 特效调优 W 路；设计单 docs/art/vfx/warlord.md）。只管外观，不碰判定：
     /// 判定、危险物、预警都在招式里（Reference/WarlordMoves.cs、Warlord/Moves），这里由 <see cref="WarlordBrain"/> 在释放帧那一刻调。
-    /// 粒子走 <see cref="Burst"/> / 预设（都过 <see cref="FxBudget"/>），刀光是自己的月牙 <see cref="WarlordArc"/>（池化），大剑拖影见 <see cref="WarlordBlade"/>。
+    /// 粒子走 <see cref="Burst"/> / 预设（都过 <see cref="FxBudget"/>），刀光是自己的墨笔月牙 <see cref="WarlordArc"/>（池化），大剑拖影 / 熔铜长刃见 <see cref="WarlordBlade"/>，
+    /// 飞行剑气见 <see cref="WarlordWaveFx"/>（剑士化 v2，设计单第 13 章）。
     /// fury = 0..1 狂怒换挡程度（色阶从熔铜转白热铜）。
     /// </summary>
     public static partial class Fx
@@ -94,6 +95,9 @@ namespace Spiritfire.Game
                 WarlordShards(ground + new Vector3(d.x, 0, d.z) * radius * 0.45f + Vector3.up * 0.2f, d, 0.6f, fury, false);
             }
             Flash(ground + Vector3.up * 0.5f, WarlordPalette.CopperAt(fury), 6f, radius * 2.4f, 0.22f);
+            // 用户概念图 ACTION POSES ③「大剑砸地，地面炸起熔岩火焰」：落点一圈往上窜的熔岩火舌
+            FlameTongues.Ground(ground, radius * 0.35f, Mathf.Clamp(Mathf.RoundToInt(radius * 1.6f), 4, 7), 0.6f, 0.4f + 0.12f * radius,
+                WarlordPalette.HotAt(fury), WarlordPalette.CopperAt(fury), WarlordPalette.DeepAt(fury));
         }
 
         /// <summary>
@@ -192,6 +196,196 @@ namespace Spiritfire.Game
                 Burst(at + o, WarlordPalette.Smoke, 1, 0.6f, 0.8f, 0.42f * Mathf.Clamp(radius, 0.6f, 1.6f), -1.2f);
             }
         }
+
+        // ───────────── 剑士化 v2（设计单第 13 章）：剑光 ─────────────
+
+        /// <summary>
+        /// 飞行剑气（<see cref="WarlordWaveFx"/>）：竖剑气是一弯竖着的月牙（侧移躲）、横剑气是一弯平放的月牙（跳过）；前沿 = 月牙顶点 = 判定前沿。
+        /// 主月牙 + 身后两道淡下去的残月（拖影），飞行中从顶点甩铜火星；句柄 MoveTo 跟着判定走、Cancel 收掉（命中 / 撞墙 / 飞完的爆点另调 <see cref="WarlordWaveBurst"/>）。
+        /// lord = null（样机）时退回通用刀光（不跟随）
+        /// </summary>
+        public static FxHandle WarlordWave(Vector3 origin, Vector3 dir, bool vertical, float halfWidth, float height, bool fury, Object lord)
+        {
+            if (!Finite(origin)) return FxHandle.None;
+            if (!lord)
+                return Slash(origin + Vector3.up * (vertical ? 1.6f : 0.6f), Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg, halfWidth * 1.2f, 1.9f, 1,
+                    vertical ? -Mathf.PI * 0.5f : 0f, 0.7f, 0.35f, WarlordRef.Fire, true);
+            return WarlordWaveFx.Spawn(origin, dir, vertical, halfWidth, height, fury);
+        }
+
+        /// <summary>
+        /// 剑气的爆点（打中玩家 / 撞上掩体 / 飞到尽头）：亮芯爆闪星 + 「啪」环 + 一个由两弯短月牙交成的「X」斩痕（读作「斩」到了）+ 方铜渣 + 一闪；
+        /// 散在空处（飞完）时只放小一号的碎月牙和火星，不抢画面
+        /// </summary>
+        public static void WarlordWaveBurst(Vector3 at, Vector3 dir, bool vertical, bool fury, bool wall)
+        {
+            if (!Finite(at)) return;
+            float f = fury ? 1f : 0f;
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-4f) dir = Vector3.forward;
+            dir.Normalize();
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            float s = wall ? 1.25f : 1f;
+            HanbaOne(rt, "ToonBurst", at, Vector3.zero, 1.5f * s, 0.1f, WarlordPalette.HotAt(f));
+            HanbaOne(rt, "ToonPop", at, Vector3.zero, 2.2f * s, 0.2f, WarlordPalette.CopperAt(f), false);
+            // X 斩痕：两笔短刀光交成「X」，画在正对剑气来向的面上（迎面看是满的，不是一条线）
+            var side = Vector3.Cross(Vector3.up, dir);
+            foreach (var along in new[] { (side + Vector3.up).normalized, (side - Vector3.up).normalized })
+                WarlordStroke(at, along, Vector3.Cross(dir, along), (vertical ? 2.4f : 2f) * s, 0.42f, f, 0.24f);
+            WarlordShards(at, -dir + Vector3.up * 0.4f, wall ? 0.9f : 0.6f, f, wall);
+            Flash(at, WarlordPalette.CopperAt(f), wall ? 6f : 4f, wall ? 7f : 5f, 0.14f);
+        }
+
+        /// <summary>狂怒十字剑气：竖剑气从横剑气中间穿过的那一刻，交点亮一个「十」字（两道近乎笔直的刀光 + 亮芯星 + 一闪）</summary>
+        public static void WarlordCrossFlare(Vector3 at, Vector3 dir, float halfWidth, bool fury)
+        {
+            if (!Finite(at)) return;
+            float f = fury ? 1f : 0f;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            dir.y = 0;
+            dir = dir.sqrMagnitude > 1e-4f ? dir.normalized : Vector3.forward;
+            var side = Vector3.Cross(Vector3.up, dir);
+            float len = Mathf.Clamp(halfWidth * 1.4f, 2.4f, 5f);
+            // 一横一竖两笔，都画在正对来向的面上
+            WarlordStroke(at, side, Vector3.up, len, 0.45f, f, 0.32f);
+            WarlordStroke(at + Vector3.up * 0.3f, Vector3.up, -side, len * 0.8f, 0.4f, f, 0.32f);
+            HanbaOne(rt, "ToonBurst", at, Vector3.zero, 2.4f, 0.12f, WarlordPalette.HotAt(f));
+            Flash(at, WarlordPalette.HotAt(f), 7f, 9f, 0.18f);
+        }
+
+        /// <summary>
+        /// 一笔近乎笔直的墨笔刀光（<see cref="WarlordArc"/> 取大半径、小弧：12 m 长的一笔拱起不到 1 m）：中点在 mid，沿 along 方向长 length，
+        /// 往 bow 方向微微拱起（bow 和 along 垂直；月牙的面 = along、bow 张成的面）。刀头从起笔（−along 端）往收笔扫，reveal = 第一帧刀头扫到哪（1.12 = 一下现满）
+        /// </summary>
+        public static FxHandle WarlordStroke(Vector3 mid, Vector3 along, Vector3 bow, float length, float width, float fury, float life, float reveal = 1.12f)
+        {
+            if (!Finite(mid) || !(length > 0.1f) || along.sqrMagnitude < 1e-6f) return FxHandle.None;
+            along.Normalize();
+            bow -= along * Vector3.Dot(bow, along);
+            if (bow.sqrMagnitude < 1e-6f) bow = Vector3.Cross(along, Vector3.right).sqrMagnitude > 1e-4f ? Vector3.Cross(along, Vector3.right) : Vector3.up;
+            bow.Normalize();
+            float r = length * 1.6f, arc = length / r;
+            // 月牙在局部 XZ 面、拱向局部 +Z：局部 Z = bow、局部 X = along（Y = Z × X）
+            var rot = Quaternion.LookRotation(bow, Vector3.Cross(bow, along));
+            return WarlordArc.SpawnRotated(mid - bow * r, rot, r, arc, -1, width, life, fury, reveal);
+        }
+
+        /// <summary>
+        /// 居合拔刀的「一闪」：腰高一道白热细线（突进的路线，0.12 s）+ 一道铜色的宽线（0.2 s）、起步紫褐尘、线尾一撮火星。快得只剩一道线
+        /// </summary>
+        public static void WarlordIaiDraw(Vector3 from, Vector3 dir, float dash, float fury)
+        {
+            if (!Finite(from)) return;
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-4f) return;
+            dir.Normalize();
+            var a = from + Vector3.up * 1.35f;
+            var b = a + dir * dash;
+            Beam(a, b, WarlordPalette.HotAt(fury), 0.09f, 0.12f);
+            Beam(a + Vector3.up * 0.05f, b, WarlordPalette.CopperAt(fury), 0.32f, 0.2f);
+            WarlordSmoke(from + Vector3.up * 0.3f, 1f, 3);
+            Burst(b, WarlordPalette.CopperAt(fury), 8, 6f, 0.3f, 0.08f, 4f);
+        }
+
+        /// <summary>
+        /// 居合收刀「咔」：整条线上的刀光现形——腰高一笔长长的墨笔刀光（一下现满、0.45 s 从起笔往收笔收掉），中线一道白热细线一闪，
+        /// 沿线隔 2 m 一撮火星、线头线尾两蓬方铜渣，线中间一闪。halfWidth 只决定刀光粗细（判定在招式里）
+        /// </summary>
+        public static void WarlordIaiCut(Vector3 from, Vector3 dir, float length, float halfWidth, float fury)
+        {
+            if (!Finite(from)) return;
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-4f) return;
+            dir.Normalize();
+            var mid = from + dir * (length * 0.5f) + Vector3.up * 1.25f;
+            // 竖着的面里微微往上拱（从侧面看是一整笔，不是贴着视线的细线）
+            WarlordStroke(mid, dir, Vector3.up + Vector3.Cross(Vector3.up, dir) * 0.15f, length, Mathf.Clamp(halfWidth * 0.62f, 0.7f, 1.2f), fury, 0.45f);
+            Beam(from + Vector3.up * 1.25f, from + dir * length + Vector3.up * 1.25f, WarlordPalette.HotAt(fury), 0.07f, 0.1f);
+            int n = Mathf.Clamp(Mathf.RoundToInt(length / 2f), 3, 8);
+            for (int i = 0; i <= n; i++)
+            {
+                var p = from + dir * (length * i / n) + Vector3.up * (1.1f + 0.3f * Random.value);
+                Burst(p, WarlordPalette.CopperAt(fury), 4, 5f, 0.3f, 0.08f, 6f);
+            }
+            WarlordShards(from + Vector3.up * 1f, -dir + Vector3.up * 0.3f, 0.7f, fury, false);
+            WarlordShards(from + dir * length + Vector3.up * 1f, dir + Vector3.up * 0.3f, 0.8f, fury, true);
+            Flash(mid, WarlordPalette.HotAt(fury), 7f, length * 0.6f, 0.16f);
+        }
+
+        /// <summary>
+        /// 突刺起跑：剑尖往前一圈「啪」环（正对着冲过来的方向，第一人称迎面就是一个亮圈）+ 亮芯星 + 一束往前喷的铜丝；拖影由大剑自己画
+        /// </summary>
+        public static void WarlordThrustFlare(Vector3 tip, Vector3 dir, float fury)
+        {
+            if (!Finite(tip)) return;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return;
+            dir.y = 0;
+            dir = dir.sqrMagnitude > 1e-4f ? dir.normalized : Vector3.forward;
+            HanbaOne(rt, "ToonBurst", tip, Vector3.zero, 1.2f, 0.09f, WarlordPalette.HotAt(fury));
+            HanbaOne(rt, "ToonPop", tip + dir * 0.4f, Vector3.zero, 2f, 0.18f, WarlordPalette.CopperAt(fury), false);
+            HanbaMany(rt, "StreakLight", 10, _ =>
+            {
+                var d = (dir + Random.insideUnitSphere * 0.25f).normalized;
+                return (tip, d * Random.Range(12f, 18f), Random.Range(0.07f, 0.1f), Random.Range(0.12f, 0.22f));
+            }, WarlordPalette.CopperAt(fury));
+            Flash(tip, WarlordPalette.CopperAt(fury), 5f, 6f, 0.14f);
+        }
+
+        /// <summary>
+        /// 回旋斩：一整圈的墨笔月牙（腰高，刀头 0.12 s 绕满一圈，刃口白热）+ 贴地赭红粗环到判定半径 + 一圈四向甩出的方铜渣 + 紫褐尘。
+        /// second（狂怒二连的第二圈）= 外环：月牙更大更低、内圈 inner 以内留空（粗环画外沿）
+        /// </summary>
+        public static void WarlordSpinRing(Vector3 feet, float radius, float inner, float yawDeg, float fury, bool second)
+        {
+            if (!Finite(feet)) return;
+            float r = second ? Mathf.Lerp(inner, radius, 0.6f) : radius * 0.62f;
+            float h = second ? 0.8f : 1.25f;
+            WarlordArc.Spawn(feet + Vector3.up * h, yawDeg + 180f, r, Mathf.PI * 2f, second ? -1 : 1, 0f, second ? 1.6f : 1.5f, 0.34f, fury, 0f, 0.55f, -1);
+            Ring(feet + Vector3.up * 0.08f, radius, WarlordPalette.DeepAt(fury), 0.32f, false);
+            if (second) Ring(feet + Vector3.up * 0.1f, inner, WarlordPalette.Smoke, 0.25f, false);
+            for (int i = 0; i < 4; i++)
+            {
+                float a = (yawDeg + 45f + i * 90f) * Mathf.Deg2Rad;
+                var d = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                WarlordShards(feet + d * r + Vector3.up * h, d + Vector3.up * 0.3f, 0.6f, fury, i == 0);
+            }
+            WarlordSmoke(feet + Vector3.up * 0.2f, radius * 0.4f, 3);
+        }
+
+        /// <summary>
+        /// 下劈的裂地线（沿下劈的长条预警）：从 from 沿 dir 每 1.6 m 一节往前崩开（每 0.035 s 一节：一小块方形裂纹 + 火星，最后一节方铜渣 + 贴地火舌），
+        /// 读作「这一刀劈到哪」——和预警长条一样长
+        /// </summary>
+        public static void WarlordCleaveLine(Vector3 from, Vector3 dir, float length, float fury)
+        {
+            if (!Finite(from)) return;
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-4f) return;
+            dir.Normalize();
+            int n = Mathf.Clamp(Mathf.RoundToInt(length / 1.6f), 2, 7);
+            var seq = WarlordFxSequence.Start();
+            if (!seq) return;
+            for (int i = 0; i < n; i++)
+            {
+                float k = (i + 1) / (float)n;
+                var p = from + dir * (length * k);
+                float gy = GroundY(p + Vector3.up * 2f, 4f);
+                if (!float.IsNegativeInfinity(gy)) p.y = gy;
+                float s = Mathf.Lerp(1f, 0.65f, k);
+                bool last = i == n - 1;
+                seq.At(i * 0.035f, () =>
+                {
+                    Ch3Crack(p, 0.8f * s, fury, 4f, 1f, false);
+                    Burst(p + Vector3.up * 0.2f, WarlordPalette.CopperAt(fury), 5, 4f, 0.3f, 0.08f, 6f);
+                    if (!last) return;
+                    WarlordShards(p + Vector3.up * 0.15f, Vector3.up + dir * 0.4f, s, fury, true);
+                    FlameTongues.Ground(p, 0.6f, 3, 0.7f, 0.45f, WarlordPalette.HotAt(fury), WarlordPalette.CopperAt(fury), WarlordPalette.DeepAt(fury));
+                });
+            }
+        }
     }
 
     /// <summary>一次性的特效时间轴：挂在特效根下，按 at 秒放一串动作，放完自己销毁（换关清场时随特效根一起没了）</summary>
@@ -237,81 +431,40 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 熔心魔将的月牙刀光（主形 · 暗月牙托亮刃，设计单 §1.3）：通用刀光 <see cref="SlashArc"/> 是等宽的加法光带，在 3-3 的暗红打光里容易叠成一片发白的浅带；
-    /// 这里是专门的「月牙」——两头尖、中间厚（厚度按 sin^0.7 收），三层：
-    ///   暗衬（普通混合，暗紫褐，比本体大一圈、略往外偏）→ 本体（普通混合的熔铜实色块：内缘赭红、外缘熔铜，两阶软阶梯）→ 刃口（加法，外缘一道白热线，刀头那一段最亮）。
-    /// 时间：第一帧刀头就已经扫到 40%（释放帧亮芯第一帧到峰值），前 40% 寿命刀头缓出扫到尽头，之后刀尾从起点往刀头收掉、整体略往外扩。
-    /// 池化（最多 10 道，满了复用最老的），网格顶点数固定，复用时只重写顶点位置 / 颜色。纯视觉，不做判定。
+    /// 一弯墨笔月牙的网格（<see cref="WarlordArc"/>、<see cref="WarlordWaveFx"/> 共用；设计单 §1.3 + §13.2）：三层——
+    ///   暗衬（普通混合，紫褐，比本体大一圈、略往外偏：亮的熔岩上压得出轮廓）→ 本体（普通混合的熔铜实色块：内缘赭红、外缘熔铜）→ 刃口（加法，外缘一道白热线，刀头最亮）。
+    /// 笔形（剑士化 v2 的「墨笔起收锋」，<see cref="Brush"/>）：u = 0 起笔（挥刀的起点）→ 1 收笔（刀头）——露锋细入、一路渐粗、收笔前一顿、出锋尖收；
+    /// 起笔那一段（u &lt; 0.38）两条「飞白」：厚度方向第 2、4 圈的不透明度按干笔程度往下压（中尺度的两道丝，不是噪点）；内缘带两三个手绘的起伏。
+    /// 顶点色一律过 <see cref="FxVertexColor"/>（线性空间）。纯视觉，不做判定。
     /// </summary>
-    public sealed class WarlordArc : MonoBehaviour, IFxSlot
+    public sealed class WarlordCrescentMesh
     {
-        const int Segments = 32, Rows = 4, MaxArcs = 10;
-        /// <summary>每一圈在厚度方向的位置（0 = 内缘、1 = 外缘）</summary>
-        static readonly float[] RowAt = { 0f, 0.45f, 0.86f, 1f };
-        static readonly List<WarlordArc> pool = new();
+        public const int Segments = 40, Rows = 6;
+        /// <summary>每一圈在厚度方向的位置（0 = 内缘、1 = 外缘）与三层各圈的不透明度</summary>
+        static readonly float[] RowAt = { 0f, 0.22f, 0.45f, 0.68f, 0.86f, 1f };
+        static readonly float[] UnderA = { 0.3f, 0.72f, 0.86f, 0.88f, 0.86f, 0.74f };
+        static readonly float[] BodyA = { 0f, 0.72f, 0.9f, 0.95f, 0.92f, 0.55f };
+        static readonly float[] EdgeA = { 0f, 0f, 0f, 0.04f, 0.16f, 0.85f };
+        static int[] tris;
+        static Vector2[] uvs;
 
-        Mesh under, body, edge;
-        MeshRenderer underR, bodyR, edgeR;
-        Vector3[] pu, pb;
-        Color[] cu, cb, ce;
-        float age, life, radius, arc, width, fury;
-        int dir, gen;
-        bool active;
+        readonly Mesh under, body, edge;
+        readonly MeshRenderer underR, bodyR, edgeR;
+        readonly Vector3[] pu, pb;
+        readonly Color[] cu, cb, ce;
 
-        int IFxSlot.Generation => gen;
-        bool IFxSlot.IsActive => active;
-        void IFxSlot.CancelFx() => life = Mathf.Min(life, age + 0.06f);
-        void IFxSlot.RetargetFx(Vector3 from, Vector3 to) { }
-        void IFxSlot.MoveFx(Vector3 position) => transform.position = position;
-
-        public static FxHandle Spawn(Vector3 center, float yawDeg, float radius, float arc, int dir, float tilt, float width, float life, float fury, float pitchDeg = 0f)
+        /// <summary>一次绘制的参数：半径、弧长（弧度）、最厚处、方向（1 = 俯视逆时针扫）、刀头 / 刀尾（0..1.15）、外扩、狂怒、整体不透明度、干笔、起伏相位、局部偏移、要不要刃口</summary>
+        public struct Look
         {
-            if (!Fx.Finite(center) || !(radius > 0.1f)) return FxHandle.None;
-            var rt = FxRuntime.Ensure();
-            if (!rt) return FxHandle.None;
-            var s = Take(rt.transform);
-            s.gen++;
-            s.active = true;
-            s.age = 0;
-            s.life = Mathf.Max(0.08f, life);
-            s.radius = radius;
-            s.arc = Mathf.Clamp(arc, 0.2f, Mathf.PI * 2f);
-            s.width = Mathf.Clamp(width, 0.1f, radius * 0.8f);
-            s.dir = dir >= 0 ? 1 : -1;
-            s.fury = Mathf.Clamp01(fury);
-            s.transform.SetPositionAndRotation(center,
-                Quaternion.Euler(0, yawDeg, 0) * Quaternion.AngleAxis(pitchDeg, Vector3.right) * Quaternion.AngleAxis(-tilt * Mathf.Rad2Deg, Vector3.forward));
-            s.transform.localScale = Vector3.one;
-            s.gameObject.SetActive(true);
-            s.Paint();
-            return new FxHandle(s);
+            public float radius, arc, width, head, tail, grow, fury, alpha, dry, seed;
+            public int dir;
+            public Vector3 offset;
+            public bool edge;
+            /// <summary>只用狂怒的暗边色（残月）</summary>
+            public bool ember;
         }
 
-        static WarlordArc Take(Transform parent)
-        {
-            WarlordArc oldest = null;
-            for (int i = pool.Count - 1; i >= 0; i--)
-            {
-                var x = pool[i];
-                if (!x)
-                {
-                    pool.RemoveAt(i);
-                    continue;
-                }
-                if (!x.active) return x;
-                if (!oldest || x.age / x.life > oldest.age / oldest.life) oldest = x;
-            }
-            if (pool.Count >= MaxArcs && oldest) return oldest;
-            var go = new GameObject("Warlord Arc");
-            go.transform.SetParent(parent, false);
-            go.SetActive(false);
-            var a = go.AddComponent<WarlordArc>();
-            a.Init();
-            pool.Add(a);
-            return a;
-        }
-
-        void Init()
+        public WarlordCrescentMesh(Transform parent, string name)
         {
             int n = (Segments + 1) * Rows;
             pu = new Vector3[n];
@@ -319,42 +472,45 @@ namespace Spiritfire.Game
             cu = new Color[n];
             cb = new Color[n];
             ce = new Color[n];
-            var uv = new Vector2[n];
-            for (int i = 0; i <= Segments; i++)
-                for (int k = 0; k < Rows; k++)
-                    uv[i * Rows + k] = new Vector2(i / (float)Segments, RowAt[k]);
-            var idx = new int[Segments * (Rows - 1) * 6];
-            int w = 0;
-            for (int i = 0; i < Segments; i++)
-                for (int k = 0; k < Rows - 1; k++)
-                {
-                    int a = i * Rows + k, b = a + Rows;
-                    idx[w++] = a; idx[w++] = a + 1; idx[w++] = b;
-                    idx[w++] = a + 1; idx[w++] = b + 1; idx[w++] = b;
-                }
-            under = Make("Under", uv, idx, pu, cu);
-            body = Make("Body", uv, idx, pb, cb);
-            edge = Make("Edge", uv, idx, pb, ce);
-            underR = AddRenderer("Under", under, FxMaterials.AlphaBlend, -2);
-            bodyR = AddRenderer("Body", body, FxMaterials.AlphaBlend, -1);
-            edgeR = AddRenderer("Edge", edge, FxMaterials.Additive, 0);
+            if (tris == null)
+            {
+                uvs = new Vector2[n];
+                for (int i = 0; i <= Segments; i++)
+                    for (int k = 0; k < Rows; k++)
+                        uvs[i * Rows + k] = new Vector2(i / (float)Segments, RowAt[k]);
+                tris = new int[Segments * (Rows - 1) * 6];
+                int w = 0;
+                for (int i = 0; i < Segments; i++)
+                    for (int k = 0; k < Rows - 1; k++)
+                    {
+                        int a = i * Rows + k, b = a + Rows;
+                        tris[w++] = a; tris[w++] = a + 1; tris[w++] = b;
+                        tris[w++] = a + 1; tris[w++] = b + 1; tris[w++] = b;
+                    }
+            }
+            under = Make(name + " Under", pu, cu);
+            body = Make(name + " Body", pb, cb);
+            edge = Make(name + " Edge", pb, ce);
+            underR = AddRenderer(parent, "Under", under, FxMaterials.AlphaBlend, -2);
+            bodyR = AddRenderer(parent, "Body", body, FxMaterials.AlphaBlend, -1);
+            edgeR = AddRenderer(parent, "Edge", edge, FxMaterials.Additive, 0);
         }
 
-        static Mesh Make(string name, Vector2[] uv, int[] idx, Vector3[] pos, Color[] col)
+        static Mesh Make(string name, Vector3[] pos, Color[] col)
         {
             var m = new Mesh { name = "Warlord Arc " + name };
             m.MarkDynamic();
             m.vertices = pos;
-            m.uv = uv;
+            m.uv = uvs;
             m.colors = col;
-            m.triangles = idx;
+            m.triangles = tris;
             return m;
         }
 
-        MeshRenderer AddRenderer(string name, Mesh m, Material mat, int order)
+        static MeshRenderer AddRenderer(Transform parent, string name, Mesh m, Material mat, int order)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(transform, false);
+            go.transform.SetParent(parent, false);
             go.AddComponent<MeshFilter>().sharedMesh = m;
             var r = go.AddComponent<MeshRenderer>();
             r.sharedMaterial = mat;
@@ -366,46 +522,70 @@ namespace Spiritfire.Game
             return r;
         }
 
-        void Paint()
+        public void SetVisible(bool on)
         {
-            float t = age / life;
-            // 刀头：第一帧已在 40%，前 40% 寿命缓出扫到尽头；刀尾：35% 寿命起从起点往刀头收
-            float head = Mathf.Lerp(0.4f, 1.12f, 1f - Mathf.Pow(1f - Mathf.Clamp01(t / 0.4f), 2.4f));
-            float tail = Mathf.Clamp01((t - 0.35f) / 0.65f) * 1.15f;
-            float grow = 1f + 0.08f * t;
-            var hot = WarlordPalette.Vertex(WarlordPalette.HotAt(fury));
-            var copper = WarlordPalette.Vertex(WarlordPalette.CopperAt(fury));
-            var deep = WarlordPalette.Vertex(WarlordPalette.DeepAt(fury));
+            underR.enabled = on;
+            bodyR.enabled = on;
+            edgeR.enabled = on;
+        }
+
+        /// <summary>
+        /// 笔形（相对最厚处）：0 = 起笔 → 1 = 收笔。露锋：起笔只有 0.15 的厚度；行笔很快渐粗、到一半就是满的（释放帧刀头扫到一半时已经是一弯厚刃）；
+        /// 0.8 附近顿一下（+10%）；之后出锋尖收到 0
+        /// </summary>
+        public static float Brush(float u)
+        {
+            u = Mathf.Clamp01(u);
+            float swell = Mathf.Pow(Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(u / 0.5f)), 0.7f);
+            float entry = 0.15f + 0.85f * swell;
+            float x = Mathf.Clamp01((u - 0.82f) / 0.18f);
+            float exit = 1f - Mathf.Pow(x, 1.6f);
+            float d = (u - 0.8f) / 0.06f;
+            float press = 1f + 0.1f * Mathf.Exp(-d * d);
+            return entry * exit * press;
+        }
+
+        /// <summary>u 处（0..1）的干笔程度（0..1）：起笔那一段最干</summary>
+        public static float Dryness(float u) => Mathf.Clamp01(1f - u / 0.38f);
+
+        public void Paint(in Look p)
+        {
+            var hot = WarlordPalette.Vertex(p.ember ? WarlordPalette.FuryHot : WarlordPalette.HotAt(p.fury));
+            var copper = WarlordPalette.Vertex(p.ember ? WarlordPalette.FuryDeep : WarlordPalette.CopperAt(p.fury));
+            var deep = WarlordPalette.Vertex(p.ember ? WarlordPalette.FuryDeep * 0.75f : WarlordPalette.DeepAt(p.fury));
             var underC = WarlordPalette.Vertex(WarlordPalette.Under);
+            float alpha = Mathf.Clamp01(p.alpha);
             for (int i = 0; i <= Segments; i++)
             {
                 float u = i / (float)Segments;
-                float a = (u - 0.5f) * arc * -dir;
+                float a = (u - 0.5f) * p.arc * -p.dir;
                 float sn = Mathf.Sin(a), cs = Mathf.Cos(a);
-                // 两头尖、中间厚
-                float thick = width * Mathf.Pow(Mathf.Max(0f, Mathf.Sin(Mathf.PI * u)), 0.7f);
-                bool on = u <= head && u >= tail;
-                float lead = on ? Mathf.Clamp01(1f - (head - u) * 3.5f) : 0f;
-                float soft = on ? Mathf.Clamp01((head - u) * 12f) * Mathf.Clamp01((u - tail) * 6f) : 0f;
+                float thick = p.width * Brush(u);
+                // 内缘手绘的起伏（两三个中尺度的波，不是噪点）
+                float wob = 1f + 0.04f * Mathf.Sin(u * 9.4f + p.seed);
+                bool on = u <= p.head && u >= p.tail;
+                float lead = on ? Mathf.Clamp01(1f - (p.head - u) * 3.5f) : 0f;
+                float soft = on ? Mathf.Clamp01((p.head - u) * 12f) * Mathf.Clamp01((u - p.tail) * 6f) * alpha : 0f;
+                float dry = p.dry * Dryness(u);
                 for (int k = 0; k < Rows; k++)
                 {
                     int v = i * Rows + k;
-                    float r = (radius - thick * (1f - RowAt[k])) * grow;
-                    pb[v] = new Vector3(sn * r, 0, cs * r);
-                    float ru = (radius + width * 0.12f - thick * 1.18f * (1f - RowAt[k])) * grow;
-                    pu[v] = new Vector3(sn * ru, 0, cs * ru);
-                    // 暗衬：整弯压暗，外缘最浓
+                    float inner = thick * (1f - RowAt[k]) * (k <= 2 ? wob : 1f);
+                    float r = (p.radius - inner) * p.grow;
+                    pb[v] = new Vector3(sn * r, 0, cs * r) + p.offset;
+                    float ru = (p.radius + p.width * 0.12f - inner * 1.18f) * p.grow;
+                    pu[v] = new Vector3(sn * ru, 0, cs * ru) + p.offset;
+                    // 飞白：第 2、4 圈在干笔处压掉（暗衬一起压：露出底下的场景，读作笔锋里的丝）
+                    float gap = k is 2 or 4 ? 1f - 0.85f * dry : 1f;
                     var cU = underC;
-                    cU.a = soft * (k == 0 ? 0.35f : k == 3 ? 0.75f : 0.88f);
+                    cU.a = soft * UnderA[k] * gap;
                     cu[v] = cU;
-                    // 本体：内缘赭红 → 外缘熔铜（两阶实色，普通混合；不提亮，免得在泛光里冲成奶白），刀头一段略偏亮
-                    var cB = k <= 1 ? deep : copper;
-                    cB = Color.Lerp(cB, copper, lead * 0.4f * (k / 3f));
-                    cB.a = soft * (k == 0 ? 0f : k == 1 ? 0.85f : k == 2 ? 0.95f : 0.55f);
+                    var cB = k <= 2 ? deep : copper;
+                    cB = Color.Lerp(cB, copper, lead * 0.4f * (k / (float)(Rows - 1)));
+                    cB.a = soft * BodyA[k] * gap;
                     cb[v] = cB;
-                    // 刃口：只在最外一圈（厚度的外 14%）白热，刀头一段更亮
                     var cE = hot;
-                    cE.a = soft * (k == 3 ? 0.85f : k == 2 ? 0.12f + 0.3f * lead : 0f);
+                    cE.a = p.edge ? soft * (EdgeA[k] + (k == Rows - 2 ? 0.3f * lead : 0f)) : 0f;
                     ce[v] = cE;
                 }
             }
@@ -420,11 +600,144 @@ namespace Spiritfire.Game
             edge.RecalculateBounds();
         }
 
+        public void Destroy()
+        {
+            if (under) Object.Destroy(under);
+            if (body) Object.Destroy(body);
+            if (edge) Object.Destroy(edge);
+        }
+    }
+
+    /// <summary>
+    /// 熔心魔将的月牙刀光（主形 · 暗月牙托亮刃，设计单 §1.3；剑士化 v2 起是墨笔笔形 <see cref="WarlordCrescentMesh"/>）：
+    /// 通用刀光 <see cref="SlashArc"/> 是等宽的加法光带，在 3-3 的暗红打光里容易叠成一片发白的浅带，所以魔将用自己的月牙。
+    /// 时间：第一帧刀头就已经扫到 reveal（缺省一半：释放帧亮芯第一帧到峰值，露出来的已经是笔形渐粗之后的厚刃），前 40% 寿命刀头缓出扫到尽头，之后刀尾从起点往刀头收掉、整体略往外扩。
+    /// 狂怒（fury &gt; 0.5）多一层残月：晚 0.05 s、大 7%、只用赤色暗边、没有刃口——换挡后每一刀都是「双影」。
+    /// 池化（最多 16 道，低画质 10 道、不画残月，满了复用最老的），网格顶点数固定，复用时只重写顶点位置 / 颜色。纯视觉，不做判定。
+    /// </summary>
+    public sealed class WarlordArc : MonoBehaviour, IFxSlot
+    {
+        const int MaxArcs = 16, MaxArcsLow = 10;
+        /// <summary>残月比主月牙晚多久（秒）</summary>
+        const float EchoDelay = 0.05f;
+        static readonly List<WarlordArc> pool = new();
+
+        WarlordCrescentMesh main, echo;
+        Transform echoRoot;
+        float age, life, radius, arc, width, fury, reveal, seed;
+        int dir, gen;
+        bool active, withEcho;
+
+        /// <summary>此刻在播的月牙数（测试 / 预算读）</summary>
+        public static int Live
+        {
+            get
+            {
+                int n = 0;
+                foreach (var a in pool)
+                    if (a && a.active)
+                        n++;
+                return n;
+            }
+        }
+
+        int IFxSlot.Generation => gen;
+        bool IFxSlot.IsActive => active;
+        void IFxSlot.CancelFx() => life = Mathf.Min(life, age + 0.06f);
+        void IFxSlot.RetargetFx(Vector3 from, Vector3 to) { }
+        void IFxSlot.MoveFx(Vector3 position) => transform.position = position;
+
+        /// <summary>
+        /// 生成一弯月牙：yaw / tilt（绕前方轴倾斜，弧度）/ pitchDeg（整弯往前低头）定朝向；echo = −1 按狂怒自动、0 不要、1 要
+        /// </summary>
+        public static FxHandle Spawn(Vector3 center, float yawDeg, float radius, float arc, int dir, float tilt, float width, float life, float fury, float pitchDeg = 0f,
+            float reveal = 0.5f, int echo = -1) =>
+            SpawnRotated(center,
+                Quaternion.Euler(0, yawDeg, 0) * Quaternion.AngleAxis(pitchDeg, Vector3.right) * Quaternion.AngleAxis(-tilt * Mathf.Rad2Deg, Vector3.forward),
+                radius, arc, dir, width, life, fury, reveal, echo);
+
+        /// <summary>同上，直接给朝向（月牙在局部 XZ 面、拱向局部 +Z）</summary>
+        public static FxHandle SpawnRotated(Vector3 center, Quaternion rotation, float radius, float arc, int dir, float width, float life, float fury, float reveal = 0.5f,
+            int echo = -1)
+        {
+            if (!Fx.Finite(center) || !(radius > 0.1f)) return FxHandle.None;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return FxHandle.None;
+            var s = Take(rt.transform);
+            s.gen++;
+            s.active = true;
+            s.age = 0;
+            s.life = Mathf.Max(0.08f, life);
+            s.radius = radius;
+            s.arc = Mathf.Clamp(arc, 0.1f, Mathf.PI * 2f);
+            s.width = Mathf.Clamp(width, 0.1f, radius * 0.8f);
+            s.dir = dir >= 0 ? 1 : -1;
+            s.fury = Mathf.Clamp01(fury);
+            s.reveal = Mathf.Clamp(reveal, 0f, 1.15f);
+            s.seed = Random.value * 6.28f;
+            bool fine = QualityProfile.Current.particleDensity > 0.5f;
+            s.withEcho = fine && (echo > 0 || echo < 0 && s.fury > 0.5f);
+            s.transform.SetPositionAndRotation(center, rotation);
+            s.transform.localScale = Vector3.one;
+            s.gameObject.SetActive(true);
+            s.Paint();
+            return new FxHandle(s);
+        }
+
+        static WarlordArc Take(Transform parent)
+        {
+            WarlordArc oldest = null;
+            int cap = QualityProfile.Current.particleDensity > 0.5f ? MaxArcs : MaxArcsLow;
+            for (int i = pool.Count - 1; i >= 0; i--)
+            {
+                var x = pool[i];
+                if (!x)
+                {
+                    pool.RemoveAt(i);
+                    continue;
+                }
+                if (!x.active) return x;
+                if (!oldest || x.age / x.life > oldest.age / oldest.life) oldest = x;
+            }
+            if (pool.Count >= cap && oldest) return oldest;
+            var go = new GameObject("Warlord Arc");
+            go.transform.SetParent(parent, false);
+            go.SetActive(false);
+            var a = go.AddComponent<WarlordArc>();
+            a.main = new WarlordCrescentMesh(go.transform, "Main");
+            a.echoRoot = new GameObject("Echo").transform;
+            a.echoRoot.SetParent(go.transform, false);
+            a.echo = new WarlordCrescentMesh(a.echoRoot, "Echo");
+            pool.Add(a);
+            return a;
+        }
+
+        WarlordCrescentMesh.Look LookAt(float t, float alpha, float scale, bool edge, bool ember)
+        {
+            // 刀头：第一帧已在 reveal，前 40% 寿命缓出扫到尽头；刀尾：35% 寿命起从起点往刀头收
+            float head = Mathf.Lerp(reveal, 1.12f, 1f - Mathf.Pow(1f - Mathf.Clamp01(t / 0.4f), 2.4f));
+            float tail = Mathf.Clamp01((t - 0.35f) / 0.65f) * 1.15f;
+            return new WarlordCrescentMesh.Look
+            {
+                radius = radius * scale, arc = arc, width = width * (fury > 0.5f ? 1.1f : 1f), head = head, tail = tail, grow = 1f + 0.08f * t, fury = fury,
+                alpha = alpha, dry = 1f, seed = seed, dir = dir, offset = Vector3.zero, edge = edge, ember = ember,
+            };
+        }
+
+        void Paint()
+        {
+            main.Paint(LookAt(age / life, 1f, 1f, true, false));
+            float te = (age - EchoDelay) / life;
+            bool showEcho = withEcho && te >= 0f && te < 1f;
+            echo.SetVisible(showEcho);
+            if (showEcho) echo.Paint(LookAt(te, 0.5f, 1.07f, false, true));
+        }
+
         void Update()
         {
             if (!active) return;
             age += Time.deltaTime;
-            if (age >= life)
+            if (age >= life + (withEcho ? EchoDelay : 0f))
             {
                 active = false;
                 gameObject.SetActive(false);
@@ -436,9 +749,181 @@ namespace Spiritfire.Game
         void OnDestroy()
         {
             pool.Remove(this);
-            if (under) Destroy(under);
-            if (body) Destroy(body);
-            if (edge) Destroy(edge);
+            main?.Destroy();
+            echo?.Destroy();
+        }
+    }
+
+    /// <summary>
+    /// 飞行剑气的外观（剑士化 v2，设计单 §13.5；判定在 <see cref="WarlordWaveRunner"/>）：一弯墨笔月牙（顶点 = 判定前沿）+ 身后两道淡下去的残月（拖影），
+    /// 竖剑气竖着立在地上（下尖贴地）、横剑气平放在 0.55 m 高；飞行中月牙微微呼吸（缩放，不重画网格），从顶点往后甩铜火星（走 <see cref="Fx.Burst"/>，过预算），
+    /// 竖剑气的下尖犁地再带一撮。出生 0.06 s 从 60% 撑满，Cancel 后 0.1 s 淡掉。网格只在出生 / 淡出时重画，中间只挪位置。
+    /// 池化（最多 10 道，低画质不画残月）
+    /// </summary>
+    public sealed class WarlordWaveFx : MonoBehaviour, IFxSlot
+    {
+        const int MaxWaves = 10;
+        const float Arc = 110f * Mathf.Deg2Rad, FadeIn = 0.06f, FadeOut = 0.1f, MaxLife = 4f;
+        static readonly List<WarlordWaveFx> pool = new();
+        /// <summary>残月：沿飞行方向往后的距离（米）、不透明度、半径倍率</summary>
+        static readonly float[] EchoBack = { 0.8f, 1.6f }, EchoAlpha = { 0.42f, 0.2f }, EchoScale = { 0.95f, 0.9f };
+
+        WarlordCrescentMesh main;
+        readonly WarlordCrescentMesh[] echoes = new WarlordCrescentMesh[2];
+        Transform pivot;
+        float age, fadeT = -1f, radius, width, sparkAcc, painted = -1f, seed;
+        int gen;
+        bool active, vertical, fury, fine;
+
+        public static int Live
+        {
+            get
+            {
+                int n = 0;
+                foreach (var w in pool)
+                    if (w && w.active)
+                        n++;
+                return n;
+            }
+        }
+
+        int IFxSlot.Generation => gen;
+        bool IFxSlot.IsActive => active;
+        void IFxSlot.CancelFx()
+        {
+            if (fadeT < 0) fadeT = 0;
+        }
+
+        void IFxSlot.RetargetFx(Vector3 from, Vector3 to) { }
+        void IFxSlot.MoveFx(Vector3 position) => transform.position = position;
+
+        /// <summary>origin = 前沿起点（地面高度）；halfWidth / height = 横剑气半宽 / 竖剑气高度（米）</summary>
+        public static FxHandle Spawn(Vector3 origin, Vector3 dir, bool vertical, float halfWidth, float height, bool fury)
+        {
+            if (!Fx.Finite(origin)) return FxHandle.None;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return FxHandle.None;
+            dir.y = 0;
+            dir = dir.sqrMagnitude > 1e-4f ? dir.normalized : Vector3.forward;
+            var s = Take(rt.transform);
+            s.gen++;
+            s.active = true;
+            s.age = 0;
+            s.fadeT = -1f;
+            s.painted = -1f;
+            s.sparkAcc = 0;
+            s.vertical = vertical;
+            s.fury = fury;
+            s.fine = QualityProfile.Current.particleDensity > 0.5f;
+            s.seed = Random.value * 6.28f;
+            float half = vertical ? Mathf.Max(0.8f, height * 0.5f) : Mathf.Max(0.8f, halfWidth);
+            s.radius = half / Mathf.Sin(Arc * 0.5f);
+            s.width = vertical ? 0.75f : fury ? 1f : 0.85f;
+            s.transform.SetPositionAndRotation(origin, Quaternion.LookRotation(dir, Vector3.up));
+            // 竖剑气：绕前方轴转 90°（月牙立起来，下尖贴地）；横剑气：平放在 0.55 m 高
+            s.pivot.localPosition = vertical ? Vector3.up * half : Vector3.up * 0.55f;
+            s.pivot.localRotation = vertical ? Quaternion.AngleAxis(90f, Vector3.forward) : Quaternion.identity;
+            s.pivot.localScale = Vector3.one * 0.6f;
+            s.gameObject.SetActive(true);
+            s.Paint(0f);
+            return new FxHandle(s);
+        }
+
+        static WarlordWaveFx Take(Transform parent)
+        {
+            WarlordWaveFx oldest = null;
+            for (int i = pool.Count - 1; i >= 0; i--)
+            {
+                var x = pool[i];
+                if (!x)
+                {
+                    pool.RemoveAt(i);
+                    continue;
+                }
+                if (!x.active) return x;
+                if (!oldest || x.age > oldest.age) oldest = x;
+            }
+            if (pool.Count >= MaxWaves && oldest) return oldest;
+            var go = new GameObject("Warlord Sword Wave");
+            go.transform.SetParent(parent, false);
+            go.SetActive(false);
+            var w = go.AddComponent<WarlordWaveFx>();
+            w.pivot = new GameObject("Pivot").transform;
+            w.pivot.SetParent(go.transform, false);
+            w.main = new WarlordCrescentMesh(w.pivot, "Wave");
+            for (int i = 0; i < w.echoes.Length; i++) w.echoes[i] = new WarlordCrescentMesh(w.pivot, "Wave Echo " + i);
+            pool.Add(w);
+            return w;
+        }
+
+        void Paint(float alpha)
+        {
+            painted = alpha;
+            var look = new WarlordCrescentMesh.Look
+            {
+                radius = radius, arc = Arc, width = width, head = 1.12f, tail = 0f, grow = 1f, fury = fury ? 1f : 0f, alpha = alpha, dry = 1f, seed = seed, dir = 1,
+                // 月牙顶点放在原点（= 判定前沿）
+                offset = new Vector3(0, 0, -radius), edge = true,
+            };
+            main.Paint(look);
+            for (int i = 0; i < echoes.Length; i++)
+            {
+                bool on = fine;
+                echoes[i].SetVisible(on);
+                if (!on) continue;
+                var e = look;
+                e.radius = radius * EchoScale[i];
+                e.offset = new Vector3(0, 0, -e.radius - EchoBack[i] / Mathf.Max(0.3f, pivot.localScale.z));
+                e.alpha = alpha * EchoAlpha[i];
+                e.edge = false;
+                e.ember = fury;
+                echoes[i].Paint(e);
+            }
+        }
+
+        void Update()
+        {
+            if (!active) return;
+            float dt = Time.deltaTime;
+            age += dt;
+            float alpha;
+            if (fadeT >= 0f)
+            {
+                fadeT += dt;
+                alpha = 1f - fadeT / FadeOut;
+                if (alpha <= 0f || age > MaxLife + FadeOut)
+                {
+                    active = false;
+                    gameObject.SetActive(false);
+                    return;
+                }
+            }
+            else
+            {
+                alpha = Mathf.Clamp01(age / FadeIn);
+                if (age > MaxLife) fadeT = 0f;
+            }
+            // 出生撑满、飞行中呼吸（只改缩放）
+            float k = Mathf.Clamp01(age / FadeIn);
+            float breathe = 1f + 0.04f * Mathf.Sin(age * 22f + seed);
+            pivot.localScale = Vector3.one * (Mathf.Lerp(0.6f, 1f, k) * breathe);
+            if (Mathf.Abs(alpha - painted) > 0.04f) Paint(alpha);
+            // 火星：从顶点往后甩（过预算）
+            sparkAcc += dt;
+            if (sparkAcc < 0.05f || fadeT >= 0f) return;
+            sparkAcc = 0;
+            var c = fury ? WarlordPalette.FuryCopper : WarlordPalette.Copper;
+            var back = -transform.forward;
+            var top = pivot.position + (vertical ? Vector3.up * Random.Range(-0.6f, 0.9f) : transform.right * Random.Range(-1f, 1f) * radius * 0.6f);
+            Fx.Burst(top, c, 2, 3f, 0.3f, 0.08f, vertical ? 3f : 6f);
+            if (vertical) Fx.Burst(transform.position + Vector3.up * 0.1f + back * 0.3f, WarlordPalette.HotAt(fury ? 1f : 0f), 2, 4f, 0.25f, 0.07f, 9f);
+        }
+
+        void OnDestroy()
+        {
+            pool.Remove(this);
+            main?.Destroy();
+            foreach (var e in echoes) e?.Destroy();
         }
     }
 
@@ -452,7 +937,9 @@ namespace Spiritfire.Game
     ///     边光同步转白热；剑尖滴铜火星；狂怒时剑身两片火舌；
     ///   · 拖影（次级 · 暗月牙托亮刃，跟着真实的刀走）：<see cref="Smear"/> 起到 <see cref="EndSmear"/> 止，每帧记下剑身，
     ///     相邻两帧之间按握点插 3 份弧线（转角 slerp），画成两层带子：普通混合的暗衬（整条刀带压暗）+ 加法的亮刃（靠剑尖那一半最亮），0.2 s 内淡掉。
-    /// 预算：拖影是一个对象两张固定顶点数的网格；火星走 <see cref="Fx.Burst"/>（<see cref="FxBudget"/>）；低画质拖影段数减半、不插值。
+    ///   · 熔铜长刃（剑士化 v2 狂怒换挡，设计单 §13.8）：<see cref="Fury"/> 升起来以后，剑身外面裹一层熔铜火刃，一直烧出剑尖 40%（呼吸着伸缩），
+    ///     两层带子：普通混合的赤色暗衬 + 加法的亮铜 / 白热芯；带子永远侧对着镜头（以剑身为轴的公告板），第一人称迎面也看得到一把更长的刃。
+    /// 预算：拖影是一个对象两张固定顶点数的网格；熔铜长刃两张 3 × 10 顶点的网格；火星走 <see cref="Fx.Burst"/>（<see cref="FxBudget"/>）；低画质拖影段数减半、不插值。
     /// </summary>
     public sealed class WarlordBlade : MonoBehaviour
     {
@@ -481,6 +968,10 @@ namespace Spiritfire.Game
         public bool HasMask => emissionMask;
         /// <summary>剑长（米，握点 → 剑尖）</summary>
         public float Length { get; private set; } = 2.7f;
+        /// <summary>熔铜长刃此刻伸出剑尖多少（相对剑长，0 = 没有；测试读）</summary>
+        public float LongBlade { get; private set; }
+        /// <summary>熔铜长刃伸出剑尖的比例（呼吸前）</summary>
+        public const float LongBladeReach = 0.4f;
         /// <summary>拖影正在记录 / 还有没淡完的段</summary>
         public bool Smearing => smearing;
         public int SmearCount { get; private set; }
@@ -507,6 +998,12 @@ namespace Spiritfire.Game
         Vector3[] pos;
         Color[] colAdd, colUnder;
         GameObject trailGo;
+        // 熔铜长刃
+        const int EdgeSamples = 10;
+        Mesh edgeMesh, edgeUnderMesh;
+        MeshRenderer edgeAddR, edgeUnderR;
+        Vector3[] edgePos, edgeUnderPos;
+        Color[] edgeAdd, edgeUnder;
 
         public Vector3 Tip => tip ? tip.position : transform.position;
         public Vector3 Grip => grip ? grip.position : transform.position;
@@ -665,6 +1162,7 @@ namespace Spiritfire.Game
 
         void LateUpdate()
         {
+            PaintLongBlade();
             if (smearing)
             {
                 if (Time.time > smearUntil) smearing = false;
@@ -704,6 +1202,102 @@ namespace Spiritfire.Game
             underMesh = NewMesh("Blade Smear Underlay", uv, idx, colUnder);
             underR = AddRenderer(trailGo, "Under", underMesh, FxMaterials.AlphaBlend, -1);
             addR = AddRenderer(trailGo, "Edge", mesh, FxMaterials.Additive, 0);
+            BuildLongBlade();
+        }
+
+        // ───────────── 熔铜长刃（狂怒） ─────────────
+
+        void BuildLongBlade()
+        {
+            int n = EdgeSamples * 3;
+            edgePos = new Vector3[n];
+            edgeUnderPos = new Vector3[n];
+            edgeAdd = new Color[n];
+            edgeUnder = new Color[n];
+            var uv = new Vector2[n];
+            for (int i = 0; i < EdgeSamples; i++)
+                for (int k = 0; k < 3; k++)
+                    uv[i * 3 + k] = new Vector2(i / (float)(EdgeSamples - 1), k * 0.5f);
+            var idx = new int[(EdgeSamples - 1) * 2 * 6];
+            int w = 0;
+            for (int i = 0; i < EdgeSamples - 1; i++)
+                for (int k = 0; k < 2; k++)
+                {
+                    int a = i * 3 + k, b = a + 3;
+                    idx[w++] = a; idx[w++] = a + 1; idx[w++] = b;
+                    idx[w++] = a + 1; idx[w++] = b + 1; idx[w++] = b;
+                }
+            edgeMesh = new Mesh { name = "Molten Long Blade" };
+            edgeMesh.MarkDynamic();
+            edgeMesh.vertices = edgePos;
+            edgeMesh.uv = uv;
+            edgeMesh.colors = edgeAdd;
+            edgeMesh.triangles = idx;
+            edgeUnderMesh = new Mesh { name = "Molten Long Blade Underlay" };
+            edgeUnderMesh.MarkDynamic();
+            edgeUnderMesh.vertices = edgeUnderPos;
+            edgeUnderMesh.uv = uv;
+            edgeUnderMesh.colors = edgeUnder;
+            edgeUnderMesh.triangles = idx;
+            edgeUnderR = AddRenderer(trailGo, "Long Blade Under", edgeUnderMesh, FxMaterials.AlphaBlend, -1);
+            edgeAddR = AddRenderer(trailGo, "Long Blade", edgeMesh, FxMaterials.Additive, 1);
+        }
+
+        /// <summary>
+        /// 熔铜长刃：沿剑身从 0.28 处一直到剑尖外 40%（呼吸 ±4%），宽度中段最宽、出剑尖后收成一个尖；带子以剑身为轴转到侧对镜头。
+        /// 芯（中间那一列）白热、两边亮铜；暗衬宽一圈、赤色、普通混合
+        /// </summary>
+        void PaintLongBlade()
+        {
+            float k = Mathf.Clamp01((Fury - 0.05f) / 0.6f);
+            bool show = k > 0.01f && grip && tip && edgeMesh;
+            if (edgeAddR) edgeAddR.enabled = show;
+            if (edgeUnderR) edgeUnderR.enabled = show;
+            LongBlade = show ? LongBladeReach * k : 0f;
+            if (!show) return;
+            var g = Grip;
+            var d = Dir;
+            float len = Length;
+            var cam = Camera.main;
+            var mid = g + d * (len * 0.7f);
+            var toCam = cam ? cam.transform.position - mid : Vector3.up;
+            var side = Vector3.Cross(d, toCam);
+            if (side.sqrMagnitude < 1e-6f) side = Vector3.Cross(d, Vector3.up);
+            if (side.sqrMagnitude < 1e-6f) side = Vector3.right;
+            side.Normalize();
+            float t = Time.time;
+            float reach = 1f + LongBlade * (0.92f + 0.08f * Mathf.Sin(t * 11f));
+            var hot = WarlordPalette.Vertex(WarlordPalette.FuryHot);
+            var copper = WarlordPalette.Vertex(WarlordPalette.FuryCopper);
+            var deep = WarlordPalette.Vertex(WarlordPalette.FuryDeep);
+            for (int i = 0; i < EdgeSamples; i++)
+            {
+                float u = i / (float)(EdgeSamples - 1);
+                float along = Mathf.Lerp(0.28f, reach, u);
+                // 宽度：剑身段 0.16–0.24 m（中段最宽），出剑尖后收尖；火苗一样沿剑身流动起伏
+                float beyond = Mathf.Clamp01((along - 1f) / Mathf.Max(0.01f, reach - 1f));
+                float wdt = (0.16f + 0.08f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(u * 1.3f))) * (1f - beyond * beyond) * (0.9f + 0.1f * Mathf.Sin(t * 17f - u * 9f));
+                var c = g + d * (len * along);
+                for (int j = 0; j < 3; j++)
+                {
+                    int v = i * 3 + j;
+                    float o = j - 1;
+                    edgePos[v] = c + side * (wdt * o);
+                    edgeUnderPos[v] = c + side * (wdt * 1.6f * o);
+                    var ca = j == 1 ? Color.Lerp(copper, hot, 0.7f) : copper;
+                    ca.a = k * (j == 1 ? 0.9f : 0.35f) * (1f - 0.6f * beyond);
+                    edgeAdd[v] = ca;
+                    var cu = deep;
+                    cu.a = k * (j == 1 ? 0.55f : 0.2f) * (1f - 0.5f * beyond);
+                    edgeUnder[v] = cu;
+                }
+            }
+            edgeMesh.vertices = edgePos;
+            edgeMesh.colors = edgeAdd;
+            edgeMesh.RecalculateBounds();
+            edgeUnderMesh.vertices = edgeUnderPos;
+            edgeUnderMesh.colors = edgeUnder;
+            edgeUnderMesh.RecalculateBounds();
         }
 
         Mesh NewMesh(string name, Vector2[] uv, int[] idx, Color[] col)
@@ -773,6 +1367,8 @@ namespace Spiritfire.Game
             if (trailGo) Destroy(trailGo);
             if (mesh) Destroy(mesh);
             if (underMesh) Destroy(underMesh);
+            if (edgeMesh) Destroy(edgeMesh);
+            if (edgeUnderMesh) Destroy(edgeUnderMesh);
             foreach (var f in flames)
                 if (f)
                     Destroy(f.gameObject);

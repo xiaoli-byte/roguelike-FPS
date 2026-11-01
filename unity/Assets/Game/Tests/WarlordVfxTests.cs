@@ -14,7 +14,9 @@ namespace Spiritfire.Game.Tests
     ///   · 陨石雨 raise 的 cast 在 33%、熔铜渠 plant 的 hit 在 35%（WarlordBrain 按这两个比例拉伸）；
     ///   · 横扫 / 反手的 hit 在头两帧（前摇片段拉伸到前摇，接上就是刀到）；落地 land 的 hit 在第 0 帧（落地那一刻才触发）；
     ///   · 跃击腾空 leap 不自动接 land（落地由招式判定触发）；
-    ///   · 狂怒色阶的两端。
+    ///   · 狂怒色阶的两端；
+    ///   · 剑士化 v2（设计单第 13 章）：新片段的出手事件在 <see cref="WarlordSword"/> 记的位置上（招式按这些比例拉伸片段），
+    ///     连斩每一刀在下一刀起手之前都没开始退回待机（片段 98% 处退场），墨笔笔形（露锋细入、出锋尖收）。
     /// </summary>
     public sealed class WarlordVfxTests
     {
@@ -78,6 +80,62 @@ namespace Spiritfire.Game.Tests
             Assert.IsTrue(leap.Success);
             StringAssert.DoesNotContain("\"next\"", leap.Groups[1].Value, "落地由招式判定触发（WarlordBrain.LeapLand），腾空片段不能按时长自动接 land");
             StringAssert.Contains("\"next\": \"leap\"", Regex.Match(Events, "\"crouch\": \\{(.*?)\\}\\s*,\\s*\"", RegexOptions.Singleline).Groups[1].Value);
+        }
+
+        [Test]
+        public void SwordClips_ReleaseEventsMatchTheMoves()
+        {
+            Assume.That(Events, Is.Not.Null, "没有事件叠加表（先跑 warlord_anims.py）");
+            void Check(string clip, string evt, float want)
+            {
+                float at = At(clip, evt);
+                Assume.That(float.IsNaN(at), Is.False, $"{clip} 还没有 {evt} 事件（新骨架的片段还没写到这一招？）");
+                Assert.AreEqual(want, at, 0.5f / 30f, $"{clip} 的 {evt} 在 {at:F3}，招式按 {want:F3} 拉伸");
+            }
+            foreach (var clip in new[] { "slashA", "slashB", "slashUp", "slashC" }) Check(clip, "hit", WarlordSword.SlashHitAt);
+            Check("iai", "hit", WarlordSword.IaiHitAt);
+            Check("waveSlash", "hit", WarlordSword.WaveHitAt);
+            Check("waveCross", "hit", WarlordSword.CrossHitAt);
+            Check("waveCross", "impact", WarlordSword.CrossImpactAt);
+            Check("thrustCut", "hit", WarlordSword.ThrustCutHitAt);
+            Check("spin", "hit", WarlordSword.SpinHitAt);
+            Check("spinTwice", "hit", WarlordSword.SpinTwiceHitAt);
+            Check("spinTwice", "impact", WarlordSword.SpinTwiceImpactAt);
+        }
+
+        [Test]
+        public void ComboPlan_NextStrokeArrivesBeforeTheClipLeaves()
+        {
+            for (int phase = 0; phase <= 2; phase++)
+            {
+                var plan = WarlordBladeCombo.Plan(phase);
+                Assert.AreEqual(3 + phase, plan.Length, $"阶段 {phase} 的刀数");
+                Assert.AreEqual(WarlordBladeCombo.Stroke.Cleave, plan[^1].stroke, "末刀是下劈");
+                Assert.AreEqual(phase >= 1, plan.Any(b => b.stroke == WarlordBladeCombo.Stroke.Rise), "二阶段起有上挑（接下劈）");
+                for (int k = 0; k < plan.Length; k++)
+                {
+                    Assert.Greater(plan[k].Windup, 0.33f, $"阶段 {phase} 第 {k} 刀的前摇太短");
+                    if (k == 0) continue;
+                    Assert.Greater(plan[k].warn, plan[k - 1].strike, "下一刀的预警在上一刀刀到之后");
+                    // 上一刀的片段按 前摇 / 0.6 拉伸、98% 处退回待机：下一刀的触发器要在那之前到（退场过渡里 AnyState 触发器进不来）
+                    float leave = plan[k - 1].warn + 0.98f * plan[k - 1].Windup / WarlordSword.SlashHitAt;
+                    Assert.Less(plan[k].warn, leave, $"阶段 {phase} 第 {k} 刀起手时上一刀已经在退回待机");
+                }
+            }
+            // 节奏不是匀速：下劈前多顿一下
+            var p0 = WarlordBladeCombo.Plan(0);
+            Assert.Greater(p0[2].warn - p0[1].strike, p0[1].warn - p0[0].strike);
+        }
+
+        [Test]
+        public void Brush_EntryThinExitSharp()
+        {
+            Assert.Less(WarlordCrescentMesh.Brush(0f), 0.2f, "露锋：起笔细");
+            Assert.AreEqual(0f, WarlordCrescentMesh.Brush(1f), 1e-4f, "出锋：收笔尖");
+            Assert.Greater(WarlordCrescentMesh.Brush(0.8f), 1f, "收笔前一顿");
+            Assert.Greater(WarlordCrescentMesh.Brush(0.6f), WarlordCrescentMesh.Brush(0.2f), "行笔渐粗");
+            Assert.Greater(WarlordCrescentMesh.Dryness(0.05f), 0.8f, "飞白在起笔那一段");
+            Assert.AreEqual(0f, WarlordCrescentMesh.Dryness(0.5f), 1e-4f);
         }
 
         [Test]

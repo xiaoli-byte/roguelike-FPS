@@ -6,12 +6,17 @@ namespace Spiritfire.Game
     /// 熔心魔将（3-3 铸范大坊终点的领主战，D5；Three.js src/enemies/bosses/Warlord.ts；docs/level-design/maps/3-3.md 第 6 节）。
     /// 熔火深渊的统帅：一身玄铁甲、角盔、一柄焰刃；模型是 E5 的部件骨架（SK_Boss_Warlord，18 段采样片段 + act_ 触发器，受击 / 倒下片段等 ART8），
     /// 美术缺失时用熔炉铁牛 × 1.6 当代理（4.11）。
-    ///   招式（Three.js 原值，B1 已移植成参考招式 <see cref="WarlordCharge"/> 等，这里直接装上；动作由 <see cref="WarlordBrain"/> 按招式时间轴触发）：
-    ///     烈焰冲锋（沿途留火、撞墙硬直，二阶段起连冲两次）、扇形火焰横扫（二阶段反手再扫 + 火弹）、陨石雨（10 / 14 / 20 颗，二阶段起落点留火）、
-    ///     跃击（落点重击 + 冲击波，二阶段起落点燃火）、焰刃连斩（贴身 3 / 三阶段 4 斩）、
+    ///   招式（剑士化 v2，2026-11-01，docs/art/vfx/warlord.md 第 13 章：重剑剑术大师——挥砍多、连段有节奏、剑光是主角）：
+    ///     焰刃连斩（<see cref="WarlordBladeCombo"/>：贴身三 / 四 / 五刀，二阶段起上挑接下劈）、居合一闪（<see cref="WarlordIai"/>）、熔铜剑气（<see cref="WarlordSwordWave"/>，
+    ///     狂怒十字剑气）、突刺冲锋（<see cref="WarlordThrust"/>，替代烈焰冲锋：沿途留火保留，刹住后收刀横斩）、回旋斩（<see cref="WarlordSpin"/>，二阶段起，狂怒二连）；
+    ///     B1 参考招式里保留扇形火焰横扫（二阶段反手再扫 + 火弹）、跃击（落点重击 + 冲击波）、陨石雨（改成二阶段起才出：号令天火是场地压力，不是剑术），
     ///     熔铜渠涨落（<see cref="WarlordChannelSurge"/>，替代 TS 的方场熔岩涌动：神范台的十字浅渠和熔池漫上渠岸，<see cref="FoundryChannels"/>）。
-    ///   阶段（D23：血条刻度就是这两道阈值）：50% 引动熔铜渠（转换后第一招就是涨落）；20% 狂怒——喘息 / 前摇缩短、陨石冷却 7 s、战斗中持续落零星陨石、连斩 4 斩。
-    ///   弱点：角盔（部件骨架的 j_0_1_24_8 锚点，半径 0.45 m）；另有肩甲、膝甲两组命中区（TS hitShapes）。
+    ///     动作由招式自己调 <see cref="WarlordBrain.Act"/>（剑士化招式）或 <see cref="WarlordBrain"/> 按招式时间轴触发（参考招式）。
+    ///   阶段（D23：血条刻度就是这两道阈值）：教招（100–50%）→ 50% 引动熔铜渠（转换后第一招就是涨落；回旋斩、陨石雨解锁、连斩四刀、剑气横竖两道）→
+    ///     20% 狂怒（压缩）——喘息 / 前摇缩短、大剑燃成熔铜长刃（射程 × 1.15、刀光多一层残月）、连斩五刀、十字剑气、回旋二连、居合回身再斩、
+    ///     陨石冷却 7 s、战斗中持续落零星陨石；狂怒后第一招是回旋二连。
+    ///   弱点：胸口的地火之心（新模型的挂点 socket_core，半径 0.45 m；2026-11-01 模型路定的新骨架）；另有肩甲、膝甲两组命中区（TS hitShapes）。
+    ///     新模型落地之前仍是旧部件骨架（j_*）：WarlordBrain 认出旧骨架时弱点退回角盔、命中区挂回旧骨（<see cref="Legacy"/>）。
     ///   数值：3-3 的难度 2.92 下定档 18000 生命 + 4600 护盾 + 5000 护甲（I3 按首领浸泡实测秒伤重定：BS6 的 9000 / 2300 / 2500 是按「约 200 秒伤」估的，
     ///     代表配装实测可选中时约 435 秒伤，36 s 就倒下；翻倍后浸泡估算约 85 s，<see cref="WarlordBalance"/> 约 90 s，EditMode 测试 WarlordBalanceTests 守着 60–120 s。
     ///     TS 原值 4000 / 1000 / 1100 × 难度在实测秒伤下不到 60 s）。
@@ -28,12 +33,36 @@ namespace Spiritfire.Game
         public const float StageDifficulty = 2.92f;
         /// <summary>3-3 难度下的定档（I3，见类注释）</summary>
         public const float TierHp = 18000f, TierShield = 4600f, TierArmor = 5000f;
-        /// <summary>部件骨架的弱点锚点（角盔）与头骨</summary>
-        public const string WeakBone = "j_0_1_24_8", HeadBone = "j_0_1_24";
+        /// <summary>
+        /// 新模型（人形骨架，模型路 2026-11-01 定的骨名 / 挂点；挂点不变形、绑定矩阵是单位阵）：弱点 = 胸口地火之心 socket_core（挂在 chest 下）、头骨 head
+        /// </summary>
+        public const string WeakBone = "socket_core", HeadBone = "head";
         /// <summary>腰以上（上身）的骨：转身时目光领先叠在它和头上（WarlordBrain.LateUpdate）</summary>
-        public const string TorsoBone = "j_0_1";
-        /// <summary>熔心大剑的握点骨（大剑挂件挂在这里）与剑尖骨（WarlordBlade 校朝向、拖影取剑长）</summary>
-        public const string GripBone = "j_0_1_21_1_5", TipBone = "j_0_1_21_1_5_11";
+        public const string TorsoBone = "spine";
+        /// <summary>
+        /// 熔心大剑的握点（右手掌心挂点，大剑按单位变换挂上去就是剑尖朝下、剑面朝前）与剑尖挂点（WarlordBlade 校朝向、拖影取剑长）。
+        /// 故意不叫 socket_greatsword：那个名字会让 Bosses.AttachParts 再挂一把不带 WarlordBlade 的剑
+        /// </summary>
+        public const string GripBone = "socket_sword", TipBone = "socket_sword_tip";
+        /// <summary>角盔盔脊、两肩甲顶（狂怒火舌挂在这里）</summary>
+        public const string HelmBone = "socket_helm", PauldronL = "socket_pauldron_L", PauldronR = "socket_pauldron_R";
+
+        /// <summary>旧部件骨架（j_*，新模型落地前的过渡；WarlordBrain 找不到 <see cref="GripBone"/> 而找得到这里的握点时按它走）</summary>
+        public static class Legacy
+        {
+            public const string WeakBone = "j_0_1_24_8", HeadBone = "j_0_1_24", TorsoBone = "j_0_1", GripBone = "j_0_1_21_1_5", TipBone = "j_0_1_21_1_5_11";
+            public const string PauldronL = "j_0_1_13", PauldronR = "j_0_1_18", KneeL = "j_0_0_11_1", KneeR = "j_0_0_12_1";
+
+            /// <summary>新命中区 id → 旧骨名</summary>
+            public static string ZoneBone(string zoneId) => zoneId switch
+            {
+                "pauldron_l" => PauldronL,
+                "pauldron_r" => PauldronR,
+                "knee_l" => KneeL,
+                "knee_r" => KneeR,
+                _ => null,
+            };
+        }
 
         // ───────────── 运行时层 ─────────────
 
@@ -74,11 +103,11 @@ namespace Spiritfire.Game
                 id = FormId, name = null, prefab = PrefabId, scale = 1f, proxyPrefab = ProxyPrefabId, proxyScale = 1.6f,
                 weakBone = WeakBone, weakRadius = 0.45f,
             });
-            // TS hitShapes：肩甲、膝甲（胸、髋在角色胶囊里）
-            hitZones.Add(new BossHitZoneDef { id = "pauldron_l", bone = "j_0_1_13", radius = 0.46f });
-            hitZones.Add(new BossHitZoneDef { id = "pauldron_r", bone = "j_0_1_18", radius = 0.46f });
-            hitZones.Add(new BossHitZoneDef { id = "knee_l", bone = "j_0_0_11_1", radius = 0.3f, height = 1.44f });
-            hitZones.Add(new BossHitZoneDef { id = "knee_r", bone = "j_0_0_12_1", radius = 0.3f, height = 1.44f });
+            // TS hitShapes：肩甲、膝甲（胸、髋在角色胶囊里）；BossModel.FindBone 是子串匹配、深度优先取第一个：pauldron_L 先命中肩甲骨本身，不会落到 socket_pauldron_L
+            hitZones.Add(new BossHitZoneDef { id = "pauldron_l", bone = "pauldron_L", radius = 0.46f });
+            hitZones.Add(new BossHitZoneDef { id = "pauldron_r", bone = "pauldron_R", radius = 0.46f });
+            hitZones.Add(new BossHitZoneDef { id = "knee_l", bone = "shin_L", radius = 0.3f, height = 1.44f });
+            hitZones.Add(new BossHitZoneDef { id = "knee_r", bone = "shin_R", radius = 0.3f, height = 1.44f });
 
             phases.Add(new BossPhaseDef
             {
@@ -88,15 +117,20 @@ namespace Spiritfire.Game
             phases.Add(new BossPhaseDef
             {
                 // 狂怒的提示由 enrageToast 打（生命层跌破 20% 立刻狂怒，转换演出等当前招式收尾）
-                at = FuryAt, seconds = 2.2f, anim = "roar", sfx = "boss_roar", shake = 0.6f, toast = null, restScale = 0.85f, firstMove = "warlord_meteor",
+                at = FuryAt, seconds = 2.2f, anim = "roar", sfx = "boss_roar", shake = 0.6f, toast = null, restScale = 0.85f, firstMove = WarlordSpin.MoveId,
             });
 
-            // B1 的参考招式（TS 原值，见 Reference/WarlordMoves.cs）；它们的前摇动作名是参考样机的，这里清掉，动作由 WarlordBrain 按时间轴触发
-            moves.Add(() => new WarlordCharge { windupAnim = null });
+            // 剑士化 v2 的剑术招式（Bosses/Warlord/Moves，动作由招式自己调 WarlordBrain.Act）
+            moves.Add(() => new WarlordBladeCombo());
+            moves.Add(() => new WarlordIai());
+            moves.Add(() => new WarlordSwordWave());
+            moves.Add(() => new WarlordThrust());
+            moves.Add(() => new WarlordSpin());
+            // 保留的 B1 参考招式（TS 原值，见 Reference/WarlordMoves.cs）；它们的前摇动作名是参考样机的，这里清掉，动作由 WarlordBrain 按时间轴触发
             moves.Add(() => new WarlordSweep { windupAnim = null });
-            moves.Add(() => new WarlordMeteor { windupAnim = null });
             moves.Add(() => new WarlordLeap { windupAnim = null });
-            moves.Add(() => new WarlordCombo { windupAnim = null });
+            // 陨石雨（号令天火）二阶段起才出：一阶段只教剑术
+            moves.Add(() => new WarlordMeteor { windupAnim = null, minPhase = 1 });
             moves.Add(() => new WarlordChannelSurge());
 
             summonCap = 0;
@@ -106,7 +140,7 @@ namespace Spiritfire.Game
             enrageRestScale = 0.7f;
             enrageWindupScale = 0.9f;
             enrageDamageScale = 1.1f;
-            enrageToast = "熔心魔将陷入狂怒——陨石将更加频繁！";
+            enrageToast = "熔心魔将陷入狂怒——大剑燃成熔铜长刃！";
             intro.seconds = 2.6f;
             intro.anim = null;
             intro.sfx = null;
