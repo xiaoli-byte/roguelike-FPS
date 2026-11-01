@@ -78,6 +78,8 @@ namespace Spiritfire.Game
         const float ImpactRate = 0.05f;
         /// <summary>这一帧有没有走到 Think（出招中却没走到 = AI 被底座停摆：轻怪挨枪顿一下、掉出导航网格找回…）</summary>
         int thinkFrame = -1;
+        /// <summary>顿帧是哪一帧开的（那一帧两边都已经走完整帧，从下一帧起一起放慢、扣时间）</summary>
+        int impactFrame = -1;
         /// <summary>Animator.speed 现在是不是这里改的（非精英；精英归 EliteStrike）</summary>
         bool ownsAnimSpeed;
         bool chargedLast;
@@ -185,7 +187,7 @@ namespace Spiritfire.Game
         {
             if (elite || !anim) return;
             bool paused = Move.Busy && thinkFrame != Time.frameCount && !Dead && !(vitals && vitals.Dead) && Time.deltaTime > 0;
-            if (!paused && impactLeft > 0) impactLeft -= Time.deltaTime;
+            if (!paused && impactLeft > 0 && impactFrame != Time.frameCount) impactLeft -= Time.deltaTime;
             float want = paused ? 0f : impactLeft > 0 ? ImpactRate : 1f;
             if (want == 1f && !ownsAnimSpeed) return;
             if (!Mathf.Approximately(anim.speed, want)) anim.speed = want;
@@ -547,11 +549,11 @@ namespace Spiritfire.Game
         protected void ImpactHold(float seconds)
         {
             if (elite || !anim || !anim.isActiveAndEnabled) return;
-            // 这一帧的 Animator 就顿（ImpactHold 在 Update 里调，动画更新在后）；恢复和扣时间归 SyncAnimSpeed。
-            // 时间轴跟着顿：否则时间兜底先出手、片段被顿住，片段自己的同名事件晚到一整个顿帧（实测 60 ms），后面的时间点也跟片段错开
-            anim.speed = ImpactRate;
-            ownsAnimSpeed = true;
+            // 时间轴跟着顿：否则时间兜底先出手、片段被顿住，片段自己的同名事件晚到一整个顿帧（实测 60 ms），后面的时间点也跟片段错开。
+            // 从下一帧起两边一起放慢（这一帧时间轴已经走完整帧；这里就把 Animator 放慢的话，这一帧片段只走 0.05 帧，
+            // 碰上 100 ms 的尖峰帧会落后 95 ms，实测 140 ms）。放慢 / 恢复 / 扣时间都在 SyncAnimSpeed
             impactLeft = Mathf.Max(impactLeft, seconds);
+            impactFrame = Time.frameCount;
         }
 
         /// <summary>身子下的地面高度（往下 20 m 找，没找到就是原高度）</summary>
