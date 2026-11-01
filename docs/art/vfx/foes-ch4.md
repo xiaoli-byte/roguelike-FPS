@@ -42,6 +42,8 @@
 **预警的颜色**（C4-4，chuanzang-combat 1.5）：
 - **会挨打的范围一律 `TelegraphTone.Danger`**（草甸、雪地上是正红，由 `TelegraphPalette` 按关卡给），不改配色体系；
 - **紫红只出现在元素身份层**：雷标的符印圈、冲撞线上冒的电火花、电场的边、比翼电弧。身份层画在危险填充之上、细而亮，填充是红、符印是紫，两者分得开；
+  地面上的紫红身份层走 F 路的 `TelegraphTone.Thunder`（固定 `#ff4fd8`、靛紫暗衬 `#4a1a6e`、普通混合、不进脚底提示、不算危险）：蛮蛮走廊的中线、雷暴里举父落点外沿的一圈；
+  天狗的落雷交给 `LightningStrike`（它自己画两层：正红危险填充 + 外沿 0.35 m 紫红雷标环，同时填满时劈下），定格前的 1.2 s 跟随段由 E 路画（正红填充 + 紫红符印）；
 - **白星**（出手闪光）：只给「挨了会很疼」的招（踩踏、雷球砸地、球雷、掠空扑杀），出手前 0.25 s 在弱点上闪一下。
 
 ### 0.3 通用做法
@@ -52,6 +54,7 @@
    AI 收到事件就出手，没收到（占位体、动画被裁）就按时间轴兜底（事件与时间先到者算，同 `BossMove.Cue`），两者相差 ≤ 1 帧（片段按招式总长拉伸，事件时刻 = 时间轴时刻）。
    **预警时长 = 前摇时长**，起手那一帧画、释放帧正好填满。
 3. **释放帧四件套对在同一帧**：判定 + 亮芯第一帧到峰值的主形 + 局部顿帧（只顿自己的 Animator，0.04–0.08 s，精英由 EliteStrike 管）+ 按距离衰减的震屏（`CameraShake.Quake`）。音效第二期。
+   顿帧期间招式时间轴和 Animator 一起放慢到 0.05 倍；出招中 AI 被底座停摆（轻怪挨枪顿一下、找回导航网格）时 Animator 也停——否则片段自己往前走，后面的动画事件和时间轴错开（实测过 60 ms）。
 4. **受击四层**（chuanzang-combat 1.1）：闪白 + 数字（EnemyBody 原有）→ 方向小抖（CreatureRig.Hit）→ 硬直（2 s 内韧性伤害累计超过韧性：弱点 ×2、爆炸 ×3；打断非霸体招、撤预警，播 `stagger`）→ 眩晕（反制 / 封脉，`stun` 循环 + 头顶一圈紫白火花）。
    F 路落地后改成覆写通用入口，见第 11 节。
 5. **四种死法**（Unity 用布娃娃，不做死亡片段——布娃娃在高原起伏地形上比固定倒地片段可信，和前三章一致）：
@@ -372,6 +375,7 @@
 
 - 每碎一面：那面鼓爆开（方块木片 + 鼓皮碎片 18 颗 + 一团闪；红鼓是珊瑚红闪）、隐藏；少一份护盾，红鼓碎了不再加速。
 - 受击：被打的那面鼓凹一下（缩放 0.9 → 1）、震纹（平面环）；硬直时整个鼓环倾斜。
+- 命中区：六面鼓各一个（打鼓只掉鼓的血），其余打到雷心——鼓剩 3 面及以上吃 25%、少于 3 面吃满、全碎落地吃 200%；根上的角色碰撞体只包雷心（瞄身体中心的自动瞄准、灵宠、试玩套件瞄得到它）。
 - 死亡：雷心裂开一道白光（竖直的光柱 0.2 s）+ 一团紫白爆闪，剩下的鼓和骨槌掉到地上（刚体，叮叮当当弹两下），3 s 后沉下去。
 
 ## 7. 帝江（近战·自爆）
@@ -398,6 +402,7 @@
 ### 7.3 爆囊（被打死）与连锁
 
 - 被玩家打死时炸 4 m：对敌人 40、对 2.5 m 内的玩家 10；6 m 内的帝江 0.15 s 后一个接一个引爆（每一只都是同样的球状闪电，小一号 0.8）——在一群中间打爆一只能清一片。被火打死的是一团紫红火球（球壳换成火 + 紫红两层）。
+- 击杀归属：被玩家打死、被连锁引爆的都走伤害管线派发击杀（掉落、秘卷钩子、计数）；球雷胀爆是自爆退场（`ISelfDestruct.Detonated`，同冰河豚：没有击杀事件、不给奖励）。
 
 ## 8. 穷奇（游猎·精英）
 
@@ -472,24 +477,55 @@
 
 | 项 | 位置 |
 |---|---|
-| 定义（[Defs] 400–499） | `Enemies/Defs/Plateau/Enemy_{Marmot,Tiangou,Aoyin,Leiyak,Jufu,Manman,Liangu,Dijiang,Qiongqi}.cs`，id 与网页一致：`marmot tiangou aoyin leiyak jufu manman liangu dijiang qiongqi` |
-| 底座 | `Enemies/AI/Plateau/PlateauEnemyAI.cs`：招式时间轴（`PlateauMoveRunner`，事件优先 + 时间兜底）、受击四层、带电、四种死法、兽群警觉 |
-| 每只的 AI | `Enemies/AI/Plateau/{Marmot,Tiangou,Aoyin,Jufu,Manman,Liangu,Dijiang,Qiongqi}AI.cs`；电网 `MarmotNet`、连鼓灵组装 `LianguRig` |
-| F 路接口转接 | `Enemies/AI/Plateau/PlateauHooks.cs`（带电、落雷、导体、受击入口；F 落地前是本地实现） |
-| 特效 | `Fx/Fx.Plateau.cs`（`PlateauPalette`、雷刃 `PlateauBolt`、符印 `PlateauGlyph`、球 `PlateauOrb`、月牙 `PlateauCrescent`、声环、羽毛、土团…） |
-| 动作 | 采样 `scripts/unity/bake/SK_Enemy_*.mjs`（`_plateau.mjs`）；手 K `art/source/characters/SK_Enemy_*/anim/*_anims.py` → `Anim/Keyframed/*.fbx`；事件 `Anim/SK_Enemy_*.events.json` |
-| 测试 | `plateau-foes`（逐只招式、受击、死亡、带电互动）、`beats-ch4-foes`（节拍条）、EditMode `PlateauFoesTests` |
+| 定义（[Defs] 400–499） | `Enemies/Defs/Plateau/Enemy_{Marmot,Tiangou,Aoyin,Leiyak,Jufu,Manman,Liangu,Dijiang,Qiongqi}.cs`，id 与网页一致：`marmot tiangou aoyin leiyak jufu manman liangu dijiang qiongqi`（雷牦 = 獓狠模型 ×0.72，同一个 `AoyinAI`） |
+| 底座 | `Enemies/AI/Plateau/PlateauEnemyAI.cs`：招式时间轴（`PlateauKit.cs` 的 `PlateauMoveRunner`，动画事件先到先出 + 时间兜底）、受击四层（覆写 F 的入口）、带电、四种死法、兽群警觉；释放帧局部顿帧 `ImpactHold` 让 Animator 和时间轴一起放慢 |
+| 每只的 AI | `Enemies/AI/Plateau/{Marmot,Tiangou,Aoyin,Jufu,Manman,Liangu,Dijiang,Qiongqi}AI.cs`；啸獭电网 `MarmotNet`、举父电场 `JufuStormField`、连鼓灵骨槌曲线 `LianguKeys.cs`（脚本生成）；兽群 / 出手名额 `PlateauPack`、几何 `PlateauGeo` |
+| 特效 | `Fx/Fx.Plateau.cs`：`PlateauPalette`、三层雷刃 `PlateauBolt / Arc / SkyBolt`（`PlateauBoltFx` 池化网格）、贴地主形 `PlateauSigil / Field / Shadow / Scorch`（`PlateauShape`，带靛紫暗衬）、月牙 `PlateauCrescent / Claw`、雷球 `PlateauOrb`、`PlateauBallLightning / Scream / FaceFlash / Glint / Crackle / ArcRing / Dirt / Feathers / FurFlame / Sparks`，延时序列 `PlateauFxSeq`；全部过 `FxBudget` |
+| 动作 | 采样 `scripts/unity/bake/SK_Enemy_*.mjs`（`_plateau.mjs`）；手 K `art/source/characters/SK_Enemy_*/anim/*_anims.py`（共用 `_plateau/plateau_keys.py`）→ `Anim/Keyframed/*.fbx`；事件 `Anim/SK_Enemy_*.events.json` |
+| 测试 | `plateau-foes`（逐只招式、受击、死亡、带电互动、动画事件对时间轴误差）、`beats-ch4-foes`（节拍条）、EditMode `PlateauFoesTests`、`RegistryTests`（分章核对敌人数） |
 | 对比图 | `docs/art/review/ch4-port/E/`：网页（`review/ch4-combat/foe-*.jpg`）对 Unity 节拍条 |
 
-## 11. F 路接口（转接层）
+## 11. F 路接口（直接用，没有另起转接层）
 
-| 契约 | F 落地前（本地实现） | F 落地后 |
-|---|---|---|
-| 带电 `Charge.Apply / IsCharged / Arc` | `PlateauHooks.Charge`：挂雷殛（EnemyStatus 的 Shock，燎的火照样焚雷）+ 本地计时；连锁用雷刃画 + 给目标挂带电 | 只改转接层，调 `Charge.*` |
-| 落雷 `LightningStrike.Strike` + `Conductor` | `PlateauHooks.Strike`：本地预警 + 落雷 + 判定，不引雷 | 调 F 的落雷（导体引雷、溅电） |
-| 受击四层（EnemyDef 韧性、EnemyAI 的硬直 / 眩晕入口） | `PlateauEnemyAI` 自己累计韧性、调自己的 `OnStagger` | 改成覆写 F 的入口，不另起状态机 |
-| 高原雷暴（举父雷石、穷奇主动找人） | `PlateauHooks.Storm`：读 `WeatherDirector` 的雷暴相位（没有就当无雷暴） | 读 F 的高原雷暴 |
+| 契约 | 用法 |
+|---|---|
+| 带电 `Charge.Apply / Hold / IsCharged / Arc` | 常驻带电（成对蛮蛮、雷心、攒了电的雷球）用 `Charge.Hold`；出生 / 钻地中不可选中时拿不到，`HoldCharge()` 返回空、下一帧再拿；带电死亡放电走 `Charge.Arc` |
+| 落雷 `LightningStrike.Strike` + `Landed` | 天狗雷标定格后调 F 的落雷（F 画正红危险填充 + 紫红雷标环；落点 3 m 内的天狗衔雷带电） |
+| 预警 `TelegraphTone.Thunder` | 只当紫红身份层（蛮蛮走廊中线、雷暴里举父落点外沿）；挨打范围一律 `TelegraphTone.Danger` |
+| 受击四层（`EnemyDef.poise / staggerSeconds / hitch`、`Poise` 组件、`HitStagger / HitStun / Hitch`） | `PlateauEnemyAI` 只覆写 `SuperArmor / OnHitStagger / OnHitStaggerEnd / OnHitStun`，不另起状态机 |
+| 高原雷暴 `PlateauStorm.Level` | 举父雷石留电场、穷奇主动找人；测试用 `PlateauEnemyAI.StormOverride` 固定 |
 
-## 12. 实测（实现后回填）
+## 12. 实测
 
-见第 13 节（实现后补：节拍条对齐误差、性能、试玩套件结果）。
+**招式对时**（`plateau-foes`：每个动画事件量它到达时和招式时间轴的差，超过一帧不合格；一帧按那一刻 / 起手那一刻的实际帧长算，平常 1/30 s）：
+76 次，平常帧里最大 27 ms；唯一超过 1/30 s 的一次是 68 ms，发生在 93 ms 的尖峰帧上（举父远投 release）。
+修之前两处超标：释放帧顿帧只顿 Animator 不顿时间轴，时间兜底先出手、片段同名事件晚到 60 ms（獓狠挑 / 踩踏 / 砸地、天狗、举父、啸獭的释放帧都有顿帧）；
+举父远投收招片段早到 63 ms（出招中 AI 停摆、Animator 照走）。两处都改成 Animator 跟时间轴同步（第 0.3 节第 3 条）；
+顿帧从开顿的下一帧起两边一起放慢（开顿那帧就放慢 Animator 的话，碰上 100 ms 尖峰帧片段落后 95 ms，雷牦左挑实测 140 ms）。
+
+**节拍条**（`beats-ch4-foes`，16 招 89 张）：15 招释放帧由时间轴先到、差 1–6 ms（那一帧 6–12 ms）；穷奇翼刃雷旋是动画事件先到 43 ms（精英的 Animator 归 EliteStrike，蓄力顿住后追帧）。
+节拍条读数里的「差」会被拍照本身的尖峰帧放大（渲染 + 读回 + 存 jpg），所以每张同时记「那一帧」多长；对时以 `plateau-foes` 为准。
+拍法：刷出来等 1.2 s，同一帧「打断它自己在出的招 → 站到正前方 → 唤醒 → 强制出招」，只认这一招的释放事件
+（第一版先唤醒再等它空下来，AI 会先自己出一招，踩踏把獓狠带到场边，释放帧拍成了上一招的）。测试场中央的红色圆台是场景自带的刷怪台（Spawn Pad，直径 7 m），不是预警。
+
+**试玩套件**：`plateau-foes` 全部通过（九种逐招、受击四层、四种死法、带电互动、帝江击杀归属，反应 Thunderfire ×2 / 传电 4 次 / 落雷 3 道）；
+`beats-ch4-foes` 全部通过；`arena` 全部通过（连鼓灵占位体开火 8.4 s 被武器打死、帝江球雷自爆退场）；回归 `desert` `frost` `inferno` `fx` `fx-style` `telegraph-look` 全部通过。
+EditMode 全量 878 条全过（含 `PlateauFoesTests`、分章核对敌人数的 `RegistryTests`、试玩后单跑也稳定的 `EncounterTests`）。
+
+**对比图**：`docs/art/review/ch4-port/E/compare-<种类>.jpg`（上：网页审阅图；下：Unity 节拍条）、`keyposes-<种类>.jpg`（手 K 关键姿势侧视 / 3/4 视）。
+
+**性能**（`perf-fx`，编辑器内同机，主线程平均 ms；基准 = 第四章移植开工前 10-31 13:32）：
+
+| 场景 | 基准 | 现在 | 变化 |
+|---|---|---|---|
+| 空场 · 高 | 4.06 | 3.89 | −4% |
+| 空场 · 低 | 3.56 | 3.71 | +4% |
+| 压力 · 高 | 7.12 | 7.66 | +8% |
+| 压力 · 高（复测） | 7.04 | 7.26 | +3% |
+| 压力 · 低 | 6.40 | 7.23 | +13% |
+| 压力 · 高 + 藏 HUD | 6.40 | 6.39 | 0% |
+
+perf-fx 的场景里没有第四章雷魅，E 路的脚本一个实例都不生成（`Fx.Plateau` 的池子按需建），这部分涨幅不是这里的：
+分段里涨的是 ScriptRunBehaviourUpdate（+0.13）、LateUpdate（+0.14）、UI 重绘（+0.17）、BeginCameraRendering（+0.15）和等渲染线程，
+同期别的路线（第四章地基、精英可读性、第一人称渲染）都改过这些；测的时候机器上还有别的代理在编译（CPU 占用约 40%，前一次测到压力 · 高复测 13 ms，作废）。
+雷魅同场的帧时还没有单独做压力测（perf-fx 不含第四章敌人）；`plateau-foes` 只顺带记了对时那一刻的帧长：76 次里 1 次是 93 ms 的尖峰帧，其余都在 1/30 s 内。
