@@ -1042,7 +1042,7 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 神范台领主战：首领场地（矩形，x 108–196、z 120–208；只给 boss_warlord）、熔铜渠（会漫的那 9 片熔岩）、首领关流程（目标完成前关着）、
-        /// 两扇熔铁闸（白盒，开战时从闸前桥、东铸北桥的桥头升起封住，结算后落回去；场景里关着，不挡导航烘焙）、清关宝箱落点、出口点（神范前）
+        /// 南侧入场触发区（前庭虽然在场地西北，但不会提前开战）、两扇熔铁闸（白盒，开战时从闸前桥、东铸北桥的桥头升起封住，结算后落回去；场景里关着，不挡导航烘焙）、清关宝箱落点、出口点（神范前）
         /// </summary>
         static Lord BuildLord(LevelKit.TerrainSet set, Transform markers, LevelObjective objective, List<Vector2> covers, List<LavaVolume> surge)
         {
@@ -1113,6 +1113,13 @@ namespace Spiritfire.Art.Editor.Levels
             enc.bossId = BossId;
             enc.arena = arena;
             enc.difficulty = 0;
+            var entryTrigger = new GameObject("Lord Threshold · 西南入场区").transform;
+            entryTrigger.SetParent(markers, false);
+            entryTrigger.position = G(new Vector2(156, 138), 2f);
+            var threshold = entryTrigger.gameObject.AddComponent<BoxCollider>();
+            threshold.isTrigger = true;
+            threshold.size = new Vector3(80, 6, 36);
+            enc.threshold = threshold;
             enc.thresholdInset = 2f;
             enc.gates = gates;
             enc.warnSeconds = 2.5f;
@@ -1146,7 +1153,7 @@ namespace Spiritfire.Art.Editor.Levels
             Near("中央铸床床面", Y(new Vector2(84, 66)), 0, 0.3f);
             Near("东铸床床面", Y(new Vector2(160, 40)), 0, 0.3f);
             Near("鼓风正殿地面", Y(new Vector2(48, 141)), 0, 0.3f);
-            Near("神范台床面", Y(new Vector2(130, 186)), 0, 0.05f);
+            Near("神范台床面", Y(new Vector2(118, 176)), 0, 0.05f);
             foreach (var pl in Platforms) Near($"{pl.name}台顶", Y(pl.Center + new Vector2(0.5f, 0.5f)), pl.h, 0.35f);
             foreach (var c in Channels)
             {

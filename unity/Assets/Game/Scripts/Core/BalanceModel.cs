@@ -121,8 +121,8 @@ namespace Spiritfire.Game
                 S("lantern_jelly", 3), S("frost_crab", 1)),
             new("3-1", 1, 0, 1, S("tuo", 1), S("tantong", 21), S("huodou", 10), S("mamian", 5, 1), S("fire_crow", 7), S("firecracker", 4, 1), S("bifang", 3)),
             new("3-2", 1, 1, 1, S("firecracker", 4), S("tantong", 20), S("mamian", 6, 1), S("huodou", 10), S("bifang", 2), S("fire_crow", 6), S("iron_ox", 1, 1)),
-            new("3-3", 1, 0, 1, S("tuo", 1), S("tantong", 20), S("firecracker", 4), S("mamian", 2), S("founder", 1), S("bifang", 1), S("huodou", 4), S("nuo", 1), S("fire_crow", 3),
-                S("iron_ox", 2, 1)),
+            new("3-3", 1, 0, 1, S("mamian", 3, 1), S("nuo", 2), S("tantong", 22), S("fire_crow", 5), S("firecracker", 5), S("iron_ox", 2, 1), S("tuo", 1), S("huodou", 4), S("founder", 1),
+                S("bifang", 1)),
             new("4-1", 0, 0, 1, S("aoyin", 2), S("leiyak", 3), S("jufu", 5), S("marmot", 10), S("manman", 3), S("liangu", 3), S("tiangou", 10), S("dijiang", 7)),
             new("4-2", 1, 1, 1, S("jufu", 4), S("tiangou", 10), S("liangu", 3), S("manman", 4), S("dijiang", 6), S("aoyin", 1), S("leiyak", 2), S("marmot", 6)),
         };

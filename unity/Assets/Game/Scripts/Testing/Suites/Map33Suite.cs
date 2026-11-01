@@ -21,7 +21,7 @@ namespace Spiritfire.Game.Testing
     ///      每处 150 s 内肃清，肃清后场地宝箱要出现（不开）。
     ///   3. 必清全部肃清 → 目标完成 → 领主战解锁（BossEncounter 启用）。
     ///   4. 风闸台的炉工私藏：发现 → 按 F → 宝箱出现（无人看守）。
-    ///   5. 领主战：沿桥走进神范台 → 熔铁闸升起封桥 → 熔心魔将登场（BS6 之前没有首领定义时 BossEncounter 直接结算）→ 冒烟里直接打死（招式、阶段由 boss-warlord 套件验）
+    ///   5. 领主战：前庭期间不得提前开战；沿桥到西南入场区 → 熔铁闸升起封桥 → 熔心魔将登场 → 冒烟里直接打死（招式、阶段由 boss-warlord 套件验）
     ///      → 结算：首领宝箱、回满、熔铁闸落下、神范前的清关宝箱（RunPlan 3-3：秘卷）、出口升起。
     ///   6. 走到神范前的出口按 F → 本关结算（下一关 3-4）。
     /// 走路的 NavMesh 路径不完整、卡住过多都记不合格；运行时报错由宿主记不合格（PlaytestRunner）。
@@ -529,6 +529,8 @@ namespace Spiritfire.Game.Testing
         /// <summary>沿桥走进神范台 → 封门 → 登场 → 打死（冒烟只验流程）→ 结算：首领宝箱、回满、熔铁闸落下、清关宝箱、出口</summary>
         IEnumerator LordCase(BossEncounter enc, FoundryLordGate lordGate, FoundryChannels channels)
         {
+            Line($"进入领主战流程前：{enc.State}，首领 {(enc.Boss ? "已生成" : "未生成")}");
+            if (enc.State != BossEncounter.Phase.Waiting || enc.Boss) Fail("神范前庭期间魔将提前开战（前庭应在入场触发区之外）");
             EnemyRegistry.PurgeAll();
             vitals.Heal(99999);
             var entry = enc.arena.PlayerEntryPoint;
@@ -546,7 +548,7 @@ namespace Spiritfire.Game.Testing
             float s0 = Time.time;
             while (enc.State == BossEncounter.Phase.Warning && Time.time - s0 < enc.warnSeconds + 3f) yield return null;
             var boss = enc.Boss;
-            if (!boss) Line($"首领 {enc.bossId} 没有生成（BS6 之前没有首领定义：BossEncounter 直接结算），状态 {enc.State}");
+            if (!boss) Fail($"首领 {enc.bossId} 没有生成，状态 {enc.State}（3-3 必须真正打一场魔将）");
             else
             {
                 Line($"登场：{boss.Title}（{boss.Subtitle}），{boss.Health.maxHealth:F0} 生命 + {boss.Health.maxShield:F0} 护盾 + {boss.Health.maxArmor:F0} 护甲，模型 {boss.Model?.source} {boss.Model?.prefab}");

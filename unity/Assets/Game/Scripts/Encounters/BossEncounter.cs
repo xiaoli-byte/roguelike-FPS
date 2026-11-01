@@ -138,6 +138,18 @@ namespace Spiritfire.Game
             }
         }
 
+        /// <summary>试玩套件重置本场状态（历史「已击败」标记由套件清除），不改变正式流程</summary>
+        public void ResetForTests()
+        {
+            State = Phase.Waiting;
+            Boss = null;
+            cleaned = essenceGiven = false;
+            gatesUp = false;
+            EnsureGateRest();
+            foreach (var g in gates ?? Array.Empty<GameObject>())
+                if (g) g.SetActive(false);
+        }
+
         /// <summary>开战（门槛触发；测试 / 剧本可以直接调）。只在等待中有效</summary>
         public void Begin()
         {
