@@ -9,13 +9,13 @@ namespace Spiritfire.Game.Testing
 {
     /// <summary>
     /// 4-1 折多垭口·天路草甸整图冒烟（bridge.sh playtest map-4-1；docs/level-design/maps/4-1.md §10）：
-    ///   · 静态：灵火坛 6 座、要点亮 3 座；7 处遇敌都是可选场地；3 个领主擂台（夔 / 飞廉 / 化蛇）各有 BossArena 与 BossEncounter；出口开局关着；
-    ///     没有空气墙（Ignore Raycast 层的实体碰撞体只在兜底环上）；
+    ///   · 静态：灵火坛 6 座、要点亮 3 座；7 处遇敌都是可选场地；3 个领主擂台（夔 / 飞廉 / 化蛇）各有 BossArena 与 BossEncounter（开着、据点模式、
+    ///     点亮本据点的灵火坛，门槛归 ZheduoLevel）；出口开局关着；没有空气墙（Ignore Raycast 层的实体碰撞体只在兜底环上）；
     ///   · 走天路：从出生点沿天路标记（Route_Road_*，构建器每 15 m 摆一个）用角色控制器逐帧走到垭口（不瞬移，卡住 1.5 s 才跳点并记一次），
     ///     路上关掉场地的自动触发（只测路）；量用时、爬升、卡住次数；
     ///   · 点灵火：① 碉楼寨 ② 白塔溪谷 ③ 牧民营地——开战、清场（补刀：地图冒烟不测平衡）、站到灵火坛前按住交互点亮；三处点亮后目标完成、出口升起；
     ///   · 软边界：往盆地外五个方向（北、东、南、西、西南）从界内 8 m 处冲出去 5 s，再松手 2.5 s：最远只到起风线外几米、最后被推回起风线以内，没有撞墙。
-    /// 玩家全程无敌。
+    /// 玩家全程无敌；走路、点灵火、冲边界时三个领主据点的首领流程先关着（领主战另有 map-4-1-lords），记下天路穿过了哪几处领主门槛。
     /// </summary>
     public sealed class Map41Suite : PlaytestSuite
     {
@@ -78,10 +78,13 @@ namespace Spiritfire.Game.Testing
             }
             float t0 = Time.time;
             StaticChecks(portal, objective, altars, sites);
+            var lords = FindObjectsByType<BossEncounter>().ToDictionary(e => e, e => e.enabled);
+            foreach (var e in lords.Keys) e.enabled = false;
             yield return NoAirWall();
             yield return WalkTianlu(sites);
             yield return LightThree(altars, objective, portal);
             yield return Boundary();
+            foreach (var kv in lords) kv.Key.enabled = kv.Value;
             Line($"合计用时 {Time.time - t0:F0} s，卡住跳点 {stalls} 次");
             if (stalls >= 6) Fail($"机器人走路卡住 {stalls} 次（地形 / 碰撞和路线对不上：看上面的位置）");
         }
@@ -96,9 +99,16 @@ namespace Spiritfire.Game.Testing
             if (sites.Length != 7 || objective.RequiredTotal != 0 || sites.Any(s => !s.optional)) Fail("遇敌应 7 处、都是可选场地（目标只看灵火）");
             var arenas = FindObjectsByType<BossArena>();
             var ids = arenas.Select(a => a.bossId).OrderBy(x => x).ToArray();
-            Line($"领主擂台：{string.Join("、", ids)}；首领流程 {FindObjectsByType<BossEncounter>(FindObjectsInactive.Include).Length} 个");
+            var encs = FindObjectsByType<BossEncounter>(FindObjectsInactive.Include);
+            var level = FindAnyObjectByType<ZheduoLevel>();
+            Line($"领主擂台：{string.Join("、", ids)}；首领流程 {encs.Length} 个（据点模式 {encs.Count(e => e.enabled && e.stronghold)}），ZheduoLevel 门槛 {level?.strongholds.Length ?? 0} 个");
             foreach (var id in new[] { "boss_feilian", "boss_huashe", "boss_kui" })
+            {
                 if (!ids.Contains(id)) Fail($"没有 {id} 的 BossArena");
+                var e = encs.FirstOrDefault(x => x.bossId == id);
+                if (!e || !e.enabled || !e.stronghold || !e.altar || e.altar.guard) Fail($"{id} 的 BossEncounter 应开着、据点模式、点亮本据点不挂守卫的灵火坛");
+                else if (!level || !level.strongholds.Any(sh => sh != null && sh.encounter == e && sh.center)) Fail($"{id} 的门槛没接到 ZheduoLevel");
+            }
             var stage = RunPlan.ForScene(portal.gameObject.scene.path);
             Line($"本关 {stage?.Label ?? "（RunPlan 里还没有 4-1）"}；出口开局 {(portal.IsOpen ? "开着" : "关着")}");
             if (portal.IsOpen) Fail("开局出口就开着（灵火没点够）");
@@ -161,6 +171,16 @@ namespace Spiritfire.Game.Testing
             }
             var auto = sites.ToDictionary(s => s, s => s.autoTrigger);
             foreach (var s in sites) s.autoTrigger = false;
+            // 天路穿过哪几处领主门槛（真玩时走天路会在这里开打）
+            var zl = FindAnyObjectByType<ZheduoLevel>();
+            if (zl)
+                foreach (var sh in zl.strongholds)
+                {
+                    if (sh == null || !sh.encounter) continue;
+                    int inside = marks.Count(m => sh.Contains(m + Vector3.up * 0.1f));
+                    float near = marks.Min(m => Flat(m - sh.center.position));
+                    Line($"  天路离 {sh.encounter.Def?.name ?? sh.encounter.bossId} 门槛圆心最近 {near:F0} m（门槛 {sh.radius:F0} m）{(inside > 0 ? $"，{inside} 个标记在门槛里" : "，不进门槛")}");
+                }
             Teleport(motor, marks[0]);
             yield return new WaitForSeconds(0.5f);
             float t0 = Time.time, walked = 0, lowest = motor.transform.position.y, highest = lowest;

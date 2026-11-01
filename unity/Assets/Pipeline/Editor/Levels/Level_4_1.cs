@@ -16,8 +16,8 @@ namespace Spiritfire.Art.Editor.Levels
     /// 4-1 折多垭口·天路草甸（docs/level-design/maps/4-1.md；docs/level-design/chuanzang-v1.md 第 2 节；docs/unity-ch4-port.md M1）：
     /// 网页 src/world/plateau/ 的开放盆地移植。关卡坐标 = 世界 XZ（米；x 向东、z 向北），网页 z 向南，换算一律 Unity (x, z) = 网页 (x, −z)，高程不变。
     ///   盆地约 620 × 510 m，地形 768 × 768 m（3 × 3 块，0.5 m 格），高度场是网页 terrain.ts 的逐式移植（Level_4_1.Field.cs）；
-    ///   出生 · 道班 (−262, −214) → 6 个据点任意顺序：① 碉楼寨 ② 白塔溪谷 ③ 牧民营地（清守卫后点灵火）、④ 圣湖 ⑤ 冰川口 ⑥ 经幡山头（领主据点）
-    ///   → 点亮任意 3 处灵火，⑦ 垭口经幡门 (272, 187) 里的出口升起。
+    ///   出生 · 道班 (−262, −214) → 6 个据点任意顺序：① 碉楼寨 ② 白塔溪谷 ③ 牧民营地（清守卫后点灵火）、④ 圣湖 ⑤ 冰川口 ⑥ 经幡山头
+    ///   （领主据点：化蛇 / 飞廉 / 夔，BossEncounter 据点模式，打败领主自动点亮灵火）→ 点亮任意 3 处灵火，⑦ 垭口经幡门 (272, 187) 里的出口升起。
     /// 边界（没有空气墙）：离盆地轮廓 24 m 起风雪软边界（冰原主题白化），环山主坡挡在外面。
     /// 第四章场景件只有夔的残鼓有模型，其余地标都是带 Placeholder 标签的白盒（Level_4_1.Landmarks.cs，资产 id 见 maps/4-1.md 第 9 节）。
     /// 生成：Spiritfire ▸ Levels ▸ Build 4-1 折多垭口（或 bridge.sh level 4-1）。冒烟：bridge.sh playtest map-4-1（Map41Suite）。
@@ -236,7 +236,7 @@ namespace Spiritfire.Art.Editor.Levels
                 var altars = BuildAltars(markers, sites);
                 var objective = BuildObjective(markers, sites, altars);
                 var lords = BuildLords(markers, sites, altars, water);
-                BuildWindAndRoamer(markers, sites);
+                BuildWindAndRoamer(markers, sites, lords);
                 var portal = BuildExit(markers, objective);
                 BuildMarkers(markers);
 
@@ -338,7 +338,9 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.EnsureWorldMaterials();
             var mat = AssetDatabase.LoadAssetAtPath<Material>($"{LevelKit.WorldMaterialDir}/{WorldMaterials.AssetName(WorldMaterialKind.Water)}.mat");
             var w = new Water();
-            WaterVolume Lake(string name, int n)
+            // 圣湖的水体盒子水平尺寸正好是湖的椭圆（2 rx × 2 rz，朝向 = 网页 rot）：化蛇（B1 HuasheLake）拿它当湖的椭圆，游线 = 椭圆 × 0.62（网页 swimPos）；
+            // 椭圆外的盒角都在湖岸地面下面（湖岸 r > 1 的地面高于水面），水只在湖里。冰湖不读，照旧放宽到 2.3 倍
+            WaterVolume Lake(string name, int n, double span)
             {
                 var L = Lakes[n];
                 double level = field.lakeLevel[n];
@@ -347,12 +349,12 @@ namespace Spiritfire.Art.Editor.Levels
                 block.transform.SetParent(world, false);
                 var c = U(L.x, L.z);
                 block.transform.SetPositionAndRotation(new Vector3(c.x, 0, c.y), Quaternion.Euler(0, (float)(L.rot * Mathf.Rad2Deg), 0));
-                block.transform.localScale = new Vector3((float)(L.rx * 2.3), 1, (float)(L.rz * 2.3));
+                block.transform.localScale = new Vector3((float)(L.rx * span), 1, (float)(L.rz * span));
                 float depth = (float)L.depth + 1.5f;
                 return LevelKit.WaterBody(block, (float)level - depth, depth);
             }
-            w.holyLake = Lake("Water_HolyLake", 0);
-            w.glacialLake = Lake("Water_GlacialLake", 1);
+            w.holyLake = Lake("Water_HolyLake", 0, 2.0);
+            w.glacialLake = Lake("Water_GlacialLake", 1, 2.3);
 
             var river = new GameObject("Water_GlacialRiver · 冰川河").transform;
             river.SetParent(world, false);
@@ -575,7 +577,13 @@ namespace Spiritfire.Art.Editor.Levels
             return result;
         }
 
-        /// <summary>六座灵火坛（SpiritAltar：守卫肃清前点不着，按住 1.2 s 点亮，点亮回满血 + 复活点），面朝据点中心</summary>
+        /// <summary>领主据点（④ 化蛇 ⑤ 飞廉 ⑥ 夔）：灵火坛只由领主点亮，岸上 / 坡上的兽群是可选遇敌，不当守卫</summary>
+        static readonly HashSet<string> LordSites = new() { "s4", "s5", "s6" };
+
+        /// <summary>
+        /// 六座灵火坛（SpiritAltar：按住 1.2 s 点亮，点亮回满血 + 复活点），面朝据点中心。
+        /// ①②③ 守卫肃清前点不着；④⑤⑥ 不挂守卫，由 ZheduoLevel 封着（打败领主、据点结算时 BossEncounter 点亮）
+        /// </summary>
         static Dictionary<string, SpiritAltar> BuildAltars(Transform markers, Dictionary<string, EncounterSite> sites)
         {
             var root = new GameObject("Spirit Altars · 灵火坛").transform;
@@ -591,7 +599,7 @@ namespace Spiritfire.Art.Editor.Levels
                 alt.transform.SetParent(root, false);
                 alt.transform.SetPositionAndRotation(at, Quaternion.LookRotation(new Vector3(face.x, 0, face.y).normalized));
                 alt.title = $"灵火坛 · {s.name}";
-                alt.guard = sites.TryGetValue(s.id, out var g) ? g : null;
+                alt.guard = !LordSites.Contains(s.id) && sites.TryGetValue(s.id, out var g) ? g : null;
                 alt.lightOnGuardCleared = false;
                 // 四根小石柱挂竖幡（网页 altar 的四角）：只做外观，不挡交互
                 var posts = LevelKit.PlateauPiece(Dir, IdAltarPosts, "altarPosts", alt.transform, at, alt.transform.eulerAngles.y, 0, b =>
@@ -636,6 +644,25 @@ namespace Spiritfire.Art.Editor.Levels
             public SpiritAltar altar;
             public GameObject drum;
             public int ridges, boulders, covers;
+            /// <summary>门槛（ZheduoLevel 判）：圆心、半径、脚的高度范围</summary>
+            public Transform thresholdCenter;
+            public float thresholdRadius, minY, maxY;
+        }
+
+        /// <summary>门槛圆里地面的最低 / 最高（每 2 m 一圈、每圈 36 个点）</summary>
+        static (float lo, float hi) GroundRange(Vector3 center, float radius)
+        {
+            float lo = float.MaxValue, hi = float.MinValue;
+            var c = new Vector2(center.x, center.z);
+            for (float r = 0; r <= radius + 0.01f; r += 2f)
+            for (int i = 0; i < (r < 0.1f ? 1 : 36); i++)
+            {
+                float a = i * Mathf.PI * 2 / 36;
+                float y = GroundY(c + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r);
+                lo = Mathf.Min(lo, y);
+                hi = Mathf.Max(hi, y);
+            }
+            return (lo, hi);
         }
 
         static Transform Point(Transform root, string name, Vector3 pos, Vector3 facing)
@@ -662,7 +689,10 @@ namespace Spiritfire.Art.Editor.Levels
                 a.radius = radius;
                 return a;
             }
-            BossEncounter Encounter(string id, string label, BossArena arena, Collider threshold, float inset, string warn, SpiritAltar altar)
+            // 据点模式（B1 b4fc36b2）：倒下 → 死亡演出放完 → 点亮本据点的灵火坛、出「X · 平息」横幅，不立出口（出口归 LevelObjective 的灵火计数）。
+            // 门槛由 ZheduoLevel 按圆判（Lord.threshold*）：BossEncounter 自己的触发体按包围盒判（球会变成方块），场地内缩判法以场地中心为圆心
+            // （夔的门槛圆心在残鼓、不在拉则），所以把它自己的门槛关掉——不给触发体、内缩大于场地半径
+            BossEncounter Encounter(string id, string label, BossArena arena, string warn, SpiritAltar altar)
             {
                 var go = new GameObject($"Boss Encounter · {label}");
                 go.transform.SetParent(markers, false);
@@ -671,15 +701,25 @@ namespace Spiritfire.Art.Editor.Levels
                 enc.bossId = id;
                 enc.arena = arena;
                 enc.difficulty = 0;
-                enc.threshold = threshold;
-                enc.thresholdInset = inset;
+                enc.threshold = null;
+                enc.thresholdInset = arena.radius + 1f;
                 enc.warnSeconds = 2.5f;
                 enc.warnText = warn;
                 enc.tetherSlack = 30f;
                 enc.rewardPoint = altar ? Point(go.transform, "Lord Reward", altar.transform.position + altar.transform.forward * 3f, -altar.transform.forward) : null;
-                // B1 的据点模式（stronghold / altar）合进来之前关着：开着的话打赢会直接开出口（BossEncounter 的老流程是首领关）
-                enc.enabled = false;
+                enc.stronghold = true;
+                enc.altar = altar;
+                enc.enabled = true;
                 return enc;
+            }
+            Lord Threshold(Lord l, Transform center, float radius)
+            {
+                var (lo, hi) = GroundRange(center.position, radius);
+                l.thresholdCenter = center;
+                l.thresholdRadius = radius;
+                l.minY = lo - 3f;
+                l.maxY = hi + 5f;
+                return l;
             }
             void Edges(BossArena a, float r)
             {
@@ -734,17 +774,13 @@ namespace Spiritfire.Art.Editor.Levels
                     }
                 }
                 else Debug.LogWarning($"[Level] 4-1 缺少 {KuiDrumId}");
-                // 门槛：残鼓 22 m 内（触发球，不进导航烘焙、不挡视线）
-                var th = new GameObject("Threshold · 残鼓 22 m") { layer = 2 };
-                th.transform.SetParent(arena.transform, false);
-                th.transform.position = G(drumXZ);
-                var sc = th.AddComponent<SphereCollider>();
-                sc.isTrigger = true;
-                sc.radius = 22;
-                th.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
+                // 门槛：残鼓 22 m 内（圆心标记，ZheduoLevel 判）
+                var th = new GameObject("Threshold · 残鼓 22 m").transform;
+                th.SetParent(arena.transform, false);
+                th.position = G(drumXZ);
                 altars.TryGetValue("s6", out var alt);
-                var enc = Encounter("boss_kui", "夔", arena, sc, 2, "乌云从经幡山头压了过来——残鼓在震！", alt);
-                list.Add(new Lord { id = "boss_kui", name = "夔", arena = arena, encounter = enc, altar = alt, drum = drum });
+                var enc = Encounter("boss_kui", "夔", arena, "乌云从经幡山头压了过来——残鼓在震！", alt);
+                list.Add(Threshold(new Lord { id = "boss_kui", name = "夔", arena = arena, encounter = enc, altar = alt, drum = drum }, th, 22));
             }
 
             // ── 飞廉 · ⑤ 冰川口：冰舌顶 34 m，风涡柱在擂台中心；风蚀冰脊 / 冰碛巨石（碰撞体名 IceRidge_* / Boulder_*）+ 背风面掩体点 ──
@@ -789,8 +825,10 @@ namespace Spiritfire.Art.Editor.Levels
                 arena.coverPoints = covers.ToArray();
                 Edges(arena, 31);
                 altars.TryGetValue("s5", out var alt);
-                var enc = Encounter("boss_feilian", "飞廉", arena, null, 2, "冰舌顶上的风涡收紧了——风伯飞廉！", alt);
-                list.Add(new Lord { id = "boss_feilian", name = "飞廉", arena = arena, encounter = enc, altar = alt, ridges = k, boulders = nb, covers = covers.Count });
+                var enc = Encounter("boss_feilian", "飞廉", arena, "冰舌顶上的风涡收紧了——风伯飞廉！", alt);
+                // 门槛：上到冰舌顶 32 m 内（场地 34 m 往里 2 m）
+                list.Add(Threshold(new Lord { id = "boss_feilian", name = "飞廉", arena = arena, encounter = enc, altar = alt, ridges = k, boulders = nb, covers = covers.Count },
+                    arena.transform, arena.radius - 2));
             }
 
             // ── 化蛇 · ④ 圣湖海子：湖面 + 一圈湖岸 52 m；场地中心取在湖面高度 ──
@@ -815,14 +853,16 @@ namespace Spiritfire.Art.Editor.Levels
                 arena.coverPoints = covers.ToArray();
                 Edges(arena, 50);
                 altars.TryGetValue("s4", out var alt);
-                var enc = Encounter("boss_huashe", "化蛇", arena, null, 2, "圣湖的水面起了涟漪，一道长长的黑影在水下游过……", alt);
-                list.Add(new Lord { id = "boss_huashe", name = "化蛇", arena = arena, encounter = enc, altar = alt, covers = covers.Count });
+                var enc = Encounter("boss_huashe", "化蛇", arena, "圣湖的水面起了涟漪，一道长长的黑影在水下游过……", alt);
+                // 门槛：走进湖岸擂台（场地 52 m 往里 2 m）
+                list.Add(Threshold(new Lord { id = "boss_huashe", name = "化蛇", arena = arena, encounter = enc, altar = alt, covers = covers.Count },
+                    arena.transform, arena.radius - 2));
             }
             return list;
         }
 
         /// <summary>风场锚点（WindField 是静态的，飞廉的吸引点由 B1 运行时加，这里留位置）+ 穷奇巡视线（E 路的穷奇 AI 读这些标记）</summary>
-        static void BuildWindAndRoamer(Transform markers, Dictionary<string, EncounterSite> sites)
+        static void BuildWindAndRoamer(Transform markers, Dictionary<string, EncounterSite> sites, List<Lord> lords)
         {
             var wind = new GameObject("WindField_Attractor · 飞廉");
             wind.transform.SetParent(markers, false);
@@ -863,6 +903,11 @@ namespace Spiritfire.Art.Editor.Levels
                 holes.Add(new ZheduoLevel.Burrows { site = sites[siteId], holes = list.ToArray() });
             }
             level.burrows = holes.ToArray();
+            // 三处领主据点：门槛（圆）+ 灵火坛封着
+            level.strongholds = lords.Select(l => new ZheduoLevel.Stronghold
+            {
+                encounter = l.encounter, center = l.thresholdCenter, radius = l.thresholdRadius, minY = l.minY, maxY = l.maxY,
+            }).ToArray();
         }
 
         /// <summary>出口传送门：立在经幡门的两根杆之间（门洞 5.6 × 5.2 m），目标完成（3 处灵火）后升起；下一关读 RunPlan</summary>
@@ -1059,7 +1104,7 @@ namespace Spiritfire.Art.Editor.Levels
 
         static void CheckLords(LevelKit.Report rep, List<Lord> lords)
         {
-            rep.Section("领主擂台（锚点给 B1）");
+            rep.Section("领主据点（锚点给 B1；BossEncounter 据点模式）");
             foreach (var l in lords)
             {
                 var a = l.arena;
@@ -1077,8 +1122,16 @@ namespace Spiritfire.Art.Editor.Levels
                     "boss_feilian" => $"，冰脊 {l.ridges}、巨石 {l.boulders}、掩体点 {l.covers}",
                     _ => $"，掩体点 {l.covers}",
                 };
-                string m = $"{l.name}（{l.id}）：半径 {a.radius:F0} m，灵火坛 {(l.altar ? l.altar.name : "无")}，BossEncounter 开局{(l.encounter.enabled ? "开着" : "关着（等 B1 的据点模式）")}{extra}";
-                if (missing.Count > 0) rep.Fail($"{m}——缺锚点 {string.Join("、", missing)}");
+                var e = l.encounter;
+                string m = $"{l.name}（{l.id}）：半径 {a.radius:F0} m，灵火坛 {(l.altar ? l.altar.name : "无")}，门槛 {l.thresholdCenter?.name} {l.thresholdRadius:F0} m（脚 y {l.minY:F1}…{l.maxY:F1}）{extra}";
+                var bad = new List<string>();
+                if (missing.Count > 0) bad.Add($"缺锚点 {string.Join("、", missing)}");
+                if (!e.enabled || !e.stronghold) bad.Add($"BossEncounter 应开着、据点模式（enabled={e.enabled} stronghold={e.stronghold}）");
+                if (!l.altar || e.altar != l.altar) bad.Add("BossEncounter.altar 不是本据点的灵火坛");
+                else if (l.altar.guard) bad.Add($"{l.altar.title} 还挂着守卫 {l.altar.guard.title}（应只由领主点亮）");
+                if (e.threshold || e.thresholdInset <= a.radius) bad.Add("BossEncounter 自己的门槛没关（门槛由 ZheduoLevel 按圆判）");
+                if (!l.thresholdCenter || l.thresholdRadius <= 0) bad.Add("没有门槛圆");
+                if (bad.Count > 0) rep.Fail($"{m}——{string.Join("；", bad)}");
                 else rep.Line($"✓ {m}");
             }
             var kui = lords.First(l => l.id == "boss_kui");
@@ -1091,6 +1144,20 @@ namespace Spiritfire.Art.Editor.Levels
                 else rep.Line($"✓ {m}");
             }
             else rep.Fail("夔的残鼓（SM_Prop_KuiBrokenDrum）没摆上");
+            var level = Object.FindAnyObjectByType<ZheduoLevel>();
+            int wired = level ? level.strongholds.Count(s => s != null && lords.Any(l => l.encounter == s.encounter && l.thresholdCenter == s.center)) : 0;
+            if (wired != lords.Count) rep.Fail($"ZheduoLevel 的领主据点只接上 {wired} / {lords.Count} 个（门槛、灵火坛封印都在它那里）");
+            else rep.Line($"✓ ZheduoLevel 接上 {wired} 个领主据点：门槛按圆判，灵火坛领主没平前不能手点");
+            // 化蛇读的湖：水体盒子的水平尺寸 = 湖的椭圆（游线 = 椭圆 × 0.62）
+            var hl = lords.First(l => l.id == "boss_huashe").arena.GetComponentsInChildren<WaterVolume>(true).FirstOrDefault(w => w.name.StartsWith("Water_HolyLake"));
+            if (!hl) rep.Fail("化蛇的擂台下面没有 Water_HolyLake");
+            else
+            {
+                var sc = hl.transform.lossyScale;
+                string m = $"圣湖（化蛇读的湖）：椭圆半轴 {sc.x * 0.5f:F1} × {sc.z * 0.5f:F1} m、朝向 {hl.transform.eulerAngles.y:F1}°（网页 {Lakes[0].rx} × {Lakes[0].rz}、{Lakes[0].rot * Mathf.Rad2Deg:F1}°），水面 {hl.Surface:F2}";
+                if (Mathf.Abs(sc.x * 0.5f - (float)Lakes[0].rx) > 0.05f || Mathf.Abs(sc.z * 0.5f - (float)Lakes[0].rz) > 0.05f) rep.Fail(m);
+                else rep.Line($"✓ {m}");
+            }
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；另查本关的件（灵火坛、目标、遭遇、出口），顺带重新生成 GameDatabase</summary>
@@ -1120,6 +1187,8 @@ namespace Spiritfire.Art.Editor.Levels
             if (nArenas != 3 || nEnc != 3) rep.Fail("领主擂台 / 首领流程应各 3 个");
             foreach (var id in new[] { "s1", "s2", "s3" })
                 if (!altars[id].guard || altars[id].guard != sites[id]) rep.Fail($"{altars[id].title} 的守卫不是本据点的遇敌");
+            foreach (var id in LordSites)
+                if (altars[id].guard) rep.Fail($"{altars[id].title} 是领主据点，不该挂守卫（由领主点亮）");
             if (!portal || portal.objective != objective) rep.Fail("出口传送门没接上 LevelObjective");
             else
             {
