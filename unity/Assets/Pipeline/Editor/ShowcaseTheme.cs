@@ -151,10 +151,14 @@ namespace Spiritfire.Art.Editor
 
         /// <summary>
         /// 第四章 · 雪域天路（docs/unity-ch4-port.md；fx-style §2.2 第四章底色）：高原的强日光、深蓝天、青绿草甸、白雪、白墙赭红、五色经幡。
-        /// 关卡构建器 <c>ShowcaseSceneBuilder.BuildLighting(ShowcaseTheme.Plateau, Dir)</c> 生成本关的 VP_Plateau.asset。
-        /// 后处理（2026-10-31 F 路，按前三章的数值体系推定，还没在 4-1 场景里对照截图；第一人称渲染一路改成单遍后处理后统一再对一次）：
-        ///   曝光 −0.3（雪地反光强，同第二章一档）、对比 18（高原空气透、明暗硬）、饱和 +8（草甸、经幡、深蓝天要鲜）、色温 −6（偏冷但不青）、
-        ///   Bloom 0.5 / 阈值 1.0（雪面不糊、只让雷光和灵火发光）、暗角 0.18。
+        /// 4-1 的构建器（LevelKit.PlateauTheme）用它建光照、天空、雾和 VP_Plateau.asset；bridge.sh volumes（LevelVolumes）按它重写 VP_Plateau。
+        /// 光照、天空、雾、地表照 M1 按网页 backdrop.ts 调的值（深蓝天顶、浅色地平线、雾很远——贡嘎在 1 km 外也看得见）。
+        /// 后处理是单遍（枪模和世界同一遍，8ee2a54d 之后）下直接按观感调的：第四章没有两遍时代的「改前」，不拟合、不做第一人称补偿（FirstPersonExposure 全 1）。
+        ///   2026-11-01 F 路用 playtest look-plateau（fp-look 同一套机位：出生、中段远眺、主线两段，第一人称、上半屏去掉枪模区）比了 8 组：
+        ///   构建器原来的本地值（曝光 −0.15、对比 10、饱和 −4、色温 −3）亮度 140、饱和 88，草偏黄绿荧光、白塔和雪顶发白；
+        ///   定下的值：曝光 −0.35、对比 20、饱和 0、色温 −14、色调 +6、暗角 0.18、Bloom 0.45 / 阈值 1.0、提升 / 伽马 / 增益 0——
+        ///   上半屏亮度 134.5、饱和度 115.6、对比度 25.9（参照：1-1 为 101 / 124 / 33，2-1 为 57 / 162 / 24）。色温往冷、色调往品红一点，
+        ///   把草从黄绿拉到青绿、天压成深蓝，雪顶和白墙留住层次；高原比沙寺、霜山都亮一档是有意的（强日光、空气透）。
         /// 不在 <see cref="All"/> 里：展示广场没有第四章的建筑套件（第一期只有夔的残鼓），不生成 Showcase_Plateau
         /// </summary>
         public static readonly ShowcaseTheme Plateau = new()
@@ -166,16 +170,17 @@ namespace Spiritfire.Art.Editor
                 ("SK_Enemy_Aoyin", 0f), ("SK_Enemy_Dijiang", 0.35f),
             },
             armR = "SM_Arms_RedPandaR", armL = "SM_Arms_RedPandaL", boss = "SK_Boss_Kui",
-            // 高原：太阳高而白、天顶深蓝；草甸和雪的反弹让环境光地面一侧偏亮绿灰
-            sunColor = new(1f, 0.97f, 0.92f), sunIntensity = 1.6f, sunEuler = new(48, 210, 0),
-            gradientSky = true, skyTop = new(0.07f, 0.2f, 0.55f), skyHorizon = new(0.62f, 0.76f, 0.92f), skyBottom = new(0.52f, 0.58f, 0.6f), skyExposure = 1.1f,
-            ambientSky = new(0.38f, 0.52f, 0.8f), ambientEquator = new(0.56f, 0.6f, 0.64f), ambientGround = new(0.34f, 0.38f, 0.27f),
-            // 空气稀薄：雾远而淡，偏天蓝（远山贡嘎要看得见）
-            fogColor = new(0.7f, 0.8f, 0.92f), fogStart = 60, fogEnd = 420,
-            fireColor = new(1f, 0.6f, 0.3f), fireIntensity = 5f,
-            postExposure = -0.3f, contrast = 18, saturation = 8, temperature = -6, bloomTint = new(0.94f, 0.96f, 1f),
-            bloomIntensity = 0.5f, bloomThreshold = 1f, vignette = 0.18f,
-            groundA = new(0.34f, 0.46f, 0.22f), groundB = new(0.5f, 0.58f, 0.3f), groundShadowTint = new(0.5f, 0.58f, 0.86f),
+            // 高原（M1 照网页 backdrop.ts / SKY.sunDir）：太阳高而白、天顶深蓝、浅色地平线；草甸和雪的反弹让环境光地面一侧偏亮绿灰
+            sunColor = new(1f, 0.96f, 0.88f), sunIntensity = 1.45f, sunEuler = new(48, 51, 0),
+            gradientSky = true, skyTop = new(0.16f, 0.39f, 0.78f), skyHorizon = new(0.79f, 0.88f, 0.95f), skyBottom = new(0.62f, 0.7f, 0.74f), skyExposure = 1f,
+            ambientSky = new(0.46f, 0.58f, 0.82f), ambientEquator = new(0.62f, 0.68f, 0.72f), ambientGround = new(0.36f, 0.4f, 0.3f),
+            // 空气稀薄：雾很远很淡，偏天蓝（贡嘎在 1 km 外也看得见）
+            fogColor = new(0.79f, 0.88f, 0.95f), fogStart = 160, fogEnd = 1300,
+            fireColor = new(0.62f, 0.94f, 1f), fireIntensity = 5f,
+            // 单遍后处理（见上）
+            postExposure = -0.35f, contrast = 20, saturation = 0, temperature = -14, tint = 6, bloomTint = new(0.95f, 0.97f, 1f),
+            bloomIntensity = 0.45f, bloomThreshold = 1f, vignette = 0.18f,
+            groundA = new(0.36f, 0.58f, 0.21f), groundB = new(0.5f, 0.64f, 0.27f), groundShadowTint = new(0.56f, 0.64f, 0.86f),
             groundPattern = GroundPattern.Drifts,
         };
 

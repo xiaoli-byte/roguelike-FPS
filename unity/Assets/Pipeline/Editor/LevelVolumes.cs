@@ -7,15 +7,15 @@ namespace Spiritfire.Art.Editor
 {
     /// <summary>
     /// bridge.sh volumes：不重建关卡，只按 <see cref="ShowcaseTheme"/> 重写各关 / 展示场景 / 测试场里的 VP_&lt;章&gt;.asset（<see cref="ShowcaseSceneBuilder.FillVolume"/>）。
-    /// 只认三章主题的 key（Desert / Frost / Inferno），别的 VP（比如第四章自己的）不碰。建关时 BuildLighting 写的是同一份值，所以重建关卡结果一样。
+    /// 认四章主题的 key（Desert / Frost / Inferno / Plateau），别的 VP 不碰。建关时 BuildLighting 写的是同一份值，所以重建关卡结果一样。
     /// 第二批 E 路（单遍后处理）引入：改了主题的后处理之后跑一次，各关的 Volume 就跟上，不用重建 12 关。
     /// </summary>
     public static class LevelVolumes
     {
         static readonly string[] Roots = { "Assets/Levels", "Assets/Showcase" };
 
-        /// <summary>只重写前三章（单遍后处理重新拟合过的）；第四章的 VP_Plateau 归它自己的关卡构建器</summary>
-        static readonly ShowcaseTheme[] Themes = { ShowcaseTheme.Desert, ShowcaseTheme.Frost, ShowcaseTheme.Inferno };
+        /// <summary>前三章（单遍后处理重新拟合过的）+ 第四章（单遍下直接按观感调的 VP_Plateau，F 路）</summary>
+        static readonly ShowcaseTheme[] Themes = { ShowcaseTheme.Desert, ShowcaseTheme.Frost, ShowcaseTheme.Inferno, ShowcaseTheme.Plateau };
 
         public static int RewriteAll()
         {

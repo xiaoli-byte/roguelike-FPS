@@ -312,10 +312,10 @@ namespace Spiritfire.Art.Editor.Levels
         // ───────────────────────────── 主题 ─────────────────────────────
 
         /// <summary>
-        /// 第四章主题：F 路在 ShowcaseTheme 里登记 key = "Plateau" 之后用它的；之前用这里的本地版（网页 backdrop.ts 的高原天：深蓝天顶、浅色地平线，
-        /// 太阳方向照网页 SKY.sunDir 换算，雾很远——贡嘎在 1 km 外也看得见）
+        /// 第四章主题：F 路登记的 <see cref="ShowcaseTheme.Plateau"/>（光照、天空、雾、地表就是下面本地版的值；后处理按单遍调过，bridge.sh volumes 也按它重写）。
+        /// 本地版留作对照（网页 backdrop.ts 的高原天：深蓝天顶、浅色地平线，太阳方向照网页 SKY.sunDir 换算，雾很远——贡嘎在 1 km 外也看得见）
         /// </summary>
-        public static ShowcaseTheme PlateauTheme => Array.Find(ShowcaseTheme.All, t => t.key == "Plateau") ?? localPlateau;
+        public static ShowcaseTheme PlateauTheme => ShowcaseTheme.Plateau ?? localPlateau;
 
         static readonly ShowcaseTheme localPlateau = new()
         {
