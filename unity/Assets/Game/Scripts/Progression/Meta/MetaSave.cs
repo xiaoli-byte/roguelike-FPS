@@ -57,6 +57,13 @@ namespace Spiritfire.Game
             if (save) Commit();
         }
 
+        /// <summary>魂晶直接设成某个值（只给冒烟测试还原调试档用：测完把余额放回测前的快照）</summary>
+        internal void SetEssenceForTests(int amount, bool save = true)
+        {
+            essence = Math.Max(0, amount);
+            if (save) Commit();
+        }
+
         bool Spend(int price)
         {
             if (price < 0 || essence < price) return false;

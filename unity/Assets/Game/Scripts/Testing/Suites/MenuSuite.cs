@@ -20,6 +20,8 @@ namespace Spiritfire.Game.Testing
     ///   7. 秘卷三选一：弹出、停时间、截图；选第一张后层数 +1、时间恢复；触发弹字出现；
     ///   8. 强制结束本局（RunEnd.Force）：结算界面弹出、停时间、计数滚完、生涯 +1 局；「主菜单」回到主菜单场景。
     /// 全程用调试档（SaveService.ForceDev），不碰正式存档；结束时还原。
+    /// 调试档的天赋等级和魂晶开头记快照、结束时还原（包括不合格、抛异常、中途退出 Play）：以前第 2 步每跑一次就在调试档里给「生命强化」升一级、
+    /// 一直不还原，跑过 5 次以后所有英雄的生命上限都多了 40，heroes 套件对不上定义值（第二批收尾 D 路）。
     /// </summary>
     public sealed class MenuSuite : PlaytestSuite
     {
@@ -28,20 +30,59 @@ namespace Spiritfire.Game.Testing
 
         const float LoadTimeout = 90f;
 
+        /// <summary>调试档天赋等级 / 魂晶的快照（测完还原）</summary>
+        System.Collections.Generic.Dictionary<string, int> talentRestore;
+        int essenceRestore = -1;
+
         protected override IEnumerator Steps()
         {
             bool forceDev = SaveService.ForceDev;
             SaveService.ForceDev = true;
             // 别的套件留下的续玩档（I5）：主菜单会多一项「继续征程」、出征前还要确认，这里先清掉
             RunSuspend.Discard(RunSuspend.MenuDev);
+            var meta = SaveService.Dev.Section<MetaSave>();
+            talentRestore = TalentLibrary.All.ToDictionary(t => t.id, t => meta.TalentLevel(t.id));
+            essenceRestore = meta.Essence;
+            // 中途退出 Play（超时、手动停）时 finally 不一定走得到：退出时也还原一次
+            Application.quitting += RestoreMeta;
             try
             {
-                yield return Run();
+                // 顶层步骤在这里逐步推进：Run 本身抛异常时也会落到下面的 finally（嵌套协程抛异常时 Unity 不回到外层）
+                var it = Run();
+                while (true)
+                {
+                    object step;
+                    try
+                    {
+                        if (!it.MoveNext()) break;
+                        step = it.Current;
+                    }
+                    catch (Exception e)
+                    {
+                        Fail($"menu 套件抛出异常：{e}");
+                        break;
+                    }
+                    yield return step;
+                }
             }
             finally
             {
+                Application.quitting -= RestoreMeta;
+                RestoreMeta();
                 SaveService.ForceDev = forceDev;
             }
+        }
+
+        /// <summary>调试档的天赋等级、魂晶放回测前的快照（只做一次）</summary>
+        void RestoreMeta()
+        {
+            if (talentRestore == null) return;
+            var meta = SaveService.Dev.Section<MetaSave>();
+            foreach (var kv in talentRestore) meta.SetTalentLevel(kv.Key, kv.Value, false);
+            if (essenceRestore >= 0) meta.SetEssenceForTests(essenceRestore, false);
+            SaveService.Dev.Save();
+            talentRestore = null;
+            essenceRestore = -1;
         }
 
         IEnumerator Run()
