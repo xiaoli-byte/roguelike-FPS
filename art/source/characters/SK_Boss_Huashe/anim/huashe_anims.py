@@ -6,8 +6,8 @@
 assets.SK_Boss_Huashe：片段帧数 = 三段之和 × 30（spit 2.55 s / lunge 2.25 s / dive 3.05 s 落在半帧上，取设计单表里的 76 / 67 / 91 帧，
 游戏里按招式时长拉伸，差不到 1%），事件帧 = at × 帧数（取最近的半帧），events.json 的 at = 事件帧 ÷ 片段帧数（和表差 ≤ 0.25 帧）。
 导出时打印每段的帧数、事件、身体链最大折角、逐帧最快转动、Idle 首尾差（HUASHE_ANIMS）；--review 另打印每个关键帧的网格拉伸（HUASHE_CHECK）。
-已知的模型限制（不改模型 / 骨架，只能躲）：骨段距离权重把同一缕水草 / 鬃毛分给了翼根、颈、前臂几根骨，翅膀和脖子一动就有几缕被拉成细线；
-口鼻有一部分权重在 jaw 上，张嘴过 25° 口鼻会被拉长（见 JAW_K）。
+蒙皮（native_build 6 重蒙皮，只改权重，见 art/pipeline/creature_rigs/SK_Boss_Huashe.json 的 doc）：jaw 只管嘴线以下的下巴和下颌底面，
+口鼻整块跟 head，嘴按设计单张到 35–52°；水草 / 小簇整缕跟一组权重走，鬃毛和胸毛不再带翼根、前腿的权重，所以姿势里不用再躲。
 
 产出（都可以重新生成，FBX 按 unity/.gitignore 不入库）：
   unity/Assets/Art/Characters/SK_Boss_Huashe/Anim/Keyframed/<状态>.fbx   一个状态一个文件（文件名 = Animator 状态名），同名时覆盖采样片段
@@ -678,9 +678,6 @@ CLIPS = {
 
 # ───────────── 采样：关键姿势插值 + 程序层 ─────────────
 EXP = {"in": 1.7, "out": 2.0}
-# 下颌的实际转角 = 姿势里写的 × JAW_K。模型的鼻尖、上唇有一部分权重在 jaw 上（面具脸的渐变球只锁嘴线以上），
-# 下颌转过 25° 以后整个口鼻被往下拉成长喙；姿势按设计单的「张 35–50°」写，实际压到一半（最大约 26°），张嘴靠头的动作和嘴光来读
-JAW_K = 0.5
 
 
 def _slopes(ts, vs) -> list:
@@ -742,8 +739,6 @@ def sampler(clip: dict):
                 p.setdefault(b, [0.0, 0.0, 0.0])[i] = v
         for layer in clip.get("layers", []):
             p = merge(p, layer(f))
-        if "jaw" in p:
-            p["jaw"][0] *= JAW_K
         return p
     return at
 
