@@ -17,6 +17,13 @@ namespace Spiritfire.Game.Tests
             public string Roll(EnemyDef def, RunRng rng) => rolled;
         }
 
+        /// <summary>
+        /// 每条都从「没有词缀登记」开始：EliteAffixes.Install 在进 Play 时（BeforeSceneLoad）把真登记装进 SquadAffixes.Source，
+        /// 退出 Play 不重载程序域，静态量留在编辑器里；之后单跑这个类（前面没有别的测试类清它），真登记就会随机出词缀（比如 volatile）
+        /// </summary>
+        [SetUp]
+        public void SetUp() => SquadAffixes.Source = null;
+
         [TearDown]
         public void TearDown() => SquadAffixes.Source = null;
 
