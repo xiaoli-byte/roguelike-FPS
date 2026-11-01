@@ -136,7 +136,7 @@ def mod(p: dict, **kw) -> dict:
 BASE = P()
 
 # ── 小跳 hop / 转身跳 turnLeap（§2.1 / §2.4）──
-# 双臂的大动作一律前后摆、肘往后收（POLE_B）：侧腹带手臂权重，往正侧面张开会拉出膜（见体检的 web）
+# 肘尖：大动作多用 POLE_B（往后收），看着更沉；侧腹的权重在 native_build 7 重蒙皮后已不再被手臂拉成膜
 HOP_CROUCH = P(drop=0.55, pitch=18, spine=4, chest=2, head=6, stretch=-0.03,
                arms=A(1.3, -1.4, 0.6, ref="w", aim=(0, -0.45, -1), pole=POLE_B))
 HOP_HOLD = mod(HOP_CROUCH, drop=0.6, pitch=19, arms=A(1.3, -1.65, 0.7, ref="w", aim=(0, -0.5, -1), pole=POLE_B))
@@ -153,8 +153,8 @@ ARM_BACKUP = (0.3, 0.2, -1.0)    # 手臂甩到身后上方时肘尖朝下
 LEAP_ANTIC = P(pitch=-8, chest=-4, head=-6, stretch=0.04, arms=A(1.35, 0.9, 0.6, pole=POLE_B))
 LEAP_DOWN = P(drop=0.6, pitch=18, spine=3, head=6, stretch=-0.02, arms=A(1.35, -1.6, 1.6, ref="w", pole=POLE_B))
 LEAP_DEEP = P(drop=1.1, pitch=30, spine=6, chest=4, head=14, stretch=-0.05,
-              arms=A(1.35, -2.6, 5.0, ref="w", aim=(0, -0.5, 0.85), pole=ARM_BACKUP))
-LEAP_HOLD = mod(LEAP_DEEP, drop=1.15, pitch=31, head_roll=2, arms=A(1.4, -2.8, 5.25, ref="w", aim=(0, -0.55, 0.83), pole=ARM_BACKUP))
+              arms=A(1.6, -2.5, 5.6, ref="w", aim=(0.05, -0.5, 0.85), pole=ARM_BACKUP))
+LEAP_HOLD = mod(LEAP_DEEP, drop=1.15, pitch=31, head_roll=2, arms=A(1.65, -2.7, 5.85, ref="w", aim=(0.05, -0.55, 0.83), pole=ARM_BACKUP))
 LEAP_PUSH = P(drop=0.0, pitch=6, spine=-4, chest=-4, head=-6, stretch=0.08, toe=12,
               arms=A(1.3, -1.6, 8.0, ref="w", pole=(0.3, -0.6, -0.6)))
 LEAP_TUCK = P(drop=-0.05, pitch=4, spine=6, chest=2, head=6, plant=0, thigh=-95, shin=35, hoof=45, arms=A(1.3, 1.9, 7.8, pole=POLE_B))
@@ -170,18 +170,18 @@ LEAP_PULL = P(drop=0.55, pitch=26, spine=4, head=4, arms=A(1.45, 2.6, 0.7, ref="
 
 CH_START = P(drop=0.55, pitch=22, spine=3, head=8, arms=A(1.4, -0.6, 1.0, ref="w", pole=POLE_B))
 CH_DEEP = P(drop=0.83, pitch=26, spine=5, chest=3, head=12, stretch=-0.04,
-            arms=A(1.35, -2.6, 3.9, ref="w", aim=(0, -0.6, 0.75), pole=ARM_BACKUP))
-CH_HOLD = mod(CH_DEEP, drop=0.86, pitch=27, arms=A(1.4, -2.8, 4.1, ref="w", aim=(0, -0.65, 0.7), pole=ARM_BACKUP))
+            arms=A(1.55, -2.4, 5.0, ref="w", aim=(0.05, -0.5, 0.85), pole=ARM_BACKUP))
+CH_HOLD = mod(CH_DEEP, drop=0.86, pitch=27, arms=A(1.6, -2.6, 5.25, ref="w", aim=(0.05, -0.55, 0.83), pole=ARM_BACKUP))
 CH_PUSH = mod(LEAP_PUSH, stretch=0.07)
 CH_LAND = mod(LEAP_LAND, drop=0.85, pitch=38)
 CH_OVER = mod(CH_LAND, drop=0.93, pitch=40, stretch=-0.07)
 CH_PULL = P(drop=0.7, pitch=30, spine=4, head=8, arms=A(1.45, 1.4, 0.8, ref="w", pole=POLE_B))
 
-# ── 雷掌 clap（§2.6）：张臂改成斜前方约 45°（正侧平举会把侧腹拉成膜），剪影仍是「门户大开」──
+# ── 雷掌 clap（§2.6）：双臂侧平举张到最开（剪影「T」、胸前空门大开）→ 两掌在身前合拢 ──
 CLAP_ANTIC = P(pitch=-6, chest=-2, head=-2, arms=A(1.35, -1.4, 0.8, pole=POLE_B))
-CLAP_RISE = P(pitch=-6, chest=-5, head=-5, arms=A(2.4, 2.0, 2.9, clav=(4, 0), pole=POLE_B))
-CLAP_WIDE = P(pitch=-6, chest=-8, head=-8, stretch=0.03, arms=A(3.9, 3.0, 4.6, aim=(0.72, 0.68, 0.05), clav=(8, -4), pole=(0.3, -1, -0.4)))
-CLAP_HOLD = mod(CLAP_WIDE, chest=-9, head=-9, arms=A(4.0, 2.85, 4.65, aim=(0.74, 0.66, 0.06), clav=(9, -5), pole=(0.3, -1, -0.4)))
+CLAP_RISE = P(pitch=-6, chest=-5, head=-5, arms=A(3.7, 0.1, 2.6, clav=(6, -4)))
+CLAP_WIDE = P(pitch=-6, chest=-8, head=-8, stretch=0.03, arms=A(5.35, 0.2, 4.75, aim=(1, 0.05, 0.02), clav=(10, -8)))
+CLAP_HOLD = mod(CLAP_WIDE, chest=-9, head=-9, arms=A(5.35, -0.15, 4.8, aim=(1, -0.05, 0.03), clav=(11, -10)))
 CLAP_HIT = P(pitch=10, spine=5, chest=0, head=4, stretch=0.04,
              arms=A(0.44, 4.25, 4.0, aim=(-0.12, 1, -0.05), pole=(1.0, 0.0, -0.6), clav=(4, 16)))
 CLAP_OVER = P(pitch=12, spine=6, chest=1, head=6, stretch=0.02,
@@ -189,15 +189,14 @@ CLAP_OVER = P(pitch=12, spine=6, chest=1, head=6, stretch=0.02,
 CLAP_AFTER = P(pitch=9, spine=4, head=4, arms=A(0.7, 4.1, 3.4, aim=(-0.05, 1, -0.3), pole=(1.0, 0.0, -0.6), clav=(2, 12)))
 CLAP_RETRACT = P(pitch=4, spine=2, head=2, arms=A(1.5, 2.0, 1.4, pole=POLE_B))
 
-# ── 捶胸引雷 drum / drum5（§2.7）：大猩猩式捶胸——上臂垂在身前、肘往下，前臂竖起、拳举到头边；捶时拳往回砸鼓面 ──
-DRUM_POLE = (0.55, 0.35, -1.0)
-DRUM_UP_ARM = A(1.05, 1.1, 6.25, aim=(-0.05, 0.15, 1), pole=DRUM_POLE, clav=(6, 4))
-DRUM_COCK = A(1.15, 1.25, 5.85, aim=(-0.1, 0.2, 1), pole=DRUM_POLE, clav=(5, 4))
-DRUM_SMEAR = A(0.85, 1.8, 4.8, aim=(-0.3, 0.7, -0.5), pole=DRUM_POLE, clav=(3, 6))
-DRUM_HIT = A(0.32, 1.12, 3.65, aim=(-0.45, -0.55, -0.7), pole=(0.6, 0.25, -1), clav=(2, 8))
-DRUM_REBOUND = A(1.0, 1.55, 5.0, aim=(-0.1, 0.4, 0.8), pole=DRUM_POLE, clav=(4, 5))
+# ── 捶胸引雷 drum / drum5（§2.7）：人立、双拳举过头握紧 → 左右拳交替从头顶砸下来贴住鼓面（另一只拳举在头顶上等着）──
+DRUM_UP_ARM = A(1.25, 0.6, 8.5, clav=(16, 0), pole=(1, -0.3, 0))
+DRUM_COCK = A(1.75, 1.0, 6.9, clav=(12, 2), pole=(1, -0.2, -0.3))
+DRUM_SMEAR = A(1.15, 1.9, 5.0, clav=(6, 6), pole=(1, 0.1, -0.5))
+DRUM_HIT = A(0.32, 1.12, 3.65, aim=(-0.45, -0.55, -0.7), clav=(2, 10), pole=(1, 0.2, -0.6))
+DRUM_REBOUND = A(1.6, 1.7, 5.4, clav=(8, 6), pole=(1, 0, -0.4))
 DRUM_REAR = P(pitch=-10, spine=-3, chest=-4, head=-10, stretch=0.04, arms=DRUM_UP_ARM)
-DRUM_CLENCH = mod(DRUM_REAR, pitch=-11, chest=-6, head=-12, arms=A(1.0, 1.15, 6.35, aim=(-0.08, 0.15, 1), pole=DRUM_POLE, clav=(7, 4)))
+DRUM_CLENCH = mod(DRUM_REAR, pitch=-11, chest=-6, head=-12, arms=A(1.2, 0.8, 8.4, clav=(17, 0), pole=(1, -0.3, 0)))
 DRUM_DOWN = P(drop=0.1, pitch=6, chest=3, head=6, arms=A(1.4, 0.9, 0.7, pole=POLE_B))
 DRUM_PANT_OUT = P(drop=0.18, pitch=12, spine=4, chest=6, head=14, stretch=-0.03, arms=A(1.35, 0.9, 0.45, pole=POLE_B))
 DRUM_PANT_IN = P(drop=0.08, pitch=6, spine=1, chest=-2, head=6, stretch=0.02, arms=A(1.4, 0.8, 0.5, pole=POLE_B))
@@ -273,7 +272,7 @@ RISE_STAND = P(drop=0.2, pitch=4, chest=-4, head=-12, arms=A(1.5, 1.3, 1.0, ref=
 RISE_ROAR = P(pitch=-6, chest=-6, neck=-4, head=-28, stretch=0.03, arms=A(1.7, 0.8, 0.8, pole=POLE_B))
 RISE_END = P(pitch=-2, chest=-2, head=-10, arms=A(1.3, 0.5, 0.35))
 
-# 吼：双臂往前上方张开成 V（不往正侧面），仰头
+# 吼：双拳举到头两边、肘往下（「W」字剪影），仰头挺胸（登场特写镜头里读得清）
 ROAR_GATHER = P(drop=0.25, pitch=12, spine=4, chest=6, head=18, stretch=-0.03, arms=A(1.05, 0.7, 1.1, pole=POLE_B))
 ROAR_POLE = (0.7, 0.3, -1.0)
 ROAR_A = P(pitch=-8, spine=-4, chest=-8, neck=-6, head=-38, stretch=0.05, arms=A(2.35, 1.2, 5.75, aim=(0.3, 0.15, 1), clav=(10, 2), pole=ROAR_POLE))
@@ -848,14 +847,6 @@ def mesh_groups(mesh):
     cat[(owner == "fist_L") | (owner == "fist_R")] = 1
     cat[owner == "hoof"] = 2
     cat[(owner == "thigh") | (owner == "shin")] = 3
-    # 已知的蒙皮问题：躯干侧腹（|x| 0.4–0.9）同时带手臂和躯干权重，手臂一张开就被拉成膜（模型权重的事，不在动作里修）。
-    # 这些顶点单独统计（web），拉伸比只看其余顶点，量的是动作本身有没有扭麻花 / 撕裂
-    arms_w = {"arm_L", "forearm_L", "fist_L", "arm_R", "forearm_R", "fist_R"}
-    torso_w = {"hips", "spine", "chest", "thigh", "shin", "drum", "neck"}
-    mixed = np.zeros(n, dtype=bool)
-    for v in mesh.data.vertices:
-        w = {vg[g.group]: g.weight for g in v.groups}
-        mixed[v.index] = sum(x for k, x in w.items() if k in arms_w) > 0.1 and sum(x for k, x in w.items() if k in torso_w) > 0.1
     edges = np.empty(len(mesh.data.edges) * 2, dtype=np.int32)
     mesh.data.edges.foreach_get("vertices", edges)
     edges = edges.reshape(-1, 2)
@@ -864,20 +855,19 @@ def mesh_groups(mesh):
     rest = rest.reshape(-1, 3)
     rl = np.linalg.norm(rest[edges[:, 0]] - rest[edges[:, 1]], axis=1)
     keep = rl > 0.02
-    edges, rl = edges[keep], rl[keep]
-    web = mixed[edges[:, 0]] | mixed[edges[:, 1]]
-    return cat, edges, rl, owner, web
+    return cat, edges[keep], rl[keep], owner
 
 
 def check_clip(arm, mesh, groups, name: str, clip: dict, act, infos: dict) -> dict:
     import numpy as np
-    cat, edges, rl, owner, web = groups
+    cat, edges, rl, owner = groups
     sc = bpy.context.scene
     arm.animation_data.action = act
     n = len(mesh.data.vertices)
     co = np.empty(n * 3)
-    out = {"minz": {"fist": (9, 0), "hoof": (9, 0), "leg": (9, 0), "body": (9, 0)}, "stretch": (0, 0, ""), "web": (0, 0),
-           "hoof_slide": (0, 0), "fist_slide": (0, 0)}
+    # stretch = 全网格最大边拉伸比（静止边长 > 2 cm）；p99 = 每帧 99 分位拉伸比的最大值；grow = 最大伸长（米）
+    out = {"minz": {"fist": (9, 0), "hoof": (9, 0), "leg": (9, 0), "body": (9, 0)}, "stretch": (0, 0, ""), "p99": (0, 0),
+           "grow": (0, 0), "hoof_slide": (0, 0), "fist_slide": (0, 0)}
     air = clip.get("air")
     names = {0: "body", 1: "fist", 2: "hoof", 3: "leg"}
     for f in range(clip["frames"] + 1):
@@ -894,14 +884,16 @@ def check_clip(arm, mesh, groups, name: str, clip: dict, act, infos: dict) -> di
             if m < out["minz"][nm][0]:
                 out["minz"][nm] = (round(float(m), 3), f)
         dl = np.linalg.norm(p[edges[:, 0]] - p[edges[:, 1]], axis=1)
-        el = dl - rl                       # 伸长量（米）
-        w = float(el[web].max())
-        if w > out["web"][0]:
-            out["web"] = (round(w, 2), f)
-        el[web] = 0
-        i = int(el.argmax())
-        if el[i] > out["stretch"][0]:
-            out["stretch"] = (round(float(el[i]), 3), f, round(float(dl[i] / rl[i]), 1), owner[edges[i, 0]] + "/" + owner[edges[i, 1]])
+        ratio = dl / rl
+        i = int(ratio.argmax())
+        if ratio[i] > out["stretch"][0]:
+            out["stretch"] = (round(float(ratio[i]), 2), f, owner[edges[i, 0]] + "/" + owner[edges[i, 1]])
+        q = float(np.percentile(ratio, 99))
+        if q > out["p99"][0]:
+            out["p99"] = (round(q, 3), f)
+        g = float((dl - rl).max())
+        if g > out["grow"][0]:
+            out["grow"] = (round(g, 3), f)
         # 着地帧的蹄 / 撑地的拳：骨骼实际位置 vs 钉点
         inf = infos[f]
         pbs = arm.pose.bones
