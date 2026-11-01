@@ -126,6 +126,7 @@ namespace Spiritfire.Art.Editor.Levels
             new() { id = "B4", name = "废范北桥", ch = Cross, at = 24, width = 10 },
             new() { id = "B5", name = "闸前桥", ch = Trunk, at = 176, width = 10 },
             new() { id = "B6", name = "东铸北桥", ch = Cross, at = 178, width = 12 },
+            new() { id = "B7", name = "风闸捷径", ch = Trunk, at = 196, width = 9 },
             new() { id = "AN", name = "神范北桥", ch = ArenaX, at = 190, width = 8 },
             new() { id = "AS", name = "神范南桥", ch = ArenaX, at = 138, width = 8 },
             new() { id = "AW", name = "神范西桥", ch = ArenaZ, at = 126, width = 8 },
@@ -158,11 +159,12 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Platform Service = new() { name = "检修台", min = new(78, 144), max = new(86, 160), h = 3f, ramps = new[] { (new Vector2(82, 169f), new Vector2(82, 160.2f), 5f) } };
         static readonly Platform WindTerrace = new() { name = "风闸台", min = new(60, 190), max = new(92, 212), h = 2f, ramps = new[] { (new Vector2(64, 180.5f), new Vector2(64, 189.8f), 6f) } };
         static readonly Platform Dais = new() { name = "神范台", min = new(176, 192), max = new(198, 212), h = 3.5f, ramps = new[] { (new Vector2(184, 181f), new Vector2(184, 191.8f), 6f) } };
-        static readonly Platform[] Platforms = { GateTerrace, Ladle, WallTerrace, Altar, Service, WindTerrace, Dais };
+        static readonly Platform ForecourtRise = new() { name = "前庭瞭望台", min = new(130, 182), max = new(138, 190), h = 3f, ramps = new[] { (new Vector2(124, 176), new Vector2(130, 184), 4f) } };
+        static readonly Platform[] Platforms = { GateTerrace, Ladle, WallTerrace, Altar, Service, WindTerrace, Dais, ForecourtRise };
 
         // ───────────── 场地 / 标记 ─────────────
         static readonly Vector2 Spawn = new(100, 7);
-        static readonly Vector2 CentralSite = new(100, 64), EastSite = new(166, 62), HallSite = new(48, 152), ScrapSite = new(28, 56), ArenaCenter = new(152, 164);
+        static readonly Vector2 CentralSite = new(100, 64), EastSite = new(166, 62), HallSite = new(48, 152), ScrapSite = new(28, 56), ForecourtSite = new(122, 176), ArenaCenter = new(152, 164);
         /// <summary>神范台首领场地：矩形半宽 44 m（x 108–196、z 120–208，西、南两边外面就是主渠和横渠）</summary>
         static readonly Vector2 ArenaHalfSize = new(44, 44);
         static readonly Vector2 BossSpawnAt = new(174, 182), PlayerEntryAt = new(128, 144), ExitAt = new(184, 197), BossRewardAt = new(166, 192), ClearChestAt = new(172, 186);
@@ -275,12 +277,12 @@ namespace Spiritfire.Art.Editor.Levels
             float edge = ChannelEdge(p, out _);
             float bank = edge > 0 ? 1 - Smooth(0, 3.5f, edge) : 0;
 
-            // ── 火山口壁：可玩区外 RimWall 米内升到 RimTop（60–75°，翻不上去），再往外是火山口顶（远处落回远景地面）──
+            // ── 火山口壁：可玩区外 RimWall 米内升起（60–75°，翻不上去），大尺度高低差形成锯齿轮廓，不做细碎裂纹 ──
             float outside = LevelKit.BoxSdf(p, FloorMin, FloorMax);
             float rock = 0;
             if (outside > -0.5f)
             {
-                float rim = RimTop + 4f * Fbm(p, 40, 3, 7) + 3f * Ridged(p, 26, 3, 11);
+                float rim = RimTop + 7f * Fbm(p, 22, 3, 7) + 8f * Ridged(p, 15, 3, 11);
                 float k = Smooth(0, RimWall, outside);
                 h = Mathf.Lerp(h, Mathf.Max(h, rim), k);
                 rock = Smooth(0.5f, 3f, outside);
@@ -324,6 +326,7 @@ namespace Spiritfire.Art.Editor.Levels
             var markers = new GameObject("Markers").transform;
 
             ShowcaseSceneBuilder.BuildLighting(theme, Dir);
+            ConfigureFireGodSky();
             // 火山口壁 24 m：主题默认的低角度太阳会把半个铸坊压在壁影里，抬到 52°
             if (RenderSettings.sun) RenderSettings.sun.transform.rotation = Quaternion.Euler(52, 35, 0);
             var set = LevelKit.BuildTerrainSet(new LevelKit.TerrainSpec
@@ -332,10 +335,11 @@ namespace Spiritfire.Art.Editor.Levels
                 ground = LevelKit.Ground.Inferno, eval = Eval,
             }, env);
 
-            // 远景：玄武岩脊 + 两圈火山锥；火山口壁外的远景地面在雾里接上环脚
+            // 三层锯齿岩峰渐隐在暗紫烟雾里；远景地面用本关暗色，不改章节主题
             var backdrop = LevelKit.BackdropFor(theme, Dir, Name, new Vector2(100, 107), FarY - 0.5f, 760, 5);
+            ConfigureFireGodBackdrop(backdrop);
             LevelKit.Backdrop(backdrop, env);
-            LevelKit.FarGround(Dir, Name, env, new Rect(Origin, Size), FarY - 0.05f, theme.groundA);
+            LevelKit.FarGround(Dir, Name, env, new Rect(Origin, Size), FarY - 0.05f, new Color(0.11f, 0.08f, 0.12f));
 
             // 软边界（没有空气墙）：火山口壁本身翻不上去，等值线外热风推回 + 兜底环
             LevelKit.Boundary(Dir, Name, env, Playable, new Rect(Origin, Size), Bounds);
@@ -351,6 +355,7 @@ namespace Spiritfire.Art.Editor.Levels
             BuildWindTerrace(set, arch, props);
             var arenaProps = BuildArenaProps(set, arch, props);
             var throne = BuildFireGodThrone(set, arch);
+            BuildFoundryDirection(set, arch);
             BuildScatter(set, env);
             BuildMarkers(set, markers);
 
@@ -366,6 +371,7 @@ namespace Spiritfire.Art.Editor.Levels
             var gate = BuildWindGate(set, markers, props, objective, hall, lava.tides);
             BuildCaches(set, markers, objective);
             var lord = BuildLord(set, markers, objective, arenaProps, lava.surge);
+            throne.GetComponent<FireGodThrone>().channels = lord.channels;
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
@@ -864,6 +870,12 @@ namespace Spiritfire.Art.Editor.Levels
             ("Enemy_4_West", new Vector2(26, 127), StationRole.Assault, 2, false),
             ("Enemy_4_AirNorth", new Vector2(38, 172), StationRole.Support, 1, true),
             ("Enemy_4_AirSouth", new Vector2(62, 131), StationRole.Flank, 2, true),
+            // ⑥ 神范前庭：亲卫在风闸捷径桥头迎击，飞鸦从王座方向压过来，玩家已经能看到魔将的场地
+            ("Enemy_6_GuardA", new Vector2(116, 174), StationRole.Assault, 0, false),
+            ("Enemy_6_GuardB", new Vector2(126, 186), StationRole.Flank, 1, false),
+            ("Enemy_6_Ranged", new Vector2(122, 164), StationRole.Ranged, 0, false),
+            ("Enemy_6_Air", new Vector2(136, 184), StationRole.Support, 1, true),
+            ("Enemy_6_Elite", new Vector2(118, 190), StationRole.Assault, 2, false),
             // ⑤ 废范守军（可选）
             ("Enemy_5_Ranged", new Vector2(16, 66), StationRole.Ranged, 0, false),
             ("Enemy_5_FlankA", new Vector2(40, 48), StationRole.Flank, 1, false),
@@ -881,6 +893,7 @@ namespace Spiritfire.Art.Editor.Levels
             Marker(root, "Site_2_Hall", set.OnGround(HallSite.x, HallSite.y));
             Marker(root, "Site_3_East", set.OnGround(EastSite.x, EastSite.y));
             Marker(root, "Site_5_Scrap", set.OnGround(ScrapSite.x, ScrapSite.y));
+            Marker(root, "Site_6_Forecourt", set.OnGround(ForecourtSite.x, ForecourtSite.y));
             Marker(root, "Site_Lord", set.OnGround(ArenaCenter.x, ArenaCenter.y));
             foreach (var a in AnchorDefs)
             {
@@ -944,6 +957,11 @@ namespace Spiritfire.Art.Editor.Levels
             // 第二次进殿：要求第一次已清，开局不自动触发（风闸拉开后由 FoundryWindGate 打开）
             s4.requires = new[] { s2 };
             s4.autoTrigger = false;
+            var s6 = Site(6, "神范前庭", ForecourtSite, 22, 28, EncounterSpec.Of(
+                    EncounterSpec.Wave("神范亲卫", E("mamian", 1).Elite("frenzied"), E("nuo", 1), E("tantong", 2)).Hint("魔将亲卫守住风闸捷径——先破傩巫的金面，再处理甩钩"),
+                    EncounterSpec.Wave("王座降火", E("fire_crow", 2), E("firecracker", 1)).After(1, 1.6f).Hint("飞鸦从王座方向俯冲，傀儡压住桥头——离开桥中线再反击"))
+                .Gather(0.5f).Distance(8, 30), "scroll", new Vector3(10, 0, -8));
+            s6.requires = new[] { s4 };
             var guard = Site(5, "废范守军", ScrapSite, 16, 24, EncounterSpec.Of(
                     EncounterSpec.Wave("废范守军", E("mamian", 1), E("tantong", 3)).Hint("守着废范残兵的狱卒"))
                 .Gather(0.4f).Distance(8, 26), "");
@@ -953,7 +971,7 @@ namespace Spiritfire.Art.Editor.Levels
             var objective = new GameObject("Level Objective").AddComponent<LevelObjective>();
             objective.transform.SetParent(root, false);
             objective.title = "肃清铸范大坊";
-            objective.required = new[] { s1, s2, s3, s4 };
+            objective.required = new[] { s1, s2, s3, s4, s6 };
             objective.optional = new[] { guard };
             objective.autoCollect = false;
             return objective;
@@ -1258,7 +1276,7 @@ namespace Spiritfire.Art.Editor.Levels
             // 场景里不放 ExitPortal：它会接上关卡目标、肃清据点就开门；出口由领主战结算后立在神范前（同 1-4）
             if (portals != 0) rep.Fail($"场景里有 {portals} 个 ExitPortal（3-3 的出口由领主战结算后立）");
             if (caches != 2) rep.Fail($"藏宝点 {caches} 处（应为 2）");
-            if (objective.required.Length != 4 || objective.optional.Length != 1) rep.Fail($"目标图：必清 {objective.required.Length}、可选 {objective.optional.Length}（应为 4 / 1）");
+            if (objective.required.Length != 5 || objective.optional.Length != 1) rep.Fail($"目标图：必清 {objective.required.Length}、可选 {objective.optional.Length}（应为 5 / 1）");
             else rep.Line($"✓ 目标图：必清 {string.Join("、", objective.required.Select(s => s.title))}；可选 {objective.optional[0].title}；藏宝 {caches} 处；下一关 {RunPlan.Next(RunPlan.Get("3-3"))?.Label ?? "?"}");
             CoreSceneBuilder.BuildDatabase(rep);
         }
@@ -1293,22 +1311,18 @@ namespace Spiritfire.Art.Editor.Levels
                         S("① 中央铸床", CentralSite, 56, cover: 4, layers: 2, overlook: true),
                         S("③ 东铸床", EastSite, 52, cover: 4, layers: 2, overlook: true),
                         S("②④ 鼓风正殿", HallSite, 60, cover: 4, layers: 2, overlook: true),
+                        S("⑥ 神范前庭", ForecourtSite, 36, cover: 3, layers: 2, overlook: true),
                         S("⑤ 神范台（领主战）", ArenaCenter, 80, cover: 4, layers: 2, overlook: true),
                         S("废范场（可选）", ScrapSite, 44, cover: 2),
                     },
                 }
                 .Route("出生 · 南闸门", G(Spawn)).Route("闸台坡脚", G(GateTerrace.ramps[0].foot + new Vector2(0, 2)))
-                .Route("① 浇包吊台顶", G(Ladle.Center + new Vector2(-3, -3))).Route("① 东侧", G(new Vector2(126, 52)))
-                .Route("东桥", Deck("B1")).Route("③ 范列", G(new Vector2(162, 56)))
-                .Route("③ 铸铁墙台", G(new Vector2(192, 66))).Route("③ 北侧", G(new Vector2(170, 90)))
-                .Route("东桥（回）", Deck("B1")).Route("殿前桥", Deck("B3"))
-                .Route("② 南风箱道", G(new Vector2(60, 141))).Route("② 十字口", G(HallSite)).Route("② 炉坛", G(Altar.Center))
-                .Route("② 北风箱道", G(new Vector2(40, 166))).Route("风闸台", G(WindGateAt + new Vector2(-4, -3)))
-                .Route("闸前桥", Deck("B5")).Route("⑤ 西北象限", G(new Vector2(126, 186)))
-                .Route("⑤ 神范北桥", Deck("AN")).Route("⑤ 东北象限", G(new Vector2(170, 186)))
-                .Route("⑤ 神范台顶（出口）", G(ExitAt)).Route("⑤ 神范东桥", Deck("AE"))
-                .Route("⑤ 东南象限", G(new Vector2(176, 140))).Route("东铸北桥", Deck("B6"))
-                .Route("③ 东铸床北头", G(new Vector2(178, 100)))
+                .Route("① 中央铸床", G(CentralSite)).Route("东桥", Deck("B1")).Route("③ 东铸床", G(EastSite))
+                .Route("殿前桥", Deck("B3")).Route("②④ 鼓风正殿", G(HallSite))
+                .Route("风闸台", G(WindGateAt + new Vector2(-4, -3)))
+                .Route("风闸捷径", Deck("B7")).Route("⑥ 神范前庭", G(ForecourtSite))
+                .Route("闸前桥", Deck("B5")).Route("⑤ 神范台（领主战）", G(ArenaCenter))
+                .Route("⑤ 神范台顶（出口）", G(ExitAt))
                 .Sight("南闸门 → 浇包吊台", G(Spawn, 1.62f), G(new Vector2(103, 68), Ladle.h + 2.2f), 6, CrucibleId)
                 .Sight("南闸门 → 神范", G(Spawn, 1.62f), mouldTop, 8, MouldId)
                 .Sight("风闸台 → 神范", G(WindGateAt + new Vector2(-4, -3), 1.62f), mouldTop, 8, MouldId)

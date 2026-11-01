@@ -11,9 +11,9 @@ namespace Spiritfire.Game.Testing
 {
     /// <summary>
     /// 3-3 铸范大坊冒烟（bridge.sh playtest map-3-3；场景 L3_3_Foundry，docs/level-design/maps/3-3.md §11，parity 7.4「机器人清完全部必清场地并走出出口」）：
-    ///   1. 开局：SceneFlow 认领的关卡是 3-3、局难度 = RunPlan 的 2.92；目标图（必清 4 + 可选 1，④ 要求 ② 且开局不自动触发）、2 处藏宝、
+    ///   1. 开局：SceneFlow 认领的关卡是 3-3、局难度 = RunPlan 的 2.92；目标图（必清 5 + 可选 1，④ 要求 ② 且开局不自动触发，前庭要求 ④）、2 处藏宝、
     ///      场景里没有出口（领主战结算后才立）、领主战关着（FoundryLordGate 没解锁）、风闸卡死、熔铜渠（铸坊渠的涨落关着、神范台的渠岸是干的）；
-    ///      没有空气墙；出生点看得见神范；出生点到四处必清场地、风闸、神范台入场点的 NavMesh 路径都完整（桥是唯一的走位线）。
+    ///      没有空气墙；出生点看得见神范；出生点到五处必清场地、风闸、神范台入场点的 NavMesh 路径都完整（桥是唯一的走位线）。
     ///      提前踏上神范台：只提示「先肃清铸坊」，不开打。
     ///   2. 机器人清场：每次挑 NavMesh 路程最近、能触发的必清场地，用角色控制器沿 NavMesh 真走过去（桥、坡道都是真的），路上被别处触发就先打那处；
     ///      交战时自动瞄最近的敌人（四成打弱点）射击、隔 4 s 放技能，被挡住绕到看得见的地方。玩家临时 +5000 生命、伤害 ×3（第三章的构筑）。
@@ -86,6 +86,8 @@ namespace Spiritfire.Game.Testing
             var stage = flow ? flow.Current : null;
             var want = RunPlan.Get("3-3");
             var run = RunState.Current;
+            if (run != null)
+                foreach (var key in run.flags.Keys.Where(k => k.StartsWith("boss_cleared:")).ToList()) run.flags.Remove(key);
             Line($"关卡：{stage?.Label ?? "（不在 RunPlan 里）"}，局难度 {(run != null ? run.difficulty.ToString("F2") : "—")}（RunPlan {want?.difficulty:F2}），" +
                  $"清关奖励 {want?.clearReward}，下一关 {RunPlan.Next(want)?.Label ?? "无"}");
             if (want == null) Fail("RunPlan 里没有 3-3");
@@ -97,12 +99,13 @@ namespace Spiritfire.Game.Testing
             var wind = FindAnyObjectByType<FoundryWindGate>();
             var lordGate = FindAnyObjectByType<FoundryLordGate>();
             var enc = lordGate ? lordGate.encounter : FindAnyObjectByType<BossEncounter>(FindObjectsInactive.Include);
+            if (enc) enc.ResetForTests();
             var channels = FindAnyObjectByType<FoundryChannels>();
             var portals = FindObjectsByType<ExitPortal>();
             Line($"场景：必清 {objective?.RequiredTotal ?? 0}，可选 {objective?.optional?.Length ?? 0}，藏宝 {caches.Length}，场景出口 {portals.Length}，" +
                  $"风闸 {(wind ? wind.Phase.ToString() : "无")}，领主战 {(enc ? $"{enc.bossId}（{(enc.enabled ? "开着" : "关着")}）" : "无")}，" +
                  $"神范台熔铜渠 {channels?.Count ?? 0} 片，熔岩 {LavaVolume.Live.Count} 片");
-            if (!objective || objective.RequiredTotal != 4) Fail("目标图的必清场地应为 4 个");
+            if (!objective || objective.RequiredTotal != 5) Fail("目标图的必清场地应为 5 个");
             if (objective && (objective.optional?.Length ?? 0) != 1) Fail("目标图的可选场地应为 1 个（废范守军）");
             var second = wind ? wind.secondVisit : null;
             if (!wind || !second) Fail("没有风闸，或风闸没接上第二次进殿的场地");

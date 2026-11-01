@@ -4,13 +4,12 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 熔心魔将登场（3-3 铸范大坊 · 神范台，docs/level-design/boss-intros.md「熔心魔将」）：约 6.5 s（回程远时落地按路程拉长，3-3 实际约 7.1 s）。
-    ///   0.0–2.0 vista   从玩家眼中摇臂升到肩后上方，越过场地仰望火神王座的熔岩圆环与竖直熔瀑，镜头慢慢仰起——余烬往上飘，高处一团火光，魔将拖火下坠
+    ///   0.0–2.0 vista   贴地后退的 establish：熔池、圆环与塔顶同框，沿竖直熔岩柱慢慢仰起——余烬往上飘，高处一团火光，魔将拖火下坠
     ///   1.6             生成（WarlordBrain 的登场：从 34 m 高处 1.04 s 砸下来、身后拖火，落地爆炸 + 火环 + 重震；70% = 3.4 s 时咆哮）
-    ///   2.0–3.3 impact  侧面低机位跟拍下坠（看点 = 模型，胶囊不动），2.66 s 落地：熔铜四溅、地面一圈火环、闪屏、短慢动作
+    ///   2.0–3.3 impact  首领后侧低机位 reveal 跟拍下坠，王座留在背景（看点 = 模型，胶囊不动），2.66 s 落地：熔铜四溅、地面一圈火环、闪屏、短慢动作
     ///   3.3–5.2 roar    略低于头的特写（角盔露全），咆哮，余烬绕身，名字卡
     ///   5.2–6.5         拉回玩家眼睛
-    /// 魔将还没有动作片段（部件骨架，ART8）：下坠、落地、咆哮的身体姿态都缺，这里只有位移和特效——
-    /// 下坠靠火尾体积 + 身上三片大火舌 + 甩出的熔铜遮住僵直的姿态，落地是看得清的砸地（尘浪、熔铜冠、熔铜贴花、残火，不再被通用爆炸光整个盖住），
+    /// 人形手 K 片段负责下坠、落地与咆哮的身体姿态；火尾、熔铜冠、裂纹和余烬只加强这些关键姿势，不用光团遮模型。
     /// 咆哮靠肩头火柱 + 脚下残火（WarlordBrain.BeginDropFx / Land / RoarFx）。镜头转场的风见 <see cref="IntroFx.Wind"/>。
     /// </summary>
     [Defs]
@@ -27,16 +26,16 @@ namespace Spiritfire.Game
             const string throne = "fireGodThrone";
             anchors[throne] = c => c.Arena ? c.Arena.Center + Vector3.up * 31f : c.Spawn + Vector3.up * 31f;
 
-            // 3-3 的入场点离出生点 60 m：从玩家肩后摇臂升起，越过整片神范台场地仰望火神王座，
-            // 镜头慢慢仰起——1.45 s 天上一团火光，1.6 s 魔将在 34 m 高处现身、拖着火尾往下砸（远景里整段下坠都在画里）
+            // establish：贴地后退，熔池在画面下沿、圆环与 65 m 高的塔顶都在画里，视线沿熔岩柱慢慢抬升。
             shots.Add(IntroShot.Make("vista", 2.0f)
-                .Move(IntroPoint.At(IntroAnchors.Player, 2.5f, 6f, -7f), IntroPoint.At(IntroAnchors.Player, 3.5f, 7.5f, -9f))
-                .Look(IntroPoint.At(throne, 0, -12f, 0), IntroPoint.At(throne, 0, 4f, 0))
-                .Fov(52f, 50f).BlendIn(0.9f).Handheld(0.15f));
+                .Move(IntroPoint.At(IntroAnchors.Player, 0, 2f, -18f), IntroPoint.At(IntroAnchors.Player, 2f, 2.5f, -22f))
+                .Look(IntroPoint.At(throne, 0, -12f, 0), IntroPoint.At(throne, 0, 0, 0))
+                .Fov(58f, 54f).BlendIn(0.9f).Handheld(0.15f));
+            // reveal：从首领后侧低机位跟拍，首领与王座、圆环、熔岩柱同向；只改机位，不改下坠与落地事件。
             shots.Add(IntroShot.Make("impact", 1.3f)
-                .Move(IntroPoint.At(IntroAnchors.Spawn, 12f, 1.4f, -10f), IntroPoint.At(IntroAnchors.Spawn, 10.5f, 1.8f, -9f))
-                .Look(IntroPoint.At(IntroAnchors.Model, 0, 0, 0), IntroPoint.At(IntroAnchors.Model, 0, -0.3f, 0))
-                .Fov(55f, 50f).Ease(IntroEase.Out).Handheld(0.3f));
+                .Move(IntroPoint.At(IntroAnchors.Spawn, 7f, 1.2f, 15f), IntroPoint.At(IntroAnchors.Spawn, 5f, 1.5f, 13f))
+                .Look(IntroPoint.At(IntroAnchors.Model, 0, 2f, 0), IntroPoint.At(IntroAnchors.Model, 0, -0.3f, 0))
+                .Fov(58f, 54f).Ease(IntroEase.Out).Handheld(0.3f));
             // 角盔是弱点，要露全：机位只比头低一点（太低时胸甲、肩甲把头盔挡掉）
             shots.Add(IntroShot.Make("roar", 1.9f)
                 .Move(IntroPoint.Sized(IntroAnchors.Head, 2.0f, -0.6f, -5.8f), IntroPoint.Sized(IntroAnchors.Head, 1.2f, -0.4f, -4.4f))
