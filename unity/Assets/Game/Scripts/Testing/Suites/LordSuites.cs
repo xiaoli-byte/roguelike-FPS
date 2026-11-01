@@ -325,10 +325,24 @@ namespace Spiritfire.Game.Testing
             float start = Time.time, activeAt = -1, recoverAt = -1;
             bool[] taken = new bool[8];
             int warned0 = 0;
+            var trace = new System.Text.StringBuilder();
+            float nextTrace = 0.25f;
             while (boss && !boss.Dead && boss.Current == move && Time.time - start < 16f)
             {
                 KeepPlayerAlive();
                 DuringMove(id, move);
+                // 片段播放进度的抽样（诊断「片段比玩法慢」）：每 0.25 s 记一次 Animator 的状态时间、速度、过渡
+                var an = boss.Model?.animator;
+                if (an && move.T >= nextTrace)
+                {
+                    nextTrace += 0.25f;
+                    var si = an.GetCurrentAnimatorStateInfo(0);
+                    var ni = an.GetNextAnimatorStateInfo(0);
+                    bool tr = an.IsInTransition(0);
+                    float act = 0;
+                    foreach (var pr in an.parameters) if (pr.name == "ActScale") act = an.GetFloat("ActScale");
+                    trace.Append($" [{move.T:F2}: {(si.IsName(move.Id) ? "" : "≠")}{si.normalizedTime * si.length:F2}/{si.length:F2}{(tr ? $"→{(ni.IsName(move.Id) ? "" : "≠")}{ni.normalizedTime * ni.length:F2}" : "")} ×{an.speed:F2}·{act:F2}]");
+                }
                 var c = boss.BodyCenter + Vector3.up * 0.5f;
                 float size = Mathf.Max(5f, boss.Def.height);
                 switch (move.Stage)
@@ -368,19 +382,23 @@ namespace Spiritfire.Game.Testing
             float rel = move.ReleasedAt;
             string align;
             if (rel < 0) align = "没有释放帧";
+            else if (cue == "none") align = "招式表里没有出手事件（按时间出手）";
             else if (ev.evt == null) align = "没收到片段事件（按时间兜底）";
             else
             {
-                // 按渲染帧量：片段在出招那一帧才开始播（动画比玩法计时晚一个渲染帧是结构性的），编辑器里一帧常常远长于 1/30 s
+                // 渲染帧和 30 fps 帧取宽的那个量：片段在出招那一帧才开始播（动画比玩法计时晚一个渲染帧是结构性的）；
+                // 编辑器卡的时候一帧远长于 1/30 s（只看时间会冤枉），跑得快的时候 1/30 s 里有四五个渲染帧（只看渲染帧会冤枉）
                 int df = ev.frame - move.ReleasedFrame;
                 float diff = (ev.t - start - rel) * 30f;
                 align = $"{df:+0;-0;0} 渲染帧（{diff:+0.0;-0.0} 帧 @30 fps）";
-                if (Mathf.Abs(df) > 1) Fail($"{move.Name}：释放帧和片段事件「{cue}」差 {df} 个渲染帧（> 1 帧）");
+                if (Mathf.Abs(df) > 1 && Mathf.Abs(diff) > 1f)
+                    Fail($"{move.Name}：释放帧和片段事件「{cue}」差 {df} 个渲染帧、{diff:+0.0;-0.0} 帧 @30 fps（都超过 1 帧）");
             }
             bool reached = move.ReachedActive && !move.Cancelled;
             Line($"{move.Name}（{id}）：{(reached ? "✓ 出手" : move.Cancelled ? "被打断" : "✗ 没出手")}，前摇 {move.WindupTime:F2} s，释放帧 {(rel >= 0 ? $"{rel:F2} s" : "—")}，" +
                  $"事件「{cue}」对齐 {align}，预警 {warned0} 个，命中玩家 {move.Hits}，粒子峰值 {FxBudget.Peak}，事件 {string.Join(" ", events.Select(e => $"{e.evt}@{e.t - start:F2}"))}");
             if (!reached && !AllowCancel(id)) Fail($"{move.Name}：没有走到出手 / 被打断");
+            if (trace.Length > 0) Line($"  片段进度 {trace}");
             AfterMove(id, move);
         }
 
@@ -793,7 +811,8 @@ namespace Spiritfire.Game.Testing
         protected override string Tag => "playtest_huashe";
         protected override float ArenaRadius => 26f;
 
-        protected override string ReleaseEvent(string id) => id == HuasheSpit.MoveId ? "release" : "hit";
+        // 网页招式表 roar 只有 warn / end：吼在前摇末按时间出
+        protected override string ReleaseEvent(string id) => id == HuasheSpit.MoveId ? "release" : id == HuasheRoar.MoveId ? "none" : "hit";
 
         protected override bool AllowCancel(string id) => false;
 
@@ -896,7 +915,7 @@ namespace Spiritfire.Game.Testing
             protected override string BossId => FeilianDef.Id;
             protected override string Tag => "beats_feilian";
             protected override IEnumerable<string> MoveOrder => new[] { FeilianGust.MoveId, FeilianCharge.MoveId, FeilianBlades.MoveId, FeilianTornadoMove.MoveId, FeilianWheel.MoveId, FeilianStormBurst.MoveId };
-            protected override string ReleaseEvent(string id) => id is FeilianBlades.MoveId or FeilianTornadoMove.MoveId ? "release" : "hit";
+            protected override string ReleaseEvent(string id) => id is FeilianBlades.MoveId or FeilianTornadoMove.MoveId ? "release" : id == FeilianSidestep.MoveId ? "none" : "hit";
             protected override float DistanceFor(string id) => id == FeilianStormBurst.MoveId ? 8f : 14f;
         }
 
@@ -906,7 +925,7 @@ namespace Spiritfire.Game.Testing
             protected override string Tag => "beats_huashe";
             protected override float ArenaRadius => 26f;
             protected override IEnumerable<string> MoveOrder => new[] { HuasheSpit.MoveId, HuasheLunge.MoveId, HuasheWingSlap.MoveId, HuasheRoar.MoveId, HuasheDive.MoveId, HuasheTailSweep.MoveId };
-            protected override string ReleaseEvent(string id) => id == HuasheSpit.MoveId ? "release" : "hit";
+            protected override string ReleaseEvent(string id) => id == HuasheSpit.MoveId ? "release" : id == HuasheRoar.MoveId ? "none" : "hit";
             protected override float DistanceFor(string id) => id == HuasheLunge.MoveId ? 6f : id == HuasheDive.MoveId ? 16f : id == HuasheTailSweep.MoveId ? -8f : 12f;
         }
     }

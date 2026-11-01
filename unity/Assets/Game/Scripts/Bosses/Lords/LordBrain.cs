@@ -114,14 +114,29 @@ namespace Spiritfire.Game
 
         float holdUntil = -1, holdRecover;
 
-        /// <summary>顿帧：只顿首领自己（Animator ×0.05 停 seconds 秒，再 ×1.6 追回同样的时长）；全局时间不动</summary>
+        /// <summary>
+        /// 顿帧：只顿首领自己（Animator ×0.05 停 seconds 秒，再 ×1.6 把停掉的 0.95 × seconds 追回来）；全局时间不动。
+        /// 追回的时长 = 0.95 × seconds ÷ 0.6：片段的总时长不变，后面的出手事件（捶胸第二、三下）照样落在玩法的时刻上
+        /// </summary>
         public void ImpactHold(float seconds)
         {
+            if (!Model?.animator || !(seconds > 0)) return;
+            // 等这一帧的 Animator 更新完（LateUpdate）再顿：释放帧由玩法在 Update 里先到，这一帧就压慢会把片段的出手事件拖后几帧
+            pendingHold = Mathf.Max(pendingHold, seconds);
+        }
+
+        float pendingHold;
+
+        void LateUpdate()
+        {
+            if (!(pendingHold > 0)) return;
             var a = Model?.animator;
-            if (!a || !(seconds > 0)) return;
+            float seconds = pendingHold;
+            pendingHold = 0;
+            if (!a) return;
             a.speed = 0.05f;
             holdUntil = Time.time + seconds;
-            holdRecover = seconds;
+            holdRecover = seconds * 0.95f / 0.6f;
         }
 
         protected override void Update()
@@ -134,7 +149,7 @@ namespace Spiritfire.Game
                 holdUntil = -1;
                 return;
             }
-            if (Time.time >= holdUntil + holdRecover * 0.6f)
+            if (Time.time >= holdUntil + holdRecover)
             {
                 a.speed = 1f;
                 holdUntil = -1;

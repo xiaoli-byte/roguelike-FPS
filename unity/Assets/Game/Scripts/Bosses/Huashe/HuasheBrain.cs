@@ -24,8 +24,8 @@ namespace Spiritfire.Game
         /// <summary>嘴张着（招式写；噎住时也算）</summary>
         public bool MouthForced { get; set; }
         public bool MouthOpen => MouthForced || (Break != null && Break.Broken);
-        /// <summary>身体泡在水里（湿身）</summary>
-        public bool Wet => Lake != null && BodyCenter.y < Lake.Level + 0.6f;
+        /// <summary>身体泡在水里（湿身）：游动时根节点在水面下 0.3 m；扑上岸搁浅时根节点高出水面就不算</summary>
+        public bool Wet => Lake != null && transform.position.y < Lake.Level + 0.2f;
         /// <summary>吼叫涨水剩余的停留秒数</summary>
         public float SurgeHold { get; set; }
         /// <summary>湿身加成生效过几次、电到玩家自己几次、泡水掉过几次血（测试用）</summary>
