@@ -11,9 +11,14 @@ namespace Spiritfire.Game
     ///     前面挡着走不过去时一大跳（2.2 m 高、多跳 2.5 m）跃过矮掩体或河。
     ///   · 球雷 <c>swell</c>（贴到 2.5 m）：原地越转越快、胀大 1.5 倍、白闪越来越快 0.8 s → 炸成 4 m 球状闪电，22 + 击退，自己死。胀大时带电。
     ///   · 爆囊（被打死）：炸 4 m，对周围敌人 40、对 2.5 m 内的玩家 10；6 m 内的帝江 0.15 s 后一个接一个引爆。被火打死的是一团紫红火球。
+    /// 死法和击杀：被玩家打死 / 被连锁引爆 = 走伤害管线（派发击杀：掉落、秘卷钩子、计数）；球雷胀爆是自爆退场（<see cref="ISelfDestruct"/>，
+    /// 同冰河豚：不经伤害结算、没有击杀事件、不给奖励）。
     /// </summary>
-    public sealed class DijiangAI : PlateauEnemyAI
+    public sealed class DijiangAI : PlateauEnemyAI, ISelfDestruct
     {
+        /// <summary>球雷胀爆把自己炸没了（自爆退场；被打死、被连锁引爆的为 false）</summary>
+        public bool Detonated => Popped && SelfPop;
+
         public const float SwellRange = 2.5f, SelfRadius = 4f, SelfDamage = 22f, PopRadius = 4f, PopFoeDamage = 40f, PopPlayerRadius = 2.5f, PopPlayerDamage = 10f;
         public const float ChainRadius = 6f, ChainDelay = 0.15f, HopHigh = 2.2f;
 
@@ -218,11 +223,24 @@ namespace Spiritfire.Game
             }
             if (!Dead)
             {
-                var info = DamageInfo.Simple(hp.health + hp.armor + hp.shield + 1, DamageSource.Explosion, at, Vector3.up);
-                info.tags = DamageTag.Explosion;
-                info.noCrit = true;
-                hp.noReward = self;
-                hp.Kill(info);
+                if (self)
+                {
+                    // 自爆退场：同冰河豚，不经伤害结算、不派发击杀、不给奖励（ISelfDestruct.Detonated）
+                    hp.noReward = true;
+                    var info = DamageInfo.Simple(0, DamageSource.Enemy, at, Vector3.up);
+                    info.tags = DamageTag.Explosion; // 死法记成爆炸（皮囊不留尸体）
+                    hp.Kill(info);
+                }
+                else
+                {
+                    // 被连锁引爆：玩家打爆前一只引起的，走伤害管线派发击杀（同爆囊打周围敌人的爆炸来源）；
+                    // 被护盾 / 免伤挡住没死的照样炸没（皮囊已经炸开），这时没有击杀事件
+                    var info = DamageInfo.Simple((hp.health + hp.armor + hp.shield) * 4f + 100f, DamageSource.Explosion, at, Vector3.up);
+                    info.tags = DamageTag.Explosion;
+                    info.noCrit = true;
+                    Combat.DamageEnemy(hp, info);
+                    if (!Dead) hp.Kill(info);
+                }
             }
         }
 

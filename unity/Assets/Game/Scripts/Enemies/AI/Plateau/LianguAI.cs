@@ -114,7 +114,16 @@ namespace Spiritfire.Game
                 foreach (Transform c in transform)
                     if (c.name is "Body" or "Facing" || c.GetComponent<Renderer>())
                         c.gameObject.SetActive(false);
-                foreach (var c in GetComponents<Collider>()) c.enabled = false;
+                // 根上的角色胶囊收成只包雷心（不整个关掉）：瞄身体中心的（自动瞄准、灵宠、试玩套件的 BodyCenter）要瞄得到雷心，
+                // 关掉以后它们瞄的是根节点上方 1 m 的空处，一枪也打不中（arena 开火 40 s 一滴血没掉）。鼓环在外圈另有命中区
+                foreach (var c in GetComponents<Collider>())
+                    if (c is CapsuleCollider cap)
+                    {
+                        cap.center = Vector3.zero;
+                        cap.radius = 0.5f;
+                        cap.height = 1f;
+                    }
+                    else c.enabled = false;
                 coreModel = Spawn("SM_EnemyPart_LianguCore", transform).transform;
             }
             else coreModel = transform.Find("Model") ?? transform;

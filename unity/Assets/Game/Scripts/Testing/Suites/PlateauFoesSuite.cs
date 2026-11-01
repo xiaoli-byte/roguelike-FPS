@@ -470,18 +470,38 @@ namespace Spiritfire.Game.Testing
             foreach (var d in list) d.Notice(false);
             yield return new WaitForSeconds(1.5f);
             Check(list.Sum(d => d.Hops) > 0, $"歌舞：蹦着过来（{list.Sum(d => d.Hops)} 蹦）");
+            // 被打死、被连锁引爆的都走伤害管线派发击杀（掉落、秘卷钩子、计数靠它）
+            int kills = 0;
+            InAction<KillEvent> onKill = (in KillEvent e) =>
+            {
+                foreach (var d in list)
+                    if (d && e.enemy == d.Health)
+                        kills++;
+            };
+            GameEvents.EnemyKilled += onKill;
             Hurt(list[0], 9999f, list[0].Center);
             yield return new WaitForSeconds(0.8f);
+            GameEvents.EnemyKilled -= onKill;
             int popped = list.Count(d => d.Popped);
             Check(popped >= 2, $"打爆一只 → 连锁引爆（{popped} / 3）");
+            Check(kills == popped && list.All(d => !d.Detonated), $"打死的和连锁引爆的都派发击杀（{kills} / {popped}）");
             Reset();
             var s = Spawn<DijiangAI>("dijiang", away * -3f);
             if (!s) yield break;
             yield return new WaitForSeconds(0.8f);
             StandAt(s, 2f);
+            bool selfKill = false;
+            InAction<KillEvent> onSelf = (in KillEvent e) =>
+            {
+                if (s && e.enemy == s.Health) selfKill = true;
+            };
+            GameEvents.EnemyKilled += onSelf;
             s.ForceSwell();
             yield return WaitFor(() => s.Popped, 2f);
+            yield return null;
+            GameEvents.EnemyKilled -= onSelf;
             Check(s.Popped && s.SelfPop, "贴身胀爆（球雷）");
+            Check(s.Dead && s.Detonated && !selfKill, "球雷胀爆是自爆退场（ISelfDestruct，不派发击杀）");
         }
 
         IEnumerator Qiongqi()
