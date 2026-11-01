@@ -16,35 +16,35 @@ namespace Spiritfire.Art.Editor.Levels
         {
             if (RenderSettings.skybox && RenderSettings.skybox.shader.name == "Spiritfire/SkyGradient")
             {
-                RenderSettings.skybox.SetColor("_TopColor", new Color(0.055f, 0.035f, 0.085f));
-                RenderSettings.skybox.SetColor("_HorizonColor", new Color(0.32f, 0.12f, 0.08f));
-                RenderSettings.skybox.SetColor("_BottomColor", new Color(0.07f, 0.045f, 0.075f));
-                RenderSettings.skybox.SetColor("_SunColor", new Color(0.55f, 0.24f, 0.16f));
-                RenderSettings.skybox.SetFloat("_Exposure", 0.95f);
+                RenderSettings.skybox.SetColor("_TopColor", new Color(0.18f, 0.07f, 0.12f));
+                RenderSettings.skybox.SetColor("_HorizonColor", new Color(0.58f, 0.19f, 0.09f));
+                RenderSettings.skybox.SetColor("_BottomColor", new Color(0.16f, 0.08f, 0.1f));
+                RenderSettings.skybox.SetColor("_SunColor", new Color(0.9f, 0.42f, 0.18f));
+                RenderSettings.skybox.SetFloat("_Exposure", 1.2f);
             }
             if (RenderSettings.sun)
             {
-                RenderSettings.sun.color = new Color(0.78f, 0.48f, 0.4f);
-                RenderSettings.sun.intensity = 0.8f;
+                RenderSettings.sun.color = new Color(1f, 0.62f, 0.42f);
+                RenderSettings.sun.intensity = 1.05f;
             }
-            RenderSettings.ambientSkyColor = new Color(0.24f, 0.2f, 0.3f);
-            RenderSettings.ambientEquatorColor = new Color(0.28f, 0.21f, 0.27f);
-            RenderSettings.ambientGroundColor = new Color(0.34f, 0.18f, 0.13f);
-            RenderSettings.fogColor = new Color(0.18f, 0.095f, 0.13f);
-            RenderSettings.fogStartDistance = 30f;
-            RenderSettings.fogEndDistance = 260f;
+            RenderSettings.ambientSkyColor = new Color(0.38f, 0.26f, 0.34f);
+            RenderSettings.ambientEquatorColor = new Color(0.45f, 0.28f, 0.26f);
+            RenderSettings.ambientGroundColor = new Color(0.5f, 0.24f, 0.14f);
+            RenderSettings.fogColor = new Color(0.42f, 0.16f, 0.12f);
+            RenderSettings.fogStartDistance = 35f;
+            RenderSettings.fogEndDistance = 320f;
         }
 
         static void ConfigureFireGodBackdrop(LevelKit.BackdropSpec backdrop)
         {
-            backdrop.silhouette = new Color(0.075f, 0.055f, 0.1f);
-            backdrop.top = new Color(0.16f, 0.075f, 0.09f);
+            backdrop.silhouette = new Color(0.18f, 0.09f, 0.14f);
+            backdrop.top = new Color(0.32f, 0.12f, 0.12f);
             backdrop.horizon = RenderSettings.fogColor;
             backdrop.rings = new[]
             {
-                new LevelKit.BackdropRing { style = LevelKit.BackdropStyle.Ridges, radius = 420, height = 75, haze = 0.3f, freq = 19, seed = 31 },
-                new LevelKit.BackdropRing { style = LevelKit.BackdropStyle.Ridges, radius = 650, height = 140, haze = 0.5f, freq = 15, seed = 37 },
-                new LevelKit.BackdropRing { style = LevelKit.BackdropStyle.Ridges, radius = 900, height = 230, haze = 0.7f, freq = 11, seed = 43 },
+                new LevelKit.BackdropRing { style = LevelKit.BackdropStyle.Ridges, radius = 420, height = 75, haze = 0.24f, freq = 19, seed = 31 },
+                new LevelKit.BackdropRing { style = LevelKit.BackdropStyle.Ridges, radius = 650, height = 140, haze = 0.46f, freq = 15, seed = 37 },
+                new LevelKit.BackdropRing { style = LevelKit.BackdropStyle.Ridges, radius = 900, height = 230, haze = 0.68f, freq = 11, seed = 43 },
             };
         }
 
@@ -54,20 +54,36 @@ namespace Spiritfire.Art.Editor.Levels
             var root = new GameObject("FireGodThrone").transform;
             root.SetParent(parent, false);
             var controller = root.gameObject.AddComponent<FireGodThrone>();
-            var basalt = LevelKit.Mat(Dir, "FireGodBasalt", new Color(0.115f, 0.09f, 0.15f), 0.94f);
-            var basaltCool = LevelKit.Mat(Dir, "FireGodBasaltCool", new Color(0.085f, 0.085f, 0.135f), 0.96f);
+            var basalt = LevelKit.Mat(Dir, "FireGodBasalt", new Color(0.34f, 0.23f, 0.26f), 0.94f);
+            var basaltCool = LevelKit.Mat(Dir, "FireGodBasaltCool", new Color(0.27f, 0.21f, 0.3f), 0.96f);
+            foreach (var rock in new[] { basalt, basaltCool })
+            {
+                rock.SetColor("_RimColor", new Color(1f, 0.3f, 0.07f));
+                rock.SetFloat("_RimStrength", 0.65f);
+                rock.SetFloat("_RimPower", 2.2f);
+                rock.SetFloat("_ShadowLift", 0.55f);
+                rock.SetColor("_ShadowTint", new Color(0.38f, 0.22f, 0.32f));
+            }
 
             var throne = Anchor("Throne", root, new Vector3(FireGodSpire.x, 22f, FireGodSpire.y));
             var throneProcedural = Anchor("Procedural", throne, Vector3.zero);
-            NewMeshObject("王座主尖塔", throneProcedural, CragMesh(14f, 44f, 71, 0.82f), basalt,
+            NewMeshObject("王座主尖塔", throneProcedural, CragMesh(17f, 46f, 71, 0.82f), basalt,
                 $"{Dir}/Throne/Mesh_FireGodThrone.asset");
             foreach (var (at, radius, height, seed) in new[]
                      {
-                         (new Vector3(-10, 0, 2), 6.5f, 30f, 73), (new Vector3(10, 1, 3), 7f, 34f, 79),
-                         (new Vector3(-6, -2, -5), 5f, 25f, 83), (new Vector3(7, -1, -4), 5.5f, 28f, 89),
+                         (new Vector3(-12, -1, 2), 8f, 38f, 73), (new Vector3(12, 0, 3), 8.5f, 41f, 79),
+                         (new Vector3(-7, -3, -5), 6f, 30f, 83), (new Vector3(8, -2, -4), 6.5f, 33f, 89),
                      })
                 NewMeshObject("王座侧刃", throneProcedural, CragMesh(radius, height, seed, 0.8f), basaltCool,
                     $"{Dir}/Throne/Mesh_FireGodBlade_{seed}.asset").transform.localPosition = at;
+            var crackMat = LevelKit.GlowMat(Dir, "FireGodCracks", new Color(1f, 0.28f, 0.025f), new Color(4.5f, 0.85f, 0.08f));
+            foreach (var (at, height, width, seed) in new[]
+                     {
+                         (new Vector3(-6f, 4f, -12.5f), 25f, 0.18f, 211), (new Vector3(-2f, 8f, -12.5f), 31f, 0.24f, 223),
+                         (new Vector3(3f, 3f, -12.5f), 23f, 0.16f, 227), (new Vector3(7f, 6f, -12.5f), 27f, 0.2f, 229),
+                     })
+                NewMeshObject("王座熔岩裂缝", throneProcedural, CrackMesh(height, width, seed), crackMat,
+                    $"{Dir}/Throne/Mesh_FireGodCrack_{seed}.asset").transform.localPosition = at;
 
             foreach (var (at, radius, height, seed) in new[]
                      {
@@ -93,34 +109,61 @@ namespace Spiritfire.Art.Editor.Levels
             }
 
             var ring = Anchor("Ring", root, FireGodRing);
+            ring.localRotation = Quaternion.Euler(0, 35f, 0);
             var ringProcedural = Anchor("Procedural", ring, Vector3.zero);
-            NewMeshObject("圆环玄武岩暗衬", ringProcedural, RingMesh(5.2f, 0.45f),
-                LevelKit.Mat(Dir, "FireGodRingBacking", new Color(0.09f, 0.055f, 0.085f), 0.94f),
-                $"{Dir}/Throne/Mesh_FireGodRingBacking.asset").transform.localPosition = new Vector3(0, 0, 0.6f);
-            NewMeshObject("熔岩圆环", ringProcedural, RingMesh(5.2f, 0.38f),
-                LevelKit.GlowMat(Dir, "FireGodRing", new Color(1f, 0.26f, 0.035f), new Color(4.2f, 0.75f, 0.08f)),
-                $"{Dir}/Throne/Mesh_FireGodRing.asset").transform.localPosition = new Vector3(0, 0, -0.7f);
+            NewMeshObject("圆环玄武岩暗衬", ringProcedural, RingMesh(5.2f, 0.88f),
+                LevelKit.Mat(Dir, "FireGodRingBacking", new Color(0.16f, 0.08f, 0.09f), 0.94f),
+                $"{Dir}/Throne/Mesh_FireGodRingBacking.asset").transform.localPosition = new Vector3(0, 0, 0.75f);
+            NewMeshObject("熔岩圆环", ringProcedural, RingMesh(5.2f, 0.68f),
+                LevelKit.GlowMat(Dir, "FireGodRing", new Color(1f, 0.38f, 0.04f), new Color(6f, 1.5f, 0.18f)),
+                $"{Dir}/Throne/Mesh_FireGodRing.asset").transform.localPosition = new Vector3(0, 0, -0.65f);
 
             var fallRoot = Anchor("Lava Fall", root, new Vector3(Basin.x, ArenaLava - 0.2f, Basin.y));
             var fallMat = new Material(LevelKit.LavaMaterial()) { name = "M_FireGodFall" };
-            fallMat.SetColor("_DeepColor", new Color(0.65f, 0.055f, 0.012f));
-            fallMat.SetColor("_HotColor", new Color(1f, 0.36f, 0.025f));
-            fallMat.SetColor("_CoreColor", new Color(1f, 0.82f, 0.32f));
-            fallMat.SetFloat("_Emission", 2.35f);
-            fallMat.SetFloat("_MoltenAmount", 0.78f);
-            fallMat.SetFloat("_CrackWidth", 0.055f);
+            fallMat.SetColor("_DeepColor", new Color(0.65f, 0.045f, 0.008f));
+            fallMat.SetColor("_HotColor", new Color(1f, 0.12f, 0.005f));
+            fallMat.SetColor("_CoreColor", new Color(1f, 0.88f, 0.55f));
+            fallMat.SetFloat("_Emission", 2.2f);
+            fallMat.SetFloat("_MoltenAmount", 0.9f);
+            fallMat.SetFloat("_CrackWidth", 0.045f);
             fallMat.SetFloat("_NoiseScale", 0.17f);
             fallMat.SetFloat("_PlateScale", 0.18f);
             fallMat.SetFloat("_ShoreWidth", 0f);
             fallMat.SetFloat("_ShoreDepth", 0f);
-            fallMat.SetFloat("_BubbleRate", 0.25f);
+            fallMat.SetFloat("_BubbleRate", 0.35f);
             LevelKit.SaveAsset(fallMat, $"{Dir}/M_WB_FireGodFall.mat");
             var fall = NewMeshObject("FireGodThrone · 熔岩柱", fallRoot,
                 FallMesh(FireGodFallTop - ArenaLava + 0.2f), fallMat, $"{Dir}/Lava/Mesh_FireGodFall_1.asset");
             fall.isStatic = false;
+            for (int i = 0; i < 2; i++)
+            {
+                var splash = NewMeshObject("熔岩落点飞溅环", fallRoot, RingMesh(1.8f + i * 1.4f, 0.12f), crackMat,
+                    $"{Dir}/Throne/Mesh_FireGodSplash_{i + 1}.asset");
+                splash.transform.localPosition = new Vector3(0, 0.2f + i * 0.08f, 0);
+                splash.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            }
+            for (int i = 0; i < 14; i++)
+            {
+                float a = i * Mathf.PI * 2f / 14f;
+                float r = Mathf.Lerp(1.2f, 3.8f, Landform.Hash(i, 4, 251));
+                var spark = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                spark.name = "熔岩落点火星";
+                spark.transform.SetParent(fallRoot, false);
+                spark.transform.localPosition = new Vector3(Mathf.Cos(a) * r, Mathf.Lerp(0.4f, 3.4f, Landform.Hash(i, 6, 251)), Mathf.Sin(a) * r);
+                spark.transform.localScale = new Vector3(0.14f, 0.34f, 0.14f) * Mathf.Lerp(0.7f, 1.4f, Landform.Hash(i, 8, 251));
+                Object.DestroyImmediate(spark.GetComponent<Collider>());
+                spark.GetComponent<MeshRenderer>().sharedMaterial = crackMat;
+            }
 
-            var ringLight = LightAt(root, "FireGodThrone · 圆环光", FireGodRing, 1.6f, 27f);
-            var fallLight = LightAt(root, "FireGodThrone · 熔瀑落点光", new Vector3(Basin.x, 3f, Basin.y), 3.2f, 25f);
+            var ringLight = LightAt(root, "FireGodThrone · 圆环光", FireGodRing, 6f, 48f);
+            var fallLight = LightAt(root, "FireGodThrone · 熔瀑落点光", new Vector3(Basin.x, 4f, Basin.y), 10f, 55f);
+            LightAt(root, "FireGodThrone · 王座左轮廓光", new Vector3(139, 10, 199), 18f, 60f);
+            LightAt(root, "FireGodThrone · 王座右轮廓光", new Vector3(165, 12, 200), 18f, 60f);
+            LightAt(root, "FireGodThrone · 王座正面反光", new Vector3(152, 28, 190), 12f, 60f);
+            LightAt(root, "FireGodThrone · 塔顶逆光", new Vector3(152, 48, 211), 10f, 44f);
+            LightAt(root, "FireGodThrone · 南渠反光", new Vector3(152, 2, 140), 3.5f, 30f);
+            LightAt(root, "FireGodThrone · 西渠反光", new Vector3(136, 2, 164), 3.5f, 30f);
+            LightAt(root, "FireGodThrone · 东渠反光", new Vector3(168, 2, 164), 3.5f, 30f);
             controller.throne = throne;
             controller.ring = ring;
             controller.throneProcedural = throneProcedural;
@@ -132,6 +175,7 @@ namespace Spiritfire.Art.Editor.Levels
             var air = root.gameObject.AddComponent<FireGodAtmosphere>();
             air.smokeAt = new Vector3(FireGodSpire.x, 54f, FireGodSpire.y);
             air.embersAt = new Vector3(Basin.x, 0f, Basin.y);
+            air.emberRate = 7f;
             var rumbleAt = new GameObject("FireGodThrone · 熔岩轰鸣").transform;
             rumbleAt.SetParent(root, false);
             rumbleAt.localPosition = new Vector3(Basin.x, 16f, Basin.y);
@@ -178,14 +222,18 @@ namespace Spiritfire.Art.Editor.Levels
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
             LevelKit.SaveAsset(profile, $"{Dir}/VP_FireGodThrone.asset");
             var color = profile.Add<ColorAdjustments>(true);
-            color.postExposure.Override(0.12f);
-            color.contrast.Override(20f);
-            color.saturation.Override(0f);
+            color.postExposure.Override(0.65f);
+            color.contrast.Override(12f);
+            color.saturation.Override(8f);
             var white = profile.Add<WhiteBalance>(true);
-            white.temperature.Override(-10f);
-            white.tint.Override(-2f);
+            white.temperature.Override(15f);
+            white.tint.Override(2f);
+            var bloom = profile.Add<Bloom>(true);
+            bloom.threshold.Override(0.85f);
+            bloom.intensity.Override(1.25f);
+            bloom.scatter.Override(0.72f);
             var vignette = profile.Add<Vignette>(true);
-            vignette.intensity.Override(0.42f);
+            vignette.intensity.Override(0.25f);
             vignette.smoothness.Override(0.48f);
             ShowcaseSceneBuilder.PersistVolumeComponents(profile);
 
@@ -264,6 +312,33 @@ namespace Spiritfire.Art.Editor.Levels
             return mesh;
         }
 
+        static Mesh CrackMesh(float height, float width, int seed)
+        {
+            const int Segments = 12;
+            var vertices = new List<Vector3>();
+            var triangles = new List<int>();
+            for (int i = 0; i <= Segments; i++)
+            {
+                float v = i / (float)Segments;
+                float x = (Landform.Hash(i, 3, seed) - 0.5f) * width * 4f;
+                float half = width * Mathf.Lerp(0.65f, 1.15f, Landform.Hash(i, 7, seed));
+                float z = 10.5f * v - 0.35f;
+                vertices.Add(new Vector3(x - half, v * height, z));
+                vertices.Add(new Vector3(x + half, v * height, z));
+            }
+            for (int i = 0; i < Segments; i++)
+            {
+                int a = i * 2;
+                triangles.AddRange(new[] { a, a + 2, a + 1, a + 1, a + 2, a + 3, a + 1, a + 2, a, a + 3, a + 2, a + 1 });
+            }
+            var mesh = new Mesh();
+            mesh.SetVertices(vertices);
+            mesh.SetTriangles(triangles, 0);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
         static Mesh RingMesh(float radius, float tube)
         {
             const int Major = 64, Minor = 8;
@@ -299,8 +374,8 @@ namespace Spiritfire.Art.Editor.Levels
             for (int j = 0; j <= Rows; j++)
             {
                 float v = j / (float)Rows;
-                float half = Mathf.Lerp(0.82f, 0.64f, v) * (1f + 0.045f * Mathf.Sin(v * 13f));
-                float center = 0.045f * Mathf.Sin(v * 9f);
+                float half = Mathf.Lerp(1.65f, 1.25f, v) * (1f + 0.055f * Mathf.Sin(v * 13f));
+                float center = 0.08f * Mathf.Sin(v * 9f);
                 for (int i = 0; i <= Cols; i++)
                 {
                     float u = -1f + 2f * i / Cols;

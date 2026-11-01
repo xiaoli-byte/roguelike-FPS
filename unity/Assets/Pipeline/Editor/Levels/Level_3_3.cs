@@ -406,7 +406,7 @@ namespace Spiritfire.Art.Editor.Levels
                         ("Spawn", E(Spawn), G(Ladle.Center, 4), true),
                         ("SpawnMould", E(Spawn), mouldTop, false),
                         ("SpawnThrone", E(Spawn), FireGodRing, false),
-                        ("ArenaThrone", E(PlayerEntryAt), FireGodRing, false),
+                        ("ArenaThrone", E(new Vector2(152, 121), 2.2f), new Vector3(Basin.x, 22f, 190f), false),
                         ("Central", E(new Vector2(84, 40)), G(Ladle.Center, 3), false),
                         ("EastBridge", E(new Vector2(146, 52)), G(EastSite, 2), false),
                         ("EastRows", E(new Vector2(150, 90)), G(new Vector2(176, 50), 1.5f), false),
