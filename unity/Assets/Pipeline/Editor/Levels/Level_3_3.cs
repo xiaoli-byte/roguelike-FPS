@@ -30,7 +30,7 @@ namespace Spiritfire.Art.Editor.Levels
     /// 报告列出来；全部到齐后占位检查自动收紧成不合格。生成：Spiritfire ▸ Levels ▸ Build 3-3 铸范大坊（或 bridge.sh level 3-3）。
     /// </summary>
     [LevelBuilder("3-3", ScenePath)]
-    public static class Level_3_3
+    public static partial class Level_3_3
     {
         public const string Dir = "Assets/Levels/L3_3_Foundry";
         public const string ScenePath = "Assets/Scenes/L3_3_Foundry.unity";
@@ -350,6 +350,7 @@ namespace Spiritfire.Art.Editor.Levels
             var hall = BuildHall(set, arch, props, markers);
             BuildWindTerrace(set, arch, props);
             var arenaProps = BuildArenaProps(set, arch, props);
+            var throne = BuildFireGodThrone(set, arch);
             BuildScatter(set, env);
             BuildMarkers(set, markers);
 
@@ -376,6 +377,7 @@ namespace Spiritfire.Art.Editor.Levels
             var rep = new LevelKit.Report();
             rep.Line("3-3 铸范大坊 · 鼓风正殿 · 验收");
             CheckGeometry(rep, set, lava, decks, hall, gate, lord);
+            CheckFireGodThrone(rep, throne);
             var spec = Spec(set);
             LevelValidator.Run(spec, rep); // 主线、坡度、视线 + L5 规则集，见文件末尾的 Spec
             LevelKit.ValidateLava(rep);
@@ -397,6 +399,8 @@ namespace Spiritfire.Art.Editor.Levels
                         ("Map", new Vector3(100, 400, 107), new Vector3(100, 0, 107.5f), false),
                         ("Spawn", E(Spawn), G(Ladle.Center, 4), true),
                         ("SpawnMould", E(Spawn), mouldTop, false),
+                        ("SpawnThrone", E(Spawn), FireGodRing, false),
+                        ("ArenaThrone", E(PlayerEntryAt), FireGodRing, false),
                         ("Central", E(new Vector2(84, 40)), G(Ladle.Center, 3), false),
                         ("EastBridge", E(new Vector2(146, 52)), G(EastSite, 2), false),
                         ("EastRows", E(new Vector2(150, 90)), G(new Vector2(176, 50), 1.5f), false),
@@ -1308,6 +1312,7 @@ namespace Spiritfire.Art.Editor.Levels
                 .Sight("南闸门 → 浇包吊台", G(Spawn, 1.62f), G(new Vector2(103, 68), Ladle.h + 2.2f), 6, CrucibleId)
                 .Sight("南闸门 → 神范", G(Spawn, 1.62f), mouldTop, 8, MouldId)
                 .Sight("风闸台 → 神范", G(WindGateAt + new Vector2(-4, -3), 1.62f), mouldTop, 8, MouldId)
+                .Sight("南闸门 → 火神王座", G(Spawn, 1.62f), FireGodRing, 10, "FireGodThrone")
                 .Sight("殿南口 → 大炉", G(new Vector2(44, 119), 1.62f), G(FurnaceAt, 14f), 6, FurnaceId);
             foreach (var pl in Platforms)
                 foreach (var (foot, top, _) in pl.ramps)

@@ -4,7 +4,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 熔心魔将登场（3-3 铸范大坊 · 神范台，docs/level-design/boss-intros.md「熔心魔将」）：约 6.5 s（回程远时落地按路程拉长，3-3 实际约 7.1 s）。
-    ///   0.0–2.0 vista   从玩家眼中摇臂升到肩后上方，越过场地望向出生点和后面的神范台，镜头慢慢仰起——余烬往上飘，高处一团火光，魔将拖火下坠
+    ///   0.0–2.0 vista   从玩家眼中摇臂升到肩后上方，越过场地仰望火神王座的熔岩圆环与竖直熔瀑，镜头慢慢仰起——余烬往上飘，高处一团火光，魔将拖火下坠
     ///   1.6             生成（WarlordBrain 的登场：从 34 m 高处 1.04 s 砸下来、身后拖火，落地爆炸 + 火环 + 重震；70% = 3.4 s 时咆哮）
     ///   2.0–3.3 impact  侧面低机位跟拍下坠（看点 = 模型，胶囊不动），2.66 s 落地：熔铜四溅、地面一圈火环、闪屏、短慢动作
     ///   3.3–5.2 roar    略低于头的特写（角盔露全），咆哮，余烬绕身，名字卡
@@ -24,12 +24,14 @@ namespace Spiritfire.Game
             spawnAt = 1.6f;
             landSeconds = 1.3f;
             epithet = "第三章 · 铸范大坊 · 神范台";
+            const string throne = "fireGodThrone";
+            anchors[throne] = c => c.Arena ? c.Arena.Center + Vector3.up * 31f : c.Spawn + Vector3.up * 31f;
 
-            // 3-3 的入场点离出生点 60 m：从玩家肩后摇臂升起，越过整片神范台场地望向出生点和后面发亮的神范，
+            // 3-3 的入场点离出生点 60 m：从玩家肩后摇臂升起，越过整片神范台场地仰望火神王座，
             // 镜头慢慢仰起——1.45 s 天上一团火光，1.6 s 魔将在 34 m 高处现身、拖着火尾往下砸（远景里整段下坠都在画里）
             shots.Add(IntroShot.Make("vista", 2.0f)
                 .Move(IntroPoint.At(IntroAnchors.Player, 2.5f, 6f, -7f), IntroPoint.At(IntroAnchors.Player, 3.5f, 7.5f, -9f))
-                .Look(IntroPoint.At(IntroAnchors.Spawn, -2f, 4f, 10f), IntroPoint.At(IntroAnchors.Spawn, 0, 13f, 2f))
+                .Look(IntroPoint.At(throne, 0, -12f, 0), IntroPoint.At(throne, 0, 4f, 0))
                 .Fov(52f, 50f).BlendIn(0.9f).Handheld(0.15f));
             shots.Add(IntroShot.Make("impact", 1.3f)
                 .Move(IntroPoint.At(IntroAnchors.Spawn, 12f, 1.4f, -10f), IntroPoint.At(IntroAnchors.Spawn, 10.5f, 1.8f, -9f))
