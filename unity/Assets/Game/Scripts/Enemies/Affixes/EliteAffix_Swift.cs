@@ -25,7 +25,7 @@ namespace Spiritfire.Game
             float angle, trailTimer, tornadoCooldown, windLeft, recovery;
             Vector3 lastPos, lockedDirection, windOrigin;
             TelegraphHandle warning;
-            FeilianSpiral charge;
+            EliteTornadoVisual charge;
             bool token;
 
             public bool Winding => windLeft > 0;
@@ -89,8 +89,7 @@ namespace Spiritfire.Game
                     {
                         charge.transform.position = Ground(ai.transform.position);
                         float k = 1f - Mathf.Clamp01(windLeft / EliteTornado.Windup);
-                        charge.transform.localScale = Vector3.one * Mathf.Lerp(0.45f, 1.15f, k);
-                        charge.SetAlpha(0.45f + k * 0.55f);
+                        charge.SetCharge(k);
                     }
                     if (windLeft <= 0) ReleaseTornado();
                     return;
@@ -113,8 +112,9 @@ namespace Spiritfire.Game
                 windOrigin = Ground(ai.transform.position);
                 windLeft = EliteTornado.Windup;
                 warning = Telegraph.Lane(windOrigin, windOrigin + lockedDirection * EliteTornado.Range, EliteTornado.Radius * 2f, EliteTornado.Windup, Affix.Color);
-                charge = FeilianSpiral.Create(windOrigin, 0.16f, 0.72f, 2.2f, 540f, null, false, 0.68f);
+                charge = EliteTornadoVisual.Create(windOrigin, 4.6f, 1.2f);
                 GameAudio.PlayAt("telegraph", ai.transform.position, 0.8f);
+                GameAudio.PlayAt("enemy_charge", ai.transform.position, 0.65f, 1.25f);
             }
 
             bool Interrupted(EnemyAI ai)
@@ -137,9 +137,13 @@ namespace Spiritfire.Game
                 var at = windOrigin + lockedDirection * (Host.radius * size + 0.65f);
                 EliteTornado.Spawn(ai, at, lockedDirection, EliteTornado.BaseDamage * Host.DamageMult);
                 float yaw = Mathf.Atan2(lockedDirection.x, lockedDirection.z) * Mathf.Rad2Deg;
-                Fx.Slash(Host.Center + lockedDirection * 0.45f, yaw, 1.9f * size, 1.55f, 1, 0.65f, 0.55f * size, 0.24f, FeilianPalette.WindCore, true);
+                Fx.Slash(Host.Center + lockedDirection * 0.45f, yaw, 2.15f * size, 1.55f, 1, 0.65f, 0.62f * size, 0.28f, Hex.Rgb(0xc6e7dc), true);
                 Fx.Burst(at + Vector3.up * 0.5f, Affix.Color, 8, 4f, 0.35f, 0.12f);
+                var dust = FxTone.Ground(Hex.Rgb(0xa08a6a));
+                Surge.Crown(at, 1.25f, 1.1f, SurgeKind.Sand, 0.58f, dust, FxTone.Ground(Hex.Rgb(0xd5bd91)), 0.82f);
+                CameraShake.Quake(at, 0.22f, 14f, 0.25f);
                 GameAudio.PlayAt("enemy_melee", ai.transform.position, 0.9f);
+                GameAudio.PlayAt("boss_slam", at, 0.45f, 1.35f);
                 if (token)
                 {
                     AttackTokens.Release(ai);
