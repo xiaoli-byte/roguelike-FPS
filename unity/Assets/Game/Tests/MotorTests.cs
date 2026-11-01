@@ -424,6 +424,33 @@ namespace Spiritfire.Game.Tests
         }
 
         [Test]
+        public void SteepSlopeNeverLiftsWhenPushingOrDashingIntoIt()
+        {
+            // 50° 的坡（1-4 沙壁）：坡往 +z 升高，法线朝 −z、朝上。每帧都报「碰到陡坡」，推着往坡上走 / 冲刺 / 下落中顶着坡
+            var n = Quaternion.Euler(-50f, 0, 0) * Vector3.up;
+            Assert.AreEqual(50f, Vector3.Angle(n, Vector3.up), 0.01f);
+            Assert.Less(n.z, 0f, "法线朝 −z（坡往 +z 升高）");
+            foreach (var fps in Rates)
+            foreach (var (name, dash, vy0) in new[] { ("走", false, 0f), ("冲刺", true, 0f), ("下落中顶着坡走", false, -6f), ("上升中顶着坡冲刺", true, 4f) })
+            {
+                var s = new Sim(fps);
+                s.core.velocity = new Vector3(0, vy0, 7.5f);
+                float dt = 1f / fps, rise = 0, vyMax = vy0;
+                for (int i = 0; i < fps * 0.6f; i++)
+                {
+                    s.core.AfterMove(new MotorFeedback { touching = true, steep = true, groundNormal = n }, dt, out _);
+                    var input = new MotorInput { wish = Vector3.forward, facing = Vector3.forward, dashPressed = dash && i == 0 };
+                    var r = s.core.Step(input, s.Frame(input), dt);
+                    rise += r.delta.y;
+                    vyMax = Mathf.Max(vyMax, s.core.velocity.y);
+                }
+                Assert.IsFalse(s.core.grounded, $"{fps} fps {name}：陡坡上不算站稳");
+                Assert.LessOrEqual(vyMax, Mathf.Max(0, vy0) + 1e-4f, $"{fps} fps {name}：顶着陡坡不能把竖直速度往上抬");
+                Assert.LessOrEqual(rise, Mathf.Max(0, vy0) * vy0 / (2 * 26f) + 0.01f, $"{fps} fps {name}：顶着陡坡不往上走（只有原来的上升惯性）");
+            }
+        }
+
+        [Test]
         public void InvulnerabilityCountsDown()
         {
             var s = new Sim(60);

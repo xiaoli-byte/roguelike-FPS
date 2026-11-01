@@ -285,11 +285,18 @@ namespace Spiritfire.Art
             if (stick) dy = Mathf.Min(dy, -t.groundStick * dt);
             r.snap = stick;
 
-            // 陡坡：去掉压进坡面的速度分量，重力的切向分量照常加速——沿坡滑下，不能靠走硬爬上去
+            // 陡坡：去掉压进坡面的速度分量，重力的切向分量照常加速——沿坡滑下，不能靠走硬爬上去。
+            // 投影不能把速度往上抬：顶着坡的水平速度投到坡面上是「沿坡往上」，冲刺（22 m/s、冲刺期间不下坠）每帧被投成约 10 m/s 的上升，
+            // 连冲几次就冲上了 1-4 的 50° 沙壁；所以投影后的竖直速度不超过投影前（下落时最多减到 0）
             if (steep && !jumped && !hard)
             {
                 float into = Vector3.Dot(velocity, groundNormal);
-                if (into < 0) velocity -= groundNormal * into;
+                if (into < 0)
+                {
+                    float vyBefore = velocity.y;
+                    velocity -= groundNormal * into;
+                    velocity.y = Mathf.Min(velocity.y, Mathf.Max(0, vyBefore));
+                }
             }
 
             preMoveVy = velocity.y;
