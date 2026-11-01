@@ -94,7 +94,7 @@ namespace Spiritfire.Game
             if (Dead) return;
             // 成对时常驻带电
             bool paired = Paired;
-            if (paired && pairHold == null) pairHold = Charge.Hold(hp, this);
+            if (paired && pairHold == null) pairHold = HoldCharge();
             else if (!paired && pairHold != null)
             {
                 pairHold.Dispose();

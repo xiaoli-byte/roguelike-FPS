@@ -166,7 +166,7 @@ namespace Spiritfire.Game
         void SetOrbCharge(int n)
         {
             OrbCharge = Mathf.Clamp(n, 0, 3);
-            if (OrbCharge > 0 && orbHold == null) orbHold = Charge.Hold(hp, this);
+            if (OrbCharge > 0 && orbHold == null) orbHold = HoldCharge();
             else if (OrbCharge == 0 && orbHold != null)
             {
                 orbHold.Dispose();
@@ -202,6 +202,7 @@ namespace Spiritfire.Game
                 v.localScale = Vector3.one * 1.1f * Size / parent;
                 FxMaterials.Tint(v.GetComponent<Renderer>(), PlateauPalette.A(PlateauPalette.Bolt, 0.45f + 0.25f * Mathf.Sin(Time.time * 9f + id.Length)));
             }
+            if (OrbCharge > 0 && orbHold == null) orbHold = HoldCharge();
             if (orb)
             {
                 float windup = Move.Id == "slam" && Move.Stage == MoveStage.Windup ? Move.StageK : Move.Id == "slam" && Move.Stage == MoveStage.Active ? 1 : 0;
@@ -406,7 +407,6 @@ namespace Spiritfire.Game
                         {
                             HitWall = false;
                             FinishActive();
-                            if (!Leiyak) SetOrbCharge(OrbCharge + 1);
                         }
                     }
                     else
@@ -451,6 +451,8 @@ namespace Spiritfire.Game
             {
                 EndManualMotion();
                 Leader = null;
+                // 每冲一次角间雷球攒一份电（冲满 3 s 没到头也算）
+                if (!Leiyak) SetOrbCharge(OrbCharge + 1);
             }
         }
 

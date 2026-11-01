@@ -112,11 +112,19 @@ namespace Spiritfire.Game
         public readonly Dictionary<string, int> Count = new();
         /// <summary>最近一次各时间点：实际出手时刻 − 时间轴时刻（秒；动画事件早到为负）、是不是动画事件先到</summary>
         public readonly Dictionary<string, (float delta, bool anim)> CueDelta = new();
+        /// <summary>本招各时间点的动画事件到达时刻 − 时间轴时刻（秒；不管它和时间兜底谁先到；每招开始清空）：「释放帧与判定误差 ≤ 1 帧」的实测</summary>
+        public readonly Dictionary<string, float> AnimDelta = new();
+        /// <summary>
+        /// 每到一个动画事件报一次（招式 id、时间点名、到达时刻 − 时间轴时刻、这一刻的「一帧」秒数）。
+        /// 「一帧」取事件那一帧和起手那一帧 deltaTime 的大者：起手那帧 Animator 已经把新状态走了一整帧（时间轴从 0 起），
+        /// 那帧碰上帧时尖峰（刷怪、截图）时片段会整帧领先；事件那帧是尖峰时两边谁先到都差一整帧。
+        /// </summary>
+        public event Action<string, string, float, float> AnimMeasured;
 
         readonly List<(float at, string name)> events = new();
         readonly HashSet<string> seen = new();
         int next;
-        float activeLen;
+        float activeLen, startDt;
 
         public bool Busy => Def != null;
         public string Id => Def?.id ?? "";
@@ -159,6 +167,8 @@ namespace Spiritfire.Game
             events.AddRange(def.Timeline());
             next = 0;
             seen.Clear();
+            AnimDelta.Clear();
+            startDt = Time.deltaTime;
             Count[def.id] = Count.TryGetValue(def.id, out int n) ? n + 1 : 1;
         }
 
@@ -188,10 +198,13 @@ namespace Spiritfire.Game
         public void OnAnimEvent(string name)
         {
             if (Def == null || string.IsNullOrEmpty(name)) return;
-            for (int i = next; i < events.Count; i++)
+            for (int i = 0; i < events.Count; i++)
                 if (events[i].name == name && Mathf.Abs(events[i].at - T) <= 0.15f)
                 {
-                    seen.Add(name);
+                    float d = T - events[i].at;
+                    AnimDelta[name] = d;
+                    if (i >= next) seen.Add(name);
+                    AnimMeasured?.Invoke(Def.id, name, d, Mathf.Max(Time.deltaTime, startDt));
                     return;
                 }
         }

@@ -73,6 +73,13 @@ namespace Spiritfire.Game
         Transform glowBone, glowSprite;
         Renderer glowR;
         float crackleT, stunFxT, roamT;
+        /// <summary>释放帧局部顿帧还剩几秒：这期间招式时间轴和 Animator 一起放慢到 0.05 倍，后面的时间点不和片段错开</summary>
+        float impactLeft;
+        const float ImpactRate = 0.05f;
+        /// <summary>这一帧有没有走到 Think（出招中却没走到 = AI 被底座停摆：轻怪挨枪顿一下、掉出导航网格找回…）</summary>
+        int thinkFrame = -1;
+        /// <summary>Animator.speed 现在是不是这里改的（非精英；精英归 EliteStrike）</summary>
+        bool ownsAnimSpeed;
         bool chargedLast;
         IDisposable shieldMod;
 
@@ -156,9 +163,10 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>动画之后：发光骨骼的光晕（子类覆写时先调 base）</summary>
+        /// <summary>动画之后：片段和招式时间轴对齐的 Animator 速度、发光骨骼的光晕（子类覆写时先调 base）</summary>
         protected virtual void LateUpdate()
         {
+            SyncAnimSpeed();
             if (!glowSprite) return;
             float g = Dead ? 0 : body.GlowLevel(0);
             glowR.enabled = g > 0.03f;
@@ -168,8 +176,25 @@ namespace Spiritfire.Game
             FxMaterials.Tint(glowR, new Color(GlowColor.r, GlowColor.g, GlowColor.b, 0.3f + 0.6f * g));
         }
 
+        /// <summary>
+        /// 片段跟着招式时间轴走：出招中 AI 被底座停摆（这一帧没走到 Think，时间轴没动）就把 Animator 停住；
+        /// 释放帧顿帧期间两边一起 0.05 倍。不这样的话片段自己往前走，后面的动画事件比时间轴早到（实测举父远投收招早 63 ms）。
+        /// 顿帧的剩余时间在这里扣（停摆期间不扣），时间轴在 Think 里按同一个倍率走。
+        /// </summary>
+        void SyncAnimSpeed()
+        {
+            if (elite || !anim) return;
+            bool paused = Move.Busy && thinkFrame != Time.frameCount && !Dead && !(vitals && vitals.Dead) && Time.deltaTime > 0;
+            if (!paused && impactLeft > 0) impactLeft -= Time.deltaTime;
+            float want = paused ? 0f : impactLeft > 0 ? ImpactRate : 1f;
+            if (want == 1f && !ownsAnimSpeed) return;
+            if (!Mathf.Approximately(anim.speed, want)) anim.speed = want;
+            ownsAnimSpeed = want != 1f;
+        }
+
         protected sealed override void Think(float dt)
         {
+            thinkFrame = Time.frameCount;
             if (!Alerted)
             {
                 Roam(dt);
@@ -179,7 +204,7 @@ namespace Spiritfire.Game
             {
                 Move.speed = HasteMult;
                 string id = Move.Id;
-                Move.Tick(dt, fired);
+                Move.Tick(impactLeft > 0 && !elite ? dt * ImpactRate : dt, fired);
                 Dispatch(id);
                 if (Move.Busy && Move.Id == id) MoveTick(dt, Move.Stage, Move.StageK);
                 else if (!Move.Busy && state == id) EndMove(id);
@@ -240,6 +265,12 @@ namespace Spiritfire.Game
             if (Move.Busy) InterruptAttack();
             Move.Start(m);
             Move.speed = HasteMult;
+            impactLeft = 0;
+            if (ownsAnimSpeed && anim)
+            {
+                anim.speed = 1f;
+                ownsAnimSpeed = false;
+            }
             SetState(m.id);
             warns.Clear();
             ActTimed(m.id, m.Total / Move.speed, 0.1f);
@@ -509,15 +540,18 @@ namespace Spiritfire.Game
             return move.magnitude;
         }
 
+        /// <summary>常驻带电（Charge.Hold）：出生中 / 钻地里（不可选中）拿不到，返回 null，下一帧再试</summary>
+        protected IDisposable HoldCharge() => hp && !hp.Dead && !hp.untargetable ? Charge.Hold(hp, this) : null;
+
         /// <summary>局部顿帧（释放帧：只顿自己的 Animator 0.04–0.08 s；精英的 Animator.speed 归 EliteStrike 管，这里不碰）</summary>
         protected void ImpactHold(float seconds)
         {
             if (elite || !anim || !anim.isActiveAndEnabled) return;
-            anim.speed = 0.05f;
-            PlateauFxSeq.After(seconds, () =>
-            {
-                if (anim) anim.speed = 1f;
-            });
+            // 这一帧的 Animator 就顿（ImpactHold 在 Update 里调，动画更新在后）；恢复和扣时间归 SyncAnimSpeed。
+            // 时间轴跟着顿：否则时间兜底先出手、片段被顿住，片段自己的同名事件晚到一整个顿帧（实测 60 ms），后面的时间点也跟片段错开
+            anim.speed = ImpactRate;
+            ownsAnimSpeed = true;
+            impactLeft = Mathf.Max(impactLeft, seconds);
         }
 
         /// <summary>身子下的地面高度（往下 20 m 找，没找到就是原高度）</summary>

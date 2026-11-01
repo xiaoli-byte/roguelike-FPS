@@ -69,7 +69,6 @@ namespace Spiritfire.Game
             for (int i = 0; i < Drums; i++) drumHp[i] = DrumHp * s;
             var p = transform.position;
             transform.position = new Vector3(p.x, Ground(p) + Hover, p.z);
-            coreHold = Charge.Hold(hp, this);
         }
 
         // ───────────── 组装 ─────────────
@@ -381,6 +380,8 @@ namespace Spiritfire.Game
         {
             base.Update();
             if (Dead) return;
+            // 雷心一直带电（出生的 0.7 s 不可选中，拿不到就下一帧再拿）
+            coreHold ??= HoldCharge();
             float dt = Time.deltaTime;
             // 鼓环：平时慢转，惊雷前摇转得飞快；出手一下放大；硬直时整个鼓环倾斜
             float clap = Move.Id == "clap" && Move.Stage == MoveStage.Windup ? Move.StageK : 0;

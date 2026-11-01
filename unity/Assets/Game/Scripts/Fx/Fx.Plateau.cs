@@ -408,7 +408,7 @@ namespace Spiritfire.Game
             for (int i = 0; i <= n; i++)
             {
                 float t = i / (float)n;
-                float env = Mathf.Pow(Mathf.Sin(Mathf.PI * t), 0.6f);
+                float env = Mathf.Pow(Mathf.Max(0f, Mathf.Sin(Mathf.PI * t)), 0.6f);
                 sgn = -sgn;
                 float x = sgn * Random.Range(0.35f, 1f) * amp * env, y = Random.Range(-0.4f, 0.4f) * amp * env;
                 pts[i] = a + d * t + p1 * x + p2 * y;
