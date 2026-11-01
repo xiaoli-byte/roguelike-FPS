@@ -444,7 +444,7 @@ namespace Spiritfire.Game.Testing
         {
             var hua = boss as HuasheBrain;
             var lake = hua.Lake;
-            Line($"化蛇：湖 {(lake.Real ? "场景里的 Water_HolyLake ✓" : "测试场虚拟湖 ✗")}，中心（湖心岛）{Fmt(lake.Center)}，半轴 {lake.Rx:F1} × {lake.Rz:F1} m、朝向 {lake.Yaw:F1}°，水位 {lake.Level:F2}");
+            Line($"化蛇：湖 {(lake.Real ? "场景里的 Water_HolyLake ✓" : "测试场虚拟湖 ✗")}，湖心 {Fmt(lake.Center)}，半轴 {lake.Rx:F1} × {lake.Rz:F1} m、朝向 {lake.Yaw:F1}°，水位 {lake.Level:F2}");
             if (!lake.Real) Fail("化蛇没读到场景里的圣湖");
             // 湿身导电
             Guard(false);
@@ -533,6 +533,12 @@ namespace Spiritfire.Game.Testing
             float back = Time.time;
             while (!hua.Wet && Time.time - back < 4f) yield return null;
             if (!hua.Wet) Fail("化蛇搁浅后没有滑回水里");
+
+            // 东西两岸都扑得到：游线绕湖心、贴着湖岸转（原来绕湖心岛转、整条偏西，东岸离游线约 30 m，从东岸进场几乎看不到扑岸）
+            Line($"游线：中心 {Fmt(lake.SwimCenter)}（湖心 {Fmt(lake.Center)}），半轴 {lake.SwimRx:F1} × {lake.SwimRz:F1} m，" +
+                 $"按实测湖岸贴过去 {lake.ShoreMeasured}/180 个采样，湖心岛 {(lake.Island.HasValue ? $"{Fmt(lake.Island.Value)} 半径 {lake.IslandRadius:F1} m（游线被推开 {lake.IslandPushed} 个采样点）" : "没有")}");
+            foreach (var (dir, label) in new[] { (Vector3.right, "东岸"), (Vector3.left, "西岸") })
+                yield return ShoreLunge(hua, lake, dir, label, order);
 
             // 涨水：转二阶段常驻 +1.2 m，淹到岸边；吼叫再涨
             yield return WaitIdle();
@@ -690,6 +696,86 @@ namespace Spiritfire.Game.Testing
                  $"目标{(objective.Complete ? "完成" : "没完成")}，出口{(portal.IsOpen ? "开了" : "没开")}");
             if (!altar.Lit) Fail($"{altar.title} 没点亮");
             if (!objective.Complete || !portal.IsOpen) Fail("两处领主灵火 + 一处普通灵火，出口应开");
+        }
+
+        /// <summary>
+        /// 玩家站到某一侧的湖岸上（湖心沿 dir 走到地面高出水面 0.6 m 的地方，再往岸上 1.5 m），不摆游线角，等化蛇自己游过来：
+        /// 头进 10 m（扑岸能出）→ 扑岸（自己出了就看那一次，没出就强制）→ 头胸搁浅在这一侧的岸上
+        /// </summary>
+        IEnumerator ShoreLunge(HuasheBrain hua, HuasheLake lake, Vector3 dir, string label, int order)
+        {
+            yield return WaitIdle();
+            Vector3 shore = default;
+            bool found = false;
+            for (float r = 2f; r < 90f && !found; r += 0.5f)
+            {
+                var q = lake.Center + dir * r;
+                if (lake.Island.HasValue && Flat(q - lake.Island.Value) < lake.IslandRadius + 2f) continue;
+                if (hua.GroundAt(q) < lake.Level + 0.6f) continue;
+                shore = q;
+                found = true;
+            }
+            if (!found)
+            {
+                Fail($"{label}：从湖心往外找不到湖岸");
+                yield break;
+            }
+            Stand(shore + dir * 1.5f, out var stand);
+            var swimAt = lake.SwimPoint(lake.AngleOf(stand), 0, out _);
+            float gap = Flat(shore - swimAt);
+            if (gap > 8.5f) Fail($"{label}：游线离岸 {gap:F1} m（应贴着湖岸 6 m 左右，扑岸够得着）");
+            Place(stand, boss.BodyCenter);
+            var lunge = boss.MoveById(HuasheLunge.MoveId) as HuasheLunge;
+            float t0 = Time.time, best = float.MaxValue, reachedAt = -1;
+            bool natural = false, forced = false;
+            // 不摆游线角：从上一次扑岸的地方自己游过来（半圈约 110 m，中间还会吐水、拍浪，给 60 s）
+            while (Time.time - t0 < 60f)
+            {
+                vitals.Heal(99999);
+                if (boss.Current == null && Flat(motor.transform.position - stand) > 2.5f) Place(stand, boss.BodyCenter);
+                best = Mathf.Min(best, Flat(boss.BonePos("head") - stand));
+                if (boss.Current == lunge)
+                {
+                    natural = true;
+                    reachedAt = Time.time - t0;
+                    break;
+                }
+                if (boss.Current == null && lunge.Weight(boss) > 0)
+                {
+                    reachedAt = Time.time - t0;
+                    if (!Force(HuasheLunge.MoveId, order, out _)) yield break;
+                    forced = true;
+                    break;
+                }
+                yield return null;
+            }
+            if (!natural && !forced)
+            {
+                Line($"✗ {label}扑岸：游线离岸 {gap:F1} m，60 s 里化蛇的头最近离玩家 {best:F1} m（要 < 10 m 才扑）");
+                Fail($"{label}扑不到：化蛇的头最近离岸上的玩家 {best:F1} m");
+                yield break;
+            }
+            bool headLand = false, chestLand = false, sawRecover = false;
+            float t1 = Time.time;
+            while (boss.Current == lunge && Time.time - t1 < 6f)
+            {
+                vitals.Heal(99999);
+                if (lunge.Stage == MoveStage.Recover && lunge.StageT < lunge.recover * 0.6f)
+                {
+                    if (!sawRecover) Shot(weapons.eye, $"map41_lord_huashe_lunge_{(dir.x > 0 ? "east" : "west")}");
+                    sawRecover = true;
+                    headLand |= hua.GroundAt(boss.BonePos("head")) > lake.Level;
+                    chestLand |= hua.GroundAt(boss.BodyCenter) > lake.Level;
+                }
+                yield return null;
+            }
+            bool ok = sawRecover && headLand && chestLand && Vector3.Dot(Flatten(lunge.Landed - lake.Center), dir) > 0;
+            Line($"{(ok ? "✓" : "✗")} {label}扑岸：游线离岸 {gap:F1} m，化蛇游过来 {(natural ? $"{reachedAt:F1} s 后自己扑了" : $"{reachedAt:F1} s 后头进 10 m、强制扑")}，" +
+                 $"头最近 {best:F1} m，扑到 {Fmt(lunge.Landed)}，头在岸上 {(headLand ? "✓" : "✗")}、胸在岸上 {(chestLand ? "✓" : "✗")}");
+            if (!ok) Fail($"{label}扑岸没有搁浅在{label}上");
+            float back = Time.time;
+            while (!hua.Wet && Time.time - back < 4f) yield return null;
+            yield return WaitIdle();
         }
 
         // ───────────── 工具 ─────────────

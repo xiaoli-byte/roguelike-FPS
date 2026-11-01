@@ -145,7 +145,7 @@ namespace Spiritfire.Game
             if (!PlayerFeet(out var feet)) feet = PlayerPosition;
             float target = Lake.AngleOf(feet);
             float d = Mathf.DeltaAngle(SwimAngle * Mathf.Rad2Deg, target * Mathf.Rad2Deg) * Mathf.Deg2Rad;
-            float rate = (HDef != null ? HDef.swimRate : 0.35f) * (EnemyStatus.Of(hp) && EnemyStatus.Of(hp).SlowMult < 1 ? 0.6f : 1f);
+            float rate = (HDef != null ? HDef.swimRate : 0.35f) * Lake.SwimRateScale * (EnemyStatus.Of(hp) && EnemyStatus.Of(hp).SlowMult < 1 ? 0.6f : 1f);
             SwimAngle += Mathf.Clamp(d, -rate * dt, rate * dt);
             PlaceOnSwim(-0.3f);
         }

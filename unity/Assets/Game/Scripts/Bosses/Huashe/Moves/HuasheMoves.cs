@@ -156,6 +156,15 @@ namespace Spiritfire.Game
 
         public override float Weight(BossBrain b) => Near(b) < 10f ? weight : 0f;
 
+        /// <summary>从 p 沿 dir 往前第一处地面高出水面 0.1 m（上岸）的距离；max 米内没有岸为 −1（测试场的虚拟湖地面 = 水位，永远没有岸）</summary>
+        protected float ShoreAhead(Vector3 p, Vector3 dir, float max)
+        {
+            for (float s = 0.5f; s <= max; s += 0.5f)
+                if (LordB.GroundAt(p + dir * s) > Level + 0.1f)
+                    return s;
+            return -1f;
+        }
+
         protected static float Near(BossBrain b)
         {
             var lb = b as LordBrain;
@@ -175,6 +184,9 @@ namespace Spiritfire.Game
             d.y = 0;
             float reach = Mathf.Min(Reach, d.magnitude + 1f);
             yaw = Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg;
+            // 游线贴着湖岸（3–5.5 m）时「头到人 + 1 m」可能不够冲上岸：至少冲到岸上 3 m（最多 10 m），头胸都搁浅在岸上
+            float shore = ShoreAhead(from, Dir(yaw), 12f);
+            if (shore >= 0) reach = Mathf.Min(Reach, Mathf.Max(reach, shore + 3f));
             to = from + Dir(yaw) * reach;
             float g = LordB.GroundAt(to);
             to.y = Mathf.Max(g, Level) - 0.2f;
