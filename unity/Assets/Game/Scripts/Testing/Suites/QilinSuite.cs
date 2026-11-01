@@ -1052,7 +1052,14 @@ namespace Spiritfire.Game.Testing
             if (enc.State != BossEncounter.Phase.Settled) Fail("火麒麟倒下后没有结算");
             if (!chest) Fail("结算没有落首领宝箱");
             if (enc.Result != want) Fail($"3-4 打完的去向是 {enc.Result}（RunPlan 要 {want}）");
-            if (!final && !enc.OpenedExit) Fail("不是最后一关，结算后没有立出口去下一关");
+            if (!final)
+            {
+                // 出口在结算后 PortalDelay 秒才立
+                float e0 = Time.time;
+                while (!enc.OpenedExit && Time.time - e0 < BossEncounter.PortalDelay + 2f) yield return null;
+                if (!enc.OpenedExit) Fail("不是最后一关，结算后没有立出口去下一关");
+                else Line($"出口：{Time.time - e0:F1} s 后立起，去 {RunPlan.Next(stage)?.Label}");
+            }
             if (enc.GatesSealed) Fail("结算后熔铁闸没有落回去");
             yield return new WaitForSeconds(0.5f);
             Shot(weapons.eye, "qilin_settled");
