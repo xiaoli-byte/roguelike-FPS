@@ -54,6 +54,12 @@ namespace Spiritfire.Game
         [Tooltip("出口（空 = 场景里的 ExitPortal；再没有就在场地远端立一座）")] public ExitPortal exit;
         [Tooltip("没有出口时立在这里（空 = 场地远端）")] public Transform exitPoint;
 
+        [Tooltip("据点模式（4-1 开放图的领主战）：倒下后等死亡演出放完再结算，不立出口（出口归 LevelObjective 的灵火计数），改成点亮这个据点的灵火坛")]
+        public bool stronghold;
+        [Tooltip("据点模式下结算时点亮的灵火坛")] public SpiritAltar altar;
+        /// <summary>据点模式：倒下后多久结算（等领主的死亡演出放完，秒）</summary>
+        public const float StrongholdSettleDelay = 6.3f;
+
         static readonly List<EnemyAI> buffer = new();
 
         float phaseAt, gateT = 1f;
@@ -127,7 +133,7 @@ namespace Spiritfire.Game
                     break;
                 case Phase.Collapsing:
                     if (!cleaned && now - phaseAt >= CleanupDelay) Disperse();
-                    if (now - phaseAt >= SettleDelay) Settle();
+                    if (now - phaseAt >= (stronghold ? StrongholdSettleDelay : SettleDelay)) Settle();
                     break;
             }
         }
@@ -261,6 +267,14 @@ namespace Spiritfire.Game
             GameUI.SetObjective("");
             GameAudio.SetMusic("calm");
             Result = Decide(CurrentStage);
+            if (stronghold)
+            {
+                // 据点模式：点亮这个据点的灵火（出口由 LevelObjective 按点亮的灵火数开）
+                if (altar) altar.Light();
+                GameUI.Banner($"{def?.name ?? "领主"} · 平息", "灵火已点亮 · 生命已完全恢复", 2.8f);
+                Raise(Settled);
+                return;
+            }
             if (Result == Outcome.Victory)
             {
                 GameUI.Banner("灵火破晓", "深渊已平 · 凯旋而归", VictoryDelay);
