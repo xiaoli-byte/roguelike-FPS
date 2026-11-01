@@ -157,6 +157,8 @@ namespace Spiritfire.Art.Editor.Levels
         /// 外坡从脊直落到环外地面（outside）。坡角按风向分：坡面朝下风的是落沙坡（陡），朝上风的是迎风坡（缓）——
         /// 风从西南偏西吹来时，西环的内坡（朝东）是落沙坡，下午的太阳从背后照不到，影子落在它的坡脚。
         /// 内外坡在脊线上直接相交，脊是刀刃一样的尖脊（鸣沙山的样子），不是圆包。
+        /// 可选沙壁（<see cref="wallWindward"/> / <see cref="wallSlip"/> &gt; 0）：离盆底边缘 <see cref="wallFrom"/> 米起，内坡换成比角色坡度上限还陡的直坡一直到脊——
+        /// 坡脚那条带照旧走得上去，上半截地形本身挡人；脊高不变，脊线往盆地这边收（内坡变窄），外坡坡角不变、跟着脊线一起往里挪。
         /// </summary>
         public sealed class DuneRingSpec
         {
@@ -179,6 +181,16 @@ namespace Spiritfire.Art.Editor.Levels
             /// <summary>坡面上的细小起伏（米）</summary>
             public float faceNoise = 0.6f;
             public int seed;
+            /// <summary>沙壁坡角（度）：迎风侧、落沙侧（按坡面朝向混，同内坡）。都是 0 = 没有沙壁（整段内坡是凹形坡脚 + 一段直坡）</summary>
+            public float wallWindward, wallSlip;
+            /// <summary>沙壁从离盆底边缘多少米起（沿环 ±wallWobble 米摆动，壁脚线不是圆规画的）</summary>
+            public float wallFrom = 28f, wallWobble = 3f;
+            /// <summary>坡脚直坡接沙壁的折角倒圆（米，平滑最大值的宽度）</summary>
+            public float wallKnee = 2.5f;
+            /// <summary>沙壁上坡面细小起伏的倍率：起伏会把局部坡度拉缓，沙壁上留多了会冒出能站的小平台</summary>
+            public float wallNoise = 0.35f;
+
+            public bool HasWall => wallWindward > 0 && wallSlip > 0;
         }
 
         /// <summary>环形沙山在某点的局部量</summary>
@@ -186,10 +198,12 @@ namespace Spiritfire.Art.Editor.Levels
         {
             /// <summary>离盆底边缘的米数（盆内为负）</summary>
             public float u;
-            /// <summary>该方位的内坡水平宽、脊高（米）、内坡坡角（度）、方位角（弧度）</summary>
+            /// <summary>该方位的内坡水平宽（= 脊离盆底边缘的米数）、脊高（米）、内坡坡角（度）、方位角（弧度）</summary>
             public float width, crest, innerSlope, angle;
             /// <summary>该方位的盆底边缘半径（米，离 center）</summary>
             public float floorRadius;
+            /// <summary>该方位的沙壁坡角（度，0 = 没有沙壁）、沙壁起点离盆底边缘的米数</summary>
+            public float wallSlope, wallFrom;
             /// <summary>0–1：在内坡上（坡脚 0 → 脊 1）；外坡 / 环外为 1</summary>
             public readonly float Rise => width > 0 ? Mathf.Clamp01(u / width) : 0;
         }
@@ -218,24 +232,59 @@ namespace Spiritfire.Art.Editor.Levels
             float width = crest / (Mathf.Tan(slopeIn * Mathf.Deg2Rad) * (1 - s.apron * 0.5f)) + s.crestWobble * Loop(ang, 6, 2, s.seed + 17);
             width = Mathf.Max(crest * 0.9f, width);
             float u = r - rf;
-            q = new DuneRingPoint { u = u, width = width, crest = crest, innerSlope = slopeIn, angle = ang, floorRadius = rf };
+            // 沙壁：老剖面在壁脚的高 hb 起，按沙壁坡角直上到脊；脊（top）因此比老剖面的 width 近
+            float top = width, wall = 0, ub = 0, hb = 0, tanWall = 0;
+            if (s.HasWall)
+            {
+                wall = FaceAngle(-radial, s.wind, s.wallWindward, s.wallSlip);
+                ub = Mathf.Max(0, s.wallFrom + s.wallWobble * Loop(ang, 5, 2, s.seed + 29));
+                if (wall > slopeIn && ub < width)
+                {
+                    hb = RingProfile(ub, width, crest, s.apron);
+                    tanWall = Mathf.Tan(wall * Mathf.Deg2Rad);
+                    top = ub + (crest - hb) / tanWall;
+                }
+                else wall = 0;
+            }
+            q = new DuneRingPoint { u = u, width = top, crest = crest, innerSlope = slopeIn, angle = ang, floorRadius = rf, wallSlope = wall, wallFrom = ub };
             if (u <= 0) return 0;
             float h;
-            if (u < width)
+            if (u < top)
             {
                 // 凹形坡脚（二次）接直坡：坡脚切线水平，脊下是 slopeIn 的直坡
-                float t = u / width, a = Mathf.Max(1e-3f, s.apron);
-                float g = t < a ? t * t / (2 * a) : t - a * 0.5f;
-                h = crest * g / (1 - a * 0.5f);
+                h = RingProfile(u, width, crest, s.apron);
+                float noise = 1;
+                if (wall > 0)
+                {
+                    // 沙壁：和老剖面取平滑最大值（壁脚的折角倒圆），壁上的起伏压小
+                    h = SmoothMax(h, hb + (u - ub) * tanWall, s.wallKnee);
+                    noise = Mathf.Lerp(1, s.wallNoise, Smooth(ub - 2, ub + 4, u));
+                }
                 // 坡面上的细小起伏，不碰坡脚和脊线
-                h += s.faceNoise * Fbm(p, 14, 2, s.seed + 9) * Smooth(0, 6, u) * (1 - Smooth(width - 6, width, u));
+                h += s.faceNoise * Fbm(p, 14, 2, s.seed + 9) * Smooth(0, 6, u) * (1 - Smooth(top - 6, top, u)) * noise;
             }
             else
             {
                 float ground = s.outside != null ? s.outside(p) : 0;
-                h = Mathf.Max(crest - (u - width) * Mathf.Tan(slopeOut * Mathf.Deg2Rad), ground);
+                h = Mathf.Max(crest - (u - top) * Mathf.Tan(slopeOut * Mathf.Deg2Rad), ground);
             }
             return h;
+        }
+
+        /// <summary>内坡老剖面（离盆底边缘 u 米处的高）：凹形坡脚（二次，坡脚切线水平）接直坡，u = width 到脊</summary>
+        static float RingProfile(float u, float width, float crest, float apron)
+        {
+            float t = u / width, a = Mathf.Max(1e-3f, apron);
+            float g = t < a ? t * t / (2 * a) : t - a * 0.5f;
+            return crest * g / (1 - a * 0.5f);
+        }
+
+        /// <summary>平滑最大值（多项式）：两者相差 k 以上时就是 max，交点处多出 k / 4</summary>
+        static float SmoothMax(float a, float b, float k)
+        {
+            if (k <= 0) return Mathf.Max(a, b);
+            float m = Mathf.Max(k - Mathf.Abs(a - b), 0) / k;
+            return Mathf.Max(a, b) + m * m * k * 0.25f;
         }
     }
 }

@@ -14,22 +14,26 @@ namespace Spiritfire.Art.Editor.Levels
     /// 1-4 鸣沙山月牙泉 · 旱魃（docs/level-design/maps/1-4.md；unity-maps-v1.md 第 1 节 1-4、第 3 节场地）：第一章的首领场，露天。
     /// 照甘肃敦煌鸣沙山月牙泉的实景缩成游戏尺度：一圈刀刃脊的大沙山围出一片开阔的沙洼，洼底偏南一弯月牙泉（凸顶朝北、两角朝南），
     /// 泉的南岸、月牙怀里是月泉阁一组楼阁（月牙阁 + 回廊 + 白杨林），泉边芦苇、红柳，盆底两座新月形沙丘。
-    /// 关卡坐标 = 世界 XZ（米），盆底 y ≈ 0。地形 400 × 400 m，沙山脊高约 25–43 m，环外是起伏的沙海，外缘 40 m 落回远景地面。
+    /// 关卡坐标 = 世界 XZ（米），盆底 y ≈ 0。地形 400 × 400 m，沙山脊高约 25–43 m（上半截是 50–52° 的沙壁），环外是起伏的沙海，外缘 40 m 落回远景地面。
     ///
     ///   出生 · 鸣沙山观景台：北面沙山伸进盆地的一道支脊上，16 m 高的平台（安全区，不开店——补给营在上一关 1-3 的寺院塔院）；
     ///   → 两条下山路：顺支脊脊线直下的木梯（约 28°，踏板 0.36 m 一级）、往西绕沙山坡面的驼道（≤ 18°）；沙坡本身也能直接跑下去
     ///   → 盆底（约 112 × 92 m，西缘紧贴西环沙山的坡脚）：首领场是圆心 (−2, 4)、半径 44 m 的圆，月牙泉、月牙阁、两座新月丘都在里面。
     ///
     /// 日晒与荫蔽（旱魃核心机制）：主光 = 午后的太阳，从西南偏西（方位 242°）、仰角 31° 照进来，影子是真实投影，判定是同一套几何上的射线。
-    ///   · 全影：月牙阁敞厅东半、二层后半（屋顶在）、回廊廊下、白杨的树影（朝东北偏东拖出 15–19 m）、西环沙山的坡脚（落沙坡背着太阳，盆底西缘）；
+    ///   · 全影：月牙阁敞厅东半、二层后半（屋顶在）、回廊廊下、白杨的树影（朝东北偏东拖出 15–19 m）、西环沙山的坡脚（落沙坡背着太阳，盆底西缘；
+    ///     沙壁让西南环的脊往盆地收，影子最深伸进盆底约 8 m、占场地约 6%）；
     ///   · 半影：两座新月丘的落沙坡脚——落沙坡（36°）只比日光陡 5°，影子是一道薄楔，胸口在影子里、头露在外（半份灼烧）；
     ///     新月丘主要是挡日轮直射的掩体（日轮在旱魃身后 4 m 高，躲到丘背后就照不到）和走得上去的俯射层；
     ///   · 全晒：泉北的开阔沙地、东半场；泉水里站着灼烧减半（WaterVolume，名字带 CrescentSpring，二阶段被吸干）；
     ///   · 三阶段旱魃把太阳推到头顶（约 85°，BS2 HanbaSunDriver）：沙丘、树的影子缩到脚下，只剩楼阁、回廊的顶下还有深影。
     /// 场景里不放 SunShaft（露天 = 没有穴顶开口）。
     ///
-    /// 边界（D14，没有空气墙）：可玩区 = 盆底 + 沙山坡脚往上 18 m + 观景台 / 木梯 / 驼道；坡脚以上是沙山的直坡（落沙坡 36°、迎风坡 27°），
-    /// 等值线外风沙推回、白化，26 m 外兜底碰撞环。沙山本身走得上去（坡度 &lt; 45°），所以「出不去」靠软边界 + 兜底环，不靠地形挡死。
+    /// 边界（D14，没有空气墙；2026-11-01 沙山改陡）：可玩区 = 盆底 + 沙山坡脚往上 18 m + 观景台 / 木梯 / 驼道。坡脚是凹形缓坡接 27° / 36° 的直坡，照旧走得上去；
+    /// 离盆底边缘 28 ± 3 m（壁脚高 9–18 m）起是沙壁——迎风侧 52°、落沙侧 50°，一直到脊，比角色的坡度上限 45° 陡：走不上去，
+    /// 陡坡上不算站稳（不重置土狼时间、空中跳次数），顶着陡坡的速度也不再被投影成往上走（MotorCore），连跳、冲刺、二段跳都爬不上去。
+    /// 「出不去」靠地形本身：L5 防越界撤掉兜底环也出不去，playtest dune-wall 在一圈壁脚上用真输入硬爬验过。
+    /// 等值线外的风沙推回、白化和 26 m 外的兜底碰撞环留作后备（技能位移、击飞）。
     /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、自举标记、观景台安全区（<see cref="SafeZone"/>，没有 SupplyCamp / 商店）、首领场地（<see cref="BossArena"/>）、
     /// 首领关流程（<see cref="BossEncounter"/>，首领 boss_hanba；出口在打完后由它升起）。
     /// 生成：Spiritfire ▸ Levels ▸ Build 1-4 鸣沙山月牙泉（或 bridge.sh level 1-4）。
@@ -47,7 +51,7 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>高度场里 Base 米 = 世界 y 0（泉床挖到 −1.6 也还在范围内）；远景地面 y = FarY（环外沙海的平均高）</summary>
         const float Base = 10f, HeightRange = 72f, FarY = 12f;
         static readonly Vector2 Origin = new(-200, -200), Size = new(400, 400);
-        /// <summary>软边界（L3，D14）：等值线外起风推回、白化，26 m 外兜底碰撞；越界验收按兜底环算</summary>
+        /// <summary>软边界（L3，D14）：等值线外起风推回、白化，26 m 外兜底碰撞——沙壁本身挡人，这些只是后备；越界验收的界外距离按兜底环算</summary>
         static readonly LevelKit.BoundarySpec Bounds = LevelKit.BoundarySpec.Default;
 
         // ───────────── 风与太阳 ─────────────
@@ -92,10 +96,18 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>环外的沙海：顺风向的横向沙丘（波长 70 m、高 12 m），底面 16 m</summary>
         static float Sea(Vector2 p) => 16f + Dunes(p, Wind, 70, 12, 41, 0.76f);
 
+        /// <summary>
+        /// 沙壁（2026-11-01 用户定「改陡」）：离盆底边缘 <see cref="WallFrom"/> 米（±3 m 摆动）起，内坡换成迎风侧 52°、落沙侧 50° 的直坡到脊——
+        /// 比角色的坡度上限（45°）陡，走不上去；在陡坡上不算站稳（MotorCore 陡坡滑落），也就不能连跳往上爬。坡脚（凹形缓坡 + 27° / 36° 直坡）照旧走得上去。
+        /// 落沙侧只到 50°：西环背着太阳，壁越陡脊越往盆地收、坡脚的全影越宽（见 CheckGeometry 的「沙山全影」）
+        /// </summary>
+        const float WallWindward = 52f, WallSlip = 50f, WallFrom = FloorGrow + 10f;
+
         static readonly LevelKit.DuneRingSpec Ring = new()
         {
             center = FloorCenter, axes = FloorAxes, wind = Wind, crest = CrestHeight, outside = Sea,
             innerWindward = 27f, innerSlip = 36f, outerWindward = 16f, outerSlip = 32f, apron = 0.2f, crestWobble = 7f, seed = 5,
+            wallWindward = WallWindward, wallSlip = WallSlip, wallFrom = WallFrom,
         };
 
         // ───────────── 月牙泉 ─────────────
@@ -133,9 +145,12 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 StairTop = Platform + (StairFoot - Platform).normalized * (PlatformR - 0.5f);
         const float StairHalf = 1.6f, StairShoulder = 2f, StairWidth = 2.6f, TreadRise = 0.36f;
         static readonly PathSpline StairPath = new PathSpline(new[] { StairTop, StairFoot }, 1).WithHeights(new[] { PlatformY, 0f });
-        /// <summary>支脊：北面沙山伸下来的一道刀刃脊，脊线 = 木梯 → 观景台 → 往上接进沙山（顶宽 6 m，两侧 31°）</summary>
-        static readonly PathSpline SpurPath = new PathSpline(new[] { StairFoot, StairTop, Platform, new Vector2(31, 94), new Vector2(40, 112) }, 6)
-            .WithHeights(new[] { 0f, PlatformY, PlatformY, 19f, 30f });
+        /// <summary>
+        /// 支脊：北面沙壁脚下伸进盆地的一道刀刃脊，脊线 = 木梯 → 观景台（顶宽 6 m，两侧 31°）。观景台背后直接靠着沙壁，支脊不再往上接到脊线
+        /// （以前那一段顺着 27° 的迎风坡接上去，是一条走得出去的坡道）
+        /// </summary>
+        static readonly PathSpline SpurPath = new PathSpline(new[] { StairFoot, StairTop, Platform }, 6)
+            .WithHeights(new[] { 0f, PlatformY, PlatformY });
         /// <summary>驼道：从台的西沿横切北面沙山坡面往西、再折下到盆底 (−21, 45)，约 56 m、≤ 18°</summary>
         static readonly PathSpline TrailPath = new PathSpline(new[]
             {
@@ -383,6 +398,12 @@ namespace Spiritfire.Art.Editor.Levels
                         ("Cloister", E(new Vector2(4, CloisterZ + 0.5f)), G(new Vector2(-8, CloisterZ + 0.5f), 1.5f), false),
                         ("BossSide", E(BossSpawn + new Vector2(0, 2)), G(Platform, 2f), false),
                         ("WestApron", E(new Vector2(-50, 4)), G(new Vector2(-110, 4), 20f), false),
+                        // 沙壁对比（docs/art/review/1-4-dunes/）：首领场北岸看西环、南环，东环坡脚仰看，西南高处旁观整圈
+                        ("CenterWest", E(ArenaCenter + new Vector2(0, 14)), G(new Vector2(-95, 12), 16f), false),
+                        ("CenterSouth", E(ArenaCenter + new Vector2(0, 14)), G(new Vector2(0, -80), 18f), false),
+                        ("EastFoot", E(new Vector2(60, 2)), new Vector3(100, 12, 6), true),
+                        ("RingSW", new Vector3(-130, 105, -120), new Vector3(12, 0, 8), false),
+                        ("RingInside", new Vector3(14, 46, -46), new Vector3(14, 8, 60), false),
                     });
                 }
                 finally
@@ -849,6 +870,62 @@ namespace Spiritfire.Art.Editor.Levels
             return e;
         }
 
+        /// <summary>两个探针朝太阳打出去，第一个挡住的都是地形（沙山 / 沙丘的影子，不是楼阁、树）</summary>
+        static bool TerrainShade(Vector3 feet, Vector3 toSun)
+        {
+            foreach (float y in new[] { 1.8f * 0.55f, PlayerFactory.EyeHeight })
+                if (!Physics.Raycast(feet + Vector3.up * y, toSun, out var hit, 400f, Layers.WorldMask, QueryTriggerInteraction.Ignore) || hit.collider is not TerrainCollider)
+                    return false;
+            return true;
+        }
+
+        /// <summary>
+        /// 沙壁：每 5° 一条径向线，从壁脚往上 4 m（过了倒圆的折角）到脊下 1.5 m，向下打射线取地形三角面的坡度（角色控制器看到的就是三角面）。
+        /// 可玩区里的点不算（观景台背后、驼道切进壁面的那一段本来就该走得上去）。壁面上有不到坡度上限的点就不合格：那里站得住，能歇脚再跳
+        /// </summary>
+        static void CheckWall(LevelKit.Report rep, LevelKit.TerrainSet set)
+        {
+            float minSlope = 90, footLo = float.MaxValue, footHi = 0, topLo = float.MaxValue, topHi = 0;
+            var minAt = Vector2.zero;
+            int samples = 0;
+            for (int i = 0; i < 72; i++)
+            {
+                float a = i * 5f * Mathf.Deg2Rad;
+                var dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                LevelKit.DuneRing(FloorCenter + dir * 50f, Ring, out var rq);
+                if (rq.wallSlope <= 0) continue;
+                var foot = FloorCenter + dir * (rq.floorRadius + rq.wallFrom);
+                footLo = Mathf.Min(footLo, set.GroundY(foot.x, foot.y));
+                footHi = Mathf.Max(footHi, set.GroundY(foot.x, foot.y));
+                topLo = Mathf.Min(topLo, rq.width);
+                topHi = Mathf.Max(topHi, rq.width);
+                for (float u = rq.wallFrom + 4f; u < rq.width - 1.5f; u += 1f)
+                {
+                    var p = FloorCenter + dir * (rq.floorRadius + u);
+                    if (Playable(p) > 0.01f) continue;
+                    if (!Physics.Raycast(new Vector3(p.x, Base + HeightRange + 10f, p.y), Vector3.down, out var hit, HeightRange + 40f, Layers.WorldMask,
+                            QueryTriggerInteraction.Ignore)) continue;
+                    samples++;
+                    float slope = Vector3.Angle(hit.normal, Vector3.up);
+                    if (slope < minSlope)
+                    {
+                        minSlope = slope;
+                        minAt = p;
+                    }
+                }
+            }
+            if (samples == 0)
+            {
+                rep.Fail("沙壁没有采样点（DuneRingSpec 没开沙壁？）");
+                return;
+            }
+            rep.Line($"沙壁：迎风侧 {WallWindward:F0}°、落沙侧 {WallSlip:F0}°，离盆底边缘 {WallFrom:F0} ± 3 m 起（壁脚高 {footLo:F0}–{footHi:F0} m），" +
+                     $"脊离盆底边缘 {topLo:F0}–{topHi:F0} m");
+            const float limit = 45f;
+            if (minSlope <= limit + 0.5f) rep.Fail($"沙壁上 ({minAt.x:F0}, {minAt.y:F0}) 只有 {minSlope:F0}°（≤ 坡度上限 {limit:F0}°）：站得住，能歇脚再往上跳");
+            else rep.Line($"✓ 壁面 {samples} 个采样点（可玩区外）最缓 {minSlope:F0}° @ ({minAt.x:F0}, {minAt.y:F0})，都比坡度上限 {limit:F0}° 陡");
+        }
+
         /// <summary>
         /// 白盒自查：关键点高度、木梯 / 驼道坡度、露天（没有 SunShaft、主光仰角在 BS2 约定的 30–40°）、日晒与荫蔽（一阶段 31° / 三阶段 85° 的影子比例与关键掩体点）、
         /// 泉水段数与名字、月牙阁 / 回廊 / 树的碰撞体、观景台安全区
@@ -900,6 +977,7 @@ namespace Spiritfire.Art.Editor.Levels
             if (trailWorst > 24f) rep.Fail($"驼道最陡 {trailWorst:F0}°（> 24°），纵断面 {TrailPath.MaxGrade():F0}°");
             else rep.Line($"✓ 驼道长 {TrailPath.length:F0} m、落差 {PlatformY:F0} m，最陡 {trailWorst:F0}°（纵断面 {TrailPath.MaxGrade():F0}°）");
             rep.Line($"木梯长 {StairPath.length:F0} m、落差 {PlatformY:F0} m（{Mathf.Atan(PlatformY / StairPath.length) * Mathf.Rad2Deg:F0}°），踏板每级 {TreadRise} m");
+            CheckWall(rep, set);
 
             rep.Section("露天日晒与荫蔽");
             int shafts = Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include).Count(m => m && m.GetType().Name == "SunShaft");
@@ -911,7 +989,7 @@ namespace Spiritfire.Art.Editor.Levels
             var toSun1 = sun ? -sun.transform.forward : ToSun(SunPitch);
             var toSun3 = ToSun(RisenPitch);
             int cells = 0;
-            float full1 = 0, half1 = 0, full3 = 0;
+            float full1 = 0, half1 = 0, full3 = 0, dune1 = 0, duneDepth = 0;
             for (float x = -ArenaRadius; x <= ArenaRadius; x += 2f)
             for (float z = -ArenaRadius; z <= ArenaRadius; z += 2f)
             {
@@ -920,14 +998,26 @@ namespace Spiritfire.Art.Editor.Levels
                 var feet = set.OnGround(q.x, q.y);
                 cells++;
                 float e1 = Exposure(feet, toSun1);
-                if (e1 <= 0) full1++;
+                if (e1 <= 0)
+                {
+                    full1++;
+                    if (TerrainShade(feet, toSun1))
+                    {
+                        dune1++;
+                        var d = q - FloorCenter;
+                        duneDepth = Mathf.Max(duneDepth, LevelKit.DuneRingFloorRadius(Ring, Mathf.Atan2(d.y, d.x)) - d.magnitude);
+                    }
+                }
                 else if (e1 < 1) half1++;
                 if (Exposure(feet, toSun3) <= 0) full3++;
             }
-            float f1 = full1 / Mathf.Max(1, cells), h1 = half1 / Mathf.Max(1, cells), f3 = full3 / Mathf.Max(1, cells);
+            float f1 = full1 / Mathf.Max(1, cells), h1 = half1 / Mathf.Max(1, cells), f3 = full3 / Mathf.Max(1, cells), fd = dune1 / Mathf.Max(1, cells);
             rep.Line($"场地里（{cells} 个点，2 m 一格，地面站立）：一阶段 全影 {f1:P0} · 半影 {h1:P0}；三阶段（太阳 {RisenPitch:F0}°）全影 {f3:P0}");
+            rep.Line($"  其中沙山（地形）投下的全影 {fd:P0}，最深伸进盆底 {Mathf.Max(0, duneDepth):F0} m（离盆底边缘）");
             if (f1 < 0.04f) rep.Fail($"一阶段场地里的全影只有 {f1:P0}（楼阁、回廊、树影应给出可躲的影子）");
             if (f1 > 0.6f) rep.Fail($"一阶段场地里 {f1:P0} 在影子里（日晒失去压力）");
+            // 沙壁越陡、脊越往盆地收，西环（背着太阳）坡脚的全影就越宽：不能宽到盆底西半边都能躲
+            if (fd > 0.15f) rep.Fail($"沙山投下的全影盖住场地的 {fd:P0}（> 15%）：西环的沙壁太陡 / 脊太近，盆底西边成片能躲——把 WallSlip 调缓或 WallFrom 往上挪");
             if (f3 >= f1 && f1 > 0) rep.Fail("太阳推到头顶后影子没有缩小");
             Transform Cover(string name) => arena && arena.coverPoints != null ? arena.coverPoints.FirstOrDefault(t => t && t.name == name) : null;
             bool realPavilion = pavilion && pavilion.tag != LevelKit.PlaceholderTag;
@@ -1012,7 +1102,7 @@ namespace Spiritfire.Art.Editor.Levels
         /// 交给 L5 规则集的声明：主线 出生 → 观景台 → 驼道（顶 / 弯 / 脚）→ 入场点 → 沙丘岛顶 → 泉心 → 月牙阁前 → 庭院 → 东沙丘顶 → 首领出生点；
         /// 坡度：驼道（≤ 24°）、木梯（有踏板，放宽到 30°）、两座新月丘的迎风背；地标视线（观景台看月牙阁与泉心、驼道脚看沙丘岛、入场点看首领出生点）；
         /// 场地：观景台（缓冲）、月牙泉首领场（≥ 3 处掩体、两层以上、走得上去的俯射层 = 沙丘岛）；召唤点当刷怪锚点查净空 / 有路（沙魇、蝎尾弩卫）。
-        /// 软边界没有空气墙：越界按远处的兜底环算（escapeMargin = 兜底距离 + 2 m）。白杨、芦苇还没有资产：占位只列清单（Warn）
+        /// 没有空气墙：越界按远处的兜底环算（escapeMargin = 兜底距离 + 2 m），沙壁走不上去，撤掉兜底环也出不去。白杨、芦苇还没有资产：占位只列清单（Warn）
         /// </summary>
         static LevelSpec Spec(LevelKit.TerrainSet set)
         {
