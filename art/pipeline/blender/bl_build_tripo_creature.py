@@ -362,7 +362,9 @@ def build_custom_skeleton() -> None:
     front = -Y, the creature's left = +X, up = +Z), weights by Blender's bone heat diffusion, then rigid overrides
     ("rigid": a sphere or box of vertices fully on one bone, for hard parts such as a weak-spot sac or a weapon),
     then each "limit" keeps a bone's weights inside a region (e.g. arm bones never reach the pincers); "soft_limits" do
-    the same with a linear edge and hand the removed weight to a body bone (legs off a thin torso's belly)."""
+    the same with a linear edge and hand the removed weight to a body bone (legs off a thin torso's belly).
+    Optional, off unless the rig JSON has them: "smooth" (weights averaged with mesh neighbours inside a box, after the
+    limits and before the soft limits) and "islands" (small loose parts inside a box take one set of weights)."""
     global arm
     t = time.time()
     data = bpy.data.armatures.new(f"{ASSET}_Rig")
@@ -444,6 +446,43 @@ def build_custom_skeleton() -> None:
         outside = ~m
         for n in lim["bones"]:
             W[outside, col[n]] = 0.0
+    welded = None
+    if RIG.get("smooth") or RIG.get("islands"):
+        # Tripo meshes are split along UV seams: weld coincident vertices so smoothing and islands follow the surface
+        _, rep = np.unique(np.round(V / 1e-5).astype(np.int64), axis=0, return_inverse=True)
+        rep = rep.ravel()
+        ev = np.empty(len(mesh.data.edges) * 2, np.int64)
+        mesh.data.edges.foreach_get("vertices", ev)
+        ev = np.sort(rep[ev.reshape(-1, 2)], axis=1)
+        ev = np.unique(ev[ev[:, 0] != ev[:, 1]], axis=0)
+        welded = (rep, int(rep.max()) + 1, ev)
+    for sm in RIG.get("smooth", []):
+        # Segments weights blend only the 3 nearest bones and the limits cut hard, so on a shaggy mane / chest fur the
+        # weights jump between neighbouring vertices (化蛇: head 0.3 → 0 across one edge at the head limit, a tuft half on
+        # the wing root) and every neck / wing move pulls fur spikes into thin lines. Here the weights of the vertices
+        # inside "box" are averaged with their mesh neighbours ("iterations" × "factor"); "skip" boxes stay as they are
+        # (e.g. the jaw, whose split at the mouth line must stay sharp). The soft limits after this still apply.
+        rep, nw, ev = welded
+        cnt = np.bincount(rep, minlength=nw).astype(float)
+        Wr = np.zeros((nw, W.shape[1]))
+        np.add.at(Wr, rep, W)
+        Wr /= np.maximum(cnt, 1)[:, None]
+        Vr = np.zeros((nw, 3))
+        np.add.at(Vr, rep, V)
+        Vr /= np.maximum(cnt, 1)[:, None]
+        inside = ((Vr >= np.array(sm["box"][0])) & (Vr <= np.array(sm["box"][1]))).all(1)
+        for sk in sm.get("skip", []):
+            inside &= ~((Vr >= np.array(sk[0])) & (Vr <= np.array(sk[1]))).all(1)
+        deg = np.bincount(ev.ravel(), minlength=nw).astype(float)
+        lam = sm.get("factor", 0.5)
+        for _ in range(sm.get("iterations", 10)):
+            acc = np.zeros_like(Wr)
+            np.add.at(acc, ev[:, 0], Wr[ev[:, 1]])
+            np.add.at(acc, ev[:, 1], Wr[ev[:, 0]])
+            Wn = acc / np.maximum(deg, 1)[:, None]
+            Wr[inside] = (1 - lam) * Wr[inside] + lam * Wn[inside]
+        W = Wr[rep]
+        reg.setdefault("smoothed", []).append(int(inside[rep].sum()))
     for lim in RIG.get("soft_limits", []):
         # A limit box with a soft edge: the bones keep their weight `soft` metres (per axis; 0 = hard on that axis) inside
         # the box, fading linearly to zero at its faces, and what they lose goes to `to` (their body parent) instead of
@@ -502,6 +541,50 @@ def build_custom_skeleton() -> None:
         W[m] *= (1 - w[m])[:, None]
         W[m, col[r["bone"]]] += w[m]
         reg[f"{r['bone']}_verts"] = int((w > 0.5).sum())
+    if RIG.get("islands"):
+        # Loose strands and tufts (化蛇's water weed hanging off the wing roots, beside the face, over the legs) are
+        # weighted by distance like the body, so one strand ends up split between a wing root and a foreleg and is pulled
+        # into a thin line by every flap. A small mesh island (≤ "max_verts" welded vertices) whose bounding box lies
+        # inside "box" takes one set of weights for all its vertices: "bone" if given, else the average of its majority
+        # (the vertices whose strongest bone is the island's most common strongest bone). It then moves rigidly.
+        rep, nw, ev = welded
+        parent = np.arange(nw)
+
+        def find(i):
+            while parent[i] != i:
+                parent[i] = parent[parent[i]]
+                i = parent[i]
+            return i
+        for a, b in ev:
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
+        lab = np.array([find(i) for i in range(nw)])[rep]
+        deform_col = np.array([RIG["bones"][n].get("deform", True) for n in names])
+        Wd = W * deform_col
+        groups = {}
+        for vi, iid in enumerate(lab):
+            groups.setdefault(int(iid), []).append(vi)
+        fixed = 0
+        for rule in RIG["islands"]:
+            lo, hi = np.array(rule["box"][0]), np.array(rule["box"][1])
+            for idx in groups.values():
+                idx = np.array(idx)
+                if len(np.unique(rep[idx])) > rule.get("max_verts", 400):
+                    continue
+                P_ = V[idx]
+                if not ((P_.min(0) >= lo).all() and (P_.max(0) <= hi).all()):
+                    continue
+                if "bone" in rule:
+                    W[idx] = 0
+                    W[idx, col[rule["bone"]]] = 1
+                else:
+                    dom = Wd[idx].argmax(1)
+                    major = np.bincount(dom, minlength=len(names)).argmax()
+                    avg = Wd[idx[dom == major]].mean(0)
+                    W[idx] = avg / max(avg.sum(), 1e-9)
+                fixed += len(idx)
+        reg["island_verts"] = fixed
     # Vertices heat diffusion left empty (or emptied by a limit) take their nearest weighted neighbour's weights.
     empty = W.sum(1) < 1e-6
     if empty.any():
