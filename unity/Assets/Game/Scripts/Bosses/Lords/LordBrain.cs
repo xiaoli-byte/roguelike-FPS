@@ -122,15 +122,30 @@ namespace Spiritfire.Game
         {
             if (!Model?.animator || !(seconds > 0)) return;
             // 等这一帧的 Animator 更新完（LateUpdate）再顿：释放帧由玩法在 Update 里先到，这一帧就压慢会把片段的出手事件拖后几帧
+            if (!(pendingHold > 0)) pendingAt = Time.time;
             pendingHold = Mathf.Max(pendingHold, seconds);
         }
 
-        float pendingHold;
+        float pendingHold, pendingAt = -1, lastClipEventAt = -1;
+
+        /// <summary>片段事件（sfx 以外）到了：记下时刻，顿帧等它</summary>
+        protected override void OnAnimEvent(string evt)
+        {
+            if (!string.IsNullOrEmpty(evt) && !evt.StartsWith("sfx:", StringComparison.Ordinal)) lastClipEventAt = Time.time;
+            OnLordAnimEvent(evt);
+        }
+
+        /// <summary>子类的片段事件钩子</summary>
+        protected virtual void OnLordAnimEvent(string evt) { }
 
         void LateUpdate()
         {
             if (!(pendingHold > 0)) return;
             var a = Model?.animator;
+            // 释放帧是时间兜底先到的（片段的出手事件还差不到一帧）：先让片段照常走，等事件到了再顿，最多等 1/30 s——
+            // 不然 Animator 停在事件前一点点，出手事件被顿帧拖后 0.05–0.08 s（连环大跳实测 +2.5 帧）
+            bool clipThere = lastClipEventAt >= pendingAt - 0.05f;
+            if (a && !clipThere && Time.time - pendingAt < 1f / 30f) return;
             float seconds = pendingHold;
             pendingHold = 0;
             if (!a) return;
