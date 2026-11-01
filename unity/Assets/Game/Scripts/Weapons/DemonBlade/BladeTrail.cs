@@ -46,6 +46,7 @@ namespace Spiritfire.Game
         bool breakNext = true;
         Mesh mesh;
         MeshRenderer meshRenderer;
+        float exposureApplied = 1f;
         Vector3[] verts;
         Color[] colors;
         int[] body, fringe;
@@ -160,6 +161,7 @@ namespace Spiritfire.Game
                 return;
             }
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
+            FirstPersonView.ApplyExposure(meshRenderer, ref exposureApplied);
         }
 
         /// <summary>

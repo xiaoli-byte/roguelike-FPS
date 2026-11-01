@@ -186,6 +186,8 @@ namespace Spiritfire.Art.Editor
                 // audio：混音台 Resources/Audio/Spiritfire.mixer（缺了才生成，audio force 重建）+ 检查
                 if (command == "audio") errors += AudioMixerBuilder.Build(args.Contains("force"));
                 if (command == "blade") errors += BladeMeshBaker.Bake();
+                // volumes：不重建关卡，只按 ShowcaseTheme 重写各关 / 展示场景的 VP_<章>.asset（改了主题的后处理之后跑）
+                if (command == "volumes") errors += LevelVolumes.RewriteAll();
                 // 临时诊断：调用 Spiritfire.Art.Editor.Diag.Run()（存在时），排查问题用，用完删掉那个类
                 if (command == "diag")
                     Type.GetType("Spiritfire.Art.Editor.Diag, Spiritfire.Art.Editor")?.GetMethod("Run")?.Invoke(null, null);

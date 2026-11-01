@@ -14,8 +14,8 @@ using static UnityEngine.Object;
 namespace Spiritfire.Game.Testing
 {
     /// <summary>
-    /// 第一人称渲染开销的对照（第二批 E 路；bridge.sh playtest perf-fp）：和 perf 套件不同，这里测的是<b>玩家自己的相机栈</b>
-    /// （主相机 + 枪模），固定渲染到 1920×1080，玩家站在机位上、枪模照常显示。每关两个机位（出生、战斗：6 只敌人着火感电 + 暴击连射），
+    /// 第一人称渲染开销的对照（第二批 E 路；bridge.sh playtest perf-fp）：和 perf 套件不同，这里测的是<b>玩家自己的相机</b>
+    /// （主相机 + 枪模；改前是叠加的枪模相机，现行是 <see cref="FirstPersonView"/> 的枪模 pass，见 <see cref="FirstPersonView.LegacyOverlay"/>），固定渲染到 1920×1080，玩家站在机位上、枪模照常显示。每关两个机位（出生、战斗：6 只敌人着火感电 + 暴击连射），
     /// 每个机位把各个配置轮流测 <see cref="Rounds"/> 轮（同一会话交替，取中位数），记主线程 P50 / P95、整条相机栈、各相机自己的 URP 采样、
     /// 后处理和体积更新的分段。出生机位另外每个配置拍一张，算出和第一个配置的逐像素差（上半屏 = 世界，右下 = 枪模）；
     /// 「再拍一次」的配置只拍图不计时，给出同配置两张图之间的噪声（枪模待机晃动、粒子）。
@@ -35,7 +35,7 @@ namespace Spiritfire.Game.Testing
 
         static readonly string[] Extra =
         {
-            CamMarker(MainName), CamMarker(VmName), "Inl_UpdateVolumeFramework", "Inl_RenderCameraStack",
+            CamMarker(MainName), CamMarker(VmName), "Inl_UpdateVolumeFramework", "Inl_RenderCameraStack", "Inl_First Person Viewmodel",
             "Inl_RG_UberPost", "Inl_RG_BloomSetup", "Inl_ScreenSpaceAmbientOcclusion", "Inl_UberPostProcess", "Inl_Bloom",
         };
 
@@ -50,7 +50,7 @@ namespace Spiritfire.Game.Testing
         sealed class Row
         {
             public string level, view, config;
-            public readonly List<float> mainP50 = new(), mainP95 = new(), stack = new(), mainCam = new(), vmCam = new(), volume = new(), gpu = new(), render = new();
+            public readonly List<float> mainP50 = new(), mainP95 = new(), stack = new(), mainCam = new(), vmCam = new(), vmPass = new(), volume = new(), gpu = new(), render = new();
             public readonly List<float> draws = new(), setPass = new();
         }
 
@@ -64,6 +64,7 @@ namespace Spiritfire.Game.Testing
         protected override IEnumerator Steps()
         {
             var quality = ArtQuality.Level;
+            bool legacy0 = FirstPersonView.LegacyOverlay;
             int vSync0 = QualitySettings.vSyncCount, frameRate0 = Application.targetFrameRate;
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
@@ -76,6 +77,7 @@ namespace Spiritfire.Game.Testing
             finally
             {
                 ViewmodelCameraTrim.Disabled = false;
+                FirstPersonView.LegacyOverlay = legacy0;
                 if (main) main.targetTexture = null;
                 if (rt)
                 {
@@ -99,36 +101,28 @@ namespace Spiritfire.Game.Testing
 
         // ───────────── 配置 ─────────────
 
+        /// <summary>以前的叠加相机（两遍后处理）；trim = 第 1 步的裁剪（不要深度图、不跑 SSAO / 贴花）</summary>
+        void Legacy(bool trim)
+        {
+            FirstPersonView.LegacyOverlay = true;
+            ViewmodelCameraTrim.Disabled = !trim;
+            vmData.requiresDepthOption = trim ? CameraOverrideOption.Off : CameraOverrideOption.UsePipelineSettings;
+        }
+
+        void Single()
+        {
+            FirstPersonView.LegacyOverlay = false;
+            ViewmodelCameraTrim.Disabled = false;
+            vmData.requiresDepthOption = CameraOverrideOption.Off;
+        }
+
         List<Config> Configs() => new()
         {
-            new Config
-            {
-                name = "改前（叠加相机不裁剪）",
-                apply = () =>
-                {
-                    ViewmodelCameraTrim.Disabled = true;
-                    vmData.requiresDepthOption = CameraOverrideOption.UsePipelineSettings;
-                },
-                revert = () =>
-                {
-                    ViewmodelCameraTrim.Disabled = false;
-                    vmData.requiresDepthOption = CameraOverrideOption.Off;
-                },
-            },
-            new Config { name = "改前（再拍一次，看噪声）", apply = () =>
-                {
-                    ViewmodelCameraTrim.Disabled = true;
-                    vmData.requiresDepthOption = CameraOverrideOption.UsePipelineSettings;
-                },
-                revert = () =>
-                {
-                    ViewmodelCameraTrim.Disabled = false;
-                    vmData.requiresDepthOption = CameraOverrideOption.Off;
-                },
-                shotOnly = true,
-            },
-            new Config { name = "裁剪（现行：叠加相机不要深度图、不跑 SSAO / 贴花）" },
-            new Config { name = "不画枪模（叠加相机停用）", apply = () => vm.enabled = false, revert = () => vm.enabled = true },
+            new Config { name = "改前（叠加枪模相机，不裁剪）", apply = () => Legacy(false), revert = Single },
+            new Config { name = "改前（再拍一次，看噪声）", apply = () => Legacy(false), revert = Single, shotOnly = true },
+            new Config { name = "第 1 步（叠加相机裁剪）", apply = () => Legacy(true), revert = Single },
+            new Config { name = "现行（单相机 + 枪模 pass）" },
+            new Config { name = "不画枪模", apply = () => vm.enabled = false, revert = () => vm.enabled = true },
         };
 
         // ───────────── 一关 ─────────────
@@ -176,6 +170,7 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
             vmData = vm.GetUniversalAdditionalCameraData();
+            Single();
             WeaponController.TestMode = true;
             Interactor.TestMode = true;
             HeroSkills.TestMode = true;
@@ -339,6 +334,7 @@ namespace Spiritfire.Game.Testing
             row.stack.Add((float)r.Get("Inl_RenderCameraStack"));
             row.mainCam.Add((float)r.Get(CamMarker(MainName)));
             row.vmCam.Add((float)r.Get(CamMarker(VmName)));
+            row.vmPass.Add((float)r.Get("Inl_First Person Viewmodel"));
             row.volume.Add((float)r.Get("Inl_UpdateVolumeFramework"));
             row.gpu.Add((float)r.GpuP50);
             row.render.Add((float)r.RenderP95);
@@ -358,7 +354,7 @@ namespace Spiritfire.Game.Testing
         void Report(Row r)
         {
             Out($"  {r.level} · {r.view} · {r.config}：主线程 P50 {Ms(Median(r.mainP50))}（各轮 {string.Join("/", r.mainP50.Select(x => x.ToString("F2")))}）/ P95 {Ms(Median(r.mainP95))}；" +
-                $"相机栈 {Ms(Median(r.stack))}（主相机 {Ms(Median(r.mainCam))}、枪模相机 {Ms(Median(r.vmCam))}、体积更新 {Ms(Median(r.volume))}）；" +
+                $"相机栈 {Ms(Median(r.stack))}（主相机 {Ms(Median(r.mainCam))}、枪模相机 {Ms(Median(r.vmCam))}、其中枪模 pass 录制 {Ms(Median(r.vmPass))}、体积更新 {Ms(Median(r.volume))}）；" +
                 $"渲染线程 P95 {Ms(Median(r.render))}、GPU P50 {Ms(Median(r.gpu))}；绘制 {Median(r.draws):F0}、SetPass {Median(r.setPass):F0}");
         }
 

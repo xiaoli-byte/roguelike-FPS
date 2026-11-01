@@ -226,24 +226,47 @@ namespace Spiritfire.Art.Editor
             string profilePath = $"{dir}/VP_{t.key}.asset";
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
             SaveAsset(profile, profilePath);
-            profile.Add<Tonemapping>(true).mode.Override(TonemappingMode.Neutral);
-            var bloom = profile.Add<Bloom>(true);
-            bloom.threshold.Override(t.bloomThreshold);
-            bloom.intensity.Override(t.bloomIntensity);
-            bloom.scatter.Override(0.65f);
-            bloom.tint.Override(t.bloomTint);
-            var color = profile.Add<ColorAdjustments>(true);
-            color.postExposure.Override(t.postExposure);
-            color.contrast.Override(t.contrast);
-            color.saturation.Override(t.saturation);
-            profile.Add<WhiteBalance>(true).temperature.Override(t.temperature);
-            var vig = profile.Add<Vignette>(true);
-            vig.intensity.Override(t.vignette);
-            vig.smoothness.Override(0.45f);
+            FillVolume(profile, t);
             PersistVolumeComponents(profile);
             var vol = new GameObject("Global Volume").AddComponent<Volume>();
             vol.isGlobal = true;
             vol.sharedProfile = profile;
+        }
+
+        /// <summary>
+        /// 章节主题的后处理写进 profile（缺的组件补上，已有的改值）：Neutral 色调映射、Bloom、调色、白平衡、提升 / 伽马 / 增益、暗角。
+        /// 单遍后处理（第二批 E 路起枪模不再是叠加相机）下的值，见 ShowcaseTheme「后处理」一节和 docs/performance-unity.md「第一人称渲染」。
+        /// 建关（BuildLighting）和 bridge.sh volumes（LevelVolumes：不重建关卡、只按主题重写各关的 VP_*.asset）共用。
+        /// </summary>
+        internal static void FillVolume(VolumeProfile profile, ShowcaseTheme t)
+        {
+            T Get<T>() where T : VolumeComponent => profile.TryGet<T>(out var c) ? c : profile.Add<T>(true);
+            Get<Tonemapping>().mode.Override(TonemappingMode.Neutral);
+            var bloom = Get<Bloom>();
+            bloom.threshold.Override(t.bloomThreshold);
+            bloom.intensity.Override(t.bloomIntensity);
+            bloom.scatter.Override(0.65f);
+            bloom.tint.Override(t.bloomTint);
+            var color = Get<ColorAdjustments>();
+            color.postExposure.Override(t.postExposure);
+            color.contrast.Override(t.contrast);
+            color.saturation.Override(t.saturation);
+            var wb = Get<WhiteBalance>();
+            wb.temperature.Override(t.temperature);
+            wb.tint.Override(t.tint);
+            var lgg = Get<LiftGammaGain>();
+            lgg.lift.Override(new Vector4(1, 1, 1, t.lift));
+            lgg.gamma.Override(new Vector4(1, 1, 1, t.gamma));
+            lgg.gain.Override(new Vector4(1, 1, 1, t.gain));
+            var vig = Get<Vignette>();
+            vig.intensity.Override(t.vignette);
+            vig.smoothness.Override(0.45f);
+            var fp = Get<Spiritfire.Game.FirstPersonExposure>();
+            fp.multiplier.Override(t.fpExposure);
+            fp.gamma.Override(t.fpGamma);
+            fp.effects.Override(t.fpEffects);
+            fp.effectsSaturation.Override(t.fpEffectsSaturation);
+            fp.flash.Override(t.fpFlash);
         }
 
         /// <summary>
@@ -571,7 +594,8 @@ namespace Spiritfire.Art.Editor
             data.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
             data.antialiasingQuality = AntialiasingQuality.High;
 
-            // 枪模相机：叠加在主相机上，竖直视角 60°（与 Three.js 版 viewCamera 一致），只渲染 FirstPerson 层
+            // 枪模视图：竖直视角 60°（与 Three.js 版 viewCamera 一致），只画 FirstPerson 层；不进相机栈，
+            // 由 Spiritfire.Game.FirstPersonView 在主相机里画、和世界走同一遍后处理
             var vmGo = new GameObject("Viewmodel Camera");
             vmGo.transform.SetParent(camGo.transform, false);
             var vm = vmGo.AddComponent<Camera>();
@@ -579,14 +603,7 @@ namespace Spiritfire.Art.Editor
             vm.nearClipPlane = 0.01f;
             vm.farClipPlane = 20f;
             vm.cullingMask = 1 << fpLayer;
-            var vmData = vm.GetUniversalAdditionalCameraData();
-            vmData.renderType = CameraRenderType.Overlay;
-            vmData.renderShadows = false;
-            vmData.renderPostProcessing = true;
-            // 第一人称层没有采样深度图的着色器；渲染它时 SSAO / 贴花也不跑（Spiritfire.Game.ViewmodelCameraTrim）
-            vmData.requiresDepthOption = CameraOverrideOption.Off;
-            vmData.requiresColorOption = CameraOverrideOption.Off;
-            data.cameraStack.Add(vm);
+            Spiritfire.Game.FirstPersonView.Setup(vm);
 
             fpRig = BuildFirstPerson(t, camGo.transform, fpLayer);
             return cam;

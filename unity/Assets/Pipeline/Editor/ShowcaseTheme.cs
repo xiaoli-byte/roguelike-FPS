@@ -39,11 +39,22 @@ namespace Spiritfire.Art.Editor
         public Color fireColor = new(1f, 0.55f, 0.22f);
         public float fireIntensity = 6f;
 
-        // ── 后处理 ──
-        public float postExposure, contrast, saturation, temperature;
+        // ── 后处理（单遍：第二批 E 路起枪模不再是叠加相机，世界只后处理一遍）──
+        // 以前世界被主相机和枪模相机各后处理一遍。前三章的值是按「那时第一人称看到的样子」重新拟合的（playtest fp-grade-ch1/2/3：
+        // 同一帧里拍两遍后处理的参照、在单遍上拟合 曝光 / 对比 / 饱和 / 色温 / 色调 / 暗角 / Bloom / 提升 / 伽马 / 增益，
+        // scripts/unity/fp_grade_combine.py 按各关的敏感度合成每章一套；改前的值留在 FpGradeSuite.Old）。新章节直接按单遍调。
+        public float postExposure, contrast, saturation, temperature, tint;
         public float bloomIntensity = 0.55f, bloomThreshold = 1f;
         public Color bloomTint = Color.white;
         public float vignette = 0.2f;
+        /// <summary>LiftGammaGain 的整体分量（w）：提升 / 伽马 / 增益，0 = 不变</summary>
+        public float lift, gamma, gain;
+        /// <summary>
+        /// 第一人称曝光补偿（Spiritfire.Game.FirstPersonExposure）：上面的调色为了世界变重了，枪模、手、枪口火焰进后处理之前提亮回改前的亮度——
+        /// 颜色 = fpExposure × 颜色^fpGamma（枪模和手臂），刀光 / 枪口火焰这些粒子特效 × fpEffects，枪口火焰颜色饱和度 × fpEffectsSaturation，白芯再 × fpFlash。
+        /// 全部 1 = 不补偿（新章节按单遍调色，不用它）
+        /// </summary>
+        public float fpExposure = 1f, fpGamma = 1f, fpEffects = 1f, fpEffectsSaturation = 1f, fpFlash = 1f;
 
         // ── 地表：两色手绘色斑 + 纹理笔触；熔火加岩浆裂纹自发光 ──
         public Color groundA, groundB, groundShadowTint;
@@ -73,7 +84,7 @@ namespace Spiritfire.Art.Editor
             skyTint = new(0.6f, 0.62f, 0.7f), skyGround = new(0.62f, 0.5f, 0.38f), skyExposure = 1.3f, atmosphere = 0.8f,
             ambientSky = new(0.44f, 0.52f, 0.7f), ambientEquator = new(0.58f, 0.5f, 0.42f), ambientGround = new(0.34f, 0.27f, 0.21f),
             fogColor = new(0.88f, 0.76f, 0.6f), fogStart = 40, fogEnd = 260,
-            postExposure = -0.25f, contrast = 16, saturation = -6, temperature = -4, bloomTint = new(1f, 0.9f, 0.78f),
+            postExposure = -0.919f, contrast = 24.4f, saturation = -11, temperature = -9.5f, tint = -0.5f, lift = -0.007f, gamma = 0.258f, gain = -0.084f, fpExposure = 2.755f, fpGamma = 1.2f, fpEffects = 1.3f, fpEffectsSaturation = 1.15f, fpFlash = 1, vignette = 0.276f, bloomIntensity = 0.496f, bloomTint = new(1f, 0.9f, 0.78f),
             groundA = new(0.62f, 0.47f, 0.33f), groundB = new(0.78f, 0.64f, 0.47f), groundShadowTint = new(0.7f, 0.64f, 0.82f),
             groundPattern = GroundPattern.Ripples,
         };
@@ -102,8 +113,8 @@ namespace Spiritfire.Art.Editor
             ambientSky = new(0.42f, 0.52f, 0.72f), ambientEquator = new(0.56f, 0.6f, 0.68f), ambientGround = new(0.5f, 0.54f, 0.62f),
             fogColor = new(0.76f, 0.83f, 0.9f), fogStart = 25, fogEnd = 210,
             fireColor = new(0.55f, 0.85f, 1f), fireIntensity = 4f,
-            postExposure = -0.35f, contrast = 14, saturation = -10, temperature = -14, bloomTint = new(0.85f, 0.93f, 1f),
-            bloomIntensity = 0.5f,
+            postExposure = -0.827f, contrast = 17.2f, saturation = -6.1f, temperature = -21.8f, tint = 3.6f, lift = -0.004f, gamma = 0.111f, gain = -0.107f, fpExposure = 2.86f, fpGamma = 1.2f, fpEffects = 1.4f, fpEffectsSaturation = 1.15f, fpFlash = 1, vignette = 0.278f, bloomTint = new(0.85f, 0.93f, 1f),
+            bloomIntensity = 0.311f,
             groundA = new(0.66f, 0.72f, 0.8f), groundB = new(0.84f, 0.88f, 0.93f), groundShadowTint = new(0.55f, 0.64f, 0.9f),
             groundPattern = GroundPattern.Drifts,
         };
@@ -132,8 +143,8 @@ namespace Spiritfire.Art.Editor
             ambientSky = new(0.24f, 0.18f, 0.3f), ambientEquator = new(0.42f, 0.24f, 0.2f), ambientGround = new(0.55f, 0.24f, 0.1f),
             fogColor = new(0.34f, 0.17f, 0.15f), fogStart = 18, fogEnd = 170,
             fireColor = new(1f, 0.45f, 0.15f), fireIntensity = 9f,
-            postExposure = 0f, contrast = 18, saturation = 4, temperature = 6, bloomTint = new(1f, 0.75f, 0.55f),
-            bloomIntensity = 1.0f, bloomThreshold = 0.9f, vignette = 0.28f,
+            postExposure = 0.003f, contrast = 40.8f, saturation = 6.2f, temperature = 8.7f, tint = 3, lift = 0.001f, gamma = 0.054f, gain = -0.099f, fpExposure = 2, fpGamma = 1.08f, fpEffects = 1.1f, fpEffectsSaturation = 1, fpFlash = 1, bloomTint = new(1f, 0.75f, 0.55f),
+            bloomIntensity = 0.748f, bloomThreshold = 0.9f, vignette = 0.365f,
             groundA = new(0.16f, 0.12f, 0.16f), groundB = new(0.3f, 0.22f, 0.24f), groundShadowTint = new(0.5f, 0.3f, 0.55f),
             groundPattern = GroundPattern.LavaCracks,
         };

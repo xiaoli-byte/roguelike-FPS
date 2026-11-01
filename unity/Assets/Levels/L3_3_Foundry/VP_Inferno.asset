@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8497983799147683960
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e28da29848aa294599b960973d85399, type: 3}
+  m_Name: FirstPersonExposure
+  m_EditorClassIdentifier: Spiritfire.Game::Spiritfire.Game.FirstPersonExposure
+  active: 1
+  multiplier:
+    m_OverrideState: 1
+    m_Value: 2
+  gamma:
+    m_OverrideState: 1
+    m_Value: 1.08
+  effects:
+    m_OverrideState: 1
+    m_Value: 1.1
+  effectsSaturation:
+    m_OverrideState: 1
+    m_Value: 1
+  flash:
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &-5811594354745478754
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -21,13 +49,35 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.28
+    m_Value: 0.365
   smoothness:
     m_OverrideState: 1
     m_Value: 0.45
   rounded:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &-5399355738885289196
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
+  m_Name: LiftGammaGain
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.LiftGammaGain
+  active: 1
+  lift:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0.001}
+  gamma:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0.054}
+  gain:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: -0.099}
 --- !u!114 &-5193651742359594544
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -49,7 +99,7 @@ MonoBehaviour:
     m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.748
   scatter:
     m_OverrideState: 1
     m_Value: 0.65
@@ -93,10 +143,10 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.003
   contrast:
     m_OverrideState: 1
-    m_Value: 18
+    m_Value: 40.8
   colorFilter:
     m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -105,7 +155,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 6.2
 --- !u!114 &-2851373255803263007
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -164,6 +214,8 @@ MonoBehaviour:
   - {fileID: -4107207036463329953}
   - {fileID: 4475821829597844563}
   - {fileID: -5811594354745478754}
+  - {fileID: -5399355738885289196}
+  - {fileID: -8497983799147683960}
 --- !u!114 &4475821829597844563
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -179,7 +231,7 @@ MonoBehaviour:
   active: 1
   temperature:
     m_OverrideState: 1
-    m_Value: 6
+    m_Value: 8.7
   tint:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 3

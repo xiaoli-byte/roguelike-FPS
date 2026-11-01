@@ -138,6 +138,11 @@ Shader "Spiritfire/StylizedLit"
             #include "SF_StylizedInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
+
+            // 第一人称曝光补偿（Spiritfire.Game.FirstPersonView 画 FirstPerson 层时设成「系数 − 1」「伽马 − 1」：颜色 = 系数 × 颜色^伽马；
+            // 平时两个都是 0 = 跳过、输出不变；docs/performance-unity.md「第一人称渲染」）
+            float _FirstPersonExposureDelta;
+            float _FirstPersonGammaDelta;
             #include "SF_StylizedShading.hlsl"
             #include "SF_Fur.hlsl"
 
@@ -436,6 +441,8 @@ Shader "Spiritfire/StylizedLit"
 
                 color = lerp(color, _FlashColor.rgb, _FlashAmount);
                 color += _DissolveEdgeColor.rgb * dissolveEdge;
+                [branch] if (_FirstPersonExposureDelta != 0 || _FirstPersonGammaDelta != 0)
+                    color = (1.0 + _FirstPersonExposureDelta) * PositivePow(color, 1.0 + _FirstPersonGammaDelta);
                 color = MixFog(color, i.fogAndVertexLight.x);
                 return half4(color, _Tint.a);
             }

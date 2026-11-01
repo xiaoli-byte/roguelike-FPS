@@ -110,17 +110,8 @@ namespace Spiritfire.Game
             return true;
         }
 
-        static Camera FindViewmodelCamera()
-        {
-            var main = Camera.main;
-            if (!main) return null;
-            var data = main.GetUniversalAdditionalCameraData();
-            if (data == null) return null;
-            foreach (var c in data.cameraStack)
-                if (c && c.cullingMask == 1 << Layers.FirstPerson)
-                    return c;
-            return null;
-        }
+        /// <summary>主相机下的枪模视图（FirstPersonView；旧场景是叠在主相机上的枪模相机）</summary>
+        static Camera FindViewmodelCamera() => FirstPersonView.ViewCamera(Camera.main);
 
         /// <summary>按相机视角 / 画幅把光带铺满底边（近裁面外一点点，挡在枪模前面）</summary>
         void Fit()

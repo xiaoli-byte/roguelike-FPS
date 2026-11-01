@@ -17,6 +17,7 @@ namespace Spiritfire.Game
 
         Mesh mesh;
         MeshRenderer meshRenderer;
+        float exposureApplied = 1f;
         readonly Vector3[] verts = new Vector3[Max * 4];
         readonly Color[] colors = new Color[Max * 4];
         int count;
@@ -117,6 +118,7 @@ namespace Spiritfire.Game
             mesh.colors = colors;
             mesh.RecalculateBounds();
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
+            FirstPersonView.ApplyExposure(meshRenderer, ref exposureApplied);
         }
 
         public void Clear()

@@ -38,7 +38,7 @@ namespace Spiritfire.Game
     /// 区别只在 Prefab 从哪来（<see cref="PrefabPlacer"/>）。
     /// 组件先在停用的物体上挂好、字段填好再激活：Awake 读得到 startWeapon / rigs / eye；HeroStats 挂在 PlayerVitals 前面（它要先建属性表）。
     /// 镜头层级（F3）：Player → Eye（motor.eye，眼高处，PlayerMotor 写俯仰；瞄准 / 射线用，不抖）→ Main Camera（Head：<see cref="CameraFeel"/> 写晃动、震屏、冲击、FOV）
-    /// → 枪模相机 + 各把枪的第一人称 rig。
+    /// → 枪模视图（<see cref="FirstPersonView"/>）+ 各把枪的第一人称 rig。
     /// 灵宠（PetOwner / PetHud）由 <see cref="PetBootstrap.Setup"/> 补挂，[GameSystem] 系统由 <see cref="SystemsBootstrap"/> 补挂。
     /// 运行时组装完立刻按当前局（开局锁定的快照）套天赋（<see cref="MetaSave.ApplyTalents(StatSheet, RunState)"/>），所以调用方随后读回的生命 / 护盾不会被上限天赋「补满」。
     /// </summary>
@@ -107,7 +107,7 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 主相机（竖直视角 70°、SMAA、后处理、音频监听）+ 叠加的枪模相机（60°，只渲染 FirstPerson 层，与 Three.js 版 viewCamera 一致），
+        /// 主相机（竖直视角 70°、SMAA、后处理、音频监听）+ 枪模视图（60°，只画 FirstPerson 层，与 Three.js 版 viewCamera 一致；<see cref="FirstPersonView"/>），
         /// 挂在 parent 下 height 米处（缺省眼高；玩家的相机挂在 Eye 节点下，height = 0）。
         /// parent 是停用的玩家时，音频监听不会先在场景根上启用一下、和别的监听撞车。玩家的 FOV 运行时由 CameraFeel 按设置覆盖。
         /// </summary>
@@ -128,6 +128,8 @@ namespace Spiritfire.Game
             data.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
             data.antialiasingQuality = AntialiasingQuality.High;
 
+            // 枪模视图：这台相机只提供投影参数（60°、近裁 0.01、远裁 20），不进相机栈；FirstPersonView 在主相机里用一个 pass 画 FirstPerson 层，
+            // 和世界走同一遍后处理（以前是叠加相机，世界被后处理两遍）
             var vmGo = new GameObject("Viewmodel Camera");
             vmGo.transform.SetParent(camGo.transform, false);
             var vm = vmGo.AddComponent<Camera>();
@@ -135,14 +137,7 @@ namespace Spiritfire.Game
             vm.nearClipPlane = 0.01f;
             vm.farClipPlane = 20f;
             vm.cullingMask = 1 << fpLayer;
-            var vmData = vm.GetUniversalAdditionalCameraData();
-            vmData.renderType = CameraRenderType.Overlay;
-            vmData.renderShadows = false;
-            vmData.renderPostProcessing = true;
-            // 第一人称层没有采样深度图的着色器；渲染它时 SSAO / 贴花也不跑（ViewmodelCameraTrim）
-            vmData.requiresDepthOption = CameraOverrideOption.Off;
-            vmData.requiresColorOption = CameraOverrideOption.Off;
-            data.cameraStack.Add(vm);
+            FirstPersonView.Setup(vm);
             return cam;
         }
 

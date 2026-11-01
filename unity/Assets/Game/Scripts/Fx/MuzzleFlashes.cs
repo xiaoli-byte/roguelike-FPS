@@ -497,7 +497,10 @@ namespace Spiritfire.Game
                         cp.t[i].localRotation = Quaternion.Euler(0, 0, v.roll[i]);
                     }
                     block.Clear();
-                    block.SetColor(BaseColorId, premul ? new Color(c.r * a, c.g * a, c.b * a, a * PremulOpacity) : new Color(c.r, c.g, c.b, a));
+                    // 第一人称那份按第一人称补偿调（FirstPersonExposure，进后处理之前）：饱和度、亮度（白芯 = 特效 × 火焰，其余 = 特效）
+                    var g = fpCopy ? FirstPersonView.GradeEffect(c, part.hot) : c;
+                    if (fpCopy) MarkHot(cp.r[i], part.hot);
+                    block.SetColor(BaseColorId, premul ? new Color(g.r * a, g.g * a, g.b * a, a * PremulOpacity) : new Color(g.r, g.g, g.b, a));
                     cp.r[i].SetPropertyBlock(block);
                 }
             }
@@ -569,6 +572,17 @@ namespace Spiritfire.Game
             var v = new View { fp = MakeCopy("Muzzle Flash"), world = MakeCopy("Muzzle Flash (3P)") };
             Hide(v);
             return v;
+        }
+
+        /// <summary>第一人称那份火焰里这一帧是白芯的渲染器（核对第一人称补偿的套件按它分开调白芯和星芒）</summary>
+        static readonly HashSet<Renderer> hotParts = new();
+
+        public static bool IsHotPart(Renderer r) => r && hotParts.Contains(r);
+
+        static void MarkHot(Renderer r, bool hot)
+        {
+            if (hot) hotParts.Add(r);
+            else hotParts.Remove(r);
         }
 
         Copy MakeCopy(string name)

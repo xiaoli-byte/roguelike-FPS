@@ -21,7 +21,7 @@ MonoBehaviour:
     m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.748
   scatter:
     m_OverrideState: 1
     m_Value: 0.65
@@ -50,6 +50,56 @@ MonoBehaviour:
   dirtIntensity:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &-1244329180595747111
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e28da29848aa294599b960973d85399, type: 3}
+  m_Name: FirstPersonExposure
+  m_EditorClassIdentifier: Spiritfire.Game::Spiritfire.Game.FirstPersonExposure
+  active: 1
+  multiplier:
+    m_OverrideState: 1
+    m_Value: 2
+  gamma:
+    m_OverrideState: 1
+    m_Value: 1.08
+  effects:
+    m_OverrideState: 1
+    m_Value: 1.1
+  effectsSaturation:
+    m_OverrideState: 1
+    m_Value: 1
+  flash:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &-691545721048777410
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
+  m_Name: LiftGammaGain
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.LiftGammaGain
+  active: 1
+  lift:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0.001}
+  gamma:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0.054}
+  gain:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: -0.099}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,6 +118,8 @@ MonoBehaviour:
   - {fileID: 8950308856599344321}
   - {fileID: 9022680000082742671}
   - {fileID: 5868165670575056012}
+  - {fileID: -691545721048777410}
+  - {fileID: -1244329180595747111}
 --- !u!114 &616871198077910772
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -129,7 +181,7 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.28
+    m_Value: 0.365
   smoothness:
     m_OverrideState: 1
     m_Value: 0.45
@@ -151,10 +203,10 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.003
   contrast:
     m_OverrideState: 1
-    m_Value: 18
+    m_Value: 40.8
   colorFilter:
     m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -163,7 +215,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 6.2
 --- !u!114 &9022680000082742671
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -179,7 +231,7 @@ MonoBehaviour:
   active: 1
   temperature:
     m_OverrideState: 1
-    m_Value: 6
+    m_Value: 8.7
   tint:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 3
