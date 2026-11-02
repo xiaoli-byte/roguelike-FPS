@@ -1,0 +1,235 @@
+3-3 铸范大坊 · 鼓风正殿 · 验收
+— 地形 · 熔铜渠 · 桥 —
+✓ 中央铸床床面：y = -0.01
+✓ 东铸床床面：y = 0.01
+✓ 鼓风正殿地面：y = 0.01
+✓ 神范台床面：y = 0.00
+✓ 南闸门台顶：y = 2.46
+✓ 浇包吊台台顶：y = 2.98
+✓ 铸铁墙台台顶：y = 3.49
+✓ 炉坛台顶：y = 3.50
+✓ 检修台台顶：y = 2.98
+✓ 风闸台台顶：y = 1.96
+✓ 神范台台顶：y = 3.50
+✓ 前庭瞭望台台顶：y = 3.00
+✓ 横渠渠底：y = -2.40
+✓ 主渠渠底：y = -2.40
+✓ 西渠渠底：y = -2.40
+✓ 东渠渠底：y = -2.40
+✓ 神范南北渠渠底：y = -0.60
+✓ 神范东西渠渠底：y = -0.60
+✓ 神范熔池池底：y = -0.60
+✓ 铸坊渠壁最陡 53°（人走不上来、火鼍爬得上岸），渠边外 1 m 已在床面（y = -0.03）
+✓ 11 座铁桥：桥面与两头床面齐平（±0.2 m），桥面干燥（主线 7 座、神范台 4 座）
+熔岩：铸坊渠 11 段（自动涨落，风闸拉开前关着，涨 0.6 m 只在渠里）、神范台 9 片（领主战漫溢 +0.75 m）、桥下静止 15 片
+✓ 神范台渠岸 (157.5, 200)：基准面时干燥，漫溢 +0.75 m 后算熔岩
+· 火鼍网格在干地上还有 1 处（1 m 网格）：(48, 0.26, 116) ×1
+— 鼓风正殿 · 风闸 · 领主战 —
+风箱 2 台（瘪着 × 0.56），风闸接线：第一次 鼓风正殿、第二次 鼓风正殿 · 炉门守军（autoTrigger False），风箱道 2 条、涨落渠 11 段
+领主战：boss_warlord，场地 88 × 88 m，熔铜渠 9 片，熔铁闸 2 扇，首领关流程开局关着 ✓，出口点 (184.00, 3.50, 197.00)
+— 第三章专用件（ART6 暂缓，docs/art/ch3-kit.md） —
+⚠ 缺 5 件第三章专用件的 Prefab：SM_Tripo_InfernoCastingMould、SM_Tripo_InfernoCastingBed、SM_Tripo_InfernoBellows、SM_Tripo_InfernoMoltenGate、SM_Tripo_InfernoIronBridge——摆成 PlaceOrBox 白盒 45 个（铁桥 11 座），占位检查只列清单；到齐后自动收紧成不合格
+✓ 火神王座：可替换玄武岩尖塔与圆环、一道竖直熔岩柱、锯齿岩峰和局部氛围，落点接神范熔池
+══ 规则集（14 项）══
+— 主线连通（NavMesh，人形代理） —
+✓ 出生 · 南闸门 → 闸台坡脚：路径 22 m（直线 22 m，绕路 ×1.00），约 3 秒
+✓ 闸台坡脚 → ① 中央铸床：路径 35 m（直线 35 m，绕路 ×1.00），约 5 秒
+✓ ① 中央铸床 → 东桥：路径 49 m（直线 40 m，绕路 ×1.21），约 6 秒
+✓ 东桥 → ③ 东铸床：路径 30 m（直线 30 m，绕路 ×1.00），约 4 秒
+✓ ③ 东铸床 → 殿前桥：路径 106 m（直线 97 m，绕路 ×1.10），约 14 秒
+✓ 殿前桥 → ②④ 鼓风正殿：路径 54 m（直线 54 m，绕路 ×1.00），约 7 秒
+✓ ②④ 鼓风正殿 → 风闸台：路径 62 m（直线 60 m，绕路 ×1.02），约 8 秒
+✓ 风闸台 → 风闸捷径：路径 63 m（直线 19 m，绕路 ×3.33），约 8 秒
+✓ 风闸捷径 → ⑥ 神范前庭：路径 30 m（直线 30 m，绕路 ×1.00），约 4 秒
+✓ ⑥ 神范前庭 → 闸前桥：路径 22 m（直线 22 m，绕路 ×1.00），约 3 秒
+✓ 闸前桥 → ⑤ 神范台（领主战）：路径 54 m（直线 53 m，绕路 ×1.01），约 7 秒
+✓ ⑤ 神范台（领主战） → ⑤ 神范台顶（出口）：路径 54 m（直线 46 m，绕路 ×1.18），约 7 秒
+主线总长 581 m，约 78 秒（不含战斗）
+— 坡度 —
+✓ 南闸门坡道坡度：最陡 13° @ (100, 18)，全程 ≤ 24°
+✓ 浇包吊台坡道坡度：最陡 18° @ (100, 74)，全程 ≤ 24°
+✓ 浇包吊台坡道坡度：最陡 18° @ (100, 58)，全程 ≤ 24°
+✓ 铸铁墙台坡道坡度：最陡 19° @ (192, 94)，全程 ≤ 24°
+✓ 炉坛坡道坡度：最陡 19° @ (16, 135)，全程 ≤ 24°
+✓ 检修台坡道坡度：最陡 19° @ (82, 169)，全程 ≤ 24°
+✓ 风闸台坡道坡度：最陡 12° @ (64, 186)，全程 ≤ 24°
+✓ 神范台坡道坡度：最陡 18° @ (184, 188)，全程 ≤ 24°
+✓ 前庭瞭望台坡道坡度：最陡 17° @ (124, 176)，全程 ≤ 24°
+— 地标视线（眼高） —
+✓ 南闸门 → 浇包吊台：可见（61 m）
+✓ 南闸门 → 神范：可见（220 m）
+✓ 风闸台 → 神范：可见（110 m）
+✓ 南闸门 → 火神王座：可见（168 m）
+✓ 殿南口 → 大炉：可见（53 m）
+— 锚点有路（NavMesh，从出生点） —
+✓ 37 个锚点都有路（最远：神范前庭 / Enemy_6_Air，路径 211 m）
+— 出生净空（按敌人体型） —
+✓ 37 个锚点都放得下（最大体型：iron_ox（精英），半径 1.66 m、高 4.0 m）
+— 交互净空（宝箱 / 传送门 / 摊位） —
+✓ Wind Gate · 风闸（FoundryWindGate）：8/8 个方向可接近，离出生点路径 219 m
+✓ Cache · 废范残兵（CachePOI）：8/8 个方向可接近，离出生点路径 134 m
+✓ Cache · 炉工私藏（CachePOI）：8/8 个方向可接近，离出生点路径 203 m
+✓ 中央铸床 宝箱（scroll）（Chest）：8/8 个方向可接近，离出生点路径 57 m
+✓ 鼓风正殿 宝箱（weapon）（Chest）：8/8 个方向可接近，离出生点路径 145 m
+✓ 东铸床 宝箱（scroll）（Chest）：8/8 个方向可接近，离出生点路径 109 m
+✓ 鼓风正殿 · 炉门守军 宝箱（weapon:min=1）（Chest）：8/8 个方向可接近，离出生点路径 171 m
+✓ 神范前庭 宝箱（scroll）（Chest）：8/8 个方向可接近，离出生点路径 203 m
+— 防越界（走 / 跳 / 冲刺 / 二段跳） —
+栅格 292 × 306（1.0 m），可站立面 60815，可达 41281；贴着边界线的可达面 4 处都当起跳点试过
+尺度：移速 7.5 m/s · 单跳 1.42 m · 二段跳 2.68 m · 冲刺 3.96 m · 台阶 0.45 m · 坡度 ≤ 45°
+✓ 出不去：界外 28 m 以外没有一处可达（射线 40729，扫掠 6941）
+✓ 撤掉不可见墙之后也出不去：地形本身就是边界，空气墙可以直接撤
+（用时 1.8 s）
+— 主线不靠二段跳（玩家可达性） —
+起跳包络（同高最远）：单跳 5.2 m · 冲刺 10.6 m · 二段跳 15.3 m；最高：单跳 1.42 m · 二段跳 2.68 m
+✓ 出生 · 南闸门：步行可达
+✓ 闸台坡脚：步行可达
+✓ ① 中央铸床：步行可达
+✓ 东桥：步行可达
+✓ ③ 东铸床：步行可达
+✓ 殿前桥：步行可达
+✓ ②④ 鼓风正殿：步行可达
+✓ 风闸台：步行可达
+✓ 风闸捷径：步行可达
+✓ ⑥ 神范前庭：步行可达
+✓ 闸前桥：步行可达
+✓ ⑤ 神范台（领主战）：步行可达
+✓ ⑤ 神范台顶（出口）：步行可达
+✓ 13 个主线路点都不靠二段跳
+— 场地尺寸（可站立面积） —
+✓ 南闸门（缓冲）：设计 24 m，可站立 414 m²（占圆 92%，折合直径 23 m）
+✓ ① 中央铸床：设计 56 m，可站立 2369 m²（占圆 96%，折合直径 55 m）
+✓ ③ 东铸床：设计 52 m，可站立 1989 m²（占圆 94%，折合直径 50 m）
+✓ ②④ 鼓风正殿：设计 60 m，可站立 2733 m²（占圆 97%，折合直径 59 m）
+✓ ⑥ 神范前庭：设计 36 m，可站立 996 m²（占圆 98%，折合直径 36 m）
+⚠ ⑥ 神范前庭：战斗场地设计尺寸 36 m < 40 m（尺度表：40–60 m）
+✓ ⑤ 神范台（领主战）：设计 80 m，可站立 4935 m²（占圆 98%，折合直径 79 m）
+✓ 废范场（可选）：设计 44 m，可站立 1513 m²（占圆 100%，折合直径 44 m）
+— 掩体数 —
+· 南闸门（缓冲）：5 处掩体（4 处能全遮），掩体旁站位 54 格
+✓ ① 中央铸床：7 处掩体（6 处能全遮），掩体旁站位 135 格（要求 ≥ 4）
+✓ ③ 东铸床：8 处掩体（7 处能全遮），掩体旁站位 236 格（要求 ≥ 4）
+✓ ②④ 鼓风正殿：11 处掩体（10 处能全遮），掩体旁站位 289 格（要求 ≥ 4）
+✓ ⑥ 神范前庭：4 处掩体（3 处能全遮），掩体旁站位 49 格（要求 ≥ 3）
+✓ ⑤ 神范台（领主战）：8 处掩体（7 处能全遮），掩体旁站位 192 格（要求 ≥ 4）
+✓ 废范场（可选）：4 处掩体（3 处能全遮），掩体旁站位 33 格（要求 ≥ 2）
+— 高差层数（地面 / 台阶 / 俯射） —
+· 南闸门（缓冲）：1 层 —— 地面 412 m² · 台阶 2 m²（单跳）
+✓ ① 中央铸床：3 层 —— 地面 2190 m² · 台阶 32 m²（步行） · 俯射 147 m²（步行）；另有 5 m² 只有二段跳上得去（捷径）
+✓ ③ 东铸床：2 层 —— 地面 1865 m² · 台阶 1 m²（单跳） · 俯射 138 m²（步行）；另有 72 m² 只有二段跳上得去（捷径）
+✓ ②④ 鼓风正殿：2 层 —— 地面 2415 m² · 台阶 2 m²（单跳） · 俯射 316 m²（步行）；另有 9 m² 只有二段跳上得去（捷径）
+✓ ⑥ 神范前庭：3 层 —— 地面 920 m² · 台阶 21 m²（步行） · 俯射 71 m²（步行）
+✓ ⑤ 神范台（领主战）：3 层 —— 地面 4837 m² · 台阶 65 m²（步行） · 俯射 97 m²（步行）
+· 废范场（可选）：1 层 —— 地面 1513 m²；另有 7 m² 只有二段跳上得去（捷径）
+— 占位清单 —
+⚠ 45 个占位件（PlaceOrBox 白盒 / 名字带 Placeholder、占位）：白盒阶段允许，正式验收前要换掉
+    · Architecture/Blast Hall/Bellows A/SM_Tripo_InfernoBellows · 风箱 A (Placeholder) @ (32, 1, 152)
+    · Architecture/Blast Hall/Bellows B/SM_Tripo_InfernoBellows · 风箱 B (Placeholder) @ (64, 1, 152)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · AE 神范东桥 (Placeholder) @ (178, 0, 164)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · AN 神范北桥 (Placeholder) @ (152, 0, 190)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · AS 神范南桥 (Placeholder) @ (152, 0, 138)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · AW 神范西桥 (Placeholder) @ (126, 0, 164)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · B1 东桥 (Placeholder) @ (138, 0, 52)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · B2 西桥 (Placeholder) @ (62, 0, 84)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · B3 殿前桥 (Placeholder) @ (82, 0, 110)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · B4 废范北桥 (Placeholder) @ (24, 0, 110)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · B5 闸前桥 (Placeholder) @ (100, 0, 176)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · B6 东铸北桥 (Placeholder) @ (178, 0, 110)
+    · Architecture/Iron Bridges/SM_Tripo_InfernoIronBridge · B7 风闸捷径 (Placeholder) @ (100, 0, 196)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingBed · 神范台铸床 (Placeholder) @ (168, 1, 128)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingBed · 神范台铸床 (Placeholder) @ (132, 1, 206)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范 (Placeholder) @ (192, 8, 207)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范台掩体 (Placeholder) @ (188, 1, 130)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范台掩体 (Placeholder) @ (170, 1, 146)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范台掩体 (Placeholder) @ (136, 1, 128)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范台掩体 (Placeholder) @ (122, 1, 142)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范台掩体 (Placeholder) @ (166, 1, 178)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范台掩体 (Placeholder) @ (136, 1, 180)
+    · Architecture/Mould Dais/SM_Tripo_InfernoCastingMould · 神范台掩体 (Placeholder) @ (124, 1, 194)
+    · Architecture/Sluice/SM_Tripo_InfernoMoltenGate · 炉闸 (Placeholder) @ (100, 3, 216)
+    · Markers/Lord Gates · 熔铁闸/SM_Tripo_InfernoMoltenGate · 东铸北桥封门 (Placeholder) @ (178, 4, 118)
+    · Markers/Lord Gates · 熔铁闸/SM_Tripo_InfernoMoltenGate · 闸前桥封门 (Placeholder) @ (107, 4, 176)
+    · Props/① Central Bed/SM_Tripo_InfernoCastingBed · 中央铸床 (Placeholder) @ (122, 1, 90)
+    · Props/① Central Bed/SM_Tripo_InfernoCastingBed · 中央铸床 (Placeholder) @ (78, 0, 40)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingBed · 东铸床 (Placeholder) @ (176, 1, 96)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingBed · 东铸床 (Placeholder) @ (154, 0, 28)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (172, 1, 76)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (168, 1, 76)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (156, 1, 76)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (152, 1, 76)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (172, 1, 62)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (168, 1, 62)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (156, 1, 62)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (152, 1, 62)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (172, 1, 48)
+    · Props/③ East Bed/SM_Tripo_InfernoCastingMould · 范列 (Placeholder) @ (168, 1, 48)
+    ……另有 5 个
+— 面数 / 批次预算（粗估） —
+全场景（LOD0）：205 个渲染器，259,404 面，205 次绘制；LOD 组 0 个，粒子系统 0 个，地形 1 块（不计）
+机位 13 个（FOV 70°，远裁 1500 m）：最重的画面是「⑤ 神范台顶（出口）」245,964 面、180 次绘制（按材质合并后下限 85）；绘制次数最多 187
+    面数大头：SM_Tripo_InfernoFireAltar 39,000 · SM_Tripo_InfernoColumn 33,000 · SM_Tripo_InfernoIngotPile 24,000 · Backdrop 17,280 · SM_Tripo_InfernoHallWall 16,000
+✓ 机位面数 ≤ 2,000,000
+✓ 机位绘制次数 ≤ 400
+— 性能预算（固定机位估算） —
+高 · 出生（100, 3, 7）：渲染器 161、三角面 205k、绘制 161（+ 投影 42，投影体 42）
+高 · 中段远眺（51, 0, 144）：渲染器 121、三角面 141k、绘制 121（+ 投影 65，投影体 65）
+高 · 战斗（100, 1, 54）：渲染器 132、三角面 169k、绘制 132（+ 投影 67，投影体 67）
+高 · 主线 1（出生点 → 中央铸床）（100, 3, 7）：渲染器 161、三角面 205k、绘制 161（+ 投影 42，投影体 42）
+高 · 主线 2（中央铸床 → 东铸床）（100, 3, 64）：渲染器 55、三角面 54k、绘制 55（+ 投影 72，投影体 72）
+高 · 主线 3（东铸床 → 熔心魔将）（166, 0, 62）：渲染器 134、三角面 133k、绘制 134（+ 投影 56，投影体 56）
+高 · 主线 4（熔心魔将 → 神范前庭）（152, 0, 164）：渲染器 78、三角面 138k、绘制 78（+ 投影 74，投影体 74）
+高 · 主线 5（神范前庭 → 鼓风正殿）（122, 0, 176）：渲染器 69、三角面 141k、绘制 69（+ 投影 78，投影体 78）
+低 · 出生（100, 3, 7）：渲染器 151、三角面 199k、绘制 151（+ 投影 9，投影体 9）
+低 · 中段远眺（51, 0, 144）：渲染器 105、三角面 130k、绘制 105（+ 投影 25，投影体 25）
+低 · 战斗（100, 1, 54）：渲染器 126、三角面 166k、绘制 126（+ 投影 21，投影体 21）
+低 · 主线 1（出生点 → 中央铸床）（100, 3, 7）：渲染器 151、三角面 199k、绘制 151（+ 投影 9，投影体 9）
+低 · 主线 2（中央铸床 → 东铸床）（100, 3, 64）：渲染器 51、三角面 52k、绘制 51（+ 投影 24，投影体 24）
+低 · 主线 3（东铸床 → 熔心魔将）（166, 0, 62）：渲染器 118、三角面 121k、绘制 118（+ 投影 25，投影体 25）
+低 · 主线 4（熔心魔将 → 神范前庭）（152, 0, 164）：渲染器 76、三角面 137k、绘制 76（+ 投影 31，投影体 31）
+低 · 主线 5（神范前庭 → 鼓风正殿）（122, 0, 176）：渲染器 65、三角面 140k、绘制 65（+ 投影 38，投影体 38）
+— 俯视地图 —
+✓ Assets/Art/_Review/level_3-3_map.png（世界 XZ -14…214 × -14…228，坐标映射见同名 .json）
+✓ 行旅图：Assets/Levels/L3_3_Foundry/LevelMap_3-3.jpg（1448×1536），地点 8 处（场地 5、藏宝 2、首领 1），写进场景「Level Meta」
+规则集：不合格 0 项，提醒 2 条，用时 7.5 s（其中可达性栅格 1.8 s）
+— 熔岩（L7）—
+✓ Lava · 东渠 1（8 × 48 m，熔岩面 y -1.00）
+✓ Lava · 神范南北渠 2（14 × 11 m，熔岩面 y -0.45）
+✓ Lava · 主渠 1（8 × 56 m，熔岩面 y -1.00）
+✓ Lava · 西渠 2（8 × 16 m，熔岩面 y -1.00）
+✓ Lava · 主渠 2（8 × 8.5 m，熔岩面 y -1.00）
+✓ Lava · 横渠 1（8 × 21 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 神范南桥 侧1（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 神范东西渠 1（14 × 17 m，熔岩面 y -0.45）
+✓ Lava · 西渠 1（8 × 81 m，熔岩面 y -1.00）
+✓ Lava · 神范东西渠 2（14 × 11 m，熔岩面 y -0.45）
+✓ Lava · 桥下 · 神范南桥 侧2（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 桥下 · 神范西桥 侧1（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 横渠 3（8 × 82 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 西桥（8 × 12 m，熔岩面 y -1.00）
+✓ Lava · 神范南北渠 3（14 × 11 m，熔岩面 y -0.45）
+✓ Lava · 神范东西渠 3（14 × 11 m，熔岩面 y -0.45）
+✓ Lava · 神范南北渠 1（14 × 19 m，熔岩面 y -0.45）
+✓ Lava · 桥下 · 神范东桥 侧1（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 桥下 · 东铸北桥（8 × 14 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 神范北桥 侧1（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 桥下 · 东桥（8 × 14 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 风闸捷径（8 × 11 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 神范北桥 侧2（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 主渠 3（8 × 15.5 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 神范东桥 侧2（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 神范熔池（圆 r 10 m，熔岩面 y -0.45）
+✓ Lava · 神范南北渠 4（14 × 22 m，熔岩面 y -0.45）
+✓ Lava · 桥下 · 神范西桥 侧2（8 × 1.5 m，熔岩面 y -0.45）
+✓ Lava · 横渠 4（8 × 18 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 殿前桥（8 × 14 m，熔岩面 y -1.00）
+✓ Lava · 神范东西渠 4（14 × 20 m，熔岩面 y -0.45）
+✓ Lava · 横渠 2（8 × 45 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 废范北桥（8 × 12 m，熔岩面 y -1.00）
+✓ Lava · 桥下 · 闸前桥（8 × 12 m，熔岩面 y -1.00）
+✓ Lava · 东渠 2（8 × 47 m，熔岩面 y -1.00）
+— 场景内容（L1：只有环境和标记，玩家在 Core 场景）—
+✓ PlayerSpawn ×1、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话
+✓ 目标图：必清 中央铸床、鼓风正殿、东铸床、鼓风正殿 · 炉门守军、神范前庭；可选 废范守军；藏宝 2 处；下一关 3-4 · 祝融炉心 · 火麒麟
+GameDatabase：武器 18/18、手臂 6、敌人 48/40、挂件 20
+  缺 Prefab（运行时：枪没有第一人称画面 / 敌人用占位体）：敌人 / 首领 SK_Enemy_TantongEmber
+全部通过
