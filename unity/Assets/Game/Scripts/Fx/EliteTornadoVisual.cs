@@ -3,15 +3,15 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 精英龙卷的手绘风体：淡漏斗托出体积，双主螺旋与四条断笔风纹表现旋转，团块云顶与章节尘裙交代气流去向。
-    /// 暗衬、风青、窄亮边都走普通混合；亮边不是铺满整条的加法光，避免在亮沙与雪地上冲成奶白。
+    /// 精英龙卷的手绘风体：十六条起止、宽度与转速各异的流层绕 S 形风核运动，柔边亮芯叠在淡漏斗上。
+    /// 倾斜云冠、稳定地面环、章节尘裙与外抛风丝分层运动；普通混合保持色阶，不让亮部铺成一片奶白。
     /// </summary>
     public sealed class EliteTornadoVisual : MonoBehaviour
     {
-        const int Bands = 6, Segments = 36, BodySegments = 40, BodyLevels = 14, CrownSegments = 48;
+        const int Bands = 16, Segments = 28, BodySegments = 40, BodyLevels = 14, CrownSegments = 48;
         static readonly Color Ink = Hex.Rgb(0x263e4c);
-        static readonly Color Wind = Hex.Rgb(0x58a6b3);
-        static readonly Color Edge = Hex.Rgb(0xc6e7dc);
+        static readonly Color Wind = Hex.Rgb(0x68b2bf);
+        static readonly Color Edge = Hex.Rgb(0xd3eee4);
         static readonly Color Cloud = Hex.Rgb(0x7297a3);
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
@@ -21,9 +21,10 @@ namespace Spiritfire.Game
         Mesh mainMesh, underMesh, bodyMesh, crownMesh;
         MeshRenderer mainRenderer, underRenderer, bodyRenderer, crownRenderer;
         MaterialPropertyBlock block;
+        FxHandle groundFlow;
         Vector3[] mainVertices, underVertices, bodyVertices, crownVertices;
 
-        public static EliteTornadoVisual Create(Vector3 ground, float height, float topRadius, Transform parent = null)
+        public static EliteTornadoVisual Create(Vector3 ground, float height, float topRadius, Transform parent = null, bool charging = false)
         {
             var go = new GameObject("Elite Tornado Visual");
             go.transform.SetParent(parent, true);
@@ -31,6 +32,7 @@ namespace Spiritfire.Game
             var v = go.AddComponent<EliteTornadoVisual>();
             v.height = height;
             v.topRadius = topRadius;
+            v.charging = charging;
             v.Build();
             return v;
         }
@@ -38,19 +40,22 @@ namespace Spiritfire.Game
         void Build()
         {
             block = new MaterialPropertyBlock();
-            mainVertices = new Vector3[Bands * (Segments + 1) * 2];
-            underVertices = new Vector3[mainVertices.Length];
+            mainVertices = new Vector3[Bands * (Segments + 1) * 3];
+            underVertices = new Vector3[Bands * (Segments + 1) * 2];
             bodyVertices = new Vector3[(BodyLevels + 1) * (BodySegments + 1)];
             crownVertices = new Vector3[3 * (CrownSegments + 1)];
-            mainMesh = MakeStrokeMesh("Wind Strokes", out mainRenderer, 0);
-            underMesh = MakeStrokeMesh("Ink Underlay", out underRenderer, -1);
+            mainMesh = MakeStrokeMesh("Wind Strokes", out mainRenderer, 0, 3);
+            underMesh = MakeStrokeMesh("Ink Underlay", out underRenderer, -1, 2);
             bodyMesh = MakeBodyMesh();
             crownMesh = MakeCrownMesh();
+            if (!charging)
+                groundFlow = Surge.Annulus(transform.position + Vector3.up * 0.05f, 0.42f, 1.65f, SurgeKind.Water, 20f, 95f, 0.65f,
+                    Hex.Rgb(0x315c6c), Edge, 0.48f);
             UpdateStrokes();
             PaintVertices();
         }
 
-        Mesh MakeStrokeMesh(string name, out MeshRenderer renderer, int order)
+        Mesh MakeStrokeMesh(string name, out MeshRenderer renderer, int order, int rows)
         {
             var go = new GameObject(name);
             go.transform.SetParent(transform, false);
@@ -64,15 +69,16 @@ namespace Spiritfire.Game
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false;
 
-            var triangles = new int[Bands * Segments * 12];
+            var triangles = new int[Bands * Segments * (rows - 1) * 12];
             int n = 0;
             for (int b = 0; b < Bands; b++)
                 for (int i = 0; i < Segments; i++)
-                {
-                    int k = b * (Segments + 1) * 2 + i * 2;
-                    n = Quad(triangles, n, k, 2);
-                }
-            mesh.SetVertices(new Vector3[Bands * (Segments + 1) * 2]);
+                    for (int r = 0; r < rows - 1; r++)
+                    {
+                        int k = b * (Segments + 1) * rows + i * rows + r;
+                        n = Quad(triangles, n, k, rows);
+                    }
+            mesh.SetVertices(new Vector3[Bands * (Segments + 1) * rows]);
             mesh.SetTriangles(triangles, 0);
             mesh.bounds = new Bounds(Vector3.up * height * 0.5f, new Vector3(topRadius * 4f, height * 1.4f, topRadius * 4f));
             return mesh;
@@ -158,14 +164,18 @@ namespace Spiritfire.Game
                 {
                     float v = i / (float)Segments;
                     float a = Mathf.Pow(Mathf.Sin(v * Mathf.PI), 0.42f);
+                    for (int side = 0; side < 3; side++)
+                    {
+                        int k = b * (Segments + 1) * 3 + i * 3 + side;
+                        var c = side == 1 ? Color.Lerp(Wind, Edge, 0.72f) : Wind;
+                        c.a = a * (side == 1 ? 0.95f : 0.3f);
+                        mainColors[k] = FxVertexColor.Linear(c);
+                    }
                     for (int side = 0; side < 2; side++)
                     {
                         int k = b * (Segments + 1) * 2 + i * 2 + side;
-                        var c = Color.Lerp(Wind, Edge, side == 0 ? 0.62f : 0.05f);
-                        c.a = a * 0.94f;
-                        mainColors[k] = FxVertexColor.Linear(c);
                         var dark = Ink;
-                        dark.a = a * 0.88f;
+                        dark.a = a * 0.12f;
                         underColors[k] = FxVertexColor.Linear(dark);
                     }
                 }
@@ -176,7 +186,7 @@ namespace Spiritfire.Game
             for (int y = 0; y <= BodyLevels; y++)
             {
                 float u = y / (float)BodyLevels;
-                float a = Mathf.Lerp(0.1f, 0.24f, u) * Mathf.Clamp01(u * 9f) * Mathf.Clamp01((1f - u) * 5f);
+                float a = Mathf.Lerp(0.16f, 0.34f, u) * Mathf.Clamp01(u * 9f) * Mathf.Clamp01((1f - u) * 5f);
                 for (int x = 0; x <= BodySegments; x++)
                 {
                     var c = Color.Lerp(Ink, Wind, 0.48f + u * 0.18f);
@@ -205,6 +215,7 @@ namespace Spiritfire.Game
             time += dt;
             fade = Mathf.MoveTowards(fade, fadeTarget, dt * fadeSpeed);
             UpdateStrokes();
+            groundFlow.MoveTo(transform.position + Vector3.up * 0.05f);
             block.SetColor(BaseColorId, new Color(1, 1, 1, alpha * fade));
             mainRenderer.SetPropertyBlock(block);
             underRenderer.SetPropertyBlock(block);
@@ -233,31 +244,43 @@ namespace Spiritfire.Game
         Vector3 Axis(float u)
         {
             float sway = u * u * 0.22f;
+            float bend = Mathf.Pow(u, 1.65f) * 0.52f;
             var shear = -travel * (u * u * height * 0.11f);
-            return new Vector3(Mathf.Sin(u * 4.4f - time * 1.35f) * sway, u * height, Mathf.Cos(u * 3.2f - time * 1.1f) * sway) + shear;
+            return new Vector3(Mathf.Sin(u * 4.4f - time * 1.35f) * sway + bend, u * height,
+                Mathf.Cos(u * 3.2f - time * 1.1f) * sway - bend * 0.38f) + shear;
         }
+
+        static float Hash(int b, int k) => Mathf.Repeat(Mathf.Sin(b * 12.9898f + k * 78.233f) * 43758.5453f, 1f);
 
         void UpdateStrokes()
         {
             for (int b = 0; b < Bands; b++)
+            {
+                bool outer = b >= 12;
+                float start = b == 0 ? 0f : b == 1 ? 0.12f : outer ? 0.16f + Hash(b, 1) * 0.5f : Hash(b, 1) * 0.3f;
+                float span = b == 0 ? 1f : b == 1 ? 0.82f : outer ? 0.2f + Hash(b, 2) * 0.2f : 0.58f + Hash(b, 2) * 0.36f;
                 for (int i = 0; i <= Segments; i++)
                 {
                     float v = i / (float)Segments;
-                    bool spine = b < 2;
-                    float u = spine ? v : Mathf.Clamp01((b - 1) / 6f + (v - 0.5f) * (0.3f + 0.025f * (b % 3)));
-                    float angle = b * 2.31f + time * (3.1f + b * 0.13f) + u * (spine ? 10.5f : 7.2f) + v * 0.65f;
-                    float radius = Mathf.Lerp(0.24f, topRadius, Mathf.Pow(u, 1.45f)) * (1f + 0.08f * Mathf.Sin(time * 2.2f + b));
+                    float u = Mathf.Clamp01(start + span * v);
+                    float angle = b * 2.39f + time * (outer ? 4.4f + Hash(b, 3) * 2f : 2.2f + Hash(b, 3) * 2.1f)
+                        + Mathf.Pow(u, 0.9f) * (4.2f + Hash(b, 4) * 4.4f) + v * 0.45f;
+                    float radius = Mathf.Lerp(0.2f, topRadius, Mathf.Pow(u, 1.42f)) * (outer ? 1.18f + Hash(b, 5) * 0.22f : 0.82f + Hash(b, 5) * 0.3f);
                     var radial = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle));
-                    float taper = spine ? Mathf.Clamp01(Mathf.Min(v, 1f - v) * 14f) : Mathf.Pow(Mathf.Sin(v * Mathf.PI), 0.62f);
-                    float width = Mathf.Lerp(spine ? 0.18f : 0.14f, spine ? 0.42f : 0.34f, u) * taper;
+                    float taper = Mathf.Pow(Mathf.Sin(v * Mathf.PI), outer ? 0.72f : 0.35f);
+                    float width = outer ? 0.025f + Hash(b, 6) * 0.035f : Mathf.Lerp(0.14f, 0.52f, u) * (0.7f + Hash(b, 6) * 0.65f);
+                    width *= taper;
                     var center = Axis(u) + radial * radius;
                     var lift = Vector3.up * (width * 0.5f) + radial * (width * 0.18f);
-                    int k = b * (Segments + 1) * 2 + i * 2;
+                    int k = b * (Segments + 1) * 3 + i * 3;
                     mainVertices[k] = center + lift;
-                    mainVertices[k + 1] = center - lift;
-                    underVertices[k] = center + lift * 1.35f - radial * 0.025f;
-                    underVertices[k + 1] = center - lift * 1.35f - radial * 0.025f;
+                    mainVertices[k + 1] = center;
+                    mainVertices[k + 2] = center - lift;
+                    int u2 = b * (Segments + 1) * 2 + i * 2;
+                    underVertices[u2] = center + lift * 1.15f - radial * 0.02f;
+                    underVertices[u2 + 1] = center - lift * 1.15f - radial * 0.02f;
                 }
+            }
             mainMesh.SetVertices(mainVertices);
             underMesh.SetVertices(underVertices);
 
@@ -281,8 +304,9 @@ namespace Spiritfire.Game
                 for (int x = 0; x <= CrownSegments; x++)
                 {
                     float a = x / (float)CrownSegments * Mathf.PI * 2f + time * 0.7f;
-                    float radius = Mathf.Lerp(topRadius * 0.48f, topRadius * 1.26f, v) * (1f + 0.08f * Mathf.Sin(a * 4f - time * 1.6f));
-                    float lift = Mathf.Sin(a * 3f - time * 2.1f) * 0.13f + Mathf.Sin(a * 5f + time) * 0.05f + v * 0.12f;
+                    float radius = Mathf.Lerp(topRadius * 0.48f, topRadius * 1.3f, v) * (1f + 0.12f * Mathf.Sin(a * 4f - time * 1.6f));
+                    float lift = Mathf.Sin(a * 3f - time * 2.1f) * 0.13f + Mathf.Sin(a * 5f + time) * 0.05f + v * 0.12f
+                        + Mathf.Sin(a) * radius * 0.22f - Mathf.Cos(a) * radius * 0.1f;
                     crownVertices[y * (CrownSegments + 1) + x] = crownAxis + new Vector3(Mathf.Sin(a) * radius, lift, Mathf.Cos(a) * radius);
                 }
             }
@@ -348,10 +372,12 @@ namespace Spiritfire.Game
         {
             fadeTarget = 0;
             fadeSpeed = 1f / Mathf.Max(0.05f, seconds);
+            groundFlow.Cancel();
         }
 
         void OnDestroy()
         {
+            groundFlow.Cancel();
             if (mainMesh) Destroy(mainMesh);
             if (underMesh) Destroy(underMesh);
             if (bodyMesh) Destroy(bodyMesh);

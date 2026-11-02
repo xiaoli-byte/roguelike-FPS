@@ -112,7 +112,7 @@ namespace Spiritfire.Game
                 windOrigin = Ground(ai.transform.position);
                 windLeft = EliteTornado.Windup;
                 warning = Telegraph.Lane(windOrigin, windOrigin + lockedDirection * EliteTornado.Range, EliteTornado.Radius * 2f, EliteTornado.Windup, Affix.Color);
-                charge = EliteTornadoVisual.Create(windOrigin, 4.6f, 1.2f);
+                charge = EliteTornadoVisual.Create(windOrigin, 4.6f, 1.2f, null, true);
                 GameAudio.PlayAt("telegraph", ai.transform.position, 0.8f);
                 GameAudio.PlayAt("enemy_charge", ai.transform.position, 0.65f, 1.25f);
             }
