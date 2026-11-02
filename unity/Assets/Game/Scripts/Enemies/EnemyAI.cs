@@ -413,6 +413,13 @@ namespace Spiritfire.Game
         // ───────────── 坠落回收 ─────────────
         /// <summary>掉到最后站过的导航网格点以下多深算掉出世界（同 TS floorY − 12）</summary>
         public const float FallDepth = 12f;
+        /// <summary>
+        /// 被掀飞（<see cref="LaunchUp"/>）的这一趟按多深算掉出世界：从悬空的甲板 / 桥上被打下去要落 20 m 左右才到熔岩 / 下一层
+        /// （第三章 v2 S3：3-2 悬炉锻台离熔岩井 19.5 m），按 12 m 算会在半空被传回台上
+        /// </summary>
+        public const float LaunchFallDepth = 40f;
+        /// <summary>脚本位移（跳、冲锋、被掀飞）找脚下地面的射线有多长（米）：短了会在高台外的半空「落地」被吸回台上</summary>
+        public const float ManualGroundProbe = 60f;
         /// <summary>不在脚本位移里却离开导航网格多久就拉回（秒）</summary>
         public const float OffMeshGrace = 2.5f;
 
@@ -443,7 +450,7 @@ namespace Spiritfire.Game
                 offMeshTime = 0;
                 return false;
             }
-            bool fell = !finite || p.y < lastOnMesh.y - FallDepth;
+            bool fell = !finite || p.y < lastOnMesh.y - (launched ? LaunchFallDepth : FallDepth);
             // 只是落到了更低的地面上（跳下高台、冲下陡坡）：脚下 3 m 内就有导航网格，参考点跟着下来，不算掉出世界
             if (fell && finite && NavMesh.SamplePosition(p, out var below, 3f, NavMesh.AllAreas))
             {
@@ -824,7 +831,8 @@ namespace Spiritfire.Game
                 HitWall = true;
             }
             p += step;
-            float ground = GroundY(p);
+            float ground = Physics.Raycast(p + Vector3.up * 3f, Vector3.down, out var below, ManualGroundProbe, Layers.WorldMask, QueryTriggerInteraction.Ignore)
+                ? below.point.y : p.y;
             ManualGrounded = p.y <= ground + 0.02f && manualVelocity.y <= 0;
             if (p.y < ground)
             {

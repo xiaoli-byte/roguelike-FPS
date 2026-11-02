@@ -335,6 +335,8 @@ namespace Spiritfire.Game
         public int Burned { get; private set; }
         /// <summary>本关被拉回岸上的次数（敌人自己走进熔岩、被涨潮淹到）</summary>
         public int PushedBack { get; private set; }
+        /// <summary>本关被击退推下台沿、掉向熔岩的敌人数（S3：悬空甲板 / 桥 / 台沿外是熔岩）</summary>
+        public int Shoved { get; private set; }
 
         sealed class Track
         {
@@ -342,6 +344,10 @@ namespace Spiritfire.Game
             public bool hasBank;
             public float knockAt = float.NegativeInfinity;
             public NavMeshAgent agent;
+            /// <summary>被击退过、还没落回地上自己走（S3：落地前一直算击退）</summary>
+            public bool airKnock;
+            public Vector3 prev;
+            public bool hasPrev;
         }
 
         readonly Dictionary<EnemyAI, Track> tracks = new();
@@ -472,7 +478,21 @@ namespace Spiritfire.Game
                 var pos = ai.transform.position;
                 // 击退只认明确的信号（同 TS knockedBack）：失控滑行（伤害 / 技能的击退冲量）、被掀飞。
                 // 不按「这一帧挪得比导航快」推断——传送、落地吸附、坠落回收、测试里的 Warp 都会被误当成击退，走进熔岩就被烧死
-                if (LavaEnemyRule.Knocked(ai.LaunchedUp, ai.KnockedBack)) tr.knockAt = now;
+                // S3（ch3-v2 风险 2）：被击退后离地的（被掀飞、被推下台沿、击退途中起跳），落地前一直算击退——
+                // 从 17 m 高的悬炉甲板掉进熔岩井要 1 s 以上，只认 0.6 s 窗口会被当成「自己走进熔岩」拉回岸上
+                if (LavaEnemyRule.Knocked(ai.LaunchedUp, ai.KnockedBack))
+                {
+                    tr.knockAt = now;
+                    tr.airKnock = true;
+                    if (ai.KnockedBack && Walking(tr) && TryShoveOffLedge(ai, tr, pos)) Shoved++;
+                }
+                else if (tr.airKnock)
+                {
+                    if (Walking(tr) && tr.agent.isOnNavMesh) tr.airKnock = false;
+                    else tr.knockAt = now;
+                }
+                tr.prev = pos;
+                tr.hasPrev = true;
                 bool inLava = LavaGeometry.Touches(bodies, pos);
                 switch (LavaEnemyRule.Decide(false, inLava, now, tr.knockAt))
                 {
@@ -502,6 +522,48 @@ namespace Spiritfire.Game
                 foreach (var k in stale) tracks.Remove(k);
                 swimmers.RemoveWhere(s => !s);
             }
+        }
+
+        /// <summary>
+        /// 被击退的地面敌人到了导航网格的边上、外面是悬空的熔岩（悬炉甲板的缺口、链桥 / 吊臂两侧、台沿外的熔岩井）：
+        /// 导航代理的 Move 出不了网格边，自己掉不下去——这里补一下：顺着被推的方向再推一把、掀起一点（<see cref="EnemyAI.LaunchUp"/>），
+        /// 交给脚本重力落下去；落进熔岩前一直算击退，所以烧死、计击杀。外面有墙 / 矮栏（0.35 m 高处挡着）、外面 0.8 m 内还有网格（同一层能走）、
+        /// 下面不是熔岩、或者熔岩上面先有别的地面（下一层环台、桥），都不推
+        /// </summary>
+        bool TryShoveOffLedge(EnemyAI ai, Track tr, Vector3 pos)
+        {
+            var agent = tr.agent;
+            if (!agent || !agent.isOnNavMesh) return false;
+            var filter = new NavMeshQueryFilter { agentTypeID = agent.agentTypeID, areaMask = agent.areaMask };
+            if (!NavMesh.FindClosestEdge(pos, out var edge, filter) || edge.distance > 0.75f) return false;
+            // 推的方向：这一帧的位移（击退推着走），太小就取离玩家的方向
+            var dir = tr.hasPrev ? pos - tr.prev : Vector3.zero;
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-6f)
+            {
+                var v = PlayerVitals.Instance;
+                if (!v) return false;
+                dir = pos - v.transform.position;
+                dir.y = 0;
+            }
+            if (dir.sqrMagnitude < 1e-6f) return false;
+            dir.Normalize();
+            // 朝着网格边往外（推的方向和「边 → 敌人」反向才算往外推）
+            var toEdge = edge.position - pos;
+            toEdge.y = 0;
+            if (toEdge.sqrMagnitude > 0.01f && Vector3.Dot(dir, toEdge.normalized) < 0.2f) return false;
+            var q = pos + dir * 1.3f;
+            if (Physics.Raycast(pos + Vector3.up * 0.35f, dir, 1.5f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) return false;
+            if (NavMesh.SamplePosition(q, out var near, 0.8f, filter) && near.position.y > pos.y - 2f) return false;
+            if (!LavaGeometry.SurfaceAt(bodies, q.x, q.z, out float lavaY, out _) || lavaY > pos.y - 1.5f) return false;
+            // 熔岩上面先有别的地面（下一层环台、桥）：不是直接掉进熔岩
+            if (Physics.Raycast(q + Vector3.up * 0.5f, Vector3.down, out var floor, pos.y + 0.5f - lavaY, Layers.WorldMask, QueryTriggerInteraction.Ignore)
+                && floor.point.y > lavaY + LavaTuning.StandRise) return false;
+            ai.Knockback(dir * 6f);
+            if (!ai.LaunchUp(2.5f)) return false;
+            tr.knockAt = Time.time;
+            tr.airKnock = true;
+            return true;
         }
 
         /// <summary>在导航网格上自己走（不是跳跃 / 冲锋 / 被掀飞这类脚本位移）</summary>
