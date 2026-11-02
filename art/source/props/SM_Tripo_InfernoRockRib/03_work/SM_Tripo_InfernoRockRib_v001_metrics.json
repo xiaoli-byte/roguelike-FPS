@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 13263,
+    "verts": 7400
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 16.00782,
+    "iou": 0.863,
+    "iou_per_view": {
+      "front": 0.929,
+      "left": 0.835,
+      "back": 0.803,
+      "right": 0.85
+    },
+    "size_m": [
+      9.372,
+      7.543,
+      16.0
+    ],
+    "reference_m": [
+      9.0,
+      12.0,
+      16.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0129
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.599,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoRockRib_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoRockRib_LOD0",
+      "tris": 13263,
+      "verts": 7400,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99755859375,
+        0.99853515625
+      ],
+      "uv_utilization": 0.477,
+      "bbox_min": [
+        -4.6859,
+        -3.7714,
+        0.0
+      ],
+      "bbox_max": [
+        4.6859,
+        3.7714,
+        16.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoRockRib/04_export/SM_Tripo_InfernoRockRib_v001.glb",
+    "bytes": 977908
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 37.7,
+  "_seconds": 40.3
+}

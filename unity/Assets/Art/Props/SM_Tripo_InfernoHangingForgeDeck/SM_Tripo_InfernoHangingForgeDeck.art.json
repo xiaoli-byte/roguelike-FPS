@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoHangingForgeDeck",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.forgeWell.hangingForge",
+    "part": "Deck"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_BellyFire",
+      "pos": [
+        0,
+        0.3,
+        0
+      ],
+      "dir": [
+        0,
+        -1,
+        0
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        -5.73,
+        3.54,
+        0
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        5.73,
+        3.54,
+        0
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        0,
+        3.4,
+        5.81
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        0,
+        3.4,
+        -5.81
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -8.779348373413086,
+      0,
+      -8.813779830932617
+    ],
+    "max": [
+      8.779348373413086,
+      6.390165328979492,
+      8.813779830932617
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoHangingForgeDeck_LOD0",
+      "lod": 0,
+      "tris": 15863,
+      "verts": 19872,
+      "materials": [
+        "M_Tripo_InfernoHangingForge"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoHangingForge",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoHangingForge_BC.png",
+        "N": "Textures/T_Tripo_InfernoHangingForge_N.png",
+        "ORM": "Textures/T_Tripo_InfernoHangingForge_ORM.png",
+        "E": "Textures/T_Tripo_InfernoHangingForge_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoHangingForgeDeck.glb",
+    "sha256": "c88202cd453ba3e199b096b3753cf973836e942bef98884f43c068d6075aab33",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoHangingForge"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:57:22"
+}

@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_QilinCauldron",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "boss.qilin.cauldron"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_LavaSurface",
+      "pos": [
+        0,
+        6.26,
+        0
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "SOCKET_ChainFL",
+      "pos": [
+        -2.51,
+        5.98,
+        1.85
+      ]
+    },
+    {
+      "name": "SOCKET_ChainFR",
+      "pos": [
+        2.56,
+        5.97,
+        1.94
+      ]
+    },
+    {
+      "name": "SOCKET_ChainBL",
+      "pos": [
+        -2.56,
+        6,
+        -1.94
+      ]
+    },
+    {
+      "name": "SOCKET_ChainBR",
+      "pos": [
+        2.52,
+        6.07,
+        -1.85
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -2.7611143589019775,
+      0,
+      -2.116267681121826
+    ],
+    "max": [
+      2.7611143589019775,
+      8,
+      2.116267681121826
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_QilinCauldron_LOD0",
+      "lod": 0,
+      "tris": 28534,
+      "verts": 36059,
+      "materials": [
+        "M_Prop_QilinCauldron"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_QilinCauldron",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_QilinCauldron_BC.png",
+        "N": "Textures/T_Prop_QilinCauldron_N.png",
+        "ORM": "Textures/T_Prop_QilinCauldron_ORM.png",
+        "E": "Textures/T_Prop_QilinCauldron_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_QilinCauldron.glb",
+    "sha256": "27c1ec8e1f70c056d86602ba52ae287bc46062ede1fb8989613917102b010d7f",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:59:00"
+}

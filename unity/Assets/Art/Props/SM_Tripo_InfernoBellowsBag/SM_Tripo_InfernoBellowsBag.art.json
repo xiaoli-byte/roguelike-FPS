@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoBellowsBag",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.foundry.bellows",
+    "part": "Bag"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -3.4749999046325684,
+      -1.3000000715255737,
+      -1.683387041091919
+    ],
+    "max": [
+      3.4749999046325684,
+      1.2999999523162842,
+      1.683387041091919
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoBellowsBag_LOD0",
+      "lod": 0,
+      "tris": 2767,
+      "verts": 4264,
+      "materials": [
+        "M_Tripo_InfernoBellows"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoBellows",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoBellows_BC.png",
+        "N": "Textures/T_Tripo_InfernoBellows_N.png",
+        "ORM": "Textures/T_Tripo_InfernoBellows_ORM.png",
+        "E": "Textures/T_Tripo_InfernoBellows_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoBellowsBag.glb",
+    "sha256": "8fe1b9260c2bb5c61470b05980c54c1bb8db5948d9dd4fe320cd1e090b82c925",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoBellows"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:52:37"
+}

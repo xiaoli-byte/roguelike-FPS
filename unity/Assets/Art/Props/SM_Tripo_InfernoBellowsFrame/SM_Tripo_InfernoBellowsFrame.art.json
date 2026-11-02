@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoBellowsFrame",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.foundry.bellows",
+    "part": "Frame"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_NozzleFire",
+      "pos": [
+        -4.2,
+        2.1,
+        0
+      ],
+      "dir": [
+        -1,
+        0,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -4.631222248077393,
+      0,
+      -2.011301040649414
+    ],
+    "max": [
+      4.631222248077393,
+      5.000125885009766,
+      2.011301040649414
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoBellowsFrame_LOD0",
+      "lod": 0,
+      "tris": 30040,
+      "verts": 38335,
+      "materials": [
+        "M_Tripo_InfernoBellows"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoBellows",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoBellows_BC.png",
+        "N": "Textures/T_Tripo_InfernoBellows_N.png",
+        "ORM": "Textures/T_Tripo_InfernoBellows_ORM.png",
+        "E": "Textures/T_Tripo_InfernoBellows_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoBellowsFrame.glb",
+    "sha256": "9c5e91b58bbc29f73806323f56d32ff7884366df3514dfd560fccf228138d630",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoBellows"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:56:53"
+}

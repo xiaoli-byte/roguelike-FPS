@@ -1,0 +1,231 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoHangingForge",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.forgeWell.hangingForge"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_BellyFire",
+      "pos": [
+        0,
+        0.3,
+        0
+      ],
+      "dir": [
+        0,
+        -1,
+        0
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        -5.73,
+        3.54,
+        0
+      ],
+      "dir": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        5.73,
+        3.54,
+        0
+      ],
+      "dir": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        0,
+        3.4,
+        5.81
+      ],
+      "dir": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "FX_PortGlow",
+      "pos": [
+        0,
+        3.4,
+        -5.81
+      ],
+      "dir": [
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        -7.61,
+        6.92,
+        8.07
+      ]
+    },
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        7.61,
+        6.92,
+        8.07
+      ]
+    },
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        -7.61,
+        6.92,
+        -8.07
+      ]
+    },
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        7.61,
+        6.92,
+        -8.07
+      ]
+    },
+    {
+      "name": "SOCKET_Chain",
+      "pos": [
+        -6.96,
+        8,
+        6.82
+      ]
+    },
+    {
+      "name": "SOCKET_Chain",
+      "pos": [
+        6.96,
+        8,
+        6.82
+      ]
+    },
+    {
+      "name": "SOCKET_Chain",
+      "pos": [
+        -6.96,
+        8,
+        -6.82
+      ]
+    },
+    {
+      "name": "SOCKET_Chain",
+      "pos": [
+        6.96,
+        8,
+        -6.82
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -8.779333114624023,
+      0,
+      -8.813779830932617
+    ],
+    "max": [
+      8.779333114624023,
+      8,
+      8.813779830932617
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoHangingForge_LOD0",
+      "lod": 0,
+      "tris": 25035,
+      "verts": 32296,
+      "materials": [
+        "M_Tripo_InfernoHangingForge"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoHangingForge",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoHangingForge_BC.png",
+        "N": "Textures/T_Tripo_InfernoHangingForge_N.png",
+        "ORM": "Textures/T_Tripo_InfernoHangingForge_ORM.png",
+        "E": "Textures/T_Tripo_InfernoHangingForge_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoHangingForge.glb",
+    "sha256": "1596f3fd3840a0c2d865d81b5da976c6c704b90382c3f0359362680d4af8f5f1",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 4,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:56:59"
+}

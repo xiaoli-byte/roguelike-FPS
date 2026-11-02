@@ -278,6 +278,157 @@
           }
         }
       ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:39:02",
+          "files": {
+            "HP_SM_Prop_QilinChainLock_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_QilinChainLock_v001_source.glb",
+              "sha256": "837f99c4b02eb6303945e0716c83524e36825508280bd7ab877fbaa953b2b951"
+            },
+            "HP_SM_Prop_QilinChainLock_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_QilinChainLock_v001.glb",
+              "sha256": "7eecd3692d6073b10cdffdcb9bdab34f80041cd7b4e36e2c6b4e78124d008a0a"
+            },
+            "HP_SM_Prop_QilinChainLock_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_QilinChainLock_v001_graph.json",
+              "sha256": "147d8bf833a1a139bb6f1bede9fd00c389759ff97cb97189e3ccd7c662e7b9c5"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/57bb18ed-30a8-4df7-97e4-cbffa41e34da",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7946,
+          "source_sha256": "837f99c4b02eb6303945e0716c83524e36825508280bd7ab877fbaa953b2b951"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:39:22",
+          "files": {
+            "SM_Prop_QilinChainLock_v001.blend": {
+              "path": "03_work/SM_Prop_QilinChainLock_v001.blend",
+              "sha256": "bdf080beeb2518b238aa5c8a83eaf56213bcabf4848f5623e04916e66c6808a9"
+            },
+            "SM_Prop_QilinChainLock_v001.glb": {
+              "path": "04_export/SM_Prop_QilinChainLock_v001.glb",
+              "sha256": "1ea21f658429a536018a28cc461292135cff08506e9a0b225784df2826f8accd"
+            },
+            "SM_Prop_QilinChainLock_v001_metrics.json": {
+              "path": "03_work/SM_Prop_QilinChainLock_v001_metrics.json",
+              "sha256": "b11f608be4e75fdcd5e87affdb89f194d15183e0030a2c07471b18f8b7c9aeaa"
+            },
+            "T_Prop_QilinChainLock_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_QilinChainLock_BC.png",
+              "sha256": "270fe4bf2933f8bc8d0690cc5b1e9283ad21863dc194f8f23c727128bbc51272"
+            },
+            "T_Prop_QilinChainLock_E.png": {
+              "path": "03_work/textures_v001/T_Prop_QilinChainLock_E.png",
+              "sha256": "54238fd74700e24437a3d83e87dc4456ebdb1ae3e5deb88804b97dd0517c6a39"
+            },
+            "T_Prop_QilinChainLock_N.png": {
+              "path": "03_work/textures_v001/T_Prop_QilinChainLock_N.png",
+              "sha256": "d7bf80a721eaab8ac5b095208dd9e10da70886f7d5306269eb4d7e6b6e37bdf0"
+            },
+            "T_Prop_QilinChainLock_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_QilinChainLock_ORM.png",
+              "sha256": "09d5244e679f0f276340e7a2dd9e3d63018d0e70c9ae518084e94dfb7c6cea5e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.824,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7946,
+              "verts": 4398
+            }
+          ],
+          "export_kb": 396.5,
+          "seconds": 19.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:39:22",
+          "files": {
+            "SM_Prop_QilinChainLock_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_QilinChainLock_v001_validation_v001.json",
+              "sha256": "fda7453c7a42ece2b4300afd8754f44d29ea91958ea9a1b14feaa176c4b1b44c"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:39:32",
+          "files": {
+            "SM_Prop_QilinChainLock_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_QilinChainLock_v001_review_v001.png",
+              "sha256": "105b4ee232f0817e8cce2de151605c1147b9d73583473cb82409c379e9d61bc2"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 7946 面，火晶核 emissive_key；用户授权免审",
+            "time": "2026-11-03 02:08:35"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 02:08:35",
+          "files": {
+            "SM_Prop_QilinChainLock.glb": {
+              "path": "@root/public/assets/props/SM_Prop_QilinChainLock.glb",
+              "sha256": "1ea21f658429a536018a28cc461292135cff08506e9a0b225784df2826f8accd"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_QilinChainLock.glb"
+        }
+      ]
     }
   }
 }

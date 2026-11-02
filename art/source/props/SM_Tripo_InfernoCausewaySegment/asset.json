@@ -164,6 +164,157 @@
           }
         }
       ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:25:51",
+          "files": {
+            "HP_SM_Tripo_InfernoCausewaySegment_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCausewaySegment_v001_source.glb",
+              "sha256": "2219d87e2b7846b396f577e933c3bbd4e185f83a21bc08172f5442dcfc1ae3f2"
+            },
+            "HP_SM_Tripo_InfernoCausewaySegment_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCausewaySegment_v001.glb",
+              "sha256": "e03bc84690dc3460fca349beb0cf4f5315c808e5d5169cb5cf24959ff7e6efd3"
+            },
+            "HP_SM_Tripo_InfernoCausewaySegment_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCausewaySegment_v001_graph.json",
+              "sha256": "fcf4868986dafb5c7999cc3e1f73d017c6d46a7d0a431bd01c07e796aa905010"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/1bdcb980-e30b-4842-9cd5-31f9ab406aff",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13945,
+          "source_sha256": "2219d87e2b7846b396f577e933c3bbd4e185f83a21bc08172f5442dcfc1ae3f2"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:27:12",
+          "files": {
+            "SM_Tripo_InfernoCausewaySegment_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoCausewaySegment_v001.blend",
+              "sha256": "412d314b1d4ebff7ae5ff7da03f53bdd09150e55af7426a797292b0b9eafad30"
+            },
+            "SM_Tripo_InfernoCausewaySegment_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoCausewaySegment_v001.glb",
+              "sha256": "7300a8bfedda63d6a8adee6bc5007e66e3039f20d19272bbf087b08177ed07ae"
+            },
+            "SM_Tripo_InfernoCausewaySegment_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoCausewaySegment_v001_metrics.json",
+              "sha256": "3a04bfe6865f5539b1c40940725f3f1e29e6c719bfbda4b87bafc7885c1035f6"
+            },
+            "T_Tripo_InfernoCausewaySegment_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewaySegment_BC.png",
+              "sha256": "69bc3744553d3725131a37b72785b98894219e959f4884088dc0403327deadd6"
+            },
+            "T_Tripo_InfernoCausewaySegment_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewaySegment_E.png",
+              "sha256": "c2a7863590482e31a6559bc78d18ec4eb16a8b41c8fcbd93bb286ebfe3cefbe3"
+            },
+            "T_Tripo_InfernoCausewaySegment_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewaySegment_N.png",
+              "sha256": "f9f75639ff0543c9a5ccce19a9c904b58059b07486a2a7febb2874f098cf2810"
+            },
+            "T_Tripo_InfernoCausewaySegment_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewaySegment_ORM.png",
+              "sha256": "61aff7094358aff13533a45154c8b8a009a23c83d2f3e54ca8cf93ee63ea211f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.797,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13945,
+              "verts": 8126
+            }
+          ],
+          "export_kb": 1189.4,
+          "seconds": 35.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:27:23",
+          "files": {
+            "SM_Tripo_InfernoCausewaySegment_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoCausewaySegment_v001_validation_v001.json",
+              "sha256": "af1f3fe8696fa6c6cde4c188e6e868eb8a35a29fa262953f9e28a9e104e00c94"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:27:38",
+          "files": {
+            "SM_Tripo_InfernoCausewaySegment_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoCausewaySegment_v001_review_v001.png",
+              "sha256": "3c207dfa93ff4abb4e9e2c0ff197fa2352d509f3e4e8e2953a956cbb2fae9278"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 13945 面；底部熔岩带由 emissive_key 抠成 T_E；用户授权免审",
+            "time": "2026-11-03 01:27:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:27:49",
+          "files": {
+            "SM_Tripo_InfernoCausewaySegment.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoCausewaySegment.glb",
+              "sha256": "7300a8bfedda63d6a8adee6bc5007e66e3039f20d19272bbf087b08177ed07ae"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoCausewaySegment.glb"
+        }
+      ]
     }
   }
 }

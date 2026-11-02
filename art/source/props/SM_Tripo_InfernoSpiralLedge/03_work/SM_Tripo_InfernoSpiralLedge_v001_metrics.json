@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 17004,
+    "verts": 8555
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 12.78858,
+    "iou": 0.743,
+    "iou_per_view": {
+      "front": 0.879,
+      "left": 0.588,
+      "back": 0.872,
+      "right": 0.565
+    },
+    "size_m": [
+      12.782,
+      4.69,
+      7.0
+    ],
+    "reference_m": [
+      14.0,
+      8.0,
+      7.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0704
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.659,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoSpiralLedge_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoSpiralLedge_LOD0",
+      "tris": 17004,
+      "verts": 8555,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.99853515625
+      ],
+      "uv_utilization": 0.504,
+      "bbox_min": [
+        -6.3912,
+        -2.3448,
+        0.0
+      ],
+      "bbox_max": [
+        6.3912,
+        2.3448,
+        7.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoSpiralLedge/04_export/SM_Tripo_InfernoSpiralLedge_v001.glb",
+    "bytes": 1211076
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 38.2,
+  "_seconds": 40.5
+}

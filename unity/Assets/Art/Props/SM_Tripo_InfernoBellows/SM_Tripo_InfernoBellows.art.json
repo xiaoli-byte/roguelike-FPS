@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoBellows",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.foundry.bellows"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_NozzleFire",
+      "pos": [
+        -4.2,
+        2.1,
+        0
+      ],
+      "dir": [
+        -1,
+        0,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -4.631222248077393,
+      0,
+      -2.01131272315979
+    ],
+    "max": [
+      4.631222248077393,
+      5,
+      2.01131272315979
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoBellows_LOD0",
+      "lod": 0,
+      "tris": 30117,
+      "verts": 38390,
+      "materials": [
+        "M_Tripo_InfernoBellows"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoBellows",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoBellows_BC.png",
+        "N": "Textures/T_Tripo_InfernoBellows_N.png",
+        "ORM": "Textures/T_Tripo_InfernoBellows_ORM.png",
+        "E": "Textures/T_Tripo_InfernoBellows_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoBellows.glb",
+    "sha256": "bc6115951f2f96dae78488372a24eb4d488819516dd1c4a42f836e90a3715b48",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:56:47"
+}

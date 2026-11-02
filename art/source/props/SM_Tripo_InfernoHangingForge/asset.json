@@ -5,7 +5,7 @@
   "class": "tripo_architecture",
   "stages": {
     "blockout": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -39,11 +39,44 @@
           },
           "reference_mode": "bounds_only",
           "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:54:41",
+          "files": {
+            "BO_SM_Tripo_InfernoHangingForge_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoHangingForge_v002.json",
+              "sha256": "852db54b085bfc81b389aa88976e8c652bb9bc5d4eadde9b63819f187efa1332"
+            },
+            "BO_SM_Tripo_InfernoHangingForge_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoHangingForge_v002_views.json",
+              "sha256": "aa4800a2fe1c4c782f10083b800667f0f53e110a19568eda96b2cb062443c46c"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.forgeWell.hangingForge"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -13.0,
+              0.0,
+              -13.0
+            ],
+            "max": [
+              13.0,
+              8.0,
+              13.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
         }
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -162,6 +195,517 @@
             "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
             "time": "2026-10-21 06:38:31"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:54:45",
+          "files": {
+            "CN_SM_Tripo_InfernoHangingForge_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_source.png",
+              "sha256": "510a4eef3f159beae5613adcda611c0a64c0636e57bbbb470dd49b6fc1ba59c1"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_front.png",
+              "sha256": "64e2f17f240271ef7fb9c3d03936fb504c596c92fb3835fcc2bb5620d2efae37"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_left.png",
+              "sha256": "929d95f56e660b64b2ab8bfc7ea7a3d31fe2e71a74c1a0dfcdfbcf64a3ffe662"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_back.png",
+              "sha256": "ce1dd9e34550c578c4033a3b5133fa7070fcaf2f475ca00be7604b3da0fa68c6"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_right.png",
+              "sha256": "89ef90a3a1b860d20667b799c1bff6f873e170398b4b87af62097f581ed21040"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_sheet.png",
+              "sha256": "88d703fb6fe0d1056a4cd6c0bb83426c71088eccd8aaee98353d4a685beb0b15"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_prompt.txt",
+              "sha256": "c21b7e3f9687f03dc6a7d9246ff4a21a8edd492bd1e42f19a9b91b432cff66da"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v002_registration.json",
+              "sha256": "1c429db4c99a88efa792de6289d11466723db522c9a0653b120206dea856e6ce"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              3704,
+              512
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (26m wide x 8m tall x 26m deep): A huge square iron forge platform hanging in the air, a wide FLAT walkable arena deck, the same from all four sides. From bottom to top: (1) under the deck a shallow round upside-down black iron bowl (furnace belly) 2m deep and 16m across, ringed by eight small round ports painted flat bright orange; (2) the deck: one thick square slab of riveted black iron plates 1.5m thick, its edge faces trimmed with a deep vermilion lacquered band; its top is a big FLAT EMPTY floor of dark iron plates; (3) a very low black iron kerb 0.6m tall along the deck edges with one 4m gap in the middle of each side; (4) at each of the four corners a separate squat thick square black iron pillar 4.5m tall with a flat top and one big iron ring on its outer side; (5) in the exact centre a square basalt step base 7m wide and 1.4m tall carrying a squat round black iron furnace 3.5m wide and 3m tall whose open top is a flat bright orange coal bed. Nothing else on the deck. PROPORTIONS: every view about 3.2 times as wide as tall: a wide thin slab, a shallow bowl under it, four short corner posts and one central furnace. NO chains anywhere (not between the posts, not hanging), no railings, no anvils, no spikes.",
+          "source_sha256": "510a4eef3f159beae5613adcda611c0a64c0636e57bbbb470dd49b6fc1ba59c1",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.41738676753513543,
+              "offset": [
+                94,
+                441
+              ],
+              "size": [
+                324,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.41615189544183623,
+              "offset": [
+                107,
+                441
+              ],
+              "size": [
+                298,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.41492430872961844,
+              "offset": [
+                95,
+                441
+              ],
+              "size": [
+                322,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.41492430872961844,
+              "offset": [
+                107,
+                441
+              ],
+              "size": [
+                298,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张",
+            "time": "2026-11-03 01:54:45"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-03 01:58:22",
+          "files": {
+            "CN_SM_Tripo_InfernoHangingForge_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_source.png",
+              "sha256": "8f801ff8e2fe1c0a07c07beedc3c13ecf1d0005d1c5f8a9828035288932a10a6"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_front.png",
+              "sha256": "334808e6dc9de8e8b06703c052ad34c552c060a98a231bdd7776227a5242325f"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_left.png",
+              "sha256": "87c136087084137f65bff6baa25489a78ee23685eb623874ca128002798f6fe8"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_back.png",
+              "sha256": "d08a21010d37fe59f9c69d659d05ddae1c5b005d4196c4ad28f9fdfc91375c4e"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_right.png",
+              "sha256": "d558a580c0dcc53d697284a392d16786cc7ae1e92a99361da6a58e5929c93d1f"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_sheet.png",
+              "sha256": "fc909ab312aadab511a85aaf9cc1222a624968ddc2f8232a5a9e77de8403cca2"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_prompt.txt",
+              "sha256": "c21b7e3f9687f03dc6a7d9246ff4a21a8edd492bd1e42f19a9b91b432cff66da"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v003_registration.json",
+              "sha256": "1c80db7e4623b054b66c417650095152e7c560df1f588bdc04664989a710612c"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "HangingForge2_2.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (26m wide x 8m tall x 26m deep): A huge square iron forge platform hanging in the air, a wide FLAT walkable arena deck, the same from all four sides. From bottom to top: (1) under the deck a shallow round upside-down black iron bowl (furnace belly) 2m deep and 16m across, ringed by eight small round ports painted flat bright orange; (2) the deck: one thick square slab of riveted black iron plates 1.5m thick, its edge faces trimmed with a deep vermilion lacquered band; its top is a big FLAT EMPTY floor of dark iron plates; (3) a very low black iron kerb 0.6m tall along the deck edges with one 4m gap in the middle of each side; (4) at each of the four corners a separate squat thick square black iron pillar 4.5m tall with a flat top and one big iron ring on its outer side; (5) in the exact centre a square basalt step base 7m wide and 1.4m tall carrying a squat round black iron furnace 3.5m wide and 3m tall whose open top is a flat bright orange coal bed. Nothing else on the deck. PROPORTIONS: every view about 3.2 times as wide as tall: a wide thin slab, a shallow bowl under it, four short corner posts and one central furnace. NO chains anywhere (not between the posts, not hanging), no railings, no anvils, no spikes.",
+          "source_sha256": "8f801ff8e2fe1c0a07c07beedc3c13ecf1d0005d1c5f8a9828035288932a10a6",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.41615189544183623,
+              "offset": [
+                94,
+                441
+              ],
+              "size": [
+                323,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.41615189544183623,
+              "offset": [
+                107,
+                441
+              ],
+              "size": [
+                298,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.41492430872961844,
+              "offset": [
+                95,
+                441
+              ],
+              "size": [
+                322,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.41492430872961844,
+              "offset": [
+                107,
+                441
+              ],
+              "size": [
+                298,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:58:22"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-11-03 01:59:17",
+          "files": {
+            "CN_SM_Tripo_InfernoHangingForge_v004_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_source.png",
+              "sha256": "ca10af1ae53e64648d76a6291622b5ea8f127be2a76ab945eed9958f287e4e5b"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v004_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_front.png",
+              "sha256": "334808e6dc9de8e8b06703c052ad34c552c060a98a231bdd7776227a5242325f"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v004_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_left.png",
+              "sha256": "1299a61d169fd90e31544364568e6433393ec10fd89ac84f2bcf1067ad299e98"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v004_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_back.png",
+              "sha256": "d08a21010d37fe59f9c69d659d05ddae1c5b005d4196c4ad28f9fdfc91375c4e"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v004_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_right.png",
+              "sha256": "d558a580c0dcc53d697284a392d16786cc7ae1e92a99361da6a58e5929c93d1f"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v004_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_sheet.png",
+              "sha256": "e053e6e726d07af399f9e351ebe02ba7abc50397a7fdccb273c9ae26ee74deb9"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v004_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_prompt.txt",
+              "sha256": "c21b7e3f9687f03dc6a7d9246ff4a21a8edd492bd1e42f19a9b91b432cff66da"
+            },
+            "CN_SM_Tripo_InfernoHangingForge_v004_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHangingForge_v004_registration.json",
+              "sha256": "1c80db7e4623b054b66c417650095152e7c560df1f588bdc04664989a710612c"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张（2×2 网格）；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "HangingForge2_2.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (26m wide x 8m tall x 26m deep): A huge square iron forge platform hanging in the air, a wide FLAT walkable arena deck, the same from all four sides. From bottom to top: (1) under the deck a shallow round upside-down black iron bowl (furnace belly) 2m deep and 16m across, ringed by eight small round ports painted flat bright orange; (2) the deck: one thick square slab of riveted black iron plates 1.5m thick, its edge faces trimmed with a deep vermilion lacquered band; its top is a big FLAT EMPTY floor of dark iron plates; (3) a very low black iron kerb 0.6m tall along the deck edges with one 4m gap in the middle of each side; (4) at each of the four corners a separate squat thick square black iron pillar 4.5m tall with a flat top and one big iron ring on its outer side; (5) in the exact centre a square basalt step base 7m wide and 1.4m tall carrying a squat round black iron furnace 3.5m wide and 3m tall whose open top is a flat bright orange coal bed. Nothing else on the deck. PROPORTIONS: every view about 3.2 times as wide as tall: a wide thin slab, a shallow bowl under it, four short corner posts and one central furnace. NO chains anywhere (not between the posts, not hanging), no railings, no anvils, no spikes.",
+          "source_sha256": "ca10af1ae53e64648d76a6291622b5ea8f127be2a76ab945eed9958f287e4e5b",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.41615189544183623,
+              "offset": [
+                94,
+                441
+              ],
+              "size": [
+                323,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.41615189544183623,
+              "offset": [
+                107,
+                441
+              ],
+              "size": [
+                298,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.41492430872961844,
+              "offset": [
+                95,
+                441
+              ],
+              "size": [
+                322,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.41492430872961844,
+              "offset": [
+                107,
+                441
+              ],
+              "size": [
+                298,
+                141
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张（2×2 网格）；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:59:17"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:52:34",
+          "files": {
+            "HP_SM_Tripo_InfernoHangingForge_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHangingForge_v001_source.glb",
+              "sha256": "e8fa99e66145266de2949b5d66cb68e243e9eb15df20970ffa61c09a6bb2d79b"
+            },
+            "HP_SM_Tripo_InfernoHangingForge_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHangingForge_v001.glb",
+              "sha256": "aee12ffc54427d2afd2328f8f3cea96ebc51e7a783f3501c73ad35d69bca4cbf"
+            },
+            "HP_SM_Tripo_InfernoHangingForge_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHangingForge_v001_graph.json",
+              "sha256": "0a642899e8beb0e26171fdc7107834f11fb41cfd1e917e5048ed708f74c8d89e"
+            }
+          },
+          "from_concept": 4,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/99dbb7bf-e053-4c0f-b2e2-a961b9271df8",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 25035,
+          "source_sha256": "e8fa99e66145266de2949b5d66cb68e243e9eb15df20970ffa61c09a6bb2d79b"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:53:30",
+          "files": {
+            "SM_Tripo_InfernoHangingForge_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoHangingForge_v001.blend",
+              "sha256": "e1ee5c0d47fe104073d5e2980a6dbeea53a736abbcfa6844876582a0788e0876"
+            },
+            "SM_Tripo_InfernoHangingForge_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoHangingForge_v001.glb",
+              "sha256": "1596f3fd3840a0c2d865d81b5da976c6c704b90382c3f0359362680d4af8f5f1"
+            },
+            "SM_Tripo_InfernoHangingForge_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoHangingForge_v001_metrics.json",
+              "sha256": "dfbe491fd6966076ebe7e336dc7da7d625b378f5eebbf7f82a42b873802439d8"
+            },
+            "T_Tripo_InfernoHangingForge_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoHangingForge_BC.png",
+              "sha256": "6ee843823740653ea30249797ca1cc31bfd020b7da9202fe7badccc76b62f33b"
+            },
+            "T_Tripo_InfernoHangingForge_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoHangingForge_E.png",
+              "sha256": "2cd31da4d9832cdc21e63316d997258a95b6517b23405ace47fc1bc5caa84c6b"
+            },
+            "T_Tripo_InfernoHangingForge_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoHangingForge_N.png",
+              "sha256": "f3f1680c44c3b14e7199f423f92e5a38164efe33068b00fdf77b895b7e51afbc"
+            },
+            "T_Tripo_InfernoHangingForge_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoHangingForge_ORM.png",
+              "sha256": "c4fb62d10d31c88400dbfdf1ed09f2a45bc0267afff1e0c5b49ad4de0181e941"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 4,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.763,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 25035,
+              "verts": 15463
+            }
+          ],
+          "export_kb": 1396.6,
+          "seconds": 55.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:53:31",
+          "files": {
+            "SM_Tripo_InfernoHangingForge_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoHangingForge_v001_validation_v001.json",
+              "sha256": "d5137ca2966ab299233d5993a759a0463e4ccc6461e710936aafbf6c306e1ab3"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:53:45",
+          "files": {
+            "SM_Tripo_InfernoHangingForge_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoHangingForge_v001_review_v001.png",
+              "sha256": "7b977459cb4d07c6c95c2d4eff4c66c31b9ea74917350b94c84fcb1ed9d910b5"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 25035 面；四角链柱由 derive_inferno_parts.py 切成单件；用户授权免审",
+            "time": "2026-11-03 05:27:46"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:27:46",
+          "files": {
+            "SM_Tripo_InfernoHangingForge.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoHangingForge.glb",
+              "sha256": "1596f3fd3840a0c2d865d81b5da976c6c704b90382c3f0359362680d4af8f5f1"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoHangingForge.glb"
         }
       ]
     }

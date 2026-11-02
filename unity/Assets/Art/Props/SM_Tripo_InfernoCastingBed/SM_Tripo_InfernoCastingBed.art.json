@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoCastingBed",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.foundry.castingBed"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -2.6388585567474365,
+      0,
+      -1.0454881191253662
+    ],
+    "max": [
+      2.6388585567474365,
+      1.399999976158142,
+      1.0454881191253662
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoCastingBed_LOD0",
+      "lod": 0,
+      "tris": 6625,
+      "verts": 10613,
+      "materials": [
+        "M_Tripo_InfernoCastingBed"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoCastingBed",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoCastingBed_BC.png",
+        "N": "Textures/T_Tripo_InfernoCastingBed_N.png",
+        "ORM": "Textures/T_Tripo_InfernoCastingBed_ORM.png",
+        "E": "Textures/T_Tripo_InfernoCastingBed_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoCastingBed.glb",
+    "sha256": "7dc7c548fd8dfd2f2431a5c35a2b1108345136627a2e51c6731d7461cb82219c",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 02:10:00"
+}

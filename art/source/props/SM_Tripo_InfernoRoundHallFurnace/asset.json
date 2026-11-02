@@ -43,7 +43,7 @@
       ]
     },
     "concept": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -276,6 +276,278 @@
             "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
             "time": "2026-10-21 06:38:33"
           }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-03 05:08:06",
+          "files": {
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_source.png",
+              "sha256": "4acb932239c6f0ca5ff7861e2562de7f2d6e106acda50c9fe1b358b312af8a5b"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_front.png",
+              "sha256": "3f6c81762f304f2f0bf4eb3c9e36a09b05f5792303b56194f6069bcd15a5d375"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_left.png",
+              "sha256": "e3e449eaddab1cbdb761e44c88469fefdcae404edd97809c9a8267c8427f8b97"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_back.png",
+              "sha256": "5f7702084ea8e0eeec456600bcd20de095bdc3852d1081a9b0598a4ec6361386"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_right.png",
+              "sha256": "e4529c61a22f61d89641287e759742bb48a5fac2f850cc1ec09f5b2024a8aa61"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_sheet.png",
+              "sha256": "7e19d70e018edca3d2911a19f8bc3acd55d0368c408e7a7ef5decd84c748dfa4"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_prompt.txt",
+              "sha256": "d8a4c5ca8f9a28747e03c216f646e374eb6abb527ddd26c0895bb1f5e41a19ab"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v003_registration.json",
+              "sha256": "96401c7bf5d6c475e79e3cd8e7653171471dce47126d2da834846dfa43076a87"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 1,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 1 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "RoundHallFurnace_1.png"
+          },
+          "prompt": "MANDATORY CHANGES to the attached sheet: keep the SAME object, the SAME four views in ONE SINGLE HORIZONTAL ROW, the same layout, proportions, stone courses, iron pilasters, vermilion frieze band, bronze beast-face arch and colours, EXCEPT ONE CHANGE: inside the round-arched furnace mouth remove all flames, fire tongues and glow; the inside of the mouth becomes a recessed flat smooth opaque bright orange-yellow back wall with a few chunky dark coal lumps along its bottom, nothing sticking out of the mouth. No fire, no smoke, no sparks, no glow halo. Plain flat light neutral grey background (#D6D6D6), no text, no labels, no floor, no shadow. Stylized hand-painted 3D game asset in the style of Gunfire Reborn. (reference image: CN_SM_Tripo_InfernoRoundHallFurnace_v002_source.png)\n",
+          "source_sha256": "4acb932239c6f0ca5ff7861e2562de7f2d6e106acda50c9fe1b358b312af8a5b",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7181621577508466,
+              "offset": [
+                49,
+                232
+              ],
+              "size": [
+                414,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7010416044293083,
+              "offset": [
+                206,
+                232
+              ],
+              "size": [
+                99,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7135761925033955,
+              "offset": [
+                48,
+                232
+              ],
+              "size": [
+                415,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7028052311071178,
+              "offset": [
+                204,
+                232
+              ],
+              "size": [
+                103,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 1 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:08:06"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:31:42",
+          "files": {
+            "HP_SM_Tripo_InfernoRoundHallFurnace_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallFurnace_v001_source.glb",
+              "sha256": "0258aed9752ae39172d967703dd093f65cb888503f1b845b0a25ebb7fa57b465"
+            },
+            "HP_SM_Tripo_InfernoRoundHallFurnace_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallFurnace_v001.glb",
+              "sha256": "30f22bccf3bfc7d31e1cb3b35290f92b9d80e2f21fcf89c2b3d0928ea3d929de"
+            },
+            "HP_SM_Tripo_InfernoRoundHallFurnace_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallFurnace_v001_graph.json",
+              "sha256": "344352ba8e491866b3f1f1d8f062d16fff928fad7d3f994e4c6db1c84174c141"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/daa3b041-6556-4d2a-a823-7187e0965809",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 24066,
+          "source_sha256": "0258aed9752ae39172d967703dd093f65cb888503f1b845b0a25ebb7fa57b465"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:32:41",
+          "files": {
+            "SM_Tripo_InfernoRoundHallFurnace_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoRoundHallFurnace_v001.blend",
+              "sha256": "e0a90640251550c30cb52b8479cda2604c7fac6e7df8679c200caf7b30ada2a2"
+            },
+            "SM_Tripo_InfernoRoundHallFurnace_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoRoundHallFurnace_v001.glb",
+              "sha256": "5bd0946c3cc401ed80c02ef3be3cf5247fd4c73cd67d53aee11b2238f34a0bdb"
+            },
+            "SM_Tripo_InfernoRoundHallFurnace_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoRoundHallFurnace_v001_metrics.json",
+              "sha256": "c0b5ea16166ebc004ec62ebec304d06017ff618f6ee74c818106e8962a44f24c"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRoundHallFurnace_BC.png",
+              "sha256": "7ac6585bb05d48f28c65c2137a0f86341e4aa9b9d1086e091eac2aa79a13e562"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRoundHallFurnace_E.png",
+              "sha256": "9fd2b3c8dc03ccec9e23cab7e98b451a707f77455f507913756fd89f6a07418b"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRoundHallFurnace_N.png",
+              "sha256": "91104c08cb60e7fe7b0a3c32b55ec5e6fb5377fd8af21877c42e0f7a8ce9badb"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRoundHallFurnace_ORM.png",
+              "sha256": "a75d93a9ce781358bc21c0abd4f8fce52773792e49999f4d230f21ab4b0be772"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.781,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 24066,
+              "verts": 13394
+            }
+          ],
+          "export_kb": 1227.7,
+          "seconds": 58.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:32:42",
+          "files": {
+            "SM_Tripo_InfernoRoundHallFurnace_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoRoundHallFurnace_v001_validation_v001.json",
+              "sha256": "759f49c458740cfe7df9b2683763cc9db4ad577d9b039c830586835042e6e291"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:32:54",
+          "files": {
+            "SM_Tripo_InfernoRoundHallFurnace_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoRoundHallFurnace_v001_review_v001.png",
+              "sha256": "f63fe5f348fe21661883bdd561ae0aeee08943ab178f56e0c022762f6fe3fb9c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 24066 面；概念 v003 去掉炉口火焰，炉口内壁平涂亮橙 → T_E；用户授权免审",
+            "time": "2026-11-03 05:49:26"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:27",
+          "files": {
+            "SM_Tripo_InfernoRoundHallFurnace.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoRoundHallFurnace.glb",
+              "sha256": "5bd0946c3cc401ed80c02ef3be3cf5247fd4c73cd67d53aee11b2238f34a0bdb"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoRoundHallFurnace.glb"
         }
       ]
     }

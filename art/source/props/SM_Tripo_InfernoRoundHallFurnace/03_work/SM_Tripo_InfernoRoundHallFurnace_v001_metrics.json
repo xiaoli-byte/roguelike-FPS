@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 24066,
+    "verts": 13394
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 22.01075,
+    "iou": 0.781,
+    "iou_per_view": {
+      "front": 0.884,
+      "left": 0.619,
+      "back": 0.909,
+      "right": 0.659
+    },
+    "size_m": [
+      17.164,
+      4.847,
+      22.0
+    ],
+    "reference_m": [
+      18.0,
+      5.0,
+      22.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0126
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.572,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoRoundHallFurnace_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoRoundHallFurnace_LOD0",
+      "tris": 24066,
+      "verts": 13394,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.99609375
+      ],
+      "uv_utilization": 0.601,
+      "bbox_min": [
+        -8.5818,
+        -2.4235,
+        0.0
+      ],
+      "bbox_max": [
+        8.5818,
+        2.4235,
+        22.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoRoundHallFurnace/04_export/SM_Tripo_InfernoRoundHallFurnace_v001.glb",
+    "bytes": 1257212
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 55.0,
+  "_seconds": 58.0
+}

@@ -164,6 +164,157 @@
           }
         }
       ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:35:27",
+          "files": {
+            "HP_SM_Tripo_InfernoCastingMould_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCastingMould_v001_source.glb",
+              "sha256": "d0463baf171f2e0745bddbffecf640e87ef61afe6396793519a56a1a372d061a"
+            },
+            "HP_SM_Tripo_InfernoCastingMould_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCastingMould_v001.glb",
+              "sha256": "196908907cf92af1d57787901c3a3bcdb096d9261670d30dc3b8f520881b96ea"
+            },
+            "HP_SM_Tripo_InfernoCastingMould_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCastingMould_v001_graph.json",
+              "sha256": "202bc1d80632a22272641b19e462e15570da49b035334fc8b071a2a867936aa6"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/8e0b34a1-de38-4985-931c-ad23b62aecd1",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7541,
+          "source_sha256": "d0463baf171f2e0745bddbffecf640e87ef61afe6396793519a56a1a372d061a"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:35:43",
+          "files": {
+            "SM_Tripo_InfernoCastingMould_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoCastingMould_v001.blend",
+              "sha256": "1c917609d6aa76f45fe564666587ba2e1e38f8a25b654629a46c29cade924a22"
+            },
+            "SM_Tripo_InfernoCastingMould_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoCastingMould_v001.glb",
+              "sha256": "54e92a949bddd9b2ee4d81455b451b7bf2f8506e2f7a42a496e4cd4483bae13b"
+            },
+            "SM_Tripo_InfernoCastingMould_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoCastingMould_v001_metrics.json",
+              "sha256": "6c0a20eb089398c16eeb2ff20df236d826c04ca08d51ea9a506bb8f3e7559b1b"
+            },
+            "T_Tripo_InfernoCastingMould_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCastingMould_BC.png",
+              "sha256": "a9e303ca5359dffa0451a731ee6f6126220508a63eda9d4ebf29d77b73ef6a59"
+            },
+            "T_Tripo_InfernoCastingMould_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCastingMould_E.png",
+              "sha256": "f3fbfe34c53e4c26236bf972b27bde05a226457249c056f2d7d51c676b277a82"
+            },
+            "T_Tripo_InfernoCastingMould_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCastingMould_N.png",
+              "sha256": "5ee827b5186791bd051f492ed4d549bd02fa02f01baef5f07ac07ce5890ba983"
+            },
+            "T_Tripo_InfernoCastingMould_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCastingMould_ORM.png",
+              "sha256": "a2f0bd46820e85b189ba9135a57393e058e7af77d5c27a1aa31d1f01a9364350"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7541,
+              "verts": 4255
+            }
+          ],
+          "export_kb": 354.9,
+          "seconds": 15.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:35:43",
+          "files": {
+            "SM_Tripo_InfernoCastingMould_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoCastingMould_v001_validation_v001.json",
+              "sha256": "307e43f7f6b7aa48beadf67594eb4c5c6edefa49818c4a7c1b5d4e65f3385f20"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:35:55",
+          "files": {
+            "SM_Tripo_InfernoCastingMould_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoCastingMould_v001_review_v001.png",
+              "sha256": "57c96ef8ae37ee69ad4c1869ac106bfed3151971256cf74ebd92bac51a399fbd"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 7541 面，范缝 emissive_key；用户授权免审",
+            "time": "2026-11-03 01:39:17"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:39:19",
+          "files": {
+            "SM_Tripo_InfernoCastingMould.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoCastingMould.glb",
+              "sha256": "54e92a949bddd9b2ee4d81455b451b7bf2f8506e2f7a42a496e4cd4483bae13b"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoCastingMould.glb"
+        }
+      ]
     }
   }
 }

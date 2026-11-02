@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_QilinChainLock",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "boss.qilin.chainLock"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_CoreGlow",
+      "pos": [
+        0,
+        0.8,
+        0.3
+      ],
+      "dir": [
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -0.644260048866272,
+      0,
+      -0.2960430383682251
+    ],
+    "max": [
+      0.644260048866272,
+      2.4000000953674316,
+      0.2960430383682251
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_QilinChainLock_LOD0",
+      "lod": 0,
+      "tris": 7946,
+      "verts": 10223,
+      "materials": [
+        "M_Prop_QilinChainLock"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_QilinChainLock",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_QilinChainLock_BC.png",
+        "N": "Textures/T_Prop_QilinChainLock_N.png",
+        "ORM": "Textures/T_Prop_QilinChainLock_ORM.png",
+        "E": "Textures/T_Prop_QilinChainLock_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_QilinChainLock.glb",
+    "sha256": "1ea21f658429a536018a28cc461292135cff08506e9a0b225784df2826f8accd",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:59:04"
+}

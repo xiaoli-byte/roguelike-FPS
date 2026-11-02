@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoHangingForgePillarBL",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.forgeWell.hangingForge",
+    "part": "PillarBL"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        -0.65,
+        0.62,
+        -1.25
+      ]
+    },
+    {
+      "name": "SOCKET_Chain",
+      "pos": [
+        0,
+        1.7,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -1.7509479522705078,
+      0,
+      -1.8294200897216797
+    ],
+    "max": [
+      1.7509474754333496,
+      1.6912031173706055,
+      1.8294200897216797
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoHangingForgePillarBL_LOD0",
+      "lod": 0,
+      "tris": 3374,
+      "verts": 4441,
+      "materials": [
+        "M_Tripo_InfernoHangingForge"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoHangingForge",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoHangingForge_BC.png",
+        "N": "Textures/T_Tripo_InfernoHangingForge_N.png",
+        "ORM": "Textures/T_Tripo_InfernoHangingForge_ORM.png",
+        "E": "Textures/T_Tripo_InfernoHangingForge_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoHangingForgePillarBL.glb",
+    "sha256": "cbb939f100c12b111fdbe62540f62560d40113c438a4cf42ba0f31265848099e",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoHangingForge"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:57:45"
+}

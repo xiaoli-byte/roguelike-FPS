@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 7946,
+    "verts": 4398
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.40117,
+    "iou": 0.824,
+    "iou_per_view": {
+      "front": 0.937,
+      "left": 0.769,
+      "back": 0.9,
+      "right": 0.633
+    },
+    "size_m": [
+      1.289,
+      0.592,
+      2.4
+    ],
+    "reference_m": [
+      2.0,
+      1.2,
+      2.4
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.019
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.691,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_QilinChainLock_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_QilinChainLock_LOD0",
+      "tris": 7946,
+      "verts": 4398,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.99462890625
+      ],
+      "uv_utilization": 0.646,
+      "bbox_min": [
+        -0.6443,
+        -0.296,
+        0.0
+      ],
+      "bbox_max": [
+        0.6443,
+        0.296,
+        2.4
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_QilinChainLock/04_export/SM_Prop_QilinChainLock_v001.glb",
+    "bytes": 406024
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 16.7,
+  "_seconds": 19.0
+}

@@ -2253,6 +2253,7 @@ blockout = { source = "scene", id = "inferno.causeway.segment" }
 reference_mode = "bounds_only"
 reference_dimensions = [12.0, 5.0, 12.0]
 lod_tris = [15000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "walkway"
 keep_glow = "none"
 material = { roughness = 0.85, metallic = 0.05 }
@@ -2285,6 +2286,7 @@ blockout = { source = "scene", id = "inferno.forgeWell.spiralLedge" }
 reference_mode = "bounds_only"
 reference_dimensions = [14.0, 7.0, 8.0]
 lod_tris = [15000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "walkway"
 keep_glow = "none"
 material = { roughness = 0.85, metallic = 0.05 }
@@ -2300,6 +2302,7 @@ blockout = { source = "scene", id = "inferno.forgeWell.rockRib" }
 reference_mode = "bounds_only"
 reference_dimensions = [9.0, 16.0, 12.0]
 lod_tris = [15000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "cliff"
 keep_glow = "none"
 material = { roughness = 0.85, metallic = 0.05 }
@@ -2315,6 +2318,7 @@ blockout = { source = "scene", id = "inferno.foundry.castingMould" }
 reference_mode = "bounds_only"
 reference_dimensions = [3.2, 2.8, 2.2]
 lod_tris = [8000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "cover"
 keep_glow = "none"
 material = { roughness = 0.8, metallic = 0.2 }
@@ -2330,6 +2334,7 @@ blockout = { source = "scene", id = "inferno.foundry.castingBed" }
 reference_mode = "bounds_only"
 reference_dimensions = [8.0, 1.4, 5.0]
 lod_tris = [8000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "cover"
 keep_glow = "none"
 material = { roughness = 0.8, metallic = 0.3 }
@@ -2345,9 +2350,19 @@ blockout = { source = "scene", id = "inferno.foundry.bellows" }
 reference_mode = "bounds_only"
 reference_dimensions = [18.0, 5.0, 8.0]
 lod_tris = [30000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "landmark"
 keep_glow = "none"
 material = { roughness = 0.75, metallic = 0.25 }
+# 部件分离（derive_inferno_parts.py，ch3-kit.md 第 3 节）：风箱囊单独一件，原点在囊中心，运行时沿 Y 缩放「鼓动」；其余是框架
+parts = [
+  { id = "SM_Tripo_InfernoBellowsFrame", rest = true, origin = "base", fx_points = [{ name = "FX_NozzleFire", pos = [4.2, 2.1, 0], dir = [1, 0, 0] }] },
+  { id = "SM_Tripo_InfernoBellowsBag", box = [[-4.0, 1.12, -2.1], [2.95, 3.72, 2.1]], origin = "center" },
+]
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_NozzleFire", pos = [4.2, 2.1, 0], dir = [1, 0, 0] },
+]
 brief = """A colossal forge bellows lying on the floor of a blast hall, 18m long, 5m tall and 8m deep: a huge accordion bag of thick dark oxblood-red leather with big rounded pleats running across its length, stretched between a heavy flat black iron top board and a black iron base frame on squat beast-paw feet; at the RIGHT end it narrows into a massive cast bronze nozzle shaped like a roaring beast head that points into the furnace; a thick black iron pumping beam with a chain lies along the top board; rows of big rivets, soot on the edges, a faint orange glow inside the beast's mouth painted as an opaque bright orange-yellow surface. PROPORTIONS: the FRONT and BACK views are drawn about 3.6 times as wide as tall, a long low machine; the LEFT and RIGHT views about 1.6 times as wide as tall. Chunky readable forms, no smoke, no fire. One solid connected piece on a flat base."""
 
 # 2026-11-03 修改（ch3-v2 第 6.1 节）：16 × 8 × 16 只看的吊台 → 26 × 8 × 26 可走甲板（3-2 ② 悬炉锻台场地，井心 +17）。
@@ -2362,9 +2377,34 @@ blockout = { source = "scene", id = "inferno.forgeWell.hangingForge" }
 reference_mode = "bounds_only"
 reference_dimensions = [26.0, 8.0, 26.0]
 lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "platform"
 keep_glow = "none"
 material = { roughness = 0.7, metallic = 0.4 }
+# 部件分离（derive_inferno_parts.py，ch3-kit.md 第 3 节）：四角链柱切到甲板顶面（发布尺度 y = 6.3）以上，各自一件；其余是甲板 + 炉腹
+parts = [
+  { id = "SM_Tripo_InfernoHangingForgeDeck", rest = true, origin = "base", fx_points = [{ name = "FX_BellyFire", pos = [0, 0.3, 0], dir = [0, -1, 0] }, { name = "FX_PortGlow", pos = [5.73, 3.54, 0] }, { name = "FX_PortGlow", pos = [-5.73, 3.54, 0] }, { name = "FX_PortGlow", pos = [0, 3.4, 5.81] }, { name = "FX_PortGlow", pos = [0, 3.4, -5.81] }] },
+  { id = "SM_Tripo_InfernoHangingForgePillarFL", box = [[5.2, 6.3, 5.0], [8.9, 8.1, 8.9]], origin = "base", fx_points = [{ name = "FX_Lantern", pos = [0.65, 0.62, 1.25] }, { name = "SOCKET_Chain", pos = [0, 1.7, 0] }] },
+  { id = "SM_Tripo_InfernoHangingForgePillarFR", box = [[-8.9, 6.3, 5.0], [-5.2, 8.1, 8.9]], origin = "base", fx_points = [{ name = "FX_Lantern", pos = [-0.65, 0.62, 1.25] }, { name = "SOCKET_Chain", pos = [0, 1.7, 0] }] },
+  { id = "SM_Tripo_InfernoHangingForgePillarBL", box = [[5.2, 6.3, -8.9], [8.9, 8.1, -5.0]], origin = "base", fx_points = [{ name = "FX_Lantern", pos = [0.65, 0.62, -1.25] }, { name = "SOCKET_Chain", pos = [0, 1.7, 0] }] },
+  { id = "SM_Tripo_InfernoHangingForgePillarBR", box = [[-8.9, 6.3, -8.9], [-5.2, 8.1, -5.0]], origin = "base", fx_points = [{ name = "FX_Lantern", pos = [-0.65, 0.62, -1.25] }, { name = "SOCKET_Chain", pos = [0, 1.7, 0] }] },
+]
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_BellyFire", pos = [0, 0.3, 0], dir = [0, -1, 0] },
+  { name = "FX_PortGlow", pos = [5.73, 3.54, 0], dir = [1, 0, 0] },
+  { name = "FX_PortGlow", pos = [-5.73, 3.54, 0], dir = [-1, 0, 0] },
+  { name = "FX_PortGlow", pos = [0, 3.4, 5.81], dir = [0, 0, 1] },
+  { name = "FX_PortGlow", pos = [0, 3.4, -5.81], dir = [0, 0, -1] },
+  { name = "FX_Lantern", pos = [7.61, 6.92, 8.07] },
+  { name = "FX_Lantern", pos = [-7.61, 6.92, 8.07] },
+  { name = "FX_Lantern", pos = [7.61, 6.92, -8.07] },
+  { name = "FX_Lantern", pos = [-7.61, 6.92, -8.07] },
+  { name = "SOCKET_Chain", pos = [6.96, 8, 6.82] },
+  { name = "SOCKET_Chain", pos = [-6.96, 8, 6.82] },
+  { name = "SOCKET_Chain", pos = [6.96, 8, -6.82] },
+  { name = "SOCKET_Chain", pos = [-6.96, 8, -6.82] },
+]
 brief = """A huge square forge platform that hangs on chains over a lava shaft, 26m wide, 26m deep and 8m tall overall, a walkable arena deck. From bottom to top: (1) under the deck hangs a shallow upside-down black iron furnace belly, a wide squat bowl 2m deep and 16m across, ringed by eight small round fire ports glowing opaque bright orange-yellow; (2) the deck itself is one thick slab of riveted black iron plates 1.5m thick, its edge faces trimmed with a deep vermilion lacquered band; its top is a big FLAT open walkable floor of dark iron plates and basalt pavers 3.5m above the bottom of the belly; (3) along the deck edges a very low black iron kerb only 0.6m tall, with one 4m gap in the middle of each of the four sides; (4) at each of the four deck corners a squat thick black iron chain pillar 4.5m tall with a flat square top and one big iron ring bolted to its side (the hanging chains themselves not shown); (5) in the exact centre a square stone forge hearth: a flat-topped basalt step base 7m square and 1.4m tall, and on it a squat round black iron furnace 3.5m wide and 3m tall with glowing coals in its open top painted as opaque bright orange-yellow; (6) at the middle of the LEFT edge, outside the kerb gap, a short stub of a black iron crane arm root 3m long. The rest of the deck is empty and flat. PROPORTIONS: all four views are drawn about 3.2 times as wide as tall and look nearly the same, a wide flat slab with four corner posts and a central furnace. Chunky readable forms, broad faceted planes, no smoke, no chains, no fire tongues, no anvils, no clutter on the deck. One solid connected piece."""
 
 [assets.SM_Prop_QilinCauldron]
@@ -2377,9 +2417,18 @@ blockout = { source = "scene", id = "boss.qilin.cauldron" }
 reference_mode = "bounds_only"
 reference_dimensions = [6.4, 8.0, 6.4]
 lod_tris = [30000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "landmark"
 keep_glow = "none"
 material = { roughness = 0.5, metallic = 0.65 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_LavaSurface", pos = [0, 6.26, 0], dir = [0, 1, 0] },
+  { name = "SOCKET_ChainFL", pos = [2.51, 5.98, 1.85] },
+  { name = "SOCKET_ChainFR", pos = [-2.56, 5.97, 1.94] },
+  { name = "SOCKET_ChainBL", pos = [2.56, 6, -1.94] },
+  { name = "SOCKET_ChainBR", pos = [-2.52, 6.07, -1.85] },
+]
 brief = """A colossal square bronze ding ritual cauldron 8m tall and 6.4m wide that hangs on chains over a lava pool: a square body 5.2m wide and 3.6m tall slightly narrower at the bottom, made of warm aged bronze with patches of dark verdigris, a thick dark rim band, a raised taotie beast-mask relief in the middle of each of the four faces and flanged vertical ridges at the corners; two big upright loop handles stand on the rim on the LEFT and RIGHT sides; four thick columnar legs 2.4m long at the four corners ending in paw-like feet; at each of the four top corners of the rim a massive black iron shackle ring for a giant chain (the chains themselves not shown); the mouth is filled with molten lava painted as an opaque bright orange-yellow surface. PROPORTIONS: all four views are drawn about 0.8 times as wide as tall and look the same apart from the handles. Chunky readable forms, no smoke, no fire tongues. One solid connected piece."""
 
 [assets.SM_Prop_QilinChainLock]
@@ -2392,9 +2441,14 @@ blockout = { source = "scene", id = "boss.qilin.chainLock" }
 reference_mode = "bounds_only"
 reference_dimensions = [2.0, 2.4, 1.2]
 lod_tris = [8000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "target"
 keep_glow = "none"
 material = { roughness = 0.55, metallic = 0.6 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_CoreGlow", pos = [0, 0.8, 0.3], dir = [0, 0, 1] },
+]
 brief = """A giant chain lock clasp mounted on a basalt wall, 2m wide, 2.4m tall and 1.2m deep, the shootable weak point that holds one chain of a hanging cauldron: a heavy square black iron back plate with big rivets (its BACK is flat against the wall), on it a massive padlock-shaped iron clasp cast like a crouching qilin head biting a thick iron shackle loop that sticks out at the top front; in the middle of the clasp a round glowing core of molten vermilion-orange fire crystal painted as an opaque bright orange-yellow surface, framed by an aged bronze ring with flame patterns. PROPORTIONS: the FRONT view is drawn about 0.83 times as wide as tall; the LEFT and RIGHT views about 0.5 times as wide as tall, showing the clasp standing out from the flat back plate. Chunky readable forms, no chain, no smoke. One solid connected piece."""
 
 [assets.SM_Prop_InfernoChainLink]
@@ -2425,9 +2479,14 @@ blockout = { source = "scene", id = "inferno.zhurong.moltenGate" }
 reference_mode = "bounds_only"
 reference_dimensions = [10.0, 9.0, 1.4]
 lod_tris = [15000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "gate"
 keep_glow = "none"
 material = { roughness = 0.6, metallic = 0.6 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_Sparks", pos = [0, 0.1, 0], dir = [0, -1, 0] },
+]
 brief = """A massive drop gate that seals the entrance of a fire god's forge hall, 10m wide, 9m tall and 1.4m thick: one solid slab of black iron (no openings, nothing see-through) built as a grid of thick vertical bars and three heavy horizontal crossbars fused together with riveted plates filling every gap, a row of sharp iron spikes along the bottom edge, a big cast vermilion fire-sun disc in the centre, and the seams between the bars glowing with half-cooled molten iron painted as opaque bright orange-yellow lines; soot-darkened edges. The FRONT and BACK faces are the same. PROPORTIONS: the FRONT and BACK views are drawn about 1.1 times as wide as tall; the LEFT and RIGHT views are a thin slab about 0.16 times as wide as tall. Chunky readable forms, no smoke. One solid connected piece."""
 
 [assets.SM_Tripo_InfernoRoundHallWall]
@@ -2440,9 +2499,14 @@ blockout = { source = "scene", id = "inferno.zhurong.roundHallWall" }
 reference_mode = "bounds_only"
 reference_dimensions = [18.0, 22.0, 5.0]
 lod_tris = [15000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "wall"
 keep_glow = "none"
 material = { roughness = 0.8, metallic = 0.15 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_VentSmoke", pos = [0, 16.4, -1.6], dir = [0, 0, 1] },
+]
 brief = """One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m with a row of cast bronze fire-sun discs, a second iron band at 14m, and high up in the middle one square smoke vent opening 3m wide framed in black iron and glowing faintly orange inside (painted as an opaque bright orange-yellow surface). The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so eight segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views are a tall thick wall about 0.23 times as wide as tall. Broad faceted blocks, no smoke. One solid connected piece."""
 
 [assets.SM_Tripo_InfernoRoundHallFurnace]
@@ -2455,9 +2519,14 @@ blockout = { source = "scene", id = "inferno.zhurong.roundHallFurnace" }
 reference_mode = "bounds_only"
 reference_dimensions = [18.0, 22.0, 5.0]
 lod_tris = [30000]  # Tripo 生成面数（ch3-v2 第 6.2 节：大件 ≤ 3 万、中件 ≤ 1.5 万、掩体 ≤ 0.8 万；不减面）
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "wall"
 keep_glow = "none"
 material = { roughness = 0.8, metallic = 0.15 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_KilnFire", pos = [0, 1.2, -1.6], dir = [0, 0, 1] },
+]
 brief = """One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall, the companion of the plain wall segment with the same courses and bands: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m and a second iron band at 14m; at floor level in the middle a big round-arched furnace mouth 4m wide and 4m tall framed by a cast bronze beast face whose open jaws form the arch, the inside of the mouth filled with glowing coals and molten fire painted as opaque bright orange-yellow surfaces. The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so the segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views about 0.23 times as wide as tall. Broad faceted blocks, no smoke, no flames outside the mouth. One solid connected piece."""
 
 # ───────────── 第三章 v2 地图件（docs/level-design/ch3-v2.md 第 6.2 / 6.3 节，2026-11-03）─────────────
@@ -2477,9 +2546,18 @@ blockout = { source = "scene", id = "inferno.v2.gatehouse" }
 reference_mode = "bounds_only"
 reference_dimensions = [16.0, 12.0, 14.0]
 lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "gatehouse"
 keep_glow = "none"
 material = { roughness = 0.8, metallic = 0.15 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_Brazier", pos = [5.8, 11.6, 2], dir = [0, 1, 0] },
+  { name = "FX_Brazier", pos = [-5.8, 11.6, 2], dir = [0, 1, 0] },
+  { name = "FX_Brazier", pos = [5.5, 11, -1.7], dir = [0, 1, 0] },
+  { name = "FX_Brazier", pos = [-5.5, 11, -1.7], dir = [0, 1, 0] },
+  { name = "SOCKET_Gate", pos = [0, 0, 0], dir = [0, 0, 1] },
+]
 brief = """A massive two-storey frontier gatehouse of a fire god's palace standing on a lava lake causeway, 16m wide, 12m tall and 14m deep. LOWER STOREY: a solid block of huge dark charcoal basalt blocks 12m wide, 8m tall and 14m deep, pierced straight through from FRONT to BACK by one big gate passage 8m wide and 6m tall with a flat black iron lintel, so a road runs through the building; heavy black iron corner plates with big rivets on the four vertical edges; above the passage on the FRONT face a big cast bronze plaque with a raised fire-sun emblem; a deep vermilion lacquered timber pent eave with dark tiles juts out over the passage on the FRONT and BACK faces at 6.5m. UPPER STOREY: the top of the block at 8m is a big FLAT open walkable stone platform, surrounded on all four edges by a solid basalt parapet 1.1m tall with square merlons; at the two BACK corners of the platform stand two small square watch kiosks 3m wide with vermilion lacquered posts and dark tiled pyramid roofs whose tips reach 12m; the rest of the platform is empty and flat. STAIRS: on the LEFT and RIGHT outer side walls one straight external stone stair 2m wide each climbs from the ground at the front corner up to the platform at the back, hugging the wall. PROPORTIONS: the FRONT and BACK views are drawn about 1.33 times as wide as tall and show the gate passage; the LEFT and RIGHT views about 1.17 times as wide as tall and show the diagonal side stair. Big broad faceted blocks, no fine brick seams, no smoke, no flags. One solid connected piece on a flat base."""
 
 [assets.SM_Tripo_InfernoBasaltColumns]
@@ -2492,6 +2570,7 @@ blockout = { source = "scene", id = "inferno.v2.basaltColumns" }
 reference_mode = "bounds_only"
 reference_dimensions = [8.0, 9.0, 7.0]
 lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "cover"
 keep_glow = "none"
 material = { roughness = 0.85, metallic = 0.05 }
@@ -2507,6 +2586,7 @@ blockout = { source = "scene", id = "inferno.v2.scaffold" }
 reference_mode = "bounds_only"
 reference_dimensions = [12.0, 10.0, 8.0]
 lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "walkway"
 keep_glow = "none"
 material = { roughness = 0.75, metallic = 0.35 }
@@ -2522,9 +2602,17 @@ blockout = { source = "scene", id = "inferno.v2.ironBridge" }
 reference_mode = "bounds_only"
 reference_dimensions = [12.0, 2.5, 10.0]
 lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "walkway"
 keep_glow = "none"
 material = { roughness = 0.6, metallic = 0.55 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_Lantern", pos = [4.64, 1.63, 3.06] },
+  { name = "FX_Lantern", pos = [-4.64, 1.63, 3.06] },
+  { name = "FX_Lantern", pos = [4.64, 1.63, -3.06] },
+  { name = "FX_Lantern", pos = [-4.64, 1.63, -3.06] },
+]
 brief = """A short heavy black iron bridge span over a lava channel, 12m long from LEFT to RIGHT, 10m wide from FRONT to BACK and 2.5m tall. The bridge body is a thick black iron box girder 0.8m deep covered with riveted plates, and its top is a wide FLAT walkable deck of iron plates 10m wide. Along the FRONT edge and the BACK edge runs a solid black iron railing 1.1m tall with thick square posts and riveted panels; the FRONT railing has one 3m wide gap in its middle (an open edge), the BACK railing is continuous. At the four corners of the deck stand four squat cast bronze bridge posts 1.7m tall, each topped with a chunky roaring beast head facing outward along the bridge. The deck surface has a few vermilion lacquered iron strips. PROPORTIONS: the FRONT and BACK views are drawn about 4.8 times as wide as tall, a long low flat span; the LEFT and RIGHT views about 4 times as wide as tall. Chunky readable forms, no lava, no smoke, no arches under the deck. One solid connected piece."""
 
 [assets.SM_Tripo_InfernoHallTruss]
@@ -2543,19 +2631,46 @@ material = { roughness = 0.75, metallic = 0.3 }
 brief = """One giant roof truss of a ruined blast hall, 24m wide, 9m tall and 8m deep, seen on its own in the air. A gabled A-shaped frame: a thick straight horizontal tie beam 24m long at the bottom, two thick rafters rising from its ends to a ridge point at 9m, and a short king post plus two diagonal struts inside the triangle; the members are heavy charred dark timber 0.8m thick clad with black iron straps and big rivets. At both ends the tie beam rests on a chunky stepped bracket set (dougong) of vermilion lacquered wood blocks 2m tall. Five thick timber purlins 8m long run front to back across the rafters, and on the LEFT half of the roof a sheet of dark grey roof tiles still hangs on the purlins with a ragged broken edge; the RIGHT half shows the bare purlins. PROPORTIONS: the FRONT and BACK views are drawn about 2.7 times as wide as tall and show the full triangle; the LEFT and RIGHT views about 0.9 times as wide as tall and show the purlins end on. Chunky thick members only, no thin sticks, no smoke. One solid connected piece."""
 
 [assets.SM_Tripo_InfernoLadleCrane]
-display = "浇包吊车（3-3 ③ 熔流闸视觉核心；3-2 ④ 吊臂台；承重：横梁走道 +12；不带浇包）"
+display = "浇包吊车门架（3-3 ③ 熔流闸视觉核心；3-2 ④ 吊臂台；承重：横梁走道约 +11；吊钩 / 绞盘是另一件 SM_Tripo_InfernoCraneHook）"
 kind = "static"
 class = "tripo_architecture"
 source_provider = "tripo"
 style_theme = "zhurong"
 blockout = { source = "scene", id = "inferno.v2.ladleCrane" }
 reference_mode = "bounds_only"
-reference_dimensions = [18.0, 16.0, 8.0]
+reference_dimensions = [18.0, 13.0, 8.0]  # 2026-11-03 概念图（门架 1.37:1、没有滑轮头）定稿后由 16 改 13；走道顶面实测见 ch3-kit.md
 lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "landmark"
 keep_glow = "none"
 material = { roughness = 0.6, metallic = 0.5 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "SOCKET_Hook", pos = [4, 10, 0], dir = [0, -1, 0] },
+  { name = "SOCKET_Hook", pos = [-4, 10, 0], dir = [0, -1, 0] },
+]
 brief = """A giant gantry crane of a mythic foundry, 18m wide, 16m tall and 8m deep, made of massive black iron with big rivets. Two thick legs stand at the LEFT and RIGHT ends; seen from the side each leg is an A-frame of two heavy iron columns spreading to 8m at the foot. A massive horizontal box girder spans between the legs; its top at 12m is a FLAT walkable iron walkway 3m wide with a 1.1m iron railing on both long edges, reached by a straight iron ladder cage running up the outside of the RIGHT leg. Above the walkway each leg ends in a squat iron pulley head carrying one big pulley wheel, reaching 16m. Under the girder hang two big black iron hooks, each on a short thick chain from a drum winch bolted under the girder, the hooks at about 8m above the ground; nothing hangs on the hooks. Deep vermilion lacquered bands on the girder and a few cast bronze fire-sun discs on the legs. PROPORTIONS: the FRONT and BACK views are drawn about 1.1 times as wide as tall and show the full gantry; the LEFT and RIGHT views about 0.5 times as wide as tall and show one A-frame leg. Chunky thick members only, no ladle, no lava, no smoke. One solid connected piece on a flat base."""
+
+# 2026-11-03 部件分离补的件（ch3-kit.md 第 3 节）：吊车门架不带吊钩，绞盘 + 吊钩单独生成一件，再按连通块切成两件；链条用 SM_Prop_InfernoChainLink 程序拼
+[assets.SM_Tripo_InfernoCraneHook]
+display = "浇包吊车绞盘 + 吊钩（3-3 ③ 熔流闸；挂在 SM_Tripo_InfernoLadleCrane 横梁下，链条程序拼）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.v2.craneHook" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 6.0, 3.0]
+lod_tris = [8000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
+architecture_role = "machine"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.5 }
+parts = [
+  { id = "SM_Tripo_InfernoCraneHookWinch", box = [[-2.0, 3.85, -1.2], [2.0, 6.2, 1.2]], origin = "center", fx_points = [{ name = "SOCKET_ChainTop", pos = [0, -0.96, 0] }] },
+  { id = "SM_Tripo_InfernoCraneHookBlock", rest = true, origin = "center", fx_points = [{ name = "SOCKET_ChainBottom", pos = [0, 1.83, 0] }] },
+]
+brief = """A crane hook kit of two SEPARATE parts floating one above the other with a clear empty gap between them (no chain): a heavy black iron drum winch with riveted end flanges and a squat bracket housing with a flat top, and below it a big black iron hook block, a chunky sheave block with a vermilion lacquered band and one massive blunt curved iron hook."""
 
 [assets.SM_Tripo_InfernoKilnMouth]
 display = "炉窟门脸（3-2 ① / ③ 窟口；3-3 殿后炉窟；背面平贴岩壁）"
@@ -2567,9 +2682,14 @@ blockout = { source = "scene", id = "inferno.v2.kilnMouth" }
 reference_mode = "bounds_only"
 reference_dimensions = [16.0, 12.0, 5.0]
 lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "portal"
 keep_glow = "none"
 material = { roughness = 0.75, metallic = 0.35 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_KilnFire", pos = [0, 0.8, 0], dir = [0, 0, 1] },
+]
 brief = """The monumental entrance of a forge cave cut into a basalt cliff, 16m wide, 12m tall and 5m deep. A thick frame of dark charcoal basalt blocks surrounds one big round-topped archway 8m wide and 7m tall that goes straight through the piece from FRONT to BACK; the arch is framed by a massive cast bronze beast face whose brow and fangs form the top of the arch and whose paws form the two jambs. Two huge black iron door leaves covered with rows of big round iron studs stand swung fully open and folded flat against the FRONT face, one on each side of the arch. Inside the arch the side walls are lined with low glowing coal braziers painted as opaque bright orange-yellow. A deep vermilion lacquered lintel band with a row of bronze discs crosses above the arch. The BACK is a FLAT rough rock face (it is set into the cliff) with the arch opening in it. PROPORTIONS: the FRONT and BACK views are drawn about 1.33 times as wide as tall; the LEFT and RIGHT views about 0.42 times as wide as tall. Chunky readable forms, no smoke, no flames outside the arch. One solid connected piece on a flat base."""
 
 [assets.SM_Tripo_InfernoSpout]
@@ -2582,9 +2702,14 @@ blockout = { source = "scene", id = "inferno.v2.spout" }
 reference_mode = "bounds_only"
 reference_dimensions = [5.0, 4.0, 6.0]
 lod_tris = [10000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "spout"
 keep_glow = "none"
 material = { roughness = 0.5, metallic = 0.6 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_LavaPour", pos = [0, 1.43, 0.9], dir = [0, -0.3, 1] },
+]
 brief = """A colossal cast bronze beast head that spits molten bronze, mounted on a wall, 5m wide, 4m tall and 6m deep. A heavy square black iron back plate with rivets forms the FLAT BACK. From it the chunky warm aged bronze head of a roaring mythic beast juts forward toward the FRONT: heavy brows, curled horns lying back flat, big round eyes, and a wide open mouth. Its long lower jaw is a broad open trough reaching far forward, and a thick smooth tongue of molten bronze painted as an opaque bright orange-yellow surface fills the trough and spills over its front lip. Patches of dark verdigris and soot on the bronze. PROPORTIONS: the FRONT view is drawn about 1.25 times as wide as tall and shows the open mouth head on; the LEFT and RIGHT views about 1.5 times as wide as tall and show the long jutting jaw trough. Chunky readable forms, no smoke, no splashes, no loose drops. One solid connected piece."""
 
 [assets.SM_Tripo_InfernoGuardianStatue]
@@ -2597,9 +2722,14 @@ blockout = { source = "scene", id = "inferno.v2.guardianStatue" }
 reference_mode = "bounds_only"
 reference_dimensions = [3.5, 7.5, 3.5]
 lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "statue"
 keep_glow = "none"
 material = { roughness = 0.5, metallic = 0.6 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "SOCKET_Perch", pos = [0, 7.5, 0], dir = [0, 1, 0] },
+]
 brief = """A colossal bronze guardian statue of a fire god's warrior standing on a plinth, 3.5m wide, 7.5m tall and 3.5m deep. PLINTH: a solid square block of dark charcoal basalt 3.5m wide and 2.6m tall with a black iron top band. STATUE: on it a stiff, frontal, stocky armoured warrior 4.9m tall facing the FRONT, cast in warm aged bronze with patches of dark verdigris green; chunky overlapping armour plates lacquered deep vermilion on the chest and shoulders; a stern square face; a helmet with a FLAT square top; both hands hold the long haft of a big crescent-bladed yue battle axe planted upright on the plinth in front of the body, the blade beside the head. Arms close to the body, nothing sticking out beyond the plinth. PROPORTIONS: all four views are drawn about 0.47 times as wide as tall. Chunky simplified forms like a toy figure, no fine engraving, no smoke, no fire. One solid connected piece on a flat base."""
 
 [assets.SM_Tripo_InfernoCausewayBreak]
@@ -2612,6 +2742,7 @@ blockout = { source = "scene", id = "inferno.v2.causewayBreak" }
 reference_mode = "bounds_only"
 reference_dimensions = [12.0, 5.0, 12.0]
 lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "walkway"
 keep_glow = "none"
 material = { roughness = 0.85, metallic = 0.05 }
@@ -2627,9 +2758,19 @@ blockout = { source = "scene", id = "inferno.v2.geyserVent" }
 reference_mode = "bounds_only"
 reference_dimensions = [6.0, 2.5, 6.0]
 lod_tris = [8000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "vent"
 keep_glow = "none"
 material = { roughness = 0.85, metallic = 0.05 }
+qa_waivers = { "场景高度" = "Tripo 网格比概念扁宽，等比对齐被占地卡住：实得 6.72 × 2.08 × 6.62 m（登记 2.5 m 高）；喷口是贴地件，高度不影响玩法（2026-11-03）" }
+parts = [
+  { id = "SM_Tripo_InfernoGeyserVentBase", rest = true, origin = "base", fx_points = [{ name = "FX_GeyserJet", pos = [0, 1.31, 0], dir = [0, 1, 0] }] },
+  { id = "SM_Tripo_InfernoGeyserVentCrust", box = [[-1.4, 1.15, -1.4], [1.4, 2.2, 1.4]], origin = "base", fx_points = [{ name = "FX_CrustBurst", pos = [0, 0.5, 0] }] },
+]
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_GeyserJet", pos = [0, 2.08, 0], dir = [0, 1, 0] },
+]
 brief = """A low volcanic lava vent cone on a basalt floor, 6m across and 2.5m tall: a squat round mound of chunky dark charcoal basalt plates and blocks rising to a broad crater rim, the crater capped by a domed crust of cooled black lava split by a few wide cracks that glow molten lava painted as opaque bright orange-yellow; a ring of thicker glowing seams around the foot of the crust. Round and roughly the same from every side. PROPORTIONS: all four views are drawn about 2.4 times as wide as tall and look the same. Broad faceted chunks, no tiny cracks, no smoke, no fire, no spray. One solid connected piece on a flat base."""
 
 [assets.SM_Tripo_InfernoWorkShed]
@@ -2642,9 +2783,14 @@ blockout = { source = "scene", id = "inferno.v2.workShed" }
 reference_mode = "bounds_only"
 reference_dimensions = [10.0, 7.0, 8.0]
 lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
 architecture_role = "shed"
 keep_glow = "none"
 material = { roughness = 0.75, metallic = 0.3 }
+# 特效 / 挂件挂点（glTF 米，发布尺度；ch3-kit.md 第 3 节）：Prefab 里是命名空节点，特效由地图路挂
+fx_points = [
+  { name = "FX_ForgeFire", pos = [0.2, 1.7, -1.9], dir = [0, 0, 1] },
+]
 brief = """A half-open foundry work shed, 10m wide, 7m tall and 8m deep. A flat basalt floor slab; four thick black iron corner posts with rivets and deep vermilion lacquered timber beams; a single-pitch roof of dark grey tiles that slopes down from the FRONT (7m) to the BACK (5m), with the LEFT part of the roof broken away to bare black rafters. The BACK wall is solid riveted black iron plates; the LEFT and RIGHT sides are closed only up to 2m by low timber plank walls; the FRONT is completely open. Under the roof on the back wall hang big chunky smith tongs, hammers and one short thick chain, and a squat iron workbench with a small anvil stands against the back wall. PROPORTIONS: the FRONT and BACK views are drawn about 1.43 times as wide as tall; the LEFT and RIGHT views about 1.15 times as wide as tall and show the sloping roof. Chunky readable forms, no smoke, no fire. One solid connected piece on a flat base."""
 
 # ───────────── 宝箱 / 商店 / 祭台道具（ART7，docs/unity-parity.md 第 5 节）─────────────
