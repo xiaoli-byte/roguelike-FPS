@@ -365,6 +365,24 @@ def sha256(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+def fx_points(asset_id: str, entry: dict) -> list[dict]:
+    """registry fx_points（glTF 米：x = 资产左、y 上、z 前）→ Unity 局部坐标（X 取反）。派生部件从母件 parts 表里取"""
+    reg = CFG.registry.get(asset_id)
+    pts = reg.get("fx_points") if reg else None
+    if reg is None:
+        parent = (entry.get("derivedFrom") or {}).get("id")
+        for p in (CFG.registry.get(parent) or {}).get("parts", []):
+            if p.get("id") == asset_id:
+                pts = p.get("fx_points")
+    out = []
+    for q in pts or []:
+        row = {"name": q["name"], "pos": [-q["pos"][0], q["pos"][1], q["pos"][2]]}
+        if q.get("dir"):
+            row["dir"] = [-q["dir"][0], q["dir"][1], q["dir"][2]]
+        out.append(row)
+    return out
+
+
 def export_one(asset_id: str, entry: dict, force: bool) -> str:
     glb = ROOT / "public" / entry["url"]
     hi = glb.with_name(glb.stem + "@hi.glb")
@@ -383,7 +401,8 @@ def export_one(asset_id: str, entry: dict, force: bool) -> str:
     if not force and sidecar.exists() and (out_dir / f"{asset_id}.fbx").exists():
         old = json.loads(sidecar.read_text(encoding="utf-8"))
         if (old.get("source", {}).get("sha256") == src_hash and old.get("exporterVersion") == EXPORTER_VERSION
-                and old.get("fur") == fur and old.get("weapon") == (weapon["art"] if weapon else None)):
+                and old.get("fur") == fur and old.get("weapon") == (weapon["art"] if weapon else None)
+                and old.get("fxPoints", []) == fx_points(asset_id, entry)):
             return "unchanged"
 
     doc, binc = read_glb(src)
@@ -424,6 +443,8 @@ def export_one(asset_id: str, entry: dict, force: bool) -> str:
         "qaWaivers": CFG.registry.get(asset_id, {}).get("qa_waivers", {}),
         **({"fur": fur} if fur else {}),
         **({"weapon": weapon["art"]} if weapon else {}),
+        # 特效 / 挂件挂点（第三章 v2，ArtPrefabBuilder 建成 Prefab 下的命名空节点）
+        **({"fxPoints": fx_points(asset_id, entry)} if fx_points(asset_id, entry) else {}),
         "bounds": gltf_to_unity_bounds(entry.get("bounds")),
         "rig": {
             "type": "humanoid" if profile else ("generic" if res["armature"] else "none"),

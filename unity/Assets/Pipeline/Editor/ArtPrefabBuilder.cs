@@ -416,6 +416,19 @@ namespace Spiritfire.Art.Editor
                         StaticEditorFlags.OccludeeStatic | StaticEditorFlags.ReflectionProbeStatic);
             }
 
+            // 特效 / 挂件挂点（registry fx_points → sidecar fxPoints，Prefab 局部米、Unity 轴向）：只放命名空节点，
+            // 火焰 / 烟 / 熔流 / 火星这类特效由地图路挂到它下面（第三章 v2，docs/art/ch3-kit.md 第 3 节）
+            if (sc.raw["fxPoints"] is JArray fxPoints)
+                foreach (var fx in fxPoints.OfType<JObject>())
+                {
+                    var t = new GameObject((string)fx["name"]).transform;
+                    t.SetParent(root.transform, false);
+                    var p = fx["pos"]?.ToObject<float[]>() ?? new float[3];
+                    t.localPosition = new Vector3(p[0], p[1], p[2]);
+                    var d = fx["dir"]?.ToObject<float[]>();
+                    if (d != null && d.Length == 3) t.localRotation = Quaternion.LookRotation(new Vector3(d[0], d[1], d[2]));
+                }
+
             // 第一人称武器：语义零件、挂点、程序化零件（瞄具 / 弩弦 / 弩箭），见 WeaponPrefabParts
             if (sc.Weapon != null)
                 foreach (var w in WeaponPrefabParts.Build(sc, root, inst))

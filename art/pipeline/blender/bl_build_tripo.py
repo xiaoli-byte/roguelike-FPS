@@ -219,6 +219,34 @@ def new_image(suffix: str, data: np.ndarray, colorspace: str):
 bc = pixels(img_base); bc[..., 3] = 1.0
 img_bc = new_image("BC", bc, "sRGB")
 
+# Optional emissive mask by colour key (registry emissive_key, e.g. the chapter-3 lava cracks / furnace mouths that are
+# painted as flat bright orange): E = painted colour where hue / saturation / value fall in the key, soft-edged, else black.
+img_e = None
+EK = P.get("emissive_key")
+if EK:
+    rgb = np.clip(bc[..., :3], 0, 1)
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    val = mx
+    sat = np.where(mx > 1e-6, (mx - mn) / np.maximum(mx, 1e-6), 0)
+    d = np.maximum(mx - mn, 1e-6)
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    hue = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) / 6.0
+
+    def ramp(x, lo, soft):
+        return np.clip((x - lo) / max(soft, 1e-6) + 0.5, 0, 1)
+
+    h0, h1 = EK.get("hue", [0.02, 0.17])
+    soft = EK.get("soft", 0.06)
+    m = (ramp(hue, h0, 0.02) * (1 - ramp(hue, h1, 0.02))
+         * ramp(sat, EK.get("min_sat", 0.55), soft) * ramp(val, EK.get("min_val", 0.75), soft))
+    m = np.where(mx - mn < 1e-6, 0, m)
+    e = np.zeros_like(bc)
+    e[..., :3] = rgb * m[..., None]
+    e[..., 3] = 1.0
+    img_e = new_image("E", e, "sRGB")
+    RESULT["emissive"] = {"key": EK, "coverage": round(float((m > 0.5).mean()), 4)}
+    log(f"自发光遮罩：覆盖 {(m > 0.5).mean():.2%} 纹素")
+
 
 def detail_normal(colour: np.ndarray, strength: float = 2.5) -> np.ndarray:
     """Tangent-space detail normal from painted luminance (darker paint reads as recessed), softened first."""
@@ -300,6 +328,10 @@ grp = bpy.data.node_groups.new("glTF Material Output", "ShaderNodeTree")
 grp.interface.new_socket("Occlusion", in_out="INPUT", socket_type="NodeSocketFloat")
 gnode = gn.new("ShaderNodeGroup"); gnode.node_tree = grp
 gl.new(sep.outputs["Red"], gnode.inputs["Occlusion"])
+if img_e is not None:
+    t_e = gn.new("ShaderNodeTexImage"); t_e.image = img_e
+    gl.new(t_e.outputs["Color"], gb.inputs["Emission Color"])
+    gb.inputs["Emission Strength"].default_value = 1.0
 for lod in lods:
     lod.data.materials.clear()
     lod.data.materials.append(game)
@@ -307,7 +339,7 @@ for lod in lods:
 # ── 5. export ──
 bpy.data.objects.remove(src)
 for img in list(bpy.data.images):
-    if img not in (img_bc, img_n, img_orm):
+    if img not in (img_bc, img_n, img_orm, img_e):
         bpy.data.images.remove(img)  # provider originals and the AO scratch image
 lod_metrics = []
 for i, lod in enumerate(lods):

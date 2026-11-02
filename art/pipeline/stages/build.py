@@ -61,6 +61,8 @@ def run(spec: AssetSpec, a) -> None:
         "max_bone_influences": b["max_bone_influences"],
         "draco": ex["draco"], "image_format": ex["image_format"], "tangents": ex["tangents"],
         "texture_name": name,
+        # Tripo 静态件：按颜色键从供应方底色抠自发光遮罩 T_<名>_E（第三章熔岩缝 / 炉口，registry emissive_key）
+        "emissive_key": spec.raw.get("emissive_key"),
     }
     # Tripo Studio P2.0 sources already carry a game mesh and PBR images: keep them, don't project the concept.
     tripo = spec.raw.get("source_provider") == "tripo"
