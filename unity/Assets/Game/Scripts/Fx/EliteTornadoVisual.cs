@@ -8,7 +8,7 @@ namespace Spiritfire.Game
     /// </summary>
     public sealed class EliteTornadoVisual : MonoBehaviour
     {
-        const int Bands = 6, Segments = 36, BodySegments = 40, BodyLevels = 14;
+        const int Bands = 6, Segments = 36, BodySegments = 40, BodyLevels = 14, CrownSegments = 48;
         static readonly Color Ink = Hex.Rgb(0x263e4c);
         static readonly Color Wind = Hex.Rgb(0x58a6b3);
         static readonly Color Edge = Hex.Rgb(0xc6e7dc);
@@ -16,10 +16,12 @@ namespace Spiritfire.Game
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
         float height, topRadius, time, alpha = 1f, fade = 1f, fadeTarget = 1f, fadeSpeed = 3f, crownTimer, dustTimer;
-        Mesh mainMesh, underMesh, bodyMesh;
-        MeshRenderer mainRenderer, underRenderer, bodyRenderer;
+        bool charging;
+        Vector3 travel;
+        Mesh mainMesh, underMesh, bodyMesh, crownMesh;
+        MeshRenderer mainRenderer, underRenderer, bodyRenderer, crownRenderer;
         MaterialPropertyBlock block;
-        Vector3[] mainVertices, underVertices, bodyVertices;
+        Vector3[] mainVertices, underVertices, bodyVertices, crownVertices;
 
         public static EliteTornadoVisual Create(Vector3 ground, float height, float topRadius, Transform parent = null)
         {
@@ -39,9 +41,11 @@ namespace Spiritfire.Game
             mainVertices = new Vector3[Bands * (Segments + 1) * 2];
             underVertices = new Vector3[mainVertices.Length];
             bodyVertices = new Vector3[(BodyLevels + 1) * (BodySegments + 1)];
+            crownVertices = new Vector3[3 * (CrownSegments + 1)];
             mainMesh = MakeStrokeMesh("Wind Strokes", out mainRenderer, 0);
             underMesh = MakeStrokeMesh("Ink Underlay", out underRenderer, -1);
             bodyMesh = MakeBodyMesh();
+            crownMesh = MakeCrownMesh();
             UpdateStrokes();
             PaintVertices();
         }
@@ -101,6 +105,33 @@ namespace Spiritfire.Game
             return mesh;
         }
 
+        Mesh MakeCrownMesh()
+        {
+            var go = new GameObject("Rolling Cloud Crown");
+            go.transform.SetParent(transform, false);
+            var filter = go.AddComponent<MeshFilter>();
+            var mesh = new Mesh { name = "Elite Tornado Cloud Crown" };
+            mesh.MarkDynamic();
+            filter.sharedMesh = mesh;
+            crownRenderer = go.AddComponent<MeshRenderer>();
+            crownRenderer.sharedMaterial = FxMaterials.AlphaBlend;
+            crownRenderer.sortingOrder = -1;
+            crownRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            crownRenderer.receiveShadows = false;
+            var triangles = new int[2 * CrownSegments * 12];
+            int n = 0;
+            for (int y = 0; y < 2; y++)
+                for (int x = 0; x < CrownSegments; x++)
+                {
+                    int k = y * (CrownSegments + 1) + x;
+                    n = Quad(triangles, n, k, CrownSegments + 1);
+                }
+            mesh.SetVertices(new Vector3[3 * (CrownSegments + 1)]);
+            mesh.SetTriangles(triangles, 0);
+            mesh.bounds = new Bounds(Vector3.up * height, new Vector3(topRadius * 4f, 2f, topRadius * 4f));
+            return mesh;
+        }
+
         static int Quad(int[] triangles, int n, int k, int stride)
         {
             triangles[n++] = k;
@@ -154,6 +185,17 @@ namespace Spiritfire.Game
                 }
             }
             bodyMesh.colors = bodyColors;
+
+            var crownColors = new Color[crownVertices.Length];
+            for (int y = 0; y < 3; y++)
+                for (int x = 0; x <= CrownSegments; x++)
+                {
+                    float v = y / 2f;
+                    var c = Color.Lerp(Wind, Cloud, 0.35f + v * 0.55f);
+                    c.a = y == 1 ? 0.52f : 0.24f;
+                    crownColors[y * (CrownSegments + 1) + x] = FxVertexColor.Linear(c);
+                }
+            crownMesh.colors = crownColors;
         }
 
         void Update()
@@ -167,6 +209,7 @@ namespace Spiritfire.Game
             mainRenderer.SetPropertyBlock(block);
             underRenderer.SetPropertyBlock(block);
             bodyRenderer.SetPropertyBlock(block);
+            crownRenderer.SetPropertyBlock(block);
             if (fadeTarget <= 0 && fade <= 0.005f)
             {
                 Destroy(gameObject);
@@ -174,9 +217,9 @@ namespace Spiritfire.Game
             }
 
             crownTimer -= dt;
-            if (crownTimer <= 0 && fade > 0.3f)
+            if (!charging && crownTimer <= 0 && fade > 0.3f)
             {
-                crownTimer = 0.11f;
+                crownTimer = 0.18f;
                 EmitCrown();
             }
             dustTimer -= dt;
@@ -190,7 +233,8 @@ namespace Spiritfire.Game
         Vector3 Axis(float u)
         {
             float sway = u * u * 0.22f;
-            return new Vector3(Mathf.Sin(u * 4.4f - time * 1.35f) * sway, u * height, Mathf.Cos(u * 3.2f - time * 1.1f) * sway);
+            var shear = -travel * (u * u * height * 0.11f);
+            return new Vector3(Mathf.Sin(u * 4.4f - time * 1.35f) * sway, u * height, Mathf.Cos(u * 3.2f - time * 1.1f) * sway) + shear;
         }
 
         void UpdateStrokes()
@@ -229,15 +273,30 @@ namespace Spiritfire.Game
                 }
             }
             bodyMesh.SetVertices(bodyVertices);
+
+            var crownAxis = Axis(1f);
+            for (int y = 0; y < 3; y++)
+            {
+                float v = y / 2f;
+                for (int x = 0; x <= CrownSegments; x++)
+                {
+                    float a = x / (float)CrownSegments * Mathf.PI * 2f + time * 0.7f;
+                    float radius = Mathf.Lerp(topRadius * 0.48f, topRadius * 1.26f, v) * (1f + 0.08f * Mathf.Sin(a * 4f - time * 1.6f));
+                    float lift = Mathf.Sin(a * 3f - time * 2.1f) * 0.13f + Mathf.Sin(a * 5f + time) * 0.05f + v * 0.12f;
+                    crownVertices[y * (CrownSegments + 1) + x] = crownAxis + new Vector3(Mathf.Sin(a) * radius, lift, Mathf.Cos(a) * radius);
+                }
+            }
+            crownMesh.SetVertices(crownVertices);
         }
 
         void EmitCrown()
         {
             float a = Random.value * Mathf.PI * 2f;
             var d = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
-            var at = transform.position + d * topRadius * Random.Range(0.5f, 0.85f) + Vector3.up * height * Random.Range(0.93f, 0.99f);
+            var center = transform.position + Axis(1f);
+            var at = center + d * topRadius * Random.Range(0.55f, 0.9f) + Vector3.up * Random.Range(-0.08f, 0.12f);
             var tangent = Vector3.Cross(Vector3.up, d) * 1.6f;
-            Fx.LdOne("ToonSmoke", at, tangent + Vector3.up * 0.25f, Random.Range(1.05f, 1.45f), 0.58f, Fx.LdAlpha(Cloud, 0.84f), false);
+            Fx.LdOne("ToonSmoke", at, tangent + Vector3.up * 0.25f, Random.Range(0.75f, 1.05f), 0.52f, Fx.LdAlpha(Cloud, 0.62f), false);
         }
 
         void EmitSkirt()
@@ -247,7 +306,7 @@ namespace Spiritfire.Game
             float a = Random.value * Mathf.PI * 2f;
             var d = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
             var tangent = Vector3.Cross(Vector3.up, d);
-            Fx.LdOne("ToonSmoke", at + d * 0.55f + Vector3.up * 0.25f, tangent * 4.2f + Vector3.up * 0.8f,
+            Fx.LdOne("ToonSmoke", at + d * 0.55f + Vector3.up * 0.25f, tangent * 4.2f - travel * 1.5f + Vector3.up * 0.8f,
                 Random.Range(0.9f, 1.3f), 0.58f, Fx.LdAlpha(dust, 0.82f), false);
             Fx.LdMany("Chunk", 2, i =>
             {
@@ -256,13 +315,31 @@ namespace Spiritfire.Game
                 var p = at + d * Mathf.Lerp(0.35f, topRadius, u * u) + Vector3.up * h;
                 return (p, tangent * Random.Range(4.5f, 6.5f) + Vector3.up * 1.4f, Random.Range(0.1f, 0.16f), 0.62f);
             }, dust);
+            if (travel.sqrMagnitude > 0.1f)
+                Fx.LdMany("Spray", 2, i =>
+                {
+                    var side = Vector3.Cross(Vector3.up, travel) * (i == 0 ? -0.65f : 0.65f);
+                    var p = at - travel * Random.Range(0.2f, 0.8f) + side + Vector3.up * 0.16f;
+                    return (p, -travel * 5.5f + Vector3.up * 0.3f, 0.055f, 0.32f);
+                }, Wind);
+        }
+
+        public void SetTravel(Vector3 direction)
+        {
+            charging = false;
+            direction.y = 0;
+            travel = direction.sqrMagnitude > 1e-4f ? direction.normalized : Vector3.zero;
+            bodyRenderer.enabled = crownRenderer.enabled = true;
         }
 
         public void SetCharge(float k)
         {
+            charging = true;
             k = Mathf.Clamp01(k);
             transform.localScale = Vector3.one * Mathf.Lerp(0.22f, 0.72f, k * k * (3f - 2f * k));
             alpha = Mathf.Lerp(0.25f, 0.9f, k);
+            bodyRenderer.enabled = k > 0.42f;
+            crownRenderer.enabled = k > 0.76f;
         }
 
         public void SetAlpha(float a) => alpha = Mathf.Clamp01(a);
@@ -278,6 +355,7 @@ namespace Spiritfire.Game
             if (mainMesh) Destroy(mainMesh);
             if (underMesh) Destroy(underMesh);
             if (bodyMesh) Destroy(bodyMesh);
+            if (crownMesh) Destroy(crownMesh);
         }
     }
 }
