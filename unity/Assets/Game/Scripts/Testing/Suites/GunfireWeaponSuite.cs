@@ -58,8 +58,11 @@ namespace Spiritfire.Game.Testing
                 var gun = WeaponRigParts.GunOf(view.transform, def.prefab);
                 var sockets = WeaponSockets.Of(gun);
                 int found = sockets ? WeaponSockets.SocketNames.Count(n => sockets.Socket(n)) : 0;
-                Line($"枪模 {def.prefab}；挂点 {found}/6；机械瞄具 {WeaponSight.For("rifle").kind}");
-                if (found != 6) Fail("枪械挂点不全");
+                var native = gun ? gun.GetComponent<GunfireOriginalAnimation>() : null;
+                Line(native
+                    ? $"原生枪模 {def.prefab}；双手 Animator {native.GetComponentsInChildren<Animator>(true).Length}；枪口 {(found > 0 ? "已接" : "没接")}"
+                    : $"枪模 {def.prefab}；挂点 {found}/6；机械瞄具 {WeaponSight.For("rifle").kind}");
+                if (native ? !native || found < 1 : found != 6) Fail("枪械运行挂点不全");
 
                 rig.weapons.testAim = true;
                 yield return new WaitForSeconds(0.55f);

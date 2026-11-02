@@ -1,0 +1,179 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 1101
+  m_Shader: {fileID: 4800000, guid: 43a70b8937c40e24f866ce32c5ed7456, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - ENABLE_UV_ANIMATION
+  - _EMISSION
+  - _METALLICGLOSSMAP
+  - _METALLICSPECGLOSSMAP
+  - _OCCLUSIONMAP
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - HideOutLine
+  m_LockedProperties:
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AnimationMask:
+        m_Texture: {fileID: 2800000, guid: d46390480f160334ab61e6ed9e958928, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AnimationTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AnimationTex2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DirChangeTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveEdgeTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveNoise:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 2800000, guid: d3308e290f430fe43b093efa9f15dcc1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelAniTex:
+        m_Texture: {fileID: 2800000, guid: 8f56425bc6404654fba828edd136400a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelAnimationTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelDissolveNoise:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelMap1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 1068e09304dc6ba45996a09b215d5b89, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 2800000, guid: d3308e290f430fe43b093efa9f15dcc1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 2800000, guid: d3308e290f430fe43b093efa9f15dcc1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AdditionLightIntensity: 1
+    - _AlphaClip: 0
+    - _AnimationBlendFunc: 0
+    - _AnimationRatio: 0
+    - _Blend: 0
+    - _BumpScale: 1
+    - _Cull: 2
+    - _Cutoff: 0.63
+    - _DirChange: 0
+    - _DissolveAmount: 0.3
+    - _DissolveBand: 0.3
+    - _DissolveEdgeWidth: 0.1
+    - _DitherClip: 0
+    - _DitherScale: 0
+    - _DstBlend: 0
+    - _ENABLE_DISSOLVE: 0
+    - _ENABLE_HIDE_OUTLINE: 0
+    - _ENABLE_OUTLINE: 1
+    - _ENABLE_UV_ANIMATION: 1
+    - _EdgeRatio: 2
+    - _EnableDirectionalDissolve: 0
+    - _EnableEdgeLight: 0
+    - _EnableFresnelAnimation: 0
+    - _EnableMatCapLight: 0
+    - _EnableShield: 0
+    - _EnableSmoothFresnel: 0
+    - _FogFactor: 1
+    - _FresnelAniRatio: 1
+    - _FresnelScale1: 1
+    - _FresnelScale2: 1
+    - _Frozen: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _HideOutLineComp: 6
+    - _HideOutLineRef: 65
+    - _InfluenceByViewDis: 0
+    - _MainLightIntensity: 1
+    - _Metallic: 0
+    - _OcclusionStrength: 0.339
+    - _OutLineReadMask: 127
+    - _OutLineRef: 65
+    - _OutLineWriteMask: 127
+    - _OutlineWidth: 0.005
+    - _ReceiveShadows: 1
+    - _ReflectionRatio: 1
+    - _RenderQueueOffset: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _StencilZfail: 0
+    - _Surface: 0
+    - _Use2UV: 0
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 1
+    m_Colors:
+    - _AnimationColor: {r: 1, g: 1, b: 1, a: 1}
+    - _AnimationDir: {r: 0, g: 0, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DirChangeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveEdgeAlbedo: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveEnd: {r: 0, g: 0, b: 0, a: 1}
+    - _DissolveStart: {r: 1, g: 0, b: 0, a: 1}
+    - _EdgeColor: {r: 0, g: 1.2, b: 6, a: 1}
+    - _EdgeLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0.3137255, g: 0.21176471, b: 1.4980392, a: 1}
+    - _FresnelAniDir: {r: 0, g: 0.2, b: 0, a: 1}
+    - _FresnelAnimationColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelAnimationDir: {r: 0, g: 0, b: 0, a: 0}
+    - _HideOutlineColor: {r: 1, g: 0, b: 0, a: 1}
+    - _MatCapColor1: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _MatCapColor2: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _OutlineColor: {r: 0.009803922, g: 0, b: 0, a: 1}
+    - _OverlayColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

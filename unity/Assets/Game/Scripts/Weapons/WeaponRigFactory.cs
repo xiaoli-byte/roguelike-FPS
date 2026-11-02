@@ -6,7 +6,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 一把枪的第一人称 rig（W4；原来在 PlayerFactory.BuildWeaponRig，签名不变，PlayerFactory 转调这里）：
-    ///   rig（相机下，<see cref="FirstPersonViewmodel"/>，绕 Y 转 180° 让枪管朝相机前方）→ 枪模 Prefab（缩放 VM_SCALE 0.76）→ 英雄手臂。
+    ///   rig（相机下，<see cref="FirstPersonViewmodel"/>；项目枪管朝 −Z 时绕 Y 转 180°，Gunfire 原生 +Z 不旋转）→ 枪模 Prefab（缩放 VM_SCALE 0.76）→ 英雄手臂。
     ///   · 腰射 = viewOffset + HIP_SHIFT(0.024, −0.02)，开镜 = aimOffset × VM_SCALE；
     ///   · 右手在握把（武器表 rightHand / rightPitch）；左手放在枪模的 leftGrip 挂点上（W3；旧 Prefab 没有挂点时用武器表 leftHand），横滚 = leftRoll；
     ///   · 持握与换弹（<see cref="HandlingProfile"/>）：枪重 / 晃动倍率 / 换弹姿态写进 FirstPersonViewmodel，挂 <see cref="WeaponPartAnimator"/>（弹匣、转轮、泵）
@@ -24,46 +24,69 @@ namespace Spiritfire.Game
             place ??= GameDatabase.Place;
             var rig = new GameObject($"FP Rig {def.id}");
             rig.transform.SetParent(cam, false);
-            var gun = Place(place, def.prefab, rig.transform, Vector3.zero, PlayerFactory.ViewmodelScale);
+            GameObject gun = null;
+            bool original = def.prefab.StartsWith("SK_Weapon_Gunfire", System.StringComparison.Ordinal);
+            if (original)
+            {
+                string sourceId = def.prefab.Substring("SK_Weapon_Gunfire".Length);
+                gun = GunfireOriginalWeapon.Instantiate(sourceId, rig.transform, PlayerFactory.ViewmodelScale);
+            }
+            if (!gun) gun = Place(place, def.prefab, rig.transform, Vector3.zero, PlayerFactory.ViewmodelScale);
             if (!gun)
             {
                 PlayerFactory.Kill(rig);
                 return null;
             }
+            original = original && gun.GetComponent<GunfireOriginalAnimation>();
             var vm = rig.AddComponent<FirstPersonViewmodel>();
             vm.hipOffset = def.viewHip + HipShift;
             vm.aimOffset = def.viewAim * PlayerFactory.ViewmodelScale;
             var profile = def.IsBlade ? null : HandlingProfile.For(def.id);
             Configure(vm, profile);
-            rig.transform.SetLocalPositionAndRotation(vm.hipOffset, Quaternion.Euler(0, 180, 0));
-
-            var r = Place(place, hero.armR, gun.transform, def.rightHand, 1);
-            if (r) r.transform.localRotation = Quaternion.Euler(def.rightPitch * Mathf.Rad2Deg, 0, 0);
-            var grip = WeaponSockets.Find(gun.transform, WeaponSockets.LeftGrip);
-            var leftPos = grip ? gun.transform.InverseTransformPoint(grip.position) : def.leftHand;
-            var l = Place(place, hero.armL, gun.transform, leftPos, 1);
-            if (l) l.transform.localRotation = Quaternion.Euler(0, 0, -def.leftRoll * Mathf.Rad2Deg);
-
-            foreach (var lg in rig.GetComponentsInChildren<LODGroup>(true))
+            if (original) vm.reloadTiltRot = vm.reloadTiltPos = vm.shellTiltRot = vm.shellTiltPos = Vector3.zero;
+            rig.transform.SetLocalPositionAndRotation(original ? Vector3.zero : vm.hipOffset, original ? Quaternion.identity : Quaternion.Euler(0, 180, 0));
+            if (original)
             {
-                var lods = lg.GetLODs();
-                for (int i = 1; i < lods.Length; i++)
-                    foreach (var rr in lods[i].renderers) if (rr) rr.enabled = false;
-                PlayerFactory.Kill(lg);
+                var muzzle = WeaponSockets.FindDeep(gun.transform, WeaponSockets.Muzzle);
+                if (muzzle)
+                {
+                    vm.hipOffset = new Vector3(def.prefab == "SK_Weapon_Gunfire1002" ? 0f : 0.2f, -0.13f, 0.6f) - rig.transform.InverseTransformPoint(muzzle.position);
+                    vm.aimOffset = new Vector3(0, -0.08f, 0.65f) - rig.transform.InverseTransformPoint(muzzle.position);
+                }
+                rig.transform.localPosition = vm.hipOffset;
             }
-            // 运行时 Destroy 要到帧末才生效：先停掉，免得这一帧挡住玩家自己的角色控制器
-            foreach (var c in rig.GetComponentsInChildren<Collider>(true))
-            {
-                c.enabled = false;
-                PlayerFactory.Kill(c);
-            }
-            foreach (var rr in rig.GetComponentsInChildren<Renderer>(true)) rr.shadowCastingMode = ShadowCastingMode.Off;
 
-            if (profile != null)
+            if (!original)
             {
-                rig.AddComponent<WeaponPartAnimator>().Bind(def, profile, gun.transform);
-                if (l) rig.AddComponent<WeaponHandRig>().Bind(def, profile, gun.transform, l.transform);
+                var r = Place(place, hero.armR, gun.transform, def.rightHand, 1);
+                if (r) r.transform.localRotation = Quaternion.Euler(def.rightPitch * Mathf.Rad2Deg, 0, 0);
+                var grip = WeaponSockets.Find(gun.transform, WeaponSockets.LeftGrip);
+                var leftPos = grip ? gun.transform.InverseTransformPoint(grip.position) : def.leftHand;
+                var l = Place(place, hero.armL, gun.transform, leftPos, 1);
+                if (l) l.transform.localRotation = Quaternion.Euler(0, 0, -def.leftRoll * Mathf.Rad2Deg);
+
+                foreach (var lg in rig.GetComponentsInChildren<LODGroup>(true))
+                {
+                    var lods = lg.GetLODs();
+                    for (int i = 1; i < lods.Length; i++)
+                        foreach (var rr in lods[i].renderers) if (rr) rr.enabled = false;
+                    PlayerFactory.Kill(lg);
+                }
+                // 运行时 Destroy 要到帧末才生效：先停掉，免得这一帧挡住玩家自己的角色控制器
+                foreach (var c in rig.GetComponentsInChildren<Collider>(true))
+                {
+                    c.enabled = false;
+                    PlayerFactory.Kill(c);
+                }
+                foreach (var rr in rig.GetComponentsInChildren<Renderer>(true)) rr.shadowCastingMode = ShadowCastingMode.Off;
+
+                if (profile != null)
+                {
+                    rig.AddComponent<WeaponPartAnimator>().Bind(def, profile, gun.transform);
+                    if (l) rig.AddComponent<WeaponHandRig>().Bind(def, profile, gun.transform, l.transform);
+                }
             }
+            else gun.GetComponent<GunfireOriginalAnimation>().Bind(rig.GetComponentInParent<WeaponController>());
             PlayerFactory.SetLayer(rig, Layers.FirstPerson);
             rig.SetActive(def.id == hero.startWeapon);
             return vm;

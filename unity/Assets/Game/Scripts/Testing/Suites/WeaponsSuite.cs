@@ -436,10 +436,20 @@ namespace Spiritfire.Game.Testing
             var missing = sockets ? WeaponSockets.SocketNames.Where(n => !sockets.Socket(n)).ToList() : WeaponSockets.SocketNames.ToList();
             var hand = view.GetComponent<WeaponHandRig>();
             var parts = view.GetComponent<WeaponPartAnimator>();
-            Line($"挂点：{(sockets ? $"零件 {string.Join("/", sockets.partNames)}，缺 {(missing.Count == 0 ? "无" : string.Join("、", missing))}" : "没有 WeaponSockets（Prefab 没重建？）")}；" +
-                 $"左手 {(hand ? "已接" : "没接")}，零件动画 {(parts ? "已接" : "没接")}");
-            if (!sockets || missing.Count > 0) Fail($"{def.name}：枪模挂点不全（{string.Join("、", missing)}）");
-            if (!hand) Fail($"{def.name}：rig 上没有 WeaponHandRig（左手不跟握点、换弹没有手位）");
+            var native = gun ? gun.GetComponent<GunfireOriginalAnimation>() : null;
+            Line(native
+                ? $"原生双手 Animator {native.GetComponentsInChildren<Animator>(true).Length}，枪口 {(sockets && sockets.muzzle ? "已接" : "没接")}；原 Fire/Reload 由 gunfireoriginal 套件验证"
+                : $"挂点：{(sockets ? $"零件 {string.Join("/", sockets.partNames)}，缺 {(missing.Count == 0 ? "无" : string.Join("、", missing))}" : "没有 WeaponSockets（Prefab 没重建？）")}；" +
+                  $"左手 {(hand ? "已接" : "没接")}，零件动画 {(parts ? "已接" : "没接")}");
+            if (native)
+            {
+                if (!sockets || !sockets.muzzle) Fail($"{def.name}：原生枪口没接");
+            }
+            else
+            {
+                if (!sockets || missing.Count > 0) Fail($"{def.name}：枪模挂点不全（{string.Join("、", missing)}）");
+                if (!hand) Fail($"{def.name}：rig 上没有 WeaponHandRig（左手不跟握点、换弹没有手位）");
+            }
             var grip = sockets ? sockets.leftGrip : null;
             float restGap = hand && hand.Arm && grip ? Vector3.Distance(hand.Arm.position, grip.position) : -1;
             if (restGap > 0.01f) Fail($"{def.name}：静止时左手离握点 {restGap * 100:F1} cm");

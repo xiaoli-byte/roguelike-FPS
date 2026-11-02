@@ -31,7 +31,8 @@ namespace Spiritfire.Art.Editor
     /// ui（UI Toolkit 基座资产：SDF 字体、分层 PanelSettings、文本设置，见 UIBuilder.cs）/
     /// fx（FxBuilder：特效程序贴图、材质、粒子风格预制体、着色器变体集、URP 贴花渲染特性）/
     /// blade（BladeMeshBaker：碎刃网格、渐变 / 刀柄贴图、材质、SK_Weapon_DemonBlade Prefab；之后再跑 core 让 GameDatabase 收录）/
-    /// gunfire（GunfireWeaponImport：定向生成 1001 枪械材质、Prefab、挂点并更新 GameDatabase）。
+    /// gunfire（六把转换版武器）/ gunfirenative（GunfireOriginalImport：原生网格、动画、枪口特效与音频 Prefab）/
+    /// gunfirearena（把未保存场景备份到 Library/SpiritfireBridge，再打开 TestArena）/ buildgunfire（独立试玩包）。
     /// 安全：Play 模式中、或当前场景有未保存的修改时拒绝执行（不替用户丢弃修改）；执行完重新打开用户原来的场景。
     /// 编辑器没开时 bridge.sh 用 -batchmode -executeMethod <see cref="BatchRun"/> 跑 level / levels（命令和参数走命令行）。
     /// </summary>
@@ -69,6 +70,19 @@ namespace Spiritfire.Art.Editor
             string[] args = req["args"] is JArray a ? a.Select(t => (string)t).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray() : Array.Empty<string>();
 
             if (EditorApplication.isPlayingOrWillChangePlaymode) { Respond(id, command, "rejected", "编辑器在 Play 模式中", null, 0); return; }
+            if (command == "gunfirearena")
+            {
+                for (int i = 0; i < EditorSceneManager.sceneCount; i++)
+                {
+                    var scene = EditorSceneManager.GetSceneAt(i);
+                    if (!scene.isDirty) continue;
+                    string backup = $"Library/SpiritfireBridge/recovery-{Guid.NewGuid():N}.unity";
+                    EditorSceneManager.SaveScene(scene, backup);
+                }
+                EditorSceneManager.OpenScene("Assets/Scenes/TestArena.unity");
+                Respond(id, command, "ok", null, null, 0);
+                return;
+            }
             for (int i = 0; i < EditorSceneManager.sceneCount; i++)
                 if (EditorSceneManager.GetSceneAt(i).isDirty) { Respond(id, command, "rejected", "当前场景有未保存的修改，请先保存", null, 0); return; }
 
@@ -142,6 +156,8 @@ namespace Spiritfire.Art.Editor
                 bool all = command == "all";
                 if (all || command == "sync") ArtSync.Sync(out errors);
                 if (command == "gunfire") GunfireWeaponImport.Run();
+                if (command == "gunfirenative") GunfireOriginalImport.Run();
+                if (command == "buildgunfire") GunfirePlayerBuild.Run();
                 if (all || command == "scenes") ShowcaseSceneBuilder.BuildAll();
                 if (all || command == "capture") ReviewCapture.CaptureAll();
                 if (all || command == "sheets") AnimReviewSheet.RenderAll();

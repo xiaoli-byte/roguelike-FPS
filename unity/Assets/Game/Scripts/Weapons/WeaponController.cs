@@ -556,11 +556,16 @@ namespace Spiritfire.Game
             {
                 var socket = MuzzleSocket;
                 var sockets = socket ? socket.GetComponentInParent<WeaponSockets>() : null;
-                Fx.MuzzleFlash(socket, muzzle, sockets ? sockets.Forward : Aim.forward, Fx.ElementColor(w.element),
-                    def.flash / 0.12f * (0.5f + 0.5f * Mathf.Clamp01(strength)));
+                if (!socket || !socket.GetComponentInParent<GunfireOriginalAnimation>())
+                    Fx.MuzzleFlash(socket, muzzle, sockets ? sockets.Forward : Aim.forward, Fx.ElementColor(w.element),
+                        def.flash / 0.12f * (0.5f + 0.5f * Mathf.Clamp01(strength)));
             }
-            if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
-            else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
+            var original = MuzzleSocket ? MuzzleSocket.GetComponentInParent<GunfireOriginalAnimation>() : null;
+            if (!original || original.shotClips.Length == 0)
+            {
+                if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
+                else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
+            }
             if (feel) feel.FireKick(def.shake * strength, def.shake > 0.15f ? 0.16f : 0.08f, def.kickBack * strength);
         }
 

@@ -9,7 +9,10 @@
 #   refresh / sync / scenes / capture / sheets / motion / all / pets / petcompare / fur（毛发画质对比截图）/ furbench（毛发三档帧耗时）
 #   fx                      FxBuilder：特效程序贴图、材质、粒子风格预制体、着色器变体集、URP 贴花渲染特性（改了 G/Fx/Presets 后重跑）
 #   blade                   BladeMeshBaker：碎刃网格、渐变 / 刀柄贴图（webp 用 python + Pillow 转码）、材质、SK_Weapon_DemonBlade Prefab；之后跑 core
-#   gunfire                 定向导入 Gunfire 1001 枪械 Prefab，并更新 GameDatabase
+#   gunfire                 导入六把 Gunfire 转换版武器 Prefab，并更新 GameDatabase
+#   gunfirenative           从 Assets/Art/Original/Gunfire 生成原生武器 Prefab、动画和配套资源
+#   gunfirearena            备份未保存场景到 Library/SpiritfireBridge，再打开 TestArena
+#   buildgunfire            构建独立 GunfireTest 试玩包；加 --gunfire-review 参数可跑原生武器专项
 #   level <id>              按 [LevelBuilder] 登记生成一张关卡 + 验收 + 截图（level 1-1 = 1-1 古道穿越戈壁；旧名 level11 仍可用）
 #   levels                  生成全部登记的关卡，构建设置里的关卡场景按登记顺序排（最后顺带生成主菜单场景）
 #   menu                    主菜单场景 Assets/Scenes/MainMenu.unity：展示场景做远景 + 选英雄祭台（MenuSceneBuilder.cs）
@@ -102,7 +105,7 @@ case "$cmd" in
   petcompare) method=Spiritfire.Art.Editor.PetStyleCompare.BatchRun ;;
   fur) method=Spiritfire.Art.Editor.FurReview.BatchRun ;;
   furbench) method=Spiritfire.Art.Editor.FurBench.BatchRun ;;
-  level|levels|ui|fx|blade|menu|audio|gunfire)
+  level|levels|ui|fx|blade|menu|audio|gunfire|gunfirenative|gunfirearena|buildgunfire)
     # 和编辑器里走同一套命令分发（PipelineBridge.BatchRun），回应写 response-batch-<命令>.json
     batch=(-bridgeCommand "$cmd")
     for a in ${args[@]+"${args[@]}"}; do batch+=(-bridgeArg "$a"); done

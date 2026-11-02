@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4794158607196126940
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1709254077376921, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_Name
+      value: 1106
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372920208702427, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114025901758691103, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    - {fileID: 114985305603660343, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    - {fileID: 114977153420339851, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    - {fileID: 114336590748365959, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    - {fileID: 114161607090078389, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    - {fileID: 114918264173551851, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    - {fileID: 114587397909062814, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    - {fileID: 114875609422105747, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1709254077376921, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7411816806635844631}
+    - targetCorrespondingSourceObject: {fileID: 1709254077376921, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6627010009873737650}
+  m_SourcePrefab: {fileID: 100100000, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+--- !u!1 &4795866675525359429 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1709254077376921, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+  m_PrefabInstance: {fileID: 4794158607196126940}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7411816806635844631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4795866675525359429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e3e64056a35504b864844065ef1a9b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.WeaponSockets
+  weaponId: 1106
+  muzzle: {fileID: 4798641928198126244}
+  sight: {fileID: 0}
+  leftGrip: {fileID: 0}
+  load: {fileID: 0}
+  finish: {fileID: 0}
+  eject: {fileID: 0}
+  partNames: []
+  parts: []
+--- !u!114 &6627010009873737650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4795866675525359429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 616ffe5d2a90fc74e9a875b1cbaed742, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Spiritfire.Game::Spiritfire.Game.GunfireOriginalAnimation
+  weaponId: 1106
+  muzzlePrefab: {fileID: 6545714971039000763, guid: 8264a98d55f31db4ab532f9f1c786bf5, type: 3}
+  shotClips: []
+  fireCount: 0
+  reloadCount: 0
+  lastTrigger:
+--- !u!4 &4798641928198126244 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4634108722742392, guid: 0092e0851658f524a83301cbdca02399, type: 3}
+  m_PrefabInstance: {fileID: 4794158607196126940}
+  m_PrefabAsset: {fileID: 0}
