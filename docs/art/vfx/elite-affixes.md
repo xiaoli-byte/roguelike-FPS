@@ -80,10 +80,10 @@
 |---|---|---|
 | 蓄 | 0–0.85 s | 申请重击出手名额，基础 AI 暂停；小型漏斗与风纹从收束到展开，20 m 长、2.7 m 宽的青色风道锁定方向，不再追踪玩家 |
 | 挥 | 0.85 s | 一道近白 / 风青 / 墨青暗边的月牙挥斩；龙卷从身前生成，脚下尘冠、低频与局部震动同帧给出重量；同帧归还出手名额，0.22 s 后恢复基础 AI |
-| 行 | 释放后 0–2.5 s | 5.8 m 漏斗以 8 m/s 直线前进：十六条起止、宽度、转速各异的流层绕 S 形风核，三排顶点形成亮芯与柔边；倾斜云冠随前进方向后拖，稳定地面环、章节尘裙、切向碎石与后刮风痕分层运动；水平扫掠判定防低帧率漏检，命中 18 × 伤害倍率并卷起玩家，只结算一次 |
+| 行 | 释放后 0–2.5 s | 5.8 m 漏斗以 8 m/s 直线前进：十六条流层与双层噪声风体共同采样 8 段阻尼弹簧风核；云冠按层减速扩散，径向地面流环、章节尘裙、切向碎石与后刮风痕分层运动；水平扫掠判定防低帧率漏检，命中 18 × 伤害倍率并卷起玩家，只结算一次 |
 | 散 | 撞墙 / 2.5 s | 风体 0.35 s 渐隐；精英死亡或回收不影响已经挥出的龙卷，未释放的蓄力则撤回 |
 
-主形是 `EliteTornadoVisual` 的四张动态网格（淡漏斗 / 弱暗衬 / 柔边流层 / 连续云环），挥斩复用 `SlashArc`；环境色由 `FxTone.Ground` 按章节换算。只用普通混合，不让每条流层都带硬暗边而叠成网。参考：[Le Lu 的 Godot 龙卷](https://www.youtube.com/watch?v=thOuxupumtI)（S 形风核、长流层、倾斜云冠、地面环）、[로헨 的水龙卷](https://www.youtube.com/watch?v=E1VNO_jtRXY)（内外流层与边缘亮芯）、[Eric VFX Studio 的龙卷合集](https://www.youtube.com/watch?v=dzXZIJ5MVww)（宽顶与密度）；只提炼结构，不照搬高曝白。冒烟：`bash scripts/unity/bridge.sh playtest elite-tornado [场景]`，已在亮沙、雪地、熔岩三种地面检查第一人称。
+主形是 `EliteTornadoVisual` 的四张动态网格与 `SF_EliteTornado.shader`。着色器按 [Scenes3D/vfx-tornado](https://github.com/Scenes3D/vfx-tornado) 的 `twistedCylinder`、双层斜向噪声和地面径向 UV 改写为 URP HLSL；8 段弹簧风核与云顶减速扩散按 [Habrador/Unity-Tornado-Simulator](https://github.com/Habrador/Unity-Tornado-Simulator)（MIT，Copyright 2021 Erik Nordeus）实现。流层三排顶点形成亮芯与柔边，环境色由 `FxTone.Ground` 按章节换算。造型另参考 [Le Lu 的 Godot 龙卷](https://www.youtube.com/watch?v=thOuxupumtI)、[로헨 的水龙卷](https://www.youtube.com/watch?v=E1VNO_jtRXY) 与 [Eric VFX Studio 的龙卷合集](https://www.youtube.com/watch?v=dzXZIJ5MVww)，不照搬高曝白。冒烟：`bash scripts/unity/bridge.sh playtest elite-tornado [场景]`，已在亮沙、雪地、熔岩三种地面检查第一人称。
 
 ### 3.6 死亡 · 金环收起
 

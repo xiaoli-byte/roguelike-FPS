@@ -49,6 +49,8 @@ namespace Spiritfire.Game
         Surge,
         /// <summary>首领 / 章节贴花（特效打磨 C 路：三章主题出生法阵、熔铜泼溅、湿痕，Assets/Art/Shaders/SF_FxSigil.shader）</summary>
         Sigil,
+        /// <summary>精英龙卷的双层噪声风体与地面径向流环（Assets/Art/Shaders/SF_EliteTornado.shader）</summary>
+        EliteTornado,
     }
 
     /// <summary>
@@ -69,6 +71,7 @@ namespace Spiritfire.Game
         public const string ShaderChain = "Spiritfire/FxChain";
         public const string ShaderSurge = "Spiritfire/FxSurge";
         public const string ShaderSigil = "Spiritfire/FxSigil";
+        public const string ShaderEliteTornado = "Spiritfire/EliteTornado";
 
         static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         static readonly int MainTexId = Shader.PropertyToID("_MainTex");
@@ -112,6 +115,7 @@ namespace Spiritfire.Game
             FxMaterialKind.Chain => ShaderChain,
             FxMaterialKind.Surge => ShaderSurge,
             FxMaterialKind.Sigil => ShaderSigil,
+            FxMaterialKind.EliteTornado => ShaderEliteTornado,
             _ => ShaderParticles,
         };
 
@@ -215,6 +219,7 @@ namespace Spiritfire.Game
                     m.enableInstancing = false;
                     return;
                 case FxMaterialKind.Surge:
+                case FxMaterialKind.EliteTornado:
                     m.SetOverrideTag("RenderType", "Transparent");
                     m.renderQueue = (int)RenderQueue.Transparent + 2;
                     m.enableInstancing = false;

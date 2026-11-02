@@ -3,26 +3,32 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 精英龙卷的手绘风体：十六条起止、宽度与转速各异的流层绕 S 形风核运动，柔边亮芯叠在淡漏斗上。
-    /// 倾斜云冠、稳定地面环、章节尘裙与外抛风丝分层运动；普通混合保持色阶，不让亮部铺成一片奶白。
+    /// 精英龙卷的手绘风体：十六条起止、宽度与转速各异的流层绕 8 段阻尼弹簧风核运动，柔边亮芯叠在双层噪声风体上。
+    /// 倾斜云冠按层减速扩散，稳定地面环、章节尘裙与外抛风丝分层运动。
+    /// 弹簧骨架与云顶扩散实现参考 Habrador/Unity-Tornado-Simulator（MIT，Copyright 2021 Erik Nordeus）。
     /// </summary>
     public sealed class EliteTornadoVisual : MonoBehaviour
     {
-        const int Bands = 16, Segments = 28, BodySegments = 40, BodyLevels = 14, CrownSegments = 48;
+        const int Bands = 16, Segments = 28, BodySegments = 40, BodyLevels = 14, CrownSegments = 48, SkeletonPieces = 8;
         static readonly Color Ink = Hex.Rgb(0x263e4c);
         static readonly Color Wind = Hex.Rgb(0x68b2bf);
         static readonly Color Edge = Hex.Rgb(0xd3eee4);
         static readonly Color Cloud = Hex.Rgb(0x7297a3);
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+        static readonly int ModeId = Shader.PropertyToID("_Mode");
+        static readonly int AlphaId = Shader.PropertyToID("_Alpha");
+        static readonly int ColorAId = Shader.PropertyToID("_ColorA");
+        static readonly int ColorBId = Shader.PropertyToID("_ColorB");
 
         float height, topRadius, time, alpha = 1f, fade = 1f, fadeTarget = 1f, fadeSpeed = 3f, crownTimer, dustTimer;
         bool charging;
         Vector3 travel;
         Mesh mainMesh, underMesh, bodyMesh, crownMesh;
-        MeshRenderer mainRenderer, underRenderer, bodyRenderer, crownRenderer;
+        MeshRenderer mainRenderer, underRenderer, bodyRenderer, flowRenderer, groundRenderer, crownRenderer;
         MaterialPropertyBlock block;
-        FxHandle groundFlow;
         Vector3[] mainVertices, underVertices, bodyVertices, crownVertices;
+        readonly Vector3[] skeleton = new Vector3[SkeletonPieces];
+        readonly Vector3[] skeletonVelocity = new Vector3[SkeletonPieces];
 
         public static EliteTornadoVisual Create(Vector3 ground, float height, float topRadius, Transform parent = null, bool charging = false)
         {
@@ -39,6 +45,7 @@ namespace Spiritfire.Game
 
         void Build()
         {
+            InitializeSkeleton();
             block = new MaterialPropertyBlock();
             mainVertices = new Vector3[Bands * (Segments + 1) * 3];
             underVertices = new Vector3[Bands * (Segments + 1) * 2];
@@ -47,10 +54,9 @@ namespace Spiritfire.Game
             mainMesh = MakeStrokeMesh("Wind Strokes", out mainRenderer, 0, 3);
             underMesh = MakeStrokeMesh("Ink Underlay", out underRenderer, -1, 2);
             bodyMesh = MakeBodyMesh();
+            flowRenderer = MakeOverlayRenderer("Flow Noise", bodyMesh, -1);
             crownMesh = MakeCrownMesh();
-            if (!charging)
-                groundFlow = Surge.Annulus(transform.position + Vector3.up * 0.05f, 0.42f, 1.65f, SurgeKind.Water, 20f, 95f, 0.65f,
-                    Hex.Rgb(0x315c6c), Edge, 0.48f);
+            if (!charging) groundRenderer = MakeGroundRenderer();
             UpdateStrokes();
             PaintVertices();
         }
@@ -84,6 +90,36 @@ namespace Spiritfire.Game
             return mesh;
         }
 
+        MeshRenderer MakeOverlayRenderer(string name, Mesh mesh, int order)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(transform, false);
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var renderer = go.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = FxMaterials.Get(FxMaterialKind.EliteTornado);
+            renderer.sortingOrder = order;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            return renderer;
+        }
+
+        MeshRenderer MakeGroundRenderer()
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            Destroy(go.GetComponent<Collider>());
+            go.name = "Ground Flow";
+            go.transform.SetParent(transform, false);
+            go.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            go.transform.localPosition = new Vector3(0, 0.05f, 0);
+            go.transform.localScale = new Vector3(3.4f, 3.4f, 1);
+            var renderer = go.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = FxMaterials.Get(FxMaterialKind.EliteTornado);
+            renderer.sortingOrder = -3;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            return renderer;
+        }
+
         Mesh MakeBodyMesh()
         {
             var go = new GameObject("Funnel Body");
@@ -93,11 +129,12 @@ namespace Spiritfire.Game
             mesh.MarkDynamic();
             filter.sharedMesh = mesh;
             bodyRenderer = go.AddComponent<MeshRenderer>();
-            bodyRenderer.sharedMaterial = FxMaterials.AlphaBlend;
+            bodyRenderer.sharedMaterial = FxMaterials.Get(FxMaterialKind.EliteTornado);
             bodyRenderer.sortingOrder = -2;
             bodyRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             bodyRenderer.receiveShadows = false;
             var triangles = new int[BodyLevels * BodySegments * 12];
+            var uv = new Vector2[(BodyLevels + 1) * (BodySegments + 1)];
             int n = 0;
             for (int y = 0; y < BodyLevels; y++)
                 for (int x = 0; x < BodySegments; x++)
@@ -105,7 +142,11 @@ namespace Spiritfire.Game
                     int k = y * (BodySegments + 1) + x;
                     n = Quad(triangles, n, k, BodySegments + 1);
                 }
+            for (int y = 0; y <= BodyLevels; y++)
+                for (int x = 0; x <= BodySegments; x++)
+                    uv[y * (BodySegments + 1) + x] = new Vector2(x / (float)BodySegments, y / (float)BodyLevels);
             mesh.SetVertices(new Vector3[(BodyLevels + 1) * (BodySegments + 1)]);
+            mesh.uv = uv;
             mesh.SetTriangles(triangles, 0);
             mesh.bounds = new Bounds(Vector3.up * height * 0.5f, new Vector3(topRadius * 4f, height * 1.4f, topRadius * 4f));
             return mesh;
@@ -214,8 +255,11 @@ namespace Spiritfire.Game
             if (dt <= 0) return;
             time += dt;
             fade = Mathf.MoveTowards(fade, fadeTarget, dt * fadeSpeed);
+            UpdateSkeleton(dt);
             UpdateStrokes();
-            groundFlow.MoveTo(transform.position + Vector3.up * 0.05f);
+            SetNoiseLayer(bodyRenderer, 0, Ink, Wind, alpha * fade * 0.8f);
+            SetNoiseLayer(flowRenderer, 1, Wind, Edge, alpha * fade);
+            SetNoiseLayer(groundRenderer, 2, Ink, Wind, alpha * fade * 0.8f);
             block.SetColor(BaseColorId, new Color(1, 1, 1, alpha * fade));
             mainRenderer.SetPropertyBlock(block);
             underRenderer.SetPropertyBlock(block);
@@ -241,13 +285,59 @@ namespace Spiritfire.Game
             }
         }
 
-        Vector3 Axis(float u)
+        void SetNoiseLayer(Renderer renderer, int mode, Color a, Color b, float opacity)
+        {
+            if (!renderer) return;
+            block.SetInt(ModeId, mode);
+            block.SetColor(ColorAId, a);
+            block.SetColor(ColorBId, b);
+            block.SetFloat(AlphaId, opacity);
+            renderer.SetPropertyBlock(block);
+        }
+
+        Vector3 RestAxis(float u)
         {
             float sway = u * u * 0.22f;
             float bend = Mathf.Pow(u, 1.65f) * 0.52f;
             var shear = -travel * (u * u * height * 0.11f);
             return new Vector3(Mathf.Sin(u * 4.4f - time * 1.35f) * sway + bend, u * height,
                 Mathf.Cos(u * 3.2f - time * 1.1f) * sway - bend * 0.38f) + shear;
+        }
+
+        void InitializeSkeleton()
+        {
+            for (int i = 0; i < SkeletonPieces; i++)
+            {
+                skeleton[i] = RestAxis(i / (float)(SkeletonPieces - 1));
+                skeletonVelocity[i] = Vector3.zero;
+            }
+        }
+
+        void UpdateSkeleton(float dt)
+        {
+            float h = Mathf.Min(dt, 1f / 30f);
+            skeleton[0] = RestAxis(0);
+            skeletonVelocity[0] = Vector3.zero;
+            for (int i = 1; i < SkeletonPieces; i++)
+            {
+                float u = i / (float)(SkeletonPieces - 1);
+                var target = RestAxis(u);
+                var acceleration = (target - skeleton[i]) * 18f - skeletonVelocity[i] * 7f;
+                acceleration += (skeleton[i - 1] - skeleton[i]) * 24f;
+                if (i + 1 < SkeletonPieces) acceleration += (skeleton[i + 1] - skeleton[i]) * 24f;
+                skeletonVelocity[i] += acceleration * h;
+                skeleton[i] += skeletonVelocity[i] * h;
+                skeleton[i].y = target.y;
+            }
+        }
+
+        Vector3 Axis(float u)
+        {
+            float x = Mathf.Clamp01(u) * (SkeletonPieces - 1);
+            int i = Mathf.Min(SkeletonPieces - 2, Mathf.FloorToInt(x));
+            var result = Vector3.Lerp(skeleton[i], skeleton[i + 1], x - i);
+            result.y = u * height;
+            return result;
         }
 
         static float Hash(int b, int k) => Mathf.Repeat(Mathf.Sin(b * 12.9898f + k * 78.233f) * 43758.5453f, 1f);
@@ -303,7 +393,7 @@ namespace Spiritfire.Game
                 float v = y / 2f;
                 for (int x = 0; x <= CrownSegments; x++)
                 {
-                    float a = x / (float)CrownSegments * Mathf.PI * 2f + time * 0.7f;
+                    float a = x / (float)CrownSegments * Mathf.PI * 2f + time * Mathf.Lerp(0.85f, 0.32f, v);
                     float radius = Mathf.Lerp(topRadius * 0.48f, topRadius * 1.3f, v) * (1f + 0.12f * Mathf.Sin(a * 4f - time * 1.6f));
                     float lift = Mathf.Sin(a * 3f - time * 2.1f) * 0.13f + Mathf.Sin(a * 5f + time) * 0.05f + v * 0.12f
                         + Mathf.Sin(a) * radius * 0.22f - Mathf.Cos(a) * radius * 0.1f;
@@ -318,9 +408,11 @@ namespace Spiritfire.Game
             float a = Random.value * Mathf.PI * 2f;
             var d = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
             var center = transform.position + Axis(1f);
+            float layer = Random.value;
             var at = center + d * topRadius * Random.Range(0.55f, 0.9f) + Vector3.up * Random.Range(-0.08f, 0.12f);
-            var tangent = Vector3.Cross(Vector3.up, d) * 1.6f;
-            Fx.LdOne("ToonSmoke", at, tangent + Vector3.up * 0.25f, Random.Range(0.75f, 1.05f), 0.52f, Fx.LdAlpha(Cloud, 0.62f), false);
+            var tangent = Vector3.Cross(Vector3.up, d) * Mathf.Lerp(1.8f, 0.65f, layer);
+            var velocity = tangent + d * Mathf.Lerp(0.25f, 1.15f, layer) + Vector3.up * 0.2f;
+            Fx.LdOne("ToonSmoke", at, velocity, Mathf.Lerp(0.75f, 1.35f, layer), 0.52f, Fx.LdAlpha(Cloud, 0.62f), false);
         }
 
         void EmitSkirt()
@@ -372,12 +464,10 @@ namespace Spiritfire.Game
         {
             fadeTarget = 0;
             fadeSpeed = 1f / Mathf.Max(0.05f, seconds);
-            groundFlow.Cancel();
         }
 
         void OnDestroy()
         {
-            groundFlow.Cancel();
             if (mainMesh) Destroy(mainMesh);
             if (underMesh) Destroy(underMesh);
             if (bodyMesh) Destroy(bodyMesh);
