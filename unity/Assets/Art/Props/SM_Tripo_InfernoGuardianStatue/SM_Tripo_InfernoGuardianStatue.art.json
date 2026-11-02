@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoGuardianStatue",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.guardianStatue"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "SOCKET_Perch",
+      "pos": [
+        0,
+        7.5,
+        0
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -1.4857109785079956,
+      0,
+      -1.170615792274475
+    ],
+    "max": [
+      1.4857109785079956,
+      7.5,
+      1.170615792274475
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoGuardianStatue_LOD0",
+      "lod": 0,
+      "tris": 15267,
+      "verts": 20597,
+      "materials": [
+        "M_Tripo_InfernoGuardianStatue"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoGuardianStatue",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoGuardianStatue_BC.png",
+        "N": "Textures/T_Tripo_InfernoGuardianStatue_N.png",
+        "ORM": "Textures/T_Tripo_InfernoGuardianStatue_ORM.png",
+        "E": "Textures/T_Tripo_InfernoGuardianStatue_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoGuardianStatue.glb",
+    "sha256": "14d33652507e1edb0cfd505c618227d07fb76b7084e9bbc6baa1d4bc7a7c5f3c",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:58:24"
+}

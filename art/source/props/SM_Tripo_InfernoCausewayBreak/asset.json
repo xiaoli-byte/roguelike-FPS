@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_InfernoCausewayBreak",
+  "display": "断堤端头（3-1 断堤两端、石林残堤；左端与堤道段对接）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:53",
+          "files": {
+            "BO_SM_Tripo_InfernoCausewayBreak_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCausewayBreak_v001.json",
+              "sha256": "84421218f2591b3d65c28c91e6fa788ace8e561753d6bdeb627384a9d68aea83"
+            },
+            "BO_SM_Tripo_InfernoCausewayBreak_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCausewayBreak_v001_views.json",
+              "sha256": "27237ee643e7014d67278dbcd2b9ea883316fde269ab91ebfb166ce69f9dcc5b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.causewayBreak"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0.0,
+              -6.0
+            ],
+            "max": [
+              6.0,
+              5.0,
+              6.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:54",
+          "files": {
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_source.png",
+              "sha256": "66700b14f360c88949d62ed92cb11cae52a811d76a42ad5ba1a355cca01ee2b3"
+            },
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_front.png",
+              "sha256": "dae555ff31cf105bd465a626cc37e3e3576b54c992403895db897f816321739c"
+            },
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_left.png",
+              "sha256": "3787cf3d9493095d70ae99af08b518972041434282f2cffb08f8a8f586acb339"
+            },
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_back.png",
+              "sha256": "0b564566f8fa785f25796bc4f312ae491a8aae63b095572c3a44869b4a7c9046"
+            },
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_right.png",
+              "sha256": "480361140da0b4d9d94c0e9a575313d821c2d9f0e44da2a95cde7badd74413cd"
+            },
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_sheet.png",
+              "sha256": "9a540f82b250682033dd00bfd9d5804d11eaff41d0fa0371b8ac84b54774bde0"
+            },
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_prompt.txt",
+              "sha256": "93bdb60c44ff08f4408389d92bda5dee6e00fa763b76710e8d7bdcb2e30e3927"
+            },
+            "CN_SM_Tripo_InfernoCausewayBreak_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayBreak_v001_registration.json",
+              "sha256": "40c6c877ee6e1b5ef87daf68189731745e01f4f8fab449fe117435085eacef49"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "CausewayBreak_4.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (12m wide x 5m tall x 12m deep): The broken end of a massive basalt causeway. A FLAT walkable top paved with big dark charcoal basalt slabs and a low kerb of square black iron-capped stones along both long edges; the two long sides are steep walls of chunky hexagonal basalt columns with a few thick black iron tie plates. The LEFT end is a clean flat cut face showing the column cross-section. Toward the RIGHT end the causeway is shattered: the last third of the top breaks off in a jagged stepped edge of snapped column stumps and big tilted slabs sliding down, with a few wide cracks in the stumps painted flat bright orange. PROPORTIONS: FRONT and BACK views about 2.4 times as wide as tall, flat on the left and broken down on the right; the LEFT view shows the clean end face, the RIGHT view the jagged broken end. No lava around it, chunky broken blocks, no small rubble.",
+          "source_sha256": "66700b14f360c88949d62ed92cb11cae52a811d76a42ad5ba1a355cca01ee2b3",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4896560166483045,
+              "offset": [
+                78,
+                417
+              ],
+              "size": [
+                355,
+                190
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5134129123347452,
+              "offset": [
+                72,
+                417
+              ],
+              "size": [
+                368,
+                190
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.444000444000444,
+              "offset": [
+                91,
+                417
+              ],
+              "size": [
+                329,
+                190
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5079365079365079,
+              "offset": [
+                71,
+                417
+              ],
+              "size": [
+                369,
+                190
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:07:54"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:44:05",
+          "files": {
+            "HP_SM_Tripo_InfernoCausewayBreak_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCausewayBreak_v001_source.glb",
+              "sha256": "9c4ea33333a170048f5821665b41c5d9ed37c58a2d88e6c93469732bed251980"
+            },
+            "HP_SM_Tripo_InfernoCausewayBreak_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCausewayBreak_v001.glb",
+              "sha256": "e2243d47af83078921381cb50a6d3b32418e6b3954f5fa8f4d1a241778f8169e"
+            },
+            "HP_SM_Tripo_InfernoCausewayBreak_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCausewayBreak_v001_graph.json",
+              "sha256": "c141199078f3d47997b6446af4455f464f96a1fac90f9dda27b14ba416dfeb29"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/8494e5af-a845-4653-81f3-1488b71e55cc",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 16169,
+          "source_sha256": "9c4ea33333a170048f5821665b41c5d9ed37c58a2d88e6c93469732bed251980"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:44:51",
+          "files": {
+            "SM_Tripo_InfernoCausewayBreak_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoCausewayBreak_v001.blend",
+              "sha256": "3ea0437e1d9e0cfaa7b741e097ee61a6d359a0c42651474c30deea4bf51e65a5"
+            },
+            "SM_Tripo_InfernoCausewayBreak_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoCausewayBreak_v001.glb",
+              "sha256": "23af6ed024710f1973ffac836b3737eb6d14038a4a4642c30efd5ae9426e644a"
+            },
+            "SM_Tripo_InfernoCausewayBreak_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoCausewayBreak_v001_metrics.json",
+              "sha256": "6969fa3298a093088d58f549ecd543ddbb4e1f2e5eb434e46dfbed7636c76e0e"
+            },
+            "T_Tripo_InfernoCausewayBreak_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewayBreak_BC.png",
+              "sha256": "0601690e1544b5f7a6d044c60f491450adaf2b3efd42d50b4b7156cae8556c27"
+            },
+            "T_Tripo_InfernoCausewayBreak_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewayBreak_E.png",
+              "sha256": "0aeb09f7ccefb5746a500abf864006fdab5ef6c03aa5df835e8bdf95d7ae7562"
+            },
+            "T_Tripo_InfernoCausewayBreak_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewayBreak_N.png",
+              "sha256": "72a3224616ae11198ec9aaced38d6a38b6ba581bcea34487ae25ed1a31ba5089"
+            },
+            "T_Tripo_InfernoCausewayBreak_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCausewayBreak_ORM.png",
+              "sha256": "c171c8689493600dc25258c3a6a2598ce753a3feee01c048ba2d5990eac2766f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.794,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 16169,
+              "verts": 8385
+            }
+          ],
+          "export_kb": 732.6,
+          "seconds": 44.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:44:51",
+          "files": {
+            "SM_Tripo_InfernoCausewayBreak_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoCausewayBreak_v001_validation_v001.json",
+              "sha256": "0cac10c4e58c03932fae90af22043565959cda0ff286722f7707cc667a37d3ba"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:45:03",
+          "files": {
+            "SM_Tripo_InfernoCausewayBreak_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoCausewayBreak_v001_review_v001.png",
+              "sha256": "d6ec8f3e7ed628bf41ef398690b43c969c698e962e41d753f49fdd06194f77d5"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 16169 面；概念画成了下方断裂的残堤块，半沉熔岩使用；用户授权免审",
+            "time": "2026-11-03 05:49:46"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:46",
+          "files": {
+            "SM_Tripo_InfernoCausewayBreak.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoCausewayBreak.glb",
+              "sha256": "23af6ed024710f1973ffac836b3737eb6d14038a4a4642c30efd5ae9426e644a"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoCausewayBreak.glb"
+        }
+      ]
+    }
+  }
+}

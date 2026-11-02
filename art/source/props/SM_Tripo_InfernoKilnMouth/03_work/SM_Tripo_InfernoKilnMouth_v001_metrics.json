@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 30388,
+    "verts": 16498
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 14.29668,
+    "iou": 0.866,
+    "iou_per_view": {
+      "front": 0.926,
+      "left": 0.788,
+      "back": 0.937,
+      "right": 0.784
+    },
+    "size_m": [
+      14.29,
+      5.047,
+      12.0
+    ],
+    "reference_m": [
+      16.0,
+      5.0,
+      12.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0071
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.653,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoKilnMouth_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoKilnMouth_LOD0",
+      "tris": 30388,
+      "verts": 16498,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.994873046875
+      ],
+      "uv_utilization": 0.424,
+      "bbox_min": [
+        -7.1449,
+        -2.5236,
+        0.0
+      ],
+      "bbox_max": [
+        7.1449,
+        2.5236,
+        12.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoKilnMouth/04_export/SM_Tripo_InfernoKilnMouth_v001.glb",
+    "bytes": 1289668
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 57.9,
+  "_seconds": 61.9
+}

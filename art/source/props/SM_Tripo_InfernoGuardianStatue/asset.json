@@ -1,0 +1,401 @@
+{
+  "id": "SM_Tripo_InfernoGuardianStatue",
+  "display": "神道铜人（3-4 ① ×6；基座 2.6 m 全遮，头顶平 = 毕方栖点）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:34",
+          "files": {
+            "BO_SM_Tripo_InfernoGuardianStatue_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoGuardianStatue_v001.json",
+              "sha256": "c26778f1e608ef9b205d38d48c5e59df171db50f70c3f402cdb61143bcfc084d"
+            },
+            "BO_SM_Tripo_InfernoGuardianStatue_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoGuardianStatue_v001_views.json",
+              "sha256": "d545e3d7fb9f1e07062f245152ad7c38a53bbf52ba4a9f0152f4663cabfeacde"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.guardianStatue"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.75,
+              0.0,
+              -1.75
+            ],
+            "max": [
+              1.75,
+              7.5,
+              1.75
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:35",
+          "files": {
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_source.png",
+              "sha256": "f037a93ced4da2cf1e5bf864b820e6b72582ccc249ba2065126434ad433b89f9"
+            },
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_front.png",
+              "sha256": "3e35906bfaef456c050e78897eb747d658e2dcdd778dcc0003e77939ba0b560a"
+            },
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_left.png",
+              "sha256": "5bf25643305015999382224b3dd5b4009ac80f7665db8921e8b2bd8e9f308a6d"
+            },
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_back.png",
+              "sha256": "71df26ab1aa69b1200231b6e816e460d062b5b8dd000cd91a4479ada764b3d4b"
+            },
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_right.png",
+              "sha256": "2308503712dba52953785130c92339fc4391fb80332422a36bb8bdda02bb090c"
+            },
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_sheet.png",
+              "sha256": "29b1651ddd0a988468ce8a64a555220bb9d3f74b7101b695f6c626b57b8bc7cd"
+            },
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_prompt.txt",
+              "sha256": "2958861dc7d471f91bbb6ab42a2fc8854db344e5accb217b90baf3212cb3b80b"
+            },
+            "CN_SM_Tripo_InfernoGuardianStatue_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGuardianStatue_v001_registration.json",
+              "sha256": "26d3c9ebec9460cc4ecfdc93e5821fb5e70fff124d52c9aedcac85d291235333"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "GuardianStatue_2.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (3.5m wide x 7.5m tall x 3.5m deep): A colossal bronze guardian statue of a fire god's warrior standing on a plinth. PLINTH: a solid square block of dark charcoal basalt 3.5m wide and 2.6m tall with a black iron top band. STATUE: a stiff, frontal, stocky armoured warrior 4.9m tall facing the FRONT, cast in warm aged bronze with patches of dark verdigris green; chunky overlapping armour plates lacquered deep vermilion on the chest and shoulders; a stern square face; a helmet with a FLAT square top; both hands hold the long haft of a big crescent-bladed yue battle axe planted upright on the plinth in front of the body, the blade beside the head. Arms close to the body, nothing sticks out beyond the plinth. PROPORTIONS: all four views about 0.47 times as wide as tall. Chunky simplified toy-like forms, no fine engraving.",
+          "source_sha256": "f037a93ced4da2cf1e5bf864b820e6b72582ccc249ba2065126434ad433b89f9",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9852216748768472,
+              "offset": [
+                78,
+                55
+              ],
+              "size": [
+                355,
+                914
+              ],
+              "physical_height_m": 7.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9862844814301124,
+              "offset": [
+                121,
+                55
+              ],
+              "size": [
+                270,
+                914
+              ],
+              "physical_height_m": 7.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9862844814301124,
+              "offset": [
+                79,
+                55
+              ],
+              "size": [
+                354,
+                914
+              ],
+              "physical_height_m": 7.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9862844814301124,
+              "offset": [
+                121,
+                55
+              ],
+              "size": [
+                269,
+                914
+              ],
+              "physical_height_m": 7.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:07:35"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:42:26",
+          "files": {
+            "HP_SM_Tripo_InfernoGuardianStatue_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGuardianStatue_v001_source.glb",
+              "sha256": "896802ab3a504733fd8cbbf31c170ca4f5fabf2a1b036e57f488bd622da6a47f"
+            },
+            "HP_SM_Tripo_InfernoGuardianStatue_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGuardianStatue_v001.glb",
+              "sha256": "44be16b261cfa4afe02115776031659cd540ae60a85051ce8812c76110722700"
+            },
+            "HP_SM_Tripo_InfernoGuardianStatue_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGuardianStatue_v001_graph.json",
+              "sha256": "fabb7cda8f7373b59169b33d9da74498c6456e8b2e48b7af774dddf2fd5aae4f"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/a734248d-bcc4-4468-8234-b138b1a3c399",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15267,
+          "source_sha256": "896802ab3a504733fd8cbbf31c170ca4f5fabf2a1b036e57f488bd622da6a47f"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:43:14",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoGuardianStatue_v001.blend",
+              "sha256": "7d238eafe47bee79055419733b206eb88f14ea8e6c48d13ff2116ba2a79520de"
+            },
+            "SM_Tripo_InfernoGuardianStatue_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoGuardianStatue_v001.glb",
+              "sha256": "62d590b4dcc54d146729d8ddf8334c9a1bb805b25ca55d8f379a89685740bbe9"
+            },
+            "SM_Tripo_InfernoGuardianStatue_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoGuardianStatue_v001_metrics.json",
+              "sha256": "b44c5977b9d5b2ae7416465fdfb3c74e86315816f2449f11242505bdec04c03d"
+            },
+            "T_Tripo_InfernoGuardianStatue_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGuardianStatue_BC.png",
+              "sha256": "f29cfd079e65484e144115f6f9f86448085704c6a9448c62e3054ff76e3c2320"
+            },
+            "T_Tripo_InfernoGuardianStatue_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGuardianStatue_N.png",
+              "sha256": "2507b92dc26b408ec3d1674dd2024a5d9a24efe702df366b3280d5a52f12431b"
+            },
+            "T_Tripo_InfernoGuardianStatue_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGuardianStatue_ORM.png",
+              "sha256": "8ed333e1fa26656d349e7db2b322951048be20cc26629caf071f707c594dcf93"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.92,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15267,
+              "verts": 8066
+            }
+          ],
+          "export_kb": 1122.8,
+          "seconds": 48.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 05:48:53",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoGuardianStatue_v002.blend",
+              "sha256": "01f1da6938ed4da55c78f3d8653e3221173be6beea48951640e6fd2017c78c9c"
+            },
+            "SM_Tripo_InfernoGuardianStatue_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoGuardianStatue_v002.glb",
+              "sha256": "14d33652507e1edb0cfd505c618227d07fb76b7084e9bbc6baa1d4bc7a7c5f3c"
+            },
+            "SM_Tripo_InfernoGuardianStatue_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoGuardianStatue_v002_metrics.json",
+              "sha256": "7f7bab11b209fdf443d223dc1e440b45026ce8f4803e9c769addac4df1e68c31"
+            },
+            "T_Tripo_InfernoGuardianStatue_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGuardianStatue_BC.png",
+              "sha256": "f29cfd079e65484e144115f6f9f86448085704c6a9448c62e3054ff76e3c2320"
+            },
+            "T_Tripo_InfernoGuardianStatue_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGuardianStatue_E.png",
+              "sha256": "3cc1d3197f28ed51c84cd44b51bd095ddb777093269212825d4fff8ed71c5522"
+            },
+            "T_Tripo_InfernoGuardianStatue_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGuardianStatue_N.png",
+              "sha256": "2507b92dc26b408ec3d1674dd2024a5d9a24efe702df366b3280d5a52f12431b"
+            },
+            "T_Tripo_InfernoGuardianStatue_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGuardianStatue_ORM.png",
+              "sha256": "8ed333e1fa26656d349e7db2b322951048be20cc26629caf071f707c594dcf93"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.92,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15267,
+              "verts": 8066
+            }
+          ],
+          "export_kb": 1139.8,
+          "seconds": 48.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:43:15",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoGuardianStatue_v001_validation_v001.json",
+              "sha256": "22761710a33d8861810265a9774f38065b54fd76c5cba4a37f7b02f81dbaff05"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 05:48:54",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoGuardianStatue_v002_validation_v002.json",
+              "sha256": "af5bfbb1c3ed62e333553eba27dc59dc8f66e857cf66cb12374b65aeacae3f48"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:43:27",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoGuardianStatue_v001_review_v001.png",
+              "sha256": "0c194790c5ff421c07ef0b8dc06e9ffddf511f21d678254a8a0afb90195a2155"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 05:49:09",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoGuardianStatue_v002_review_v002.png",
+              "sha256": "f65a85751144aab9e975b4fe42faca3c0f069573e91310d823f468f4da2d1657"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 15267 面；用户授权免审",
+            "time": "2026-11-03 05:49:45"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:45",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoGuardianStatue.glb",
+              "sha256": "14d33652507e1edb0cfd505c618227d07fb76b7084e9bbc6baa1d4bc7a7c5f3c"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_InfernoGuardianStatue.glb"
+        }
+      ]
+    }
+  }
+}

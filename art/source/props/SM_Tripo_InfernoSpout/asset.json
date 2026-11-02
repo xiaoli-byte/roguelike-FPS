@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_InfernoSpout",
+  "display": "兽首熔流口（3-3 熔铜瀑三级落口；3-4 闸渠口；背面平贴墙）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:27",
+          "files": {
+            "BO_SM_Tripo_InfernoSpout_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoSpout_v001.json",
+              "sha256": "c8bc4fbddeba40ce194acae704e15d7de14c8f547079ab9fdb5be58acbb0519a"
+            },
+            "BO_SM_Tripo_InfernoSpout_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoSpout_v001_views.json",
+              "sha256": "e5ddf6e4df3c2d3f15f9fa9c544e235ed3c7488a341510548aee8a046d0ef2db"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.spout"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.5,
+              0.0,
+              -3.0
+            ],
+            "max": [
+              2.5,
+              4.0,
+              3.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:28",
+          "files": {
+            "CN_SM_Tripo_InfernoSpout_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_source.png",
+              "sha256": "1a80230cc5c717efdee253e4693934d63af66955fb381bc56e3aa6a1ace06f2c"
+            },
+            "CN_SM_Tripo_InfernoSpout_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_front.png",
+              "sha256": "6f1062f24bb531e451a5415337e5a4a23843ca9510c8a9e2aad295fd46f7e347"
+            },
+            "CN_SM_Tripo_InfernoSpout_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_left.png",
+              "sha256": "751fb742184f00706d79737e9c890e730301739c14d12afc6b4b3f9453790539"
+            },
+            "CN_SM_Tripo_InfernoSpout_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_back.png",
+              "sha256": "3122b847078151b6643fe0ef71f4f62bfe8d874088141beb085ef5be785e69f9"
+            },
+            "CN_SM_Tripo_InfernoSpout_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_right.png",
+              "sha256": "c559a23534cbc71ac00447277008d85303947a9b413d5dd44b0b756060af805f"
+            },
+            "CN_SM_Tripo_InfernoSpout_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_sheet.png",
+              "sha256": "748c0fda3cecc6c15df40e509bcd1cfad94635cb53c7a3517f2164dd188ba51a"
+            },
+            "CN_SM_Tripo_InfernoSpout_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_prompt.txt",
+              "sha256": "9fd0f6e5e757d2e0c4277053e146175998df1c101d138411f221426502ebd3f7"
+            },
+            "CN_SM_Tripo_InfernoSpout_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoSpout_v001_registration.json",
+              "sha256": "599912b99c05a26374bba60af8b403132c515c9a843d78cfaa67a09e0c97d0aa"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 1,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 1 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "Spout_1.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (5m wide x 4m tall x 6m deep): A colossal cast bronze beast-head spout mounted on a wall. A heavy square black iron back plate with rivets forms the FLAT BACK. From it the chunky warm aged bronze head of a roaring mythic beast juts forward toward the FRONT: heavy brows, curled horns lying back flat, big round eyes and a wide open mouth. Its long lower jaw is a broad EMPTY open trough reaching far forward, its inside dark crusted bronze with a thin flat bright orange painted line along the bottom; nothing flows out of it. Patches of dark verdigris and soot. PROPORTIONS: FRONT view about 1.25 times as wide as tall showing the open mouth head on; LEFT and RIGHT views about 1.5 times as wide as tall showing the long jutting jaw trough.",
+          "source_sha256": "1a80230cc5c717efdee253e4693934d63af66955fb381bc56e3aa6a1ace06f2c",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7451391314471999,
+              "offset": [
+                107,
+                359
+              ],
+              "size": [
+                297,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7071041873826096,
+              "offset": [
+                129,
+                359
+              ],
+              "size": [
+                253,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7543611504007544,
+              "offset": [
+                106,
+                359
+              ],
+              "size": [
+                299,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7087486157253599,
+              "offset": [
+                129,
+                359
+              ],
+              "size": [
+                254,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 1 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:07:28"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:40:38",
+          "files": {
+            "HP_SM_Tripo_InfernoSpout_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoSpout_v001_source.glb",
+              "sha256": "bbd22dca8c9d16dc07958a5055c2ee5dc3c58351430627138c599f2294958ac8"
+            },
+            "HP_SM_Tripo_InfernoSpout_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoSpout_v001.glb",
+              "sha256": "fdca92a9f13f7d9a312bd7fc1355f8d4e7b88c25ca4783ad19b6fd03ad483dd9"
+            },
+            "HP_SM_Tripo_InfernoSpout_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoSpout_v001_graph.json",
+              "sha256": "d15f6ec90cf495154294def939f737b7ea48006635fdef512bd5cf4395595370"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/af104ff3-238f-4ce7-88c1-698fb243e660",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 9773,
+          "source_sha256": "bbd22dca8c9d16dc07958a5055c2ee5dc3c58351430627138c599f2294958ac8"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:41:28",
+          "files": {
+            "SM_Tripo_InfernoSpout_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoSpout_v001.blend",
+              "sha256": "8bac74be3b766918a4d5df6a8ae6be287dc243b86e8e6cce03d5b0fe23392999"
+            },
+            "SM_Tripo_InfernoSpout_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoSpout_v001.glb",
+              "sha256": "5f30481219ea3dd17cc9f18e4a11a714dcf554f8e6b5a13663a7475c32700ffd"
+            },
+            "SM_Tripo_InfernoSpout_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoSpout_v001_metrics.json",
+              "sha256": "329f77e2ee9fc3ee7166a344be66a63755b052317f2e32baae8711c2ab54b4fe"
+            },
+            "T_Tripo_InfernoSpout_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoSpout_BC.png",
+              "sha256": "2e857c87f821d3d93e948248bad690ddb9fe13750b074b90e10f4b02064bff55"
+            },
+            "T_Tripo_InfernoSpout_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoSpout_E.png",
+              "sha256": "6481b442981b7f797a7895b4cf9a9b9713ecd43e89b02332738b6c61d74a7cd0"
+            },
+            "T_Tripo_InfernoSpout_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoSpout_N.png",
+              "sha256": "f9ed169ef7478fd688fb50ceedcf8d2a4bce496f7bc202f17b01e383d821211c"
+            },
+            "T_Tripo_InfernoSpout_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoSpout_ORM.png",
+              "sha256": "f42423b7e88ca143ace8fe86839617a6dfe6594bc4aa7174d09f1b053f8043c1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.875,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 9773,
+              "verts": 5167
+            }
+          ],
+          "export_kb": 576.5,
+          "seconds": 49.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:41:29",
+          "files": {
+            "SM_Tripo_InfernoSpout_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoSpout_v001_validation_v001.json",
+              "sha256": "63edfbda8ee76fc4253f70a1fe01737861068ae4638dd0bd7c11f333a3b4c06c"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:41:44",
+          "files": {
+            "SM_Tripo_InfernoSpout_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoSpout_v001_review_v001.png",
+              "sha256": "b872e3bef4f45f6b6b82362ddf95264e65359f255e931d98481518e22191546f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 9773 面；嘴里平涂亮橙 → T_E，熔流本身是特效；用户授权免审",
+            "time": "2026-11-03 05:49:43"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:44",
+          "files": {
+            "SM_Tripo_InfernoSpout.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoSpout.glb",
+              "sha256": "5f30481219ea3dd17cc9f18e4a11a714dcf554f8e6b5a13663a7475c32700ffd"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoSpout.glb"
+        }
+      ]
+    }
+  }
+}

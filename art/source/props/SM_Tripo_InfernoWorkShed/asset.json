@@ -1,0 +1,401 @@
+{
+  "id": "SM_Tripo_InfernoWorkShed",
+  "display": "铸坊工棚（3-3 吊坊 ×2、范场 ×1；正面开敞）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:41",
+          "files": {
+            "BO_SM_Tripo_InfernoWorkShed_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoWorkShed_v001.json",
+              "sha256": "047b538dc59e23a178545eaa00df81b170b73c42bc7fad7a81a96ca9514ea46e"
+            },
+            "BO_SM_Tripo_InfernoWorkShed_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoWorkShed_v001_views.json",
+              "sha256": "bed156e3bab6e36af39485b79a62ab178a2dc82cb46cb1f33d7fa78f64792a3c"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.workShed"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.0,
+              0.0,
+              -4.0
+            ],
+            "max": [
+              5.0,
+              7.0,
+              4.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:41",
+          "files": {
+            "CN_SM_Tripo_InfernoWorkShed_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_source.png",
+              "sha256": "b1b155424eb350e96f04b58e7e547dbd9d4b34f4dbcd19bb7535064004f9aadd"
+            },
+            "CN_SM_Tripo_InfernoWorkShed_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_front.png",
+              "sha256": "0ce06b37afeb519173279e29f500afc0e1afb571d0e95a17605e903f3a4f61e6"
+            },
+            "CN_SM_Tripo_InfernoWorkShed_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_left.png",
+              "sha256": "d654d5310920a140cdb804a69115a27a3c96b9becf2afa54b73e12823d180923"
+            },
+            "CN_SM_Tripo_InfernoWorkShed_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_back.png",
+              "sha256": "34f5894fb982f1de21dcd4b3765862163d49cbb8f1e3b045661458ae6c8021e0"
+            },
+            "CN_SM_Tripo_InfernoWorkShed_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_right.png",
+              "sha256": "44ee62187067caf75ca8595fd5a737b95d809e8e582f9b591120ef7c17d84a28"
+            },
+            "CN_SM_Tripo_InfernoWorkShed_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_sheet.png",
+              "sha256": "c052287381c36a597cdc07acfce1038d821a24c78d44f8ccb20016a90c40ec48"
+            },
+            "CN_SM_Tripo_InfernoWorkShed_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_prompt.txt",
+              "sha256": "8634e2f4a57a357c24e646b2e3f7d86ede3d666a3eb8ba4c9c6911e4af365ec5"
+            },
+            "CN_SM_Tripo_InfernoWorkShed_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoWorkShed_v001_registration.json",
+              "sha256": "4e920e59c0c6422949f3f3e61f6c0fe7c64afbf21fe327ce0d2efddb325ccc40"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "WorkShed_4.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (10m wide x 7m tall x 8m deep): A half-open foundry work shed. A flat basalt floor slab; four thick black iron corner posts with rivets and deep vermilion lacquered timber beams; a single-pitch roof of dark grey tiles sloping down from the FRONT (7m) to the BACK (5m), the LEFT part of the roof broken away to bare black rafters. The BACK wall is solid riveted black iron plates; the LEFT and RIGHT sides are closed only up to 2m by low timber plank walls; the FRONT is completely open. Under the roof on the back wall hang big chunky smith tongs, hammers and one short thick chain, and a squat iron workbench with a small anvil stands against the back wall. PROPORTIONS: FRONT and BACK views about 1.43 times as wide as tall; LEFT and RIGHT views about 1.15 times as wide as tall showing the sloping roof.",
+          "source_sha256": "b1b155424eb350e96f04b58e7e547dbd9d4b34f4dbcd19bb7535064004f9aadd",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8938547486033518,
+              "offset": [
+                63,
+                352
+              ],
+              "size": [
+                385,
+                320
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.949554896142433,
+              "offset": [
+                110,
+                352
+              ],
+              "size": [
+                292,
+                320
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9142857142857141,
+              "offset": [
+                68,
+                352
+              ],
+              "size": [
+                376,
+                320
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9467455621301774,
+              "offset": [
+                104,
+                352
+              ],
+              "size": [
+                303,
+                320
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:07:42"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:45:40",
+          "files": {
+            "HP_SM_Tripo_InfernoWorkShed_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoWorkShed_v001_source.glb",
+              "sha256": "e86316aa13dbdee3ca82d096f11894daeb9f541f46a1a68ab1fd3977eebeb470"
+            },
+            "HP_SM_Tripo_InfernoWorkShed_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoWorkShed_v001.glb",
+              "sha256": "52272cac113ce04fe97fd46bc4b029c825f315af6cf428d215055e3f4eec661f"
+            },
+            "HP_SM_Tripo_InfernoWorkShed_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoWorkShed_v001_graph.json",
+              "sha256": "5cce129db20ff183c1aafe1f01b720568c40e374dd3947a6ad1d8150458e5420"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/7b949262-6cc8-4f9c-b066-1303fd6fe416",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 14568,
+          "source_sha256": "e86316aa13dbdee3ca82d096f11894daeb9f541f46a1a68ab1fd3977eebeb470"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:46:28",
+          "files": {
+            "SM_Tripo_InfernoWorkShed_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoWorkShed_v001.blend",
+              "sha256": "39e23263cd89ddf6c7e4783b8a5873563b083c15a4783a6c24ba0cc21af4a10c"
+            },
+            "SM_Tripo_InfernoWorkShed_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoWorkShed_v001.glb",
+              "sha256": "94fc68ca09474966f8ab4bd8ce821d50681650e12bb3a41eb78d1243ac03cae3"
+            },
+            "SM_Tripo_InfernoWorkShed_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoWorkShed_v001_metrics.json",
+              "sha256": "fc9bfa3f6264e1d1684ca7813d92bf718907a56a5c32556226e6a1271fff9699"
+            },
+            "T_Tripo_InfernoWorkShed_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoWorkShed_BC.png",
+              "sha256": "41f956e1a4b71876c92fcc3041794a53bdc604db3f0c73c634bd7c1698ad3aa2"
+            },
+            "T_Tripo_InfernoWorkShed_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoWorkShed_N.png",
+              "sha256": "ec68758b2c683a8025316852fde065749fdf74d1eb121806de2e2f9dd740bfbc"
+            },
+            "T_Tripo_InfernoWorkShed_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoWorkShed_ORM.png",
+              "sha256": "a30410be1fe46f030a462c6b95e0c265f245e5690ccdf040c5bccb54b80aa115"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.835,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14568,
+              "verts": 8188
+            }
+          ],
+          "export_kb": 965.4,
+          "seconds": 47.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 05:47:51",
+          "files": {
+            "SM_Tripo_InfernoWorkShed_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoWorkShed_v002.blend",
+              "sha256": "4846251cfad5427d8cd3372d8e018892d1975f96919e97a9f9df48c6685d6d1f"
+            },
+            "SM_Tripo_InfernoWorkShed_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoWorkShed_v002.glb",
+              "sha256": "0c4a29349ed7c77fabd227a191624e2835af5a5650f517774ee2d78ef2f48412"
+            },
+            "SM_Tripo_InfernoWorkShed_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoWorkShed_v002_metrics.json",
+              "sha256": "02155877b91ce5fa2b826789a629f08dcea0bc8e8f251bca0e12da33cc53178a"
+            },
+            "T_Tripo_InfernoWorkShed_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoWorkShed_BC.png",
+              "sha256": "41f956e1a4b71876c92fcc3041794a53bdc604db3f0c73c634bd7c1698ad3aa2"
+            },
+            "T_Tripo_InfernoWorkShed_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoWorkShed_E.png",
+              "sha256": "80f061345e6baab905196225881f349d75bf7de766b63801b36eec2c9ef7d5ed"
+            },
+            "T_Tripo_InfernoWorkShed_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoWorkShed_N.png",
+              "sha256": "ec68758b2c683a8025316852fde065749fdf74d1eb121806de2e2f9dd740bfbc"
+            },
+            "T_Tripo_InfernoWorkShed_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoWorkShed_ORM.png",
+              "sha256": "a30410be1fe46f030a462c6b95e0c265f245e5690ccdf040c5bccb54b80aa115"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.835,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14568,
+              "verts": 8188
+            }
+          ],
+          "export_kb": 979.6,
+          "seconds": 52.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:46:29",
+          "files": {
+            "SM_Tripo_InfernoWorkShed_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoWorkShed_v001_validation_v001.json",
+              "sha256": "482ee182b8fa7d060c36a47ad3a8d499a2908ec2329118bd4643fce057b2da32"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 05:47:51",
+          "files": {
+            "SM_Tripo_InfernoWorkShed_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoWorkShed_v002_validation_v002.json",
+              "sha256": "90e6c7caa4bf1f755714e68a23c7e752cb591d3c269f7c42371cffb5478a0a10"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:46:43",
+          "files": {
+            "SM_Tripo_InfernoWorkShed_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoWorkShed_v001_review_v001.png",
+              "sha256": "7148dc223388c06cd542262792e8f06d9700638de3fd8c7bca177b7397c0045a"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 05:48:03",
+          "files": {
+            "SM_Tripo_InfernoWorkShed_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoWorkShed_v002_review_v002.png",
+              "sha256": "feb0eb202e4aea8a083e26d5bc6053a7164ecda774416f4f6c69c0903c8677d6"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 14568 面；用户授权免审",
+            "time": "2026-11-03 05:49:47"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:48",
+          "files": {
+            "SM_Tripo_InfernoWorkShed.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoWorkShed.glb",
+              "sha256": "0c4a29349ed7c77fabd227a191624e2835af5a5650f517774ee2d78ef2f48412"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_InfernoWorkShed.glb"
+        }
+      ]
+    }
+  }
+}

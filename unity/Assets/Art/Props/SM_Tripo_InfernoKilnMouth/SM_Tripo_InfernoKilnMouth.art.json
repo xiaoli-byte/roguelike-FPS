@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoKilnMouth",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.kilnMouth"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_KilnFire",
+      "pos": [
+        0,
+        0.8,
+        0
+      ],
+      "dir": [
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -7.144852638244629,
+      0,
+      -2.5235610008239746
+    ],
+    "max": [
+      7.144852638244629,
+      12,
+      2.5235610008239746
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoKilnMouth_LOD0",
+      "lod": 0,
+      "tris": 30388,
+      "verts": 38028,
+      "materials": [
+        "M_Tripo_InfernoKilnMouth"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoKilnMouth",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoKilnMouth_BC.png",
+        "N": "Textures/T_Tripo_InfernoKilnMouth_N.png",
+        "ORM": "Textures/T_Tripo_InfernoKilnMouth_ORM.png",
+        "E": "Textures/T_Tripo_InfernoKilnMouth_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoKilnMouth.glb",
+    "sha256": "a06c7f1b5fe42472cd7bcb5013041ddb9c7db523929ec3c38e63af6ccc47ecd1",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:58:13"
+}

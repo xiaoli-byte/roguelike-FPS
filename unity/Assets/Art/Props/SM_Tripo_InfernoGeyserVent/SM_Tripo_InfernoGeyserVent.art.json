@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoGeyserVent",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.geyserVent"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {
+    "场景高度": "Tripo 网格比概念扁宽，等比对齐被占地卡住：实得 6.72 × 2.08 × 6.62 m（登记 2.5 m 高）；喷口是贴地件，高度不影响玩法（2026-11-03）"
+  },
+  "fxPoints": [
+    {
+      "name": "FX_GeyserJet",
+      "pos": [
+        0,
+        2.08,
+        0
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -3.359999895095825,
+      0,
+      -3.3107571601867676
+    ],
+    "max": [
+      3.359999895095825,
+      2.084611415863037,
+      3.3107571601867676
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoGeyserVent_LOD0",
+      "lod": 0,
+      "tris": 7030,
+      "verts": 8830,
+      "materials": [
+        "M_Tripo_InfernoGeyserVent"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoGeyserVent",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoGeyserVent_BC.png",
+        "N": "Textures/T_Tripo_InfernoGeyserVent_N.png",
+        "ORM": "Textures/T_Tripo_InfernoGeyserVent_ORM.png",
+        "E": "Textures/T_Tripo_InfernoGeyserVent_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoGeyserVent.glb",
+    "sha256": "92090262fb4b1107381adc1d3613f6ce9e80c4edbcd3bef0d6703e7ef0969351",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:58:05"
+}

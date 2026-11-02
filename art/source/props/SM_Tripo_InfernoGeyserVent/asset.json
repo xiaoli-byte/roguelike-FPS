@@ -1,0 +1,340 @@
+{
+  "id": "SM_Tripo_InfernoGeyserVent",
+  "display": "熔泉喷口（3-2 ④ ×4、3-4 ② ×4；间歇熔泉 S3 的外观）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:59",
+          "files": {
+            "BO_SM_Tripo_InfernoGeyserVent_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoGeyserVent_v001.json",
+              "sha256": "4516cd2aec18dd10099c6f3308a2be9fd0f80c7f8a69a0d7172806849a8923ce"
+            },
+            "BO_SM_Tripo_InfernoGeyserVent_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoGeyserVent_v001_views.json",
+              "sha256": "f5f2736476f2c295840f8ca79476f086a9fb9721fe208027ac340c53c3aefe9b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.geyserVent"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0.0,
+              -3.0
+            ],
+            "max": [
+              3.0,
+              2.5,
+              3.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:08:00",
+          "files": {
+            "CN_SM_Tripo_InfernoGeyserVent_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_source.png",
+              "sha256": "a9f3dd08c6ab75f46a621aa51ebecf3911575c2e2d33754aa04a32447d56b940"
+            },
+            "CN_SM_Tripo_InfernoGeyserVent_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_front.png",
+              "sha256": "77b7f966a7d3e34952e26143f0d6b8e7e12ca69fe26dabd96bd9961b88b5ddf0"
+            },
+            "CN_SM_Tripo_InfernoGeyserVent_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_left.png",
+              "sha256": "76fd25d52227d96f89f02683cc57f7d499406fe728f33b0a1fc6a4bb6ccce53d"
+            },
+            "CN_SM_Tripo_InfernoGeyserVent_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_back.png",
+              "sha256": "bea2921aac3d88dbbbdea41c1c57bbc02e13dc00102640b026855c7e785068cc"
+            },
+            "CN_SM_Tripo_InfernoGeyserVent_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_right.png",
+              "sha256": "e27bf645e041876643eca317773fd84c7270a932864dd8fea15bf4d0dcbee859"
+            },
+            "CN_SM_Tripo_InfernoGeyserVent_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_sheet.png",
+              "sha256": "436d700e4278ec4ff8eaecafeef60c55e3b1cac279be9ea13f8eb075fda16d8c"
+            },
+            "CN_SM_Tripo_InfernoGeyserVent_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_prompt.txt",
+              "sha256": "98c3eddb646262ac54b57d879a3d7a2b3cb7caa2875fdd4470fcd9040bcc6474"
+            },
+            "CN_SM_Tripo_InfernoGeyserVent_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGeyserVent_v001_registration.json",
+              "sha256": "a60e3aa85ab7d31ceaaf6a01fbddf0d22ede99f87804e77762197aeea63faf5e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "GeyserVent_2.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (6m wide x 2.5m tall x 6m deep): A low volcanic vent cone, two clearly distinct parts: BASE: a squat round mound of chunky dark charcoal basalt plates rising to a broad crater rim; CAP: inside the rim sits a separate domed crust of cooled black lava, split by four wide cracks painted flat bright orange, with a clean flat bright orange seam ring where the crust meets the rim. Round and the same from every side. PROPORTIONS: all four views about 2.4 times as wide as tall and identical. Broad faceted chunks, no spray.",
+          "source_sha256": "a9f3dd08c6ab75f46a621aa51ebecf3911575c2e2d33754aa04a32447d56b940",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5350454788657035,
+              "offset": [
+                63,
+                417
+              ],
+              "size": [
+                386,
+                190
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5618766680713583,
+              "offset": [
+                54,
+                417
+              ],
+              "size": [
+                403,
+                190
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5602240896358542,
+              "offset": [
+                55,
+                417
+              ],
+              "size": [
+                401,
+                190
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5807200929152148,
+              "offset": [
+                48,
+                417
+              ],
+              "size": [
+                416,
+                190
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:08:00"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:36:12",
+          "files": {
+            "HP_SM_Tripo_InfernoGeyserVent_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGeyserVent_v001_source.glb",
+              "sha256": "e8b123acc2bdc1c626be3cbefecc33c9f9dd1511f17b12f5770f5dada0058e70"
+            },
+            "HP_SM_Tripo_InfernoGeyserVent_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGeyserVent_v001.glb",
+              "sha256": "e9f183e41d51e999028b1572ea0a5a16c2cfe7feaeef13ce591b9303fe43b94b"
+            },
+            "HP_SM_Tripo_InfernoGeyserVent_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGeyserVent_v001_graph.json",
+              "sha256": "b86e9dc9b603b827726ac53bbe913ca6457b336f86a0bfe585c8f7d9fc9ba817"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/285199e2-5010-49ab-b8e3-6edca76ae4d9",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7030,
+          "source_sha256": "e8b123acc2bdc1c626be3cbefecc33c9f9dd1511f17b12f5770f5dada0058e70"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:36:36",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoGeyserVent_v001.blend",
+              "sha256": "64b2ac51bffe3639a5441f3448ff7c8be1d2f8d60d1ce0b7fc3340d1ac504c34"
+            },
+            "SM_Tripo_InfernoGeyserVent_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoGeyserVent_v001.glb",
+              "sha256": "92090262fb4b1107381adc1d3613f6ce9e80c4edbcd3bef0d6703e7ef0969351"
+            },
+            "SM_Tripo_InfernoGeyserVent_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoGeyserVent_v001_metrics.json",
+              "sha256": "31ffce438b3982c6281d71c835be1143e3eebab6d248d25cbf88bc77489fd23c"
+            },
+            "T_Tripo_InfernoGeyserVent_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGeyserVent_BC.png",
+              "sha256": "64b2ffb2ea4b96b9038935d51470bbaf8ca8c7a0a600d3ba53c9c1870c5f93b1"
+            },
+            "T_Tripo_InfernoGeyserVent_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGeyserVent_E.png",
+              "sha256": "9a824531706153a587cfe4974cbb90334b81eb2daa0180b966687f4a1391c788"
+            },
+            "T_Tripo_InfernoGeyserVent_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGeyserVent_N.png",
+              "sha256": "085613eeed8a895ed07a5325318f07349085acf704767701cf1a13a84ff0da6a"
+            },
+            "T_Tripo_InfernoGeyserVent_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGeyserVent_ORM.png",
+              "sha256": "7483da700f17fc4b2fa4690f3792138b3f082a8460ef266356b4f603f6450324"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.693,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7030,
+              "verts": 4311
+            }
+          ],
+          "export_kb": 353.7,
+          "seconds": 23.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:36:37",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoGeyserVent_v001_validation_v001.json",
+              "sha256": "3a1dd777aed5eaf91db59779a11332155e190460af46140d23b44f3e8361d08a"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 05:45:58",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoGeyserVent_v001_validation_v002.json",
+              "sha256": "013a5c2e22693ae8020e2220a5d8a96cf91e7b238a4251d5f0e898fd0765846f"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:46:38",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoGeyserVent_v001_review_v001.png",
+              "sha256": "37029b5fd9bc08d3a84a0d59c8f3ab27c8067ab892ff998f5ba29535251045d5"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 7030 面；顶部岩壳切成单件（可射爆）；用户授权免审",
+            "time": "2026-11-03 05:49:29"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:30",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoGeyserVent.glb",
+              "sha256": "92090262fb4b1107381adc1d3613f6ce9e80c4edbcd3bef0d6703e7ef0969351"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoGeyserVent.glb"
+        }
+      ]
+    }
+  }
+}

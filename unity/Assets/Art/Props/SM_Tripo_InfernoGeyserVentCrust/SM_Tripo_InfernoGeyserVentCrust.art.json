@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoGeyserVentCrust",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.geyserVent",
+    "part": "Crust"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_CrustBurst",
+      "pos": [
+        0,
+        0.5,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -1.399999976158142,
+      0,
+      -1.399999976158142
+    ],
+    "max": [
+      1.399999976158142,
+      0.9345411062240601,
+      1.399999976158142
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoGeyserVentCrust_LOD0",
+      "lod": 0,
+      "tris": 2143,
+      "verts": 3309,
+      "materials": [
+        "M_Tripo_InfernoGeyserVent"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoGeyserVent",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoGeyserVent_BC.png",
+        "N": "Textures/T_Tripo_InfernoGeyserVent_N.png",
+        "ORM": "Textures/T_Tripo_InfernoGeyserVent_ORM.png",
+        "E": "Textures/T_Tripo_InfernoGeyserVent_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoGeyserVentCrust.glb",
+    "sha256": "2da9c22b946e5a274391889534982a0b561f4aee40e0f42052745f36c3bb4b25",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoGeyserVent"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:58:53"
+}

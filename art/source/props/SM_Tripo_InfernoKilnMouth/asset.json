@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_InfernoKilnMouth",
+  "display": "炉窟门脸（3-2 ① / ③ 窟口；3-3 殿后炉窟；背面平贴岩壁）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:24",
+          "files": {
+            "BO_SM_Tripo_InfernoKilnMouth_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoKilnMouth_v001.json",
+              "sha256": "4a6a57e8ae5b08fd60155e6b61ce7b237e1fad1c46c40f2795134d6d7c4af421"
+            },
+            "BO_SM_Tripo_InfernoKilnMouth_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoKilnMouth_v001_views.json",
+              "sha256": "dfbb99dfa205606542ef5a98c05cf31126cef5f920a1471a5256580ee9689c30"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.kilnMouth"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.0,
+              0.0,
+              -2.5
+            ],
+            "max": [
+              8.0,
+              12.0,
+              2.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:09:09",
+          "files": {
+            "CN_SM_Tripo_InfernoKilnMouth_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_source.png",
+              "sha256": "93adb6c6a11c6f4a339204558cb66114ef90fb7c9ac06a5bad40ea95d69a30e2"
+            },
+            "CN_SM_Tripo_InfernoKilnMouth_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_front.png",
+              "sha256": "b3cba55cbe9793cdbb21385bf6c8b999f2445c431a7eab723accfeed1d215d07"
+            },
+            "CN_SM_Tripo_InfernoKilnMouth_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_left.png",
+              "sha256": "66247281e511f0063c6adf6a0c5b17beff8d14fa5ad962e1a2371b02f5ee6d27"
+            },
+            "CN_SM_Tripo_InfernoKilnMouth_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_back.png",
+              "sha256": "fe98d8fb4630dd35e65c830094ccf9824ee1e5343a870900252d93c287fc2ab0"
+            },
+            "CN_SM_Tripo_InfernoKilnMouth_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_right.png",
+              "sha256": "70a90e156d7d025bcbc0ca7424232b0b74efaa50c3f2ce053c08873063c856c5"
+            },
+            "CN_SM_Tripo_InfernoKilnMouth_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_sheet.png",
+              "sha256": "4b1a5ec7cab3c0793b0b6a301e55082ef55c55273fa65e6d8a1fcb5e92b43022"
+            },
+            "CN_SM_Tripo_InfernoKilnMouth_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_prompt.txt",
+              "sha256": "c6d442d031f2b008fdc329e0cc639ecaa255b091111fbee9c4da3a2978be7cbf"
+            },
+            "CN_SM_Tripo_InfernoKilnMouth_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoKilnMouth_v001_registration.json",
+              "sha256": "ea7b528042339694a0fb43ca97556c33ca4a1df3997ca3f73d895b18824c76f0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "KilnMouth_2.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (16m wide x 12m tall x 5m deep): The monumental entrance of a forge cave cut into a basalt cliff. A thick frame of dark charcoal basalt blocks surrounds one big round-topped archway 8m wide and 7m tall that goes straight through from FRONT to BACK and is EMPTY and open; the arch is framed by a massive cast bronze beast face whose brow and fangs form the top of the arch and whose paws form the two jambs. Two huge black iron door leaves covered with rows of big round studs stand swung fully open, folded flat against the FRONT face on each side of the arch. A deep vermilion lacquered lintel band with a row of bronze discs above the arch. The inner walls of the arch are plain basalt with a few flat bright orange painted cracks; no braziers, no fire. The BACK is a FLAT rough rock face with the arch opening in it. PROPORTIONS: FRONT and BACK views about 1.33 times as wide as tall; LEFT and RIGHT views about 0.42 times as wide as tall.",
+          "source_sha256": "93adb6c6a11c6f4a339204558cb66114ef90fb7c9ac06a5bad40ea95d69a30e2",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6762468300929839,
+              "offset": [
+                52,
+                340
+              ],
+              "size": [
+                408,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6762468300929839,
+              "offset": [
+                192,
+                340
+              ],
+              "size": [
+                128,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6762468300929839,
+              "offset": [
+                46,
+                340
+              ],
+              "size": [
+                420,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6762468300929839,
+              "offset": [
+                192,
+                340
+              ],
+              "size": [
+                128,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:09:09"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:38:18",
+          "files": {
+            "HP_SM_Tripo_InfernoKilnMouth_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoKilnMouth_v001_source.glb",
+              "sha256": "c2096525cecdd4cdc0be5e5bea76bbd5f8ac7a948f058d29fe7bba7907fe309d"
+            },
+            "HP_SM_Tripo_InfernoKilnMouth_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoKilnMouth_v001.glb",
+              "sha256": "8f496a31927b6f521dd0782672b1def89582505431992c15c217b5ed9dbab91c"
+            },
+            "HP_SM_Tripo_InfernoKilnMouth_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoKilnMouth_v001_graph.json",
+              "sha256": "6fa9a98539857640df22dc0a0150444920a6f8e4af4ff98bc21a50e7280c71c3"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/a64cd91b-e70f-4dc1-a5fd-913d0ab23df5",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 30388,
+          "source_sha256": "c2096525cecdd4cdc0be5e5bea76bbd5f8ac7a948f058d29fe7bba7907fe309d"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:39:21",
+          "files": {
+            "SM_Tripo_InfernoKilnMouth_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoKilnMouth_v001.blend",
+              "sha256": "53891d27f07bf6a10811bf83517976fb1006f7a4f816c7be8cbf0a9f8636587e"
+            },
+            "SM_Tripo_InfernoKilnMouth_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoKilnMouth_v001.glb",
+              "sha256": "a06c7f1b5fe42472cd7bcb5013041ddb9c7db523929ec3c38e63af6ccc47ecd1"
+            },
+            "SM_Tripo_InfernoKilnMouth_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoKilnMouth_v001_metrics.json",
+              "sha256": "6b1347f9f3aa74f8b81bf937ac8d8df2af976622857b00cf3a29f1531282e0d5"
+            },
+            "T_Tripo_InfernoKilnMouth_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoKilnMouth_BC.png",
+              "sha256": "90362a9232a563278f9a12aa4f6ffd61ff088f9eaecd2c82e85c7589817534a2"
+            },
+            "T_Tripo_InfernoKilnMouth_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoKilnMouth_E.png",
+              "sha256": "77f9405ec63cf3df511fa6d105352998308b91c17c82ecafc25854ce67573ed0"
+            },
+            "T_Tripo_InfernoKilnMouth_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoKilnMouth_N.png",
+              "sha256": "4b37faddacd73e84f2853f344170e0778c5f5aa321c4e88a70391d4fdd90849e"
+            },
+            "T_Tripo_InfernoKilnMouth_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoKilnMouth_ORM.png",
+              "sha256": "a68d1124d395c69c8b27d5767fd16f3e506eecae159fcae4346a6db2e04ae8ef"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 30388,
+              "verts": 16498
+            }
+          ],
+          "export_kb": 1259.4,
+          "seconds": 61.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:39:22",
+          "files": {
+            "SM_Tripo_InfernoKilnMouth_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoKilnMouth_v001_validation_v001.json",
+              "sha256": "ef197f756fb69c860d9f955b1fd5d581177388484a4ee18f47021a12fbef0672"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:39:35",
+          "files": {
+            "SM_Tripo_InfernoKilnMouth_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoKilnMouth_v001_review_v001.png",
+              "sha256": "1c19ffe62efb1b70e07768cc8a976bf5b5f7f0bd0e429e51395eccb6454f8905"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 30388 面；拱门贯通，门内火是特效；用户授权免审",
+            "time": "2026-11-03 05:49:31"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:31",
+          "files": {
+            "SM_Tripo_InfernoKilnMouth.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoKilnMouth.glb",
+              "sha256": "a06c7f1b5fe42472cd7bcb5013041ddb9c7db523929ec3c38e63af6ccc47ecd1"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoKilnMouth.glb"
+        }
+      ]
+    }
+  }
+}
