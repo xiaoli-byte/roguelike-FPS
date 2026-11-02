@@ -75,6 +75,12 @@ namespace Spiritfire.Game
         [FormerlySerializedAs("squads"), SerializeField, HideInInspector]
         Squad[] legacySquads = Array.Empty<Squad>();
 
+        [Header("出场方式（S1）")]
+        [Tooltip("路遇：主路上的小队，不计目标、不落宝箱、横幅只给一行小字（用 AsRoadside 设置；条目一般 Via(Ambush)）")]
+        public bool roadside;
+        [Tooltip("埋伏单位提前摆上场的距离：玩家离场地中心这么近时预生成并休眠（米；0 = 触发半径 + 40，至少 60）")]
+        public float armRadius;
+
         [Header("目标与奖励")]
         [Tooltip("可选场地：不算进关卡目标的必清场地")]
         public bool optional;
@@ -114,6 +120,25 @@ namespace Spiritfire.Game
             }
         }
 
+        /// <summary>
+        /// 设成路遇（链式，S1）：不计目标（optional）、自动触发、小触发圈、要视线、不落宝箱。
+        /// 摆的时候离必清场地 ≥ 触发半径 + 场地半径，免得两处同时开打（同一时间只打一处）
+        /// </summary>
+        public EncounterSite AsRoadside(float trigger = 12f, float arena = 16f)
+        {
+            roadside = true;
+            optional = true;
+            autoTrigger = true;
+            requireSight = true;
+            triggerRadius = trigger;
+            arenaRadius = arena;
+            reward = "";
+            return this;
+        }
+
+        /// <summary>埋伏单位实际的预生成半径</summary>
+        public float ArmRadius => armRadius > 0 ? armRadius : Mathf.Max(60f, triggerRadius + 40f);
+
         public event Action<EncounterSite> Cleared;
         public static event Action<EncounterSite> AnySiteCleared;
         /// <summary>某场地开了第 i 波（0 起）</summary>
@@ -144,6 +169,7 @@ namespace Spiritfire.Game
             public EnemyDef def;
             public bool elite;
             public StationRole role;
+            public SpawnMode mode;
             public int lane, wave;
             public float warnAt, at;
             public bool warned, hasPos, elevated, relocated;
@@ -305,7 +331,7 @@ namespace Spiritfire.Game
                             : mainLane;
                         pending.Add(new Pending
                         {
-                            id = e.enemy, def = def, elite = e.elite, role = r, lane = lane, wave = index,
+                            id = e.enemy, def = def, elite = e.elite, role = r, lane = lane, wave = index, mode = e.via,
                             affix = SquadAffixes.Resolve(def, e.elite, e.affix, run.squadAffix, Rng),
                             warnAt = now + arrival + k * Mathf.Max(0, run.stagger) + (late ? HoldBackDelay : 0),
                         });
@@ -431,7 +457,7 @@ namespace Spiritfire.Game
                 minDist = wide ? Mathf.Min(6f, run.minPlayerDistance) : run.minPlayerDistance,
                 maxDist = wide ? Mathf.Max(48f, run.maxPlayerDistance) : run.maxPlayerDistance,
                 partialOk = stalledFor > 6f,
-                anchors = anchors, recent = recent, now = Time.time,
+                anchors = anchors, recent = recent, now = Time.time, mode = p.mode,
             };
         }
 

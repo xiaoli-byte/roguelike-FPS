@@ -138,6 +138,8 @@ namespace Spiritfire.Game
             public IReadOnlyList<Transform> anchors;
             public IReadOnlyList<Recent> recent;
             public float now;
+            /// <summary>条目要的出场方式（S1）：场地里有这种站位时只在它们里面选，没有就当现身（见 <see cref="SpawnMode"/>）</summary>
+            public SpawnMode mode;
 
             public bool Charger => def != null && def.charger;
             public bool GroundOnly => def != null && def.groundOnly;
@@ -174,10 +176,12 @@ namespace Spiritfire.Game
             if (q == null) return false;
             cands.Clear();
             pathBudget = MaxPathsPerPick;
+            var want = ModeFor(q.anchors, q.mode, out bool anyOfWant);
             if (q.anchors != null)
                 foreach (var t in q.anchors)
                 {
                     if (!t) continue;
+                    if (!SpawnModes.Accepts(SpawnAnchor.ModeOf(t), want, anyOfWant)) continue;
                     var (role, lane, elevated, spread) = SpawnAnchor.Read(t);
                     if (elevated && q.GroundOnly) continue;
                     float bonus = AnchorBonus(q, role, lane, elevated);
@@ -224,6 +228,30 @@ namespace Spiritfire.Game
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// 条目实际用哪种方式的站位（S1）：要的方式在场地里有站位就用它；没有就退回现身。
+        /// anyOfWant = 场地里有没有这种方式的站位（现身条目在一个现身站位都没有的场地里用全部站位）
+        /// </summary>
+        public static SpawnMode ModeFor(IReadOnlyList<Transform> anchors, SpawnMode wanted, out bool anyOfWant)
+        {
+            bool has = false, hasAppear = false;
+            if (anchors != null)
+                foreach (var t in anchors)
+                {
+                    if (!t) continue;
+                    var m = SpawnAnchor.ModeOf(t);
+                    if (m == wanted) has = true;
+                    if (m == SpawnMode.Appear) hasAppear = true;
+                }
+            if (wanted != SpawnMode.Appear && has)
+            {
+                anyOfWant = true;
+                return wanted;
+            }
+            anyOfWant = hasAppear;
+            return SpawnMode.Appear;
         }
 
         /// <summary>锚点的角色 / lane / 高台加分</summary>

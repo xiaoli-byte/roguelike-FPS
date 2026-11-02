@@ -30,8 +30,17 @@ namespace Spiritfire.Game
         public int lane = -1;
         [Tooltip("近战成群（≥ 3 只、非精英）时留最后一只晚 2.5 s 从侧翼进场")]
         public bool holdBack = true;
+        [Tooltip("出场方式（S1，默认现身）：场地里有同一方式的站位时只在那些站位出场，没有就退回现身")]
+        public SpawnMode via;
 
         public WaveEntry Clone() => (WaveEntry)MemberwiseClone();
+
+        /// <summary>出场方式（链式，S1）：埋伏 / 余烬起身 / 熔岩爬出 / 飞临 / 跃下 / 增援门；场地里没有这种站位时退回现身</summary>
+        public WaveEntry Via(SpawnMode mode)
+        {
+            via = mode;
+            return this;
+        }
 
         /// <summary>升为精英（链式）</summary>
         public WaveEntry Elite(string affixId = "")
@@ -63,7 +72,7 @@ namespace Spiritfire.Game
             return this;
         }
 
-        public override string ToString() => $"{enemy}×{count}{(elite ? "（精英）" : "")}";
+        public override string ToString() => $"{enemy}×{count}{(elite ? "（精英）" : "")}{(via != SpawnMode.Appear ? $"·{SpawnModes.Label(via)}" : "")}";
     }
 
     /// <summary>
