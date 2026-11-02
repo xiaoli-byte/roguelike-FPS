@@ -1,0 +1,1024 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Weapon_BoneDragon",
+  "kind": "static",
+  "class": "weapon_fp",
+  "category": "weapons",
+  "bind": {
+    "source": "weapon",
+    "id": "launcher"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "qaWaivers": {},
+  "weapon": {
+    "id": "launcher",
+    "parts": {},
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "j_0": [
+        0.0,
+        0.28,
+        -0.585
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "j_0"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.1,
+          0.18,
+          -0.1
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          -0.01,
+          -0.27
+        ]
+      },
+      "load": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.02,
+          0.08
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.045,
+          0.045,
+          -0.03
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.07,
+          0.065,
+          0.0
+        ],
+        "dir": [
+          -1.0,
+          0.2,
+          0.3
+        ]
+      }
+    }
+  },
+  "bounds": {
+    "min": [
+      -0.19597,
+      -0.15,
+      -0.58
+    ],
+    "max": [
+      0.19597,
+      0.74436,
+      0.34049
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "Horn_Socket_-1",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_EdgeSteel"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Horn_Socket_1",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_EdgeSteel"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_ChinBlade_-1",
+      "lod": null,
+      "tris": 40,
+      "verts": 86,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_ChinBlade_1",
+      "lod": null,
+      "tris": 40,
+      "verts": 86,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Jaw_-1",
+      "lod": null,
+      "tris": 60,
+      "verts": 124,
+      "materials": [
+        "M_BoneDragon_IvoryShade"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Jaw_1",
+      "lod": null,
+      "tris": 60,
+      "verts": 124,
+      "materials": [
+        "M_BoneDragon_IvoryShade"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_-1_0",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_-1_1",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_-1_2",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_-1_3",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_-1_4",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_-1_5",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_1_0",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_1_1",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_1_2",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_1_3",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_1_4",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Lower_Tooth_1_5",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Boss_-1",
+      "lod": null,
+      "tris": 92,
+      "verts": 168,
+      "materials": [
+        "M_BoneDragon_EdgeSteel"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Boss_1",
+      "lod": null,
+      "tris": 92,
+      "verts": 168,
+      "materials": [
+        "M_BoneDragon_EdgeSteel"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Leather",
+      "lod": null,
+      "tris": 108,
+      "verts": 208,
+      "materials": [
+        "M_BoneDragon_Oxblood"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Wrap_0",
+      "lod": null,
+      "tris": 44,
+      "verts": 72,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Wrap_1",
+      "lod": null,
+      "tris": 44,
+      "verts": 72,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Wrap_2",
+      "lod": null,
+      "tris": 44,
+      "verts": 72,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Wrap_3",
+      "lod": null,
+      "tris": 44,
+      "verts": 72,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Wrap_4",
+      "lod": null,
+      "tris": 44,
+      "verts": 72,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Wrap_5",
+      "lod": null,
+      "tris": 44,
+      "verts": 72,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "LowerGrip_Wrap_6",
+      "lod": null,
+      "tris": 44,
+      "verts": 72,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_01",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_02",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_03",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_04",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_05",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_06",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_07",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_08",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_09",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_10",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_11",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_BoneSegment_12",
+      "lod": null,
+      "tris": 28,
+      "verts": 48,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_DarkThroat",
+      "lod": null,
+      "tris": 92,
+      "verts": 144,
+      "materials": [
+        "M_BoneDragon_MuzzleBlack"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Muzzle_InnerBarrel",
+      "lod": null,
+      "tris": 92,
+      "verts": 144,
+      "materials": [
+        "M_BoneDragon_MuzzleBlack"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Rear_Breech",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_EdgeSteel"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Receiver_OctagonalCore",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_DarkIron"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Receiver_Rivet_-1_-0.25",
+      "lod": null,
+      "tris": 92,
+      "verts": 192,
+      "materials": [
+        "M_BoneDragon_Rivets"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Receiver_Rivet_-1_0.24",
+      "lod": null,
+      "tris": 92,
+      "verts": 192,
+      "materials": [
+        "M_BoneDragon_Rivets"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Receiver_Rivet_1_-0.25",
+      "lod": null,
+      "tris": 92,
+      "verts": 192,
+      "materials": [
+        "M_BoneDragon_Rivets"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Receiver_Rivet_1_0.24",
+      "lod": null,
+      "tris": 92,
+      "verts": 192,
+      "materials": [
+        "M_BoneDragon_Rivets"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Swept_Horn_-1",
+      "lod": null,
+      "tris": 66,
+      "verts": 126,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Swept_Horn_1",
+      "lod": null,
+      "tris": 66,
+      "verts": 126,
+      "materials": [
+        "M_BoneDragon_Horn"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "TopHandle_Bridge",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_EdgeSteel"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "TopHandle_Leather",
+      "lod": null,
+      "tris": 108,
+      "verts": 208,
+      "materials": [
+        "M_BoneDragon_Oxblood"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "TopHandle_Post_-1",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_DarkIron"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "TopHandle_Post_1",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_DarkIron"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Cheek_-1",
+      "lod": null,
+      "tris": 60,
+      "verts": 124,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Cheek_1",
+      "lod": null,
+      "tris": 60,
+      "verts": 124,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_CranialPlate",
+      "lod": null,
+      "tris": 52,
+      "verts": 110,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_RearCrest",
+      "lod": null,
+      "tris": 44,
+      "verts": 96,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_-1_0",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_-1_1",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_-1_2",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_-1_3",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_-1_4",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_-1_5",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_1_0",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_1_1",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_1_2",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_1_3",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_1_4",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_IvoryLight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "Upper_Tooth_1_5",
+      "lod": null,
+      "tris": 12,
+      "verts": 24,
+      "materials": [
+        "M_BoneDragon_Ivory"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_BoneDragon_Ivory",
+      "baseColor": [
+        0.7599999904632568,
+        0.699999988079071,
+        0.5799999833106995,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.7799999713897705,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_IvoryShade",
+      "baseColor": [
+        0.6100000143051147,
+        0.550000011920929,
+        0.44999998807907104,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.8199999928474426,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_IvoryLight",
+      "baseColor": [
+        0.8600000143051147,
+        0.800000011920929,
+        0.6800000071525574,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.7599999904632568,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_EdgeSteel",
+      "baseColor": [
+        0.10499999672174454,
+        0.0949999988079071,
+        0.12999999523162842,
+        1
+      ],
+      "metallic": 0.7200000286102295,
+      "roughness": 0.3799999952316284,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_Horn",
+      "baseColor": [
+        0.11500000208616257,
+        0.054999999701976776,
+        0.07500000298023224,
+        1
+      ],
+      "metallic": 0.15000000596046448,
+      "roughness": 0.5799999833106995,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_Oxblood",
+      "baseColor": [
+        0.1899999976158142,
+        0.04500000178813934,
+        0.06199999898672104,
+        1
+      ],
+      "metallic": 0.05000000074505806,
+      "roughness": 0.7200000286102295,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_MuzzleBlack",
+      "baseColor": [
+        0.006000000052154064,
+        0.004999999888241291,
+        0.008999999612569809,
+        1
+      ],
+      "metallic": 0.05000000074505806,
+      "roughness": 0.8199999928474426,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_DarkIron",
+      "baseColor": [
+        0.054999999701976776,
+        0.04699999839067459,
+        0.06800000369548798,
+        1
+      ],
+      "metallic": 0.6499999761581421,
+      "roughness": 0.41999998688697815,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    },
+    {
+      "name": "M_BoneDragon_Rivets",
+      "baseColor": [
+        0.23999999463558197,
+        0.17000000178813934,
+        0.10000000149011612,
+        1
+      ],
+      "metallic": 0.699999988079071,
+      "roughness": 0.44999998807907104,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {}
+    }
+  ],
+  "source": {
+    "glb": "public/assets/weapons/SM_Weapon_BoneDragon.glb",
+    "sha256": "e88338d7be196f20fa2bdc59ca0b01bb79b8f159ac4a79b810d8b3ac685ef893",
+    "hiRes": false,
+    "version": {
+      "local_build": 1
+    },
+    "generator": {
+      "tool": "Blender 5.2.1 LTS",
+      "mode": "local_blender",
+      "script": "art/source/weapons/SM_Weapon_BoneDragon/build_bone_dragon.py"
+    },
+    "license": null
+  },
+  "exported": "2026-11-02 20:31:03"
+}

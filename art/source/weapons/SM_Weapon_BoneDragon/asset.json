@@ -1,0 +1,49 @@
+{
+  "id": "SM_Weapon_BoneDragon",
+  "display": "狱裂骨龙",
+  "kind": "static",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "file": "00_blockout/BO_SM_Weapon_BoneDragon_v001.json",
+          "source": { "kind": "weapon", "id": "launcher" },
+          "joints": 2,
+          "reference_mode": "semantic_sockets"
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "provider": "local_blender",
+          "script": "build_bone_dragon.py",
+          "file": "04_export/SM_Weapon_BoneDragon_v001.glb",
+          "open_file": "04_export/SM_Weapon_BoneDragon_open_v001.glb",
+          "triangles": 2740,
+          "mesh_parts": 70,
+          "materials": 9,
+          "pivots": ["Jaw_Upper_Pivot", "Jaw_Lower_Pivot"]
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "sheet": "05_review/SM_Weapon_BoneDragon_review.jpg",
+          "comparison": "05_review/SM_Weapon_BoneDragon_concept_comparison.jpg",
+          "verdict": "approved",
+          "by": "Kimi Code visual review",
+          "note": "双握把、骨白外甲、暗铁机匣、双角与圆形炮口完整；闭口/张牙由独立上下颌枢轴驱动；四视图与概念对照已检查。"
+        }
+      ]
+    }
+  }
+}

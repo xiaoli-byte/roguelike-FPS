@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "assetId": "SM_Weapon_BoneDragon",
+  "source": { "kind": "weapon", "id": "launcher" },
+  "rig": "parts",
+  "space": { "up": "+Y", "forward": "-Z", "unit": "m", "origin": "model" },
+  "bounds": {
+    "min": [-0.19597, -0.15, -0.58],
+    "max": [0.19597, 0.74436, 0.34049]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [0, 0, 0],
+      "restLocal": [0, 0, 0],
+      "bindRotation": [0, 0, 0],
+      "bindScale": [1, 1, 1]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [0, 0.28, -0.585],
+      "restLocal": [0, 0.28, -0.585],
+      "bindRotation": [0, 0, 0],
+      "bindScale": [1, 1, 1]
+    }
+  ],
+  "keep": [],
+  "fields": {},
+  "parts": {}
+}

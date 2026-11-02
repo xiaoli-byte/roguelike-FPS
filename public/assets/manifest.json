@@ -12765,7 +12765,43 @@
       "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/31ec43d2-60fb-4976-9439-45464fd4e2d9",
       "hiUrl": "assets/characters/SK_Boss_Leize@hi.glb",
       "hiBytes": 2749440
+    },
+    "SM_Weapon_BoneDragon": {
+      "url": "assets/weapons/SM_Weapon_BoneDragon.glb",
+      "kind": "static",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "launcher"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -0.19597,
+          -0.15,
+          -0.58
+        ],
+        "max": [
+          0.19597,
+          0.74436,
+          0.34049
+        ]
+      },
+      "version": {
+        "local_build": 1
+      },
+      "sha256": "e88338d7be196f20fa2bdc59ca0b01bb79b8f159ac4a79b810d8b3ac685ef893",
+      "bytes": 219088,
+      "published": "2026-11-02 20:28:14",
+      "generator": {
+        "tool": "Blender 5.2.1 LTS",
+        "mode": "local_blender",
+        "script": "art/source/weapons/SM_Weapon_BoneDragon/build_bone_dragon.py"
+      }
     }
   },
-  "updated": "2026-11-01 21:34:30"
+  "updated": "2026-11-02 20:28:14"
 }
