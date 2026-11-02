@@ -1,0 +1,176 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Weapon_Gunfire1002",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "category": "weapons",
+  "bind": {
+    "source": "weapon",
+    "id": "smg"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "qaWaivers": {},
+  "weapon": {
+    "id": "smg",
+    "parts": {
+      "muzzle": "muzzle",
+      "mag": "mag"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.04,
+        -0.35
+      ],
+      "mag": [
+        0.0,
+        -0.05,
+        -0.14
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.09,
+          -0.08
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.015,
+          -0.18
+        ]
+      },
+      "load": {
+        "parent": "mag",
+        "pos": [
+          0.02,
+          -0.06,
+          -0.14
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.04,
+          0.05,
+          0.03
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.03,
+          0.055,
+          -0.06
+        ],
+        "dir": [
+          -1.0,
+          0.5,
+          0.2
+        ]
+      }
+    }
+  },
+  "bounds": {
+    "min": [
+      -0.034042379570505696,
+      -0.12942785604532878,
+      -0.36108821630477905
+    ],
+    "max": [
+      0.03249340351013351,
+      0.09503247760560393,
+      0.28884806990623474
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": "parts",
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "j_r",
+      "muzzle",
+      "mag"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Weapon_Gunfire1002_LOD0",
+      "lod": 0,
+      "tris": 2394,
+      "verts": 7138,
+      "materials": [
+        "1002"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "1002",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/weapon_1002_c_BC.png",
+        "N": "Textures/weapon_1002_n_N.png",
+        "ORM": "Textures/weapon_1002_s_S_ORM.png",
+        "E": "Textures/weapon_1002_s_S_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/weapons/SK_Weapon_Gunfire1002.glb",
+    "sha256": "496332334d7a8d5d91d6cf1fee4943fa0b4ed82535b9582849f03b0a67cb2d06",
+    "hiRes": false,
+    "version": {
+      "source": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Gunfire Reborn AssetBundle",
+      "mode": "runtime rigid-parts conversion",
+      "checkpoint": "data244/1002"
+    },
+    "license": "Gunfire Reborn installed-game asset; local prototype use only, no redistribution rights implied"
+  },
+  "exported": "2026-11-02 22:44:44"
+}

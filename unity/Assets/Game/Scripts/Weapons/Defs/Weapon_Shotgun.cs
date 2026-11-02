@@ -11,7 +11,7 @@ namespace Spiritfire.Game
         {
             yield return new WeaponDef
             {
-                id = "shotgun", name = "碎岩霰弹", category = "霰弹枪", kind = WeaponKind.Shotgun, prefab = "SK_Weapon_Shotgun",
+                id = "shotgun", name = "碎岩霰弹", category = "霰弹枪", kind = WeaponKind.Shotgun, prefab = "SK_Weapon_Gunfire1301",
                 mode = FireMode.Semi, reload = ReloadStyle.Shell, sfx = "shot_shotgun", sfxVolume = 0.9f,
                 damage = 12, pellets = 9, pelletCone = 0.06f, fireRate = 1.4f, mag = 6, reserve = 42,
                 reloadTime = 3.6f, shellTime = 0.48f, reloadStart = 0.4f,

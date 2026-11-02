@@ -16,7 +16,7 @@ namespace Spiritfire.Game
         {
             yield return new WeaponDef
             {
-                id = "smg", name = "蜂鸣冲锋枪", category = "冲锋枪", kind = WeaponKind.Smg, prefab = "SK_Weapon_Smg",
+                id = "smg", name = "蜂鸣冲锋枪", category = "冲锋枪", kind = WeaponKind.Smg, prefab = "SK_Weapon_Gunfire1002",
                 mode = FireMode.Auto, reload = ReloadStyle.Magazine, sfx = "shot_smg", sfxVolume = 0.6f,
                 damage = 11, fireRate = 13, mag = 36, reserve = 252, reloadTime = 1.7f,
                 spreadTs = new SpreadParams(0.03f, 0.016f, 0.0035f, 0.07f, 0.2f),

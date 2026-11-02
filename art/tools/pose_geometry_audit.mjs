@@ -33,10 +33,10 @@ export const { createCannonAim, boundCannonAim, applyCannonAim } = cannonAim;
 const { articulationGeometry } = await import(await ts('src/assets/ArticulationWeights.ts'));
 export { articulationGeometry };
 const manifest=JSON.parse(fs.readFileSync(path.resolve(repository, 'public/assets/manifest.json'),'utf8')).assets;
-export function loadPublishedMesh(id, lod = 0){
+export function loadPublishedMesh(id, lod = 0, primitive = 0){
 const b=fs.readFileSync(path.resolve(repository, 'public/'+manifest[id].url));
 const j=JSON.parse(b.subarray(20,20+b.readUInt32LE(12)));const binStart=20+b.readUInt32LE(12)+8;
-const prim=j.meshes[lod].primitives[0], ext=prim.extensions.KHR_draco_mesh_compression,bv=j.bufferViews[ext.bufferView];
+const prim=j.meshes[lod].primitives[primitive], ext=prim.extensions.KHR_draco_mesh_compression,bv=j.bufferViews[ext.bufferView];
 const input=new Int8Array(b.buffer,b.byteOffset+binStart+(bv.byteOffset||0),bv.byteLength);
 const buffer=new draco.DecoderBuffer();buffer.Init(input,input.byteLength);
 const decoder=new draco.Decoder(), mesh=new draco.Mesh();const status=decoder.DecodeBufferToMesh(buffer,mesh);

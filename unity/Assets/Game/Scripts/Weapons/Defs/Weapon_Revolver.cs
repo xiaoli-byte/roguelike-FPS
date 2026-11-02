@@ -11,7 +11,7 @@ namespace Spiritfire.Game
         {
             yield return new WeaponDef
             {
-                id = "revolver", name = "赤铜左轮", category = "手枪", kind = WeaponKind.Pistol, prefab = "SK_Weapon_Revolver",
+                id = "revolver", name = "赤铜左轮", category = "手枪", kind = WeaponKind.Pistol, prefab = "SK_Weapon_Gunfire1202",
                 mode = FireMode.Semi, reload = ReloadStyle.Cylinder, sfx = "shot_pistol", sfxVolume = 1f,
                 damage = 38, fireRate = 3.5f, mag = 8, reserve = 64, reloadTime = 1.6f,
                 spreadTs = new SpreadParams(0.004f, 0.0012f, 0.014f, 0.04f, 0.16f),

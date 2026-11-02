@@ -16,7 +16,7 @@ namespace Spiritfire.Game
         {
             yield return new WeaponDef
             {
-                id = "railgun", name = "贯虹灵炮", category = "蓄能炮", kind = WeaponKind.Rifle, prefab = "SK_Weapon_Railgun",
+                id = "railgun", name = "贯虹灵炮", category = "蓄能炮", kind = WeaponKind.Rifle, prefab = "SK_Weapon_Gunfire1008",
                 mode = FireMode.Charge, reload = ReloadStyle.Cell, sfx = "shot_sniper", sfxVolume = 0.9f,
                 damage = 155, fireRate = 2, mag = 6, reserve = 36, reloadTime = 2.4f,
                 chargeTime = 0.9f, chargeMinMult = 0.2f, chargeFullPierce = 3, chargeDetonate = true,

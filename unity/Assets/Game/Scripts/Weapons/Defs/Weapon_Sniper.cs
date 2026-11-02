@@ -16,7 +16,7 @@ namespace Spiritfire.Game
         {
             yield return new WeaponDef
             {
-                id = "sniper", name = "鹰隼狙击", category = "狙击枪", kind = WeaponKind.Sniper, prefab = "SK_Weapon_Sniper",
+                id = "sniper", name = "鹰隼狙击", category = "狙击枪", kind = WeaponKind.Sniper, prefab = "SK_Weapon_Gunfire1106",
                 mode = FireMode.Semi, reload = ReloadStyle.Magazine, sfx = "shot_sniper", sfxVolume = 1f,
                 damage = 160, fireRate = 0.9f, mag = 5, reserve = 30, reloadTime = 3.2f,
                 spreadTs = new SpreadParams(0.028f, 0, 0.03f, 0.07f, 0.12f),

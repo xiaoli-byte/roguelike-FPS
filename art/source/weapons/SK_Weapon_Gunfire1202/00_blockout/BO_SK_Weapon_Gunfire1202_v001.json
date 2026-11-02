@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Gunfire1202",
+  "source": {
+    "kind": "weapon",
+    "id": "revolver"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.052040039774931705,
+      -0.11120783009383682,
+      -0.24741775435209273
+    ],
+    "max": [
+      0.05204225756351777,
+      0.11500732308626174,
+      0.10486743631924172
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.055,
+        -0.25
+      ],
+      "restLocal": [
+        0,
+        0.055,
+        -0.25
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_13",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.038,
+        -0.05
+      ],
+      "restLocal": [
+        0,
+        0.038,
+        -0.05
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {
+    "muzzle": "j_0",
+    "cylinder": "j_13",
+    "mag": "j_13"
+  },
+  "sockets": {
+    "sight": [
+      0,
+      0.075,
+      -0.053
+    ],
+    "leftGrip": [
+      -0.02,
+      -0.03,
+      0.02
+    ],
+    "load": [
+      [
+        -0.025,
+        -0.04,
+        -0.05
+      ],
+      "@mag"
+    ],
+    "finish": [
+      -0.025,
+      0.05,
+      -0.05
+    ],
+    "eject": [
+      [
+        0.03,
+        0.05,
+        -0.04
+      ],
+      [
+        1,
+        0.4,
+        0
+      ]
+    ]
+  },
+  "externalSource": "Gunfire Reborn data245 weapon 1202"
+}
