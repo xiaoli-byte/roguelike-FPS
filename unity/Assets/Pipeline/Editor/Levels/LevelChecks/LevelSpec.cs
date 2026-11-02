@@ -52,6 +52,24 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>跳过的检查项 id（<see cref="ILevelCheck.Id"/>）</summary>
         public HashSet<string> skip = new();
 
+        /// <summary>
+        /// 主线节拍（S5 PacingCheck，docs/level-design/ch3-v2.md 2.4 / 2.9）：主线上按顺序发生的事件——必清场地、路遇、藏宝岔口、补给、揭示 / 演出、首领、出口。
+        /// PacingCheck 从出生点起按人形 NavMesh 依次量相邻两拍之间的空白段（路程减去两拍的半径），超过 <see cref="maxBeatGap"/> 不合格；
+        /// 出生 → 第一个交战拍（Fight / Roadside / Boss）超过 <see cref="maxFirstFight"/> 不合格。空 = 不检查（旧图不受影响）。
+        /// </summary>
+        public List<BeatSpec> beats = new();
+        /// <summary>相邻两拍之间最长的空白段（米，人形 NavMesh 路程）：ch3-v2 2.9「≤ 110 m ≈ 15 s」</summary>
+        public float maxBeatGap = 110f;
+        /// <summary>出生 → 第一次交战最长多少米：ch3-v2 2.9「≤ 60 m」</summary>
+        public float maxFirstFight = 60f;
+
+        /// <summary>声明一拍（按主线顺序调用）；radius = 事件的范围（场地触发圈 / 补给营安全区），空白段从圈边量起</summary>
+        public LevelSpec Beat(string name, Vector3 pos, BeatKind kind, float radius = 0f)
+        {
+            beats.Add(new BeatSpec { name = name, pos = pos, kind = kind, radius = radius });
+            return this;
+        }
+
         public LevelSpec Route(string name, Vector3 pos)
         {
             route.Add(new Waypoint { name = name, pos = pos });
@@ -94,8 +112,49 @@ namespace Spiritfire.Art.Editor.Levels
         public int minLayers = -1;
         /// <summary>要有不靠二段跳就能上去的俯射层（≥ 2.5 m）</summary>
         public bool overlook;
+        /// <summary>
+        /// S5 CoverReachCheck：场地可站立格里离最近的全遮掩体 ≤ 8 m 的比例至少多少（ch3-v2 2.6：0.8）；−1 = 只报告。
+        /// 首领场不查：留 −1 或标 <see cref="boss"/>。
+        /// </summary>
+        public float minCoverReach = -1f;
+        /// <summary>场地里熔岩面积最多占多少（ch3-v2 2.7：战斗场地 ≤ 0.35）；−1 = 只报告</summary>
+        public float maxLavaShare = -1f;
+        /// <summary>首领场：CoverReachCheck 跳过（首领场的掩体由首领自查管）</summary>
+        public bool boss;
 
         public float Radius => size * 0.5f;
+    }
+
+    /// <summary>节拍种类：Fight / Roadside / Boss 算交战（PacingCheck 的「出生 → 首战」）</summary>
+    public enum BeatKind
+    {
+        /// <summary>必清场地</summary>
+        Fight,
+        /// <summary>路遇小队（不计目标）</summary>
+        Roadside,
+        /// <summary>藏宝岔口 / 可选守军</summary>
+        Cache,
+        /// <summary>补给（营地、可破坏补给）</summary>
+        Supply,
+        /// <summary>揭示 / 演出（远景、门开、熔流）</summary>
+        Reveal,
+        /// <summary>首领入场</summary>
+        Boss,
+        /// <summary>出口</summary>
+        Exit,
+    }
+
+    /// <summary>主线上的一拍（<see cref="LevelSpec.beats"/>）</summary>
+    public sealed class BeatSpec
+    {
+        public string name;
+        /// <summary>事件位置（地面；场地取中心）</summary>
+        public Vector3 pos;
+        public BeatKind kind;
+        /// <summary>事件范围半径（米）：场地给触发圈半径，空白段从圈边量起；0 = 点事件</summary>
+        public float radius;
+
+        public bool Combat => kind is BeatKind.Fight or BeatKind.Roadside or BeatKind.Boss;
     }
 
     /// <summary>刷怪锚点：enemies = 会在这里出生的敌人 id（null = 名册里最大的体型）</summary>
