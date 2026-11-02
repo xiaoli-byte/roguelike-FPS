@@ -15,7 +15,7 @@ namespace Spiritfire.Game
         Vector3 direction;
         float damage, life, age;
         bool spent, nearRumble;
-        EliteTornadoVisual look;
+        TornadoVisualBase look;
 
         public int PlayerHits { get; private set; }
         public Vector3 Direction => direction;
@@ -31,7 +31,9 @@ namespace Spiritfire.Game
             t.direction = Flat(direction).normalized;
             t.damage = damage;
             t.life = Range / Speed;
-            t.look = EliteTornadoVisual.Create(ground, Height, 1.65f, go.transform);
+            t.look = FxTone.Chapter == 3
+                ? ScenesTornadoVisual.Create(ground, Height, 1.65f, go.transform)
+                : EliteTornadoVisual.Create(ground, Height, 1.65f, go.transform);
             t.look.SetTravel(t.direction);
             t.look.transform.localScale = Vector3.one * 0.45f;
             return t;

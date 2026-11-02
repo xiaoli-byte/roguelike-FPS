@@ -186,7 +186,24 @@ namespace Spiritfire.Art.Editor
                     continue;
                 }
                 string tn = FxMaterials.TextureName(kind);
-                Texture2D tex = null;
+                if (kind == FxMaterialKind.ScenesTornado)
+                    AssetDatabase.ImportAsset("Assets/Art/Fx/T_ScenesTornado_Perlin.png", ImportAssetOptions.ForceSynchronousImport);
+                Texture2D tex = kind == FxMaterialKind.ScenesTornado
+                    ? AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Fx/T_ScenesTornado_Perlin.png") : null;
+                if (kind == FxMaterialKind.ScenesTornado)
+                {
+                    if (!tex)
+                    {
+                        Debug.LogError("[FxBuilder] 缺少 Scenes3D 原始噪声贴图 T_ScenesTornado_Perlin.png");
+                        errors++;
+                    }
+                    else if (AssetImporter.GetAtPath("Assets/Art/Fx/T_ScenesTornado_Perlin.png") is TextureImporter scenesTex)
+                    {
+                        scenesTex.sRGBTexture = false;
+                        scenesTex.wrapMode = TextureWrapMode.Repeat;
+                        scenesTex.SaveAndReimport();
+                    }
+                }
                 if (tn != null && (!textures.TryGetValue(tn, out tex) || !tex))
                 {
                     Debug.LogError($"[FxBuilder] 贴图 {tn} 没有生成（{kind}）");

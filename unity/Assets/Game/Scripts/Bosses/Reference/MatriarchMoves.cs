@@ -269,6 +269,77 @@ namespace Spiritfire.Game
         }
     }
 
+    /// <summary>妖后 · 水龙卷：锁定一条风道，放出 8.5 m 水龙卷缓慢推进；破碎水冠、径向水面环与周期范围伤害同步。</summary>
+    public sealed class MatriarchTornado : ReferenceMove
+    {
+        public override string Id => "matriarch_tornado";
+        public override string Name => "妖后 · 水龙卷";
+
+        EliteTornadoVisual look;
+        Vector3 center, direction;
+        float tick;
+        public bool Spawned { get; private set; }
+
+        public MatriarchTornado()
+        {
+            cooldown = 12f;
+            recovery = 1.5f;
+            windup = 1f;
+            active = 6f;
+            recover = 0.2f;
+            weight = 2.2f;
+            windupAnim = "blessWindup";
+        }
+
+        protected override void OnStart()
+        {
+            center = OnGround(Brain.transform.position);
+            direction = Brain.PlayerPosition - center;
+            direction.y = 0;
+            direction = direction.sqrMagnitude > 1e-4f ? direction.normalized : Vector3.forward;
+            Spawned = false;
+            tick = 0;
+            Brain.Halt();
+            Sfx("enemy_charge", 0.8f, 0.8f);
+        }
+
+        protected override void OnTelegraph()
+        {
+            WarnLine(center, center + direction * 20f, 4.7f, WindupTime, MatriarchRef.Warn);
+        }
+
+        protected override void OnActiveBegin()
+        {
+            look = EliteTornadoVisual.Create(center, 8.5f, 2.35f, null, false, true);
+            look.SetTravel(direction);
+            Spawned = true;
+            Fx.Burst(center + Vector3.up, MatriarchRef.Shard, 20, 6f, 0.55f, 0.18f);
+            Sfx("boss_roar", 0.65f, 1.2f);
+        }
+
+        protected override void OnActive(float dt)
+        {
+            center += direction * (3.2f * dt);
+            center = OnGround(center);
+            if (look) look.transform.position = center;
+            tick -= dt;
+            if (tick > 0) return;
+            tick = 0.55f;
+            Hazards.Blast(center, 2.35f, Dmg(5), new BossBlastOpts { maxHeight = 8.5f, knockback = 2f, knockUp = 1.2f });
+        }
+
+        protected override bool ActiveDone => StageT >= 6f;
+
+        protected override void OnEnd(bool cancelled)
+        {
+            if (look)
+            {
+                look.FadeOut(0.4f);
+                look = null;
+            }
+        }
+    }
+
     /// <summary>
     /// 妖后 · 冰棱螺旋弹幕（地面版：妖后本体升空蓄力，参考实现留在原地）：蓄力 0.8 s（地上亮出放射状辐条预警），然后自转并喷出 3 臂（二阶段 4 臂、中途反转）螺旋冰棱，
     /// 每 0.12 s（二阶段 0.1 s）一圈，持续 3.2 s（二阶段 3.8 s）；弹道向下倾斜，在玩家距离处约胸口高

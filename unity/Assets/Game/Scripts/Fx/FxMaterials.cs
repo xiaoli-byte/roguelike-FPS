@@ -51,6 +51,8 @@ namespace Spiritfire.Game
         Sigil,
         /// <summary>精英龙卷的双层噪声风体与地面径向流环（Assets/Art/Shaders/SF_EliteTornado.shader）</summary>
         EliteTornado,
+        /// <summary>Scenes3D 源码与原始噪声贴图的实现级还原（Assets/Art/Shaders/SF_ScenesTornado.shader）</summary>
+        ScenesTornado,
     }
 
     /// <summary>
@@ -72,6 +74,7 @@ namespace Spiritfire.Game
         public const string ShaderSurge = "Spiritfire/FxSurge";
         public const string ShaderSigil = "Spiritfire/FxSigil";
         public const string ShaderEliteTornado = "Spiritfire/EliteTornado";
+        public const string ShaderScenesTornado = "Spiritfire/ScenesTornado";
 
         static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         static readonly int MainTexId = Shader.PropertyToID("_MainTex");
@@ -116,6 +119,7 @@ namespace Spiritfire.Game
             FxMaterialKind.Surge => ShaderSurge,
             FxMaterialKind.Sigil => ShaderSigil,
             FxMaterialKind.EliteTornado => ShaderEliteTornado,
+            FxMaterialKind.ScenesTornado => ShaderScenesTornado,
             _ => ShaderParticles,
         };
 
@@ -216,6 +220,12 @@ namespace Spiritfire.Game
                 case FxMaterialKind.Flame:
                     m.SetOverrideTag("RenderType", "Transparent");
                     m.renderQueue = (int)RenderQueue.Transparent + 5;
+                    m.enableInstancing = false;
+                    return;
+                case FxMaterialKind.ScenesTornado:
+                    m.SetTexture(MainTexId, tex);
+                    m.SetOverrideTag("RenderType", "Transparent");
+                    m.renderQueue = (int)RenderQueue.Transparent + 2;
                     m.enableInstancing = false;
                     return;
                 case FxMaterialKind.Surge:

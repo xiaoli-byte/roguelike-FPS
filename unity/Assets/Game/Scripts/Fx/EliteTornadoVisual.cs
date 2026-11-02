@@ -7,13 +7,13 @@ namespace Spiritfire.Game
     /// 倾斜云冠按层减速扩散，稳定地面环、章节尘裙与外抛风丝分层运动。
     /// 弹簧骨架与云顶扩散实现参考 Habrador/Unity-Tornado-Simulator（MIT，Copyright 2021 Erik Nordeus）。
     /// </summary>
-    public sealed class EliteTornadoVisual : MonoBehaviour
+    public sealed class EliteTornadoVisual : TornadoVisualBase
     {
         const int Bands = 16, Segments = 28, BodySegments = 40, BodyLevels = 14, CrownSegments = 48, SkeletonPieces = 8;
-        static readonly Color Ink = Hex.Rgb(0x263e4c);
-        static readonly Color Wind = Hex.Rgb(0x68b2bf);
-        static readonly Color Edge = Hex.Rgb(0xd3eee4);
-        static readonly Color Cloud = Hex.Rgb(0x7297a3);
+        Color Ink = Hex.Rgb(0x263e4c);
+        Color Wind = Hex.Rgb(0x68b2bf);
+        Color Edge = Hex.Rgb(0xd3eee4);
+        Color Cloud = Hex.Rgb(0x7297a3);
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         static readonly int ModeId = Shader.PropertyToID("_Mode");
         static readonly int AlphaId = Shader.PropertyToID("_Alpha");
@@ -21,7 +21,7 @@ namespace Spiritfire.Game
         static readonly int ColorBId = Shader.PropertyToID("_ColorB");
 
         float height, topRadius, time, alpha = 1f, fade = 1f, fadeTarget = 1f, fadeSpeed = 3f, crownTimer, dustTimer;
-        bool charging;
+        bool charging, water;
         Vector3 travel;
         Mesh mainMesh, underMesh, bodyMesh, crownMesh;
         MeshRenderer mainRenderer, underRenderer, bodyRenderer, flowRenderer, groundRenderer, crownRenderer;
@@ -30,7 +30,7 @@ namespace Spiritfire.Game
         readonly Vector3[] skeleton = new Vector3[SkeletonPieces];
         readonly Vector3[] skeletonVelocity = new Vector3[SkeletonPieces];
 
-        public static EliteTornadoVisual Create(Vector3 ground, float height, float topRadius, Transform parent = null, bool charging = false)
+        public static EliteTornadoVisual Create(Vector3 ground, float height, float topRadius, Transform parent = null, bool charging = false, bool water = false)
         {
             var go = new GameObject("Elite Tornado Visual");
             go.transform.SetParent(parent, true);
@@ -39,6 +39,14 @@ namespace Spiritfire.Game
             v.height = height;
             v.topRadius = topRadius;
             v.charging = charging;
+            v.water = water;
+            if (water)
+            {
+                v.Ink = Hex.Rgb(0x123c56);
+                v.Wind = Hex.Rgb(0x42bdd0);
+                v.Edge = Hex.Rgb(0xd2fbff);
+                v.Cloud = Hex.Rgb(0x78c9d8);
+            }
             v.Build();
             return v;
         }
@@ -413,18 +421,24 @@ namespace Spiritfire.Game
             var tangent = Vector3.Cross(Vector3.up, d) * Mathf.Lerp(1.8f, 0.65f, layer);
             var velocity = tangent + d * Mathf.Lerp(0.25f, 1.15f, layer) + Vector3.up * 0.2f;
             Fx.LdOne("ToonSmoke", at, velocity, Mathf.Lerp(0.75f, 1.35f, layer), 0.52f, Fx.LdAlpha(Cloud, 0.62f), false);
+            if (water)
+                Fx.LdMany("Drop", 3, i =>
+                {
+                    var velocityDrop = tangent * Random.Range(1.1f, 1.8f) + d * Random.Range(1.5f, 3.2f) + Vector3.up * Random.Range(1.2f, 2.6f);
+                    return (at, velocityDrop, Random.Range(0.12f, 0.22f), 0.58f);
+                }, Edge);
         }
 
         void EmitSkirt()
         {
             var at = transform.position;
-            var dust = FxTone.Ground(Hex.Rgb(0xa08a6a));
+            var dust = water ? Cloud : FxTone.Ground(Hex.Rgb(0xa08a6a));
             float a = Random.value * Mathf.PI * 2f;
             var d = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
             var tangent = Vector3.Cross(Vector3.up, d);
             Fx.LdOne("ToonSmoke", at + d * 0.55f + Vector3.up * 0.25f, tangent * 4.2f - travel * 1.5f + Vector3.up * 0.8f,
                 Random.Range(0.9f, 1.3f), 0.58f, Fx.LdAlpha(dust, 0.82f), false);
-            Fx.LdMany("Chunk", 2, i =>
+            Fx.LdMany(water ? "Drop" : "Chunk", 2, i =>
             {
                 float h = Random.Range(0.35f, height * 0.72f);
                 float u = h / height;
@@ -440,7 +454,7 @@ namespace Spiritfire.Game
                 }, Wind);
         }
 
-        public void SetTravel(Vector3 direction)
+        public override void SetTravel(Vector3 direction)
         {
             charging = false;
             direction.y = 0;
@@ -458,9 +472,9 @@ namespace Spiritfire.Game
             crownRenderer.enabled = k > 0.76f;
         }
 
-        public void SetAlpha(float a) => alpha = Mathf.Clamp01(a);
+        public override void SetAlpha(float a) => alpha = Mathf.Clamp01(a);
 
-        public void FadeOut(float seconds)
+        public override void FadeOut(float seconds)
         {
             fadeTarget = 0;
             fadeSpeed = 1f / Mathf.Max(0.05f, seconds);

@@ -20,7 +20,7 @@ namespace Spiritfire.Game
         public static readonly IReadOnlyList<Func<BossMove>> All = new Func<BossMove>[]
         {
             () => new ColossusSlam(), () => new ColossusBoulders(), () => new ColossusBeam(), () => new ColossusStomp(), () => new ColossusFissure(),
-            () => new MatriarchNova(), () => new MatriarchLances(), () => new MatriarchSpiral(),
+            () => new MatriarchNova(), () => new MatriarchLances(), () => new MatriarchSpiral(), () => new MatriarchTornado(),
             () => new WarlordCharge(), () => new WarlordSweep(), () => new WarlordMeteor(), () => new WarlordLeap(), () => new WarlordCombo(), () => new WarlordLava(),
         };
 

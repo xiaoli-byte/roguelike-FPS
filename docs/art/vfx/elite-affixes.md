@@ -85,6 +85,11 @@
 
 主形是 `EliteTornadoVisual` 的四张动态网格与 `SF_EliteTornado.shader`。着色器按 [Scenes3D/vfx-tornado](https://github.com/Scenes3D/vfx-tornado) 的 `twistedCylinder`、双层斜向噪声和地面径向 UV 改写为 URP HLSL；8 段弹簧风核与云顶减速扩散按 [Habrador/Unity-Tornado-Simulator](https://github.com/Habrador/Unity-Tornado-Simulator)（MIT，Copyright 2021 Erik Nordeus）实现。流层三排顶点形成亮芯与柔边，环境色由 `FxTone.Ground` 按章节换算。造型另参考 [Le Lu 的 Godot 龙卷](https://www.youtube.com/watch?v=thOuxupumtI)、[로헨 的水龙卷](https://www.youtube.com/watch?v=E1VNO_jtRXY) 与 [Eric VFX Studio 的龙卷合集](https://www.youtube.com/watch?v=dzXZIJ5MVww)，不照搬高曝白。冒烟：`bash scripts/unity/bridge.sh playtest elite-tornado [场景]`，已在亮沙、雪地、熔岩三种地面检查第一人称。
 
+三套主题：
+- **熔火精英**：`ScenesTornadoVisual` + `SF_ScenesTornado.shader`，使用 Scenes3D 原始 `perlinTexture.png`、`timeScale = 0.15`、暗层振幅 0.2、发光层振幅 0.15，以及原双层圆柱与地面噪声；按项目色调映射校准发光覆盖，不混入云冠流带。
+- **第二章精英**：冰蓝风流层、弹簧风核与冰尘裙。
+- **第二章 Boss（霜翼妖后参考招式）**：`MatriarchTornado` 使用 8.5 m 水主题风体，水滴破碎水冠与径向水面环；3.2 m/s 推进，0.55 s 一次 `BossHazards.Blast`，完整接入 `ReferenceBossDef` 与 `boss-hazards` 回归。后两张参考未找到公开工程，按画面结构重建，不宣称源码级 1:1。
+
 ### 3.6 死亡 · 金环收起
 
 死亡后 0.3 s 里金环收拢到 35%、先亮一下再淡掉（原来是一下子消失）。

@@ -141,7 +141,7 @@ namespace Spiritfire.Game.Testing
                 KeepPlayerAlive();
                 Aim(motor, eye, boss.BodyCenter);
                 projMax = Mathf.Max(projMax, EnemyProjectile.LiveCount - proj0);
-                if (!shot && move.Stage == MoveStage.Active && move.StageT > 0.25f)
+                if (!shot && move.Stage == MoveStage.Active && move.StageT > (move is MatriarchTornado ? 1.5f : 0.25f))
                 {
                     shot = true;
                     Shot(weapons.eye, $"hazard_{move.Id}_{(label == "一阶段" ? "p0" : "p2")}");
@@ -164,6 +164,7 @@ namespace Spiritfire.Game.Testing
                 ColossusFissure cf => $"，排进地刺 {cf.LastSpikes} 根",
                 MatriarchLances ml => $"，射出冰枪 {ml.Fired} 支",
                 MatriarchSpiral ms => $"，冰棱 {ms.Emitted} 圈",
+                MatriarchTornado mt => $"，水龙卷 {(mt.Spawned ? "已生成" : "未生成")}",
                 WarlordCharge wc => $"，火迹 {wc.Trails} 片、撞中 {wc.Hits} 次",
                 WarlordLeap wl => $"，落在预警圈 {(wl.LastOnMark ? "✓" : "✗")}",
                 WarlordCombo co => $"，斩中 {co.Hits} 次",
@@ -185,6 +186,7 @@ namespace Spiritfire.Game.Testing
                 ColossusFissure cf when erupts < 1 || cf.LastSpikes != erupts => $"地刺 {erupts} 根（排进 {cf.LastSpikes}）",
                 MatriarchLances ml when ml.Fired != (phase1 ? 14 : 5) => $"冰枪 {ml.Fired} 支（应 {(phase1 ? 14 : 5)}）",
                 MatriarchSpiral ms when ms.Emitted <= 0 => "没有放出冰棱",
+                MatriarchTornado mt when !mt.Spawned => "没有生成水龙卷",
                 MatriarchNova when phase1 && projMax <= 0 => "二阶段起新星没有放出冰棱环",
                 WarlordSweep when waves < (phase1 ? 2 : 1) => $"火浪 {waves} 道（应 {(phase1 ? 2 : 1)}）",
                 WarlordMeteor when lobs != (phase2 ? 20 : phase1 ? 14 : 10) => $"陨石 {lobs} 颗（应 {(phase2 ? 20 : phase1 ? 14 : 10)}）",
