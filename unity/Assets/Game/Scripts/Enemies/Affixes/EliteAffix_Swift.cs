@@ -130,7 +130,8 @@ namespace Spiritfire.Game
                 warning.End();
                 if (charge)
                 {
-                    charge.FadeOut(0.16f);
+                    charge.SetAlpha(0);
+                    charge.FadeOut(0.08f);
                     charge = null;
                 }
                 float size = ai.transform.lossyScale.x;

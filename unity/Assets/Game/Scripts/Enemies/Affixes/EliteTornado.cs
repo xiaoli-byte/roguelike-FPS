@@ -32,6 +32,7 @@ namespace Spiritfire.Game
             t.damage = damage;
             t.life = Range / Speed;
             t.look = EliteTornadoVisual.Create(ground, Height, 1.65f, go.transform);
+            t.look.SetTravel(t.direction);
             t.look.transform.localScale = Vector3.one * 0.45f;
             return t;
         }
