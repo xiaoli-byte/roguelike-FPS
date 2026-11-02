@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoCraneHookWinch",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.craneHook",
+    "part": "Winch"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "SOCKET_ChainTop",
+      "pos": [
+        0,
+        -0.96,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -1.5638161897659302,
+      -0.961362361907959,
+      -0.8925105333328247
+    ],
+    "max": [
+      1.5638161897659302,
+      0.961362361907959,
+      0.8925105333328247
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoCraneHookWinch_LOD0",
+      "lod": 0,
+      "tris": 3428,
+      "verts": 4705,
+      "materials": [
+        "M_Tripo_InfernoCraneHook"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoCraneHook",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoCraneHook_BC.png",
+        "N": "Textures/T_Tripo_InfernoCraneHook_N.png",
+        "ORM": "Textures/T_Tripo_InfernoCraneHook_ORM.png",
+        "E": "Textures/T_Tripo_InfernoCraneHook_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoCraneHookWinch.glb",
+    "sha256": "9d3de892aef26d4d4237c876498c9d73da34e57e3938c7af7c3f4a1cceb27313",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoCraneHook"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:58:37"
+}

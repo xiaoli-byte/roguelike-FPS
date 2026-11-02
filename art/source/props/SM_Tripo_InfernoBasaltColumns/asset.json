@@ -1,0 +1,441 @@
+{
+  "id": "SM_Tripo_InfernoBasaltColumns",
+  "display": "玄武岩柱丛（3-1 石林 / 3-2 井壁 / 3-4 神道；全遮掩体，矮柱可站）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:30",
+          "files": {
+            "BO_SM_Tripo_InfernoBasaltColumns_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoBasaltColumns_v001.json",
+              "sha256": "b9a5e9e1f32cbe233f403b855e96cf50bb33439d464987e3cfdac1348b181a1f"
+            },
+            "BO_SM_Tripo_InfernoBasaltColumns_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoBasaltColumns_v001_views.json",
+              "sha256": "3d825fe18222599ef19a171d28e1e1f132a48b36988c1d98911275dca827e1a0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.basaltColumns"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0.0,
+              -3.5
+            ],
+            "max": [
+              4.0,
+              9.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:35",
+          "files": {
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_source.png",
+              "sha256": "d8a473fd23c55d1a899a0fa45ce58cbca5dd6ddbbf860873b07eb12f6a8af166"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_front.png",
+              "sha256": "640e2ffdbbdb2c78f4b3994f30f4ebd61ffd4a207f90db62c44a62c2539f5f8d"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_left.png",
+              "sha256": "3343c9468fefc601cc19417bf03d699f2021009ed014bc613f4a7804009df307"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_back.png",
+              "sha256": "97badef90f603d0f8b3ce5a22143f0abf4e13bf21666d3c504ee711c7f49b344"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_right.png",
+              "sha256": "c057fab0dd1559948b652b53f72f29cf66fee4d1afaae8dbb9be36e949fcf912"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_sheet.png",
+              "sha256": "25660added006ce1169961be94203b347be10109c382b1fd56f94d0ed80aca21"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_prompt.txt",
+              "sha256": "69066db4cfc33ab6d35a39e22d506cc280604474b994c6824c69c5ae9ba9b972"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v001_registration.json",
+              "sha256": "711ce531dab44d0d3479182a2b54d17520aa56a9e66ce2ce9d19ff7928e48c69"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (8m wide x 9m tall x 7m deep): A cluster of six thick fused hexagonal basalt columns rising from the ground, used as cover and stepping stones. Each column is a chunky six-sided prism about 2m across with a FLAT hexagonal top. The columns step up like a staircase with clearly different heights: 3m, 4.5m, 6m, 7m, 8m and 9m; the two lowest stand at the FRONT-LEFT, the tallest at the BACK-RIGHT. Dark charcoal basalt with soot-darkened edges and slightly lighter worn flat tops; one wide crack around the shared foot painted as a flat bright orange band. Irregular asymmetric outline from every side. PROPORTIONS: FRONT and BACK views about 0.9 times as wide as tall; LEFT and RIGHT views about 0.8 times as wide as tall.",
+          "source_sha256": "d8a473fd23c55d1a899a0fa45ce58cbca5dd6ddbbf860873b07eb12f6a8af166",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.0327022375215145,
+              "offset": [
+                65,
+                255
+              ],
+              "size": [
+                382,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.022436807725078,
+              "offset": [
+                79,
+                255
+              ],
+              "size": [
+                353,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.030632693959347,
+              "offset": [
+                74,
+                255
+              ],
+              "size": [
+                364,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.020408163265306,
+              "offset": [
+                81,
+                255
+              ],
+              "size": [
+                350,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张",
+            "time": "2026-11-03 01:54:35"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:58:12",
+          "files": {
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_source.png",
+              "sha256": "805db040096242f82d869249597c32e7270e93623f262e3605e143907a2a1541"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_front.png",
+              "sha256": "da73d48bfa9096c7889ac25f043dca2165df13264a53877bd8cba81861d1a4c8"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_left.png",
+              "sha256": "3343c9468fefc601cc19417bf03d699f2021009ed014bc613f4a7804009df307"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_back.png",
+              "sha256": "67b6f8e13c0bc2c8e05ab1d021ea6b1d10eab5e67b4ec7130f542b4540d6b42f"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_right.png",
+              "sha256": "ef7c4a439fcb1893ca779a8392d2f14fdf440b9b65e65190e6f617219449dc53"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_sheet.png",
+              "sha256": "1708692e9033cad1524bf995efe4e1c013aa135985dfcb263d72bec7dfb10a08"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_prompt.txt",
+              "sha256": "69066db4cfc33ab6d35a39e22d506cc280604474b994c6824c69c5ae9ba9b972"
+            },
+            "CN_SM_Tripo_InfernoBasaltColumns_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoBasaltColumns_v002_registration.json",
+              "sha256": "4b9e3e2dd69d91e90e6658c5840fb3d0f7f0a6eee07cff7a739c48ea37875a87"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "BasaltColumns_4.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (8m wide x 9m tall x 7m deep): A cluster of six thick fused hexagonal basalt columns rising from the ground, used as cover and stepping stones. Each column is a chunky six-sided prism about 2m across with a FLAT hexagonal top. The columns step up like a staircase with clearly different heights: 3m, 4.5m, 6m, 7m, 8m and 9m; the two lowest stand at the FRONT-LEFT, the tallest at the BACK-RIGHT. Dark charcoal basalt with soot-darkened edges and slightly lighter worn flat tops; one wide crack around the shared foot painted as a flat bright orange band. Irregular asymmetric outline from every side. PROPORTIONS: FRONT and BACK views about 0.9 times as wide as tall; LEFT and RIGHT views about 0.8 times as wide as tall.",
+          "source_sha256": "805db040096242f82d869249597c32e7270e93623f262e3605e143907a2a1541",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.0327022375215145,
+              "offset": [
+                64,
+                255
+              ],
+              "size": [
+                383,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.022436807725078,
+              "offset": [
+                79,
+                255
+              ],
+              "size": [
+                353,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.030632693959347,
+              "offset": [
+                73,
+                255
+              ],
+              "size": [
+                365,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.020408163265306,
+              "offset": [
+                80,
+                255
+              ],
+              "size": [
+                351,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:58:12"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:58:04",
+          "files": {
+            "HP_SM_Tripo_InfernoBasaltColumns_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v001_source.glb",
+              "sha256": "3b69c5c025988c4c0729ff83577cfab1f8e11b3e2d70694f85285d352dc2453a"
+            },
+            "HP_SM_Tripo_InfernoBasaltColumns_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v001.glb",
+              "sha256": "af4d4a4bd0246e2a974cf9923a4dccb04deb6499e3eaf9909462eae7008a9d1f"
+            },
+            "HP_SM_Tripo_InfernoBasaltColumns_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v001_graph.json",
+              "sha256": "89983f7018c6caad398a1274453303faf0a554698c226a3aeceab02e7c492bed"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/7d018205-0971-4dc0-bc62-fee3196e395b",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15702,
+          "source_sha256": "3b69c5c025988c4c0729ff83577cfab1f8e11b3e2d70694f85285d352dc2453a"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:59:20",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoBasaltColumns_v001.blend",
+              "sha256": "1c7251606497722f0b435243f9c8e69670d0cc7abbaa5546cf8b425e5c3ea162"
+            },
+            "SM_Tripo_InfernoBasaltColumns_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoBasaltColumns_v001.glb",
+              "sha256": "b5a6778923147c34fcab9b15a5c401d4579a7958bdc6a2d140515590ee094162"
+            },
+            "SM_Tripo_InfernoBasaltColumns_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoBasaltColumns_v001_metrics.json",
+              "sha256": "5b4cf8f671f6fefc0bb3b30b3d99fc20a4b52f2e474a9495f68b2c65fb9f6b68"
+            },
+            "T_Tripo_InfernoBasaltColumns_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoBasaltColumns_BC.png",
+              "sha256": "1d358c2bb9ce756f0c2c363e04bd10d99ed320d672b6452ed619914cb8b59284"
+            },
+            "T_Tripo_InfernoBasaltColumns_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoBasaltColumns_E.png",
+              "sha256": "9d378d79bcdd674e32a264508413037944d8b677ddaa5d6d05cd9f71520baf5b"
+            },
+            "T_Tripo_InfernoBasaltColumns_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoBasaltColumns_N.png",
+              "sha256": "68c14e82518db0b96d4b291d500017acfd8baef8cd56198bfda54405e97da24a"
+            },
+            "T_Tripo_InfernoBasaltColumns_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoBasaltColumns_ORM.png",
+              "sha256": "d49f54f98260b621bec0767245f59c26ce401327e9d1453822540f798e7df5cf"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.885,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15702,
+              "verts": 8004
+            }
+          ],
+          "export_kb": 581.5,
+          "seconds": 75.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:59:21",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoBasaltColumns_v001_validation_v001.json",
+              "sha256": "d9fb3661647e8361d6a58631068791ae0551343649e23c7db1f5aa610b04f36a"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:59:44",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoBasaltColumns_v001_review_v001.png",
+              "sha256": "c0e41de52fb8a0623b7317c05eb34eff3f537687f0ef31d02f0f30cc3b3384e7"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 15702 面；用户授权免审",
+            "time": "2026-11-03 05:27:48"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:27:49",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoBasaltColumns.glb",
+              "sha256": "b5a6778923147c34fcab9b15a5c401d4579a7958bdc6a2d140515590ee094162"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoBasaltColumns.glb"
+        }
+      ]
+    }
+  }
+}

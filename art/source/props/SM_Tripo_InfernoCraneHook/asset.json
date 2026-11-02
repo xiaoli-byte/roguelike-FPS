@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_InfernoCraneHook",
+  "display": "浇包吊车绞盘 + 吊钩（3-3 ③ 熔流闸；挂在 SM_Tripo_InfernoLadleCrane 横梁下，链条程序拼）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:47",
+          "files": {
+            "BO_SM_Tripo_InfernoCraneHook_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCraneHook_v001.json",
+              "sha256": "76ad91f1f068d9b1c7d40cacf206424e4d82fe866d97c12b50b94e65e5ae4c66"
+            },
+            "BO_SM_Tripo_InfernoCraneHook_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCraneHook_v001_views.json",
+              "sha256": "8eb35b2d971b8ce648ce7f9feeb805f1cf7e87dd88e278fbe7df84ac521aad87"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.craneHook"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0.0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              6.0,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:07:48",
+          "files": {
+            "CN_SM_Tripo_InfernoCraneHook_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_source.png",
+              "sha256": "574282fcabc9d8b3eaa3ce1352d9c911f4ac994d24140e45b78d270f96558444"
+            },
+            "CN_SM_Tripo_InfernoCraneHook_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_front.png",
+              "sha256": "43e9aecedd7a15708bf8af9f0647d2993205c14446aea398b0f71f8a92a58c1d"
+            },
+            "CN_SM_Tripo_InfernoCraneHook_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_left.png",
+              "sha256": "178871d8948d0eb38dcc17a536a76118ad04424c7fdf43da82f223e7de5bc085"
+            },
+            "CN_SM_Tripo_InfernoCraneHook_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_back.png",
+              "sha256": "7c84fcbf38c456e0960af99f9336461f8bac190ea6f1183184bfb107520cd56b"
+            },
+            "CN_SM_Tripo_InfernoCraneHook_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_right.png",
+              "sha256": "7f179ca89e7c180066d0e038931a9d5113d9abd26a4cbc86be2c248e587e91b2"
+            },
+            "CN_SM_Tripo_InfernoCraneHook_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_sheet.png",
+              "sha256": "838713748c086d6cc13105b041baaf03180cf9561c390766b80f5dd4b65a12ff"
+            },
+            "CN_SM_Tripo_InfernoCraneHook_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_prompt.txt",
+              "sha256": "e628f17206855a2a478ab5c1c9dd374d65e3a183fd3eb737781f65a119b9e1da"
+            },
+            "CN_SM_Tripo_InfernoCraneHook_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCraneHook_v001_registration.json",
+              "sha256": "d273c41ff55f51a3a2383cff29c32990cb6293259bd1bcdfcd387a7cd43a15a0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 1,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 1 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "CraneHook_1.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (4m wide x 6m tall x 3m deep): A crane hook kit of two SEPARATE parts floating one above the other with a clear empty gap of 1.5m between them (no chain, no rope between them): TOP PART: a heavy black iron drum winch 4m wide and 1.6m tall, a thick horizontal drum with riveted end flanges and a squat iron bracket housing with a flat top (it bolts under a crane girder); BOTTOM PART: a big black iron crane hook block 2.6m tall, a chunky rectangular sheave block with a vermilion lacquered band and one massive curved iron hook below it, the hook thick and blunt. PROPORTIONS: every view about 0.67 times as wide as tall; FRONT and BACK views look the same, LEFT and RIGHT views show the drum end on and the hook in profile.",
+          "source_sha256": "574282fcabc9d8b3eaa3ce1352d9c911f4ac994d24140e45b78d270f96558444",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8486562942008486,
+              "offset": [
+                79,
+                169
+              ],
+              "size": [
+                353,
+                686
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8403361344537814,
+              "offset": [
+                155,
+                169
+              ],
+              "size": [
+                202,
+                686
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8486562942008486,
+              "offset": [
+                79,
+                169
+              ],
+              "size": [
+                353,
+                686
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8393075712537156,
+              "offset": [
+                155,
+                169
+              ],
+              "size": [
+                201,
+                686
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 1 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 05:07:48"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:33:50",
+          "files": {
+            "HP_SM_Tripo_InfernoCraneHook_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCraneHook_v001_source.glb",
+              "sha256": "e5f27cd1ccdf6cd08ed4fe658f0ce0d7467532604bd4631206bd6b372d6b6666"
+            },
+            "HP_SM_Tripo_InfernoCraneHook_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCraneHook_v001.glb",
+              "sha256": "ef09f21177544a076f251d05cceb2227f918d6a41eaa7003bdabd047ecf34c12"
+            },
+            "HP_SM_Tripo_InfernoCraneHook_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCraneHook_v001_graph.json",
+              "sha256": "8de49286f73948ca8cc46e80feb17823d5a9ce54c65793990ae009041a0d62fc"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/efae4706-9c6f-47f8-9863-124b6608419c",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 6535,
+          "source_sha256": "e5f27cd1ccdf6cd08ed4fe658f0ce0d7467532604bd4631206bd6b372d6b6666"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:34:09",
+          "files": {
+            "SM_Tripo_InfernoCraneHook_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoCraneHook_v001.blend",
+              "sha256": "460d0783397f6043048b822f4f881eaee9defcc4beb83189c4d61f713d34f31f"
+            },
+            "SM_Tripo_InfernoCraneHook_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoCraneHook_v001.glb",
+              "sha256": "b0d19bac51e91fc9824f631b258aa58e20da3928e776949c5ef7e4820515c462"
+            },
+            "SM_Tripo_InfernoCraneHook_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoCraneHook_v001_metrics.json",
+              "sha256": "c12d26f8901b2fc09d0fe84cf31294ebbda12b65eb9726d86a37d8cda4f65882"
+            },
+            "T_Tripo_InfernoCraneHook_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCraneHook_BC.png",
+              "sha256": "7189c1fcceeb500d5de665107b2e8bc65391f744f858646e414e6a91b0ef1e5b"
+            },
+            "T_Tripo_InfernoCraneHook_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCraneHook_E.png",
+              "sha256": "466de4d17ce4fd05bb614655c779cfa98105b9a601b191539850d0421e793f92"
+            },
+            "T_Tripo_InfernoCraneHook_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCraneHook_N.png",
+              "sha256": "e0212014454c146c29f0850ab0956a04063bb597d09b81f04e8cf2bffe638405"
+            },
+            "T_Tripo_InfernoCraneHook_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCraneHook_ORM.png",
+              "sha256": "9bbf1f6907c4c441ac2b5444849a5cbd5aba7d0fc51997a3d4e1e002ed08b604"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.887,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6535,
+              "verts": 4313
+            }
+          ],
+          "export_kb": 297.7,
+          "seconds": 18.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:34:09",
+          "files": {
+            "SM_Tripo_InfernoCraneHook_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoCraneHook_v001_validation_v001.json",
+              "sha256": "8e2c1e1e65a3c57674365d7055cf2b21770131f600ebb4597fd52d198b3aff33"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:34:19",
+          "files": {
+            "SM_Tripo_InfernoCraneHook_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoCraneHook_v001_review_v001.png",
+              "sha256": "4fcea8832fc80cc1b844effe57fafc5635b3eeb6407245a9eab6e9492baf5d11"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 6535 面；绞盘 / 吊钩按连通块切成两件；用户授权免审",
+            "time": "2026-11-03 05:49:28"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:49:28",
+          "files": {
+            "SM_Tripo_InfernoCraneHook.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoCraneHook.glb",
+              "sha256": "b0d19bac51e91fc9824f631b258aa58e20da3928e776949c5ef7e4820515c462"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoCraneHook.glb"
+        }
+      ]
+    }
+  }
+}

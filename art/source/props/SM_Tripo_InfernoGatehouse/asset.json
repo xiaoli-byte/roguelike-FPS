@@ -1,0 +1,441 @@
+{
+  "id": "SM_Tripo_InfernoGatehouse",
+  "display": "渡口关楼（3-1 ① 主件；3-4 ① 山门复用，承重：城台 +8）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:20",
+          "files": {
+            "BO_SM_Tripo_InfernoGatehouse_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoGatehouse_v001.json",
+              "sha256": "6efbdbb1f212c68a29085d094b484c0dd4247551136b23398a8c24cc352c1269"
+            },
+            "BO_SM_Tripo_InfernoGatehouse_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoGatehouse_v001_views.json",
+              "sha256": "f73acd17c2c7c0fa6607023bc0331c1a934589582015002d56134279c735d7e3"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.gatehouse"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.0,
+              0.0,
+              -7.0
+            ],
+            "max": [
+              8.0,
+              12.0,
+              7.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:24",
+          "files": {
+            "CN_SM_Tripo_InfernoGatehouse_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_source.png",
+              "sha256": "2993d24bad1ec53528176b4c37b7b45d7280f383fe15327131d94cd105ac3379"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_front.png",
+              "sha256": "8bc67d7d930dfa5496c03561a4fe87de2c4941aa94abb1b93755443b663c177e"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_left.png",
+              "sha256": "05e1ac8d376b5d4a0100500e0d77db0191c8f189fcbd1d09d09a8c8bf91b8be0"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_back.png",
+              "sha256": "2b6cd40df819e72a379a2c789ef75818cbebb390cb41a907232212fcd264ae1e"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_right.png",
+              "sha256": "62f056541df082bfcd3344f7af9c4afd995cae1515e828dbef0a2f58a01f453b"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_sheet.png",
+              "sha256": "7f79ec76a06c59f566e7ba134f4e4eb2b4bc3a60a1b377858c79a734db498cdc"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_prompt.txt",
+              "sha256": "bf23455aebc8c6e3252e2575933ab2e2447b38112322825d5b0a026a74d64309"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v001_registration.json",
+              "sha256": "850d787b58a4ce59b0f37689fc818a5dccde60f7b3f35e6cc603a49bad48df5a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (16m wide x 12m tall x 14m deep): A massive fortified gate BLOCK of dark charcoal basalt (like a short thick section of a city wall), NOT a tower and NOT a hall: a solid stone block 12m wide, 8m tall and 14m deep with a FLAT ROOF TERRACE on top. One big rectangular gate passage 8m wide and 6m tall goes straight through the block from FRONT to BACK; the passage is EMPTY and open (no gate, no door) with a flat black iron lintel and a narrow vertical slot groove in each side wall. Heavy black iron corner plates with big rivets on the vertical edges; a big cast bronze plaque with a raised sun emblem above the passage on the FRONT face; a short deep vermilion lacquered timber pent eave with dark tiles above the passage on the FRONT and BACK faces at two thirds of the height. The FLAT ROOF TERRACE is open and walkable, surrounded by a solid basalt parapet 1.1m tall with square merlons; on it there is NO building, NO roof and NO hall, only two tiny square watch kiosks 3m wide with vermilion posts and small dark pyramid roofs at the two BACK corners, reaching 12m. On the LEFT and RIGHT outer side walls one straight external stone stair climbs diagonally from the ground at the front corner up to the roof terrace at the back. PROPORTIONS: FRONT and BACK views about 1.33 times as wide as tall: a wide low stone block with the open passage and the two small kiosks on top; LEFT and RIGHT views about 1.17 times as wide as tall showing the diagonal side stair. Big broad blocks, no fine brick seams, no flags, no banners.",
+          "source_sha256": "2993d24bad1ec53528176b4c37b7b45d7280f383fe15327131d94cd105ac3379",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9191880505553427,
+              "offset": [
+                10,
+                340
+              ],
+              "size": [
+                491,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9167303284950343,
+              "offset": [
+                128,
+                340
+              ],
+              "size": [
+                255,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9167303284950343,
+              "offset": [
+                11,
+                340
+              ],
+              "size": [
+                489,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9191880505553427,
+              "offset": [
+                128,
+                340
+              ],
+              "size": [
+                256,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张",
+            "time": "2026-11-03 01:54:24"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:58:00",
+          "files": {
+            "CN_SM_Tripo_InfernoGatehouse_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_source.png",
+              "sha256": "380d37e456a5be18974d33c20df9027dbf5bf0d2b473bc5438d3c17f2b4fa3f3"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_front.png",
+              "sha256": "4aa58253c0aacabbbec5560a4e24c32ffe2034fd07b76a0dcaafe7adb864c99c"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_left.png",
+              "sha256": "97bd1fcfa6ca12e14c4084d888bc3fcd39fbcc5bdcc806a6bfde2c2c4765f94a"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_back.png",
+              "sha256": "e756b2d2bacf64a4f02e5d3d02d2e910483e75002571fe392f557a96f263e8e1"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_right.png",
+              "sha256": "9fb33bd0c57002beab543830f73e896e5fe86a8efcb0bb59c1daf02e3bd93b3c"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_sheet.png",
+              "sha256": "05228171c65d94bac0af6439983c3ededf0fab5b5672f0a0391f2a0588b1f107"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_prompt.txt",
+              "sha256": "bf23455aebc8c6e3252e2575933ab2e2447b38112322825d5b0a026a74d64309"
+            },
+            "CN_SM_Tripo_InfernoGatehouse_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoGatehouse_v002_registration.json",
+              "sha256": "2699c93296cfe5b8590009a500cda84d8fdf81474eacc5cbab76550074dd5ac0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "Gatehouse2_4.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (16m wide x 12m tall x 14m deep): A massive fortified gate BLOCK of dark charcoal basalt (like a short thick section of a city wall), NOT a tower and NOT a hall: a solid stone block 12m wide, 8m tall and 14m deep with a FLAT ROOF TERRACE on top. One big rectangular gate passage 8m wide and 6m tall goes straight through the block from FRONT to BACK; the passage is EMPTY and open (no gate, no door) with a flat black iron lintel and a narrow vertical slot groove in each side wall. Heavy black iron corner plates with big rivets on the vertical edges; a big cast bronze plaque with a raised sun emblem above the passage on the FRONT face; a short deep vermilion lacquered timber pent eave with dark tiles above the passage on the FRONT and BACK faces at two thirds of the height. The FLAT ROOF TERRACE is open and walkable, surrounded by a solid basalt parapet 1.1m tall with square merlons; on it there is NO building, NO roof and NO hall, only two tiny square watch kiosks 3m wide with vermilion posts and small dark pyramid roofs at the two BACK corners, reaching 12m. On the LEFT and RIGHT outer side walls one straight external stone stair climbs diagonally from the ground at the front corner up to the roof terrace at the back. PROPORTIONS: FRONT and BACK views about 1.33 times as wide as tall: a wide low stone block with the open passage and the two small kiosks on top; LEFT and RIGHT views about 1.17 times as wide as tall showing the diagonal side stair. Big broad blocks, no fine brick seams, no flags, no banners.",
+          "source_sha256": "380d37e456a5be18974d33c20df9027dbf5bf0d2b473bc5438d3c17f2b4fa3f3",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9191880505553427,
+              "offset": [
+                10,
+                340
+              ],
+              "size": [
+                491,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9167303284950343,
+              "offset": [
+                128,
+                340
+              ],
+              "size": [
+                255,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9167303284950343,
+              "offset": [
+                11,
+                340
+              ],
+              "size": [
+                490,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9191880505553427,
+              "offset": [
+                128,
+                340
+              ],
+              "size": [
+                256,
+                343
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:58:00"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:54:51",
+          "files": {
+            "HP_SM_Tripo_InfernoGatehouse_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGatehouse_v001_source.glb",
+              "sha256": "e383c06a915d476eb09d5e99ca809f087c277f807fd15aa6309e4ead1987f87f"
+            },
+            "HP_SM_Tripo_InfernoGatehouse_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGatehouse_v001.glb",
+              "sha256": "7a6eeeba5c3ba32b7fe3dac4d9ed99a84fba1649f4a3c22e3123073103d95e34"
+            },
+            "HP_SM_Tripo_InfernoGatehouse_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGatehouse_v001_graph.json",
+              "sha256": "2a9054aa6b8181b714a802860c2578d3254447d69a75284592c9847d6b089ba6"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/355744d0-647e-4cc2-bcb6-c2009eafc218",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 28929,
+          "source_sha256": "e383c06a915d476eb09d5e99ca809f087c277f807fd15aa6309e4ead1987f87f"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:55:40",
+          "files": {
+            "SM_Tripo_InfernoGatehouse_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoGatehouse_v001.blend",
+              "sha256": "62a45dae9664fe35efbcc28d44831381002bfa51a9b3877a5685a2529eeb3946"
+            },
+            "SM_Tripo_InfernoGatehouse_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoGatehouse_v001.glb",
+              "sha256": "ef0efc2f439d54644cf79f5f7892d1f0b8046b4b7bf994f378f6bf232fed0925"
+            },
+            "SM_Tripo_InfernoGatehouse_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoGatehouse_v001_metrics.json",
+              "sha256": "2bc81b2d52fdc71f1ee6888e5b74ccf0cbc8ca31ba833f471308f09e2fb2d664"
+            },
+            "T_Tripo_InfernoGatehouse_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGatehouse_BC.png",
+              "sha256": "42e93bdf68d07fc8d7de924c7ecf21a771e9ed7a762f8e82a410032e636a814d"
+            },
+            "T_Tripo_InfernoGatehouse_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGatehouse_E.png",
+              "sha256": "e1eba8129ca1a1eeabdc09b588878f000477b5a599a020ca847ca8d404e44183"
+            },
+            "T_Tripo_InfernoGatehouse_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGatehouse_N.png",
+              "sha256": "a13f793c1103263902b402c1041ec51b57c6643d441ce69dfd8dc1666562c386"
+            },
+            "T_Tripo_InfernoGatehouse_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoGatehouse_ORM.png",
+              "sha256": "8708cb09ef19a91b962a9591f7934b2f73a7ccd14527e7ea24865d45413f5df2"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.896,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 28929,
+              "verts": 16070
+            }
+          ],
+          "export_kb": 1241.8,
+          "seconds": 47.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:55:40",
+          "files": {
+            "SM_Tripo_InfernoGatehouse_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoGatehouse_v001_validation_v001.json",
+              "sha256": "cb5b8eda79affda342700dc82c4289a979880768db856e18c0c79d51f0489f1e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:55:52",
+          "files": {
+            "SM_Tripo_InfernoGatehouse_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoGatehouse_v001_review_v001.png",
+              "sha256": "18fa2615c3aa30db9210cbfb66fbbe8c7d4dcdb98dddad5176c133c77dd8f59a"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 28929 面；门洞空着，闸门复用熔铁闸门；用户授权免审",
+            "time": "2026-11-03 05:27:47"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:27:48",
+          "files": {
+            "SM_Tripo_InfernoGatehouse.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoGatehouse.glb",
+              "sha256": "ef0efc2f439d54644cf79f5f7892d1f0b8046b4b7bf994f378f6bf232fed0925"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoGatehouse.glb"
+        }
+      ]
+    }
+  }
+}

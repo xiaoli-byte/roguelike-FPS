@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 13939,
+    "verts": 8101
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 10.00489,
+    "iou": 0.864,
+    "iou_per_view": {
+      "front": 0.913,
+      "left": 0.812,
+      "back": 0.896,
+      "right": 0.812
+    },
+    "size_m": [
+      8.202,
+      5.232,
+      10.0
+    ],
+    "reference_m": [
+      12.0,
+      8.0,
+      10.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.555,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoScaffold_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoScaffold_LOD0",
+      "tris": 13939,
+      "verts": 8101,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.993896484375,
+        0.99853515625
+      ],
+      "uv_utilization": 0.519,
+      "bbox_min": [
+        -4.1011,
+        -2.616,
+        0.0
+      ],
+      "bbox_max": [
+        4.1011,
+        2.616,
+        10.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoScaffold/04_export/SM_Tripo_InfernoScaffold_v001.glb",
+    "bytes": 1100860
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 49.8,
+  "_seconds": 52.8
+}

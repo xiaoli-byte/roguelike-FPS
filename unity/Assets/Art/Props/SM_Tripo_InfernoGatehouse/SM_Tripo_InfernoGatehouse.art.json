@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoGatehouse",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.gatehouse"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_Brazier",
+      "pos": [
+        -5.8,
+        11.6,
+        2
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "FX_Brazier",
+      "pos": [
+        5.8,
+        11.6,
+        2
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "FX_Brazier",
+      "pos": [
+        -5.5,
+        11,
+        -1.7
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "FX_Brazier",
+      "pos": [
+        5.5,
+        11,
+        -1.7
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "SOCKET_Gate",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "dir": [
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -8.655391693115234,
+      0,
+      -4.486259460449219
+    ],
+    "max": [
+      8.655391693115234,
+      12,
+      4.486259460449219
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoGatehouse_LOD0",
+      "lod": 0,
+      "tris": 28929,
+      "verts": 36091,
+      "materials": [
+        "M_Tripo_InfernoGatehouse"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoGatehouse",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoGatehouse_BC.png",
+        "N": "Textures/T_Tripo_InfernoGatehouse_N.png",
+        "ORM": "Textures/T_Tripo_InfernoGatehouse_ORM.png",
+        "E": "Textures/T_Tripo_InfernoGatehouse_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoGatehouse.glb",
+    "sha256": "ef0efc2f439d54644cf79f5f7892d1f0b8046b4b7bf994f378f6bf232fed0925",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:57:06"
+}

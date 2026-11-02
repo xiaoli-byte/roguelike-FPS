@@ -1,0 +1,562 @@
+{
+  "id": "SM_Tripo_InfernoIronBridge",
+  "display": "铁桥（3-3 B1 / B2 / B5 / B6 + 神范台四桥；3-4 护城渠桥；承重：桥面 +0.8）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:46",
+          "files": {
+            "BO_SM_Tripo_InfernoIronBridge_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoIronBridge_v001.json",
+              "sha256": "f0bd8099bb300038b5331bb2a50b31761e9a67230037051aa34dbc3f2d38fed3"
+            },
+            "BO_SM_Tripo_InfernoIronBridge_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoIronBridge_v001_views.json",
+              "sha256": "c0ffc21839af8a641861e5e9231397479e4638730ac377d14844adaea06f9771"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.ironBridge"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0.0,
+              -5.0
+            ],
+            "max": [
+              6.0,
+              2.5,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:51",
+          "files": {
+            "CN_SM_Tripo_InfernoIronBridge_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_source.png",
+              "sha256": "6b63eedd12f2226918ab3d0ca4dcb8328c2ba44814120d5775e7143a55404c52"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_front.png",
+              "sha256": "a446ce7c623969beab0bdd47dfbccaf878a3483b094fc492f386002b18a4371d"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_left.png",
+              "sha256": "0aec53e410789ea5292cfdb9f2074bff86abe0a659dddd42da897c9d7c1b949d"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_back.png",
+              "sha256": "22bcabb38b7840c1170628b0f7c3945d9cd9979c177fda275d37e711409cfea9"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_right.png",
+              "sha256": "974dd9155bb6cac3c14ff2647040c21437ebe60d8b03069a03c8dac32b922d77"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_sheet.png",
+              "sha256": "872f5f612473b1fe9b591be6fad8648884c02c801e0d2100e5dfa9108a6fb095"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_prompt.txt",
+              "sha256": "b018860e4efc64dd20d6b06651cdc16dece16e1f4e46606ebe888a4cc58c54a7"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v001_registration.json",
+              "sha256": "779e66c4774e788448ed5d9728250a820ec40ee19abcf1112a3938f18c015b13"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              3704,
+              512
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (12m wide x 2.5m tall x 10m deep): A short heavy black iron bridge span, 12m long from LEFT to RIGHT and 10m wide from FRONT to BACK. The bridge body is a thick black iron box girder 0.8m deep covered with riveted plates; its top is a wide FLAT walkable deck of iron plates. Along the FRONT edge and the BACK edge runs a solid black iron railing 1.1m tall with thick square posts and riveted panels; the FRONT railing has one 3m wide gap in its middle, the BACK railing is continuous. At the four corners stand four squat cast bronze posts 1.7m tall, each topped with a chunky roaring beast head facing outward along the bridge. A few vermilion lacquered iron strips on the deck. PROPORTIONS: FRONT and BACK views about 4.8 times as wide as tall, a long low flat span; LEFT and RIGHT views about 4 times as wide as tall. No arches under the deck, no water, no lava.",
+          "source_sha256": "6b63eedd12f2226918ab3d0ca4dcb8328c2ba44814120d5775e7143a55404c52",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.3607503607503607,
+              "offset": [
+                106,
+                464
+              ],
+              "size": [
+                300,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3239390994493035,
+              "offset": [
+                156,
+                464
+              ],
+              "size": [
+                199,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.36212203512583735,
+              "offset": [
+                105,
+                464
+              ],
+              "size": [
+                301,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3250446936453762,
+              "offset": [
+                156,
+                464
+              ],
+              "size": [
+                199,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张",
+            "time": "2026-11-03 01:54:51"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:58:26",
+          "files": {
+            "CN_SM_Tripo_InfernoIronBridge_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_source.png",
+              "sha256": "98c5fa36e688f2f648c3b7b183ddb0dc71dc4e7e1ed71bee5790d98bd95ed5ac"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_front.png",
+              "sha256": "1f045f4d926717f758d284be0b26335f334da3d0d718c2651ad786bfe5b3d33a"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_left.png",
+              "sha256": "748ee9c99fa9cd1e01eea8f764cf931b886dbf5de9263b4237348ce581bd07c4"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_back.png",
+              "sha256": "08315efe48741d5cd9f5053c9be1aa3b74d701c82786dc6c874ab18f72d06cef"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_right.png",
+              "sha256": "5e5c2b8917330005f135f12bc397d5248818558408b444819c4b23c999bce795"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_sheet.png",
+              "sha256": "2ba0588ccd2f095829f352b2bad04274f41037fdf381c86807710f45e7035477"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_prompt.txt",
+              "sha256": "b018860e4efc64dd20d6b06651cdc16dece16e1f4e46606ebe888a4cc58c54a7"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v002_registration.json",
+              "sha256": "5f3045432aeda7fb89d71de7ff15e4e787df3df765124b6bb30fde17035100d9"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "IronBridge_4.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (12m wide x 2.5m tall x 10m deep): A short heavy black iron bridge span, 12m long from LEFT to RIGHT and 10m wide from FRONT to BACK. The bridge body is a thick black iron box girder 0.8m deep covered with riveted plates; its top is a wide FLAT walkable deck of iron plates. Along the FRONT edge and the BACK edge runs a solid black iron railing 1.1m tall with thick square posts and riveted panels; the FRONT railing has one 3m wide gap in its middle, the BACK railing is continuous. At the four corners stand four squat cast bronze posts 1.7m tall, each topped with a chunky roaring beast head facing outward along the bridge. A few vermilion lacquered iron strips on the deck. PROPORTIONS: FRONT and BACK views about 4.8 times as wide as tall, a long low flat span; LEFT and RIGHT views about 4 times as wide as tall. No arches under the deck, no water, no lava.",
+          "source_sha256": "98c5fa36e688f2f648c3b7b183ddb0dc71dc4e7e1ed71bee5790d98bd95ed5ac",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.3607503607503607,
+              "offset": [
+                106,
+                464
+              ],
+              "size": [
+                300,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3239390994493035,
+              "offset": [
+                126,
+                464
+              ],
+              "size": [
+                260,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.36212203512583735,
+              "offset": [
+                105,
+                464
+              ],
+              "size": [
+                301,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3250446936453762,
+              "offset": [
+                125,
+                464
+              ],
+              "size": [
+                261,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:58:26"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-03 01:59:24",
+          "files": {
+            "CN_SM_Tripo_InfernoIronBridge_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_source.png",
+              "sha256": "4dac26474f08f65f18d7cc173e20017b3ef30ee94b75ff5620b970dddc1040f3"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_front.png",
+              "sha256": "b06c736650ded4b1e0ae4c727e4b3e9f8a5a25ae97c661feb30899e7b77aed80"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_left.png",
+              "sha256": "d011cb214f3f3ca0900dee0f47cacb922feaa65e69293a9ce6608e8ba14fa9be"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_back.png",
+              "sha256": "0b254807287e6229897683786bb2043b45761f88444809308362061854cc0da8"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_right.png",
+              "sha256": "06f091f06970c28b21e69d9f7202cbb5b7a8e094ae59533f805f2cce6b6e7ab9"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_sheet.png",
+              "sha256": "af66256f6465f20d692a09c31a3652eb74bd5e19993363a1316dc4e6e74efb54"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_prompt.txt",
+              "sha256": "b018860e4efc64dd20d6b06651cdc16dece16e1f4e46606ebe888a4cc58c54a7"
+            },
+            "CN_SM_Tripo_InfernoIronBridge_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoIronBridge_v003_registration.json",
+              "sha256": "eca977aee38ee7548b8106b49e2e2df400d4010bdad0935e675bbc12c9b07a09"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张（2×2 网格）；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "IronBridge_4.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (12m wide x 2.5m tall x 10m deep): A short heavy black iron bridge span, 12m long from LEFT to RIGHT and 10m wide from FRONT to BACK. The bridge body is a thick black iron box girder 0.8m deep covered with riveted plates; its top is a wide FLAT walkable deck of iron plates. Along the FRONT edge and the BACK edge runs a solid black iron railing 1.1m tall with thick square posts and riveted panels; the FRONT railing has one 3m wide gap in its middle, the BACK railing is continuous. At the four corners stand four squat cast bronze posts 1.7m tall, each topped with a chunky roaring beast head facing outward along the bridge. A few vermilion lacquered iron strips on the deck. PROPORTIONS: FRONT and BACK views about 4.8 times as wide as tall, a long low flat span; LEFT and RIGHT views about 4 times as wide as tall. No arches under the deck, no water, no lava.",
+          "source_sha256": "4dac26474f08f65f18d7cc173e20017b3ef30ee94b75ff5620b970dddc1040f3",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.3607503607503607,
+              "offset": [
+                100,
+                464
+              ],
+              "size": [
+                311,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3239390994493035,
+              "offset": [
+                156,
+                464
+              ],
+              "size": [
+                199,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.36212203512583735,
+              "offset": [
+                100,
+                464
+              ],
+              "size": [
+                312,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3239390994493035,
+              "offset": [
+                156,
+                464
+              ],
+              "size": [
+                199,
+                95
+              ],
+              "physical_height_m": 2.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张（2×2 网格）；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:59:24"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:02:39",
+          "files": {
+            "HP_SM_Tripo_InfernoIronBridge_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoIronBridge_v001_source.glb",
+              "sha256": "c9c883fe09e90b64d781b30c61b4211e6fb18b4c4f9ce5cdb6f8c758d6805b30"
+            },
+            "HP_SM_Tripo_InfernoIronBridge_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoIronBridge_v001.glb",
+              "sha256": "eb51cea32c315e92e7ae38961ce677b608a3a87c833a3dc85cf41a94b7d9e038"
+            },
+            "HP_SM_Tripo_InfernoIronBridge_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoIronBridge_v001_graph.json",
+              "sha256": "285b28f8d64c4ffe229970fba1d36253115b7abbb2fd2923be569a8bec6544d5"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/9507e6e7-c109-4da3-96fd-560980b88c9b",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12758,
+          "source_sha256": "c9c883fe09e90b64d781b30c61b4211e6fb18b4c4f9ce5cdb6f8c758d6805b30"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:03:39",
+          "files": {
+            "SM_Tripo_InfernoIronBridge_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoIronBridge_v001.blend",
+              "sha256": "527a6b582c044b3b179397a97367455cc8a8bde255e9b058b74f18fd4d0c9793"
+            },
+            "SM_Tripo_InfernoIronBridge_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoIronBridge_v001.glb",
+              "sha256": "7cf9f64898268c2ff3f441ef542c8913f1b8b9686f7c318a9f87fc71504673a0"
+            },
+            "SM_Tripo_InfernoIronBridge_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoIronBridge_v001_metrics.json",
+              "sha256": "bc6082a8debad4a32f26395f513a941eb55dfe1c46d8167168eec13f4bb68882"
+            },
+            "T_Tripo_InfernoIronBridge_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoIronBridge_BC.png",
+              "sha256": "b47c9dff9d97b2d83790dadca6aef08cc772309f4aff8a11aa0ae93bb760268f"
+            },
+            "T_Tripo_InfernoIronBridge_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoIronBridge_E.png",
+              "sha256": "e5d5481acb4e9f1acdac21e75fdc11ce9428de6da206077874661b80b1246894"
+            },
+            "T_Tripo_InfernoIronBridge_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoIronBridge_N.png",
+              "sha256": "60db5051e3d9962ad11365fcaa41da18964f462faa6f61c45abdd04be3e034f2"
+            },
+            "T_Tripo_InfernoIronBridge_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoIronBridge_ORM.png",
+              "sha256": "e60d8438b8ff88e3ec566af755813b8d1ae04ff93abaa49e25fd07fea8d34ae4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.542,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12758,
+              "verts": 7824
+            }
+          ],
+          "export_kb": 1018.1,
+          "seconds": 58.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:03:40",
+          "files": {
+            "SM_Tripo_InfernoIronBridge_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoIronBridge_v001_validation_v001.json",
+              "sha256": "1e99dd9a7cada87f01166c46286e7e65eed72c24d5210044a4a62978ae6e07d5"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:03:52",
+          "files": {
+            "SM_Tripo_InfernoIronBridge_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoIronBridge_v001_review_v001.png",
+              "sha256": "bfbbd5e0c29649d36edf3f9f5a46475b4be6a1c533351ade54f5938008f93dde"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 12758 面；用户授权免审",
+            "time": "2026-11-03 05:28:02"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:28:02",
+          "files": {
+            "SM_Tripo_InfernoIronBridge.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoIronBridge.glb",
+              "sha256": "7cf9f64898268c2ff3f441ef542c8913f1b8b9686f7c318a9f87fc71504673a0"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoIronBridge.glb"
+        }
+      ]
+    }
+  }
+}

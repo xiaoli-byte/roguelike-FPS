@@ -1,0 +1,552 @@
+{
+  "id": "SM_Tripo_InfernoLadleCrane",
+  "display": "浇包吊车（3-3 ③ 熔流闸视觉核心；3-2 ④ 吊臂台；承重：横梁走道 +12；不带浇包）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:35",
+          "files": {
+            "BO_SM_Tripo_InfernoLadleCrane_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoLadleCrane_v001.json",
+              "sha256": "f4db94b0830d5d401ed2ae273ec12c31335a030631bd913fda3980b5c983f685"
+            },
+            "BO_SM_Tripo_InfernoLadleCrane_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoLadleCrane_v001_views.json",
+              "sha256": "850acbc112d127fe2ede15cae855412bbb7119130244bfc06bd64ddf9a6e11d8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.ladleCrane"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -9.0,
+              0.0,
+              -4.0
+            ],
+            "max": [
+              9.0,
+              16.0,
+              4.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:55:49",
+          "files": {
+            "BO_SM_Tripo_InfernoLadleCrane_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoLadleCrane_v002.json",
+              "sha256": "ce4132fa719929fe3157665303cdf0bbfd8fe75b6d512ebb22ffd84d33b2c936"
+            },
+            "BO_SM_Tripo_InfernoLadleCrane_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoLadleCrane_v002_views.json",
+              "sha256": "0c29aafe9618f99c8009270ef0929cdca16478f7b48e29f55269a0b6270f8e01"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.ladleCrane"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -9.0,
+              0.0,
+              -4.0
+            ],
+            "max": [
+              9.0,
+              13.0,
+              4.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:55:53",
+          "files": {
+            "CN_SM_Tripo_InfernoLadleCrane_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_source.png",
+              "sha256": "c5976e89141ddbb093a3fb7e41e5bef257a719c7f11ca98de801b0bbe0a2a8f8"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_front.png",
+              "sha256": "e2f0cdf934f23cc7d6bf4193e93d87e10303a620acb4029ae54b240f444f41d9"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_left.png",
+              "sha256": "57d455c52fa92cd4500c659c42cb086a0451f99f4bafdeae15a7ad260ea1934b"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_back.png",
+              "sha256": "32a221e4a67c4d8c46bc5bb97b83952afe4626c4fef34b87bf8a7aebfde10132"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_right.png",
+              "sha256": "5fd6d374d505745dec62cafde3e1d9727a2b2158ef7558dd6cecd09b1ac3c327"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_sheet.png",
+              "sha256": "7ebb38688523bc891acce63d872008ac0502d313b9d036bbff87ab412efa1134"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_prompt.txt",
+              "sha256": "c8475c4e2c64afebb3bd69bd56de92fe9e09eb298897b81197dfd6e9f1bcca0f"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v001_registration.json",
+              "sha256": "df218df59706f11fe58aefeac7569b5ac1682bea27413fdb70b8d44e9fc5c470"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (18m wide x 16m tall x 8m deep): A giant gantry crane frame of a mythic foundry, massive black iron with big rivets, WITHOUT any hooks, chains, ropes, winches or ladles. Two thick legs stand at the LEFT and RIGHT ends; seen from the side each leg is an A-frame of two heavy iron columns spreading to 8m at the foot. A massive horizontal box girder spans between the legs; its top at 12m is a FLAT walkable iron walkway 3m wide with a 1.1m iron railing on both long edges, reached by a straight iron ladder cage on the outside of the RIGHT leg. Above the walkway each leg ends in a squat iron pulley head with one big pulley wheel, reaching 16m. Under the girder only two plain square iron mounting brackets (nothing hangs from them). Deep vermilion lacquered bands on the girder and a few cast bronze sun discs on the legs. PROPORTIONS: FRONT and BACK views about 1.1 times as wide as tall showing the full gantry; LEFT and RIGHT views about 0.5 times as wide as tall showing one A-frame leg.",
+          "source_sha256": "c5976e89141ddbb093a3fb7e41e5bef257a719c7f11ca98de801b0bbe0a2a8f8",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8112008112008111,
+              "offset": [
+                29,
+                347
+              ],
+              "size": [
+                453,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8072340590677998,
+              "offset": [
+                156,
+                347
+              ],
+              "size": [
+                200,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7974848554558699,
+              "offset": [
+                29,
+                347
+              ],
+              "size": [
+                454,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7974848554558699,
+              "offset": [
+                152,
+                347
+              ],
+              "size": [
+                207,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张",
+            "time": "2026-11-03 01:55:53"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:58:17",
+          "files": {
+            "CN_SM_Tripo_InfernoLadleCrane_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_source.png",
+              "sha256": "0dd7ca96bf1c3a25566ba955bcac4d61870aa5e51a64f6707d8c2afbe5133ca8"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_front.png",
+              "sha256": "e2f0cdf934f23cc7d6bf4193e93d87e10303a620acb4029ae54b240f444f41d9"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_left.png",
+              "sha256": "ff5144e2ea3d74923f3fd0b9675faab45b0f8955d5cead354856d1afb3238fe7"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_back.png",
+              "sha256": "32a221e4a67c4d8c46bc5bb97b83952afe4626c4fef34b87bf8a7aebfde10132"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_right.png",
+              "sha256": "c919446f5dd16cebd8646f00b0c36635dd17b15df5148228dbde13d86a8a067c"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_sheet.png",
+              "sha256": "fd4e45d685342495edbc6b1361661e70888c4aba9f35d9e13f9753e960249e21"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_prompt.txt",
+              "sha256": "c8475c4e2c64afebb3bd69bd56de92fe9e09eb298897b81197dfd6e9f1bcca0f"
+            },
+            "CN_SM_Tripo_InfernoLadleCrane_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoLadleCrane_v002_registration.json",
+              "sha256": "8071d59be723d08beab0a94c0d8c317db8e353ac936b49f9260d33a2733f8740"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 4,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "LadleCrane_4.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (18m wide x 16m tall x 8m deep): A giant gantry crane frame of a mythic foundry, massive black iron with big rivets, WITHOUT any hooks, chains, ropes, winches or ladles. Two thick legs stand at the LEFT and RIGHT ends; seen from the side each leg is an A-frame of two heavy iron columns spreading to 8m at the foot. A massive horizontal box girder spans between the legs; its top at 12m is a FLAT walkable iron walkway 3m wide with a 1.1m iron railing on both long edges, reached by a straight iron ladder cage on the outside of the RIGHT leg. Above the walkway each leg ends in a squat iron pulley head with one big pulley wheel, reaching 16m. Under the girder only two plain square iron mounting brackets (nothing hangs from them). Deep vermilion lacquered bands on the girder and a few cast bronze sun discs on the legs. PROPORTIONS: FRONT and BACK views about 1.1 times as wide as tall showing the full gantry; LEFT and RIGHT views about 0.5 times as wide as tall showing one A-frame leg.",
+          "source_sha256": "0dd7ca96bf1c3a25566ba955bcac4d61870aa5e51a64f6707d8c2afbe5133ca8",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8112008112008111,
+              "offset": [
+                29,
+                347
+              ],
+              "size": [
+                453,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8072340590677998,
+              "offset": [
+                156,
+                347
+              ],
+              "size": [
+                200,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7974848554558699,
+              "offset": [
+                29,
+                347
+              ],
+              "size": [
+                454,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7974848554558699,
+              "offset": [
+                152,
+                347
+              ],
+              "size": [
+                208,
+                330
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 4 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:58:17"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:56:26",
+          "files": {
+            "HP_SM_Tripo_InfernoLadleCrane_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoLadleCrane_v001_source.glb",
+              "sha256": "8a73f78c534830d314bacc5287cd7d36a558117267e6d0381cc51daef327d5e5"
+            },
+            "HP_SM_Tripo_InfernoLadleCrane_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoLadleCrane_v001.glb",
+              "sha256": "c04d9165096a7dfd2689c92bb9ea3efc4dcbb46940f48b4386b12b755ecad427"
+            },
+            "HP_SM_Tripo_InfernoLadleCrane_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoLadleCrane_v001_graph.json",
+              "sha256": "f942e5c70fab26994e620af5b863561e20b864f9806f844be1746a7398c190ae"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/70903862-5f0a-4ad1-a41f-2893557a08a4",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 23865,
+          "source_sha256": "8a73f78c534830d314bacc5287cd7d36a558117267e6d0381cc51daef327d5e5"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:57:12",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoLadleCrane_v001.blend",
+              "sha256": "eb93bd78713a519516545d12d490c9bb685a324df0471d86b42958c97fa03b76"
+            },
+            "SM_Tripo_InfernoLadleCrane_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoLadleCrane_v001.glb",
+              "sha256": "831fec35f5bcc880582f9eb92b2a39044ec3a2eaac3c1f4799ffa8dc4bfcfc8c"
+            },
+            "SM_Tripo_InfernoLadleCrane_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoLadleCrane_v001_metrics.json",
+              "sha256": "453253b941f6fdc8336d91ac0301bfb2ad89cb467bbd7778a5a009e2e0865b80"
+            },
+            "T_Tripo_InfernoLadleCrane_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoLadleCrane_BC.png",
+              "sha256": "575d0fb74473707242f4561f589fca6d5eaa09d3d7806c776b2dd4775de8d867"
+            },
+            "T_Tripo_InfernoLadleCrane_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoLadleCrane_N.png",
+              "sha256": "a1ce16d77b0b52c280d3f7db16ce6532c46cf535cf0d12958a746a27e8a15796"
+            },
+            "T_Tripo_InfernoLadleCrane_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoLadleCrane_ORM.png",
+              "sha256": "c219922bce4d151995ae0ab849727c30bc391c6683da2a31ffdaa4f38e3d2983"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 23865,
+              "verts": 14784
+            }
+          ],
+          "export_kb": 1293.2,
+          "seconds": 45.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 04:59:23",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoLadleCrane_v002.blend",
+              "sha256": "8d36a54adc672698db4ae4baaf2f6dcef3a438a731ffb968a8ca409442051dc8"
+            },
+            "SM_Tripo_InfernoLadleCrane_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoLadleCrane_v002.glb",
+              "sha256": "067f4140107b9e8dfedc67d09ee0f98711f82004100e30a46ed0e502ab105a6c"
+            },
+            "SM_Tripo_InfernoLadleCrane_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoLadleCrane_v002_metrics.json",
+              "sha256": "46a0088df0d630f93e13919ba3fc2de62145c1c21301e314aa0033137737845e"
+            },
+            "T_Tripo_InfernoLadleCrane_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoLadleCrane_BC.png",
+              "sha256": "575d0fb74473707242f4561f589fca6d5eaa09d3d7806c776b2dd4775de8d867"
+            },
+            "T_Tripo_InfernoLadleCrane_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoLadleCrane_E.png",
+              "sha256": "224ebb090c7c05bb2057b45f8150f56d3be91ae04046441d899430c8620cee4a"
+            },
+            "T_Tripo_InfernoLadleCrane_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoLadleCrane_N.png",
+              "sha256": "a1ce16d77b0b52c280d3f7db16ce6532c46cf535cf0d12958a746a27e8a15796"
+            },
+            "T_Tripo_InfernoLadleCrane_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoLadleCrane_ORM.png",
+              "sha256": "c219922bce4d151995ae0ab849727c30bc391c6683da2a31ffdaa4f38e3d2983"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 23865,
+              "verts": 14784
+            }
+          ],
+          "export_kb": 1317.1,
+          "seconds": 73.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:57:13",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoLadleCrane_v001_validation_v001.json",
+              "sha256": "54e09295bc1d118f1b9192ee3255bac8bbe28db39e4dca6f881bf2b542077d65"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 04:59:24",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoLadleCrane_v002_validation_v002.json",
+              "sha256": "fdce8d41620cd004a7931b8a6c86726a3a793ea22e5cb5ff65045618ff3a785c"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 04:57:25",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoLadleCrane_v001_review_v001.png",
+              "sha256": "e2a5a961d35186e5cc275b018ea992e02f40def7b99c2e9daa8930d138c4e32b"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 04:59:40",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoLadleCrane_v002_review_v002.png",
+              "sha256": "cee7f900b089795a79b720084235be01f24418c5ac56341b9d9f499ba3c0dff3"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 23865 面；门架不带吊钩，吊钩 / 绞盘是 SM_Tripo_InfernoCraneHook；用户授权免审",
+            "time": "2026-11-03 05:28:04"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:28:05",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoLadleCrane.glb",
+              "sha256": "067f4140107b9e8dfedc67d09ee0f98711f82004100e30a46ed0e502ab105a6c"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_InfernoLadleCrane.glb"
+        }
+      ]
+    }
+  }
+}

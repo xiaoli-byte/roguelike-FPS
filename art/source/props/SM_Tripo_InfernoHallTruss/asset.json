@@ -1,0 +1,558 @@
+{
+  "id": "SM_Tripo_InfernoHallTruss",
+  "display": "殿顶屋架（3-3 鼓风正殿 ×3；3-2 风箱窟口；下缘离地 ≥ 14 m，只给轮廓）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:52",
+          "files": {
+            "BO_SM_Tripo_InfernoHallTruss_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoHallTruss_v001.json",
+              "sha256": "e728153e1f071b5ec1c7008e4e3a3105a328651222b692c484cffe08166964a7"
+            },
+            "BO_SM_Tripo_InfernoHallTruss_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoHallTruss_v001_views.json",
+              "sha256": "cc012fc211e867f2eac9d9f786876180dd7ec05f7de4059db75a02a368d5e18c"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.hallTruss"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -12.0,
+              0.0,
+              -4.0
+            ],
+            "max": [
+              12.0,
+              9.0,
+              4.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 01:54:56",
+          "files": {
+            "CN_SM_Tripo_InfernoHallTruss_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_source.png",
+              "sha256": "4d1c3ff9fbf2a03ae4afc2ffe0ffa47168de3d257851db3fe76230f772faf1d9"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_front.png",
+              "sha256": "88c5fb7b0c025cfbe4aadc6108e505dd504b440dd02ffdde9ff3864b616014c4"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_left.png",
+              "sha256": "93b85354ca488e4bfc4c387f09fdc45ae3e101ed16498b0e7ffd375b4fc1c287"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_back.png",
+              "sha256": "bad7fc64f9f7edc89e3e802a7f71ccb105ba893e3fc9f619733af021d719cc93"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_right.png",
+              "sha256": "31e0bdc99f8fe510f083c0a30ba13a3bc1d0a9d7a5cb67f3a48ff1895e6998b2"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_sheet.png",
+              "sha256": "e6aa5c45dc34630278c748027e902b7fc96a94ca0506f4dd385413f9852f6d58"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_prompt.txt",
+              "sha256": "dd7e6d8f388007399c142d1cc0555cd3127319d8a21b2cebf23a552430e59b96"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v001_registration.json",
+              "sha256": "ea35c5828ab589d3a4bb199d1f608f354bcd4cd3bb45a3cd8150ae6526b44827"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              3704,
+              512
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (24m wide x 9m tall x 8m deep): One giant roof truss of a ruined blast hall, shown on its own. A gabled A-shaped frame: a thick straight horizontal tie beam 24m long at the bottom, two thick rafters rising from its ends to a ridge point at 9m, a short king post and two diagonal struts inside the triangle; heavy charred dark timber members 0.8m thick clad with black iron straps and big rivets. At both ends the tie beam rests on a chunky stepped bracket set (dougong) of vermilion lacquered wood blocks 2m tall. Five thick timber purlins 8m long run front to back across the rafters; on the LEFT half of the roof a sheet of dark grey roof tiles hangs on the purlins with a ragged broken edge, the RIGHT half shows bare purlins. PROPORTIONS: FRONT and BACK views about 2.7 times as wide as tall showing the full triangle; LEFT and RIGHT views about 0.9 times as wide as tall showing the purlins end on. Thick members only, no thin sticks.",
+          "source_sha256": "4d1c3ff9fbf2a03ae4afc2ffe0ffa47168de3d257851db3fe76230f772faf1d9",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.45836516424751717,
+              "offset": [
+                67,
+                426
+              ],
+              "size": [
+                378,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8241758241758241,
+              "offset": [
+                146,
+                426
+              ],
+              "size": [
+                220,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.45836516424751717,
+              "offset": [
+                67,
+                426
+              ],
+              "size": [
+                378,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8528784648187633,
+              "offset": [
+                142,
+                426
+              ],
+              "size": [
+                228,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张",
+            "time": "2026-11-03 01:54:56"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-03 01:58:31",
+          "files": {
+            "CN_SM_Tripo_InfernoHallTruss_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_source.png",
+              "sha256": "f96bd242daf71be47f83cedebd4d84cb27f7c9d32a31e6530dc720d09ce2fe09"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_front.png",
+              "sha256": "3fd8ccbe4ffc566f34031921fde3b40be3c5ab2623733bec0c195bf65cd0185f"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_left.png",
+              "sha256": "b0fd6e8baedde8ac5aad44c0f7c53082477758422562875ab22eaf37682506f9"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_back.png",
+              "sha256": "8aa0773ef3a58cd23e862ddf798364b5482bd60cd8665fc71fb091ba1736c1d9"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_right.png",
+              "sha256": "2e581e47dfbc235ebe38b57a9ab2ef8ccd412bee3e11464b41e13c46ce2790ed"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_sheet.png",
+              "sha256": "ffa5ca608efe549df8ebd5d53c1bc713101d99d6d975697b02333293f997b6ed"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_prompt.txt",
+              "sha256": "dd7e6d8f388007399c142d1cc0555cd3127319d8a21b2cebf23a552430e59b96"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v002_registration.json",
+              "sha256": "34d0164c1221d15e7949a750964a70c9d063dc2c83010f45d064d9b048aeb3f9"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "HallTruss_2.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (24m wide x 9m tall x 8m deep): One giant roof truss of a ruined blast hall, shown on its own. A gabled A-shaped frame: a thick straight horizontal tie beam 24m long at the bottom, two thick rafters rising from its ends to a ridge point at 9m, a short king post and two diagonal struts inside the triangle; heavy charred dark timber members 0.8m thick clad with black iron straps and big rivets. At both ends the tie beam rests on a chunky stepped bracket set (dougong) of vermilion lacquered wood blocks 2m tall. Five thick timber purlins 8m long run front to back across the rafters; on the LEFT half of the roof a sheet of dark grey roof tiles hangs on the purlins with a ragged broken edge, the RIGHT half shows bare purlins. PROPORTIONS: FRONT and BACK views about 2.7 times as wide as tall showing the full triangle; LEFT and RIGHT views about 0.9 times as wide as tall showing the purlins end on. Thick members only, no thin sticks.",
+          "source_sha256": "f96bd242daf71be47f83cedebd4d84cb27f7c9d32a31e6530dc720d09ce2fe09",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.45836516424751717,
+              "offset": [
+                67,
+                426
+              ],
+              "size": [
+                378,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4222378606615059,
+              "offset": [
+                105,
+                426
+              ],
+              "size": [
+                302,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.45836516424751717,
+              "offset": [
+                67,
+                426
+              ],
+              "size": [
+                378,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.42120042120042117,
+              "offset": [
+                105,
+                426
+              ],
+              "size": [
+                301,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:58:31"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-03 01:59:30",
+          "files": {
+            "CN_SM_Tripo_InfernoHallTruss_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_source.png",
+              "sha256": "84ef6062bbe37ae406f97249297e493e238b3c465b6b028a14793aaf32f42a09"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_front.png",
+              "sha256": "e42d2fbaf1723d4b557826f9bb82ebefcdbbdf6f507b862a3079756a5cd77b15"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_left.png",
+              "sha256": "723a44439f7180065fd594d2dc0453dd9bf212a5b37ce7c721b524ba5edc13ca"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_back.png",
+              "sha256": "0908c8c29bf9c495176622a434196a2ef35adb8445650a7bfb7f2835da63f4dd"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_right.png",
+              "sha256": "5c8f3ed65bccdedda673fac9bedbf4f512b4f0e8d356c496ddc4c1c3d6691315"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_sheet.png",
+              "sha256": "cd5fc1e135e29b4f35529227546d08dda1046f24e65e6b6cb3b30d8fb1c25377"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_prompt.txt",
+              "sha256": "dd7e6d8f388007399c142d1cc0555cd3127319d8a21b2cebf23a552430e59b96"
+            },
+            "CN_SM_Tripo_InfernoHallTruss_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoHallTruss_v003_registration.json",
+              "sha256": "1e547870431c50cb368f5156bbf7ff1eb9326a93ff4679b623bf97b29f7a315f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张（2×2 网格）；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "HallTruss_2.png"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas. STYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights. OBJECT (24m wide x 9m tall x 8m deep): One giant roof truss of a ruined blast hall, shown on its own. A gabled A-shaped frame: a thick straight horizontal tie beam 24m long at the bottom, two thick rafters rising from its ends to a ridge point at 9m, a short king post and two diagonal struts inside the triangle; heavy charred dark timber members 0.8m thick clad with black iron straps and big rivets. At both ends the tie beam rests on a chunky stepped bracket set (dougong) of vermilion lacquered wood blocks 2m tall. Five thick timber purlins 8m long run front to back across the rafters; on the LEFT half of the roof a sheet of dark grey roof tiles hangs on the purlins with a ragged broken edge, the RIGHT half shows bare purlins. PROPORTIONS: FRONT and BACK views about 2.7 times as wide as tall showing the full triangle; LEFT and RIGHT views about 0.9 times as wide as tall showing the purlins end on. Thick members only, no thin sticks.",
+          "source_sha256": "84ef6062bbe37ae406f97249297e493e238b3c465b6b028a14793aaf32f42a09",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.45836516424751717,
+              "offset": [
+                6,
+                426
+              ],
+              "size": [
+                500,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4222378606615059,
+              "offset": [
+                230,
+                426
+              ],
+              "size": [
+                52,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.45836516424751717,
+              "offset": [
+                5,
+                426
+              ],
+              "size": [
+                501,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.42120042120042117,
+              "offset": [
+                230,
+                426
+              ],
+              "size": [
+                51,
+                171
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5，4 张里选第 2 张（2×2 网格）；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-03 01:59:30"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:04:30",
+          "files": {
+            "HP_SM_Tripo_InfernoHallTruss_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHallTruss_v001_source.glb",
+              "sha256": "c5ba85bee6d55142cafba8ed97b6e71b3c5fda713e95fe99ea8e538f90f5d053"
+            },
+            "HP_SM_Tripo_InfernoHallTruss_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHallTruss_v001.glb",
+              "sha256": "a60991bf43e24247349d5490d9560f97787b12fa3bee14852266a6c0a8873709"
+            },
+            "HP_SM_Tripo_InfernoHallTruss_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHallTruss_v001_graph.json",
+              "sha256": "24a3d9e14f5c356e11f0bf55c9b52e3234caa3cd7335b409e74f0398746960d1"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/3fe16759-6cb1-4458-8db0-d5b6f791dc63",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13204,
+          "source_sha256": "c5ba85bee6d55142cafba8ed97b6e71b3c5fda713e95fe99ea8e538f90f5d053"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:05:13",
+          "files": {
+            "SM_Tripo_InfernoHallTruss_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoHallTruss_v001.blend",
+              "sha256": "07dc7b0ceae77fa0b3f71ecd9630db2fe24cfde0bdd3e57a05a8dc9a48add2a8"
+            },
+            "SM_Tripo_InfernoHallTruss_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoHallTruss_v001.glb",
+              "sha256": "e8a4e28d50d1ccb89dab1f99e9053acd019d1963ac500d8bc153ff8abf858049"
+            },
+            "SM_Tripo_InfernoHallTruss_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoHallTruss_v001_metrics.json",
+              "sha256": "7aed710bb557b2e4d34fae0419a1b31595505de72ec94c4059865130ba8f3565"
+            },
+            "T_Tripo_InfernoHallTruss_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoHallTruss_BC.png",
+              "sha256": "5009648e3ef6f42cc6ade09f896b7cf52cdb40631c8a6f768c8fb23d90d75679"
+            },
+            "T_Tripo_InfernoHallTruss_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoHallTruss_N.png",
+              "sha256": "d211fbb6d7b48a0163763c9fe0ccc99517a6144c6eaf485569c2c8771e008270"
+            },
+            "T_Tripo_InfernoHallTruss_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoHallTruss_ORM.png",
+              "sha256": "4be32b694810362809b236f4e9993f57d9c0b2ddec98ec2b53fd5ebae3997adf"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.679,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13204,
+              "verts": 7771
+            }
+          ],
+          "export_kb": 833.3,
+          "seconds": 41.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:05:14",
+          "files": {
+            "SM_Tripo_InfernoHallTruss_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoHallTruss_v001_validation_v001.json",
+              "sha256": "2a59ec66cc1743c04189859e1bae4e370ab713959ac1fb297295510efb340c6e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:05:23",
+          "files": {
+            "SM_Tripo_InfernoHallTruss_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoHallTruss_v001_review_v001.png",
+              "sha256": "bbc7db2ecaa0c3ca36c8616958c70baf1690769d9d3694b27a3334a7eb9d1102"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 13204 面；用户授权免审",
+            "time": "2026-11-03 05:28:03"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-03 05:28:04",
+          "files": {
+            "SM_Tripo_InfernoHallTruss.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoHallTruss.glb",
+              "sha256": "e8a4e28d50d1ccb89dab1f99e9053acd019d1963ac500d8bc153ff8abf858049"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoHallTruss.glb"
+        }
+      ]
+    }
+  }
+}

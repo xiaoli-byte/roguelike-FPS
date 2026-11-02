@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 12758,
+    "verts": 7824
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 10.87049,
+    "iou": 0.542,
+    "iou_per_view": {
+      "front": 0.583,
+      "left": 0.494,
+      "back": 0.576,
+      "right": 0.494
+    },
+    "size_m": [
+      10.865,
+      8.052,
+      2.5
+    ],
+    "reference_m": [
+      12.0,
+      10.0,
+      2.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0082
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.557,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoIronBridge_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoIronBridge_LOD0",
+      "tris": 12758,
+      "verts": 7824,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.998779296875
+      ],
+      "uv_utilization": 0.625,
+      "bbox_min": [
+        -5.4326,
+        -4.026,
+        0.0
+      ],
+      "bbox_max": [
+        5.4326,
+        4.026,
+        2.5
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoIronBridge/04_export/SM_Tripo_InfernoIronBridge_v001.glb",
+    "bytes": 1042560
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 55.7,
+  "_seconds": 58.5
+}

@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoHallTruss",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.hallTruss"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -13.4399995803833,
+      0,
+      -2.133854389190674
+    ],
+    "max": [
+      13.4399995803833,
+      8.96875286102295,
+      2.133854389190674
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoHallTruss_LOD0",
+      "lod": 0,
+      "tris": 13204,
+      "verts": 9513,
+      "materials": [
+        "M_Tripo_InfernoHallTruss"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoHallTruss",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoHallTruss_BC.png",
+        "N": "Textures/T_Tripo_InfernoHallTruss_N.png",
+        "ORM": "Textures/T_Tripo_InfernoHallTruss_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoHallTruss.glb",
+    "sha256": "e8a4e28d50d1ccb89dab1f99e9053acd019d1963ac500d8bc153ff8abf858049",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 3,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:33:15"
+}

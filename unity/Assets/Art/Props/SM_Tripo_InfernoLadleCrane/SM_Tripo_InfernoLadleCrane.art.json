@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoLadleCrane",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.ladleCrane"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "SOCKET_Hook",
+      "pos": [
+        -4,
+        10,
+        0
+      ],
+      "dir": [
+        0,
+        -1,
+        0
+      ]
+    },
+    {
+      "name": "SOCKET_Hook",
+      "pos": [
+        4,
+        10,
+        0
+      ],
+      "dir": [
+        0,
+        -1,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -8.61197566986084,
+      0,
+      -4.043043613433838
+    ],
+    "max": [
+      8.61197566986084,
+      13,
+      4.043043613433838
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoLadleCrane_LOD0",
+      "lod": 0,
+      "tris": 23865,
+      "verts": 33110,
+      "materials": [
+        "M_Tripo_InfernoLadleCrane"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoLadleCrane",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoLadleCrane_BC.png",
+        "N": "Textures/T_Tripo_InfernoLadleCrane_N.png",
+        "ORM": "Textures/T_Tripo_InfernoLadleCrane_ORM.png",
+        "E": "Textures/T_Tripo_InfernoLadleCrane_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoLadleCrane.glb",
+    "sha256": "067f4140107b9e8dfedc67d09ee0f98711f82004100e30a46ed0e502ab105a6c",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-03 05:57:16"
+}
