@@ -735,6 +735,17 @@ A reliable military assault rifle: olive-green painted steel receiver with wind-
 Moving part: the curved magazine. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
 """
 
+[assets.SK_Weapon_Gunfire1001]
+display = "裂风步枪 · Gunfire 1001"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+blockout = { source = "weapon", id = "rifle" }
+material = { roughness = 0.63, metallic = 0.63 }
+keep_glow = "none"
+external_source = "Gunfire Reborn installed-game data241 weapon 1001; local prototype only"
+
 [assets.SK_Weapon_Burst]
 display = "三叠点射枪"
 kind = "skeletal"

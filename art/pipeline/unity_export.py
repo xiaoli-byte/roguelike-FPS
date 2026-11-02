@@ -239,9 +239,9 @@ def weapon_parts(asset_id: str, entry: dict, category: str) -> dict | None:
 
     named = set(parts.values()) | {"j_r"}
     sockets: dict[str, dict] = {"muzzle": {"bone": parts.get("muzzle", "j_0")}}
-    for name, spec in WEAPON_SOCKETS[wid].items():
+    for name, spec in (meta.get("sockets") or WEAPON_SOCKETS[wid]).items():
         # [x, y, z] | ([x, y, z], 父零件) | ([x, y, z], [方向]) | ([x, y, z], [方向], 父零件)
-        items = list(spec) if isinstance(spec, tuple) else [spec]
+        items = list(spec) if isinstance(spec, (tuple, list)) and spec and isinstance(spec[0], (tuple, list)) else [spec]
         pos = items.pop(0)
         direction = items.pop(0) if items and isinstance(items[0], list) else None
         parent = items.pop(0) if items else None

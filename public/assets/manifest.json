@@ -12801,6 +12801,73 @@
         "mode": "local_blender",
         "script": "art/source/weapons/SM_Weapon_BoneDragon/build_bone_dragon.py"
       }
+    },
+    "SK_Weapon_Gunfire1001": {
+      "url": "assets/weapons/SK_Weapon_Gunfire1001.glb",
+      "kind": "skeletal",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "rifle"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "rig": {
+        "mode": "parts",
+        "joints": [
+          [
+            "j_r",
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            "j_0",
+            [
+              0,
+              0.042,
+              -0.615
+            ]
+          ],
+          [
+            "j_13",
+            [
+              0,
+              0,
+              -0.105
+            ]
+          ]
+        ],
+        "keep": []
+      },
+      "bounds": {
+        "min": [
+          -0.040270643721610266,
+          -0.19546172147095206,
+          -0.6151348064139486
+        ],
+        "max": [
+          0.04173852336568885,
+          0.10004633681866258,
+          0.34838480616052514
+        ]
+      },
+      "version": {
+        "source": 1,
+        "build": 1
+      },
+      "sha256": "63e6fb7f8ecfb3eb41ca564196706c9c632af326d85a14ded097d0d611332830",
+      "bytes": 2378700,
+      "generator": {
+        "tool": "Gunfire Reborn AssetBundle",
+        "mode": "rigid-parts conversion",
+        "checkpoint": "data241/1001"
+      },
+      "license": "Gunfire Reborn installed-game asset; local prototype use only, no redistribution rights implied"
     }
   },
   "updated": "2026-11-02 20:28:14"
