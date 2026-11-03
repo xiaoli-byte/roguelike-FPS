@@ -83,12 +83,12 @@
 | 行 | 释放后 0–2.5 s | 5.8 m 漏斗以 8 m/s 直线前进：十六条流层与双层噪声风体共同采样 8 段阻尼弹簧风核；云冠按层减速扩散，径向地面流环、章节尘裙、切向碎石与后刮风痕分层运动；水平扫掠判定防低帧率漏检，命中 18 × 伤害倍率并卷起玩家，只结算一次 |
 | 散 | 撞墙 / 2.5 s | 风体 0.35 s 渐隐；精英死亡或回收不影响已经挥出的龙卷，未释放的蓄力则撤回 |
 
-主形是 `EliteTornadoVisual` 的四张动态网格与 `SF_EliteTornado.shader`。着色器按 [Scenes3D/vfx-tornado](https://github.com/Scenes3D/vfx-tornado) 的 `twistedCylinder`、双层斜向噪声和地面径向 UV 改写为 URP HLSL；8 段弹簧风核与云顶减速扩散按 [Habrador/Unity-Tornado-Simulator](https://github.com/Habrador/Unity-Tornado-Simulator)（MIT，Copyright 2021 Erik Nordeus）实现。流层三排顶点形成亮芯与柔边，环境色由 `FxTone.Ground` 按章节换算。造型另参考 [Le Lu 的 Godot 龙卷](https://www.youtube.com/watch?v=thOuxupumtI)、[로헨 的水龙卷](https://www.youtube.com/watch?v=E1VNO_jtRXY) 与 [Eric VFX Studio 的龙卷合集](https://www.youtube.com/watch?v=dzXZIJ5MVww)，不照搬高曝白。冒烟：`bash scripts/unity/bridge.sh playtest elite-tornado [场景]`，已在亮沙、雪地、熔岩三种地面检查第一人称。
+主形使用正式 FBX、UV 与骨骼动画；造型参考 [Le Lu 的 Godot 龙卷](https://www.youtube.com/watch?v=thOuxupumtI)、[로헨 的水龙卷](https://www.youtube.com/watch?v=E1VNO_jtRXY) 与 [Eric VFX Studio 的龙卷合集](https://www.youtube.com/watch?v=dzXZIJ5MVww)，不照搬高曝白。实现调研还使用了 [Scenes3D/vfx-tornado](https://github.com/Scenes3D/vfx-tornado) 与 [Habrador/Unity-Tornado-Simulator](https://github.com/Habrador/Unity-Tornado-Simulator)（MIT，Copyright 2021 Erik Nordeus）。冒烟：`bash scripts/unity/bridge.sh playtest elite-tornado [场景]`。
 
-三套主题：
-- **熔火精英**：`ScenesTornadoVisual` + `SF_ScenesTornado.shader`，使用 Scenes3D 原始 `perlinTexture.png`、`timeScale = 0.15`、暗层振幅 0.2、发光层振幅 0.15，以及原双层圆柱与地面噪声；按项目色调映射校准发光覆盖，不混入云冠流带。
-- **第二章精英**：冰蓝风流层、弹簧风核与冰尘裙。
-- **第二章 Boss（霜翼妖后参考招式）**：`MatriarchTornado` 使用 8.5 m 水主题风体，水滴破碎水冠与径向水面环；3.2 m/s 推进，0.55 s 一次 `BossHazards.Blast`，完整接入 `ReferenceBossDef` 与 `boss-hazards` 回归。后两张参考未找到公开工程，按画面结构重建，不宣称源码级 1:1。
+三套主题共用正式美术资产 `Assets/Art/VFX/Tornado/SK_VFX_Tornado.fbx`：72 条细丝风纹、8 段骨骼、120 帧循环、24 片小云冠与三层细地面环；源工程 `art/source/vfx/tornado/Tornado.blend`，生成脚本同目录。`AuthoredTornadoBuilder` 生成材质与 `Resources/Fx/Authored/Tornado.prefab`，运行时由 `AuthoredTornadoVisual` 播放，不再以程序网格冒充正式资产。
+- **熔火精英**：同一 FBX 的 Fire 材质，暗烟与橙色流层。
+- **第二章精英**：同一 FBX 的 Frost 材质，冰蓝风流层。
+- **第二章 Boss（霜翼妖后参考招式）**：`MatriarchTornado` 使用 8.5 m Water 主题，破碎水滴与径向水面环；3.2 m/s 推进，0.55 s 一次 `BossHazards.Blast`，完整接入 `ReferenceBossDef` 与 `boss-hazards` 回归。后两张参考未找到公开工程，按画面结构重制资产，不宣称源码级 1:1。
 
 ### 3.6 死亡 · 金环收起
 

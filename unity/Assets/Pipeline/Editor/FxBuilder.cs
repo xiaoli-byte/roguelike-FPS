@@ -61,6 +61,7 @@ namespace Spiritfire.Art.Editor
 
             var textures = BuildTextures(log);
             var materials = BuildMaterials(textures, log, ref errors);
+            AuthoredTornadoBuilder.Build(log);
             extraMaterials = FxBlastBuilder.Build(log, ref errors);
             BuildPresetPrefabs(materials, log, ref errors);
             var telegraph = BuildTelegraphMaterial(log, ref errors);

@@ -275,7 +275,7 @@ namespace Spiritfire.Game
         public override string Id => "matriarch_tornado";
         public override string Name => "妖后 · 水龙卷";
 
-        EliteTornadoVisual look;
+        TornadoVisualBase look;
         Vector3 center, direction;
         float tick;
         public bool Spawned { get; private set; }
@@ -310,7 +310,7 @@ namespace Spiritfire.Game
 
         protected override void OnActiveBegin()
         {
-            look = EliteTornadoVisual.Create(center, 8.5f, 2.35f, null, false, true);
+            look = AuthoredTornadoVisual.Create(center, 8.5f, 2.35f, null, AuthoredTornadoTheme.Water);
             look.SetTravel(direction);
             Spawned = true;
             Fx.Burst(center + Vector3.up, MatriarchRef.Shard, 20, 6f, 0.55f, 0.18f);
