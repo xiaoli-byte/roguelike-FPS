@@ -92,7 +92,7 @@ namespace Spiritfire.Art.Editor.Levels
             Z("① 去 B1", T1, new(74, 44), new(100, 58), 3, 1f),
             Z("B1 去 ③（瀑池东岸）", T1, new(105, 44), new(128, 70), 3, 1f),
             Z("③ 浇包吊坊", T1, new(126, 34), new(182, 72), 5, 1.5f),
-            Z("③ 铸门后", T1, new(178, 42), new(194, 66), 4, 1f),
+            Z("③ 铸门后", T1, new(178, 40), new(194, 70), 4, 1f),
             // T2 −4：西坡顶、殿东道、鼓风正殿、殿西北口、废范龛、东中台（③ 的俯射层，东引坡从这里接南岸台）
             Z("西坡顶", T2, new(22, 92), new(42, 128), 6, 2f),
             Z("殿东道", T2, new(74, 84), new(100, 108), 5, 1.2f),
@@ -327,6 +327,10 @@ namespace Spiritfire.Art.Editor.Levels
             TrussId = "SM_Tripo_InfernoHallTruss", ShedId = "SM_Tripo_InfernoWorkShed";
         /// <summary>必须到齐才把占位检查收紧成不合格的件（锦上添花件缺了有替代：工棚 → 锻铺放大）</summary>
         static readonly string[] Ch3Kit = { MouldId, BedId, BellowsId, GateId, BridgeId, CraneId, TrussId };
+        /// <summary>正式件的实测（docs/art/ch3-kit.md）：铁桥桥面 1.37 / 高 2.5（Y ×0.58 → 桥面 0.8）；风箱整件等比 ×1.94</summary>
+        const float BridgePrefabH = 1.45f, BridgeDeckOnPrefab = 0.8f, BellowsPrefabScale = 1.94f, ShedPrefabScale = 1.18f, CranePrefabScale = 1.02f;
+        /// <summary>③ 两座工棚（东侧，增援门：敌人从工棚后冲出来），朝西开敞</summary>
+        static readonly Vector2[] Sheds = { new(186, 44.5f), new(186, 66.5f) };
         // 已有的祝融套件
         const string ColumnId = "SM_Tripo_InfernoColumn", ButtressId = "SM_Tripo_InfernoHallButtress", HallWallId = "SM_Tripo_InfernoHallWall",
             FurnaceId = "SM_Tripo_InfernoFurnaceTower", AltarId = "SM_Tripo_InfernoFireAltar", IngotsId = "SM_Tripo_InfernoIngotPile",
@@ -334,7 +338,7 @@ namespace Spiritfire.Art.Editor.Levels
             StallId = "SM_Tripo_InfernoForgeStall", HoardId = "SM_Tripo_InfernoTreasureHoard", CrucibleId = "SM_Prop_InfernoCrucible",
             ObeliskId = "SM_Prop_InfernoChainObelisk", GatewayId = "SM_Tripo_InfernoGateway";
         static readonly Vector3 MouldSize = new(3.2f, 2.8f, 2.2f), BedSize = new(8f, 1.4f, 5f), GateSize = new(10f, 9f, 1.4f),
-            TrussSize = new(24f, 9f, 8f), ShedSize = new(10f, 7f, 8f),
+            TrussSize = new(26.88f, 9f, 4.27f), ShedSize = new(10f, 7f, 8f),
             ColumnSize = new(1.97f, 4.93f, 1.81f), ButtressSize = new(4.51f, 17.84f, 3.74f), HallWallSize = new(8.17f, 15.8f, 2.57f),
             FurnaceSize = new(6.13f, 12.86f, 4.99f), AltarSize = new(1.13f, 2.36f, 1.15f), IngotsSize = new(2.18f, 1.52f, 1.81f),
             CoverWallSize = new(3.42f, 2.48f, 0.89f), BarricadeSize = new(3.56f, 1.18f, 0.47f), RuinSize = new(3.11f, 1.54f, 1.53f),

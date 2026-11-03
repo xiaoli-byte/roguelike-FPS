@@ -51,9 +51,9 @@ namespace Spiritfire.Art.Editor.Levels
             A("Enemy_7_EastS", 118, 50, StationRole.Flank, 0),
             A("Enemy_7_Perch", PerchB1.x, PerchB1.y, StationRole.Precision, 0, true),
             // ③ 浇包吊坊：第一波从工棚后（增援门）冲出来、顺着浇铸槽冲向玩家；第二波铁牛从东壁铸门走出、马面守在吊车走道
-            A("Enemy_3_ShedN", 190, 62, StationRole.Assault, 0),
-            A("Enemy_3_ShedS", 190, 46, StationRole.Assault, 1),
-            A("Enemy_3_GateMid", 190, 54, StationRole.Flank, 2),
+            A("Enemy_3_ShedN", 191.5f, 59, StationRole.Assault, 0),
+            A("Enemy_3_ShedS", 191.5f, 51.5f, StationRole.Assault, 1),
+            A("Enemy_3_GateMid", 192, 56, StationRole.Flank, 2),
             A("Enemy_3_TroughN", 166, 63, StationRole.Assault, 2),
             A("Enemy_3_TroughS", 166, 49, StationRole.Flank, 1),
             A("Enemy_3_Ox", 189, 54, StationRole.Assault, 0),
@@ -330,8 +330,8 @@ namespace Spiritfire.Art.Editor.Levels
             gateRoot.SetParent(markers, false);
             var b5 = BridgeById("B5").center;
             var b6 = BridgeById("B6").center;
-            var gA = LevelKit.PlaceOrBox(GateId, gateRoot, new Vector3(b5.x + Trunk.half + 2.6f, 0, b5.y), GateSize, 90);
-            var gB = LevelKit.PlaceOrBox(GateId, gateRoot, new Vector3(b6.x, 0, b6.y + Cross.half + 3.5f), new Vector3(GateSize.x * 1.2f, GateSize.y, GateSize.z), 0, 1.2f);
+            var gA = PlaceFit(GateId, gateRoot, new Vector3(b5.x + Trunk.half + 2.6f, 0, b5.y), 90, GateSize);
+            var gB = PlaceFit(GateId, gateRoot, new Vector3(b6.x, 0, b6.y + Cross.half + 3.5f), 0, new Vector3(GateSize.x * 1.2f, GateSize.y, GateSize.z));
             Label(gA, GateId, "闸前桥封门");
             Label(gB, GateId, "东铸北桥封门");
             var gates = new[] { gA, gB }.Where(g => g).ToArray();

@@ -323,7 +323,8 @@ namespace Spiritfire.Art.Editor.Levels
                 .Beat("神范前出口", G(ExitAt), BeatKind.Exit)
                 .Sight("南闸楼 → 火神王座", G(Spawn, 1.62f), FireGodRing, 10, "FireGodThrone")
                 .Sight("南闸楼 → 神范", G(Spawn, 1.62f), mouldTop, 8, MouldId)
-                .Sight("① 吊梁走道 → 浇包吊车", new Vector3(PierWest.Center.x, PierWest.Top + 1.62f, PierWest.Center.y), new Vector3(CraneX, T2 - 0.4f, 58), 6, CraneId)
+                .Sight("① 吊梁东墩 → 浇包吊车", new Vector3(PierEast.Center.x, PierEast.Top + 1.62f, PierEast.Center.y),
+                    ShowcaseSceneBuilder.Prefab(CraneId) ? new Vector3(CraneX, T1 + 11f, 56) : new Vector3(CraneX, T2 - 0.4f, 58), 6, CraneId)
                 .Sight("B2 瀑上桥 → 殿顶屋架", Deck("B2") + Vector3.up * 1.62f, new Vector3(TrussX[0], T2 + 15.5f, 146), 6, TrussId)
                 .Sight("殿南口 → 大炉", G(new Vector2(32, 122), 1.62f), G(FurnaceAt, 14f), 6, FurnaceId)
                 .Sight("风闸 → 神范", G(windFront, 1.62f), mouldTop, 8, MouldId)

@@ -50,9 +50,8 @@ namespace Spiritfire.Art.Editor.Levels
             Put(AltarId, root, set, new Vector2(38, 51), 0, 1.3f, 0.05f, AltarSize);
 
             // 门式吊梁走道（复用浇包吊车件；白盒）：顶 −3，搭在东西两墩上
-            var gantry = LevelKit.PlaceOrBox(CraneId, arch, new Vector3((PierWest.max.x + PierEast.min.x) * 0.5f, PierWest.Top - 0.8f + 0.05f, 51),
+            IronDeck("范场吊梁走道", arch, new Vector3((PierWest.max.x + PierEast.min.x) * 0.5f, PierWest.Top - 0.8f + 0.05f, 51),
                 new Vector3(PierEast.min.x - PierWest.max.x + 2f, 0.8f, 3.5f), 0);
-            Label(gantry, CraneId, "范场吊梁走道");
         }
 
         /// <summary>可破坏的铸范：外观 + 碰撞在 Intact 下（白盒时是暗铁色方块），只认爆炸 + 近战；碎了导航的洞跟着撤（挖洞障碍）</summary>
@@ -66,7 +65,10 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 var body = d.intact.transform.Find("Body");
                 if (body) Object.DestroyImmediate(body.gameObject);
-                var go = LevelKit.PlaceOrBox(MouldId, d.intact.transform, d.transform.position, MouldSize, yaw);
+                var holder = new GameObject("Mould").transform;
+                holder.SetParent(d.intact.transform, false);
+                holder.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                var go = PlaceFit(MouldId, holder, d.transform.position, yaw, MouldSize);
                 if (go) foreach (var t in go.GetComponentsInChildren<Transform>(true)) t.gameObject.isStatic = false;
             }
             else
@@ -99,24 +101,31 @@ namespace Spiritfire.Art.Editor.Levels
             var root = new GameObject("③ Ladle Yard").transform;
             root.SetParent(arch, false);
             float len = CraneNorthZ - CraneSouthZ;
-            var deck = LevelKit.PlaceOrBox(CraneId, root, new Vector3(CraneX, T2 - CraneDeckThick + 0.05f, (CraneNorthZ + CraneSouthZ) * 0.5f), new Vector3(CraneDeckW, CraneDeckThick, len), 0);
-            Label(deck, CraneId, "浇包吊车横梁走道");
+            // 吊车走道（程序铁板，顶 −4）+ 两根立柱；正式吊车门架（横梁 +12）东西向跨在走道上方，两条腿落在两条浇铸槽中间（maps/3-3.md 第 4 / 10 节）
+            IronDeck("浇包吊车横梁走道", root, new Vector3(CraneX, T2 - CraneDeckThick + 0.05f, (CraneNorthZ + CraneSouthZ) * 0.5f), new Vector3(CraneDeckW, CraneDeckThick, len), 0);
+            var legMat = LevelKit.Mat(Dir, "FoundryIronDeck", new Color(0.16f, 0.13f, 0.13f), 0.8f);
             foreach (float z in CraneLegZ)
+                LevelKit.Box("浇包吊车立柱", root, new Vector3(CraneX + 1.2f, T1 - 0.1f, z), new Vector3(1.2f, T2 - T1 - CraneDeckThick + 0.1f, 1.4f), 0, legMat, 0.1f);
+            if (ShowcaseSceneBuilder.Prefab(CraneId))
             {
-                var leg = LevelKit.PlaceOrBox(CraneId, root, new Vector3(CraneX + 1.2f, T1 - 0.1f, z), new Vector3(1.2f, T2 - T1 - CraneDeckThick + 0.1f, 1.4f), 0);
-                Label(leg, CraneId, "浇包吊车立柱");
+                var crane = LevelKit.PlaceOrBox(CraneId, root, set.OnGround(CraneX, 56, -0.1f), new Vector3(17.6f, 13.3f, 8.3f), 0, CranePrefabScale);
+                if (crane) crane.name = $"{crane.name} · 浇包吊车门架";
             }
-            // 工棚（锦上添花件；缺件时锻铺放大顶上，不算占位）
-            foreach (var z in new[] { 46f, 62f })
+            // 工棚（锦上添花件，×1.18 → 10 m 宽；缺件时锻铺放大顶上，不算占位）
+            foreach (var at in Sheds)
             {
-                if (ShowcaseSceneBuilder.Prefab(ShedId)) Label(Put(ShedId, root, set, new Vector2(183, z), 90, 1f, 0.1f, ShedSize), ShedId, "工棚");
+                if (ShowcaseSceneBuilder.Prefab(ShedId))
+                {
+                    var shed = LevelKit.PlaceOrBox(ShedId, root, set.OnGround(at.x, at.y, -0.1f), ShedSize, 270, ShedPrefabScale);
+                    if (shed) shed.name = $"{shed.name} · 工棚";
+                }
                 else
                 {
-                    var stall = Put(StallId, root, set, new Vector2(183, z), 90, 2.4f, 0.05f, StallSize);
+                    var stall = Put(StallId, root, set, at, 0, 2.4f, 0.05f, StallSize);
                     if (stall) stall.name = $"{stall.name} · 工棚（锻铺放大）";
                 }
             }
-            var gate = LevelKit.PlaceOrBox(GateId, root, set.OnGround(195.5f, 54, -0.1f), GateSize * 0.9f, 270, 0.9f);
+            var gate = PlaceFit(GateId, root, set.OnGround(195.5f, 54, -0.1f), 270, GateSize * 0.9f);
             Label(gate, GateId, "东壁铸门");
             var p = new GameObject("③ Props").transform;
             p.SetParent(props, false);
@@ -176,7 +185,7 @@ namespace Spiritfire.Art.Editor.Levels
                 b.SetParent(root, false);
                 b.position = set.OnGround(c.x, c.y, -0.1f);
                 // PlaceOrBox 摆 Prefab 按父节点本地坐标、白盒按世界坐标：先摆在原点的父节点下，再保持世界位置挂到风箱根下
-                var piece = LevelKit.PlaceOrBox(BellowsId, root, b.position, BellowsSize, 180);
+                var piece = LevelKit.PlaceOrBox(BellowsId, root, b.position, BellowsSize, 180, BellowsPrefabScale);
                 if (piece)
                 {
                     piece.transform.SetParent(b, true);
@@ -271,7 +280,7 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var root = new GameObject("Sluice").transform;
             root.SetParent(arch, false);
-            var sluice = LevelKit.PlaceOrBox(GateId, root, new Vector3(SluiceAt.x, FieldFloor, SluiceAt.y), GateSize * 1.2f, 180, 1.2f);
+            var sluice = PlaceFit(GateId, root, new Vector3(SluiceAt.x, FieldFloor, SluiceAt.y), 180, GateSize * 1.2f);
             if (sluice) sluice.isStatic = true;
             Label(sluice, GateId, "炉闸");
             var l = new GameObject("Sluice Light").AddComponent<Light>();
@@ -292,7 +301,7 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var root = new GameObject("Mould Dais").transform;
             root.SetParent(arch, false);
-            var mould = LevelKit.PlaceOrBox(MouldId, root, set.OnGround(MouldAt.x, MouldAt.y, -0.1f), MouldSize * MouldScale, MouldYaw, MouldScale);
+            var mould = PlaceFit(MouldId, root, set.OnGround(MouldAt.x, MouldAt.y, -0.1f), MouldYaw, MouldSize * MouldScale);
             if (mould) mould.isStatic = true;
             Label(mould, MouldId, "神范");
             MouldGlow(mould, props);

@@ -114,8 +114,45 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>按 id 摆到地形上（底面往下埋 sink × scale）；缺 Prefab 时放 size × scale 的占位白盒（验收会列出来）</summary>
         static GameObject Put(string id, Transform parent, LevelKit.TerrainSet set, Vector2 at, float yaw, float scale = 1, float sink = 0.15f, Vector3? size = null, float dy = 0)
         {
-            var go = LevelKit.PlaceOrBox(id, parent, set.OnGround(at.x, at.y, dy - sink * scale), (size ?? new Vector3(3, 3, 3)) * scale, yaw, scale);
+            var basePos = set.OnGround(at.x, at.y, dy - sink * scale);
+            var sz = (size ?? new Vector3(3, 3, 3)) * scale;
+            var go = FitIds.Contains(id) ? PlaceFit(id, parent, basePos, yaw, sz) : LevelKit.PlaceOrBox(id, parent, basePos, sz, yaw, scale);
             if (go) go.isStatic = true;
+            return go;
+        }
+
+        /// <summary>按设计占地非等比缩放的第三章件（ch3-kit 第 1 节：铸范 X ×1.37 Z ×1.76、铸床 X ×1.5 Z ×2.4、闸板按门洞宽、工棚）</summary>
+        static readonly HashSet<string> FitIds = new() { MouldId, BedId, GateId };
+
+        /// <summary>
+        /// 摆一件第三章件：有 Prefab 时按设计包围盒把它非等比缩放到 size（底面中心 = baseCenter，父节点要在原点：Place 按父节点本地坐标）；
+        /// 没有时放 size 的白盒（同 PlaceOrBox）
+        /// </summary>
+        static GameObject PlaceFit(string id, Transform parent, Vector3 baseCenter, float yaw, Vector3 size)
+        {
+            if (!ShowcaseSceneBuilder.Prefab(id)) return LevelKit.PlaceOrBox(id, parent, baseCenter, size, yaw);
+            var go = ShowcaseSceneBuilder.Place(id, parent, baseCenter, yaw, 1f);
+            if (!go) return null;
+            var b = ShowcaseSceneBuilder.DesignBounds(id);
+            go.transform.localScale = new Vector3(size.x / Mathf.Max(0.1f, b.size.x), size.y / Mathf.Max(0.1f, b.size.y), size.z / Mathf.Max(0.1f, b.size.z));
+            go.isStatic = true;
+            return go;
+        }
+
+        /// <summary>程序铁板（吊车 / 吊梁的走道：正式吊车件的横梁只有 1.75 m 宽，走道由构建器补，ch3-kit 第 2 节）：暗铁 + 两侧 1.1 m 栏杆（不挡头尾）</summary>
+        static GameObject IronDeck(string name, Transform parent, Vector3 baseCenter, Vector3 size, float yaw, bool rails = true)
+        {
+            var iron = LevelKit.Mat(Dir, "FoundryIronDeck", new Color(0.16f, 0.13f, 0.13f), 0.8f);
+            var go = LevelKit.Box(name, parent, baseCenter, size, yaw, iron, 0.1f);
+            if (!rails) return go;
+            var rot = Quaternion.Euler(0, yaw, 0);
+            bool longX = size.x >= size.z;
+            foreach (float side in new[] { -1f, 1f })
+            {
+                var off = longX ? new Vector3(0, 0, side * (size.z * 0.5f - 0.1f)) : new Vector3(side * (size.x * 0.5f - 0.1f), 0, 0);
+                var railSize = longX ? new Vector3(size.x, 1.1f, 0.15f) : new Vector3(0.15f, 1.1f, size.z);
+                LevelKit.Box($"{name} · 栏杆", go.transform.parent, baseCenter + rot * off + Vector3.up * (size.y - 0.05f), railSize, yaw, iron, 0f);
+            }
             return go;
         }
 
@@ -401,7 +438,10 @@ namespace Spiritfire.Art.Editor.Levels
                 bool alongX = Mathf.Abs(b.along.x) > 0.5f;
                 var size = alongX ? new Vector3(b.span, b.Thick, b.width) : new Vector3(b.width, b.Thick, b.span);
                 // 白盒的顶 = 底面中心 y + 尺寸 y − 0.05（PlaceOrBox 往下埋 0.1 m）
-                var go = LevelKit.PlaceOrBox(BridgeId, root, new Vector3(c.x, b.DeckY - b.Thick + 0.05f, c.y), size, 0);
+                GameObject go;
+                if (ShowcaseSceneBuilder.Prefab(BridgeId))
+                    go = PlaceFit(BridgeId, root, new Vector3(c.x, b.DeckY - BridgeDeckOnPrefab, c.y), alongX ? 0 : 90, new Vector3(b.span, BridgePrefabH, b.width));
+                else go = LevelKit.PlaceOrBox(BridgeId, root, new Vector3(c.x, b.DeckY - b.Thick + 0.05f, c.y), size, 0);
                 Label(go, BridgeId, $"{b.id} {b.name}");
                 list.Add(go);
             }
