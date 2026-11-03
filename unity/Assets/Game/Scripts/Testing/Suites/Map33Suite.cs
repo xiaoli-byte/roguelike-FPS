@@ -10,15 +10,17 @@ using Random = UnityEngine.Random;
 namespace Spiritfire.Game.Testing
 {
     /// <summary>
-    /// 3-3 铸范大坊冒烟（bridge.sh playtest map-3-3；场景 L3_3_Foundry，docs/level-design/maps/3-3.md §11，parity 7.4「机器人清完全部必清场地并走出出口」）：
+    /// 3-3 铸范大坊 · 铸范梯坊冒烟（bridge.sh playtest map-3-3；场景 L3_3_Foundry，docs/level-design/maps/3-3.md 第 9 节，ch3-v2.md 7.4「map-3-3」）：
     ///   1. 开局：SceneFlow 认领的关卡是 3-3、局难度 = RunPlan 的 2.92；目标图（必清 5 + 可选 1，④ 要求 ② 且开局不自动触发，前庭要求 ④）、2 处藏宝、
     ///      场景里没有出口（领主战结算后才立）、领主战关着（FoundryLordGate 没解锁）、风闸卡死、熔铜渠（铸坊渠的涨落关着、神范台的渠岸是干的）；
     ///      没有空气墙；出生点看得见神范；出生点到五处必清场地、风闸、神范台入场点的 NavMesh 路径都完整（桥是唯一的走位线）。
     ///      提前踏上神范台：只提示「先肃清铸坊」，不开打。
-    ///   2. 机器人清场：每次挑 NavMesh 路程最近、能触发的必清场地，用角色控制器沿 NavMesh 真走过去（桥、坡道都是真的），路上被别处触发就先打那处；
+    ///   2. 机器人清场：每次挑 NavMesh 路程最近、能触发的必清场地，用角色控制器沿 NavMesh 真走过去（桥、坡道都是真的），路上被别处触发就先打那处（B1 瀑下桥的路遇也这样打）；
     ///      交战时自动瞄最近的敌人（四成打弱点）射击、隔 4 s 放技能，被挡住绕到看得见的地方。玩家临时 +5000 生命、伤害 ×3（第三章的构筑）。
     ///      ② 肃清前按风闸：拉不动；只剩 ④ 时走上风闸台拉开风闸 → 风箱鼓起、第二次进殿可以触发、铸坊渠开始涨落；回殿后炉门往风箱道喷火（地火出现）。
     ///      每处 150 s 内肃清，肃清后场地宝箱要出现（不开）。
+    ///      ③ 浇包吊坊（熔流闸 S4）：开打后等有敌人走进浇铸槽（最多 14 s），站到浇铸槽旁、真开枪射断吊钩 → 浇包倾倒 → 熔流冲 6 s；
+    ///      实战里一只没烧到，就刷一只眩晕住的祸斗站在槽里再放一次——熔流闸至少烧死 1 只。
     ///   3. 必清全部肃清 → 目标完成 → 领主战解锁（BossEncounter 启用）。
     ///   4. 风闸台的炉工私藏：发现 → 按 F → 宝箱出现（无人看守）。
     ///   5. 领主战：前庭期间不得提前开战；沿桥到西南入场区 → 熔铁闸升起封桥 → 熔心魔将登场 → 冒烟里直接打死（招式、阶段由 boss-warlord 套件验）
@@ -51,7 +53,9 @@ namespace Spiritfire.Game.Testing
         Transform eye;
         Camera cam;
         readonly List<EncounterSite.SpawnRecord> spawned = new();
-        int partialPaths, skillCasts, stalls, lures;
+        List<LavaSluice> sluices = new();
+        int partialPaths, skillCasts, stalls, lures, jumps;
+        float clearStart;
 
         protected override IEnumerator Steps()
         {
@@ -102,6 +106,8 @@ namespace Spiritfire.Game.Testing
             if (enc) enc.ResetForTests();
             var channels = FindAnyObjectByType<FoundryChannels>();
             var portals = FindObjectsByType<ExitPortal>();
+            sluices = FindObjectsByType<LavaSluice>().OrderBy(x => x.title).ToList();
+            foreach (var sl in sluices) sl.ResetForTests();
             Line($"场景：必清 {objective?.RequiredTotal ?? 0}，可选 {objective?.optional?.Length ?? 0}，藏宝 {caches.Length}，场景出口 {portals.Length}，" +
                  $"风闸 {(wind ? wind.Phase.ToString() : "无")}，领主战 {(enc ? $"{enc.bossId}（{(enc.enabled ? "开着" : "关着")}）" : "无")}，" +
                  $"神范台熔铜渠 {channels?.Count ?? 0} 片，熔岩 {LavaVolume.Live.Count} 片");
@@ -125,13 +131,16 @@ namespace Spiritfire.Game.Testing
             if (tides.Count == 0) Fail("风闸没接上铸坊渠（拉开后涨落的那几段）");
             else if (tides.Any(v => v.tide.enabled)) Fail("铸坊渠开局就在自动涨落（应等风闸）");
             NoAirWall();
+            Line($"熔流闸 {sluices.Count} 道：{string.Join("、", sluices.Select(x => $"{x.title}（{x.trigger}，熔流道 {x.Length:F0} m，吊钩 {(x.hook ? "有" : "无")}）"))}");
+            if (sluices.Count != 2) Fail($"熔流闸 {sluices.Count} 道（应 2：③ 南浇包、北浇包）");
 
             // 地标：出生点看得见神范
             var mould = FindNamed(MouldId, "神范");
             if (!mould) Fail("场景里没有神范");
             else
             {
-                var top = TopOf(mould, 0.85f);
+                // 神范在 225 m 外、越过横渠南岸的崖边才露出上半截：瞄它顶部（梯坊图里出生点比神范台低 8.5 m）
+                var top = TopOf(mould, 0.95f);
                 bool seen = Visible(eye.position, top, 8f, MouldId);
                 Line($"出生点 → 神范（{Vector3.Distance(eye.position, top):F0} m）：{(seen ? "看得见" : "被挡住")}");
                 if (!seen) Fail("出生点看不到神范（全图地标）");
@@ -179,11 +188,14 @@ namespace Spiritfire.Game.Testing
             vitals.stats.Add("playtest_map33", Stat.DamagePct, 2f);
             vitals.Heal(99999);
             EncounterSite.AnySpawned += OnSpawned;
+            LavaField.PlayerEntered += OnLavaEntered;
+            if (SafeGround.Instance) SafeGround.Instance.Recovered += OnRecovered;
             bool windChecked = false;
             try
             {
                 var required = objective ? objective.required.Where(s => s).ToList() : FindObjectsByType<EncounterSite>().Where(s => !s.optional).ToList();
                 float t0 = Time.time;
+                clearStart = Time.time;
                 while (required.Any(s => s.phase != EncounterSite.Phase.Cleared) && Time.time - t0 < ClearAllTimeout)
                 {
                     if (EncounterSite.ActiveSites.Count > 0)
@@ -221,12 +233,19 @@ namespace Spiritfire.Game.Testing
                     if (s.phase != EncounterSite.Phase.Cleared) Fail($"必清场地「{s.title}」没有肃清（{s.phase}，剩 {s.Remaining}）");
                 var elites = spawned.Where(r => r.elite).ToList();
                 Line($"出场 {spawned.Count} 只，精英 {elites.Count} 只：{string.Join("、", elites.Select(r => $"{r.id}（{(string.IsNullOrEmpty(r.affix) ? "无词缀" : r.affix)}）"))}");
-                if (elites.Count < 2) Fail($"必清场地只出了 {elites.Count} 只精英（③ 升格 1 只 + ④ 炉前精英铁牛）");
-                if (!spawned.Any(r => r.id == "tuo")) Fail("中央铸床没有出火鼍");
+                if (elites.Count < 3) Fail($"必清场地只出了 {elites.Count} 只精英（③ 迅捷祸斗 + ④ 坚盾铁牛 + ⑥ 狂暴马面）");
+                foreach (var id in new[] { "founder", "nuo", "iron_ox", "fire_crow", "firecracker" })
+                    if (!spawned.Any(r => r.id == id)) Fail($"3-3 没有出 {id}（第三章登场表：铜匠、傩巫在 3-3 教）");
+                Line($"熔流闸：{string.Join("、", sluices.Select(x => $"{x.title} {x.Phase}，放 {x.Fired} 次、烧死 {x.Kills} 只"))}");
+                if (sluices.Count == 0) Fail("场景里没有熔流闸（③ 浇包吊坊的两口浇包）");
+                else if (sluices.Sum(x => x.Kills) < 1) Fail("熔流闸一只敌人都没烧死");
             }
             finally
             {
                 EncounterSite.AnySpawned -= OnSpawned;
+                LavaField.PlayerEntered -= OnLavaEntered;
+                if (SafeGround.Instance) SafeGround.Instance.Recovered -= OnRecovered;
+                if (lavaLog.Count > 0) Line($"熔岩记录：{string.Join("；", lavaLog)}");
             }
             if (wind)
             {
@@ -285,10 +304,21 @@ namespace Spiritfire.Game.Testing
             if (Runner.kills == 0) Fail("整关一只敌人都没打死");
             if (partialPaths > 0) Fail($"机器人走的 NavMesh 路径有 {partialPaths} 次不完整（桥断了？）");
             Line($"走路卡住跳点 {stalls} 次，引火鼍上岸 {lures} 次");
+            Line($"总时长（开始清场 → 出口，机器人 11 m/s、伤害 ×3）：{Time.time - clearStart:F0} s（ch3-v2 风险 7：真人约 9–11 min）");
             if (stalls >= 8) Fail($"机器人沿 NavMesh 走时卡住 {stalls} 次（角色控制器和导航网格对不上：桥头 / 坡道？看上面的位置）");
         }
 
         void OnSpawned(EncounterSite s, EncounterSite.SpawnRecord r) => spawned.Add(r);
+
+        readonly List<string> lavaLog = new();
+        void OnLavaEntered(Vector3 feet)
+        {
+            if (lavaLog.Count < 12) lavaLog.Add($"踩进熔岩 @ {feet}（{Time.time - clearStart:F0} s）");
+        }
+        void OnRecovered(Vector3 to)
+        {
+            if (lavaLog.Count < 24) lavaLog.Add($"托回 → {to}");
+        }
 
         /// <summary>D14：没有空气墙——Ignore Raycast 层上的实体碰撞体只有软边界的兜底环；出生点在软边界里 ≥ 5 m</summary>
         void NoAirWall()
@@ -358,19 +388,32 @@ namespace Spiritfire.Game.Testing
 
         IEnumerator Fight(EncounterSite site, FoundryWindGate wind)
         {
-            float limit = SiteTimeout + (HasTuo(site) ? TuoExtra : 0);
+            float limit = site.optional ? 70f : SiteTimeout + (HasTuo(site) ? TuoExtra : 0);
             float start = Time.time, flankAt = 0, skillAt = Time.time + 1f, lureAt = 0, lureHold = 0, tuoOnly = 0;
             bool shotMid = false;
             int kills0 = Runner.kills, fires0 = wind ? wind.FiresSpawned : 0;
+            // ③ 浇包吊坊：熔流闸
+            var siteSluices = sluices.Where(x => x && Flat(x.transform.position - site.transform.position) < site.arenaRadius + 12f).ToList();
+            bool sluiceUsed = siteSluices.Count == 0;
             float dmg0 = Runner.playerDamage;
             Runner.killsById.Clear();
-            Line($"遭遇「{site.title}」开始：{site.Total} 只，{site.WaveCount} 波，升格精英 {site.Promoted}");
+            Line($"遭遇「{site.title}」开始：{site.Total} 只，{site.WaveCount} 波，升格精英 {site.Promoted}（玩家 {motor.transform.position}，离场地中心 {Flat(motor.transform.position - site.transform.position):F1} m）");
             while (site.phase != EncounterSite.Phase.Cleared && Time.time - start < limit)
             {
                 if (vitals.Dead) vitals.Revive();
                 if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
                 if (weapons.Active != null) weapons.Active.reserve = weapons.Active.def.reserve;
-                var target = NearestEnemy(eye.position);
+                if (!sluiceUsed && Time.time - start > 2f)
+                {
+                    var hot = siteSluices.FirstOrDefault(x => x.CanRelease && EnemyAI.All.Any(e => e && !e.Dead && !LavaField.IsImmune(e) && x.Covers(e.transform.position)));
+                    if (hot || Time.time - start > 14f)
+                    {
+                        sluiceUsed = true;
+                        yield return FireSluice(hot ? hot : siteSluices.FirstOrDefault(x => x.CanRelease), hot ? "有敌人走进浇铸槽" : "等了 14 s 没有敌人进槽");
+                        continue;
+                    }
+                }
+                var target = NearestFoe(eye.position);
                 if (!target)
                 {
                     weapons.testFire = false;
@@ -430,10 +473,19 @@ namespace Spiritfire.Game.Testing
                              $"导航网格上 {(ag && ag.isOnNavMesh)}，在熔岩里 {LavaField.IsLava(e.transform.position)}");
                     }
                 Fail($"{limit:F0} s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
+                SpawnDiagnostics(site);
                 EnemyRegistry.PurgeAll();
                 float p0 = Time.time;
                 while (site.phase != EncounterSite.Phase.Cleared && Time.time - p0 < 3f) yield return null;
+                // 卡住的可选 / 路遇场地关掉，免得机器人一直回来打它
+                if (site.phase != EncounterSite.Phase.Cleared && site.optional) site.gameObject.SetActive(false);
                 yield break;
+            }
+            if (siteSluices.Count > 0 && siteSluices.Sum(x => x.Kills) == 0)
+            {
+                var spare = siteSluices.FirstOrDefault(x => x.CanRelease) ?? siteSluices[0];
+                Line($"  熔流闸在实战里没烧到敌人：用「{spare.title}」做一次定点验证（刷一只眩晕的祸斗站在槽里）");
+                yield return SluiceDummy(spare);
             }
             if (!string.IsNullOrEmpty(site.reward))
             {
@@ -448,6 +500,50 @@ namespace Spiritfire.Game.Testing
                 Line($"  场地宝箱（{site.reward}）：{(chest ? $"出现在 {chest.transform.position}" : "没有出现")}");
                 if (!chest) Fail($"「{site.title}」肃清后没有出现宝箱（{site.reward}）");
             }
+        }
+
+        /// <summary>刷不出怪时的诊断：待出场数、全场在场 / 休眠数、玩家位置、每个站位的导航采样和到玩家的路</summary>
+        void SpawnDiagnostics(EncounterSite site)
+        {
+            var me = motor.transform.position;
+            Line($"  诊断：待出场 {site.PendingCount}，全场在场 {EnemyRegistry.Count}、休眠 {EncounterSite.DormantCount}，玩家 {me}，场地中心 {site.transform.position}（水平 {Flat(me - site.transform.position):F1} m）");
+            var sg = SafeGround.Instance;
+            string below = Physics.Raycast(me + Vector3.up, Vector3.down, out var bh, 4f, Layers.WorldMask, QueryTriggerInteraction.Ignore) ? $"{bh.collider.name} y {bh.point.y:F2}" : "（下面没有碰撞体）";
+            Line($"  玩家：熔岩里 {LavaField.IsLava(me)}，下沉中 {(sg && sg.Sinking)}，托回 {(sg ? sg.Recoveries : -1)} 次，上一个安全点 {(sg ? sg.LastSafe : Vector3.zero)}，脚下 {below}，生命 {vitals.health:F0}/{vitals.MaxHealth:F0}");
+            var walker = LavaField.WalkerFilter();
+            bool goalOk = NavMesh.SamplePosition(me, out var g, 6f, walker);
+            foreach (var a in site.anchors ?? System.Array.Empty<Transform>())
+            {
+                if (!a) continue;
+                bool on = NavMesh.SamplePosition(a.position, out var h, 2.5f, walker);
+                string path = "—";
+                if (on && goalOk)
+                {
+                    var np = new NavMeshPath();
+                    NavMesh.CalculatePath(h.position, g.position, walker, np);
+                    path = np.status.ToString();
+                }
+                Line($"    站位 {a.name} {a.position}：离玩家 {Flat(a.position - me):F1} m，导航 {(on ? $"✓ y {h.position.y:F2}" : "✗")}，到玩家 {path}");
+            }
+        }
+
+        /// <summary>
+        /// 最近的活敌人（只认 EnemyAI：基类的 NearestEnemy 认所有 Damageable，会去追 ① 的可破坏铸范、③ 的吊钩——
+        /// 铸范只吃爆炸 / 近战，子弹打不坏，机器人就一直在 ① 里对着它开枪，别处的场地刷不出怪）
+        /// </summary>
+        static Damageable NearestFoe(Vector3 from)
+        {
+            Damageable best = null;
+            float bestD = float.MaxValue;
+            foreach (var e in EnemyAI.All)
+            {
+                if (!e || e.Dead || !e.Health || e.Health.Dead || e.Health.untargetable) continue;
+                float d = (e.transform.position - from).sqrMagnitude;
+                if (d >= bestD) continue;
+                bestD = d;
+                best = e.Health;
+            }
+            return best;
         }
 
         static bool HasTuo(EncounterSite site) =>
@@ -491,6 +587,111 @@ namespace Spiritfire.Game.Testing
             }
             spot = default;
             return false;
+        }
+
+        // ───────────── 熔流闸（S4）─────────────
+
+        /// <summary>
+        /// 放一道熔流闸：站到浇铸槽旁（离两条熔流道都 ≥ 0.8 m 的干地）、瞄吊钩真开枪（3 s 内射不断记不合格并强制放）；看着熔流冲完（预警 + 6 s），截一张图
+        /// </summary>
+        IEnumerator FireSluice(LavaSluice s, string why)
+        {
+            if (!s)
+            {
+                Fail("没有能放的熔流闸");
+                yield break;
+            }
+            weapons.testFire = false;
+            var stand = SluiceStand(s);
+            Place(stand);
+            yield return null;
+            int k0 = s.Kills;
+            bool viaHook = s.hook && !s.hook.IsBroken && s.trigger != LavaSluice.Trigger.Lever;
+            if (viaHook)
+            {
+                float t0 = Time.time;
+                while (s.Phase == LavaSluice.State.Ready && Time.time - t0 < 3f)
+                {
+                    Aim(motor, eye, s.hook.Center);
+                    if (weapons.Active != null) weapons.Active.reserve = weapons.Active.def.reserve;
+                    weapons.testFire = weapons.Active != null && (weapons.Active.def.mode != FireMode.Semi || !weapons.testFire);
+                    yield return null;
+                }
+                weapons.testFire = false;
+                if (s.Phase == LavaSluice.State.Ready)
+                {
+                    Fail($"站在 {stand} 朝「{s.title}」的吊钩开了 3 s 枪没射断（吊钩命中 {s.hook.Taken} 次、挡下 {s.hook.Blocked} 次）");
+                    s.Release(true);
+                }
+            }
+            else s.Release(true);
+            Line($"  熔流闸「{s.title}」（{why}）：{(viaHook ? $"射断吊钩（{s.hook.BrokenBy}）" : "直接放")}，阶段 {s.Phase}，熔流道 {s.Length:F0} m");
+            float f0 = Time.time;
+            bool snap = false;
+            while ((s.Phase == LavaSluice.State.Warning || s.Phase == LavaSluice.State.Flowing) && Time.time - f0 < s.warn + s.duration + 2f)
+            {
+                if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
+                if (!snap && s.Phase == LavaSluice.State.Flowing && Time.time - s.FlowStartedAt > 1.4f)
+                {
+                    snap = true;
+                    Aim(motor, eye, s.PointAt(s.Length * 0.45f));
+                    yield return null;
+                    Shot(cam, "map33_sluice");
+                }
+                yield return null;
+            }
+            int live = s.Volumes.Count(v => v && v.gameObject.activeSelf);
+            Line($"  熔流：{Time.time - f0:F1} s，熔岩段 {s.Volumes.Count}（还开着 {live}），烧死 {s.Kills - k0} 只，阶段 {s.Phase}");
+            if (s.Volumes.Count == 0) Fail($"熔流闸「{s.title}」放了但没有熔岩段");
+        }
+
+        /// <summary>熔流道旁、离两条熔流道都 ≥ 0.8 m 的干地（看得见吊钩，熔流冲不到）</summary>
+        Vector3 SluiceStand(LavaSluice s)
+        {
+            var a = s.PointAt(s.Length * 0.35f);
+            var b = s.PointAt(s.Length * 0.35f + 2f);
+            var dir = Flat3(b - a).normalized;
+            var side = new Vector3(dir.z, 0, -dir.x);
+            foreach (float sign in new[] { 1f, -1f })
+            {
+                var p = a + side * (sign * (s.width * 0.5f + 1.6f));
+                if (sluices.Any(x => x.Covers(p, 0.8f))) continue;
+                if (NavMesh.SamplePosition(p, out var hit, 2f, Dry) && !LavaField.IsLava(hit.position)) return hit.position;
+            }
+            return a + side * (s.width * 0.5f + 2f);
+        }
+
+        static Vector3 Flat3(Vector3 v) => new(v.x, 0, v.z);
+
+        /// <summary>定点验证：刷一只祸斗站在熔流道中段、眩晕 8 s，放熔流——它要被烧死（熔流闸烧死计数 +1）</summary>
+        IEnumerator SluiceDummy(LavaSluice s)
+        {
+            var p = s.PointAt(s.Length * 0.6f);
+            if (!NavMesh.SamplePosition(p, out var hit, 2f, Dry))
+            {
+                Fail($"熔流闸「{s.title}」的熔流道中段 {p} 不在导航网格上");
+                yield break;
+            }
+            var e = EnemyRoster.Spawn("huodou", hit.position, Quaternion.identity, 1, false);
+            if (!e)
+            {
+                Fail("熔流闸定点验证：刷不出祸斗");
+                yield break;
+            }
+            yield return new WaitForSeconds(1f);
+            if (e && !e.Dead)
+            {
+                EnemyStatus.Stun(e.Health, 8f);
+                var agent = e.GetComponent<NavMeshAgent>();
+                if (agent && agent.enabled) agent.Warp(hit.position);
+            }
+            if (s.Phase != LavaSluice.State.Ready) s.ResetForTests();
+            int k0 = s.Kills;
+            yield return FireSluice(s, "定点验证");
+            bool dead = !e || e.Dead;
+            Line($"  定点验证：槽里的祸斗{(dead ? "被熔流烧死" : $"还活着（{e.transform.position}，熔岩里 {LavaField.IsLava(e.transform.position)}）")}，熔流闸烧死 +{s.Kills - k0}");
+            if (!dead) Fail($"熔流闸「{s.title}」的熔流冲过槽里眩晕的祸斗没烧死");
+            if (e && !e.Dead) Destroy(e.gameObject);
         }
 
         // ───────────── 藏宝 ─────────────
@@ -627,8 +828,11 @@ namespace Spiritfire.Game.Testing
                 d.y = 0;
                 var dir = d.normalized;
                 motor.SetLook(Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg, 0);
+                var before = motor.transform.position;
                 if (cc && cc.enabled) cc.Move(dir * Mathf.Min(BotSpeed * Time.deltaTime, d.magnitude));
                 yield return null;
+                if ((motor.transform.position - before).sqrMagnitude > 100f && jumps++ < 6)
+                    Line($"  ⚠ 走路时被挪走：{before} → {motor.transform.position}（熔岩里 {LavaField.IsLava(before)}）");
                 float now = Flat(target - motor.transform.position);
                 if (now < best - 0.3f)
                 {
@@ -705,7 +909,7 @@ namespace Spiritfire.Game.Testing
         static GameObject FindNamed(string id, string what)
         {
             foreach (var t in FindObjectsByType<Transform>())
-                if (t.name.StartsWith(id) && t.name.Contains(what) && t.GetComponentInChildren<Renderer>()) return t.gameObject;
+                if (t.name.StartsWith(id) && (t.name.EndsWith($"· {what}") || t.name.Contains($"· {what} (")) && t.GetComponentInChildren<Renderer>()) return t.gameObject;
             return null;
         }
 
