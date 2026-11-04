@@ -599,7 +599,8 @@ namespace Spiritfire.Game
                     break;
                 case WeaponNote.ReloadStarted:
                     beam.Hide();
-                    GameAudio.Play("reload_start", 0.8f);
+                    var original = MuzzleSocket ? MuzzleSocket.GetComponentInParent<GunfireOriginalAnimation>() : null;
+                    if (!original || original.reloadClips.Length == 0) GameAudio.Play("reload_start", 0.8f);
                     Changed?.Invoke();
                     GameEvents.RaiseReloadStarted(w);
                     break;

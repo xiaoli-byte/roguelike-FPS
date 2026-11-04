@@ -127,9 +127,10 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.15f);
             bool reloadState = animators.Any(a => a.GetCurrentAnimatorStateInfo(0).IsName("Reload"));
             bool moved = probes.Where((t, i) => Quaternion.Angle(t.rotation, restRotations[i]) > 0.01f || Vector3.Distance(t.position, restPositions[i]) > 0.0001f).Any();
-            Line($"换弹状态 Reload={reloadState}，双手/武器骨骼变化={moved}");
+            Line($"换弹状态 Reload={reloadState}，双手/武器骨骼变化={moved}，原换弹音={original.reloadClips.Length}+{original.reloadDetailClips.Length}");
             if (!reloadState) Fail($"{sourceId}：没有进入原 Reload 状态");
             if (!moved) Fail($"{sourceId}：原骨骼没有实际运动");
+            if (original.reloadClips.Length > 0 && (original.reloadCount == 0 || !original.GetComponent<AudioSource>().isPlaying)) Fail($"{sourceId}：原换弹音没有播放");
             start = Time.time;
             bool captured = false;
             while (wc.Reloading && Time.time - start < 8f)

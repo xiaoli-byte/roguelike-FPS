@@ -8,6 +8,8 @@ namespace Spiritfire.Game
         public string weaponId;
         public GameObject muzzlePrefab;
         public AudioClip[] shotClips = System.Array.Empty<AudioClip>();
+        public AudioClip[] reloadClips = System.Array.Empty<AudioClip>();
+        public AudioClip[] reloadDetailClips = System.Array.Empty<AudioClip>();
         public int fireCount, reloadCount;
         public string lastTrigger;
 
@@ -115,6 +117,12 @@ namespace Spiritfire.Game
                 animator.SetFloat("ReloadSpeed", length > 0 && duration > 0 ? length / duration : 1f);
             }
             Trigger("Reload");
+            reloadCount++;
+            if (audioSource)
+            {
+                if (reloadClips.Length > 0) audioSource.PlayOneShot(reloadClips[Random.Range(0, reloadClips.Length)]);
+                if (reloadDetailClips.Length > 0) audioSource.PlayOneShot(reloadDetailClips[Random.Range(0, reloadDetailClips.Length)]);
+            }
         }
 
         void Trigger(string name)

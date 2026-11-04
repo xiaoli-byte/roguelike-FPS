@@ -173,7 +173,13 @@ namespace Spiritfire.Art.Editor
             animation.weaponId = id;
             animation.muzzlePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Gunfire/Effects/1926_muzzle.prefab");
             animation.shotClips = id == "1202"
-                ? Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Resources/Gunfire/Audio/weapon_1202_1p_shot{i}.ogg")).Where(a => a).ToArray()
+                ? new[] { "436179418", "792043890", "816101160" }.Select(media => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Resources/Gunfire/Audio/wwise_2612982229_{media}.wav")).Where(a => a).ToArray()
+                : Array.Empty<AudioClip>();
+            animation.reloadClips = id == "1202"
+                ? new[] { "283121052", "291819121", "841820460" }.Select(media => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Resources/Gunfire/Audio/wwise_240364026_{media}.wav")).Where(a => a).ToArray()
+                : Array.Empty<AudioClip>();
+            animation.reloadDetailClips = id == "1202"
+                ? new[] { "129416451", "380127794", "749669683" }.Select(media => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Resources/Gunfire/Audio/wwise_4209784489_{media}.wav")).Where(a => a).ToArray()
                 : Array.Empty<AudioClip>();
             var prefab = PrefabUtility.SaveAsPrefabAsset(instance, $"Assets/Resources/Gunfire/Weapons/{id}.prefab");
             int animators = prefab.GetComponentsInChildren<Animator>(true).Count(a => a.runtimeAnimatorController && a.avatar);
