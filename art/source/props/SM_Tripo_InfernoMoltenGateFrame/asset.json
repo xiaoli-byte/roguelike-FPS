@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_InfernoMoltenGateFrame",
+  "display": "熔铁闸门门框（3-3 两扇领主闸 / 炉闸 / ③ 东壁铸门；3-4 门、3-1 宫门、3-2 井底铸门；门洞 10 × 9，闸板另一件）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-04 21:22:36",
+          "files": {
+            "BO_SM_Tripo_InfernoMoltenGateFrame_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoMoltenGateFrame_v001.json",
+              "sha256": "9a32d5da1996436a3f526a37d48dc8e08bf656ce28ab34b5950d5226eac0ec5b"
+            },
+            "BO_SM_Tripo_InfernoMoltenGateFrame_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoMoltenGateFrame_v001_views.json",
+              "sha256": "678e20942ea65335e7eb88f7ef170e589718310a82ac997d82dc0f2e335a3011"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.moltenGateFrame"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -7.0,
+              0.0,
+              -1.6
+            ],
+            "max": [
+              7.0,
+              12.0,
+              1.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-04 21:22:36",
+          "files": {
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_source.png",
+              "sha256": "65713894afe0c3d6aa9a1296b846d95287549f9817393b9def6bf2966f28008d"
+            },
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_front.png",
+              "sha256": "3656eb10c9640ee50326284ebc48727119671d088884c23dbf48e4524a8d4ef0"
+            },
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_left.png",
+              "sha256": "187410f2a19a5c9471d7caa3cf22f5ec1a5abca35e781badeed3df97a78e56a4"
+            },
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_back.png",
+              "sha256": "03b270771cbf62040a7cddc8b52f89e10a0c4a0f5cfc23bd2e4023eda8fd017c"
+            },
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_right.png",
+              "sha256": "be16aef47e4971feda05b3f95d1bf329f9a6520bfc9b313007677eb502a6425d"
+            },
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_sheet.png",
+              "sha256": "065f04f78edd4b28f9857a7d7623d30cdcf2301dee46848e7a8000f38271f0f2"
+            },
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_prompt.txt",
+              "sha256": "96fbffc3be66b32f957fe952936d4e103e64a522dd2829d9c2571518e8dbd002"
+            },
+            "CN_SM_Tripo_InfernoMoltenGateFrame_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGateFrame_v001_registration.json",
+              "sha256": "f94c4ca0f3bc928bd435d42ae77faa7e9fe90aa4e74c791973c54eed2c90b7ba"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 3,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "4 张里选第 3 张：正反两面都有朱漆带和槽口熔光，门洞方正",
+            "source_image": "MoltenGateFrame_3.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava stream, no lava pool, no glow halo: hot cracks and furnace interiors are painted only as flat opaque bright orange-yellow colour areas.\n\nSTYLE: stylized hand-painted 3D game environment asset in the readable style of Gunfire Reborn: bold chunky silhouette, broad clean faceted planes, two or three dominant colour blocks (dark charcoal basalt, black iron with big rivets, deep vermilion lacquer, warm dark bronze), soft painted gradients, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no dense tiny cracks, no tiny carvings, no harsh highlights.\n\nOBJECT (14m wide x 12m tall x 3.2m deep): A massive standalone gate FRAME with NO gate in it. Two thick square pillars 2m wide of dark charcoal basalt blocks, clad with black iron corner plates and big rivets, stand on low stepped basalt plinths at the LEFT and RIGHT; one heavy straight black iron lintel beam 3m tall joins their tops, with a deep vermilion lacquered band, a big cast warm bronze fire-sun disc in its centre and a short row of chunky iron spikes along its top. The rectangular doorway between the pillars, 10m wide and 9m tall, is completely EMPTY and OPEN, you see the plain grey background straight through it: no gate, no door, no bars, no grille, no portcullis, no chains, nothing inside the doorway. A deep vertical slot groove runs up the inner face of each pillar and along the underside of the lintel, the back of the groove painted flat bright orange-yellow. The FRONT and BACK faces look the same. PROPORTIONS: FRONT and BACK views about 1.17 times as wide as tall: a big empty rectangular doorway between two thick pillars under a heavy lintel; LEFT and RIGHT views show only one pillar end on, a tall narrow block about 0.27 times as wide as tall.",
+          "source_sha256": "65713894afe0c3d6aa9a1296b846d95287549f9817393b9def6bf2966f28008d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7868207523973444,
+              "offset": [
+                28,
+                316
+              ],
+              "size": [
+                456,
+                392
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7868207523973444,
+              "offset": [
+                209,
+                316
+              ],
+              "size": [
+                94,
+                392
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7852439573023597,
+              "offset": [
+                16,
+                316
+              ],
+              "size": [
+                480,
+                392
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7868207523973444,
+              "offset": [
+                209,
+                316
+              ],
+              "size": [
+                94,
+                392
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：用户授权免审，按推荐方案直接通过；4 张里选第 3 张：正反两面都有朱漆带和槽口熔光，门洞方正",
+            "time": "2026-11-04 21:22:36"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-04 21:33:01",
+          "files": {
+            "HP_SM_Tripo_InfernoMoltenGateFrame_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoMoltenGateFrame_v001_source.glb",
+              "sha256": "f9966811127389c6af5f2fd3e1ac4b78d2a81509477bb78d7d5c1ab6211262f1"
+            },
+            "HP_SM_Tripo_InfernoMoltenGateFrame_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoMoltenGateFrame_v001.glb",
+              "sha256": "4ff69d45980c26e54cfb19c05204d88b0764fede8696b4a9145328dc88e84083"
+            },
+            "HP_SM_Tripo_InfernoMoltenGateFrame_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoMoltenGateFrame_v001_graph.json",
+              "sha256": "a4bfc722889c77251739b6349e9c7ca1cf2aaef15c1020e3a0a2a50a86a4f171"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/04a2354f-f193-4eca-85dc-c6c172d3c0d7",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12442,
+          "source_sha256": "f9966811127389c6af5f2fd3e1ac4b78d2a81509477bb78d7d5c1ab6211262f1"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-04 21:33:35",
+          "files": {
+            "SM_Tripo_InfernoMoltenGateFrame_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoMoltenGateFrame_v001.blend",
+              "sha256": "d51a77e74566f29bc5a3a9aaa2316fe9e7a34f4ef3775bcce979e335bd7f9306"
+            },
+            "SM_Tripo_InfernoMoltenGateFrame_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoMoltenGateFrame_v001.glb",
+              "sha256": "7f0e0601c39ffdb711e8108a57d34f5295dd62ae96564370a293d1c8078d872c"
+            },
+            "SM_Tripo_InfernoMoltenGateFrame_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoMoltenGateFrame_v001_metrics.json",
+              "sha256": "9fd631eb60b1c964f05b34cb6c8e582f839962d0a407aabbbdd0edd7cc4c1d8c"
+            },
+            "T_Tripo_InfernoMoltenGateFrame_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoMoltenGateFrame_BC.png",
+              "sha256": "3e2a9a9d6b53cdaa4951a69e33350d196b89dd785bb84a665842fc02111e134e"
+            },
+            "T_Tripo_InfernoMoltenGateFrame_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoMoltenGateFrame_E.png",
+              "sha256": "674e76ca9dc4d1fb6d5e94dc348dc69c388879b044e9b7c5727e246ba49f8cc6"
+            },
+            "T_Tripo_InfernoMoltenGateFrame_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoMoltenGateFrame_N.png",
+              "sha256": "e6f422a8c5e115e2646c94df9098a7d0f0853cf0310bb3ea08386b5add59b3ed"
+            },
+            "T_Tripo_InfernoMoltenGateFrame_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoMoltenGateFrame_ORM.png",
+              "sha256": "cf5ace511aa9a2f06bccd561ba40031c578c4d7c71b98ab844c0ab7e4b5a0ac7"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.801,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12442,
+              "verts": 7681
+            }
+          ],
+          "export_kb": 1015.0,
+          "seconds": 33.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-04 21:33:36",
+          "files": {
+            "SM_Tripo_InfernoMoltenGateFrame_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoMoltenGateFrame_v001_validation_v001.json",
+              "sha256": "5f499cb9f3fbc7b7e35a11f7d34bec4a4f82ff25fef2bc3095bb8b8ccba80016"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-04 21:33:43",
+          "files": {
+            "SM_Tripo_InfernoMoltenGateFrame_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoMoltenGateFrame_v001_review_v001.png",
+              "sha256": "b20e5c28869014746ea6aab6b8ddba807a56334e79eb61762bd3d103b7b9260b"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-03 第三章 v2（A3）：11-04 M33 补件：熔铁闸门专用门框；去掉了 Tripo 多加的一根门槛横杆；用户授权免审",
+            "time": "2026-11-04 21:33:56"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-04 21:33:56",
+          "files": {
+            "SM_Tripo_InfernoMoltenGateFrame.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoMoltenGateFrame.glb",
+              "sha256": "7f0e0601c39ffdb711e8108a57d34f5295dd62ae96564370a293d1c8078d872c"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoMoltenGateFrame.glb"
+        }
+      ]
+    }
+  }
+}

@@ -2678,6 +2678,29 @@ parts = [
 ]
 brief = """A crane hook kit of two SEPARATE parts floating one above the other with a clear empty gap between them (no chain): a heavy black iron drum winch with riveted end flanges and a squat bracket housing with a flat top, and below it a big black iron hook block, a chunky sheave block with a vermilion lacquered band and one massive blunt curved iron hook."""
 
+# 2026-11-04 M33 补件（ch3-kit.md 第 3 节）：熔铁闸板 SM_Tripo_InfernoMoltenGate 的专用门框，门洞 10 × 9 对上 3-3 的闸板（GateSize 10 × 9 × 1.4）；
+# 门框和闸板分开，闸板在门柱 / 门楣的槽里升降，门框原点 = 门洞底面中心 = 闸板原点（SOCKET_Gate）
+[assets.SM_Tripo_InfernoMoltenGateFrame]
+display = "熔铁闸门门框（3-3 两扇领主闸 / 炉闸 / ③ 东壁铸门；3-4 门、3-1 宫门、3-2 井底铸门；门洞 10 × 9，闸板另一件）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.v2.moltenGateFrame" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.0, 12.0, 3.2]
+lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }  # 熔岩缝 / 炉口画成的亮橙黄 → 自发光遮罩 T_*_E（bl_build_tripo.py）
+architecture_role = "portal"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.45 }
+# 特效 / 挂件挂点（glTF 米，发布尺度）：闸板挂 SOCKET_Gate（门洞底面中心）。实测门洞：柱身内侧 ±3.92、柱脚 / 柱头箍带 ±3.2、门楣下缘 8.26
+# （GPT 概念画窄了，不是 10 × 9）→ 配法写在 ch3-kit.md 第 3.1 节末：给定闸板 W × H，门框 X = W / 8.35、Y = H / 8.8
+fx_points = [
+  { name = "SOCKET_Gate", pos = [0, 0, 0] },
+]
+brief = """A massive standalone gate FRAME for a black iron drop gate, 14m wide, 12m tall and 3.2m deep, with NO gate in it. Two thick square pillars 2m wide of dark charcoal basalt blocks, clad with black iron corner plates and big rivets, stand on low stepped basalt plinths at the LEFT and RIGHT; one heavy straight black iron lintel beam 3m tall joins their tops, with a deep vermilion lacquered band and a big cast warm bronze fire-sun disc in its centre and a short row of chunky iron spikes on top. The rectangular doorway between the pillars, 10m wide and 9m tall, is completely EMPTY and open, see-through from FRONT to BACK: no gate, no door, no bars, no grille, no chains in it. A deep vertical slot groove runs up the inner face of each pillar and along the underside of the lintel, its back painted as an opaque bright orange-yellow surface. The FRONT and BACK faces are the same. PROPORTIONS: the FRONT and BACK views are drawn about 1.17 times as wide as tall; the LEFT and RIGHT views show one pillar end on, about 0.27 times as wide as tall. Chunky readable forms, no smoke, no fire. One solid connected piece on a flat base."""
+
 [assets.SM_Tripo_InfernoKilnMouth]
 display = "炉窟门脸（3-2 ① / ③ 窟口；3-3 殿后炉窟；背面平贴岩壁）"
 kind = "static"
