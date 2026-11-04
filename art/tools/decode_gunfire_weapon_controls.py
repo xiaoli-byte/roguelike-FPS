@@ -17,17 +17,25 @@ BUNDLES = {
 }
 
 
-def read_fields(data: bytes, fields: list[dict]) -> tuple[dict, bytes]:
+def read_fields(data: bytes, fields: list[dict], offset: int = 32) -> tuple[dict, bytes]:
     values = {}
-    offset = 32
     for field in fields:
-        if field["flags"] & 7 != 6:
-            continue
         kind = field["type"]
         name = field["name"]
-        if kind == "CameraSettingByGun.SightSetting":
+        if field["flags"] & 7 != 6 and name != "magicBulletConfigList":
+            continue
+        if kind in ("CameraSettingByGun.SightSetting", "MagicBulletType"):
             values[name] = struct.unpack_from("<i", data, offset)[0]
             offset += 4
+            continue
+        if kind == "System.Collections.Generic.List<MagicBulletConfig>" and name == "magicBulletConfigList":
+            count = struct.unpack_from("<i", data, offset)[0]
+            offset += 4
+            values[name] = []
+            for _ in range(count):
+                config, remaining = read_fields(data[offset:], json.loads((ROOT / "art/reviews/gunfire-reborn-analysis/weapon-type-layout.json").read_text(encoding="utf-8-sig"))["MagicBulletConfig"], 0)
+                values[name].append(config)
+                offset += len(data[offset:]) - len(remaining)
             continue
         if kind == "UnityEngine.Vector2[]":
             count = struct.unpack_from("<i", data, offset)[0]
