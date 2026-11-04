@@ -1,0 +1,1030 @@
+{
+  "WeaponNormalCtrl": [
+    {
+      "name": "weaponmotionctrl",
+      "offset": "24",
+      "type": "WeaponMotionCtrl",
+      "flags": 1
+    },
+    {
+      "name": "PositionOffset",
+      "offset": "32",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionOffset_Refer",
+      "offset": "44",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionSightOffset",
+      "offset": "56",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionDWOffset",
+      "offset": "68",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionFocusOffset",
+      "offset": "80",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionIronSightOffset",
+      "offset": "92",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationOffset",
+      "offset": "104",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationOffset_Refer",
+      "offset": "116",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationSightOffset",
+      "offset": "128",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationDWOffset",
+      "offset": "140",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationFocusOffset",
+      "offset": "152",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationIronSightOffset",
+      "offset": "164",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "DWOffsetMinDis",
+      "offset": "176",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "m_prefabName",
+      "offset": "184",
+      "type": "System.String",
+      "flags": 1
+    }
+  ],
+  "WeaponMotionCtrl": [
+    {
+      "name": "m_offsetType",
+      "offset": "24",
+      "type": "WeaponMotionCtrl.OffsetType",
+      "flags": 1
+    },
+    {
+      "name": "weaponnormalctrl",
+      "offset": "32",
+      "type": "WeaponNormalCtrl",
+      "flags": 1
+    },
+    {
+      "name": "m_weaponPos",
+      "offset": "40",
+      "type": "System.Int32",
+      "flags": 1
+    },
+    {
+      "name": "m_weaposShape",
+      "offset": "44",
+      "type": "System.Int32",
+      "flags": 1
+    },
+    {
+      "name": "m_isMainWeapon",
+      "offset": "48",
+      "type": "System.Boolean",
+      "flags": 6
+    },
+    {
+      "name": "m_StopBob",
+      "offset": "49",
+      "type": "System.Boolean",
+      "flags": 1
+    },
+    {
+      "name": "FixedPoint",
+      "offset": "50",
+      "type": "System.Boolean",
+      "flags": 6
+    },
+    {
+      "name": "FixedPosition",
+      "offset": "52",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionSpringStiffness",
+      "offset": "64",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionSpringDamping",
+      "offset": "68",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionSpring2Stiffness",
+      "offset": "72",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionSpring2Damping",
+      "offset": "76",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionSpring3Stiffness",
+      "offset": "80",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionSpring3Damping",
+      "offset": "84",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionKneeling",
+      "offset": "88",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionKneelingSoftness",
+      "offset": "92",
+      "type": "System.Int32",
+      "flags": 6
+    },
+    {
+      "name": "PositionFallRetract",
+      "offset": "96",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionWalkSlide",
+      "offset": "100",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionInputVelocityScale",
+      "offset": "112",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PositionMaxInputVelocity",
+      "offset": "116",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "m_PositionSpring",
+      "offset": "120",
+      "type": "vp_Spring",
+      "flags": 4
+    },
+    {
+      "name": "m_PositionSpring2",
+      "offset": "128",
+      "type": "vp_Spring",
+      "flags": 4
+    },
+    {
+      "name": "m_PositionSpring3",
+      "offset": "136",
+      "type": "vp_Spring",
+      "flags": 4
+    },
+    {
+      "name": "RotationSpringStiffness",
+      "offset": "144",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationSpringDamping",
+      "offset": "148",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationSpring2Stiffness",
+      "offset": "152",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationSpring2Damping",
+      "offset": "156",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationSpring3Stiffness",
+      "offset": "160",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationSpring3Damping",
+      "offset": "164",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationKneeling",
+      "offset": "168",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationKneelingSoftness",
+      "offset": "172",
+      "type": "System.Int32",
+      "flags": 6
+    },
+    {
+      "name": "RotationLookSway",
+      "offset": "176",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationStrafeSway",
+      "offset": "188",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationFallSway",
+      "offset": "200",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "PositionFallSway",
+      "offset": "212",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "RotationSlopeSway",
+      "offset": "224",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationInputVelocityScale",
+      "offset": "228",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RotationMaxInputVelocity",
+      "offset": "232",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "m_SwayVel",
+      "offset": "236",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_FallSway",
+      "offset": "248",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_RotationSpring",
+      "offset": "264",
+      "type": "vp_Spring",
+      "flags": 4
+    },
+    {
+      "name": "m_RotationSpring2",
+      "offset": "272",
+      "type": "vp_Spring",
+      "flags": 4
+    },
+    {
+      "name": "m_RotationSpring3",
+      "offset": "280",
+      "type": "vp_Spring",
+      "flags": 4
+    },
+    {
+      "name": "ShakeSpeed",
+      "offset": "288",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "ShakeAmplitude",
+      "offset": "292",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "ShakePosition",
+      "offset": "304",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "m_Shake",
+      "offset": "316",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_PositionShake",
+      "offset": "328",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "BobRotation",
+      "offset": "340",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "BobRotationAmplitude",
+      "offset": "352",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "BobPosition",
+      "offset": "364",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "BobPositionAmplitude",
+      "offset": "376",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "BobInputVelocityScale",
+      "offset": "388",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "BobMaxInputVelocity",
+      "offset": "392",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "BobRequireGroundContact",
+      "offset": "396",
+      "type": "System.Boolean",
+      "flags": 6
+    },
+    {
+      "name": "m_LastBobSpeed",
+      "offset": "400",
+      "type": "System.Single",
+      "flags": 4
+    },
+    {
+      "name": "m_CurrentBobRotaAmp",
+      "offset": "404",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_CurrentBobRotaVal",
+      "offset": "416",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_CurrentBobPosiAmp",
+      "offset": "428",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_CurrentBobPosiVal",
+      "offset": "440",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_BobSpeed",
+      "offset": "452",
+      "type": "System.Single",
+      "flags": 4
+    },
+    {
+      "name": "StepPositionForce",
+      "offset": "456",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "StepRotationForce",
+      "offset": "468",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "StepSoftness",
+      "offset": "480",
+      "type": "System.Int32",
+      "flags": 6
+    },
+    {
+      "name": "StepMinVelocity",
+      "offset": "484",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "StepPositionBalance",
+      "offset": "488",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "StepRotationBalance",
+      "offset": "492",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "StepForceScale",
+      "offset": "496",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "m_LastUpRotaBob",
+      "offset": "500",
+      "type": "System.Single",
+      "flags": 4
+    },
+    {
+      "name": "m_BobWasElevating",
+      "offset": "504",
+      "type": "System.Boolean",
+      "flags": 4
+    },
+    {
+      "name": "m_PosStep",
+      "offset": "508",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_RotStep",
+      "offset": "520",
+      "type": "UnityEngine.Vector3",
+      "flags": 4
+    },
+    {
+      "name": "m_LookInput",
+      "offset": "532",
+      "type": "UnityEngine.Vector2",
+      "flags": 4
+    },
+    {
+      "name": "MotionPositionReset",
+      "offset": "540",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "MotionRotationReset",
+      "offset": "544",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "MotionPositionRecoil",
+      "offset": "548",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "MotionRotationRecoil",
+      "offset": "560",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "MotionPositionMaxState",
+      "offset": "572",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "MotionRotationRecoilDeadZone",
+      "offset": "584",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "MotionRecoilInterval",
+      "offset": "588",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "m_LastMotionRecoilTime",
+      "offset": "592",
+      "type": "System.Single",
+      "flags": 4
+    },
+    {
+      "name": "FireFOVOffset",
+      "offset": "596",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FireFOVMax",
+      "offset": "600",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FireFOVTime",
+      "offset": "604",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FireFOVRecoverTime",
+      "offset": "608",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "HitPositionReset",
+      "offset": "612",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "HitRotationReset",
+      "offset": "616",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "HitPositionRecoil",
+      "offset": "620",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "HitRotationRecoil",
+      "offset": "632",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "HitRotationRecoilDeadZone",
+      "offset": "644",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "HitPositionMaxState",
+      "offset": "648",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "HitSkillSID",
+      "offset": "660",
+      "type": "System.Int32",
+      "flags": 4
+    },
+    {
+      "name": "SwitchWeaponRoatation",
+      "offset": "664",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "SwitchWeaponPosition",
+      "offset": "668",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PutDownTime",
+      "offset": "672",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "PullOutTime",
+      "offset": "676",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "CamRotationSpringStiffness",
+      "offset": "680",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "CamRotationSpringDamping",
+      "offset": "684",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "CameraRollOffset",
+      "offset": "688",
+      "type": "UnityEngine.Vector3",
+      "flags": 6
+    },
+    {
+      "name": "ReloadWeaponRoatation",
+      "offset": "700",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "ReloadPutDownTime",
+      "offset": "704",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "ReloadPullOutTime",
+      "offset": "708",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "SightRatio",
+      "offset": "712",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "SightFOVChangeTime",
+      "offset": "716",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FocusFOV",
+      "offset": "720",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FocussingEndTime",
+      "offset": "724",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FocussingStartTime",
+      "offset": "728",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "IronSightFOVOffset",
+      "offset": "732",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "IronSightOpenTime",
+      "offset": "736",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "IronSightCloseTime",
+      "offset": "740",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FOVOffset",
+      "offset": "744",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FOVSetTime",
+      "offset": "748",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "FOVRecoverTime",
+      "offset": "752",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "m_prefabName",
+      "offset": "760",
+      "type": "System.String",
+      "flags": 1
+    },
+    {
+      "name": "m_lstRot",
+      "offset": "768",
+      "type": "UnityEngine.Vector2",
+      "flags": 4
+    },
+    {
+      "name": "m_nowRot",
+      "offset": "776",
+      "type": "UnityEngine.Vector2",
+      "flags": 4
+    },
+    {
+      "name": "m_lepRot",
+      "offset": "784",
+      "type": "UnityEngine.Vector2",
+      "flags": 4
+    },
+    {
+      "name": "m_lstRotw",
+      "offset": "792",
+      "type": "System.Single",
+      "flags": 4
+    },
+    {
+      "name": "m_FPSCam",
+      "offset": "800",
+      "type": "UnityEngine.Transform",
+      "flags": 4
+    },
+    {
+      "name": "m_MainTra",
+      "offset": "808",
+      "type": "UnityEngine.Transform",
+      "flags": 4
+    },
+    {
+      "name": "fpsCamMotion",
+      "offset": "816",
+      "type": "FPSCamMotionCtrl",
+      "flags": 1
+    }
+  ],
+  "MagicBullet": [
+    {
+      "name": "m_id",
+      "offset": "24",
+      "type": "System.Int32",
+      "flags": 1
+    },
+    {
+      "name": "magicBulletConfigList",
+      "offset": "32",
+      "type": "System.Collections.Generic.List<MagicBulletConfig>",
+      "flags": 1
+    },
+    {
+      "name": "tempConfigs",
+      "offset": "40",
+      "type": "System.Collections.Generic.List<MagicBulletConfig>",
+      "flags": 1
+    },
+    {
+      "name": "curConfigType",
+      "offset": "48",
+      "type": "MagicBulletType",
+      "flags": 1
+    }
+  ],
+  "CameraSettingByGun": [
+    {
+      "name": "UseCustomRecoil",
+      "offset": "24",
+      "type": "System.Boolean",
+      "flags": 6
+    },
+    {
+      "name": "X_Change_Prob",
+      "offset": "28",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RecoilMax_X",
+      "offset": "32",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RecoilMax_Y",
+      "offset": "36",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RecoilTime",
+      "offset": "40",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RandomMin_X",
+      "offset": "44",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RandomMin_Y",
+      "offset": "48",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RandomMax_X",
+      "offset": "52",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RandomMax_Y",
+      "offset": "56",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RecoverSpeed",
+      "offset": "60",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "StabilityOffset",
+      "offset": "64",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "Axis_X_Y_Ratio",
+      "offset": "68",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RecoilUpLimit",
+      "offset": "72",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "RecoilDownLimit",
+      "offset": "76",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "m_weaponPos",
+      "offset": "80",
+      "type": "System.Int32",
+      "flags": 1
+    },
+    {
+      "name": "m_weaponitemid",
+      "offset": "84",
+      "type": "System.Int32",
+      "flags": 1
+    },
+    {
+      "name": "m_weaponSid",
+      "offset": "88",
+      "type": "System.Int32",
+      "flags": 1
+    },
+    {
+      "name": "m_name",
+      "offset": "96",
+      "type": "System.String",
+      "flags": 1
+    },
+    {
+      "name": "m_CanRefresh",
+      "offset": "104",
+      "type": "System.Boolean",
+      "flags": 1
+    },
+    {
+      "name": "SightMax",
+      "offset": "108",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "SightMin",
+      "offset": "112",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "SightDefaultUse",
+      "offset": "116",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "SightSpeed",
+      "offset": "120",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "SightSmoothTime",
+      "offset": "124",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "CrazyShootRecoilMax_Y",
+      "offset": "128",
+      "type": "System.Single",
+      "flags": 6
+    },
+    {
+      "name": "IronSightOption",
+      "offset": "132",
+      "type": "CameraSettingByGun.SightSetting",
+      "flags": 6
+    },
+    {
+      "name": "CustomRecoils",
+      "offset": "136",
+      "type": "UnityEngine.Vector2[]",
+      "flags": 6
+    },
+    {
+      "name": "stabilityCustomRecoils",
+      "offset": "144",
+      "type": "UnityEngine.Vector2[]",
+      "flags": 1
+    },
+    {
+      "name": "WeaponPropEventStr",
+      "offset": "152",
+      "type": "System.String",
+      "flags": 1
+    },
+    {
+      "name": "HeroPropEventStr",
+      "offset": "160",
+      "type": "System.String",
+      "flags": 1
+    }
+  ]
+}
