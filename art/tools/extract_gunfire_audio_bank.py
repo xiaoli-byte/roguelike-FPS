@@ -112,7 +112,7 @@ def main() -> None:
         raise ValueError("Embedded bank does not start with BKHD")
     output = ROOT / args.output
     output.mkdir(parents=True, exist_ok=True)
-    (output / "wpn.bnk").write_bytes(bank)
+    (output / f"{args.pck.stem}.bnk").write_bytes(bank)
     version, embedded_id = struct.unpack_from("<2I", bank, 8)
     objects, names = parse_hirc(bank, version)
     for obj in objects.values():
