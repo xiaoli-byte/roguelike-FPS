@@ -11,9 +11,10 @@ namespace Spiritfire.Game
     ///   1. 北链桥：玩家第一次走过桥中段，悬炉炉腹喷一口火星、桥身一震（不伤人）。
     ///   2. ② 悬炉锻台肃清：北链桥从桥头往下一段段崩断坠井（<see cref="BreakableSpan.BreakAll"/>），西吊臂的挂钩放下来——往下走。
     ///      北链桥塌了以后回 T1 走南链桥（常设）或井底升降台。
-    ///   3. ④ 熔泉炉坛第二波开波（或 S1 增援门调 <see cref="OnActivated"/>）：井底铸门先亮 <see cref="gateWarn"/> 秒，再升到半开（铁牛低头走出来）。
-    ///   4. 关卡目标完成：铸门全开、门缝里的光出来；四口间歇熔泉同时喷一次（<see cref="LavaGeyser.EruptNow"/>）。
-    /// 铸门：<see cref="gate"/> 是会升起的门板（碰撞不进导航烘焙），关着时 <see cref="gateCarve"/>（挖洞障碍）把门洞从导航网格上挖掉，升到半开就撤掉。
+    ///   3. ④ 熔泉炉坛第二波开波（或 S1 增援门调 <see cref="OnActivated"/>）：井底铸门先亮 <see cref="gateWarn"/> 秒，再一下沉到半开（闸板顶齐地，铁牛走出来）。
+    ///   4. 关卡目标完成：铸门全开（闸板整个沉进地面）、门缝里的光出来；四口间歇熔泉同时喷一次（<see cref="LavaGeyser.EruptNow"/>）。
+    /// 铸门：<see cref="gate"/> 是开闸时沉进地面的闸板（碰撞不进导航烘焙；专用门框不动，往上提会从门楣顶露出来，所以往下沉），
+    /// 关着时 <see cref="gateCarve"/>（挖洞障碍）把门洞从导航网格上挖掉，到半开就撤掉。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class ForgeWellDirector : MonoBehaviour, IActivatable
@@ -45,15 +46,17 @@ namespace Spiritfire.Game
         public GameObject[] hookLamps = Array.Empty<GameObject>();
 
         [Header("井底铸门")]
-        [Tooltip("门板（升起）")]
+        [Tooltip("闸板（开闸沉进地面）")]
         public Transform gate;
         [Tooltip("门关着时把门洞挖掉的导航障碍")]
         public NavMeshObstacle gateCarve;
         [Tooltip("门缝的光（开门前亮起）")]
         public GameObject[] gateGlow = Array.Empty<GameObject>();
         public Light gateLight;
-        [Tooltip("开门前门缝亮多久（秒）、半开 / 全开升多高（米）、升起速度（m/s）")]
-        public float gateWarn = 1.2f, gateHalf = 5.5f, gateFull = 9.6f, gateSpeed = 2.4f;
+        [Tooltip("开门前门缝亮多久（秒）、半开 / 全开走多远（米；9 m 的闸板底面在地下 0.2 m：沉 8.6 m 顶齐地、9.4 m 整个没进地面）、速度（m/s）")]
+        public float gateWarn = 1.2f, gateHalf = 8.6f, gateFull = 9.4f, gateSpeed = 8f;
+        [Tooltip("开闸方向：−1 往下沉进地面（专用门框，3-2 / 3-4 的做法），+1 往上升")]
+        public float gateDirection = -1f;
 
         [Header("熔泉")]
         [Tooltip("目标完成时同时喷一次的间歇熔泉（④ 熔泉炉坛的四口）")]
@@ -65,7 +68,7 @@ namespace Spiritfire.Game
         public bool BridgeBroken { get; private set; }
         /// <summary>挂钩放下了（0–1）</summary>
         public float HookLowered { get; private set; }
-        /// <summary>铸门升起的高度（米）与目标高度</summary>
+        /// <summary>铸门开了多少（闸板沿 <see cref="gateDirection"/> 走过的米数）与目标</summary>
         public float GateRise { get; private set; }
         public float GateTarget { get; private set; }
         /// <summary>铸门：0 关着、1 门缝发光、2 半开、3 全开</summary>
@@ -172,7 +175,7 @@ namespace Spiritfire.Game
             if (on) OpenGateHalf();
         }
 
-        /// <summary>铸门先亮、再升到半开（④ 第二波：精英铁牛低头走出来）</summary>
+        /// <summary>铸门先亮、再沉到半开（④ 第二波：精英铁牛走出来）</summary>
         public void OpenGateHalf()
         {
             if (GateStage >= 1) return;
@@ -226,7 +229,7 @@ namespace Spiritfire.Game
             float dt = Time.deltaTime;
             if (!(dt > 0)) return;
             StepBridgeShake();
-            // 铸门：门缝先亮，到点升到半开（撤掉挖洞，铁牛走得出来）；全开继续升
+            // 铸门：门缝先亮，到点沉到半开（撤掉挖洞，铁牛走得出来）；全开继续沉
             if (gateWarnLeft >= 0)
             {
                 gateWarnLeft -= dt;
@@ -241,7 +244,7 @@ namespace Spiritfire.Game
             if (gate && GateRise < GateTarget)
             {
                 GateRise = Mathf.MoveTowards(GateRise, GateTarget, gateSpeed * dt);
-                gate.position = gateHome + Vector3.up * GateRise;
+                gate.position = gateHome + Vector3.up * (GateRise * (gateDirection < 0 ? -1f : 1f));
             }
             if (gateLight)
             {

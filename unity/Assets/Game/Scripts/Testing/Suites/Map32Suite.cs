@@ -229,7 +229,15 @@ namespace Spiritfire.Game.Testing
             while (portal.IsOpen && !portal.Risen && Time.time - rise0 < 5f) yield return null;
             yield return new WaitForSeconds(0.6f);
             Line($"出口：{(portal.IsOpen ? "已开启" : "未开启")}，升起 {portal.Rise:P0}，清关宝箱 {(portal.ClearChest ? portal.ClearChest.reward : "无")}；" +
-                 $"铸门 {(director ? $"第 {director.GateStage} 段、升起 {director.GateRise:F1} m" : "—")}");
+                 $"铸门 {(director ? $"第 {director.GateStage} 段、闸板{(director.gateDirection < 0 ? "沉下" : "升起")} {director.GateRise:F1} m" : "—")}");
+            if (director && director.gate)
+            {
+                // 全开后闸板顶要低于地面（门框挡着，不能往上提）、门洞走得过去
+                var leafTop = director.gate.GetComponentsInChildren<Renderer>().Select(r => r.bounds.max.y).DefaultIfEmpty(float.MinValue).Max();
+                float floorY = portal.transform.position.y;
+                Line($"铸门闸板顶 y {leafTop:F2}（龛底 y {floorY:F2}）");
+                if (director.GateStage >= 3 && leafTop > floorY + 0.35f) Fail($"铸门全开后闸板顶还高出地面 {leafTop - floorY:F2} m");
+            }
             if (!portal.IsOpen) Fail("必清场地肃清后出口没有开启");
             else if (!portal.ClearChest) Fail("出口升起后没有落清关宝箱");
             if (director && director.GateStage < 3) Fail("目标完成后铸门没有全开");

@@ -127,6 +127,8 @@ namespace Spiritfire.Art.Editor.Levels
             new() { name = "③ 风箱窟", th = Site3Th, rFrom = 44f, rTo = 76f, half = 23f, floor = T2Y, face = 4f },
             new() { name = "藏宝 A · 炼渣龛", th = CacheATh, rFrom = 58f, rTo = 72f, half = 4.5f, floor = T1Y, face = 3.5f },
             new() { name = "井底铸门龛", th = GateTh, rFrom = 32.5f, rTo = 43f, half = 6.2f, floor = T3Y, face = 3f },
+            // 门框位：专用门框外廓 16.6 m 宽、3.3 m 深（立在 r 38.2），龛在门框那一段放宽到 20 m，门框两头不插进井壁
+            new() { name = "井底铸门框位", th = GateTh, rFrom = GateR - 3f, rTo = GateR + 3f, half = 10f, floor = T3Y, face = 3f },
         };
 
         // ── 东旋坡（T0 → T1，凿进井壁，宽 7 m）：折线（世界 XZ，坡顶 → 坡脚）──
@@ -258,6 +260,15 @@ namespace Spiritfire.Art.Editor.Levels
         // ── 井底铸门：门板（熔铁闸门 10 × 9 × 1.4）离井心、出口传送门离井心 ──
         const float GateR = 38.2f, PortalR = 35f;
         static readonly Vector2 GateAt = P(GateTh, GateR), PortalAt = P(GateTh, PortalR), GateBehind = P(GateTh, 41f);
+        /// <summary>
+        /// 闸板正式件 6.83 × 9 × 1.33：X ×1.46 → 门洞宽 W ≈ 10 m、H 9 m。专用门框（ch3-kit 第 3.1 节末）配 W × H 的闸板：X = W / 8.35、Y = H / 8.8、Z 不跟
+        /// → ×1.19 / ×1.02，外廓 16.6 × 12.3 × 3.3；开闸后柱脚箍带处最窄 6.4 × 1.19 ≈ 7.6 m、柱身之间 7.84 × 1.19 ≈ 9.4 m、门楣下缘 8.26 × 1.02 ≈ 8.4 m
+        /// </summary>
+        const float GateLeafX = 1.46f, GateLeafW = 6.83f * GateLeafX, GateLeafH = 9f, GateFrameW = 13.89f, GateFrameD = 3.32f;
+        static readonly Vector3 GateFrameScale = new(GateLeafW / 8.35f, GateLeafH / 8.8f, 1f);
+        /// <summary>门框柱身内侧（发布尺度 ±3.92）、柱脚箍带内侧（±3.2）× X 缩放</summary>
+        static float GatePostInner => 3.92f * GateFrameScale.x;
+        static float GateFootInner => 3.2f * GateFrameScale.x;
 
         // ── 四口间歇熔泉（④，S3 落地后接上）──
         static readonly float[] GeyserThetas = { 80f, 98f, 132f, 150f };
@@ -271,7 +282,7 @@ namespace Spiritfire.Art.Editor.Levels
             CoverWallId = "SM_Tripo_InfernoCoverWall", BarricadeId = "SM_Tripo_InfernoBarricade", IngotsId = "SM_Tripo_InfernoIngotPile",
             HoardId = "SM_Tripo_InfernoTreasureHoard", StallId = "SM_Tripo_InfernoForgeStall", CrucibleId = "SM_Prop_InfernoCrucible",
             ObeliskId = "SM_Prop_InfernoChainObelisk", AnvilId = "SM_Prop_Anvil", FurnaceTowerId = "SM_Tripo_InfernoFurnaceTower",
-            CauldronId = "SM_Tripo_InfernoCauldronRuin", KilnMouthId = "SM_Tripo_InfernoKilnMouth";
+            CauldronId = "SM_Tripo_InfernoCauldronRuin", KilnMouthId = "SM_Tripo_InfernoKilnMouth", GateFrameId = "SM_Tripo_InfernoMoltenGateFrame";
         const float BellowsScale = 1.5f;
 
         /// <summary>第三章 ART6 / v2 地图件的登记尺寸（缺 Prefab 时放这个尺寸的白盒；registry.toml「第三章地图件」「第三章 v2 地图件」）</summary>
@@ -279,7 +290,7 @@ namespace Spiritfire.Art.Editor.Levels
         {
             [HangingForgeId] = new(26f, 8f, 26f), [RockRibId] = new(9f, 16f, 12f), [SpiralLedgeId] = new(14f, 7f, 8f), [BellowsId] = new(18f, 5f, 8f),
             [CastingBedId] = new(8f, 1.4f, 5f), [MoltenGateId] = new(10f, 9f, 1.4f), [ScaffoldId] = new(12f, 10f, 8f), [LadleCraneId] = new(18f, 16f, 8f),
-            [BasaltColumnsId] = new(8f, 9f, 7f), [KilnMouthId] = new(16f, 12f, 5f),
+            [BasaltColumnsId] = new(8f, 9f, 7f), [KilnMouthId] = new(16f, 12f, 5f), [GateFrameId] = new(13.89f, 12f, 3.32f),
         };
 
         // ───────────── 地貌 ─────────────
@@ -619,6 +630,7 @@ namespace Spiritfire.Art.Editor.Levels
                 CheckSquads(rep, scene);
                 CheckSiteCenters(rep, scene);
                 CheckSteps(rep);
+                CheckGate(rep);
                 CheckSceneContents(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
                 rep.Save($"{LevelKit.ReviewDir}/level_3-2_report.txt");
@@ -1093,9 +1105,11 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 井底铸门（出口）：北崖脚凿进去的龛，龛底 = T3；熔铁闸门（ART6 白盒 10 × 9 × 1.4）立在龛里，正面朝井心。
-        /// 门板的碰撞不进导航烘焙（门后那截龛底也在网格上），关着时挂一个挖洞障碍把门洞挖掉；ForgeWellDirector 开门时撤掉。
-        /// 门缝的光（两条发光竖缝 + 一盏点光）开门前亮起。返回门板、挖洞障碍、门缝光、点光
+        /// 井底铸门（出口）：北崖脚凿进去的龛，龛底 = T3；熔铁闸板（SM_Tripo_InfernoMoltenGate X ×1.46 → 10 × 9）+ 专用门框（SM_Tripo_InfernoMoltenGateFrame，
+        /// X ×1.19 / Y ×1.02，外廓 16.6 × 12.3 × 3.3）立在龛里，正面朝井心。两件同原点（门框的 SOCKET_Gate = 门洞底面中心）、同朝向；
+        /// 门框在不动的 root 下（网格碰撞，进导航烘焙），闸板在 Gate Leaf 下，开闸往下沉进地面（往上提会从门楣顶露出来）。
+        /// 闸板的碰撞不进导航烘焙（门后那截龛底也在网格上），关着时挂一个挖洞障碍把门洞挖掉；ForgeWellDirector 开门时撤掉。
+        /// 门缝的光（闸板和两根门柱之间两条发光竖缝 + 门后一盏点光）开门前亮起。返回门板、挖洞障碍、门缝光、点光
         /// </summary>
         static (Transform gate, NavMeshObstacle carve, GameObject[] glow, Light light) BuildExitGate(Transform kit, Transform world)
         {
@@ -1105,8 +1119,12 @@ namespace Spiritfire.Art.Editor.Levels
             var gate = new GameObject("Gate Leaf").transform;
             gate.SetParent(root, false);
             gate.position = At(GateAt, T3Y);
-            // 闸板正式件 6.83 m 宽：X ×1.46 撑满 10 m 门洞（门框没建，用自己的铁门柱 + 门楣）
-            var leaf = KitScaled(MoltenGateId, gate, GateAt, T3Y - 0.2f, yaw, new Vector3(1.46f, 1f, 1f));
+            var leaf = KitScaled(MoltenGateId, gate, GateAt, T3Y - 0.2f, yaw, new Vector3(GateLeafX, 1f, 1f));
+            // Place 按父节点的局部坐标摆：Gate Leaf 已经挪到门洞，闸板要按世界坐标放回门洞（以前落到了 2 × GateAt 的地下，闸板一直看不见）
+            if (leaf) leaf.transform.SetPositionAndRotation(At(GateAt, T3Y - 0.2f), Quaternion.Euler(0, yaw, 0));
+            // 门框：和闸板同原点、同朝向，不跟着闸板动
+            var frame = KitScaled(GateFrameId, root, GateAt, T3Y - 0.2f, yaw, GateFrameScale);
+            if (frame) frame.name = "Gate Frame";
             foreach (var t in gate.GetComponentsInChildren<Transform>(true)) t.gameObject.isStatic = false;
             gate.gameObject.AddComponent<NavMeshModifier>().ignoreFromBuild = true;
             var carveGo = new GameObject("Gate Nav Carve");
@@ -1119,16 +1137,12 @@ namespace Spiritfire.Art.Editor.Levels
             carve.carving = true;
             carve.carveOnlyStationary = false;
             carve.enabled = false; // 运行时 ForgeWellDirector.Awake 打开（编辑期关着，L5 看到的是开门后的网格）
-            // 门两侧的门柱（铁）+ 门楣
             var tg = Tan(GateTh);
-            foreach (int s in new[] { -1, 1 })
-                LevelKit.Box("Gate Jamb", root, At(GateAt + tg * (s * 5.6f) + Dir2(GateTh) * 0.3f, T3Y), new Vector3(1.2f, 10.5f, 2.2f), yaw, darkIron, 0.2f);
-            LevelKit.Box("Gate Lintel", root, At(GateAt + Dir2(GateTh) * 0.3f, T3Y + 9.6f), new Vector3(12.4f, 1.6f, 2.4f), yaw, darkIron, 0f);
-            // 门缝的光：门板两侧各一条竖缝 + 门后一盏点光
+            // 门缝的光：闸板和两根门柱的接缝各一条竖缝（贴着柱身内侧、闸板正面前面；高到两角斜撑下）+ 门后一盏点光
             var glow = new List<GameObject>();
             foreach (int s in new[] { -1, 1 })
             {
-                var slit = LevelKit.Box("Gate Slit Glow", root, At(GateAt + tg * (s * 5.05f) - Dir2(GateTh) * 0.2f, T3Y), new Vector3(0.18f, 9f, 0.3f), yaw, glowMat, 0f);
+                var slit = LevelKit.Box("Gate Slit Glow", root, At(GateAt + tg * (s * (GatePostInner - 0.06f)) - Dir2(GateTh) * 0.75f, T3Y), new Vector3(0.16f, 7.8f, 0.12f), yaw, glowMat, 0f);
                 Object.DestroyImmediate(slit.GetComponent<Collider>());
                 slit.isStatic = false;
                 glow.Add(slit);
@@ -1810,6 +1824,18 @@ namespace Spiritfire.Art.Editor.Levels
             }
             rep.Line($"{(gaps == 4 ? "✓" : "·")} 矮栏缺口 {gaps}/4（北 / 南接链桥、西接吊臂、东口直通熔岩井）");
             if (gaps < 4) rep.Fail($"甲板矮栏缺口只有 {gaps} 处（应为 4）");
+            // 锻楼台顶（俯射层）走铁梯坡上得去：台顶的导航和甲板连通（孤岛会让站在楼上的玩家「走不到」，出生站位全失效）
+            var deckFilter = SG.LavaField.WalkerFilter();
+            var towerTop = At(DeckPt(TowerLocal), DeckY + TowerRise);
+            if (NavMesh.SamplePosition(towerTop, out var tHit, 1.5f, deckFilter) && Mathf.Abs(tHit.position.y - towerTop.y) < 0.6f
+                && NavMesh.SamplePosition(DeckRoute, out var dHit, 2f, deckFilter))
+            {
+                var tp = new NavMeshPath();
+                NavMesh.CalculatePath(dHit.position, tHit.position, deckFilter, tp);
+                if (tp.status == NavMeshPathStatus.PathComplete) rep.Line("✓ 锻楼台顶（+3.5）走铁梯坡和甲板连通");
+                else rep.Fail("锻楼台顶（+3.5）是导航孤岛（铁梯坡没接上）");
+            }
+            else rep.Fail("锻楼台顶 / 甲板路点附近没有导航网格");
             // 东口外：正下方是熔岩井
             var east = DeckPt(DeckHalf + 1.5f, 0);
             bool lavaBelow = east.magnitude < WellR - 1f;
@@ -1967,6 +1993,63 @@ namespace Spiritfire.Art.Editor.Levels
                 v.center = Vector3.zero;
                 v.area = 1;
             }
+        }
+
+        /// <summary>
+        /// 井底铸门：门框不插进井壁（门框外廓外扩 0.3 m 的一圈地形都不比龛底高 0.4 m 以上）；开闸后的净宽（门框网格碰撞，在柱脚箍带 / 柱身两个高度横着量，≥ 7 m）；
+        /// 门洞导航通（烘焙时闸板不进、挖洞障碍关着 = 开门后的网格）：④ 炉坛 → 门后
+        /// </summary>
+        static void CheckGate(LevelKit.Report rep)
+        {
+            rep.Section("井底铸门（闸板 + 专用门框）");
+            Physics.SyncTransforms();
+            var tg = Tan(GateTh);
+            var rd = Dir2(GateTh);
+            float halfW = GateFrameW * GateFrameScale.x * 0.5f + 0.3f, halfD = GateFrameD * 0.5f + 0.3f, worst = float.MinValue;
+            var worstAt = GateAt;
+            for (float v = -halfW; v <= halfW + 0.01f; v += 0.5f)
+            for (float u = -halfD; u <= halfD + 0.01f; u += 0.5f)
+            {
+                var q = GateAt + tg * v + rd * u;
+                float dy = GroundY(q) - T3Y;
+                if (dy <= worst) continue;
+                worst = dy;
+                worstAt = q;
+            }
+            string m = $"门框外廓 {GateFrameW * GateFrameScale.x:F1} × {12f * GateFrameScale.y:F1} × {GateFrameD:F1} m（缩放 {GateFrameScale.x:F2} / {GateFrameScale.y:F2}），外扩 0.3 m 一圈地形最高比龛底高 {worst:F2} m";
+            if (worst < 0.4f) rep.Line($"✓ {m}（没插进井壁）");
+            else rep.Fail($"{m} @ ({worstAt.x:F0}, {worstAt.y:F0}) —— 门框插进井壁");
+            // 开闸后净宽：闸板的碰撞先关掉（开闸 = 闸板沉进地面），在门框中面离地 0.75 m（柱脚箍带）/ 4 m（柱身）横着往两边打
+            var leafRoot = GameObject.Find("Gate Leaf");
+            var leafCols = leafRoot ? leafRoot.GetComponentsInChildren<Collider>().Where(c => c.enabled).ToList() : new List<Collider>();
+            foreach (var c in leafCols) c.enabled = false;
+            Physics.SyncTransforms();
+            foreach (var (label, y, want) in new[] { ("柱脚箍带", 0.75f, 2f * GateFootInner), ("柱身", 4f, 2f * GatePostInner) })
+            {
+                float w = 0;
+                foreach (int s in new[] { -1, 1 })
+                {
+                    var d = new Vector3(tg.x, 0, tg.y) * s;
+                    w += Physics.Raycast(new Vector3(GateAt.x, T3Y + y, GateAt.y), d, out var hit, 12f, SG.Layers.WorldMask, QueryTriggerInteraction.Ignore) ? hit.distance : 12f;
+                }
+                string line = $"开闸后净宽（{label}，离地 {y:F2} m，门框中面）：{w:F1} m（按实测尺寸应为 {want:F1} m）";
+                if (w >= 7f && w <= want + 1f) rep.Line($"✓ {line}");
+                else if (w >= 7f) rep.Line($"· {line} —— 比实测宽，门框的碰撞可能没打到");
+                else rep.Fail(line);
+            }
+            foreach (var c in leafCols) c.enabled = true;
+            Physics.SyncTransforms();
+            rep.Line($"· 闸板碰撞体 {leafCols.Count} 个（量净宽时临时关掉）");
+            // 门洞导航（开门后的网格）
+            var filter = SG.LavaField.WalkerFilter();
+            if (NavMesh.SamplePosition(OnGround(Site4), out var a, 6f, filter) && NavMesh.SamplePosition(At(GateBehind, T3Y), out var b, 3f, filter))
+            {
+                var path = new NavMeshPath();
+                NavMesh.CalculatePath(a.position, b.position, filter, path);
+                if (path.status == NavMeshPathStatus.PathComplete) rep.Line("✓ ④ 炉坛 → 铸门后：导航穿过门框（开门后）");
+                else rep.Fail($"④ 炉坛走不到铸门后面（{path.status}，门洞导航不通）");
+            }
+            else rep.Fail("铸门后 / ④ 炉坛附近没有导航网格");
         }
 
         /// <summary>每座俯射台 / 台阶的台顶：有坡的要和出生点连通；没坡的要么不进导航（noNav），要么连通——不许有导航孤岛</summary>
