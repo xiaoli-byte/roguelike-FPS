@@ -60,6 +60,8 @@ namespace Spiritfire.Game
         public float shellHp = 45f;
         [Tooltip("射爆岩壳后多快喷（秒）")]
         public float detonateWarn = 0.35f;
+        [Tooltip("射爆后把岩壳藏起来（渲染 + 碰撞），喷完再结上（正式件的岩壳是单独部件）")]
+        public bool hideShellOnBurst;
 
         static readonly List<LavaGeyser> all = new();
         /// <summary>场上的间歇熔泉（测试用）</summary>
@@ -179,7 +181,8 @@ namespace Spiritfire.Game
             Detonations++;
             Detonated = true;
             GameAudio.PlayAt("shield_break", Base, 0.7f, 0.7f);
-            Fx.Burst(Base + Vector3.up * 0.5f, new Color(0.2f, 0.16f, 0.15f), 14, 6f, 0.6f, 0.16f, -12f);
+            Fx.Burst(shell ? shell.position + Vector3.up * 0.5f : Base + Vector3.up * 0.5f, new Color(0.2f, 0.16f, 0.15f), 14, 6f, 0.6f, 0.16f, -12f);
+            ShowShell(false);
             EruptNow(detonateWarn);
         }
 
@@ -267,6 +270,7 @@ namespace Spiritfire.Game
             Fx.Burst(Base + Vector3.up * height * 0.6f, LavaField.Orange, 10, 3f, 0.8f, 0.12f, -12f);
             shellDamage = 0;
             Detonated = false;
+            ShowShell(true);
             nextAt = Time.time + Mathf.Max(0.5f, period - warnTime - eruptTime);
         }
 
@@ -338,6 +342,14 @@ namespace Spiritfire.Game
                     }
                 }
             }
+        }
+
+        /// <summary>岩壳藏起来 / 结上（只在 hideShellOnBurst 时）：渲染和碰撞一起</summary>
+        void ShowShell(bool on)
+        {
+            if (!hideShellOnBurst || !shell) return;
+            foreach (var r in shell.GetComponentsInChildren<Renderer>(true)) r.enabled = on;
+            foreach (var c in shell.GetComponentsInChildren<Collider>(true)) c.enabled = on;
         }
 
         void SetGlow(float k)

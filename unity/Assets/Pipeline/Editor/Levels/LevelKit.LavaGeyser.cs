@@ -7,7 +7,9 @@ using Object = UnityEngine.Object;
 namespace Spiritfire.Art.Editor.Levels
 {
     // LevelKit · 间歇熔泉（第三章 v2 S3，M32 拥有；3-2 ④ 熔泉炉坛、3-4 神道用）：喷口外观 + 熔柱网格 + LavaGeyser 组件。
-    //   · 喷口：有 SM_Tripo_InfernoGeyserVent（锦上添花件，6 × 2.5 × 6）就摆它；没有就用程序壳（ch3-v2 6.3「没有它时 S3 用程序壳 + 现有 Basalt」，不算白盒）：
+    //   · 喷口：有正式件就用它的两个部件（docs/art/ch3-kit.md 第 3 节）——SM_Tripo_InfernoGeyserVentBase（底座锥，顶 1.31）+ SM_Tripo_InfernoGeyserVentCrust
+    //     （顶部岩壳 2.8 × 0.93 × 2.8，原点在底座上 1.15 m）：岩壳就是靶子，射爆后藏起来、喷完再结上；喷柱从 FX_GeyserJet（2.08 m）往上。只有整件时摆整件。
+    //     都没有就用程序壳（ch3-v2 6.3「没有它时 S3 用程序壳 + 现有 Basalt」，不算白盒）：
     //     一圈矮玄武岩锥（不规则的八棱台）+ 中间结壳的圆盖 + 壳缝一圈自发光的熔岩光（预警时由组件调亮）+ 三四块 SM_Env_InfernoBasalt 压边。
     //   · 岩壳：圆盖的碰撞体就是靶子（LavaGeyser 运行时挂命中盒）；喷口高 0.35 m，走得上去（台阶 0.45 m 以内），导航网格照常烘。
     //   · 熔柱：上细下粗、表面起伏的管子，喂熔岩着色器（uv 约定同 LavaVolume.BuildMesh：uv1 = 半周长 / 很长 / 盒 / 不按深度，uv2 = 往上流），
@@ -17,7 +19,9 @@ namespace Spiritfire.Art.Editor.Levels
     //   g.EruptNow();  // 演出：马上喷一次
     public static partial class LevelKit
     {
-        public const string GeyserVentId = "SM_Tripo_InfernoGeyserVent";
+        public const string GeyserVentId = "SM_Tripo_InfernoGeyserVent", GeyserBaseId = "SM_Tripo_InfernoGeyserVentBase", GeyserCrustId = "SM_Tripo_InfernoGeyserVentCrust";
+        /// <summary>正式喷口：外圈半径（发布尺度 6.72 宽）、岩壳原点高、喷柱起点高（FX_GeyserJet）</summary>
+        const float VentArtRadius = 3.36f, CrustAt = 1.15f, JetAt = 2.08f;
 
         /// <summary>间歇熔泉的摆放参数（缺省 = ch3-v2 2.7：预警 1.2 s、喷 1.5 s、熔柱半径 2.2 m、高 9 m）</summary>
         public sealed class GeyserSpec
@@ -53,8 +57,25 @@ namespace Spiritfire.Art.Editor.Levels
             var glow = GlowMat(dir, "GeyserCrack", new Color(1f, 0.5f, 0.18f), new Color(4f, 1.3f, 0.3f));
             var cracks = new List<Renderer>();
             Transform shell;
+            float jet = 0.2f;
             var vent = ShowcaseSceneBuilder.Prefab(GeyserVentId);
-            if (vent)
+            if (ShowcaseSceneBuilder.Prefab(GeyserBaseId) && ShowcaseSceneBuilder.Prefab(GeyserCrustId))
+            {
+                // 正式件（部件版）：底座 + 岩壳，按喷口外圈缩放
+                float k = s.ventRadius / VentArtRadius;
+                float yaw = s.seed * 47f % 360f;
+                var b = ShowcaseSceneBuilder.Place(GeyserBaseId, root.transform, ground - Vector3.up * 0.1f, yaw, k);
+                if (b)
+                {
+                    b.name = "Vent";
+                    b.isStatic = true;
+                }
+                var c = ShowcaseSceneBuilder.Place(GeyserCrustId, root.transform, ground + Vector3.up * (CrustAt * k - 0.1f), yaw, k);
+                if (c) c.name = "Shell";
+                shell = c ? c.transform : root.transform;
+                jet = JetAt * k - 0.3f;
+            }
+            else if (vent)
             {
                 // 正式件：按喷口外圈缩放（登记 6 m 宽）
                 float k = s.ventRadius * 2f / 6f;
@@ -65,6 +86,7 @@ namespace Spiritfire.Art.Editor.Levels
                     go.isStatic = true;
                 }
                 shell = go ? go.transform : root.transform;
+                jet = JetAt * k - 0.3f;
             }
             else
             {
@@ -118,7 +140,7 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 var col = new GameObject("Column");
                 col.transform.SetParent(root.transform, false);
-                col.transform.position = ground + Vector3.up * 0.2f;
+                col.transform.position = ground + Vector3.up * jet;
                 var cm = ColumnMesh(s.radius, s.seed);
                 SaveAsset(cm, $"{dir}/Geyser/Mesh_GeyserColumn_{SafeName(name)}.asset");
                 col.AddComponent<MeshFilter>().sharedMesh = cm;
@@ -145,10 +167,11 @@ namespace Spiritfire.Art.Editor.Levels
             g.enemyLaunch = s.enemyLaunch;
             g.shellHp = s.shellHp;
             g.shell = s.shellHp > 0 ? shell : null;
+            g.hideShellOnBurst = shell && shell != root.transform && shell.name == "Shell" && ShowcaseSceneBuilder.Prefab(GeyserCrustId);
             g.column = column;
             g.cracks = cracks.ToArray();
             foreach (var t in root.GetComponentsInChildren<Transform>(true))
-                if (t == root.transform || t == column || cracks.Exists(c => c && c.transform == t)) t.gameObject.isStatic = false;
+                if (t == root.transform || t == column || cracks.Exists(c => c && c.transform == t) || (g.hideShellOnBurst && t.IsChildOf(shell))) t.gameObject.isStatic = false;
             return g;
         }
 

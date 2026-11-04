@@ -704,6 +704,9 @@ namespace Spiritfire.Game
 
         Vector3 push;
 
+        /// <summary>还没推完的水平击退速度（m/s，按 8/s 衰减；<see cref="LaunchUp"/> 时整段交给脚本位移）——熔岩推下台沿按落点重算推力时读</summary>
+        public Vector3 PendingPush => push;
+
         /// <summary>击退冲量（水平，m/s）超过这么多才算失控（同 TS EnemyBase.knockback：impulse.lengthSq() &gt; 4）</summary>
         public const float ControlLossImpulse = 2f;
         /// <summary>失控时长（秒，再 × (1 − 击退抗性)；同 TS 0.25 × k）</summary>

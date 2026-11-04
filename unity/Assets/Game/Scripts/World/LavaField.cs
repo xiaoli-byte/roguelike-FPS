@@ -528,7 +528,9 @@ namespace Spiritfire.Game
         /// 被击退的地面敌人到了导航网格的边上、外面是悬空的熔岩（悬炉甲板的缺口、链桥 / 吊臂两侧、台沿外的熔岩井）：
         /// 导航代理的 Move 出不了网格边，自己掉不下去——这里补一下：顺着被推的方向再推一把、掀起一点（<see cref="EnemyAI.LaunchUp"/>），
         /// 交给脚本重力落下去；落进熔岩前一直算击退，所以烧死、计击杀。外面有墙 / 矮栏（0.35 m 高处挡着）、外面 0.8 m 内还有网格（同一层能走）、
-        /// 下面不是熔岩、或者熔岩上面先有别的地面（下一层环台、桥），都不推
+        /// 下面不是熔岩、或者熔岩上面先有别的地面（下一层环台、桥），都不推。
+        /// 推出去的速度按落点重算（不管之前被打得多狠）：落在熔岩带中间（离台沿 ≤ 4 m），掀起的高度要够越过台沿再落——
+        /// 17 m 高的悬炉甲板外只有 7 m 宽的熔岩井，带着 9 m/s 的击退原样掀出去会飞过熔岩井、摔在下一层环台上
         /// </summary>
         bool TryShoveOffLedge(EnemyAI ai, Track tr, Vector3 pos)
         {
@@ -559,11 +561,53 @@ namespace Spiritfire.Game
             // 熔岩上面先有别的地面（下一层环台、桥）：不是直接掉进熔岩
             if (Physics.Raycast(q + Vector3.up * 0.5f, Vector3.down, out var floor, pos.y + 0.5f - lavaY, Layers.WorldMask, QueryTriggerInteraction.Ignore)
                 && floor.point.y > lavaY + LavaTuning.StandRise) return false;
-            ai.Knockback(dir * 6f);
-            if (!ai.LaunchUp(2.5f)) return false;
+            float k = 1f - ai.knockbackResist;
+            if (k < 0.05f) return false;
+            // 台沿：从脚下沿推的方向，脚下 0.5 m 内没有地面的地方
+            float lip = 1.3f;
+            for (float d = 0f; d < 1.3f; d += 0.25f)
+                if (!Physics.Raycast(pos + dir * d + Vector3.up * 0.5f, Vector3.down, 1f, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+                {
+                    lip = d;
+                    break;
+                }
+            const float lava0 = 1.3f;
+            float far = LavaRunAhead(pos, dir, lava0), land = Mathf.Clamp((lava0 + far) * 0.5f, lava0 + 0.3f, lava0 + 4f);
+            float clear = lip + agent.radius + 0.2f, drop = Mathf.Max(0.5f, pos.y - lavaY), g = EnemyAI.LaunchGravity;
+            // 水平速度 s 让落点在 land；上抛 vy 让它在回到起跳高度之前水平走过 clear（越过台沿）：两式互相依赖，迭代几次就收敛
+            float s = land / 1.4f, vy = ShoveLift;
+            for (int i = 0; i < 4; i++)
+            {
+                vy = Mathf.Clamp(clear * g / (2f * Mathf.Max(0.5f, s)), ShoveLift, 12f);
+                float t = (vy + Mathf.Sqrt(vy * vy + 2f * g * drop)) / g;
+                s = Mathf.Clamp(land / t, 1.2f, 7f);
+            }
+            var have = ai.PendingPush;
+            have.y = 0;
+            ai.Knockback((dir * s - have) / k);
+            if (!ai.LaunchUp(vy / k)) return false;
             tr.knockAt = Time.time;
             tr.airKnock = true;
             return true;
+        }
+
+        /// <summary>推下台沿时的最小上抛速度（m/s）</summary>
+        const float ShoveLift = 2.5f;
+
+        /// <summary>从 pos 沿 dir（水平单位向量）往外，熔岩带连续到多远（离 pos 的水平距离）：从 from 起每 0.5 m 采一次，
+        /// 到不是熔岩、熔岩面不比 pos 低 1.5 m、或熔岩上面先有地面（下一层环台、桥）为止；最多看 16 m</summary>
+        float LavaRunAhead(Vector3 pos, Vector3 dir, float from)
+        {
+            float last = from;
+            for (float d = from + 0.5f; d <= 16f; d += 0.5f)
+            {
+                var q = pos + dir * d;
+                if (!LavaGeometry.SurfaceAt(bodies, q.x, q.z, out float y, out _) || y > pos.y - 1.5f) break;
+                if (Physics.Raycast(new Vector3(q.x, pos.y + 0.5f, q.z), Vector3.down, out var floor, pos.y + 0.5f - y, Layers.WorldMask, QueryTriggerInteraction.Ignore)
+                    && floor.point.y > y + LavaTuning.StandRise) break;
+                last = d;
+            }
+            return last;
         }
 
         /// <summary>在导航网格上自己走（不是跳跃 / 冲锋 / 被掀飞这类脚本位移）</summary>
