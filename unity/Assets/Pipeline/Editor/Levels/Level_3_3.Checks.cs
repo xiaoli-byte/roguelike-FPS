@@ -327,7 +327,9 @@ namespace Spiritfire.Art.Editor.Levels
                     ShowcaseSceneBuilder.Prefab(CraneId) ? new Vector3(CraneX, T1 + 11f, 56) : new Vector3(CraneX, T2 - 0.4f, 58), 6, CraneId)
                 .Sight("B2 瀑上桥 → 殿顶屋架", Deck("B2") + Vector3.up * 1.62f, new Vector3(TrussX[0], T2 + 15.5f, 146), 6, TrussId)
                 .Sight("殿南口 → 大炉", G(new Vector2(32, 122), 1.62f), G(FurnaceAt, 14f), 6, FurnaceId)
-                .Sight("风闸 → 神范", G(windFront, 1.62f), mouldTop, 8, MouldId)
+                // 风闸看神范的视线会被闸前桥的熔铁闸门框（12 m 高）挡住：风闸改看王座，神范从闸前楼台看
+                .Sight("风闸 → 火神王座", G(windFront, 1.62f), FireGodRing, 10, "FireGodThrone")
+                .Sight("⑥ 闸前楼台 → 神范", new Vector3(GateTower.Center.x, GateTower.Top + 1.62f, GateTower.Center.y), mouldTop, 8, MouldId)
                 .Sight("⑥ 闸前楼台 → 火神王座", new Vector3(GateTower.Center.x, GateTower.Top + 1.62f, GateTower.Center.y), FireGodRing, 10, "FireGodThrone");
             foreach (var pl in Platforms)
                 foreach (var (foot, top, _) in pl.ramps)
@@ -369,6 +371,8 @@ namespace Spiritfire.Art.Editor.Levels
                     ("ArenaNW", E(new Vector2(112, 176)), G(ArenaCenter, 1), false),
                     ("ArenaDais", E(ExitAt, Dais.h + 1.62f), G(ArenaCenter, 0), false),
                     ("ScrapNiche", E(new Vector2(36, 186)), G(ScrapSite, 1), false),
+                    // 闸前桥东头的熔铁闸门框（门洞开着：闸板平时沉在地下，开战才升起）
+                    ("GateFrameB5", new Vector3(97, BridgeById("B5").DeckY + 1.62f, 172.5f), new Vector3(108, 4.5f, 176), false),
                 });
             }
             finally

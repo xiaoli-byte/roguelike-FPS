@@ -125,8 +125,10 @@ namespace Spiritfire.Art.Editor.Levels
                     if (stall) stall.name = $"{stall.name} · 工棚（锻铺放大）";
                 }
             }
-            var gate = PlaceFit(GateId, root, set.OnGround(195.5f, 54, -0.1f), 270, GateSize * 0.9f);
+            var gateAt = set.OnGround(195.5f, 54, -0.1f);
+            var gate = PlaceFit(GateId, root, gateAt, 270, GateSize * 0.9f);
             Label(gate, GateId, "东壁铸门");
+            GateFrame(root, gateAt, 270, GateSize * 0.9f, "东壁铸门");
             var p = new GameObject("③ Props").transform;
             p.SetParent(props, false);
             PutLabeled(BedId, p, set, new Vector2(144, 39.5f), 0, BedSize, "吊坊铸床", 1, 0.1f);
@@ -275,14 +277,33 @@ namespace Spiritfire.Art.Editor.Levels
             Put(AltarId, root, set, new Vector2(20, 184), 0, 1.3f, 0.05f, AltarSize);
         }
 
+        const string GateFrameId = "SM_Tripo_InfernoMoltenGateFrame";
+
+        /// <summary>
+        /// 熔铁闸门门框（ch3-kit 3.1）：和闸板同位置、同朝向、同原点（门洞底面中心 = SOCKET_Gate），X = 闸板宽 / 8.35、Y = 闸板高 / 8.8、Z 不缩；
+        /// 门框常驻（静态、网格碰撞，进导航烘焙），闸板单独往地下沉 / 升。开闸后最窄处是柱脚箍带，净宽约 6.4 × X。缺件时不摆
+        /// </summary>
+        static GameObject GateFrame(Transform parent, Vector3 baseCenter, float yaw, Vector3 plate, string what)
+        {
+            if (!ShowcaseSceneBuilder.Prefab(GateFrameId)) return null;
+            var go = ShowcaseSceneBuilder.Place(GateFrameId, parent, baseCenter, yaw, 1f);
+            if (!go) return null;
+            go.transform.localScale = new Vector3(plate.x / 8.35f, plate.y / 8.8f, 1f);
+            foreach (var t in go.GetComponentsInChildren<Transform>(true)) t.gameObject.isStatic = true;
+            go.name = $"{go.name} · {what}门框";
+            return go;
+        }
+
         /// <summary>主渠渠头的炉闸（北壁正中，王座下；熔铁闸门 × 1.2，白盒）压在主渠渠头，一盏常亮的熔铜光</summary>
         static void BuildSluiceHead(Transform arch, Transform props)
         {
             var root = new GameObject("Sluice").transform;
             root.SetParent(arch, false);
-            var sluice = PlaceFit(GateId, root, new Vector3(SluiceAt.x, FieldFloor, SluiceAt.y), 180, GateSize * 1.2f);
+            var sluiceAt = new Vector3(SluiceAt.x, FieldFloor, SluiceAt.y);
+            var sluice = PlaceFit(GateId, root, sluiceAt, 180, GateSize * 1.2f);
             if (sluice) sluice.isStatic = true;
             Label(sluice, GateId, "炉闸");
+            GateFrame(root, sluiceAt, 180, GateSize * 1.2f, "炉闸");
             var l = new GameObject("Sluice Light").AddComponent<Light>();
             l.transform.SetParent(props, false);
             l.transform.position = new Vector3(SluiceAt.x, 2f, SluiceAt.y - 5f);

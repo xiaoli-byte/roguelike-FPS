@@ -330,10 +330,16 @@ namespace Spiritfire.Art.Editor.Levels
             gateRoot.SetParent(markers, false);
             var b5 = BridgeById("B5").center;
             var b6 = BridgeById("B6").center;
-            var gA = PlaceFit(GateId, gateRoot, new Vector3(b5.x + Trunk.half + 2.6f, 0, b5.y), 90, GateSize);
-            var gB = PlaceFit(GateId, gateRoot, new Vector3(b6.x, 0, b6.y + Cross.half + 3.5f), 0, new Vector3(GateSize.x * 1.2f, GateSize.y, GateSize.z));
+            // 闸板离桥头 2 m（门框深 3.3 m，前后各 1.66：不压桥栏）；门框常驻，闸板开战时从地下升起
+            var atA = new Vector3(b5.x + Trunk.half + 4f, 0, b5.y);
+            var atB = new Vector3(b6.x, 0, b6.y + Cross.half + 4f);
+            var sizeB = new Vector3(GateSize.x * 1.2f, GateSize.y, GateSize.z);
+            var gA = PlaceFit(GateId, gateRoot, atA, 90, GateSize);
+            var gB = PlaceFit(GateId, gateRoot, atB, 0, sizeB);
             Label(gA, GateId, "闸前桥封门");
             Label(gB, GateId, "东铸北桥封门");
+            GateFrame(gateRoot, atA, 90, GateSize, "闸前桥");
+            GateFrame(gateRoot, atB, 0, sizeB, "东铸北桥");
             var gates = new[] { gA, gB }.Where(g => g).ToArray();
             foreach (var g in gates)
             {
