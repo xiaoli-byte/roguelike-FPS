@@ -82,7 +82,11 @@ namespace Spiritfire.Art.Editor.Levels
 
             public static readonly Ground Inferno = new()
             {
-                key = "Inferno", layers = TerrainTextureGen.Inferno, rule = Splat.Inferno, shadowTint = ShowcaseTheme.Inferno.groundShadowTint, macroStrength = 0.24f,
+                key = "Inferno", layers = TerrainTextureGen.Inferno, rule = Splat.Inferno, shadowTint = ShowcaseTheme.Inferno.groundShadowTint, macroStrength = 0.2f,
+                // 2026-11-04 美术清理：火山口壁高、连成圈，同冰原——岩层一张 18 m（与 InfernoBasalt 的 tileSize 一致）、四层三平面投影（灰 / 地面挂在陡坡上不拉成竖条）、
+                // 岩层去重复；崖面光照用平滑法线，把崖线水平扰动在高度场里形成的竖褶（一根根亮 / 暗竖条）从光照里抹掉
+                rockScale = 18f, steepTriplanar = true, rockWarp = 0.25f, rockDetile = 0.35f,
+                lightNormalRadius = 3f, lightNormalBlend = 0.8f,
             };
 
             public static Ground For(ShowcaseTheme t) => For(t?.key);
@@ -379,8 +383,10 @@ namespace Spiritfire.Art.Editor.Levels
             }
 
             /// <summary>
-            /// 第三章火狱（0 火山灰 / 1 冷却熔岩 / 2 结壳熔岩 / 3 柱状玄武岩）：陡坡、凸脊 → 玄武岩；熔岩床与岸带 → 结壳（缝里透红）；
-            /// 路面（踩出的浅色灰路，读路用）、软覆盖、凹处与高处落灰 → 火山灰；剩下的是冷却熔岩。
+            /// 第三章火狱（0 铜灰路面 / 落灰 · 1 玄武岩地面 · 2 结壳熔岩 · 3 大切面玄武岩）：陡坡、凸脊 → 玄武岩；熔岩床与岸带 → 结壳（缝里透铜橙）；
+            /// 路面（踩实的铜灰路，读路用）→ 第 0 层，软覆盖只给七成、凹处落灰只给一点；剩下的是玄武岩地面。
+            /// 2026-11-04 美术清理：以前凹处、高处都铺灰（+ 相对高度 × 0.25），灰和路是同一层，满地都是浅色、路反而读不出来；
+            /// 现在第 0 层基本只剩路面和台顶，其余是暗紫灰的玄武岩地面——路线一眼读得出
             /// </summary>
             public static Vector4 Inferno(in Sample s, in SplatContext c)
             {
@@ -390,8 +396,8 @@ namespace Spiritfire.Art.Editor.Levels
                 float left = 1 - rock;
                 float ember = Mathf.Clamp01(Mathf.Max(s.fluid, s.shore * 0.9f)) * left;
                 left -= ember;
-                float ashBias = Mathf.Max(Mathf.Max(s.packed, s.sand),
-                    Landform.Smooth(0.05f, 0.5f, c.concavity) * Landform.Smooth(22, 8, c.slope) * 0.7f + c.relHeight * 0.25f);
+                float ashBias = Mathf.Max(Mathf.Max(s.packed, s.sand * 0.7f),
+                    Landform.Smooth(0.1f, 0.6f, c.concavity) * Landform.Smooth(18, 6, c.slope) * 0.35f);
                 float ash = Mathf.Clamp01(ashBias) * left;
                 left -= ash;
                 return new Vector4(ash, left, ember, rock);

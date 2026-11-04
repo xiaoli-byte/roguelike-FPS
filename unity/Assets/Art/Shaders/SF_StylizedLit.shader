@@ -22,6 +22,7 @@ Shader "Spiritfire/StylizedLit"
         [MainTexture] _BaseMap("Base Color (BC)", 2D) = "white" {}
         [MainColor] _BaseColor("Base Color", Color) = (1,1,1,1)
         _Tint("Instance Tint", Color) = (1,1,1,1)
+        _Desaturate("Desaturate (scene unify)", Range(0,1)) = 0
         [Normal] _BumpMap("Normal (N)", 2D) = "bump" {}
         _BumpScale("Normal Scale", Float) = 1
         _ORMMap("ORM (R=AO G=Rough B=Metal)", 2D) = "white" {}
@@ -359,7 +360,8 @@ Shader "Spiritfire/StylizedLit"
                     clip(df);
                     dissolveEdge = 1.0 - smoothstep(0.0, max((half)_DissolveParams.y, 0.001), df);
                 }
-                half3 albedo = base.rgb * _Tint.rgb;
+                // _Desaturate：场景件统一画风（第三章正式件按亮度往灰里收一点，再由 _Tint 压到同一个色调）；默认 0，输出不变
+                half3 albedo = lerp(base.rgb, dot(base.rgb, half3(0.2126, 0.7152, 0.0722)).xxx, _Desaturate) * _Tint.rgb;
                 half variantCrack = 0;
                 [branch] if (_VariantParams.x + _VariantParams.y > 0.001)
                     albedo = SFVariantSurface(albedo, i.uv, variantCrack);

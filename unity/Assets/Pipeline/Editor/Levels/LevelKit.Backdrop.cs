@@ -62,8 +62,9 @@ namespace Spiritfire.Art.Editor.Levels
                     };
                     break;
                 case "Inferno":
-                    s.silhouette = new Color(0.12f, 0.07f, 0.09f);
-                    s.top = new Color(0.26f, 0.13f, 0.12f);
+                    // 暗紫玄武岩剪影（2026-11-04 美术清理）：压在地平线那一窄条暖橙前面，冷暖、明暗都拉开；峰顶一点受光的紫灰，不是红褐
+                    s.silhouette = new Color(0.09f, 0.075f, 0.13f);
+                    s.top = new Color(0.2f, 0.16f, 0.24f);
                     s.rings = new[]
                     {
                         new BackdropRing { style = BackdropStyle.Ridges, radius = radius, height = 60, haze = 0.25f, freq = 13, seed = seed },

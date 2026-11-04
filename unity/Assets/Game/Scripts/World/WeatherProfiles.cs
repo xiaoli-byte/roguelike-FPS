@@ -128,10 +128,11 @@ namespace Spiritfire.Game
                 },
                 new WeatherProfile
                 {
+                    // 第三章色彩脚本（2026-11-04 美术清理）：烟偏紫褐（fx-style §2.2），不再是红褐
                     id = WhiteoutInferno, title = "烟尘（软边界）",
-                    fogColor = new Color(0.32f, 0.2f, 0.17f), fogStart = 0, fogEnd = 24,
-                    sunMult = 0.6f, sunTint = new Color(1f, 0.7f, 0.55f),
-                    postExposure = -0.2f, contrast = -15, saturation = -25, colorFilter = new Color(1f, 0.82f, 0.72f),
+                    fogColor = new Color(0.26f, 0.19f, 0.23f), fogStart = 0, fogEnd = 24,
+                    sunMult = 0.6f, sunTint = new Color(0.96f, 0.8f, 0.76f),
+                    postExposure = -0.2f, contrast = -15, saturation = -25, colorFilter = new Color(0.98f, 0.86f, 0.86f),
                     wind = 0.8f, particles = WeatherParticles.Ash, particleRate = 600, particleColor = new Color(0.34f, 0.25f, 0.29f, 0.6f), particleSpeed = 9,
                     dome = 1, windSound = 0.7f,
                 },
@@ -146,10 +147,11 @@ namespace Spiritfire.Game
                 },
                 new WeatherProfile
                 {
+                    // 第三章色彩脚本（2026-11-04 美术清理）：落灰的雾是紫褐烟，主光只轻微压暖
                     id = Ashfall, title = "落灰",
-                    fogColor = new Color(0.3f, 0.17f, 0.15f), fogStart = 12, fogEnd = 120,
-                    sunMult = 0.8f, sunTint = new Color(1f, 0.75f, 0.6f),
-                    contrast = -6, saturation = -10, colorFilter = new Color(1f, 0.88f, 0.8f),
+                    fogColor = new Color(0.23f, 0.17f, 0.22f), fogStart = 12, fogEnd = 120,
+                    sunMult = 0.8f, sunTint = new Color(0.98f, 0.86f, 0.84f),
+                    contrast = -6, saturation = -10, colorFilter = new Color(0.97f, 0.9f, 0.92f),
                     wind = 0.3f, particles = WeatherParticles.Ash, particleRate = 160, particleColor = new Color(0.36f, 0.27f, 0.31f, 0.55f), particleSpeed = 2.5f,
                     dome = 0.3f, windSound = 0.2f,
                 },

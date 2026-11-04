@@ -52,9 +52,10 @@ namespace Spiritfire.Art.Editor.Levels
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
             root.transform.position = ground;
-            var basalt = Mat(dir, "GeyserBasalt", new Color(0.15f, 0.12f, 0.12f), 0.9f);
-            var crust = Mat(dir, "GeyserCrust", new Color(0.1f, 0.08f, 0.08f), 0.95f);
-            var glow = GlowMat(dir, "GeyserCrack", new Color(1f, 0.5f, 0.18f), new Color(4f, 1.3f, 0.3f));
+            // 没有正式件时的程序壳：取第三章调色板（LevelKit.InfernoLook）
+            var basalt = Ch3Basalt(dir, "GeyserBasalt");
+            var crust = Ch3BasaltDeep(dir, "GeyserCrust");
+            var glow = Ch3Glow(dir, "GeyserCrack");
             var cracks = new List<Renderer>();
             Transform shell;
             float jet = 0.2f;

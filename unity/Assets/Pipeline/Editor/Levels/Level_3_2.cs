@@ -540,13 +540,13 @@ namespace Spiritfire.Art.Editor.Levels
             var world = new GameObject("World").transform;
             var markers = new GameObject("Markers").transform;
 
-            darkIron = LevelKit.Mat(Dir, "ForgeIron", new Color(0.17f, 0.14f, 0.15f), 0.6f);
-            deckPlate = LevelKit.Mat(Dir, "DeckPlate", new Color(0.24f, 0.19f, 0.17f), 0.8f);
-            // 白盒用暗玄武岩色（默认的白在火狱的泛光下刺眼，同 3-1 / 3-3）
-            placeholderMat = LevelKit.Mat(Dir, "Ch3Placeholder", new Color(0.36f, 0.3f, 0.27f), 0.85f);
-            glowMat = LevelKit.GlowMat(Dir, "ForgeGlow", new Color(1f, 0.5f, 0.2f), new Color(4f, 1.4f, 0.35f));
-            lampMat = LevelKit.GlowMat(Dir, "LiftLamp", new Color(1f, 0.6f, 0.25f), new Color(3f, 1.3f, 0.3f));
-            wood = LevelKit.Mat(Dir, "CharredWood", new Color(0.2f, 0.15f, 0.12f), 0.9f);
+            // 程序材质都取第三章共用的调色板（LevelKit.InfernoLook：铸铁 / 甲板 / 白盒退路 / 熔岩光带 / 灯 / 焦木），资产名沿用本关的
+            darkIron = LevelKit.Ch3Iron(Dir, "ForgeIron");
+            deckPlate = LevelKit.Ch3Deck(Dir, "DeckPlate");
+            placeholderMat = LevelKit.Ch3Placeholder(Dir);
+            glowMat = LevelKit.Ch3Glow(Dir, "ForgeGlow");
+            lampMat = LevelKit.Ch3Lamp(Dir, "LiftLamp");
+            wood = LevelKit.Ch3Wood(Dir, "CharredWood");
 
             ShowcaseSceneBuilder.BuildLighting(theme, Dir);
             RenderSettings.fogStartDistance = FogStart;
@@ -653,7 +653,7 @@ namespace Spiritfire.Art.Editor.Levels
             l.transform.SetParent(parent, false);
             l.transform.position = at;
             l.type = LightType.Point;
-            l.color = color ?? new Color(1f, 0.46f, 0.16f);
+            l.color = color ?? LevelKit.InfernoPalette.FireLight;
             l.range = range;
             l.intensity = intensity;
             l.shadows = LightShadows.None;
@@ -733,8 +733,8 @@ namespace Spiritfire.Art.Editor.Levels
                 name = "Well", center = new Vector3(0, LavaY, 0), shape = SG.LavaShape.Disc,
                 size = new Vector2(WellR + 1f, 0), depth = 2f, depthShore = false, catchFloor = true,
             }, world);
-            var basalt = LevelKit.Mat(Dir, "WellLining", new Color(0.13f, 0.1f, 0.11f), 0.95f);
-            var glow = LevelKit.GlowMat(Dir, "WellGlowBand", new Color(1f, 0.45f, 0.15f), new Color(3.2f, 1.1f, 0.25f));
+            var basalt = LevelKit.Ch3BasaltDeep(Dir, "WellLining");
+            var glow = LevelKit.Ch3Glow(Dir, "WellGlowBand");
             LevelKit.WellLining(Dir, "Well Lining", world, Circle(WellR + 0.6f, 128), -0.12f, LavaY - 1.2f, basalt);
             LevelKit.WellLining(Dir, "Well Glow Band", world, Circle(WellR + 0.52f, 128), LavaY + 0.9f, LavaY - 0.3f, glow);
         }
@@ -892,7 +892,7 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var root = new GameObject("Chain Bridges").transform;
             root.SetParent(world, false);
-            var plank = LevelKit.Mat(Dir, "BridgePlate", new Color(0.21f, 0.17f, 0.15f), 0.8f);
+            var plank = LevelKit.Ch3Deck(Dir, "BridgePlate");
             SG.BreakableSpan Bridge(string name, Vector2 head, float headY, Vector2 mouth, int count, bool breakable)
             {
                 var from = At(head, headY);
@@ -1133,7 +1133,7 @@ namespace Spiritfire.Art.Editor.Levels
                 slit.isStatic = false;
                 glow.Add(slit);
             }
-            var light = Point(root, "Gate Light", At(GateBehind, T3Y + 4f), 22f, 0f, new Color(1f, 0.62f, 0.28f));
+            var light = Point(root, "Gate Light", At(GateBehind, T3Y + 4f), 22f, 0f, LevelKit.InfernoPalette.LampLight);
             // 门前两座火坛
             foreach (int s in new[] { -1, 1 }) Prop(AltarId, kit, P(GateTh, 33.5f) + tg * (s * 7.6f), FaceIn(GateTh));
             return (gate, carve, glow.ToArray(), light);
@@ -1183,7 +1183,7 @@ namespace Spiritfire.Art.Editor.Levels
             dl.transform.SetParent(deck, false);
             dl.transform.localPosition = new Vector3(0, 2.5f, 0);
             dl.type = LightType.Point;
-            dl.color = new Color(1f, 0.55f, 0.2f);
+            dl.color = LevelKit.InfernoPalette.LampLight;
             dl.range = 10f;
             dl.intensity = 2.5f;
             dl.shadows = LightShadows.None;
@@ -1212,7 +1212,7 @@ namespace Spiritfire.Art.Editor.Levels
         static SG.SceneActivator BuildLiftGong(Transform world, SG.MovingPlatform lift)
         {
             var at = P(LiftTh + 12f, LiftR - 1.5f);
-            var gong = LevelKit.PlaceGong("Lift Gong", world, OnGround(at), FaceIn(LiftTh + 12f), wood, LevelKit.Mat(Dir, "Bronze", new Color(0.55f, 0.36f, 0.16f), 0.4f), lampMat);
+            var gong = LevelKit.PlaceGong("Lift Gong", world, OnGround(at), FaceIn(LiftTh + 12f), wood, LevelKit.Ch3Bronze(Dir, "Bronze"), lampMat);
             gong.title = "升降台铜锣";
             gong.verb = "敲响";
             gong.hint = "炉坛升降台通电：井底 ↔ 上层工坊环";
@@ -1239,7 +1239,7 @@ namespace Spiritfire.Art.Editor.Levels
             Prop(CoverWallId, props, P(Site1Th, 66f), AlongT(Site1Th));
             Prop(CoverWallId, props, P(Site1Th - 11f, 69f), AlongT(Site1Th - 11f) + 15f);
             Prop(StallId, props, P(Site1Th + 16f, 70f), FaceIn(Site1Th + 16f));
-            var cargo = LevelKit.Mat(Dir, "Cargo", new Color(0.3f, 0.22f, 0.16f), 0.9f);
+            var cargo = LevelKit.Ch3Crate(Dir, "Cargo");
             foreach (float dth in new[] { -5f, 6f })
             {
                 var q = P(Site1Th + dth, 59.5f);

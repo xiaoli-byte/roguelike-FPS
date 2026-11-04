@@ -260,72 +260,74 @@ namespace Spiritfire.Art.Editor.Levels
                         h = 0.3f - crack * 0.2f;
                         break;
                     }
+                    // 第三章四层（2026-11-04 美术清理，docs/art/review/ch3-v2/art-pass/）：只留大块色面和宽阔的柔和渐变，不出高频噪点。
+                    // 以前：火山灰撒满 60 格的黑色火山渣点（远看一地小黑点）、冷却熔岩的绳纹 + 冷缩细缝、结壳 9 格细碎明暗、
+                    // 崖面 14 列柱状节理（0.5 m 一根竖条，满崖都是，像拉伸的三向投影条纹 / 波纹板）
                     case Kind.Ash:
                     {
-                        // 火山灰：细腻的灰褐粉面，风吹出很淡的细条纹；零星黑色火山渣颗粒（整颗同色，不跨格跳色）
-                        float blot = Fbm(u, v, 2, seed);
-                        float streak = Mathf.Sin((v * 14 + Fbm(u, v, 3, seed + 5) * 2f) * Mathf.PI * 2) * 0.5f + 0.5f;
-                        var cinder = Voronoi(u, v, 60, seed + 7, out int id);
-                        float dot = (1 - Smooth(0.1f, 0.22f, cinder.x)) * Smooth(0.72f, 0.9f, Hash(id % 60, id / 60, seed + 3));
-                        c = Color.Lerp(p.a, p.b, Smooth(0.2f, 0.8f, blot));
-                        c = Color.Lerp(c, p.accent, Smooth(0.75f, 0.98f, streak) * 0.12f);
-                        c = Color.Lerp(c, p.dark, dot * 0.7f);
-                        h = 0.35f + blot * 0.25f + streak * 0.08f + dot * 0.2f;
+                        // 踩实的路面 / 落灰面（第 0 层，路、台顶、软覆盖）：铜灰色，比玄武岩地面亮一档——路线一眼读得出。
+                        // 两三块大色斑 + 少量更亮的踩实面，没有颗粒、没有细纹
+                        float blot = Fbm(u, v, 2, seed, 3);
+                        float soft = Fbm(u, v, 3, seed + 5, 2);
+                        c = Color.Lerp(p.a, p.b, Smooth(0.25f, 0.75f, blot));
+                        c = Color.Lerp(c, p.accent, Smooth(0.58f, 0.85f, soft) * 0.3f);
+                        c = Color.Lerp(c, p.dark, Smooth(0.6f, 0.85f, 1 - soft) * 0.12f);
+                        h = 0.42f + blot * 0.2f + soft * 0.05f;
                         break;
                     }
                     case Kind.CooledLava:
                     {
-                        // 绳状熔岩：大块平滑熔岩面，局部起一束束被流动扭弯的绳纹（低反差）；少量冷缩裂缝
-                        float warp = Fbm(u, v, 2, seed) * 2.2f + Fbm(u, v, 4, seed + 3) * 0.6f;
-                        float rope = Mathf.Sin((u * 6 + warp) * Mathf.PI * 2) * 0.5f + 0.5f;
-                        float ropeZone = Smooth(0.4f, 0.7f, Fbm(u, v, 3, seed + 9));
-                        float blot = Fbm(u, v, 3, seed + 1);
-                        var vo = Voronoi(u, v, 6, seed + 5);
-                        float crack = 1 - Smooth(0, 0.02f, vo.y);
-                        c = Color.Lerp(p.a, p.b, Smooth(0.25f, 0.8f, blot));
-                        c = Color.Lerp(c, p.accent, Smooth(0.6f, 0.95f, rope) * ropeZone * 0.45f);
-                        c = Color.Lerp(c, p.dark, crack * 0.6f);
-                        h = 0.45f + (rope - 0.5f) * 0.3f * ropeZone + blot * 0.15f - crack * 0.25f;
+                        // 玄武岩地面（第 1 层，底面）：大块平涂的冷熔岩板（一张 3 × 3 块），每块一个明暗 + 一道朝向各异的宽渐变（手绘的「几大块」），
+                        // 板缝很宽、反差很低，只是两块之间的一道软暗线
+                        float wu = u + (Fbm(u, v, 2, seed + 1, 2) - 0.5f) * 0.12f, wv = v + (Fbm(u, v, 2, seed + 2, 2) - 0.5f) * 0.12f;
+                        var vo = Voronoi(wu, wv, 3, 3, seed + 5, out int id, out var lp);
+                        float tone = Hash(id % 3, id / 3, seed + 7);
+                        float ang = Hash(id % 3, id / 3, seed + 8) * Mathf.PI * 2;
+                        float tilt = Mathf.Cos(ang) * lp.x + Mathf.Sin(ang) * lp.y;
+                        float blot = Fbm(u, v, 2, seed, 3);
+                        float k = 0.5f + (tone - 0.5f) * 0.45f + tilt * 0.3f + (blot - 0.5f) * 0.3f;
+                        c = Color.Lerp(p.a, p.b, Smooth(0.1f, 0.9f, k));
+                        float seam = 1 - Smooth(0.0f, 0.1f, vo.y);
+                        c = Color.Lerp(c, p.dark, seam * 0.3f);
+                        h = 0.45f + (k - 0.5f) * 0.2f - seam * 0.12f;
                         break;
                     }
                     case Kind.EmberCrust:
                     {
-                        // 结壳熔岩：一块块暗色硬壳，壳缝里透出橙红（缝宽不一，缝心最亮）；壳面有冷却的细碎明暗
-                        const int cells = 9;
+                        // 结壳熔岩（第 2 层，熔岩岸带）：一张 4 × 4 块大块暗色硬壳；壳缝只有一部分透出铜橙（低频噪声挑出一两片「热区」，
+                        // 其余的缝是暗缝）——暗壳加少量亮缝，不是满地一张发光的网（composition.md 第 6 节：饱和度和面积成反比）
+                        const int cells = 4;
                         var vo = Voronoi(u, v, cells, seed, out int id);
                         int ix = id % cells, iy = id / cells;
-                        float crack = 1 - Smooth(0.0f, 0.06f + Hash(ix, iy, seed + 2) * 0.05f, vo.y);
-                        float hot = 1 - Smooth(0.0f, 0.022f, vo.y);
-                        float fine = Fbm(u, v, 12, seed + 4);
-                        c = Color.Lerp(p.a, p.b, Smooth(0.25f, 0.85f, Hash(ix, iy, seed + 7) * 0.6f + fine * 0.4f));
-                        c = Color.Lerp(c, p.dark, crack * 0.85f);
-                        c = Color.Lerp(c, p.accent, hot * 0.9f);
-                        h = 0.6f + fine * 0.1f - crack * 0.5f;
+                        float crack = 1 - Smooth(0.0f, 0.1f + Hash(ix, iy, seed + 2) * 0.06f, vo.y);
+                        float hot = (1 - Smooth(0.0f, 0.035f, vo.y)) * Smooth(0.45f, 0.62f, Fbm(u, v, 2, seed + 9, 2));
+                        float blot = Fbm(u, v, 2, seed + 4, 2);
+                        c = Color.Lerp(p.a, p.b, Smooth(0.2f, 0.8f, Hash(ix, iy, seed + 7) * 0.6f + blot * 0.4f));
+                        c = Color.Lerp(c, p.dark, crack * 0.6f);
+                        c = Color.Lerp(c, p.accent, hot * 0.5f);
+                        h = 0.6f + blot * 0.1f - crack * 0.5f;
                         break;
                     }
                     case Kind.Basalt:
                     {
-                        // 柱状节理玄武岩（第 4 层，三平面投影后 v = 高度）：一列列宽窄不一的竖柱，柱缝深色、柱棱一侧受光，
-                        // 每根柱子各有几道横向断口（位置不同）——崖面读起来是「一束束石柱」，不是层理
-                        const int cols = 14;
-                        float cx = (u + Fbm(u, v, 3, seed) * 0.02f) * cols;
-                        int Wc(int i) => ((i % cols) + cols) % cols;
-                        float Bd(int i) => i + (Hash(Wc(i), 3, seed) - 0.5f) * 0.5f;
-                        int i0 = Mathf.FloorToInt(cx);
-                        if (cx < Bd(i0)) i0--;
-                        else if (cx >= Bd(i0 + 1)) i0++;
-                        float b0 = Bd(i0), b1 = Bd(i0 + 1);
-                        float edge = Mathf.Min(cx - b0, b1 - cx);
-                        int col = Wc(i0);
-                        int breaksPer = 1 + (int)(Hash(col, 11, seed) * 3);
-                        float brk = Mathf.Abs(Mathf.Sin((v + Hash(col, 9, seed)) * Mathf.PI * breaksPer));
-                        float crackH = 1 - Smooth(0.0f, 0.05f, brk);
-                        float joint = 1 - Smooth(0.02f, 0.07f, edge);
-                        float face = Fbm(u, v, 6, seed + 3);
-                        c = Color.Lerp(p.a, p.b, Smooth(0.2f, 0.8f, Hash(col, 5, seed) * 0.7f + face * 0.3f));
-                        c = Color.Lerp(c, p.accent, (1 - Smooth(0.04f, 0.16f, cx - b0)) * 0.35f);
-                        c = Color.Lerp(c, p.dark, Mathf.Max(joint, crackH * 0.8f) * 0.8f);
-                        h = 0.6f - joint * 0.45f - crackH * 0.3f + face * 0.1f;
+                        // 崖面（第 4 层，三平面投影后 v = 高度）：大切面块面——一张 3 × 2 块朝向各异的平整岩面（一块约 6 × 9 m，略高于宽），
+                        // 每块一个明暗 + 一道宽的手绘明暗梯度（像朝向不同的切面），第二级小块只做块内的深浅起伏；块上沿一线受光、块缝一线压暗
+                        float wu = u + (Fbm(u, v, 2, seed + 1, 2) - 0.5f) * 0.1f, wv = v + (Fbm(u, v, 2, seed + 2, 2) - 0.5f) * 0.1f;
+                        var vo = Voronoi(wu, wv, 3, 2, seed, out int id, out var lp);
+                        float tone = Hash(id % 3, id / 3, seed + 5);
+                        float ang = Hash(id % 3, id / 3, seed + 6) * Mathf.PI * 2;
+                        float tilt = Mathf.Cos(ang) * lp.x + Mathf.Sin(ang) * lp.y;
+                        var vb = Voronoi(wu, wv, 9, 7, seed + 11, out int idb, out _);
+                        float toneB = Mathf.Lerp(0.5f, Hash(idb % 9, idb / 9, seed + 12), Smooth(0, 0.12f, vb.y));
+                        float face = 0.5f + (tone - 0.5f) * 0.5f + tilt * 0.45f + (toneB - 0.5f) * 0.16f;
+                        c = Color.Lerp(p.a, p.b, Smooth(0.08f, 0.92f, face));
+                        float seam = 1 - Smooth(0, 0.05f, vo.y);
+                        float top = (1 - Smooth(0.02f, 0.14f, vo.y)) * Smooth(0.05f, 0.35f, lp.y);
+                        float under = (1 - Smooth(0, 0.18f, vo.y)) * Smooth(0, -0.35f, lp.y);
+                        c = Color.Lerp(c, p.dark, under * 0.25f);
+                        c = Color.Lerp(c, p.accent, top * 0.35f);
+                        c = Color.Lerp(c, p.dark, seam * 0.3f);
+                        h = 0.5f + (face - 0.5f) * 0.3f - seam * 0.3f + top * 0.08f;
                         break;
                     }
                     default: // FrozenSoil
@@ -460,13 +462,17 @@ namespace Spiritfire.Art.Editor.Levels
             Layer("FrostRock", Kind.DarkRock, new Palette { a = C(0.34f, 0.37f, 0.44f), b = C(0.46f, 0.50f, 0.58f), accent = C(0.7f, 0.78f, 0.86f), dark = C(0.2f, 0.22f, 0.28f) }, 16f, 67, 1024),
         };
 
-        /// <summary>第三章火狱的四层：火山灰、冷却熔岩（绳状）、结壳熔岩（缝里透红）、柱状玄武岩。暗紫玄武岩 + 铜橙，与 art/README.md 的熔火方向一致</summary>
+        /// <summary>
+        /// 第三章火狱的四层：踩实的铜灰路面 / 落灰、玄武岩地面（大块冷熔岩板）、结壳熔岩（缝里透铜橙）、大切面玄武岩崖。
+        /// 色彩脚本（2026-11-04 美术清理）：岩和地是低饱和偏冷的暗紫灰（崖更偏靛、地面偏灰紫），路面是亮一档的铜灰，熔岩橙只在岸带的壳缝里——
+        /// 三块主色 暗紫玄武岩 / 铜褐 / 熔岩橙，与 art/README.md、fx-style §2.2 的熔火方向一致。贴图覆盖的米数放大（9 / 7 / 6 / 7 → 14 / 16 / 9 / 18 m），色块跟着变大
+        /// </summary>
         public static TerrainLayer[] Inferno() => new[]
         {
-            Layer("InfernoAsh", Kind.Ash, new Palette { a = C(0.36f, 0.33f, 0.33f), b = C(0.45f, 0.41f, 0.40f), accent = C(0.56f, 0.51f, 0.48f), dark = C(0.13f, 0.11f, 0.12f) }, 9f, 71),
-            Layer("InfernoCooledLava", Kind.CooledLava, new Palette { a = C(0.16f, 0.13f, 0.15f), b = C(0.25f, 0.20f, 0.22f), accent = C(0.38f, 0.29f, 0.29f), dark = C(0.06f, 0.05f, 0.06f) }, 7f, 73),
-            Layer("InfernoEmberCrust", Kind.EmberCrust, new Palette { a = C(0.13f, 0.10f, 0.11f), b = C(0.21f, 0.15f, 0.15f), accent = C(1.0f, 0.46f, 0.12f), dark = C(0.55f, 0.12f, 0.04f) }, 6f, 79),
-            Layer("InfernoBasalt", Kind.Basalt, new Palette { a = C(0.20f, 0.17f, 0.21f), b = C(0.31f, 0.26f, 0.30f), accent = C(0.44f, 0.35f, 0.35f), dark = C(0.07f, 0.05f, 0.08f) }, 7f, 83),
+            Layer("InfernoAsh", Kind.Ash, new Palette { a = C(0.40f, 0.30f, 0.24f), b = C(0.46f, 0.35f, 0.27f), accent = C(0.52f, 0.40f, 0.30f), dark = C(0.30f, 0.23f, 0.21f) }, 14f, 71),
+            Layer("InfernoCooledLava", Kind.CooledLava, new Palette { a = C(0.19f, 0.17f, 0.215f), b = C(0.25f, 0.22f, 0.27f), accent = C(0.31f, 0.27f, 0.33f), dark = C(0.13f, 0.11f, 0.15f) }, 16f, 73),
+            Layer("InfernoEmberCrust", Kind.EmberCrust, new Palette { a = C(0.15f, 0.12f, 0.155f), b = C(0.21f, 0.17f, 0.21f), accent = C(0.85f, 0.42f, 0.16f), dark = C(0.30f, 0.13f, 0.1f) }, 9f, 79),
+            Layer("InfernoBasalt", Kind.Basalt, new Palette { a = C(0.15f, 0.14f, 0.19f), b = C(0.24f, 0.22f, 0.29f), accent = C(0.33f, 0.30f, 0.38f), dark = C(0.09f, 0.08f, 0.12f) }, 18f, 83, 1024),
         };
 
         /// <summary>按章节键（ShowcaseTheme.key：Desert / Frost / Inferno）取四层</summary>

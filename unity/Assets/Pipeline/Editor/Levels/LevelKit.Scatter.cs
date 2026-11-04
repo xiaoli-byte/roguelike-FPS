@@ -20,7 +20,7 @@ namespace Spiritfire.Art.Editor.Levels
         public const string ScatterDir = TerrainTextureGen.Dir + "/Scatter";
 
         /// <summary>美术资产缺席时的程序化占位网格：换正式资产只改规则的 prefab 字段</summary>
-        public enum Placeholder { Pebbles, Boulder, Shrub, IceShards, EmberRock, SnowRock }
+        public enum Placeholder { Pebbles, Boulder, Shrub, IceShards, EmberRock, SnowRock, Cinder }
 
         /// <summary>散布点上下文：规则据此给密度</summary>
         public struct ScatterPoint
@@ -378,22 +378,30 @@ namespace Spiritfire.Art.Editor.Levels
                 },
             };
 
-            /// <summary>火狱：余烬石（熔岩岸、结壳上，发光）、火山渣（灰地、缓坡）</summary>
+            /// <summary>
+            /// 火狱：余烬石（熔岩岸、结壳上，发光）、玄武岩碎块（地面、缓坡，离路远）。
+            /// 2026-11-04 美术清理（留白 / 节奏）：以前余烬石 3 个 / 100 m²、火山渣 2.5 个 / 100 m²（0.5 m 的小深色卵石）均匀地撒，
+            /// 和地表的火渣点一起读成一地小黑点。现在只在一小片一小片的组团里出现（7–8 m 尺度的噪声取最高的一成左右，<see cref="Cluster"/>），
+            /// 每团 3–5 件、大小搭配，团与团之间是大片空地；平均下来余烬石约 0.8 个、碎块约 0.7 个 / 100 m²，路面上不出
+            /// </summary>
             public static ScatterRule[] InfernoDetails() => new[]
             {
                 new ScatterRule
                 {
                     name = "InfernoEmberRocks", placeholder = Placeholder.EmberRock,
-                    perHundredSqm = 3f, scale = new(0.6f, 1.5f), slope = new(0, 30), roadClear = 2.5f, clump = 0.55f, seed = 31, castShadows = true,
-                    where = pt => Mathf.Max(pt.s.shore, pt.s.fluid * 0.25f),
+                    perHundredSqm = 9f, scale = new(0.8f, 2.0f), slope = new(0, 30), roadClear = 3.5f, clump = 0, seed = 31, castShadows = true,
+                    where = pt => Mathf.Max(pt.s.shore, pt.s.fluid * 0.25f) * Cluster(pt.p, 7f, 31),
                 },
                 new ScatterRule
                 {
-                    name = "InfernoCinders", placeholder = Placeholder.Pebbles,
-                    perHundredSqm = 2.5f, scale = new(0.7f, 1.4f), slope = new(0, 26), roadClear = 3, clump = 0.5f, seed = 33,
-                    where = pt => (1 - pt.s.fluid) * (1 - pt.s.shore) * (0.4f + 0.6f * pt.s.sand),
+                    name = "InfernoCinders", placeholder = Placeholder.Cinder,
+                    perHundredSqm = 8f, scale = new(0.9f, 2.2f), slope = new(0, 26), roadClear = 5, clump = 0, seed = 33, castShadows = true,
+                    where = pt => (1 - pt.s.fluid) * (1 - pt.s.shore) * (1 - pt.s.packed) * Cluster(pt.p, 8f, 33),
                 },
             };
+
+            /// <summary>紧密组团的遮罩：scale 米尺度的噪声里只取最高的一成左右（硬一点的边），组团之外是 0——散布件成簇出现，簇与簇之间留白</summary>
+            static float Cluster(Vector2 p, float scale, int seed) => S(0.2f, 0.3f, Landform.Fbm(p, scale, 2, seed + 101));
 
             /// <summary>大件（带碰撞）默认：戈壁巨砾、昆仑雪松、火狱玄武岩块</summary>
             public static ScatterRule Boulders(string chapterKey) => chapterKey switch
@@ -449,6 +457,11 @@ namespace Spiritfire.Art.Editor.Levels
                     b.Rock(new Vector3(0, 0.45f, 0), new Vector3(1.0f, 0.75f, 0.85f), b.Range(0, 360), 0);
                     b.Rock(new Vector3(0.75f, 0.15f, 0.3f), new Vector3(0.35f, 0.3f, 0.3f), b.Range(0, 360), 0);
                     break;
+                case Placeholder.Cinder:
+                    // 第三章玄武岩碎块：一大一小两块平面着色的扁石（大形清楚，不是一撮小卵石）
+                    b.Rock(new Vector3(0, 0.1f, 0), new Vector3(0.42f, 0.24f, 0.34f), b.Range(0, 360), 0);
+                    b.Rock(new Vector3(0.38f, 0.04f, 0.18f), new Vector3(0.18f, 0.12f, 0.15f), b.Range(0, 360), 0);
+                    break;
                 case Placeholder.EmberRock:
                     b.Rock(new Vector3(0, 0.12f, 0), new Vector3(0.35f, 0.26f, 0.3f), b.Range(0, 360), 0.3f);
                     for (int i = 0; i < 2; i++)
@@ -485,7 +498,8 @@ namespace Spiritfire.Art.Editor.Levels
                 Placeholder.Pebbles => (new Color(0.33f, 0.28f, 0.25f), 0.9f, 0.1f),
                 Placeholder.SnowRock => (new Color(0.42f, 0.45f, 0.52f), 0.85f, 0.15f),
                 Placeholder.Boulder => (new Color(0.55f, 0.42f, 0.32f), 0.92f, 0.12f),
-                Placeholder.EmberRock => (new Color(0.12f, 0.09f, 0.1f), 0.8f, 0.1f),
+                Placeholder.EmberRock => (new Color(0.14f, 0.12f, 0.16f), 0.8f, 0.1f),
+                Placeholder.Cinder => (new Color(0.24f, 0.22f, 0.29f), 0.9f, 0.12f),
                 Placeholder.IceShards => (new Color(0.7f, 0.86f, 0.96f), 0.25f, 0.6f),
                 _ => (new Color(0.48f, 0.42f, 0.26f), 0.95f, 0.1f),
             };

@@ -33,6 +33,8 @@ namespace Spiritfire.Art.Editor
         /// <summary>设了就用 Spiritfire/SkyGradient（天顶 / 地平线 / 地面三色），否则用 Skybox/Procedural。</summary>
         public bool gradientSky;
         public Color skyTop, skyHorizon, skyBottom;
+        /// <summary>渐变天空的地平线锐度 / 地平线辉光（Spiritfire/SkyGradient 的默认值 2.5 / 0.4）：锐度越大，地平线色越贴着地平线、天顶色占得越多</summary>
+        public float skyHorizonSharpness = 2.5f, skyHorizonGlow = 0.4f;
         public Color ambientSky, ambientEquator, ambientGround;
         public Color fogColor;
         public float fogStart, fogEnd;
@@ -137,15 +139,25 @@ namespace Spiritfire.Art.Editor
                 ("SK_Enemy_Founder", 0f), ("SK_Enemy_IronOx", 0f),
             },
             armR = "SM_Arms_FlyingSquirrelR", armL = "SM_Arms_FlyingSquirrelL", boss = "SK_Boss_Qilin",
-            // 暗红高空光 + 岩浆地面反弹：环境光自下而上是橙，天顶暗紫；Bloom 更强，让岩浆与火坛发光
-            sunColor = new(1f, 0.62f, 0.42f), sunIntensity = 1.1f, sunEuler = new(20, 30, 0),
-            gradientSky = true, skyTop = new(0.1f, 0.05f, 0.08f), skyHorizon = new(0.78f, 0.3f, 0.12f), skyBottom = new(0.16f, 0.06f, 0.04f), skyExposure = 1f,
-            ambientSky = new(0.24f, 0.18f, 0.3f), ambientEquator = new(0.42f, 0.24f, 0.2f), ambientGround = new(0.55f, 0.24f, 0.1f),
-            fogColor = new(0.34f, 0.17f, 0.15f), fogStart = 18, fogEnd = 170,
+            // 色彩脚本（2026-11-04 美术清理，docs/art/ch3-look.md、docs/art/composition.md 第 6 节；fx-style §2.2「暗紫玄武岩，配铜色和橙色」）：
+            //   冷暗部：岩、地是低饱和偏冷的暗紫灰玄武岩；暖光只来自熔岩、铜器、火盆、引导灯——所以主光是烟里透下来的淡紫白，不再是橙光，
+            //   暖色留给熔岩点光和自发光，冷暖才分得开。三块主色 631：暗紫玄武岩 / 铜褐（路面、铸铁件）/ 熔岩橙；青金只给引导灯、灵火。
+            //   明暗：一盏主光（1.45）定阴影形状，环境光只托住暗部（偏紫、不发黑），后处理对比 30 把明度拉开——崖面和背光面是大块暗部，受光的地、路是中间调，熔岩最亮。
+            //   天：上部压成靛紫烟（天顶色占大半，地平线锐度 14），只有贴着地平线的一窄条泛暖橙；雾是暗紫暮色，50 → 340 m 把近、中、远三层拉开。
+            //   以前是满屏同一个红褐：橙色主光 + 饱和红天 + 红褐雾 + 对比 40.8 / 饱和 +6 / 色温 +8.7 的后处理，色相和明暗全挤在中暗调。
+            sunColor = new(0.93f, 0.86f, 0.87f), sunIntensity = 1.45f, sunEuler = new(20, 30, 0),
+            // 天的混色在线性空间里做：地平线的暖橙比天顶亮一个数量级，锐度不够大的话一成的地平线色就把整片天染成红褐——
+            // 所以地平线色压暗一档、锐度 14，暖色靠贴地平线的辉光（0.5）出一窄条；仰角 8° 以上就是靛紫烟
+            gradientSky = true, skyTop = new(0.13f, 0.11f, 0.23f), skyHorizon = new(0.5f, 0.24f, 0.13f), skyBottom = new(0.1f, 0.075f, 0.12f), skyExposure = 1f,
+            skyHorizonSharpness = 14f, skyHorizonGlow = 0.5f,
+            ambientSky = new(0.18f, 0.17f, 0.3f), ambientEquator = new(0.2f, 0.17f, 0.24f), ambientGround = new(0.3f, 0.17f, 0.11f),
+            fogColor = new(0.2f, 0.16f, 0.23f), fogStart = 50, fogEnd = 340,
             fireColor = new(1f, 0.45f, 0.15f), fireIntensity = 9f,
-            postExposure = 0.003f, contrast = 40.8f, saturation = 6.2f, temperature = 8.7f, tint = 3, lift = 0.001f, gamma = 0.054f, gain = -0.099f, fpExposure = 2, fpGamma = 1.08f, fpEffects = 1.1f, fpEffectsSaturation = 1, fpFlash = 1, bloomTint = new(1f, 0.75f, 0.55f),
-            bloomIntensity = 0.748f, bloomThreshold = 0.9f, vignette = 0.365f,
-            groundA = new(0.16f, 0.12f, 0.16f), groundB = new(0.3f, 0.22f, 0.24f), groundShadowTint = new(0.5f, 0.3f, 0.55f),
+            // 单遍后处理，直接按观感调（不再拟合两遍时代的红褐调）：曝光 +0.25 一次定死（之后的明暗靠主光 → 环境 → 点光，不拿曝光补布光）、对比 30 拉开明度、
+            // 色温往冷、色调往品红一点（暗部偏紫），提升一点黑位（暗部是紫灰，不是死黑）；Bloom 阈值 1.05——只有 HDR 自发光（熔岩、火盆、灯）过阈值
+            postExposure = 0.25f, contrast = 30f, saturation = 4f, temperature = -4f, tint = 3, lift = 0.01f, gamma = 0, gain = 0, fpExposure = 2, fpGamma = 1.08f, fpEffects = 1.1f, fpEffectsSaturation = 1, fpFlash = 1, bloomTint = new(1f, 0.78f, 0.55f),
+            bloomIntensity = 0.55f, bloomThreshold = 1.05f, vignette = 0.22f,
+            groundA = new(0.2f, 0.18f, 0.23f), groundB = new(0.3f, 0.26f, 0.3f), groundShadowTint = new(0.52f, 0.48f, 0.8f),
             groundPattern = GroundPattern.LavaCracks,
         };
 

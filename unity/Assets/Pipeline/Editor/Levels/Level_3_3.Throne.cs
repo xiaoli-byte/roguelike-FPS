@@ -12,33 +12,42 @@ namespace Spiritfire.Art.Editor.Levels
         static Vector3 FireGodRing => new(Basin.x, 31f, Basin.y);
         const float FireGodFallTop = 65f;
 
+        /// <summary>
+        /// 3-3 的天：在第三章主题（暗紫靛烟天顶、贴地平线一窄条暖橙）上往参考图（user_ref_throne_of_fire_god.png）偏一点——
+        /// 暖橙烟雾天（地平线锐度 6、辉光 0.5，主题是 14 / 0.5：火神王座的盆地整片天都映着熔岩光，四周的岩和地仍是冷暗紫，冷暖对比在这里）、天顶带一点紫褐，环境光的地面一侧是熔岩盆地的暖反光；暗部仍是紫，不是死黑。
+        /// 主光 / 环境光的强弱跟主题一个思路：主光定阴影形状，环境光只托住暗部（明度要拉得开，不靠曝光提亮）。
+        /// 2026-11-04 美术清理：以前是整片饱和红天（天顶 0.18/0.07/0.12、地平线 0.58/0.19/0.09、曝光 1.2）+ 橙色主光 + 红褐雾，非王座区一片浑红
+        /// </summary>
         static void ConfigureFireGodSky()
         {
             if (RenderSettings.skybox && RenderSettings.skybox.shader.name == "Spiritfire/SkyGradient")
             {
-                RenderSettings.skybox.SetColor("_TopColor", new Color(0.18f, 0.07f, 0.12f));
-                RenderSettings.skybox.SetColor("_HorizonColor", new Color(0.58f, 0.19f, 0.09f));
-                RenderSettings.skybox.SetColor("_BottomColor", new Color(0.16f, 0.08f, 0.1f));
-                RenderSettings.skybox.SetColor("_SunColor", new Color(0.9f, 0.42f, 0.18f));
-                RenderSettings.skybox.SetFloat("_Exposure", 1.2f);
+                RenderSettings.skybox.SetColor("_TopColor", new Color(0.15f, 0.1f, 0.19f));
+                RenderSettings.skybox.SetColor("_HorizonColor", new Color(0.62f, 0.28f, 0.14f));
+                RenderSettings.skybox.SetColor("_BottomColor", new Color(0.12f, 0.08f, 0.12f));
+                RenderSettings.skybox.SetColor("_SunColor", new Color(0.85f, 0.5f, 0.3f));
+                RenderSettings.skybox.SetFloat("_HorizonSharpness", 6f);
+                RenderSettings.skybox.SetFloat("_HorizonGlow", 0.5f);
+                RenderSettings.skybox.SetFloat("_Exposure", 1f);
             }
             if (RenderSettings.sun)
             {
-                RenderSettings.sun.color = new Color(1f, 0.62f, 0.42f);
-                RenderSettings.sun.intensity = 1.05f;
+                RenderSettings.sun.color = new Color(0.93f, 0.84f, 0.84f);
+                RenderSettings.sun.intensity = 1.4f;
             }
-            RenderSettings.ambientSkyColor = new Color(0.38f, 0.26f, 0.34f);
-            RenderSettings.ambientEquatorColor = new Color(0.45f, 0.28f, 0.26f);
-            RenderSettings.ambientGroundColor = new Color(0.5f, 0.24f, 0.14f);
-            RenderSettings.fogColor = new Color(0.42f, 0.16f, 0.12f);
-            RenderSettings.fogStartDistance = 35f;
-            RenderSettings.fogEndDistance = 320f;
+            RenderSettings.ambientSkyColor = new Color(0.2f, 0.17f, 0.3f);
+            RenderSettings.ambientEquatorColor = new Color(0.25f, 0.18f, 0.24f);
+            RenderSettings.ambientGroundColor = new Color(0.38f, 0.19f, 0.11f);
+            RenderSettings.fogColor = new Color(0.24f, 0.16f, 0.21f);
+            RenderSettings.fogStartDistance = 45f;
+            RenderSettings.fogEndDistance = 340f;
         }
 
         static void ConfigureFireGodBackdrop(LevelKit.BackdropSpec backdrop)
         {
-            backdrop.silhouette = new Color(0.18f, 0.09f, 0.14f);
-            backdrop.top = new Color(0.32f, 0.12f, 0.12f);
+            // 远山：暗紫剪影压在暖橙烟雾带前面，峰顶一点被火光照到的暖紫
+            backdrop.silhouette = new Color(0.13f, 0.09f, 0.15f);
+            backdrop.top = new Color(0.27f, 0.15f, 0.18f);
             backdrop.horizon = RenderSettings.fogColor;
             backdrop.rings = new[]
             {
@@ -54,15 +63,16 @@ namespace Spiritfire.Art.Editor.Levels
             var root = new GameObject("FireGodThrone").transform;
             root.SetParent(parent, false);
             var controller = root.gameObject.AddComponent<FireGodThrone>();
-            var basalt = LevelKit.Mat(Dir, "FireGodBasalt", new Color(0.34f, 0.23f, 0.26f), 0.94f);
-            var basaltCool = LevelKit.Mat(Dir, "FireGodBasaltCool", new Color(0.27f, 0.21f, 0.3f), 0.96f);
+            // 岩塔：第三章的暗紫玄武岩（偏暖一点的主塔 / 偏靛的侧刃和岩峰）——像参考图那样是一大块暗剪影，边缘被熔岩照亮（橙色边缘光 + 王座的轮廓点光），暗部偏紫不发黑
+            var basalt = LevelKit.Mat(Dir, "FireGodBasalt", new Color(0.2f, 0.14f, 0.18f), 0.94f);
+            var basaltCool = LevelKit.Mat(Dir, "FireGodBasaltCool", new Color(0.16f, 0.13f, 0.2f), 0.96f);
             foreach (var rock in new[] { basalt, basaltCool })
             {
                 rock.SetColor("_RimColor", new Color(1f, 0.3f, 0.07f));
-                rock.SetFloat("_RimStrength", 0.65f);
+                rock.SetFloat("_RimStrength", 0.9f);
                 rock.SetFloat("_RimPower", 2.2f);
-                rock.SetFloat("_ShadowLift", 0.55f);
-                rock.SetColor("_ShadowTint", new Color(0.38f, 0.22f, 0.32f));
+                rock.SetFloat("_ShadowLift", 0.4f);
+                rock.SetColor("_ShadowTint", new Color(0.42f, 0.3f, 0.5f));
             }
 
             var throne = Anchor("Throne", root, new Vector3(FireGodSpire.x, 22f, FireGodSpire.y));
@@ -157,13 +167,15 @@ namespace Spiritfire.Art.Editor.Levels
 
             var ringLight = LightAt(root, "FireGodThrone · 圆环光", FireGodRing, 6f, 48f);
             var fallLight = LightAt(root, "FireGodThrone · 熔瀑落点光", new Vector3(Basin.x, 4f, Basin.y), 10f, 55f);
-            LightAt(root, "FireGodThrone · 王座左轮廓光", new Vector3(139, 10, 199), 18f, 60f);
-            LightAt(root, "FireGodThrone · 王座右轮廓光", new Vector3(165, 12, 200), 18f, 60f);
-            LightAt(root, "FireGodThrone · 王座正面反光", new Vector3(152, 28, 190), 12f, 60f);
-            LightAt(root, "FireGodThrone · 塔顶逆光", new Vector3(152, 48, 211), 10f, 44f);
-            LightAt(root, "FireGodThrone · 南渠反光", new Vector3(152, 2, 140), 3.5f, 30f);
-            LightAt(root, "FireGodThrone · 西渠反光", new Vector3(136, 2, 164), 3.5f, 30f);
-            LightAt(root, "FireGodThrone · 东渠反光", new Vector3(168, 2, 164), 3.5f, 30f);
+            // 王座区的亮度靠这几盏熔岩光（2026-11-04 美术清理：以前靠局部 Volume 把整片盆地曝光 +0.65 提亮，现在只比章节底色多 0.15，
+            // 岩塔边缘、王座正面和三条熔渠的岸由点光照亮——亮的是熔岩照到的地方，暗部仍是大块暗剪影，和参考图一样）
+            LightAt(root, "FireGodThrone · 王座左轮廓光", new Vector3(139, 10, 199), 28f, 64f);
+            LightAt(root, "FireGodThrone · 王座右轮廓光", new Vector3(165, 12, 200), 28f, 64f);
+            LightAt(root, "FireGodThrone · 王座正面反光", new Vector3(152, 28, 190), 16f, 62f);
+            LightAt(root, "FireGodThrone · 塔顶逆光", new Vector3(152, 48, 211), 16f, 48f);
+            LightAt(root, "FireGodThrone · 南渠反光", new Vector3(152, 2, 140), 5.5f, 32f);
+            LightAt(root, "FireGodThrone · 西渠反光", new Vector3(136, 2, 164), 5.5f, 32f);
+            LightAt(root, "FireGodThrone · 东渠反光", new Vector3(168, 2, 164), 5.5f, 32f);
             controller.throne = throne;
             controller.ring = ring;
             controller.throneProcedural = throneProcedural;
@@ -217,21 +229,26 @@ namespace Spiritfire.Art.Editor.Levels
             return light;
         }
 
+        /// <summary>
+        /// 王座区的局部调色（盆地 136 m 见方，边缘 48 m 渐变）：只做焦点强化——比章节底色暖一点、饱和一点（参考图的暖橙烟火），
+        /// 曝光只比章节底色（+0.25）多 0.15，亮度交给王座的熔岩点光（BuildFireGodThrone）；Bloom 阈值仍高于受光的岩面（只给熔岩柱、圆环、裂缝）。
+        /// 2026-11-04 美术清理：以前 曝光 +0.65 / 饱和 +8 / 色温 +15 / Bloom 阈值 0.85、强度 1.25，盆地整片泛红光
+        /// </summary>
         static void BuildFireGodGrade(Transform parent)
         {
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
             LevelKit.SaveAsset(profile, $"{Dir}/VP_FireGodThrone.asset");
             var color = profile.Add<ColorAdjustments>(true);
-            color.postExposure.Override(0.65f);
-            color.contrast.Override(12f);
+            color.postExposure.Override(0.4f);
+            color.contrast.Override(26f);
             color.saturation.Override(8f);
             var white = profile.Add<WhiteBalance>(true);
-            white.temperature.Override(15f);
+            white.temperature.Override(12f);
             white.tint.Override(2f);
             var bloom = profile.Add<Bloom>(true);
-            bloom.threshold.Override(0.85f);
-            bloom.intensity.Override(1.25f);
-            bloom.scatter.Override(0.72f);
+            bloom.threshold.Override(0.95f);
+            bloom.intensity.Override(0.95f);
+            bloom.scatter.Override(0.7f);
             var vignette = profile.Add<Vignette>(true);
             vignette.intensity.Override(0.25f);
             vignette.smoothness.Override(0.48f);

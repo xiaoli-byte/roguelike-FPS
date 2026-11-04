@@ -9,6 +9,7 @@ CBUFFER_START(UnityPerMaterial)
     float4 _BaseMap_ST;
     half4  _BaseColor;
     half4  _Tint;
+    half   _Desaturate;        // 固有色按亮度往灰里收（0 = 不变）：章节场景件统一画风用（ArtPrefabBuilder 的第三章正式件）
     half   _Cutoff;
     half   _BumpScale;
     half   _Metallic;

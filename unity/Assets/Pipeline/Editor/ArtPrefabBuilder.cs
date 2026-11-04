@@ -79,6 +79,33 @@ namespace Spiritfire.Art.Editor
         /// <summary>这个资产的材质要不要强制非金属</summary>
         public static bool ForceNonMetal(ArtSidecar sc) => sc != null && !string.IsNullOrEmpty(sc.Id) && NonMetalAssets.Contains(sc.Id);
 
+        /// <summary>
+        /// 第三章场景件（火狱套件、正式地图件、环境件：SM_Tripo_Inferno* / SM_Env_Inferno* / SM_Prop_Inferno*；不含敌人、首领、武器）的材质统一（2026-11-04 美术清理，
+        /// docs/art/review/ch3-v2/art-pass/）。Tripo 件的贴图细节很碎（满件的小橙点、红漆块、刻花），法线又是满强度，在火狱的暗环境里一片噪点，和地形也不是一套画风。
+        /// 不重新出模型、不花积分，只在材质层收：法线 ×0.35、去饱和 12%、往暗紫玄武岩的色调压一点（_Tint）、金属度 ×0.35、高光 / 边缘光减弱、暗部偏紫；
+        /// 贴图另由 <see cref="ArtImportPostprocessor"/> 加 mip 偏移（BC / N / ORM 往模糊一级的方向取，<see cref="InfernoEnvMipBias"/>），把最细的一层噪点抹掉。
+        /// 每次 sync 重建材质都按这条走
+        /// </summary>
+        public static bool IsInfernoEnv(string id) =>
+            !string.IsNullOrEmpty(id) && (id.StartsWith("SM_Tripo_Inferno") || id.StartsWith("SM_Env_Inferno") || id.StartsWith("SM_Prop_Inferno"));
+
+        /// <summary>第三章场景件贴图的 mip 偏移（BC / N / ORM；_E 发光遮罩不偏，发光的形状保持清楚）</summary>
+        public const float InfernoEnvMipBias = 0.8f;
+
+        static void ApplyInfernoEnvLook(Material mat)
+        {
+            mat.SetFloat("_BumpScale", 0.35f);
+            mat.SetFloat("_Desaturate", 0.12f);
+            mat.SetColor("_Tint", new Color(0.96f, 0.94f, 0.98f));
+            mat.SetFloat("_Metallic", Mathf.Min(mat.GetFloat("_Metallic"), 1f) * 0.35f);
+            mat.SetFloat("_OcclusionStrength", mat.GetFloat("_OcclusionStrength") * 0.7f);
+            mat.SetFloat("_SpecStrength", 0.12f);
+            mat.SetFloat("_RimStrength", 0.1f);
+            mat.SetColor("_ShadowTint", new Color(0.56f, 0.5f, 0.8f));
+            // 件上的自发光（_E 遮罩：炉口、熔槽、灯）收到六成：最高饱和、最亮的一档留给怪、预警、引导灯和熔岩（composition.md 第 6 节「射击游戏优先」）
+            mat.SetColor("_EmissionColor", mat.GetColor("_EmissionColor") * 0.6f);
+        }
+
         public static Material BuildMaterial(ArtSidecar sc, JObject m)
         {
             string name = (string)m["name"];
@@ -128,6 +155,12 @@ namespace Spiritfire.Art.Editor
             mat.SetFloat("_RimPower", p.rimPower);
             mat.SetFloat("_RimStrength", p.rimStrength);
             mat.SetFloat("_FlashAmount", 0f);
+            if (IsInfernoEnv(sc.Id) && !IsGlow(name))
+            {
+                ApplyInfernoEnvLook(mat);
+                foreach (var t in new[] { mat.GetTexture("_BaseMap"), mat.GetTexture("_BumpMap"), mat.GetTexture("_ORMMap") })
+                    ArtImportPostprocessor.EnsureMipBias(t as Texture2D);
+            }
 
             // 毛发细节（画质「中」以上由全局 _SFFurDetail 打开）：只给身体材质，发光壳 / 重烘的远景 LOD 材质不要
             var fur = FurSettings.From(sc);

@@ -42,6 +42,29 @@ namespace Spiritfire.Art.Editor
             }
             // 有 Alpha 遮罩的材质（alphaMode = MASK）需要 BC 的 Alpha
             if (n.EndsWith("_BC") && NeedsAlpha(assetPath)) ti.alphaSource = TextureImporterAlphaSource.FromInput;
+            ti.mipMapBias = MipBiasFor(assetPath);
+        }
+
+        /// <summary>
+        /// 贴图的 mip 偏移：第三章场景件（<see cref="ArtPrefabBuilder.IsInfernoEnv"/>）的 BC / N / ORM 往模糊一级的方向取（2026-11-04 美术清理：
+        /// Tripo 贴图最细的一层噪点在暗环境里一片花，取样时抹掉它，大块的颜色和形状不变）；其余资产、_E 发光遮罩都是 0
+        /// </summary>
+        public static float MipBiasFor(string texPath)
+        {
+            string n = Path.GetFileNameWithoutExtension(texPath);
+            if (!(n.EndsWith("_BC") || n.EndsWith("_N") || n.EndsWith("_ORM"))) return 0f;
+            string assetDir = Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(texPath)));
+            return ArtPrefabBuilder.IsInfernoEnv(assetDir) ? ArtPrefabBuilder.InfernoEnvMipBias : 0f;
+        }
+
+        /// <summary>导入设置里的 mip 偏移和 <see cref="MipBiasFor"/> 对不上就重新导入（导入规则改了、但贴图本身没变，Unity 不会自己重导）</summary>
+        public static void EnsureMipBias(Texture2D tex)
+        {
+            if (!tex) return;
+            string path = AssetDatabase.GetAssetPath(tex);
+            if (!InArt(path) || AssetImporter.GetAtPath(path) is not TextureImporter ti) return;
+            if (Mathf.Abs(ti.mipMapBias - MipBiasFor(path)) < 1e-4f) return;
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         }
 
         static bool NeedsAlpha(string texPath)
