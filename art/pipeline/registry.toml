@@ -2613,6 +2613,12 @@ fx_points = [
   { name = "FX_Lantern", pos = [4.64, 1.63, -3.06] },
   { name = "FX_Lantern", pos = [-4.64, 1.63, -3.06] },
 ]
+# 部件分离（derive_inferno_parts.py，ch3-kit.md 第 3 节）：Tripo 没画出前侧（+Z）栏杆中段的 3 m 缺口（击退带）→ 切掉前栏中段
+# x ±1.37（12 m 桥长时 = 3.0 m）、路缘顶 1.415 以上；带缺口的整桥是 Gapped（包围盒、原点和整件相同，可直接替换），切下来的栏杆段单独一件
+parts = [
+  { id = "SM_Tripo_InfernoIronBridgeGapped", rest = true, origin = "base", fx_points = [{ name = "FX_Lantern", pos = [4.64, 1.63, 3.06] }, { name = "FX_Lantern", pos = [-4.64, 1.63, 3.06] }, { name = "FX_Lantern", pos = [4.64, 1.63, -3.06] }, { name = "FX_Lantern", pos = [-4.64, 1.63, -3.06] }] },
+  { id = "SM_Tripo_InfernoIronBridgeRailPiece", box = [[-1.37, 1.415, 2.86], [1.37, 2.6, 3.9]], origin = "base" },
+]
 brief = """A short heavy black iron bridge span over a lava channel, 12m long from LEFT to RIGHT, 10m wide from FRONT to BACK and 2.5m tall. The bridge body is a thick black iron box girder 0.8m deep covered with riveted plates, and its top is a wide FLAT walkable deck of iron plates 10m wide. Along the FRONT edge and the BACK edge runs a solid black iron railing 1.1m tall with thick square posts and riveted panels; the FRONT railing has one 3m wide gap in its middle (an open edge), the BACK railing is continuous. At the four corners of the deck stand four squat cast bronze bridge posts 1.7m tall, each topped with a chunky roaring beast head facing outward along the bridge. The deck surface has a few vermilion lacquered iron strips. PROPORTIONS: the FRONT and BACK views are drawn about 4.8 times as wide as tall, a long low flat span; the LEFT and RIGHT views about 4 times as wide as tall. Chunky readable forms, no lava, no smoke, no arches under the deck. One solid connected piece."""
 
 [assets.SM_Tripo_InfernoHallTruss]

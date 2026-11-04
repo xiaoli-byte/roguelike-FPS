@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoIronBridgeRailPiece",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.ironBridge",
+    "part": "RailPiece"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -1.3700000047683716,
+      0,
+      -0.31327152252197266
+    ],
+    "max": [
+      1.3700000047683716,
+      0.32589638233184814,
+      0.31327176094055176
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoIronBridgeRailPiece_LOD0",
+      "lod": 0,
+      "tris": 370,
+      "verts": 616,
+      "materials": [
+        "M_Tripo_InfernoIronBridge"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoIronBridge",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoIronBridge_BC.png",
+        "N": "Textures/T_Tripo_InfernoIronBridge_N.png",
+        "ORM": "Textures/T_Tripo_InfernoIronBridge_ORM.png",
+        "E": "Textures/T_Tripo_InfernoIronBridge_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoIronBridgeRailPiece.glb",
+    "sha256": "f3ed9ad1479eb1d5fa795d15fdff88653fd862dd9ba9d8cea1709751eca77632",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoIronBridge"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-04 20:38:23"
+}

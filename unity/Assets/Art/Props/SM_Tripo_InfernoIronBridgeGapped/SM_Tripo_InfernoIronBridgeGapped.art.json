@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_InfernoIronBridgeGapped",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.ironBridge",
+    "part": "Gapped"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        -4.64,
+        1.63,
+        3.06
+      ]
+    },
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        4.64,
+        1.63,
+        3.06
+      ]
+    },
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        -4.64,
+        1.63,
+        -3.06
+      ]
+    },
+    {
+      "name": "FX_Lantern",
+      "pos": [
+        4.64,
+        1.63,
+        -3.06
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -5.432591438293457,
+      0,
+      -4.025947093963623
+    ],
+    "max": [
+      5.432591438293457,
+      2.500258684158325,
+      4.025947093963623
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoIronBridgeGapped_LOD0",
+      "lod": 0,
+      "tris": 14733,
+      "verts": 20812,
+      "materials": [
+        "M_Tripo_InfernoIronBridge"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoIronBridge",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoIronBridge_BC.png",
+        "N": "Textures/T_Tripo_InfernoIronBridge_N.png",
+        "ORM": "Textures/T_Tripo_InfernoIronBridge_ORM.png",
+        "E": "Textures/T_Tripo_InfernoIronBridge_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoIronBridgeGapped.glb",
+    "sha256": "1d1d46f44f9c76a86a79bd068be6152cc7c7d14578897e057c8159a09481004f",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "inferno_parts",
+      "checkpoint": "SM_Tripo_InfernoIronBridge"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-04 20:38:19"
+}
