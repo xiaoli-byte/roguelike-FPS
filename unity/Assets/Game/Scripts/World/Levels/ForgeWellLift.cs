@@ -6,7 +6,9 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 3-2 铸神井的炉坛升降台（docs/level-design/maps/3-2.md §6；本关自己的两站逻辑，载人 / 压人检测用 L6 的通用核心 <see cref="PlatformCarrier"/>，
+    /// 【已退役】3-2 v2（2026-11-03，docs/level-design/maps/3-2.md）的升降台改用通用件 <see cref="MovingPlatform"/>（OnRide + 铜锣通电），场景里不再有本组件；
+    /// 保留文件只因为 KnockbackSuite 还用它测「载人下行不误救」。新关卡请用 MovingPlatform。
+    /// 原说明：3-2 铸神井（旧版）的炉坛升降台（本关自己的两站逻辑，载人 / 压人检测用 L6 的通用核心 <see cref="PlatformCarrier"/>，
     /// 和通用件 <see cref="MovingPlatform"/> 同一套）：
     /// 一块竖直往返的铁台，两站——下站在井底炉坛旁，上站在上环岩台沿的栈桥头（出口铸门前）。
     ///   · 通电：<see cref="powerSite"/>（井底炉坛）肃清后才动；没设 = 一直通电。通电时亮灯、提示一次。

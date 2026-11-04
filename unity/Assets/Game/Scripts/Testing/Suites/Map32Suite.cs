@@ -10,28 +10,29 @@ using Random = UnityEngine.Random;
 namespace Spiritfire.Game.Testing
 {
     /// <summary>
-    /// 3-2 铸神井冒烟（bridge.sh playtest map-3-2；场景 L3_2_ForgeWell，docs/level-design/maps/3-2.md §10，parity 7.4「机器人清完全部必清场地并走出出口」）：
-    ///   1. 开局：SceneFlow 认领的关卡是 3-2、局难度 = RunPlan 的 2.76；目标图（必清 4、顺序不限 + 可选 1）、两片熔岩（熔岩井 + 熔瀑池）、
-    ///      炉坛升降台（开局没通电、停在下站）、出口（没开）、2 处藏宝；没有空气墙（Ignore Raycast 层只有兜底环）；
-    ///      出生点看得见井心的悬炉，井口眺台看得见熔岩井；出生点到四个必清场地、升降台下站、出口铸门的 NavMesh 路径都完整。
-    ///   2. 机器人清场：每次挑 NavMesh 路程最近的未清必清场地，用角色控制器沿 NavMesh 路径真走（螺旋岩台、横坡、俯射台坡都是真的），
-    ///      路上被别的场地触发就先打那个；交战时自动瞄最近的敌人（四成打弱点）射击、隔 4 s 放技能，被挡住绕到看得见的地方；
-    ///      熔炉铁牛：站到它正前方 10 m 引它吸气，炉门开着就打炉门。玩家临时 +5000 生命。每处 200 s 内肃清，肃清后场地宝箱要出现（不开）。
-    ///   3. 必清全部肃清 → 目标完成 → 出口升起 → 门旁清关宝箱；④ 井底炉坛肃清后升降台通电。
-    ///   4. 熔瀑池：站进熔岩池正中——熔岩接管（PlayerEntered），扣血，0.5 s 后被托回岸上。
-    ///   5. 升降台：走到井底下站、站上台面 → 自己开 → 到上站（玩家跟着台面升 ~14 m，全程不掉出台面），走下栈桥。
-    ///   6. 藏宝 A（炼渣龛，无守军）：走到龛口发现 → 按 F → 宝箱出现。
-    ///   7. 出口铸门前按 F → 本关结算（下一关 3-3）。
-    /// 走路的 NavMesh 路径不完整、卡住过多都记不合格；运行时报错由宿主记不合格（PlaytestRunner）。
+    /// 3-2 铸神井 v2 冒烟（bridge.sh playtest map-3-2；场景 L3_2_ForgeWell，docs/level-design/maps/3-2.md §10，ch3-v2 7.4）：
+    ///   1. 开局：关卡 = 3-2、局难度 = RunPlan 的 2.76；目标图（必清 4、顺序不限 + 可选 1）、路遇 1、两片熔岩（熔岩井 + 熔泉池）、
+    ///      两座链桥（北链桥 Signal、南链桥常设）、升降台（MovingPlatform，开局没通电、停在井底）、出口（没开）、铸门（关着）、2 处藏宝；
+    ///      没有空气墙；出生点看得见悬炉和井底铸门、井口眺台看得见熔岩井；出生点到四个必清场地、升降台下站、出口的导航路径都完整。
+    ///   2. 机器人清场：每次挑导航路程最近的未清必清场地，用角色控制器沿导航路径真走（东旋坡、链桥、西吊臂下跳、熔瀑栈道都是真的），
+    ///      路上被别的场地 / 路遇触发就先打那个；自动瞄准射击、隔 4 s 放技能；铁牛站到正前方引它吸气打炉门。
+    ///      玩家临时 +5000 生命、+300% 伤害（冒烟只测路线与机制，清场时间由 squads-ch3 量；宿主 600 s 内要跑完整套），每处 120 s 内肃清。
+    ///   3. 必清全部肃清 → 目标完成 → 出口升起 → 清关宝箱；铸门全开。
+    ///   4. 北链桥：② 肃清后崩断（桥板全塌、桥面从导航网格上挖掉）；从甲板走南链桥回到 T1。
+    ///   5. 熔泉池：站进熔岩池正中——熔岩接管、扣血、托回岸上。
+    ///   6. 升降台：走到井底下站、敲铜锣通电，站上台面 → 升到 T1 → 走下栈桥上 T1（北链桥塌了以后的第二条回程）。
+    ///   S3：悬炉甲板东口刷一只祸斗、眩晕住、朝外打一发带击退的射击 → 推下甲板、掉进 17 m 下的熔岩井烧死（熔岩烧死 +1、推下台沿 +1、走正常的击杀事件）；
+    ///       间歇熔泉：目标完成时四口齐喷过、不在 ④ 交战时不按周期喷；站在喷口上被掀起来扣血；敌人站在喷口上被掀起；射爆岩壳提前引爆。
+    ///   7. 藏宝 A（炼渣龛）：走过去发现 → 按 F → 宝箱。8. 出口前按 F → 结算。
+    /// 走路的导航路径不完整、卡住过多都记不合格；运行时报错由宿主记不合格。
     /// </summary>
     public sealed class Map32Suite : PlaytestSuite
     {
         public override string Id => "map-3-2";
-        /// <summary>3-2 铸神井（与编辑器里 Level_3_2.ScenePath 相同，运行时程序集引用不到那边的常量）</summary>
         public override string Scene => "Assets/Scenes/L3_2_ForgeWell.unity";
 
-        const float ReadyTimeout = 90f, SiteTimeout = 200f, ClearAllTimeout = 1100f, BotSpeed = 11f, LiftTimeout = 20f;
-        const string HangingForgeId = "SM_Tripo_InfernoHangingForge";
+        const float ReadyTimeout = 90f, SiteTimeout = 90f, StallPurge = 18f, ClearAllTimeout = 400f, BotSpeed = 11f, LiftTimeout = 25f, T1Y = 22f;
+        const string HangingForgeId = "SM_Tripo_InfernoHangingForge", MoltenGateId = "SM_Tripo_InfernoMoltenGate";
 
         PlayerMotor motor;
         PlayerVitals vitals;
@@ -41,7 +42,9 @@ namespace Spiritfire.Game.Testing
         Transform eye;
         Camera cam;
         readonly List<EncounterSite.SpawnRecord> spawned = new();
-        int partialPaths, skillCasts, stalls, lavaEntries;
+        int partialPaths, skillCasts, stalls, lavaEntries, stallPurges, hops;
+        Damageable lastKilled;
+        DamageInfo lastKillInfo;
 
         protected override IEnumerator Steps()
         {
@@ -86,21 +89,30 @@ namespace Spiritfire.Game.Testing
             var portal = FindAnyObjectByType<ExitPortal>();
             var caches = FindObjectsByType<CachePOI>();
             var lavas = FindObjectsByType<LavaVolume>();
-            var lift = FindAnyObjectByType<ForgeWellLift>();
-            Line($"场景：必清 {objective?.RequiredTotal ?? 0}，可选 {objective?.optional?.Length ?? 0}，藏宝 {caches.Length}，熔岩 {lavas.Length} 片（LavaField {(LavaField.Any ? "在" : "不在")}），" +
-                 $"升降台 {(lift ? $"{(lift.Powered ? "已通电" : "未通电")}、{(lift.AtLow ? "停在下站" : lift.AtHigh ? "停在上站" : "在走")}、通电场地「{(lift.powerSite ? lift.powerSite.title : "无")}」" : "无")}，" +
-                 $"出口 {(portal ? "有" : "无")}");
+            var lift = FindAnyObjectByType<MovingPlatform>();
+            var director = ForgeWellDirector.Instance;
+            var spans = FindObjectsByType<BreakableSpan>();
+            var roadside = FindObjectsByType<EncounterSite>().Where(s => s.roadside).ToList();
+            Line($"场景：必清 {objective?.RequiredTotal ?? 0}，可选 {objective?.optional?.Length ?? 0}，路遇 {roadside.Count}，藏宝 {caches.Length}，熔岩 {lavas.Length} 片，链桥 {spans.Length}，" +
+                 $"升降台 {(lift ? $"{(lift.Powered ? "已通电" : "未通电")}、停在第 {lift.At} 站" : "无")}，出口 {(portal ? "有" : "无")}，演出 {(director ? "有" : "无")}");
             if (!objective || objective.RequiredTotal != 4) Fail("目标图的必清场地应为 4 个");
             if (objective && (objective.optional?.Length ?? 0) != 1) Fail("目标图的可选场地应为 1 个（铸范库守军）");
             if (objective && objective.required.Any(s => s && s.requires != null && s.requires.Length > 0)) Fail("必清场地写了 requires（3-2 的场地应当顺序不限）");
+            if (roadside.Count != 1) Fail($"路遇 {roadside.Count} 处（应为 1：熔瀑栈道）");
             if (caches.Length != 2) Fail($"藏宝点 {caches.Length} 处（应为 2：炼渣龛、铸范库）");
-            if (lavas.Length != 2 || !LavaField.Any) Fail($"熔岩 {lavas.Length} 片（应为 2：熔岩井、熔瀑池），LavaField {(LavaField.Any ? "在" : "不在")}");
-            if (!lift) Fail("场景里没有炉坛升降台（ForgeWellLift）");
+            if (lavas.Length != 4 || !LavaField.Any) Fail($"熔岩 {lavas.Length} 片（应为 4：熔岩井、熔泉池、① / ③ 铸槽）");
+            if (spans.Length != 2) Fail($"链桥 {spans.Length} 座（应为 2）");
+            if (!director) Fail("场景里没有 ForgeWellDirector");
             else
             {
-                if (!lift.powerSite) Fail("升降台没有接通电场地");
-                else if (lift.Powered) Fail("开局升降台就通电了（应等井底炉坛肃清）");
-                if (!lift.AtLow) Fail("开局升降台不在下站");
+                if (!director.northBridge) Fail("演出没有接北链桥");
+                if (director.GateStage != 0) Fail("开局铸门就不是关着的");
+            }
+            if (!lift) Fail("场景里没有升降台（MovingPlatform）");
+            else
+            {
+                if (lift.Powered) Fail("开局升降台就通电了（应等井底敲锣）");
+                if (lift.At != 0) Fail("开局升降台不在井底下站（第 0 站）");
             }
             if (!portal)
             {
@@ -110,8 +122,9 @@ namespace Spiritfire.Game.Testing
             if (portal.IsOpen) Fail("开局出口就开着（应等必清场地肃清）");
             NoAirWall();
 
-            // 地标：出生点看得见井心的悬炉；井口眺台看得见熔岩井
+            // 地标：出生点看得见悬炉、井底铸门；井口眺台看得见熔岩井
             var forge = GameObject.Find("Landmark_HangingForge");
+            var gateMark = GameObject.Find("Landmark_ExitGate");
             if (!forge) Fail("没有悬炉地标标记 Landmark_HangingForge");
             else
             {
@@ -129,9 +142,18 @@ namespace Spiritfire.Game.Testing
                 var back = motor.transform.position;
                 Place(lookout.transform.position);
                 yield return new WaitForSeconds(0.25f);
-                bool seen = Visible(eye.position, lava.transform.position, 2f, "Lava");
+                bool seen = Visible(eye.position, lava.transform.position, 2.5f, "Lava");
                 Line($"井口眺台 → 熔岩井：{(seen ? "看得见" : "被挡住")}");
                 if (!seen) Fail("井口眺台看不到熔岩井");
+                var gateEye = GameObject.Find("Lookout_Gate");
+                if (gateMark && gateEye)
+                {
+                    Place(gateEye.transform.position);
+                    yield return new WaitForSeconds(0.25f);
+                    bool g = Visible(eye.position, gateMark.transform.position, 4f, MoltenGateId);
+                    Line($"井口栈台 → 井底铸门（{Vector3.Distance(eye.position, gateMark.transform.position):F0} m）：{(g ? "看得见" : "被挡住")}");
+                    if (!g) Fail("井口看不到井底的铸门（出口）");
+                }
                 Aim(motor, eye, lava.transform.position);
                 yield return new WaitForSeconds(0.2f);
                 Shot(cam, "map32_lookout");
@@ -139,11 +161,10 @@ namespace Spiritfire.Game.Testing
                 yield return null;
             }
 
-            // 主线可走：出生点 → 四个必清场地、升降台下站、出口铸门
             var start = motor.transform.position;
             var goals = new List<(string name, Vector3 at)>();
             if (objective) goals.AddRange(objective.required.Where(s => s).Select(s => (s.title, s.transform.position)));
-            if (lift) goals.Add(("升降台下站", lift.lowPosition));
+            if (lift) goals.Add(("升降台下站", lift.path[0]));
             goals.Add(("出口铸门", portal.transform.position - portal.transform.forward * 3.5f));
             foreach (var (name, at) in goals)
             {
@@ -153,7 +174,9 @@ namespace Spiritfire.Game.Testing
             }
 
             // ── 2. 机器人清场 ──
+            // 冒烟只测路线与机制（清场时间由 squads-ch3 量）：机器人临时 +5000 生命、+300% 伤害，整套在宿主的 600 s 内跑完
             vitals.stats.Add("playtest_map32", Stat.MaxHp, 5000);
+            vitals.stats.Add("playtest_map32", Stat.DamagePct, 3f);
             vitals.Heal(99999);
             EncounterSite.AnySpawned += OnSpawned;
             LavaField.PlayerEntered += OnLava;
@@ -174,7 +197,6 @@ namespace Spiritfire.Game.Testing
                     Line($"前往「{next.title}」（路程 {PathLength(motor.transform.position, next.transform.position):F0} m）");
                     yield return Travel(next.transform.position, Mathf.Max(3f, next.triggerRadius - next.entryDepth - 4f), true);
                     if (EncounterSite.ActiveSites.Count > 0) continue;
-                    // 到了触发圈边上还没开战：像玩家一样再往场地中心走
                     yield return Travel(next.transform.position, 2f, true);
                     float w0 = Time.time;
                     while (next.phase == EncounterSite.Phase.Idle && EncounterSite.ActiveSites.Count == 0 && Time.time - w0 < 3f) yield return null;
@@ -188,16 +210,16 @@ namespace Spiritfire.Game.Testing
                     if (s.phase != EncounterSite.Phase.Cleared) Fail($"必清场地「{s.title}」没有肃清（{s.phase}，剩 {s.Remaining}）");
                 var elites = spawned.Where(r => r.elite).ToList();
                 Line($"出场 {spawned.Count} 只，精英 {elites.Count} 只：{string.Join("、", elites.Select(r => $"{r.id}（{(string.IsNullOrEmpty(r.affix) ? "无词缀" : r.affix)}）"))}");
-                if (elites.Count < 2) Fail($"必清场地只出了 {elites.Count} 只精英（③ 升格 1 只 + ④ 精英熔炉铁牛）");
+                if (elites.Count < 2) Fail($"必清场地只出了 {elites.Count} 只精英（② 精英马面·迅捷 + ④ 精英熔炉铁牛·狂暴）");
                 if (SquadAffixes.Source != null && SquadAffixes.Source.Exists("frenzied") && !spawned.Any(r => r.elite && r.id == "iron_ox" && r.affix == "frenzied"))
-                    Fail("井底炉坛的精英熔炉铁牛没有带「狂暴」词缀");
+                    Fail("熔泉炉坛的精英熔炉铁牛没有带「狂暴」词缀");
             }
             finally
             {
                 EncounterSite.AnySpawned -= OnSpawned;
             }
 
-            // ── 3. 目标完成 → 出口升起 → 清关宝箱；升降台通电 ──
+            // ── 3. 目标完成 → 出口升起 → 清关宝箱；铸门全开 ──
             if (objective)
             {
                 Line($"目标：{(objective.Complete ? "已完成" : "未完成")}（肃清 {objective.RequiredCleared}/{objective.RequiredTotal}，可选 {objective.OptionalCleared}）");
@@ -206,26 +228,45 @@ namespace Spiritfire.Game.Testing
             float rise0 = Time.time;
             while (portal.IsOpen && !portal.Risen && Time.time - rise0 < 5f) yield return null;
             yield return new WaitForSeconds(0.6f);
-            Line($"出口：{(portal.IsOpen ? "已开启" : "未开启")}，升起 {portal.Rise:P0}，清关宝箱 {(portal.ClearChest ? portal.ClearChest.reward : "无")}");
+            Line($"出口：{(portal.IsOpen ? "已开启" : "未开启")}，升起 {portal.Rise:P0}，清关宝箱 {(portal.ClearChest ? portal.ClearChest.reward : "无")}；" +
+                 $"铸门 {(director ? $"第 {director.GateStage} 段、升起 {director.GateRise:F1} m" : "—")}");
             if (!portal.IsOpen) Fail("必清场地肃清后出口没有开启");
             else if (!portal.ClearChest) Fail("出口升起后没有落清关宝箱");
-            if (lift && !lift.Powered) Fail("井底炉坛肃清后升降台没有通电");
+            if (director && director.GateStage < 3) Fail("目标完成后铸门没有全开");
 
-            // ── 4. 熔瀑池 ──
+            // ── 4. 北链桥崩断 → 走南链桥回 T1 ──
+            if (director) yield return BridgeCheck(director);
+
+            // ── S3：悬炉甲板击退落井 ──
+            InAction<KillEvent> onKill = OnKilled;
+            GameEvents.EnemyKilled += onKill;
+            try
+            {
+                yield return DeckKnockCase();
+            }
+            finally
+            {
+                GameEvents.EnemyKilled -= onKill;
+            }
+
+            // ── 5. 熔泉池 ──
             var pool = lavas.FirstOrDefault(v => v && v.shape == LavaShape.Box);
-            if (!pool) Fail("没有熔瀑池（盒形熔岩）");
+            if (!pool) Fail("没有熔泉池（盒形熔岩）");
             else yield return LavaPoolCheck(pool);
             LavaField.PlayerEntered -= OnLava;
 
-            // ── 5. 升降台 ──
+            // ── S3：间歇熔泉 ──
+            yield return GeyserCase();
+
+            // ── 6. 升降台（井底敲锣通电 → 升到 T1）──
             if (lift) yield return LiftCheck(lift);
 
-            // ── 6. 藏宝 A ──
+            // ── 7. 藏宝 A ──
             var cache = caches.FirstOrDefault(c => !c.guard);
             if (!cache) Fail("没有无守军的藏宝点（藏宝 A 炼渣龛）");
             else yield return CacheCheck(cache);
 
-            // ── 7. 出口 ──
+            // ── 8. 出口 ──
             vitals.Heal(99999);
             var front = portal.transform.position - portal.transform.forward * 3.5f;
             yield return Travel(front, 1.2f, false);
@@ -235,6 +276,7 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.15f);
             if (interactor.Current as ExitPortal != portal) Fail($"站在出口前没有交互提示（当前 {interactor.Current?.Prompt ?? "无"}）");
             Line($"出口提示：{portal.Prompt}");
+            Shot(cam, "map32_gate");
             interactor.testInteract = true;
             yield return new WaitForSecondsRealtime(0.5f);
             bool done = GameSession.Instance && GameSession.Instance.Completed;
@@ -244,21 +286,257 @@ namespace Spiritfire.Game.Testing
             GameSession.Instance?.SetModal(false);
             vitals.stats.Remove("playtest_map32");
 
-            Line($"合计：武器命中 {Runner.hits}，伤害 {Runner.damage:F0}，击杀 {Runner.kills}，敌人对玩家伤害 {Runner.playerDamage:F0}，技能 {skillCasts} 次，踩进熔岩 {lavaEntries} 次");
+            Line($"合计：武器命中 {Runner.hits}，伤害 {Runner.damage:F0}，击杀 {Runner.kills}，敌人对玩家伤害 {Runner.playerDamage:F0}，技能 {skillCasts} 次，踩进熔岩 {lavaEntries} 次" +
+                 $"，熔岩烧死 {(LavaField.Instance ? LavaField.Instance.Burned : 0)}");
             if (Runner.kills == 0) Fail("整关一只敌人都没打死");
-            if (partialPaths > 0) Fail($"机器人走的 NavMesh 路径有 {partialPaths} 次不完整（螺旋 / 横坡断了？）");
-            Line($"走路卡住跳点 {stalls} 次");
-            if (stalls >= 8) Fail($"机器人沿 NavMesh 走时卡住 {stalls} 次（角色控制器和导航网格对不上：横坡 / 俯射台坡 / 陡坎沿？看上面的位置）");
+            if (partialPaths > 0) Fail($"机器人走的导航路径有 {partialPaths} 次不完整");
+            Line($"走路卡住跳点 {stalls} 次；交战卡住清残敌 {stallPurges} 次；跳下台阶孤岛 {hops} 次");
+            if (stalls >= 8) Fail($"机器人沿导航网格走时卡住 {stalls} 次（东旋坡 / 链桥 / 栈道 / 俯射台坡？看上面的位置）");
         }
 
         void OnSpawned(EncounterSite s, EncounterSite.SpawnRecord r) => spawned.Add(r);
 
+        /// <summary>
+        /// 最近的活着的敌人（只看 EnemyAI，不打可破坏货堆 / 熔泉岩壳 / 机关这些也挂了血量的场景件）：先挑正在交战的场地自己的。
+        /// 跳过不可选中的（S1 埋伏：别的场地预生成的休眠单位打不着，只在那个场地能开战时才可选中）和别的场地还在休眠的（AI 停用）
+        /// </summary>
+        static Damageable NearestFoe(Vector3 from, EncounterSite site = null)
+        {
+            Damageable best = null;
+            float bestD = float.MaxValue;
+            bool bestOwn = false;
+            foreach (var e in EnemyAI.All)
+            {
+                if (!e || e.Dead || !e.Health || e.Health.Dead || e.Health.untargetable) continue;
+                bool own = site && e.transform.IsChildOf(site.transform);
+                if (!e.enabled && !own) continue;
+                if (bestOwn && !own) continue;
+                float d = (e.transform.position - from).sqrMagnitude;
+                if ((own && !bestOwn) || d < bestD)
+                {
+                    bestD = d;
+                    best = e.Health;
+                    bestOwn = own;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>只清掉这个场地自己的残敌（别的场地预生成的埋伏单位留着，到那边照常苏醒）</summary>
+        static int PurgeSite(EncounterSite site)
+        {
+            int n = 0;
+            foreach (var e in EnemyAI.All.ToArray())
+                if (e && !e.Dead && e.Health && e.transform.IsChildOf(site.transform))
+                {
+                    Combat.Execute(e.Health, true);
+                    n++;
+                }
+            return n;
+        }
+
         void OnLava(Vector3 feet) => lavaEntries++;
 
+        void OnKilled(in KillEvent e)
+        {
+            lastKilled = e.enemy;
+            lastKillInfo = e.info;
+        }
+
+        static NavMeshQueryFilter Dry => LavaField.WalkerFilter(LavaField.DryAreaMask);
+
         /// <summary>
-        /// D14：没有空气墙——Ignore Raycast 层上的实体碰撞体只有软边界的兜底环（离等值线 ≥ failsafe − 3 m）；边界本身是火山口内壁（地形），
-        /// 顺带看一眼出生点在软边界里多深（应在界内 ≥ 5 m）
+        /// S3 悬炉甲板击退落井（ch3-v2 风险 2）：甲板东口（矮栏的缺口，外面就是 17 m 下的熔岩井）刷一只祸斗、眩晕住，机器人站在它身后、
+        /// 朝外打一发带击退的射击（9 m/s）→ 导航代理推到网格边 → LavaField 推下台沿 → 落进熔岩井烧死：熔岩烧死 +1、推下台沿 +1、走正常的击杀事件
         /// </summary>
+        IEnumerator DeckKnockCase()
+        {
+            var field = LavaField.Instance;
+            var gap = GameObject.Find("Deck_EastGap");
+            if (!gap || !field)
+            {
+                Fail("甲板击退：没有 Deck_EastGap 标记或熔岩系统，跳过");
+                yield break;
+            }
+            EnemyRegistry.PurgeAll();
+            vitals.Heal(99999);
+            var spot = gap.transform.position;
+            var dir = Flat3(spot).normalized;
+            var stand = spot - dir * 3.5f;
+            yield return Travel(stand, 1.5f, false);
+            Place(stand);
+            yield return null;
+            var e = EnemyRoster.Spawn("huodou", spot, Quaternion.LookRotation(-dir), 1, false);
+            if (!e)
+            {
+                Fail("甲板击退：刷不出祸斗");
+                yield break;
+            }
+            yield return new WaitForSeconds(1f);
+            if (!e || e.Dead)
+            {
+                Fail("甲板击退：祸斗还没开始就死了");
+                yield break;
+            }
+            EnemyStatus.Stun(e.Health, 4f);
+            yield return null;
+            var agent = e.GetComponent<NavMeshAgent>();
+            if (agent && agent.enabled && NavMesh.SamplePosition(spot, out var hit, 1f, Dry)) agent.Warp(hit.position);
+            else e.transform.position = spot;
+            yield return null;
+            yield return null;
+            Place(stand);
+            Aim(motor, eye, BodyCenter(e.Health));
+            yield return null;
+            int burned0 = field.Burned, shoved0 = field.Shoved;
+            lastKilled = null;
+            var d = e.Health;
+            var from = e.transform.position;
+            var info = DamageInfo.Simple(1, DamageSource.Weapon, from + Vector3.up * 0.5f, dir);
+            info.knockback = 9;
+            info.noCrit = true;
+            Combat.DamageEnemy(d, info);
+            float t = 0, lowest = from.y;
+            bool shot = false;
+            while (e && !e.Dead && t < 4f)
+            {
+                t += Time.deltaTime;
+                lowest = Mathf.Min(lowest, e.transform.position.y);
+                if (!shot && from.y - e.transform.position.y > 4f)
+                {
+                    shot = true;
+                    Shot(cam, "map32_deck_knock");
+                }
+                yield return null;
+            }
+            bool dead = !e || e.Dead;
+            Line($"甲板击退：祸斗从东口 {from} 被打{(dead ? $"下甲板，{t:F1} s 后在熔岩井里烧死" : $"了一下还活着（在 {e.transform.position}）")}，最低落到 y {lowest:F1}；" +
+                 $"推下台沿 +{field.Shoved - shoved0}，熔岩烧死 +{field.Burned - burned0}，击杀事件 {(lastKilled == d ? $"有（来源 {lastKillInfo.source}）" : "没有")}");
+            if (!dead) Fail("悬炉甲板东口被击退的祸斗 4 s 内没有掉进熔岩井烧死");
+            else
+            {
+                if (field.Shoved - shoved0 < 1) Fail("甲板东口的击退没有走「推下台沿」（LavaField.Shoved 没加）");
+                if (field.Burned - burned0 != 1) Fail($"熔岩烧死计数 +{field.Burned - burned0}（应为 1）");
+                if (lastKilled != d) Fail("掉进熔岩井烧死没有走伤害管线的击杀事件（不计击杀、不掉落）");
+                else if ((lastKillInfo.tags & DamageTag.Purge) != 0) Fail("烧死被当成了静默处决");
+            }
+            if (e && !e.Dead) Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        /// <summary>
+        /// S3 间歇熔泉：四口都在、目标完成时齐喷过、④ 肃清后不再按周期喷；玩家站在喷口上 → 预警 → 被掀起来扣血；
+        /// 祸斗站在喷口上 → 被掀起来（掀起计数 +1）；朝岩壳打够伤害 → 提前引爆
+        /// </summary>
+        IEnumerator GeyserCase()
+        {
+            var gs = LavaGeyser.All.Where(g => g).OrderBy(g => g.name).ToList();
+            Line($"间歇熔泉：{gs.Count} 口，喷过 {string.Join(" / ", gs.Select(g => g.Eruptions))} 次，按周期喷 {gs.Count(g => g.Cycling)} 口");
+            if (gs.Count != 4)
+            {
+                Fail($"间歇熔泉 {gs.Count} 口（应为 4）");
+                if (gs.Count == 0) yield break;
+            }
+            if (gs.Any(g => g.Eruptions == 0)) Fail("关卡目标完成时四口熔泉没有齐喷");
+            if (gs.Any(g => g.Cycling)) Fail("④ 肃清后熔泉还在按周期喷");
+            EnemyRegistry.PurgeAll();
+            vitals.Heal(99999);
+            var g0 = gs[Mathf.Min(1, gs.Count - 1)];
+            float wait0 = Time.time;
+            while (g0.Current != LavaGeyser.State.Idle && Time.time - wait0 < 4f) yield return null;
+            // 1) 玩家站在喷口上
+            yield return Travel(g0.Base, 2.5f, false);
+            Place(g0.Base + Vector3.up * 0.4f);
+            yield return new WaitForSeconds(0.3f);
+            // 先扣护盾再扣生命（一路捡的强化可能带护盾）：按「生命 + 护盾」和实际造成的伤害判
+            float hp0 = vitals.health + vitals.shield, y0 = motor.transform.position.y, top = y0, dealt = 0;
+            int hits0 = g0.PlayerHits, warned = 0;
+            System.Action<LavaGeyser> onWarn = _ => warned++;
+            System.Action<LavaGeyser, float> onHit = (_, d) => dealt += d;
+            g0.Warned += onWarn;
+            g0.HitPlayer += onHit;
+            g0.EruptNow(0.5f);
+            float t0 = Time.time;
+            bool shot = false;
+            while (Time.time - t0 < 2.5f)
+            {
+                top = Mathf.Max(top, motor.transform.position.y);
+                if (!shot && g0.Current == LavaGeyser.State.Erupting && Time.time - t0 > 0.75f)
+                {
+                    shot = true;
+                    Aim(motor, eye, g0.Base + Vector3.up * 4f);
+                    Shot(cam, "map32_geyser_player");
+                }
+                yield return null;
+            }
+            g0.Warned -= onWarn;
+            g0.HitPlayer -= onHit;
+            Line($"熔泉 · 玩家：预警 {warned} 次，挨 {g0.PlayerHits - hits0} 次（伤害 {dealt:F0}），生命 + 护盾 {hp0:F0} → {vitals.health + vitals.shield:F0}，被掀起 {top - y0:F1} m");
+            if (warned == 0) Fail("熔泉喷之前没有预警");
+            if (g0.PlayerHits - hits0 != 1) Fail($"站在喷口上挨了 {g0.PlayerHits - hits0} 次（应为 1）");
+            if (top - y0 < 1f) Fail($"站在喷口上只被掀起 {top - y0:F1} m");
+            if (!(dealt > 0) || vitals.health + vitals.shield >= hp0) Fail("站在喷口上被喷没有扣血");
+            vitals.Heal(99999);
+            // 2) 敌人站在喷口上
+            var g1 = gs[Mathf.Min(2, gs.Count - 1)];
+            wait0 = Time.time;
+            while (g1.Current != LavaGeyser.State.Idle && Time.time - wait0 < 4f) yield return null;
+            var away = g1.Base + Flat3(g1.Base).normalized * 7f;
+            yield return Travel(away, 2f, false);
+            Place(away);
+            // 喷口是 2 m 的岩锥：祸斗站在锥坡上（喷柱半径内、离井沿一侧）
+            var onVent = g1.Base + Flat3(g1.Base).normalized * Mathf.Min(2.4f, g1.radius - 0.4f);
+            var e = EnemyRoster.Spawn("huodou", onVent, Quaternion.identity, 1, false);
+            yield return new WaitForSeconds(1f);
+            if (!e || e.Dead) Fail("熔泉 · 敌人：刷不出祸斗");
+            else
+            {
+                EnemyStatus.Stun(e.Health, 3f);
+                var ag = e.GetComponent<NavMeshAgent>();
+                if (ag && ag.enabled && NavMesh.SamplePosition(onVent, out var nh, 1.5f, Dry)) ag.Warp(nh.position);
+                yield return null;
+                int launched0 = g1.EnemiesLaunched;
+                float ey0 = e.transform.position.y, etop = ey0;
+                g1.EruptNow(0.4f);
+                t0 = Time.time;
+                while (Time.time - t0 < 2.5f && e && !e.Dead)
+                {
+                    etop = Mathf.Max(etop, e.transform.position.y);
+                    yield return null;
+                }
+                bool burned = !e || e.Dead;
+                Line($"熔泉 · 敌人：掀起 {g1.EnemiesLaunched - launched0} 只，最高离地 {etop - ey0:F1} m，{(burned ? "落进熔岩井烧死了" : "落回地上")}");
+                if (g1.EnemiesLaunched - launched0 < 1) Fail("站在喷口上的祸斗没有被掀起");
+                if (e && !e.Dead) Destroy(e.gameObject);
+            }
+            // 3) 射岩壳提前引爆
+            var g2 = gs[0];
+            wait0 = Time.time;
+            while (g2.Current != LavaGeyser.State.Idle && Time.time - wait0 < 4f) yield return null;
+            var aside = g2.Base + Flat3(g2.Base).normalized * 7f;
+            yield return Travel(aside, 2f, false);
+            Place(aside);
+            yield return null;
+            int det0 = g2.Detonations, er0 = g2.Eruptions;
+            if (!g2.Health) Fail("熔泉岩壳没有挂血量（射不爆）");
+            else
+            {
+                Aim(motor, eye, g2.Base + Vector3.up * 0.4f);
+                var shellHit = DamageInfo.Simple(400, DamageSource.Weapon, g2.Base + Vector3.up * 0.4f, (g2.Base - eye.position).normalized);
+                shellHit.noCrit = true;
+                Combat.DamageEnemy(g2.Health, shellHit);
+                t0 = Time.time;
+                while (g2.Eruptions == er0 && Time.time - t0 < 1.5f) yield return null;
+                Line($"熔泉 · 射岩壳：引爆 +{g2.Detonations - det0}，{Time.time - t0:F2} s 后{(g2.Eruptions > er0 ? "喷了" : "没喷")}");
+                if (g2.Detonations - det0 != 1) Fail("朝熔泉岩壳打够伤害没有引爆");
+                else if (g2.Eruptions == er0) Fail("岩壳引爆后 1.5 s 内熔泉没有喷");
+                yield return new WaitForSeconds(0.4f);
+                Shot(cam, "map32_geyser_shell");
+            }
+            vitals.Heal(99999);
+            yield return new WaitForSeconds(1.5f);
+        }
+
         void NoAirWall()
         {
             var zone = BoundaryZone.Active;
@@ -292,34 +570,56 @@ namespace Spiritfire.Game.Testing
 
         IEnumerator Fight(EncounterSite site)
         {
-            float start = Time.time, flankAt = 0, skillAt = Time.time + 1f;
+            float start = Time.time, flankAt = 0, skillAt = Time.time + 1f, progressAt = Time.time, idleSince = -1;
             bool shotMid = false;
-            int kills0 = Runner.kills;
+            int kills0 = Runner.kills, killsSeen = Runner.kills;
             float dmg0 = Runner.playerDamage;
             Runner.killsById.Clear();
-            Line($"遭遇「{site.title}」开始：{site.Total} 只，{site.WaveCount} 波，升格精英 {site.Promoted}");
+            Line($"遭遇「{site.title}」开始：{site.Total} 只，{site.WaveCount} 波");
             while (site.phase != EncounterSite.Phase.Cleared && Time.time - start < SiteTimeout)
             {
                 if (vitals.Dead) vitals.Revive();
                 if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
                 if (weapons.Active != null) weapons.Active.reserve = weapons.Active.def.reserve;
-                var target = NearestEnemy(eye.position);
-                if (!target)
+                if (Runner.kills != killsSeen)
                 {
-                    weapons.testFire = false;
-                    // 还有没出场的：往场地中心靠一点，别站在距离带外
-                    if (site.PendingCount > 0 && Flat(motor.transform.position - site.transform.position) > site.arenaRadius)
-                        yield return Step(site.transform.position, 6f);
+                    killsSeen = Runner.kills;
+                    progressAt = Time.time;
+                }
+                // 卡住：18 s 没有击杀、只剩 ≤ 3 只、没有待出场的（远程 / 飞行跑到够不着的地方）——清掉残敌、记一笔，不算不合格
+                // （冒烟测的是路线和机制；宿主 600 s 内要跑完整套）
+                if (Time.time - progressAt > StallPurge && site.PendingCount == 0 && site.AliveCount is > 0 and <= 3)
+                {
+                    stallPurges++;
+                    var left = EnemyAI.All.Where(e => e && !e.Dead && e.transform.IsChildOf(site.transform)).Select(e => $"{e.enemyId}@{e.transform.position}");
+                    Line($"  ⚠ 「{site.title}」{StallPurge:F0} s 没有进展，清掉残敌 {site.AliveCount} 只：{string.Join("、", left)}");
+                    PurgeSite(site);
+                    progressAt = Time.time;
                     yield return null;
                     continue;
                 }
+                var target = NearestFoe(eye.position, site);
+                if (!target)
+                {
+                    weapons.testFire = false;
+                    if (idleSince < 0) idleSince = Time.time;
+                    if (site.PendingCount > 0 && (Flat(motor.transform.position - site.transform.position) > site.arenaRadius || Time.time - idleSince > 3f))
+                    {
+                        PathCorners(motor.transform.position, site.transform.position, out bool linked);
+                        if (!linked) HopOffIsland(site.transform.position);
+                        else if (Flat(motor.transform.position - site.transform.position) > 4f) yield return Step(site.transform.position, 6f);
+                        idleSince = Time.time;
+                    }
+                    yield return null;
+                    continue;
+                }
+                idleSince = -1;
                 var body = target.GetComponent<EnemyBody>();
                 var ai = target.GetComponent<EnemyAI>();
                 bool weakOpen = body && body.WeakPoint && body.WeakPoint.gameObject.activeInHierarchy;
                 var aim = weakOpen && Random.value < 0.4f ? body.WeakPoint.position : BodyCenter(target);
                 if (ai is IronOxAI ox)
                 {
-                    // 熔炉铁牛：铁甲只吃两成——站到它正前方 10 m 引它吸气，炉门开着就一直打炉门
                     if (ox.DoorOpen && weakOpen) aim = body.WeakPoint.position;
                     else if (Time.time >= flankAt)
                     {
@@ -356,14 +656,17 @@ namespace Spiritfire.Game.Testing
             if (!cleared)
             {
                 foreach (var e in EnemyAI.All)
-                    if (e && !e.Dead)
+                    if (e && !e.Dead && e.transform.IsChildOf(site.transform))
                     {
                         var ag = e.GetComponent<NavMeshAgent>();
                         Line($"  残敌 {e.enemyId}：状态 {e.State}，位置 {e.transform.position}，离玩家 {Vector3.Distance(e.transform.position, motor.transform.position):F1} m，导航网格上 {(ag && ag.isOnNavMesh)}");
                     }
-                Fail($"{SiteTimeout:F0} s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
-                // 不卡死后面的步骤：清掉残敌，让目标图照常推进
-                EnemyRegistry.PurgeAll();
+                PathCorners(motor.transform.position, site.transform.position, out bool botLinked);
+                Line($"  场地状态：第 {site.Wave + 1}/{site.WaveCount} 波，待出场 {site.PendingCount}，在场 {site.AliveCount}，休眠 {site.SleepingCount}/{site.ArmedCount}，" +
+                     $"换点 {site.Relocations}，防卡 {site.Stalled}；全场敌人 {EnemyRegistry.Count}（休眠 {EncounterSite.DormantCount}）；" +
+                     $"机器人 {motor.transform.position}，到场地中心的导航{(botLinked ? "连通" : "不通（孤岛？）")}");
+                if (!site.optional) Fail($"{SiteTimeout:F0} s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
+                PurgeSite(site);
                 float p0 = Time.time;
                 while (site.phase != EncounterSite.Phase.Cleared && Time.time - p0 < 3f) yield return null;
                 yield break;
@@ -383,15 +686,54 @@ namespace Spiritfire.Game.Testing
             }
         }
 
-        // ───────────── 熔瀑池 / 升降台 / 藏宝 ─────────────
+        // ───────────── 北链桥 / 熔泉池 / 升降台 / 藏宝 ─────────────
+
+        /// <summary>② 肃清后北链桥崩断（桥板全塌、桥面挖掉）；把玩家放到甲板中央，沿导航走南链桥回到 T1</summary>
+        IEnumerator BridgeCheck(ForgeWellDirector director)
+        {
+            EnemyRegistry.PurgeAll();
+            var north = director.northBridge;
+            float t0 = Time.time;
+            while (north && !north.Collapsed && Time.time - t0 < 6f) yield return null;
+            int carved = 0;
+            if (north)
+                for (int i = 0; i < north.Count; i++)
+                    if (north.Carved(i)) carved++;
+            Line($"北链桥：{(director.BridgeBroken ? "崩断了" : "没断")}，塌 {(north ? north.FallenCount : 0)}/{(north ? north.Count : 0)} 段，挖洞 {carved} 段；挂钩放下 {director.HookLowered:P0}");
+            if (!director.BridgeBroken || !north || !north.Collapsed) Fail("② 悬炉锻台肃清后北链桥没有全部崩断");
+            else if (carved < north.Count) Fail($"北链桥塌了但只挖掉了 {carved}/{north.Count} 段导航");
+            var deck = GameObject.Find("Site_2_HangingForge");
+            var south = GameObject.Find("Bridge_SouthHead");
+            var northHead = GameObject.Find("Bridge_NorthHead");
+            if (!deck || !south)
+            {
+                Fail("缺少甲板 / 南链桥头标记");
+                yield break;
+            }
+            Place(deck.transform.position + Vector3.up * 0.3f);
+            yield return new WaitForSeconds(0.3f);
+            if (northHead)
+            {
+                PathCorners(motor.transform.position, northHead.transform.position, out bool c1);
+                float len = PathLength(motor.transform.position, northHead.transform.position);
+                Line($"北链桥塌后：甲板 → 北链桥头导航 {(c1 ? $"{len:F0} m（绕南链桥 / 栈道）" : "不完整")}");
+            }
+            var target = south.transform.position + (south.transform.position - new Vector3(0, south.transform.position.y, 0)).normalized * 4f;
+            yield return Travel(target, 1.5f, false);
+            yield return new WaitForSeconds(0.3f);
+            var p = motor.transform.position;
+            bool onT1 = p.y > T1Y - 1f && Flat(p - target) < 4f;
+            Line($"走南链桥回 T1：{(onT1 ? "到了" : "没到")}（{p}）");
+            Shot(cam, "map32_south_bridge");
+            if (!onT1) Fail("北链桥塌后从甲板走南链桥回不到 T1");
+        }
 
         IEnumerator LavaPoolCheck(LavaVolume pool)
         {
             EnemyRegistry.PurgeAll();
             vitals.Heal(99999);
             var c = pool.transform.position;
-            // 池底在导航上是 Lava 区、四周是挖下去的陡岸（只能掉进去 / 被打进去），走路只走到靠井心那边的岸上，再一步跨进池子正中
-            // （池子的 +X 朝井外：构建器按螺旋切向摆长边）
+            // 池子靠井心那一侧的岸（池子的 +X 朝井外）
             var shore = c - pool.transform.right * (pool.size.x * 0.5f + 2.5f);
             yield return Travel(shore, 1.5f, false);
             int entries0 = lavaEntries;
@@ -402,40 +744,52 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(1.0f);
             var feet = motor.transform.position;
             bool out_ = !LavaField.IsLava(feet);
-            Line($"熔瀑池：熔岩接管 {lavaEntries - entries0} 次，生命 {hp0:F0} → {vitals.health:F0}，1 s 后{(out_ ? $"已托回岸上 {feet}" : "还在熔岩里")}");
+            Line($"熔泉池：熔岩接管 {lavaEntries - entries0} 次，生命 {hp0:F0} → {vitals.health:F0}，1 s 后{(out_ ? $"已托回岸上 {feet}" : "还在熔岩里")}");
             Shot(cam, "map32_lavapool");
-            if (lavaEntries == entries0) Fail("站进熔瀑池正中，熔岩没有接管（LavaField.PlayerEntered 没响）");
-            else if (!out_) Fail("踩进熔瀑池 1.5 s 后还没被托回岸上");
+            if (lavaEntries == entries0) Fail("站进熔泉池正中，熔岩没有接管（LavaField.PlayerEntered 没响）");
+            else if (!out_) Fail("踩进熔泉池 1.5 s 后还没被托回岸上");
             vitals.Heal(99999);
         }
 
-        IEnumerator LiftCheck(ForgeWellLift lift)
+        /// <summary>走到井底下站、敲铜锣通电，站上台面 → 升到 T1 → 走下栈桥（玩家全程不掉出台面）</summary>
+        IEnumerator LiftCheck(MovingPlatform lift)
         {
             EnemyRegistry.PurgeAll();
             vitals.Heal(99999);
-            // 走到井底下站的台口等（台面在上站时站在台口叫它下来接）：台口在台面靠井心那条边外 1.5 m——
-            // 站在台面投影里，下来的台面会停在头顶上方等人站开（不压人），像玩家一样站在旁边
-            var fwd = lift.deck ? Flat3(lift.deck.forward).normalized : Vector3.forward;
-            var landing = lift.lowPosition - fwd * (lift.deckSize.y * 0.5f + 1.5f);
-            yield return Travel(landing, 1f, false);
-            Line($"升降台：到了下站台口（离井道 {Flat(motor.transform.position - lift.lowPosition):F1} m），台面{(lift.AtLow ? "停在下站" : lift.AtHigh ? "停在上站" : "在走")}");
-            float w0 = Time.time;
-            while (!lift.AtLow && Time.time - w0 < LiftTimeout) yield return null;
-            if (!lift.AtLow)
+            var gong = SceneActivator.All.FirstOrDefault(a => a && a.targets != null && a.targets.Contains(lift));
+            if (!gong)
             {
-                Fail($"玩家在下站等了 {LiftTimeout:F0} s，升降台没有下来接人（{(lift.Blocked ? "台面下有东西挡着" : lift.Moving ? "还在走" : "停在上站")}）");
+                Fail("升降台没有铜锣（SceneActivator）");
                 yield break;
             }
-            Place(lift.lowPosition + Vector3.up * 0.3f);
+            yield return Travel(gong.transform.position + gong.transform.forward * 2f, 1.2f, false);
+            Place(gong.transform.position + gong.transform.forward * 2f);
+            yield return new WaitForSeconds(0.3f);
+            Aim(motor, eye, gong.Focus);
+            yield return new WaitForSeconds(0.15f);
+            bool prompted = interactor.Current as SceneActivator == gong;
+            if (prompted) interactor.testInteract = true;
+            else gong.Activate(SceneActivator.Cause.Script);
+            yield return new WaitForSeconds(0.5f);
+            Line($"升降台铜锣：{(prompted ? "按 F 敲响" : "交互提示没出来，脚本触发")}，升降台{(lift.Powered ? "通电了" : "没通电")}");
+            if (!prompted) Fail($"站在铜锣前没有交互提示（当前 {interactor.Current?.Prompt ?? "无"}）");
+            if (!lift.Powered) Fail("敲响铜锣后升降台没有通电");
+            float w0 = Time.time;
+            while ((lift.At != 0 || lift.Moving) && Time.time - w0 < LiftTimeout) yield return null;
+            if (lift.At != 0)
+            {
+                Fail("升降台没有停在井底下站");
+                yield break;
+            }
+            Place(lift.path[0] + Vector3.up * 0.3f);
             yield return new WaitForSeconds(0.2f);
             var cc = motor.GetComponent<CharacterController>();
             if (!lift.Carrying(cc)) Fail("站在下站台面中央，升降台没有认出乘客");
             int trips0 = lift.Trips;
             float t0 = Time.time, worstGap = 0;
             bool shot = false;
-            while (!(lift.AtHigh && lift.Trips > trips0) && Time.time - t0 < LiftTimeout)
+            while (!(lift.At == lift.LastIndex && lift.Trips > trips0) && Time.time - t0 < LiftTimeout)
             {
-                // 乘客脚底离台面多远（往下掉出台面就会越来越大）
                 worstGap = Mathf.Max(worstGap, lift.deck.position.y - motor.transform.position.y);
                 if (!shot && lift.Moving && Time.time - t0 > 3f)
                 {
@@ -445,22 +799,19 @@ namespace Spiritfire.Game.Testing
                 yield return null;
             }
             yield return new WaitForSeconds(0.3f);
+            var top = lift.path[lift.LastIndex];
             float y = motor.transform.position.y;
-            Line($"升降台：{(lift.AtHigh ? "到了上站" : "没到上站")}，用时 {Time.time - t0:F1} s，玩家 y {y:F2}（上站台面 {lift.highPosition.y:F2}），" +
-                 $"途中脚底最多低于台面 {worstGap:F2} m");
-            if (!lift.AtHigh) Fail($"站上台面 {LiftTimeout:F0} s 升降台没到上站");
-            else if (Mathf.Abs(y - lift.highPosition.y) > 0.6f) Fail($"升降台到站，玩家没跟上来（y {y:F2}，台面 {lift.highPosition.y:F2}）");
+            Line($"升降台：{(lift.At == lift.LastIndex ? "到了上站" : "没到上站")}，用时 {Time.time - t0:F1} s，玩家 y {y:F2}（上站台面 {top.y:F2}），途中脚底最多低于台面 {worstGap:F2} m");
+            if (lift.At != lift.LastIndex) Fail($"站上台面 {LiftTimeout:F0} s 升降台没到上站");
+            else if (Mathf.Abs(y - top.y) > 0.6f) Fail($"升降台到站，玩家没跟上来（y {y:F2}，台面 {top.y:F2}）");
             if (worstGap > 0.5f) Fail($"升降台途中玩家掉出台面（脚底低于台面 {worstGap:F2} m）");
-            // 走下栈桥到上环岩台：栈桥的 +Z 朝井外（构建器按径向摆的），走到桥头外 1.5 m
-            var gangway = GameObject.Find("Lift Gangway");
-            var ahead = gangway
-                ? gangway.transform.position + gangway.transform.forward * (gangway.transform.lossyScale.z * 0.5f + 1.5f)
-                : lift.highPosition + Flat3(lift.highPosition).normalized * 11f;
+            var landing = GameObject.Find("Lift_TopLanding");
+            var ahead = landing ? landing.transform.position : top + Flat3(top).normalized * 22f;
             yield return Walk(ahead, 0.8f);
             yield return new WaitForSeconds(0.3f);
-            bool onLedge = !lift.Carrying(cc) && motor.transform.position.y > lift.highPosition.y - 1f;
-            Line($"走下栈桥：{(onLedge ? "上了上环岩台" : "没下来")}（{motor.transform.position}）");
-            if (!onLedge) Fail("从升降台上站走不下栈桥");
+            bool onT1 = !lift.Carrying(cc) && motor.transform.position.y > T1Y - 1f;
+            Line($"走下栈桥：{(onT1 ? "上了 T1" : "没下来")}（{motor.transform.position}）");
+            if (!onT1) Fail("从升降台上站走不下栈桥到 T1");
             Shot(cam, "map32_lift_top");
         }
 
@@ -493,16 +844,16 @@ namespace Spiritfire.Game.Testing
             Shot(cam, "map32_cache");
         }
 
-        // ───────────── 走路（沿 NavMesh 路径，用角色控制器真走）─────────────
+        // ───────────── 走路（沿导航路径，用角色控制器真走）─────────────
 
         /// <summary>
-        /// 沿 NavMesh 路径走到离 goal 水平 stopAt 米以内：逐个拐点用角色控制器 Move（螺旋岩台、横坡、俯射台坡都是真的），
-        /// 触发圈和视线由场地自己按真实位置判定；1.5 s 没有接近当前拐点就跳到拐点并记一次卡住（同 Map1x）。
-        /// breakOnCombat = 路上有场地开战就停下（交给 Fight）。路径不完整记一次。
+        /// 沿导航路径走到离 goal 水平 stopAt 米以内：逐个拐点用角色控制器 Move（东旋坡、链桥、栈道、西吊臂下跳都是真的），
+        /// 1.5 s 没有接近当前拐点就跳到拐点并记一次卡住。breakOnCombat = 路上有场地开战就停下（交给 Fight）。路径不完整记一次。
         /// </summary>
         IEnumerator Travel(Vector3 goal, float stopAt, bool breakOnCombat)
         {
             var corners = PathCorners(motor.transform.position, goal, out bool complete);
+            if (!complete && HopOffIsland(goal)) corners = PathCorners(motor.transform.position, goal, out complete);
             if (!complete)
             {
                 partialPaths++;
@@ -521,7 +872,30 @@ namespace Spiritfire.Game.Testing
             }
         }
 
-        /// <summary>不看导航网格、直线走过去（升降台台面不在导航网格上）</summary>
+        /// <summary>
+        /// 机器人被交战时的绕视线 / 包抄瞬移放到了没坡的 +1.3 m 台阶上（④ 炉坛、③ 风箱侧台：玩家单跳上得去，敌人的导航网格在那里是孤岛）：
+        /// 像玩家一样跳下来——在 2.5–8 m 内找一处到 goal 有完整路径、高差 ≤ 3 m 的导航点放下去；找到了就不算「路径不完整」
+        /// </summary>
+        bool HopOffIsland(Vector3 goal)
+        {
+            var walker = LavaField.WalkerFilter();
+            var p = motor.transform.position;
+            foreach (float r in new[] { 2.5f, 4f, 6f, 8f })
+                for (int k = 0; k < 12; k++)
+                {
+                    float a = k * 30f * Mathf.Deg2Rad;
+                    var q = p + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * r;
+                    if (!NavMesh.SamplePosition(q, out var hit, 1.5f, walker) || Mathf.Abs(hit.position.y - p.y) > 3f) continue;
+                    PathCorners(hit.position, goal, out bool ok);
+                    if (!ok) continue;
+                    hops++;
+                    Line($"  · 从 {p} 跳下台阶（导航孤岛）到 {hit.position}");
+                    Place(hit.position);
+                    return true;
+                }
+            return false;
+        }
+
         IEnumerator Walk(Vector3 target, float stopAt) => WalkTo(target, target, stopAt, false);
 
         IEnumerator WalkTo(Vector3 target, Vector3 goal, float stopAt, bool breakOnCombat)
@@ -555,7 +929,6 @@ namespace Spiritfire.Game.Testing
             }
         }
 
-        /// <summary>朝 goal 沿 NavMesh 走 maxStep 米（交战中追敌人用，不会走上孤立的台子）</summary>
         IEnumerator Step(Vector3 goal, float maxStep)
         {
             var corners = PathCorners(motor.transform.position, goal, out _);
@@ -584,7 +957,9 @@ namespace Spiritfire.Game.Testing
             complete = false;
             var list = new List<Vector3>();
             var walker = LavaField.WalkerFilter();
-            if (!NavMesh.SamplePosition(from, out var a, 4f, walker) || !NavMesh.SamplePosition(to, out var b, 4f, walker)) return list;
+            // 目标点（场地中心）可能在炉坛 / 风箱这种不进导航的东西里：先 4 m、再 8 m 找
+            if (!NavMesh.SamplePosition(from, out var a, 4f, walker)) return list;
+            if (!NavMesh.SamplePosition(to, out var b, 4f, walker) && !NavMesh.SamplePosition(to, out b, 8f, walker)) return list;
             var path = new NavMeshPath();
             NavMesh.CalculatePath(a.position, b.position, walker, path);
             complete = path.status == NavMeshPathStatus.PathComplete;
@@ -601,7 +976,7 @@ namespace Spiritfire.Game.Testing
             return complete ? len : len + 1000f;
         }
 
-        /// <summary>贴地放下玩家：只从头顶 2 m 往下找地面（悬炉、栈桥、井架不会接住人）</summary>
+        /// <summary>贴地放下玩家：只从头顶 2 m 往下找地面（链桥、栈桥、甲板都接得住）</summary>
         void Place(Vector3 p)
         {
             if (Physics.Raycast(p + Vector3.up * 2f, Vector3.down, out var hit, 8f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) p.y = hit.point.y + 0.05f;
@@ -611,7 +986,6 @@ namespace Spiritfire.Game.Testing
             if (cc) cc.enabled = true;
         }
 
-        /// <summary>眼睛到目标没被挡（终点 tolerance 米内的命中、或打到地标资产本身都算看到）</summary>
         static bool Visible(Vector3 from, Vector3 to, float tolerance, string landmark)
         {
             if (!Physics.Linecast(from, to, out var hit, Layers.WorldMask, QueryTriggerInteraction.Ignore)) return true;
