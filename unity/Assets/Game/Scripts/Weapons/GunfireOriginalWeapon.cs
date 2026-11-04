@@ -21,6 +21,7 @@ namespace Spiritfire.Game
             go.name = $"SK_Weapon_Gunfire{weaponId}";
             go.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             go.transform.localScale = new Vector3(-0.24f, 0.24f, 0.24f);
+            ShowRightHand(go);
             foreach (Transform child in go.transform)
             {
                 if (child.name.EndsWith("_Drop", StringComparison.Ordinal) || child.name.EndsWith("_Show", StringComparison.Ordinal))
@@ -33,6 +34,13 @@ namespace Spiritfire.Game
             sockets.weaponId = weaponId;
             if (!sockets.muzzle) sockets.muzzle = WeaponSockets.FindDeep(go.transform, WeaponSockets.Muzzle);
             return go;
+        }
+
+        public static void ShowRightHand(GameObject gun)
+        {
+            if (!gun) return;
+            foreach (Transform child in gun.transform)
+                if (child.name.EndsWith("_Left", StringComparison.Ordinal)) child.gameObject.SetActive(false);
         }
 
         public static void ApplyOriginalMaterials(string weaponId, GameObject gun)

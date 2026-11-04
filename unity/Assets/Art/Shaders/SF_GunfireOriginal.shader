@@ -197,8 +197,18 @@ Shader "Spiritfire/Gunfire/Original Character"
                     for (uint i = 0u; i < count; ++i)
                     {
                         Light light = GetAdditionalLight(i, input.positionWS);
-                        color += OriginalLight(normal, view, light.direction,
-                            light.color * light.distanceAttenuation * light.shadowAttenuation * _AdditionLightIntensity,
+                        uint lightIndex = GetPerObjectLightIndex(i);
+                        #if USE_STRUCTURED_BUFFER_FOR_LIGHT_DATA
+                            float4 lightPosition = _AdditionalLightsBuffer[lightIndex].position;
+                        #else
+                            float4 lightPosition = _AdditionalLightsPosition[lightIndex];
+                        #endif
+                        float3 lightVector = lightPosition.xyz - input.positionWS * lightPosition.w;
+                        float distanceSqr = max(dot(lightVector, lightVector), 0.000061);
+                        half3 direction = lightPosition.w > 0 ? lightVector * rsqrt(distanceSqr) : light.direction;
+                        half attenuation = lightPosition.w > 0 ? 1 - min(distanceSqr / (lightPosition.w * lightPosition.w), 1) : 1;
+                        color += OriginalLight(normal, view, direction,
+                            light.color * attenuation * light.shadowAttenuation * _AdditionLightIntensity,
                             diffuse, specular, roughness);
                     }
                 #endif

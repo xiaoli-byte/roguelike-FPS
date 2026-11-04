@@ -10,14 +10,16 @@ namespace Spiritfire.Game.Testing
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void StartReview()
         {
-            if (!Environment.GetCommandLineArgs().Contains("--gunfire-review", StringComparer.Ordinal)) return;
+            var args = Environment.GetCommandLineArgs();
+            bool extra = args.Contains("--gunfire-review-extra", StringComparer.Ordinal);
+            if (!extra && !args.Contains("--gunfire-review", StringComparer.Ordinal)) return;
             Application.runInBackground = true;
             var go = new GameObject("Gunfire Review Player");
             var runner = go.AddComponent<PlaytestRunner>();
-            runner.suite = "gunfireoriginal";
+            runner.suite = extra ? "gunfireextra" : "gunfireoriginal";
             string directory = Path.Combine(Environment.CurrentDirectory, "review");
             Directory.CreateDirectory(directory);
-            runner.resultPath = Path.Combine(directory, "result.txt");
+            runner.resultPath = Path.Combine(directory, extra ? "result-extra.txt" : "result.txt");
             runner.shotDir = directory;
             go.AddComponent<GunfireReviewPlayer>();
         }

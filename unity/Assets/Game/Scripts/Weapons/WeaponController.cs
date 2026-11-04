@@ -549,7 +549,10 @@ namespace Spiritfire.Game
             float pitch = def.recoilPitch * climb * k * UnityEngine.Random.Range(0.85f, 1.15f);
             float yaw = (def.recoilBias + UnityEngine.Random.Range(-1f, 1f) * def.recoilYaw) * k;
             motor.AddRecoil(pitch * RecoilScale * Mathf.Rad2Deg, yaw * RecoilScale * Mathf.Rad2Deg);
-            ViewFor(shownRig)?.Kick(def.kickBack * 0.76f * ViewKickScale * strength, def.kickRot * ViewKickScale * strength);
+            var view = ViewFor(shownRig);
+            var originalMotion = view ? view.GetComponent<GunfireOriginalMotion>() : null;
+            if (!originalMotion || !originalMotion.HasMotion)
+                view?.Kick(def.kickBack * 0.76f * ViewKickScale * strength, def.kickRot * ViewKickScale * strength);
             // 枪口火焰挂在第一人称枪模的 muzzle 挂点下（W3 / W4 提供挂点，火焰预设归 FX1）；没有 rig 时放在投到主相机的枪口位置。
             // 未满蓄的蓄力射击按 TS 0.5 + 0.5 × 强度减弱
             if (def.flash > 0)

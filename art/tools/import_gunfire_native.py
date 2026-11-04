@@ -32,6 +32,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", default="complete")
     parser.add_argument("--weapons", nargs="+", default=WEAPONS)
+    parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--normalize-only", action="store_true")
     args = parser.parse_args()
     if args.normalize_only:
@@ -68,7 +69,7 @@ def main() -> None:
     copied: list[Path] = []
     for source in sorted(selected):
         target = TARGET / source.relative_to(SOURCE)
-        if args.source != "complete" and target.exists():
+        if not args.overwrite and args.source != "complete" and target.exists():
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)

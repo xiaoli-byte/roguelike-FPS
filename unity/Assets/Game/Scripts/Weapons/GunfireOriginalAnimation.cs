@@ -134,6 +134,9 @@ namespace Spiritfire.Game
                 if ((name == "Reload" || name == "ForceSaving") && animator.name.EndsWith("_Left", System.StringComparison.Ordinal)) continue;
                 string state = name == "Fire" && animator.name.EndsWith("_Left", System.StringComparison.Ordinal) ? "LeftFire" : name;
                 if (name == "Fire" && weaponId == "1008") state = "1008_Fire";
+                if (name == "Fire" && weaponId == "1004") state = "1004_Fire01";
+                if (name == "Fire" && weaponId is "1003" or "1013" or "1014")
+                    state = animator.name.EndsWith("_Left", System.StringComparison.Ordinal) ? "1003_L_Fire02" : "1003_Fire02";
                 state = "Base Layer." + state;
                 float clipLength = 0;
                 foreach (var clip in animator.runtimeAnimatorController.animationClips)

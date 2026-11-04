@@ -31,7 +31,11 @@ namespace Spiritfire.Game
             if (!gun)
             {
                 gun = Place(place, def.prefab, rig.transform, Vector3.zero, PlayerFactory.ViewmodelScale);
-                if (original && gun) GunfireOriginalWeapon.ApplyOriginalMaterials(sourceId, gun);
+                if (original && gun)
+                {
+                    GunfireOriginalWeapon.ShowRightHand(gun);
+                    GunfireOriginalWeapon.ApplyOriginalMaterials(sourceId, gun);
+                }
             }
             if (!gun)
             {
@@ -51,7 +55,7 @@ namespace Spiritfire.Game
                 var muzzle = WeaponSockets.FindDeep(gun.transform, WeaponSockets.Muzzle);
                 if (muzzle)
                 {
-                    vm.hipOffset = new Vector3(def.prefab == "SK_Weapon_Gunfire1002" ? 0f : 0.2f, -0.13f, 0.6f) - rig.transform.InverseTransformPoint(muzzle.position);
+                    vm.hipOffset = new Vector3(0.2f, -0.13f, 0.6f) - rig.transform.InverseTransformPoint(muzzle.position);
                     vm.aimOffset = new Vector3(0, -0.08f, 0.65f) - rig.transform.InverseTransformPoint(muzzle.position);
                 }
                 rig.transform.localPosition = vm.hipOffset;
@@ -88,6 +92,7 @@ namespace Spiritfire.Game
                 }
             }
             else gun.GetComponent<GunfireOriginalAnimation>().Bind(rig.GetComponentInParent<WeaponController>());
+            if (!string.IsNullOrEmpty(sourceId)) rig.AddComponent<GunfireOriginalMotion>().Bind(sourceId, rig.GetComponentInParent<WeaponController>());
             PlayerFactory.SetLayer(rig, Layers.FirstPerson);
             rig.SetActive(def.id == hero.startWeapon);
             return vm;

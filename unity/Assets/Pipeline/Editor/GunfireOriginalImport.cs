@@ -5,6 +5,7 @@ using System.Linq;
 using Spiritfire.Game;
 using Spiritfire.Art.Editor.Levels;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -155,6 +156,8 @@ namespace Spiritfire.Art.Editor
             Directory.CreateDirectory("Assets/Resources/Gunfire/Animations");
             foreach (var animator in instance.GetComponentsInChildren<Animator>(true))
             {
+                if (!animator.runtimeAnimatorController && id is "1013" or "1014" && animator.name.EndsWith("_Left", StringComparison.Ordinal))
+                    animator.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<AnimatorController>($"{Root}/arts/artres/characters/weapons/1003/1003_dw.controller");
                 if (animator.runtimeAnimatorController is not AnimatorOverrideController sourceOverride) continue;
                 var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
                 sourceOverride.GetOverrides(overrides);
@@ -179,7 +182,7 @@ namespace Spiritfire.Art.Editor
                 ? new[] { "283121052", "291819121", "841820460" }.Select(media => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Resources/Gunfire/Audio/wwise_240364026_{media}.wav")).Where(a => a).ToArray()
                 : Array.Empty<AudioClip>();
             animation.reloadDetailClips = id == "1202"
-                ? new[] { "129416451", "380127794", "749669683" }.Select(media => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Resources/Gunfire/Audio/wwise_4209784489_{media}.wav")).Where(a => a).ToArray()
+                ? new[] { "250587956", "583867777", "605265383" }.Select(media => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Resources/Gunfire/Audio/wwise_161980014_{media}.wav")).Where(a => a).ToArray()
                 : Array.Empty<AudioClip>();
             var prefab = PrefabUtility.SaveAsPrefabAsset(instance, $"Assets/Resources/Gunfire/Weapons/{id}.prefab");
             int animators = prefab.GetComponentsInChildren<Animator>(true).Count(a => a.runtimeAnimatorController && a.avatar);

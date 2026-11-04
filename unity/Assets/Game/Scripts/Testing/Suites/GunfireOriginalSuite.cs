@@ -6,10 +6,14 @@ using static UnityEngine.Object;
 
 namespace Spiritfire.Game.Testing
 {
-    public sealed class GunfireOriginalSuite : PlaytestSuite
+    public class GunfireOriginalSuite : PlaytestSuite
     {
         public override string Id => "gunfireoriginal";
         public override string Scene => "Assets/Scenes/TestArena.unity";
+        protected virtual bool IncludeBase => true;
+        protected virtual bool IncludeExtra => false;
+        protected virtual WeaponDef Definition(string weaponId, string sourceId) => WeaponLibrary.Get(weaponId);
+        protected virtual void PrepareRigs(PlayerRig rig) { }
 
         protected override IEnumerator Steps()
         {
@@ -33,27 +37,56 @@ namespace Spiritfire.Game.Testing
             var pos = arena.playerSpawn ? arena.playerSpawn.position : arena.Center + Vector3.back * 12;
             var rot = arena.playerSpawn ? arena.playerSpawn.rotation : Quaternion.identity;
             var rig = PlayerFactory.Create(HeroLibrary.Get(HeroLibrary.DefaultHero), pos, rot);
+            PrepareRigs(rig);
             PlayerFactory.Bind(systems, rig);
             SystemsBootstrap.Setup();
             yield return null;
             rig.vitals.invulnerableUntil = Time.time + 9999;
-            foreach (var (weapon, source) in new[] { ("rifle", "1001"), ("smg", "1002"), ("revolver", "1202"), ("railgun", "1008"), ("sniper", "1106"), ("shotgun", "1301") })
-                yield return WeaponCase(rig, weapon, source);
+            if (IncludeBase)
+                foreach (var (weapon, source) in new[] { ("rifle", "1001"), ("smg", "1002"), ("revolver", "1202"), ("railgun", "1008"), ("sniper", "1106"), ("shotgun", "1301") })
+                    yield return WeaponCase(rig, weapon, source);
+            if (IncludeExtra)
+                foreach (var (weapon, source) in new[] { ("gf1003", "1003"), ("gf1004", "1004"), ("gf1005", "1005"), ("gf1006", "1006"), ("gf1009", "1009"), ("gf1010", "1010"), ("gf1013", "1013"), ("gf1014", "1014"), ("gf1101", "1101"), ("gf1102", "1102") })
+                    yield return WeaponCase(rig, weapon, source);
             rig.weapons.testFire = false;
             rig.weapons.testReload = false;
             rig.weapons.testAim = false;
         }
 
+        IEnumerator ProgrammaticCase(PlayerRig rig, string weaponId, string sourceId, FirstPersonViewmodel view)
+        {
+            var motion = view ? view.GetComponent<GunfireOriginalMotion>() : null;
+            if (!motion || !motion.HasMotion) yield break;
+            var wc = rig.weapons;
+            wc.testFire = true;
+            float start = Time.time;
+            while (motion.fireCount == 0 && Time.time - start < 5f) yield return null;
+            wc.testFire = false;
+            yield return new WaitForSeconds(0.12f);
+            var data = motion.source.motion;
+            bool hasLocalRecoil = data.MotionPositionRecoil.sqrMagnitude > 0 || data.MotionRotationRecoil.sqrMagnitude > 0;
+            Line($"{sourceId}：原后坐事件 {motion.fireCount}，位移={motion.RecoilPosition}，旋转={motion.RecoilRotation}，配置={data.MotionPositionRecoil}/{data.MotionRotationRecoil}");
+            if (motion.fireCount == 0) Fail($"{sourceId}：原运动没有收到开火事件");
+            if (hasLocalRecoil && motion.RecoilPosition.magnitude < 1e-6f && motion.RecoilRotation.magnitude < 1e-4f) Fail($"{sourceId}：原后坐没有驱动骨架");
+            if (!hasLocalRecoil) Line($"{sourceId}：原武器本地后坐为零，镜头配置={motion.source.camera.RecoilMax_X}/{motion.source.camera.RecoilMax_Y}");
+            Shot(rig.cam, $"original_{sourceId}_motion");
+        }
+
         IEnumerator WeaponCase(PlayerRig rig, string weaponId, string sourceId)
         {
             var wc = rig.weapons;
-            var def = WeaponLibrary.Get(weaponId);
+            var def = Definition(weaponId, sourceId);
             var instance = new WeaponInstance(def);
             wc.Give(instance);
             yield return new WaitForSeconds(0.7f);
             var view = wc.rigs.FirstOrDefault(r => r.weaponId == weaponId)?.view;
             var gun = WeaponRigParts.GunOf(view ? view.transform : null, def.prefab);
             var original = gun ? gun.GetComponent<GunfireOriginalAnimation>() : null;
+            if (gun)
+            {
+                int visibleHands = gun.transform.Cast<Transform>().Count(t => t.gameObject.activeSelf && (t.name.EndsWith("_Left") || t.name.EndsWith("_Right")));
+                if (visibleHands > 1) Fail($"{sourceId}：左右枪模同时显示 {visibleHands} 套");
+            }
             var characterMaterials = gun
                 ? gun.GetComponentsInChildren<Renderer>(true).SelectMany(r => r.sharedMaterials)
                     .Where(m => m && m.shader && m.shader.name == "Spiritfire/Gunfire/Original Character").Distinct().ToArray()
@@ -66,9 +99,12 @@ namespace Spiritfire.Game.Testing
                 bool emission = material.GetTexture("_EmissionMap") && material.GetColor("_EmissionColor").maxColorComponent > 0;
                 if (emission != material.IsKeywordEnabled("_EMISSION")) Fail($"{sourceId}：自发光变体不匹配 {material.name}");
             }
-            if (!original && sourceId is "1001" or "1106" or "1301")
+            var originalMotion = view ? view.GetComponent<GunfireOriginalMotion>() : null;
+            if (!originalMotion || !originalMotion.HasMotion) Fail($"{sourceId}：没有加载原运动配置");
+            if (sourceId is "1001" or "1106" or "1301" or "1005" or "1009")
             {
-                Line($"{sourceId}：原动画资源未提供，跳过原生动画验收，使用已验证的转换骨架");
+                Line($"{sourceId}：使用原程序化运动配置；该武器没有原 AnimationClip");
+                yield return ProgrammaticCase(rig, weaponId, sourceId, view);
                 yield break;
             }
             if (!original || original.weaponId != sourceId)
@@ -96,6 +132,9 @@ namespace Spiritfire.Game.Testing
             bool fireState = animators.Any(a =>
                 a.GetCurrentAnimatorStateInfo(0).IsName("Fire") || a.GetNextAnimatorStateInfo(0).IsName("Fire") ||
                 a.GetCurrentAnimatorStateInfo(0).IsName("1008_Fire") || a.GetNextAnimatorStateInfo(0).IsName("1008_Fire") ||
+                a.GetCurrentAnimatorStateInfo(0).IsName("1003_Fire02") || a.GetNextAnimatorStateInfo(0).IsName("1003_Fire02") ||
+                a.GetCurrentAnimatorStateInfo(0).IsName("1003_L_Fire02") || a.GetNextAnimatorStateInfo(0).IsName("1003_L_Fire02") ||
+                a.GetCurrentAnimatorStateInfo(0).IsName("1004_Fire01") || a.GetNextAnimatorStateInfo(0).IsName("1004_Fire01") ||
                 a.GetCurrentAnimatorStateInfo(0).IsName("ForceShot") || a.GetNextAnimatorStateInfo(0).IsName("ForceShot"));
             Line($"开火状态 Fire={fireState}，收到开火事件 {original.fireCount}，弹药 {instance.mag}，Fire哈希={Animator.StringToHash("Fire")}，时间倍率={Time.timeScale}，调用 {original.lastTrigger}；" + string.Join(" | ", animators.Select(a =>
             {
@@ -105,11 +144,12 @@ namespace Spiritfire.Game.Testing
             })));
             if (!fireState) Fail($"{sourceId}：开火没有进入原 Fire 状态");
             int muzzleParticles = original.GetComponentsInChildren<ParticleSystem>().Length;
-            bool fireLight = original.GetComponentsInChildren<Light>().Any(l => l.enabled);
+            var fireLights = original.GetComponentsInChildren<Light>(true);
+            bool fireLight = fireLights.Any(l => l.enabled);
             bool originalAudio = original.GetComponent<AudioSource>() && original.GetComponent<AudioSource>().isPlaying;
-            Line($"配套效果：枪口粒子 {muzzleParticles}，FireLight={fireLight}，原声播放={originalAudio}");
+            Line($"配套效果：枪口粒子 {muzzleParticles}，FireLight={fireLight}（节点 {fireLights.Length}），原声播放={originalAudio}");
             if (muzzleParticles == 0) Fail($"{sourceId}：原枪口粒子没有生成");
-            if (!fireLight) Fail($"{sourceId}：原 FireLight 没有闪烁");
+            if (fireLights.Length > 0 && !fireLight) Fail($"{sourceId}：原 FireLight 没有闪烁");
             if (original.shotClips.Length > 0 && !originalAudio) Fail($"{sourceId}：原枪声没有播放");
             Shot(rig.cam, $"original_{sourceId}_fire");
             yield return new WaitForSeconds(0.35f);
