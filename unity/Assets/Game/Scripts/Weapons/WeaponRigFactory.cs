@@ -44,6 +44,7 @@ namespace Spiritfire.Game
             }
             original = original && gun.GetComponent<GunfireOriginalAnimation>();
             var vm = rig.AddComponent<FirstPersonViewmodel>();
+            vm.sourceFacesForward = original;
             vm.hipOffset = def.viewHip + HipShift;
             vm.aimOffset = def.viewAim * PlayerFactory.ViewmodelScale;
             var profile = def.IsBlade ? null : HandlingProfile.For(def.id);

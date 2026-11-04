@@ -40,7 +40,12 @@ namespace Spiritfire.Game
         {
             if (!gun) return;
             foreach (Transform child in gun.transform)
-                if (child.name.EndsWith("_Left", StringComparison.Ordinal)) child.gameObject.SetActive(false);
+            {
+                if (!child.name.EndsWith("_Left", StringComparison.Ordinal)) continue;
+                child.gameObject.SetActive(true);
+                foreach (var renderer in child.GetComponentsInChildren<Renderer>(true))
+                    renderer.enabled = renderer.name.StartsWith("hero_fpp_", StringComparison.Ordinal);
+            }
         }
 
         public static void ApplyOriginalMaterials(string weaponId, GameObject gun)

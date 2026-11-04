@@ -78,12 +78,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 95126508818681447, guid: c54bdc91237153446b579590e47b76a2, type: 3}
       propertyPath: m_Controller
-      value: 
+      value:
       objectReference: {fileID: 22100000, guid: 42f233e0e6df91841976ed64e9a6745e, type: 2}
     - target: {fileID: 95320592835458227, guid: c54bdc91237153446b579590e47b76a2, type: 3}
       propertyPath: m_Controller
-      value: 
+      value:
       objectReference: {fileID: 22100000, guid: 79d12375fcd7f0c46b4688fabe6a0858, type: 2}
+    - target: {fileID: 137105912343260855, guid: c54bdc91237153446b579590e47b76a2, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137463395028392447, guid: c54bdc91237153446b579590e47b76a2, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: 3d0d821f816b0f74aa53666630915a1e, type: 2}
+    - target: {fileID: 137463395028392447, guid: c54bdc91237153446b579590e47b76a2, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137580109562975512, guid: c54bdc91237153446b579590e47b76a2, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137952854571839949, guid: c54bdc91237153446b579590e47b76a2, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: 3d0d821f816b0f74aa53666630915a1e, type: 2}
+    - target: {fileID: 137952854571839949, guid: c54bdc91237153446b579590e47b76a2, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114177930474251431, guid: c54bdc91237153446b579590e47b76a2, type: 3}
     - {fileID: 114294885792020211, guid: c54bdc91237153446b579590e47b76a2, type: 3}
@@ -120,7 +144,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38e3e64056a35504b864844065ef1a9b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.WeaponSockets
   weaponId: 1102
   muzzle: {fileID: 4003990542796797686}
@@ -141,7 +165,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 616ffe5d2a90fc74e9a875b1cbaed742, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Game::Spiritfire.Game.GunfireOriginalAnimation
   weaponId: 1102
   muzzlePrefab: {fileID: 6545714971039000763, guid: 8264a98d55f31db4ab532f9f1c786bf5, type: 3}
@@ -150,7 +174,7 @@ MonoBehaviour:
   reloadDetailClips: []
   fireCount: 0
   reloadCount: 0
-  lastTrigger: 
+  lastTrigger:
 --- !u!4 &4003990542796797686 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4901155395665742, guid: c54bdc91237153446b579590e47b76a2, type: 3}

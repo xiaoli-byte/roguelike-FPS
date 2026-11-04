@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1092105871539913, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1709254077376921, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
       propertyPath: m_Name
       value: 1013
@@ -54,8 +58,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 95681721672847880, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
       propertyPath: m_Controller
-      value: 
+      value:
       objectReference: {fileID: 9100000, guid: 534f98a2edaee454a9062e6a4c5036fa, type: 2}
+    - target: {fileID: 137433881075115309, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: a41ee14a2352a40448b0f94028cb5f8c, type: 2}
+    - target: {fileID: 137433881075115309, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137722550256369544, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: a41ee14a2352a40448b0f94028cb5f8c, type: 2}
+    - target: {fileID: 137722550256369544, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137751888446361502, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137993076962757715, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114817325062191328, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
     - {fileID: 114831874417830518, guid: 8bfff89f464df844b97d95543b366c1c, type: 3}
@@ -97,7 +125,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38e3e64056a35504b864844065ef1a9b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.WeaponSockets
   weaponId: 1013
   muzzle: {fileID: 2774381341177057341}
@@ -118,7 +146,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 616ffe5d2a90fc74e9a875b1cbaed742, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Game::Spiritfire.Game.GunfireOriginalAnimation
   weaponId: 1013
   muzzlePrefab: {fileID: 6545714971039000763, guid: 8264a98d55f31db4ab532f9f1c786bf5, type: 3}
@@ -127,4 +155,4 @@ MonoBehaviour:
   reloadDetailClips: []
   fireCount: 0
   reloadCount: 0
-  lastTrigger: 
+  lastTrigger:

@@ -156,7 +156,7 @@ namespace Spiritfire.Art.Editor
                 bool all = command == "all";
                 if (all || command == "sync") ArtSync.Sync(out errors);
                 if (command == "gunfire") GunfireWeaponImport.Run();
-                if (command == "gunfirenative") GunfireOriginalImport.Run();
+                if (command == "gunfirenative") GunfireOriginalImport.Run(args);
                 if (command == "buildgunfire") GunfirePlayerBuild.Run();
                 if (all || command == "scenes") ShowcaseSceneBuilder.BuildAll();
                 if (all || command == "capture") ReviewCapture.CaptureAll();

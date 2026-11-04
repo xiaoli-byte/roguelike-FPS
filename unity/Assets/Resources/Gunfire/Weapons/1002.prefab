@@ -86,12 +86,76 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 95126508818681447, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
       propertyPath: m_Controller
-      value: 
+      value:
       objectReference: {fileID: 22100000, guid: 92964cafd6d87d24da6b6c7dedf0d17f, type: 2}
     - target: {fileID: 95320592835458227, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
       propertyPath: m_Controller
-      value: 
+      value:
       objectReference: {fileID: 22100000, guid: a37f60c3b9bfcb04f84bedfe4e8ad473, type: 2}
+    - target: {fileID: 137405989028062321, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: a41ee14a2352a40448b0f94028cb5f8c, type: 2}
+    - target: {fileID: 137405989028062321, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137405989028062321, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137405989028062321, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value:
+      objectReference: {fileID: 2100000, guid: e5ef3af1da760dc40977b1448146b70a, type: 2}
+    - target: {fileID: 137681721672847880, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: 3d0d821f816b0f74aa53666630915a1e, type: 2}
+    - target: {fileID: 137681721672847880, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137681721672847880, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137681721672847880, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value:
+      objectReference: {fileID: 2100000, guid: e5ef3af1da760dc40977b1448146b70a, type: 2}
+    - target: {fileID: 137722550256369544, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: 3d0d821f816b0f74aa53666630915a1e, type: 2}
+    - target: {fileID: 137722550256369544, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137722550256369544, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137722550256369544, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value:
+      objectReference: {fileID: 2100000, guid: e5ef3af1da760dc40977b1448146b70a, type: 2}
+    - target: {fileID: 137952854571839949, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: a41ee14a2352a40448b0f94028cb5f8c, type: 2}
+    - target: {fileID: 137952854571839949, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137952854571839949, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137952854571839949, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value:
+      objectReference: {fileID: 2100000, guid: e5ef3af1da760dc40977b1448146b70a, type: 2}
     m_RemovedComponents:
     - {fileID: 114817325062191328, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
     - {fileID: 114831874417830518, guid: 270a98b7ca4e39640b57f4af90fc29c3, type: 3}
@@ -136,7 +200,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38e3e64056a35504b864844065ef1a9b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.WeaponSockets
   weaponId: 1002
   muzzle: {fileID: 3461481639684153393}
@@ -157,7 +221,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 616ffe5d2a90fc74e9a875b1cbaed742, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Game::Spiritfire.Game.GunfireOriginalAnimation
   weaponId: 1002
   muzzlePrefab: {fileID: 6545714971039000763, guid: 8264a98d55f31db4ab532f9f1c786bf5, type: 3}
@@ -166,4 +230,4 @@ MonoBehaviour:
   reloadDetailClips: []
   fireCount: 0
   reloadCount: 0
-  lastTrigger: 
+  lastTrigger:

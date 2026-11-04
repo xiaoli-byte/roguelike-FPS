@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Spiritfire.Art
 {
     /// <summary>
-    /// 第一人称枪模的姿态（W4；同 Three.js 版 src/weapons/Viewmodel.ts 的 update，幅度沿用它，跟随改成弹簧阻尼）。挂在 rig 上（相机下，枪模是子物体，枪管朝 −Z，所以 rig 绕 Y 转 180°）。
+    /// 第一人称枪模的姿态（W4；同 Three.js 版 src/weapons/Viewmodel.ts 的 update，幅度沿用它，跟随改成弹簧阻尼）。挂在 rig 上（相机下，枪模是子物体；旧枪模朝 −Z 时绕 Y 转 180°，原生骨架朝 +Z 时不转）。
     /// 每帧（LateUpdate）叠加，内部按 Three.js 相机空间约定算（x 右、y 上、z 朝后；rx + 枪口上抬、ry + 枪口左摆、rz + 右侧上翻），最后换成 Unity：
     ///   · 腰射 ↔ 开镜：<see cref="hipOffset"/> → <see cref="aimOffset"/>，按开镜程度的 smoothstep 混合；
     ///   · 呼吸、行走摆动（相位按水平速度累计，横摆 / 下沉 / 横滚，开镜收到 15%）；
@@ -24,6 +24,8 @@ namespace Spiritfire.Art
     public sealed class FirstPersonViewmodel : MonoBehaviour
     {
         public Vector3 hipOffset = new(0.224f, -0.19f, 0.42f);
+        /// <summary>原生模型已经朝 +Z，不再套用项目旧枪模的 180° 转向</summary>
+        public bool sourceFacesForward;
         /// <summary>开镜位置（相机局部坐标）；0 向量 = 不支持开镜混合</summary>
         public Vector3 aimOffset;
         /// <summary>鼠标滞后系数（Three.js 0.00042 / 像素）</summary>
@@ -264,11 +266,11 @@ namespace Spiritfire.Art
 
             var basePos = aimOffset != Vector3.zero ? Vector3.Lerp(hipOffset, aimOffset, a) : hipOffset;
             transform.localPosition = basePos + new Vector3(x, y, -z);
-            // Unity 相机空间：绕 +X 正转 = 枪口向下、绕 +Y 正转 = 枪口向右、绕 +Z 正转 = 右侧上翻；枪模绕 Y 转 180°（枪管朝 −Z）
+            // 项目旧枪模朝 −Z，需要转 180°；Gunfire 原生骨架朝 +Z，保留它的正向。
             transform.localRotation = Quaternion.AngleAxis(-rx * Mathf.Rad2Deg, Vector3.right) *
                                       Quaternion.AngleAxis(-ry * Mathf.Rad2Deg, Vector3.up) *
                                       Quaternion.AngleAxis(rz * Mathf.Rad2Deg, Vector3.forward) *
-                                      Quaternion.Euler(0, 180, 0);
+                                      Quaternion.Euler(0, sourceFacesForward ? 0 : 180, 0);
         }
 
         /// <summary>换弹姿态包络（同 TS reloadEnvelope）：进 0–15%，保持，82–100% 退出</summary>

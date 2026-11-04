@@ -8,9 +8,9 @@ import re
 import shutil
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / "art" / "source" / "_tmp" / "gunfire-native" / "complete" / "ExportedProject" / "Assets"
+SOURCE = ROOT / "art" / "source" / "_tmp" / "gunfire-native" / "all16" / "ExportedProject" / "Assets"
 TARGET = ROOT / "unity" / "Assets" / "Art" / "Original" / "Gunfire"
-WEAPONS = ["1001", "1002", "1202", "1008", "1106", "1301"]
+WEAPONS = ["1001", "1002", "1202", "1008", "1106", "1301", "1003", "1004", "1005", "1006", "1009", "1010", "1013", "1014", "1101", "1102"]
 GUID = re.compile(r"guid: ([0-9a-f]{32})")
 SKIP = {".cs", ".dll", ".asmdef", ".shader", ".shadergraph", ".shadervariants"}
 TEXT_SUFFIXES = {".meta", ".prefab", ".mat", ".anim", ".controller", ".overridecontroller", ".asset"}
@@ -30,7 +30,7 @@ def normalize_text_assets() -> None:
 def main() -> None:
     global SOURCE, WEAPONS
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source", default="complete")
+    parser.add_argument("--source", default="all16")
     parser.add_argument("--weapons", nargs="+", default=WEAPONS)
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--normalize-only", action="store_true")
@@ -47,6 +47,8 @@ def main() -> None:
             guid_paths[match.group(1)] = Path(str(meta)[:-5])
     queue = [SOURCE / "res" / "characters" / "weapons" / weapon / f"{weapon}.prefab" for weapon in WEAPONS]
     queue += [
+        SOURCE / "arts" / "artres" / "characters" / "heros" / "101" / "101Avatar.asset",
+        SOURCE / "arts" / "artres" / "characters" / "heros" / "101" / "101_SkinAvatar.asset",
         SOURCE / "res" / "effects" / "prefabs" / "common" / "1926_muzzle.prefab",
         SOURCE / "res" / "effects" / "prefabs" / "monster" / "bullet.prefab",
         *sorted((SOURCE / "res" / "soundma" / "wav" / "wpn" / "wpn_1202").glob("*.ogg")),
@@ -69,7 +71,7 @@ def main() -> None:
     copied: list[Path] = []
     for source in sorted(selected):
         target = TARGET / source.relative_to(SOURCE)
-        if not args.overwrite and args.source != "complete" and target.exists():
+        if not args.overwrite and args.source != "all16" and target.exists():
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)

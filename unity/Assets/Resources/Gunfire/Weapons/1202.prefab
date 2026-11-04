@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1220697728379336, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1709254077376921, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
       propertyPath: m_Name
       value: 1202
@@ -52,6 +56,58 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 137239265225482239, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: 3d0d821f816b0f74aa53666630915a1e, type: 2}
+    - target: {fileID: 137239265225482239, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137239265225482239, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137239265225482239, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value:
+      objectReference: {fileID: 2100000, guid: e5ef3af1da760dc40977b1448146b70a, type: 2}
+    - target: {fileID: 137350143044813081, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: a41ee14a2352a40448b0f94028cb5f8c, type: 2}
+    - target: {fileID: 137350143044813081, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137350143044813081, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137350143044813081, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value:
+      objectReference: {fileID: 2100000, guid: e5ef3af1da760dc40977b1448146b70a, type: 2}
+    - target: {fileID: 137463395028392447, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137573076885614623, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_Mesh
+      value:
+      objectReference: {fileID: 4300000, guid: 3d0d821f816b0f74aa53666630915a1e, type: 2}
+    - target: {fileID: 137573076885614623, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137573076885614623, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137573076885614623, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value:
+      objectReference: {fileID: 2100000, guid: e5ef3af1da760dc40977b1448146b70a, type: 2}
     m_RemovedComponents:
     - {fileID: 114177930474251431, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
     - {fileID: 114294885792020211, guid: cef6ec4aea8dd8e40933bcd21e8f6dc4, type: 3}
@@ -95,7 +151,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38e3e64056a35504b864844065ef1a9b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.WeaponSockets
   weaponId: 1202
   muzzle: {fileID: 3002856641505525019}
@@ -116,7 +172,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 616ffe5d2a90fc74e9a875b1cbaed742, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Spiritfire.Game::Spiritfire.Game.GunfireOriginalAnimation
   weaponId: 1202
   muzzlePrefab: {fileID: 6545714971039000763, guid: 8264a98d55f31db4ab532f9f1c786bf5, type: 3}
@@ -134,4 +190,4 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ce40f7c8314682a469ad65500b6548d0, type: 3}
   fireCount: 0
   reloadCount: 0
-  lastTrigger: 
+  lastTrigger:

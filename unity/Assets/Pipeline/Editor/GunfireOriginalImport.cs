@@ -19,8 +19,9 @@ namespace Spiritfire.Art.Editor
         static readonly HashSet<string> AlphaBlend = new() { "1faad54a41c7c0842b1735c6ba71dbd9" };
 
         [MenuItem("Spiritfire/Art/Import Native Gunfire Weapons")]
-        public static void Run()
+        public static void Run(string[] selected = null)
         {
+            selected = selected?.Where(id => id.All(char.IsDigit)).ToArray();
             string previousScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path;
             UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
             UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.SceneManagement.NewSceneSetup.EmptyScene);
@@ -45,7 +46,7 @@ namespace Spiritfire.Art.Editor
                     string name = Path.GetFileNameWithoutExtension(shot);
                     AssetDatabase.CopyAsset(shot.Replace('\\', '/'), $"Assets/Resources/Gunfire/Audio/{name}.ogg");
                 }
-                foreach (string id in Ids) BuildWeapon(id);
+                foreach (string id in selected is { Length: > 0 } ? selected : Ids) BuildWeapon(id);
                 CoreSceneBuilder.BuildDatabase();
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -153,6 +154,7 @@ namespace Spiritfire.Art.Editor
                 if (child.name.EndsWith("_Drop", StringComparison.Ordinal) || child.name.EndsWith("_Show", StringComparison.Ordinal))
                     child.gameObject.SetActive(false);
             foreach (var collider in instance.GetComponentsInChildren<Collider>(true)) UnityEngine.Object.DestroyImmediate(collider);
+            RestoreFirstPersonArms(instance);
             Directory.CreateDirectory("Assets/Resources/Gunfire/Animations");
             foreach (var animator in instance.GetComponentsInChildren<Animator>(true))
             {
@@ -190,6 +192,106 @@ namespace Spiritfire.Art.Editor
             int clips = prefab.GetComponentsInChildren<Animator>(true).Sum(a => a.runtimeAnimatorController ? a.runtimeAnimatorController.animationClips.Length : 0);
             Debug.Log($"[Gunfire] Native {id}: {animators} animators, {clips} clips, {renderers} skinned meshes, muzzle={(bool)sockets.muzzle}");
             UnityEngine.Object.DestroyImmediate(instance);
+        }
+
+        static void RestoreFirstPersonArms(GameObject weapon)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>($"{Root}/arts/artres/characters/heros/101/101_fpp.mat");
+            foreach (var renderer in weapon.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if (!renderer.name.StartsWith("hero_fpp_101_A_", StringComparison.Ordinal)) continue;
+                var mesh = AssetDatabase.LoadAssetAtPath<Mesh>($"{Root}/arts/artres/characters/heros/101/{renderer.name}.asset");
+                if (!mesh || !material)
+                    throw new InvalidOperationException($"Missing native first-person arm asset: {renderer.name}; mesh={(bool)mesh}, material={(bool)material}");
+                if (renderer.bones.Length == 0 || renderer.bones.Any(b => !b) || !renderer.rootBone) RestoreArmBones(renderer, mesh);
+                renderer.sharedMesh = mesh;
+                renderer.sharedMaterial = material;
+                renderer.gameObject.SetActive(true);
+                renderer.enabled = true;
+                renderer.updateWhenOffscreen = true;
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+            }
+        }
+
+        static bool RestoreReferenceArmBones(SkinnedMeshRenderer renderer, Transform home)
+        {
+            var source = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Gunfire/Weapons/1002.prefab");
+            var reference = source
+                ? source.GetComponentsInChildren<SkinnedMeshRenderer>(true).FirstOrDefault(r => r.name == renderer.name && r.rootBone && r.bones.Length > 0 && r.bones.All(b => b))
+                : null;
+            if (!reference)
+            {
+                Debug.LogWarning($"[Gunfire] No valid reference arm for {renderer.name}");
+                return false;
+            }
+            var referenceHome = reference.transform.parent;
+            if (!home.Find("Bip001"))
+            {
+                var referenceSkeleton = referenceHome.Find("Bip001");
+                if (!referenceSkeleton) return false;
+                var skeleton = UnityEngine.Object.Instantiate(referenceSkeleton, home, false);
+                skeleton.name = referenceSkeleton.name;
+                var animator = home.GetComponent<Animator>();
+                var referenceAnimator = referenceHome.GetComponent<Animator>();
+                if (animator && referenceAnimator) animator.avatar = referenceAnimator.avatar;
+            }
+            string Path(Transform bone)
+            {
+                string path = bone.name;
+                while (bone.parent && bone.parent != referenceHome)
+                {
+                    bone = bone.parent;
+                    path = bone.name + "/" + path;
+                }
+                return bone.parent == referenceHome ? path : null;
+            }
+            Transform FindBone(string path)
+            {
+                var direct = home.Find(path);
+                if (direct) return direct;
+                int separator = path.LastIndexOf('/');
+                return WeaponSockets.FindDeep(home, separator >= 0 ? path.Substring(separator + 1) : path);
+            }
+            var bones = reference.bones.Select(b => FindBone(Path(b))).ToArray();
+            var root = FindBone(Path(reference.rootBone));
+            if (!root || bones.Any(b => !b))
+            {
+                Debug.LogWarning($"[Gunfire] Cannot map reference arm {renderer.name}: {string.Join(", ", reference.bones.Where((b, i) => !bones[i]).Select(Path))}");
+                Debug.LogWarning($"[Gunfire] Actual {home.parent.name}/{home.name} children: {string.Join(" | ", home.GetComponentsInChildren<Transform>(true).Select(t => t.name))}");
+                return false;
+            }
+            renderer.bones = bones;
+            renderer.rootBone = root;
+            Debug.Log($"[Gunfire] Restored {bones.Length} reference arm bones for {renderer.name} under {home.name}");
+            return true;
+        }
+
+        static void RestoreArmBones(SkinnedMeshRenderer renderer, Mesh mesh)
+        {
+            var home = renderer.transform.parent;
+            if (!home) throw new InvalidOperationException($"No native arm home: {renderer.name}");
+            if (RestoreReferenceArmBones(renderer, home)) return;
+            var paths = new Dictionary<uint, string>();
+            string avatarText = File.ReadAllText($"{Root}/arts/artres/characters/heros/101/101Avatar.asset");
+            foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(avatarText, @"^\s*(\d+): (.+)$", System.Text.RegularExpressions.RegexOptions.Multiline))
+                if (uint.TryParse(match.Groups[1].Value, out uint hash)) paths[hash] = match.Groups[2].Value.Trim().Trim('\'');
+            string meshText = File.ReadAllText(AssetDatabase.GetAssetPath(mesh));
+            string hashes = System.Text.RegularExpressions.Regex.Match(meshText, @"m_BoneNameHashes: ([0-9a-f]+)").Groups[1].Value;
+            if (hashes.Length == 0 || hashes.Length % 8 != 0) throw new InvalidOperationException($"No native arm bone hashes: {renderer.name}");
+            var bones = new Transform[hashes.Length / 8];
+            for (int i = 0; i < bones.Length; i++)
+            {
+                uint hash = uint.Parse(hashes.Substring(i * 8, 8), System.Globalization.NumberStyles.HexNumber);
+                bones[i] = paths.TryGetValue(hash, out string path) ? home.Find(path) : null;
+                if (!bones[i]) throw new InvalidOperationException($"Missing native arm bone: {renderer.name}, hash={hash}, path={(paths.TryGetValue(hash, out path) ? path : "unknown")}, home={home.name}");
+            }
+            string rootHashText = System.Text.RegularExpressions.Regex.Match(meshText, @"m_RootBoneNameHash: (\d+)").Groups[1].Value;
+            uint rootHash = uint.Parse(rootHashText);
+            var root = paths.TryGetValue(rootHash, out string rootPath) ? home.Find(rootPath) : null;
+            if (!root) throw new InvalidOperationException($"Missing native arm root bone: {renderer.name}, hash={rootHash}");
+            renderer.bones = bones;
+            renderer.rootBone = root;
+            Debug.Log($"[Gunfire] Restored {bones.Length} native arm bones for {renderer.name} under {home.name}");
         }
 
         static void StripMissingScripts(GameObject go)

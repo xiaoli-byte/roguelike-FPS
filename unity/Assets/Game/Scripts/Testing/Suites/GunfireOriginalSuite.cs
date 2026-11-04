@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Linq;
 using Spiritfire.Art;
@@ -43,14 +44,48 @@ namespace Spiritfire.Game.Testing
             yield return null;
             rig.vitals.invulnerableUntil = Time.time + 9999;
             if (IncludeBase)
+            {
+                yield return ForwardHitCase(rig);
                 foreach (var (weapon, source) in new[] { ("rifle", "1001"), ("smg", "1002"), ("revolver", "1202"), ("railgun", "1008"), ("sniper", "1106"), ("shotgun", "1301") })
                     yield return WeaponCase(rig, weapon, source);
+            }
             if (IncludeExtra)
                 foreach (var (weapon, source) in new[] { ("gf1003", "1003"), ("gf1004", "1004"), ("gf1005", "1005"), ("gf1006", "1006"), ("gf1009", "1009"), ("gf1010", "1010"), ("gf1013", "1013"), ("gf1014", "1014"), ("gf1101", "1101"), ("gf1102", "1102") })
                     yield return WeaponCase(rig, weapon, source);
             rig.weapons.testFire = false;
             rig.weapons.testReload = false;
             rig.weapons.testAim = false;
+        }
+
+        IEnumerator ForwardHitCase(PlayerRig rig)
+        {
+            var wc = rig.weapons;
+            wc.Give(new WeaponInstance(WeaponLibrary.Get("smg")));
+            yield return new WaitForSeconds(0.7f);
+            var aim = wc.Aim;
+            var target = new GameObject("Gunfire Forward Hit Target");
+            target.layer = Layers.Character;
+            target.transform.SetPositionAndRotation(aim.position + aim.forward * 5, aim.rotation);
+            var box = target.AddComponent<BoxCollider>();
+            box.size = new Vector3(2, 2, 0.2f);
+            var health = target.AddComponent<Damageable>();
+            health.prop = true;
+            health.noReward = true;
+            int hits = 0;
+            float direction = -1;
+            health.Damaged += (info, result) =>
+            {
+                hits++;
+                direction = Vector3.Dot(info.direction, aim.forward);
+            };
+            wc.testFire = true;
+            float start = Time.time;
+            while (hits == 0 && Time.time - start < 5f) yield return null;
+            wc.testFire = false;
+            Line($"实际前方命中：次数={hits}，命中方向与视线点积={direction:F3}，目标剩余生命={health.health:F0}");
+            if (hits == 0 || direction < 0.99f) Fail("1002：实际射击没有命中前方目标");
+            Destroy(target);
+            yield return null;
         }
 
         IEnumerator ProgrammaticCase(PlayerRig rig, string weaponId, string sourceId, FirstPersonViewmodel view)
@@ -84,8 +119,21 @@ namespace Spiritfire.Game.Testing
             var original = gun ? gun.GetComponent<GunfireOriginalAnimation>() : null;
             if (gun)
             {
-                int visibleHands = gun.transform.Cast<Transform>().Count(t => t.gameObject.activeSelf && (t.name.EndsWith("_Left") || t.name.EndsWith("_Right")));
-                if (visibleHands > 1) Fail($"{sourceId}：左右枪模同时显示 {visibleHands} 套");
+                int visibleGunMeshes = gun.GetComponentsInChildren<SkinnedMeshRenderer>().Count(r => r.enabled && r.sharedMesh && !r.name.StartsWith("hero_fpp_", StringComparison.Ordinal));
+                int visibleLeftGunMeshes = gun.transform.Cast<Transform>().Where(t => t.name.EndsWith("_Left", StringComparison.Ordinal))
+                    .Sum(t => t.GetComponentsInChildren<SkinnedMeshRenderer>().Count(r => r.enabled && r.sharedMesh && !r.name.StartsWith("hero_fpp_", StringComparison.Ordinal)));
+                if (original && visibleLeftGunMeshes > 0) Fail($"{sourceId}：左侧枪模仍在显示 {visibleLeftGunMeshes} 个网格");
+                if (original)
+                {
+                    var arms = gun.GetComponentsInChildren<SkinnedMeshRenderer>().Where(r => r.name.StartsWith("hero_fpp_", StringComparison.Ordinal)).ToArray();
+                    Line($"{sourceId}：角色手臂 {arms.Length} 套，可见枪身网格 {visibleGunMeshes}");
+                    if (arms.Length < 2 || arms.Any(r => !r.enabled || !r.sharedMesh || r.bones.Length == 0 || r.bones.Any(b => !b)))
+                        Fail($"{sourceId}：原角色手臂网格或骨骼绑定不完整");
+                }
+                float forwardDot = Vector3.Dot(gun.transform.forward, rig.cam.transform.forward);
+                bool correctFacing = view.sourceFacesForward ? forwardDot > 0.99f : forwardDot < -0.99f;
+                Line($"{sourceId}：枪模与视线方向点积={forwardDot:F3}，原生正向={view.sourceFacesForward}");
+                if (!correctFacing) Fail($"{sourceId}：枪模朝向与源模型定义不符");
             }
             var characterMaterials = gun
                 ? gun.GetComponentsInChildren<Renderer>(true).SelectMany(r => r.sharedMaterials)
@@ -124,9 +172,10 @@ namespace Spiritfire.Game.Testing
             var probes = animators.Select(a => WeaponSockets.FindDeep(a.transform, "1102_Bone003") ?? WeaponSockets.FindDeep(a.transform, "Bip001 L Hand") ?? WeaponSockets.FindDeep(a.transform, "Bip001") ?? a.transform).ToArray();
             var restPositions = probes.Select(t => t.position).ToArray();
             var restRotations = probes.Select(t => t.rotation).ToArray();
+            int fireBefore = original.fireCount;
             wc.testFire = true;
             float fireStart = Time.time;
-            while (original.fireCount == 0 && Time.time - fireStart < 5f) yield return null;
+            while (original.fireCount <= fireBefore && Time.time - fireStart < 5f) yield return null;
             wc.testFire = false;
             yield return new WaitForEndOfFrame();
             bool fireState = animators.Any(a =>
