@@ -6,6 +6,7 @@ using Spiritfire.Game;
 using Spiritfire.Art.Editor.Levels;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Spiritfire.Art.Editor
 {
@@ -27,6 +28,13 @@ namespace Spiritfire.Art.Editor
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
                 ConfigureTextures();
                 ConfigureMaterials();
+                Directory.CreateDirectory("Assets/Resources/Gunfire/Materials");
+                foreach (string id in new[] { "1001", "1106", "1301" })
+                {
+                    string directory = id == "1301" ? "materials/" : "";
+                    AssetDatabase.CopyAsset($"{Root}/arts/artres/characters/weapons/{id}/{directory}{id}.mat", $"Assets/Resources/Gunfire/Materials/{id}.mat");
+                }
+                AssetDatabase.CopyAsset($"{Root}/arts/artres/characters/weapons/1301/materials/1.mat", "Assets/Resources/Gunfire/Materials/1301_shell.mat");
                 Directory.CreateDirectory("Assets/Resources/Gunfire/Weapons");
                 Directory.CreateDirectory("Assets/Resources/Gunfire/Effects");
                 Directory.CreateDirectory("Assets/Resources/Gunfire/Audio");
@@ -76,16 +84,40 @@ namespace Spiritfire.Art.Editor
                 if (!material) continue;
                 string source = File.ReadAllText(path);
                 string shaderId = source.Split(new[] { "m_Shader: {fileID: 4800000, guid: " }, StringSplitOptions.None).ElementAtOrDefault(1)?.Substring(0, 32);
-                bool isParticle = path.Contains("/arteffects/");
+                if (material.name.StartsWith("1926_", StringComparison.Ordinal))
+                {
+                    shaderId = material.name switch
+                    {
+                        "1926_muzzle_ray_01" => "32a99689008ccae42ac566b5574e59bc",
+                        "1926_muzzle_ring_01" or "1926_muzzle_ring_02" => "296b511ef18167e4991b7fd123944eff",
+                        "1926_muzzle_ring_03" => "d23f46ed29477cc409565f73a91be21f",
+                        "1926_muzzle_smoke_01" or "1926_trail_smoke_01" => "1faad54a41c7c0842b1735c6ba71dbd9",
+                        _ => shaderId,
+                    };
+                }
+                bool isParticle = path.Contains("/arteffects/") && material.name != "1926_ball_01";
                 material.shader = isParticle ? particle : character;
                 if (isParticle)
                 {
-                    material.SetFloat("_UseParticleTexture", ParticleGraph.Contains(shaderId) ? 1 : 0);
-                    material.SetFloat("_SrcBlend", AlphaBlend.Contains(shaderId) ? 5 : 1);
+                    bool dissolve = shaderId is "32a99689008ccae42ac566b5574e59bc" or "296b511ef18167e4991b7fd123944eff" or "1faad54a41c7c0842b1735c6ba71dbd9";
+                    bool uvAnimation = shaderId == "d23f46ed29477cc409565f73a91be21f";
+                    material.SetFloat("_EffectMode", uvAnimation ? 2 : dissolve ? 1 : 0);
+                    material.SetFloat("_UseParticleTexture", !dissolve && !uvAnimation && ParticleGraph.Contains(shaderId) ? 1 : 0);
+                    material.SetFloat("_SrcBlend", dissolve || uvAnimation ? 5 : 1);
                     material.SetFloat("_DstBlend", AlphaBlend.Contains(shaderId) ? 10 : 1);
+                    material.SetKeyword(new LocalKeyword(particle, "ENABLE_DISSOLVE_AMOUNT"), (dissolve || uvAnimation) && material.GetFloat("_EnableAlphaToDissolve") > 0.5f);
+                    material.SetKeyword(new LocalKeyword(particle, "ENABLE_COLOR_CONTROL_UV_AMOUNT"), dissolve && material.GetFloat("_EnableColorControlUV") > 0.5f);
                     material.SetFloat("_ZZWrite", 0);
                     material.SetFloat("_Cull", 0);
                     material.renderQueue = 3000;
+                }
+                else
+                {
+                    material.DisableKeyword("_METALLICGLOSSMAP");
+                    material.SetKeyword(new LocalKeyword(character, "_METALLICSPECGLOSSMAP"), material.GetTexture("_MetallicGlossMap"));
+                    material.SetKeyword(new LocalKeyword(character, "_OCCLUSIONMAP"), material.GetTexture("_OcclusionMap"));
+                    material.SetKeyword(new LocalKeyword(character, "_EMISSION"), material.GetTexture("_EmissionMap") && material.GetColor("_EmissionColor").maxColorComponent > 0);
+                    material.SetKeyword(new LocalKeyword(character, "_RECEIVE_SHADOWS_OFF"), material.GetFloat("_ReceiveShadows") == 0);
                 }
                 EditorUtility.SetDirty(material);
             }

@@ -54,6 +54,18 @@ namespace Spiritfire.Game.Testing
             var view = wc.rigs.FirstOrDefault(r => r.weaponId == weaponId)?.view;
             var gun = WeaponRigParts.GunOf(view ? view.transform : null, def.prefab);
             var original = gun ? gun.GetComponent<GunfireOriginalAnimation>() : null;
+            var characterMaterials = gun
+                ? gun.GetComponentsInChildren<Renderer>(true).SelectMany(r => r.sharedMaterials)
+                    .Where(m => m && m.shader && m.shader.name == "Spiritfire/Gunfire/Original Character").Distinct().ToArray()
+                : new Material[0];
+            if (characterMaterials.Length == 0) Fail($"{sourceId}：缺少原角色 Shader 材质");
+            foreach (var material in characterMaterials)
+            {
+                if (material.GetTexture("_MetallicGlossMap") != material.IsKeywordEnabled("_METALLICSPECGLOSSMAP")) Fail($"{sourceId}：金属贴图变体不匹配 {material.name}");
+                if (material.GetTexture("_OcclusionMap") != material.IsKeywordEnabled("_OCCLUSIONMAP")) Fail($"{sourceId}：遮蔽贴图变体不匹配 {material.name}");
+                bool emission = material.GetTexture("_EmissionMap") && material.GetColor("_EmissionColor").maxColorComponent > 0;
+                if (emission != material.IsKeywordEnabled("_EMISSION")) Fail($"{sourceId}：自发光变体不匹配 {material.name}");
+            }
             if (!original && sourceId is "1001" or "1106" or "1301")
             {
                 Line($"{sourceId}：原动画资源未提供，跳过原生动画验收，使用已验证的转换骨架");

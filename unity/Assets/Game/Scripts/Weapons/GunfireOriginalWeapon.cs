@@ -35,6 +35,20 @@ namespace Spiritfire.Game
             return go;
         }
 
+        public static void ApplyOriginalMaterials(string weaponId, GameObject gun)
+        {
+            var main = Resources.Load<Material>($"Gunfire/Materials/{weaponId}");
+            if (!main) return;
+            var shell = weaponId == "1301" ? Resources.Load<Material>("Gunfire/Materials/1301_shell") : null;
+            foreach (var renderer in gun.GetComponentsInChildren<Renderer>(true))
+            {
+                var materials = renderer.sharedMaterials;
+                for (int i = 0; i < materials.Length; i++)
+                    materials[i] = shell && materials[i] && materials[i].name.Contains("shell", StringComparison.OrdinalIgnoreCase) ? shell : main;
+                renderer.sharedMaterials = materials;
+            }
+        }
+
         public static void PlayMuzzle(Transform socket)
         {
             if (!socket) return;

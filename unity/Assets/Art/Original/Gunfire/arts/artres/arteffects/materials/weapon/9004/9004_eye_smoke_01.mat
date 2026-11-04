@@ -20,7 +20,7 @@ Material:
   m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties:
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -34,6 +34,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 94a1aacc7b2abe143866e7310cd17636, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParticleTexture:
@@ -50,13 +54,20 @@ Material:
     - _DissolveAmount: 0.01
     - _DissolveEdgeWidth: 0
     - _DstBlend: 1
+    - _EffectMode: 0
     - _EnableAlphaToDissolve: 0
+    - _EnableColorControlUV: 0
     - _EnableFog: 0
     - _EnableSoftParticle: 1
+    - _M1GlobalShaderPower: 1
+    - _MaskTexUVXSpeed: 0
+    - _MaskTexUVYSpeed: 0
     - _SoftPower: 1
     - _SoftRatio: 150
     - _SourceBlendMode: 5
     - _SrcBlend: 1
+    - _UVXSpeed: 0
+    - _UVYSpeed: 0
     - _UseParticleTexture: 0
     - _ZTest: 4
     - _ZZWrite: 0

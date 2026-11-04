@@ -26,12 +26,13 @@ namespace Spiritfire.Game
             rig.transform.SetParent(cam, false);
             GameObject gun = null;
             bool original = def.prefab.StartsWith("SK_Weapon_Gunfire", System.StringComparison.Ordinal);
-            if (original)
+            string sourceId = original ? def.prefab.Substring("SK_Weapon_Gunfire".Length) : null;
+            if (original) gun = GunfireOriginalWeapon.Instantiate(sourceId, rig.transform, PlayerFactory.ViewmodelScale);
+            if (!gun)
             {
-                string sourceId = def.prefab.Substring("SK_Weapon_Gunfire".Length);
-                gun = GunfireOriginalWeapon.Instantiate(sourceId, rig.transform, PlayerFactory.ViewmodelScale);
+                gun = Place(place, def.prefab, rig.transform, Vector3.zero, PlayerFactory.ViewmodelScale);
+                if (original && gun) GunfireOriginalWeapon.ApplyOriginalMaterials(sourceId, gun);
             }
-            if (!gun) gun = Place(place, def.prefab, rig.transform, Vector3.zero, PlayerFactory.ViewmodelScale);
             if (!gun)
             {
                 PlayerFactory.Kill(rig);
