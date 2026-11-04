@@ -58,7 +58,9 @@ write_plain() {
   fi
 }
 
-open=$(powershell -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"Name='Unity.exe'\" | Where-Object { \$_.CommandLine -match 'roguelike-FPS\\\\unity' -and \$_.CommandLine -notmatch 'batchmode' } | Measure-Object).Count")
+# 工程路径用通配（? 配 / 或 \）：反斜杠正则要经过 bash、PowerShell 两层转义，有的会话里会变成 '\u' 报错、计数恒为 0，
+# 编辑器开着也退回 batchmode 去抢工程锁；编辑器用正斜杠路径启动时，反斜杠正则也匹配不上
+open=$(powershell -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"Name='Unity.exe'\" | Where-Object { \$_.CommandLine -like '*roguelike-FPS?unity*' -and \$_.CommandLine -notmatch 'batchmode' } | Measure-Object).Count")
 if [ "$open" != "0" ]; then
   # 好几个会话共用一个编辑器：每个请求单独一个文件排队（queue/<毫秒时间戳>-<pid>-<随机数>.json），
   # 编辑器按文件名顺序一次处理一个、处理完只删自己那条。先写同目录的临时文件（不是 .json，编辑器不看）再改名，
