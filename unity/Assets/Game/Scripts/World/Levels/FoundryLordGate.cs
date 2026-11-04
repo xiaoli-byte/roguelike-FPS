@@ -26,6 +26,10 @@ namespace Spiritfire.Game
         public Transform clearChestPoint;
         [TextArea] public string lockedHint = "熔心魔将还在神范里沉睡——先肃清铸坊（肃清据点后它才会醒来）";
         public string wakeTitle = "神范台", wakeSub = "熔心魔将苏醒 · 守范之主在等你";
+        [Tooltip("解锁后目标栏写什么（3-4 复用：前往炉心殿 · 击败火麒麟）")]
+        public string wakeObjective = "前往神范台 · 击败熔心魔将";
+        [Tooltip("领主战结算后落本关的清关宝箱（3-4 是章末首领关、打完走胜利链：关掉）")]
+        public bool clearChest = true;
 
         /// <summary>首领关流程已启用</summary>
         public bool Unlocked { get; private set; }
@@ -71,7 +75,7 @@ namespace Spiritfire.Game
                 GameUI.Banner(wakeTitle, wakeSub, 3f);
                 if (encounter && encounter.arena) GameAudio.PlayAt("boss_roar", encounter.arena.BossSpawnPoint + Vector3.up * 3f, 0.55f, 0.6f);
             }
-            if (encounter && encounter.State == BossEncounter.Phase.Waiting) GameUI.SetObjective("前往神范台 · 击败熔心魔将");
+            if (encounter && encounter.State == BossEncounter.Phase.Waiting && !string.IsNullOrEmpty(wakeObjective)) GameUI.SetObjective(wakeObjective);
             if (Unlocking == null) return;
             try
             {
@@ -85,7 +89,14 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            if (Unlocked || !encounter || !encounter.arena) return;
+            if (Unlocked || !encounter) return;
+            // 有人绕过门槛直接开了战（调试命令 boss_qilin / 剧本调 Begin）：跟着解锁，不然停用的首领关流程停在预警里不出怪
+            if (encounter.State != BossEncounter.Phase.Waiting)
+            {
+                Unlock(false);
+                return;
+            }
+            if (!encounter.arena) return;
             var pv = PlayerVitals.Instance;
             if (!pv || pv.Dead || !GameStateMachine.IsPlaying || Time.time < hintAt) return;
             var feet = pv.transform.position;
@@ -95,7 +106,10 @@ namespace Spiritfire.Game
             GameUI.Toast(lockedHint, new Color(1f, 0.55f, 0.3f));
         }
 
-        void OnSettled(BossEncounter e) => SpawnClearChest();
+        void OnSettled(BossEncounter e)
+        {
+            if (clearChest) SpawnClearChest();
+        }
 
         /// <summary>清关宝箱：RunPlan 本关的 clearReward（3-3 = 秘卷），落在神范前，朝着玩家</summary>
         void SpawnClearChest()

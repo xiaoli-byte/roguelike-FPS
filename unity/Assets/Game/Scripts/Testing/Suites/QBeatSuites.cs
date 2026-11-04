@@ -69,6 +69,9 @@ namespace Spiritfire.Game.Testing
                 Fail("场景里没有火麒麟的 BossArena（先 bridge.sh level 3-4）");
                 yield break;
             }
+            // 3-4 v2：首领关要先肃清神道（FoundryLordGate 关着 BossEncounter）——直接解锁
+            var lordGate = enc ? FindObjectsByType<FoundryLordGate>(FindObjectsSortMode.None).FirstOrDefault(g => g && g.encounter == enc) : null;
+            if (lordGate) lordGate.Unlock(false);
             Teleport(motor, arena.PlayerEntryPoint);
             if (enc && enc.State == BossEncounter.Phase.Waiting)
             {

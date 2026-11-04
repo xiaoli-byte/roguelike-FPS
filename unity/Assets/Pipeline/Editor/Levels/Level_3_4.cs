@@ -9,10 +9,11 @@ using static Spiritfire.Art.Editor.Levels.Landform;
 namespace Spiritfire.Art.Editor.Levels
 {
     /// <summary>
-    /// 3-4 祝融炉心 · 火麒麟（docs/level-design/maps/3-4.md；V2 inferno-5 祝融炉心殿，D4 / D5；终章首领场）。
-    /// 关卡坐标 = 世界 XZ（米），北 = +Z，炉心殿地面 y = 0；熔池圆心 = 世界原点。地形 160 × 160 m（2 × 2 块），火山岩壁顶 y ≈ 30–34。
+    /// 3-4 祝融炉心 · 火麒麟（docs/level-design/maps/3-4.md；第三章 v2 第 5.4 节；终章首领场）。
+    /// 关卡坐标 = 世界 XZ（米），北 = +Z，炉心殿地面 y = 0；熔池圆心 = 世界原点。地形 160 × 320 m（2 × 4 块），火口壁顶 y ≈ 30–38。
     ///
-    ///   出生 · 铸神前殿（南侧 72 × 52 m 的玄武岩台地，三面是火山岩壁）：祝融像坐在南端的祭台上，东侧是补给营（SupplyCamp + SafeZone + 商店）；
+    ///   第三章 v2：圆殿、护城渠、桥原样；前殿缩成补给营，往南加一段沿火口壁盘下的祝融神道和两处守关（见 Level_3_4.Shrine.cs）：
+    ///   出生 · 火口南沿眺台（+24）→ 神道上段（路遇）→ ① 铜人神道（+14）→ 山门 → 神道下段 → ② 熔流闸口（+6）→ 补给营 · 铸神前殿（+1：祝融像、商店、安全区）
     ///   → 熔铁护城渠（东西横贯，熔岩面 y −0.6，渠床 −2.4）上唯一的一座桥（10 m 宽）；
     ///   → 门楼（SM_Tripo_InfernoGateway；开战后熔铁闸从地下升起封死）→ 祝融炉心殿：
     ///     直径 48 m 的圆殿（墙 = 现有的殿墙板 + 扶壁一圈，背后是 30 m 高的火山岩），殿心半径 7 m 的熔池（浅碟，熔岩面 y −0.1），
@@ -25,11 +26,12 @@ namespace Spiritfire.Art.Editor.Levels
     /// 第三章新模型暂缓（用户 2026-10-22，docs/art/ch3-kit.md）：吊鼎、锁扣是运行时程序几何，熔铁闸门、两段门楣（圆殿外壳）是白盒占位，
     /// 巨链用已发布的链环 SM_Prop_InfernoChainLink（关卡里摆一个停用的模板，运行时按链长实例化）。占位清单只提醒（PlaceholderPolicy.Warn）。
     /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、自举标记、补给营、首领场地（<see cref="BossArena"/> + <see cref="QilinFurnace"/>）、
-    /// 吊鼎与四个锁扣、首领关流程（<see cref="BossEncounter"/>，首领 boss_qilin，熔铁闸是它的门；3-4 是最后一关，打完走胜利链）。
+    /// 吊鼎与四个锁扣、首领关流程（<see cref="BossEncounter"/>，首领 boss_qilin，熔铁闸是它的门；3-4 是最后一关，打完走胜利链）；
+    /// 神道的两处必清场地（<see cref="EncounterSite"/> + <see cref="LevelObjective"/>）、路遇、熔岩洞藏宝，首领门槛（<see cref="FoundryLordGate"/>）。
     /// 生成：Spiritfire ▸ Levels ▸ Build 3-4 祝融炉心（或 bridge.sh level 3-4）。
     /// </summary>
     [LevelBuilder("3-4", ScenePath)]
-    public static class Level_3_4
+    public static partial class Level_3_4
     {
         public const string Dir = "Assets/Levels/L3_4_Zhurong";
         public const string ScenePath = "Assets/Scenes/L3_4_Zhurong.unity";
@@ -38,8 +40,8 @@ namespace Spiritfire.Art.Editor.Levels
         const string BossId = "boss_qilin";
 
         // ── 高度（世界 y）──
-        const float Base = 8f, HeightRange = 48f, RockTop = 30f;
-        static readonly Vector2 Origin = new(-80, -116), Size = new(160, 160);
+        const float Base = 8f, HeightRange = 56f, RockTop = 30f;
+        static readonly Vector2 Origin = new(-80, -276), Size = new(160, 320);
 
         // ── 炉心殿 ──
         const float HallR = 24f, RingR = 25.5f, FloorR = 27.5f, PoolR = 7f, PoolBed = 1.0f, PoolLava = -0.1f, TrackR = 20.8f;
@@ -66,16 +68,15 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 ShrineAt = new(0, 37.6f);
         const float ShrineScale = 0.9f;
 
-        // ── 门楼、桥、护城渠、前殿（南）──
+        // ── 门楼、桥、护城渠、护城渠南岸（南）──
         static readonly Vector2 GateC = new(0, -25.5f), GateHalf = new(5.5f, 3.5f);
         const float GateZ = -26.6f, BridgeHalfW = 5f, BridgeZ0 = -46.5f, BridgeZ1 = -27.5f;
         const float MoatZ0 = -45.5f, MoatZ1 = -28f, MoatBed = 2.4f, MoatLava = -0.6f;
-        static readonly Vector2 SouthC = new(0, -63), SouthHalf = new(36, 35);
-        static readonly Vector2 DaisC = new(0, -92), DaisHalf = new(8, 5);
-        const float DaisH = 1.0f, DaisSkirt = 4.5f;
+        /// <summary>护城渠一带（原前殿的北段，x ±36、z −52…−28）：渠、桥、南岸一条 6 m 的岸；再往南是补给营（+1，见 Shrine）</summary>
+        static readonly Vector2 ApronC = new(0, -40), ApronHalf = new(36, 12);
 
         // ── 标记 ──
-        static readonly Vector2 Spawn = new(-24, -84), Camp = new(16, -68), ForecourtN = new(0, -52);
+        static readonly Vector2 ForecourtN = new(0, -52);
         static readonly Vector2 BossSpawn = new(0, 11.5f), PlayerEntry = new(0, -19.5f), RewardAt = new(0, -12), ExitAt = new(0, 35f);
         const float ArenaRadius = 23.5f;
 
@@ -100,20 +101,33 @@ namespace Spiritfire.Art.Editor.Levels
             return new Vector2(Mathf.Max(dx, 0), Mathf.Max(dz, 0)).magnitude + Mathf.Min(Mathf.Max(dx, dz), 0);
         }
 
-        /// <summary>开阔区（殿内、神龛、门楼、桥 + 护城渠 + 前殿）的有符号距离：里面为负，岩壁从 0 开始起</summary>
-        static float Open(Vector2 p)
+        /// <summary>圆殿一带（殿内、神龛、门楼、桥 + 护城渠 + 南岸）的有符号距离：里面为负</summary>
+        static float HallOpen(Vector2 p)
         {
             // 殿墙那一圈（墙板 / 扶壁背面到 26.8 m）也是平地：墙立在地上，岩体从墙背后起
             float hall = p.magnitude - FloorR;
             float apse = BoxSdf(p, ApseC, ApseHalf);
             float gate = BoxSdf(p, GateC, GateHalf);
-            // 前殿：圆角 + 起伏的崖线（不是一个方坑）；护城渠一带保持直边
-            float south = BoxSdf(p, SouthC, SouthHalf - new Vector2(8, 8)) - 8f + Fbm(p, 16, 3, 7) * 2f * Smooth(-50f, -62f, p.y);
-            return Mathf.Min(Mathf.Min(hall, apse), Mathf.Min(gate, south));
+            float apron = BoxSdf(p, ApronC, ApronHalf - new Vector2(6, 6)) - 6f;
+            return Mathf.Min(Mathf.Min(hall, apse), Mathf.Min(gate, apron));
         }
 
-        /// <summary>可玩区（防越界 / 俯视图）：开阔区往岩壁里 2 m 以内算界内（岩壁 3–6 m 内陡升到 30 m，爬不上去，没有空气墙）</summary>
+        /// <summary>开阔区（圆殿一带 + 神道：台、路、坡、火口坑）的有符号距离：里面为负，岩壁从 0 开始起</summary>
+        static float Open(Vector2 p) => Mathf.Min(HallOpen(p), ShrineOpen(p));
+
+        /// <summary>可玩区（防越界 / 俯视图 / 软边界）：开阔区（含火口坑）往岩壁里 2 m 以内算界内（岩壁 3–4 m 内陡升到 30 m 以上，爬不上去，没有空气墙）</summary>
         static float Playable(Vector2 p) => 1 - Smooth(0, 2f, Open(p));
+
+        /// <summary>软边界：火狱主题</summary>
+        static LevelKit.BoundarySpec Bounds
+        {
+            get
+            {
+                var b = LevelKit.BoundarySpec.Default;
+                b.theme = "Inferno";
+                return b;
+            }
+        }
 
         /// <summary>点在第几条熔岩渠上（池外到窄桥内沿、窄桥外沿到殿墙这两段；不在渠上返回 0）</summary>
         static float ChannelMask(Vector2 p)
@@ -144,36 +158,34 @@ namespace Spiritfire.Art.Editor.Levels
             return best;
         }
 
-        /// <summary>祝融像祭台（1 m，四周 4.5 m 缓坡）的抬高；shrink 同上</summary>
-        static float DaisRaise(Vector2 p, float shrink) => DaisH * (1 - Smooth(0, DaisSkirt, BoxSdf(p, DaisC, DaisHalf) - shrink));
-
         static LevelKit.Sample Eval(Vector2 p)
         {
             var s = new LevelKit.Sample();
-            float d = Open(p);
+            float dHall = HallOpen(p), dShrine = ShrineOpen(p);
+            float d = Mathf.Min(dHall, dShrine);
             float r = p.magnitude;
             float h;
             if (d > 0)
             {
-                // 岩壁：靠殿的一侧 3 m 内陡升（殿墙背后的岩体），前殿一侧 4 m（崖），壁顶有起伏。
-                // 从贴着岩壁的台面高度起坡（祭台贴着凹室侧墙、祝融像祭台贴着南崖）：从 0 起的话台子和崖脚之间会夹出一道缝
+                // 岩壁：殿外 3 m、其余 4 m 内陡升，壁顶有起伏；从贴着岩壁的那片开阔区的顶面起坡（祭台、眺台、神道……），
+                // 不从 0 起——否则台子和崖脚之间会夹出一道缝
                 float w = Mathf.Lerp(4f, 3f, Smooth(-60f, -38f, p.y));
-                float top = RockTop + Fbm(p, 30, 3, 5) * 4f;
-                float foot = Mathf.Max(PlatRaise(p, d), DaisRaise(p, d));
+                float foot = Mathf.Max(PlatRaise(p, dHall) - 3f * (dHall - d), ShrineFoot(p, d));
+                float top = Mathf.Max(RockTop + Fbm(p, 30, 3, 5) * 4f, foot + 10f);
                 h = foot + (top - foot) * Mathf.Pow(Smooth(0, w, d), 0.7f);
                 s.rock = Smooth(0.2f, 1.2f, d);
             }
-            else
+            else if (dHall <= 0)
             {
                 h = 0;
                 bool south = p.y < MoatZ0;
-                if (south) h += Fbm(p, 14, 3, 2) * 0.12f * Smooth(0, 3, -d);
+                if (south) h += Fbm(p, 14, 3, 2) * 0.12f * Smooth(0, 3, -dHall);
                 // 熔池：浅碟，熔岩面 −0.1，池心 −1.0
                 float pool = 1 - Smooth(PoolR - 1.4f, PoolR, r);
                 h -= PoolBed * pool;
                 // 护城渠：东西横贯（桥除外），渠床 −2.4、南岸陡坎
                 float moat = 0;
-                if (p.y > MoatZ0 - 1f && p.y < MoatZ1 && BoxSdf(p, SouthC, SouthHalf) <= 0)
+                if (p.y > MoatZ0 - 1f && p.y < MoatZ1 && BoxSdf(p, ApronC, ApronHalf) <= 0)
                 {
                     moat = Smooth(MoatZ0, MoatZ0 + 0.7f, p.y);
                     float bridge = p.y > BridgeZ0 && p.y < BridgeZ1 ? 1 - Smooth(BridgeHalfW, BridgeHalfW + 0.6f, Mathf.Abs(p.x)) : 0;
@@ -189,13 +201,24 @@ namespace Spiritfire.Art.Editor.Levels
                 }
                 // 只在祭台 / 坡道上抬高（Max 到 0 会把熔池、护城渠挖下去的坑全部填平）
                 if (raise > 1e-3f) h = Mathf.Max(h, raise);
-                // 祝融像祭台（1 m，四周缓坡）
-                h += DaisRaise(p, 0);
+                // 补给营（+1）的缓坡伸到护城渠南岸：只在渠外抬
+                if (moat < 1e-3f && p.y < MoatZ0)
+                {
+                    float camp = ShrineHeight(p, out _, out _);
+                    if (camp > h) h = camp;
+                }
                 float channel = r < HallR + 1f ? ChannelMask(p) : 0;
                 s.fluid = Mathf.Max(Mathf.Max(Smooth(0.5f, 1f, pool), moat), channel);
                 s.shore = Mathf.Max(Smooth(PoolR + 1.2f, PoolR, r) * (1 - pool), 0);
                 bool inHall = r < HallR + 0.5f || BoxSdf(p, ApseC, ApseHalf) < 0 || BoxSdf(p, GateC, GateHalf) < 0 || (p.y > BridgeZ0 && Mathf.Abs(p.x) < BridgeHalfW);
                 s.packed = inHall ? 0.85f : 0.35f;
+            }
+            else
+            {
+                h = ShrineHeight(p, out float fluid, out float shore);
+                s.fluid = fluid;
+                s.shore = shore;
+                s.packed = ShrinePacked(p);
             }
             s.h = h + Base;
             return s;
@@ -229,25 +252,37 @@ namespace Spiritfire.Art.Editor.Levels
             var set = LevelKit.BuildTerrainSet(new LevelKit.TerrainSpec
             {
                 dir = Dir, name = Name, size = Size, origin = Origin, baseHeight = Base, heightRange = HeightRange,
-                heightRes = 257, splatRes = 256, tiles = new Vector2Int(2, 2), ground = LevelKit.Ground.Inferno, eval = Eval,
+                heightRes = 257, splatRes = 256, tiles = new Vector2Int(2, 4), ground = LevelKit.Ground.Inferno, eval = Eval,
             }, env);
+            // 远景：火口壁顶之上露出的玄武岩脊和火山锥（同 3-3 的章节远景）
+            LevelKit.Backdrop(LevelKit.BackdropFor(theme, Dir, Name, new Vector2(0, -100), -2f, 760, 7), env);
+            // 软边界（没有空气墙）：火口壁本身翻不上去，等值线外热风推回 + 兜底环
+            LevelKit.Boundary(Dir, Name, env, Playable, new Rect(Origin, Size), Bounds);
             LevelKit.Weather(env, theme, new Vector2(0.3f, 1f), 0.15f);
 
             var lava = BuildLava(env);
+            var shrineLava = BuildShrineLava(env);
             var hall = BuildHall(set, props);
             BuildPillars(set, props);
             BuildApse(set, props);
             var gate = BuildGate(props);
             BuildBridgeAndForecourt(set, props);
+            var shrine = BuildShrineProps(set, props);
             var furnace = BuildArena(set, markers, out var arena, out var exitPoint, out var rewardPoint);
             var cauldron = BuildCauldron(markers, furnace);
-            BuildEncounter(markers, arena, gate, exitPoint, rewardPoint);
+            var enc = BuildEncounter(markers, arena, gate, exitPoint, rewardPoint);
             var camp = BuildCamp(set, markers);
+            var sites = BuildShrineSites(set, markers);
+            sites.lordGate = BuildLordGate(enc, sites.objective);
+            (sites.knock1, sites.knock2, sites.sluice) = BuildShrineMarkers(set, markers, sites.site2, sites.geysers);
+            BuildShrineGuides(set, props);
+            BuildPerches(set, markers, shrine);
             BuildLights(env, furnace);
+            BuildShrineLights(set, env);
 
-            // 玩家在 Core 场景（L1）：这里只放出生标记 + 自举标记
-            var spawnAt = set.OnGround(Spawn.x, Spawn.y, 0.05f);
-            var spawnRot = Quaternion.LookRotation(Flat(new Vector3(0, 0, -26) - spawnAt));
+            // 玩家在 Core 场景（L1）：这里只放出生标记 + 自举标记；出生在火口南沿眺台，面朝北俯瞰整口火口和炉心殿
+            var spawnAt = set.OnGround(SpawnAt.x, SpawnAt.y, 0.05f);
+            var spawnRot = Quaternion.LookRotation(Flat(new Vector3(0, 0, -60) - spawnAt));
             var playerSpawn = new GameObject("PlayerSpawn").AddComponent<PlayerSpawn>();
             playerSpawn.transform.SetParent(markers, false);
             playerSpawn.transform.SetPositionAndRotation(spawnAt, spawnRot);
@@ -267,9 +302,10 @@ namespace Spiritfire.Art.Editor.Levels
             var rep = new LevelKit.Report();
             rep.Line("3-4 祝融炉心 · 验收");
             CheckGeometry(rep, set, lava, hall, furnace, cauldron, gate, camp);
-            LevelValidator.Run(Spec(set), rep); // 主线、坡度、视线 + L5 规则集（占位只提醒：第三章新模型暂缓）
+            CheckShrine(rep, set, shrineLava, shrine, sites, enc);
+            LevelValidator.Run(Spec(set), rep); // 主线、坡度、视线、节拍 + L5 规则集（占位只提醒：第三章 v2 新件到货前白盒）
             LevelKit.ValidateLava(rep);
-            CheckSceneContents(rep, scene);
+            CheckSceneContents(rep, scene, sites);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
             rep.Save($"{LevelKit.ReviewDir}/level_3-4_report.txt");
 
@@ -283,11 +319,11 @@ namespace Spiritfire.Art.Editor.Levels
                 {
                     LevelKit.Capture(cam, fpRig, "level_3-4", new[]
                     {
-                        ("Aerial", new Vector3(55, 110, -95), new Vector3(0, 0, -25), false),
-                        ("Map", new Vector3(0, 260, -34), new Vector3(0, 0, -33.9f), false),
-                        ("Spawn", E(Spawn), new Vector3(0, 6, -26), true),
-                        ("Camp", E(new Vector2(4, -64)), G(Camp, 1), false),
-                        ("Statue", E(new Vector2(-9, -79)), G(new Vector2(0, DaisC.y - 2f), 6f), false),
+                        ("Aerial", new Vector3(95, 130, -250), new Vector3(0, 0, -110), false),
+                        ("Map", new Vector3(0, 420, -100), new Vector3(0, 0, -99.9f), false),
+                        ("Spawn", E(SpawnAt), new Vector3(0, 8, -60), true),
+                        ("Camp", E(new Vector2(-8, -70)), G(CampAt, 1), false),
+                        ("Statue", E(new Vector2(-2, -60)), G(StatueAt, 8f), false),
                         ("Bridge", E(new Vector2(0, -50)), new Vector3(0, 6, -25), false),
                         ("Entry", E(PlayerEntry), ding, true),
                         ("Track", E(new Vector2(-14, -14)), G(new Vector2(14, 14), 2), false),
@@ -295,6 +331,15 @@ namespace Spiritfire.Art.Editor.Levels
                         ("LockWest", E(new Vector2(17, -8.5f)), new Vector3(-LockR, LockHeight, 0), false),
                         ("Apse", E(new Vector2(0, 14)), G(ShrineAt, 5), false),
                         ("Overlook", E(BalconyC + new Vector2(-0.6f, -0.6f)), ding, false),
+                        ("Roadside", E(new Vector2(13, -215)), G(new Vector2(27, -196), 3f), false),
+                        ("Site1", E(new Vector2(6.5f, -186.5f)), G(new Vector2(1, -150), 3f), true),
+                        ("Site1Terrace", E(new Vector2(-15, -147)), G(new Vector2(6, -172), 1f), false),
+                        ("LowerRoad", E(LandingAt), G(new Vector2(-14, -104), 0f), false),
+                        ("Site2", E(new Vector2(-23, -112.5f)), G(new Vector2(12, -100), 3f), true),
+                        ("Sluice", E(new Vector2(17.5f, -116)), G(new Vector2(-14, -96), 0f), false),
+                        ("Cave", E(new Vector2(-28, -118)), G(CacheAt, 1f), false),
+                        ("CampFromRamp", E(new Vector2(-13, -79)), new Vector3(0, 3, -30), false),
+                        ("CraterView", E(new Vector2(-9, -218.5f)), new Vector3(6, 2, -165), false),
                     });
                 }
                 finally
@@ -333,7 +378,7 @@ namespace Spiritfire.Art.Editor.Levels
                     name = "Molten Pool", center = new Vector3(0, PoolLava, 0), shape = LavaShape.Disc, size = new Vector2(PoolR, PoolR), depth = PoolBed + 0.5f,
                 }, root),
             };
-            float moatOut = SouthHalf.x + 2f, moatW = moatOut - BridgeHalfW;
+            float moatOut = ApronHalf.x + 2f, moatW = moatOut - BridgeHalfW;
             foreach (float sx in new[] { -1f, 1f })
                 l.moat.Add(LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
                 {
@@ -481,7 +526,7 @@ namespace Spiritfire.Art.Editor.Levels
             return gate;
         }
 
-        /// <summary>护城渠桥两侧的矮栏（拒马件）、桥头两座火坛；前殿：祝融像 + 祭台火坛、散放的玄武岩、锻摊货堆</summary>
+        /// <summary>护城渠桥两侧的矮栏（拒马件）、桥头两座火坛（祝融像、锻摊、货堆挪到补给营：见 Shrine）</summary>
         static void BuildBridgeAndForecourt(LevelKit.TerrainSet set, Transform props)
         {
             var root = new GameObject("Forecourt").transform;
@@ -491,24 +536,6 @@ namespace Spiritfire.Art.Editor.Levels
                 LevelKit.PlaceOrBox(BarricadeId, root, set.OnGround(sx * (BridgeHalfW - 0.4f), z, -0.05f), new Vector3(3.56f, 1.18f, 0.47f), 90f);
             foreach (float sx in new[] { -1f, 1f })
                 LevelKit.PlaceOrBox(AltarId, root, set.OnGround(sx * 8.5f, BridgeZ0 - 3.5f, -0.05f), new Vector3(1.13f, 2.36f, 1.15f), 0f);
-            // 祝融像：前殿南端的祭台上，面朝北（望着护城渠对岸的炉心殿）
-            float statueScale = 1.2f;
-            LevelKit.PlaceOrBox(StatueId, root, set.OnGround(DaisC.x, DaisC.y - 1.5f, -0.1f), new Vector3(7.8f, 15.4f, 6.8f) * statueScale, 0f, statueScale);
-            foreach (float sx in new[] { -1f, 1f })
-                LevelKit.PlaceOrBox(AltarId, root, set.OnGround(sx * 6f, DaisC.y + 3f, -0.05f), new Vector3(1.13f, 2.36f, 1.15f), 0f);
-            var rng = new System.Random(34);
-            foreach (var p in new[]
-                     {
-                         new Vector2(-32, -58), new Vector2(-31, -72), new Vector2(-30, -90), new Vector2(-18, -95), new Vector2(31, -56), new Vector2(32, -86),
-                         new Vector2(20, -95), new Vector2(-12, -60),
-                     })
-                LevelKit.PlaceOrBox(BasaltId, root, set.OnGround(p.x, p.y, -0.3f), new Vector3(2.6f, 2.9f, 2.4f), (float)rng.NextDouble() * 360f,
-                    0.8f + (float)rng.NextDouble() * 0.5f);
-            LevelKit.PlaceOrBox(StallId, root, set.OnGround(30, -76, -0.05f), new Vector3(2.6f, 3.5f, 1.6f), -90f);
-            LevelKit.PlaceOrBox(IngotId, root, set.OnGround(29, -63, -0.05f), new Vector3(2.2f, 1.5f, 1.8f), 200f);
-            LevelKit.PlaceOrBox(HoardId, root, set.OnGround(30, -81, -0.05f), new Vector3(2.3f, 1.7f, 1.6f), 250f);
-            LevelKit.PlaceOrBox(CrucibleId, root, set.OnGround(-16, -66, -0.05f), new Vector3(1.3f, 1f, 1.3f), 30f);
-            LevelKit.PlaceOrBox(CrucibleId, root, set.OnGround(-14.5f, -67.5f, -0.05f), new Vector3(1.3f, 1f, 1.3f), 110f);
         }
 
         // ───────────── 标记 ─────────────
@@ -642,7 +669,7 @@ namespace Spiritfire.Art.Editor.Levels
         static string Compass(float yaw) => (Mathf.RoundToInt(Mathf.Repeat(yaw, 360f) / 90f) % 4) switch { 0 => "N", 1 => "E", 2 => "S", _ => "W" };
 
         /// <summary>首领关流程：走过门楼进殿 → 熔铁闸升起封门 → 登场预警 2.5 s → 火麒麟从熔池跃出；拴绳 6 m；倒下 → 溃散 → 结算 → 最后一关：胜利链</summary>
-        static void BuildEncounter(Transform markers, BossArena arena, GameObject gate, Transform exitPoint, Transform rewardPoint)
+        static BossEncounter BuildEncounter(Transform markers, BossArena arena, GameObject gate, Transform exitPoint, Transform rewardPoint)
         {
             var go = new GameObject("Boss Encounter · 火麒麟");
             go.transform.SetParent(markers, false);
@@ -659,14 +686,15 @@ namespace Spiritfire.Art.Editor.Levels
             enc.tetherSlack = 6f;
             enc.exitPoint = exitPoint;
             enc.rewardPoint = rewardPoint;
+            return enc;
         }
 
-        /// <summary>铸神前殿补给营（B2 / R3）：前殿东侧，正面朝西（玩家从西南的出生点走来），商店弧排在中心东边 6.4 m；安全区半径 10 m</summary>
+        /// <summary>铸神前殿补给营（B2 / R3）：补给营台地中线偏东，正面朝西（玩家从 ② 的坡道由西南下来），商店弧排在中心东边 6.4 m；安全区半径 10 m（主线从里面穿过，到桥头）</summary>
         static SupplyCamp BuildCamp(LevelKit.TerrainSet set, Transform markers)
         {
             var go = new GameObject("SupplyCamp");
             go.transform.SetParent(markers, false);
-            go.transform.SetPositionAndRotation(set.OnGround(Camp.x, Camp.y), Quaternion.Euler(0, -90f, 0));
+            go.transform.SetPositionAndRotation(set.OnGround(CampAt.x, CampAt.y), Quaternion.Euler(0, -90f, 0));
             var zone = go.AddComponent<SafeZone>();
             zone.radius = 10f;
             zone.height = 6f;
@@ -723,10 +751,10 @@ namespace Spiritfire.Art.Editor.Levels
             Near("护城渠桥面", Y(new Vector2(0, -37)), 0, 0.3f);
             Near("门楼门洞", Y(new Vector2(0, GateZ)), 0, 0.3f);
             Near("神龛西祭台", Y(new Vector2(-PlatC.x, PlatC.y)), PlatH, 0.35f);
-            Near("前殿（补给营）", Y(Camp), 0, 0.5f);
-            float rockE = Y(new Vector2(30, 0)), rockS = Y(new Vector2(-20, -105));
-            if (rockE < 15f || rockS < 15f) rep.Fail($"岩壁不够高：殿外（30, 0）y = {rockE:F1}，前殿南崖线外 6 m（−20, −105）y = {rockS:F1}（应 ≥ 15，地形本身是边界）");
-            else rep.Line($"✓ 岩壁：殿外 y = {rockE:F1}，前殿南 y = {rockS:F1}");
+            Near("护城渠南岸（桥头）", Y(ForecourtN + new Vector2(0, 3)), 0, 0.5f);
+            float rockE = Y(new Vector2(30, 0)), rockS = Y(new Vector2(-44, -40));
+            if (rockE < 15f || rockS < 15f) rep.Fail($"岩壁不够高：殿外（30, 0）y = {rockE:F1}，护城渠西头外（−44, −40）y = {rockS:F1}（应 ≥ 15，地形本身是边界）");
+            else rep.Line($"✓ 岩壁：殿外 y = {rockE:F1}，护城渠西头外 y = {rockS:F1}");
             rep.Line($"熔岩：熔池 r {PoolR}（熔岩面 {PoolLava}）、护城渠桥两侧 {lava.moat.Count} 片 {(lava.moat.Count > 0 && lava.moat[0] ? $"{lava.moat[0].size.x:F0} × {lava.moat[0].size.y:F1}" : "?")} m（熔岩面 {MoatLava}）、" +
                      $"熔岩渠 {lava.channels.Count} 段（宽 {ChannelHalf * 2} m，齐地，岸壳 {ChannelShoreWidth} m）");
             if (lava.moat.Count != 2) rep.Fail($"护城渠应为桥两侧 2 片熔岩，现在 {lava.moat.Count}");
@@ -807,7 +835,7 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；另查 3-4 自己的件（BossArena + QilinFurnace、BossEncounter、SupplyCamp 各 1，吊鼎 1、锁扣 4，没有 ExitPortal）。顺带重新生成 GameDatabase</summary>
-        static void CheckSceneContents(LevelKit.Report rep, UnityEngine.SceneManagement.Scene scene)
+        static void CheckSceneContents(LevelKit.Report rep, UnityEngine.SceneManagement.Scene scene, ShrineSites sites)
         {
             rep.Line("— 场景内容（L1：只有环境和标记，玩家在 Core 场景）—");
             int Count<T>() where T : Component =>
@@ -834,50 +862,79 @@ namespace Spiritfire.Art.Editor.Levels
             var stage = RunPlan.ForScene(ScenePath);
             rep.Line($"RunPlan：{(stage != null ? $"{stage.code} {stage.Label}，最后一关 {(RunPlan.IsFinal(stage) ? "✓（打完走胜利链）" : "✗")}" : "（不在 RunPlan 里）")}");
             if (stage == null || !RunPlan.IsFinal(stage)) rep.Warn("3-4 不是 RunPlan 的最后一关：BossEncounter 打完会立出口（Boss Exit 点在神龛前）");
+            int objectives = Count<LevelObjective>(), lordGates = Count<FoundryLordGate>(), encSites = Count<EncounterSite>(), caches = Count<CachePOI>();
+            if (objectives != 1 || lordGates != 1 || encSites != 3 || caches != 1)
+                rep.Fail($"LevelObjective {objectives}（应 1）/ FoundryLordGate {lordGates}（应 1）/ EncounterSite {encSites}（应 3：①、②、路遇）/ CachePOI {caches}（应 1）");
+            else rep.Line("✓ 神道：LevelObjective ×1（①②）、FoundryLordGate ×1、EncounterSite ×3（①、②、路遇）、CachePOI ×1（熔岩洞）");
             if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1、BossArena / QilinFurnace / BossEncounter / SupplyCamp 各 1、吊鼎 1、锁扣 4，没有玩家 / 相机 / HUD / 会话");
             CoreSceneBuilder.BuildDatabase(rep);
         }
 
         /// <summary>
-        /// 交给 L5 规则集的声明：主线 出生 → 补给营 → 前殿北 → 桥中 → 门楼 → 入场点 → 东柱旁 → 神龛西祭台（坡道上去）→ 神龛前；
-        /// 坡度（两条祭台坡道、祝融像祭台）；地标视线（前殿望门楼、入场点望巨鼎 / 神龛、东象限隔熔池望西锁扣）；
-        /// 场地：补给营（缓冲）、炉心殿（≥ 4 处掩体、两层、要有坡道上得去的俯射层）；炉口召唤点按炭童查净空 / 有路；补给营的 7 个摊位按 ShopLayout 声明成交互点。
-        /// 可玩区 = 开阔区往岩壁里 2 m，岩壁 3–6 m 内升到 30 m（escapeMargin 3 m）；第三章新模型暂缓，占位只提醒
+        /// 交给 L5 规则集的声明：
+        ///   主线（关键路线，到入场点为止）：出生 · 眺台 → 神道上段 → ① 南口 → ① 中 → 山门 → 神道下段 → ② 西口 → ② 西桥 → ② 北岸 → 坡道 → 补给营 → 桥头 → 护城渠桥 → 门楼 → 入场点；
+        ///   殿内（入场点 → 东柱旁 → 神龛西祭台 → 神龛前）在 CheckGeometry 里单独查连通，不算进关键路线长度；
+        ///   节拍（S5 PacingCheck）：出生 → 路遇 → ① → 山门俯瞰 → 熔岩洞岔口 → ② → 补给营 → 首领；
+        ///   坡度（两条祭台坡道、祝融像祭台、牌坊台两阶、闸楼台两坡、② → 补给营坡道、两段神道）；
+        ///   地标视线（出生望炉心殿门楼 / 祝融像 / ①，山门望闸楼，② 望门洞，补给营望熔池，殿内原有几条）；
+        ///   场地：① ② 战斗场地（≥ 6 处全遮、3 层、要有坡 / 阶上得去的俯射层、CoverReach ≥ 80%、熔岩 ≤ 35%）、补给营（缓冲）、炉心殿（首领场，不查 CoverReach）；
+        ///   炉口召唤点按炭童查净空 / 有路；补给营的 7 个摊位按 ShopLayout 声明成交互点。
+        /// 可玩区 = 开阔区（含火口坑）往岩壁里 2 m，软边界兜底；第三章 v2 新件到货前白盒，占位只提醒
         /// </summary>
         static LevelSpec Spec(LevelKit.TerrainSet set)
         {
             Vector3 G(Vector2 q, float dy = 0) => set.OnGround(q.x, q.y, dy);
             var spec = new LevelSpec
                 {
-                    id = "3-4", title = "祝融炉心", playerSpawn = G(Spawn), bounds = new Rect(Origin, Size),
-                    playable = Playable, escapeMargin = 3f, placeholders = PlaceholderPolicy.Warn,
+                    id = "3-4", title = "祝融炉心", playerSpawn = G(SpawnAt), bounds = new Rect(Origin, Size),
+                    playable = Playable, escapeMargin = Bounds.EscapeMargin, placeholders = PlaceholderPolicy.Warn,
                     slopePaths =
                     {
                         new SlopePath { name = "神龛西祭台坡道", points = new[] { new Vector2(-RampFoot.x, RampFoot.y), new Vector2(-RampTop.x, RampTop.y) } },
                         new SlopePath { name = "神龛东祭台坡道", points = new[] { RampFoot, RampTop } },
-                        new SlopePath { name = "祝融像祭台", points = new[] { new Vector2(0, DaisC.y + DaisHalf.y + DaisSkirt + 0.5f), DaisC } },
+                        new SlopePath { name = "祝融像祭台", points = new[] { StatueAt + new Vector2(0, 9f), StatueAt + new Vector2(0, 3.5f) } },
                     },
                     sites =
                     {
-                        new SiteSpec { name = "铸神前殿补给营（缓冲）", center = G(Camp), size = 24, combat = false },
-                        new SiteSpec { name = "祝融炉心殿（首领场）", center = G(new Vector2(0, 2)), size = 60, minCover = 4, minLayers = 2, overlook = true },
+                        new SiteSpec
+                        {
+                            name = "① 铜人神道", center = G(Site1C + new Vector2(0, 2)), size = 44, minCover = 6, minLayers = 3, overlook = true, minCoverReach = 0.8f, maxLavaShare = 0.35f,
+                        },
+                        new SiteSpec
+                        {
+                            name = "② 熔流闸口", center = G(Site2C), size = 46, minCover = 6, minLayers = 3, overlook = true, minCoverReach = 0.8f, maxLavaShare = 0.35f,
+                        },
+                        new SiteSpec { name = "铸神前殿补给营（缓冲）", center = G(CampAt), size = 24, combat = false },
+                        new SiteSpec { name = "祝融炉心殿（首领场）", center = G(new Vector2(0, 2)), size = 60, minCover = 4, minLayers = 2, overlook = true, boss = true },
                     },
                 }
-                .Route("出生 · 前殿", G(Spawn)).Route("补给营", G(Camp + new Vector2(-4, 0))).Route("前殿北 · 桥头", G(ForecourtN))
+                .Route("出生 · 火口南沿眺台", G(SpawnAt)).Route("神道上段 · 拐弯", G(new Vector2(29, -201)))
+                .Route("① 南口", G(new Vector2(6, -183))).Route("① 神道中", G(new Vector2(0, -160))).Route("山门", G(new Vector2(GatehouseC.x, -142)))
+                .Route("神道下段", G(new Vector2(-15, -135.5f))).Route("神道下段 · 西头", G(new Vector2(-33, -124))).Route("② 西口", G(new Vector2(-24, -115)))
+                .Route("② 西桥", G(new Vector2(ChannelBridges[0], ChannelZ))).Route("② 北岸", G(new Vector2(-10, -90)))
+                .Route("② → 补给营坡道", G(new Vector2(-13, -76))).Route("补给营 · 商店前", G(CampAt + new Vector2(3, 0))).Route("护城渠南岸 · 桥头", G(ForecourtN))
                 .Route("护城渠桥", G(new Vector2(0, -37))).Route("门楼", G(new Vector2(0, -24))).Route("入场点", G(PlayerEntry))
-                .Route("东柱旁", G(new Vector2(15.5f, 6))).Route("神龛西祭台", G(new Vector2(-PlatC.x, PlatC.y))).Route("神龛前", G(ExitAt))
-                .Sight("前殿 → 门楼", G(ForecourtN + new Vector2(0, -4), 1.62f), new Vector3(0, 6f, -24.9f), 4, GatewayId)
+                .Sight("出生 → 炉心殿门楼", G(SpawnAt, 1.62f), new Vector3(0, 9f, -24.9f), 5, GatewayId)
+                .Sight("出生 → 补给营祝融像", G(SpawnAt, 1.62f), G(StatueAt, 12f), 5, StatueId)
+                .Sight("出生 → ① 山门（西城台）", G(SpawnAt, 1.62f), new Vector3(GatehouseC.x - 6f, Site1H + 8.5f, GatehouseC.y - GatehouseSize.z * 0.5f + 0.5f), 4, GatehouseId)
+                .Sight("山门 → ② 闸楼", G(LandingAt, 1.62f), G(SluiceTowerAt, 7f), 4, FurnaceId)
+                .Sight("② → 炉心殿门洞", G(new Vector2(-4, -88), 1.62f), new Vector3(0, 4.5f, -25.5f), 4, GatewayId)
+                .Sight("补给营 → 门洞后的熔池红光", G(new Vector2(0, -56), 1.62f), new Vector3(0, 0.6f, PoolR - 1f), 3)
+                .Sight("护城渠南岸 → 门楼", G(ForecourtN + new Vector2(0, -4), 1.62f), new Vector3(0, 6f, -24.9f), 4, GatewayId)
                 .Sight("入场点 → 巨鼎", G(PlayerEntry, 1.62f), new Vector3(0, HangHeight, 0), 3)
                 .Sight("入场点 → 神龛", G(PlayerEntry, 1.62f), G(ShrineAt, 6f), 5, ShrineId)
                 .Sight("东南象限 → 西锁扣（隔着熔池、从巨鼎旁边）", G(new Vector2(17, -8.5f), 1.62f), new Vector3(-LockR + 0.8f, LockHeight, 0), 3)
                 .Sight("东祭台观台 → 熔池（隔着北口）", G(BalconyC + new Vector2(-0.6f, -0.6f), 1.62f), new Vector3(0, 0.5f, PoolR - 1f), 2)
                 .Sight("西祭台观台 → 熔池（隔着北口）", G(new Vector2(-BalconyC.x + 0.6f, BalconyC.y - 0.6f), 1.62f), new Vector3(0, 0.5f, PoolR - 1f), 2);
+            foreach (var sl in Slopes) spec.slopePaths.Add(new SlopePath { name = sl.name, points = new[] { sl.foot, sl.top } });
+            foreach (var rd in Roads) spec.slopePaths.Add(new SlopePath { name = rd.name, points = rd.Points.ToArray(), maxSlope = 18f });
+            ShrineBeats(spec, (q, dy) => G(q, dy));
             for (int i = 0; i < 2; i++)
             {
                 var m = Ring((i == 0 ? -1 : 1) * FurnaceYaw, MouthR);
                 spec.anchors.Add(new AnchorSpec { name = $"炉口召唤点 {(i == 0 ? "西" : "东")}（炭童）", pos = G(new Vector2(m.x, m.z)), enemies = new[] { "tantong" } });
             }
-            var center = G(Camp);
+            var center = G(CampAt);
             var stations = ShopLayout.Build(center, -90f, 7, 3);
             for (int i = 0; i < stations.Count; i++)
                 spec.interactables.Add(new InteractSpec

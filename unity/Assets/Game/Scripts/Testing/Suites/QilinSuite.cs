@@ -171,6 +171,9 @@ namespace Spiritfire.Game.Testing
             int spawned0 = spawnedEvents;
             if (enc && enc.State == BossEncounter.Phase.Waiting)
             {
+                // 3-4 v2：首领关要先肃清神道（FoundryLordGate 关着 BossEncounter）——冒烟直接解锁（同 boss-warlord）
+                var lordGate = FindObjectsByType<FoundryLordGate>(FindObjectsSortMode.None).FirstOrDefault(g => g && g.encounter == enc);
+                if (lordGate) lordGate.Unlock(false);
                 Place(arena.PlayerEntryPoint);
                 Aim(motor, eye, arena.BossSpawnPoint + Vector3.up * 3f);
                 float t0 = Time.time;
