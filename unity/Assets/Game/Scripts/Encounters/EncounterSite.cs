@@ -21,6 +21,12 @@ namespace Spiritfire.Game
     ///   肃清：全部波次出完且全部死亡 → 横幅「区域肃清」→ Cleared 事件（宝箱由 LootDirector、目标图由 <see cref="LevelObjective"/> 处理）。
     ///   防卡：30 s 没有进展、只剩 ≤ 2 只时，把它们传送到玩家附近的合法站位。
     /// 旧场景里只有 Squad[] 编制（字段名 squads）的场地照常工作：按单波、原出场时间转成编排。
+    /// 出场方式（第三章 v2 S1，<see cref="SpawnMode"/>）：条目 Via 了某种方式、场地里有这种站位时：
+    ///   埋伏：玩家进到 <see cref="ArmRadius"/> 内就在埋伏站位上预生成、休眠（AI 停用、不索敌、不占出手名额，但打得到）；
+    ///         该波开波时整组苏醒（头顶「！」+ 吼），被打中提前唤醒整组、场地随之开战（休眠单位只在玩家走近、没有别处在交战时打得到）。休眠的不算全场同时在场上限（<see cref="DormantCount"/>）；
+    ///   余烬起身 / 熔岩爬出 / 飞临 / 跃下 / 增援门：预警换成各自的预告（<see cref="SpawnCues"/>），出场换成各自的位移（<see cref="SpawnEntrance"/>）；
+    ///   站位不合适（不是炭童却要余烬起身、找不到熔岩、没给跃下高点）时退回现身。出场记录带实际用的方式（<see cref="SpawnRecord.mode"/>）。
+    /// 路遇（<see cref="roadside"/>）：开战只弹一行提示、肃清不弹横幅。
     /// </summary>
     public sealed class EncounterSite : MonoBehaviour
     {
@@ -49,6 +55,8 @@ namespace Spiritfire.Game
             public Vector3 point, player;
             /// <summary>预警结束复检不过、换过点</summary>
             public bool relocated;
+            /// <summary>实际用的出场方式（站位不合适退回现身时是 Appear）</summary>
+            public SpawnMode mode;
         }
 
         public string title = "战场";
@@ -150,6 +158,11 @@ namespace Spiritfire.Game
         public static IReadOnlyList<EncounterSite> ActiveSites => active;
         static readonly List<EncounterSite> active = new();
 
+        /// <summary>全场正在休眠的埋伏单位（不算全场同时在场上限）</summary>
+        public static int DormantCount { get; private set; }
+        /// <summary>开局以来各出场方式实际出场的次数（测试、调试面板用；Play 进出清零）</summary>
+        public static readonly Dictionary<SpawnMode, int> ModeTally = new();
+
         const float WarnTime = 0.8f, HoldBackDelay = 2.5f, SightGrace = 2f, DeepFraction = 0.5f, RetryDelay = 0.25f;
         /// <summary>出生预警色（TS WARN_COLOR / ELITE_COLOR）</summary>
         static readonly Color WarnNormal = new(1f, 0.29f, 0.23f), WarnElite = new(1f, 0.76f, 0.2f);
@@ -158,6 +171,8 @@ namespace Spiritfire.Game
         static void ResetStatics()
         {
             active.Clear();
+            DormantCount = 0;
+            ModeTally.Clear();
             AnySiteCleared = null;
             AnyWaveStarted = null;
             AnySpawned = null;
@@ -170,6 +185,11 @@ namespace Spiritfire.Game
             public bool elite;
             public StationRole role;
             public SpawnMode mode;
+            /// <summary>选好点后实际用的出场方式与辅助点（入场点 / 熔岩冒出点 / 跃下高点 / 门后出生点）</summary>
+            public SpawnMode present;
+            public Vector3 aux;
+            public MonoBehaviour door;
+            public GameObject cue;
             public int lane, wave;
             public float warnAt, at;
             public bool warned, hasPos, elevated, relocated;
@@ -182,6 +202,33 @@ namespace Spiritfire.Game
 
         EncounterSpec run;
         readonly List<Pending> pending = new();
+
+        /// <summary>预生成的埋伏单位</summary>
+        sealed class Dormant
+        {
+            public EnemyAI ai;
+            public string id, affix;
+            public int wave;
+            public bool elite, woken, consumed;
+            public Transform anchor;
+        }
+
+        readonly List<Dormant> dormant = new();
+        readonly HashSet<MonoBehaviour> openedDoors = new();
+        bool armed;
+        /// <summary>预生成了几只埋伏单位（测试用）</summary>
+        public int ArmedCount => dormant.Count;
+        /// <summary>还在休眠的埋伏单位（测试用）</summary>
+        public int SleepingCount
+        {
+            get
+            {
+                int n = 0;
+                foreach (var d in dormant)
+                    if (!d.woken && d.ai && !d.ai.Dead) n++;
+                return n;
+            }
+        }
         readonly List<EnemyAI> alive = new();
         readonly List<SpawnRecord> records = new();
         readonly List<SpawnStations.Recent> recent = new();
@@ -201,6 +248,8 @@ namespace Spiritfire.Game
         {
             var pv = PlayerVitals.Instance;
             if (!pv || pv.Dead) return;
+            if (!armed && phase != Phase.Cleared) TryArm(pv.transform);
+            if (dormant.Count > 0) GuardDormant(pv.transform);
             switch (phase)
             {
                 case Phase.Idle:
@@ -215,7 +264,21 @@ namespace Spiritfire.Game
         void OnDisable()
         {
             active.Remove(this);
-            foreach (var p in pending) p.warning.FadeOut();
+            foreach (var p in pending)
+            {
+                p.warning.FadeOut();
+                if (p.cue) Destroy(p.cue);
+            }
+        }
+
+        void OnDestroy()
+        {
+            foreach (var d in dormant)
+                if (!d.woken)
+                {
+                    d.woken = true;
+                    DormantCount = Mathf.Max(0, DormantCount - 1);
+                }
         }
 
         // ───────────── 触发 ─────────────
@@ -283,7 +346,8 @@ namespace Spiritfire.Game
                 sub = !string.IsNullOrEmpty(first.hint) ? first.hint : null;
                 if (run.waves.Length > 1) sub = $"共 {run.waves.Length} 波" + (sub != null ? $" · {sub}" : "");
             }
-            GameUI.Banner(title, sub, 2f);
+            if (roadside) GameUI.Toast($"路遇 · {title}", new Color(1f, 0.78f, 0.45f), 2f);
+            else GameUI.Banner(title, sub, 2f);
             GameAudio.Play("wave_start");
             UpdateObjective();
             GameEvents.RaiseEncounterStarted(this);
@@ -322,7 +386,9 @@ namespace Spiritfire.Game
                     var role = SpawnStations.Resolve(e.role, def);
                     float arrival = e.arrivalDelay >= 0 ? e.arrivalDelay : SpawnStations.DefaultArrival(role);
                     bool hold = e.holdBack && !e.elite && e.count >= 3 && def != null && def.role == AttackTokens.Kind.Melee;
-                    for (int k = 0; k < e.count; k++)
+                    int already = e.via == SpawnMode.Ambush ? WakeFor(index, e) : 0;
+                    if (already > 0) hold = false;
+                    for (int k = already; k < e.count; k++)
                     {
                         bool late = hold && k == e.count - 1;
                         var r = late ? StationRole.Flank : role;
@@ -381,7 +447,7 @@ namespace Spiritfire.Game
                 if (!p.warned)
                 {
                     // 全场上限：已在场 + 本场地正在预警的
-                    if (EnemyRegistry.Count + warnedCount >= Mathf.Max(1, run.maxAlive))
+                    if (EnemyRegistry.Count - DormantCount + warnedCount >= Mathf.Max(1, run.maxAlive))
                     {
                         p.warnAt = now + RetryDelay;
                         continue;
@@ -405,6 +471,7 @@ namespace Spiritfire.Game
                 {
                     p.warning.FadeOut(); // 填满的预警撤不回（Cancel 只撤没填满的），直接淡出
                     p.warning = TelegraphHandle.None;
+                    if (p.cue) Destroy(p.cue);
                     p.warned = false;
                     p.relocated = true;
                     Relocations++;
@@ -438,10 +505,48 @@ namespace Spiritfire.Game
         void Warn(Pending p, float now)
         {
             p.warned = true;
-            p.at = Mathf.Max(p.at, now + WarnTime); // 慢帧跨过了预警时刻，屏幕上的预警也要给足
             var (r, _) = SpawnStations.BodySize(p.def, p.elite);
+            switch (p.present)
+            {
+                case SpawnMode.Ember:
+                    p.at = Mathf.Max(p.at, now + SpawnCues.EmberTime);
+                    p.cue = SpawnCues.EmberPile(p.pos, p.at - now);
+                    return;
+                case SpawnMode.LavaCrawl:
+                    p.at = Mathf.Max(p.at, now + SpawnCues.LavaTime);
+                    SpawnCues.LavaBubble(p.aux, Mathf.Max(1.2f, r + 0.4f), p.at - now);
+                    return;
+                case SpawnMode.FlyIn:
+                    p.at = Mathf.Max(p.at, now + SpawnCues.FlyTime);
+                    SpawnCues.FlyCry(p.aux);
+                    return;
+                case SpawnMode.Drop:
+                    // 露头 0.6 s 在 SpawnEntrance 里：这里马上生成到墙头
+                    p.at = Mathf.Max(p.at, now + 0.05f);
+                    return;
+                case SpawnMode.Gate:
+                    p.at = Mathf.Max(p.at, now + SpawnCues.GateTime);
+                    OpenDoor(p.door);
+                    SpawnCues.GateGlow(p.aux, 4f, p.pos - p.aux, p.at - now);
+                    return;
+            }
+            p.at = Mathf.Max(p.at, now + WarnTime); // 慢帧跨过了预警时刻，屏幕上的预警也要给足
             // 出生点提示（不伤人）：原色（精英金 / 普通红），不用危险配色
             p.warning = Telegraph.Circle(p.pos, Mathf.Max(1.1f, r + 0.3f), p.at - now, p.elite ? WarnElite : WarnNormal, TelegraphTone.Own);
+        }
+
+        /// <summary>增援门：同一扇门只开一次（MovingPlatform 收到第二次信号会开回去）</summary>
+        void OpenDoor(MonoBehaviour door)
+        {
+            if (!door || door is not IActivatable a || !openedDoors.Add(door)) return;
+            try
+            {
+                a.OnActivated(null, true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         // ───────────── 选点 ─────────────
@@ -468,8 +573,64 @@ namespace Spiritfire.Game
             p.pos = st.point;
             p.anchor = st.anchor;
             p.elevated = st.elevated;
+            ResolvePresent(p);
             recent.Add(new SpawnStations.Recent { pos = st.point, role = p.role, time = Time.time });
             return true;
+        }
+
+        /// <summary>
+        /// 选好站位后定实际的出场方式：站位是这种方式的才用；余烬起身只给炭童；熔岩爬出要找得到熔岩（站位的 entry，或站位外 3–8 m 的熔岩）；
+        /// 飞临只给会飞的（入场点 = entry，没给就从场地外侧 22 m、高 14 m 处来）；跃下要有 dropFrom；增援门的出生点 = gate（没给就是站位）
+        /// </summary>
+        void ResolvePresent(Pending p)
+        {
+            p.present = SpawnMode.Appear;
+            p.door = null;
+            if (p.mode == SpawnMode.Appear || p.mode == SpawnMode.Ambush || !p.anchor) return;
+            var a = p.anchor.GetComponent<SpawnAnchor>();
+            if (!a || a.mode != p.mode) return;
+            switch (p.mode)
+            {
+                case SpawnMode.Ember:
+                    if (p.id != null && p.id.StartsWith("tantong")) p.present = SpawnMode.Ember;
+                    return;
+                case SpawnMode.LavaCrawl:
+                    if (a.entry)
+                    {
+                        p.aux = a.entry.position;
+                        p.present = SpawnMode.LavaCrawl;
+                    }
+                    else if (LavaField.NearestLava(p.pos, 8f, out var lava, out _))
+                    {
+                        var out3 = lava - p.pos;
+                        out3.y = 0;
+                        p.aux = lava + (out3.sqrMagnitude > 0.01f ? out3.normalized * 2.5f : Vector3.zero);
+                        p.present = SpawnMode.LavaCrawl;
+                    }
+                    return;
+                case SpawnMode.FlyIn:
+                    if (p.def == null || !p.def.flying) return;
+                    if (a.entry) p.aux = a.entry.position;
+                    else
+                    {
+                        var outward = p.pos - transform.position;
+                        outward.y = 0;
+                        if (outward.sqrMagnitude < 0.01f) outward = -a.transform.forward;
+                        p.aux = p.pos + outward.normalized * 22f + Vector3.up * 14f;
+                    }
+                    p.present = SpawnMode.FlyIn;
+                    return;
+                case SpawnMode.Drop:
+                    if (!a.dropFrom) return;
+                    p.aux = a.dropFrom.position;
+                    p.present = SpawnMode.Drop;
+                    return;
+                case SpawnMode.Gate:
+                    p.aux = a.gate ? a.gate.position : p.pos;
+                    p.door = a.gateDoor;
+                    p.present = SpawnMode.Gate;
+                    return;
+            }
         }
 
         bool StillSafe(Pending p, Transform player) => SpawnStations.Safe(QueryFor(p, player.position, player.forward), p.pos, p.elevated, out _);
@@ -477,9 +638,18 @@ namespace Spiritfire.Game
         void Spawn(Pending p, Vector3 ppos)
         {
             lastProgress = Time.time;
+            if (p.cue) Destroy(p.cue);
             var look = ppos - p.pos;
             look.y = 0;
-            var ai = EnemyRoster.Spawn(p.id, p.pos, Quaternion.LookRotation(look.sqrMagnitude > 0.01f ? look : Vector3.forward), difficulty, p.elite,
+            bool swimmer = p.present == SpawnMode.LavaCrawl && IsSwimmer(p.def);
+            // 生成点：熔岩爬出生在熔岩里（地面预警的法阵落在熔岩下）、增援门生在门后；飞临 / 跃下先生在落点，再由 SpawnEntrance 挪到起点
+            var at = p.present switch
+            {
+                SpawnMode.LavaCrawl => p.aux,
+                SpawnMode.Gate => p.aux,
+                _ => p.pos,
+            };
+            var ai = EnemyRoster.Spawn(p.id, at, Quaternion.LookRotation(look.sqrMagnitude > 0.01f ? look : Vector3.forward), difficulty, p.elite,
                 new SpawnOptions { parent = transform, affix = p.affix });
             if (!ai)
             {
@@ -487,15 +657,239 @@ namespace Spiritfire.Game
                 UpdateObjective();
                 return;
             }
+            if (p.present != SpawnMode.Appear) SkipMaterialize(ai);
+            switch (p.present)
+            {
+                case SpawnMode.Ember:
+                    SpawnCues.EmberRise(p.pos);
+                    break;
+                case SpawnMode.LavaCrawl:
+                    if (swimmer) SpawnCues.LavaSplash(p.aux);
+                    else SpawnEntrance.Begin(ai, SpawnEntrance.Kind.Hop, AboveLava(p.aux), p.pos);
+                    break;
+                case SpawnMode.FlyIn:
+                    SpawnEntrance.Begin(ai, SpawnEntrance.Kind.Fly, p.aux, p.pos + Vector3.up * 2f);
+                    break;
+                case SpawnMode.Drop:
+                    SpawnEntrance.Begin(ai, SpawnEntrance.Kind.Jump, p.aux, p.pos);
+                    break;
+            }
             alive.Add(ai);
             ai.Removed += OnRemoved;
+            Tally(p.present);
             var rec = new SpawnRecord
             {
                 ai = ai, id = p.id, affix = p.affix, elite = p.elite, elevated = p.elevated, role = p.role, lane = p.lane, wave = p.wave,
-                anchor = p.anchor, point = p.pos, player = ppos, relocated = p.relocated,
+                anchor = p.anchor, point = p.pos, player = ppos, relocated = p.relocated, mode = p.present,
             };
             records.Add(rec);
             AnySpawned?.Invoke(this, rec);
+        }
+
+        static void Tally(SpawnMode m) => ModeTally[m] = (ModeTally.TryGetValue(m, out int n) ? n : 0) + 1;
+
+        /// <summary>熔岩生物（火鼍）：直接生在熔岩里潜游进场，不做上岸跃起</summary>
+        static bool IsSwimmer(EnemyDef def) => def != null && def.ai != null && typeof(ILavaDweller).IsAssignableFrom(def.ai);
+
+        /// <summary>熔岩面上方 0.4 m（熔岩系统只认脚底 0.3 m 内的算踩在熔岩里）</summary>
+        static Vector3 AboveLava(Vector3 p) => LavaField.TrySurfaceHeight(p, out float y) ? new Vector3(p.x, y + 0.4f, p.z) : p + Vector3.up * 0.4f;
+
+        /// <summary>不走「现身」的出场：显形溶解直接收尾（地面法阵已经发出去了，熔岩爬出 / 门后的那一个看不见）</summary>
+        static void SkipMaterialize(EnemyAI ai)
+        {
+            if (ai && ai.TryGetComponent(out SpawnMaterialize sm)) sm.enabled = false;
+        }
+
+        // ───────────── 埋伏（预生成、休眠、苏醒）─────────────
+
+        /// <summary>
+        /// 玩家进到 <see cref="ArmRadius"/> 以内、前置场地都肃清了：把各波 Via(Ambush) 的条目预生成在埋伏站位上并休眠。
+        /// 站位按角色对上优先、贴地的不站高台，同一站位多只时绕一圈散开；朝向 = 站位的 forward。没有埋伏站位的场地什么都不做
+        /// </summary>
+        void TryArm(Transform player)
+        {
+            if (armed) return;
+            var template = run ?? CurrentSpec();
+            if (template?.waves == null)
+            {
+                armed = true;
+                return;
+            }
+            var ambush = new List<Transform>();
+            if (anchors != null)
+                foreach (var t in anchors)
+                    if (t && SpawnAnchor.ModeOf(t) == SpawnMode.Ambush)
+                        ambush.Add(t);
+            bool any = false;
+            foreach (var w in template.waves)
+                if (w?.entries != null)
+                    foreach (var e in w.entries)
+                        any |= e != null && e.count > 0 && e.via == SpawnMode.Ambush;
+            if (ambush.Count == 0 || !any)
+            {
+                armed = true;
+                return;
+            }
+            if (Flat(player.position - transform.position) > ArmRadius || !RequirementsMet()) return;
+            armed = true;
+            var used = new Dictionary<Transform, int>();
+            for (int wi = 0; wi < template.waves.Length; wi++)
+            {
+                var w = template.waves[wi];
+                if (w?.entries == null || (phase == Phase.Active && wi < nextWave)) continue;
+                foreach (var e in w.entries)
+                {
+                    if (e == null || e.count <= 0 || e.via != SpawnMode.Ambush || string.IsNullOrEmpty(e.enemy)) continue;
+                    var def = EnemyRoster.Get(e.enemy);
+                    var role = SpawnStations.Resolve(e.role, def);
+                    for (int k = 0; k < e.count; k++)
+                    {
+                        var a = PickAmbushAnchor(ambush, used, def, role);
+                        if (!a) break;
+                        int n = used.TryGetValue(a, out int c) ? c : 0;
+                        used[a] = n + 1;
+                        var (_, _, elevated, spread) = SpawnAnchor.Read(a);
+                        var pos = a.position;
+                        if (n > 0)
+                        {
+                            float ang = n * 2.1f;
+                            pos += new Vector3(Mathf.Cos(ang), 0, Mathf.Sin(ang)) * Mathf.Max(1.4f, spread);
+                        }
+                        var face = a.forward;
+                        face.y = 0;
+                        string affix = SquadAffixes.Resolve(def, e.elite, e.affix, template.squadAffix, Rng);
+                        var ai = EnemyRoster.Spawn(e.enemy, pos, Quaternion.LookRotation(face.sqrMagnitude > 0.01f ? face.normalized : Vector3.forward), difficulty, e.elite,
+                            new SpawnOptions { parent = transform, affix = affix });
+                        if (!ai) continue;
+                        // 栖在柱顶 / 台沿的（高台站位）：生成器会把它吸到 4 m 内的导航网格上，这里放回站位
+                        if (elevated && def != null && def.flying) ai.transform.position = pos;
+                        SkipMaterialize(ai);
+                        ai.enabled = false;
+                        if (ai.Health) ai.Health.untargetable = true;
+                        var d = new Dormant { ai = ai, id = e.enemy, affix = affix, wave = wi, elite = e.elite, anchor = a };
+                        dormant.Add(d);
+                        DormantCount++;
+                        ai.Removed += OnDormantRemoved;
+                        if (ai.Health)
+                        {
+                            int wave = wi;
+                            ai.Health.Damaged += (_, _) => OnDormantHit(wave);
+                        }
+                    }
+                }
+            }
+        }
+
+        static Transform PickAmbushAnchor(List<Transform> ambush, Dictionary<Transform, int> used, EnemyDef def, StationRole role)
+        {
+            Transform best = null;
+            float bestScore = float.MinValue;
+            foreach (var a in ambush)
+            {
+                var (r, _, elevated, _) = SpawnAnchor.Read(a);
+                if (elevated && def != null && def.groundOnly) continue;
+                float s = -(used.TryGetValue(a, out int n) ? n : 0) * 3f;
+                if (r != StationRole.Auto) s += r == role ? 4f : -2f;
+                if (elevated) s += SpawnStations.RaisedRole(role) ? 2f : -1f;
+                if (s > bestScore)
+                {
+                    bestScore = s;
+                    best = a;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>开第 wave 波时：这一条目要几只，先从预生成的同种埋伏单位里认领（叫醒），返回认领了几只（不够的照常出场）</summary>
+        int WakeFor(int wave, WaveEntry e)
+        {
+            int got = 0;
+            foreach (var d in dormant)
+            {
+                if (got >= e.count) break;
+                if (d.consumed || d.wave != wave || d.id != e.enemy || d.elite != e.elite) continue;
+                d.consumed = true;
+                got++;
+                if (!d.woken) Wake(d);
+            }
+            return got;
+        }
+
+        /// <summary>休眠单位打得到的距离：玩家离场地中心 ≤ 触发半径 + 这么多米</summary>
+        const float WakeReach = 15f;
+
+        /// <summary>
+        /// 休眠的埋伏单位只在「这个场地能开战」时打得到：玩家离场地中心 ≤ 触发半径 + <see cref="WakeReach"/>、前置场地都肃清了、
+        /// 没有别的场地正在交战（同一时间只打一处）；其余时间不可选中（远处看得见、打不着，不会在别处交战时把这里提前叫醒）
+        /// </summary>
+        void GuardDormant(Transform player)
+        {
+            bool wakeable = phase != Phase.Cleared && Flat(player.position - transform.position) <= triggerRadius + WakeReach && RequirementsMet() && !OtherActive();
+            foreach (var d in dormant)
+                if (!d.woken && d.ai && !d.ai.Dead && d.ai.Health)
+                    d.ai.Health.untargetable = !wakeable;
+        }
+
+        bool OtherActive()
+        {
+            foreach (var s in active)
+                if (s && s != this)
+                    return true;
+            return false;
+        }
+
+        /// <summary>被打中：整组（同一波的埋伏单位）提前苏醒；场地还没开战就开战（别的场地正在交战时不叫醒，见 <see cref="GuardDormant"/>）</summary>
+        void OnDormantHit(int wave)
+        {
+            if (phase == Phase.Cleared || OtherActive()) return;
+            if (phase == Phase.Idle) Activate();
+            foreach (var d in dormant)
+                if (d.wave == wave && !d.woken)
+                    Wake(d);
+        }
+
+        void Wake(Dormant d)
+        {
+            d.woken = true;
+            DormantCount = Mathf.Max(0, DormantCount - 1);
+            var ai = d.ai;
+            if (!ai || ai.Dead) return;
+            ai.enabled = true;
+            if (ai.Health) ai.Health.untargetable = false;
+            SpawnCues.Wake(ai);
+            lastProgress = Time.time;
+            if (!alive.Contains(ai))
+            {
+                alive.Add(ai);
+                ai.Removed += OnRemoved;
+            }
+            Tally(SpawnMode.Ambush);
+            var rec = new SpawnRecord
+            {
+                ai = ai, id = d.id, affix = d.affix, elite = d.elite, elevated = SpawnAnchor.Read(d.anchor).elevated, role = SpawnStations.Resolve(StationRole.Auto, EnemyRoster.Get(d.id)),
+                lane = SpawnAnchor.Read(d.anchor).lane, wave = d.wave, anchor = d.anchor, point = ai.transform.position,
+                player = PlayerVitals.Instance ? PlayerVitals.Instance.transform.position : Vector3.zero, mode = SpawnMode.Ambush,
+            };
+            records.Add(rec);
+            AnySpawned?.Invoke(this, rec);
+        }
+
+        /// <summary>休眠中就死了（一下打死、掉出世界）：开战（它算在总数里）、记一只击杀</summary>
+        void OnDormantRemoved(EnemyAI ai)
+        {
+            foreach (var d in dormant)
+            {
+                if (d.ai != ai || d.woken) continue;
+                d.woken = true;
+                DormantCount = Mathf.Max(0, DormantCount - 1);
+                if (phase == Phase.Idle) Activate();
+                if (phase == Phase.Active)
+                {
+                    killed++;
+                    UpdateObjective();
+                }
+                return;
+            }
         }
 
         void OnRemoved(EnemyAI ai)
@@ -519,7 +913,8 @@ namespace Spiritfire.Game
             active.Remove(this);
             foreach (var p in pending) p.warning.FadeOut();
             pending.Clear();
-            GameUI.Banner("区域肃清", seconds: 2.5f);
+            if (roadside) GameUI.Toast($"{title} · 肃清", new Color(1f, 0.85f, 0.55f), 2f);
+            else GameUI.Banner("区域肃清", seconds: 2.5f);
             GameAudio.Play("stage_clear");
             GameUI.SetObjective("");
             Cleared?.Invoke(this);
@@ -576,6 +971,28 @@ namespace Spiritfire.Game
 
         /// <summary>还没出生的（排队 + 预警中）</summary>
         public int PendingCount => pending.Count;
+
+        /// <summary>调试：排队里第一只选不到点的原因（每个候选站位一句）；没有在排队的返回空串</summary>
+        public string ExplainStall(Vector3 player)
+        {
+            foreach (var p in pending)
+            {
+                if (p.warned) continue;
+                var q = QueryFor(p, player, Vector3.forward);
+                var want = SpawnStations.ModeFor(anchors, p.mode, out bool any);
+                var parts = new List<string>();
+                if (anchors != null)
+                    foreach (var t in anchors)
+                    {
+                        if (!t || !SpawnModes.Accepts(SpawnAnchor.ModeOf(t), want, any)) continue;
+                        var (_, _, elevated, _) = SpawnAnchor.Read(t);
+                        if (elevated && q.GroundOnly) continue;
+                        parts.Add($"{t.name}：{SpawnStations.Explain(q, t.position, elevated) ?? "可以"}");
+                    }
+                return $"{p.id}（{SpawnModes.Label(p.mode)} → 用{SpawnModes.Label(want)}站位）：{string.Join("；", parts)}";
+            }
+            return "";
+        }
 
         static float Flat(Vector3 v) => new Vector2(v.x, v.z).magnitude;
         static Vector3 Flat3(Vector3 v) => new(v.x, 0, v.z);

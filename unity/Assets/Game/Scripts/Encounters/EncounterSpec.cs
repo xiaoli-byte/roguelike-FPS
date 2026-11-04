@@ -287,7 +287,7 @@ namespace Spiritfire.Game
             var cand = new List<WaveEntry>();
             foreach (var e in w.entries)
             {
-                if (e == null || e.elite || e.count <= 0 || string.IsNullOrEmpty(e.enemy)) continue;
+                if (e == null || e.elite || e.count <= 0 || string.IsNullOrEmpty(e.enemy) || e.via == SpawnMode.Ambush) continue;
                 var def = EnemyRoster.Get(e.enemy);
                 if (def == null || def.rank != Rank.Normal) continue;
                 cand.Add(e);

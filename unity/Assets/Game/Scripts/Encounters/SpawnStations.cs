@@ -318,6 +318,24 @@ namespace Spiritfire.Game
             return Reachable(snapped, q.player, q.partialOk);
         }
 
+        /// <summary>调试：p 这个点为什么不能出生（能出生返回 null）——距离带 / 导航网格 / 身体放不下 / 走不到玩家</summary>
+        public static string Explain(Query q, Vector3 p, bool elevated)
+        {
+            float d0 = Flat(p - q.player).magnitude;
+            if (d0 < q.minDist - 2.5f || d0 > q.maxDist + 2.5f) return $"离玩家 {d0:F0} m（带 {q.minDist:F0}–{q.maxDist:F0}）";
+            if (!NavMesh.SamplePosition(p, out var hit, elevated ? 1.5f : 2.5f, LavaField.WalkerFilter())) return "附近没有导航网格";
+            var snapped = hit.position;
+            if (elevated && Mathf.Abs(snapped.y - p.y) > 1.2f) return "高台吸到台下";
+            float d = Flat(snapped - q.player).magnitude;
+            if (d < q.minDist || d > q.maxDist) return $"吸附后离玩家 {d:F0} m";
+            if (!BodyClear(snapped, q.def, q.elite)) return "身体放不下";
+            var filter = LavaField.WalkerFilter();
+            var goal = NavMesh.SamplePosition(q.player, out var near, 6f, filter) ? near.position : q.player;
+            if (!NavMesh.CalculatePath(snapped, goal, filter, path)) return $"算不出路（玩家导航点 {goal}）";
+            if (path.status != NavMeshPathStatus.PathComplete && !(q.partialOk && path.status == NavMeshPathStatus.PathPartial)) return $"路不完整（{path.status}，玩家导航点 {goal}）";
+            return null;
+        }
+
         /// <summary>
         /// 从出生点有路走到玩家（玩家可能站在网格外的箱子 / 台顶上：终点取离他最近的网格点）。
         /// 只查人形代理的网格（<see cref="LavaField.WalkerFilter"/>）：熔岩图里火鼍的网格和它叠在一起，不过滤会两头落在不同的网格上
