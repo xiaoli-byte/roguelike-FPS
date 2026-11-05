@@ -14,7 +14,9 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 3-3 的天：在第三章主题（暗紫靛烟天顶、贴地平线一窄条暖橙）上往参考图（user_ref_throne_of_fire_god.png）偏一点——
-        /// 暖橙烟雾天（地平线锐度 6、辉光 0.5，主题是 14 / 0.5：火神王座的盆地整片天都映着熔岩光，四周的岩和地仍是冷暗紫，冷暖对比在这里）、天顶带一点紫褐，环境光的地面一侧是熔岩盆地的暖反光；暗部仍是紫，不是死黑。
+        /// 地平线的暖橙烟雾带比主题宽（地平线锐度 6、辉光 0.5，主题是 14 / 0.5），天顶是带一点紫褐的靛紫；雾是暖一点的紫褐烟（远处的岩塔、岩峰隐进暖烟里，像参考图），
+        /// 近处的岩和地仍是主题的冷暗紫——冷暖对比在「近冷远暖」。王座视角的暖意再加上王座的局部调色（色温 +12、饱和 +10）和熔岩柱、圆环、熔渠；
+        /// 提亮靠熔岩点光和暖烟，不靠曝光。环境光的地面一侧是熔岩盆地的暖反光；暗部仍是紫，不是死黑。
         /// 主光 / 环境光的强弱跟主题一个思路：主光定阴影形状，环境光只托住暗部（明度要拉得开，不靠曝光提亮）。
         /// 2026-11-04 美术清理：以前是整片饱和红天（天顶 0.18/0.07/0.12、地平线 0.58/0.19/0.09、曝光 1.2）+ 橙色主光 + 红褐雾，非王座区一片浑红
         /// </summary>
@@ -22,10 +24,11 @@ namespace Spiritfire.Art.Editor.Levels
         {
             if (RenderSettings.skybox && RenderSettings.skybox.shader.name == "Spiritfire/SkyGradient")
             {
-                RenderSettings.skybox.SetColor("_TopColor", new Color(0.15f, 0.1f, 0.19f));
+                RenderSettings.skybox.SetColor("_TopColor", new Color(0.15f, 0.1f, 0.2f));
                 RenderSettings.skybox.SetColor("_HorizonColor", new Color(0.62f, 0.28f, 0.14f));
                 RenderSettings.skybox.SetColor("_BottomColor", new Color(0.12f, 0.08f, 0.12f));
-                RenderSettings.skybox.SetColor("_SunColor", new Color(0.85f, 0.5f, 0.3f));
+                // 烟里的太阳只是一团暗暖光晕（不是 HDR 白盘：抬头时它会是画面里最亮的东西，抢了怪）
+                RenderSettings.skybox.SetColor("_SunColor", new Color(0.22f, 0.13f, 0.08f));
                 RenderSettings.skybox.SetFloat("_HorizonSharpness", 6f);
                 RenderSettings.skybox.SetFloat("_HorizonGlow", 0.5f);
                 RenderSettings.skybox.SetFloat("_Exposure", 1f);
@@ -38,9 +41,9 @@ namespace Spiritfire.Art.Editor.Levels
             RenderSettings.ambientSkyColor = new Color(0.2f, 0.17f, 0.3f);
             RenderSettings.ambientEquatorColor = new Color(0.25f, 0.18f, 0.24f);
             RenderSettings.ambientGroundColor = new Color(0.38f, 0.19f, 0.11f);
-            RenderSettings.fogColor = new Color(0.24f, 0.16f, 0.21f);
-            RenderSettings.fogStartDistance = 45f;
-            RenderSettings.fogEndDistance = 340f;
+            RenderSettings.fogColor = new Color(0.3f, 0.18f, 0.21f);
+            RenderSettings.fogStartDistance = 40f;
+            RenderSettings.fogEndDistance = 320f;
         }
 
         static void ConfigureFireGodBackdrop(LevelKit.BackdropSpec backdrop)
@@ -167,12 +170,12 @@ namespace Spiritfire.Art.Editor.Levels
 
             var ringLight = LightAt(root, "FireGodThrone · 圆环光", FireGodRing, 6f, 48f);
             var fallLight = LightAt(root, "FireGodThrone · 熔瀑落点光", new Vector3(Basin.x, 4f, Basin.y), 10f, 55f);
-            // 王座区的亮度靠这几盏熔岩光（2026-11-04 美术清理：以前靠局部 Volume 把整片盆地曝光 +0.65 提亮，现在只比章节底色多 0.15，
+            // 王座区的亮度靠这几盏熔岩光（2026-11-04 美术清理：以前靠局部 Volume 把整片盆地曝光 +0.65 提亮，现在局部 Volume 不动曝光，跟章节底色一样，
             // 岩塔边缘、王座正面和三条熔渠的岸由点光照亮——亮的是熔岩照到的地方，暗部仍是大块暗剪影，和参考图一样）
-            LightAt(root, "FireGodThrone · 王座左轮廓光", new Vector3(139, 10, 199), 28f, 64f);
-            LightAt(root, "FireGodThrone · 王座右轮廓光", new Vector3(165, 12, 200), 28f, 64f);
-            LightAt(root, "FireGodThrone · 王座正面反光", new Vector3(152, 28, 190), 16f, 62f);
-            LightAt(root, "FireGodThrone · 塔顶逆光", new Vector3(152, 48, 211), 16f, 48f);
+            LightAt(root, "FireGodThrone · 王座左轮廓光", new Vector3(139, 10, 199), 40f, 66f);
+            LightAt(root, "FireGodThrone · 王座右轮廓光", new Vector3(165, 12, 200), 40f, 66f);
+            LightAt(root, "FireGodThrone · 王座正面反光", new Vector3(152, 28, 190), 24f, 64f);
+            LightAt(root, "FireGodThrone · 塔顶逆光", new Vector3(152, 48, 211), 22f, 50f);
             LightAt(root, "FireGodThrone · 南渠反光", new Vector3(152, 2, 140), 5.5f, 32f);
             LightAt(root, "FireGodThrone · 西渠反光", new Vector3(136, 2, 164), 5.5f, 32f);
             LightAt(root, "FireGodThrone · 东渠反光", new Vector3(168, 2, 164), 5.5f, 32f);
@@ -231,7 +234,7 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 王座区的局部调色（盆地 136 m 见方，边缘 48 m 渐变）：只做焦点强化——比章节底色暖一点、饱和一点（参考图的暖橙烟火），
-        /// 曝光只比章节底色（+0.25）多 0.15，亮度交给王座的熔岩点光（BuildFireGodThrone）；Bloom 阈值仍高于受光的岩面（只给熔岩柱、圆环、裂缝）。
+        /// 曝光不覆盖（跟章节底色一样 +0.25，先把曝光定死），亮度交给王座的熔岩点光（BuildFireGodThrone）；Bloom 阈值仍高于受光的岩面（只给熔岩柱、圆环、裂缝）。
         /// 2026-11-04 美术清理：以前 曝光 +0.65 / 饱和 +8 / 色温 +15 / Bloom 阈值 0.85、强度 1.25，盆地整片泛红光
         /// </summary>
         static void BuildFireGodGrade(Transform parent)
@@ -239,9 +242,9 @@ namespace Spiritfire.Art.Editor.Levels
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
             LevelKit.SaveAsset(profile, $"{Dir}/VP_FireGodThrone.asset");
             var color = profile.Add<ColorAdjustments>(true);
-            color.postExposure.Override(0.4f);
+            color.postExposure.overrideState = false;
             color.contrast.Override(26f);
-            color.saturation.Override(8f);
+            color.saturation.Override(10f);
             var white = profile.Add<WhiteBalance>(true);
             white.temperature.Override(12f);
             white.tint.Override(2f);

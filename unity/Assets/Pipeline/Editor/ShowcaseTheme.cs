@@ -35,6 +35,9 @@ namespace Spiritfire.Art.Editor
         public Color skyTop, skyHorizon, skyBottom;
         /// <summary>渐变天空的地平线锐度 / 地平线辉光（Spiritfire/SkyGradient 的默认值 2.5 / 0.4）：锐度越大，地平线色越贴着地平线、天顶色占得越多</summary>
         public float skyHorizonSharpness = 2.5f, skyHorizonGlow = 0.4f;
+        /// <summary>渐变天空里的太阳：颜色 = 主光色 × skySunTint，日面大小 / 光晕（Spiritfire/SkyGradient 的默认值 0.03 / 0.6）</summary>
+        public Color skySunTint = Color.white;
+        public float skySunSize = 0.03f, skySunHalo = 0.6f;
         public Color ambientSky, ambientEquator, ambientGround;
         public Color fogColor;
         public float fogStart, fogEnd;
@@ -145,11 +148,14 @@ namespace Spiritfire.Art.Editor
             //   明暗：一盏主光（1.45）定阴影形状，环境光只托住暗部（偏紫、不发黑），后处理对比 30 把明度拉开——崖面和背光面是大块暗部，受光的地、路是中间调，熔岩最亮。
             //   天：上部压成靛紫烟（天顶色占大半，地平线锐度 14），只有贴着地平线的一窄条泛暖橙；雾是暗紫暮色，50 → 340 m 把近、中、远三层拉开。
             //   以前是满屏同一个红褐：橙色主光 + 饱和红天 + 红褐雾 + 对比 40.8 / 饱和 +6 / 色温 +8.7 的后处理，色相和明暗全挤在中暗调。
-            sunColor = new(0.93f, 0.86f, 0.87f), sunIntensity = 1.45f, sunEuler = new(20, 30, 0),
+            // 主光仰角 38°（以前 20°：大半个地面压在长影里，路面的铜色出不来；3-2 / 3-3 / 3-4 各自另抬）
+            sunColor = new(0.93f, 0.86f, 0.87f), sunIntensity = 1.45f, sunEuler = new(38, 30, 0),
             // 天的混色在线性空间里做：地平线的暖橙比天顶亮一个数量级，锐度不够大的话一成的地平线色就把整片天染成红褐——
             // 所以地平线色压暗一档、锐度 14，暖色靠贴地平线的辉光（0.5）出一窄条；仰角 8° 以上就是靛紫烟
             gradientSky = true, skyTop = new(0.13f, 0.11f, 0.23f), skyHorizon = new(0.5f, 0.24f, 0.13f), skyBottom = new(0.1f, 0.075f, 0.12f), skyExposure = 1f,
             skyHorizonSharpness = 14f, skyHorizonGlow = 0.5f,
+            // 烟里的太阳只是一团暗暖的光晕：以前日面是主光色 × 6 的 HDR 白盘，一抬头就是画面里最亮、最跳的东西，抢了怪（composition.md 第 6 节）
+            skySunTint = new(0.2f, 0.16f, 0.14f), skySunSize = 0.05f, skySunHalo = 0.35f,
             ambientSky = new(0.18f, 0.17f, 0.3f), ambientEquator = new(0.2f, 0.17f, 0.24f), ambientGround = new(0.3f, 0.17f, 0.11f),
             fogColor = new(0.2f, 0.16f, 0.23f), fogStart = 50, fogEnd = 340,
             fireColor = new(1f, 0.45f, 0.15f), fireIntensity = 9f,
@@ -157,7 +163,7 @@ namespace Spiritfire.Art.Editor
             // 色温往冷、色调往品红一点（暗部偏紫），提升一点黑位（暗部是紫灰，不是死黑）；Bloom 阈值 1.05——只有 HDR 自发光（熔岩、火盆、灯）过阈值
             postExposure = 0.25f, contrast = 30f, saturation = 4f, temperature = -4f, tint = 3, lift = 0.01f, gamma = 0, gain = 0, fpExposure = 2, fpGamma = 1.08f, fpEffects = 1.1f, fpEffectsSaturation = 1, fpFlash = 1, bloomTint = new(1f, 0.78f, 0.55f),
             bloomIntensity = 0.55f, bloomThreshold = 1.05f, vignette = 0.22f,
-            groundA = new(0.2f, 0.18f, 0.23f), groundB = new(0.3f, 0.26f, 0.3f), groundShadowTint = new(0.52f, 0.48f, 0.8f),
+            groundA = new(0.2f, 0.18f, 0.23f), groundB = new(0.3f, 0.26f, 0.3f), groundShadowTint = new(0.55f, 0.5f, 0.74f),
             groundPattern = GroundPattern.LavaCracks,
         };
 

@@ -304,7 +304,7 @@ namespace Spiritfire.Art.Editor.Levels
                         float blot = Fbm(u, v, 2, seed + 4, 2);
                         c = Color.Lerp(p.a, p.b, Smooth(0.2f, 0.8f, Hash(ix, iy, seed + 7) * 0.6f + blot * 0.4f));
                         c = Color.Lerp(c, p.dark, crack * 0.6f);
-                        c = Color.Lerp(c, p.accent, hot * 0.5f);
+                        c = Color.Lerp(c, p.accent, hot * 0.35f);
                         h = 0.6f + blot * 0.1f - crack * 0.5f;
                         break;
                     }
@@ -319,7 +319,8 @@ namespace Spiritfire.Art.Editor.Levels
                         float tilt = Mathf.Cos(ang) * lp.x + Mathf.Sin(ang) * lp.y;
                         var vb = Voronoi(wu, wv, 9, 7, seed + 11, out int idb, out _);
                         float toneB = Mathf.Lerp(0.5f, Hash(idb % 9, idb / 9, seed + 12), Smooth(0, 0.12f, vb.y));
-                        float face = 0.5f + (tone - 0.5f) * 0.5f + tilt * 0.45f + (toneB - 0.5f) * 0.16f;
+                        // 块与块的明暗差收窄（composition.md 第 6 节：交战背景压在一条窄明度带里，墙上不出「明暗花」），切面靠色相和块缘一线读出来
+                        float face = 0.5f + (tone - 0.5f) * 0.35f + tilt * 0.3f + (toneB - 0.5f) * 0.12f;
                         c = Color.Lerp(p.a, p.b, Smooth(0.08f, 0.92f, face));
                         float seam = 1 - Smooth(0, 0.05f, vo.y);
                         float top = (1 - Smooth(0.02f, 0.14f, vo.y)) * Smooth(0.05f, 0.35f, lp.y);
@@ -465,14 +466,15 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>
         /// 第三章火狱的四层：踩实的铜灰路面 / 落灰、玄武岩地面（大块冷熔岩板）、结壳熔岩（缝里透铜橙）、大切面玄武岩崖。
         /// 色彩脚本（2026-11-04 美术清理）：岩和地是低饱和偏冷的暗紫灰（崖更偏靛、地面偏灰紫），路面是亮一档的铜灰，熔岩橙只在岸带的壳缝里——
-        /// 三块主色 暗紫玄武岩 / 铜褐 / 熔岩橙，与 art/README.md、fx-style §2.2 的熔火方向一致。贴图覆盖的米数放大（9 / 7 / 6 / 7 → 14 / 16 / 9 / 18 m），色块跟着变大
+        /// 三块主色 暗紫玄武岩 / 铜褐 / 熔岩橙，与 art/README.md、fx-style §2.2 的熔火方向一致。贴图覆盖的米数放大（9 / 7 / 6 / 7 → 14 / 16 / 9 / 18 m），色块跟着变大。
+        /// 射击游戏优先（docs/art/composition.md 第 6 节）：崖、地、路三层的明度压在一条窄带里（崖面抬亮、路面压暗一档），主要靠色相（靛紫 / 灰紫 / 铜）分开，明度对比留给怪
         /// </summary>
         public static TerrainLayer[] Inferno() => new[]
         {
-            Layer("InfernoAsh", Kind.Ash, new Palette { a = C(0.40f, 0.30f, 0.24f), b = C(0.46f, 0.35f, 0.27f), accent = C(0.52f, 0.40f, 0.30f), dark = C(0.30f, 0.23f, 0.21f) }, 14f, 71),
-            Layer("InfernoCooledLava", Kind.CooledLava, new Palette { a = C(0.19f, 0.17f, 0.215f), b = C(0.25f, 0.22f, 0.27f), accent = C(0.31f, 0.27f, 0.33f), dark = C(0.13f, 0.11f, 0.15f) }, 16f, 73),
+            Layer("InfernoAsh", Kind.Ash, new Palette { a = C(0.36f, 0.28f, 0.23f), b = C(0.41f, 0.32f, 0.26f), accent = C(0.45f, 0.35f, 0.28f), dark = C(0.28f, 0.22f, 0.21f) }, 14f, 71),
+            Layer("InfernoCooledLava", Kind.CooledLava, new Palette { a = C(0.21f, 0.19f, 0.235f), b = C(0.27f, 0.24f, 0.29f), accent = C(0.32f, 0.28f, 0.34f), dark = C(0.15f, 0.13f, 0.17f) }, 16f, 73),
             Layer("InfernoEmberCrust", Kind.EmberCrust, new Palette { a = C(0.15f, 0.12f, 0.155f), b = C(0.21f, 0.17f, 0.21f), accent = C(0.85f, 0.42f, 0.16f), dark = C(0.30f, 0.13f, 0.1f) }, 9f, 79),
-            Layer("InfernoBasalt", Kind.Basalt, new Palette { a = C(0.15f, 0.14f, 0.19f), b = C(0.24f, 0.22f, 0.29f), accent = C(0.33f, 0.30f, 0.38f), dark = C(0.09f, 0.08f, 0.12f) }, 18f, 83, 1024),
+            Layer("InfernoBasalt", Kind.Basalt, new Palette { a = C(0.2f, 0.185f, 0.25f), b = C(0.27f, 0.25f, 0.33f), accent = C(0.34f, 0.31f, 0.4f), dark = C(0.13f, 0.12f, 0.17f) }, 18f, 83, 1024),
         };
 
         /// <summary>按章节键（ShowcaseTheme.key：Desert / Frost / Inferno）取四层</summary>

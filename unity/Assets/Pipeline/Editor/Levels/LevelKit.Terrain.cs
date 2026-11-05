@@ -82,7 +82,7 @@ namespace Spiritfire.Art.Editor.Levels
 
             public static readonly Ground Inferno = new()
             {
-                key = "Inferno", layers = TerrainTextureGen.Inferno, rule = Splat.Inferno, shadowTint = ShowcaseTheme.Inferno.groundShadowTint, macroStrength = 0.2f,
+                key = "Inferno", layers = TerrainTextureGen.Inferno, rule = Splat.Inferno, shadowTint = ShowcaseTheme.Inferno.groundShadowTint, macroStrength = 0.12f,
                 // 2026-11-04 美术清理：火山口壁高、连成圈，同冰原——岩层一张 18 m（与 InfernoBasalt 的 tileSize 一致）、四层三平面投影（灰 / 地面挂在陡坡上不拉成竖条）、
                 // 岩层去重复；崖面光照用平滑法线，把崖线水平扰动在高度场里形成的竖褶（一根根亮 / 暗竖条）从光照里抹掉
                 rockScale = 18f, steepTriplanar = true, rockWarp = 0.25f, rockDetile = 0.35f,

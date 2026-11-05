@@ -190,10 +190,12 @@ namespace Spiritfire.Art.Editor
                 sky.SetColor("_TopColor", t.skyTop);
                 sky.SetColor("_HorizonColor", t.skyHorizon);
                 sky.SetColor("_BottomColor", t.skyBottom);
-                sky.SetColor("_SunColor", t.sunColor);
+                sky.SetColor("_SunColor", t.sunColor * t.skySunTint);
                 sky.SetFloat("_Exposure", t.skyExposure);
                 sky.SetFloat("_HorizonSharpness", t.skyHorizonSharpness);
                 sky.SetFloat("_HorizonGlow", t.skyHorizonGlow);
+                sky.SetFloat("_SunSize", t.skySunSize);
+                sky.SetFloat("_SunHalo", t.skySunHalo);
             }
             else
             {
