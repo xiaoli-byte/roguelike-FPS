@@ -18,7 +18,10 @@ namespace Spiritfire.Game
     ///     砸下的那一刻派发 <see cref="Impact"/>（fallen = false）。之后再断一角，鼎改朝新的一角倾倒；
     ///   坠池（<see cref="Fall"/>，55%）：剩下的链全断，鼎整个砸进熔池、翻倒半露，落定时派发 <see cref="Impact"/>（fallen = true）并立一个碰撞盒——
     ///     二阶段它是池中挡吐息、挡视线的掩体（盒子在熔池里，不影响导航）。
-    /// 外观：物体下有名为 Model 的子物体（正式美术 SM_Prop_QilinCauldron，ART6 暂缓）就用它，否则运行时搭程序方鼎（鼎身、口沿、腰箍、饕餮纹、双耳、四足、鼎口熔岩、四角铁环）；
+    /// 外观：物体下有名为 Model 的子物体（正式件 SM_Prop_QilinCauldron：底面在原点、5.52 × 8 × 4.23 m，关卡按 <see cref="ModelDrop"/> / <see cref="RestRotation"/> 摆）就用它——
+    ///   巨链拴在件上的四个 SOCKET_Chain*（四角铁环，实测 docs/art/ch3-kit.md 第 3 节；按方位就近配给四个角），件上的碰撞体停用（同程序方鼎：吊鼎本身不挡子弹、不进导航）；
+    ///   没有 Model 时运行时搭程序方鼎（鼎身、口沿、腰箍、饕餮纹、双耳、四足、鼎口熔岩、四角铁环）。
+    ///   鼎的姿势（吊着 / 一角坠下 / 坠池）、撞击点、掩体盒都只看 <see cref="Half"/> / <see cref="HalfY"/> / <see cref="Leg"/>，与外观无关：换正式件玩法不变。
     ///   有 Model (fallen) 子物体时坠池落定换成它（关卡可以摆一个翻倒的残鼎）。
     ///   巨链：<see cref="linkTemplate"/>（关卡摆进来、停用的 SM_Prop_InfernoChainLink：长 1 m、节距 0.68 m、每隔一节绕 Y 转 90°）运行时按链长实例化；
     ///   没有模板时用程序方块链环。
@@ -36,6 +39,10 @@ namespace Spiritfire.Game
         public const float LinkLength = 1f, LinkPitch = 0.68f;
         /// <summary>崩飞的链节多久散尽（秒）</summary>
         public const float SnapTime = 1.6f;
+        /// <summary>正式件（底面在原点、足底着地）摆在鼎身中心往下这么多米：足底和程序方鼎的足底齐平（鼎身中心 − 半高 − 足长）</summary>
+        public const float ModelDrop = HalfY + Leg;
+        /// <summary>正式件上四角铁环挂点的名字前缀（SOCKET_ChainFL / FR / BL / BR）</summary>
+        public const string ChainSocketPrefix = "SOCKET_Chain";
 
         static readonly Color Bronze = Hex.Rgb(0x5a4422), Verdigris = Hex.Rgb(0x3e5040), Dark = Hex.Rgb(0x2a2018), Molten = Hex.Rgb(0xff6a1a), IronLink = Hex.Rgb(0x2a2422);
 
@@ -85,6 +92,8 @@ namespace Spiritfire.Game
         float moveT = 1, moveDur = 0.6f, age, sway;
         bool built;
         GameObject proceduralLink;
+        /// <summary>四个角各自的巨链挂点（正式件的 SOCKET_Chain*；空 = 程序方鼎的角环）</summary>
+        Transform[] sockets = Array.Empty<Transform>();
 
         void Awake() => Build();
 
@@ -140,6 +149,9 @@ namespace Spiritfire.Game
             return c;
         }
 
+        /// <summary>吊着时鼎的朝向：四个角正对四个象限中线（局部角方向 (±1, ±1)/√2），整体绕 Y 转 第一个象限 − 45°。关卡摆正式件用同一个朝向</summary>
+        public static Quaternion RestRotation(QilinFurnace f) => Quaternion.Euler(0, (f && f.QuadrantCount > 0 ? f.QuadrantYaw(0) : 45f) - 45f, 0);
+
         /// <summary>搭外观、巨链，记下吊着的姿势（只做一次）</summary>
         public void Build()
         {
@@ -148,9 +160,7 @@ namespace Spiritfire.Game
             if (!furnace) furnace = QilinFurnace.Nearest(transform.position);
             ding = new GameObject("Ding").transform;
             ding.SetParent(transform, false);
-            // 四个角正对四个象限中线：局部角方向 (±1, ±1)/√2，整体绕 Y 转 yaw0 = 第一个象限 − 45°
-            float yaw0 = (furnace && furnace.QuadrantCount > 0 ? furnace.QuadrantYaw(0) : 45f) - 45f;
-            restRot = Quaternion.Euler(0, yaw0, 0);
+            restRot = RestRotation(furnace);
             restPos = transform.position + Vector3.up * hangHeight;
             ding.SetPositionAndRotation(restPos, restRot);
             fromPos = toPos = restPos;
@@ -161,6 +171,8 @@ namespace Spiritfire.Game
             {
                 art.SetParent(ding, true);
                 model = art;
+                // 吊鼎不挡子弹、不进导航（同程序方鼎）；件上自带的网格碰撞体停用
+                foreach (var col in art.GetComponentsInChildren<Collider>(true)) col.enabled = false;
             }
             else model = BuildModel();
             fallenModel = transform.Find("Model (fallen)");
@@ -181,6 +193,7 @@ namespace Spiritfire.Game
                 local = new Vector3(Mathf.Sign(local.x == 0 ? 1 : local.x), 0, Mathf.Sign(local.z == 0 ? 1 : local.z)).normalized;
                 cornerDirs.Add(local);
             }
+            if (art) BindSockets(art);
             linkRoot = new GameObject("Chains").transform;
             linkRoot.SetParent(transform, false);
             for (int i = 0; i < n; i++)
@@ -195,9 +208,39 @@ namespace Spiritfire.Game
 
         bool HasLock(int i) => locks != null && i < locks.Length && locks[i];
 
+        /// <summary>正式件的四个 SOCKET_Chain* 按方位配给四个角：每个角取鼎身局部水平方向和角方向最接近、还没配出去的那个</summary>
+        void BindSockets(Transform art)
+        {
+            var found = new List<Transform>();
+            foreach (var t in art.GetComponentsInChildren<Transform>(true))
+                if (t.name.StartsWith(ChainSocketPrefix, StringComparison.Ordinal))
+                    found.Add(t);
+            sockets = new Transform[cornerDirs.Count];
+            for (int i = 0; i < cornerDirs.Count; i++)
+            {
+                Transform best = null;
+                float bestDot = 0.3f;
+                foreach (var t in found)
+                {
+                    if (Array.IndexOf(sockets, t) >= 0) continue;
+                    var p = ding.InverseTransformPoint(t.position);
+                    p.y = 0;
+                    if (p.sqrMagnitude < 1e-4f) continue;
+                    float d = Vector3.Dot(p.normalized, cornerDirs[i]);
+                    if (d <= bestDot) continue;
+                    best = t;
+                    bestDot = d;
+                }
+                sockets[i] = best;
+            }
+        }
+
+        /// <summary>角 i 拴巨链的正式件挂点（SOCKET_Chain*；程序方鼎 / 没配上 = null；测试 / 验收用）</summary>
+        public Transform Socket(int i) => i >= 0 && i < sockets.Length ? sockets[i] : null;
+
         // ───────────── 外观 ─────────────
 
-        /// <summary>程序方鼎（ART6 暂缓期间的运行时外观；尺寸照 TS QilinCauldron 与 registry 的 SM_Prop_QilinCauldron 6.4 × 8 × 6.4 m）</summary>
+        /// <summary>程序方鼎（关卡没摆正式件时的运行时外观：测试场、开发命令；尺寸照 TS QilinCauldron）</summary>
         Transform BuildModel()
         {
             var root = new GameObject("Model (procedural)").transform;
@@ -289,9 +332,11 @@ namespace Spiritfire.Game
 
         public int ChainCount => chains.Count;
 
-        /// <summary>鼎角 i 的铁环（世界坐标，当前姿势）：巨链从这里拉到锁扣</summary>
+        /// <summary>鼎角 i 的铁环（世界坐标，当前姿势）：巨链从这里拉到锁扣。正式件用它的 SOCKET_Chain* 挂点</summary>
         public Vector3 Anchor(int i)
         {
+            var s = Socket(i);
+            if (s) return s.position;
             var d = CornerDir(i);
             return ding.TransformPoint(new Vector3(d.x * Half * 0.98f * Mathf.Sqrt(2f), HalfY + 0.35f, d.z * Half * 0.98f * Mathf.Sqrt(2f)));
         }

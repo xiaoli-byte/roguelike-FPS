@@ -16,7 +16,10 @@ namespace Spiritfire.Game
     ///   <see cref="Purge"/>：55% 时剩下的铁链全断，静默移除（不派发 Broken）。
     /// 不移动、不攻击、不掉落、不进敌人登记（同狐巫冰壁：只是一个可破坏的 <see cref="Damageable"/>，不给奖励）。
     /// 碰撞体在 Character 层：子弹打得到，视线 / 导航不受影响。
-    /// 外观：物体下有名为 Model 的子物体（正式美术 SM_Prop_QilinChainLock，ART6 暂缓）就用它，否则运行时搭程序锁扣（背板、锁身、锁梁、锁芯、光晕）。
+    /// 外观：物体下有名为 Model 的子物体（正式件 SM_Prop_QilinChainLock：1.29 × 2.4 × 0.59 m，底面在原点、背面贴墙、正面 +Z）就用它——
+    ///   锁芯弱点球和光晕放在件上的 FX_CoreGlow（实测 (0, 0.8, 0.3)，docs/art/ch3-kit.md 第 3 节），锁身碰撞盒按件的网格包围盒（锁扣局部），
+    ///   巨链拴在件顶正中；件上的网格碰撞体停用（同程序锁扣：只有 Character 层的锁身 / 锁芯两个碰撞体），件的自发光（_EmissionColor）跟着休眠 / 上膛 / 高亮走；
+    ///   没有 Model 时运行时搭程序锁扣（背板、锁身、锁梁、锁芯、光晕）。血量、弱点半径、碎开 / 静默移除的流程与外观无关：换正式件玩法不变。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class QilinLock : MonoBehaviour
@@ -33,6 +36,9 @@ namespace Spiritfire.Game
         public const float CollapseTime = 0.6f;
 
         static readonly Color Bronze = Hex.Rgb(0x6a4a24), Iron = Hex.Rgb(0x1e1a18), Core = Hex.Rgb(0xffd070), Halo = Hex.Rgb(0xff7a20);
+        /// <summary>正式件上锁芯发光点的名字</summary>
+        public const string CoreGlowPoint = "FX_CoreGlow";
+        static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
 
         [Tooltip("象限下标（QilinFurnace.QuadrantYaw，与吊鼎四个角同序）")] public int index;
 
@@ -61,6 +67,12 @@ namespace Spiritfire.Game
         Collider bodyCollider, coreCollider;
         Transform model, coreVisual, halo;
         Renderer coreRenderer;
+        /// <summary>正式件的渲染器（自发光跟着锁扣状态走）与它们材质里原本的自发光颜色</summary>
+        Renderer[] artRenderers;
+        Color[] artEmission;
+        MaterialPropertyBlock glowBlock;
+        Vector3 modelPos, modelScale = Vector3.one;
+        Quaternion modelRot = Quaternion.identity;
         float glowK, age, collapse = -1;
         bool built;
 
@@ -90,13 +102,31 @@ namespace Spiritfire.Game
 
             var existing = transform.Find("Model");
             model = existing ? existing : BuildModel();
+            modelPos = model.localPosition;
+            modelRot = model.localRotation;
+            modelScale = model.localScale;
+            Transform coreFx = null;
+            var artBox = new Bounds();
+            bool art = existing && ArtBounds(existing, out artBox);
+            if (existing)
+            {
+                foreach (var t in existing.GetComponentsInChildren<Transform>(true))
+                    if (t.name == CoreGlowPoint)
+                    {
+                        coreFx = t;
+                        break;
+                    }
+                // 子弹只认 Character 层的锁身 / 锁芯（Hitbox），件自带的网格碰撞体（World 层）会把子弹截在半路
+                foreach (var col in existing.GetComponentsInChildren<Collider>(true)) col.enabled = false;
+                BindArtGlow(existing, coreFx);
+            }
 
-            // 锁身：一个盒（背板 + 锁身合起来的外包），Character 层
+            // 锁身：一个盒（背板 + 锁身合起来的外包；正式件 = 网格包围盒），Character 层
             var bodyGo = new GameObject("Lock Body") { layer = Layers.Character };
             bodyGo.transform.SetParent(transform, false);
-            bodyGo.transform.localPosition = new Vector3(0, 0, -Size.z * 0.25f);
+            bodyGo.transform.localPosition = art ? artBox.center : new Vector3(0, 0, -Size.z * 0.25f);
             var box = bodyGo.AddComponent<BoxCollider>();
-            box.size = new Vector3(Size.x * 0.85f, Size.y * 0.9f, Size.z * 0.6f);
+            box.size = art ? artBox.size : new Vector3(Size.x * 0.85f, Size.y * 0.9f, Size.z * 0.6f);
             var hb = bodyGo.AddComponent<Hitbox>();
             hb.owner = Health;
             bodyCollider = box;
@@ -104,7 +134,7 @@ namespace Spiritfire.Game
             // 锁芯：弱点球，贴在锁身正面
             var coreGo = new GameObject("Lock Core") { layer = Layers.Character };
             coreGo.transform.SetParent(transform, false);
-            coreGo.transform.localPosition = new Vector3(0, -0.1f, Size.z * 0.18f);
+            coreGo.transform.localPosition = coreFx ? transform.InverseTransformPoint(coreFx.position) : new Vector3(0, -0.1f, Size.z * 0.18f);
             var sph = coreGo.AddComponent<SphereCollider>();
             sph.radius = CoreRadius;
             var chb = coreGo.AddComponent<Hitbox>();
@@ -118,13 +148,57 @@ namespace Spiritfire.Game
             {
                 chain = new GameObject("Chain Point").transform;
                 chain.SetParent(transform, false);
-                chain.localPosition = new Vector3(0, Size.y * 0.5f + 0.35f, 0.15f);
+                // 程序锁扣：锁梁顶上；正式件：件顶正中、略靠前
+                chain.localPosition = art ? new Vector3(artBox.center.x, artBox.max.y - 0.1f, artBox.center.z + 0.05f) : new Vector3(0, Size.y * 0.5f + 0.35f, 0.15f);
             }
             ChainPoint = chain;
             State = LockState.Dormant;
         }
 
-        /// <summary>程序锁扣（ART6 暂缓期间的运行时外观）：铁背板 + 青铜锁身 + 铁锁梁 + 发光锁芯 + 光晕</summary>
+        /// <summary>
+        /// 正式件在锁扣局部坐标里的包围盒（各网格的本地包围盒八个角换到锁扣局部再合起来；锁扣朝向任意时也贴合）。没有网格返回 false
+        /// </summary>
+        bool ArtBounds(Transform art, out Bounds b)
+        {
+            b = new Bounds();
+            bool any = false;
+            foreach (var mf in art.GetComponentsInChildren<MeshFilter>(true))
+            {
+                var mesh = mf.sharedMesh;
+                if (!mesh) continue;
+                var mb = mesh.bounds;
+                for (int k = 0; k < 8; k++)
+                {
+                    var c = mb.center + Vector3.Scale(mb.extents, new Vector3((k & 1) == 0 ? -1 : 1, (k & 2) == 0 ? -1 : 1, (k & 4) == 0 ? -1 : 1));
+                    var p = transform.InverseTransformPoint(mf.transform.TransformPoint(c));
+                    if (!any) b = new Bounds(p, Vector3.zero);
+                    else b.Encapsulate(p);
+                    any = true;
+                }
+            }
+            return any && b.size.x > 0.05f && b.size.y > 0.05f;
+        }
+
+        /// <summary>正式件：记下渲染器与材质原本的自发光（每帧按状态缩放），光晕片挂在 FX_CoreGlow 前面一点（没有挂点就挂在件中心）</summary>
+        void BindArtGlow(Transform art, Transform coreFx)
+        {
+            var list = new List<Renderer>();
+            var em = new List<Color>();
+            foreach (var r in art.GetComponentsInChildren<Renderer>(true))
+            {
+                var m = r.sharedMaterial;
+                if (!m || !m.HasProperty(EmissionId) || !m.IsKeywordEnabled("_EMISSION")) continue;
+                list.Add(r);
+                em.Add(m.GetColor(EmissionId));
+            }
+            artRenderers = list.ToArray();
+            artEmission = em.ToArray();
+            glowBlock = new MaterialPropertyBlock();
+            halo = FxMaterials.GlowSprite(art, 1.4f, new Color(Halo.r, Halo.g, Halo.b, 0.35f));
+            halo.position = coreFx ? coreFx.position + transform.forward * 0.08f : art.position + transform.up * (Size.y * 0.5f);
+        }
+
+        /// <summary>程序锁扣（关卡没摆正式件时的运行时外观：测试场、开发命令）：铁背板 + 青铜锁身 + 铁锁梁 + 发光锁芯 + 光晕</summary>
         Transform BuildModel()
         {
             var root = new GameObject("Model (procedural)").transform;
@@ -225,9 +299,10 @@ namespace Spiritfire.Game
                 float t = Mathf.Clamp01(collapse / CollapseTime);
                 if (model)
                 {
-                    model.localPosition = new Vector3(0, -3f * t * t, 0);
-                    model.localRotation = Quaternion.Euler(t * 80f, 0, 0);
-                    model.localScale = Vector3.one * Mathf.Max(0.01f, 1 - t * 0.6f);
+                    // 相对摆放时的姿势（正式件的原点在件底、贴墙往后挪过）
+                    model.localPosition = modelPos + new Vector3(0, -3f * t * t, 0);
+                    model.localRotation = Quaternion.Euler(t * 80f, 0, 0) * modelRot;
+                    model.localScale = modelScale * Mathf.Max(0.01f, 1 - t * 0.6f);
                     if (t >= 1f) model.gameObject.SetActive(false);
                 }
                 return;
@@ -239,6 +314,19 @@ namespace Spiritfire.Game
             if (halo) halo.localScale = Vector3.one * 1.4f * (0.6f + 0.25f * k) * (0.6f + 1.4f * glowK);
             if (coreVisual) coreVisual.localRotation = Quaternion.Euler(0, 0, 45 + age * (20f + 160f * glowK));
             if (coreRenderer) FxMaterials.Tint(coreRenderer, Core * (0.35f + 1.4f * glowK * k));
+            if (artRenderers != null)
+            {
+                // 正式件的火晶核：休眠压暗到三成，上膛约等于材质原值，高亮翻到两倍上下（同程序锁芯的 0.35 → 1.75）
+                float e = 0.3f + 1.6f * glowK * k;
+                for (int i = 0; i < artRenderers.Length; i++)
+                {
+                    var r = artRenderers[i];
+                    if (!r) continue;
+                    r.GetPropertyBlock(glowBlock);
+                    glowBlock.SetColor(EmissionId, artEmission[i] * e);
+                    r.SetPropertyBlock(glowBlock);
+                }
+            }
         }
 
         void OnDestroy()
