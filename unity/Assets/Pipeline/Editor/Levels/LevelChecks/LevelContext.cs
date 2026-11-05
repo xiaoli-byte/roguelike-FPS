@@ -257,7 +257,10 @@ namespace Spiritfire.Art.Editor.Levels
         List<SiteSpec> sites;
         List<InteractSpec> interactables;
 
-        /// <summary>声明的锚点 + 场景里每个 EncounterSite 的锚点（敌人 = 该场地全部编制）</summary>
+        /// <summary>
+        /// 声明的锚点 + 场景里每个 EncounterSite 的锚点。敌人 = 会用这个站位的条目（第三章 v2 S1：条目的出场方式在场地里有站位就只用那种站位，
+        /// 没有就退回现身站位；高台站位不给贴地的），没有出场方式站位的旧场地就是该场地全部编制。高台站位上全是会飞的 = 飞行锚点（不查路）
+        /// </summary>
         public IReadOnlyList<AnchorInfo> Anchors
         {
             get
@@ -268,15 +271,49 @@ namespace Spiritfire.Art.Editor.Levels
                     anchors.Add(Sized(new AnchorInfo { name = a.name, site = "", pos = a.pos, enemies = a.enemies, flying = a.flying }, null));
                 foreach (var site in Object.FindObjectsByType<EncounterSite>().OrderBy(s => s.name))
                 {
-                    var ids = site.squads.Where(q => q != null && !string.IsNullOrEmpty(q.enemy)).Select(q => q.enemy).Distinct().ToArray();
+                    var all = site.squads;
+                    var ids = all.Where(q => q != null && !string.IsNullOrEmpty(q.enemy)).Select(q => q.enemy).Distinct().ToArray();
                     foreach (var t in site.anchors)
                     {
                         if (!t) continue;
-                        anchors.Add(Sized(new AnchorInfo { name = t.name, site = site.title, pos = t.position, enemies = ids }, site.squads));
+                        var users = AnchorUsers(site, t, all);
+                        if (users == null)
+                        {
+                            anchors.Add(Sized(new AnchorInfo { name = t.name, site = site.title, pos = t.position, enemies = ids }, all));
+                            continue;
+                        }
+                        if (users.Length == 0) continue; // 没有条目会用这个站位（比如另一种出场方式的站位）
+                        var mine = users.Select(q => q.enemy).Distinct().ToArray();
+                        bool flying = SpawnAnchor.Read(t).elevated && mine.All(id => EnemyRoster.Get(id) is { flying: true });
+                        anchors.Add(Sized(new AnchorInfo { name = t.name, site = site.title, pos = t.position, enemies = mine, flying = flying }, users));
                     }
                 }
                 return anchors;
             }
+        }
+
+        /// <summary>会用站位 t 的条目（null = 场地没有出场方式站位，按旧规则全部编制都算）</summary>
+        static EncounterSite.Squad[] AnchorUsers(EncounterSite site, Transform t, EncounterSite.Squad[] all)
+        {
+            var spec = site.spec;
+            if (spec?.waves == null || spec.IsEmpty || site.anchors.All(a => !a || SpawnAnchor.ModeOf(a) == SpawnMode.Appear)) return null;
+            var mode = SpawnAnchor.ModeOf(t);
+            bool elevated = SpawnAnchor.Read(t).elevated;
+            var list = new List<EncounterSite.Squad>();
+            foreach (var w in spec.waves)
+            {
+                if (w?.entries == null) continue;
+                foreach (var e in w.entries)
+                {
+                    if (e == null || e.count <= 0 || string.IsNullOrEmpty(e.enemy)) continue;
+                    var want = SpawnStations.ModeFor(site.anchors, e.via, out bool any);
+                    if (!SpawnModes.Accepts(mode, want, any)) continue;
+                    if (elevated && EnemyRoster.Get(e.enemy) is { groundOnly: true }) continue;
+                    list.Add(new EncounterSite.Squad { enemy = e.enemy, count = e.count, elite = e.elite });
+                    if (spec.promote > 0 && !e.elite) list.Add(new EncounterSite.Squad { enemy = e.enemy, count = 0, elite = true });
+                }
+            }
+            return list.ToArray();
         }
 
         static AnchorInfo Sized(AnchorInfo a, EncounterSite.Squad[] squads)

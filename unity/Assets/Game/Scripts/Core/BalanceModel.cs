@@ -119,7 +119,7 @@ namespace Spiritfire.Game
             new("2-2", 1, 0, 1, S("xingxing", 21), S("qingniao", 7), S("fuzhu", 4, 1), S("haozhi", 8), S("xuangui", 2, 1), S("fox_witch", 2)),
             new("2-3", 1, 1, 1, S("jiaoren", 14), S("ice_puffer", 6), S("fuzhu", 6, 1), S("fox_witch", 2), S("xingxing", 5), S("qingniao", 3), S("xuangui", 1, 1), S("haozhi", 6),
                 S("lantern_jelly", 3), S("frost_crab", 1)),
-            new("3-1", 1, 0, 1, S("tuo", 1), S("tantong", 21), S("huodou", 10), S("mamian", 5, 1), S("fire_crow", 7), S("firecracker", 4, 1), S("bifang", 3)),
+            new("3-1", 0, 0, 1, S("bifang", 8), S("tantong", 36), S("mamian", 6, 2), S("tuo", 2), S("huodou", 15, 1)),
             new("3-2", 1, 1, 1, S("firecracker", 4), S("tantong", 20), S("mamian", 6, 1), S("huodou", 10), S("bifang", 2), S("fire_crow", 6), S("iron_ox", 1, 1)),
             new("3-3", 1, 0, 1, S("mamian", 3, 1), S("nuo", 2), S("tantong", 22), S("fire_crow", 5), S("firecracker", 5), S("iron_ox", 2, 1), S("tuo", 1), S("huodou", 4), S("founder", 1),
                 S("bifang", 1)),

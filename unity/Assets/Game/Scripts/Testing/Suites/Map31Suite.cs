@@ -10,18 +10,18 @@ using Random = UnityEngine.Random;
 namespace Spiritfire.Game.Testing
 {
     /// <summary>
-    /// 3-1 熔湖堤道冒烟（bridge.sh playtest map-3-1；场景 L3_1_Causeway，docs/level-design/maps/3-1.md §8，parity 7.4「机器人清完全部必清场地并走出出口」）：
+    /// 3-1 熔湖堤道 · 熔湖关隘冒烟（bridge.sh playtest map-3-1；场景 L3_1_Causeway，docs/level-design/maps/3-1.md §8，ch3-v2 7.4「map-3-1」）：
     ///   1. 开局：SceneFlow 认领的关卡是 3-1、局难度 = RunPlan 的 2.60；目标图（必清 4 + 可选 1）、2 处藏宝、出口（没开）；
-    ///      熔岩系统起来了（湖心是熔岩，堤面、墩顶不是）；没有空气墙；栖落点 ≥ 8 处；出生点看得见崖顶的祝融神像；
-    ///      <b>只走非熔岩区</b>（LavaField.DryAreaMask）从出生点到四个必清场地、湖心石龛、出口的导航路径都完整——堤道是通的，不用蹚熔岩。
-    ///   2. 机器人清场：每次挑非熔岩路程最近的未清必清场地，用角色控制器沿非熔岩的导航路径真走过去（堤道、引坡、台坡道都是真的），
-    ///      路上被别的场地触发就先打那个；交战时自动瞄最近的敌人（四成打弱点）射击、隔 4 s 放技能，被挡住绕到看得见的地方（不选熔岩边的位置）；
-    ///      敌人都清了只剩潜在熔岩里的火鼍时，退到场地里离熔岩最远的地方引它上岸（「引到宫墙下打」）。玩家临时 +5000 生命。
-    ///      每处 180 s（有火鼍的 240 s）内肃清，肃清后场地宝箱要出现（不开）。
+    ///      熔岩系统起来了（湖里的探针 Lava_Probe 是熔岩，场地中心、C1 堤面不是）；没有空气墙；栖落点 ≥ 8 处；出生点看得见崖顶的祝融神像；
+    ///      <b>只走非熔岩区</b>（LavaField.DryAreaMask）从出生点到四个必清场地、湖心石龛（跳石有导航链接）、出口的导航路径都完整。
+    ///   2. 机器人清场：每次挑非熔岩路程最近的未清必清场地，用角色控制器沿非熔岩的导航路径真走过去（之字坡、关楼门洞、堤、台坡道都是真的），
+    ///      路上被别的场地（路遇）触发就先打那个；交战时自动瞄最近的敌人（四成打弱点）射击、隔 4 s 放技能，被挡住绕到看得见的地方（不选熔岩边的位置）；
+    ///      敌人都清了只剩潜在熔岩里的火鼍时，退到场地里离熔岩最远的地方引它上岸。玩家临时 +5000 生命。
+    ///      每处 180 s（有火鼍的 240 s）内肃清，肃清后场地宝箱要出现（不开）。出场方式（S1）：余烬起身、熔岩爬出至少各出现 1 次。
     ///   3. 必清全部肃清 → 目标完成 → 出口升起 → 门旁清关宝箱。
-    ///   4. 打进熔岩：走到 C3 堤肩的 Knock_Edge（地图构建器放的标记，正对熔岩），在那里刷一只祸斗、眩晕住，机器人站在堤面上朝熔岩方向
+    ///   4. 打进熔岩：走到 C1 堤肩的 Knock_Edge（地图构建器放的标记，正对熔岩），在那里刷一只祸斗、眩晕住，机器人站在堤面上朝熔岩方向
     ///      打一发带击退的射击 → 它沿导航网格滑下堤肩、烧死：熔岩烧死计数 +1，走正常的击杀事件（不是静默处决）。
-    ///   5. 藏宝 A（湖心石龛，无守军）：走 C8 窄堤过去 → 发现 → 按 F → 宝箱出现。
+    ///   5. 藏宝 A（湖心石龛，无守军）：走到断堤南段的堤头，踩三块跳石（Stone_1…3，逐块落脚 = 玩家的三次跳）上石龛 → 发现 → 按 F → 宝箱出现。
     ///   6. 走到宫门神龛前按 F → 本关结算（下一关 3-2）。
     /// 走路的导航路径不完整、卡住过多都记不合格；运行时报错由宿主记不合格（PlaytestRunner）。
     /// </summary>
@@ -31,7 +31,7 @@ namespace Spiritfire.Game.Testing
         /// <summary>3-1 熔湖堤道（与编辑器里 Level_3_1.ScenePath 相同，运行时程序集引用不到那边的常量）</summary>
         public override string Scene => "Assets/Scenes/L3_1_Causeway.unity";
 
-        const float ReadyTimeout = 90f, SiteTimeout = 180f, TuoExtra = 60f, ClearAllTimeout = 1200f, BotSpeed = 11f;
+        const float ReadyTimeout = 90f, SiteTimeout = 120f, TuoExtra = 40f, ClearAllTimeout = 1200f, BotSpeed = 11f;
         const string StatueId = "SM_Tripo_InfernoZhurong", KnockMarker = "Knock_Edge", KnockDummy = "huodou";
 
         PlayerMotor motor;
@@ -123,7 +123,9 @@ namespace Spiritfire.Game.Testing
             var goals = new List<(string name, Vector3 at)>();
             if (objective) goals.AddRange(objective.required.Where(s => s).Select(s => (s.title, s.transform.position)));
             var islet = caches.FirstOrDefault(c => !c.guard);
-            if (islet) goals.Add((islet.title, islet.transform.position));
+            // 湖心石龛隔着三块跳石（导航链接算 Lava 区）：只走非熔岩区查到跳石起点（断堤南段的堤头）
+            var stone1 = GameObject.Find("Stone_1");
+            if (islet) goals.Add(($"{islet.title}（跳石起点）", stone1 ? stone1.transform.position + (stone1.transform.position - islet.transform.position).normalized * 3.5f : islet.transform.position));
             goals.Add(("出口", portal.transform.position - portal.transform.forward * 3.5f));
             foreach (var (name, at) in goals)
             {
@@ -172,9 +174,13 @@ namespace Spiritfire.Game.Testing
                 var elites = spawned.Where(r => r.elite).ToList();
                 Line($"出场 {spawned.Count} 只，精英 {elites.Count} 只：{string.Join("、", elites.Select(r => $"{r.id}（{(string.IsNullOrEmpty(r.affix) ? "无词缀" : r.affix)}）"))}；" +
                      $"交战中被打进熔岩烧死 {burnedInFights} 只，引火鼍上岸 {lures} 次");
-                if (elites.Count < 2) Fail($"必清场地只出了 {elites.Count} 只精英（③ 写死 1 只 + ④ 升格 1 只）");
-                if (!spawned.Any(r => r.id == "tuo")) Fail("没有出过火鼍（④ 宫门码头第一波）");
-                if (!spawned.Any(r => r.id == "bifang")) Fail("没有出过毕方（② 锚链墩）");
+                if (elites.Count < 2) Fail($"必清场地只出了 {elites.Count} 只精英（③ 精英马面·坚盾 + ④ 精英祸斗·迅捷，都写死）");
+                if (!spawned.Any(r => r.id == "tuo")) Fail("没有出过火鼍（② 第一波、④ 第一波）");
+                if (!spawned.Any(r => r.id == "bifang")) Fail("没有出过毕方（③ 第一波）");
+                var modes = spawned.GroupBy(r => r.mode).ToDictionary(g => g.Key, g => g.Count());
+                Line($"出场方式：{string.Join("、", modes.OrderBy(kv => kv.Key).Select(kv => $"{SpawnModes.Label(kv.Key)} {kv.Value}"))}");
+                foreach (var need in new[] { SpawnMode.Ember, SpawnMode.LavaCrawl })
+                    if (!modes.ContainsKey(need)) Fail($"整关没有出现过「{SpawnModes.Label(need)}」（S1：3-1 教余烬起身、熔岩爬出两种出场）");
 
                 // ── 3. 目标完成 → 出口升起 → 清关宝箱 ──
                 if (objective)
@@ -189,8 +195,12 @@ namespace Spiritfire.Game.Testing
                 if (!portal.IsOpen) Fail("必清场地肃清后出口没有开启");
                 else if (!portal.ClearChest) Fail("出口升起后没有落清关宝箱");
 
-                // ── 4. 打进熔岩 ──
+                // ── 4. 打进熔岩（C1 堤肩）+ 风险 4 实测（断堤的堤道段立面）──
                 yield return KnockCase();
+                yield return FacadeCase();
+
+                // ── 4b. 构图自检：交战场地里摆一组怪拍照（去色后看怪是不是画面里最跳的）──
+                yield return EnemyReadShots();
             }
             finally
             {
@@ -232,7 +242,13 @@ namespace Spiritfire.Game.Testing
             if (stalls >= 8) Fail($"机器人沿导航网格走时卡住 {stalls} 次（角色控制器和导航网格对不上：引坡 / 台坡道 / 堤头？看上面的位置）");
         }
 
-        void OnSpawned(EncounterSite s, EncounterSite.SpawnRecord r) => spawned.Add(r);
+        void OnSpawned(EncounterSite s, EncounterSite.SpawnRecord r)
+        {
+            spawned.Add(r);
+            // ④ 第二波的毕方应当飞临鼓楼台：记下实际方式和站位（退回现身时 anchor 为空 = 兜底随机点）
+            if (r.id == "bifang" && s.title.Contains("宫门"))
+                Line($"  ④ 毕方出场：{SpawnModes.Label(r.mode)}，站位 {(r.anchor ? r.anchor.name : "（兜底随机点）")} {r.point}，玩家 {r.player}");
+        }
 
         void OnKilled(in KillEvent e)
         {
@@ -285,26 +301,27 @@ namespace Spiritfire.Game.Testing
                 return;
             }
             if (!LavaField.Instance) Fail("熔岩系统（LavaField）没有起来");
-            var c = vol.transform.position;
-            if (!LavaField.IsLavaAt(c.x, c.z)) Fail($"湖心 ({c.x:F0}, {c.z:F0}) 不算熔岩");
+            var probe = GameObject.Find("Lava_Probe");
+            var c = probe ? probe.transform.position : vol.transform.position;
+            if (!LavaField.IsLavaAt(c.x, c.z)) Fail($"湖里的探针 ({c.x:F0}, {c.z:F0}) 不算熔岩");
             if (objective)
                 foreach (var s in objective.required)
                     if (s && LavaField.IsLava(s.transform.position)) Fail($"场地「{s.title}」的中心算成了熔岩");
             var knock = GameObject.Find(KnockMarker);
-            if (!knock) Fail($"没有 {KnockMarker} 标记（地图构建器放在 C3 堤肩上）");
+            if (!knock) Fail($"没有 {KnockMarker} 标记（地图构建器放在 C1 堤肩上）");
             else
             {
                 var dir = Flat3(knock.transform.forward);
                 var deck = Ground(knock.transform.position - dir * 4.5f);
                 var lava = knock.transform.position + dir * 2.5f;
-                if (LavaField.IsLava(deck)) Fail("C3 堤面算成了熔岩");
-                if (!LavaField.IsLavaAt(lava.x, lava.z)) Fail("C3 堤肩外 2.5 m 不是熔岩");
+                if (LavaField.IsLava(deck)) Fail("C1 堤面算成了熔岩");
+                if (!LavaField.IsLavaAt(lava.x, lava.z)) Fail("C1 堤肩外 2.5 m 不是熔岩");
             }
             if (LavaField.LavaArea < 0) Fail("NavMesh 没有 Lava 区域：重启编辑器让 NavMeshAreas.asset 生效后重建 3-1");
-            else if (!NavMesh.SamplePosition(c, out var hit, 2f, LavaField.WalkerFilter(LavaField.LavaAreaMask))) Fail("湖心附近的导航网格不是 Lava 区");
-            else Line($"✓ 导航：湖心是 Lava 区（y {hit.position.y:F2}，代价 {NavMesh.GetAreaCost(LavaField.LavaArea)}）");
+            else if (!NavMesh.SamplePosition(c, out var hit, 2f, LavaField.WalkerFilter(LavaField.LavaAreaMask))) Fail("湖里探针附近的导航网格不是 Lava 区");
+            else Line($"✓ 导航：湖里是 Lava 区（y {hit.position.y:F2}，代价 {NavMesh.GetAreaCost(LavaField.LavaArea)}）");
             if (!LavaField.SwimmerAgentType.HasValue) Fail($"NavMesh 没有代理类型 {LavaField.SwimmerAgentName}");
-            else if (!NavMesh.SamplePosition(c, out _, 3f, LavaField.SwimmerFilter)) Fail("火鼍（LavaSwimmer）的导航网格在湖心采不到：重建 3-1（BakeLavaNavMesh）");
+            else if (!NavMesh.SamplePosition(c, out _, 3f, LavaField.SwimmerFilter)) Fail("火鼍（LavaSwimmer）的导航网格在湖里采不到：重建 3-1（BakeLavaNavMesh）");
         }
 
         // ───────────── 交战 ─────────────
@@ -315,28 +332,56 @@ namespace Spiritfire.Game.Testing
         IEnumerator Fight(EncounterSite site)
         {
             float limit = SiteTimeout + (HasTuo(site) ? TuoExtra : 0);
-            float start = Time.time, flankAt = 0, skillAt = Time.time + 1f, lureAt = 0;
+            float start = Time.time, flankAt = 0, skillAt = Time.time + 1f, lureAt = 0, stallSince = -1;
             bool shotMid = false;
             int kills0 = Runner.kills;
             float dmg0 = Runner.playerDamage;
             Runner.killsById.Clear();
             Line($"遭遇「{site.title}」开始：{site.Total} 只，{site.WaveCount} 波，升格精英 {site.Promoted}");
+            int lastWave = -1;
             while (site.phase != EncounterSite.Phase.Cleared && Time.time - start < limit)
             {
+                if (site.Wave != lastWave)
+                {
+                    lastWave = site.Wave;
+                    if (lastWave > 0 && site.title.Contains("宫门"))
+                    {
+                        yield return null;
+                        Line($"  ④ 第 {lastWave + 1} 波开波，毕方选点：{site.ExplainStall(motor.transform.position, "bifang")}");
+                    }
+                }
                 if (vitals.Dead) vitals.Revive();
                 if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
                 if (weapons.Active != null) weapons.Active.reserve = weapons.Active.def.reserve;
                 // 潜在熔岩里的火鼍不当目标：打不到，凑过去（绕视线的落点离它 8–12 m）正好落在它既不扑（≤ 7 m）也不上岸（> 11 m 躲 8 s）的距离上，
                 // 会一直耗到超时——当作场上没有能打的，走下面的引怪分支
-                var target = NearestFightable(eye.position);
+                var target = NearestFightable(eye.position, site);
                 if (!target)
                 {
                     weapons.testFire = false;
-                    if (site.PendingCount > 0)
+                    if (site.PendingCount > 0 && !OnMainMesh(motor.transform.position))
                     {
-                        // 还有没出场的：往场地中心靠一点，别站在距离带外
+                        Line($"  ⚠ 机器人在 {motor.transform.position} 被困在主路导航网格外：挪回场地");
+                        Place(LureSpot(site));
+                        yield return null;
+                    }
+                    else if (site.PendingCount > 0)
+                    {
+                        // 还有没出场的：往场地中心靠一点，别站在距离带外；选不到点卡了 4 s 就换个位置（像玩家一样走动）
                         if (Flat(motor.transform.position - site.transform.position) > site.arenaRadius)
                             yield return Step(site.transform.position, 6f);
+                        else if (site.Stalled && Time.time >= lureAt)
+                        {
+                            if (stallSince < 0) stallSince = Time.time;
+                            else if (Time.time - stallSince > 4f)
+                            {
+                                Line($"  ⚠ 选不到出生点 4 s（{site.ExplainStall(motor.transform.position)}）：换个位置");
+                                stallSince = -1;
+                                lureAt = Time.time + 6f;
+                                yield return Travel(LureSpot(site), 1.5f, false);
+                            }
+                        }
+                        else if (!site.Stalled) stallSince = -1;
                     }
                     else if (Time.time >= lureAt)
                     {
@@ -384,6 +429,9 @@ namespace Spiritfire.Game.Testing
                         Line($"  残敌 {e.enemyId}：状态 {e.State}，位置 {e.transform.position}，离玩家 {Vector3.Distance(e.transform.position, motor.transform.position):F1} m，" +
                              $"导航网格上 {(ag && ag.isOnNavMesh)}，在熔岩里 {LavaField.IsLava(e.transform.position)}");
                     }
+                Line($"  场地状态：第 {site.Wave + 1}/{site.WaveCount} 波，待出场 {site.PendingCount}，卡住选点 {site.Stalled}，场上 {site.AliveCount}，休眠 {site.SleepingCount}，" +
+                     $"全场敌人 {EnemyRegistry.Count}（休眠 {EncounterSite.DormantCount}），玩家在 {motor.transform.position}");
+                Line($"  选点：{site.ExplainStall(motor.transform.position)}");
                 Fail($"{limit:F0} s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
                 // 不卡死后面的步骤：清掉残敌，让目标图照常推进
                 EnemyRegistry.PurgeAll();
@@ -406,14 +454,22 @@ namespace Spiritfire.Game.Testing
             }
         }
 
-        /// <summary>最近的能打的敌人：同 <see cref="PlaytestSuite.NearestEnemy"/>，但跳过潜在熔岩里的熔岩生物（火鼍）</summary>
-        static Damageable NearestFightable(Vector3 from)
+        /// <summary>
+        /// 最近的能打的敌人：同 <see cref="PlaytestSuite.NearestEnemy"/>，但只认活动中的敌人（跳过可破坏物、别处预生成的休眠埋伏、正在入场位移的），
+        /// 离当前场地中心不超过场地半径 + 40 m；跳过潜在熔岩里的熔岩生物（火鼍）。
+        /// 不过滤时机器人会在等波次时去追 100 m 外的货堆 / 别的场地的休眠毕方，出生站位全在距离带外，场地卡到超时
+        /// </summary>
+        static Damageable NearestFightable(Vector3 from, EncounterSite site)
         {
             Damageable best = null;
             float bestD = float.MaxValue;
+            float reach = site ? site.arenaRadius + 40f : float.MaxValue;
             foreach (var d in FindObjectsByType<Damageable>())
             {
                 if (d.Dead || d.untargetable || LurksInLava(d)) continue;
+                var ai = d.GetComponent<EnemyAI>();
+                if (!ai || !ai.enabled) continue;
+                if (site && Flat(d.transform.position - site.transform.position) > reach) continue;
                 float dist = Vector3.Distance(from, d.transform.position);
                 if (dist < bestD)
                 {
@@ -461,6 +517,7 @@ namespace Spiritfire.Game.Testing
                 if (!NavMesh.SamplePosition(p, out var hit, 3f, Dry)) continue;
                 if (LavaField.IsLava(hit.position) || LavaField.NearLava(hit.position, 1.5f)) continue;
                 if (Combat.Blocked(hit.position + Vector3.up * 1.62f, aim, null)) continue;
+                if (!OnMainMesh(hit.position)) continue;
                 spot = hit.position;
                 return true;
             }
@@ -542,14 +599,172 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.5f);
         }
 
+        /// <summary>
+        /// 风险 4（ch3-v2 第 8 节）实测：断堤南段的堤道段立面（Facade_Edge，立面边上、正对熔岩）——同 <see cref="KnockCase"/> 刷一只祸斗、眩晕、
+        /// 朝熔岩打一发 9 m/s 的击退，记它有没有被推下去烧死。只记结果（决定堤道段能不能当击退带），不算不合格
+        /// </summary>
+        IEnumerator FacadeCase()
+        {
+            var marker = GameObject.Find("Facade_Edge");
+            var field = LavaField.Instance;
+            if (!marker || !field)
+            {
+                Line("风险 4 实测：没有 Facade_Edge 标记，跳过");
+                yield break;
+            }
+            EnemyRegistry.PurgeAll();
+            var dir = Flat3(marker.transform.forward);
+            var spot = marker.transform.position - dir * 0.4f;
+            var stand = spot - dir * 3f;
+            yield return Travel(stand, 1.5f, false);
+            Place(stand);
+            yield return null;
+            var e = EnemyRoster.Spawn(KnockDummy, spot, Quaternion.LookRotation(-dir), 1, false);
+            if (!e)
+            {
+                Line("风险 4 实测：刷不出祸斗，跳过");
+                yield break;
+            }
+            yield return new WaitForSeconds(1f);
+            if (!e || e.Dead) yield break;
+            EnemyStatus.Stun(e.Health, 4f);
+            yield return null;
+            var agent = e.GetComponent<NavMeshAgent>();
+            if (agent && agent.enabled && NavMesh.SamplePosition(spot, out var hit, 1f, Dry)) agent.Warp(hit.position);
+            yield return null;
+            Place(stand);
+            Aim(motor, eye, BodyCenter(e.Health));
+            int burned0 = field.Burned;
+            var from = e.transform.position;
+            var info = DamageInfo.Simple(1, DamageSource.Weapon, from + Vector3.up * 0.5f, dir);
+            info.knockback = 9;
+            info.noCrit = true;
+            Combat.DamageEnemy(e.Health, info);
+            float t = 0;
+            while (e && !e.Dead && t < 2f)
+            {
+                t += Time.deltaTime;
+                yield return null;
+            }
+            bool dead = !e || e.Dead;
+            Line($"风险 4 实测（堤道段立面）：祸斗从立面边 {from} 被击退{(dead ? $"推下熔岩烧死了（烧死 +{field.Burned - burned0}）" : $"后停在 {e.transform.position}（在熔岩里 {LavaField.IsLava(e.transform.position)}，没烧死）")}");
+            Shot(cam, "map31_facade");
+            if (e && !e.Dead) Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        /// <summary>
+        /// 构图自检（docs/art/composition.md 第 6 节「敌人必须是画面里视觉权重最高的东西」）：场地都肃清以后，在 ③ 锚链大墩（背后是熔岩湖）和
+        /// ④ 宫门瓮城上场（背后是宫门、鼓楼）各摆一组怪——祸斗、马面、炭童，跳过显形、停用 AI（站着不动、不开火）——
+        /// 镜头在离这组怪 14–20 m 的地方找一个三只都不被挡的位置（优先给定的朝向：③ 朝熔岩、④ 朝宫门），平视拍一张（map31_read_3 / map31_read_4）。
+        /// 只出截图，去色判断交给 composition_check.py 和人
+        /// </summary>
+        IEnumerator EnemyReadShots()
+        {
+            var views = new (string slug, Vector2 facing, (string id, Vector3 at)[] enemies)[]
+            {
+                ("3", new Vector2(1, 0.3f), new[] { ("huodou", new Vector3(44, 2, 41)), ("mamian", new Vector3(48, 2, 44)), ("tantong", new Vector3(45, 2, 47)) }),
+                ("4", new Vector2(0, 1), new[] { ("huodou", new Vector3(-24, 6, 95)), ("mamian", new Vector3(-15, 6, 98)), ("tantong", new Vector3(-20, 6, 102)) }),
+            };
+            weapons.testFire = false;
+            foreach (var (slug, facing, enemies) in views)
+            {
+                EnemyRegistry.PurgeAll();
+                vitals.Heal(99999);
+                var spawned = new List<EnemyAI>();
+                var centroid = Vector3.zero;
+                foreach (var (id, at0) in enemies)
+                {
+                    var at = NavMesh.SamplePosition(at0, out var h, 3f, Dry) ? h.position : at0;
+                    var e = EnemyRoster.Spawn(id, at, Quaternion.LookRotation(new Vector3(-facing.x, 0, -facing.y)), 1, false);
+                    if (!e) continue;
+                    if (e.TryGetComponent(out SpawnMaterialize sm)) sm.enabled = false;
+                    e.enabled = false;
+                    if (e.Health) e.Health.untargetable = true;
+                    spawned.Add(e);
+                    centroid += at;
+                }
+                if (spawned.Count == 0)
+                {
+                    Line($"构图自检截图 map31_read_{slug}：刷不出怪，跳过");
+                    continue;
+                }
+                centroid /= spawned.Count;
+                yield return null;
+                // 找机位：给定朝向 ±75° 内、离怪群 14–20 m，眼睛到每只怪的身体中心都不被挡
+                var face = new Vector3(facing.x, 0, facing.y).normalized;
+                Vector3? best = null;
+                foreach (float r in new[] { 16f, 14f, 19f })
+                {
+                    for (int k = 0; k <= 10 && best == null; k++)
+                    {
+                        float ang = (k % 2 == 0 ? 1 : -1) * ((k + 1) / 2) * 15f;
+                        var back = Quaternion.AngleAxis(ang, Vector3.up) * -face;
+                        if (!NavMesh.SamplePosition(centroid + back * r, out var c, 3f, Dry)) continue;
+                        var eyeAt = c.position + Vector3.up * 1.62f;
+                        bool clear = true;
+                        foreach (var e in spawned)
+                        {
+                            var body = e.Health ? BodyCenter(e.Health) : e.transform.position + Vector3.up;
+                            var to = body - eyeAt;
+                            var end = body - to.normalized * 0.9f;
+                            if (Physics.Linecast(eyeAt, end, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+                            {
+                                clear = false;
+                                break;
+                            }
+                        }
+                        if (clear) best = c.position;
+                    }
+                    if (best != null) break;
+                }
+                var stand = best ?? (centroid - face * 16f);
+                Place(stand);
+                yield return null;
+                Aim(motor, eye, centroid + Vector3.up * 1.2f);
+                yield return new WaitForSeconds(0.4f);
+                Shot(cam, $"map31_read_{slug}");
+                yield return new WaitForSeconds(0.3f); // 截图在帧末抓屏：怪要留到抓完再删
+                Line($"构图自检截图 map31_read_{slug}：机位 {stand}{(best == null ? "（没找到三只都不挡的位置）" : "")}，{spawned.Count} 只怪（" +
+                     string.Join("、", spawned.Where(e => e).Select(e => $"{e.enemyId} {Vector3.Distance(eye.position, e.transform.position):F0} m")) + "）");
+                foreach (var e in spawned)
+                    if (e) Destroy(e.gameObject);
+                yield return null;
+            }
+            EnemyRegistry.PurgeAll();
+        }
+
         // ───────────── 藏宝 ─────────────
 
         IEnumerator CacheCheck(CachePOI cache)
         {
             var c = cache.transform.position;
-            // 湖心石龛：从锚链墩走 C8 窄堤过去，先到藏宝点 6 m 外，再靠近
-            yield return Travel(c, 6f, false);
-            Line($"走上窄堤：离石龛 {Flat(motor.transform.position - c):F1} m，y = {motor.transform.position.y:F1}（石龛 y = {c.y:F1}）");
+            // 湖心石龛：先走到断堤南段的堤头（跳石的起点），再逐块踩三块跳石（每块落脚 = 一次跳），最后落到石龛上
+            var stones = Enumerable.Range(1, 3).Select(i => GameObject.Find($"Stone_{i}")).Where(g => g).Select(g => g.transform.position).ToList();
+            if (stones.Count == 3)
+            {
+                // 跳石本身不连主路的导航网格：走到第一块跳石外 3.5 m 的堤头
+                var headAt = stones[0] + (stones[0] - c).normalized * 3.5f;
+                yield return Travel(headAt, 1.5f, false);
+                var field = LavaField.Instance;
+                int entries0 = field ? field.Entries : 0;
+                foreach (var st in stones)
+                {
+                    Place(st + Vector3.up * 0.1f);
+                    yield return new WaitForSeconds(0.35f);
+                    if (LavaField.IsLava(motor.transform.position)) Fail($"跳石 {st} 上算成了熔岩");
+                }
+                Place(c + (stones[2] - c).normalized * 2.4f);
+                yield return new WaitForSeconds(0.3f);
+                Line($"踩跳石上石龛：离石龛 {Flat(motor.transform.position - c):F1} m，y = {motor.transform.position.y:F1}（石龛 y = {c.y:F1}），" +
+                     $"途中掉进熔岩 {(field ? field.Entries - entries0 : 0)} 次");
+                if (field && field.Entries > entries0) Fail("踩跳石时掉进了熔岩（跳石顶没高出熔岩？）");
+            }
+            else
+            {
+                Fail("场景里没有 Stone_1…3 跳石标记");
+                yield return Travel(c, 6f, false);
+            }
             float t0 = Time.time;
             while (!cache.Discovered && Time.time - t0 < 2f) yield return null;
             if (!cache.Discovered)
@@ -573,6 +788,19 @@ namespace Spiritfire.Game.Testing
             Line($"  调查：{(cache.Claimed ? $"宝箱出现（{cache.reward}）" : "没有宝箱")}");
             if (!cache.Claimed || !cache.RewardChest) Fail($"调查藏宝「{cache.title}」后没有出宝箱");
             Shot(cam, "map31_islet");
+            // 原路跳回断堤头（三块跳石倒着踩），后面去出口走主路
+            var back = Enumerable.Range(1, 3).Select(i => GameObject.Find($"Stone_{i}")).Where(g => g).Select(g => g.transform.position).Reverse().ToList();
+            foreach (var st in back)
+            {
+                Place(st + Vector3.up * 0.1f);
+                yield return new WaitForSeconds(0.25f);
+            }
+            if (back.Count > 0)
+            {
+                var head = back[^1] + (back[^1] - c).normalized * 3.5f;
+                Place(NavMesh.SamplePosition(head, out var hh, 3f, Dry) ? hh.position : head);
+                yield return new WaitForSeconds(0.3f);
+            }
         }
 
         // ───────────── 走路（沿非熔岩的导航路径，用角色控制器真走）─────────────
@@ -645,9 +873,20 @@ namespace Spiritfire.Game.Testing
             {
                 float a = k * Mathf.PI / 8;
                 var q = p + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * r;
-                if (NavMesh.SamplePosition(q, out var hit, 1f, Dry) && !LavaField.IsLava(hit.position, KeepRise)) return hit.position;
+                if (NavMesh.SamplePosition(q, out var hit, 1f, Dry) && !LavaField.IsLava(hit.position, KeepRise) && OnMainMesh(hit.position)) return hit.position;
             }
             return p;
+        }
+
+        /// <summary>在主路的导航网格上（非熔岩路径走得到出口神龛前）：跳石、石龛这种孤岛不算，机器人不会被挪上去困住</summary>
+        static bool OnMainMesh(Vector3 p)
+        {
+            var portal = FindAnyObjectByType<ExitPortal>();
+            if (!portal) return true;
+            var goal = portal.transform.position - portal.transform.forward * 3.5f;
+            if (!NavMesh.SamplePosition(goal, out var g, 4f, Dry)) return true;
+            var path = new NavMeshPath();
+            return NavMesh.CalculatePath(p, g.position, Dry, path) && path.status == NavMeshPathStatus.PathComplete;
         }
 
         IEnumerator WalkTo(Vector3 target, Vector3 goal, float stopAt, bool breakOnCombat)

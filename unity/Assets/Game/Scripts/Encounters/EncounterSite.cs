@@ -973,11 +973,11 @@ namespace Spiritfire.Game
         public int PendingCount => pending.Count;
 
         /// <summary>调试：排队里第一只选不到点的原因（每个候选站位一句）；没有在排队的返回空串</summary>
-        public string ExplainStall(Vector3 player)
+        public string ExplainStall(Vector3 player, string id = null)
         {
             foreach (var p in pending)
             {
-                if (p.warned) continue;
+                if (p.warned || (id != null && p.id != id)) continue;
                 var q = QueryFor(p, player, Vector3.forward);
                 var want = SpawnStations.ModeFor(anchors, p.mode, out bool any);
                 var parts = new List<string>();
