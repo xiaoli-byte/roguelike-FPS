@@ -154,16 +154,37 @@ namespace Spiritfire.Game
             model.localRotation = restRot * Quaternion.Euler(Mathf.Clamp(pitch, -MaxPitch, MaxPitch), 0, 0);
         }
 
-        static void Spring(ref float x, ref float v, float target, float dt)
+        /// <summary>弹簧积分的子步长上限（秒）与一帧最多几步：半隐式欧拉在 ω·h &lt; 2 时稳定（7.5 Hz → h &lt; 42 ms），1/60 s 留足余量</summary>
+        public const float SpringStep = 1f / 60f;
+        public const int SpringMaxSteps = 32;
+
+        /// <summary>
+        /// 姿态弹簧（欠阻尼）往 target 积分 dt 秒：半隐式欧拉，每步不超过 <see cref="SpringStep"/>。
+        /// dt ≤ 0.1 s 时和以前完全一样（每步 dt / ⌈60·dt⌉）；更大的 dt（机器人 × 4 倍时间、卡顿一帧）以前只分 6 步，单步 ω·h 超过 2 发散成 NaN，
+        /// 现在按 1/60 s 子步进、最多 32 步（0.53 s，再长的那一截弹簧早已停稳，直接截掉）；结果不是有限数时回到 target、速度清零，位移夹在 ±4 倍目标幅度内。
+        /// </summary>
+        public static void Spring(ref float x, ref float v, float target, float dt)
         {
+            if (!(dt > 0) || !float.IsFinite(dt)) return;
             float w = Freq * Mathf.PI * 2f;
-            // 半隐式欧拉，按 1/60 s 分步（低帧率也稳）
-            int steps = Mathf.Clamp(Mathf.CeilToInt(dt * 60f), 1, 6);
-            float h = dt / steps;
+            int steps = Mathf.Clamp(Mathf.CeilToInt(dt * 60f), 1, SpringMaxSteps);
+            float h = Mathf.Min(dt / steps, SpringStep);
             for (int i = 0; i < steps; i++)
             {
                 v += (-2f * Zeta * w * v - w * w * (x - target)) * h;
                 x += v * h;
+            }
+            if (!float.IsFinite(x) || !float.IsFinite(v))
+            {
+                x = float.IsFinite(target) ? target : 0;
+                v = 0;
+                return;
+            }
+            float bound = 4f * Mathf.Max(MaxSquash, MaxPitch, Mathf.Abs(target));
+            if (Mathf.Abs(x) > bound)
+            {
+                x = Mathf.Clamp(x, -bound, bound);
+                v = 0;
             }
         }
 
