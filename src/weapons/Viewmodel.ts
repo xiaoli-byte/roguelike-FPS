@@ -20,6 +20,8 @@ import { applyArtEnvironment } from '../assets/ArtEnvironment';
 import { attachStaticPart } from '../assets/StaticAttachment';
 import { WEAPON_HANDLING, sampleLoadingHand, type HandPose } from './WeaponHandling';
 import { addReloadBreech } from './ReloadBreech';
+import { OriginalWeaponLibrary } from '../assets/OriginalWeaponLibrary';
+import { OriginalRecoil, OriginalWeaponView } from './OriginalWeaponView';
 
 export interface ViewmodelState {
   aimT: number;
@@ -79,6 +81,8 @@ interface VmEntry {
   magBase: THREE.Vector3;
   magRotX: number;
   pumpBase: number;
+  original: OriginalWeaponView | null;
+  recoil: OriginalRecoil | null;
   /** 碎刃的第一人称表现；其他武器为 null */
   blade: BladeView | null;
 }
@@ -328,6 +332,7 @@ export class Viewmodel {
     if (!e) {
       e = this.build(inst);
       this.entries.set(inst.uid, e);
+      this.upgradeWhenSynced(e, inst);
     }
     this.cur = e;
     this.pivot.add(e.gun.root);
@@ -340,6 +345,24 @@ export class Viewmodel {
     this.shellT = 0;
     if (e.gun.cylinder) e.gun.cylinder.rotation.z = 0;
     e.blade?.resetAnim();
+  }
+
+  private upgradeWhenSynced(entry: VmEntry, inst: WeaponInstance): void {
+    const pending = OriginalWeaponLibrary.get(inst.defId);
+    if (!pending) return;
+    void pending.then((asset) => {
+      if (!asset || this.entries.get(inst.uid) !== entry || (entry.original && entry.recoil)) return;
+      const current = this.cur === entry;
+      this.disposeEntry(entry);
+      const upgraded = this.build(inst);
+      this.entries.set(inst.uid, upgraded);
+      if (current) {
+        this.cur = upgraded;
+        this.pivot.add(upgraded.gun.root);
+        upgraded.gun.muzzle.add(this.flash);
+        this.flash.visible = false;
+      }
+    });
   }
 
   /** 释放不再持有的武器模型 */
@@ -368,6 +391,7 @@ export class Viewmodel {
     this.land = this.vyLag = 0;
     this.rackT = 99;
     this.killFlash();
+    this.cur?.recoil?.reset();
     this.cur?.blade?.resetAnim();
   }
 
@@ -390,6 +414,7 @@ export class Viewmodel {
     e.gun.artGlow?.dispose(); // 美术枪模、美术手臂的实例材质（贴图共享，不在这里释放）
     for (const m of e.armMats) m.dispose();
     for (const g of e.ownedGeometry) g.dispose();
+    e.original?.dispose();
     e.blade?.dispose();
   }
 
@@ -400,9 +425,18 @@ export class Viewmodel {
     const base = new THREE.Color(ELEMENT_COLORS[inst.element]);
     const energyMat = new THREE.MeshBasicMaterial({ color: base.clone(), toneMapped: false });
     for (const m of gun.energy) m.material = energyMat;
-    const arms = addArms(gun, this.ctx.player.hero?.color ?? 0x5a6a7a, this.ctx.player.hero?.id, this.ctx.renderer, def.id);
+    const synced = OriginalWeaponLibrary.loaded(def.id);
+    let original: OriginalWeaponView | null = null;
+    if (synced?.gltf) {
+      original = new OriginalWeaponView(synced, this.ctx.renderer, def.reloadTime);
+      for (const child of gun.root.children) child.visible = false;
+      gun.root.add(original.root);
+      gun.muzzle = original.muzzle;
+      gun.mag = gun.cylinder = gun.spinner = gun.pump = null;
+    }
+    const arms = original ? { forearm: null, mats: [] } : addArms(gun, this.ctx.player.hero?.color ?? 0x5a6a7a, this.ctx.player.hero?.id, this.ctx.renderer, def.id);
     const armMats = arms.mats;
-    const leftArm = gun.root.getObjectByName('arm_l') ?? null;
+    const leftArm = original ? null : gun.root.getObjectByName('arm_l') ?? null;
     const support = leftArm?.position.clone() ?? new THREE.Vector3();
     const loadOffset = new THREE.Vector3().fromArray(WEAPON_HANDLING[def.id]?.load ?? [0, 0, 0]);
     if (gun.mag) {
@@ -425,9 +459,8 @@ export class Viewmodel {
       rounds.visible = false;
       leftArm.add(rounds);
     }
-    // 双管折开式枪：在已完成美术绑定后增设运行时铰链，白模骨架指纹保持原样。
     if (def.id === 'magmashot') breech = addReloadBreech(gun.root, ownedGeometry);
-    gun.root.scale.setScalar(VM_SCALE);
+    gun.root.scale.setScalar(original ? 1 : VM_SCALE);
     gun.root.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (mesh.isMesh) {
@@ -446,6 +479,8 @@ export class Viewmodel {
       magBase: gun.mag ? gun.mag.position.clone() : new THREE.Vector3(),
       magRotX: gun.mag ? gun.mag.rotation.x : 0,
       pumpBase: gun.pump ? gun.pump.position.z : 0,
+      original,
+      recoil: synced ? new OriginalRecoil(synced.motion) : null,
       blade: null,
     };
   }
@@ -469,6 +504,7 @@ export class Viewmodel {
       energyMat: new THREE.MeshBasicMaterial({ toneMapped: false }),
       armMats, leftArm: null, support: new THREE.Vector3(), loadOffset: new THREE.Vector3(), rounds: null, breech: null,
       ownedGeometry: [], baseColor: new THREE.Color(ELEMENT_COLORS[inst.element]), magBase: new THREE.Vector3(), magRotX: 0, pumpBase: 0,
+      original: null, recoil: null,
       blade: view,
     };
   }
@@ -482,6 +518,8 @@ export class Viewmodel {
     this.kickRot = Math.min(this.kickRot + k.rot * strength, k.rot * 2.4);
     this.kickRoll += (Math.random() - 0.5) * k.rot * 0.4 * strength;
     const e = this.cur;
+    e?.original?.fire(strength >= 1);
+    e?.recoil?.fire();
     if (e && e.gun.cylinder) this.cylTarget += TAU / e.gun.cylinderSteps;
     if (def.flash > 0) {
       // 强度 < 1（未蓄满的蓄力射击）时火焰与闪光相应减弱
@@ -574,19 +612,25 @@ export class Viewmodel {
     this.prevReloadP = rp;
 
     // ── 组合姿态 ──
-    const hip = def.viewOffset, aim = def.aimOffset;
+    e.recoil?.update(dt);
     const lowE = smooth(s.lowerT);
     const swayK = 1 - 0.6 * s.aimT;
-    const kz = this.kickZ * VM_SCALE;
-    let x = lerp(hip[0] + HIP_SHIFT_X, aim[0] * VM_SCALE, s.aimT) + bobX + this.swayX * 0.5 * swayK + this.dashT * 0.015;
-    let y = lerp(hip[1] + HIP_SHIFT_Y, aim[1] * VM_SCALE, s.aimT) + bobY + breath + this.swayY * 0.5 * swayK + this.vyLag - this.land
-      - lowE * 0.3 + kz * 0.15 - this.dashT * 0.02 + this.airT * 0.008;
-    let z = lerp(hip[2], aim[2] * VM_SCALE, s.aimT) + kz + this.fwdLag + lowE * 0.05;
-    let rx = this.kickRot + breath * 1.2 + this.swayY * 1.0 * swayK - lowE * 0.9 - this.dashT * 0.12 + this.airT * 0.05;
-    let ry = -this.swayX * 1.3 * swayK;
-    let rz = this.roll * swayK + bobRoll + this.kickRoll - this.dashT * 0.3;
+    const kz = this.kickZ * (e.original ? 1 : VM_SCALE);
+    const hipX = e.original?.hip.x ?? def.viewOffset[0] + HIP_SHIFT_X;
+    const hipY = e.original?.hip.y ?? def.viewOffset[1] + HIP_SHIFT_Y;
+    const hipZ = e.original?.hip.z ?? def.viewOffset[2];
+    const aimX = e.original?.aim.x ?? def.aimOffset[0] * VM_SCALE;
+    const aimY = e.original?.aim.y ?? def.aimOffset[1] * VM_SCALE;
+    const aimZ = e.original?.aim.z ?? def.aimOffset[2] * VM_SCALE;
+    let x = lerp(hipX, aimX, s.aimT) + bobX + this.swayX * 0.5 * swayK + this.dashT * 0.015 + (e.recoil?.position.x ?? 0);
+    let y = lerp(hipY, aimY, s.aimT) + bobY + breath + this.swayY * 0.5 * swayK + this.vyLag - this.land
+      - lowE * 0.3 + kz * 0.15 - this.dashT * 0.02 + this.airT * 0.008 + (e.recoil?.position.y ?? 0);
+    let z = lerp(hipZ, aimZ, s.aimT) + kz + this.fwdLag + lowE * 0.05 + (e.recoil?.position.z ?? 0);
+    let rx = this.kickRot + breath * 1.2 + this.swayY * 1.0 * swayK - lowE * 0.9 - this.dashT * 0.12 + this.airT * 0.05 + (e.recoil?.rotation.x ?? 0);
+    let ry = -this.swayX * 1.3 * swayK + (e.recoil?.rotation.y ?? 0);
+    let rz = this.roll * swayK + bobRoll + this.kickRoll - this.dashT * 0.3 + (e.recoil?.rotation.z ?? 0);
 
-    const tilt = this.reloadTilt;
+    const tilt = e.original ? 0 : this.reloadTilt;
     switch (def.reloadStyle) {
       case 'mag': rz += 0.45 * tilt; rx += 0.12 * tilt; x -= 0.03 * tilt; y += 0.01 * tilt; break;
       case 'cylinder': rz += 0.75 * tilt; rx += 0.1 * tilt; x -= 0.04 * tilt; break;
@@ -595,14 +639,13 @@ export class Viewmodel {
       case 'box': rz += 0.28 * tilt; x -= 0.02 * tilt; y -= 0.05 * tilt; break;
       case 'shell': break;
     }
-    const st = this.shellT;
+    const st = e.original ? 0 : this.shellT;
     rz -= 0.38 * st;
     rx += 0.1 * st - this.shellBump * 0.06;
     x -= 0.015 * st;
     y += 0.015 * st - this.shellBump * 0.012;
 
     if (s.firing && !e.blade) {
-      // 持续开火的颤动；蓄力时随蓄力加剧
       const j = def.mode === 'charge' ? 0.0008 + 0.0026 * s.spin : 0.003;
       x += (Math.random() - 0.5) * j;
       y += (Math.random() - 0.5) * j;
@@ -616,6 +659,7 @@ export class Viewmodel {
       bl.animate(dt, s.blade ?? BLADE_IDLE);
     }
 
+    e.original?.update(dt, s);
     this.animateParts(dt, e, s, time);
     this.animateHands(dt, e, s);
     this.updateFlash(dt, e, s);

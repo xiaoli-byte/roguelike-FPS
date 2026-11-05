@@ -1,0 +1,260 @@
+{
+  "motion": {
+    "m_isMainWeapon": true,
+    "FixedPoint": false,
+    "FixedPosition": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "PositionSpringStiffness": 0.009999999776482582,
+    "PositionSpringDamping": 0.3799999952316284,
+    "PositionSpring2Stiffness": 0.6010000109672546,
+    "PositionSpring2Damping": 0.4300000071525574,
+    "PositionSpring3Stiffness": 0.949999988079071,
+    "PositionSpring3Damping": 0.25,
+    "PositionKneeling": 0.05999999865889549,
+    "PositionKneelingSoftness": 1,
+    "PositionFallRetract": 1.0,
+    "PositionWalkSlide": {
+      "x": -5.0,
+      "y": 0.0,
+      "z": -3.0
+    },
+    "PositionInputVelocityScale": 1.0,
+    "PositionMaxInputVelocity": 25.0,
+    "RotationSpringStiffness": 0.014999999664723873,
+    "RotationSpringDamping": 0.25,
+    "RotationSpring2Stiffness": 0.6150000095367432,
+    "RotationSpring2Damping": 0.4059999883174896,
+    "RotationSpring3Stiffness": 0.949999988079071,
+    "RotationSpring3Damping": 0.25,
+    "RotationKneeling": 0.0,
+    "RotationKneelingSoftness": 1,
+    "RotationLookSway": {
+      "x": -2.0,
+      "y": -2.0,
+      "z": 3.0
+    },
+    "RotationStrafeSway": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "RotationFallSway": {
+      "x": 1.0,
+      "y": -0.5,
+      "z": -3.0
+    },
+    "PositionFallSway": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "RotationSlopeSway": 0.5,
+    "RotationInputVelocityScale": 10.0,
+    "RotationMaxInputVelocity": 100.0,
+    "ShakeSpeed": 0.15000000596046448,
+    "ShakeAmplitude": {
+      "x": 0.5,
+      "y": 0.20000000298023224,
+      "z": 0.20000000298023224
+    },
+    "ShakePosition": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "BobRotation": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "BobRotationAmplitude": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "BobPosition": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "BobPositionAmplitude": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "BobInputVelocityScale": 1.0,
+    "BobMaxInputVelocity": 100.0,
+    "BobRequireGroundContact": true,
+    "StepPositionForce": {
+      "x": 0.0,
+      "y": -0.30000001192092896,
+      "z": 0.0
+    },
+    "StepRotationForce": {
+      "x": 10.0,
+      "y": 0.0,
+      "z": 5.0
+    },
+    "StepSoftness": 1,
+    "StepMinVelocity": 1.0,
+    "StepPositionBalance": 0.0,
+    "StepRotationBalance": 0.0,
+    "StepForceScale": 0.009999999776482582,
+    "MotionPositionReset": 0.800000011920929,
+    "MotionRotationReset": 0.800000011920929,
+    "MotionPositionRecoil": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": -0.029999999329447746
+    },
+    "MotionRotationRecoil": {
+      "x": -1.0,
+      "y": 1.0,
+      "z": 1.0
+    },
+    "MotionPositionMaxState": {
+      "x": 10000.0,
+      "y": 10000.0,
+      "z": 10000.0
+    },
+    "MotionRotationRecoilDeadZone": 0.5,
+    "MotionRecoilInterval": 0.0,
+    "FireFOVOffset": 3.0,
+    "FireFOVMax": 3.0,
+    "FireFOVTime": 0.03999999910593033,
+    "FireFOVRecoverTime": 0.05999999865889549,
+    "HitPositionReset": 0.5,
+    "HitRotationReset": 0.5,
+    "HitPositionRecoil": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": -0.03500000014901161
+    },
+    "HitRotationRecoil": {
+      "x": -1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "HitRotationRecoilDeadZone": 0.5,
+    "HitPositionMaxState": {
+      "x": 10000.0,
+      "y": 10000.0,
+      "z": 10000.0
+    },
+    "SwitchWeaponRoatation": 45.0,
+    "SwitchWeaponPosition": -1.0,
+    "PutDownTime": 0.10000000149011612,
+    "PullOutTime": 0.30000001192092896,
+    "CamRotationSpringStiffness": 1.0,
+    "CamRotationSpringDamping": 0.4000000059604645,
+    "CameraRollOffset": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "ReloadWeaponRoatation": 90.0,
+    "ReloadPutDownTime": 0.10000000149011612,
+    "ReloadPullOutTime": 0.1599999964237213,
+    "SightRatio": 150.0,
+    "SightFOVChangeTime": 0.3499999940395355,
+    "FocusFOV": 60.0,
+    "FocussingEndTime": 0.5,
+    "FocussingStartTime": 0.5,
+    "IronSightFOVOffset": 1.0,
+    "IronSightOpenTime": 0.5,
+    "IronSightCloseTime": 0.5,
+    "FOVOffset": 1.0,
+    "FOVSetTime": 0.5,
+    "FOVRecoverTime": 0.5
+  },
+  "camera": {
+    "UseCustomRecoil": false,
+    "X_Change_Prob": 0.5,
+    "RecoilMax_X": 1.0,
+    "RecoilMax_Y": 2.0,
+    "RecoilTime": 8.0,
+    "RandomMin_X": 0.0,
+    "RandomMin_Y": 0.0,
+    "RandomMax_X": 0.20000000298023224,
+    "RandomMax_Y": 0.0,
+    "RecoverSpeed": 0.44999998807907104,
+    "StabilityOffset": 0.0,
+    "Axis_X_Y_Ratio": 0.5,
+    "RecoilUpLimit": 10.0,
+    "RecoilDownLimit": 0.0,
+    "SightMax": 4.0,
+    "SightMin": 2.0,
+    "SightDefaultUse": 2.0,
+    "SightSpeed": 0.20000000298023224,
+    "SightSmoothTime": 0.5,
+    "CrazyShootRecoilMax_Y": 2.0,
+    "IronSightOption": 0,
+    "CustomRecoils": []
+  },
+  "normal": {
+    "PositionOffset": {
+      "x": 0.2800000011920929,
+      "y": -0.33000001311302185,
+      "z": 0.2800000011920929
+    },
+    "PositionOffset_Refer": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "PositionSightOffset": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "PositionDWOffset": {
+      "x": 0.2800000011920929,
+      "y": -0.33000001311302185,
+      "z": 0.2800000011920929
+    },
+    "PositionFocusOffset": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "PositionIronSightOffset": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "RotationOffset": {
+      "x": -3.0,
+      "y": -3.0,
+      "z": 0.0
+    },
+    "RotationOffset_Refer": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "RotationSightOffset": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "RotationDWOffset": {
+      "x": -3.0,
+      "y": -3.0,
+      "z": 0.0
+    },
+    "RotationFocusOffset": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "RotationIronSightOffset": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "DWOffsetMinDis": 0.02500000037252903
+  }
+}

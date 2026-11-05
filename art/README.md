@@ -23,6 +23,8 @@
 
 **Unity 分支（2026-10-16 起）**：游戏迁到 Unity（`unity/`，URP）。发布物经 `art/pipeline/unity_export.py` 转成 FBX + 贴图 + `*.art.json`，Unity 里由 Spiritfire ▸ Art ▸ Sync All 生成风格化材质、Prefab 并做引擎侧 QA。详见 [docs/unity-art-pipeline.md](../docs/unity-art-pipeline.md)。
 
+**Unity 原生武器回同步 Three.js**：运行 `npm run unity:web:sync`。导出器读取 Unity 原生 Prefab、网格、通用动画曲线与 `Resources/Gunfire/Motion`，在 `public/assets/gunfire-original/` 生成带双手蒙皮和 AnimationClip 的 GLB，并逐字复制 16 份运动参数。网页主游戏为 6 把对应武器接入后坐弹簧，其中冲锋枪、左轮和灵炮使用原生双手与开火/换弹动画；其他 10 份运动文档仅供后续武器接入，不做首屏预加载。源包从 `Library/GunfireBundles` 或本机游戏目录读取；导出会拒绝非法或未归一化的蒙皮权重。`original-weapon.html` 是 `build:labs` 的检视入口，空格开火、R 换弹、A 瞄准。
+
 ```
 游戏白模 ──▶ 00 白模 ──▶ 01 概念设计 ──▶ 02 高模 ──▶ 03 游戏化 ──▶ 04 自动QA ──▶ 05 审核 ──▶ 06 发布
 (?debug 导出)  四视图+相机     GPT Image 2.5     Hunyuan3D 2.1    Blender 无头      GLB+度量     审核大图     public/assets

@@ -15,6 +15,7 @@ import { HEROES } from '../player/Heroes';
 import { WEAPON_DEFS } from '../weapons/WeaponDefs';
 import { Viewmodel, createViewmodelState } from '../weapons/Viewmodel';
 import { AssetLibrary } from '../assets/AssetLibrary';
+import { OriginalWeaponLibrary } from '../assets/OriginalWeaponLibrary';
 
 const params = new URLSearchParams(location.search);
 const hero = HEROES.find((h) => h.id === params.get('hero')) ?? HEROES[0];
@@ -24,7 +25,7 @@ const zoom = Number(params.get('zoom') ?? 1.6);
 const reloadAt = params.has('reload') ? Number(params.get('reload')) : -1;
 const aim = params.get('aim') === '1';
 
-await AssetLibrary.preload();
+await Promise.all([AssetLibrary.preload(), OriginalWeaponLibrary.preload()]);
 const game = new Game();
 const ctx = game.ctx;
 ctx.player.resetForRun(hero);
