@@ -212,6 +212,8 @@ namespace Spiritfire.Art.Editor.Levels
                 var truss = LevelKit.PlaceOrBox(TrussId, root, new Vector3(x, T2 + 14f, (HallColumns[0].y + HallColumns[3].y) * 0.5f), new Vector3(span, 3f, 1.2f), 90,
                     span / TrussSize.x);
                 Label(truss, TrussId, "殿顶屋架");
+                // 碰撞留着挡子弹，但不进导航：顶面会烘出离殿地 14 m 的孤岛，追飞鸦的换位会把人 / 怪落到上面下不来
+                if (truss) truss.AddComponent<Unity.AI.Navigation.NavMeshModifier>().ignoreFromBuild = true;
             }
             Put(AltarId, props, set, new Vector2(46, 130), 0, 1.3f, 0.05f, AltarSize);
             Put(AltarId, props, set, new Vector2(62, 162), 0, 1.3f, 0.05f, AltarSize);
