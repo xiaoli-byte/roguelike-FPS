@@ -6,6 +6,7 @@
     docs/art/review/ch3-v2/<图>/pairs.txt 可选：指定配对与标题（见下）
     docs/art/review/ch3-v2/<图>/compare/  输出：每组一张左右对照 NN-名字.jpg
     docs/art/review/ch3-v2/<图>/<图>-compare.jpg  输出：总览（全部组的缩略对照）
+    docs/art/review/ch3-v2/<图>/<图>-compare-gray.jpg  输出：总览的灰度版（去掉颜色看明暗：焦点 / 剪影读不读得出）
 
 用法：
     python scripts/unity/ch3_compare.py collect 3-4     # 拷改后图：unity/Assets/Art/_Review/level_3-4_* → after/（PNG 转 JPG、宽 ≤ 1600）
@@ -29,7 +30,7 @@ import os
 import re
 import shutil
 import sys
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 REVIEW = os.path.join(ROOT, "unity", "Assets", "Art", "_Review")
@@ -224,6 +225,10 @@ def compare(map_id: str, list_only=False) -> int:
     p = os.path.join(folder, f"{map_id}-compare.jpg")
     ov.save(p, quality=85)
     print(f"  → {p}（{ov.width}×{ov.height}）")
+    # 灰度版：只看明暗（构图的焦点、大剪影和留白在没有颜色时还读不读得出）
+    g = os.path.join(folder, f"{map_id}-compare-gray.jpg")
+    ImageOps.grayscale(ov).save(g, quality=85)
+    print(f"  → {g}（灰度）")
     return len(pairs)
 
 
