@@ -186,7 +186,8 @@ namespace Spiritfire.Art.Editor.Levels
             new() { name = "② 熔流闸口", c = Site2C, half = Site2Half, r = 4, h = Site2H, wobble = 0.5f, seed = 43 },
             new() { name = "② 闸楼台", c = new Vector2(20, -104), half = new Vector2(6, 17), r = 1.5f, h = SluiceH, steep = 8 },
             new() { name = "② 北桥头台", c = new Vector2(-2, -84), half = new Vector2(4, 2.5f), r = 0.8f, h = Site2H + SlabRise, steep = 8 },
-            new() { name = "② 南桥头台", c = new Vector2(-2, -124), half = new Vector2(4, 3), r = 0.8f, h = Site2H + SlabRise, steep = 8 },
+            // 南桥头台往西南收（原 (−2, −124) 8 × 6）：北沿和闸楼台南坡之间原来只剩 1.25 m，坡南那一条（x 2–25、z −129…−120）烘成了导航孤岛
+            new() { name = "② 南桥头台", c = new Vector2(-3.5f, -125.8f), half = new Vector2(3.5f, 2f), r = 0.8f, h = Site2H + SlabRise, steep = 8 },
             new() { name = "② 东洞口", c = new Vector2(29, -84), half = new Vector2(4.5f, 3), r = 1.5f, h = Site2H, steep = 8 },
             // 闸渠西段（出 ② 西沿进熔岩洞）、熔岩洞岸台（藏宝）
             new() { name = "闸渠西段", c = new Vector2(-36, ChannelZ), half = new Vector2(11, ChannelOut), r = 3, h = Site2H, wobble = 0.6f, seed = 44 },
@@ -195,6 +196,29 @@ namespace Spiritfire.Art.Editor.Levels
             new() { name = "补给营", c = CampC, half = CampHalf, r = 5, h = CampH, steep = 0.25f, wobble = 0.6f, seed = 46 },
             new() { name = "祝融像祭台", c = StatueAt, half = new Vector2(5.5f, 4.5f), r = 1f, h = CampH + DaisRise, steep = 0.3f },
         };
+
+        /// <summary>
+        /// 台顶不进导航的「没坡的台阶」（S1：出场站位要走得到玩家；玩家跳上去时敌人在台下够得着，不会被导航孤岛卡住）：② 两座桥头台、① 六座铜人基座。
+        /// 每块一个不可走的导航修饰体积，只罩台顶（台顶下 0.5 m 到上 2 m、台面外扩 0.2 m），台下地面不受影响
+        /// </summary>
+        static IEnumerable<Pad> NoNavTops => Pads.Where(p => p.name.Contains("桥头台")).Concat(Plinths);
+
+        static void BuildNoNavTops(Transform parent)
+        {
+            var root = new GameObject("NoNav · 台顶（没坡的台阶）").transform;
+            root.SetParent(parent, false);
+            int notWalkable = NavMesh.GetAreaFromName("Not Walkable");
+            foreach (var pad in NoNavTops)
+            {
+                var go = new GameObject($"NoNav · {pad.name}");
+                go.transform.SetParent(root, false);
+                go.transform.position = new Vector3(pad.c.x, pad.h + 0.75f, pad.c.y);
+                var v = go.AddComponent<NavMeshModifierVolume>();
+                v.center = Vector3.zero;
+                v.size = new Vector3(pad.half.x * 2f + 0.4f, 2.5f, pad.half.y * 2f + 0.4f);
+                v.area = notWalkable;
+            }
+        }
 
         /// <summary>① 铜人基座（5 × 5，+1.2）</summary>
         static readonly Pad[] Plinths = Statues.Select((s, i) => new Pad { name = $"铜人基座 {i + 1}", c = s, half = new Vector2(2.2f, 2.2f), r = 0.4f, h = Site1H + PlinthRise, steep = 10 }).ToArray();
@@ -500,6 +524,7 @@ namespace Spiritfire.Art.Editor.Levels
                 mod.overrideArea = true;
                 mod.area = NavMesh.GetAreaFromName("Not Walkable");
             }
+            BuildNoNavTops(root);
             return sp;
         }
 
@@ -521,7 +546,7 @@ namespace Spiritfire.Art.Editor.Levels
             var root = new GameObject($"山门 · Placeholder · {GatehouseId}").transform;
             root.SetParent(parent, false);
             root.position = at;
-            var mat = LevelKit.Mat(LevelKit.PlaceholderDir, "Placeholder", new Color(0.93f, 0.93f, 0.9f));
+            var mat = LevelKit.Ch3Placeholder(Dir);
             const float pier = 4f, opening = 8f, passH = 8f;
             foreach (float sx in new[] { -1f, 1f })
             {
@@ -748,7 +773,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 青金引导灯（S6，M33 的 LevelKit.GuideLamp）：主路岔口、场地出口、桥头，每 25–40 m 一盏，支路（熔岩洞）不放。
-        /// 眺台下坡口 → 神道上段拐弯 → ① 山门门洞口 → 山门后落脚台 → 神道下段中 → 熔岩洞岔口（主路一侧）→ ② 西桥两头 → ② 北坡道口 → 护城渠桥头
+        /// 眺台下坡口 → 神道上段拐弯 → ① 山门门洞口 → 山门后落脚台 → 神道下段中 → 熔岩洞岔口（主路一侧）→ ② 北坡道口 → 护城渠桥头。
+        /// 交战场地里面不放（构图准则第 6 节：交战场地保持干净，明度留给怪）：原来 ② 西桥两头各一盏，去色后是 ② 画面里最亮的竖柱，比怪还跳，拿掉了
         /// </summary>
         static List<GameObject> BuildShrineGuides(LevelKit.TerrainSet set, Transform props)
         {
@@ -766,9 +792,7 @@ namespace Spiritfire.Art.Editor.Levels
                 (G(new Vector2(-8.6f, -81)), 0),         // ② 出口：北坡道口
                 (G(new Vector2(6.4f, -49)), 0),          // 补给营 → 护城渠桥头
             };
-            var lamps = LevelKit.GuideLamps(Dir, root, spots);
-            lamps.AddRange(LevelKit.GuideBridgeHeads(Dir, root, new Vector2(ChannelBridges[0], ChannelZ), Vector2.up, 13f, ChannelBridgeHalf * 2, Site2H));
-            return lamps;
+            return LevelKit.GuideLamps(Dir, root, spots);
         }
 
         /// <summary>岸上离熔岩面高 ≤ 0.5 m、正对熔岩的点（从 start 沿 dir 往熔岩方向走）</summary>
@@ -925,7 +949,7 @@ namespace Spiritfire.Art.Editor.Levels
                     rep.Fail($"{g.name} 压在熔流闸的熔流道上");
             int lamps = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include).Count(t => t.name == LevelKit.GuideLampName);
             if (lamps < 8) rep.Fail($"青金引导灯只有 {lamps} 盏（主路岔口、场地出口、桥头）");
-            else rep.Line($"✓ 青金引导灯 {lamps} 盏（主路岔口、场地出口、桥头；支路不放）");
+            else rep.Line($"✓ 青金引导灯 {lamps} 盏（主路岔口、场地出口、桥头；支路、交战场地里面不放）");
             rep.Line($"白盒（神道）：{sp.placeholders.Count} 个 —— {string.Join("、", sp.placeholders.Where(p => p).Select(p => p.name).Take(8))}");
         }
 
@@ -969,12 +993,12 @@ namespace Spiritfire.Art.Editor.Levels
                 l.intensity = intensity;
                 l.shadows = LightShadows.None;
             }
-            var fire = new Color(1f, 0.5f, 0.2f);
+            var fire = LevelKit.InfernoPalette.FireLight;
             Add("Overlook Altars", new Vector2(0, -218), 2.5f, fire, 12f, 2.5f);
             Add("Gatehouse Glow", new Vector2(GatehouseC.x, -138), 4f, fire, 14f, 3f);
             Add("Sluice Furnace", SluiceTowerAt + new Vector2(-3.5f, 0), 3f, fire, 16f, 3.5f);
-            Add("Lava Cave", CacheAt + new Vector2(0, 2), 2.5f, new Color(1f, 0.82f, 0.45f), 10f, 2.5f);
-            Add("Camp Warm", CampAt + new Vector2(2, -2), 4.5f, new Color(1f, 0.72f, 0.42f), 18f, 2.2f);
+            Add("Lava Cave", CacheAt + new Vector2(0, 2), 2.5f, LevelKit.InfernoPalette.LampLight, 10f, 2.5f);
+            Add("Camp Warm", CampAt + new Vector2(2, -2), 4.5f, LevelKit.InfernoPalette.LampLight, 18f, 2.2f);
         }
 
         /// <summary>主线节拍（S5 PacingCheck）：出生 → 路遇 → ① → 山门俯瞰 → 熔岩洞岔口 → ② → 补给营 → 首领</summary>

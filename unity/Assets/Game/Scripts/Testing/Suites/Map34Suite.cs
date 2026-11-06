@@ -12,7 +12,7 @@ namespace Spiritfire.Game.Testing
     /// <summary>
     /// 3-4 祝融炉心 v2 冒烟（bridge.sh playtest map-3-4；场景 L3_4_Zhurong，docs/level-design/maps/3-4.md、ch3-v2.md 7.4「①② → 首领解锁 → 进殿开战」）：
     ///   1. 开局：SceneFlow 认领的关卡是 3-4、局难度 = RunPlan；目标图（必清 2：① 铜人神道、② 熔流闸口）、路遇 1（不计目标）、熔岩洞藏宝 1、补给营 1、
-    ///      场景里没有出口；首领关流程停用（FoundryLordGate 没解锁、BossEncounter 关着）；没有空气墙；出生点看得见炉心殿门楼；
+    ///      场景里没有出口；首领关流程停用（FoundryLordGate 没解锁、BossEncounter 关着）；没有空气墙；出生点看得见炉心殿南门（熔铁闸门门框）；
     ///      出生点到 ①、②、补给营、炉心殿入场点的 NavMesh 路径都完整。提前踏进炉心殿：只提示「先肃清神道」，不开打。
     ///   2. 机器人沿主线真走（角色控制器沿 NavMesh 拐点走）：路上被路遇缠上就先打；挑最近的必清场地走过去，等它开战，瞄最近的敌人打（四成打弱点），
     ///      被挡住换位，隔 4 s 放技能；只剩潜在闸渠里的火鼍就退到离熔岩最远处引它上岸。玩家临时 +5000 生命、伤害 ×3。每处 150 s 内肃清，场地宝箱要出现。
@@ -32,7 +32,8 @@ namespace Spiritfire.Game.Testing
         public override string Scene => "Assets/Scenes/L3_4_Zhurong.unity";
 
         const float ReadyTimeout = 90f, SiteTimeout = 150f, TuoExtra = 60f, LureAfter = 8f, ClearAllTimeout = 900f, BotSpeed = 11f;
-        const string GatewayId = "SM_Tripo_InfernoGateway";
+        /// <summary>炉心殿南门的门框（熔铁闸门门框；北神龛口的门阙是另一件）</summary>
+        const string GateFrameId = "SM_Tripo_InfernoMoltenGateFrame";
 
         PlayerMotor motor;
         PlayerVitals vitals;
@@ -122,17 +123,17 @@ namespace Spiritfire.Game.Testing
             }
             NoAirWall();
 
-            // 地标：出生点看得见炉心殿门楼
-            var gateway = FindNamed(GatewayId, "");
-            if (!gateway) Fail("场景里没有炉心殿门楼");
+            // 地标：出生点看得见炉心殿南门
+            var gateway = FindNamed(GateFrameId, "");
+            if (!gateway) Fail("场景里没有炉心殿南门（熔铁闸门门框）");
             else
             {
                 var top = TopOf(gateway, 0.75f);
-                bool seen = Visible(eye.position, top, 6f, GatewayId);
+                bool seen = Visible(eye.position, top, 6f, GateFrameId);
                 string blocker = !seen && Physics.Linecast(eye.position, top, out var bh, Layers.WorldMask, QueryTriggerInteraction.Ignore)
                     ? $"，挡住的是 {bh.collider.name} @ {bh.point}" : "";
-                Line($"出生点 → 炉心殿门楼（{Vector3.Distance(eye.position, top):F0} m）：{(seen ? "看得见" : "被挡住")}{blocker}");
-                if (!seen) Fail("出生点看不到炉心殿门楼（终点地标）");
+                Line($"出生点 → 炉心殿南门（{Vector3.Distance(eye.position, top):F0} m）：{(seen ? "看得见" : "被挡住")}{blocker}");
+                if (!seen) Fail("出生点看不到炉心殿南门（终点地标）");
                 Aim(motor, eye, top);
                 yield return new WaitForSeconds(0.2f);
                 Shot(cam, "map34_spawn");
@@ -328,8 +329,9 @@ namespace Spiritfire.Game.Testing
         {
             float limit = SiteTimeout + (HasTuo(site) ? TuoExtra : 0);
             float start = Time.time, flankAt = 0, skillAt = Time.time + 1f, lureAt = 0, lureHold = 0, tuoOnly = 0;
-            bool shotMid = false;
-            int kills0 = Runner.kills;
+            bool shotMid = false, shotRead = false;
+            int kills0 = Runner.kills, lastKills = Runner.kills, pushes = 0;
+            float lastKillAt = Time.time, pushAt = 0;
             int burned0 = LavaField.Instance ? LavaField.Instance.Burned : 0;
             float dmg0 = Runner.playerDamage;
             Runner.killsById.Clear();
@@ -348,6 +350,23 @@ namespace Spiritfire.Game.Testing
                     yield return null;
                     continue;
                 }
+                if (Runner.kills != lastKills)
+                {
+                    lastKills = Runner.kills;
+                    lastKillAt = Time.time;
+                }
+                // 残敌跑出场地（① 的铁牛 / 毕方跑到山门外的神道下段）：不追出场地——追出去会把整群怪一路带下神道到 ② 门口；
+                // 守在场地里等它回来（地面敌人追玩家会回来；飞的在场地里找看得见它的位置），看得见就打
+                bool outside = Flat(target.transform.position - site.transform.position) > site.arenaRadius + 4f;
+                // 僵持（25 s 没有击杀）：沿导航朝最近的场地内残敌走过去一段（同玩家：打不着就走过去打；Step 只走完整路径）
+                if (!outside && Time.time - lastKillAt > 25f && Time.time >= pushAt && Flat(target.transform.position - motor.transform.position) > 8f)
+                {
+                    pushAt = Time.time + 10f;
+                    pushes++;
+                    weapons.testFire = false;
+                    yield return Step(target.transform.position, 12f);
+                    continue;
+                }
                 var tuo = target.GetComponentInParent<TuoAI>();
                 bool sunk = tuo && tuo.Submerged;
                 tuoOnly = sunk && site.PendingCount == 0 ? tuoOnly + Time.deltaTime : 0;
@@ -363,15 +382,39 @@ namespace Spiritfire.Game.Testing
                 var body = target.GetComponent<EnemyBody>();
                 var aim = body && body.WeakPoint && body.WeakPoint.gameObject.activeInHierarchy && Random.value < 0.4f ? body.WeakPoint.position : BodyCenter(target);
                 Aim(motor, eye, aim);
+                // 敌人可读性（docs/art/composition.md 第 6 节）：开火前拍一张交战场地有怪的画面——停火等枪口特效散掉再拍，去色后看怪是不是画面里最跳的
+                if (!shotRead && Time.time - start > 1.5f && !Combat.Blocked(eye.position, aim, target.GetComponent<Collider>()))
+                {
+                    float d = Vector3.Distance(eye.position, aim);
+                    if (d > 8f && d < 35f)
+                    {
+                        shotRead = true;
+                        weapons.testFire = false;
+                        yield return new WaitForSeconds(0.6f);
+                        if (target) Aim(motor, eye, BodyCenter(target));
+                        yield return null;
+                        Shot(cam, $"map34_read_{Slug(site)}");
+                    }
+                }
                 // 飞行敌人（火口坑上空的飞鸦、栖柱的毕方）：远了朝它脚下的地面走（Step 只走完整的干地路径，坑上空的就不动）；
                 // 被挡住先在自己身边 6 m 内换个看得见的位置，换不到再朝它脚下走几步
                 bool flyer = target.GetComponentInParent<FlyingEnemyAI>() || target.GetComponentInParent<BifangAI>();
-                if (Vector3.Distance(eye.position, aim) > 22f && !(sunk && Time.time < lureHold)) yield return Step(target.transform.position, 6f);
+                if (outside)
+                {
+                    if (flyer && Time.time >= flankAt && Combat.Blocked(eye.position, aim, target.GetComponent<Collider>()))
+                    {
+                        flankAt = Time.time + 1.5f;
+                        if (PerchSightSpot(aim, out var inside, site.transform.position, site.arenaRadius)) Place(inside);
+                    }
+                    else if (!flyer && Flat(motor.transform.position - site.transform.position) > site.arenaRadius)
+                        yield return Step(site.transform.position, 6f);
+                }
+                else if (Vector3.Distance(eye.position, aim) > 22f && !(sunk && Time.time < lureHold)) yield return Step(target.transform.position, 6f);
                 else if (Time.time >= flankAt && Combat.Blocked(eye.position, aim, target.GetComponent<Collider>()))
                 {
                     flankAt = Time.time + 1.5f;
                     Vector3 near;
-                    bool found = flyer ? NearSightSpot(aim, out near) : DrySightSpot(target, aim, out near);
+                    bool found = flyer ? NearSightSpot(aim, out near) || PerchSightSpot(aim, out near) : DrySightSpot(target, aim, out near);
                     if (found) Place(near);
                     else if (flyer) yield return Step(target.transform.position, 6f);
                 }
@@ -387,9 +430,12 @@ namespace Spiritfire.Game.Testing
                     shotMid = true;
                     Shot(cam, $"map34_combat_{Slug(site)}");
                 }
-                // ② 北岸上站了 ≥ 2 只地面敌人（或打了 60 s 还没放）：上闸楼台拉熔流闸
+                // ② 北岸熔流道上站了 ≥ 2 只地面敌人（打了 30 s 以后：道上 ≥ 1 只、道边 4 m 内 ≥ 3 只）：上闸楼台拉熔流闸——
+                // 同玩家：看见熔流道上有一群怪才拉，不到点硬拉（以前 60 s 到点就拉，S1 增援门的怪那一刻正好不在北岸时熔流冲空；
+                // 只有 1 只时拉闸前摇 1 s 它就走开了）。整场都没有成群的怪走上熔流道，才算熔流闸不合格
+                float fightT = Time.time - start;
                 if (sluice && sluice.CanRelease && Flat(sluice.transform.position - site.transform.position) < site.arenaRadius + 10f &&
-                    (CoveredByFlow() >= 2 || Time.time - start > 60f))
+                    (CoveredByFlow() >= 2 || (fightT > 30f && CoveredByFlow() >= 1 && CoveredByFlow(4f) >= 3)))
                 {
                     weapons.testFire = false;
                     yield return PullSluice();
@@ -404,12 +450,20 @@ namespace Spiritfire.Game.Testing
             Line($"  {(cleared ? "已肃清" : "超时")}：用时 {Time.time - start:F0} s，击杀 {Runner.kills - kills0}（{byId}），熔岩烧死 {burned}，敌人对玩家伤害 {Runner.playerDamage - dmg0:F0}");
             if (!cleared)
             {
+                Line($"  机器人在 {motor.transform.position}（导航网格 {(NavMesh.SamplePosition(motor.transform.position, out var mh, 1.5f, Dry) ? "上" : "外")}），僵持时走过去 {pushes} 次");
+                var diag = new NavMeshPath();
                 foreach (var e in EnemyAI.All)
                     if (e && !e.Dead)
                     {
                         var ag = e.GetComponent<NavMeshAgent>();
+                        string reach = "—";
+                        if (NavMesh.SamplePosition(e.transform.position, out var eh, 2f, Dry) && NavMesh.SamplePosition(motor.transform.position, out var ph, 3f, Dry))
+                        {
+                            NavMesh.CalculatePath(eh.position, ph.position, Dry, diag);
+                            reach = diag.status.ToString();
+                        }
                         Line($"  残敌 {e.enemyId}：状态 {e.State}，位置 {e.transform.position}，离玩家 {Vector3.Distance(e.transform.position, motor.transform.position):F1} m，" +
-                             $"导航网格上 {(ag && ag.isOnNavMesh)}，在熔岩里 {LavaField.IsLava(e.transform.position)}");
+                             $"导航网格上 {(ag && ag.isOnNavMesh)}，到玩家的路 {reach}{(ag && ag.isOnNavMesh ? $"（代理目标 {ag.destination}，{ag.pathStatus}）" : "")}，在熔岩里 {LavaField.IsLava(e.transform.position)}");
                     }
                 Fail($"{limit:F0} s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
                 EnemyRegistry.PurgeAll();
@@ -433,11 +487,11 @@ namespace Spiritfire.Game.Testing
         }
 
         /// <summary>熔流道上站着的地面敌人只数</summary>
-        int CoveredByFlow()
+        int CoveredByFlow(float margin = 0)
         {
             int n = 0;
             foreach (var e in EnemyAI.All)
-                if (e && !e.Dead && !e.GetComponent<TuoAI>() && sluice.Covers(e.transform.position)) n++;
+                if (e && !e.Dead && !e.GetComponent<TuoAI>() && sluice.Covers(e.transform.position, margin)) n++;
             return n;
         }
 
@@ -508,6 +562,28 @@ namespace Spiritfire.Game.Testing
                 if (!NavMesh.SamplePosition(p, out var hit, 3f, Dry)) continue;
                 // 和目标同一层（±3 m）：别站到白盒 / 关楼顶上去
                 if (Mathf.Abs(hit.position.y - target.transform.position.y) > 3f) continue;
+                if (LavaField.IsLava(hit.position) || LavaField.NearLava(hit.position, 1.5f)) continue;
+                if (Combat.Blocked(hit.position + Vector3.up * 1.62f, aim, null)) continue;
+                spot = hit.position;
+                return true;
+            }
+            spot = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 栖在高处的飞行敌人（铜人头顶的毕方，离地 10 m）：身边 6 m 找不到看得见的位置时，在它脚下 9–18 m 一圈找干地、眼高看得到它的位置——
+        /// 站得太近仰角太陡，铜人自己的身子会挡住头顶（铜人基座台顶不进导航，机器人也站不上去）。给了 within / radius 时只在那个圆里找（不出场地）
+        /// </summary>
+        static bool PerchSightSpot(Vector3 aim, out Vector3 spot, Vector3? within = null, float radius = 0)
+        {
+            for (int i = 0; i < 24; i++)
+            {
+                float a = i * Mathf.PI * 2 / 24 + Random.value * 0.2f;
+                var p = aim + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * Random.Range(9f, 18f);
+                if (!Physics.Raycast(p, Vector3.down, out var ground, 40f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) continue;
+                if (!NavMesh.SamplePosition(ground.point, out var hit, 2f, Dry)) continue;
+                if (within.HasValue && Flat(hit.position - within.Value) > radius) continue;
                 if (LavaField.IsLava(hit.position) || LavaField.NearLava(hit.position, 1.5f)) continue;
                 if (Combat.Blocked(hit.position + Vector3.up * 1.62f, aim, null)) continue;
                 spot = hit.position;

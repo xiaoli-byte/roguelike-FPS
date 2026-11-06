@@ -15,16 +15,17 @@ namespace Spiritfire.Art.Editor.Levels
     ///   第三章 v2：圆殿、护城渠、桥原样；前殿缩成补给营，往南加一段沿火口壁盘下的祝融神道和两处守关（见 Level_3_4.Shrine.cs）：
     ///   出生 · 火口南沿眺台（+24）→ 神道上段（路遇）→ ① 铜人神道（+14）→ 山门 → 神道下段 → ② 熔流闸口（+6）→ 补给营 · 铸神前殿（+1：祝融像、商店、安全区）
     ///   → 熔铁护城渠（东西横贯，熔岩面 y −0.6，渠床 −2.4）上唯一的一座桥（10 m 宽）；
-    ///   → 门楼（SM_Tripo_InfernoGateway；开战后熔铁闸从地下升起封死）→ 祝融炉心殿：
-    ///     直径 48 m 的圆殿（墙 = 现有的殿墙板 + 扶壁一圈，背后是 30 m 高的火山岩），殿心半径 7 m 的熔池（浅碟，熔岩面 y −0.1），
+    ///   → 南门（熔铁闸门门框 SM_Tripo_InfernoMoltenGateFrame；开战后熔铁闸从地下升起封死）→ 祝融炉心殿：
+    ///     直径 48 m 的圆殿（外壳 = 八段 22 m 高的弧墙，南门是熔铁闸门门框、北神龛口是门阙；背后是 30 m 高的火山岩），殿心半径 7 m 的熔池（浅碟，熔岩面 y −0.1），
     ///     熔池上方吊着青铜巨鼎（<see cref="QilinCauldron"/>，鼎身中心离地 7.2 m），四条巨链从鼎角拉到东南西北四面外墙 12 m 高处的锁扣（<see cref="QilinLock"/>）；
     ///     四条 1.6 m 宽的放射状熔岩渠（西北 / 东北 / 东南 / 西南，与地面齐平的熔岩带）把地面切成四个象限，半径 10–14 m 处是没有熔岩的窄桥；
     ///     八根玄武岩柱在半径 13 m（每象限两根，唯一挡得住张鳞的东西）；半径 18–24 m 是外环跑道（不放任何东西）；
-    ///     东北偏东 / 西北偏西各一座炉口（SM_Tripo_InfernoFurnaceTower：饮熔时炭童钻出），东南偏南 / 西南偏南两处高排烟口（二阶段神火飞鸦，BS5）；
-    ///     北面一个神龛凹室（门楣下 16 m 宽的口），两侧各一座 2.6 m 的祭台（靠侧墙，从中间走道横着上坡，俯射层），神龛（SM_Tripo_InfernoPortalShrine）居中。
+    ///     东北偏东 / 西北偏西各一段炉口墙（SM_Tripo_InfernoRoundHallFurnace：饮熔时炭童钻出），东南偏南 / 西南偏南两处高排烟口（二阶段神火飞鸦，BS5）；
+    ///     北面一个神龛凹室（门阙下 11 m 宽的口），两侧各一座 2.6 m 的祭台（靠侧墙，从中间走道横着上坡，俯射层），神龛（SM_Tripo_InfernoPortalShrine）居中。
     ///
-    /// 第三章新模型暂缓（用户 2026-10-22，docs/art/ch3-kit.md）：吊鼎、锁扣是运行时程序几何，熔铁闸门、两段门楣（圆殿外壳）是白盒占位，
-    /// 巨链用已发布的链环 SM_Prop_InfernoChainLink（关卡里摆一个停用的模板，运行时按链长实例化）。占位清单只提醒（PlaceholderPolicy.Warn）。
+    /// 第三章正式件（66b52e57、门框 3c29e9fa，docs/art/ch3-kit.md）全部到位：圆殿弧墙 / 炉口墙段、门框 + 熔铁闸门、门阙、吊鼎（SM_Prop_QilinCauldron，四角 SOCKET_Chain* 拴链）、
+    /// 锁扣（SM_Prop_QilinChainLock，FX_CoreGlow = 锁芯弱点）都是正式件，各自挂在 QilinCauldron / QilinLock 的 Model 子物体上；
+    /// 巨链用已发布的链环 SM_Prop_InfernoChainLink（关卡里摆一个停用的模板，运行时按链长实例化）。占位件一律不合格（PlaceholderPolicy.Fail）。
     /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、自举标记、补给营、首领场地（<see cref="BossArena"/> + <see cref="QilinFurnace"/>）、
     /// 吊鼎与四个锁扣、首领关流程（<see cref="BossEncounter"/>，首领 boss_qilin，熔铁闸是它的门；3-4 是最后一关，打完走胜利链）；
     /// 神道的两处必清场地（<see cref="EncounterSite"/> + <see cref="LevelObjective"/>）、路遇、熔岩洞藏宝，首领门槛（<see cref="FoundryLordGate"/>）。
@@ -44,15 +45,35 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 Origin = new(-80, -276), Size = new(160, 320);
 
         // ── 炉心殿 ──
-        const float HallR = 24f, RingR = 25.5f, FloorR = 27.5f, PoolR = 7f, PoolBed = 1.0f, PoolLava = -0.1f, TrackR = 20.8f;
+        const float HallR = 24f, FloorR = 27.5f, PoolR = 7f, PoolBed = 1.0f, PoolLava = -0.1f, TrackR = 20.8f;
         const float PillarR = 13f, PillarSpread = 20f, PillarH = 6f;
         const float BridgeIn = 10f, BridgeOut = 14f, ChannelHalf = 0.8f;
         static readonly float[] ChannelYaws = { -135f, -45f, 45f, 135f };
         /// <summary>锁扣：离地高度、离圆心（锁身中心）；吊鼎鼎身中心离地</summary>
         const float LockHeight = 12f, LockR = 23.1f, HangHeight = 7.2f;
-        /// <summary>殿墙一圈 20 节（每 18° 一个扶壁、两扶壁之间一块墙板）；炉口、排烟口方位（度，左右对称）</summary>
-        const int RingJoints = 20;
-        const float FurnaceYaw = 72f, FurnaceR = 26.2f, MouthR = 21.5f, VentYaw = 110f, VentR = 23.5f, VentY = 12f;
+        /// <summary>
+        /// 圆殿外壳：一圈十个 36° 的格，南（180°）北（0°）两格是门（南门框、北门阙），其余八格各一段弧墙（段心 ±36 / ±72 / ±108 / ±144°，±72° 是炉口墙段）。
+        /// 弧墙段原点（底面、凹面正中往后）离圆心 <see cref="SegR"/>：实测网格（docs/art/ch3-kit.md）在 0.25–3.5 m 高度最靠里的是两端铁柱，离圆心 23.64 m，
+        /// 外环跑道（到 23 m、探测胶囊半径 0.5）留 0.14 m；每段实际占 ±20°，相邻两段端头的铁柱叠成一根（接缝在 ±18 / ±54 / ±90 / ±126 / ±162°）
+        /// </summary>
+        static readonly float[] SegmentYaws = { 36f, 72f, 108f, 144f, -36f, -72f, -108f, -144f };
+        const float SegR = 25.4f;
+        /// <summary>炉口、排烟口方位（度，左右对称）；炉口召唤点离圆心 MouthR（炉口墙段的炉膛在 SegR + 1.6 m）</summary>
+        const float FurnaceYaw = 72f, MouthR = 21.5f, VentYaw = 110f, VentR = 23.5f, VentY = 12f;
+        /// <summary>
+        /// 南门：熔铁闸门门框 SM_Tripo_InfernoMoltenGateFrame + 闸板 SM_Tripo_InfernoMoltenGate，同原点（门洞底面正中，z = <see cref="GateZ"/>）、同朝向（正面朝殿外）。
+        /// 闸板 W × H = 10 × 10.6（和桥同宽；高到盖住门楣下缘）→ 闸板 X ×1.46、Y ×1.18；门框 X = W / 8.35 = 1.2、Y = H / 8.8 = 1.2（docs/art/ch3-kit.md 第 3.1 节末），
+        /// 外廓 16.6 × 14.5，开闸后柱脚箍带处净宽 7.7 m（原门阙 6.6 m），门楣 10–13.3 m（南锁扣 10.8–13.2 m 挂在上面）。
+        /// 门框柱脚往殿里凸到原点 + 1.66 m：原点放在 z −25.2，柱脚离圆心 ≥ 23.54 m，不压外环跑道
+        /// </summary>
+        static readonly Vector3 GatePlate = new(10f, 10.6f, 1.33f);
+        static readonly Vector3 MoltenGateScale = new(10f / 6.83f, 10.6f / 9f, 1f), GateFrameScale = new(10f / 8.35f, 10.6f / 8.8f, 1f);
+        /// <summary>
+        /// 北神龛口：门阙 SM_Tripo_InfernoGateway 当门框（门洞实测 6.6 × 6.67、原点在门洞底面正中），X ×1.7、Y ×1.55 = 门洞 11.2 × 10.3
+        /// （原来两扶壁之间 11.3 m 宽、门楣 10.5 m 高：祭台观台隔着它看殿心），外廓 19.2 × 16.7，正面朝殿心；北锁扣挂在 10.3–16.7 m 的门楣上
+        /// </summary>
+        static readonly Vector3 NorthGateScale = new(1.7f, 1.55f, 1f);
+        const float ApseGateZ = 24.9f;
 
         // ── 神龛凹室（北）──
         static readonly Vector2 ApseC = new(0, 30), ApseHalf = new(10, 9);
@@ -70,7 +91,7 @@ namespace Spiritfire.Art.Editor.Levels
 
         // ── 门楼、桥、护城渠、护城渠南岸（南）──
         static readonly Vector2 GateC = new(0, -25.5f), GateHalf = new(5.5f, 3.5f);
-        const float GateZ = -26.6f, BridgeHalfW = 5f, BridgeZ0 = -46.5f, BridgeZ1 = -27.5f;
+        const float GateZ = -25.2f, BridgeHalfW = 5f, BridgeZ0 = -46.5f, BridgeZ1 = -27.5f;
         const float MoatZ0 = -45.5f, MoatZ1 = -28f, MoatBed = 2.4f, MoatLava = -0.6f;
         /// <summary>护城渠一带（原前殿的北段，x ±36、z −52…−28）：渠、桥、南岸一条 6 m 的岸；再往南是补给营（+1，见 Shrine）</summary>
         static readonly Vector2 ApronC = new(0, -40), ApronHalf = new(36, 12);
@@ -81,17 +102,17 @@ namespace Spiritfire.Art.Editor.Levels
         const float ArenaRadius = 23.5f;
 
         // ── 美术 ID ──
-        const string WallId = "SM_Tripo_InfernoHallWall", ButtressId = "SM_Tripo_InfernoHallButtress", GatewayId = "SM_Tripo_InfernoGateway",
+        const string GatewayId = "SM_Tripo_InfernoGateway",
             FurnaceId = "SM_Tripo_InfernoFurnaceTower", ColumnId = "SM_Tripo_InfernoColumn", ShrineId = "SM_Tripo_InfernoPortalShrine",
             StatueId = "SM_Tripo_InfernoZhurong", AltarId = "SM_Tripo_InfernoFireAltar", BarricadeId = "SM_Tripo_InfernoBarricade",
             StallId = "SM_Tripo_InfernoForgeStall", IngotId = "SM_Tripo_InfernoIngotPile", HoardId = "SM_Tripo_InfernoTreasureHoard",
             BasaltId = "SM_Env_InfernoBasalt", CrucibleId = "SM_Prop_InfernoCrucible", ChainLinkId = "SM_Prop_InfernoChainLink",
-            // 第三章暂缓的件（registry 已登记、没出模型）：吊鼎、锁扣运行时程序几何；熔铁闸门白盒；圆殿外壳（门楣）白盒
+            // 吊鼎、锁扣（挂到 QilinCauldron / QilinLock 的 Model 上）；熔铁闸门；圆殿外壳（弧墙段 / 炉口墙段）
             CauldronId = "SM_Prop_QilinCauldron", LockId = "SM_Prop_QilinChainLock", MoltenGateId = "SM_Tripo_InfernoMoltenGate",
-            RoundHallId = "SM_Tripo_InfernoRoundHallWall";
+            RoundHallId = "SM_Tripo_InfernoRoundHallWall", RoundFurnaceId = "SM_Tripo_InfernoRoundHallFurnace", GateFrameId = "SM_Tripo_InfernoMoltenGateFrame";
 
-        static readonly Vector3 WallSize = new(8.17f, 15.8f, 2.57f), ButtressSize = new(4.51f, 17.84f, 3.74f), GatewaySize = new(11.31f, 10.75f, 2.2f),
-            FurnaceSize = new(6.13f, 12.86f, 4.99f), ShrineSize = new(7.59f, 10.68f, 2.15f), MoltenGateSize = new(11.4f, 9f, 1.4f);
+        static readonly Vector3 RoundWallSize = new(17.03f, 22f, 5.47f), RoundFurnaceSize = new(17.16f, 22f, 4.85f), GatewaySize = new(11.31f, 10.75f, 2.2f),
+            FurnaceSize = new(6.13f, 12.86f, 4.99f), ShrineSize = new(7.59f, 10.68f, 2.15f), MoltenGateSize = new(6.83f, 9f, 1.33f), GateFrameSize = new(13.89f, 12f, 3.32f), LockArtSize = new(1.29f, 2.4f, 0.59f);
 
         // ───────────── 地貌 ─────────────
 
@@ -303,6 +324,7 @@ namespace Spiritfire.Art.Editor.Levels
             rep.Line("3-4 祝融炉心 · 验收");
             CheckGeometry(rep, set, lava, hall, furnace, cauldron, gate, camp);
             CheckShrine(rep, set, shrineLava, shrine, sites, enc);
+            CheckNavIslands(rep, set);
             LevelValidator.Run(Spec(set), rep); // 主线、坡度、视线、节拍 + L5 规则集（占位只提醒：第三章 v2 新件到货前白盒）
             LevelKit.ValidateLava(rep);
             CheckSceneContents(rep, scene, sites);
@@ -432,8 +454,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         sealed class HallSet
         {
-            public readonly List<GameObject> walls = new(), buttresses = new(), furnaces = new(), lintels = new();
-            public GameObject gateway, shrine;
+            public readonly List<GameObject> walls = new(), furnaces = new();
+            public GameObject gateway, apseGate;
         }
 
         static Vector3 Ring(float yawDeg, float r, float y = 0)
@@ -445,51 +467,34 @@ namespace Spiritfire.Art.Editor.Levels
         static bool Near(float a, float b, float tol = 1f) => Mathf.Abs(Mathf.DeltaAngle(a, b)) < tol;
 
         /// <summary>
-        /// 殿墙一圈：每 18° 一个扶壁（关节）、两扶壁之间一块殿墙板（8.17 m，正面朝殿心）。南门（180°）、北神龛口（0°）各空出一节半（两块墙板 + 中间扶壁），
-        /// ±72° 的扶壁换成炉口（炉塔前沿离圆心 23.7 m，不压外环跑道）；南北两个口上方各压一段门楣（圆殿外壳白盒，锁扣挂在门楣上）
+        /// 圆殿外壳：八段弧墙（SM_Tripo_InfernoRoundHallWall ×6、±72° 两段换炉口墙段 SM_Tripo_InfernoRoundHallFurnace，凹面朝殿心）+ 南门框 + 北门阙。
+        /// 南门框（正面朝殿外）和熔铁闸（<see cref="BuildGate"/>）同原点；北神龛口的门阙正面朝殿心。南北两个锁扣挂在门楣上，东西两个挂在弧墙接缝的铁柱上
         /// </summary>
         static HallSet BuildHall(LevelKit.TerrainSet set, Transform props)
         {
             var root = new GameObject("Round Hall").transform;
             root.SetParent(props, false);
             var h = new HallSet();
-            float step = 360f / RingJoints;
-            for (int k = 0; k < RingJoints; k++)
+            foreach (float yaw in SegmentYaws)
             {
-                float yaw = Mathf.DeltaAngle(0, k * step);
-                if (Near(yaw, 0) || Near(yaw, 180)) continue;
-                if (Near(Mathf.Abs(yaw), FurnaceYaw))
-                {
-                    var f = LevelKit.PlaceOrBox(FurnaceId, root, Ring(yaw, FurnaceR), FurnaceSize, yaw + 180f);
-                    if (f) h.furnaces.Add(f);
-                    continue;
-                }
-                var b = LevelKit.PlaceOrBox(ButtressId, root, Ring(yaw, RingR), ButtressSize, yaw + 180f);
-                if (b) h.buttresses.Add(b);
+                bool kiln = Near(Mathf.Abs(yaw), FurnaceYaw);
+                var go = LevelKit.PlaceOrBox(kiln ? RoundFurnaceId : RoundHallId, root, Ring(yaw, SegR), kiln ? RoundFurnaceSize : RoundWallSize, yaw + 180f);
+                if (!go) continue;
+                go.name = $"{go.name}（{(kiln ? "炉口" : "弧墙")} {yaw:F0}°）";
+                (kiln ? h.furnaces : h.walls).Add(go);
             }
-            for (int k = 0; k < RingJoints; k++)
-            {
-                float yaw = Mathf.DeltaAngle(0, k * step + step * 0.5f);
-                if (Mathf.Abs(Mathf.DeltaAngle(yaw, 0)) < step || Mathf.Abs(Mathf.DeltaAngle(yaw, 180)) < step) continue;
-                var w = LevelKit.PlaceOrBox(WallId, root, Ring(yaw, RingR), WallSize, yaw + 180f);
-                if (w) h.walls.Add(w);
-            }
-            // 南门楼（正面朝殿外，开战后熔铁闸在它里面升起）
-            h.gateway = LevelKit.PlaceOrBox(GatewayId, root, new Vector3(0, 0, -24.9f), GatewaySize, 180f);
-            // 门楣：两扶壁之间、门楼 / 神龛口之上，到 22 m（圆殿外壳 SM_Tripo_InfernoRoundHallWall 暂缓：白盒）
-            // 门楣的正面贴着锁扣的背板（锁身中心 LockR、背板背面再往外 0.63 m）：南北两个锁扣挂在门楣上，不是悬在门楣前面半米的空中
-            float span = 2f * RingR * Mathf.Sin(step * Mathf.Deg2Rad) - 0.4f;
-            const float lintelDepth = 2.5f;
-            float lintelR = LockR + 0.63f + lintelDepth * 0.5f;
-            foreach (var (z, y0, label) in new[] { (-lintelR, GatewaySize.y, "南门楼"), (lintelR, 10.5f, "北神龛口") })
-            {
-                var box = LevelKit.Box($"Placeholder · {RoundHallId}（{label}门楣）", root, new Vector3(0, y0, z), new Vector3(span, 22f - y0, lintelDepth), 0,
-                    LevelKit.Mat(LevelKit.PlaceholderDir, "Placeholder", new Color(0.93f, 0.93f, 0.9f)), 0f);
-                LevelKit.EnsureTag(LevelKit.PlaceholderTag);
-                box.tag = LevelKit.PlaceholderTag;
-                h.lintels.Add(box);
-            }
+            h.gateway = PlaceScaled(GateFrameId, root, new Vector3(0, 0, GateZ), GateFrameSize, 180f, GateFrameScale);
+            h.apseGate = PlaceScaled(GatewayId, root, new Vector3(0, 0, ApseGateZ), GatewaySize, 180f, NorthGateScale);
+            if (h.apseGate) h.apseGate.name = $"{h.apseGate.name}（北神龛口）";
             return h;
+        }
+
+        /// <summary>摆一件正式件并按 scale 非等比缩放（门框 / 门阙、闸板按门洞）；没有 Prefab 时白盒按缩放后的尺寸</summary>
+        static GameObject PlaceScaled(string id, Transform parent, Vector3 baseCenter, Vector3 size, float yaw, Vector3 scale)
+        {
+            var go = LevelKit.PlaceOrBox(id, parent, baseCenter, Vector3.Scale(size, scale), yaw);
+            if (go && !go.CompareTag(LevelKit.PlaceholderTag)) go.transform.localScale = scale;
+            return go;
         }
 
         /// <summary>八根玄武岩柱（半径 13 m，每象限中线左右各 20°，直径约 2.4 m、高 6 m）：张鳞时唯一挡得住鳞刃的东西</summary>
@@ -518,10 +523,10 @@ namespace Spiritfire.Art.Editor.Levels
                 LevelKit.PlaceOrBox(AltarId, root, set.OnGround(PlatC.x * sx, PlatC.y - 3.6f, -0.05f), new Vector3(1.13f, 2.36f, 1.15f), 180f);
         }
 
-        /// <summary>熔铁闸门（BossEncounter 的门：开战从地下升起封死门洞，结算后落回去）。正式件 SM_Tripo_InfernoMoltenGate 暂缓：白盒</summary>
+        /// <summary>熔铁闸门（BossEncounter 的门：开战从地下升起封死南门，结算后沉回地下）：闸板 10 × 10.6，和门框同原点、同朝向</summary>
         static GameObject BuildGate(Transform props)
         {
-            var gate = LevelKit.PlaceOrBox(MoltenGateId, props, new Vector3(0, 0, GateZ), MoltenGateSize, 0f);
+            var gate = PlaceScaled(MoltenGateId, props, new Vector3(0, 0, GateZ), MoltenGateSize, 180f, MoltenGateScale);
             if (gate) gate.isStatic = false;
             return gate;
         }
@@ -615,9 +620,11 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 吊鼎 + 四个锁扣：鼎在熔池圆心（运行时搭程序方鼎，挂 7.2 m）；锁扣在四个象限中线上、离圆心 23.1 m、离地 12 m，正面朝殿心
-        /// （东西两个贴在扶壁上，南北两个挂在门楣上）。链环模板（SM_Prop_InfernoChainLink）停用摆在鼎下，运行时按链长实例化。
-        /// 吊鼎、锁扣的正式件暂缓：各挂一个占位标记，占位清单里列出来
+        /// 吊鼎 + 四个锁扣：鼎在熔池圆心（挂 7.2 m），正式件 SM_Prop_QilinCauldron 作为 Model 子物体摆在吊着的姿势上（足底 = 鼎身中心往下 <see cref="QilinCauldron.ModelDrop"/>，
+        /// 朝向 <see cref="QilinCauldron.RestRotation"/>），巨链运行时拴在它的 SOCKET_Chain* 上；锁扣在四个象限中线上、离圆心 23.1 m、离地 12 m，正面朝殿心，
+        /// 正式件 SM_Prop_QilinChainLock 作为 Model 子物体背面贴墙（往外打五条射线找墙面：南是门框门楣、北是门阙门楣，东西是弧墙接缝的铁柱）。
+        /// 两件都会动（吊鼎摆、坠；锁扣碎了往下掉）：清掉静态标记、删掉自带的网格碰撞体（不进导航；锁扣只认 Character 层的锁身 / 锁芯）。
+        /// 链环模板（SM_Prop_InfernoChainLink）停用摆在鼎下，运行时按链长实例化。没有 Prefab 时退回运行时程序几何 + 占位标记（占位清单里不合格）
         /// </summary>
         static QilinCauldron BuildCauldron(Transform markers, QilinFurnace furnace)
         {
@@ -629,7 +636,10 @@ namespace Spiritfire.Art.Editor.Levels
             c.hangHeight = HangHeight;
             c.furnace = furnace;
             c.linkScale = 1.5f;
-            Marker(go.transform, $"Placeholder · {CauldronId}（运行时程序方鼎）", Vector3.up * HangHeight);
+            var ding = MovableModel(CauldronId, go.transform);
+            if (ding)
+                ding.transform.SetPositionAndRotation(furnace.Center + Vector3.up * (HangHeight - QilinCauldron.ModelDrop), QilinCauldron.RestRotation(furnace));
+            else Marker(go.transform, $"Placeholder · {CauldronId}（运行时程序方鼎）", Vector3.up * HangHeight);
             if (ShowcaseSceneBuilder.Prefab(ChainLinkId))
             {
                 var link = ShowcaseSceneBuilder.Place(ChainLinkId, go.transform, new Vector3(0, -3, 0));
@@ -641,6 +651,7 @@ namespace Spiritfire.Art.Editor.Levels
                     c.linkTemplate = link;
                 }
             }
+            Physics.SyncTransforms();
             var locks = new QilinLock[furnace.QuadrantCount];
             for (int i = 0; i < locks.Length; i++)
             {
@@ -651,11 +662,47 @@ namespace Spiritfire.Art.Editor.Levels
                 lgo.transform.SetPositionAndRotation(at, Quaternion.LookRotation(Flat(-at)));
                 var l = lgo.AddComponent<QilinLock>();
                 l.index = i;
-                Marker(lgo.transform, $"Placeholder · {LockId}（运行时程序锁扣）", Vector3.zero);
+                var art = MovableModel(LockId, lgo.transform);
+                if (art)
+                {
+                    // 锁身中心 = 件的半高处；件的背面（局部 z −0.296）贴到墙面上
+                    float back = WallBehind(lgo.transform);
+                    art.transform.localPosition = new Vector3(0, -LockArtSize.y * 0.5f, LockArtSize.z * 0.5f - back);
+                    art.transform.localRotation = Quaternion.identity;
+                }
+                else Marker(lgo.transform, $"Placeholder · {LockId}（运行时程序锁扣）", Vector3.zero);
                 locks[i] = l;
             }
             c.locks = locks;
             return c;
+        }
+
+        /// <summary>摆一件会动的正式件，名字叫 Model（QilinCauldron / QilinLock 认这个名字）：清静态标记（静态合批会把它钉死），删掉自带的碰撞体</summary>
+        static GameObject MovableModel(string id, Transform parent)
+        {
+            if (!ShowcaseSceneBuilder.Prefab(id)) return null;
+            var go = ShowcaseSceneBuilder.Place(id, parent, Vector3.zero);
+            if (!go) return null;
+            go.name = "Model";
+            foreach (var t in go.GetComponentsInChildren<Transform>(true)) GameObjectUtility.SetStaticEditorFlags(t.gameObject, 0);
+            foreach (var col in go.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(col);
+            return go;
+        }
+
+        /// <summary>
+        /// 锁扣背后的墙面离锁身中心多远（米）：从锁身中心和四个角（件的 ±0.55 × ±1.1）往殿外打射线（3 m 内），取最近的一条——件贴着最靠前的墙面，哪儿都不嵌进墙里。
+        /// 一条都没打到返回 −1（验收里不合格：锁扣悬在半空）
+        /// </summary>
+        static float WallBehind(Transform lockT)
+        {
+            float best = float.PositiveInfinity;
+            foreach (var (x, y) in new[] { (0f, 0f), (-0.55f, -1.1f), (0.55f, -1.1f), (-0.55f, 1.1f), (0.55f, 1.1f) })
+            {
+                var from = lockT.TransformPoint(new Vector3(x, y, 0));
+                if (Physics.Raycast(from, -lockT.forward, out var hit, 3f, Layers.WorldMask, QueryTriggerInteraction.Ignore) && !(hit.collider is TerrainCollider))
+                    best = Mathf.Min(best, hit.distance);
+            }
+            return float.IsInfinity(best) ? -1f : best;
         }
 
         static void Marker(Transform parent, string name, Vector3 local)
@@ -715,7 +762,7 @@ namespace Spiritfire.Art.Editor.Levels
                 l.transform.SetParent(env, false);
                 l.transform.position = at;
                 l.type = LightType.Point;
-                l.color = new Color(1f, 0.5f, 0.2f);
+                l.color = LevelKit.InfernoPalette.FireLight;
                 l.range = range;
                 l.intensity = intensity;
                 l.shadows = LightShadows.None;
@@ -731,7 +778,8 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>
         /// 白盒自查：关键高度（殿内 0、池心 −1、渠床 −2.4、桥面 0、祭台 2.8、前殿 0）；熔岩渠与地面齐平、窄桥上没有熔岩；
         /// 外环跑道（半径 18.5 / 20.8 / 23）与熔池边（7.5–9.5）没有任何碰撞体；八根柱子在半径 13；
-        /// 锁扣可见：殿内一圈采样点（半径 10 / 16 / 21，每 30°）各自至少看得到两个锁扣；殿墙、炉口、门楼、熔铁闸门、门楣
+        /// 锁扣可见：殿内一圈采样点（半径 10 / 16 / 21，每 30°）各自至少看得到两个锁扣；八段弧墙（两段炉口）、南门框、北门阙、熔铁闸门；
+        /// 吊鼎 / 锁扣是正式件：鼎上四个 SOCKET_Chain*、每个锁扣上有 FX_CoreGlow 且背面贴墙（离墙 ≤ 0.1 m）
         /// </summary>
         static void CheckGeometry(LevelKit.Report rep, LevelKit.TerrainSet set, LavaSet lava, HallSet hall, QilinFurnace furnace, QilinCauldron cauldron, GameObject gate, SupplyCamp camp)
         {
@@ -778,9 +826,11 @@ namespace Spiritfire.Art.Editor.Levels
             if (bridgeLava == 0 && channelDry == 0) rep.Line("✓ 四条熔岩渠：池边到半径 9.2 m、14.8 m 到殿墙是熔岩，半径 10–14 m 的窄桥没有");
 
             rep.Section("圆殿 / 跑道 / 锁扣");
-            rep.Line($"殿墙板 {hall.walls.Count} 块、扶壁 {hall.buttresses.Count} 个、炉口 {hall.furnaces.Count} 座、门楣 {hall.lintels.Count} 段（白盒），门楼 {(hall.gateway ? hall.gateway.name : "（没有）")}");
-            if (hall.furnaces.Count != 2) rep.Fail($"炉口应为 2 座，现在 {hall.furnaces.Count}");
-            if (!hall.gateway) rep.Fail("南门楼没有摆出来");
+            rep.Line($"圆殿外壳：弧墙 {hall.walls.Count} 段、炉口墙段 {hall.furnaces.Count} 段（原点离圆心 {SegR} m，每段 36°），" +
+                     $"南门框 {(hall.gateway ? hall.gateway.name : "（没有）")}、北神龛口门阙 {(hall.apseGate ? hall.apseGate.name : "（没有）")}");
+            if (hall.walls.Count + hall.furnaces.Count != 8) rep.Fail($"圆殿外壳应为八段弧墙，现在 {hall.walls.Count + hall.furnaces.Count}");
+            if (hall.furnaces.Count != 2) rep.Fail($"炉口墙段应为 2 段，现在 {hall.furnaces.Count}");
+            if (!hall.gateway || !hall.apseGate) rep.Fail("南门框 / 北神龛口门阙没有摆出来");
             // 外环跑道与熔池边：竖直胶囊探一圈，打到任何碰撞体（地形以外）都不合格
             var blocked = new List<string>();
             foreach (var (r, radius) in new[] { (18.5f, 0.5f), (TrackR, 1.2f), (23f, 0.5f), (7.6f, 0.5f), (8.6f, 0.5f), (9.5f, 0.5f) })
@@ -824,7 +874,36 @@ namespace Spiritfire.Art.Editor.Levels
             if (worst < 2) rep.Fail($"有采样点只看得到 {worst} 个锁扣（{worstAt}）：环台任何位置都应至少看得到两个");
             else rep.Line($"✓ 锁扣（离地 {LockHeight} m）：殿内 {samples} 个采样点每处至少看得到 {worst} 个");
             if (!cauldron) rep.Fail("没有吊鼎");
-            else rep.Line($"吊鼎：鼎身中心离地 {cauldron.hangHeight} m，链环模板 {(cauldron.linkTemplate ? cauldron.linkTemplate.name : "（没有：运行时程序链环）")}，锁扣 {string.Join(" / ", locks.Where(l => l).Select(l => l.name))}");
+            else
+            {
+                rep.Line($"吊鼎：鼎身中心离地 {cauldron.hangHeight} m，链环模板 {(cauldron.linkTemplate ? cauldron.linkTemplate.name : "（没有：运行时程序链环）")}，锁扣 {string.Join(" / ", locks.Where(l => l).Select(l => l.name))}");
+                var ding = cauldron.transform.Find("Model");
+                int sockets = ding ? ding.GetComponentsInChildren<Transform>(true).Count(t => t.name.StartsWith(QilinCauldron.ChainSocketPrefix)) : 0;
+                if (!ding) rep.Fail("吊鼎没有正式件 Model（运行时会退回程序方鼎）");
+                else if (sockets != 4) rep.Fail($"吊鼎正式件上的巨链挂点 {QilinCauldron.ChainSocketPrefix}* 有 {sockets} 个（应为 4）");
+                else if (ding.GetComponentsInChildren<Collider>(true).Length > 0) rep.Fail("吊鼎正式件还带着碰撞体（会烘进导航、挡子弹）");
+                else rep.Line($"✓ 吊鼎正式件 {CauldronId}：足底离地 {ding.position.y - cauldron.transform.position.y:F1} m，四角 {sockets} 个巨链挂点");
+            }
+            var lockArt = new List<string>();
+            foreach (var l in locks)
+            {
+                if (!l) continue;
+                var art = l.transform.Find("Model");
+                if (!art)
+                {
+                    rep.Fail($"{l.name} 没有正式件 Model（运行时会退回程序锁扣）");
+                    continue;
+                }
+                if (!art.GetComponentsInChildren<Transform>(true).Any(t => t.name == QilinLock.CoreGlowPoint)) rep.Fail($"{l.name} 的正式件上没有 {QilinLock.CoreGlowPoint}（锁芯弱点没处放）");
+                if (art.GetComponentsInChildren<Collider>(true).Length > 0) rep.Fail($"{l.name} 的正式件还带着碰撞体（子弹会被它截住，打不到锁身 / 锁芯）");
+                // 件背面到墙：背面在锁扣局部 z = 件原点 z − 半厚
+                float back = -(art.localPosition.z - LockArtSize.z * 0.5f);
+                float wall = WallBehind(l.transform);
+                if (wall < 0) rep.Fail($"{l.name} 背后 3 m 内没有墙（悬在半空）");
+                else if (Mathf.Abs(wall - back) > 0.1f) rep.Fail($"{l.name} 的件背面离墙 {wall - back:F2} m（应贴墙）");
+                lockArt.Add($"{l.name} 离墙 {wall:F2} m");
+            }
+            if (lockArt.Count == 4) rep.Line($"✓ 锁扣正式件 {LockId} 背面贴墙：{string.Join("、", lockArt)}");
             if (!gate) rep.Fail("没有熔铁闸门");
             else rep.Line($"{(gate.CompareTag(LevelKit.PlaceholderTag) ? "⚠ 白盒" : "✓ 正式件")} 熔铁闸门 {gate.name}（BossEncounter 的门，开战升起）");
             if (!camp) rep.Fail("没有补给营");
@@ -832,6 +911,105 @@ namespace Spiritfire.Art.Editor.Levels
             if (!furnace) rep.Fail("没有炉心殿几何（QilinFurnace）");
             else rep.Line($"✓ 炉心殿：熔池 {furnace.poolRadius} m、殿墙 {furnace.wallRadius} m、跑道 {furnace.trackRadius} m、窄桥 {furnace.bridgeInner}–{furnace.bridgeOuter} m，" +
                           $"象限中线 {string.Join(" / ", Enumerable.Range(0, furnace.QuadrantCount).Select(i => $"{furnace.QuadrantYaw(i):F0}°"))}，炉口 {furnace.mouths.Length}、排烟口 {furnace.vents.Length}");
+        }
+
+        /// <summary>
+        /// 导航孤岛（同 3-2 的 CheckSteps；第三章 v2 S1：出场站位要走得到玩家，玩家站在导航孤岛上时待出场的单位会卡 6 s 才放宽）：
+        /// 人形网格（<see cref="LevelContext.Walker"/>）按顶点焊接分块，和出生点不连通的每一块里取一点，看玩家上不上得去（可达性洪泛：附近 1.5 m、高差 0.8 m 内的可站立面档位）——
+        /// 步行 / 单跳 / 冲刺上得去的孤岛不合格（要么修坡连通，要么那块顶面不进导航）；只有二段跳上得去的提醒；玩家上不去的（墙顶、柱顶、岩壁上的碎块）只列数
+        /// </summary>
+        static void CheckNavIslands(LevelKit.Report rep, LevelKit.TerrainSet set)
+        {
+            rep.Section("导航孤岛（台顶 / 台阶：要么连通，要么不进导航）");
+            var ctx = new LevelContext(Spec(set));
+            if (ctx.SpawnNav is not Vector3 start)
+            {
+                rep.Fail("出生点附近没有导航网格");
+                return;
+            }
+            var filter = LevelContext.Walker;
+            var tri = UnityEngine.AI.NavMesh.CalculateTriangulation();
+            var v = tri.vertices;
+            var idx = tri.indices;
+            // 顶点焊接（tile 边界上的顶点各存一份）→ 并查集分块；只算过滤器认的区域（熔岩区不算路）
+            var weld = new Dictionary<Vector3Int, int>();
+            var root = new int[v.Length];
+            for (int i = 0; i < v.Length; i++)
+            {
+                var key = new Vector3Int(Mathf.RoundToInt(v[i].x * 50f), Mathf.RoundToInt(v[i].y * 50f), Mathf.RoundToInt(v[i].z * 50f));
+                if (!weld.TryGetValue(key, out int w)) weld[key] = w = i;
+                root[i] = w;
+            }
+            int Find(int a)
+            {
+                while (root[a] != a) a = root[a] = root[root[a]];
+                return a;
+            }
+            for (int t = 0; t + 2 < idx.Length; t += 3)
+            {
+                if ((filter.areaMask & (1 << tri.areas[t / 3])) == 0) continue;
+                int a = Find(idx[t]), b = Find(idx[t + 1]), c = Find(idx[t + 2]);
+                root[b] = a;
+                root[Find(c)] = Find(a);
+            }
+            // 每块：面积、面积最大的三角形的重心（一定落在这块上）
+            var blocks = new Dictionary<int, (float area, float best, Vector3 at)>();
+            for (int t = 0; t + 2 < idx.Length; t += 3)
+            {
+                if ((filter.areaMask & (1 << tri.areas[t / 3])) == 0) continue;
+                Vector3 a = v[idx[t]], b = v[idx[t + 1]], c = v[idx[t + 2]];
+                float area = Vector3.Cross(b - a, c - a).magnitude * 0.5f;
+                int k = Find(idx[t]);
+                blocks.TryGetValue(k, out var e);
+                e.area += area;
+                if (area > e.best)
+                {
+                    e.best = area;
+                    e.at = (a + b + c) / 3f;
+                }
+                blocks[k] = e;
+            }
+            var reach = ctx.Reach;
+            var lavas = Object.FindObjectsByType<LavaVolume>();
+            int linked = 0, unreachable = 0, doubleJump = 0, bad = 0, underLava = 0;
+            var notes = new List<string>();
+            foreach (var e in blocks.Values.OrderByDescending(b => b.area))
+            {
+                if (e.area < 0.25f) continue;
+                if (!UnityEngine.AI.NavMesh.SamplePosition(e.at, out var hit, 0.3f, filter)) continue; // 不是人形代理的网格（火鼍）
+                if (LevelContext.NavPath(start, hit.position, out _) == UnityEngine.AI.NavMeshPathStatus.PathComplete)
+                {
+                    linked++;
+                    continue;
+                }
+                // 熔岩底下的网格（火口坑底、护城渠床）：玩家掉进去照 L7 扣血托回，站不住，不算
+                var hp = hit.position;
+                if (lavas.Any(l => l && l.Body.Contains(hp.x, hp.z) && hp.y < l.transform.position.y + 0.3f))
+                {
+                    underLava++;
+                    continue;
+                }
+                var tier = ctx.TierAt(reach, hit.position, 1.5f, 0.8f);
+                string at = $"{LevelContext.At(hit.position)} y {hit.position.y:F1}（{e.area:F1} m²）";
+                if (tier <= Move.Dash)
+                {
+                    bad++;
+                    rep.Fail($"导航孤岛 {at}：玩家{ReachFlood.Label(tier)}上得去，出场站位走不到（修坡连通，或这块顶面不进导航）");
+                }
+                else if (tier == Move.DoubleJump)
+                {
+                    doubleJump++;
+                    rep.Warn($"导航孤岛 {at}：只有二段跳上得去");
+                }
+                else
+                {
+                    unreachable++;
+                    if (notes.Count < 6) notes.Add(at);
+                }
+            }
+            rep.Line($"人形导航网格 {linked} 块和出生点连通；孤岛：玩家上得去 {bad} 块、只有二段跳 {doubleJump} 块、玩家上不去 {unreachable} 块、熔岩底下 {underLava} 块（不算）" +
+                     (notes.Count > 0 ? $"（{string.Join("；", notes)}{(unreachable > notes.Count ? " …" : "")}）" : ""));
+            if (bad == 0) rep.Line("✓ 玩家步行 / 跳 / 冲刺站得上去的地方没有导航孤岛（S1 出场站位都走得到玩家）");
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；另查 3-4 自己的件（BossArena + QilinFurnace、BossEncounter、SupplyCamp 各 1，吊鼎 1、锁扣 4，没有 ExitPortal）。顺带重新生成 GameDatabase</summary>
@@ -879,7 +1057,7 @@ namespace Spiritfire.Art.Editor.Levels
         ///   地标视线（出生望炉心殿门楼 / 祝融像 / ①，山门望闸楼，② 望门洞，补给营望熔池，殿内原有几条）；
         ///   场地：① ② 战斗场地（≥ 6 处全遮、3 层、要有坡 / 阶上得去的俯射层、CoverReach ≥ 80%、熔岩 ≤ 35%）、补给营（缓冲）、炉心殿（首领场，不查 CoverReach）；
         ///   炉口召唤点按炭童查净空 / 有路；补给营的 7 个摊位按 ShopLayout 声明成交互点。
-        /// 可玩区 = 开阔区（含火口坑）往岩壁里 2 m，软边界兜底；第三章 v2 新件到货前白盒，占位只提醒
+        /// 可玩区 = 开阔区（含火口坑）往岩壁里 2 m，软边界兜底；第三章正式件全部到位，占位件一律不合格
         /// </summary>
         static LevelSpec Spec(LevelKit.TerrainSet set)
         {
@@ -887,7 +1065,7 @@ namespace Spiritfire.Art.Editor.Levels
             var spec = new LevelSpec
                 {
                     id = "3-4", title = "祝融炉心", playerSpawn = G(SpawnAt), bounds = new Rect(Origin, Size),
-                    playable = Playable, escapeMargin = Bounds.EscapeMargin, placeholders = PlaceholderPolicy.Warn,
+                    playable = Playable, escapeMargin = Bounds.EscapeMargin, placeholders = PlaceholderPolicy.Fail,
                     slopePaths =
                     {
                         new SlopePath { name = "神龛西祭台坡道", points = new[] { new Vector2(-RampFoot.x, RampFoot.y), new Vector2(-RampTop.x, RampTop.y) } },
@@ -914,13 +1092,13 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("② 西桥", G(new Vector2(ChannelBridges[0], ChannelZ))).Route("② 北岸", G(new Vector2(-10, -90)))
                 .Route("② → 补给营坡道", G(new Vector2(-13, -76))).Route("补给营 · 商店前", G(CampAt + new Vector2(3, 0))).Route("护城渠南岸 · 桥头", G(ForecourtN))
                 .Route("护城渠桥", G(new Vector2(0, -37))).Route("门楼", G(new Vector2(0, -24))).Route("入场点", G(PlayerEntry))
-                .Sight("出生 → 炉心殿门楼", G(SpawnAt, 1.62f), new Vector3(0, 9f, -24.9f), 5, GatewayId)
+                .Sight("出生 → 炉心殿南门", G(SpawnAt, 1.62f), new Vector3(0, 12f, GateZ), 5, GateFrameId)
                 .Sight("出生 → 补给营祝融像", G(SpawnAt, 1.62f), G(StatueAt, 12f), 5, StatueId)
                 .Sight("出生 → ① 山门（西城台）", G(SpawnAt, 1.62f), new Vector3(GatehouseC.x - 6f, Site1H + 8.5f, GatehouseC.y - GatehouseSize.z * 0.5f + 0.5f), 4, GatehouseId)
                 .Sight("山门 → ② 闸楼", G(LandingAt, 1.62f), G(SluiceTowerAt, 7f), 4, FurnaceId)
-                .Sight("② → 炉心殿门洞", G(new Vector2(-4, -88), 1.62f), new Vector3(0, 4.5f, -25.5f), 4, GatewayId)
+                .Sight("② → 炉心殿门洞", G(new Vector2(-4, -88), 1.62f), new Vector3(0, 4.5f, GateZ), 4, GateFrameId)
                 .Sight("补给营 → 门洞后的熔池红光", G(new Vector2(0, -56), 1.62f), new Vector3(0, 0.6f, PoolR - 1f), 3)
-                .Sight("护城渠南岸 → 门楼", G(ForecourtN + new Vector2(0, -4), 1.62f), new Vector3(0, 6f, -24.9f), 4, GatewayId)
+                .Sight("护城渠南岸 → 南门", G(ForecourtN + new Vector2(0, -4), 1.62f), new Vector3(0, 11.5f, GateZ), 4, GateFrameId)
                 .Sight("入场点 → 巨鼎", G(PlayerEntry, 1.62f), new Vector3(0, HangHeight, 0), 3)
                 .Sight("入场点 → 神龛", G(PlayerEntry, 1.62f), G(ShrineAt, 6f), 5, ShrineId)
                 .Sight("东南象限 → 西锁扣（隔着熔池、从巨鼎旁边）", G(new Vector2(17, -8.5f), 1.62f), new Vector3(-LockR + 0.8f, LockHeight, 0), 3)
