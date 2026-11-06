@@ -40,6 +40,12 @@ namespace Spiritfire.Game.Testing
         /// <summary>3-3 铸范大坊（与编辑器里 Level_3_3.ScenePath 相同，运行时程序集引用不到那边的常量）</summary>
         public override string Scene => "Assets/Scenes/L3_3_Foundry.unity";
 
+        /// <summary>
+        /// 开发开关：③ 实战烧到了敌人、还剩一口没放过的浇包时，也再走一次「没烧到敌人」的定点验证分支，每轮都尽量覆盖到兜底路径。
+        /// 设成 false 就只在实战一只没烧到时才走
+        /// </summary>
+        public static bool ForceSluiceDummy = true;
+
         /// <summary>有火鼍的场地多给的时间（它潜在渠里时 ×0.5，要引它上岸）、只剩潜着的火鼍多久后去引</summary>
         const float ReadyTimeout = 90f, SiteTimeout = 150f, TuoExtra = 60f, LureAfter = 8f, ClearAllTimeout = 1100f, BotSpeed = 11f;
         /// <summary>神范的白盒 / 正式件名字前缀（构建器把占位白盒改名成「id · 神范 (Placeholder)」）</summary>
@@ -442,7 +448,7 @@ namespace Spiritfire.Game.Testing
                 else if (Time.time >= flankAt && Combat.Blocked(eye.position, aim, target.GetComponent<Collider>()))
                 {
                     flankAt = Time.time + 1.5f;
-                    if (DrySightSpot(target, aim, out var spot)) Place(spot);
+                    if (DrySightSpot(target, aim, site.transform.position, out var spot)) Place(spot);
                 }
                 weapons.testFire = weapons.Active != null && (weapons.Active.def.mode != FireMode.Semi || !weapons.testFire);
                 if (skills && Time.time >= skillAt)
@@ -481,10 +487,14 @@ namespace Spiritfire.Game.Testing
                 if (site.phase != EncounterSite.Phase.Cleared && site.optional) site.gameObject.SetActive(false);
                 yield break;
             }
-            if (siteSluices.Count > 0 && siteSluices.Sum(x => x.Kills) == 0)
+            bool noKill = siteSluices.Count > 0 && siteSluices.Sum(x => x.Kills) == 0;
+            var spareSluice = siteSluices.FirstOrDefault(x => x.CanRelease);
+            if (noKill || (ForceSluiceDummy && spareSluice))
             {
-                var spare = siteSluices.FirstOrDefault(x => x.CanRelease) ?? siteSluices[0];
-                Line($"  熔流闸在实战里没烧到敌人：用「{spare.title}」做一次定点验证（刷一只眩晕的祸斗站在槽里）");
+                var spare = spareSluice ?? siteSluices[0];
+                Line(noKill
+                    ? $"  熔流闸在实战里没烧到敌人：用「{spare.title}」做一次定点验证（刷一只眩晕的祸斗站在槽里）"
+                    : $"  开发开关 ForceSluiceDummy：实战已烧到 {siteSluices.Sum(x => x.Kills)} 只，仍用没放过的「{spare.title}」强制走一次「没烧到敌人」的定点验证分支");
                 yield return SluiceDummy(spare);
             }
             if (!string.IsNullOrEmpty(site.reward))
@@ -572,15 +582,22 @@ namespace Spiritfire.Game.Testing
             return best;
         }
 
-        /// <summary>目标周围 8–12 m、干地导航网格上、离熔岩 ≥ 1.5 m、眼高能直接看到瞄准点的位置（基类的 SightSpot 不带代理过滤，会落到渠底）</summary>
-        static bool DrySightSpot(Damageable target, Vector3 aim, out Vector3 spot)
+        /// <summary>
+        /// 目标周围 8–12 m、干地导航网格上、离熔岩 ≥ 1.5 m、眼高能直接看到瞄准点的位置（基类的 SightSpot 不带代理过滤，会落到渠底）。
+        /// 还要从场地中心沿干地导航走得到：② 鼓风正殿的神火飞鸦停在柱顶 / 殿顶附近，按它的高度采样会采到殿顶屋架（离殿地 14 m）
+        /// 顶面上烘出来的孤岛导航，机器人被放上屋架就下不来，剩下的怪也刷不出来（150 s 超时）。
+        /// </summary>
+        static bool DrySightSpot(Damageable target, Vector3 aim, Vector3 home, out Vector3 spot)
         {
+            bool homeOk = NavMesh.SamplePosition(home, out var homeHit, 6f, Dry);
+            var path = new NavMeshPath();
             for (int i = 0; i < 16; i++)
             {
                 float a = i * Mathf.PI * 2 / 16 + Random.value * 0.3f;
                 var p = target.transform.position + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * Random.Range(8f, 12f);
                 if (!NavMesh.SamplePosition(p, out var hit, 3f, Dry)) continue;
                 if (LavaField.IsLava(hit.position) || LavaField.NearLava(hit.position, 1.5f)) continue;
+                if (homeOk && (!NavMesh.CalculatePath(homeHit.position, hit.position, Dry, path) || path.status != NavMeshPathStatus.PathComplete)) continue;
                 if (Combat.Blocked(hit.position + Vector3.up * 1.62f, aim, null)) continue;
                 spot = hit.position;
                 return true;
@@ -602,7 +619,8 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
             weapons.testFire = false;
-            var stand = SluiceStand(s);
+            bool clear = SluiceStand(s, out var stand, out string standWhy);
+            if (!clear) Fail($"熔流闸「{s.title}」旁找不到看得到吊钩的干地站位（{standWhy}）");
             Place(stand);
             yield return null;
             int k0 = s.Kills;
@@ -625,7 +643,7 @@ namespace Spiritfire.Game.Testing
                 }
             }
             else s.Release(true);
-            Line($"  熔流闸「{s.title}」（{why}）：{(viaHook ? $"射断吊钩（{s.hook.BrokenBy}）" : "直接放")}，阶段 {s.Phase}，熔流道 {s.Length:F0} m");
+            Line($"  熔流闸「{s.title}」（{why}）：站在 {stand}（{standWhy}），{(viaHook ? $"射断吊钩（{s.hook.BrokenBy}，命中 {s.hook.Taken} 次）" : "直接放")}，阶段 {s.Phase}，熔流道 {s.Length:F0} m");
             float f0 = Time.time;
             bool snap = false;
             while ((s.Phase == LavaSluice.State.Warning || s.Phase == LavaSluice.State.Flowing) && Time.time - f0 < s.warn + s.duration + 2f)
@@ -645,20 +663,60 @@ namespace Spiritfire.Game.Testing
             if (s.Volumes.Count == 0) Fail($"熔流闸「{s.title}」放了但没有熔岩段");
         }
 
-        /// <summary>熔流道旁、离两条熔流道都 ≥ 0.8 m 的干地（看得见吊钩，熔流冲不到）</summary>
-        Vector3 SluiceStand(LavaSluice s)
+        /// <summary>
+        /// 放熔流闸的站位：沿熔流道 20%…70% 处、两侧、离槽 1.6 / 3.2 m 两档里，挑第一个「干地导航网格上、不在任何一道熔流道里（留 0.8 m）、
+        /// 眼高看得到吊钩（拉闸的看得到拉杆）」的点。原来只试 35% 处两侧、不查视线：南浇包那一侧正好贴着槽间铸范（(158, 56)），
+        /// 站位 (156.7, 55.6) 朝吊钩的视线整条打在铸范上，3 s 一发都没打到吊钩。都不行时返回 false 和视线最好的那个
+        /// </summary>
+        bool SluiceStand(LavaSluice s, out Vector3 stand, out string why)
         {
-            var a = s.PointAt(s.Length * 0.35f);
-            var b = s.PointAt(s.Length * 0.35f + 2f);
-            var dir = Flat3(b - a).normalized;
-            var side = new Vector3(dir.z, 0, -dir.x);
-            foreach (float sign in new[] { 1f, -1f })
+            var target = SluiceTarget(s, out var targetCol);
+            stand = default;
+            why = "";
+            int tried = 0, wet = 0, blocked = 0;
+            foreach (float f in new[] { 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f })
             {
-                var p = a + side * (sign * (s.width * 0.5f + 1.6f));
-                if (sluices.Any(x => x.Covers(p, 0.8f))) continue;
-                if (NavMesh.SamplePosition(p, out var hit, 2f, Dry) && !LavaField.IsLava(hit.position)) return hit.position;
+                var a = s.PointAt(s.Length * f);
+                var b = s.PointAt(Mathf.Min(s.Length, s.Length * f + 2f));
+                var dir = Flat3(b - a).normalized;
+                if (dir.sqrMagnitude < 0.5f) continue;
+                var side = new Vector3(dir.z, 0, -dir.x);
+                foreach (float off in new[] { 1.6f, 3.2f })
+                foreach (float sign in new[] { 1f, -1f })
+                {
+                    tried++;
+                    var p = a + side * (sign * (s.width * 0.5f + off));
+                    if (!NavMesh.SamplePosition(p, out var hit, 1.5f, Dry) || LavaField.IsLava(hit.position) || sluices.Any(x => x.Covers(hit.position, 0.8f)))
+                    {
+                        wet++;
+                        continue;
+                    }
+                    if (stand == default) stand = hit.position;
+                    if (Combat.Blocked(hit.position + Vector3.up * 1.62f, target, targetCol))
+                    {
+                        blocked++;
+                        continue;
+                    }
+                    stand = hit.position;
+                    why = $"沿程 {f:P0}、离槽 {off:F1} m";
+                    return true;
+                }
             }
-            return a + side * (s.width * 0.5f + 2f);
+            why = $"试了 {tried} 处：{wet} 处不在干地导航上 / 在熔流道里，{blocked} 处看不到{(s.hook ? "吊钩" : "拉杆")}";
+            if (stand == default) stand = s.PointAt(s.Length * 0.35f);
+            return false;
+        }
+
+        /// <summary>放熔流闸要瞄的点：吊钩（射断）或拉杆（按 F）</summary>
+        static Vector3 SluiceTarget(LavaSluice s, out Collider col)
+        {
+            if (s.hook && s.trigger != LavaSluice.Trigger.Lever)
+            {
+                col = s.hook.GetComponent<Collider>();
+                return s.hook.Center;
+            }
+            col = null;
+            return s.Focus;
         }
 
         static Vector3 Flat3(Vector3 v) => new(v.x, 0, v.z);
