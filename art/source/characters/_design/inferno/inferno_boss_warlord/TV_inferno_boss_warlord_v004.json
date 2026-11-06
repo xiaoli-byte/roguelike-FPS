@@ -1,0 +1,48 @@
+{
+  "design": {
+    "key": "inferno_boss_warlord",
+    "name": "熔心魔将",
+    "height_m": 4.2,
+    "chapter": "inferno",
+    "group": "领主",
+    "layout": "humanoid",
+    "role": "3-3 铸范大坊领主（Unity 资产 SK_Boss_Warlord）；熔心大剑另建 SM_BossWeapon_Greatsword（inferno_boss_warlord_sword）",
+    "brief": "A fully armoured demon swordsman general about 4.2 m tall (horn tips), cast from dark violet basalt and burnished copper in the fire god Zhurong's foundry: dark violet helm with a pointed copper crest spike and big copper crescent horns, closed visor with two eye slits, red tassels beside the helm; copper beast-head shoulder guards over layered pauldrons with red tassels; breastplate with a round copper heart-mirror and one vertical lava crack down the chest; copper beast-face belt buckle with a ring and red tassel; long ragged dark-red war banner with a copper flame totem at the front and a long ragged dark-red cape with the totem at the back; layered lamellar plates with copper trims and rivets, long segmented tasset skirt, heavy vambraces, big gauntlets, round copper knee guards with the flame emblem, greaves and blocky sabatons.",
+    "style_note": "pipeline.toml [concept].style, written out in the prompt: polished stylized cartoon 3D game art, toy-like chunky simplified masses, clean bevelled edges, flat-ish hand-painted colours, two or three dominant colour blocks; no photorealism, micro-grain, dense tiny cracks or fine engraving.",
+    "status": "selected",
+    "note": "2026-11-07 重建（第二次）。用户选定 DS v006 方案 4（user_concept_molten_warlord_v006_4.webp，重甲剑士版），按它出四视图建模。设计说明 docs/art/boss-warlord.md"
+  },
+  "generation": {
+    "provider": "tripo_studio",
+    "account": "新账号（2026-11-06 充值 31800）",
+    "model": "GPT Image 2.5",
+    "task": "01b9991f",
+    "size": [
+      1792,
+      1024
+    ],
+    "upscaled_4k": false,
+    "credits": 0,
+    "references": [
+      "user_concept_molten_warlord_v006_4.webp（用户 11-07 选定的设定图，PNG 转码后上传当参考）"
+    ],
+    "prompt_file": "TV_inferno_boss_warlord_v004_prompt.txt",
+    "variants": 4,
+    "files": [
+      "TV_inferno_boss_warlord_v004_1.png",
+      "TV_inferno_boss_warlord_v004_2.png",
+      "TV_inferno_boss_warlord_v004_3.png",
+      "TV_inferno_boss_warlord_v004_4.png"
+    ],
+    "selected_variant": 4,
+    "views_order_in_sheet": [
+      "front",
+      "right（脸朝右）",
+      "back",
+      "left（脸朝左）"
+    ],
+    "note": "照方案 4 出的特效分离四视图：浅灰底、空手 A 字、裂纹 / 眼缝 / 兽首口平涂暗橙、无地面火光。选第 4 张：体量最接近原图（巨大兽首铜肩、前后红布、长披风），两个侧视都是正 90° 侧面。它的侧视顺序是脸朝右在第 2 位、脸朝左在第 4 位（和提示词相反），上传 Tripo 时按朝向放进左侧 / 右侧槽；背面对称，不用镜像。第 1 张前面缺披风；第 2 张身形偏瘦；第 3 张第 2 个视图画成了 3/4。",
+    "date": "2026-11-07"
+  },
+  "from_sheet": "user_concept_molten_warlord_v006_4.webp"
+}
