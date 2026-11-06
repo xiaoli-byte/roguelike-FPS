@@ -1,0 +1,356 @@
+{
+  "id": "SM_Tripo_ZhurongPalaceGate",
+  "display": "祝融宫门（大件；主焦点：圆形日轮铜门；城垛上的火盆座留给 Brazier 件）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:25:46",
+          "files": {
+            "BO_SM_Tripo_ZhurongPalaceGate_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongPalaceGate_v001.json",
+              "sha256": "28d4a89ac3b10d2ed3d99a4c768babbe0f702bc3541dbd6b50d92452b8a54faa"
+            },
+            "BO_SM_Tripo_ZhurongPalaceGate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongPalaceGate_v001_views.json",
+              "sha256": "6055ca59afac3b58a4c25e3c33df3fb6724eb1190a066153e3b0a41e9f70bc8e"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.palaceGate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -13.0,
+              0.0,
+              -5.0
+            ],
+            "max": [
+              13.0,
+              18.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:46:04",
+          "files": {
+            "BO_SM_Tripo_ZhurongPalaceGate_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongPalaceGate_v002.json",
+              "sha256": "53f6303532b6777404eefee48131d28a16f57eb23486f75a7d11c88609b0bc0a"
+            },
+            "BO_SM_Tripo_ZhurongPalaceGate_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongPalaceGate_v002_views.json",
+              "sha256": "8c8476c45df0562034358f17323bc4a7fa6a2839569d61498ad135b2ad776a6b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.palaceGate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -11.0,
+              0.0,
+              -4.1
+            ],
+            "max": [
+              11.0,
+              18.0,
+              4.1
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:46:05",
+          "files": {
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_source.png",
+              "sha256": "2cb59c463e86ed0119e85312b0ace5b6d06c3ba8c7e3e3e676cdc15cfee7c55c"
+            },
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_front.png",
+              "sha256": "3d315baa27bc2585b035bcb6fd2e0f2cfa8119dcd8f2a4de9caace6d71c9c7d0"
+            },
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_left.png",
+              "sha256": "2be5fbc85ae8143df686b24dade07cbd971cf30710fcc7329fd06e6f55d9f7ac"
+            },
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_back.png",
+              "sha256": "675bc0828ed2fc2646a37c8eda7f53d6dc6379a40dd7bea418ade97861af49a4"
+            },
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_right.png",
+              "sha256": "48d5ea62fd7eb71b62a2d4f4587ded847cccca7421f55118216f7b42a3595307"
+            },
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_sheet.png",
+              "sha256": "107acd51586ae182fdcf15d456cedf88e18e4772f6992be90dd2082689e92ff5"
+            },
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_prompt.txt",
+              "sha256": "7a79749a9c74a751c07ccc7b3c60ee4709e1900d40ede0a569b77711add7cfba"
+            },
+            "CN_SM_Tripo_ZhurongPalaceGate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceGate_v001_registration.json",
+              "sha256": "578fb2b2fc33e7b2fdda314121b8727fbfffaef7e24f7d132ad51fe6c5928c57"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 1,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "楚式宫门（朱漆铁门 + 门钉 + 铺首 + 黑漆红纹门楣）：Tripo Studio 图片页 GPT Image 2.5 纯文字，2 张里选第 1 张；2 号带火焰火盆不选",
+            "source_image": "PalaceGateChu_1.webp"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nSTYLE: stylized hand-painted 3D game environment asset rooted in ancient Chinese culture of the southern Chu kingdom (Warring States, Hubei and Hunan): thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark violet-grey basalt, vermilion lacquer with bronze studs, black lacquer with red patterns), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (26m wide x 18m tall x 10m deep): The main gate of the fire god's palace in the style of a Warring-States Chu palace of southern China: a massive gate block of dark violet-grey basalt masonry 26m wide. In its centre a tall rectangular gateway 8m wide and 10m tall is closed by a pair of huge cast-iron doors lacquered vermilion, covered with rows of big round bronze door studs, each leaf with one big bronze beast-mask knocker (pushou) holding a ring in its mouth. Above the doorway a wide black lacquered lintel board painted with broad red Chu cloud-scroll and phoenix patterns and a round bronze mirror boss in its centre. The gateway is flanked by two thick square pylons a little taller than the wall, each with a long red-and-black banner showing one stylized Chu phoenix, hanging flat against its face. The top is a walkable rampart edged with chunky square merlons, with two empty square stone pedestals on the parapet above the pylons (no braziers, no flames). A plain stone base course at the foot. The BACK is a plain flat masonry face showing the back of the doors. PROPORTIONS: FRONT and BACK views about 1.45 times as wide as tall; LEFT and RIGHT views about 0.55 times as wide as tall.",
+          "source_sha256": "2cb59c463e86ed0119e85312b0ace5b6d06c3ba8c7e3e3e676cdc15cfee7c55c",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8220351077493934,
+              "offset": [
+                27,
+                325
+              ],
+              "size": [
+                457,
+                374
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8424008424008423,
+              "offset": [
+                171,
+                325
+              ],
+              "size": [
+                170,
+                374
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8166505983099869,
+              "offset": [
+                29,
+                325
+              ],
+              "size": [
+                454,
+                374
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8443024244378645,
+              "offset": [
+                171,
+                325
+              ],
+              "size": [
+                170,
+                374
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；楚式宫门（朱漆铁门 + 门钉 + 铺首 + 黑漆红纹门楣）：Tripo Studio 图片页 GPT Image 2.5 纯文字，2 张里选第 1 张；2 号带火焰火盆不选",
+            "time": "2026-11-07 00:46:05"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:46:34",
+          "files": {
+            "HP_SM_Tripo_ZhurongPalaceGate_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v001_source.glb",
+              "sha256": "f310849f49a830a943600b8bddb6efb04666c4c56c8c108386f92b0b75965ecd"
+            },
+            "HP_SM_Tripo_ZhurongPalaceGate_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v001.glb",
+              "sha256": "443b29c5002d8261df9e8f82df4db052d2bb2146daa43810b9813c68796f6564"
+            },
+            "HP_SM_Tripo_ZhurongPalaceGate_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v001_graph.json",
+              "sha256": "27386a3454f9db221be24b7138c80d4bb922d02a923beebe115cb8c70deeeeee"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/22c592b2-2aab-42a5-86ee-3c167377bc41",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 27512,
+          "source_sha256": "f310849f49a830a943600b8bddb6efb04666c4c56c8c108386f92b0b75965ecd"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:47:41",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceGate_v001.blend",
+              "sha256": "7ba4e52779832e04047ac9a73cede703cb107a67823b7a6c98bf6fec593888ab"
+            },
+            "SM_Tripo_ZhurongPalaceGate_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongPalaceGate_v001.glb",
+              "sha256": "ad7c0304b836d1aa793e1073c05328949234f6e9f642a4de350f518521d1b795"
+            },
+            "SM_Tripo_ZhurongPalaceGate_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceGate_v001_metrics.json",
+              "sha256": "63f386fd588b333969b523873a5b5b42e911d61c3c67f8cc2d209e8bb0e6b7c1"
+            },
+            "T_Tripo_ZhurongPalaceGate_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceGate_BC.png",
+              "sha256": "a52049fe96cf19c781da355019c838a7a5e0fca308b2943332c0c4f2dc1bdbc0"
+            },
+            "T_Tripo_ZhurongPalaceGate_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceGate_E.png",
+              "sha256": "7fc62135ae97164f44075e666c278a0f073f49963fe706115bdc88c7bde3abf4"
+            },
+            "T_Tripo_ZhurongPalaceGate_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceGate_N.png",
+              "sha256": "bc54e31a06c4d5b3bc85a6e3146e461ba893b798a9ad74e7af43374e39daf4e0"
+            },
+            "T_Tripo_ZhurongPalaceGate_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceGate_ORM.png",
+              "sha256": "2225851b9a862a559f3c4f28d9e5adbbab6ebed64b3f7c64fbdfd4a1b9be90e9"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.848,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 27512,
+              "verts": 16061
+            }
+          ],
+          "export_kb": 1590.2,
+          "seconds": 66.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:47:42",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceGate_v001_validation_v001.json",
+              "sha256": "9bfc8c9c99f817178b4b57d6e92bfb5c76b0e3e68a0f982bacac5247e8e5d01b"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:47:52",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceGate_v001_review_v001.png",
+              "sha256": "a8f7bafadd003fd879df5ec4e15d2510f51b15db988c7a082ac84ede7995fc6a"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
+            "time": "2026-11-07 02:00:44"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:00:44",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongPalaceGate.glb",
+              "sha256": "ad7c0304b836d1aa793e1073c05328949234f6e9f642a4de350f518521d1b795"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongPalaceGate.glb"
+        }
+      ]
+    }
+  }
+}

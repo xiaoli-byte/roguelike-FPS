@@ -1,0 +1,356 @@
+{
+  "id": "SM_Tripo_ZhurongCustomsFort",
+  "display": "湖心税关（大件；中景岛上的建筑群（岛体走地形 / 岩块））",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:15:36",
+          "files": {
+            "BO_SM_Tripo_ZhurongCustomsFort_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongCustomsFort_v001.json",
+              "sha256": "0b9ff31432bd05f78f2bf629d8e2c7c57cef1ddda5aa925f33af0ed09c98dd7b"
+            },
+            "BO_SM_Tripo_ZhurongCustomsFort_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongCustomsFort_v001_views.json",
+              "sha256": "b3964ae61310bceb1c44ef3b9f1c9adf6cf98ebfd462aa377ece6839a4f95ec4"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.customsFort"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -12.0,
+              0.0,
+              -10.0
+            ],
+            "max": [
+              12.0,
+              14.0,
+              10.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:18:03",
+          "files": {
+            "BO_SM_Tripo_ZhurongCustomsFort_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongCustomsFort_v002.json",
+              "sha256": "f6b2d260ff7d71fa710afff137e412d6185aaa886a35efb63d52d663c91d8bcf"
+            },
+            "BO_SM_Tripo_ZhurongCustomsFort_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongCustomsFort_v002_views.json",
+              "sha256": "01fdd1c156cc68c618802c2ff5637fabdac175bca08a1df57f39149162a9ebc7"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.customsFort"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -14.65,
+              0.0,
+              -10.2
+            ],
+            "max": [
+              14.65,
+              14.0,
+              10.2
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:18:05",
+          "files": {
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_source.png",
+              "sha256": "276cbcdb3a663c9afc2f77e029a8ad5aac34788d1b9a4fea84ba06b0ee54ce3e"
+            },
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_front.png",
+              "sha256": "6bca701c1bae24227ca9e04129134fef83a5edb087d025cb0eb21fc1c6965f5c"
+            },
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_left.png",
+              "sha256": "fc4d0acaea5ac6a908e71da7ba3d77be52c828d5c76882f61429af6a91d9aa46"
+            },
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_back.png",
+              "sha256": "b57b5a823e02c2346a4554895b1a5d653f4a441bff4d36000eef690467f612a8"
+            },
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_right.png",
+              "sha256": "62b8b5a95405132d1d81772f71fffc64b50c2fe5d5af420190b0f5b8eee81d22"
+            },
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_sheet.png",
+              "sha256": "32cf0369e52a01e3630d14eedcc8e829dd91069fc3eed4d06ecc9837a2f02aae"
+            },
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_prompt.txt",
+              "sha256": "3494ab30a3572e1e97d477988cecfe824965e95510fe04c22906fab4e5a23a60"
+            },
+            "CN_SM_Tripo_ZhurongCustomsFort_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongCustomsFort_v001_registration.json",
+              "sha256": "7765776a20ae6f8bcf1a29241d5cc5e24b75fb2ac828149bf2b14c6f7bc513e0"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 1,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 1 张；登记尺寸按画出的比例修正",
+            "source_image": "CustomsFort_1.webp"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the island toll fort from it as a standalone game asset, keeping its shapes, proportions, materials and colours, simplified as described below; ignore everything else in the crop.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark violet-grey basalt, warm aged bronze, deep vermilion lacquer), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (24m wide x 14m tall x 20m deep): A walled toll fort: a square stone platform 3m tall of big dark violet-grey basalt blocks with a crenellated parapet around its edge; one wide straight stone stair climbs the FRONT face from the ground to a gateway in the parapet. On the platform: a two-storey toll pavilion of stone walls and dark timber with vermilion posts and double-eaved dark tiled roofs (the tallest part, 14m) at the back centre, a smaller one-storey side hall with a tiled roof on the RIGHT, and a round doorway in the main pavilion's front wall painted flat bright orange-yellow inside. PROPORTIONS: FRONT and BACK views about 1.7 times as wide as tall; LEFT and RIGHT views about 1.4 times as wide as tall.",
+          "source_sha256": "276cbcdb3a663c9afc2f77e029a8ad5aac34788d1b9a4fea84ba06b0ee54ce3e",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4897534397526745,
+              "offset": [
+                27,
+                403
+              ],
+              "size": [
+                457,
+                218
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.49085400928020856,
+              "offset": [
+                99,
+                403
+              ],
+              "size": [
+                314,
+                218
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5009863168112221,
+              "offset": [
+                22,
+                403
+              ],
+              "size": [
+                467,
+                218
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4986987080586594,
+              "offset": [
+                95,
+                403
+              ],
+              "size": [
+                321,
+                218
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 1 张；登记尺寸按画出的比例修正",
+            "time": "2026-11-07 00:18:05"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:48:56",
+          "files": {
+            "HP_SM_Tripo_ZhurongCustomsFort_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongCustomsFort_v001_source.glb",
+              "sha256": "773ad80452f259eb3ee58dfda39ff422a1d517fcfe6786f5d18007f43a73545e"
+            },
+            "HP_SM_Tripo_ZhurongCustomsFort_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongCustomsFort_v001.glb",
+              "sha256": "649ac86e259f267852795f4afa0a0ff26873a70b9d036e2608ad32f51e6ee0c1"
+            },
+            "HP_SM_Tripo_ZhurongCustomsFort_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongCustomsFort_v001_graph.json",
+              "sha256": "48bed1b0ce7dd0e13dfa462cb49d79e4c223829262d511289ddd67268d7acf42"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/ddfa7642-bbf3-4050-9e94-0fc63c635f58",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 24812,
+          "source_sha256": "773ad80452f259eb3ee58dfda39ff422a1d517fcfe6786f5d18007f43a73545e"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:49:41",
+          "files": {
+            "SM_Tripo_ZhurongCustomsFort_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongCustomsFort_v001.blend",
+              "sha256": "669afeea9f2d3b3ab5f03a7f110299d0d5fa82ecf2eff25037d21529ce4d848a"
+            },
+            "SM_Tripo_ZhurongCustomsFort_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongCustomsFort_v001.glb",
+              "sha256": "aff38179f1d66b5359d522bea43904270c759fc96774450963354c9ad7087edb"
+            },
+            "SM_Tripo_ZhurongCustomsFort_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongCustomsFort_v001_metrics.json",
+              "sha256": "11c0e6886480dfe8ff0df444eb2718913cb558e83fff8bf0c4c04ed21a2a81d3"
+            },
+            "T_Tripo_ZhurongCustomsFort_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongCustomsFort_BC.png",
+              "sha256": "b03c55203e1750a0a2c604d4236ebf85a36bd2e361a8698ec88e300b4d628ab6"
+            },
+            "T_Tripo_ZhurongCustomsFort_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongCustomsFort_E.png",
+              "sha256": "e2bef377b4af261c7db354d52e748c28d17459492173646c994db8051494a5b1"
+            },
+            "T_Tripo_ZhurongCustomsFort_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongCustomsFort_N.png",
+              "sha256": "e433256ea988df62a1c2a56418132183c927029e9c26161112e8d8b124481377"
+            },
+            "T_Tripo_ZhurongCustomsFort_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongCustomsFort_ORM.png",
+              "sha256": "a6d923f4578252439574e432114c630271778bf6b4d09e5d3468424c946a7f11"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.746,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 24812,
+              "verts": 15246
+            }
+          ],
+          "export_kb": 1360.7,
+          "seconds": 43.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:49:41",
+          "files": {
+            "SM_Tripo_ZhurongCustomsFort_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongCustomsFort_v001_validation_v001.json",
+              "sha256": "6104eeb5b60e7f1eac0bba3d4b02c906c7e0a6afa864a4b87b9196b744bc37c9"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:49:52",
+          "files": {
+            "SM_Tripo_ZhurongCustomsFort_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongCustomsFort_v001_review_v001.png",
+              "sha256": "8e84bbc8b2f6f2f8b9711250b27edd0575ed3fcadbf1f83258446c22e2004214"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
+            "time": "2026-11-07 02:00:47"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:00:47",
+          "files": {
+            "SM_Tripo_ZhurongCustomsFort.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongCustomsFort.glb",
+              "sha256": "aff38179f1d66b5359d522bea43904270c759fc96774450963354c9ad7087edb"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongCustomsFort.glb"
+        }
+      ]
+    }
+  }
+}

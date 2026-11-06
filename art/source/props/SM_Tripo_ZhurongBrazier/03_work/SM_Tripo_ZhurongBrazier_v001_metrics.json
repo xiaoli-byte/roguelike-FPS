@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 2900,
+    "verts": 1547
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.13175,
+    "iou": 0.925,
+    "iou_per_view": {
+      "front": 0.934,
+      "left": 0.915,
+      "back": 0.934,
+      "right": 0.915
+    },
+    "size_m": [
+      2.12,
+      2.131,
+      1.4
+    ],
+    "reference_m": [
+      2.1,
+      2.1,
+      1.4
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.725,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_ZhurongBrazier_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongBrazier_LOD0",
+      "tris": 2900,
+      "verts": 1547,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.999267578125,
+        0.986083984375
+      ],
+      "uv_utilization": 0.571,
+      "bbox_min": [
+        -1.0601,
+        -1.0654,
+        0.0
+      ],
+      "bbox_max": [
+        1.0601,
+        1.0654,
+        1.4
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongBrazier/04_export/SM_Tripo_ZhurongBrazier_v001.glb",
+    "bytes": 189192
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 13.8,
+  "_seconds": 16.3
+}

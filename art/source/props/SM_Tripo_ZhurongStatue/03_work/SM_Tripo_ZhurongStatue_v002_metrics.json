@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 35659,
+    "verts": 17889
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 28.01368,
+    "iou": 0.869,
+    "iou_per_view": {
+      "front": 0.917,
+      "left": 0.81,
+      "back": 0.87,
+      "right": 0.856
+    },
+    "size_m": [
+      14.951,
+      9.78,
+      28.0
+    ],
+    "reference_m": [
+      14.6,
+      9.3,
+      28.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.113
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.594,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongStatue_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongStatue_LOD0",
+      "tris": 35659,
+      "verts": 17889,
+      "uv_min": [
+        0.002197265625,
+        0.002197265625
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.997802734375
+      ],
+      "uv_utilization": 0.219,
+      "bbox_min": [
+        -7.4753,
+        -4.8901,
+        0.0
+      ],
+      "bbox_max": [
+        7.4753,
+        4.8901,
+        28.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongStatue/04_export/SM_Tripo_ZhurongStatue_v002.glb",
+    "bytes": 2400448
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 35.6,
+  "_seconds": 41.6
+}

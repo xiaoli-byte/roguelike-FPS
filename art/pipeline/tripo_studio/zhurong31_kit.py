@@ -3,6 +3,9 @@
   python zhurong31_kit.py prompts    写 prompts/<ID>.txt（Tripo Studio 图片页 GPT Image 2.5 四视图提示词，附参考裁图）
   python zhurong31_kit.py registry   打印 registry.toml 登记段
 
+注意：这是第一版拆件提示词；尺寸、设定的最终值以 registry.toml 为准（11-07 祝融像按用户参考方向重做成人形火神乘两龙、
+宫门 / 升鼎改楚式、宫墙 / 大阶去掉火盆，大阶改程序生成），实际发出的提示词记在各资产 asset.json 的概念版本里。
+
 规则来源：docs/art/composition.md（大中小三级、中景不立假人形竖杆、地标不对称）、art/README.md（厚实大形、两三个色块、
 不写商业游戏名、不要细砖缝 / 密集裂纹 / 小刻花）、docs/art/ch3-look.md（631 配色）、碰熔岩的只能是石 / 铸铁（用户 11-06）。
 """
@@ -127,13 +130,6 @@ KIT = [
   "level; the BACK edge is a plain wall meant to sit against the shore rock. Three short squat basalt mooring bollards stand on the "
   "FRONT edge. PROPORTIONS: FRONT and BACK views about 3.5 times as wide as tall; LEFT and RIGHT views about 2.5 times as wide as "
   "tall."),
- ("GrandStairs", "中", "宫前大阶", "宫门前的上行大台阶", "grid", "GrandStairs", "monumental staircase", STONE,
-  14, 9, 18, 8000, "tripo_architecture", STONE_MAT, [],
-  "A broad straight monumental stone staircase climbing from the FRONT (bottom) to the BACK (top, 9m high): about thirty wide "
-  "shallow steps 10m wide of dark violet-grey basalt, flanked by two solid stone side walls 2m thick whose tops step down with the "
-  "stairs in three big steps, each capped with a flat stone slab; a plain landing 3m deep at the top. Underneath, the staircase is "
-  "solid masonry. PROPORTIONS: FRONT and BACK views about 1.55 times as wide as tall; LEFT and RIGHT views about 2 times as wide as "
-  "tall showing the slope."),
  ("Boulders", "中", "前景岩堆", "前景压暗框景、死角", "grid", "Boulders", "boulder cluster", ROCK,
   8, 4, 6, 8000, "tripo_architecture", STONE_MAT, [],
   "A low cluster of four big rounded-off faceted basalt boulders fused together, 8m wide, 4m tall at the highest boulder on the "

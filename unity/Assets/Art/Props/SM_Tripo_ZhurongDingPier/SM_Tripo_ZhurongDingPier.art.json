@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongDingPier",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "zhurong31.dingPier"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -6.783761978149414,
+      0,
+      -4.516984462738037
+    ],
+    "max": [
+      6.783761978149414,
+      8,
+      4.516984462738037
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongDingPier_LOD0",
+      "lod": 0,
+      "tris": 14450,
+      "verts": 15897,
+      "materials": [
+        "M_Tripo_ZhurongDingPier"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongDingPier",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongDingPier_BC.png",
+        "N": "Textures/T_Tripo_ZhurongDingPier_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongDingPier_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongDingPier_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongDingPier.glb",
+    "sha256": "551a522bebe7344793de2602cdaa7d78aea60decd3ed0a88fc5ea471ac299d6c",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-07 02:01:56"
+}

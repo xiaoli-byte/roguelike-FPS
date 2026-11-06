@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongStatue",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "zhurong31.statue"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {
+    "文件大小": "全场唯一的崖顶主地标，Tripo 实得 35659 面 + 2048² 贴图，GLB 2.3 MB；项目规定不减面（art/README.md），按单件地标放行"
+  },
+  "bounds": {
+    "min": [
+      -7.475329875946045,
+      0,
+      -4.890083312988281
+    ],
+    "max": [
+      7.475329875946045,
+      28,
+      4.890083312988281
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongStatue_LOD0",
+      "lod": 0,
+      "tris": 35659,
+      "verts": 55090,
+      "materials": [
+        "M_Tripo_ZhurongStatue"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongStatue",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongStatue_BC.png",
+        "N": "Textures/T_Tripo_ZhurongStatue_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongStatue_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongStatue_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongStatue.glb",
+    "sha256": "6042d8115b96b334ba77efe3cff4a07707c083b88b44b5ccfaa6a9913d8adc61",
+    "hiRes": false,
+    "version": {
+      "blockout": 4,
+      "concept": 3,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-07 02:01:28"
+}

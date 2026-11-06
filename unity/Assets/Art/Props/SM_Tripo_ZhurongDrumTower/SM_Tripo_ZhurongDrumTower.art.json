@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongDrumTower",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "zhurong31.drumTower"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {
+    "场景高度": "Tripo 网格比四视图窄，等比按最紧轴对齐后高 15.4 m（登记 20 m）；场景按目标高度等比缩放（zhurong-kit-31.md）"
+  },
+  "bounds": {
+    "min": [
+      -3.9200000762939453,
+      0,
+      -2.7978484630584717
+    ],
+    "max": [
+      3.9200000762939453,
+      15.41640567779541,
+      2.7978484630584717
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongDrumTower_LOD0",
+      "lod": 0,
+      "tris": 14886,
+      "verts": 19035,
+      "materials": [
+        "M_Tripo_ZhurongDrumTower"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongDrumTower",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongDrumTower_BC.png",
+        "N": "Textures/T_Tripo_ZhurongDrumTower_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongDrumTower_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongDrumTower_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongDrumTower.glb",
+    "sha256": "31800e02bf4ed4928723d6fd6ba2ca5d76fc2b1c689fd9a14939179b7773751b",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-07 02:02:13"
+}

@@ -1,0 +1,357 @@
+{
+  "id": "SM_Tripo_ZhurongBrazier",
+  "display": "铜火盆（小件；宫门城垛、关楼台上；火焰是特效（FX_Fire））",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:15:30",
+          "files": {
+            "BO_SM_Tripo_ZhurongBrazier_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongBrazier_v001.json",
+              "sha256": "efc28b4af46a07f9178ae19a4e7d04465f115fa29ca1134734c0966be5748f8e"
+            },
+            "BO_SM_Tripo_ZhurongBrazier_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongBrazier_v001_views.json",
+              "sha256": "2385c96be17d6d1a3713c8bf389e63dbb53878423f7fc32fcb7e8199585f3960"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.brazier"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.8,
+              0.0,
+              -0.8
+            ],
+            "max": [
+              0.8,
+              1.4,
+              0.8
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:18:08",
+          "files": {
+            "BO_SM_Tripo_ZhurongBrazier_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongBrazier_v002.json",
+              "sha256": "18b14c0432e0ce93391ef9ae3c15d11779d175bca59c28d48900657fe93b9cdc"
+            },
+            "BO_SM_Tripo_ZhurongBrazier_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongBrazier_v002_views.json",
+              "sha256": "7879afdc851f5599d01d363e6d9df2eb7cda6751067c67aa12b3b6f5ab3b82b2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.brazier"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.05,
+              0.0,
+              -1.05
+            ],
+            "max": [
+              1.05,
+              1.4,
+              1.05
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:18:09",
+          "files": {
+            "CN_SM_Tripo_ZhurongBrazier_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_source.png",
+              "sha256": "00a98ce2190f49396e975380ae6e58e08396a206ff1400cc6ee69909031d5f44"
+            },
+            "CN_SM_Tripo_ZhurongBrazier_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_front.png",
+              "sha256": "92a09beb8f340915f0eb1f3f45e5a50630ffb64f1b5c3a07315beaa401489c6b"
+            },
+            "CN_SM_Tripo_ZhurongBrazier_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_left.png",
+              "sha256": "92a09beb8f340915f0eb1f3f45e5a50630ffb64f1b5c3a07315beaa401489c6b"
+            },
+            "CN_SM_Tripo_ZhurongBrazier_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_back.png",
+              "sha256": "92a09beb8f340915f0eb1f3f45e5a50630ffb64f1b5c3a07315beaa401489c6b"
+            },
+            "CN_SM_Tripo_ZhurongBrazier_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_right.png",
+              "sha256": "92a09beb8f340915f0eb1f3f45e5a50630ffb64f1b5c3a07315beaa401489c6b"
+            },
+            "CN_SM_Tripo_ZhurongBrazier_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_sheet.png",
+              "sha256": "a7ecc9c2656a3bdecf5b7f6870da1b7ce3bed1dc81030848534eee4c6dbfae15"
+            },
+            "CN_SM_Tripo_ZhurongBrazier_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_prompt.txt",
+              "sha256": "a9f3a13db8f5580f6205bee095de87773d879f9ed66bb518d08af06e27d81b4c"
+            },
+            "CN_SM_Tripo_ZhurongBrazier_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongBrazier_v001_registration.json",
+              "sha256": "886471466cbbedeb5858eb0b98100f3e08a09f9d6c1e78723d1bcdadfdb4568a"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 1,
+            "references": [],
+            "fixes": [
+              "layout row",
+              "front view used for all four (4-fold symmetric)"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 1 张；登记尺寸按画出的比例修正",
+            "source_image": "Brazier_1.webp"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the bronze brazier from it as a standalone game asset, keeping its shapes, proportions, materials and colours, simplified as described below; ignore everything else in the crop.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (warm aged bronze, dark brown-green patina, dark violet-grey basalt), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (1.6m wide x 1.4m tall x 1.6m deep): A wide cast bronze brazier: a shallow round bowl 1.6m across with a thick rolled rim and a band of large simple meander pattern, standing on three short thick beast-paw legs on a square black iron base plate; the bowl is filled with a heap of coals painted flat bright orange-yellow on top (no flames). Warm aged bronze with soot. The same from all four sides. PROPORTIONS: every view about 1.15 times as wide as tall.",
+          "source_sha256": "00a98ce2190f49396e975380ae6e58e08396a206ff1400cc6ee69909031d5f44",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.1414303549135008,
+              "offset": [
+                27,
+                359
+              ],
+              "size": [
+                458,
+                305
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.1414303549135008,
+              "offset": [
+                27,
+                359
+              ],
+              "size": [
+                458,
+                305
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.1414303549135008,
+              "offset": [
+                27,
+                359
+              ],
+              "size": [
+                458,
+                305
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.1414303549135008,
+              "offset": [
+                27,
+                359
+              ],
+              "size": [
+                458,
+                305
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 1 张；登记尺寸按画出的比例修正",
+            "time": "2026-11-07 00:18:09"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:01:36",
+          "files": {
+            "HP_SM_Tripo_ZhurongBrazier_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v001_source.glb",
+              "sha256": "dacd8939e87f51a02d11b5e199b8d249eed80a75fcf4b327eda19733202f77f4"
+            },
+            "HP_SM_Tripo_ZhurongBrazier_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v001.glb",
+              "sha256": "7ce867c96d9e10e58c3dca3f939bcc4f38c869c324bc8e3bb7bdf92777602c74"
+            },
+            "HP_SM_Tripo_ZhurongBrazier_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v001_graph.json",
+              "sha256": "087220d6ad720d7476fbbc0d150a1a74083415131445d30448f4893b9747d77e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/2bb14f92-a856-4ea1-9dd6-39e7099dcc8d",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2900,
+          "source_sha256": "dacd8939e87f51a02d11b5e199b8d249eed80a75fcf4b327eda19733202f77f4"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:01:53",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongBrazier_v001.blend",
+              "sha256": "fe2e2d6e09da25e01100d143793f5cda306b60807ba99601aad60f12ab965cf4"
+            },
+            "SM_Tripo_ZhurongBrazier_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongBrazier_v001.glb",
+              "sha256": "4c6bf9faef4f35da958a660483944b7a903637e0523e5bdac521659414760062"
+            },
+            "SM_Tripo_ZhurongBrazier_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongBrazier_v001_metrics.json",
+              "sha256": "0f4c73c0ed21aa49cbd189938a073afeae6a31d7593112cc373f8e501b4e360a"
+            },
+            "T_Tripo_ZhurongBrazier_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongBrazier_BC.png",
+              "sha256": "360003fc51506874847f417a25e11b287bc6c4d255eb40c00b9b6028870cc545"
+            },
+            "T_Tripo_ZhurongBrazier_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongBrazier_E.png",
+              "sha256": "1a5e57350822bcd0cdb03f4dc88a26b4a281ba170756106cf0e2df2b298a2cd2"
+            },
+            "T_Tripo_ZhurongBrazier_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongBrazier_N.png",
+              "sha256": "6c7ac66152817828291bfbbb6b50493b7c244ba253c59510aa228d86ce99109a"
+            },
+            "T_Tripo_ZhurongBrazier_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongBrazier_ORM.png",
+              "sha256": "f3ae156214bec7792b1322e2b2c0a80051d51c3df9af32dfa1922d6e63b5963d"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.925,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2900,
+              "verts": 1547
+            }
+          ],
+          "export_kb": 184.8,
+          "seconds": 16.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:01:53",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongBrazier_v001_validation_v001.json",
+              "sha256": "414baef3664ef954a99c2d4a7ea6ba86cf4d56b8b49d89d1b425d6aa81eb12e2"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:02:03",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongBrazier_v001_review_v001.png",
+              "sha256": "eee2df35b85254f4e04cae17c3534d839dfc0f992bd2e849cd379f6473ffdf02"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
+            "time": "2026-11-07 02:02:12"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:02:13",
+          "files": {
+            "SM_Tripo_ZhurongBrazier.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongBrazier.glb",
+              "sha256": "4c6bf9faef4f35da958a660483944b7a903637e0523e5bdac521659414760062"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongBrazier.glb"
+        }
+      ]
+    }
+  }
+}

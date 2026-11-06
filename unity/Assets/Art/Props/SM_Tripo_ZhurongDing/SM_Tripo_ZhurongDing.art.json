@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongDing",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "zhurong31.ding"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -2.683441400527954,
+      0,
+      -2.5199999809265137
+    ],
+    "max": [
+      2.683441400527954,
+      6.8278489112854,
+      2.5199999809265137
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongDing_LOD0",
+      "lod": 0,
+      "tris": 14554,
+      "verts": 22987,
+      "materials": [
+        "M_Tripo_ZhurongDing"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongDing",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongDing_BC.png",
+        "N": "Textures/T_Tripo_ZhurongDing_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongDing_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongDing_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongDing.glb",
+    "sha256": "10b3b6def158f530776d259d3da61172c51a1827ccd0455c6884d05cdca9bc38",
+    "hiRes": false,
+    "version": {
+      "blockout": 3,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-07 02:02:07"
+}

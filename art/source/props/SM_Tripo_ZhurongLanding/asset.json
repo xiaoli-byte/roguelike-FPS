@@ -1,0 +1,445 @@
+{
+  "id": "SM_Tripo_ZhurongLanding",
+  "display": "石码头台（中件；出生近景平台（替代木码头））",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:16:07",
+          "files": {
+            "BO_SM_Tripo_ZhurongLanding_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongLanding_v001.json",
+              "sha256": "3adea79b8e2c4b587a511ca839e27689ae5f7954de3618b5c6996a524d6522d4"
+            },
+            "BO_SM_Tripo_ZhurongLanding_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongLanding_v001_views.json",
+              "sha256": "aff833a5c32c772bd589542e66b650732c7ce3f665330234c2be20ba547f87a2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.landing"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -7.0,
+              0.0,
+              -5.0
+            ],
+            "max": [
+              7.0,
+              4.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:16:10",
+          "files": {
+            "CN_SM_Tripo_ZhurongLanding_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_source.png",
+              "sha256": "ee9b3902b26cb1d74cb79715a5c173f673ab7e1428d8163e3271f6b18beea9be"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_front.png",
+              "sha256": "83893be72fd58ae0d39ed4bc624aa930b73a26059c8c20313c42bcc140e5c2a3"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_left.png",
+              "sha256": "66620c1c2a561d4dd22930a661407b9a10363c0bd17d4637a17dc06f71e507c5"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_back.png",
+              "sha256": "f090652e7eaabf5a495949c0c50448f221778831378aeed0b85b25371684a6f0"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_right.png",
+              "sha256": "db384795c1555c3c2327a41000e850021b651951155e6ff1797f6b85d593b134"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_sheet.png",
+              "sha256": "6a87410faf1adac5712ac2aa73f248909357ab6d70d6d937814bc050d4dc10c4"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_prompt.txt",
+              "sha256": "40eaae6241c7dbbdb75ccbfbafa7349e306c08f7bf8b486466f06fd7b885a8ed"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v001_registration.json",
+              "sha256": "273f33144cb7aeef39e9971ae06e33b30644dbb75becad1c5f9ac29b0cc8318f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "Landing_2.webp"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the stone landing terrace from it as a standalone game asset, keeping its shapes, proportions, materials and colours, simplified as described below; ignore everything else in the crop.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark violet-grey basalt, warm aged bronze, deep vermilion lacquer), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (14m wide x 4m tall x 10m deep): A stone landing terrace built out from a rocky shore: a large FLAT paved platform 14m wide and 10m deep, 3m tall, of big dark violet-grey basalt blocks; its FRONT, LEFT and RIGHT edges are lined with a low solid parapet 0.9m tall with square stone posts at the corners and every 4m; at the FRONT-LEFT a wide straight stone stair of six steps runs down from the platform to ground level; the BACK edge is a plain wall meant to sit against the shore rock. Three short squat basalt mooring bollards stand on the FRONT edge. PROPORTIONS: FRONT and BACK views about 3.5 times as wide as tall; LEFT and RIGHT views about 2.5 times as wide as tall.",
+          "source_sha256": "ee9b3902b26cb1d74cb79715a5c173f673ab7e1428d8163e3271f6b18beea9be",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.2902494331065759,
+              "offset": [
+                167,
+                446
+              ],
+              "size": [
+                178,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.31397174254317106,
+              "offset": [
+                154,
+                446
+              ],
+              "size": [
+                203,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.3323466791296671,
+              "offset": [
+                160,
+                446
+              ],
+              "size": [
+                192,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.30588347751278494,
+              "offset": [
+                153,
+                446
+              ],
+              "size": [
+                206,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-07 00:16:10"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:49:18",
+          "files": {
+            "CN_SM_Tripo_ZhurongLanding_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_source.png",
+              "sha256": "daa773ed824cfff342766a871982747f08987c5edf8618f05f75fd24e28b791c"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_front.png",
+              "sha256": "83893be72fd58ae0d39ed4bc624aa930b73a26059c8c20313c42bcc140e5c2a3"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_left.png",
+              "sha256": "db384795c1555c3c2327a41000e850021b651951155e6ff1797f6b85d593b134"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_back.png",
+              "sha256": "f090652e7eaabf5a495949c0c50448f221778831378aeed0b85b25371684a6f0"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_right.png",
+              "sha256": "66620c1c2a561d4dd22930a661407b9a10363c0bd17d4637a17dc06f71e507c5"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_sheet.png",
+              "sha256": "d8f9b4450ecbcd04e9eae3a6bf4793c846ef6d7b411f284de186e7c94ed8b2e6"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_prompt.txt",
+              "sha256": "40eaae6241c7dbbdb75ccbfbafa7349e306c08f7bf8b486466f06fd7b885a8ed"
+            },
+            "CN_SM_Tripo_ZhurongLanding_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongLanding_v002_registration.json",
+              "sha256": "1fd4d98dc8e686a7a593f0afe7fd006eeda63ecc843196497908681768da0f78"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid",
+              "swapped left/right views"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；图里左右视图画反，已互换",
+            "source_image": "Landing_2.webp"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the stone landing terrace from it as a standalone game asset, keeping its shapes, proportions, materials and colours, simplified as described below; ignore everything else in the crop.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark violet-grey basalt, warm aged bronze, deep vermilion lacquer), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (14m wide x 4m tall x 10m deep): A stone landing terrace built out from a rocky shore: a large FLAT paved platform 14m wide and 10m deep, 3m tall, of big dark violet-grey basalt blocks; its FRONT, LEFT and RIGHT edges are lined with a low solid parapet 0.9m tall with square stone posts at the corners and every 4m; at the FRONT-LEFT a wide straight stone stair of six steps runs down from the platform to ground level; the BACK edge is a plain wall meant to sit against the shore rock. Three short squat basalt mooring bollards stand on the FRONT edge. PROPORTIONS: FRONT and BACK views about 3.5 times as wide as tall; LEFT and RIGHT views about 2.5 times as wide as tall.",
+          "source_sha256": "daa773ed824cfff342766a871982747f08987c5edf8618f05f75fd24e28b791c",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.2902494331065759,
+              "offset": [
+                167,
+                446
+              ],
+              "size": [
+                178,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.30588347751278494,
+              "offset": [
+                153,
+                446
+              ],
+              "size": [
+                206,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.3323466791296671,
+              "offset": [
+                160,
+                446
+              ],
+              "size": [
+                192,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.31397174254317106,
+              "offset": [
+                154,
+                446
+              ],
+              "size": [
+                203,
+                131
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；图里左右视图画反，已互换",
+            "time": "2026-11-07 00:49:18"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:58:30",
+          "files": {
+            "HP_SM_Tripo_ZhurongLanding_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v001_source.glb",
+              "sha256": "a8bcd44209d2d96cb04a6cc8d7d55d51834b4126eaa027db13dcb4647c6367c7"
+            },
+            "HP_SM_Tripo_ZhurongLanding_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v001.glb",
+              "sha256": "0f288b98246044fd3d5304e799ede12f3d1a42ecb27cad7526ff8760ecd87900"
+            },
+            "HP_SM_Tripo_ZhurongLanding_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v001_graph.json",
+              "sha256": "982ffecf4a4a71f74993e87a03425b2f99545f8da0de34f2853dc99f604a2ec3"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/86b1deb3-dd65-4773-82a7-50259987316c",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7967,
+          "source_sha256": "a8bcd44209d2d96cb04a6cc8d7d55d51834b4126eaa027db13dcb4647c6367c7"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:59:29",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongLanding_v001.blend",
+              "sha256": "85ec58c24cf17e813064013fe98bf61ab39d9c75d8fce60dc6a9af32b7e4db4e"
+            },
+            "SM_Tripo_ZhurongLanding_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongLanding_v001.glb",
+              "sha256": "df26a47cdd4532f84739a683a8af1840d6f6a1f2d9f5b49b5322838a83d31840"
+            },
+            "SM_Tripo_ZhurongLanding_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongLanding_v001_metrics.json",
+              "sha256": "98e766da6061be84cdd4cef48c3d0f12ee403e1fda75902a24a3ed0d19d20ed7"
+            },
+            "T_Tripo_ZhurongLanding_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongLanding_BC.png",
+              "sha256": "283d343416afa3eb44f10b4e16e0aa9ffd06014bbea4718254d437396503a43c"
+            },
+            "T_Tripo_ZhurongLanding_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongLanding_E.png",
+              "sha256": "c568c17af38da0eb82bf4e2edbc38797d5ca6a3ff56385c2fc04c6845acd9555"
+            },
+            "T_Tripo_ZhurongLanding_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongLanding_N.png",
+              "sha256": "7c78b915e39ee995ff618657f63a63fa755b58481d0bbf7e8960810f763b023f"
+            },
+            "T_Tripo_ZhurongLanding_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongLanding_ORM.png",
+              "sha256": "0a7b533560b5214e3cf54a1ed810f0673be23ff3ca06c45b91d2a6f0161b517a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.637,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7967,
+              "verts": 4218
+            }
+          ],
+          "export_kb": 850.2,
+          "seconds": 56.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:59:30",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongLanding_v001_validation_v001.json",
+              "sha256": "21f910dfd0397799c7da5952c4f5c9d7094c816830ff98b6296127bab22916f0"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:59:49",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongLanding_v001_review_v001.png",
+              "sha256": "848b41944a28bbff876033ca14ddacc70a7a52cf426a470d5581e422a051b0ff"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
+            "time": "2026-11-07 02:00:56"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:00:56",
+          "files": {
+            "SM_Tripo_ZhurongLanding.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongLanding.glb",
+              "sha256": "df26a47cdd4532f84739a683a8af1840d6f6a1f2d9f5b49b5322838a83d31840"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongLanding.glb"
+        }
+      ]
+    }
+  }
+}

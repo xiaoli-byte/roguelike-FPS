@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongPalaceGate",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "zhurong31.palaceGate"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -10.959547996520996,
+      0,
+      -4.4170145988464355
+    ],
+    "max": [
+      10.959547996520996,
+      18,
+      4.4170145988464355
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongPalaceGate_LOD0",
+      "lod": 0,
+      "tris": 27512,
+      "verts": 41684,
+      "materials": [
+        "M_Tripo_ZhurongPalaceGate"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongPalaceGate",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongPalaceGate_BC.png",
+        "N": "Textures/T_Tripo_ZhurongPalaceGate_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongPalaceGate_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongPalaceGate_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongPalaceGate.glb",
+    "sha256": "ad7c0304b836d1aa793e1073c05328949234f6e9f642a4de350f518521d1b795",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-07 02:01:34"
+}

@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 27512,
+    "verts": 16061
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 21.9298,
+    "iou": 0.848,
+    "iou_per_view": {
+      "front": 0.925,
+      "left": 0.76,
+      "back": 0.918,
+      "right": 0.752
+    },
+    "size_m": [
+      21.919,
+      8.834,
+      18.0
+    ],
+    "reference_m": [
+      22.0,
+      8.2,
+      18.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0008
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.539,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongPalaceGate_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongPalaceGate_LOD0",
+      "tris": 27512,
+      "verts": 16061,
+      "uv_min": [
+        0.001708984375,
+        0.001708984375
+      ],
+      "uv_max": [
+        0.998291015625,
+        0.99462890625
+      ],
+      "uv_utilization": 0.355,
+      "bbox_min": [
+        -10.9595,
+        -4.417,
+        0.0
+      ],
+      "bbox_max": [
+        10.9595,
+        4.417,
+        18.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongPalaceGate/04_export/SM_Tripo_ZhurongPalaceGate_v001.glb",
+    "bytes": 1628324
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 63.4,
+  "_seconds": 66.5
+}

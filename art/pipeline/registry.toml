@@ -2827,6 +2827,227 @@ fx_points = [
 ]
 brief = """A half-open foundry work shed, 10m wide, 7m tall and 8m deep. A flat basalt floor slab; four thick black iron corner posts with rivets and deep vermilion lacquered timber beams; a single-pitch roof of dark grey tiles that slopes down from the FRONT (7m) to the BACK (5m), with the LEFT part of the roof broken away to bare black rafters. The BACK wall is solid riveted black iron plates; the LEFT and RIGHT sides are closed only up to 2m by low timber plank walls; the FRONT is completely open. Under the roof on the back wall hang big chunky smith tongs, hammers and one short thick chain, and a squat iron workbench with a small anvil stands against the back wall. PROPORTIONS: the FRONT and BACK views are drawn about 1.43 times as wide as tall; the LEFT and RIGHT views about 1.15 times as wide as tall and show the sloping roof. Chunky readable forms, no smoke, no fire. One solid connected piece on a flat base."""
 
+# ───────────── 祝融火狱 3-1 熔湖关隘场景套件（2026-11-07；拆自 art/reviews/ch3-zhurong-scene-concepts/3-1-molten-lake-pass-v3.webp，docs/art/zhurong-kit-31.md）─────────────
+# 提示词与参考裁图：art/pipeline/tripo_studio/zhurong31_kit.py；四视图走 Tripo Studio 图片页（GPT Image 2.5），网格走 Tripo 多视图 P2.0，纹理勾「去光处理」。
+
+[assets.SM_Tripo_ZhurongStatue]
+display = "祝融像（大件；崖顶次焦点：人形火神，火焰鬃发 + 火焰光环，虎头盔 / 兽首肩甲 / 虎皮披肩，脚踏两龙）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.statue" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.6, 28.0, 9.3]  # 人形火神乘两龙：按选定四视图的实际比例（2026-11-07 用户给参考图：火神形象、火元素多、兽元素多、人形、乘龙，风格按项目）
+lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+qa_waivers = { "文件大小" = "全场唯一的崖顶主地标，Tripo 实得 35659 面 + 2048² 贴图，GLB 2.3 MB；项目规定不减面（art/README.md），按单件地标放行" }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """Zhurong, the Chinese god of fire, as one colossal cast-metal statue for a cliff top (secondary landmark). HUMAN FORM: a towering muscular warrior god cast in copper-red metal, standing upright with legs apart, a long spear with a big sculpted flame head in his right hand. BEAST ELEMENTS: a fierce face with tusks, two short curved horns, a tiger-head helmet crest, roaring beast-head pauldrons, a tiger-pelt cape, a beast-face belt buckle. FIRE ELEMENTS: hair, beard and brows are a huge mane of sculpted flames; a big ring of sculpted flames behind the head and shoulders; flames rising from the pauldrons. He stands with one foot on each of TWO coiling dark-bronze dragons with sculpted flame tongues along their backs, on a dark basalt flame-cloud plinth. Every flame is a solid sculpted shape, tips painted flat orange-yellow (emissive mask). Colour blocks: copper-red metal, dark aged bronze, dark violet-grey basalt, deep vermilion accents."""
+
+[assets.SM_Tripo_ZhurongPalaceGate]
+display = "祝融宫门（大件；主焦点：楚式朱漆铁门 + 门钉 + 铺首衔环、黑漆红纹门楣、火焰徽；城垛火盆座留给 Brazier 件）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.palaceGate" }
+reference_mode = "bounds_only"
+reference_dimensions = [22.0, 18.0, 8.2]  # 楚式宫门：按选定四视图的实际比例（2026-11-07）
+lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """The main gate of the fire god's palace in the style of a Warring-States Chu palace of southern China: a massive gate block of dark violet-grey basalt masonry 26m wide. In its centre a tall rectangular gateway 8m wide and 10m tall is closed by a pair of huge cast-iron doors lacquered vermilion, covered with rows of big round bronze door studs, each leaf with one big bronze beast-mask knocker (pushou) holding a ring in its mouth. Above the doorway a wide black lacquered lintel board painted with broad red Chu cloud-scroll and phoenix patterns and a round bronze mirror boss in its centre. The gateway is flanked by two thick square pylons a little taller than the wall, each with a long red-and-black banner showing one stylized Chu phoenix, hanging flat against its face. The top is a walkable rampart edged with chunky square merlons, with two empty square stone pedestals on the parapet above the pylons (no braziers, no flames). A plain stone base course at the foot. The BACK is a plain flat masonry face showing the back of the doors. PROPORTIONS: FRONT and BACK views about 1.45 times as wide as tall; LEFT and RIGHT views about 0.55 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongFerryTower]
+display = "渡口关楼（大件；近景左框（前景压暗的框架））"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.ferryTower" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.0, 20.0, 12.0]
+lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A fortified ferry gate tower: two massive square pylons of big dark violet-grey basalt blocks 12m tall stand left and right of an open gate passage 5m wide and 8m tall that goes straight through from FRONT to BACK under a flat stone lintel; the passage is EMPTY. On top of the pylons stands one wide dark timber pavilion with deep vermilion lacquered posts, a balcony railing around it, and a big double-eaved dark tiled roof with sweeping upturned corners and ridge ornaments, reaching 20m. A long vermilion banner with a gold flame emblem hangs flat over the FRONT face of the right pylon. Two simple guardian reliefs set flat into the pylons beside the passage. A short flight of stone steps at the foot of the passage. PROPORTIONS: FRONT and BACK views about 0.7 times as wide as tall; LEFT and RIGHT views about 0.6 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongCustomsFort]
+display = "湖心税关（大件；中景岛上的建筑群（岛体走地形 / 岩块））"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.customsFort" }
+reference_mode = "bounds_only"
+reference_dimensions = [29.3, 14.0, 20.4]  # 按选定概念四视图的实际比例（2026-11-07）
+lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A walled toll fort: a square stone platform 3m tall of big dark violet-grey basalt blocks with a crenellated parapet around its edge; one wide straight stone stair climbs the FRONT face from the ground to a gateway in the parapet. On the platform: a two-storey toll pavilion of stone walls and dark timber with vermilion posts and double-eaved dark tiled roofs (the tallest part, 14m) at the back centre, a smaller one-storey side hall with a tiled roof on the RIGHT, and a round doorway in the main pavilion's front wall painted flat bright orange-yellow inside. PROPORTIONS: FRONT and BACK views about 1.7 times as wide as tall; LEFT and RIGHT views about 1.4 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongDingPier]
+display = "镇鼎墩（大件；右侧中景大块面，顶上放镇湖鼎）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.dingPier" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.0, 8.0, 14.0]
+lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A massive square pier of big dark violet-grey basalt blocks, 14m wide and 6m tall with slightly rounded corners and a plain stone top edge; on its flat top, at the back centre, a stepped square plinth two steps high (2m) that is EMPTY (it will carry a giant cauldron). On the FRONT face: a big round cast bronze emblem disc in the centre and two long vermilion banners with gold flame emblems hanging flat on either side of it. Four heavy black iron mooring rings bolted to the top edge at the corners. PROPORTIONS: all four views about 1.75 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongCliffSpire]
+display = "玄武岩峰（大件；火口崖壁 / 远景剪影，随机偏航和缩放）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.cliffSpire" }
+reference_mode = "bounds_only"
+reference_dimensions = [43.6, 45.0, 21.7]  # 按选定概念四视图的实际比例（2026-11-07）
+lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A tall jagged basalt crag rising from the ground like a sheer cliff pillar, 45m tall, dark violet-grey rock in BIG smooth faceted planes: three or four huge vertical slabs leaning together, a broad foot spreading to 20m, a narrower broken top with two uneven peaks of different heights, one or two big horizontal ledges. Soft painted gradients, slightly lighter on the upper planes; no fine vertical striations, no small rubble. The silhouette is clearly different from every side. PROPORTIONS: FRONT and BACK views about 0.45 times as wide as tall; LEFT and RIGHT views about 0.4 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongDing]
+display = "镇湖鼎（中件；楚式升鼎：攀附龙兽、兽面蹄足、外撇附耳；四链用 SM_Prop_InfernoChainLink 运行时拼）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.ding" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 8.0, 4.5]  # 楚式升鼎（攀龙、兽面蹄足）：按选定四视图的实际比例（2026-11-07）
+lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.6 }
+brief = """A giant bronze ding cauldron in the style of the Chu 'sheng ding' of southern China (like the Wangzi Wu ding from Xichuan): a wide flat-bottomed round bowl with a clearly pinched narrow waist and a flared flat rim, two big upright handles that flare outward standing on the rim at the LEFT and RIGHT, and three tall thick animal-hoof legs. SIX chunky climbing dragon-beasts cling to the outside of the belly with their heads peering over the rim (two on the FRONT, two on the BACK, one on each side). Broad simple bands of interlaced dragon and cloud pattern around the waist. Warm aged bronze with dark green patina in the recesses and soot near the feet; the bowl is empty and dark inside. One heavy iron mooring ring hangs from each handle. PROPORTIONS: FRONT and BACK views about 0.9 times as wide as tall; LEFT and RIGHT views about 0.85 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongDrumTower]
+display = "鼓楼（中件；宫门两侧，东侧 ×0.8（地标不对称））"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.drumTower" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.0, 20.0, 7.0]
+lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+qa_waivers = { "场景高度" = "Tripo 网格比四视图窄，等比按最紧轴对齐后高 15.4 m（登记 20 m）；场景按目标高度等比缩放（zhurong-kit-31.md）" }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A tall square drum tower: a slightly tapering square shaft of dark violet-grey basalt 6m wide rising to 14m with a crenellated balcony ring at its top, then a one-storey dark timber pavilion with deep vermilion lacquered posts and a dark tiled pyramid roof with upturned corners and a small bronze finial, reaching 20m. A big round bronze drum face 3.5m across with a raised flame emblem fills the FRONT side of the pavilion and the same on the BACK. A vertical vermilion banner hangs flat on the FRONT face of the shaft. PROPORTIONS: all four views about 0.35 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongPalaceWall]
+display = "宫墙段（中件；素墙 + 回纹压顶，16.6 m 首尾拼）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.palaceWall" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.6, 12.0, 4.8]  # 素宫墙 + 回纹压顶：按选定四视图的实际比例（2026-11-07）
+lod_tris = [8000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A straight modular section of a fortress wall, 12m long, of big dark violet-grey basalt blocks laid in a few large courses, leaning back very slightly. Its top is a walkable rampart 4m wide with chunky square merlons along the FRONT edge and a low plain parapet along the BACK edge. One shallow square buttress in the middle of the FRONT face rises to the top. The LEFT and RIGHT ends are clean flat vertical cut faces so sections join end to end. No banners. PROPORTIONS: FRONT and BACK views about 1.0 times as wide as tall; LEFT and RIGHT views about 0.42 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongArchBridge]
+display = "石拱堤段（中件；双拱 + 栏墩灯，24.7 m 首尾拼，主引导线）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.archBridge" }
+reference_mode = "bounds_only"
+reference_dimensions = [24.7, 7.0, 4.2]  # 按选定概念四视图的实际比例（2026-11-07）
+lod_tris = [8000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """One straight modular segment of a stone causeway bridge, 12m long from LEFT to RIGHT: one wide round arch 7m wide and 4m high going straight through from FRONT to BACK, heavy dark violet-grey basalt voussoirs and big blocks; a FLAT walkable paved deck 6m wide on top; a solid stone parapet 1m tall along the FRONT and BACK edges, with a short square stone post at each end of each parapet carrying nothing. The LEFT and RIGHT ends are clean flat vertical cut faces so segments join end to end. PROPORTIONS: FRONT and BACK views about 1.7 times as wide as tall; LEFT and RIGHT views about 0.85 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongLanding]
+display = "石码头台（中件；出生近景平台（替代木码头））"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.landing" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.0, 4.0, 10.0]
+lod_tris = [8000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A stone landing terrace built out from a rocky shore: a large FLAT paved platform 14m wide and 10m deep, 3m tall, of big dark violet-grey basalt blocks; its FRONT, LEFT and RIGHT edges are lined with a low solid parapet 0.9m tall with square stone posts at the corners and every 4m; at the FRONT-LEFT a wide straight stone stair of six steps runs down from the platform to ground level; the BACK edge is a plain wall meant to sit against the shore rock. Three short squat basalt mooring bollards stand on the FRONT edge. PROPORTIONS: FRONT and BACK views about 3.5 times as wide as tall; LEFT and RIGHT views about 2.5 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongBoulders]
+display = "前景岩堆（中件；前景压暗框景、死角）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.boulders" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 4.0, 6.0]
+lod_tris = [8000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A low cluster of four big rounded-off faceted basalt boulders fused together, 8m wide, 4m tall at the highest boulder on the LEFT stepping down to 1.5m on the RIGHT: chunky dark violet-black rock with broad flat facets and a few lighter worn top planes, no cracks, no small rubble. PROPORTIONS: FRONT and BACK views about 2 times as wide as tall; LEFT and RIGHT views about 1.5 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongParapetLantern]
+display = "栏墩青金灯（小件；唯一的冷色点缀：只放桥栏 / 石台栏墩上（矮，不做中景竖杆））"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.parapetLantern" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.05, 1.6, 1.05]  # 按选定概念四视图的实际比例（2026-11-07）
+lod_tris = [3000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.6 }
+fx_points = [
+  { name = "FX_Lamp", pos = [0, 1.15, 0], dir = [0, 1, 0] },
+]
+brief = """A small guide lantern for a stone parapet: a square dark violet-grey basalt pedestal 0.9m wide and 0.8m tall with a simple top slab, carrying a square cast bronze lantern cage with a teal-green patinated frame, four glass panes painted flat bright warm yellow, and a small pagoda-shaped bronze roof cap with upturned corners. The same from all four sides. PROPORTIONS: every view about 0.55 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongBrazier]
+display = "铜火盆（小件；宫门城垛、关楼台上；火焰是特效（FX_Fire））"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "zhurong31.brazier" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.1, 1.4, 2.1]  # 按选定概念四视图的实际比例（2026-11-07）
+lod_tris = [3000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.6 }
+fx_points = [
+  { name = "FX_Fire", pos = [0, 1.3, 0], dir = [0, 1, 0] },
+]
+brief = """A wide cast bronze brazier: a shallow round bowl 1.6m across with a thick rolled rim and a band of large simple meander pattern, standing on three short thick beast-paw legs on a square black iron base plate; the bowl is filled with a heap of coals painted flat bright orange-yellow on top (no flames). Warm aged bronze with soot. The same from all four sides. PROPORTIONS: every view about 1.15 times as wide as tall."""
+
 # ───────────── 宝箱 / 商店 / 祭台道具（ART7，docs/unity-parity.md 第 5 节）─────────────
 # 跨章节通用道具用 style_theme = "loot"；霜山商摊随第二章（kunlun）。宝箱盖子要能开：Tripo 出整只合着的箱子，
 # derive_chest_parts.py 按盖缝切成箱体 <ID>Body 和盖子 <ID>Lid（盖子原点 = 后沿铰链），只写进 manifest。

@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongArchBridge",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "zhurong31.archBridge"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -12.416810989379883,
+      0,
+      -1.5953221321105957
+    ],
+    "max": [
+      12.416810989379883,
+      7,
+      1.5953221321105957
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongArchBridge_LOD0",
+      "lod": 0,
+      "tris": 8136,
+      "verts": 11089,
+      "materials": [
+        "M_Tripo_ZhurongArchBridge"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongArchBridge",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongArchBridge_BC.png",
+        "N": "Textures/T_Tripo_ZhurongArchBridge_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongArchBridge_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongArchBridge_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongArchBridge.glb",
+    "sha256": "35dc3cbad317224e9614d6dfa73e01c65100ca3f8e9a69f60dac861e921aff98",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-07 02:02:25"
+}

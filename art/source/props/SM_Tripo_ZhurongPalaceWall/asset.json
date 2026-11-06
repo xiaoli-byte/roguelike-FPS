@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_ZhurongPalaceWall",
+  "display": "宫墙段（中件；宫门两翼的模块墙，12 m 首尾拼）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:48:34",
+          "files": {
+            "BO_SM_Tripo_ZhurongPalaceWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongPalaceWall_v001.json",
+              "sha256": "e7bcd8470d374998dfb2a5e7d52927095673f41d1bf1004a7b74c0dcc0242cdd"
+            },
+            "BO_SM_Tripo_ZhurongPalaceWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongPalaceWall_v001_views.json",
+              "sha256": "7897591d9a2fcbced5f6666b2cf55bcce22ddd387ec01b5b3450c5035a185b64"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.palaceWall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.3,
+              0.0,
+              -2.4
+            ],
+            "max": [
+              8.3,
+              12.0,
+              2.4
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:48:34",
+          "files": {
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_source.png",
+              "sha256": "f1d0630049e9eec0cbfdef0c2a1fbd8dfbaf90ca22b160cd6179a6506f70d320"
+            },
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_front.png",
+              "sha256": "82e17f6b6c52a19d66a003e11e0d5a7a021b9e24894b07c73949795faf955558"
+            },
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_left.png",
+              "sha256": "df0b90095f95eba8f31e43372901a9e52dd720fb4392cc7dc37d55ac7cba06b0"
+            },
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_back.png",
+              "sha256": "ad95e7190ad518f1b70fe2edc1065f9830309eca50d578ff1b6fa4f6bc830c16"
+            },
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_right.png",
+              "sha256": "c9054fb28a50070efbba6f5567f937c70e947635425373eddaa4d8fb4d908998"
+            },
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_sheet.png",
+              "sha256": "119dc4c7d2fb5e11411d7386cf2cc46dd1ec17353c3fdc8ee82fb9e1f63c7429"
+            },
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_prompt.txt",
+              "sha256": "fc7a147ce8f330076536ade20c305a4403f12af3b57f4f880617e156de40344d"
+            },
+            "CN_SM_Tripo_ZhurongPalaceWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongPalaceWall_v001_registration.json",
+              "sha256": "f0c243748adfaa295db04cd330ce8017e617146fb70425098584d379ae26eb2a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 1,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "素宫墙 + 回纹压顶；纯文字，2 张里选第 1 张（带参考图的两轮都画了火盆火炬）",
+            "source_image": "PalaceWallNR_1.webp"
+          },
+          "prompt": "STRICTLY just one plain straight stone wall block: no towers, no corner pillars, no spikes, no torches, no braziers, no flames, no timber, no banners.\n\nMANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nSTYLE: stylized hand-painted 3D game environment asset rooted in ancient Chinese culture of the southern Chu kingdom (Warring States, Hubei and Hunan): thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark violet-grey basalt, slightly lighter worn stone caps), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (12m wide x 12m tall x 5m deep): A straight modular section of a fortress wall, 12m long, of big dark violet-grey basalt blocks laid in a few large courses, leaning back very slightly. Its top is a walkable rampart 4m wide with chunky square merlons along the FRONT edge and a low plain parapet along the BACK edge. One shallow square buttress in the middle of the FRONT face rises to the top. The LEFT and RIGHT ends are clean flat vertical cut faces so sections join end to end. PROPORTIONS: FRONT and BACK views about 1.0 times as wide as tall; LEFT and RIGHT views about 0.42 times as wide as tall.",
+          "source_sha256": "f1d0630049e9eec0cbfdef0c2a1fbd8dfbaf90ca22b160cd6179a6506f70d320",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9468903037446552,
+              "offset": [
+                27,
+                347
+              ],
+              "size": [
+                457,
+                330
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9361606685747441,
+              "offset": [
+                190,
+                347
+              ],
+              "size": [
+                131,
+                330
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9496112528933467,
+              "offset": [
+                13,
+                347
+              ],
+              "size": [
+                486,
+                330
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9335161469121036,
+              "offset": [
+                190,
+                347
+              ],
+              "size": [
+                131,
+                330
+              ],
+              "physical_height_m": 12.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；素宫墙 + 回纹压顶；纯文字，2 张里选第 1 张（带参考图的两轮都画了火盆火炬）",
+            "time": "2026-11-07 00:48:34"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:54:42",
+          "files": {
+            "HP_SM_Tripo_ZhurongPalaceWall_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceWall_v001_source.glb",
+              "sha256": "f2c5447039cb32e984757513681c6ecb321b03a0076925f97817d765b56fc77b"
+            },
+            "HP_SM_Tripo_ZhurongPalaceWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceWall_v001.glb",
+              "sha256": "089483ef7fd8bb9f063af562e769df901d7fc8f254455617a62d4e00ebd07817"
+            },
+            "HP_SM_Tripo_ZhurongPalaceWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceWall_v001_graph.json",
+              "sha256": "6a13f787eeddf5232c665aed231cc9fbec8901f9314da4b547fea30bb7da4e94"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/4bbb2b9d-d96f-481d-a9d5-b0f33704d867",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7949,
+          "source_sha256": "f2c5447039cb32e984757513681c6ecb321b03a0076925f97817d765b56fc77b"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:56:24",
+          "files": {
+            "SM_Tripo_ZhurongPalaceWall_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceWall_v001.blend",
+              "sha256": "7fec16bf67e1aeb094c5e5e3f181659be1978e4cca1ea3fe7aba875812a70c6e"
+            },
+            "SM_Tripo_ZhurongPalaceWall_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongPalaceWall_v001.glb",
+              "sha256": "5bde7540e5131aaab16ca813475bb469af38c5663c1d7253f8108155e6125a87"
+            },
+            "SM_Tripo_ZhurongPalaceWall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceWall_v001_metrics.json",
+              "sha256": "5a8d2f2030f2e9a01d432f6ad6d9cdaad12ec0d0de7203a5dc7e9074260f8934"
+            },
+            "T_Tripo_ZhurongPalaceWall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceWall_BC.png",
+              "sha256": "73e3bedd37dc1945d625869c27869ea1e83891cd883a086121173c5748647f15"
+            },
+            "T_Tripo_ZhurongPalaceWall_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceWall_E.png",
+              "sha256": "5630edf42913f842e57308503a7e0977e721d09027a12c453b8878c22108cd37"
+            },
+            "T_Tripo_ZhurongPalaceWall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceWall_N.png",
+              "sha256": "d7a52691a595405a24a452faaf6a5801efce0e304f957715f2c0bb41c7d3a710"
+            },
+            "T_Tripo_ZhurongPalaceWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongPalaceWall_ORM.png",
+              "sha256": "00a9ba43bef50be37851fd2cce2a94cd293e49b1b47f7530a6702b49f5364fe8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.902,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7949,
+              "verts": 4113
+            }
+          ],
+          "export_kb": 557.7,
+          "seconds": 101.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:56:26",
+          "files": {
+            "SM_Tripo_ZhurongPalaceWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceWall_v001_validation_v001.json",
+              "sha256": "55275fb31b7a90a5fad67040d5c8bcb5d75d6712bf69e7a8dd211b51c686a5df"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:56:38",
+          "files": {
+            "SM_Tripo_ZhurongPalaceWall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceWall_v001_review_v001.png",
+              "sha256": "86ca08ba0fa8340778eb0dadd3e2ec5f4e34f6ec80b451ba2e2dbde29cb4a38c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
+            "time": "2026-11-07 02:00:53"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:00:54",
+          "files": {
+            "SM_Tripo_ZhurongPalaceWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongPalaceWall.glb",
+              "sha256": "5bde7540e5131aaab16ca813475bb469af38c5663c1d7253f8108155e6125a87"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongPalaceWall.glb"
+        }
+      ]
+    }
+  }
+}

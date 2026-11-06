@@ -1,0 +1,396 @@
+{
+  "id": "SM_Tripo_ZhurongDrumTower",
+  "display": "鼓楼（中件；宫门两侧，东侧 ×0.8（地标不对称））",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:15:51",
+          "files": {
+            "BO_SM_Tripo_ZhurongDrumTower_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongDrumTower_v001.json",
+              "sha256": "cda4f08a42d6732ee106b95aa662b262215748143ab89769debd4e5345e7cf2e"
+            },
+            "BO_SM_Tripo_ZhurongDrumTower_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongDrumTower_v001_views.json",
+              "sha256": "f8285910bb138c9e2254ce71a11ff6a367736e33fbebaaa28bbd44d37e36eb05"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.drumTower"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.5,
+              0.0,
+              -3.5
+            ],
+            "max": [
+              3.5,
+              20.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:15:54",
+          "files": {
+            "CN_SM_Tripo_ZhurongDrumTower_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_source.png",
+              "sha256": "ad38a5d76a6b645fa6e883359814495461df65ccc435686333cfe003ad96f1eb"
+            },
+            "CN_SM_Tripo_ZhurongDrumTower_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_front.png",
+              "sha256": "a6bd20771224b0e5e7c9bf4c308c51e98e636022a28f3e122953417641c76604"
+            },
+            "CN_SM_Tripo_ZhurongDrumTower_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_left.png",
+              "sha256": "a815d1e01e9b9dd7f6ba57ed760996d13922056cbe9df6d0c2eab3d97b6a43ca"
+            },
+            "CN_SM_Tripo_ZhurongDrumTower_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_back.png",
+              "sha256": "111124ffca8cbde6c052f7f1a3a6845d1a06fab33b61f53e3de61e11d0ec62eb"
+            },
+            "CN_SM_Tripo_ZhurongDrumTower_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_right.png",
+              "sha256": "1a65923b2efdc45b1a3283b0a5c9593a6710254d844e50ac41546b2eb5c2f5d9"
+            },
+            "CN_SM_Tripo_ZhurongDrumTower_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_sheet.png",
+              "sha256": "564eb353943e9c03d3f155da2f0c55d5429be54e372a0bb0b8c81e8413858e83"
+            },
+            "CN_SM_Tripo_ZhurongDrumTower_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_prompt.txt",
+              "sha256": "9441815e4193e72e282f477b2dbb5e43240aa1a38e5c543a1e766dfc94b9355d"
+            },
+            "CN_SM_Tripo_ZhurongDrumTower_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongDrumTower_v001_registration.json",
+              "sha256": "e4402a9ef037cc210cac24656d446d5822435884f10777e32dcbaf5b01ec2483"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "source_image": "DrumTower_2.webp"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the drum tower from it as a standalone game asset, keeping its shapes, proportions, materials and colours, simplified as described below; ignore everything else in the crop.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark violet-grey basalt, warm aged bronze, deep vermilion lacquer), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (7m wide x 20m tall x 7m deep): A tall square drum tower: a slightly tapering square shaft of dark violet-grey basalt 6m wide rising to 14m with a crenellated balcony ring at its top, then a one-storey dark timber pavilion with deep vermilion lacquered posts and a dark tiled pyramid roof with upturned corners and a small bronze finial, reaching 20m. A big round bronze drum face 3.5m across with a raised flame emblem fills the FRONT side of the pavilion and the same on the BACK. A vertical vermilion banner hangs flat on the FRONT face of the shaft. PROPORTIONS: all four views about 0.35 times as wide as tall.",
+          "source_sha256": "ad38a5d76a6b645fa6e883359814495461df65ccc435686333cfe003ad96f1eb",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.1873840445269015,
+              "offset": [
+                24,
+                55
+              ],
+              "size": [
+                463,
+                914
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.1873840445269015,
+              "offset": [
+                97,
+                55
+              ],
+              "size": [
+                318,
+                914
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.1873840445269015,
+              "offset": [
+                24,
+                55
+              ],
+              "size": [
+                464,
+                914
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.1873840445269015,
+              "offset": [
+                95,
+                55
+              ],
+              "size": [
+                321,
+                914
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；背景按色键连同封闭空隙一起抠掉",
+            "time": "2026-11-07 00:15:54"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:53:44",
+          "files": {
+            "HP_SM_Tripo_ZhurongDrumTower_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v001_source.glb",
+              "sha256": "94337e3f74914aff1ec724f1c0df22942442163559877fd8dd0be032e52a6a97"
+            },
+            "HP_SM_Tripo_ZhurongDrumTower_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v001.glb",
+              "sha256": "b12bb6ef6efd7153ce7de850bd12940bc34e10991f497f713e74eb3c3161a5b3"
+            },
+            "HP_SM_Tripo_ZhurongDrumTower_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v001_graph.json",
+              "sha256": "32e9065e5eca7ac784e44846c2ba352dbb2b34e8922c766d8ba6ebebdfd1fe64"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/b5d0a052-cab8-4743-a683-4609d01c3602",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 14886,
+          "source_sha256": "94337e3f74914aff1ec724f1c0df22942442163559877fd8dd0be032e52a6a97"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:54:37",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v001.blend",
+              "sha256": "04b92056fdd2ee1204e33ed048e9835963501ac22b994812ee0837fbf14d1cc7"
+            },
+            "SM_Tripo_ZhurongDrumTower_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongDrumTower_v001.glb",
+              "sha256": "31800e02bf4ed4928723d6fd6ba2ca5d76fc2b1c689fd9a14939179b7773751b"
+            },
+            "SM_Tripo_ZhurongDrumTower_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v001_metrics.json",
+              "sha256": "e298f04530ba2816a52e73cdc993a344c13d338736c3aba8351fbae11d5afcae"
+            },
+            "T_Tripo_ZhurongDrumTower_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongDrumTower_BC.png",
+              "sha256": "92f827204df350869f0d4468a573331b3e9996bcc3cd357f07ffff330ecfacf8"
+            },
+            "T_Tripo_ZhurongDrumTower_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongDrumTower_E.png",
+              "sha256": "957f909cb99fdc85590bf7182856a34dfd82928685aea8bd2beb2277615b0a3b"
+            },
+            "T_Tripo_ZhurongDrumTower_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongDrumTower_N.png",
+              "sha256": "5a2c8f148daddbe06556a82f9fe7d1a9f0c5f0b51c100721700a963eadd6899a"
+            },
+            "T_Tripo_ZhurongDrumTower_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongDrumTower_ORM.png",
+              "sha256": "29224d6b66efc262b2a5d21625f24fdfb94866805b004d00aba5029a0f2b5225"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.624,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14886,
+              "verts": 8046
+            }
+          ],
+          "export_kb": 695.3,
+          "seconds": 51.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "场景高度"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:58:21",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v002.blend": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v002.blend",
+              "sha256": "0a37ece06a7aab0d4af6bb938178f0f5fe14cd9168d195ad1f4f952d94d57dc4"
+            },
+            "SM_Tripo_ZhurongDrumTower_v002.glb": {
+              "path": "04_export/SM_Tripo_ZhurongDrumTower_v002.glb",
+              "sha256": "31800e02bf4ed4928723d6fd6ba2ca5d76fc2b1c689fd9a14939179b7773751b"
+            },
+            "SM_Tripo_ZhurongDrumTower_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v002_metrics.json",
+              "sha256": "dfaf21fd393b4e2a8d010a06bc39944e9a048b7b5b1c94a66fd9afdb7d3a708d"
+            },
+            "T_Tripo_ZhurongDrumTower_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongDrumTower_BC.png",
+              "sha256": "92f827204df350869f0d4468a573331b3e9996bcc3cd357f07ffff330ecfacf8"
+            },
+            "T_Tripo_ZhurongDrumTower_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongDrumTower_E.png",
+              "sha256": "957f909cb99fdc85590bf7182856a34dfd82928685aea8bd2beb2277615b0a3b"
+            },
+            "T_Tripo_ZhurongDrumTower_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongDrumTower_N.png",
+              "sha256": "5a2c8f148daddbe06556a82f9fe7d1a9f0c5f0b51c100721700a963eadd6899a"
+            },
+            "T_Tripo_ZhurongDrumTower_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongDrumTower_ORM.png",
+              "sha256": "29224d6b66efc262b2a5d21625f24fdfb94866805b004d00aba5029a0f2b5225"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.624,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14886,
+              "verts": 8046
+            }
+          ],
+          "export_kb": 695.3,
+          "seconds": 64.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:54:38",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongDrumTower_v001_validation_v001.json",
+              "sha256": "490126cd286236e62debff60505101230ebee13e7686a95cc33fea939243c37b"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:58:23",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_ZhurongDrumTower_v002_validation_v002.json",
+              "sha256": "146ce5b1a60af9837c1e306ef025809ebae8632cf20691f603d2e20f8b46975c"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:58:44",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v002_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongDrumTower_v002_review_v001.png",
+              "sha256": "40d63cec28f6f09c60155dcba15cfec183ac9d05a954521bba159f69a76b5e78"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
+            "time": "2026-11-07 02:00:52"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:00:52",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongDrumTower.glb",
+              "sha256": "31800e02bf4ed4928723d6fd6ba2ca5d76fc2b1c689fd9a14939179b7773751b"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_ZhurongDrumTower.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,356 @@
+{
+  "id": "SM_Tripo_ZhurongArchBridge",
+  "display": "石拱堤段（中件；主引导线：近景石台 → 湖心税关，12 m 首尾拼）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:15:22",
+          "files": {
+            "BO_SM_Tripo_ZhurongArchBridge_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongArchBridge_v001.json",
+              "sha256": "da8597b434b785f18c5d7eb75443cd0813b72b31adac544c505cc77793b939c7"
+            },
+            "BO_SM_Tripo_ZhurongArchBridge_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongArchBridge_v001_views.json",
+              "sha256": "82dfec767d1edecde0f82d0b5e6b51bd9ee2ef167a69a05496bd11df6a15fa30"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.archBridge"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0.0,
+              -3.0
+            ],
+            "max": [
+              6.0,
+              7.0,
+              3.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:17:54",
+          "files": {
+            "BO_SM_Tripo_ZhurongArchBridge_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongArchBridge_v002.json",
+              "sha256": "25f032fad7ec40350d69355d0803af340468160dfeb45cea9088362e77bf1d8f"
+            },
+            "BO_SM_Tripo_ZhurongArchBridge_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongArchBridge_v002_views.json",
+              "sha256": "0e07cada14a4ccca98445f5611269e0e65b7e32bcebcc99c8b2edfac5780eb0b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "zhurong31.archBridge"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -12.35,
+              0.0,
+              -2.1
+            ],
+            "max": [
+              12.35,
+              7.0,
+              2.1
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 00:17:55",
+          "files": {
+            "CN_SM_Tripo_ZhurongArchBridge_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_source.png",
+              "sha256": "cab6a080e90468d40c08c532c69d30a0db29cfc721a4d5022583ce168dcf0444"
+            },
+            "CN_SM_Tripo_ZhurongArchBridge_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_front.png",
+              "sha256": "052d7a7cb1bd74f9756d794629b89e300c63562c37e9cd45b4fd7f5e17d09dc1"
+            },
+            "CN_SM_Tripo_ZhurongArchBridge_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_left.png",
+              "sha256": "579e21abc251f03da4fa5737db14b57464393316c9c1e711b5f151429f13a61c"
+            },
+            "CN_SM_Tripo_ZhurongArchBridge_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_back.png",
+              "sha256": "e9d28f188bc63db11ad0265680dc75056e6bc8c67636ec1c1fbc0e4db971e86a"
+            },
+            "CN_SM_Tripo_ZhurongArchBridge_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_right.png",
+              "sha256": "4338c263a2b4cd705641f038d484138b923bcfbe7ffa5872698f1aa8e0ee6d4a"
+            },
+            "CN_SM_Tripo_ZhurongArchBridge_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_sheet.png",
+              "sha256": "8c0a03489b1a505a8adff16bd691b1dde9b60f6eeae15540ad73631054ecef92"
+            },
+            "CN_SM_Tripo_ZhurongArchBridge_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_prompt.txt",
+              "sha256": "e414d9be676395f0ad721833688eed3ab8a94e6f3cf93de751487a3d1222b2ac"
+            },
+            "CN_SM_Tripo_ZhurongArchBridge_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongArchBridge_v001_registration.json",
+              "sha256": "97360a056ccf17690f20e6b8ba46d13540030887b0a60517cb2de8c3af38bbda"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 2,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；登记尺寸按画出的比例修正",
+            "source_image": "ArchBridge_2.webp"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the arched causeway bridge segment from it as a standalone game asset, keeping its shapes, proportions, materials and colours, simplified as described below; ignore everything else in the crop.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark violet-grey basalt, warm aged bronze, deep vermilion lacquer), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (12m wide x 7m tall x 6m deep): One straight modular segment of a stone causeway bridge, 12m long from LEFT to RIGHT: one wide round arch 7m wide and 4m high going straight through from FRONT to BACK, heavy dark violet-grey basalt voussoirs and big blocks; a FLAT walkable paved deck 6m wide on top; a solid stone parapet 1m tall along the FRONT and BACK edges, with a short square stone post at each end of each parapet carrying nothing. The LEFT and RIGHT ends are clean flat vertical cut faces so segments join end to end. PROPORTIONS: FRONT and BACK views about 1.7 times as wide as tall; LEFT and RIGHT views about 0.85 times as wide as tall.",
+          "source_sha256": "cab6a080e90468d40c08c532c69d30a0db29cfc721a4d5022583ce168dcf0444",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4233812283347887,
+              "offset": [
+                27,
+                447
+              ],
+              "size": [
+                457,
+                130
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3129339513778873,
+              "offset": [
+                217,
+                447
+              ],
+              "size": [
+                78,
+                130
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4233812283347887,
+              "offset": [
+                27,
+                447
+              ],
+              "size": [
+                457,
+                130
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.31217989366372373,
+              "offset": [
+                217,
+                447
+              ],
+              "size": [
+                77,
+                130
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：用户授权免审，按推荐方案直接通过；Tripo Studio 图片页 GPT Image 2.5（附概念裁图参考），2 张里选第 2 张；登记尺寸按画出的比例修正",
+            "time": "2026-11-07 00:17:55"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:56:42",
+          "files": {
+            "HP_SM_Tripo_ZhurongArchBridge_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v001_source.glb",
+              "sha256": "bd2f5bfd7469ee933b0beebb5bf1d11015b248db1a746d0560db767d196e4913"
+            },
+            "HP_SM_Tripo_ZhurongArchBridge_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v001.glb",
+              "sha256": "feb89b21a9d07309699b8275c53429fed31521520750b6bf016fec912b8f3f4d"
+            },
+            "HP_SM_Tripo_ZhurongArchBridge_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v001_graph.json",
+              "sha256": "d370b60ed7feea8b02aa596639190f7532bc54300098d7d5e158e6c18c28edd2"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/5d94c211-c9bd-40a5-929b-94cd1f275d3c",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8136,
+          "source_sha256": "bd2f5bfd7469ee933b0beebb5bf1d11015b248db1a746d0560db767d196e4913"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:57:47",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongArchBridge_v001.blend",
+              "sha256": "d0422137d3cc598530afa5b06045a3dba00a48efc2de15215a83b696e9c7907c"
+            },
+            "SM_Tripo_ZhurongArchBridge_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongArchBridge_v001.glb",
+              "sha256": "35dc3cbad317224e9614d6dfa73e01c65100ca3f8e9a69f60dac861e921aff98"
+            },
+            "SM_Tripo_ZhurongArchBridge_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongArchBridge_v001_metrics.json",
+              "sha256": "be82165fb1707b4cfbd51ff9d297a5d344ff02730c01d8298cd70099571230e7"
+            },
+            "T_Tripo_ZhurongArchBridge_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongArchBridge_BC.png",
+              "sha256": "344174fc4fce3ce0c7930c2e67de2fc07eca9447abd25aaef5c2ff32902c8dd9"
+            },
+            "T_Tripo_ZhurongArchBridge_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongArchBridge_E.png",
+              "sha256": "7458fa5466ad06ed95e25854316c079bf2da72c9fd5f5998c9d7f5e0988cc943"
+            },
+            "T_Tripo_ZhurongArchBridge_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongArchBridge_N.png",
+              "sha256": "6004c1c1742a358cf7e4cdb7cdc732158066dc2acc9a80f921c80fb9eef07fde"
+            },
+            "T_Tripo_ZhurongArchBridge_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongArchBridge_ORM.png",
+              "sha256": "0c69b4dcecd3ebaff080ff9d299e8b4162a6497489b8bef95075a725d1ee1197"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.652,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8136,
+              "verts": 4268
+            }
+          ],
+          "export_kb": 659.1,
+          "seconds": 63.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:57:48",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongArchBridge_v001_validation_v001.json",
+              "sha256": "0f8c2d1c8d905e4a5596c50e8053deb082bdd505127bc9ba4421f91122703eaf"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 01:58:20",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongArchBridge_v001_review_v001.png",
+              "sha256": "66b77dfc1f4e46befceea30bd9262bbdb944585b32bc3979d8a6f61ead9e3837"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
+            "time": "2026-11-07 02:00:55"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-07 02:00:55",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongArchBridge.glb",
+              "sha256": "35dc3cbad317224e9614d6dfa73e01c65100ca3f8e9a69f60dac861e921aff98"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongArchBridge.glb"
+        }
+      ]
+    }
+  }
+}
