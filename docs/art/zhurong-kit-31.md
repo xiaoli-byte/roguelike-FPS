@@ -96,3 +96,26 @@ Tripo Studio 路线脚本：[art/pipeline/tripo_studio/](../../art/pipeline/trip
 
 摆件一律「底面中心 + 目标高度」等比缩放（`PutH`），不依赖发布尺寸；缺 Prefab 时放登记尺寸的白盒并记进报告。
 远处另摆一排全套件（原始比例），截 `Kit` 总览。机位：Concept（对照概念图）、Spawn、Causeway、Ding、GateApproach、Statue、Aerial、Map、Kit。
+
+## 7. 验收（2026-11-07）
+
+![概念图 v3（上）vs ZR31 主机位（下）](review/zhurong-kit-31/concept-vs-scene.jpg)
+
+截图在 [review/zhurong-kit-31/](review/zhurong-kit-31/)（Concept / Spawn / Causeway / Ding / GateApproach / Statue / Aerial / Map / KitLarge / KitSmall），14 件的审核图总览 `kit-review-sheets.jpg`。
+构建报告 `Assets/Art/_Review/zr31_report.txt`：0 不合格，14 件全部是正式 Prefab（没有白盒）。
+
+`composition_check.py`：
+
+| 机位 | 颜色 低/固有/高 | 明度 均·跨 | 密度 安静/中等/密集 | 提示 |
+|---|---|---|---|---|
+| Concept（对照概念图） | 66 / 25 / 8 | 21 · 28 | 44 / 36 / 19 | — |
+| Causeway | 67 / 25 / 7 | 21 · 34 | 40 / 35 / 25 | 安静区刚好 40%（堤面近景） |
+| Ding | 60 / 32 / 8 | 22 · 33 | 45 / 42 / 13 | — |
+| GateApproach | 85 / 14 / 2 | 21 · 25 | 51 / 23 / 26 | 宫前全是石头、没有熔岩：没有点缀色、明度窄带属有意（composition.md 第 6 节：背景明度压窄留给怪） |
+
+迭代里改掉的问题：
+- 第一版地形沉在熔岩里：`Sample.h` 要加 `Base`（高度场 0 = 世界 y −Base），照 Level_3_1 写 `s.h = h + Base`。
+- 湖面一张亮橙裂网（密集 33%）：暗壳改大板块细缝（`Ch3LavaCrust(molten 0.04, crack 0.035, emission 1.1, plateScale 0.035)`，约 28 m 一块），只剩几道长亮缝引向宫门、税关。
+- 场景比概念图「大而空」：火口 98 × 122 → 70 × 88 m，宫门从 158 m 拉到约 120 m，宫门 / 神像 / 鼎墩 / 鼎 / 鼓楼 / 宫墙各放大一档。
+
+还差的（下一轮）：左前渡口关楼在主机位只露出一角（概念图里占左边四分之一，要再往镜头右前挪）；近处熔岩亮斑偏多；套件还没接进正式关卡 3-1（`Level_3_1.cs` 仍用 ART6 那一套件）。

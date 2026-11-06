@@ -46,13 +46,13 @@ namespace Spiritfire.Art.Editor.Levels
         };
 
         // 布局（世界 XZ，米）
-        static readonly Vector2 CraterC = new(5, 30), CraterR = new(98, 122);
-        static readonly Vector2 Eye = new(-4, -66);
+        static readonly Vector2 CraterC = new(5, 14), CraterR = new(70, 88);
+        static readonly Vector2 Eye = new(-4, -60);
         const float LookoutY = 12f, ShelfY = 3f, IslandY = 2f, QuayY = 2f, TerraceY = 10f, CliffY = 34f;
-        static readonly Vector2 FerryAt = new(-24, -45), IslandC = new(14, 18), PierAt = new(46, 4);
-        static readonly Vector2 CauseA = new(-8, -38), CauseB = new(6, 4), Cause2A = new(18, 34), Cause2B = new(15, 60);
-        const float StairX0 = 2, StairX1 = 18, StairZ0 = 62, StairZ1 = 78;
-        static readonly Vector2 GateAt = new(10, 92), StatueAt = new(16, 134);
+        static readonly Vector2 FerryAt = new(-24, -45), IslandC = new(10, 6), PierAt = new(32, -16);
+        static readonly Vector2 CauseA = new(-8, -40), CauseB = new(2, -6), Cause2A = new(13, 20), Cause2B = new(12, 36);
+        const float StairX0 = 2, StairX1 = 18, StairZ0 = 38, StairZ1 = 52;
+        static readonly Vector2 GateAt = new(10, 64), StatueAt = new(14, 94);
 
         static LevelKit.TerrainSet ts;
 
@@ -82,16 +82,16 @@ namespace Spiritfire.Art.Editor.Levels
 
             // 南沿：岸台 +3（z < −42）→ 眺台 +12（z < −60）
             float shelf = Mathf.Lerp(BedY, ShelfY + n * 0.4f, 1 - Smooth(-46, -40, q.y));
-            float lookout = Mathf.Lerp(ShelfY, LookoutY, 1 - Smooth(-64, -56, q.y));
-            if (q.y < -40) h = Mathf.Max(h, q.y < -56 ? Mathf.Max(shelf, lookout) : shelf);
+            float lookout = Mathf.Lerp(ShelfY, LookoutY, 1 - Smooth(-58, -50, q.y));
+            if (q.y < -40) h = Mathf.Max(h, q.y < -50 ? Mathf.Max(shelf, lookout) : shelf);
             // 渡口西岸、湖心岛（岛体主要由税关自带的岩基撑起，地形只给岸）
             h = Mathf.Max(h, Mathf.Lerp(BedY, ShelfY, Disc(q, FerryAt, 18, 6)));
             h = Mathf.Max(h, Mathf.Lerp(BedY, IslandY + n, Disc(q, IslandC, 17, 7)));
             // 北岸：码头 +2（z > 58）→ 台地 +10（z > 78，大台阶两侧是陡坎）→ 宫后崖 +34（z > 112）
-            float quay = Mathf.Lerp(BedY, QuayY, Smooth(54, 60, q.y));
-            float terrace = Mathf.Lerp(QuayY, TerraceY, Smooth(76, 79, q.y));
-            float cliff = Mathf.Lerp(TerraceY, CliffY + Fbm(q, 50, 3, 8) * 6, Smooth(108, 122, q.y));
-            if (q.y > 50) h = Mathf.Max(h, q.y > 106 ? Mathf.Max(terrace, cliff) : Mathf.Max(quay, terrace));
+            float quay = Mathf.Lerp(BedY, QuayY, Smooth(30, 36, q.y));
+            float terrace = Mathf.Lerp(QuayY, TerraceY, Smooth(50, 53, q.y));
+            float cliff = Mathf.Lerp(TerraceY, CliffY + Fbm(q, 50, 3, 8) * 6, Smooth(78, 90, q.y));
+            if (q.y > 26) h = Mathf.Max(h, q.y > 76 ? Mathf.Max(terrace, cliff) : Mathf.Max(quay, terrace));
             // 祝融像崖台（平顶）
             h = Mathf.Max(h, Mathf.Lerp(h, CliffY, Disc(q, StatueAt, 16, 6)));
 
@@ -99,7 +99,7 @@ namespace Spiritfire.Art.Editor.Levels
             s.fluid = h < 0.3f ? 1 : 0;
             s.shore = Mathf.Clamp01(1 - Mathf.Abs(h - 0.8f) / 1.6f) * (1 - s.fluid);
             s.rock = Mathf.Max(rock, Smooth(4, 12, h) * Smooth(0.85f, 1, e));
-            s.packed = (q.y > 58 && q.y < 106 && Mathf.Abs(q.x - GateAt.x) < 30) || (q.y < -56 && Mathf.Abs(q.x - Eye.x) < 14) ? 0.8f : 0;
+            s.packed = (q.y > 34 && q.y < 76 && Mathf.Abs(q.x - GateAt.x) < 30) || (q.y < -50 && Mathf.Abs(q.x - Eye.x) < 14) ? 0.8f : 0;
             return s;
         }
 
@@ -136,16 +136,16 @@ namespace Spiritfire.Art.Editor.Levels
                 {
                     name = "Molten Lake", center = new Vector3(CraterC.x, LavaY, CraterC.y), shape = LavaShape.Box, size = CraterR * 2.1f, depth = 2.5f, depthShore = true,
                 }, world);
-                if (lava.surface && LevelKit.Ch3LavaCrust(Dir, "LakeCrust") is { } crust) lava.surface.sharedMaterial = crust;
+                if (lava.surface && LevelKit.Ch3LavaCrust(Dir, "LakeCrust", molten: 0.04f, crack: 0.035f, emission: 1.1f, plateScale: 0.035f) is { } crust) lava.surface.sharedMaterial = crust;
 
                 // 1. 大块面：火口崖峰、宫门、关楼、税关、鼎墩、祝融像
                 BuildSpires(big);
-                var gate = PutH(Gate, big, G(GateAt, -0.2f), 180, 20, rep);
+                var gate = PutH(Gate, big, G(GateAt, -0.2f), 180, 24, rep);
                 var ferryYaw = YawZ(Eye - FerryAt) - 10;
                 PutH(Ferry, big, G(FerryAt, -0.3f), ferryYaw, 22, rep);
-                PutH(Fort, big, At(IslandC, -0.8f), 200, 15.5f, rep);
-                var pier = PutH(Pier, big, At(PierAt, -1.4f), 205, 9f, rep);
-                var statue = PutH(Statue, big, G(StatueAt, -0.3f), 180, 34, rep);
+                PutH(Fort, big, At(IslandC, -0.8f), 200, 17f, rep);
+                var pier = PutH(Pier, big, At(PierAt, -1.4f), 215, 11f, rep);
+                var statue = PutH(Statue, big, G(StatueAt, -0.3f), 180, 38, rep);
 
                 // 2. 引导线：堤（近景码头 → 湖心税关 → 北岸）、大台阶直指宫门
                 PutH(Landing, mid, At(new Vector2(-9, -48), -0.6f), 15, 4.2f, rep);
@@ -158,14 +158,14 @@ namespace Spiritfire.Art.Editor.Levels
                 if (pier)
                 {
                     float top = TopAt(pier, PierAt + new Vector2(0, -1.5f), WorldBounds(pier).max.y);
-                    var ding = PutH(Ding, mid, At(PierAt + new Vector2(0, -1.5f), top - 0.15f), 205, 9f, rep);
+                    var ding = PutH(Ding, mid, At(PierAt + new Vector2(0, -1.5f), top - 0.15f), 215, 11f, rep);
                     if (ding)
                     {
                         var b = WorldBounds(ding);
                         var hi = new Vector3(b.center.x, b.max.y - 0.6f, b.center.z);
-                        var side = Quaternion.Euler(0, 205, 0) * Vector3.right * (b.extents.x * 0.85f);
-                        int links = Chain(mid, "east-high", hi + side, new Vector3(98, 24, 18), 7, 2.2f)
-                                  + Chain(mid, "east-low", hi + side, new Vector3(94, 16, -18), 6, 2.2f)
+                        var side = Quaternion.Euler(0, 215, 0) * Vector3.right * (b.extents.x * 0.85f);
+                        int links = Chain(mid, "east-high", hi + side, new Vector3(74, 22, -4), 6, 2.2f)
+                                  + Chain(mid, "east-low", hi + side, new Vector3(70, 15, -34), 5, 2.2f)
                                   + Chain(mid, "pier-W", hi - side, At(PierAt + new Vector2(-7, -6), top - 0.2f), 1.5f, 1.6f)
                                   + Chain(mid, "pier-N", hi - side, At(PierAt + new Vector2(-6, 7), top - 0.2f), 1.5f, 1.6f);
                         rep.Line($"镇湖鼎：鼎座顶 {top:F1}，四链共 {links} 环");
@@ -173,8 +173,8 @@ namespace Spiritfire.Art.Editor.Levels
                 }
 
                 // 4. 小件最后摆：前景岩堆、火盆、栏墩灯（只放焦点和路线节点附近）
-                foreach (var (at, yaw, hgt) in new[] { (new Vector2(-28, -62), 30f, 6f), (new Vector2(16, -70), 200f, 5f), (new Vector2(36, -58), 120f, 7f),
-                                                       (new Vector2(-32, -8), 70f, 5f), (new Vector2(34, 52), 250f, 6f), (new Vector2(-24, 60), 160f, 7f) })
+                foreach (var (at, yaw, hgt) in new[] { (new Vector2(-28, -60), 30f, 6f), (new Vector2(14, -64), 200f, 5f), (new Vector2(30, -54), 120f, 7f),
+                                                       (new Vector2(-30, -14), 70f, 5f), (new Vector2(32, 30), 250f, 6f), (new Vector2(-24, 34), 160f, 7f) })
                     PutH(Boulders, small, G(at, -0.6f), yaw, hgt, rep);
                 foreach (var at in new[] { new Vector2(StairX0 - 1.2f, StairZ1 + 1.2f), new Vector2(StairX1 + 1.2f, StairZ1 + 1.2f) })
                 {
@@ -230,13 +230,13 @@ namespace Spiritfire.Art.Editor.Levels
                     ("Concept", eye + Vector3.up * 2.5f, At(new Vector2(4, 40), 7), false),
                     ("Spawn", eye, gateC, false),
                     ("Causeway", At(CauseA + (CauseB - CauseA) * 0.08f, 6), At(IslandC, 7), false),
-                    ("Ding", At(new Vector2(14, -8), 7), At(PierAt, 10), false),
-                    ("GateApproach", G(new Vector2(10, 52), 4.2f), gateC, false),
-                    ("Statue", G(new Vector2(10, 82), 1.7f), statueC, false),
+                    ("Ding", At(new Vector2(6, -28), 7), At(PierAt, 11), false),
+                    ("GateApproach", G(new Vector2(10, 30), 4.2f), gateC, false),
+                    ("Statue", At(new Vector2(-22, 36), 10), statueC, false),
                     ("Aerial", new Vector3(-150, 150, -170), At(CraterC, 0), false),
                     ("Map", At(CraterC + new Vector2(0, -1), 360), At(CraterC, 0), false),
-                    ("KitLarge", new Vector3((KitSplit + LineupX) * 0.5f, 22, -105), new Vector3((KitSplit + LineupX) * 0.5f, 14, 0), false),
-                    ("KitSmall", new Vector3((KitSplit + KitEnd) * 0.5f, 9, -48), new Vector3((KitSplit + KitEnd) * 0.5f, 4, 0), false),
+                    ("KitLarge", new Vector3((KitSplit + LineupX) * 0.5f, 16, -(KitSplit - LineupX) * 0.52f), new Vector3((KitSplit + LineupX) * 0.5f, 11, 0), false),
+                    ("KitSmall", new Vector3((KitSplit + KitEnd) * 0.5f, 7, -(KitEnd - KitSplit) * 0.52f), new Vector3((KitSplit + KitEnd) * 0.5f, 3.5f, 0), false),
                 });
             }
             finally
@@ -289,8 +289,8 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var spots = new (Vector2 at, float yaw, float h)[]
             {
-                (new(-82, -12), 20, 50), (new(-96, 48), 140, 62), (new(-66, 122), 75, 56), (new(-24, 150), 300, 48), (new(66, 136), 210, 60),
-                (new(100, 70), 330, 52), (new(96, -32), 260, 44), (new(-72, -74), 100, 40), (new(62, -80), 15, 38), (new(-108, 100), 190, 46),
+                (new(-60, -24), 20, 46), (new(-70, 26), 140, 56), (new(-50, 80), 75, 52), (new(-18, 104), 300, 46), (new(46, 98), 210, 56),
+                (new(72, 50), 330, 50), (new(72, -26), 260, 42), (new(-54, -66), 100, 38), (new(50, -66), 15, 36), (new(-78, 70), 190, 44),
             };
             foreach (var (at, yaw, h) in spots)
                 PutH(Spire, parent, G(at, -3), yaw, h, new LevelKit.Report());
@@ -315,7 +315,7 @@ namespace Spiritfire.Art.Editor.Levels
         static void Walls(Transform parent, GameObject gate, LevelKit.Report rep)
         {
             float halfGate = gate ? WorldBounds(gate).extents.x : 11;
-            float segH = 13f, segW = Reg[Wall].x * segH / Reg[Wall].y;
+            float segH = 15f, segW = Reg[Wall].x * segH / Reg[Wall].y;
             float z = GateAt.y + 1.5f;
             foreach (var side in new[] { -1, 1 })
             {
@@ -326,7 +326,7 @@ namespace Spiritfire.Art.Editor.Levels
                     if (w && i == 0) segW = WorldBounds(w).size.x;
                 }
                 float tx = GateAt.x + side * (halfGate + segW * 2 + 2.5f);
-                PutH(Drum, parent, G(new Vector2(tx, z), -0.4f), 180, side < 0 ? 21f : 27f, rep);
+                PutH(Drum, parent, G(new Vector2(tx, z), -0.4f), 180, side < 0 ? 24f : 31f, rep);
             }
         }
 
