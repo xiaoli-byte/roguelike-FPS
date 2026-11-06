@@ -106,7 +106,9 @@ namespace Spiritfire.Game
         /// 首领场（1-4 / 2-4 / 3-4 / 4-4）不在表里；3-3 末尾的熔心魔将、4-1 三领主、4-2 大鹗另算（<see cref="LordsOf"/>）。
         /// 第四章（2026-10-31，F 路）按 chuanzang-combat-v1 5.1 / docs/level-design/maps/4-1.md 第 5 节的据点配怪、chuanzang-v1 3.7 的 4-2 遇敌先写好：
         ///   4-1：① 举父 2 天狗 3 连鼓灵；② 啸獭 6 帝江 3；③ 獓狠 雷牦 2 帝江 2；④ 蛮蛮 2 天狗 3 连鼓灵；⑤ 举父 2 啸獭 4 蛮蛮 2；⑥ 连鼓灵 天狗 4 帝江 2；⑦ 獓狠 雷牦 举父；
-        ///   4-2：① 举父 2 天狗 3 连鼓灵；② 蛮蛮 2 帝江 3 连鼓灵；③ 天狗 3 举父；④ 獓狠 雷牦 2 举父；⑤ 啸獭 6 帝江 3 蛮蛮 2；⑦ 天狗 4 连鼓灵。
+        ///   4-2：① 举父 2 天狗 3 连鼓灵；② 蛮蛮 2 帝江 3 连鼓灵；③ 天狗 3 举父；④ 獓狠 雷牦 2 举父；⑤ 啸獭 6 帝江 3 蛮蛮 2；⑦ 天狗 4 连鼓灵；
+        ///   4-3（彩林海子，docs/level-design/maps/4-3.md 第 3 节）：① 天狗 3 举父 2 连鼓灵；② 啸獭 5 帝江 3；③ 蛮蛮 2 天狗 3 连鼓灵；④ 獓狠 雷牦 2 帝江 2；
+        ///   ⑤ 举父 2 啸獭 4 天狗 2；⑥ 谷口 獓狠 雷牦 举父。
         /// 游猎的穷奇不是遭遇场地，不在表里。场景生成之后以场景为准（测试会把场景的统计行打出来）：4-1 已按 M1 生成的 L4_1_Zheduo 对上（⑤ 的蛮蛮是 1 只、没有升格和窖藏）
         /// </summary>
         public static readonly StageLoad[] Stages =
@@ -125,6 +127,7 @@ namespace Spiritfire.Game
                 S("bifang", 1)),
             new("4-1", 0, 0, 1, S("aoyin", 2), S("leiyak", 3), S("jufu", 5), S("marmot", 10), S("manman", 3), S("liangu", 3), S("tiangou", 10), S("dijiang", 7)),
             new("4-2", 1, 1, 1, S("jufu", 4), S("tiangou", 10), S("liangu", 3), S("manman", 4), S("dijiang", 6), S("aoyin", 1), S("leiyak", 2), S("marmot", 6)),
+            new("4-3", 0, 0, 1, S("tiangou", 8), S("jufu", 5), S("liangu", 2), S("marmot", 9), S("dijiang", 5), S("manman", 2), S("aoyin", 2), S("leiyak", 3)),
         };
 
         /// <summary>第四章首领 / 领主的 id（定义由 B1 / B2 路落地；没落地之前 <see cref="Bosses.Get"/> 为 null，奖励按缺省算）</summary>

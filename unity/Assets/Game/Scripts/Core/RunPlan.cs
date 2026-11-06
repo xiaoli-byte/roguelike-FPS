@@ -29,7 +29,7 @@ namespace Spiritfire.Game
         public readonly StageKind kind;
         /// <summary>章（1 起）</summary>
         public readonly int chapter;
-        /// <summary>章内关序（0 起，首领场 = 3；第四章第一期没有 4-3，4-4 的关序仍是 3）</summary>
+        /// <summary>章内关序（0 起，首领场 = 3）</summary>
         public readonly int index;
         /// <summary>在整张表里的位置（0 起）</summary>
         public readonly int order;
@@ -69,7 +69,7 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 整局的关卡规划（代码表，D1–D4）：3 章 × (3 张开放大图 + 1 个首领场) = 12 关，主线顺序固定；
-    /// 第四章「雪域天路」接在第三章之后（C4-1，docs/unity-ch4-port.md），第一期是 4-1 → 4-2 → 4-4（4-3 雪域宫堡第二期再插），整表 15 关。
+    /// 第四章「雪域天路」接在第三章之后（C4-1，docs/unity-ch4-port.md）：4-1 → 4-2 → 4-3 彩林海子 → 4-4，整表 16 关。
     ///
     /// 场景还没建好的关（第四章分期建）：<see cref="Ready"/> 为假的关不在路线上——<see cref="Next"/> 跳过它、<see cref="Final"/> /
     /// <see cref="IsLast"/> 落在最后一个建好的关上，所以第四章一关都没生成时整局照旧在 3-4 胜利结算，建好几关就走到几关。
@@ -262,9 +262,11 @@ namespace Spiritfire.Game
             Add(3, "铸神井", Ch3, "L3_2_ForgeWell");
             Add(3, "铸范大坊", Ch3, "L3_3_Foundry");
             Add(3, "祝融炉心 · 火麒麟", Ch3, "L3_4_Zhurong", StageKind.Boss, true);
-            // 第四章（C4-1 / C4-2：4-1 三领主开放盆地、4-2 大鹗三江口；4-3 雪域宫堡第二期再插，4-4 关序仍是 3；补给营在 4-4 神山海子的门槛外）
+            // 第四章（C4-1 / C4-2：4-1 三领主开放盆地、4-2 大鹗三江口、4-3 彩林海子（2026-11-07 用户定：川西秋林镜面湖，占了原计划雪域宫堡的位置，
+            // 见 docs/level-design/maps/4-3.md）；补给营在 4-4 神山海子的门槛外）
             Add(4, "折多垭口·天路草甸", Ch4, "L4_1_Zheduo");
             Add(4, "大渡河·铁索桥峡谷", Ch4, "L4_2_Dadu");
+            Add(4, "彩林海子", Ch4, "L4_3_Cailin");
             Add(4, "神山海子 · 雷泽雷神", Ch4, "L4_4_Haizi", StageKind.Boss, true, 3);
             return list.ToArray();
         }

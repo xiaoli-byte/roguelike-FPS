@@ -5,7 +5,7 @@ namespace Spiritfire.Game.Tests
 {
     /// <summary>
     /// 关卡串联（I1 + 第四章）：RunPlan 的顺序 / 难度（D1）/ 首领关 / 补给营 / 清关奖励，试玩开关（demoEnd = 1-4：1-4 成为最后一关、Next 到此为止、
-    /// 首领打完走胜利），命令行解析，关间结算卡读到的下一关信息；第四章 4-1 → 4-2 → 4-4 接在 3-4 之后，场景没建好的关跳过
+    /// 首领打完走胜利），命令行解析，关间结算卡读到的下一关信息；第四章 4-1 → 4-2 → 4-3 → 4-4 接在 3-4 之后，场景没建好的关跳过
     /// （<see cref="RunPlan.SceneReady"/> 换成固定规则：缺省「第四章还没建」）。
     /// </summary>
     public sealed class RunPlanTests
@@ -33,8 +33,8 @@ namespace Spiritfire.Game.Tests
         {
             RunPlan.DemoEnd = null;
             var s = RunPlan.Stages;
-            Assert.AreEqual(15, s.Count, "前三章 12 关 + 第四章第一期 4-1 / 4-2 / 4-4");
-            Assert.AreEqual(new[] { "1-1", "1-2", "1-3", "1-4", "2-1", "2-2", "2-3", "2-4", "3-1", "3-2", "3-3", "3-4", "4-1", "4-2", "4-4" },
+            Assert.AreEqual(16, s.Count, "前三章 12 关 + 第四章 4-1 / 4-2 / 4-3 / 4-4");
+            Assert.AreEqual(new[] { "1-1", "1-2", "1-3", "1-4", "2-1", "2-2", "2-3", "2-4", "3-1", "3-2", "3-3", "3-4", "4-1", "4-2", "4-3", "4-4" },
                 s.Select(x => x.code).ToArray());
             for (int i = 0; i < s.Count; i++)
             {
@@ -54,7 +54,9 @@ namespace Spiritfire.Game.Tests
             Assert.IsFalse(RunPlan.IsFinal(RunPlan.Get("1-4")));
             Assert.AreEqual(12, RunPlan.Playable.Count);
             Assert.AreEqual(3.4f, RunPlan.Get("4-1").difficulty, 1e-5f);
-            Assert.AreEqual(3.88f, RunPlan.Get("4-4").difficulty, 1e-5f, "4-4 关序仍是 3（4-3 第二期再插）");
+            Assert.AreEqual(3.72f, RunPlan.Get("4-3").difficulty, 1e-5f);
+            Assert.AreEqual(3.88f, RunPlan.Get("4-4").difficulty, 1e-5f);
+            Assert.AreEqual("Assets/Scenes/L4_3_Cailin.unity", RunPlan.Get("4-3").scene);
             Assert.AreEqual("雪域天路", RunPlan.Get("4-2").chapterName);
         }
 
@@ -64,10 +66,11 @@ namespace Spiritfire.Game.Tests
             RunPlan.DemoEnd = null;
             RunPlan.SceneReady = _ => true;
             Assert.AreSame(RunPlan.Get("4-1"), RunPlan.Next(RunPlan.Get("3-4")), "3-4 之后进第四章");
-            Assert.AreSame(RunPlan.Get("4-4"), RunPlan.Next(RunPlan.Get("4-2")), "4-2 之后直接 4-4（第一期没有 4-3）");
+            Assert.AreSame(RunPlan.Get("4-3"), RunPlan.Next(RunPlan.Get("4-2")), "4-2 之后是 4-3 彩林海子");
+            Assert.AreSame(RunPlan.Get("4-4"), RunPlan.Next(RunPlan.Get("4-3")));
             Assert.AreSame(RunPlan.Get("4-4"), RunPlan.Final);
             Assert.IsTrue(RunPlan.IsLast(RunPlan.Get("4-4")) && !RunPlan.IsFinal(RunPlan.Get("3-4")));
-            Assert.AreEqual(15, RunPlan.Playable.Count);
+            Assert.AreEqual(16, RunPlan.Playable.Count);
             Assert.AreEqual(BossEncounter.Outcome.NextStage, BossEncounter.Decide(RunPlan.Get("3-4")), "第四章建好后火麒麟不再是终局");
             Assert.AreEqual(BossEncounter.Outcome.Victory, BossEncounter.Decide(RunPlan.Get("4-4")), "雷泽雷神是终局首领（C4-1）");
 
@@ -78,10 +81,17 @@ namespace Spiritfire.Game.Tests
             Assert.IsNull(RunPlan.Next(RunPlan.Get("4-1")));
             Assert.AreEqual(13, RunPlan.Playable.Count);
 
-            // 4-1 / 4-4 建好、4-2 没建：4-1 → 4-4 跳过 4-2
+            // 4-2 没建：4-1 → 4-3 跳过 4-2
             RunPlan.SceneReady = st => st.code != "4-2";
-            Assert.AreSame(RunPlan.Get("4-4"), RunPlan.Next(RunPlan.Get("4-1")));
+            Assert.AreSame(RunPlan.Get("4-3"), RunPlan.Next(RunPlan.Get("4-1")));
             Assert.IsFalse(RunPlan.InPlay(RunPlan.Get("4-2")));
+            Assert.AreEqual(15, RunPlan.Playable.Count);
+
+            // 现状（2026-11-07）：第四章只建好 4-1、4-3：3-4 → 4-1 → 4-3，4-3 是这一局的最后一关
+            RunPlan.SceneReady = st => st.chapter < 4 || st.code == "4-1" || st.code == "4-3";
+            Assert.AreSame(RunPlan.Get("4-3"), RunPlan.Next(RunPlan.Get("4-1")));
+            Assert.AreSame(RunPlan.Get("4-3"), RunPlan.Final);
+            Assert.IsNull(RunPlan.Next(RunPlan.Get("4-3")));
             Assert.AreEqual(14, RunPlan.Playable.Count);
 
             // 第四章一关都没建：照旧在 3-4 胜利结算
@@ -112,7 +122,7 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(4, RunPlan.Playable.Count);
             Assert.IsFalse(RunPlan.InPlay(RunPlan.Get("2-1")));
             Assert.AreEqual(BossEncounter.Outcome.Victory, BossEncounter.Decide(s14), "试玩版打完旱魃走胜利链");
-            Assert.AreEqual(15, RunPlan.Stages.Count, "完整表不受开关影响（构建顺序、经济投影）");
+            Assert.AreEqual(16, RunPlan.Stages.Count, "完整表不受开关影响（构建顺序、经济投影）");
 
             RunPlan.DemoEnd = null;
             Assert.IsFalse(RunPlan.IsDemo);
