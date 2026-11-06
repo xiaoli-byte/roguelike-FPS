@@ -166,7 +166,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -193,11 +193,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 13263,
           "source_sha256": "7ba0a3668187095fa70101c7b1389e3fc6bb28bfd30b915b7b15c9dac3ee7e30"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:25:56",
+          "files": {
+            "HP_SM_Tripo_InfernoRockRib_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRockRib_v002_source.glb",
+              "sha256": "9bc727738831a448745279c89dafaf248c1953e8f05d5d16d36ec5bdf4e4003e"
+            },
+            "HP_SM_Tripo_InfernoRockRib_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRockRib_v002.glb",
+              "sha256": "9858e01ccd18a8a022270da273de01dff1c78a259e9c2c4516996917a8cdcbb9"
+            },
+            "HP_SM_Tripo_InfernoRockRib_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRockRib_v002_graph.json",
+              "sha256": "c0b27ad1332351923b0fb362702fe01c6c171aab392711a214d32883783526b3"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/03a65abf-4a2a-4680-bdf8-776fadb0e139",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13263,
+          "source_sha256": "9bc727738831a448745279c89dafaf248c1953e8f05d5d16d36ec5bdf4e4003e"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:33:53",
+          "files": {
+            "HP_SM_Tripo_InfernoRockRib_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRockRib_v003_source.glb",
+              "sha256": "20dc842ef505ba00b9bd41533711198c53d9a525fad35aa7d4dbc86295563892"
+            },
+            "HP_SM_Tripo_InfernoRockRib_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRockRib_v003.glb",
+              "sha256": "dfe98fe6f7d79e559fcb278756289d5c21f2cefe9a0f00bf5d09293a96224f99"
+            },
+            "HP_SM_Tripo_InfernoRockRib_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRockRib_v003_graph.json",
+              "sha256": "69b14dbe3df4a29c4b18e338c6cfda4e3018c75d371c959ae9aedaaf08afeb81"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/03a65abf-4a2a-4680-bdf8-776fadb0e139",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13263,
+          "source_sha256": "20dc842ef505ba00b9bd41533711198c53d9a525fad35aa7d4dbc86295563892"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -252,11 +304,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:27:09",
+          "files": {
+            "SM_Tripo_InfernoRockRib_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoRockRib_v002.blend",
+              "sha256": "6f25f203b6e61d48af1617dce680548318bb4593544991065444fefdf672dbf1"
+            },
+            "SM_Tripo_InfernoRockRib_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoRockRib_v002.glb",
+              "sha256": "befeae6f14a99522f30691a84ef84d0365b5fdbe32fc2d8debd1e45e76942dd2"
+            },
+            "SM_Tripo_InfernoRockRib_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoRockRib_v002_metrics.json",
+              "sha256": "cd62d7c0fb8d135c21751f95fdbac5021ac6becbb4eabb0f0501e9369ef4c64b"
+            },
+            "T_Tripo_InfernoRockRib_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRockRib_BC.png",
+              "sha256": "3378c5ec1afc552857b051f944349e49db06e9b1e3a9d12bf59ca9d1c7d8c1ee"
+            },
+            "T_Tripo_InfernoRockRib_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRockRib_E.png",
+              "sha256": "992ce3b6b6451f92d9ccdd451d0919de8bd891c9fa5aec7742d095ab4af8bcb7"
+            },
+            "T_Tripo_InfernoRockRib_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRockRib_N.png",
+              "sha256": "4888e25419d318c010c48969ff83e3e0a456e7723587171900423f72a5ea0885"
+            },
+            "T_Tripo_InfernoRockRib_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRockRib_ORM.png",
+              "sha256": "131b7e2dea686a8e3a7b45e7b34143405015a41e2c12fa29964b7ca4fd6a3df6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13263,
+              "verts": 7400
+            }
+          ],
+          "export_kb": 732.7,
+          "seconds": 71.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:34:52",
+          "files": {
+            "SM_Tripo_InfernoRockRib_v003.blend": {
+              "path": "03_work/SM_Tripo_InfernoRockRib_v003.blend",
+              "sha256": "183392557c983623edffadc0cdbc3666196308c98efc6eecefac95b0fc98cd8d"
+            },
+            "SM_Tripo_InfernoRockRib_v003.glb": {
+              "path": "04_export/SM_Tripo_InfernoRockRib_v003.glb",
+              "sha256": "7485af25374c9893c932ef7b7b4e485c01803f540ec77b933132b7f660877697"
+            },
+            "SM_Tripo_InfernoRockRib_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoRockRib_v003_metrics.json",
+              "sha256": "fdbdb47edb60cb3eabd50f38eded07dd09259d006509aea275b54842c0205e00"
+            },
+            "T_Tripo_InfernoRockRib_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoRockRib_BC.png",
+              "sha256": "53af0b5e4009867af324d7bb7ad4a1154f8cc1d2f6b760134127ddc27108fc7b"
+            },
+            "T_Tripo_InfernoRockRib_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoRockRib_E.png",
+              "sha256": "4c9639efa2b4788077e8226539ff115f69fda2e14ace4823c106121a352b31f2"
+            },
+            "T_Tripo_InfernoRockRib_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoRockRib_N.png",
+              "sha256": "2daef9b851d4a4dbf1229a8857bae34d6a0a976cd6c231f7581c19883db0a5b8"
+            },
+            "T_Tripo_InfernoRockRib_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoRockRib_ORM.png",
+              "sha256": "131b7e2dea686a8e3a7b45e7b34143405015a41e2c12fa29964b7ca4fd6a3df6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13263,
+              "verts": 7400
+            }
+          ],
+          "export_kb": 736.8,
+          "seconds": 57.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -272,11 +432,41 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:27:11",
+          "files": {
+            "SM_Tripo_InfernoRockRib_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoRockRib_v002_validation_v002.json",
+              "sha256": "10bba1641ed843b2b85c01dfe4e0eae241e27e7fa406448bc6c90811fcef0ce5"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:34:53",
+          "files": {
+            "SM_Tripo_InfernoRockRib_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_InfernoRockRib_v003_validation_v003.json",
+              "sha256": "72a6870a161644c3b02e0b37bc55dc0ab64a328dd256bf0e25c24e09021341c0"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -296,11 +486,43 @@
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 13263 面，熔岩缝 emissive_key；用户授权免审",
             "time": "2026-11-03 01:35:32"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:27:28",
+          "files": {
+            "SM_Tripo_InfernoRockRib_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoRockRib_v002_review_v002.png",
+              "sha256": "026d0dad6a2a6b1794c209e3f249fd747ab8e284a4624a3291d17d433fbbc537"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:35:05",
+          "files": {
+            "SM_Tripo_InfernoRockRib_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_InfernoRockRib_v003_review_v003.png",
+              "sha256": "dc2dfbbd4b25353fa4fb3027d330916025eb1e832513b8a7daef2bfda48ff484"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "贴图太碎试点 v003：Tripo 纹理生成重出底色（新账号，使用原始 UV、去光、4K，参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙），熔岩缝按旧贴图放回原位（自发光覆盖和 v001 持平），其他会被抠成自发光的亮橙红压暗；网格 / 尺寸 / 朝向和 v001 一致",
+            "time": "2026-11-07 00:54:56"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -312,6 +534,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoRockRib.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:54:56",
+          "files": {
+            "SM_Tripo_InfernoRockRib.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoRockRib.glb",
+              "sha256": "7485af25374c9893c932ef7b7b4e485c01803f540ec77b933132b7f660877697"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_InfernoRockRib.glb"
         }
       ]

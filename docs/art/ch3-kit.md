@@ -219,6 +219,9 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 | 20261106T1548 | InfernoFireAltar | 纹理生成①：文字提示（「炭不是火」） | [3b1cc693](https://studio.tripo3d.ai/workspace/texture/3b1cc693-09b2-464a-a37e-13d8d6740b11) | 20 | 31780 |
 | 20261106T1551 | InfernoFireAltar | 纹理生成②：文字提示改写（不提火） | 同上 | 20 | 31760 |
 | 20261106T1555 | InfernoFireAltar | 纹理生成③：参考图（当前火坛渲染、炭床涂暗）——**采用** | 同上 | 20 | 31740 |
+| 20261106T1610 | InfernoRoundHallWall | 纹理生成（试点，参考图 = 原件平光渲染简化） | [97b6f229](https://studio.tripo3d.ai/workspace/texture/97b6f229-6856-4580-9511-7841393e972e) | 20 | 31720 |
+| 20261106T1616 | InfernoBasaltColumns | 纹理生成（试点，同上） | [bc94a70f](https://studio.tripo3d.ai/workspace/texture/bc94a70f-08a5-4b75-9d10-364d13967158) | 20 | 31700 |
+| 20261106T1622 | InfernoRockRib | 纹理生成（试点，同上） | [03a65abf](https://studio.tripo3d.ai/workspace/texture/03a65abf-4a2a-4680-bdf8-776fadb0e139) | 20 | 31680 |
 
 ## 6. 和设计不一致 / 没做的
 
@@ -267,3 +270,19 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 - 尺寸 1.134 × 2.356 × 1.151、底面中心原点、3000 / 1000 三角面、UV、法线、ORM 都和 v001 一样；校验 33 项通过。
 - 老问题，没有恶化：基座朝 +Z 的那块面板在原 UV 上的岛只有另外三面的一半大，还有 18% 的纹素和别的面重叠（另外三面 4–5%）；旧贴图同一处就是灰糊，新贴图也一样偏灰。要根治得重展 UV。
 - Tripo 任务 [3b1cc693](https://studio.tripo3d.ai/workspace/texture/3b1cc693-09b2-464a-a37e-13d8d6740b11)，前两次文字提示作废，第三次参考图采用，共 60 积分。
+
+### 7.3 「贴图太碎」试点（RoundHallWall / BasaltColumns / RockRib，build v003）
+
+- **挑件**：按各图截图的画面占比挑。圆殿墙段是 3-4 炉心殿外壳（8 段一圈，交战视角的整面背景）；玄武岩柱丛 3-1 七处、3-2 一处、3-4 四处；岩肋 3-1 三处、3-2 五处，16 m 高。
+- **参考图**：原件平光渲染（Tripo 对话框里 Y 转 90° 后看到的正面）做简化（`scratchpad/t1/stylize.py`）：
+  - 中值滤波去掉小橙点、砂浆细线、铆钉；
+  - 石面 / 铁件转成冷暗紫、降饱和；铜和朱漆只降饱和；
+  - 熔岩缝涂成平涂亮橙。
+- **熔岩留在原位**：Tripo 会自己挪熔岩。第一版岩肋的底部裂缝几乎没了，朱漆日纹反而被抠成了自发光。
+  - 所以 `retexture.py hp` 默认按旧贴图把 `emissive_key` 抠得出的纹素原样放回（UV 一样）；
+  - 新贴图里其他会被抠进去的亮橙红压暗到阈值以下；
+  - 自发光覆盖和 v001 持平：圆殿墙 1.23 → 1.22%、柱丛 5.23 → 5.15%、岩肋 1.29 → 1.25%。
+- **网格**：尺寸、朝向、对齐 IoU 和 v001 完全一样。
+- **对比**：[review/ch3-v2/retexture/](review/ch3-v2/retexture/)，见那里的 README。
+  - 单件转台用的是近似游戏里的材质压法；
+  - 关卡里中距离的同机位对比要等 Unity 侧导入以后补。

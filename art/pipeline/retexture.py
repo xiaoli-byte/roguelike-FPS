@@ -158,8 +158,8 @@ def uv_match(upload: Path, export: Path) -> dict:
     mean, k, flip, dmax, R = best
     h = float(va[:, 1].max() - va[:, 1].min())
     d, _ = cKDTree(np.hstack([na, ua])).query(np.hstack([norm(vb @ R.T), ub]))
-    res = {"yaw_deg": 90 * k, "mirrored": flip < 0, "pos_mean_mm": round(mean * h * 1000, 3),
-           "pos_max_mm": round(dmax * h * 1000, 3), "uv_max": round(float(d.max()), 5),
+    res = {"yaw_deg": 90 * k, "mirrored": bool(flip < 0), "pos_mean_mm": round(float(mean) * h * 1000, 3),
+           "pos_max_mm": round(float(dmax) * h * 1000, 3), "uv_max": round(float(d.max()), 5),
            "uv_off_verts": int((d > 0.002).sum()), "verts_upload": len(va), "verts_export": len(vb)}
     if res["pos_max_mm"] > max(2.0, h * 1.0) or res["uv_off_verts"] > 0.001 * len(vb):
         raise PipelineError(f"{export.name}：和上传件对不上（{res}）——上传时没开「使用原始 UV」，或者 Tripo 改了网格")
@@ -183,33 +183,87 @@ def upload_path(asset_id: str) -> Path:
     return WORK / f"{asset_id}_upload.glb"
 
 
-def tripo_source(spec, st: AssetState) -> Path:
+def tripo_source(spec, st: AssetState) -> tuple[Path, int]:
+    """The original Tripo generation behind the current high poly: a retextured high poly (its import receipt carries
+    `retexture_of_highpoly`) points back to the version whose geometry and old texture it reused."""
     hp = st.require("highpoly")
+    for _ in range(20):
+        graph = next((n for n in hp["files"] if n.endswith("_graph.json")), None)
+        rec = json.loads(st.file(hp, graph).read_text(encoding="utf-8")) if graph else {}
+        receipt = rec.get("bridge_receipt") or {}
+        back = receipt.get("retexture_of_highpoly")
+        if not back and receipt.get("geometry_from"):  # receipts written before the field existed (11-06 pilot)
+            import re
+            m = re.search(r"_v(\d+)_source\.glb$", receipt["geometry_from"])
+            back = int(m.group(1)) if m else None
+        if not back:
+            break
+        hp = next(v for v in st.stage("highpoly")["versions"] if v["version"] == back)
     name = next((n for n in hp["files"] if n.endswith("_source.glb")), None)
     if not name:
         raise PipelineError(f"{spec.id}: 高模 v{hp['version']:03d} 没有 GLB 原件")
     src = st.file(hp, name)
     if not src.exists():
         raise PipelineError(f"{spec.id}: {portable_path(src)} 不在本机")
-    return src
+    return src, hp["version"]
 
 
 def strip(asset_id: str) -> Path:
     spec = CFG.asset(asset_id)
     st = AssetState(spec)
-    src = tripo_source(spec, st) if spec.raw.get("source_provider") == "tripo" else spec.runtime_path
+    src = tripo_source(spec, st)[0] if spec.raw.get("source_provider") == "tripo" else spec.runtime_path
     out = upload_path(asset_id)
     res = blender.run("bl_strip_materials.py", {"source": str(src), "out_glb": str(out)}, WORK / f"_strip_{asset_id}", "strip")
     print(f"✔ {asset_id}：上传件 {portable_path(out)}（{res['tris']} 三角面，{res['bytes'] / 1024:.0f} KB，来自 {portable_path(src)}）")
     return out
 
 
-def to_hp(asset_id: str, file: str, task: str, note: str) -> None:
+def key_mask(rgb: np.ndarray, key: dict) -> np.ndarray:
+    """Same colour key as bl_build_tripo.py's emissive mask (registry emissive_key), 0..1 soft."""
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    sat = np.where(mx > 1e-6, (mx - mn) / np.maximum(mx, 1e-6), 0)
+    d = np.maximum(mx - mn, 1e-6)
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    hue = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) / 6.0
+
+    def ramp(x, lo, soft):
+        return np.clip((x - lo) / max(soft, 1e-6) + 0.5, 0, 1)
+
+    h0, h1 = key.get("hue", [0.02, 0.17])
+    soft = key.get("soft", 0.06)
+    m = (ramp(hue, h0, 0.02) * (1 - ramp(hue, h1, 0.02))
+         * ramp(sat, key.get("min_sat", 0.55), soft) * ramp(mx, key.get("min_val", 0.75), soft))
+    return np.where(mx - mn < 1e-6, 0, m)
+
+
+def keep_lava(new_bc: Image.Image, old_bc: Image.Image, key: dict) -> tuple[Image.Image, dict]:
+    """Lava stays exactly where the old texture had it (the UVs are the same): old keyed texels are copied back as
+    they were; anything else the new texture painted bright enough to pass the key (a red lacquer emblem, an orange
+    speck) is dimmed below it, so the emissive mask the build cuts can only light the original lava seams."""
+    from PIL import ImageFilter
+    size = new_bc.size
+    old = np.asarray(old_bc.convert("RGB").resize(size, Image.Resampling.LANCZOS), np.float32) / 255
+    new = np.asarray(new_bc.convert("RGB"), np.float32) / 255
+    old_m = key_mask(old, key)
+    hard = Image.fromarray(((old_m > 0.5) * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(3))
+    w = np.asarray(hard.filter(ImageFilter.GaussianBlur(1.0)), np.float32)[..., None] / 255
+    out = new * (1 - w) + old * w
+    stray = (key_mask(out, key) > 0.02) & (w[..., 0] < 0.5)
+    mx = out.max(-1, keepdims=True)
+    dim = np.where(stray[..., None], np.minimum(1.0, 0.74 / np.maximum(mx, 1e-6)), 1.0)
+    out = out * dim
+    stats = {"lava_texels_old": round(float((old_m > 0.5).mean()), 4),
+             "lava_texels_new_raw": round(float((key_mask(new, key) > 0.5).mean()), 4),
+             "dimmed_texels": round(float(stray.mean()), 4)}
+    return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8)), stats
+
+
+def to_hp(asset_id: str, file: str, task: str, note: str, lava: bool = True) -> None:
     spec = CFG.asset(asset_id)
     if spec.raw.get("source_provider") != "tripo":
         raise PipelineError(f"{asset_id}: 不是 Tripo 件，用 `retexture.py build`")
     st = AssetState(spec)
-    src = tripo_source(spec, st)
+    src, src_hp = tripo_source(spec, st)
     export = Path(file)
     up = upload_path(asset_id)
     if not up.exists():
@@ -222,6 +276,15 @@ def to_hp(asset_id: str, file: str, task: str, note: str) -> None:
     imgs = len(sjs.get("images", []))
     if imgs != 1:
         raise PipelineError(f"{src.name}: 原件有 {imgs} 张贴图（只认只带底色的 Tripo 原件）")
+    lava_stats = None
+    key = spec.raw.get("emissive_key")
+    if lava and key:
+        old_img = Image.open(io.BytesIO(image_bytes(sjs, sbn, base_color_image(sjs))))
+        fixed, lava_stats = keep_lava(Image.open(io.BytesIO(bc)), old_img, key)
+        buf = io.BytesIO()
+        fixed.save(buf, "PNG")
+        bc, mime = buf.getvalue(), "image/png"
+        print(f"  熔岩留在原位：{lava_stats}")
     njs, nbn = replace_images(sjs, sbn, {base_color_image(sjs): (bc, mime)})
     stamp = time.strftime("%Y%m%dT%H%M%S", time.gmtime())
     INBOX.mkdir(parents=True, exist_ok=True)
@@ -230,8 +293,9 @@ def to_hp(asset_id: str, file: str, task: str, note: str) -> None:
     shutil.copyfile(export, INBOX / f"{stamp}_{asset_id}_retex_tripo_export.glb")
     rec = receipt_base(asset_id, export, task, match, note)
     rec |= {"sha256": sha256(out), "tripo_export": f"{stamp}_{asset_id}_retex_tripo_export.glb",
-            "tripo_export_sha256": sha256(export), "geometry_from": portable_path(src),
-            "geometry_sha256": sha256(src), "glb": {"bytes": out.stat().st_size, "images": 1}}
+            "tripo_export_sha256": sha256(export), "geometry_from": portable_path(src), "retexture_of_highpoly": src_hp,
+            "geometry_sha256": sha256(src), "glb": {"bytes": out.stat().st_size, "images": 1},
+            "keep_lava": lava_stats}
     out.with_suffix(".json").write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"✔ {asset_id}：{portable_path(out)}（原件几何 + 新底色，UV 对齐 {match}）")
     print(f"  下一步：python art/pipeline/tripo_assets.py import {asset_id} --file {portable_path(out)} --task {task}")
@@ -323,6 +387,7 @@ if __name__ == "__main__":
     p = sub.add_parser("strip"); p.add_argument("ids", nargs="+")
     p = sub.add_parser("hp"); p.add_argument("id"); p.add_argument("--file", required=True); p.add_argument("--task", required=True)
     p.add_argument("--note", default="")
+    p.add_argument("--no-keep-lava", action="store_true", help="不把熔岩缝按旧贴图放回原位（默认放回，并压暗新贴图里其他会被抠成自发光的亮橙红）")
     p = sub.add_parser("build"); p.add_argument("id"); p.add_argument("--file", required=True); p.add_argument("--task", required=True)
     p.add_argument("--bc"); p.add_argument("--e"); p.add_argument("--e-none", action="store_true"); p.add_argument("--note", default="")
     a = parser.parse_args()
@@ -331,7 +396,7 @@ if __name__ == "__main__":
             for i in a.ids:
                 strip(i)
         elif a.cmd == "hp":
-            to_hp(a.id, a.file, a.task, a.note)
+            to_hp(a.id, a.file, a.task, a.note, not a.no_keep_lava)
         else:
             to_build(a.id, a.file, a.task, a.bc, a.e, a.e_none, a.note)
     except PipelineError as e:

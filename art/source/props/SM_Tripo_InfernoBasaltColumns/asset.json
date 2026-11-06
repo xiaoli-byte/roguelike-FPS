@@ -287,7 +287,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -314,11 +314,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 15702,
           "source_sha256": "3b69c5c025988c4c0729ff83577cfab1f8e11b3e2d70694f85285d352dc2453a"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:21:13",
+          "files": {
+            "HP_SM_Tripo_InfernoBasaltColumns_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v002_source.glb",
+              "sha256": "eeb08766fa2d8c6c6f0c82ec3f8a722dc7c0590e71a36b471024ec88b52a7918"
+            },
+            "HP_SM_Tripo_InfernoBasaltColumns_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v002.glb",
+              "sha256": "e9d4b74095ddfc57f268b1d33898a17202144f799930cd4ddbb45f27778c0b6c"
+            },
+            "HP_SM_Tripo_InfernoBasaltColumns_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v002_graph.json",
+              "sha256": "76de9815ece7c59a3d36d6c8d10576842ba36a6a98d74c41fc1109159e355da1"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/bc94a70f-08a5-4b75-9d10-364d13967158",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15702,
+          "source_sha256": "eeb08766fa2d8c6c6f0c82ec3f8a722dc7c0590e71a36b471024ec88b52a7918"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:53:49",
+          "files": {
+            "HP_SM_Tripo_InfernoBasaltColumns_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v003_source.glb",
+              "sha256": "2ce38650b7504803f96078c705ef5c62aa251fcdf6a6827445d87b28d7406510"
+            },
+            "HP_SM_Tripo_InfernoBasaltColumns_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v003.glb",
+              "sha256": "e8526d2b1aafaa81d4793ca12c236816f73ca729925aa5ccd67c8e848661cb1f"
+            },
+            "HP_SM_Tripo_InfernoBasaltColumns_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoBasaltColumns_v003_graph.json",
+              "sha256": "cbc8de71a21ae1317d8c6177211a6def8cd0cbab531d6741be6c7f5b899bc201"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/bc94a70f-08a5-4b75-9d10-364d13967158",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15702,
+          "source_sha256": "2ce38650b7504803f96078c705ef5c62aa251fcdf6a6827445d87b28d7406510"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -373,11 +425,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:23:15",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoBasaltColumns_v002.blend",
+              "sha256": "216baa69beb0ed771d14f71c614cd979117ddef12c2c6cb2ad3011cc28f965e2"
+            },
+            "SM_Tripo_InfernoBasaltColumns_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoBasaltColumns_v002.glb",
+              "sha256": "582ee65701795df25fa1850dc54b062bb2e887bbb8ffe974d86989887ad0a948"
+            },
+            "SM_Tripo_InfernoBasaltColumns_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoBasaltColumns_v002_metrics.json",
+              "sha256": "d17a047b8e427fc4f032211ebcf60ff04e27d9ec2e965b695f2914479372f4fe"
+            },
+            "T_Tripo_InfernoBasaltColumns_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoBasaltColumns_BC.png",
+              "sha256": "d154ae70f9e1fbec39330038110f1987223b30d8b5b459a80b906e79d6566fe9"
+            },
+            "T_Tripo_InfernoBasaltColumns_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoBasaltColumns_E.png",
+              "sha256": "eddab3762311adcdb29d0c1d2a6f1eac90f85b985ec1cd94bfb94839f69acdbe"
+            },
+            "T_Tripo_InfernoBasaltColumns_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoBasaltColumns_N.png",
+              "sha256": "f35c94a71d85e0c2e701a44e3884158421d6669384e94c51b0a67b4bac803fff"
+            },
+            "T_Tripo_InfernoBasaltColumns_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoBasaltColumns_ORM.png",
+              "sha256": "d49f54f98260b621bec0767245f59c26ce401327e9d1453822540f798e7df5cf"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.885,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15702,
+              "verts": 8004
+            }
+          ],
+          "export_kb": 514.6,
+          "seconds": 120.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:54:30",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v003.blend": {
+              "path": "03_work/SM_Tripo_InfernoBasaltColumns_v003.blend",
+              "sha256": "398e2bd4794ca341fd8b7d960c22c1b6a05c184d7fdc0aa57af98e0ac7b26a53"
+            },
+            "SM_Tripo_InfernoBasaltColumns_v003.glb": {
+              "path": "04_export/SM_Tripo_InfernoBasaltColumns_v003.glb",
+              "sha256": "b02084a5bb484024578b0061bbb444c6192df1c7c1e8436990697abccaa7b94f"
+            },
+            "SM_Tripo_InfernoBasaltColumns_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoBasaltColumns_v003_metrics.json",
+              "sha256": "1d28c4462e6408b740175f3ee18b8005561a8d0da171154f04d49c648718c407"
+            },
+            "T_Tripo_InfernoBasaltColumns_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoBasaltColumns_BC.png",
+              "sha256": "b0685c343335b293daea95a498a443a178052f4156c2a52dfebff5002fd6a6d0"
+            },
+            "T_Tripo_InfernoBasaltColumns_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoBasaltColumns_E.png",
+              "sha256": "42ab55847b0025e7835d86539da3aa029da9f4953e2b9acc4e0092d1bd556924"
+            },
+            "T_Tripo_InfernoBasaltColumns_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoBasaltColumns_N.png",
+              "sha256": "d2370d74523f919326038dbfc119a5700659978fd5ba40b7179b8b9024077d86"
+            },
+            "T_Tripo_InfernoBasaltColumns_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoBasaltColumns_ORM.png",
+              "sha256": "d49f54f98260b621bec0767245f59c26ce401327e9d1453822540f798e7df5cf"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.885,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15702,
+              "verts": 8004
+            }
+          ],
+          "export_kb": 550.9,
+          "seconds": 40.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -393,11 +553,41 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:23:16",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoBasaltColumns_v002_validation_v002.json",
+              "sha256": "109c6969e3991d28192bd77b6c9e083112476804de1b8699ff61994a9004fc5b"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:54:31",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_InfernoBasaltColumns_v003_validation_v003.json",
+              "sha256": "f291c00648e68d68386af604e374bc241ed6ff86d0252f6f06324cc6074600c7"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -417,11 +607,49 @@
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 15702 面；用户授权免审",
             "time": "2026-11-03 05:27:48"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:23:38",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoBasaltColumns_v002_review_v002.png",
+              "sha256": "ad806d9eea757e32d7f87c544351981bedd4e390accc8b896b3213646e291453"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "贴图太碎试点：Tripo 纹理生成重出底色（使用原始 UV、去光、简化参考图），冷暗紫玄武岩大面 + 原位置的平涂亮橙熔岩缝；网格 / 尺寸 / 朝向和 v001 一致",
+            "time": "2026-11-07 00:24:29"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:54:39",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_InfernoBasaltColumns_v003_review_v003.png",
+              "sha256": "11d9b38556a49857078353018b6eeb0cab3f2d4bc407d36f2b3f960f58133cec"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "贴图太碎试点 v003：Tripo 纹理生成重出底色（新账号，使用原始 UV、去光、4K，参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙），熔岩缝按旧贴图放回原位（自发光覆盖和 v001 持平），其他会被抠成自发光的亮橙红压暗；网格 / 尺寸 / 朝向和 v001 一致",
+            "time": "2026-11-07 00:54:58"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -433,6 +661,30 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoBasaltColumns.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:24:30",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoBasaltColumns.glb",
+              "sha256": "582ee65701795df25fa1850dc54b062bb2e887bbb8ffe974d86989887ad0a948"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_InfernoBasaltColumns.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 00:54:58",
+          "files": {
+            "SM_Tripo_InfernoBasaltColumns.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoBasaltColumns.glb",
+              "sha256": "b02084a5bb484024578b0061bbb444c6192df1c7c1e8436990697abccaa7b94f"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_InfernoBasaltColumns.glb"
         }
       ]
