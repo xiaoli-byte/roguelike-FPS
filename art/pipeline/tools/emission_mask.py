@@ -54,9 +54,16 @@ DILATE = 6
 # size = 遮罩边长（缺省 1024；4096 底色、线很细的旱魃用 2048）。
 # 层色 / 强度在 Unity 侧（GlowMask.cs），这里只管「哪里亮」。
 
-# 魔将大剑：剑身（资产空间：握点在原点、剑尖朝 −y 到 −2.83 m）的熔铜色——橙到金黄、饱和、亮
-_SWORD_MOLTEN = {"hue": (0.07, 0.09), "minSat": 0.56, "minVal": 0.62,
-                 "box": {"min": (-9, -9, -9), "max": (9, -0.32, 9), "soft": 0.04}}
+# 魔将本体（v006）：熔岩缝的颜色、最亮的芯；角盔只认面甲眼缝那一块（双角是橙铜色，高光会混进来）
+_WARLORD_LAVA = {"hue": (0.055, 0.04), "minSat": 0.78, "minVal": 0.6}
+_WARLORD_CORE = {"hue": (0.07, 0.05), "minSat": 0.5, "minVal": 0.86}
+_WARLORD_BELOW_HELM = {"min": (-9, -1, -9), "max": (9, 3.6, 9), "soft": 0.02}
+_WARLORD_FACE = {"min": (-0.2, 3.5, 0.28), "max": (0.2, 3.76, 1), "soft": 0.01}
+
+# 魔将大剑（v006，2026-11-07）：剑身中线那道平涂橙的熔岩裂纹（资产空间：握点 = 右拳握心在原点、剑尖朝 −y 到 −2.65 m，
+#   剑格在 −0.40 ~ −0.16）。只认剑格以下；剑格 / 环首的铜色饱和度 ≤ 0.6、剑穗是红，都不算
+_SWORD_MOLTEN = {"hue": (0.055, 0.045), "minSat": 0.66, "minVal": 0.55,
+                 "box": {"min": (-9, -9, -9), "max": (9, -0.42, 9), "soft": 0.03}}
 
 PROFILES: dict[str, dict] = {
     # 三青鸟（Qingniao.ts applyFrostGlow）：0 胸口霜晶、1 翼展外侧的羽尖冰刃、2 尾羽末端的冰羽
@@ -136,30 +143,34 @@ PROFILES: dict[str, dict] = {
             [{"radial": {"axis": 2, "max": 1.6, "soft": 0.12}}],
         ],
     },
-    # 熔心魔将本体（第二批 B 路；材质没开 _EMISSION，原来 WarlordBrain 写的 _EmissionColor 从来没显示过）：
-    #   0 玄铁甲缝里的熔铜纹（饱和的橙、亮）——平时一点余烬、前摇烧亮、狂怒常亮；1 熔铜纹里最亮的芯（近黄白：胸口地火之心、肩甲的熔口）——狂怒白热。
-    #   甲边的暗金描边（饱和度低）、披风的暗红（明度低）都不算
+    # 熔心魔将本体（v006，2026-11-07：用户选定的方案 4 重甲剑士；docs/art/boss-warlord.md）。只抠平涂橙的部分：
+    #   0 甲上的熔岩缝——面甲眼缝、胸口铜护心镜的竖裂、兽首肩甲的嘴 / 眼（橙、很饱和：饱和度中位 0.85+）——平时一点余烬、前摇烧亮、狂怒常亮；
+    #   1 最亮的芯（近黄白：眼缝、护心镜裂纹最亮的那几段）——狂怒白热。
+    #   月牙铜角也是橙铜色（饱和度 0.63–0.75，熔岩缝 0.8 以上；高光处亮度也到 0.86），所以角盔只认面甲那一块（|x| ≤ 0.2、前脸），
+    #   其余只认护颈以下（资产空间 y ≤ 3.6）；甲边铜描边饱和度 ≤ 0.45；战旗是红
     "warlord": {
         "glb": "characters/SK_Boss_Warlord",
         "bc": "Art/Characters/SK_Boss_Warlord/Textures/T_Boss_Warlord_BC.png",
+        "size": 2048,
         "layers": [
-            [{"hue": (0.055, 0.05), "minSat": 0.62, "minVal": 0.66}],
-            [{"hue": (0.08, 0.06), "minSat": 0.45, "minVal": 0.9}],
+            [{**_WARLORD_LAVA, "box": _WARLORD_BELOW_HELM}, {**_WARLORD_LAVA, "box": _WARLORD_FACE},
+             # 眼缝中间偏黄白（饱和度低）：只在面甲眼缝那一小块认亮色
+             {"minVal": 0.8, "hue": (0.09, 0.08), "minSat": 0.3, "box": _WARLORD_FACE}],
+            [{**_WARLORD_CORE, "box": _WARLORD_BELOW_HELM}, {**_WARLORD_CORE, "box": _WARLORD_FACE}],
             [],
         ],
         "grow": [1, 1, 0],
     },
-    # 熔心魔将的熔心大剑（SM_BossWeapon_Greatsword）：0 剑脊熔铜纹（剑面中间那几道熔痕和分叉）、1 刃口（剑面靠边 24 纹素的熔铜带 + 剑身侧面的窄条）。
-    #   剑格、剑柄、配重的金铜色不算（只认剑身：握点以下 0.32 m）
+    # 熔心大剑（v006）：0 剑身中线熔岩裂纹（平涂橙）；1 裂纹里最亮的芯（狂怒白热）。v006 的刃口是灰石，不画发光（剑光、热浪交给 Fx.Warlord.cs）
     "warlord_sword": {
         "glb": "attachments/SM_BossWeapon_Greatsword",
         "bc": "Art/Attachments/SM_BossWeapon_Greatsword/Textures/T_BossWeapon_Greatsword_BC.png",
         "layers": [
-            [{**_SWORD_MOLTEN, "edge": {"min": 24, "soft": 4}, "normalAbs": {"axis": 2, "min": 0.55, "soft": 0.1}}],
-            [{**_SWORD_MOLTEN, "edge": {"max": 24, "soft": 4}},
-             {**_SWORD_MOLTEN, "normalAbs": {"axis": 2, "max": 0.55, "soft": 0.1}}],
+            [_SWORD_MOLTEN],
+            [{**_SWORD_MOLTEN, "minVal": 0.88}],
             [],
         ],
+        "grow": [1, 0, 0],
     },
 }
 
