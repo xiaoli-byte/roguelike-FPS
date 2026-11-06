@@ -195,8 +195,9 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         // ───────────── 审核截图 ─────────────
-        /// <summary>按机位截图；名字以 "Map" / "Aerial" 开头的高空机位临时关雾（否则几百米外全被雾吞掉）</summary>
-        public static void Capture(Camera cam, GameObject fpRig, string prefix, (string name, Vector3 pos, Vector3 target, bool firstPerson)[] views)
+        /// <summary>按机位截图；名字以 "Map" / "Aerial" 开头的高空机位临时关雾（否则几百米外全被雾吞掉）。
+        /// 文件名 {prefix}_{序号}_{name}.png，序号从 firstIndex 起（分几次调用、每次换视角 FOV 时接着编号）</summary>
+        public static void Capture(Camera cam, GameObject fpRig, string prefix, (string name, Vector3 pos, Vector3 target, bool firstPerson)[] views, int firstIndex = 1)
         {
             Directory.CreateDirectory(ReviewDir);
             var rt = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32) { antiAliasing = 1 };
@@ -224,7 +225,7 @@ namespace Spiritfire.Art.Editor.Levels
                     shot.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
                     shot.Apply();
                     RenderTexture.active = null;
-                    string path = $"{ReviewDir}/{prefix}_{i + 1}_{name}.png";
+                    string path = $"{ReviewDir}/{prefix}_{i + firstIndex}_{name}.png";
                     File.WriteAllBytes(path, shot.EncodeToPNG());
                     Debug.Log($"[Review] {path}");
                 }

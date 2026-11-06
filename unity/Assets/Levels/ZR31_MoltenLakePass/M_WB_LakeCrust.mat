@@ -27,15 +27,17 @@ Material:
     m_Floats:
     - _Agitation: 0
     - _AmbientStrength: 1
+    - _BubbleAmount: 0.06
     - _BubbleRate: 1
     - _CrackWidth: 0.035
     - _EdgeGlow: 1
-    - _Emission: 1.1
+    - _Emission: 1
     - _FlowSpeed: 1
     - _FlowStretch: 1
-    - _MoltenAmount: 0.04
+    - _HeatCrackWiden: 0.015
+    - _MoltenAmount: -0.6
     - _NoiseScale: 0.28
-    - _PlateScale: 0.035
+    - _PlateScale: 0.045
     - _RampSoftness: 0.3
     - _RampThreshold: 0
     - _RimPower: 5
@@ -46,7 +48,7 @@ Material:
     - _WarpScale: 0.11
     m_Colors:
     - _CoreColor: {r: 1, g: 0.82, b: 0.38, a: 1}
-    - _CrustColor: {r: 0.09, g: 0.07, b: 0.1, a: 1}
+    - _CrustColor: {r: 0.17, g: 0.13, b: 0.18, a: 1}
     - _DeepColor: {r: 0.22, g: 0.025, b: 0.008, a: 1}
     - _HotColor: {r: 1, g: 0.33, b: 0.035, a: 1}
     - _RimColor: {r: 1, g: 0.6, b: 0.34999996, a: 1}

@@ -49,10 +49,26 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 CraterC = new(5, 14), CraterR = new(70, 88);
         static readonly Vector2 Eye = new(-4, -60);
         const float LookoutY = 12f, ShelfY = 3f, IslandY = 2f, QuayY = 2f, TerraceY = 10f, CliffY = 34f;
-        static readonly Vector2 FerryAt = new(-24, -45), IslandC = new(10, 6), PierAt = new(32, -16);
-        static readonly Vector2 CauseA = new(-8, -40), CauseB = new(2, -6), Cause2A = new(13, 20), Cause2B = new(12, 36);
+
+        // 概念机位 = 概念图的镜头：竖直 FOV 55°（游戏里 70° 太广，地标全缩成小件），朝北偏西 13°、俯 6°，眼高 ≈ 熔岩面上 14.7 m。
+        // 左前关楼、中间湖心税关、右前镇鼎、右后宫门与祝融像都按它们在概念图里的画面横坐标反算成「相对视轴的角度 + 距离」摆，
+        // 宫门 / 祝融像 / 大台阶不动（它们在这个机位下正好落在概念图的位置），所以视轴偏西 13° 是由宫门和像的连线反推出来的
+        const float ConceptYaw = -13f, ConceptPitch = -6f, ConceptFov = 55f, ConceptLift = 1f;
+        static Vector2 FromEye(float rel, float d)
+        {
+            float a = (ConceptYaw + rel) * Mathf.Deg2Rad;
+            return Eye + d * new Vector2(Mathf.Sin(a), Mathf.Cos(a));
+        }
+        // 关楼：画面左 1/4（相对视轴 −36°）、35 m（再近屋顶就出画）；税关：画面中线偏右（+4°）、70 m；镇鼎墩：画面右缘（+35°）、43 m
+        static readonly Vector2 FerryAt = FromEye(-36, 35), IslandC = FromEye(4, 70), PierAt = FromEye(35, 43);
+        // 双拱堤从关楼前的码头斜着伸向税关西南角（侧面的拱朝镜头）；第二段从税关东北角接北岸码头
+        static readonly Vector2 CauseA = FromEye(-22, 33), CauseB = FromEye(0, 58), Cause2A = new(-4, 20), Cause2B = new(4, 35);
         const float StairX0 = 2, StairX1 = 18, StairZ0 = 38, StairZ1 = 52;
         static readonly Vector2 GateAt = new(10, 64), StatueAt = new(14, 94);
+        // 西北峡口（概念图中线偏左那道峡谷 + 远处渡槽，相对视轴 −11°）：沿视线方向切穿火口壁，谷底从熔岩河升到远处平地
+        static readonly Vector2 GorgeAt = new(-56, 57), GorgeDir = new Vector2(-0.407f, 0.914f).normalized;
+        const float GorgeHalfW = 10, GorgeEdge = 14, AqueductAlong = 45;
+        static float GorgeFloor(float along) => Mathf.Lerp(BedY, PlainY, Smooth(4, 70, along));
 
         static LevelKit.TerrainSet ts;
 
@@ -92,6 +108,14 @@ namespace Spiritfire.Art.Editor.Levels
             float terrace = Mathf.Lerp(QuayY, TerraceY, Smooth(50, 53, q.y));
             float cliff = Mathf.Lerp(TerraceY, CliffY + Fbm(q, 50, 3, 8) * 6, Smooth(78, 90, q.y));
             if (q.y > 26) h = Mathf.Max(h, q.y > 76 ? Mathf.Max(terrace, cliff) : Mathf.Max(quay, terrace));
+            // 西北峡口：沿 GorgeDir 切穿火口壁和北岸台地 / 宫后崖（这两项横贯全宽，所以要在它们之后切）；谷壁边缘加点噪声，不是一刀切的直槽
+            var gq = q - GorgeAt;
+            float along = Vector2.Dot(gq, GorgeDir), across = Mathf.Abs(gq.x * GorgeDir.y - gq.y * GorgeDir.x);
+            if (along > -12)
+            {
+                float cut = (1 - Smooth(GorgeHalfW, GorgeHalfW + GorgeEdge, across + Fbm(q, 18, 2, 21) * 4)) * Smooth(-12, 0, along);
+                h = Mathf.Lerp(h, Mathf.Min(h, GorgeFloor(along) + n * 0.3f), cut);
+            }
             // 祝融像崖台（平顶）
             h = Mathf.Max(h, Mathf.Lerp(h, CliffY, Disc(q, StatueAt, 16, 6)));
 
@@ -136,34 +160,51 @@ namespace Spiritfire.Art.Editor.Levels
                 {
                     name = "Molten Lake", center = new Vector3(CraterC.x, LavaY, CraterC.y), shape = LavaShape.Box, size = CraterR * 2.1f, depth = 2.5f, depthShore = true,
                 }, world);
-                if (lava.surface && LevelKit.Ch3LavaCrust(Dir, "LakeCrust", molten: 0.04f, crack: 0.035f, emission: 1.1f, plateScale: 0.035f) is { } crust) lava.surface.sharedMaterial = crust;
+                if (lava.surface && LevelKit.Ch3LavaCrust(Dir, "LakeCrust", molten: -0.6f, crack: 0.035f, emission: 1.0f, plateScale: 0.045f) is { } crust)
+                {
+                    // 概念图的熔湖 = 暗紫灰硬壳 + 几道细亮缝。近处的亮斑来自三处：热区化开的熔池（molten < 0 关掉）、
+                    // 热区自动加宽的裂缝（_HeatCrackWiden 0.1 → 0.015）、壳上的冒泡亮点（_BubbleAmount 0.45 → 0.06）。
+                    // 壳色提到暗紫灰（默认的近黑壳在缝少了以后整片发死）
+                    crust.SetFloat("_HeatCrackWiden", 0.015f);
+                    crust.SetFloat("_BubbleAmount", 0.06f);
+                    crust.SetColor("_CrustColor", new Color(0.17f, 0.13f, 0.18f));
+                    EditorUtility.SetDirty(crust);
+                    AssetDatabase.SaveAssetIfDirty(crust);
+                    lava.surface.sharedMaterial = crust;
+                }
 
                 // 1. 大块面：火口崖峰、宫门、关楼、税关、鼎墩、祝融像
                 BuildSpires(big);
                 var gate = PutH(Gate, big, G(GateAt, -0.2f), 180, 24, rep);
                 var ferryYaw = YawZ(Eye - FerryAt) - 10;
-                PutH(Ferry, big, G(FerryAt, -0.3f), ferryYaw, 22, rep);
-                PutH(Fort, big, At(IslandC, -0.8f), 200, 17f, rep);
-                var pier = PutH(Pier, big, At(PierAt, -1.4f), 215, 11f, rep);
+                var ferry = PutH(Ferry, big, G(FerryAt, -0.3f), ferryYaw, 22, rep);
+                PutH(Fort, big, At(IslandC, -0.8f), YawZ(Eye - IslandC) + 8, 17f, rep);
+                float pierYaw = YawZ(Eye - PierAt) - 4;
+                var pier = PutH(Pier, big, At(PierAt, -1.4f), pierYaw, 11f, rep);
                 var statue = PutH(Statue, big, G(StatueAt, -0.3f), 180, 38, rep);
 
-                // 2. 引导线：堤（近景码头 → 湖心税关 → 北岸）、大台阶直指宫门
-                PutH(Landing, mid, At(new Vector2(-9, -48), -0.6f), 15, 4.2f, rep);
-                Causeway(mid, CauseA, CauseB, 2, rep);
+                // 2. 引导线：堤（关楼码头 → 湖心税关 → 北岸）、大台阶直指宫门；峡口里一道渡槽做远景层次
+                PutH(Landing, mid, At(FerryAt + new Vector2(15.5f, 3), -0.6f), 73, 4.2f, rep);
+                Causeway(mid, CauseA, CauseB, 1, rep);
                 Causeway(mid, Cause2A, Cause2B, 1, rep);
                 GrandStairs(mid);
                 Walls(mid, gate, rep);
+                {
+                    // 渡槽：桥身横跨峡谷、两头埋进谷壁，拱脚落在谷底
+                    var aq = GorgeAt + GorgeDir * AqueductAlong;
+                    PutH(Bridge, mid, At(aq, GorgeFloor(AqueductAlong) - 0.5f), YawZ(GorgeDir), 18, rep);
+                }
 
                 // 3. 鼎 + 链（鼎墩顶上的阶式鼎座）
                 if (pier)
                 {
                     float top = TopAt(pier, PierAt + new Vector2(0, -1.5f), WorldBounds(pier).max.y);
-                    var ding = PutH(Ding, mid, At(PierAt + new Vector2(0, -1.5f), top - 0.15f), 215, 11f, rep);
+                    var ding = PutH(Ding, mid, At(PierAt + new Vector2(0, -1.5f), top - 0.15f), pierYaw, 11f, rep);
                     if (ding)
                     {
                         var b = WorldBounds(ding);
                         var hi = new Vector3(b.center.x, b.max.y - 0.6f, b.center.z);
-                        var side = Quaternion.Euler(0, 215, 0) * Vector3.right * (b.extents.x * 0.85f);
+                        var side = Quaternion.Euler(0, pierYaw, 0) * Vector3.right * (b.extents.x * 0.85f);
                         int links = Chain(mid, "east-high", hi + side, new Vector3(74, 22, -4), 6, 2.2f)
                                   + Chain(mid, "east-low", hi + side, new Vector3(70, 15, -34), 5, 2.2f)
                                   + Chain(mid, "pier-W", hi - side, At(PierAt + new Vector2(-7, -6), top - 0.2f), 1.5f, 1.6f)
@@ -173,8 +214,9 @@ namespace Spiritfire.Art.Editor.Levels
                 }
 
                 // 4. 小件最后摆：前景岩堆、火盆、栏墩灯（只放焦点和路线节点附近）
-                foreach (var (at, yaw, hgt) in new[] { (new Vector2(-28, -60), 30f, 6f), (new Vector2(14, -64), 200f, 5f), (new Vector2(30, -54), 120f, 7f),
-                                                       (new Vector2(-30, -14), 70f, 5f), (new Vector2(32, 30), 250f, 6f), (new Vector2(-24, 34), 160f, 7f) })
+                // 前景岩堆放在眺台下的岸台上（顶面低于眼高，只压住画面下缘，不挡地平线）
+                foreach (var (at, yaw, hgt) in new[] { (new Vector2(3, -46), 200f, 4.5f), (new Vector2(16, -50), 120f, 6f),
+                                                       (new Vector2(32, 30), 250f, 6f), (new Vector2(-34, 36), 160f, 7f) })
                     PutH(Boulders, small, G(at, -0.6f), yaw, hgt, rep);
                 foreach (var at in new[] { new Vector2(StairX0 - 1.2f, StairZ1 + 1.2f), new Vector2(StairX1 + 1.2f, StairZ1 + 1.2f) })
                 {
@@ -191,12 +233,30 @@ namespace Spiritfire.Art.Editor.Levels
                     }
                     PointLight(fx, "Gate door", new Vector3(gb.center.x, gb.min.y + 6, gb.min.z - 4), LevelKit.InfernoPalette.FireLight, 16, 1.6f);
                 }
-                foreach (var at in new[] { new Vector2(StairX0 - 2, StairZ0 - 1), new Vector2(StairX1 + 2, StairZ0 - 1), new Vector2(-16, -40), new Vector2(-30, -38) })
+                // 栏墩灯：大台阶脚两盏 + 堤两头各一对（堤头落在码头 / 税关岩基上，按实际顶面摆）
+                var cd = (CauseB - CauseA).normalized;
+                var cp = new Vector2(cd.y, -cd.x) * 3.4f;
+                foreach (var at in new[] { new Vector2(StairX0 - 2, StairZ0 - 1), new Vector2(StairX1 + 2, StairZ0 - 1),
+                                           CauseA - cd * 1.5f + cp, CauseA - cd * 1.5f - cp, CauseB + cd * 1.5f + cp, CauseB + cd * 1.5f - cp })
                 {
-                    PutH(Lantern, small, G(at, 0), 180, 1.6f, rep);
-                    PointLight(fx, "Lantern", G(at, 1.3f), LevelKit.InfernoPalette.LampLight, 6, 1.4f);
+                    var p = Surface(at);
+                    if (p.y < LavaY + 0.3f) { rep.Line($"栏墩灯 {at} 脚下是熔岩，跳过"); continue; }
+                    PutH(Lantern, small, p, 180, 1.6f, rep);
+                    PointLight(fx, "Lantern", p + Vector3.up * 1.3f, LevelKit.InfernoPalette.LampLight, 6, 1.4f);
                 }
                 if (statue) PointLight(fx, "Statue crown", WorldBounds(statue).max - new Vector3(WorldBounds(statue).extents.x, 4, WorldBounds(statue).extents.z), LevelKit.InfernoPalette.FireLight, 22, 2f);
+                if (ferry)
+                {
+                    // 关楼：楼阁里透出的火光 + 门洞暖光（概念图里关楼是左侧最暖的一块）
+                    var fb = WorldBounds(ferry);
+                    var toEye = (G(Eye) - fb.center).normalized;
+                    PointLight(fx, "Ferry pavilion", new Vector3(fb.center.x, fb.max.y - fb.size.y * 0.3f, fb.center.z), LevelKit.InfernoPalette.FireLight, 14, 3f);
+                    PointLight(fx, "Ferry door", new Vector3(fb.center.x, fb.min.y + 4, fb.center.z) + toEye * (fb.extents.x + 3), LevelKit.InfernoPalette.FireLight, 16, 3f);
+                    PointLight(fx, "Ferry face", new Vector3(fb.center.x, fb.center.y, fb.center.z) + toEye * (fb.extents.x + 6), LevelKit.InfernoPalette.FireLight, 20, 2.5f);
+                }
+                // 熔岩反光：熔岩自发光不照物体，在拱下、税关和鼎墩脚下贴着熔岩面放几盏低矮的橙色点光，拱洞和墙脚才有概念图那圈火光
+                foreach (var at in new[] { Vector2.Lerp(CauseA, CauseB, 0.3f), Vector2.Lerp(CauseA, CauseB, 0.75f), IslandC + new Vector2(-4, -13), PierAt + new Vector2(-6, -6) })
+                    PointLight(fx, "Lava bounce", At(at, 0.6f), LevelKit.InfernoPalette.FireLight, 12, 2.2f);
 
                 // 套件总览（远处一排）
                 Lineup(rep);
@@ -223,24 +283,32 @@ namespace Spiritfire.Art.Editor.Levels
             var gateC = gate ? WorldBounds(gate).center : At(GateAt, 18);
             var statueC = statue ? WorldBounds(statue).center : At(StatueAt, 48);
             var preview = PlayerRigBuilder.BuildPreview(PlayerRigBuilder.Liao, eye, Quaternion.LookRotation(gateC - eye), out var cam, out var fpRig);
+            float playerFov = cam.fieldOfView;
             try
             {
+                // 1 号图用概念图的镜头；其余机位用游戏视角（玩家实际看到的）
+                var conceptPos = eye + Vector3.up * ConceptLift;
+                float yaw = ConceptYaw * Mathf.Deg2Rad, pitch = ConceptPitch * Mathf.Deg2Rad;
+                var conceptFwd = new Vector3(Mathf.Sin(yaw) * Mathf.Cos(pitch), Mathf.Sin(pitch), Mathf.Cos(yaw) * Mathf.Cos(pitch));
+                cam.fieldOfView = ConceptFov;
+                LevelKit.Capture(cam, fpRig, "zr31", new[] { ("Concept", conceptPos, conceptPos + conceptFwd * 100, false) });
+                cam.fieldOfView = playerFov;
                 LevelKit.Capture(cam, fpRig, "zr31", new[]
                 {
-                    ("Concept", eye + Vector3.up * 2.5f, At(new Vector2(4, 40), 7), false),
                     ("Spawn", eye, gateC, false),
-                    ("Causeway", At(CauseA + (CauseB - CauseA) * 0.08f, 6), At(IslandC, 7), false),
-                    ("Ding", At(new Vector2(6, -28), 7), At(PierAt, 11), false),
-                    ("GateApproach", G(new Vector2(10, 30), 4.2f), gateC, false),
+                    ("Causeway", At(CauseA + (CauseB - CauseA) * 0.05f, 7.5f), At(IslandC, 7), false),
+                    ("Ding", At(CauseA + (CauseB - CauseA) * 0.5f, 9), At(PierAt, 12), false),
+                    ("GateApproach", G(new Vector2(10, 34), 4.2f), gateC, false),
                     ("Statue", At(new Vector2(-22, 36), 10), statueC, false),
                     ("Aerial", new Vector3(-150, 150, -170), At(CraterC, 0), false),
                     ("Map", At(CraterC + new Vector2(0, -1), 360), At(CraterC, 0), false),
                     ("KitLarge", new Vector3((KitSplit + LineupX) * 0.5f, 16, -(KitSplit - LineupX) * 0.52f), new Vector3((KitSplit + LineupX) * 0.5f, 11, 0), false),
                     ("KitSmall", new Vector3((KitSplit + KitEnd) * 0.5f, 7, -(KitEnd - KitSplit) * 0.52f), new Vector3((KitSplit + KitEnd) * 0.5f, 3.5f, 0), false),
-                });
+                }, firstIndex: 2);
             }
             finally
             {
+                cam.fieldOfView = playerFov;
                 Object.DestroyImmediate(preview);
             }
         }
@@ -285,12 +353,23 @@ namespace Spiritfire.Art.Editor.Levels
             return float.IsNegativeInfinity(best) ? fallback : best;
         }
 
+        /// <summary>某点（世界 XZ）往下打射线的最高可站立面：地形或已摆的件（不算触发器，熔岩判定体是触发器）</summary>
+        static Vector3 Surface(Vector2 xz)
+        {
+            Physics.SyncTransforms();
+            float best = float.NegativeInfinity;
+            foreach (var hit in Physics.RaycastAll(new Vector3(xz.x, 400, xz.y), Vector3.down, 500, ~0, QueryTriggerInteraction.Ignore))
+                if (hit.point.y > best) best = hit.point.y;
+            return float.IsNegativeInfinity(best) ? G(xz) : new Vector3(xz.x, best, xz.y);
+        }
+
         static void BuildSpires(Transform parent)
         {
+            // 峡口两侧的（−76,20）（−88,56）（−30,96）让开主机位看峡口的视线（相对视轴 −11°），夹出概念图中间那道峡谷
             var spots = new (Vector2 at, float yaw, float h)[]
             {
-                (new(-60, -24), 20, 46), (new(-70, 26), 140, 56), (new(-50, 80), 75, 52), (new(-18, 104), 300, 46), (new(46, 98), 210, 56),
-                (new(72, 50), 330, 50), (new(72, -26), 260, 42), (new(-54, -66), 100, 38), (new(50, -66), 15, 36), (new(-78, 70), 190, 44),
+                (new(-60, -24), 20, 46), (new(-76, 20), 140, 50), (new(-30, 96), 75, 52), (new(-18, 104), 300, 46), (new(46, 98), 210, 56),
+                (new(72, 50), 330, 50), (new(72, -26), 260, 42), (new(-54, -66), 100, 38), (new(50, -66), 15, 36), (new(-88, 56), 190, 44),
             };
             foreach (var (at, yaw, h) in spots)
                 PutH(Spire, parent, G(at, -3), yaw, h, new LevelKit.Report());

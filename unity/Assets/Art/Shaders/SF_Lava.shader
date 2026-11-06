@@ -27,9 +27,11 @@ Shader "Spiritfire/Lava"
         _FlowSpeed("Churn Speed", Float) = 1
         _Agitation("Agitation (tide warning)", Range(0, 1)) = 0
         _CrackWidth("Crack Width (plate units)", Range(0.01, 0.4)) = 0.1
-        _MoltenAmount("Open Molten Amount", Range(0, 1)) = 0.35
+        _HeatCrackWiden("Crack Widening Where Hot (plate units)", Range(0, 0.3)) = 0.1
+        _MoltenAmount("Open Molten Amount (below 0 = crust and cracks only)", Range(-1, 1)) = 0.35
         _FlowStretch("Stretch Along Fast Flow", Range(0, 1)) = 1
         _BubbleRate("Bubble Rate", Range(0, 3)) = 1
+        _BubbleAmount("Bubble Coverage", Range(0, 1)) = 0.45
         _EdgeGlow("Shore Contact Glow", Range(0, 2)) = 1
 
         [Header(Shore)]
@@ -97,9 +99,11 @@ Shader "Spiritfire/Lava"
                 float _FlowSpeed;
                 half _Agitation;
                 half _CrackWidth;
+                half _HeatCrackWiden;
                 half _MoltenAmount;
                 half _FlowStretch;
                 half _BubbleRate;
+                half _BubbleAmount;
                 half _EdgeGlow;
                 float _ShoreWidth;
                 float _ShoreDepth;
@@ -247,7 +251,7 @@ Shader "Spiritfire/Lava"
                 float detail = saturate(1.6 - fwPlate * 18.0);
                 float3 v = Plates(wp * _PlateScale * 0.75, t);
                 float gap = v.y - v.x;
-                float crackW = (_CrackWidth + 0.1 * smoothstep(0.4, 0.7, heat) + agit * 0.08 + stretch * 0.12) * (1.0 - rim * 0.6);
+                float crackW = (_CrackWidth + _HeatCrackWiden * smoothstep(0.4, 0.7, heat) + agit * 0.08 + stretch * 0.12) * (1.0 - rim * 0.6);
                 crackW = max(crackW, fwPlate * 1.5);
                 float crack = 1.0 - smoothstep(crackW * 0.4, crackW, gap);
                 float core = 1.0 - smoothstep(0.0, crackW * 0.4, gap);
@@ -268,7 +272,7 @@ Shader "Spiritfire/Lava"
                     float period = (3.0 + h * 5.0) / max(0.2, _BubbleRate * (1.0 + agit * 1.5));
                     float cyc = _Time.y / period + h * 13.7;
                     float ph = frac(cyc);
-                    float on = step(0.55 - agit * 0.25, H21(bc + floor(cyc) * 0.731));
+                    float on = step(1.0 - _BubbleAmount - agit * 0.25, H21(bc + floor(cyc) * 0.731));
                     float2 cpos = 0.25 + 0.5 * float2(H21(bc + 3.3), H21(bc + 9.1));
                     float r = length(bf - cpos) * 3.0;
                     float rad = 0.12 + 0.5 * smoothstep(0.0, 0.85, ph);
