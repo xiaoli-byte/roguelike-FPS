@@ -425,7 +425,8 @@ namespace Spiritfire.Art.Editor.Levels
             None<Hud>("HUD");
             None<GameSession>("会话");
             int nAltars = Count<SpiritAltar>(), nSites = Count<EncounterSite>();
-            rep.Line($"灵火坛 {nAltars}（要点亮 {objective.AltarsNeeded}），遇敌 {nSites}（全部可选），兽群共 {Sites.Sum(s => s.units.Length)} 只");
+            rep.Line($"灵火坛 {nAltars}（要点亮 {objective.AltarsNeeded}），遇敌 {nSites}（全部可选），兽群共 {Sites.Sum(s => s.units.Length)} 只，遗物 {Count<LoreNote>()}，藏宝点 {Count<CachePOI>()}");
+            if (Count<LoreNote>() != 1 || Count<CachePOI>() != 0) rep.Fail("应有 1 份遗物（修鼓旧簿）、没有灵石窖藏");
             if (nAltars != 5 || objective.AltarsNeeded != FiresToUnlock || objective.altars.Length != 5) rep.Fail("灵火坛应 5 座、要点亮 3 座");
             if (nSites != 6 || objective.RequiredTotal != 0) rep.Fail("遇敌应 6 处、都不是必清（目标只看灵火）");
             foreach (var s in Sites.Where(s => s.altar.HasValue))
@@ -439,6 +440,16 @@ namespace Spiritfire.Art.Editor.Levels
                     : "✓ 出口在谷口经幡门里（RunPlan 里还没有 4-3）");
                 if (stage == null || stage.scene != ScenePath) rep.Fail($"RunPlan 的 4-3 应指向 {ScenePath}");
             }
+        }
+
+        /// <summary>守鼓人鼓楼：修鼓旧簿（LoreNote）在门前（离出生点有路由交互净空检查管），上台地的坡道不陡于 26°</summary>
+        static void CheckDrumTower(LevelKit.Report rep, LoreNote note)
+        {
+            rep.Section("守鼓人鼓楼");
+            rep.Line($"台地中心 ({TowerAt.x:F0}, {towerY:F1}, {TowerAt.y:F0})，比谷底高 {towerY - FloorY(TowerAt.y):F1} m；坡道 {LevelKit.RampGrade(RampFoot, rampFootY, RampTop, towerY):F1}°（{Vector2.Distance(RampFoot, RampTop):F0} m）");
+            if (!note || note.lines.Length == 0) rep.Fail("修鼓旧簿（LoreNote）没摆上");
+            else rep.Line($"✓ 修鼓旧簿：{note.lines.Length} 行，横幅「{note.bannerTitle}」，台词 {note.afterLines.Length} 句");
+            if (LevelKit.RampGrade(RampFoot, rampFootY, RampTop, towerY) > 26) rep.Fail("上鼓楼的坡道超过 26°");
         }
 
         // ───────────── 验收声明 ─────────────
@@ -463,7 +474,9 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("出生 · 南岸", spawnAt).Route("③ 西岸霜滩", G(SiteById("s3").altar.Value)).Route("② 北岸金林", G(SiteById("s2").altar.Value))
                 .Route("① 东岸塌方", G(SiteById("s1").altar.Value)).Route("④ 玛尼石滩", G(SiteById("s4").altar.Value)).Route("⑥ 谷口经幡门", gateCenter)
                 .Sight("出生 → 谷口主峰", spawnAt + Vector3.up * Eye, PeakTarget, 30)
-                .Sight("④ 玛尼石滩 → 谷口主峰", G(SiteById("s4").altar.Value, Eye), PeakTarget, 30);
+                .Sight("④ 玛尼石滩 → 谷口主峰", G(SiteById("s4").altar.Value, Eye), PeakTarget, 30)
+                .Sight("谷口草甸 → 守鼓人鼓楼", G(-165, 476, Eye), TowerTop, 8);
+            spec.slopePaths.Add(new SlopePath { name = "上鼓楼的坡道", points = new List<Vector2> { RampFoot, Vector2.Lerp(RampFoot, RampTop, 0.5f), RampTop }, maxSlope = 26f });
             spec.slopePaths.Add(new SlopePath { name = "东岸车路", points = road.Where((p, i) => i % 3 == 0 && p.y > -420 && p.y < 560).ToList(), maxSlope = 14f });
             return spec;
         }

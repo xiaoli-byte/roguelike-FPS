@@ -257,7 +257,7 @@ namespace Spiritfire.Art.Editor.Levels
             float baseD = Mathf.Lerp(0.82f, 0.42f, onFloor) * (1 - meadow * 0.85f);
             float shore = S(1.06f, 1.1f, g.lakeR) * (1 - S(1.12f, 1.25f, g.lakeR));
             baseD = Mathf.Max(baseD, 0.62f * shore);
-            float near = S(16, 30, ds) * SiteClearing(x, z);
+            float near = S(16, 30, ds) * SiteClearing(x, z) * TowerClearing(x, z);
             float strip = 0.3f * S(0.56f, 0.7f, Fbm(z * 0.03f, g.y * 0.012f, 3, 607)) * S(30, 40, slope) * (1 - S(62, 72, slope));
             return Mathf.Clamp01(baseD * (cliff + 0.06f + strip) * alt * near);
         }

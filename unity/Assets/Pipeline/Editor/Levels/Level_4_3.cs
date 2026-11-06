@@ -99,6 +99,7 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.ResetCache();
             LevelKit.ResetPlateauCache();
             road = Landform.Spline(RoadCtrl, 8);
+            InitTower();
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var env = new GameObject("Environment").transform;
             var world = new GameObject("World").transform;
@@ -121,6 +122,7 @@ namespace Spiritfire.Art.Editor.Levels
                 BuildBackdrop(env, toSun.normalized, Theme.fogColor);
                 var lake = BuildLake(world);
                 BuildSiteProps(props);
+                var note = BuildDrumTower(props, markers);
                 Physics.SyncTransforms();
                 var trees = PlantTrees();
                 var details = BuildDetails();
@@ -162,6 +164,7 @@ namespace Spiritfire.Art.Editor.Levels
                 rep.Line($"地被：{string.Join("、", details.Select(kv => $"{kv.Key} {kv.Value}"))}");
                 CheckWalk(rep);
                 CheckSceneContents(rep, scene, portal, objective, altars, sites);
+                CheckDrumTower(rep, note);
                 LevelValidator.Run(Spec(), rep);
                 rep.Section("资产缺口（白盒）");
                 foreach (var kv in LevelKit.PlateauPlaceholders.OrderByDescending(kv => kv.Value)) rep.Line($"    · {kv.Key} ×{kv.Value}");
@@ -176,6 +179,7 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 ts = null;
                 flags = null;
+                towerOn = false;
             }
         }
 
@@ -368,6 +372,10 @@ namespace Spiritfire.Art.Editor.Levels
                     ("Aerial", new Vector3(-40, 180, -420), new Vector3(-40, 60, 200), false),
                     ("Ruins", E(-95, 300, 2.2f), G(-75, 330, 1.5f), false),
                     ("Gate", E(-112, 500, 2), gateCenter + Vector3.up * 3, false),
+                    ("DrumTower", E(-206, 462, 1.62f), new Vector3(TowerAt.x, towerY + 7, TowerAt.y), false),
+                    ("DrumTowerDoor", new Vector3(TowerAt.x, towerY, TowerAt.y) + new Vector3(TowerFacing.x, 0, TowerFacing.y) * 16 + Vector3.up * 1.62f,
+                        new Vector3(TowerAt.x, towerY + 5, TowerAt.y), false),
+                    ("MeadowToTower", E(-160, 474), TowerTop + Vector3.down * 8, false),
                 });
                 cam.fieldOfView = 72;
                 LevelKit.Capture(cam, fpRig, "level_4-3_fp", new[] { ("SpawnFP", hero, heroLook, true) });

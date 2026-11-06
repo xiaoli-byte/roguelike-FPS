@@ -52,7 +52,7 @@ namespace Spiritfire.Art.Editor.Levels
 
         public struct Ground
         {
-            public float y, snow, gravel, rock, fluid, road, lakeR, floorMask, east, west;
+            public float y, snow, gravel, rock, fluid, road, lakeR, floorMask, east, west, tower, path;
         }
 
         /// <summary>
@@ -110,6 +110,20 @@ namespace Spiritfire.Art.Editor.Levels
             // 谷口：北边地形边缘抬成一道垭口（地平线从这里接上远景雪峰）
             y += 70 * S(520, 700, z) * (0.6f + 0.4f * Fbm(x * 0.01f, 2.2f, 2, 547));
 
+            // 守鼓人鼓楼：西侧山腰压出一块平台（台面取原地形在台心的高度），一条直坡道从谷底上去（Level_4_3.Tower.cs）
+            if (towerOn)
+            {
+                var pp = new Vector2(x, z);
+                float dT = Vector2.Distance(pp, TowerAt);
+                if (dT < TowerFlat + 22)
+                {
+                    y = Mathf.Lerp(y, towerY, 1 - S(TowerFlat, TowerFlat + 20, dT));
+                    g.tower = 1 - S(TowerFlat - 1, TowerFlat + 2, dT);
+                }
+                y = LevelKit.CutRamp(pp, y, RampFoot, rampFootY, RampTop, towerY, 5f, 5f, out float rm);
+                g.path = rm;
+            }
+
             // 车路：路面压平到谷底高程 + 0.6 m（路在东岸山脚，挖进林坡裙一点）
             float rd = RoadDistance(new Vector2(x, z));
             if (rd < 12)
@@ -136,7 +150,7 @@ namespace Spiritfire.Art.Editor.Levels
 
             // 分层倾向
             // 湖岸卵石滩：水线上下一圈；路面
-            g.gravel = Mathf.Max(g.road, (1 - S(1.03f, 1.09f, lr + (Fbm(x * 0.05f, z * 0.05f, 2, 553) - 0.5f) * 0.06f)) * S(0.9f, 0.97f, lr));
+            g.gravel = Mathf.Max(Mathf.Max(g.road, g.path * 0.9f), Mathf.Max(g.tower * 0.85f, (1 - S(1.03f, 1.09f, lr + (Fbm(x * 0.05f, z * 0.05f, 2, 553) - 0.5f) * 0.06f)) * S(0.9f, 0.97f, lr)));
             // 雪：雪线以上（东边高、西边低一点）、西岸近水处的霜雪斑（照片左下）
             // 东岸大山只有山顶一点雪（照片里右边是一整面灰白花岗岩），西岸低一些
             float snowLine = 300 + 130 * S(150, 330, x) + (Fbm(x * 0.01f, z * 0.01f, 3, 557) - 0.5f) * 80 - 30 * S(-100, -300, x);
