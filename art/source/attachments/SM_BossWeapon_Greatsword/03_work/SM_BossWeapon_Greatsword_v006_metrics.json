@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 14551,
+    "verts": 7236
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.26364,
+    "iou": 0.749,
+    "iou_per_view": {
+      "front": 0.879,
+      "left": 0.631,
+      "back": 0.867,
+      "right": 0.553
+    },
+    "size_m": [
+      0.769,
+      0.369,
+      3.2
+    ],
+    "reference_m": [
+      0.77,
+      0.37,
+      3.2
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "provider",
+  "ao": {
+    "mean": 0.728,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_BossWeapon_Greatsword_tripo_basecolor",
+    "normal": "SM_BossWeapon_Greatsword_tripo_normal",
+    "metal_rough": "SM_BossWeapon_Greatsword_tripo_rm",
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_BossWeapon_Greatsword_LOD0",
+      "tris": 14551,
+      "verts": 7236,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.619,
+      "bbox_min": [
+        -0.3847,
+        -0.1845,
+        -2.65
+      ],
+      "bbox_max": [
+        0.3847,
+        0.1845,
+        0.55
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_BossWeapon_Greatsword/04_export/SM_BossWeapon_Greatsword_v006.glb",
+    "bytes": 615168
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 68.2,
+  "_seconds": 71.4
+}
