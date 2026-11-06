@@ -210,6 +210,16 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 | 20261104T132513 | InfernoMoltenGateFrame（额外，11-04 补件） | 网格 P2.0 三角面 15000 | [04a2354f](https://studio.tripo3d.ai/workspace/generate/04a2354f-f193-4eca-85dc-c6c172d3c0d7) | 100 | 155 |
 | 20261104T132732 | InfernoMoltenGateFrame（额外，11-04 补件） | 纹理 | [04a2354f](https://studio.tripo3d.ai/workspace/generate/04a2354f-f193-4eca-85dc-c6c172d3c0d7) | 30 | 125 |
 
+**新账号（2026-11-06 起）**：用户 11-06 换到新账号、充值到 31800。这条线（T1 重出贴图）的软上限 6000，超过先停。
+「纹理生成」= 左栏纹理生成上传我们自己的网格、打开「使用原始 UV」、勾「去光处理」、4K，每次 **20**（8K 有一次试用，没用）；导出 GLB 4k 不花积分。做法见第 7 节。
+
+| 时间（UTC） | 件 | 项目 | Tripo 任务 | 积分 | 余额 |
+|---|---|---|---|---|---|
+| 20261106T1543 | 熔心魔将 DS v006 概念图 ×4 | 图片页 GPT Image 2.5（免费额度） | 图片任务 5a932e45 | 0 | 31800 |
+| 20261106T1548 | InfernoFireAltar | 纹理生成①：文字提示（「炭不是火」） | [3b1cc693](https://studio.tripo3d.ai/workspace/texture/3b1cc693-09b2-464a-a37e-13d8d6740b11) | 20 | 31780 |
+| 20261106T1551 | InfernoFireAltar | 纹理生成②：文字提示改写（不提火） | 同上 | 20 | 31760 |
+| 20261106T1555 | InfernoFireAltar | 纹理生成③：参考图（当前火坛渲染、炭床涂暗）——**采用** | 同上 | 20 | 31740 |
+
 ## 6. 和设计不一致 / 没做的
 
 | 件 | 情况 | 地图路怎么办 |
@@ -227,3 +237,33 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 其他：
 - ART6 的 10 件沿用旧概念，堤道段、岩台沿、岩肋的熔岩缝画成了火舌形的亮橙带，属于平涂色块（走 `T_E`），没有火焰几何。
 - 链条（悬炉吊链、吊鼎四链、吊车链）一律用 SM_Prop_InfernoChainLink 在运行时拼，件里不带链。
+
+## 7. 重出贴图（2026-11-06 起，Tripo 新账号）
+
+第三章的 Tripo 件贴图太碎（[ch3-look.md](ch3-look.md) 第一节：满件小橙点、红漆块、刻花，法线按底色亮度算出来、满强度），3-1 火坛的白黄火苗烘在贴图里。
+这一轮只换贴图：**网格、UV、尺寸、原点、挂点、碰撞、关卡摆放都不动**。
+
+### 7.1 做法
+
+1. **上传件**：`python art/pipeline/retexture.py strip <ID>` → `art/source/_tmp/retexture/<ID>_upload.glb`（只有几何 + 原 UV，没有材质、不压缩）。
+   Tripo 件取当前高模的 Tripo 原件（`02_highpoly/HP_*_source.glb`），其他来源（Hunyuan 的 3-1 旧件）取已发布的 GLB。
+2. **Tripo Studio 左栏「纹理生成」→「上传 3D 模型」**：「找到最佳角度」对话框里打开 **「使用原始 UV」**，确认；面板里勾 **「去光处理」**、分辨率 4K，每次 20 积分。
+   - 提示方式三选一：参考图 / 多视图 / 文字。**参考图最稳**：文字说「炭不是火」也会照形状画成火苗，还会自己改配色（火坛的铜鼎被涂成朱红）。
+   - 参考图 = 我们自己渲染的现有模型，在图上先改好要改的地方（火坛：炭床涂暗）。
+3. **导出 GLB 4k**（不花积分）：只带一张底色（4096² JPEG）；网格被归一化到高 1，还可能绕竖轴转 90°，**UV 不变**（火坛逐顶点核对：位置差 0.04 mm、UV 差 < 0.0002）。所以只取底色，几何一律用我们自己的。
+4. **入库**：
+   - Tripo 件：`retexture.py hp <ID> --file <导出> --task <链接>` → `_tripo_inbox/<UTC>_<ID>_retex.glb`（Tripo 原件 + 新底色）+ 回执 → `tripo_assets.py import` → `assetctl build / validate / review / approve / publish`。build 按新底色重算法线（底色亮度派生）、自发光遮罩（`emissive_key`）和 AO，对齐结果和原来一样。
+   - 非 Tripo 件（高模不在本机，build 重跑不了）：`retexture.py build <ID> --file <导出> --task <链接> [--bc <处理过的底色>] [--e <自发光>]` → 新 build 版本（发布件换 BC / E，法线、ORM 照旧）→ `assetctl validate / review / approve / publish`。
+   - 两条路都先核对导出和上传件的 UV 是否逐顶点对得上，对不上就拒绝（上传时忘了开「使用原始 UV」就会这样）。
+5. `unity_export.py <ID>` → `bridge.sh sync` → 重建用到它的关卡。
+
+### 7.2 3-1 火坛 SM_Tripo_InfernoFireAltar（build v002）
+
+- 原来：Hunyuan 2mv 网格 + 概念投影贴图，盆顶尖锥形的「火苗」是网格的一部分，贴图里涂成白黄色、自发光遮罩是一片白，比怪还亮。
+- 现在：盆里那一堆（盆口以上、盆内）是暗紫黑的炭，只有极少几处暗红余烬（自发光覆盖 0.05%，基本不发光）；铜鼎回纹、朱漆日纹板、四角铁链照原设计，平涂、去光。
+  - Tripo 出图后，又按 3D 位置把炭床区域（y > 1.74 m 且离中轴 < 0.44 m，或 y > 1.99 m）在 UV 上压暗 50%。
+  - 尖锥网格还在（改网格会动尺寸），现在读作一堆炭；火舌、光晕、点光全由 `EnvFlame.Altar` 运行时挂（焰心不到近白，第 3 节色彩脚本）。
+- 挂点：registry 补 `FX_AltarFire` (0, 2.03, 0) ↑ = 炭床顶面中心 = `EnvFlame` 原来按包围盒算的火舌起点（2.356 × 0.86）。网格没变，原来的火焰位置照样对得上。
+- 尺寸 1.134 × 2.356 × 1.151、底面中心原点、3000 / 1000 三角面、UV、法线、ORM 都和 v001 一样；校验 33 项通过。
+- 老问题，没有恶化：基座朝 +Z 的那块面板在原 UV 上的岛只有另外三面的一半大，还有 18% 的纹素和别的面重叠（另外三面 4–5%）；旧贴图同一处就是灰糊，新贴图也一样偏灰。要根治得重展 UV。
+- Tripo 任务 [3b1cc693](https://studio.tripo3d.ai/workspace/texture/3b1cc693-09b2-464a-a37e-13d8d6740b11)，前两次文字提示作废，第三次参考图采用，共 60 积分。

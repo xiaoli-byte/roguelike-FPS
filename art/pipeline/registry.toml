@@ -4361,6 +4361,9 @@ architecture_role = "dressing"
 style_theme = "zhurong"
 keep_glow = "none"
 material = { roughness = 0.6, metallic = 0.4 }
+# 2026-11-07 build v002：烘在贴图里的白黄火苗去掉了（Tripo 纹理生成，使用原始 UV，docs/art/ch3-kit.md 第 7 节），盆里只剩暗色炭床；
+# 火焰全交给 EnvFlame.Altar。FX_AltarFire = 炭床顶面中心（= EnvFlame 的火舌起点：包围盒高 2.356 × 0.86）
+fx_points = [{ name = "FX_AltarFire", pos = [0, 2.03, 0], dir = [0, 1, 0] }]
 brief = """A fire altar brazier 1.4m wide, 2.4m tall: a square stepped dark basalt pedestal with a vermilion lacquer panel and a bronze fire-sun disc on every face, topped by a wide aged-bronze ding cauldron bowl on three thick legs, the bowl heaped with glowing coals and a few chunky stylised flame tongues (all painted as opaque bright orange-yellow solid shapes). Chunky readable shapes, one solid connected piece on a flat base, identical on all four sides."""
 
 [assets.SM_Tripo_InfernoFurnaceTower]

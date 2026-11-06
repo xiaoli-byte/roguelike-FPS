@@ -379,7 +379,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -438,11 +438,68 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:03:28",
+          "files": {
+            "SM_Tripo_InfernoFireAltar_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoFireAltar_v002.glb",
+              "sha256": "29e9d004118be2d034b0065ac363f0b8c87f6213ceeb1a09d22a28b7d14b86e5"
+            },
+            "T_Tripo_InfernoFireAltar_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFireAltar_E.png",
+              "sha256": "b13fa76c54d0326c448eb212d589173dc9f91391bb895124e215053ecc625242"
+            },
+            "T_Tripo_InfernoFireAltar_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFireAltar_N.png",
+              "sha256": "f2b16ec6ecad043efd16e98e468ac182bb7f5247fe329c21224f006e42c15086"
+            },
+            "T_Tripo_InfernoFireAltar_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFireAltar_ORM.png",
+              "sha256": "6597b58a83163b3239f3c8ef383cea9d5c1b7999448ea9db168ab84a8e70376a"
+            },
+            "T_Tripo_InfernoFireAltar_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFireAltar_BC.png",
+              "sha256": "c7ecc555381fec973fdd8669e04047fb1e85196214a6caa5dc98635569b7e56f"
+            },
+            "SM_Tripo_InfernoFireAltar_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoFireAltar_v002_metrics.json",
+              "sha256": "c12add60b7a887674bd2d51a06957551738f2af396cd2b2edd615a152da29f75"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/3b1cc693-09b2-464a-a37e-13d8d6740b11",
+          "align_iou": 0.908,
+          "uncovered_ratio": 0.333,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1434
+            },
+            {
+              "tris": 1000,
+              "verts": 434
+            }
+          ],
+          "export_kb": 287.5,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "去掉烘在贴图里的白色火苗：Tripo 纹理生成（新账号，上传发布网格、使用原始 UV、去光处理、4K、参考图 = 当前火坛渲染且炭床涂暗），炭床区域（盆口以上 / 盆内）再压暗 50%，自发光只留暗红余烬；网格、UV、法线、ORM 不变；火焰交给 EnvFlame.Altar",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -458,11 +515,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:03:34",
+          "files": {
+            "SM_Tripo_InfernoFireAltar_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoFireAltar_v002_validation_v002.json",
+              "sha256": "6ae88ceb1c0b5f4dc16290b92ad9b853adf5edb01da129f775d50286d3d1ceb6"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -482,11 +554,30 @@
             "note": "2mv 种子 20261003：阶梯玄武岩座（朱漆日纹板、铁链）、三足铜鼎盆、炭堆与火舌与概念一致，四面一致；炭火与火舌自发光；实测 1.13×2.36×1.15 m；IoU 0.908，校验 0 警告，LOD 无开口边。",
             "time": "2026-10-11 23:07:17"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:03:59",
+          "files": {
+            "SM_Tripo_InfernoFireAltar_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoFireAltar_v002_review_v002.png",
+              "sha256": "c1f19eba8dd56024ef5b1caec159e547f024dccb47909709e947b6975d2b75ed"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "Tripo 纹理生成（新账号，使用原始 UV，去光）：炭床 / 火苗区涂成暗紫黑炭，不再有白黄火苗；铜鼎、朱漆日纹板、铁链照原设计；网格 / UV / 法线 / ORM 不变。正面（+Z）基座面板偏灰是原 UV 的老问题（旧贴图同处也是灰糊），没有恶化",
+            "time": "2026-11-07 00:04:30"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -498,6 +589,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoFireAltar.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 00:04:31",
+          "files": {
+            "SM_Tripo_InfernoFireAltar.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoFireAltar.glb",
+              "sha256": "29e9d004118be2d034b0065ac363f0b8c87f6213ceeb1a09d22a28b7d14b86e5"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_InfernoFireAltar.glb"
         }
       ]
