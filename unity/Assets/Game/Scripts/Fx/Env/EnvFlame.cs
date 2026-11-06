@@ -41,11 +41,12 @@ namespace Spiritfire.Game
                 light = new Color(1f, 0.62f, 0.28f), lightRange = 8f, lightIntensity = 2.6f, sparks = 3f,
                 halo = new Color(1f, 0.55f, 0.18f, 0.35f), haloSize = 1.6f,
             },
+            // 火坛（第三章）：焰心不到近白、光晕收小——去色后火坛不比怪亮（docs/art/composition.md 第 6 节「最高明度留给怪」，2026-11-06 美术清理）
             Kind.Altar => new Spec
             {
-                anchor = 0.86f, height = 0.85f, tongues = 3, hot = new Color(1f, 0.96f, 0.8f), mid = new Color(1f, 0.62f, 0.2f), tip = new Color(0.85f, 0.22f, 0.08f),
-                light = new Color(1f, 0.55f, 0.22f), lightRange = 9f, lightIntensity = 3f, sparks = 4f,
-                halo = new Color(1f, 0.5f, 0.15f, 0.4f), haloSize = 1.8f,
+                anchor = 0.86f, height = 0.85f, tongues = 3, hot = new Color(0.95f, 0.6f, 0.3f), mid = new Color(0.85f, 0.38f, 0.12f), tip = new Color(0.6f, 0.16f, 0.06f),
+                light = new Color(1f, 0.55f, 0.22f), lightRange = 9f, lightIntensity = 2f, sparks = 3f,
+                halo = new Color(1f, 0.45f, 0.14f, 0.15f), haloSize = 1.3f,
             },
             Kind.Incense => new Spec { anchor = 0.86f, height = 0, tongues = 0, smoke = 1.6f, sparks = 0.4f },
             // 灯笼：火苗在灯罩里看不见——灯头外一圈呼吸的冷光晕（光晕片穿过灯头，露在灯罩轮廓外的那圈就是光）+ 点光

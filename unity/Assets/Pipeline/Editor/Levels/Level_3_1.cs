@@ -552,6 +552,8 @@ namespace Spiritfire.Art.Editor.Levels
                 {
                     name = "Causeway Lake", center = new Vector3(2, LavaY, 13), shape = LavaShape.Box, size = LavaBox, depth = 2.5f, depthShore = true,
                 }, world);
+                // 熔湖占全图四成多、大半是主路不经过的远景：整片湖面用暗壳材质（暗色结壳少亮缝），亮缝和岸边亮边只做危险提示，不和怪抢明度
+                if (lava.surface && LevelKit.Ch3LavaCrust(Dir, "LakeCrust") is { } crust) lava.surface.sharedMaterial = crust;
 
                 LevelKit.Boundary(Dir, Name, env, Playable, new Rect(Origin, Size), Bounds);
                 LevelKit.Weather(env, theme, Wind, 0.25f, new WeatherDirector.Region
@@ -1736,7 +1738,20 @@ namespace Spiritfire.Art.Editor.Levels
             var mid = (BridgeS + BridgeN) * 0.5f;
             var along = (BridgeN - BridgeS).normalized;
             lamps.AddRange(LevelKit.GuideBridgeHeads(Dir, root, mid, along, Vector2.Distance(BridgeS, BridgeN), BridgeW, (G(BridgeS).y + G(BridgeN).y) * 0.5f + 0.05f));
-            Debug.Log($"[Level] 3-1 引导灯：主路 {spots.Count} 盏 + 吊桥头 2 盏（共 {lamps.Count}）");
+            // 交战场地 30 m 内的灯压暗一档（灯球去色后不比怪亮，composition.md 第 6 节）；场地外的照旧指路
+            int dimmed = 0;
+            foreach (var lamp in lamps)
+            {
+                if (!lamp) continue;
+                var q = new Vector2(lamp.transform.position.x, lamp.transform.position.z);
+                bool near = false;
+                foreach (var c in new[] { FerryC, TollC, AnchorC, GateC })
+                    near |= Vector2.Distance(q, c) < 30f;
+                if (!near) continue;
+                LevelKit.DimGuideLamp(Dir, lamp);
+                dimmed++;
+            }
+            Debug.Log($"[Level] 3-1 引导灯：主路 {spots.Count} 盏 + 吊桥头 2 盏（共 {lamps.Count}，交战场地里压暗 {dimmed} 盏）");
         }
 
         // ───────────── 验收声明 ─────────────

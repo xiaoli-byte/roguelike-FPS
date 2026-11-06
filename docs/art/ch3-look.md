@@ -38,6 +38,8 @@
 | 程序材质 | 铸铁 / 甲板 / 焦木 / 木箱 / 玄武岩 / 铜 / 白盒退路 / 熔岩光带 / 灯，暗部色 (0.56, 0.5, 0.8) | `LevelKit.InfernoLook`（`LevelKit.Ch3Iron(dir)` 等） |
 | 正式件材质 | 法线 ×0.35、去饱和 12%、色调 (0.96, 0.94, 0.98)、金属 ×0.35、AO ×0.7、高光 0.12、边缘光 0.1、自发光 ×0.6（最亮最饱和留给怪、预警、引导灯和熔岩）、贴图 mip 偏移 +0.8（BC / N / ORM） | `ArtPrefabBuilder.ApplyInfernoEnvLook` / `ArtImportPostprocessor.MipBiasFor` |
 | 熔岩 | 共用 M_Lava：结壳偏紫 (0.09, 0.07, 0.1)、暗红透光压暗 (0.32, 0.035, 0.01)、开口熔流 0.15、缝宽 0.06、板块 0.16 / m、自发光 1.45——大面积熔岩湖是暗壳加少量亮缝，流得快的熔渠自动更亮（着色器按流速开口） | `Assets/Levels/_Shared/M_Lava.mat` |
+| 熔岩湖（大片、远景多） | 暗壳材质 `LevelKit.Ch3LavaCrust`：开口熔流 0.06、缝宽 0.05、板块 0.08 / m（十来米一块，视野里只剩几道缝）、自发光 1.25、壳下暗红 (0.22, 0.025, 0.008)；3-1 熔湖已用 | `LevelKit.InfernoLook`、`Level_3_1` |
+| 交战场地的光源 | 交战场地 30 m 内的青金引导灯换暗一档（`LevelKit.DimGuideLamp`：灵火固有色 / 自发光压到三成上下、点光 ×0.4）；火坛的跳动火焰焰心不到近白（EnvFlame.Altar）——去色后不比怪亮 | `LevelKit.InfernoLook`、`EnvFlame` |
 | 天气 | 落灰 / 软边界烟尘：紫褐烟 | `WeatherProfiles`（Ashfall、WhiteoutInferno） |
 
 **地图构建器里不写死颜色**：程序材质用 `LevelKit.Ch3*`，点光色用 `LevelKit.InfernoPalette.FireLight / LampLight`。

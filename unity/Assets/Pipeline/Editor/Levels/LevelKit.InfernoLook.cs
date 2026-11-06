@@ -78,6 +78,44 @@ namespace Spiritfire.Art.Editor.Levels
             return m;
         }
 
+        /// <summary>
+        /// 大片熔岩湖的暗壳材质：共用 M_Lava 的副本，开口熔流、缝宽、自发光再收一档——湖面读成暗色结壳加少量亮缝，
+        /// 不和怪抢明度（composition.md 第 6、7 节：黑底亮缝的龟裂熔岩不铺在交战视线上、大面积熔岩用暗色结壳）。
+        /// 岸边的接触亮边、涨潮预警照旧（着色器按深度 / _Agitation 画），危险还读得出。存成 {dir}/M_WB_{name}.mat
+        /// </summary>
+        public static Material Ch3LavaCrust(string dir, string name, float molten = 0.06f, float crack = 0.05f, float emission = 1.25f, float plateScale = 0.08f)
+        {
+            var src = LavaMaterial();
+            if (!src) return null;
+            var m = new Material(src) { name = $"M_WB_{name}" };
+            m.SetFloat("_MoltenAmount", molten);
+            m.SetFloat("_CrackWidth", crack);
+            m.SetFloat("_Emission", emission);
+            // 板块放大到十来米一块：开口少了以后壳面更多，板块小的话亮缝就织成一张网（龟裂熔岩），放大后视野里只剩几道缝；壳下透出的暗红再压一档
+            m.SetFloat("_PlateScale", plateScale);
+            m.SetColor("_DeepColor", new Color(0.22f, 0.025f, 0.008f));
+            SaveAsset(m, $"{dir}/M_WB_{name}.mat");
+            return m;
+        }
+
+        /// <summary>
+        /// 交战场地里的青金引导灯压暗一档（灯球不比怪亮：composition.md 第 6 节「最高明度留给怪」）：灵火 / 焰心换成暗一档的材质，点光 ×0.4。
+        /// 灯的名字、结构、位置不变（引导灯自查照旧数得到），远处看仍是青金色
+        /// </summary>
+        public static void DimGuideLamp(string dir, GameObject lamp)
+        {
+            if (!lamp) return;
+            // 灯球离镜头几米时会占一大块画面：固有色和自发光都压到原来的三成上下，去色后是中间调，青色还在
+            var flame = GlowMat(dir, "GuideLampFlameDim", new Color(0.08f, 0.24f, 0.22f), GuideCyan * 0.3f);
+            var core = GlowMat(dir, "GuideLampCoreDim", new Color(0.3f, 0.25f, 0.13f), GuideGold * 0.35f);
+            foreach (var r in lamp.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (r.name == "Flame") r.sharedMaterial = flame;
+                else if (r.name == "Flame Core") r.sharedMaterial = core;
+            }
+            foreach (var l in lamp.GetComponentsInChildren<Light>(true)) l.intensity *= 0.4f;
+        }
+
         static Material Ch3GlowMat(string dir, string name, Color emission)
         {
             var m = Ch3Mat(dir, name, InfernoPalette.GlowBase, 0.92f);
