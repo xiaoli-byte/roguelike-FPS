@@ -25,7 +25,7 @@ from PIL import Image
 import prepare_nature_batch as nature  # bounds-only reference + four-figure registration (sets SKIP_ENV on import)
 
 SCENE_STYLE = """Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the
-readable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant
+readable at a glance (art/README.md §11: never name other commercial games): bold chunky silhouettes, broad clean faceted planes, two or three dominant
 colour blocks, soft painted gradients and a few restrained edge accents. {theme} Matte stone,
 wood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,
 elaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting."""

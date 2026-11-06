@@ -56,3 +56,13 @@ ONE low-angle view looking UP a vast terraced foundry inside a volcano, climbing
 ```
 ONE wide view from a high lookout on the south rim of a deep lava crater, looking down and across to its floor. MUST INCLUDE: a sacred stone road spiralling down the crater wall in switchbacks, lined with giant bronze guardian statues and one stone ceremonial archway; a sluice gate tower over a molten channel halfway down; at the crater floor, a round domed furnace hall cast of black iron, shaped like an iron heart, ringed by a moat of molten iron with ONE narrow stone bridge; furnace mouths in the hall's shell glowing orange; small warm lights of a camp and a statue before the bridge; four thin lavafalls pouring into the crater from the rim. Solemn, sacred, final-battle mood.
 ```
+
+## 3-1 修订（2026-11-06/07）
+
+| 版本 | 文件 | 结论 |
+|---|---|---|
+| v1 | `3-1-molten-lake-pass.webp` | **作废**。用户：「熔岩里面为什么还会有船，正常不应该被熔岩烧掉了吗」——木船、木码头、立在熔岩里的木桩都不合逻辑 |
+| v2 | `3-1-molten-lake-pass-v2.webp` | 以 v1 为参考图改：去船、木码头换玄武岩石台、碰熔岩的一律石 / 铸铁；按 `docs/art/composition.md` 去掉堤道上的幡杆和高灯柱（中景假人形），引导灯降到桥栏上，两座鼓楼一高一矮。`composition_check`：颜色 74/25/1、密度 5/38/57 → 点缀色不足、太满 |
+| **v3（选定）** | `3-1-molten-lake-pass-v3.webp` | 以 v2 为参考只做减法：熔岩湖改平滑暗壳 + 几道引向宫门的长亮缝，崖面和天空做成大块安静面，亮橙只给熔缝、宫门、火盆、神像。`composition_check`：颜色 48/48/4、明度均 20 跨 35、密度 17/66/17（疏密比 30）；安静区仍 < 40%（提示），进引擎后用平滑熔岩暗壳和烟雾天再拉 |
+
+v3 是拆场景套件的依据（`docs/art/zhurong-kit-31.md`）。注意：v3 里的祝融像、宫门圆日轮门是旧设计，套件里已改成楚式（见套件文档「文化依据」），场景按套件搭，不照这两处。
