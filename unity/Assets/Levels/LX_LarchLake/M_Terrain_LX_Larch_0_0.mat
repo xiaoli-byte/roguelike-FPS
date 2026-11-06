@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Terrain_LX_Larch_0_0
+  m_Shader: {fileID: 4800000, guid: 88d3cf9a54377ad49b1fe0fd645f09c2, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _STEEP_TRIPLANAR
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ControlMap:
+        m_Texture: {fileID: 1546872280073708977, guid: 4948f567542218546a93e0cc5b9c4784, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer0:
+        m_Texture: {fileID: 2800000, guid: 66361bbcbe242374b89f10e66a0f3a53, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer1:
+        m_Texture: {fileID: 2800000, guid: e013e2c9aafadd641b4a737876471dec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer2:
+        m_Texture: {fileID: 2800000, guid: 4a0e89db4ee99994985fd3065b1f76fd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer3:
+        m_Texture: {fileID: 2800000, guid: 5a086b4dd5ea58146acac488d011aadf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightNormalTex:
+        m_Texture: {fileID: 2800000, guid: c5e19a51cfcb8de4a82bb8cc3eb1e357, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MacroTex:
+        m_Texture: {fileID: 2800000, guid: 0633fcf32a969b34993310107aa04d72, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TerrainHolesTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WarpTex:
+        m_Texture: {fileID: 2800000, guid: d994236f23c639240adeefc98849ad26, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AmbientStrength: 1
+    - _HeightBlend: 0.8
+    - _HeightBlendDepth: 0.2
+    - _LightNormalBlend: 0.75
+    - _MacroScale: 70
+    - _MacroStrength: 0.3
+    - _RampSoftness: 0.3
+    - _RampThreshold: 0
+    - _RimPower: 5
+    - _RimStrength: 0.05
+    - _RockDetile: 0.45
+    - _RockScale: 18
+    - _RockWarp: 0.3
+    - _ShadowLift: 0.22
+    - _SlopeDarken: 0.25
+    - _SteepTriplanar: 1
+    - _WarpScale: 17
+    m_Colors:
+    - _LayerTile: {r: 8, g: 5, b: 10, a: 18}
+    - _RimColor: {r: 1, g: 0.92, b: 0.8, a: 1}
+    - _ShadowTint: {r: 0.55, g: 0.62, b: 0.86, a: 1}
+    - _SteepFade: {r: 0.43, g: 0.62, b: 0.58, a: 0.79}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
