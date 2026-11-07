@@ -169,7 +169,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -196,11 +196,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 14886,
           "source_sha256": "94337e3f74914aff1ec724f1c0df22942442163559877fd8dd0be032e52a6a97"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:50:14",
+          "files": {
+            "HP_SM_Tripo_ZhurongDrumTower_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v002_source.glb",
+              "sha256": "11e5efa7760e060eeb441229ac043ff18f335c7fc5c0f10e8a10a17c7614f0b9"
+            },
+            "HP_SM_Tripo_ZhurongDrumTower_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v002.glb",
+              "sha256": "8926e209f67b4481ea814e0d29af04288b1b3ded9c431183407ca7fd2929a674"
+            },
+            "HP_SM_Tripo_ZhurongDrumTower_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v002_graph.json",
+              "sha256": "62b094bbf3e360eb6bd00419c798804b54181763efa57c64302569958541dccd"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 14886,
+          "source_sha256": "11e5efa7760e060eeb441229ac043ff18f335c7fc5c0f10e8a10a17c7614f0b9"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:28:10",
+          "files": {
+            "HP_SM_Tripo_ZhurongDrumTower_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v003_source.glb",
+              "sha256": "92524bdc42c19f23b8387965a10a3f62e0091106397a6a56a8c1850d1a55ad4f"
+            },
+            "HP_SM_Tripo_ZhurongDrumTower_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v003.glb",
+              "sha256": "0e7de8c1070b41bdbe67864b1fbe5e48b9b9d49999fb33fac5285f5724d15dd8"
+            },
+            "HP_SM_Tripo_ZhurongDrumTower_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongDrumTower_v003_graph.json",
+              "sha256": "806131fe0c02724dad2394e5b0a7cd24ce01ded1ab5e5b2b2a0ead7df10c5742"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 14886,
+          "source_sha256": "92524bdc42c19f23b8387965a10a3f62e0091106397a6a56a8c1850d1a55ad4f"
         }
       ]
     },
     "build": {
-      "current": 2,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -311,11 +363,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 21:51:22",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v003.blend": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v003.blend",
+              "sha256": "dca018a434eefe166a5fe836ce49a393c5fdaf680ee1a78ca413ff969de67471"
+            },
+            "SM_Tripo_ZhurongDrumTower_v003.glb": {
+              "path": "04_export/SM_Tripo_ZhurongDrumTower_v003.glb",
+              "sha256": "ca168943bdcf6bc8e9fbca8f50a970880eb9a2651f939ee6b72eb2e1580178e8"
+            },
+            "SM_Tripo_ZhurongDrumTower_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v003_metrics.json",
+              "sha256": "6cf8f3020417fc4b3c625a83b566a2ad5ea7cc00a3a2d9da98c75feeefb459ec"
+            },
+            "T_Tripo_ZhurongDrumTower_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongDrumTower_BC.png",
+              "sha256": "aac13701aedba7e0522a81065b23043e162c39aac7523ebbed1671758ccda0fa"
+            },
+            "T_Tripo_ZhurongDrumTower_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongDrumTower_E.png",
+              "sha256": "136a962cae193d9f3eac569e1c1618d0575c1c7e43c2de7ec7ad2653eea4d491"
+            },
+            "T_Tripo_ZhurongDrumTower_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongDrumTower_N.png",
+              "sha256": "f349912b393f3bd388d21f46aeff1811a9192f5023d1b12fac7788c23d3543d2"
+            },
+            "T_Tripo_ZhurongDrumTower_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongDrumTower_ORM.png",
+              "sha256": "29224d6b66efc262b2a5d21625f24fdfb94866805b004d00aba5029a0f2b5225"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.624,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14886,
+              "verts": 8046
+            }
+          ],
+          "export_kb": 874.0,
+          "seconds": 66.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 22:29:26",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v004.blend": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v004.blend",
+              "sha256": "04d93e682c550dcb41ebf8c2ea1a81655edac303615b788c4b13b8f2fecb183c"
+            },
+            "SM_Tripo_ZhurongDrumTower_v004.glb": {
+              "path": "04_export/SM_Tripo_ZhurongDrumTower_v004.glb",
+              "sha256": "70669a535720597a9b5971905bebbf0ec518c80b83efa4aace6f17520ccd046a"
+            },
+            "SM_Tripo_ZhurongDrumTower_v004_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongDrumTower_v004_metrics.json",
+              "sha256": "d0e3a5585fe85b5d2fefef51b9df631777c792ddfa9ae873ff012851ab209148"
+            },
+            "T_Tripo_ZhurongDrumTower_BC.png": {
+              "path": "03_work/textures_v004/T_Tripo_ZhurongDrumTower_BC.png",
+              "sha256": "dcd4fbcebc2ac6af00a3e6d96cb3312c4ffabc2bb5394bd302944d20d8a857d8"
+            },
+            "T_Tripo_ZhurongDrumTower_E.png": {
+              "path": "03_work/textures_v004/T_Tripo_ZhurongDrumTower_E.png",
+              "sha256": "c313261a89087c2af0351b5d5aa1e1651ccc633a4247021bd25d0fc8c2ba8a79"
+            },
+            "T_Tripo_ZhurongDrumTower_N.png": {
+              "path": "03_work/textures_v004/T_Tripo_ZhurongDrumTower_N.png",
+              "sha256": "c36d8330a1218bb98f0e8cd6a890e826f676bbce7163aeb85b8e5d8d3b6abfc6"
+            },
+            "T_Tripo_ZhurongDrumTower_ORM.png": {
+              "path": "03_work/textures_v004/T_Tripo_ZhurongDrumTower_ORM.png",
+              "sha256": "29224d6b66efc262b2a5d21625f24fdfb94866805b004d00aba5029a0f2b5225"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.624,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14886,
+              "verts": 8046
+            }
+          ],
+          "export_kb": 847.9,
+          "seconds": 73.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 2,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -348,11 +508,45 @@
             "场景高度"
           ],
           "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 21:51:23",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_ZhurongDrumTower_v003_validation_v003.json",
+              "sha256": "5e33f29fd2bdd87c5e244bc55c723fc2a2c5380af59845386303df0a7b3783ca"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 22:29:37",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v004_validation_v004.json": {
+              "path": "05_review/SM_Tripo_ZhurongDrumTower_v004_validation_v004.json",
+              "sha256": "c0d79ae2394234c30f89c04b443d0f462fe0d1a1b41574172fc2cad726910936"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -372,11 +566,43 @@
             "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
             "time": "2026-11-07 02:00:52"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:51:41",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v003_review_v002.png": {
+              "path": "05_review/SM_Tripo_ZhurongDrumTower_v003_review_v002.png",
+              "sha256": "f0c76c895c17488ec5ba5666fe8f919ba72e6f84923e79fbca1c223d14be0e4f"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:31:48",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower_v004_review_v003.png": {
+              "path": "05_review/SM_Tripo_ZhurongDrumTower_v004_review_v003.png",
+              "sha256": "c075dc16fa0ef586d73475b29a9f985631cf97e23df45b63465e781656cd6594"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07：洗贴图去紫（texture_clean.py：只改颜色、原分辨率、不平滑）；用户 11-07 否掉泛紫灰 / 脏 / 模糊贴图；用户授权免审",
+            "time": "2026-11-07 22:41:36"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -388,6 +614,18 @@
             }
           },
           "from_build": 2,
+          "url": "assets/props/SM_Tripo_ZhurongDrumTower.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:41:37",
+          "files": {
+            "SM_Tripo_ZhurongDrumTower.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongDrumTower.glb",
+              "sha256": "70669a535720597a9b5971905bebbf0ec518c80b83efa4aace6f17520ccd046a"
+            }
+          },
+          "from_build": 4,
           "url": "assets/props/SM_Tripo_ZhurongDrumTower.glb"
         }
       ]

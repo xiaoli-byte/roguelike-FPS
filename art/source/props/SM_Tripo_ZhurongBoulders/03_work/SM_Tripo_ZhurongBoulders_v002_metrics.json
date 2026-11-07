@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 7323,
+    "verts": 4357
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 7.01971,
+    "iou": 0.796,
+    "iou_per_view": {
+      "front": 0.831,
+      "left": 0.751,
+      "back": 0.826,
+      "right": 0.758
+    },
+    "size_m": [
+      7.016,
+      4.569,
+      4.0
+    ],
+    "reference_m": [
+      8.0,
+      6.0,
+      4.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0424
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.668,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongBoulders_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongBoulders_LOD0",
+      "tris": 7323,
+      "verts": 4357,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.99267578125,
+        0.9990234375
+      ],
+      "uv_utilization": 0.665,
+      "bbox_min": [
+        -3.5081,
+        -2.2845,
+        0.0
+      ],
+      "bbox_max": [
+        3.5081,
+        2.2845,
+        4.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongBoulders/04_export/SM_Tripo_ZhurongBoulders_v002.glb",
+    "bytes": 813100
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 68.4,
+  "_seconds": 71.7
+}

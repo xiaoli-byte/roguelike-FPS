@@ -17,7 +17,9 @@
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {},
+  "qaWaivers": {
+    "文件大小": "洗贴图后（texture_clean.py：去紫、拉开固有色明度 / 彩度）底色 webp 压缩率下降，GLB 1741 KB；项目规定不减面、贴图 2048²，按单件地标放行（2026-11-07）"
+  },
   "bounds": {
     "min": [
       -2.683441400527954,
@@ -81,13 +83,13 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_ZhurongDing.glb",
-    "sha256": "10b3b6def158f530776d259d3da61172c51a1827ccd0455c6884d05cdca9bc38",
+    "sha256": "fd47b8d4e32012ddaafbaf36ac9d45170e18688df1002b76ea7a6fa6d928d5e9",
     "hiRes": false,
     "version": {
       "blockout": 3,
       "concept": 2,
-      "highpoly": 1,
-      "build": 1
+      "highpoly": 3,
+      "build": 3
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -96,5 +98,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-11-07 02:02:07"
+  "exported": "2026-11-07 22:42:44"
 }

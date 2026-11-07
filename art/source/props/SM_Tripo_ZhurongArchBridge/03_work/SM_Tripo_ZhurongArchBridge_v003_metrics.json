@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 8136,
+    "verts": 4268
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 24.84575,
+    "iou": 0.652,
+    "iou_per_view": {
+      "front": 0.666,
+      "left": 0.634,
+      "back": 0.663,
+      "right": 0.635
+    },
+    "size_m": [
+      24.834,
+      3.191,
+      7.0
+    ],
+    "reference_m": [
+      24.7,
+      4.2,
+      7.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0158
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.698,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongArchBridge_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongArchBridge_LOD0",
+      "tris": 8136,
+      "verts": 4268,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.9990234375,
+        0.997802734375
+      ],
+      "uv_utilization": 0.702,
+      "bbox_min": [
+        -12.4168,
+        -1.5953,
+        0.0
+      ],
+      "bbox_max": [
+        12.4168,
+        1.5953,
+        7.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongArchBridge/04_export/SM_Tripo_ZhurongArchBridge_v003.glb",
+    "bytes": 760992
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 41.7,
+  "_seconds": 43.4
+}

@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 24812,
+    "verts": 15246
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 25.19801,
+    "iou": 0.746,
+    "iou_per_view": {
+      "front": 0.763,
+      "left": 0.717,
+      "back": 0.764,
+      "right": 0.73
+    },
+    "size_m": [
+      25.186,
+      22.848,
+      12.759
+    ],
+    "reference_m": [
+      29.3,
+      20.4,
+      14.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0132
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.478,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongCustomsFort_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongCustomsFort_LOD0",
+      "tris": 24812,
+      "verts": 15246,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.995361328125
+      ],
+      "uv_utilization": 0.413,
+      "bbox_min": [
+        -12.5929,
+        -11.424,
+        0.0
+      ],
+      "bbox_max": [
+        12.5929,
+        11.424,
+        12.759
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongCustomsFort/04_export/SM_Tripo_ZhurongCustomsFort_v002.glb",
+    "bytes": 1557056
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 67.7,
+  "_seconds": 74.7
+}

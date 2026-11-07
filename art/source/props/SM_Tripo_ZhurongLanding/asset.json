@@ -291,7 +291,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -318,11 +318,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 7967,
           "source_sha256": "a8bcd44209d2d96cb04a6cc8d7d55d51834b4126eaa027db13dcb4647c6367c7"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:56:06",
+          "files": {
+            "HP_SM_Tripo_ZhurongLanding_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v002_source.glb",
+              "sha256": "7597fbe99ad6be5246233ccb3f7bfadb5b76f8ad2ea3c50d4de9080bc298f9e2"
+            },
+            "HP_SM_Tripo_ZhurongLanding_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v002.glb",
+              "sha256": "20802c5408c237e7e3247d6516ad41aa2a4a27916316b8e20d7e23a1a8e54bff"
+            },
+            "HP_SM_Tripo_ZhurongLanding_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v002_graph.json",
+              "sha256": "7f2a2f034c4972055f71c18a0f1d620291011afa06b8d75600b34aeb2553acc3"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7967,
+          "source_sha256": "7597fbe99ad6be5246233ccb3f7bfadb5b76f8ad2ea3c50d4de9080bc298f9e2"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:35:22",
+          "files": {
+            "HP_SM_Tripo_ZhurongLanding_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v003_source.glb",
+              "sha256": "ef25cc849e1a153eb995091301f4b14f9ba220aa36e9ff57bfd3ebaa526408fd"
+            },
+            "HP_SM_Tripo_ZhurongLanding_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v003.glb",
+              "sha256": "1fe85b352cc8e11989154a21eab32fb0fcccd19e35da4c55b780b23f14ebd15f"
+            },
+            "HP_SM_Tripo_ZhurongLanding_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongLanding_v003_graph.json",
+              "sha256": "5c1cf2d549b53c5684fab4d0446631a91eed86bceb88ff0af046ec2427ce22d0"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7967,
+          "source_sha256": "ef25cc849e1a153eb995091301f4b14f9ba220aa36e9ff57bfd3ebaa526408fd"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -377,11 +429,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:57:17",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v002.blend": {
+              "path": "03_work/SM_Tripo_ZhurongLanding_v002.blend",
+              "sha256": "d3d343ec248bd9c0f9137dbfba3b4fb9aaa7f1b38d3b368139db1a8e3923dbba"
+            },
+            "SM_Tripo_ZhurongLanding_v002.glb": {
+              "path": "04_export/SM_Tripo_ZhurongLanding_v002.glb",
+              "sha256": "0fa68ad4b43c6d0c9e75e8102e33e87ff0e9fd2fe7b0100088151e7442dd4d38"
+            },
+            "SM_Tripo_ZhurongLanding_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongLanding_v002_metrics.json",
+              "sha256": "a2446a42dff26969b8cf29e0c5f31a3d3cb643bbca52d2b4c2d03406201781db"
+            },
+            "T_Tripo_ZhurongLanding_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongLanding_BC.png",
+              "sha256": "e6be59257ba5399a46cd6a9de5361f6bb903747890a987dcf7b931c73eb91f8b"
+            },
+            "T_Tripo_ZhurongLanding_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongLanding_E.png",
+              "sha256": "6a9d2f6ff03a813ec160c67faa5caab8f586f0893ecf12f4b524ad9f32f55492"
+            },
+            "T_Tripo_ZhurongLanding_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongLanding_N.png",
+              "sha256": "e1a79600f815b18392c7f62280e6921be3d8bc7330be412db751065212d06236"
+            },
+            "T_Tripo_ZhurongLanding_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongLanding_ORM.png",
+              "sha256": "0a7b533560b5214e3cf54a1ed810f0673be23ff3ca06c45b91d2a6f0161b517a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.637,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7967,
+              "verts": 4218
+            }
+          ],
+          "export_kb": 877.0,
+          "seconds": 69.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:36:00",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v003.blend": {
+              "path": "03_work/SM_Tripo_ZhurongLanding_v003.blend",
+              "sha256": "376f55ef859c44b442fce8a051a74d37b133b147ba1f15e02d9349695e8e2458"
+            },
+            "SM_Tripo_ZhurongLanding_v003.glb": {
+              "path": "04_export/SM_Tripo_ZhurongLanding_v003.glb",
+              "sha256": "5ecaf7a7ed5292d824bdc805e28445375e7090d9f084c02e8ebd23ccf3adfc23"
+            },
+            "SM_Tripo_ZhurongLanding_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongLanding_v003_metrics.json",
+              "sha256": "a9f1e1161f4aef0248ea1e290b1411fc769912eff2b2f2419ebbe13ecab24f2a"
+            },
+            "T_Tripo_ZhurongLanding_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongLanding_BC.png",
+              "sha256": "ceef91cae6668ff8d7222a21cb00be17bcc29eb54287a7b60f9242279ca16ad1"
+            },
+            "T_Tripo_ZhurongLanding_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongLanding_E.png",
+              "sha256": "b2bb78cbc3cb190b085f73bc3d490d9ff8c2a83542527204ad0819bb81a8126a"
+            },
+            "T_Tripo_ZhurongLanding_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongLanding_N.png",
+              "sha256": "06cf1325f9e0a2362630a9c0a203b4a39a40737b1ee507808377ae07cf2f928f"
+            },
+            "T_Tripo_ZhurongLanding_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongLanding_ORM.png",
+              "sha256": "0a7b533560b5214e3cf54a1ed810f0673be23ff3ca06c45b91d2a6f0161b517a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.637,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7967,
+              "verts": 4218
+            }
+          ],
+          "export_kb": 873.1,
+          "seconds": 37.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -397,11 +557,41 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:57:18",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_ZhurongLanding_v002_validation_v002.json",
+              "sha256": "b76187e532275395f0937c4ff84754f56ed8d8008ac40db97301078349751775"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:36:00",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_ZhurongLanding_v003_validation_v003.json",
+              "sha256": "3e60e78dafbd14cc59b14bc9759cf97f65154925b2eaa082efef92e45bb4e106"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -421,11 +611,43 @@
             "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
             "time": "2026-11-07 02:00:56"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:58:09",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_ZhurongLanding_v002_review_v002.png",
+              "sha256": "c61043ad02695c7c6e97b4152f1808e819eb43f5827667caa2f71cdfc40387c1"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:36:14",
+          "files": {
+            "SM_Tripo_ZhurongLanding_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_ZhurongLanding_v003_review_v003.png",
+              "sha256": "1a225887db2e72ac06ea03e65535e7778c438169d58c5e428d059f7fdda7b50c"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07：洗贴图去紫（texture_clean.py：只改颜色、原分辨率、不平滑）；用户 11-07 否掉泛紫灰 / 脏 / 模糊贴图；用户授权免审",
+            "time": "2026-11-07 22:41:41"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -437,6 +659,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongLanding.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:41:41",
+          "files": {
+            "SM_Tripo_ZhurongLanding.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongLanding.glb",
+              "sha256": "5ecaf7a7ed5292d824bdc805e28445375e7090d9f084c02e8ebd23ccf3adfc23"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_ZhurongLanding.glb"
         }
       ]

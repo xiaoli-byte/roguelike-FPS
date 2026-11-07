@@ -17,7 +17,9 @@
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {},
+  "qaWaivers": {
+    "文件大小": "洗贴图后（texture_clean.py：去紫、拉开固有色明度 / 彩度）底色 webp 压缩率下降，GLB 1938 KB；项目规定不减面、贴图 2048²，按单件地标放行（2026-11-07）"
+  },
   "bounds": {
     "min": [
       -10.959547996520996,
@@ -81,13 +83,13 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_ZhurongPalaceGate.glb",
-    "sha256": "ad7c0304b836d1aa793e1073c05328949234f6e9f642a4de350f518521d1b795",
+    "sha256": "afaffd43e3bb1a9f5c7d0cb8b6fd4d8d905456cc5eeb37e0169e77e80b474604",
     "hiRes": false,
     "version": {
       "blockout": 2,
       "concept": 1,
-      "highpoly": 1,
-      "build": 1
+      "highpoly": 3,
+      "build": 3
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -96,5 +98,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-11-07 02:01:34"
+  "exported": "2026-11-07 22:42:17"
 }

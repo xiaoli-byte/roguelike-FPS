@@ -169,7 +169,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -196,11 +196,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 28444,
           "source_sha256": "a2eafae8cf8dcb5dce1ceff58c025cadf6ab762f6509a944b2eb23fa81677376"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:40:03",
+          "files": {
+            "HP_SM_Tripo_ZhurongFerryTower_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFerryTower_v002_source.glb",
+              "sha256": "b76f32648bc223a093ae124952b64a54a2bd89385d6cc1228016b052b77a9679"
+            },
+            "HP_SM_Tripo_ZhurongFerryTower_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFerryTower_v002.glb",
+              "sha256": "6f0c875c9ab914f434847dc2e542a503cebb6827f69f217320e4ab0fc9335430"
+            },
+            "HP_SM_Tripo_ZhurongFerryTower_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFerryTower_v002_graph.json",
+              "sha256": "d11363c619a6bc891d384e88e2d4188f61db8e9fc997ce80c7a43e482f50aaec"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 28444,
+          "source_sha256": "b76f32648bc223a093ae124952b64a54a2bd89385d6cc1228016b052b77a9679"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:16:02",
+          "files": {
+            "HP_SM_Tripo_ZhurongFerryTower_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFerryTower_v003_source.glb",
+              "sha256": "e47c300689859a8d6b33f53cc59348cab36c0eabc77dab82fff6989a8fae9222"
+            },
+            "HP_SM_Tripo_ZhurongFerryTower_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFerryTower_v003.glb",
+              "sha256": "de87d2a347ede3808ef91af2b7bc381d386393eec49e495d5d2318c71a599ffb"
+            },
+            "HP_SM_Tripo_ZhurongFerryTower_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFerryTower_v003_graph.json",
+              "sha256": "65993fa434d591a60a0e04fda0855def3ea452f173b55a0f332302c5343862a8"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 28444,
+          "source_sha256": "e47c300689859a8d6b33f53cc59348cab36c0eabc77dab82fff6989a8fae9222"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -255,11 +307,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:41:18",
+          "files": {
+            "SM_Tripo_ZhurongFerryTower_v002.blend": {
+              "path": "03_work/SM_Tripo_ZhurongFerryTower_v002.blend",
+              "sha256": "260d95d8cd2a4fc0cb718ea0436688b86a3973868f26b9c06bf8d858e917fb20"
+            },
+            "SM_Tripo_ZhurongFerryTower_v002.glb": {
+              "path": "04_export/SM_Tripo_ZhurongFerryTower_v002.glb",
+              "sha256": "5fda86360ba49232fe7db4dd6f18cc4968602090caa0d9935e9135370270dbb9"
+            },
+            "SM_Tripo_ZhurongFerryTower_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongFerryTower_v002_metrics.json",
+              "sha256": "92e521d8c826f7592eeb47fa3cd4129555a19beb37b34734b510f6ede2cd1089"
+            },
+            "T_Tripo_ZhurongFerryTower_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongFerryTower_BC.png",
+              "sha256": "912590be196d385bd7ec09530952f142a48a15bb06f52fecd31a25b32caf4c76"
+            },
+            "T_Tripo_ZhurongFerryTower_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongFerryTower_E.png",
+              "sha256": "1c1b600af5544e1f619663b362050935b56e3ca32b76af332d7e6e2dd872733f"
+            },
+            "T_Tripo_ZhurongFerryTower_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongFerryTower_N.png",
+              "sha256": "01b8c172420d692a2d43a7a1de8d6334f7b86a3c8ade40f6d99f27547f7d3d26"
+            },
+            "T_Tripo_ZhurongFerryTower_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongFerryTower_ORM.png",
+              "sha256": "7cb1bb3e42d0aad17a88dfb8079f017347ea92144ff5ca135a44c516caa54f02"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.901,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 28444,
+              "verts": 15905
+            }
+          ],
+          "export_kb": 1470.2,
+          "seconds": 73.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:16:36",
+          "files": {
+            "SM_Tripo_ZhurongFerryTower_v003.blend": {
+              "path": "03_work/SM_Tripo_ZhurongFerryTower_v003.blend",
+              "sha256": "eb56591964f67812a1ab1b89d93580b9395a0ee74ce288b4f32518e473fe2046"
+            },
+            "SM_Tripo_ZhurongFerryTower_v003.glb": {
+              "path": "04_export/SM_Tripo_ZhurongFerryTower_v003.glb",
+              "sha256": "2aa25044a85cbe68526f49836bb5a403d2657ee52d16027c588bcc61ad0993a6"
+            },
+            "SM_Tripo_ZhurongFerryTower_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongFerryTower_v003_metrics.json",
+              "sha256": "8054de49ced9e572acecdc526c2ed78f3c0b8eeb0d08128cc5512557cdc6b003"
+            },
+            "T_Tripo_ZhurongFerryTower_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongFerryTower_BC.png",
+              "sha256": "e674993b12713be89cfd51fd71818c167d2dcd402bb505e6a3848b8e1a255522"
+            },
+            "T_Tripo_ZhurongFerryTower_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongFerryTower_E.png",
+              "sha256": "14c6f98067e1f345a3a25a76dbfcaf49d0b7de2ba8c3aa14e249297704bd4b2e"
+            },
+            "T_Tripo_ZhurongFerryTower_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongFerryTower_N.png",
+              "sha256": "1cf3f40c77db1532485b156dcc16de6343ecf51fbdb21401df8a34ef2ab9eb7b"
+            },
+            "T_Tripo_ZhurongFerryTower_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongFerryTower_ORM.png",
+              "sha256": "7cb1bb3e42d0aad17a88dfb8079f017347ea92144ff5ca135a44c516caa54f02"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.901,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 28444,
+              "verts": 15905
+            }
+          ],
+          "export_kb": 1404.5,
+          "seconds": 33.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -275,11 +435,41 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:41:18",
+          "files": {
+            "SM_Tripo_ZhurongFerryTower_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_ZhurongFerryTower_v002_validation_v002.json",
+              "sha256": "6292f1fd865e29674c0c38aedd72e3951f4dd231be0e1e636ecbb5d3bba70616"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:16:37",
+          "files": {
+            "SM_Tripo_ZhurongFerryTower_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_ZhurongFerryTower_v003_validation_v003.json",
+              "sha256": "b7fbf682a71f6670c0296cbb67f2918fdb5e9578a33226c09afa7ee190172a3a"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -299,11 +489,43 @@
             "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
             "time": "2026-11-07 02:00:45"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:41:52",
+          "files": {
+            "SM_Tripo_ZhurongFerryTower_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_ZhurongFerryTower_v002_review_v002.png",
+              "sha256": "73a23661d43630faedcc7e564391221e68a834af0ec6869bf60e37c7ea2d65c6"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:17:02",
+          "files": {
+            "SM_Tripo_ZhurongFerryTower_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_ZhurongFerryTower_v003_review_v003.png",
+              "sha256": "c49bebb8ddb2fa726f803c0d518c664f277f6a19bd18c0507f07e1bb3ccc8c23"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07：洗贴图去紫（texture_clean.py：只改颜色、原分辨率、不平滑）；用户 11-07 否掉泛紫灰 / 脏 / 模糊贴图；用户授权免审",
+            "time": "2026-11-07 22:41:25"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -315,6 +537,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongFerryTower.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:41:25",
+          "files": {
+            "SM_Tripo_ZhurongFerryTower.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongFerryTower.glb",
+              "sha256": "2aa25044a85cbe68526f49836bb5a403d2657ee52d16027c588bcc61ad0993a6"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_ZhurongFerryTower.glb"
         }
       ]

@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 14554,
+    "verts": 8308
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 6.83118,
+    "iou": 0.685,
+    "iou_per_view": {
+      "front": 0.702,
+      "left": 0.664,
+      "back": 0.701,
+      "right": 0.664
+    },
+    "size_m": [
+      5.367,
+      5.04,
+      6.828
+    ],
+    "reference_m": [
+      6.0,
+      4.5,
+      8.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0042
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.719,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongDing_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongDing_LOD0",
+      "tris": 14554,
+      "verts": 8308,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.993896484375,
+        0.99853515625
+      ],
+      "uv_utilization": 0.53,
+      "bbox_min": [
+        -2.6834,
+        -2.52,
+        0.0
+      ],
+      "bbox_max": [
+        2.6834,
+        2.52,
+        6.8278
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongDing/04_export/SM_Tripo_ZhurongDing_v002.glb",
+    "bytes": 1782996
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 77.2,
+  "_seconds": 80.7
+}

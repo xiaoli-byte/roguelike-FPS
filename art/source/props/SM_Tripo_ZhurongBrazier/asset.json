@@ -203,7 +203,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -230,11 +230,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 2900,
           "source_sha256": "dacd8939e87f51a02d11b5e199b8d249eed80a75fcf4b327eda19733202f77f4"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:01:43",
+          "files": {
+            "HP_SM_Tripo_ZhurongBrazier_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v002_source.glb",
+              "sha256": "1b97d8f8a3cb040500141b9d6cbe9b74cf63822fefd726aeee2654185b7677ff"
+            },
+            "HP_SM_Tripo_ZhurongBrazier_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v002.glb",
+              "sha256": "c57784c854f381870b41db008903cd950d70d3618b716e890b3654f8713961ec"
+            },
+            "HP_SM_Tripo_ZhurongBrazier_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v002_graph.json",
+              "sha256": "e9b5288ed7094b1df9f9b4882d9c75c10c3a094ef119c7a10ca58e5cdfd81e04"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2900,
+          "source_sha256": "1b97d8f8a3cb040500141b9d6cbe9b74cf63822fefd726aeee2654185b7677ff"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:40:00",
+          "files": {
+            "HP_SM_Tripo_ZhurongBrazier_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v003_source.glb",
+              "sha256": "7684011334cff9097add98ab28bd36aefe959af2d39e81b2c0809776876ab08c"
+            },
+            "HP_SM_Tripo_ZhurongBrazier_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v003.glb",
+              "sha256": "ac9e3b23376b263c7d1eceb17e404b466b7be526c0ceb8b6fb54064ac79ce3e8"
+            },
+            "HP_SM_Tripo_ZhurongBrazier_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBrazier_v003_graph.json",
+              "sha256": "16c59ebe8e26e2e3e8d9c3069863e77ac2fb58e29ae13128236869c2d8faee2b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2900,
+          "source_sha256": "7684011334cff9097add98ab28bd36aefe959af2d39e81b2c0809776876ab08c"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -289,11 +341,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:02:04",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v002.blend": {
+              "path": "03_work/SM_Tripo_ZhurongBrazier_v002.blend",
+              "sha256": "8c01995fcd7f4ed14acba05e1e0b41d43fb97492324a1bf5fb2dc5aa5b54be24"
+            },
+            "SM_Tripo_ZhurongBrazier_v002.glb": {
+              "path": "04_export/SM_Tripo_ZhurongBrazier_v002.glb",
+              "sha256": "5aef7e097b26b15e6f3f6fec9c94aa452dbe0fb7f070a35ff629b73d330f101a"
+            },
+            "SM_Tripo_ZhurongBrazier_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongBrazier_v002_metrics.json",
+              "sha256": "a60eca3c6b0bb96e6c60bf96b797e23b0b226ca1667bf70a749664ca87ba513f"
+            },
+            "T_Tripo_ZhurongBrazier_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBrazier_BC.png",
+              "sha256": "12b3589d76d190351102d8c99072bc026924786bf81473ec596b9bf8ad848870"
+            },
+            "T_Tripo_ZhurongBrazier_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBrazier_E.png",
+              "sha256": "7f1ad64269d60e399edbc40fa26d215943c855b43d103020334e0027c9aafdb5"
+            },
+            "T_Tripo_ZhurongBrazier_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBrazier_N.png",
+              "sha256": "9b3a8d6d9fcb8542143633d3553d3c66522f6d89c663154d4edb0e87f05c1596"
+            },
+            "T_Tripo_ZhurongBrazier_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBrazier_ORM.png",
+              "sha256": "f3ae156214bec7792b1322e2b2c0a80051d51c3df9af32dfa1922d6e63b5963d"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.925,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2900,
+              "verts": 1547
+            }
+          ],
+          "export_kb": 205.8,
+          "seconds": 19.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:40:19",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v003.blend": {
+              "path": "03_work/SM_Tripo_ZhurongBrazier_v003.blend",
+              "sha256": "6d9770d5beb3fa5eefa8f0fe28c20c2d9b02e7a4f9eb3a4b3006f2a001d44a47"
+            },
+            "SM_Tripo_ZhurongBrazier_v003.glb": {
+              "path": "04_export/SM_Tripo_ZhurongBrazier_v003.glb",
+              "sha256": "1a886903ddd5f786ccd7c336b313a8c852b31f4c389b18033c3041295f57b772"
+            },
+            "SM_Tripo_ZhurongBrazier_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongBrazier_v003_metrics.json",
+              "sha256": "4d23392ceb04acbd58d94f4f80439a66d8b232daf38d4a702feac2941460d3a8"
+            },
+            "T_Tripo_ZhurongBrazier_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBrazier_BC.png",
+              "sha256": "fd73e9e4ec93ea05214da8eb05e8fa8151a2ac6cf6e71e077bbf289cbbb33888"
+            },
+            "T_Tripo_ZhurongBrazier_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBrazier_E.png",
+              "sha256": "3e79e5b8a2c4b0693ed12042a42a7cec8d30b567140832763cea29c992e9cc6a"
+            },
+            "T_Tripo_ZhurongBrazier_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBrazier_N.png",
+              "sha256": "4fbe07a467e9d580b238f58585aaee2b5a9fc7fe9a43777ac3263463ed9042e7"
+            },
+            "T_Tripo_ZhurongBrazier_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBrazier_ORM.png",
+              "sha256": "f3ae156214bec7792b1322e2b2c0a80051d51c3df9af32dfa1922d6e63b5963d"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.925,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2900,
+              "verts": 1547
+            }
+          ],
+          "export_kb": 193.8,
+          "seconds": 18.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -309,11 +469,41 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:02:04",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_ZhurongBrazier_v002_validation_v002.json",
+              "sha256": "42d8b74683433f72dcbf8af3a957cd291bbd919ab1cc86495a2cef626d03adab"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:40:20",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_ZhurongBrazier_v003_validation_v003.json",
+              "sha256": "bebb296a85fa8c46a3a591de94da40295bdf95f65a0e0058d24452d3b72ecd6c"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -333,11 +523,43 @@
             "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
             "time": "2026-11-07 02:02:12"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:02:14",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_ZhurongBrazier_v002_review_v002.png",
+              "sha256": "e10304c96def52148406764478179e6b90bdfcaec0d605329180d4c900d4a0c0"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:40:33",
+          "files": {
+            "SM_Tripo_ZhurongBrazier_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_ZhurongBrazier_v003_review_v003.png",
+              "sha256": "6c7b05649df53cd037851b25d8dbf84d547624a365cf74f127c22912966e6d87"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07：洗贴图去紫（texture_clean.py：只改颜色、原分辨率、不平滑）；用户 11-07 否掉泛紫灰 / 脏 / 模糊贴图；用户授权免审",
+            "time": "2026-11-07 22:41:45"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -349,6 +571,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongBrazier.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:41:46",
+          "files": {
+            "SM_Tripo_ZhurongBrazier.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongBrazier.glb",
+              "sha256": "1a886903ddd5f786ccd7c336b313a8c852b31f4c389b18033c3041295f57b772"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_ZhurongBrazier.glb"
         }
       ]

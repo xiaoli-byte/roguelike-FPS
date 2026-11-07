@@ -202,7 +202,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -229,11 +229,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 27512,
           "source_sha256": "f310849f49a830a943600b8bddb6efb04666c4c56c8c108386f92b0b75965ecd"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:38:17",
+          "files": {
+            "HP_SM_Tripo_ZhurongPalaceGate_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v002_source.glb",
+              "sha256": "1ee2678f89e47a95417e1ffb22412d78775b73096565c707a8d1e12c86061e1d"
+            },
+            "HP_SM_Tripo_ZhurongPalaceGate_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v002.glb",
+              "sha256": "46b37a8af219a0778efb786b907e9105ef5148de34b2133e38278291458d19d9"
+            },
+            "HP_SM_Tripo_ZhurongPalaceGate_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v002_graph.json",
+              "sha256": "cf560fd40bfd19a7316c509510571baf4dc28deda76ba4e42eefd52a1c928310"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 27512,
+          "source_sha256": "1ee2678f89e47a95417e1ffb22412d78775b73096565c707a8d1e12c86061e1d"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:13:48",
+          "files": {
+            "HP_SM_Tripo_ZhurongPalaceGate_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v003_source.glb",
+              "sha256": "258b82f889bcffd3f94c83c90f7b5732da810f9c4c3ff73f5038073390aff9b5"
+            },
+            "HP_SM_Tripo_ZhurongPalaceGate_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v003.glb",
+              "sha256": "1ed86e83a64097ffd4778d47bd86fccd856b46fed1da723c108e3f6b3e655ec0"
+            },
+            "HP_SM_Tripo_ZhurongPalaceGate_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongPalaceGate_v003_graph.json",
+              "sha256": "2dc2859a8f2a6645058bc5f5b3f29de22049c99466a73b0337f2f2dcd5e905c3"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 27512,
+          "source_sha256": "258b82f889bcffd3f94c83c90f7b5732da810f9c4c3ff73f5038073390aff9b5"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -288,11 +340,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:39:16",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v002.blend": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceGate_v002.blend",
+              "sha256": "56ab492de5209e89f448410dcba5653dddd677765dc3d858f42ba7540c825b2b"
+            },
+            "SM_Tripo_ZhurongPalaceGate_v002.glb": {
+              "path": "04_export/SM_Tripo_ZhurongPalaceGate_v002.glb",
+              "sha256": "59ad314d3d222df42e968bec3e9e90787fe08d26318daf612897ae5b166edc06"
+            },
+            "SM_Tripo_ZhurongPalaceGate_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceGate_v002_metrics.json",
+              "sha256": "f5ab61bbe480bfa4d6da7634dd3741281c897eed6649eb648726b19dead083c1"
+            },
+            "T_Tripo_ZhurongPalaceGate_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongPalaceGate_BC.png",
+              "sha256": "caf37995e7e8c15f0834c8779880474a06da0fa52849ab1fd7e096d58eb2ebaa"
+            },
+            "T_Tripo_ZhurongPalaceGate_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongPalaceGate_E.png",
+              "sha256": "d1998e1f16fd20aac88bf2e0aa49a7dbf17047ceac7e7e98710c9b18e1b67f6b"
+            },
+            "T_Tripo_ZhurongPalaceGate_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongPalaceGate_N.png",
+              "sha256": "a80821b5cf8459ae6d1cc5e60570203a85018fa27f6cb349a7bd3c2696222ce0"
+            },
+            "T_Tripo_ZhurongPalaceGate_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongPalaceGate_ORM.png",
+              "sha256": "2225851b9a862a559f3c4f28d9e5adbbab6ebed64b3f7c64fbdfd4a1b9be90e9"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.848,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 27512,
+              "verts": 16061
+            }
+          ],
+          "export_kb": 1937.9,
+          "seconds": 57.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:14:50",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v003.blend": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceGate_v003.blend",
+              "sha256": "cb33413b407930d86a14641381e8a699dc18ebbd450c33d7a333facb88710fed"
+            },
+            "SM_Tripo_ZhurongPalaceGate_v003.glb": {
+              "path": "04_export/SM_Tripo_ZhurongPalaceGate_v003.glb",
+              "sha256": "afaffd43e3bb1a9f5c7d0cb8b6fd4d8d905456cc5eeb37e0169e77e80b474604"
+            },
+            "SM_Tripo_ZhurongPalaceGate_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongPalaceGate_v003_metrics.json",
+              "sha256": "2f6b8d673f45625ebea8c6d05460d603a611435a38eead9dda9420286da6b1a5"
+            },
+            "T_Tripo_ZhurongPalaceGate_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongPalaceGate_BC.png",
+              "sha256": "76ae640824bd1c1c3334932a644f93a15e967a9839f19b2e59ac53afffebfdf0"
+            },
+            "T_Tripo_ZhurongPalaceGate_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongPalaceGate_E.png",
+              "sha256": "c30a42ab99b827738a6c9678aee44f5eb8de51cb854ae0823e2a5bf45f8506c8"
+            },
+            "T_Tripo_ZhurongPalaceGate_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongPalaceGate_N.png",
+              "sha256": "161cb2eefd181f39876dbd8b9033bf0a504a391d78369884f26351fae0334ea6"
+            },
+            "T_Tripo_ZhurongPalaceGate_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongPalaceGate_ORM.png",
+              "sha256": "2225851b9a862a559f3c4f28d9e5adbbab6ebed64b3f7c64fbdfd4a1b9be90e9"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.848,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 27512,
+              "verts": 16061
+            }
+          ],
+          "export_kb": 1858.4,
+          "seconds": 60.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -308,11 +468,60 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:39:18",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceGate_v002_validation_v002.json",
+              "sha256": "19899883313cc0aa3599e2a5678c5a3285fe8beaab4d9996a0a745d4d05017de"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:03:08",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceGate_v002_validation_v003.json",
+              "sha256": "0adad03665be400b4f85eb36bdaeb5f28d84952d5766270c881c8b6eab82dba2"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "文件大小"
+          ],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 22:14:53",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v003_validation_v004.json": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceGate_v003_validation_v004.json",
+              "sha256": "2e1f166d46976701ca9e82a0833c395f50b12b529356569708af137c20c099e5"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "文件大小"
+          ],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -332,11 +541,43 @@
             "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
             "time": "2026-11-07 02:00:44"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:03:20",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceGate_v002_review_v002.png",
+              "sha256": "0b9ac7cfb1faaf36496d4f75fe663b015030e0ece154cc339aafc28b6bc0d6ef"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:15:25",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_ZhurongPalaceGate_v003_review_v003.png",
+              "sha256": "2c311032525063c8fa08b52421b38fccf7087d7242d7fc497f94c01a782108ca"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07：洗贴图去紫（texture_clean.py：只改颜色、原分辨率、不平滑）；用户 11-07 否掉泛紫灰 / 脏 / 模糊贴图；用户授权免审",
+            "time": "2026-11-07 22:41:22"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -348,6 +589,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongPalaceGate.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:41:23",
+          "files": {
+            "SM_Tripo_ZhurongPalaceGate.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongPalaceGate.glb",
+              "sha256": "afaffd43e3bb1a9f5c7d0cb8b6fd4d8d905456cc5eeb37e0169e77e80b474604"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_ZhurongPalaceGate.glb"
         }
       ]

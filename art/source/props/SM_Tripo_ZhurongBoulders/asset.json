@@ -169,7 +169,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -196,11 +196,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 7323,
           "source_sha256": "d365e04f749ee70633d0474419a707b98eebf9dd2a39202085c8220847cd293b"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:58:49",
+          "files": {
+            "HP_SM_Tripo_ZhurongBoulders_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBoulders_v002_source.glb",
+              "sha256": "09e6afa7de16bf6323e4d11e00a1b62ac4b570fc4c54d75682492691e52976ff"
+            },
+            "HP_SM_Tripo_ZhurongBoulders_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBoulders_v002.glb",
+              "sha256": "5299acad80bda7f935c501f1cd1befd7b0b6b1053c807f5c25476bf84292ba8a"
+            },
+            "HP_SM_Tripo_ZhurongBoulders_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBoulders_v002_graph.json",
+              "sha256": "5dd40c46523c45891cfc23329d4cf11b103251cc71640e386c6245fcfaa7458e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7323,
+          "source_sha256": "09e6afa7de16bf6323e4d11e00a1b62ac4b570fc4c54d75682492691e52976ff"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:36:48",
+          "files": {
+            "HP_SM_Tripo_ZhurongBoulders_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBoulders_v003_source.glb",
+              "sha256": "c7e866b602c5576c3259c6a02e347c7a49e3ec0ea31181098641cb399d712fde"
+            },
+            "HP_SM_Tripo_ZhurongBoulders_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBoulders_v003.glb",
+              "sha256": "2f4b53ce0387223240435e8ee3302a448a3252578d23962e14b8fc716d3fa314"
+            },
+            "HP_SM_Tripo_ZhurongBoulders_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongBoulders_v003_graph.json",
+              "sha256": "19b44741dcabf6dc8fde0cab53f66958b68f0784913d3ba724bc058604361bac"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7323,
+          "source_sha256": "c7e866b602c5576c3259c6a02e347c7a49e3ec0ea31181098641cb399d712fde"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -255,11 +307,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:00:02",
+          "files": {
+            "SM_Tripo_ZhurongBoulders_v002.blend": {
+              "path": "03_work/SM_Tripo_ZhurongBoulders_v002.blend",
+              "sha256": "5a459512e7ee1b4f8bff576ae01d74c79017ec2534ff2fc9afe87a426b25f902"
+            },
+            "SM_Tripo_ZhurongBoulders_v002.glb": {
+              "path": "04_export/SM_Tripo_ZhurongBoulders_v002.glb",
+              "sha256": "e82be48049386aa976816173c8426bff8c8ee2ec39163939d53b85c913931ead"
+            },
+            "SM_Tripo_ZhurongBoulders_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongBoulders_v002_metrics.json",
+              "sha256": "0e4e55e1597566cf5c826d98758fc0c43238e32a2aaa417bbc4d75539320f437"
+            },
+            "T_Tripo_ZhurongBoulders_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBoulders_BC.png",
+              "sha256": "e1b317150dcab41510f5a2e1c63ca908e096aa58f3dbe9c1e48fdc6ac9658028"
+            },
+            "T_Tripo_ZhurongBoulders_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBoulders_E.png",
+              "sha256": "9d9c7cd1cbd85cbd558d707e8d2ae35fc312da1d9b14c22518d78bcebb4e45cf"
+            },
+            "T_Tripo_ZhurongBoulders_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBoulders_N.png",
+              "sha256": "a31119c8b0ad1be3c69f64093a25fdcae0a181157c5c0162af2b4e8399a3983c"
+            },
+            "T_Tripo_ZhurongBoulders_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongBoulders_ORM.png",
+              "sha256": "93facc0c4758cff7ee4dc3b16bc910b57e604aaeb5d5cab07a072dd20db85172"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.796,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7323,
+              "verts": 4357
+            }
+          ],
+          "export_kb": 794.0,
+          "seconds": 71.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:38:06",
+          "files": {
+            "SM_Tripo_ZhurongBoulders_v003.blend": {
+              "path": "03_work/SM_Tripo_ZhurongBoulders_v003.blend",
+              "sha256": "18b389a490e351d2d2dd32d5e52addb3b6b4ee6e6d7f2492419fd48029578a2d"
+            },
+            "SM_Tripo_ZhurongBoulders_v003.glb": {
+              "path": "04_export/SM_Tripo_ZhurongBoulders_v003.glb",
+              "sha256": "61f81779fb1f447088fe52d86a2cbc92a9e731e70c3f4bbd36f3ca76b8fe1cf7"
+            },
+            "SM_Tripo_ZhurongBoulders_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongBoulders_v003_metrics.json",
+              "sha256": "94b3eed9baaf246987744fa5afd99610a89f2d5675e92f894c1cfb9d521ac8fb"
+            },
+            "T_Tripo_ZhurongBoulders_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBoulders_BC.png",
+              "sha256": "968a48399f09595140b94ece3d78007523606fa3fd61c87a111b8a46198b8b89"
+            },
+            "T_Tripo_ZhurongBoulders_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBoulders_E.png",
+              "sha256": "13d947b948f3431386ad2f9df52f6a68a3a5b4a5b45e6ae7e0544aa13aff545e"
+            },
+            "T_Tripo_ZhurongBoulders_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBoulders_N.png",
+              "sha256": "fd0df857c2cd32333de8e863d1e46d6c0178b5c5f377c5d39990af7a3c0872b3"
+            },
+            "T_Tripo_ZhurongBoulders_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongBoulders_ORM.png",
+              "sha256": "93facc0c4758cff7ee4dc3b16bc910b57e604aaeb5d5cab07a072dd20db85172"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.796,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7323,
+              "verts": 4357
+            }
+          ],
+          "export_kb": 764.0,
+          "seconds": 76.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -275,11 +435,41 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:00:03",
+          "files": {
+            "SM_Tripo_ZhurongBoulders_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_ZhurongBoulders_v002_validation_v002.json",
+              "sha256": "ba4630cf6f450f16651ed2bf2756e750bcaa2477ef94d2d96cac3818876a8e16"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:38:07",
+          "files": {
+            "SM_Tripo_ZhurongBoulders_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_ZhurongBoulders_v003_validation_v003.json",
+              "sha256": "a0d0f7ef6e9eaf898725746cee1e30da0c45446d348596e534a2d2b46ca0f3d0"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -299,11 +489,43 @@
             "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
             "time": "2026-11-07 02:01:18"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:00:15",
+          "files": {
+            "SM_Tripo_ZhurongBoulders_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_ZhurongBoulders_v002_review_v002.png",
+              "sha256": "98904ae5e45fe6908ebc153405a6d27e22d6a0cd08e28d47cb8c9b5700af8a83"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:38:22",
+          "files": {
+            "SM_Tripo_ZhurongBoulders_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_ZhurongBoulders_v003_review_v003.png",
+              "sha256": "bd64107ddbf68ccc8d9bbfc8c6327e5565d594b14852ab6aba097026c5b2337f"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07：洗贴图去紫（texture_clean.py：只改颜色、原分辨率、不平滑）；用户 11-07 否掉泛紫灰 / 脏 / 模糊贴图；用户授权免审",
+            "time": "2026-11-07 22:41:42"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -315,6 +537,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongBoulders.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:41:43",
+          "files": {
+            "SM_Tripo_ZhurongBoulders.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongBoulders.glb",
+              "sha256": "61f81779fb1f447088fe52d86a2cbc92a9e731e70c3f4bbd36f3ca76b8fe1cf7"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_ZhurongBoulders.glb"
         }
       ]

@@ -202,7 +202,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -229,11 +229,63 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 8136,
           "source_sha256": "bd2f5bfd7469ee933b0beebb5bf1d11015b248db1a746d0560db767d196e4913"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:54:09",
+          "files": {
+            "HP_SM_Tripo_ZhurongArchBridge_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v002_source.glb",
+              "sha256": "0feef96c55da06aa0714150e99b955ee7f798e328114e963a9fe22f8c7a9a5c9"
+            },
+            "HP_SM_Tripo_ZhurongArchBridge_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v002.glb",
+              "sha256": "bb6e66fc5a3fbd0d2937b007d812e90235845f5e902f913b10fb73a418edcfc0"
+            },
+            "HP_SM_Tripo_ZhurongArchBridge_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v002_graph.json",
+              "sha256": "b6866cd93b283851aa90aa05a568c821390de8d9b12a5ae42f4b24c0f50f6b81"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8136,
+          "source_sha256": "0feef96c55da06aa0714150e99b955ee7f798e328114e963a9fe22f8c7a9a5c9"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:33:57",
+          "files": {
+            "HP_SM_Tripo_ZhurongArchBridge_v003_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v003_source.glb",
+              "sha256": "efed8cdf462bebbc4547ab1b18fdb0817b3accd63b286c967d9b0e6e94cb3f37"
+            },
+            "HP_SM_Tripo_ZhurongArchBridge_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v003.glb",
+              "sha256": "82b5c507c37a4b63799f71a11ec0de3c3dfed4c0cc7cb8dd94347eb1a03c7b45"
+            },
+            "HP_SM_Tripo_ZhurongArchBridge_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongArchBridge_v003_graph.json",
+              "sha256": "ac076d4658d15048e1f32396eb643f016586a9bf90052b965aa33c9a59a2ce9d"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:texture_clean",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8136,
+          "source_sha256": "efed8cdf462bebbc4547ab1b18fdb0817b3accd63b286c967d9b0e6e94cb3f37"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -288,11 +340,119 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:55:21",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v002.blend": {
+              "path": "03_work/SM_Tripo_ZhurongArchBridge_v002.blend",
+              "sha256": "a7ce62ec9979bb699c49266b4b2ac73f2603e22a2c3daa21bc4849efb3c0b01e"
+            },
+            "SM_Tripo_ZhurongArchBridge_v002.glb": {
+              "path": "04_export/SM_Tripo_ZhurongArchBridge_v002.glb",
+              "sha256": "819143ae3561522ecaf83a2c89b1890a5f385ace7c21e7d194fa18fe18e4ef3d"
+            },
+            "SM_Tripo_ZhurongArchBridge_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongArchBridge_v002_metrics.json",
+              "sha256": "7f15fd7de2f7c8bed5c8e97a7bb05fe9f8268e809b3ad35c209c7fe840b59746"
+            },
+            "T_Tripo_ZhurongArchBridge_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongArchBridge_BC.png",
+              "sha256": "8d60cd83c5b2f735d36fb0e38fd88d0ef6ed04578af6e2b4afc538794a3c9425"
+            },
+            "T_Tripo_ZhurongArchBridge_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongArchBridge_E.png",
+              "sha256": "6cd975c70b156aebe2f340b417b0d2b667b3c623b8b92df525117839e93b2310"
+            },
+            "T_Tripo_ZhurongArchBridge_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongArchBridge_N.png",
+              "sha256": "0c049e083d1c049e305cd1d7cf3fc9a0a32b8d69939b4474827cd55ecfe1264d"
+            },
+            "T_Tripo_ZhurongArchBridge_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_ZhurongArchBridge_ORM.png",
+              "sha256": "0c69b4dcecd3ebaff080ff9d299e8b4162a6497489b8bef95075a725d1ee1197"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.652,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8136,
+              "verts": 4268
+            }
+          ],
+          "export_kb": 757.5,
+          "seconds": 70.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:34:41",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v003.blend": {
+              "path": "03_work/SM_Tripo_ZhurongArchBridge_v003.blend",
+              "sha256": "eb0f5b7aa036366dffa29206006b50a85b3ae2a6f17c7b1c4293f3cb76ae0ff2"
+            },
+            "SM_Tripo_ZhurongArchBridge_v003.glb": {
+              "path": "04_export/SM_Tripo_ZhurongArchBridge_v003.glb",
+              "sha256": "209a566070609baf0fbd9fa35eed991963acd06ac4a5fbfd63bbb30e2a263637"
+            },
+            "SM_Tripo_ZhurongArchBridge_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongArchBridge_v003_metrics.json",
+              "sha256": "4372ea9d98f52e36760ef1d8a11a67e681a568e53ead53cfafe2578a92bc612d"
+            },
+            "T_Tripo_ZhurongArchBridge_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongArchBridge_BC.png",
+              "sha256": "72df89df3b09f1cb4aaf86cc608d157f9a6e35968a1fb81fc3a560b9560320d0"
+            },
+            "T_Tripo_ZhurongArchBridge_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongArchBridge_E.png",
+              "sha256": "ff9b85e9392df52a3d16157673ec47b4fcae9c677e2e8fdf25bd661e24cb7245"
+            },
+            "T_Tripo_ZhurongArchBridge_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongArchBridge_N.png",
+              "sha256": "c61dd9634257fc7c1da760a0a440935b36098a5822a4b20d50b803d71151f934"
+            },
+            "T_Tripo_ZhurongArchBridge_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_ZhurongArchBridge_ORM.png",
+              "sha256": "0c69b4dcecd3ebaff080ff9d299e8b4162a6497489b8bef95075a725d1ee1197"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.652,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8136,
+              "verts": 4268
+            }
+          ],
+          "export_kb": 743.2,
+          "seconds": 43.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -308,11 +468,41 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:55:21",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_ZhurongArchBridge_v002_validation_v002.json",
+              "sha256": "bbb18d877205aa7cd3101af64cae5d40fb346b29de3670c2bb84d9bbd8164d78"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:34:41",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_ZhurongArchBridge_v003_validation_v003.json",
+              "sha256": "3d26af16d1ec8bc25e37608ef5e1ca6cd543711f627a3fec603886e2059e659a"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -332,11 +522,43 @@
             "note": "2026-11-07 祝融套件 3-1：祝融 3-1 熔湖关隘套件：审核图四视图 / 贴图 / 对齐正常；用户授权免审",
             "time": "2026-11-07 02:00:55"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:55:32",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_ZhurongArchBridge_v002_review_v002.png",
+              "sha256": "982ff9aba9ed92a2b316cd0bfea669d415d153d5c3dd52dcba562dd014e9bb99"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:34:55",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_ZhurongArchBridge_v003_review_v003.png",
+              "sha256": "f36bbd621faa6cdcf303e930cfe73451e12cbe670690ee8c420c2b1572e27854"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-07：洗贴图去紫（texture_clean.py：只改颜色、原分辨率、不平滑）；用户 11-07 否掉泛紫灰 / 脏 / 模糊贴图；用户授权免审",
+            "time": "2026-11-07 22:41:39"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -348,6 +570,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongArchBridge.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 22:41:40",
+          "files": {
+            "SM_Tripo_ZhurongArchBridge.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongArchBridge.glb",
+              "sha256": "209a566070609baf0fbd9fa35eed991963acd06ac4a5fbfd63bbb30e2a263637"
+            }
+          },
+          "from_build": 3,
           "url": "assets/props/SM_Tripo_ZhurongArchBridge.glb"
         }
       ]
