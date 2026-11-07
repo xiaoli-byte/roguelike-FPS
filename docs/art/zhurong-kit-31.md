@@ -158,7 +158,10 @@ Tripo 把紫色暗部当成固有色烘进底色，去光处理只去明暗不�
 中性白光下画固有色」；`art/README.md` 熔火配色改为「暖炭灰玄武岩与铜 / 朱漆 / 橙色，紫色只在光照里」。
 
 **模糊**：Tripo Studio「纹理生成」上传网格 + 使用原始 UV 重出的贴图（`retexture.py`）比原始生成明显糊、带紫斑——
-第三章 Inferno 件今天的 v002 重贴图（另一会话，未发布）三样毛病全占，原始 v001 清晰不紫；那批件该回到 v001，不是再洗。
+第三章 Inferno 件 11-07 的 v002 重贴图三样毛病全占，原始 v001 清晰不紫；那批件该回到 v001，不是再洗。
+已处理（用户 11-08：「丢掉 v002」）：`9dd6fb54` 把 41 件 v002 的 review 记成驳回、build 和高模 current 都指回原始生成，3 件试点退回 v001 重新发布；
+核对过 29 件 Tripo 件的高模 current 全是原始生成，用户截图那四件的发布件和 Unity 底色紫偏 0–0.024（v002 是 0.31–0.77），游戏里用的是 v001。
+v002 只留入库的记录（积分、任务链接）和本机 gitignore 的 GLB，管线不会再取用。
 
 **结果**：13 件发布、Unity 重同步、ZR31 重建 0 不合格。对比图 [review/texture-clean/zr31-before-after.jpg](review/texture-clean/zr31-before-after.jpg)
 （概念图 / 去紫前 / 去紫后）、[review/texture-clean/inferno-v001-vs-v002.jpg](review/texture-clean/inferno-v001-vs-v002.jpg)（用户截图里那四件的原始贴图对今天的重贴图）。
