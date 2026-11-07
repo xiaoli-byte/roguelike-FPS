@@ -329,6 +329,71 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:39:36",
+          "files": {
+            "SM_Tripo_InfernoHallWall_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoHallWall_v002.glb",
+              "sha256": "f3e2af217b8ef3081e50460261ffd4f48018525e9a78ef8ef37101a312c0a6e2"
+            },
+            "T_Tripo_InfernoHallWall_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHallWall_E.png",
+              "sha256": "fa280fe4f3944f11fefc2e79a107d66cc6ee642bc8f99852a87829b799dc8b78"
+            },
+            "T_Tripo_InfernoHallWall_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHallWall_N.png",
+              "sha256": "4dd203224a82f660616272e90fcc5dac1b44f03c505a4f1ad24da96d59294066"
+            },
+            "T_Tripo_InfernoHallWall_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHallWall_ORM.png",
+              "sha256": "43bbb613748dee2b5979edfaaf4fdb69ae8632413fc2ab88bc48b2551695cfd9"
+            },
+            "T_Tripo_InfernoHallWall_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHallWall_BC.png",
+              "sha256": "6b3debcf6a329c8274a898885b74e0a9eab7498027f0a627f964dd5c3ed77f40"
+            },
+            "SM_Tripo_InfernoHallWall_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoHallWall_v002_metrics.json",
+              "sha256": "19094c327942c632e3f445ff6cfef4b00327e63e360ac7f919dfe0915b98e9ee"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/61f4e40b-c483-4f2d-9c34-112f3acdd8bc",
+          "align_iou": 0.944,
+          "uncovered_ratio": 0.1128,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 4002
+            },
+            {
+              "tris": 2500,
+              "verts": 1252
+            },
+            {
+              "tris": 800,
+              "verts": 402
+            }
+          ],
+          "export_kb": 397.8,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -345,6 +410,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:39:37",
+          "files": {
+            "SM_Tripo_InfernoHallWall_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoHallWall_v002_validation_v002.json",
+              "sha256": "74e4e109ff2d9d375a45da38d5dc25229f3becd66a5c861c1a05a9324ac4f435"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -372,6 +452,25 @@
             "by": "claude(AI初审)",
             "note": "2mv 种子 20261003（registry 默认）：实心墙段（体积/包围盒 0.551，单连通，焊接后 0 开边），LOD 0/0/0 开边无裂缝；两端无端柱，墙身各高度带端面竖直平切（x ±3.63），基座 ±4.09、檐口 ±3.80 与已批准概念台阶轮廓一致，段间墙身缝由扶壁柱遮挡；朱漆铜钉檐带、铁檐尖刺、基座熔岩缝与概念一致；自发光只落在基座顶面熔岩缝（色键 emid v001），墙顶 / 檐下 0；IoU 0.944，校验 0 错误（轴心 z 偏 0.146 警告：正面基座更厚，属造型）。",
             "time": "2026-10-13 09:45:25"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:39:55",
+          "files": {
+            "SM_Tripo_InfernoHallWall_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoHallWall_v002_review_v002.png",
+              "sha256": "880e6fb641537011d0121ef084387eee48eba9fdcece125dcb208a10acd52319"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

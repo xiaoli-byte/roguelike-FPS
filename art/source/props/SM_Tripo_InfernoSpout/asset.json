@@ -196,6 +196,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 9773,
           "source_sha256": "bbd22dca8c9d16dc07958a5055c2ee5dc3c58351430627138c599f2294958ac8"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:22:06",
+          "files": {
+            "HP_SM_Tripo_InfernoSpout_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoSpout_v002_source.glb",
+              "sha256": "3a3da329c80221e943414ec124523f6da9aa560ebb96edfb0e3cd2e601a2c488"
+            },
+            "HP_SM_Tripo_InfernoSpout_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoSpout_v002.glb",
+              "sha256": "7eef8f194b53b6996bd1d62785abf58ce6ca40a9c7b7985225314cf7edb81a7c"
+            },
+            "HP_SM_Tripo_InfernoSpout_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoSpout_v002_graph.json",
+              "sha256": "8b6889d5584fba2354ddcdf27a9b9780c5e308ec86d02b5324795d92561aec2e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/6d5cadc5-9eb3-4e7f-b809-7084513affa3",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 9773,
+          "source_sha256": "3a3da329c80221e943414ec124523f6da9aa560ebb96edfb0e3cd2e601a2c488"
         }
       ]
     },
@@ -255,6 +281,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:22:58",
+          "files": {
+            "SM_Tripo_InfernoSpout_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoSpout_v002.blend",
+              "sha256": "2cdc8e923f6626440cd42dda226ef9bf717c94dd2b0763fbd234cce0ab0fbefe"
+            },
+            "SM_Tripo_InfernoSpout_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoSpout_v002.glb",
+              "sha256": "f2af5d3c794ac5ec9623cd44232223c0b35e947cd1cc5f5bfefdfa397ab02d72"
+            },
+            "SM_Tripo_InfernoSpout_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoSpout_v002_metrics.json",
+              "sha256": "52e201f86b7084de59af231d2f8100d129268c0e023ea84957cd0edec0cc0e43"
+            },
+            "T_Tripo_InfernoSpout_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoSpout_BC.png",
+              "sha256": "a62c2085d9a4f10a5f3bd4fd99bc50d79d9d4edbe65dd27a0a6e854b0aae7411"
+            },
+            "T_Tripo_InfernoSpout_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoSpout_E.png",
+              "sha256": "b71d5a6a7dff5fd2a4dfa0373c90e62085324c2aceac8c4b04ba075a419e9813"
+            },
+            "T_Tripo_InfernoSpout_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoSpout_N.png",
+              "sha256": "bf834cac31007da327887237779ae1219a0236454615c2d5a34fe3052fd5ff37"
+            },
+            "T_Tripo_InfernoSpout_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoSpout_ORM.png",
+              "sha256": "f42423b7e88ca143ace8fe86839617a6dfe6594bc4aa7174d09f1b053f8043c1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.875,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 9773,
+              "verts": 5167
+            }
+          ],
+          "export_kb": 480.8,
+          "seconds": 50.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -271,6 +355,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:22:58",
+          "files": {
+            "SM_Tripo_InfernoSpout_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoSpout_v002_validation_v002.json",
+              "sha256": "63757f6d9116945f97d6f2e3d6819b1cfc8797fb550eb891e35197d6b69ddddd"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -298,6 +397,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 9773 面；嘴里平涂亮橙 → T_E，熔流本身是特效；用户授权免审",
             "time": "2026-11-03 05:49:43"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:23:09",
+          "files": {
+            "SM_Tripo_InfernoSpout_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoSpout_v002_review_v002.png",
+              "sha256": "02e71ec6d1dd886edfbcedecbcff4c60cbdd0a7a6e9a408326cfb8189089f8fa"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

@@ -307,6 +307,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 7946,
           "source_sha256": "837f99c4b02eb6303945e0716c83524e36825508280bd7ab877fbaa953b2b951"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:12:07",
+          "files": {
+            "HP_SM_Prop_QilinChainLock_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_QilinChainLock_v002_source.glb",
+              "sha256": "6a53999df3e2e2572dfd1ba730d1fa995cae2fe4ed4737298ecf834395868873"
+            },
+            "HP_SM_Prop_QilinChainLock_v002.glb": {
+              "path": "02_highpoly/HP_SM_Prop_QilinChainLock_v002.glb",
+              "sha256": "909e8c44958b174ffee189f683f42ddaadeea0e5fdfc652a4dcc879a00057cf9"
+            },
+            "HP_SM_Prop_QilinChainLock_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_QilinChainLock_v002_graph.json",
+              "sha256": "2a47c686c2edaf1a0ee133038a3e36734e7f2eb5c543430a4217bedf84496cdb"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/5f4ce7aa-53cf-4bac-af6b-85bf6ea0f8f9",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7946,
+          "source_sha256": "6a53999df3e2e2572dfd1ba730d1fa995cae2fe4ed4737298ecf834395868873"
         }
       ]
     },
@@ -366,6 +392,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:12:26",
+          "files": {
+            "SM_Prop_QilinChainLock_v002.blend": {
+              "path": "03_work/SM_Prop_QilinChainLock_v002.blend",
+              "sha256": "993ab9a7e46e977b9bcf3ad891c68f7215cccb48788d082cdd1a44f857943933"
+            },
+            "SM_Prop_QilinChainLock_v002.glb": {
+              "path": "04_export/SM_Prop_QilinChainLock_v002.glb",
+              "sha256": "d71bd491408c6d22d708b347df0ae4403246d2a88e524f63255942715b77bf75"
+            },
+            "SM_Prop_QilinChainLock_v002_metrics.json": {
+              "path": "03_work/SM_Prop_QilinChainLock_v002_metrics.json",
+              "sha256": "9e3baa921694b08329ac93bf62c136ed3f268beefa5b391fb66fdb7829574e1a"
+            },
+            "T_Prop_QilinChainLock_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinChainLock_BC.png",
+              "sha256": "7ae62e21069f0445a83445f2126185e92efeb17c75b54cb4f7497dc855b9aa8c"
+            },
+            "T_Prop_QilinChainLock_E.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinChainLock_E.png",
+              "sha256": "891f323143b97189f61b5d5e0409d42943f4299e8653a0dc9a8f53700d5f4023"
+            },
+            "T_Prop_QilinChainLock_N.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinChainLock_N.png",
+              "sha256": "0a57389cf3601ac61377cf59d81b7a5810fd2fdbf3971c7ca7077c96c218b0e4"
+            },
+            "T_Prop_QilinChainLock_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinChainLock_ORM.png",
+              "sha256": "09d5244e679f0f276340e7a2dd9e3d63018d0e70c9ae518084e94dfb7c6cea5e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.824,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7946,
+              "verts": 4398
+            }
+          ],
+          "export_kb": 349.5,
+          "seconds": 18.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -382,6 +466,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:12:27",
+          "files": {
+            "SM_Prop_QilinChainLock_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_QilinChainLock_v002_validation_v002.json",
+              "sha256": "806a2257dea05eb0d5804da6ceaa2a66d037c2a689af7d430ef87dca047b3da2"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -409,6 +508,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 7946 面，火晶核 emissive_key；用户授权免审",
             "time": "2026-11-03 02:08:35"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:12:36",
+          "files": {
+            "SM_Prop_QilinChainLock_v002_review_v002.png": {
+              "path": "05_review/SM_Prop_QilinChainLock_v002_review_v002.png",
+              "sha256": "8b097ba1f4dd8ca48a634e2e651fc1c2d98e499080097d544fc20f04d5b44f3e"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

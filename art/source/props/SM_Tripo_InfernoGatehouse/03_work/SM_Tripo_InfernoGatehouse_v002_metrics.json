@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 28929,
+    "verts": 16070
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 17.31924,
+    "iou": 0.896,
+    "iou_per_view": {
+      "front": 0.921,
+      "left": 0.865,
+      "back": 0.917,
+      "right": 0.87
+    },
+    "size_m": [
+      17.311,
+      8.973,
+      12.0
+    ],
+    "reference_m": [
+      16.0,
+      14.0,
+      12.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0048
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.547,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoGatehouse_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoGatehouse_LOD0",
+      "tris": 28929,
+      "verts": 16070,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.995361328125
+      ],
+      "uv_utilization": 0.462,
+      "bbox_min": [
+        -8.6554,
+        -4.4863,
+        0.0
+      ],
+      "bbox_max": [
+        8.6554,
+        4.4863,
+        12.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoGatehouse/04_export/SM_Tripo_InfernoGatehouse_v002.glb",
+    "bytes": 1117448
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 45.4,
+  "_seconds": 47.9
+}

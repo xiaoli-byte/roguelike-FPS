@@ -438,6 +438,67 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:38:15",
+          "files": {
+            "SM_Tripo_InfernoForgeStall_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoForgeStall_v002.glb",
+              "sha256": "5c3e2f61600ab47e6472ef0c49ec22a20366fca80f3713d0d8e7ee4b7cfdc44f"
+            },
+            "T_Tripo_InfernoForgeStall_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoForgeStall_E.png",
+              "sha256": "5681692a1c3ceea43e2165c9c366a9312c4dbf21899edecd8eae06252ead3a7e"
+            },
+            "T_Tripo_InfernoForgeStall_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoForgeStall_N.png",
+              "sha256": "734e06d89f0390c1412ffb604ba3f263349dfce9c1dec4afb126911822dab965"
+            },
+            "T_Tripo_InfernoForgeStall_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoForgeStall_ORM.png",
+              "sha256": "6c56b9c4a417bc2ced9460d8216db03115fd445e42ab7e8a624ee29eade55235"
+            },
+            "T_Tripo_InfernoForgeStall_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoForgeStall_BC.png",
+              "sha256": "773c64e5dbaf10d17ca8ccf75a6e721127fa033394cfecbfe5e2d0d226190609"
+            },
+            "SM_Tripo_InfernoForgeStall_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoForgeStall_v002_metrics.json",
+              "sha256": "6af4058d23ba187abae8644faa7efd1a7f2b64cf51579f2d54def455f9aaaa6b"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/51212c9d-0dc1-4e5f-9cbc-72456337e504",
+          "align_iou": 0.876,
+          "uncovered_ratio": 0.4635,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1436
+            },
+            {
+              "tris": 1000,
+              "verts": 436
+            }
+          ],
+          "export_kb": 248.9,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -454,6 +515,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:38:16",
+          "files": {
+            "SM_Tripo_InfernoForgeStall_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoForgeStall_v002_validation_v002.json",
+              "sha256": "321c6cfbe5cde3060f9087a3256ac98cde4bcda55b2ccef3c32b3d470fe9ad67"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -481,6 +557,25 @@
             "by": "claude(AI初审)",
             "note": "2mv 种子 20261003：铁瓦坡顶与方烟囱、朱漆立柱、铁罩炉膛与炭床（自发光）、风箱、铁砧与挂墙锤钳与概念一致；实测 2.60×3.47×1.63 m（比概念窄，布局按等比放置）；IoU 0.876，LOD 无开口边。",
             "time": "2026-10-11 23:10:48"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:38:30",
+          "files": {
+            "SM_Tripo_InfernoForgeStall_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoForgeStall_v002_review_v002.png",
+              "sha256": "796d7dfeb663e11fdf960dd6e76b69ad27a6f06ffe5d0ae3220cf7c0089d5fba"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

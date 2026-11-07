@@ -428,6 +428,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 24066,
           "source_sha256": "0258aed9752ae39172d967703dd093f65cb888503f1b845b0a25ebb7fa57b465"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:38:31",
+          "files": {
+            "HP_SM_Tripo_InfernoRoundHallFurnace_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallFurnace_v002_source.glb",
+              "sha256": "8dec6cf6366409916166b65542bd4aadab408efb8eb97e6fdfb97136d2100159"
+            },
+            "HP_SM_Tripo_InfernoRoundHallFurnace_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallFurnace_v002.glb",
+              "sha256": "7e8f7d0641798558f6b613a9c1c8e4b9785095d4fd17e373d8fb02c21e6ed4e7"
+            },
+            "HP_SM_Tripo_InfernoRoundHallFurnace_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallFurnace_v002_graph.json",
+              "sha256": "30778405427ffb9b304178a8f3c6fa2daf31628cc27a8ae8ff8c079ff69ae17a"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/1410c4be-af5a-41d1-9316-31b90b75a3fb",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 24066,
+          "source_sha256": "8dec6cf6366409916166b65542bd4aadab408efb8eb97e6fdfb97136d2100159"
         }
       ]
     },
@@ -487,6 +513,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:39:33",
+          "files": {
+            "SM_Tripo_InfernoRoundHallFurnace_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoRoundHallFurnace_v002.blend",
+              "sha256": "4de61518429ef61b6b309531f9e2c0f4d2c689c4c0554a5de2b013aa851f5db9"
+            },
+            "SM_Tripo_InfernoRoundHallFurnace_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoRoundHallFurnace_v002.glb",
+              "sha256": "8eb3008a1816ff4d948b3e0ac8e7a1dc8eda5770bf0ccf188ab7100b31a788f0"
+            },
+            "SM_Tripo_InfernoRoundHallFurnace_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoRoundHallFurnace_v002_metrics.json",
+              "sha256": "2f19331c6949f0d898ff57fad464e00b1aa26378c343f7616e1b7fbf97f78816"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRoundHallFurnace_BC.png",
+              "sha256": "04a77f6a6bbd467d6633de3d6b88cc9c8fd777e9764336be89f111774f0e5b12"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRoundHallFurnace_E.png",
+              "sha256": "cc25d8a97400edc09f9b89e04cfe9105f027b76d13d01c23e61514f7e89116d5"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRoundHallFurnace_N.png",
+              "sha256": "861586ad7b261871a51dd0c04fdfa47aa26ca0efa11953462d977094c48c4695"
+            },
+            "T_Tripo_InfernoRoundHallFurnace_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoRoundHallFurnace_ORM.png",
+              "sha256": "a75d93a9ce781358bc21c0abd4f8fce52773792e49999f4d230f21ab4b0be772"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.781,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 24066,
+              "verts": 13394
+            }
+          ],
+          "export_kb": 1019.8,
+          "seconds": 61.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -503,6 +587,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:39:34",
+          "files": {
+            "SM_Tripo_InfernoRoundHallFurnace_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoRoundHallFurnace_v002_validation_v002.json",
+              "sha256": "326225d17b101c7afe33a065db85f99480ade8c4cf5a64a428c557e071cc0ddf"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -530,6 +629,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 24066 面；概念 v003 去掉炉口火焰，炉口内壁平涂亮橙 → T_E；用户授权免审",
             "time": "2026-11-03 05:49:26"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:39:50",
+          "files": {
+            "SM_Tripo_InfernoRoundHallFurnace_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoRoundHallFurnace_v002_review_v002.png",
+              "sha256": "e6840ef04be307af285c8daceb04b729a069b9b2997538ff40eba05037edaf94"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

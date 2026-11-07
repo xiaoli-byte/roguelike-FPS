@@ -435,6 +435,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 12758,
           "source_sha256": "c9c883fe09e90b64d781b30c61b4211e6fb18b4c4f9ce5cdb6f8c758d6805b30"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:13:03",
+          "files": {
+            "HP_SM_Tripo_InfernoIronBridge_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoIronBridge_v002_source.glb",
+              "sha256": "9db19cda71f253b8acd5d34b1435a6226073f12a4ea6dbc53fcb6bb353567c02"
+            },
+            "HP_SM_Tripo_InfernoIronBridge_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoIronBridge_v002.glb",
+              "sha256": "62a0d920acd6a7a71a54fee036604a480769d110834e0971c6baadfe05b66e28"
+            },
+            "HP_SM_Tripo_InfernoIronBridge_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoIronBridge_v002_graph.json",
+              "sha256": "6cbcded18e006f28207b70961ff6c6af4b2ac2fe1f6b32ddb58f7d05ae16f7ed"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/53fd2d47-51c3-4b51-97ab-40280e5441bf",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12758,
+          "source_sha256": "9db19cda71f253b8acd5d34b1435a6226073f12a4ea6dbc53fcb6bb353567c02"
         }
       ]
     },
@@ -494,6 +520,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:13:58",
+          "files": {
+            "SM_Tripo_InfernoIronBridge_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoIronBridge_v002.blend",
+              "sha256": "84dda363a11e1cf4fc9ab7891f58d63ea38dff9e8c0358f429aca6276e6c2299"
+            },
+            "SM_Tripo_InfernoIronBridge_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoIronBridge_v002.glb",
+              "sha256": "a9d4b0bac3c98fc1347f003915b80f029633353b277f4f7017eb551a5c3a9c8b"
+            },
+            "SM_Tripo_InfernoIronBridge_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoIronBridge_v002_metrics.json",
+              "sha256": "424abfdd3500792e99b57783e69f0aa7ad4bd8af7aa91495b7f3904fce6c8926"
+            },
+            "T_Tripo_InfernoIronBridge_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIronBridge_BC.png",
+              "sha256": "83c58e135e2a0727488c17d666dfc57ab3eb2c7f2c03619793c177be5d3b0c16"
+            },
+            "T_Tripo_InfernoIronBridge_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIronBridge_E.png",
+              "sha256": "8f54762b7aac14f2e9ec15d716c5247af48bb58f0be682fba31dd4fde98d9497"
+            },
+            "T_Tripo_InfernoIronBridge_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIronBridge_N.png",
+              "sha256": "e1b8e1725d9e0895fa8c24e7f1553705f8b095b26a5a92076fd5043bddb20fea"
+            },
+            "T_Tripo_InfernoIronBridge_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIronBridge_ORM.png",
+              "sha256": "e60d8438b8ff88e3ec566af755813b8d1ae04ff93abaa49e25fd07fea8d34ae4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.542,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12758,
+              "verts": 7824
+            }
+          ],
+          "export_kb": 798.2,
+          "seconds": 53.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -510,6 +594,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:13:58",
+          "files": {
+            "SM_Tripo_InfernoIronBridge_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoIronBridge_v002_validation_v002.json",
+              "sha256": "0b9659551074da85c23b0a8db2fd6c56bb8886a52970c88a7f8e296e0e1ad41a"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -537,6 +636,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 12758 面；用户授权免审",
             "time": "2026-11-03 05:28:02"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:14:08",
+          "files": {
+            "SM_Tripo_InfernoIronBridge_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoIronBridge_v002_review_v002.png",
+              "sha256": "c411ebf9571ac1266d8596074a988e11379e2e8c9bec6858823abe471a73b8a2"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

@@ -325,6 +325,67 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:34:36",
+          "files": {
+            "SM_Tripo_InfernoIngotPile_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoIngotPile_v002.glb",
+              "sha256": "904cd1346ae611dbb85e28a9a753f83ed12d8f90f71e5155a522eb2ba3ed4742"
+            },
+            "T_Tripo_InfernoIngotPile_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIngotPile_E.png",
+              "sha256": "ed5760cc821a8d5e31443d600da59f50464dc32fc1138b5b7ea06058030a6fad"
+            },
+            "T_Tripo_InfernoIngotPile_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIngotPile_N.png",
+              "sha256": "75cf588427c3ee4807df895283f5a41b02ab91775430026ee65e3d5a004290ce"
+            },
+            "T_Tripo_InfernoIngotPile_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIngotPile_ORM.png",
+              "sha256": "69aac81281dfc78861b3af4b813fc7520a31f184469026780dbd79cf56d53f1c"
+            },
+            "T_Tripo_InfernoIngotPile_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoIngotPile_BC.png",
+              "sha256": "7bc235f84657e5180dcb4e2146df9c51bdee0bbb6ba37b2966fa29b8abdc9aa4"
+            },
+            "SM_Tripo_InfernoIngotPile_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoIngotPile_v002_metrics.json",
+              "sha256": "48f4c0ca94bc0659b72c1539cce6b98e4cad323bf34ea58870346c6b76b9d6f2"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/96c0bb80-22ac-497a-aaf0-f2f876197a10",
+          "align_iou": 0.819,
+          "uncovered_ratio": 0.5769,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1380
+            },
+            {
+              "tris": 1000,
+              "verts": 380
+            }
+          ],
+          "export_kb": 291.7,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -341,6 +402,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:34:38",
+          "files": {
+            "SM_Tripo_InfernoIngotPile_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoIngotPile_v002_validation_v002.json",
+              "sha256": "16ee73a8580e9ba6d4be238f5a44e4ccd40521a39d8d7f5b5c8513141de7dc59"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -368,6 +444,25 @@
             "by": "claude(AI初审)",
             "note": "2mv 种子 20261003：交错黑铁 / 青铜锭垛、木箱矿石、陶坩埚与盘链与概念一致，连成一堆；坩埚口与矿脉自发光；实测 2.18×1.52×1.81 m；IoU 0.819（侧视细节偏糊，2 m 级道具可接受），LOD 无开口边。",
             "time": "2026-10-11 23:15:16"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:34:54",
+          "files": {
+            "SM_Tripo_InfernoIngotPile_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoIngotPile_v002_review_v002.png",
+              "sha256": "0407caec9fca70b2bdda390e28469c186dfb15343176c481a9990bae463fa477"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

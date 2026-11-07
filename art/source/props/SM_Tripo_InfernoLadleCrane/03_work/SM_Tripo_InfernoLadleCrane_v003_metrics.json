@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 23865,
+    "verts": 14784
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 17.23236,
+    "iou": 0.854,
+    "iou_per_view": {
+      "front": 0.893,
+      "left": 0.811,
+      "back": 0.876,
+      "right": 0.815
+    },
+    "size_m": [
+      17.224,
+      8.086,
+      13.0
+    ],
+    "reference_m": [
+      18.0,
+      8.0,
+      13.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0076
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.49,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoLadleCrane_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoLadleCrane_LOD0",
+      "tris": 23865,
+      "verts": 14784,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.9951171875
+      ],
+      "uv_utilization": 0.45,
+      "bbox_min": [
+        -8.612,
+        -4.043,
+        0.0
+      ],
+      "bbox_max": [
+        8.612,
+        4.043,
+        13.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoLadleCrane/04_export/SM_Tripo_InfernoLadleCrane_v003.glb",
+    "bytes": 1224112
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 46.3,
+  "_seconds": 48.6
+}

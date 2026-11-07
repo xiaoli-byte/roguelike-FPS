@@ -329,6 +329,71 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:14:34",
+          "files": {
+            "SM_Tripo_InfernoPortalShrine_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoPortalShrine_v002.glb",
+              "sha256": "ff725be3291093a80ae7179ae2852f58a8367d06244bf11ad7028e1f38d4405d"
+            },
+            "T_Tripo_InfernoPortalShrine_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoPortalShrine_E.png",
+              "sha256": "28432f987c0edca96c3cc13c25377c0f83b177f7723219cc76cc6216f02bd1f3"
+            },
+            "T_Tripo_InfernoPortalShrine_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoPortalShrine_N.png",
+              "sha256": "1761c8f2401608719fe1130fc3e41e8a17cb29b476f06e8b87d51a7e802a3e6a"
+            },
+            "T_Tripo_InfernoPortalShrine_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoPortalShrine_ORM.png",
+              "sha256": "b8ac719f8f01bded1dfca3eb5dc8425b90d3f62ffb7403bbe47149b1c439d12c"
+            },
+            "T_Tripo_InfernoPortalShrine_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoPortalShrine_BC.png",
+              "sha256": "45f08bdbb3f152720e28a7da55c38b8be0d0f6ecd395a4089ad5d7e5715e6ce3"
+            },
+            "SM_Tripo_InfernoPortalShrine_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoPortalShrine_v002_metrics.json",
+              "sha256": "12a031e5133a502a2bb45de0f3a4d380b44900a7d3c8365978fedc533c334398"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/e6c30b1f-2fe5-4ed9-8aef-322c8338f869",
+          "align_iou": 0.919,
+          "uncovered_ratio": 0.288,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3994
+            },
+            {
+              "tris": 2500,
+              "verts": 1244
+            },
+            {
+              "tris": 800,
+              "verts": 394
+            }
+          ],
+          "export_kb": 510.1,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -345,6 +410,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:14:39",
+          "files": {
+            "SM_Tripo_InfernoPortalShrine_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoPortalShrine_v002_validation_v002.json",
+              "sha256": "93c8f6a215c1e52490cf82efac527c76fc89b42570b4b824e6f553ccbc8a7b7a"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -372,6 +452,25 @@
             "by": "claude(AI初审)",
             "note": "2mv 种子 20261003：重檐铜顶、朱漆双柱与火盆、拱券熔岩线、龛内铜日纹与概念一致；实测宽 7.59 m、高 10.68 m、深 2.15 m，内拱 3.2 m、外拱线 4.0–5.0 m、龛深 1.53 m，比概念窄，布局按 1.3 倍等比放置让传送门（直径约 4.4 m）进拱；IoU 0.919，LOD 无开口边，拱缘熔岩线与柱顶火盆自发光。",
             "time": "2026-10-11 22:30:34"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:15:31",
+          "files": {
+            "SM_Tripo_InfernoPortalShrine_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoPortalShrine_v002_review_v002.png",
+              "sha256": "faf470974e8ee4b0708a1292bbe768c47497700b3bdc0fd0d48b1a5a8f84bcde"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

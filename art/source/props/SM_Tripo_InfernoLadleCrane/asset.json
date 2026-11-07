@@ -347,6 +347,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 23865,
           "source_sha256": "8a73f78c534830d314bacc5287cd7d36a558117267e6d0381cc51daef327d5e5"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:36:32",
+          "files": {
+            "HP_SM_Tripo_InfernoLadleCrane_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoLadleCrane_v002_source.glb",
+              "sha256": "a2dde430d9802a44edae0aae5b9920d18c3128ab339289dddf4c3c0b926a9a73"
+            },
+            "HP_SM_Tripo_InfernoLadleCrane_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoLadleCrane_v002.glb",
+              "sha256": "e2788b562fd713a1daff90236bb40b5bcd1c30fde2439850b53f33279400fe15"
+            },
+            "HP_SM_Tripo_InfernoLadleCrane_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoLadleCrane_v002_graph.json",
+              "sha256": "eb45d67aa47860a8a4f3aee9a27d6cd67d4007841ef8f481cc574337f43aaf3d"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/dec519a3-9deb-4278-ab6b-b3562a5ae026",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 23865,
+          "source_sha256": "a2dde430d9802a44edae0aae5b9920d18c3128ab339289dddf4c3c0b926a9a73"
         }
       ]
     },
@@ -456,6 +482,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 01:37:21",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v003.blend": {
+              "path": "03_work/SM_Tripo_InfernoLadleCrane_v003.blend",
+              "sha256": "ee06be97e55a18260500f2341d90c828f042ec34646a26e5eed4bf5d754877c0"
+            },
+            "SM_Tripo_InfernoLadleCrane_v003.glb": {
+              "path": "04_export/SM_Tripo_InfernoLadleCrane_v003.glb",
+              "sha256": "cf20dd171451f6abcf22c4d0615a586198c1239388595116accc22271e044740"
+            },
+            "SM_Tripo_InfernoLadleCrane_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoLadleCrane_v003_metrics.json",
+              "sha256": "dc9cf5993b3c22cf7057b6b2a8719043fb32d19a8417a89bc44fefeb98e565b7"
+            },
+            "T_Tripo_InfernoLadleCrane_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoLadleCrane_BC.png",
+              "sha256": "04886396f59443c91900472ab6b28d4e116e827f5688c7af8aec5dd5d26b6a18"
+            },
+            "T_Tripo_InfernoLadleCrane_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoLadleCrane_E.png",
+              "sha256": "1469bdc510ce13e7b3b076d92fa8934ef6a2e58c19a1a53b7e204619dbdd2074"
+            },
+            "T_Tripo_InfernoLadleCrane_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoLadleCrane_N.png",
+              "sha256": "4d0bd3ab169c34a8f824df51cf87f634b7406f9f2fcb3fbcebd615035f810bdf"
+            },
+            "T_Tripo_InfernoLadleCrane_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoLadleCrane_ORM.png",
+              "sha256": "c219922bce4d151995ae0ab849727c30bc391c6683da2a31ffdaa4f38e3d2983"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 23865,
+              "verts": 14784
+            }
+          ],
+          "export_kb": 1195.4,
+          "seconds": 48.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -487,6 +571,21 @@
             }
           },
           "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 01:37:22",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_InfernoLadleCrane_v003_validation_v003.json",
+              "sha256": "7376ae109d9e275997d12e669b0257dcb032eb1b1f101229faec9bda1757a640"
+            }
+          },
+          "from_build": 3,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -527,6 +626,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 23865 面；门架不带吊钩，吊钩 / 绞盘是 SM_Tripo_InfernoCraneHook；用户授权免审",
             "time": "2026-11-03 05:28:04"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 01:37:32",
+          "files": {
+            "SM_Tripo_InfernoLadleCrane_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_InfernoLadleCrane_v003_review_v003.png",
+              "sha256": "34965f5908d7e05cd9ffb62379206144a399ab452718178e8e4ec6e8290199f2"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

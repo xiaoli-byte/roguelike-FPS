@@ -393,6 +393,63 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:31:10",
+          "files": {
+            "SM_Tripo_InfernoBarricade_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoBarricade_v002.glb",
+              "sha256": "676e98b3a922f6e47d8638b3ba80b06897b9192a5c77fe0b551ec9d958782503"
+            },
+            "T_Tripo_InfernoBarricade_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoBarricade_N.png",
+              "sha256": "d5f5b12cf264c24dee44799c2c777819fd1d1f6a5494a465add5a9f5ed6df81e"
+            },
+            "T_Tripo_InfernoBarricade_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoBarricade_ORM.png",
+              "sha256": "ff317428b6f1e091cdd830c2db1599d98b5cf044d5cfe899c336664380bed282"
+            },
+            "T_Tripo_InfernoBarricade_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoBarricade_BC.png",
+              "sha256": "7021b0b8d35d44a83e24ee3d019bb2363f7fc987e5ab5ab302c6ae2f24e1048c"
+            },
+            "SM_Tripo_InfernoBarricade_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoBarricade_v002_metrics.json",
+              "sha256": "0e0f8d7020bdbf33544881dd76cf010ad91f9f717054a64fbffa08abcd12821d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/f1b30706-0bd6-42a1-862e-ea907ed5f820",
+          "align_iou": 0.853,
+          "uncovered_ratio": 0.2536,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 168.5,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -409,6 +466,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:31:11",
+          "files": {
+            "SM_Tripo_InfernoBarricade_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoBarricade_v002_validation_v002.json",
+              "sha256": "c52bcac3ab5daef50fec330bf1d131bb22fbca3678e83c84544e300aeadbf33a"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -436,6 +508,25 @@
             "by": "claude(AI初审)",
             "note": "2mv 种子 20261003：五块火云纹铸铁模块、铜帽方柱、玄武岩路缘与概念一致，实心（射线两次穿越）；实测 3.56×1.18×0.47 m（偏薄，布局按掩体盒等比外拉加厚）；IoU 0.853，校验 0 警告，LOD 无开口边；概念无熔岩，不做自发光。",
             "time": "2026-10-11 23:01:09"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:31:29",
+          "files": {
+            "SM_Tripo_InfernoBarricade_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoBarricade_v002_review_v002.png",
+              "sha256": "c593b53a26bfaf8f1a15994fdbecadbd1ac765ff4901518d448772204b429314"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

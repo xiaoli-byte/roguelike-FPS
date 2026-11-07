@@ -166,7 +166,7 @@
       ]
     },
     "highpoly": {
-      "current": 3,
+      "current": 1,
       "versions": [
         {
           "version": 1,
@@ -249,7 +249,7 @@
       ]
     },
     "build": {
-      "current": 3,
+      "current": 1,
       "versions": [
         {
           "version": 1,
@@ -357,7 +357,11 @@
           "seconds": 71.3,
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
-          "quality_errors": []
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         },
         {
           "version": 3,
@@ -411,12 +415,16 @@
           "seconds": 57.7,
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
-          "quality_errors": []
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
     "validate": {
-      "current": 3,
+      "current": 1,
       "versions": [
         {
           "version": 1,
@@ -466,7 +474,7 @@
       ]
     },
     "review": {
-      "current": 3,
+      "current": 1,
       "versions": [
         {
           "version": 1,
@@ -513,16 +521,16 @@
           "deformation": {},
           "auto_flags": [],
           "review": {
-            "verdict": "approved",
+            "verdict": "rejected",
             "by": "Claude AI visual review",
-            "note": "贴图太碎试点 v003：Tripo 纹理生成重出底色（新账号，使用原始 UV、去光、4K，参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙），熔岩缝按旧贴图放回原位（自发光覆盖和 v001 持平），其他会被抠成自发光的亮橙红压暗；网格 / 尺寸 / 朝向和 v001 一致",
-            "time": "2026-11-07 00:54:56"
+            "note": "11-07 退回 v001 原贴图：试点重出的底色偏紫（紫色偏 0.15/0.00/0.21 → 0.62/0.86/0.84）、锐度下降，和用户 11-07「泛紫色、灰色」「贴图模糊」冲突；见 docs/art/ch3-kit.md 第 7.4 节",
+            "time": "2026-11-07 22:02:35"
           }
         }
       ]
     },
     "publish": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -546,6 +554,18 @@
             }
           },
           "from_build": 3,
+          "url": "assets/props/SM_Tripo_InfernoRockRib.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 22:02:37",
+          "files": {
+            "SM_Tripo_InfernoRockRib.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoRockRib.glb",
+              "sha256": "6db7c3c7a25bf30eb631160fa8d390af2df27b293e1b0bd40b6818b711012cc5"
+            }
+          },
+          "from_build": 1,
           "url": "assets/props/SM_Tripo_InfernoRockRib.glb"
         }
       ]

@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 25035,
+    "verts": 15463
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 17.63617,
+    "iou": 0.763,
+    "iou_per_view": {
+      "front": 0.772,
+      "left": 0.754,
+      "back": 0.772,
+      "right": 0.75
+    },
+    "size_m": [
+      17.559,
+      17.628,
+      8.0
+    ],
+    "reference_m": [
+      26.0,
+      26.0,
+      8.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0209
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.454,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoHangingForge_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoHangingForge_LOD0",
+      "tris": 25035,
+      "verts": 15463,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.99560546875,
+        0.998779296875
+      ],
+      "uv_utilization": 0.518,
+      "bbox_min": [
+        -8.7793,
+        -8.8138,
+        0.0
+      ],
+      "bbox_max": [
+        8.7793,
+        8.8138,
+        8.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoHangingForge/04_export/SM_Tripo_InfernoHangingForge_v002.glb",
+    "bytes": 1264788
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 53.3,
+  "_seconds": 56.1
+}

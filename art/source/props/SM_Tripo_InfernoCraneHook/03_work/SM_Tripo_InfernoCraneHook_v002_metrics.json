@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 6535,
+    "verts": 4313
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 6.00293,
+    "iou": 0.887,
+    "iou_per_view": {
+      "front": 0.922,
+      "left": 0.85,
+      "back": 0.921,
+      "right": 0.838
+    },
+    "size_m": [
+      3.128,
+      1.785,
+      6.0
+    ],
+    "reference_m": [
+      4.0,
+      3.0,
+      6.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0042
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.53,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_InfernoCraneHook_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoCraneHook_LOD0",
+      "tris": 6535,
+      "verts": 4313,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.531,
+      "bbox_min": [
+        -1.5638,
+        -0.8925,
+        0.0
+      ],
+      "bbox_max": [
+        1.5638,
+        0.8925,
+        6.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoCraneHook/04_export/SM_Tripo_InfernoCraneHook_v002.glb",
+    "bytes": 252664
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 13.8,
+  "_seconds": 16.2
+}

@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 28534,
+    "verts": 15050
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 8.00391,
+    "iou": 0.87,
+    "iou_per_view": {
+      "front": 0.9,
+      "left": 0.835,
+      "back": 0.896,
+      "right": 0.834
+    },
+    "size_m": [
+      5.522,
+      4.233,
+      8.0
+    ],
+    "reference_m": [
+      6.4,
+      6.4,
+      8.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0261
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.695,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Prop_QilinCauldron_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_QilinCauldron_LOD0",
+      "tris": 28534,
+      "verts": 15050,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99462890625,
+        0.99853515625
+      ],
+      "uv_utilization": 0.414,
+      "bbox_min": [
+        -2.7611,
+        -2.1163,
+        0.0
+      ],
+      "bbox_max": [
+        2.7611,
+        2.1163,
+        8.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_QilinCauldron/04_export/SM_Prop_QilinCauldron_v002.glb",
+    "bytes": 1273708
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 46.7,
+  "_seconds": 53.5
+}

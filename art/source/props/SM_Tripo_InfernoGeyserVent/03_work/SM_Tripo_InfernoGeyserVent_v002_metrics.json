@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 7030,
+    "verts": 4311
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 6.72328,
+    "iou": 0.693,
+    "iou_per_view": {
+      "front": 0.661,
+      "left": 0.707,
+      "back": 0.705,
+      "right": 0.716
+    },
+    "size_m": [
+      6.72,
+      6.622,
+      2.085
+    ],
+    "reference_m": [
+      6.0,
+      6.0,
+      2.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0437
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.725,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_InfernoGeyserVent_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoGeyserVent_LOD0",
+      "tris": 7030,
+      "verts": 4311,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.989990234375
+      ],
+      "uv_utilization": 0.6,
+      "bbox_min": [
+        -3.36,
+        -3.3108,
+        0.0
+      ],
+      "bbox_max": [
+        3.36,
+        3.3108,
+        2.0846
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoGeyserVent/04_export/SM_Tripo_InfernoGeyserVent_v002.glb",
+    "bytes": 301964
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 10.8,
+  "_seconds": 12.7
+}

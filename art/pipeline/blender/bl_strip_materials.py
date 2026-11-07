@@ -14,6 +14,11 @@ from bl_common import args, clear_scene, finish, import_glb, log
 P = args()
 clear_scene()
 objs = [o for o in import_glb(P["source"]) if o.type == "MESH"]
+# Published GLBs may still carry far LODs (_LOD1…): upload only LOD0, the mesh the texture is painted for
+lods = [o for o in objs if "_LOD" in o.name and not o.name.split("_LOD")[-1].startswith("0")]
+for o in lods:
+    bpy.data.objects.remove(o)
+objs = [o for o in objs if o not in lods]
 for o in objs:
     o.data.materials.clear()
     while len(o.data.uv_layers) > 1:

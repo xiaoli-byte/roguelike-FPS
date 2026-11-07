@@ -1,0 +1,157 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "295 KB / 上限 700 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Tripo_InfernoGeyserVent_LOD0']，规格 1 级"
+  },
+  {
+    "level": "note",
+    "check": "LOD0 面数",
+    "detail": "7030（参考 8000）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 X 轴",
+    "detail": "6.720 m / 参考 6.900 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 X 轴",
+    "detail": "6.720 m / 极限 18.000 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 Z 轴",
+    "detail": "6.622 m / 参考 6.900 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 Z 轴",
+    "detail": "6.622 m / 极限 18.000 m"
+  },
+  {
+    "level": "waived",
+    "check": "场景高度",
+    "detail": "2.085 m / 参考 2.500 m  —— 豁免：Tripo 网格比概念扁宽，等比对齐被占地卡住：实得 6.72 × 2.08 × 6.62 m（登记 2.5 m 高）；喷口是贴地件，高度不影响玩法（2026-11-03）"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=0.0000"
+  },
+  {
+    "level": "pass",
+    "check": "场景轴心居中",
+    "detail": "中心 x=0.000 z=0.000"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Tripo_InfernoGeyserVent']（一个资产一个材质，便于合批；重烘的远景 LOD 另有 M_*_LOD<i>）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Tripo_InfernoGeyserVent']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 材质",
+    "detail": "['M_Tripo_InfernoGeyserVent']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_InfernoGeyserVent_E",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_InfernoGeyserVent_E",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_InfernoGeyserVent_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_InfernoGeyserVent_N",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_InfernoGeyserVent_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_InfernoGeyserVent_ORM",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_InfernoGeyserVent_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_InfernoGeyserVent_BC",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "自发光贴图",
+    "detail": "emissiveFactor [1, 1, 1]"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_InfernoGeyserVent_LOD0 UV 范围",
+    "detail": "[0.001220703125, 0.001220703125]..[0.998779296875, 0.989990234375]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "60%"
+  },
+  {
+    "level": "warn",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.693（{'front': 0.661, 'left': 0.707, 'back': 0.705, 'right': 0.716}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 0%（扩散补色）"
+  }
+]

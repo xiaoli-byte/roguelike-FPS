@@ -442,6 +442,71 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:37:27",
+          "files": {
+            "SM_Tripo_InfernoFurnaceTower_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoFurnaceTower_v002.glb",
+              "sha256": "ed2f756133d159a2b104af7ceb0388603c59953046f08fa76a0b72fe53b93ca1"
+            },
+            "T_Tripo_InfernoFurnaceTower_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFurnaceTower_E.png",
+              "sha256": "8f0fad0ca7d1899cacb47ac49bbf8ac0bab511d11d532853d4a74f7121ae984e"
+            },
+            "T_Tripo_InfernoFurnaceTower_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFurnaceTower_N.png",
+              "sha256": "2492fc85434a13805f64bc227b644aafe6034e07ec2922d741349c5682ed820f"
+            },
+            "T_Tripo_InfernoFurnaceTower_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFurnaceTower_ORM.png",
+              "sha256": "761bd94051e803de83a957f20c8f3a7f33721eebd736002eddac951e3df3d458"
+            },
+            "T_Tripo_InfernoFurnaceTower_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoFurnaceTower_BC.png",
+              "sha256": "dd0feb4dc83d5218da63b27432b9075f9db4de99b3aa4dd3e3c8a8347ac28300"
+            },
+            "SM_Tripo_InfernoFurnaceTower_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoFurnaceTower_v002_metrics.json",
+              "sha256": "a7844eb1e98c64a46c90511aa981640a1e68d08983c573cce2c9fdd1d1f6f0bd"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/5b66a005-b115-4e96-b61a-342d3721ff7e",
+          "align_iou": 0.931,
+          "uncovered_ratio": 0.4791,
+          "lods": [
+            {
+              "tris": 7998,
+              "verts": 3937
+            },
+            {
+              "tris": 2500,
+              "verts": 1188
+            },
+            {
+              "tris": 800,
+              "verts": 338
+            }
+          ],
+          "export_kb": 640.2,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -458,6 +523,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:37:27",
+          "files": {
+            "SM_Tripo_InfernoFurnaceTower_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoFurnaceTower_v002_validation_v002.json",
+              "sha256": "268ea789134f854f537d971f9bffc3d0e1fc67bf201f602873292e9241b89fc6"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 2,
           "waived": [],
@@ -485,6 +565,25 @@
             "by": "claude(AI初审)",
             "note": "2mv 种子 20261003：玄武岩基座、拱形炉口、朱漆上层与火纹板、重檐铜瓦顶与方烟囱口与概念一致，四面完整；实测 6.13×4.99×12.86 m；IoU 0.931，LOD 无开口边（屋檐与烟囱叠层使射线多次穿越，属正常结构）；炉口、烟囱口、窗缝与基座熔岩裂纹自发光。",
             "time": "2026-10-11 22:32:43"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:37:41",
+          "files": {
+            "SM_Tripo_InfernoFurnaceTower_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoFurnaceTower_v002_review_v002.png",
+              "sha256": "fbb26343a0a1e11566f36c3ae6c5ab09baf0c49f0a5105e03954ce012e96685b"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

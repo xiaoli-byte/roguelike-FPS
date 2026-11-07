@@ -196,6 +196,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 15267,
           "source_sha256": "896802ab3a504733fd8cbbf31c170ca4f5fabf2a1b036e57f488bd622da6a47f"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 20:39:54",
+          "files": {
+            "HP_SM_Tripo_InfernoGuardianStatue_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGuardianStatue_v002_source.glb",
+              "sha256": "7361d85d743d44b21be020a81fe6bb3157d0ea267e3ad494b1cfc385cc124563"
+            },
+            "HP_SM_Tripo_InfernoGuardianStatue_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGuardianStatue_v002.glb",
+              "sha256": "ed9a60ff3e5f1ef44e3321bade2792a895c22423b9cb5a962bbc4c5f68d40b76"
+            },
+            "HP_SM_Tripo_InfernoGuardianStatue_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGuardianStatue_v002_graph.json",
+              "sha256": "feed4b493528050bbf4ce8ee3d99d1cc74570c9dda6fde50080d8736747b1871"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/09ae73e9-4dd1-4083-a242-a6be1f3fab60",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15267,
+          "source_sha256": "7361d85d743d44b21be020a81fe6bb3157d0ea267e3ad494b1cfc385cc124563"
         }
       ]
     },
@@ -305,6 +331,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 20:40:34",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v003.blend": {
+              "path": "03_work/SM_Tripo_InfernoGuardianStatue_v003.blend",
+              "sha256": "269253b62a654e4511030ab2cdaae5c51fd566342daabd4a15da5e4ab3332a80"
+            },
+            "SM_Tripo_InfernoGuardianStatue_v003.glb": {
+              "path": "04_export/SM_Tripo_InfernoGuardianStatue_v003.glb",
+              "sha256": "0d0212f4e3adf3d0861e627b51bc9111ee605e02cc75a0b1b5b93cefae5d8539"
+            },
+            "SM_Tripo_InfernoGuardianStatue_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoGuardianStatue_v003_metrics.json",
+              "sha256": "30d4dabb84a908ae98da8a0604f064e710df9e1cc16b7d927a455428db66b04a"
+            },
+            "T_Tripo_InfernoGuardianStatue_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoGuardianStatue_BC.png",
+              "sha256": "f4de292607daade1aeb96b26a005923f5cc9bd5982fb22b50e9ba48d4462072a"
+            },
+            "T_Tripo_InfernoGuardianStatue_E.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoGuardianStatue_E.png",
+              "sha256": "8b242f4fa713a68ae3816f9da9362bfde494926ff7b535fd52b8b39ba54e2db1"
+            },
+            "T_Tripo_InfernoGuardianStatue_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoGuardianStatue_N.png",
+              "sha256": "d2e85ae28cd2b2bc1557deb5530e9e78249b5d1578adfcdcbc16325a919003e8"
+            },
+            "T_Tripo_InfernoGuardianStatue_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_InfernoGuardianStatue_ORM.png",
+              "sha256": "8ed333e1fa26656d349e7db2b322951048be20cc26629caf071f707c594dcf93"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.92,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15267,
+              "verts": 8066
+            }
+          ],
+          "export_kb": 952.3,
+          "seconds": 39.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -336,6 +420,21 @@
             }
           },
           "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 20:40:35",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_InfernoGuardianStatue_v003_validation_v003.json",
+              "sha256": "5be6537013649db8f87c6bb74c1ee1613dade7ffe8ae94912ada1e1601c3135e"
+            }
+          },
+          "from_build": 3,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -376,6 +475,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 15267 面；用户授权免审",
             "time": "2026-11-03 05:49:45"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 20:40:44",
+          "files": {
+            "SM_Tripo_InfernoGuardianStatue_v003_review_v003.png": {
+              "path": "05_review/SM_Tripo_InfernoGuardianStatue_v003_review_v003.png",
+              "sha256": "4e7bb20d50d60bbfa5f2781d8630f088f5f80a5600547b573be8ea8a43de73b2"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

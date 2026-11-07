@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 6625,
+    "verts": 4030
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.28029,
+    "iou": 0.608,
+    "iou_per_view": {
+      "front": 0.623,
+      "left": 0.557,
+      "back": 0.689,
+      "right": 0.553
+    },
+    "size_m": [
+      5.278,
+      2.091,
+      1.4
+    ],
+    "reference_m": [
+      8.0,
+      5.0,
+      1.4
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0205
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.648,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_InfernoCastingBed_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoCastingBed_LOD0",
+      "tris": 6625,
+      "verts": 4030,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.997314453125
+      ],
+      "uv_utilization": 0.595,
+      "bbox_min": [
+        -2.6389,
+        -1.0455,
+        0.0
+      ],
+      "bbox_max": [
+        2.6389,
+        1.0455,
+        1.4
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoCastingBed/04_export/SM_Tripo_InfernoCastingBed_v002.glb",
+    "bytes": 345524
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 24.7,
+  "_seconds": 29.7
+}

@@ -1,5 +1,10 @@
 """Tripo Studio 纹理生成：给已发布的网格重出贴图，网格、尺寸、原点、挂点、关卡摆放都不动（2026-11-06 起）。
 
+**2026-11-07 起不再用这条路给第三章件换贴图**：第三章 44 件重出的底色普遍偏紫（参考图把石面转成了冷暗紫，Tripo 把它烘进了固有色）、
+锐度约减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；试点 3 件已退回 v001，全量铺开的 41 件不发布
+（docs/art/ch3-kit.md 第 7.4 节）。固有色问题改用 texture_clean.py 在原始贴图上只调色。下面的 UV 核对、key_mask、tripo_source
+仍被 texture_clean.py 引用。只有火坛（去掉烘进去的火苗）这种定点改内容的需求才值得再走一次，参考图要用中性白光、固有色。
+
 Tripo Studio 左栏「纹理生成」可以上传自己的模型（OBJ / FBX / STL / GLB ≤ 150 MB），上传时打开「使用原始 UV」，
 生成的底色贴图就落在原来的 UV 上。导出的 GLB 只带一张底色（4K JPEG），网格被 Tripo 归一化（高 = 1）并可能绕竖轴转 90°，
 UV 不变——所以只取底色贴图，几何一律用我们自己的。
@@ -333,8 +338,27 @@ def to_build(asset_id: str, file: str, task: str, bc_png: str | None, e_png: str
         im.save(b, "WEBP", quality=90, method=6)
         return b.getvalue()
 
-    new[base_color_image(js)] = (webp(bc_img), "image/webp")
     ei = emissive_image(js)
+    glow_stats = None
+    if ei is not None and not (e_png or e_none or bc_png):
+        # Keep the published emissive mask: where it lights, put the old paint back (the glow and its colour stay
+        # where they were); elsewhere dim anything the new texture painted bright orange enough to read as lava.
+        from PIL import ImageFilter
+        old_bc = Image.open(io.BytesIO(image_bytes(js, bn, base_color_image(js)))).convert("RGB").resize((size, size), Image.Resampling.LANCZOS)
+        old_e = Image.open(io.BytesIO(image_bytes(js, bn, ei))).convert("L").resize((size, size), Image.Resampling.LANCZOS)
+        hard = old_e.point(lambda v: 255 if v > 128 else 0).filter(ImageFilter.MaxFilter(3))
+        w = np.asarray(hard.filter(ImageFilter.GaussianBlur(1.0)), np.float32)[..., None] / 255
+        nb = np.asarray(bc_img, np.float32) / 255
+        ob = np.asarray(old_bc, np.float32) / 255
+        out = nb * (1 - w) + ob * w
+        key = spec.raw.get("emissive_key") or {"hue": [0.02, 0.17], "min_sat": 0.6, "min_val": 0.8}
+        stray = (key_mask(out, key) > 0.02) & (w[..., 0] < 0.5)
+        mx = out.max(-1, keepdims=True)
+        out = out * np.where(stray[..., None], np.minimum(1.0, 0.74 / np.maximum(mx, 1e-6)), 1.0)
+        bc_img = Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8))
+        glow_stats = {"glow_texels": round(float((w[..., 0] > 0.5).mean()), 4), "dimmed_texels": round(float(stray.mean()), 4)}
+        print(f"  自发光遮罩不动，发光处放回旧底色：{glow_stats}")
+    new[base_color_image(js)] = (webp(bc_img), "image/webp")
     e_img = None
     if e_png or e_none:
         if ei is None:
@@ -364,7 +388,7 @@ def to_build(asset_id: str, file: str, task: str, bc_png: str | None, e_png: str
     Path(keep).with_suffix(".json").write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
     metrics["retexture"] = {"from_build": prev["version"], "base_glb": portable_path(base), "base_sha256": manifest["sha256"],
                             "tripo_task": task, "tripo_export": portable_path(keep), "uv_match": match,
-                            "replaced": ["BC"] + (["E"] if e_img is not None else []),
+                            "replaced": ["BC"] + (["E"] if e_img is not None else []), "keep_glow": glow_stats,
                             "bc_source": portable_path(bc_png) if bc_png else "Tripo 导出的底色", "note": note}
     metrics["export"] = {"path": portable_path(out_glb), "bytes": out_glb.stat().st_size}
     mpath = work / f"{tag}_metrics.json"

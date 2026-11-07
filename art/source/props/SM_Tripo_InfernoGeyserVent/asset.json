@@ -196,6 +196,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 7030,
           "source_sha256": "e8b123acc2bdc1c626be3cbefecc33c9f9dd1511f17b12f5770f5dada0058e70"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 20:40:37",
+          "files": {
+            "HP_SM_Tripo_InfernoGeyserVent_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGeyserVent_v002_source.glb",
+              "sha256": "c0f39f8a686bcc986953267a50c9135f8196b4ca0764634f505c2d481219c67d"
+            },
+            "HP_SM_Tripo_InfernoGeyserVent_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGeyserVent_v002.glb",
+              "sha256": "0c2410e6c009d20f2f7a431f1fbac20327ac9691fb97ab93affa3813f9bcb107"
+            },
+            "HP_SM_Tripo_InfernoGeyserVent_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoGeyserVent_v002_graph.json",
+              "sha256": "9d3bb675ae7295870a6633d6842cb1ef535accc58af044605399609072aafe20"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/74fe4647-fc49-49d0-97da-f9dc4e86b151",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7030,
+          "source_sha256": "c0f39f8a686bcc986953267a50c9135f8196b4ca0764634f505c2d481219c67d"
         }
       ]
     },
@@ -255,6 +281,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 20:40:51",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoGeyserVent_v002.blend",
+              "sha256": "7b1db7a7409608f018002342a8ec855080f88d217fe390d1ffb271ceffd6e7da"
+            },
+            "SM_Tripo_InfernoGeyserVent_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoGeyserVent_v002.glb",
+              "sha256": "474b84fb7b26ccc15178272e18bddaa160725bf692c59ec9df65507d181a4fbe"
+            },
+            "SM_Tripo_InfernoGeyserVent_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoGeyserVent_v002_metrics.json",
+              "sha256": "8059928e9f2defbcce26149710608b221e59f510a8fbf3b79831fa33228afbec"
+            },
+            "T_Tripo_InfernoGeyserVent_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGeyserVent_BC.png",
+              "sha256": "18e83bb38a3c618d9eb6135515f6277474083e0fbc6a324e28484a5d7dc841b4"
+            },
+            "T_Tripo_InfernoGeyserVent_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGeyserVent_E.png",
+              "sha256": "729ce9a5574aa1f7ef4a7450e4fa7c9ab60b4734822c54203475309e54de9c81"
+            },
+            "T_Tripo_InfernoGeyserVent_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGeyserVent_N.png",
+              "sha256": "4753529db2cc0959a1a7e193f67420d716180220f2b35e75a993de70d285ae89"
+            },
+            "T_Tripo_InfernoGeyserVent_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoGeyserVent_ORM.png",
+              "sha256": "7483da700f17fc4b2fa4690f3792138b3f082a8460ef266356b4f603f6450324"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.693,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7030,
+              "verts": 4311
+            }
+          ],
+          "export_kb": 294.9,
+          "seconds": 12.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -292,6 +376,23 @@
             "场景高度"
           ],
           "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 20:40:51",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_InfernoGeyserVent_v002_validation_v003.json",
+              "sha256": "cfad953724812cb727a02f7a580b4a3e5e35566cedacdb1561b77aea11fd0201"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
         }
       ]
     },
@@ -315,6 +416,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 7030 面；顶部岩壳切成单件（可射爆）；用户授权免审",
             "time": "2026-11-03 05:49:29"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 20:40:58",
+          "files": {
+            "SM_Tripo_InfernoGeyserVent_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoGeyserVent_v002_review_v002.png",
+              "sha256": "0b0796f14380e39cdaf1537f89d45be7b0ab3b4337f789d88f8b29edd56a8ee3"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

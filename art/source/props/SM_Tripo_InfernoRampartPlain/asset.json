@@ -618,6 +618,67 @@
           "quality_errors": [
             "场景有效尺寸 Z 轴"
           ]
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 21:23:25",
+          "files": {
+            "SM_Tripo_InfernoRampartPlain_v004.glb": {
+              "path": "04_export/SM_Tripo_InfernoRampartPlain_v004.glb",
+              "sha256": "a7f3127e3ff171a6bef62b5dd3b1038f1c8eee6d1d0da538236ea7568f655326"
+            },
+            "T_Tripo_InfernoRampartPlain_N.png": {
+              "path": "03_work/textures_v004/T_Tripo_InfernoRampartPlain_N.png",
+              "sha256": "b75f8c6b2cb1e9c226246466e12da55414cc63ba435580a4993e912cd497f577"
+            },
+            "T_Tripo_InfernoRampartPlain_ORM.png": {
+              "path": "03_work/textures_v004/T_Tripo_InfernoRampartPlain_ORM.png",
+              "sha256": "54b938cd1fd14bfbbf84f20aa624cafd1118ca0f43425833b039ee3e2bb558d8"
+            },
+            "T_Tripo_InfernoRampartPlain_BC.png": {
+              "path": "03_work/textures_v004/T_Tripo_InfernoRampartPlain_BC.png",
+              "sha256": "5a0a2ba7e48dfc8914ac000a8cd8eebb3d9d821164ba9b07295848bed70e3f49"
+            },
+            "SM_Tripo_InfernoRampartPlain_v004_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoRampartPlain_v004_metrics.json",
+              "sha256": "2c168fa6f6823f22ea9af31636252e7f1e3bfca6a46c59d878df722247e89fa7"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "retexture_of": 2,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/5ef2aee9-72d2-4bb6-a282-5e16089459ce",
+          "align_iou": 0.935,
+          "uncovered_ratio": 0.3641,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 4002
+            },
+            {
+              "tris": 2500,
+              "verts": 1252
+            },
+            {
+              "tris": 800,
+              "verts": 402
+            }
+          ],
+          "export_kb": 298.2,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -668,6 +729,21 @@
           "warnings": 3,
           "waived": [],
           "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 21:23:26",
+          "files": {
+            "SM_Tripo_InfernoRampartPlain_v004_validation_v004.json": {
+              "path": "05_review/SM_Tripo_InfernoRampartPlain_v004_validation_v004.json",
+              "sha256": "498c66d7ab4b6055f66ca968fb6b0a00566e7d0c89a5f4b627633105a7db54ad"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
@@ -710,6 +786,25 @@
             "by": "claude(AI初审)",
             "note": "v001（种子 20261003）薄壳空心已退回；2.1 单视图 v003 墙深猜成 21 m 弃用；采用 2mv 种子 20261011 的 v002：剪影与装饰墙一致（同款外扩基座、铁板铆钉、铜帽城垛），IoU 0.935，校验 0 警告，LOD 无开口边；射线检查约 1/3 区域为双层壳（只见正面，LOD 已达预算，不影响拼墙）。素墙无熔岩，不做自发光。",
             "time": "2026-10-11 22:40:57"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-07 21:24:47",
+          "files": {
+            "SM_Tripo_InfernoRampartPlain_v004_review_v003.png": {
+              "path": "05_review/SM_Tripo_InfernoRampartPlain_v004_review_v003.png",
+              "sha256": "57e633a5265181e4132f6765d8430e2a891ac266ef028d182ced6ce357d5c0f7"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

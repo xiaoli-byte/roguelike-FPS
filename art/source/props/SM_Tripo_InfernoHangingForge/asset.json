@@ -586,6 +586,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 25035,
           "source_sha256": "e8fa99e66145266de2949b5d66cb68e243e9eb15df20970ffa61c09a6bb2d79b"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:37:29",
+          "files": {
+            "HP_SM_Tripo_InfernoHangingForge_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHangingForge_v002_source.glb",
+              "sha256": "ec025f10eb59b00b2ff932f7e198f492900771955f121efcf68aae9acfbec8f1"
+            },
+            "HP_SM_Tripo_InfernoHangingForge_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHangingForge_v002.glb",
+              "sha256": "127ffd189eabdd44c15060d158717012d60ae3f76107dcc096b7bde6aecb0a3d"
+            },
+            "HP_SM_Tripo_InfernoHangingForge_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHangingForge_v002_graph.json",
+              "sha256": "b2183cb4a533e1c361f8768e903bb2a0b5449831c3026291cfb18b3564a708fa"
+            }
+          },
+          "from_concept": 4,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/f089ce00-a331-48af-ada0-9441b8659787",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 25035,
+          "source_sha256": "ec025f10eb59b00b2ff932f7e198f492900771955f121efcf68aae9acfbec8f1"
         }
       ]
     },
@@ -645,6 +671,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:38:26",
+          "files": {
+            "SM_Tripo_InfernoHangingForge_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoHangingForge_v002.blend",
+              "sha256": "630e995c96de908a4feb8cabf91a625348b7f3cfc9c6b2ada4691962e6b554b1"
+            },
+            "SM_Tripo_InfernoHangingForge_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoHangingForge_v002.glb",
+              "sha256": "cc035fe8a3ce8d32a2d6d02fce8339f46b8cecb5787e13672a76e5f54390258b"
+            },
+            "SM_Tripo_InfernoHangingForge_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoHangingForge_v002_metrics.json",
+              "sha256": "ca554343c8273811aaeb2f64d6821bed12d78b30d239e14cda56b1c3d5bbb899"
+            },
+            "T_Tripo_InfernoHangingForge_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHangingForge_BC.png",
+              "sha256": "619a21c57cafec60e5e67e1f613e04e0a338c5e2c20558e1e76afacb6b5d1d78"
+            },
+            "T_Tripo_InfernoHangingForge_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHangingForge_E.png",
+              "sha256": "edddd3efe8d7a62ea74b330d344530b97330dd556eb03cbbde8d9b96c9746770"
+            },
+            "T_Tripo_InfernoHangingForge_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHangingForge_N.png",
+              "sha256": "7d5e89cf9b8c3827e3150e59d9b5c6f9bf66781e7c0e170b5bb6876ef2d3914e"
+            },
+            "T_Tripo_InfernoHangingForge_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHangingForge_ORM.png",
+              "sha256": "c4fb62d10d31c88400dbfdf1ed09f2a45bc0267afff1e0c5b49ad4de0181e941"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 4,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.763,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 25035,
+              "verts": 15463
+            }
+          ],
+          "export_kb": 1235.1,
+          "seconds": 56.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -661,6 +745,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:38:27",
+          "files": {
+            "SM_Tripo_InfernoHangingForge_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoHangingForge_v002_validation_v002.json",
+              "sha256": "ad1421ba6407e88fe55b4b6e0948bbf3a66679e4ae4ac6e2f8ef096697cd414b"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -688,6 +787,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 25035 面；四角链柱由 derive_inferno_parts.py 切成单件；用户授权免审",
             "time": "2026-11-03 05:27:46"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:38:38",
+          "files": {
+            "SM_Tripo_InfernoHangingForge_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoHangingForge_v002_review_v002.png",
+              "sha256": "16bef7e65337efc5d32bc184188bd5bf58a29dc6aef4e098040d58860024ccee"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

@@ -1,0 +1,80 @@
+{
+  "provider": "Tripo Studio",
+  "task_url": "https://studio.tripo3d.ai/workspace/texture/5f4ce7aa-53cf-4bac-af6b-85bf6ea0f8f9",
+  "model": "P2.0",
+  "inputs": "multiview (front/left/back/right)",
+  "from_concept": 2,
+  "source_file": "HP_SM_Prop_QilinChainLock_v002_source.glb",
+  "source_sha256": "6a53999df3e2e2572dfd1ba730d1fa995cae2fe4ed4737298ecf834395868873",
+  "bridge_receipt": {
+    "asset": "SM_Prop_QilinChainLock",
+    "task": "https://studio.tripo3d.ai/workspace/texture/5f4ce7aa-53cf-4bac-af6b-85bf6ea0f8f9",
+    "source": "S:\\文档\\Downloads\\SM_Prop_QilinChainLock_upload.glb.glb",
+    "sha256": "6a53999df3e2e2572dfd1ba730d1fa995cae2fe4ed4737298ecf834395868873",
+    "tripo": {
+      "mode": "纹理生成（上传网格，使用原始 UV）",
+      "delight": true,
+      "export": "GLB 4k",
+      "base_color": {
+        "size": [
+          4096,
+          4096
+        ],
+        "bytes": 2238789
+      }
+    },
+    "uv_match": {
+      "yaw_deg": 0,
+      "mirrored": false,
+      "pos_mean_mm": 0.006,
+      "pos_max_mm": 0.018,
+      "uv_max": 2e-05,
+      "uv_off_verts": 0,
+      "verts_upload": 10185,
+      "verts_export": 10175
+    },
+    "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；熔岩缝按旧贴图放回原位",
+    "archived_utc": "20261106T181202",
+    "tripo_export": "20261106T181202_SM_Prop_QilinChainLock_retex_tripo_export.glb",
+    "tripo_export_sha256": "da66ab6bd536cda8b60d2d17189228944cde16a3c3ddb11dd30a0668c2f6f17e",
+    "geometry_from": "art/source/props/SM_Prop_QilinChainLock/02_highpoly/HP_SM_Prop_QilinChainLock_v001_source.glb",
+    "retexture_of_highpoly": 1,
+    "geometry_sha256": "837f99c4b02eb6303945e0716c83524e36825508280bd7ab877fbaa953b2b951",
+    "glb": {
+      "bytes": 10216116,
+      "images": 1
+    },
+    "keep_lava": {
+      "lava_texels_old": 0.0192,
+      "lava_texels_new_raw": 0.0184,
+      "dimmed_texels": 0.0004
+    }
+  },
+  "import": {
+    "faces": 7946,
+    "verts": 10176,
+    "tris": 7946,
+    "materials": [
+      "tripo_mat_e66276f4-70a3-44da-b256-c5ecf2afe79f"
+    ],
+    "images": [
+      [
+        "SM_Prop_QilinChainLock_basecolor",
+        [
+          4096,
+          4096
+        ]
+      ]
+    ],
+    "uv_layers": [
+      "UVMap"
+    ],
+    "dimensions_blender": [
+      0.5366,
+      0.2466,
+      0.9995
+    ],
+    "bytes": 10216384,
+    "_seconds": 3.4
+  }
+}

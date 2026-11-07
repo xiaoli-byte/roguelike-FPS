@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 12442,
+    "verts": 7681
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 13.89259,
+    "iou": 0.801,
+    "iou_per_view": {
+      "front": 0.911,
+      "left": 0.72,
+      "back": 0.797,
+      "right": 0.721
+    },
+    "size_m": [
+      13.886,
+      3.317,
+      12.0
+    ],
+    "reference_m": [
+      14.0,
+      3.2,
+      12.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0221
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.548,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoMoltenGateFrame_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoMoltenGateFrame_LOD0",
+      "tris": 12442,
+      "verts": 7681,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.99462890625
+      ],
+      "uv_utilization": 0.478,
+      "bbox_min": [
+        -6.9429,
+        -1.6586,
+        0.0
+      ],
+      "bbox_max": [
+        6.9429,
+        1.6586,
+        12.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoMoltenGateFrame/04_export/SM_Tripo_InfernoMoltenGateFrame_v002.glb",
+    "bytes": 851112
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 44.1,
+  "_seconds": 46.6
+}

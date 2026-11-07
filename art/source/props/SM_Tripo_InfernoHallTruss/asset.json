@@ -435,6 +435,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 13204,
           "source_sha256": "c5ba85bee6d55142cafba8ed97b6e71b3c5fda713e95fe99ea8e538f90f5d053"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:16:45",
+          "files": {
+            "HP_SM_Tripo_InfernoHallTruss_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHallTruss_v002_source.glb",
+              "sha256": "5fa1ff7031e242acbce1aab936386ce4ad0101947a82ecf45ad832af2b84d773"
+            },
+            "HP_SM_Tripo_InfernoHallTruss_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHallTruss_v002.glb",
+              "sha256": "25e8a5214f67cab6d338c672b16d0d9053a64ef8680e03e900486326c2ae332e"
+            },
+            "HP_SM_Tripo_InfernoHallTruss_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoHallTruss_v002_graph.json",
+              "sha256": "ecd8dff1567edf5a48742755a7ef338490f2128554be51b85f443d2d56c94101"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/4ddf8c73-aa95-4ae3-a4a2-2e95e8914282",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13204,
+          "source_sha256": "5fa1ff7031e242acbce1aab936386ce4ad0101947a82ecf45ad832af2b84d773"
         }
       ]
     },
@@ -490,6 +516,60 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:17:21",
+          "files": {
+            "SM_Tripo_InfernoHallTruss_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoHallTruss_v002.blend",
+              "sha256": "9d7414c9245091ebe78acdf3f2b74b329b8422bfa5eac0861c3b22ff6eaeed0c"
+            },
+            "SM_Tripo_InfernoHallTruss_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoHallTruss_v002.glb",
+              "sha256": "64f957dcf83410353b2a15ad6a9f93544e8a2cbb0e79494637e80cd044a93ae3"
+            },
+            "SM_Tripo_InfernoHallTruss_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoHallTruss_v002_metrics.json",
+              "sha256": "001e086b0edffdcb09e2fb220059891fb206f11eac065b239e4b4a94052f0b5f"
+            },
+            "T_Tripo_InfernoHallTruss_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHallTruss_BC.png",
+              "sha256": "dac0d699d152e27ae3a762ce8a5876c61bf865b94248b0213c552faccfe94ebf"
+            },
+            "T_Tripo_InfernoHallTruss_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHallTruss_N.png",
+              "sha256": "c7a5e3a114505b1ae9f9669cd0879e0727ae62cdbf7180561cc736f03f83fe59"
+            },
+            "T_Tripo_InfernoHallTruss_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoHallTruss_ORM.png",
+              "sha256": "4be32b694810362809b236f4e9993f57d9c0b2ddec98ec2b53fd5ebae3997adf"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.679,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13204,
+              "verts": 7771
+            }
+          ],
+          "export_kb": 658.4,
+          "seconds": 35.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -506,6 +586,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:17:22",
+          "files": {
+            "SM_Tripo_InfernoHallTruss_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoHallTruss_v002_validation_v002.json",
+              "sha256": "fbfe1b880b765dfacbf8ec646d14869eebb94b11aafbb6b377703d442e0f453c"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 2,
           "waived": [],
@@ -533,6 +628,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 13204 面；用户授权免审",
             "time": "2026-11-03 05:28:03"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 02:17:33",
+          "files": {
+            "SM_Tripo_InfernoHallTruss_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoHallTruss_v002_review_v002.png",
+              "sha256": "4b3bc5c8c647811915840ca3cb382fbffbabc881b51f3771c032e82fe35d16af"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

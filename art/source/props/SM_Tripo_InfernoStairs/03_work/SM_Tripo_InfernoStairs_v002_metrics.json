@@ -1,0 +1,146 @@
+{
+  "steps": {
+    "导入清理": 5.5,
+    "对齐": 1.0,
+    "低模与 UV": 19.8,
+    "投影着色": 72.1,
+    "烘焙": 10.7,
+    "LOD": 0.0,
+    "导出": 1.0
+  },
+  "highpoly": {
+    "faces_raw": 1376676,
+    "faces": 764658,
+    "verts": 764660,
+    "loose_parts": 14,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00494,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.902,
+    "iou_per_view": {
+      "front": 0.861,
+      "left": 0.958,
+      "back": 0.855,
+      "right": 0.957
+    },
+    "height_m": 2.8908,
+    "blockout_height_m": 3.0
+  },
+  "uv": {
+    "smart_islands": 248,
+    "charts": 35,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.1334,
+    "density_merged": 0.1301
+  },
+  "projection": {
+    "uncovered_ratio": 0.4054
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0359
+  },
+  "textures": {
+    "T_Tripo_InfernoStairs_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoStairs_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoStairs_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoStairs_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.003417466301470995,
+        0.0035335365682840347
+      ],
+      "uv_max": [
+        0.9923983812332153,
+        0.9966945052146912
+      ],
+      "uv_utilization": 0.646,
+      "bbox_min": [
+        -1.3086,
+        -1.3097,
+        0.001
+      ],
+      "bbox_max": [
+        1.3065,
+        1.2825,
+        2.8904
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoStairs_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0039375596679747105,
+        0.003615772817283869
+      ],
+      "uv_max": [
+        0.9910897612571716,
+        0.9966945052146912
+      ],
+      "uv_utilization": 0.627,
+      "bbox_min": [
+        -1.3003,
+        -1.3084,
+        0.0069
+      ],
+      "bbox_max": [
+        1.3023,
+        1.2784,
+        2.8892
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoStairs/04_export/SM_Tripo_InfernoStairs_v002.glb",
+    "bytes": 205328
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoStairs/03_work/SM_Tripo_InfernoStairs_v001.blend",
+  "total_seconds": 110.1,
+  "_seconds": 114.9,
+  "retexture": {
+    "from_build": 1,
+    "base_glb": "public/assets/props/SM_Tripo_InfernoStairs.glb",
+    "base_sha256": "6bf10a109fe92b2541cbf451b4226b1885cfd775ee5c84542694763201165eaa",
+    "tripo_task": "https://studio.tripo3d.ai/workspace/texture/f7587567-3149-46c1-92f8-b097b4dfc3e4",
+    "tripo_export": "art/source/_tripo_inbox/20261107T133344_SM_Tripo_InfernoStairs_retex_tripo_export.glb",
+    "uv_match": {
+      "yaw_deg": 0,
+      "mirrored": false,
+      "pos_mean_mm": 0.032,
+      "pos_max_mm": 0.064,
+      "uv_max": 0.00017,
+      "uv_off_verts": 0,
+      "verts_upload": 3000,
+      "verts_export": 2963
+    },
+    "replaced": [
+      "BC"
+    ],
+    "keep_glow": {
+      "glow_texels": 0.0432,
+      "dimmed_texels": 0.0089
+    },
+    "bc_source": "Tripo 导出的底色",
+    "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色"
+  }
+}

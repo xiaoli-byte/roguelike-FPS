@@ -550,6 +550,67 @@
           "bake_device": "CPU",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:33:44",
+          "files": {
+            "SM_Tripo_InfernoStairs_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoStairs_v002.glb",
+              "sha256": "db36473febc8ae34aeafad892d90d91dedf22501086e52863548cd068a3969c2"
+            },
+            "T_Tripo_InfernoStairs_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoStairs_E.png",
+              "sha256": "8e0fcb38ce4bb75514e83bdb8ad34abae452dc6931acf270d736f933a631e104"
+            },
+            "T_Tripo_InfernoStairs_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoStairs_N.png",
+              "sha256": "ff8a8c693535909940870234bab7899295eaf7d5a15c6aaa367059688279b513"
+            },
+            "T_Tripo_InfernoStairs_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoStairs_ORM.png",
+              "sha256": "b6fb50b46e8a7947f0a7a207e1d58cec5a633dd04cbf559cfe6439e9dc1363e0"
+            },
+            "T_Tripo_InfernoStairs_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoStairs_BC.png",
+              "sha256": "e9ea319b3759adc97af48253affa8786391b256e97f94da7aeb12f983b3de474"
+            },
+            "SM_Tripo_InfernoStairs_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoStairs_v002_metrics.json",
+              "sha256": "3b3d6e2f1ec3ed6d1bc2008b3de351d8b1dd36e6ad7205f8e81e38d3d172f539"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "retexture_of": 1,
+          "tripo_task": "https://studio.tripo3d.ai/workspace/texture/f7587567-3149-46c1-92f8-b097b4dfc3e4",
+          "align_iou": 0.902,
+          "uncovered_ratio": 0.4054,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 200.5,
+          "seconds": 0,
+          "bake_device": "none (texture swap)",
+          "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；自发光遮罩不动、发光处放回旧底色",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -566,6 +627,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:33:46",
+          "files": {
+            "SM_Tripo_InfernoStairs_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoStairs_v002_validation_v002.json",
+              "sha256": "688eb557e9bf749d42aa58c90f0b40f43aca0ea5b5033d92df970415e49c51f8"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -593,6 +669,25 @@
             "by": "claude(AI初审)",
             "note": "2mv 种子 20261003：直跑玄武岩台阶，正面为最低一级、背面是实心背墙，铁皮挡墙与铜柱头、两侧熔岩槽（自发光）与概念一致；实心（射线两次穿越）；IoU 0.902，校验 0 警告，LOD 无开口边。",
             "time": "2026-10-11 22:57:30"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 21:34:13",
+          "files": {
+            "SM_Tripo_InfernoStairs_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoStairs_v002_review_v002.png",
+              "sha256": "9b3a8958156af2bfa251283f22b94262ee66917067f2a20728b805d72cf87755"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

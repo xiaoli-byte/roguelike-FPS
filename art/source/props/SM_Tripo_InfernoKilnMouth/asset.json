@@ -196,6 +196,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 30388,
           "source_sha256": "c2096525cecdd4cdc0be5e5bea76bbd5f8ac7a948f058d29fe7bba7907fe309d"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:32:07",
+          "files": {
+            "HP_SM_Tripo_InfernoKilnMouth_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoKilnMouth_v002_source.glb",
+              "sha256": "21d5c61af9285013a31a15ec280209bdab0a13ddfcbb1d0ce4a837810b0e5b74"
+            },
+            "HP_SM_Tripo_InfernoKilnMouth_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoKilnMouth_v002.glb",
+              "sha256": "f518a5b30d8b40c4759ac7d5e7b77e1d3b5f784e6082bc5509e20639944d6d5a"
+            },
+            "HP_SM_Tripo_InfernoKilnMouth_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoKilnMouth_v002_graph.json",
+              "sha256": "2a1ba433e64c5f866b1c5459ee4bf3a8261a481b8093aa6d4201f468de6a9573"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/e3340838-9252-4a78-80a2-ff4edcac399b",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 30388,
+          "source_sha256": "21d5c61af9285013a31a15ec280209bdab0a13ddfcbb1d0ce4a837810b0e5b74"
         }
       ]
     },
@@ -255,6 +281,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:32:51",
+          "files": {
+            "SM_Tripo_InfernoKilnMouth_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoKilnMouth_v002.blend",
+              "sha256": "321c8741065bf64cd64ca835eff4f1c962400576dc9e5af6e2585909a841fc58"
+            },
+            "SM_Tripo_InfernoKilnMouth_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoKilnMouth_v002.glb",
+              "sha256": "d8a5d48f960c54d84bbc8c82745ed82ca131a11e94e55a7b9ac4855d398d4862"
+            },
+            "SM_Tripo_InfernoKilnMouth_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoKilnMouth_v002_metrics.json",
+              "sha256": "056ad5525a6b100785aecf2b0d3ca407a79f8beafe6d32b44b6561dd74e48ad9"
+            },
+            "T_Tripo_InfernoKilnMouth_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoKilnMouth_BC.png",
+              "sha256": "779e245c9e5fe609325bc416d9e8469b0aefb67aefa1852356dfb70afa29f29b"
+            },
+            "T_Tripo_InfernoKilnMouth_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoKilnMouth_E.png",
+              "sha256": "654f33533cdce9cc31b1287a684e89d783cb976d6ca69fc673222bedd16c3369"
+            },
+            "T_Tripo_InfernoKilnMouth_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoKilnMouth_N.png",
+              "sha256": "e97370b912bd241a0b073d3cd4f901c7cb607c10830ef0fede525c275cb6f05d"
+            },
+            "T_Tripo_InfernoKilnMouth_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoKilnMouth_ORM.png",
+              "sha256": "a68d1124d395c69c8b27d5767fd16f3e506eecae159fcae4346a6db2e04ae8ef"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 30388,
+              "verts": 16498
+            }
+          ],
+          "export_kb": 1139.6,
+          "seconds": 43.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -271,6 +355,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:32:52",
+          "files": {
+            "SM_Tripo_InfernoKilnMouth_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoKilnMouth_v002_validation_v002.json",
+              "sha256": "7750c605cba6ebb0fd9980baf86dc0c478259aa1a292c2f2bbf98e566ff4842c"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -298,6 +397,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 30388 面；拱门贯通，门内火是特效；用户授权免审",
             "time": "2026-11-03 05:49:31"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:33:04",
+          "files": {
+            "SM_Tripo_InfernoKilnMouth_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoKilnMouth_v002_review_v002.png",
+              "sha256": "4c609af25c4325ac677b6f48255e392c019fbdb93d18c17f5826d0cc47035e33"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

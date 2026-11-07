@@ -193,6 +193,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 28534,
           "source_sha256": "6c0afaaff6519fd746a596c42d6bc6f3c3a83b712a6d6aae158470e1af1f9df5"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:57:52",
+          "files": {
+            "HP_SM_Prop_QilinCauldron_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_QilinCauldron_v002_source.glb",
+              "sha256": "4139cbb351c6c44b41c322b33ffff65dc58daafa81bba222b3bdfc2cf7b48a70"
+            },
+            "HP_SM_Prop_QilinCauldron_v002.glb": {
+              "path": "02_highpoly/HP_SM_Prop_QilinCauldron_v002.glb",
+              "sha256": "214954ab59c03782c482d343188ccd17f8f70b655c35e144d1d91235d62b3688"
+            },
+            "HP_SM_Prop_QilinCauldron_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_QilinCauldron_v002_graph.json",
+              "sha256": "22430fb412f49eb3854d3775ce4512c906c8336ccd98c1ee9c213390f2fef286"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/c2be336a-144f-41ac-8062-862a9b9c7c51",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 28534,
+          "source_sha256": "4139cbb351c6c44b41c322b33ffff65dc58daafa81bba222b3bdfc2cf7b48a70"
         }
       ]
     },
@@ -252,6 +278,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:58:48",
+          "files": {
+            "SM_Prop_QilinCauldron_v002.blend": {
+              "path": "03_work/SM_Prop_QilinCauldron_v002.blend",
+              "sha256": "79fbdc17843d067437b6d9be017565c1d7b3d167d4eae3efcb55007b8eefc003"
+            },
+            "SM_Prop_QilinCauldron_v002.glb": {
+              "path": "04_export/SM_Prop_QilinCauldron_v002.glb",
+              "sha256": "bcb3b1e1a4b94f83c30f1747cf8e88ac5566629b108f283328053b5ea6d7e6f6"
+            },
+            "SM_Prop_QilinCauldron_v002_metrics.json": {
+              "path": "03_work/SM_Prop_QilinCauldron_v002_metrics.json",
+              "sha256": "0cbbd60989baa7cf0a5e472d5f53ff97d8ea393d0af21c383418df73c53c176b"
+            },
+            "T_Prop_QilinCauldron_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinCauldron_BC.png",
+              "sha256": "5cf42e4d05ff480dd4c7425ee7b8edcfc5bf5770d6d3d213dcf0387512c5b167"
+            },
+            "T_Prop_QilinCauldron_E.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinCauldron_E.png",
+              "sha256": "29e18b095b64e66a15c6fc9af04c8cb102ce03642fe50b1d45ff85c056a79c0e"
+            },
+            "T_Prop_QilinCauldron_N.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinCauldron_N.png",
+              "sha256": "567295aa5be283b66997357aee534c83027ef7cc7d5064b19c077d398fed25ae"
+            },
+            "T_Prop_QilinCauldron_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_QilinCauldron_ORM.png",
+              "sha256": "5d5f7644956d1611220d1b47028e0e25cccfb9e795c1af17f9635a0c7bd7026c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.87,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 28534,
+              "verts": 15050
+            }
+          ],
+          "export_kb": 1243.9,
+          "seconds": 53.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -268,6 +352,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:58:50",
+          "files": {
+            "SM_Prop_QilinCauldron_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_QilinCauldron_v002_validation_v002.json",
+              "sha256": "015739f5e2326a0fe2759ffe80253fd1688f5c124569fe376d95405d26e7255b"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 1,
           "waived": [],
@@ -295,6 +394,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 28534 面；用户授权免审",
             "time": "2026-11-03 02:08:40"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:59:28",
+          "files": {
+            "SM_Prop_QilinCauldron_v002_review_v002.png": {
+              "path": "05_review/SM_Prop_QilinCauldron_v002_review_v002.png",
+              "sha256": "3530a7f69f12c8a772df46744e99e77affaac575187bc45e948dc3d21e689cac"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

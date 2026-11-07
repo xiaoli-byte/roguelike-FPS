@@ -314,6 +314,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 13939,
           "source_sha256": "2ca26efb73813243d75f0d55ab1cfb44fc60fa4a65887d95282483189696ced4"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:54:46",
+          "files": {
+            "HP_SM_Tripo_InfernoScaffold_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoScaffold_v002_source.glb",
+              "sha256": "a329879f5d07cbbe276120cf9e7540817bfcef22b85e0c1836ea791913e15969"
+            },
+            "HP_SM_Tripo_InfernoScaffold_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoScaffold_v002.glb",
+              "sha256": "a02b0486fc4b78e0f892860ef364bf6bf87b08b56186ef5c9e51e51128ed30f2"
+            },
+            "HP_SM_Tripo_InfernoScaffold_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoScaffold_v002_graph.json",
+              "sha256": "100868ee8a16a771b7577146da8ec368a729214afd4cb80ac0197f839133ac16"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/c0080211-4b01-4cb0-8564-7d2396a19e57",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13939,
+          "source_sha256": "a329879f5d07cbbe276120cf9e7540817bfcef22b85e0c1836ea791913e15969"
         }
       ]
     },
@@ -373,6 +399,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:56:29",
+          "files": {
+            "SM_Tripo_InfernoScaffold_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoScaffold_v002.blend",
+              "sha256": "b778da777a96d4d75aa729f724e41acd3f38871a4e57b20fd5facf2364dea3c4"
+            },
+            "SM_Tripo_InfernoScaffold_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoScaffold_v002.glb",
+              "sha256": "114da900b3ec3137fe590722d28f09f469f91e278ddf0bcff8ab6021b3869fa4"
+            },
+            "SM_Tripo_InfernoScaffold_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoScaffold_v002_metrics.json",
+              "sha256": "220aa1ea84ffad76feb14b11ebb870a220f6d4da9bb73a6cd403af5f4b6556fe"
+            },
+            "T_Tripo_InfernoScaffold_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoScaffold_BC.png",
+              "sha256": "105f0b5e76db89c9ee75c399dfe9bce72407fa3040e5ad88ca3cb1571903a5f3"
+            },
+            "T_Tripo_InfernoScaffold_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoScaffold_E.png",
+              "sha256": "5630edf42913f842e57308503a7e0977e721d09027a12c453b8878c22108cd37"
+            },
+            "T_Tripo_InfernoScaffold_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoScaffold_N.png",
+              "sha256": "487a9dc891ba44f6c383faac9d44b943b1960b2b846673a19e30cd1dbb48b820"
+            },
+            "T_Tripo_InfernoScaffold_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoScaffold_ORM.png",
+              "sha256": "cb8c536c44b99975d3c69d50055434b6d93667d4ecf11029b081c6347893f9f5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.864,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13939,
+              "verts": 8101
+            }
+          ],
+          "export_kb": 856.9,
+          "seconds": 101.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -389,6 +473,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:56:30",
+          "files": {
+            "SM_Tripo_InfernoScaffold_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoScaffold_v002_validation_v002.json",
+              "sha256": "89143d2a87722cd58de96d45cd09ab2f4fd706d4b88650cf0f2b49e3d50e8db7"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -416,6 +515,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 13939 面；用户授权免审",
             "time": "2026-11-03 05:27:50"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:56:43",
+          "files": {
+            "SM_Tripo_InfernoScaffold_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoScaffold_v002_review_v002.png",
+              "sha256": "ef0b67d7d1010550e632c15398fa6b619d5bd0700f0631a15e698144944b73e8"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

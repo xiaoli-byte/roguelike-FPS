@@ -193,6 +193,32 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 11828,
           "source_sha256": "38de1eee5090c21e40ad83d7ebc7ff4c532cee9cfacda1c1fa52df08d998d37d"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:39:30",
+          "files": {
+            "HP_SM_Tripo_InfernoMoltenGate_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoMoltenGate_v002_source.glb",
+              "sha256": "f1a53e04acd8c9e9a7a1640d27ea64351f7ff6a7ba00e2be59c9d0d9f350d1cd"
+            },
+            "HP_SM_Tripo_InfernoMoltenGate_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoMoltenGate_v002.glb",
+              "sha256": "f27450a4f5da2bbbbf59d0fa78ddc0614087e5b9dc9685e349cc1227f1b4f3c9"
+            },
+            "HP_SM_Tripo_InfernoMoltenGate_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoMoltenGate_v002_graph.json",
+              "sha256": "f1a55fe2b3ca185f8d337642b9106a9e18747125a1207b0a8b5f10e20e7db597"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/texture/4db3e846-e5eb-420d-8ee6-f1f4512b622e",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 11828,
+          "source_sha256": "f1a53e04acd8c9e9a7a1640d27ea64351f7ff6a7ba00e2be59c9d0d9f350d1cd"
         }
       ]
     },
@@ -252,6 +278,64 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:40:23",
+          "files": {
+            "SM_Tripo_InfernoMoltenGate_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoMoltenGate_v002.blend",
+              "sha256": "2aba7901b73c6ce17b81ee8cc2642c55276a284546d95e796fc59793270e36f9"
+            },
+            "SM_Tripo_InfernoMoltenGate_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoMoltenGate_v002.glb",
+              "sha256": "b8888ef7ef45a371428fd10402667403312d016564854cf84635e775a6ff9391"
+            },
+            "SM_Tripo_InfernoMoltenGate_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoMoltenGate_v002_metrics.json",
+              "sha256": "de68f390fdf3bd747a14630b14695517ec4577f78da3779f5de35a1a02161547"
+            },
+            "T_Tripo_InfernoMoltenGate_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoMoltenGate_BC.png",
+              "sha256": "bffe993d3cf8c7b7136641df5954bf1efbf7d8a78b9cebe7da94c2f942016bd3"
+            },
+            "T_Tripo_InfernoMoltenGate_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoMoltenGate_E.png",
+              "sha256": "47076f9eb5ea1231d65a4ed3ee0494da8773035a54d8eb71850d991fa7f403c9"
+            },
+            "T_Tripo_InfernoMoltenGate_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoMoltenGate_N.png",
+              "sha256": "d2e118cb8e03e101af48466a335c24924d63c627cfc8ab7d1e3ad56197d97a94"
+            },
+            "T_Tripo_InfernoMoltenGate_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoMoltenGate_ORM.png",
+              "sha256": "1c4eb4bffaca92458693c9c518a724da25678fa4a5c755d525025e7b76ff0db6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.8,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11828,
+              "verts": 7903
+            }
+          ],
+          "export_kb": 1080.3,
+          "seconds": 51.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": [],
+          "rejected": {
+            "time": "2026-11-07 22:02:26",
+            "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
+          }
         }
       ]
     },
@@ -268,6 +352,21 @@
             }
           },
           "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:40:24",
+          "files": {
+            "SM_Tripo_InfernoMoltenGate_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoMoltenGate_v002_validation_v002.json",
+              "sha256": "185705784d4b30230a46678ef4e08d0f8d8b7a412d6826d620d46e24da1a5e88"
+            }
+          },
+          "from_build": 2,
           "errors": 0,
           "warnings": 0,
           "waived": [],
@@ -295,6 +394,25 @@
             "by": "Claude AI visual review",
             "note": "2026-11-03 第三章 v2（A3）：Tripo P2.0 11828 面，闸缝 emissive_key；闸板件（门框另做）；用户授权免审",
             "time": "2026-11-03 02:08:36"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-07 01:40:36",
+          "files": {
+            "SM_Tripo_InfernoMoltenGate_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoMoltenGate_v002_review_v002.png",
+              "sha256": "94f84294389409bee425e838ce633135e5c73d9d743536c296c4e37c97571fc4"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review",
+            "note": "11-07 不采用：Tripo 纹理生成重出的底色普遍偏紫（texture_clean 的紫色偏指标 0.00–0.04 → 0.55–0.98）、锐度减半，和用户 11-07「泛紫色、灰色」「贴图模糊」的反馈冲突；保留原贴图（docs/art/ch3-kit.md 第 7.4 节）",
+            "time": "2026-11-07 22:02:02"
           }
         }
       ]

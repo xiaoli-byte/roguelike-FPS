@@ -1,0 +1,80 @@
+{
+  "provider": "Tripo Studio",
+  "task_url": "https://studio.tripo3d.ai/workspace/texture/c2be336a-144f-41ac-8062-862a9b9c7c51",
+  "model": "P2.0",
+  "inputs": "multiview (front/left/back/right)",
+  "from_concept": 1,
+  "source_file": "HP_SM_Prop_QilinCauldron_v002_source.glb",
+  "source_sha256": "4139cbb351c6c44b41c322b33ffff65dc58daafa81bba222b3bdfc2cf7b48a70",
+  "bridge_receipt": {
+    "asset": "SM_Prop_QilinCauldron",
+    "task": "https://studio.tripo3d.ai/workspace/texture/c2be336a-144f-41ac-8062-862a9b9c7c51",
+    "source": "S:\\文档\\Downloads\\SM_Prop_QilinCauldron_upload.glb.glb",
+    "sha256": "4139cbb351c6c44b41c322b33ffff65dc58daafa81bba222b3bdfc2cf7b48a70",
+    "tripo": {
+      "mode": "纹理生成（上传网格，使用原始 UV）",
+      "delight": true,
+      "export": "GLB 4k",
+      "base_color": {
+        "size": [
+          4096,
+          4096
+        ],
+        "bytes": 2954139
+      }
+    },
+    "uv_match": {
+      "yaw_deg": 0,
+      "mirrored": false,
+      "pos_mean_mm": 0.009,
+      "pos_max_mm": 0.022,
+      "uv_max": 2e-05,
+      "uv_off_verts": 0,
+      "verts_upload": 35963,
+      "verts_export": 35884
+    },
+    "note": "第三章贴图铺开：Tripo 纹理生成（新账号，使用原始 UV、去光、4K），参考图 = 原件平光渲染简化成冷暗紫 / 铜红 / 平涂亮橙；熔岩缝按旧贴图放回原位",
+    "archived_utc": "20261106T175738",
+    "tripo_export": "20261106T175738_SM_Prop_QilinCauldron_retex_tripo_export.glb",
+    "tripo_export_sha256": "b8594ecb5d8c9e73dd0ad160ede800216c088d6054d6e9344329a070fba0df07",
+    "geometry_from": "art/source/props/SM_Prop_QilinCauldron/02_highpoly/HP_SM_Prop_QilinCauldron_v001_source.glb",
+    "retexture_of_highpoly": 1,
+    "geometry_sha256": "6c0afaaff6519fd746a596c42d6bc6f3c3a83b712a6d6aae158470e1af1f9df5",
+    "glb": {
+      "bytes": 15632836,
+      "images": 1
+    },
+    "keep_lava": {
+      "lava_texels_old": 0.0261,
+      "lava_texels_new_raw": 0.0278,
+      "dimmed_texels": 0.0051
+    }
+  },
+  "import": {
+    "faces": 28534,
+    "verts": 35927,
+    "tris": 28534,
+    "materials": [
+      "tripo_mat_0cfb42d3-fb74-41bc-8701-89b888575053"
+    ],
+    "images": [
+      [
+        "SM_Prop_QilinCauldron_basecolor",
+        [
+          4096,
+          4096
+        ]
+      ]
+    ],
+    "uv_layers": [
+      "UVMap"
+    ],
+    "dimensions_blender": [
+      0.6899,
+      0.5288,
+      0.9995
+    ],
+    "bytes": 15633968,
+    "_seconds": 9.9
+  }
+}

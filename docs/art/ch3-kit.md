@@ -222,6 +222,51 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 | 20261106T1610 | InfernoRoundHallWall | 纹理生成（试点，参考图 = 原件平光渲染简化） | [97b6f229](https://studio.tripo3d.ai/workspace/texture/97b6f229-6856-4580-9511-7841393e972e) | 20 | 31720 |
 | 20261106T1616 | InfernoBasaltColumns | 纹理生成（试点，同上） | [bc94a70f](https://studio.tripo3d.ai/workspace/texture/bc94a70f-08a5-4b75-9d10-364d13967158) | 20 | 31700 |
 | 20261106T1622 | InfernoRockRib | 纹理生成（试点，同上） | [03a65abf](https://studio.tripo3d.ai/workspace/texture/03a65abf-4a2a-4680-bdf8-776fadb0e139) | 20 | 31680 |
+| 20261106T1711 | 熔心魔将本体 SK_Boss_Warlord（boss-warlord.md 第 3.1 节） | 高精度模型 H3.1 多视图，三角面 50000，纹理 4K 去光 | [c8eeaec6](https://studio.tripo3d.ai/workspace/generate/c8eeaec6-2511-4758-b071-27fe76545f36) | 55 | — |
+| 20261106T1711 | 熔心魔将大剑 SM_BossWeapon_Greatsword | 高精度模型 H3.1 多视图，三角面 15000，纹理 4K 去光 | [e6e0b59d](https://studio.tripo3d.ai/workspace/generate/e6e0b59d-7eda-4059-8b56-5bb98e442b47) | 55 | — |
+| 20261106T1718 | InfernoGatehouse | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [e69fa5ea](https://studio.tripo3d.ai/workspace/texture/e69fa5ea-fcba-4d9e-aeeb-a4c741c2c209) | 20 | — |
+| 20261106T1720 | InfernoCausewaySegment | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [83d1462a](https://studio.tripo3d.ai/workspace/texture/83d1462a-89c8-4de4-a117-b0bf145f4ae1) | 20 | — |
+| 20261106T1723 | InfernoSpiralLedge | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [7e099041](https://studio.tripo3d.ai/workspace/texture/7e099041-8dfa-495a-af01-ec5958c8d247) | 20 | — |
+| 20261106T1723 | InfernoKilnMouth | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [e3340838](https://studio.tripo3d.ai/workspace/texture/e3340838-9252-4a78-80a2-ff4edcac399b) | 20 | — |
+| 20261106T1724 | InfernoLadleCrane | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [dec519a3](https://studio.tripo3d.ai/workspace/texture/dec519a3-9deb-4278-ab6b-b3562a5ae026) | 20 | — |
+| 20261106T1725 | InfernoHangingForge | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [f089ce00](https://studio.tripo3d.ai/workspace/texture/f089ce00-a331-48af-ada0-9441b8659787) | 20 | — |
+| 20261106T1726 | InfernoRoundHallFurnace | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [1410c4be](https://studio.tripo3d.ai/workspace/texture/1410c4be-af5a-41d1-9316-31b90b75a3fb) | 20 | — |
+| 20261106T1733 | InfernoMoltenGate | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [4db3e846](https://studio.tripo3d.ai/workspace/texture/4db3e846-e5eb-420d-8ee6-f1f4512b622e) | 20 | — |
+| 20261106T1734 | InfernoMoltenGateFrame | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [f5acc4c7](https://studio.tripo3d.ai/workspace/texture/f5acc4c7-a722-4776-91dd-b945703a8ec1) | 20 | — |
+| 20261106T1735 | InfernoCausewayBreak | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [43780b0b](https://studio.tripo3d.ai/workspace/texture/43780b0b-e341-4f9e-9d43-39a2427f6cbd) | 20 | — |
+| 20261106T1743 | InfernoScaffold | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [c0080211](https://studio.tripo3d.ai/workspace/texture/c0080211-4b01-4cb0-8564-7d2396a19e57) | 20 | — |
+| 20261106T1744 | QilinCauldron | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [c2be336a](https://studio.tripo3d.ai/workspace/texture/c2be336a-144f-41ac-8062-862a9b9c7c51) | 20 | — |
+| 20261106T1748 | InfernoCastingMould | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [48ab4493](https://studio.tripo3d.ai/workspace/texture/48ab4493-72cb-420f-b03a-eaf5b010e1d9) | 20 | — |
+| 20261106T1750 | InfernoCastingBed | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [c7e4b06e](https://studio.tripo3d.ai/workspace/texture/c7e4b06e-99f7-43d4-8ec8-bebc1fb5ff79) | 20 | — |
+| 20261106T1801 | InfernoBellows | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [92f1b3ae](https://studio.tripo3d.ai/workspace/texture/92f1b3ae-1602-4089-b671-babf118aa8ed) | 20 | — |
+| 20261106T1805 | QilinChainLock | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [5f4ce7aa](https://studio.tripo3d.ai/workspace/texture/5f4ce7aa-53cf-4bac-af6b-85bf6ea0f8f9) | 20 | — |
+| 20261106T1807 | InfernoIronBridge | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [53fd2d47](https://studio.tripo3d.ai/workspace/texture/53fd2d47-51c3-4b51-97ab-40280e5441bf) | 20 | — |
+| 20261106T1809 | InfernoHallTruss | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [4ddf8c73](https://studio.tripo3d.ai/workspace/texture/4ddf8c73-aa95-4ae3-a4a2-2e95e8914282) | 20 | — |
+| 20261106T1811 | InfernoCraneHook | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [981ba42c](https://studio.tripo3d.ai/workspace/texture/981ba42c-c2ec-42b8-a30d-da537d3d2fd4) | 20 | — |
+| 20261106T1814 | InfernoSpout | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [6d5cadc5](https://studio.tripo3d.ai/workspace/texture/6d5cadc5-9eb3-4e7f-b809-7084513affa3) | 20 | — |
+| 20261106T1816 | InfernoGuardianStatue | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [09ae73e9](https://studio.tripo3d.ai/workspace/texture/09ae73e9-4dd1-4083-a242-a6be1f3fab60) | 20 | — |
+| 20261106T1818 | InfernoGeyserVent | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [74fe4647](https://studio.tripo3d.ai/workspace/texture/74fe4647-fc49-49d0-97da-f9dc4e86b151) | 20 | — |
+| 20261106T1821 | InfernoWorkShed | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [dc99b0f8](https://studio.tripo3d.ai/workspace/texture/dc99b0f8-4680-4965-9195-91655fbc1061) | 20 | — |
+| 20261107T1243 | InfernoCoverWall | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [c404b8a1](https://studio.tripo3d.ai/workspace/texture/c404b8a1-6767-47c4-bcc8-c40798e29658) | 20 | — |
+| 20261107T1244 | InfernoPortalShrine | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [e6c30b1f](https://studio.tripo3d.ai/workspace/texture/e6c30b1f-2fe5-4ed9-8aef-322c8338f869) | 20 | — |
+| 20261107T1245 | InfernoColumn | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [541ed68e](https://studio.tripo3d.ai/workspace/texture/541ed68e-b77f-4e1a-b1f6-033c2e3ca69c) | 20 | — |
+| 20261107T1247 | InfernoZhurong | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [aa64829a](https://studio.tripo3d.ai/workspace/texture/aa64829a-7f1e-4b04-b245-6fa29b2bca27) | 20 | — |
+| 20261107T1248 | InfernoRampart | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [b935a412](https://studio.tripo3d.ai/workspace/texture/b935a412-cb5f-461e-83b6-b9fe125b1829) | 20 | — |
+| 20261107T1251 | InfernoRampartPlain | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [5ef2aee9](https://studio.tripo3d.ai/workspace/texture/5ef2aee9-72d2-4bb6-a282-5e16089459ce) | 20 | — |
+| 20261107T1252 | InfernoGateway | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [254a99ef](https://studio.tripo3d.ai/workspace/texture/254a99ef-11a7-47d0-a3cd-fb03120bb7fe) | 20 | — |
+| 20261107T1253 | InfernoBarricade | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [f1b30706](https://studio.tripo3d.ai/workspace/texture/f1b30706-0bd6-42a1-862e-ea907ed5f820) | 20 | — |
+| 20261107T1255 | InfernoPlatformBlock | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [e9eb8a05](https://studio.tripo3d.ai/workspace/texture/e9eb8a05-c2c3-4931-af67-11e65e957b29) | 20 | — |
+| 20261107T1256 | InfernoPlatformBlockB | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [140d77bc](https://studio.tripo3d.ai/workspace/texture/140d77bc-4347-402c-b281-ebf402c9450b) | 20 | — |
+| 20261107T1257 | InfernoStairs | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [f7587567](https://studio.tripo3d.ai/workspace/texture/f7587567-3149-46c1-92f8-b097b4dfc3e4) | 20 | — |
+| 20261107T1259 | InfernoIngotPile | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [96c0bb80](https://studio.tripo3d.ai/workspace/texture/96c0bb80-22ac-497a-aaf0-f2f876197a10) | 20 | — |
+| 20261107T1301 | InfernoTreasureHoard | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [eb046b01](https://studio.tripo3d.ai/workspace/texture/eb046b01-c7e9-4891-98ef-c7173d632492) | 20 | — |
+| 20261107T1303 | InfernoCauldronRuin | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [c5645784](https://studio.tripo3d.ai/workspace/texture/c5645784-c99a-4570-9534-0060cab403c9) | 20 | — |
+| 20261107T1304 | InfernoFurnaceTower | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [5b66a005](https://studio.tripo3d.ai/workspace/texture/5b66a005-b115-4e96-b61a-342d3721ff7e) | 20 | — |
+| 20261107T1307 | InfernoForgeStall | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [51212c9d](https://studio.tripo3d.ai/workspace/texture/51212c9d-0dc1-4e5f-9cbc-72456337e504) | 20 | — |
+| 20261107T1309 | InfernoHallWall | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [61f4e40b](https://studio.tripo3d.ai/workspace/texture/61f4e40b-c483-4f2d-9c34-112f3acdd8bc) | 20 | — |
+| 20261107T1311 | InfernoHallButtress | 纹理生成（全量铺开，参考图 = 原件平光渲染简化） | [d13e0a33](https://studio.tripo3d.ai/workspace/texture/d13e0a33-0eb9-4867-9096-4a8d24bea511) | 20 | — |
+
+这条线新账号合计：火坛 60 + 试点 60 + 魔将 110 + 全量铺开 41 × 20 = 820 → **1050**（软上限 6000 以内）。账号是几条线共用的，别的会话同时在花，所以表里 11-06 17:00 以后的余额不逐行写；11-07 全量铺开做完时最后一次看到的余额是 **29190**。
 
 ## 6. 和设计不一致 / 没做的
 
@@ -245,6 +290,8 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 
 第三章的 Tripo 件贴图太碎（[ch3-look.md](ch3-look.md) 第一节：满件小橙点、红漆块、刻花，法线按底色亮度算出来、满强度），3-1 火坛的白黄火苗烘在贴图里。
 这一轮只换贴图：**网格、UV、尺寸、原点、挂点、碰撞、关卡摆放都不动**。
+
+> **11-07 结论：这条路不再用来给第三章件换贴图**（7.4）。重出的底色偏紫、变糊，和用户 11-07 的反馈冲突；3 件试点退回 v001，铺开的 41 件不发布。只有火坛（7.2）保留。
 
 ### 7.1 做法
 
@@ -286,3 +333,28 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 - **对比**：[review/ch3-v2/retexture/](review/ch3-v2/retexture/)，见那里的 README。
   - 单件转台用的是近似游戏里的材质压法；
   - 关卡里中距离的同机位对比要等 Unity 侧导入以后补。
+- **11-07 已退回 v001**（7.4）：三件都重新发布 build v001，发布件和 v001 导出逐字节一致。
+
+### 7.4 全量铺开（41 件）与否决（11-07）
+
+- **做了什么**：ch3-kit 件表里除火坛和 3 件试点以外的 41 件全部走完 7.1。
+  - Tripo 件 23 件走 `retexture.py hp`，Hunyuan 旧件 18 件走 `retexture.py build`，后者自发光遮罩不动，发光处放回旧底色。
+  - 41 次纹理生成共 820 积分，任务链接见第 5 节；build / validate / review 全部通过，0 错误。
+  - ForgeStall 在 Tripo 对话框里转 Y 90° 没生效，参考图改用侧面渲染。
+- **为什么不发布**：用户 11-07 对第三章模型的反馈是「泛紫色、灰色」「贴图模糊」。紫色只留给光照，固有色回到暖灰石、铜、朱漆，见 [ch3-look.md](ch3-look.md) 第二、三节。拿 `texture_clean.py` 的紫色偏指标和锐度（底色 2048² 的拉普拉斯均值）量了发布件 → 新 build：
+  - **紫色偏**：发布件 38 件在 0.00–0.07，WorkShed 0.19，SpiralLedge / GeyserVent 0.42。新 build 里 38 件到了 0.48–0.98。
+    只有金色的 TreasureHoard 0.01、铜色的 Spout 0.22 / QilinCauldron 0.33 没怎么紫。
+    原因是参考图做简化时，把石面和铁件转成了冷暗紫。Tripo 的去光处理只去明暗、不去色相，就把紫色当固有色烘进了底色。
+  - **锐度**：中位数降到原来的 53%（27–76%）。例如 FurnaceTower 5.0 → 1.4，Zhurong 5.2 → 1.4，PortalShrine 3.9 → 1.1，Gatehouse 3.7 → 2.3。
+    Tripo 重出的贴图本身比原始生成的糊；中值滤波过的参考图又把这种糊放大了。糊修不回来。
+  - 试点 3 件一样：圆殿墙段紫色偏 0.15 → 0.62、锐度 5.3 → 3.3；柱丛 0.00 → 0.86；岩肋 0.21 → 0.84、锐度 2.8 → 1.7。
+  - 火坛紫色偏只有 0.10。它的目的是去掉烘进去的白黄火苗，不是降细节，所以保留 v002。
+- **处置**：
+  - 41 件的新 build 不 approve、不 publish，review 记成 rejected。build 记录里加了 `rejected`（时间 + 原因），各阶段的 current 指回已发布的那一版，`assetctl publish` 不会误发。
+  - 3 件试点的 build v002 / v003 一样标 rejected，current 指回 v001 后重新发布（publish v003 = build v001）。
+  - 退回前后的底色对比在 [review/ch3-v2/retexture/revert/](review/ch3-v2/retexture/revert/)，左边是试点、右边是 v001，下面一排是原尺寸裁切。
+  - 41 件的转台对比在 [review/ch3-v2/retexture/rollout/](review/ch3-v2/retexture/rollout/)：`overview_1..3.jpg` 每件一行，上改前、下改后；底色指标在 `bc_metrics.json`。
+  - asset.json 和 03_work / 05_review 的 JSON 记录入库（积分、任务链接都在里面）。GLB 按 `.gitignore` 留在本机，以后要回看可以直接用。
+- **之后**：第三章件的固有色问题由另一条线用 `texture_clean.py` 在 v001 原始贴图上只调色解决：去紫、补斑、提固有色，不做任何平滑。
+  3-4 收尾对炉口的处理只动自发光遮罩 T_*_E 和材质 / 光照参数，不重画底色，两边不会互相覆盖（[ch3-look.md](ch3-look.md)）。
+

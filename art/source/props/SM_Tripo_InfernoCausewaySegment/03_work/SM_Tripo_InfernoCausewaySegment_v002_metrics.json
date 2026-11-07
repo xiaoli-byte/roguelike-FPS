@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 13945,
+    "verts": 8126
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 8.48384,
+    "iou": 0.797,
+    "iou_per_view": {
+      "front": 0.851,
+      "left": 0.727,
+      "back": 0.856,
+      "right": 0.727
+    },
+    "size_m": [
+      8.48,
+      4.138,
+      5.0
+    ],
+    "reference_m": [
+      12.0,
+      12.0,
+      5.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0484
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.684,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_InfernoCausewaySegment_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoCausewaySegment_LOD0",
+      "tris": 13945,
+      "verts": 8126,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.998046875
+      ],
+      "uv_utilization": 0.468,
+      "bbox_min": [
+        -4.2399,
+        -2.0692,
+        0.0
+      ],
+      "bbox_max": [
+        4.2399,
+        2.0692,
+        5.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoCausewaySegment/04_export/SM_Tripo_InfernoCausewaySegment_v002.glb",
+    "bytes": 964944
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 43.9,
+  "_seconds": 46.6
+}
