@@ -326,21 +326,41 @@ def build(arm, rest: Rest, p: dict):
     for bone, share in (("neck", 0.3), ("head", 0.7)):
         turn(arm, bone, Z, hy * share)
         turn(arm, bone, X, hp * share)
-    if "grip" in p:
-        g = p["grip"]
-        mid = (pb_(arm, "arm_L").head + pb_(arm, "arm_R").head) * 0.5
-        two_bone(arm, "arm_R", "forearm_R", "hand_R", mid + Vector((-g[0], -g[1], g[2])), D(1, -0.2, -0.6))
-    else:
-        for key, bone in (("arm_R", "arm_R"), ("fore_R", "forearm_R")):
-            if key in p:
-                aim(arm, bone, D(*p[key]))
+    # 双手握剑时左手要够得着剑柄：v006 的手臂比 11-01 的 T 字模型短（上臂 0.55 + 小臂 0.56 m），几个过头 / 贴地的双手姿势左手伸不到。
+    # 这时把整副握法（右拳 + 剑）沿「左手腕目标 → 左肩」挪过去，挪的距离 = 左臂差的长度，重解右臂（肩肘多弯一点），剑的方向、刃朝向不变
+    snap = {pb.name: (pb.rotation_quaternion.copy(), pb.location.copy()) for pb in arm.pose.bones}
+    shift = Vector((0, 0, 0))
     b = D(*p["sword"]) if "sword" in p else -Z
-    knuckle = hold_sword(arm, rest, b, D(*p["edge"]) if "edge" in p else None)
-    if p.get("grip_L"):
-        # 左拳握心放到剑柄上（右拳往剑首 L_GRIP 米），指节和右手同一侧；反解左手腕给两骨 IK，再把左手转到握法
+    for attempt in range(6):
+        if attempt:
+            for pb in arm.pose.bones:
+                pb.rotation_quaternion, pb.location = snap[pb.name][0].copy(), snap[pb.name][1].copy()
+            bpy.context.view_layer.update()
+        if "grip" in p:
+            g = p["grip"]
+            mid = (pb_(arm, "arm_L").head + pb_(arm, "arm_R").head) * 0.5
+            two_bone(arm, "arm_R", "forearm_R", "hand_R", mid + Vector((-g[0], -g[1], g[2])) + shift, D(1, -0.2, -0.6))
+        else:
+            for key, bone in (("arm_R", "arm_R"), ("fore_R", "forearm_R")):
+                if key in p:
+                    aim(arm, bone, D(*p[key]))
+            if shift.length > 1e-4:
+                elbow = pb_(arm, "forearm_R").head - pb_(arm, "arm_R").head
+                two_bone(arm, "arm_R", "forearm_R", "hand_R", pb_(arm, "hand_R").head + shift, elbow)
+        knuckle = hold_sword(arm, rest, b, D(*p["edge"]) if "edge" in p else None)
+        if not p.get("grip_L"):
+            break
+        # 左拳握心放到剑柄上（右拳往剑首 L_GRIP 米），指节和右手同一侧；反解左手腕
         RL = grip_rot(rest, "L", b, knuckle)
         fist = pb_(arm, "socket_sword").head - b.normalized() * L_GRIP
-        two_bone(arm, "arm_L", "forearm_L", "hand_L", fist - RL @ rest.fist["L"], D(-0.8, -0.3, -0.5))
+        wrist = fist - RL @ rest.fist["L"]
+        sh = pb_(arm, "arm_L").head
+        over = (wrist - sh).length - (pb_(arm, "arm_L").bone.length + pb_(arm, "forearm_L").bone.length - 0.01)
+        if over <= 0.01:
+            break
+        shift += (sh - wrist).normalized() * over
+    if p.get("grip_L"):
+        two_bone(arm, "arm_L", "forearm_L", "hand_L", wrist, D(-0.8, -0.3, -0.5))
         place_hand(arm, rest, "L", RL)
     else:
         for key, bone in (("arm_L", "arm_L"), ("fore_L", "forearm_L")):

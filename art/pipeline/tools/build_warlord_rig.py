@@ -86,6 +86,14 @@ for name, pts in (("skirt_F", [(0, -0.45, 2.33), (0, -0.50, 1.85), (0, -0.54, 1.
     for i in range(1, 4):
         bone(f"{name}{i}", pts[i - 1], pts[i], "hips" if i == 1 else f"{name}{i - 1}")
 
+# 角根红缨（设定图 HEAD CLOSE-UP：双角根部各垂一条红缨；Tripo 件里没有）：复制左肩胸前那条缨穗，缩到 2/3 挂在角根下面（长 0.32 m），
+# 一条两节的短链挂 head（tassel_ 开头，Unity 归 cloth 族）
+HELM_TASSEL = {"L": (0.34, -0.21, 3.67), "R": (-0.34, -0.21, 3.67)}
+HELM_TASSEL_LEN = 0.32
+for side, (x, y, z) in HELM_TASSEL.items():
+    bone(f"tassel_H{side}1", (x, y, z - 0.02), (x, y, z - 0.02 - HELM_TASSEL_LEN / 2), "head")
+    bone(f"tassel_H{side}2", (x, y, z - 0.02 - HELM_TASSEL_LEN / 2), (x, y, z - HELM_TASSEL_LEN), f"tassel_H{side}1")
+
 bone("socket_core", (0, -0.52, 3.0), (0, -0.72, 3.0), "chest", False)
 bone("socket_helm", (0, -0.16, 3.92), (0, -0.36, 3.92), "head", False)
 gx, gy, gz = GRIP_R
@@ -146,6 +154,25 @@ config = {
                    "bones": [{"bones": ["hips", "spine"] + lr(["thigh_{s}", "shin_{s}"]), "class": "dark"},
                              {"bones": ["skirt_F1", "skirt_F2", "skirt_F3", "skirt_B1", "skirt_B2", "skirt_B3"]
                               + lr(["skirt_{s}1", "skirt_{s}2", "tassel_{s}1", "tassel_{s}2"]), "class": "cloth"}]},
+    # 底色调色（2026-11-07，照设定图）：Tripo 把铜件画成了发白的米黄 / 浅褐（色相 0.05、饱和度 0.38、亮度 0.56），
+    # 设定图是暖的古铜（色板第 4 格 #714C3F；画上的铜件色相 0.04–0.056、饱和度 0.62–0.74、亮度 0.3–0.68）：铜件饱和度 ×1.7、亮度 ×0.72
+    # （中位 0.38 / 0.56 → 0.65 / 0.40）；甲身往色板第 1 格（#553D47）靠、压暗一点。只做逐像素的颜色映射，不模糊、不平滑。
+    # 绯红（饱和度 0.7+）、熔岩橙（0.72+）、双角（0.63+）都在带外，不动。铜件调完饱和度 ≤ 0.70、亮度 ≤ 0.72，碰不到发光遮罩的认色
+    # （熔岩缝 ≥ 0.78、最亮的芯亮度 ≥ 0.86），所以 T_Boss_Warlord_E 重烘也一样
+    "recolor": [
+        {"name": "铜件 → 古铜", "hue": [0.048, 0.03], "sat": [0.2, 0.58], "val": [0.12, 1.0], "soft": 0.025,
+         "to_hue": 0.043, "hue_keep": 0.6, "sat_mul": 1.7, "sat_max": 0.7, "val_mul": 0.72},
+        # 甲身在 CIE LCh 里调：明度 ×0.85、彩度 ×0.9，都软封顶在色板第 1 格自己的 L* 28.7 / C* 12.5（不比它亮、不比它艳），
+        # 色相往它的 351° 拉一半（原来 337° 偏紫）——宁可偏暗铁色，也不更紫（用户 11-07 否过第三章「泛紫色、灰色」的贴图）
+        {"name": "甲身 → 色板第 1 格暗紫灰", "hue": [0.87, 0.11], "sat": [0.0, 0.4], "val": [0.0, 0.62], "soft": 0.03,
+         "lch": {"L_mul": 0.85, "L_max": 28.7, "C_mul": 0.9, "C_max": 12.5, "h_to": 351.0, "h_keep": 0.5}},
+    ],
+    # 角根红缨：复制左肩胸前缨穗（红色那部分）到两个角根下，右边镜像
+    "copy_parts": [
+        {"name": "helm_tassel", "box": [[0.36, -0.46, 2.6], [0.6, -0.25, 3.12]], "colour": "red",
+         "scale": round(HELM_TASSEL_LEN / 0.48, 3), "to": [list(HELM_TASSEL["L"]), list(HELM_TASSEL["R"])], "mirror": [False, True],
+         "weights": {"bones": [["tassel_HL1", "tassel_HL2"], ["tassel_HR1", "tassel_HR2"]], "root": "head", "root_fade": 0.04}},
+    ],
     # 靴底贴地：0.15 m 以下整块归最近的脚骨
     "ground": [{"fade_z": [0.15, 0.32], "bones": ["foot_L", "foot_R", "toe_L", "toe_R"]}],
     "rigid": [

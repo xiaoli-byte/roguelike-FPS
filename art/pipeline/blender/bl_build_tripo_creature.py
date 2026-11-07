@@ -18,10 +18,17 @@ keeps the mesh, UVs, provider texture and the good part of the skeleton, and tur
     "paint_shading": providers de-light the base colour (Tripo 去光处理), which leaves a flat albedo. Stylized games keep
     painted shading in the albedo, so a short-range cavity AO (crevices, plate edges, fur clumps) and the regular AO are
     multiplied back in, with a slight contrast / saturation lift.
+    "recolor": deterministic hue / saturation / value remap of colour bands in the provider base colour (熔心魔将:
+    the provider painted the copper trims a pale beige; the user's design sheet has warm burnished copper). Each rule
+    picks texels by a soft hue / saturation / value band and moves them toward a target hue, scales saturation and
+    value; everything outside the bands (crimson cloth, molten orange) is untouched. Mesh, UVs and masks don't change.
     "texture_cleanup": erase provider texture mistakes in a body region (e.g. a bell print the provider painted on the
     back of an ear): texels of faces inside the region that deviate from the region's own smooth colour are refilled
     with that colour (two passes, so the print itself doesn't leak into the reference).
  5. One LOD: the provider mesh as it is, no decimation; ≤ 4 normalised influences.
+ Optional "copy_parts" (custom skeletons): a small part the provider left out is made from one it did make — the faces
+ inside a box (and of a colour class) are duplicated with their UVs, scaled and moved (optionally mirrored), and get
+ their own chain bones (熔心魔将: the red tassels under the horn roots, copied from the shoulder tassel).
  6. Export one GLB (Draco + WebP), save the .blend and a metrics JSON.
 """
 import json
@@ -104,6 +111,123 @@ bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 V = np.array([v.co[:] for v in mesh.data.vertices])
 RESULT["source"] = {"verts": len(V), "tris": sum(len(p.vertices) - 2 for p in mesh.data.polygons), "scale": s}
 step("导入与单位", t)
+
+
+def provider_vertex_colours() -> np.ndarray:
+    """Provider base colour (display values 0..1) at every vertex's UV."""
+    me = mesh.data
+    bsdf_ = next(n for n in me.materials[0].node_tree.nodes if n.type == "BSDF_PRINCIPLED")
+    img = bsdf_.inputs["Base Color"].links[0].from_node.image
+    w, h = img.size
+    px = np.empty(w * h * 4, np.float32)
+    img.pixels.foreach_get(px)
+    px = px.reshape(h, w, 4)
+    uv = np.empty(len(me.loops) * 2, np.float32)
+    me.uv_layers.active.data.foreach_get("uv", uv)
+    vi = np.empty(len(me.loops), np.int64)
+    me.loops.foreach_get("vertex_index", vi)
+    vuv = np.zeros((len(me.vertices), 2), np.float32)
+    vuv[vi] = uv.reshape(-1, 2)
+    return px[np.clip((vuv[:, 1] % 1) * h, 0, h - 1).astype(int), np.clip((vuv[:, 0] % 1) * w, 0, w - 1).astype(int), :3]
+
+
+def rgb_hsv(c: np.ndarray):
+    mx, mn = c.max(-1), c.min(-1)
+    d = np.maximum(mx - mn, 1e-6)
+    r, g, b = c[..., 0], c[..., 1], c[..., 2]
+    hh = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) / 6
+    return np.where(mx - mn < 1e-6, 0.0, hh), (mx - mn) / np.maximum(mx, 1e-6), mx
+
+
+def hsv_rgb(hh, ss, vv) -> np.ndarray:
+    i = np.floor(hh * 6).astype(np.int64) % 6
+    f = hh * 6 - np.floor(hh * 6)
+    p_, q_, t_ = vv * (1 - ss), vv * (1 - f * ss), vv * (1 - (1 - f) * ss)
+    r = np.choose(i, [vv, q_, p_, p_, t_, vv])
+    g = np.choose(i, [t_, vv, vv, q_, p_, p_])
+    b = np.choose(i, [p_, p_, t_, vv, vv, q_])
+    return np.stack([r, g, b], -1)
+
+
+_M_XYZ = np.array([[0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505]], np.float32)
+_WHITE = np.array([0.9505, 1.0, 1.089], np.float32)
+
+
+def rgb_lch(c: np.ndarray):
+    """sRGB display values 0..1 → CIE L* (0..100), C*, h (degrees)"""
+    lin = np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+    xyz = (lin @ _M_XYZ.T) / _WHITE
+    f = np.where(xyz > 0.008856, np.cbrt(xyz), 7.787 * xyz + 16 / 116)
+    L = 116 * f[..., 1] - 16
+    a = 500 * (f[..., 0] - f[..., 1])
+    b = 200 * (f[..., 1] - f[..., 2])
+    return L, np.hypot(a, b), np.degrees(np.arctan2(b, a)) % 360
+
+
+def lch_rgb(L, C, h) -> np.ndarray:
+    a, b = C * np.cos(np.radians(h)), C * np.sin(np.radians(h))
+    fy = (L + 16) / 116
+    f = np.stack([fy + a / 500, fy, fy - b / 200], -1)
+    xyz = np.where(f > 0.2069, f ** 3, (f - 16 / 116) / 7.787) * _WHITE
+    lin = np.clip(xyz @ np.linalg.inv(_M_XYZ).T, 0, 1)
+    return np.where(lin <= 0.0031308, lin * 12.92, 1.055 * np.power(lin, 1 / 2.4) - 0.055)
+
+
+def soft_cap(x, cap: float, knee: float = 0.8):
+    """x unchanged below knee·cap, then rolls off smoothly toward cap (never above it, no flat clipped patches)"""
+    k = knee * cap
+    return np.where(x <= k, x, k + (cap - k) * (1 - np.exp(-(x - k) / max(cap - k, 1e-6))))
+
+
+PART_VERTS: dict = {}
+if RIG.get("copy_parts"):
+    import bmesh
+    t = time.time()
+    cols = provider_vertex_colours()
+    ch, cs, cv = rgb_hsv(cols)
+    classes = {"red": (cs > 0.45) & ((ch > 0.9) | (ch < 0.03)) & (cv < 0.85)}
+    bm = bmesh.new()
+    bm.from_mesh(mesh.data)
+    bm.verts.ensure_lookup_table()
+    bm.faces.ensure_lookup_table()
+    made = []
+    for part in RIG["copy_parts"]:
+        lo, hi = np.array(part["box"][0]), np.array(part["box"][1])
+        ok = ((V >= lo) & (V <= hi)).all(1)
+        if part.get("colour"):
+            ok &= classes[part["colour"]]
+        faces = [f for f in bm.faces if all(ok[v.index] for v in f.verts)]
+        if not faces:
+            raise RuntimeError(f"copy_parts {part.get('name')}: no faces in the box")
+        src_idx = sorted({v.index for f in faces for v in f.verts})
+        P0 = V[src_idx]
+        top = P0[P0[:, 2] > P0[:, 2].max() - 0.03].mean(0)
+        sc = float(part.get("scale", 1.0))
+        flips = part.get("mirror", [False] * len(part["to"]))
+        for k, dst in enumerate(part["to"]):
+            res = bmesh.ops.duplicate(bm, geom=faces)
+            nverts = [e for e in res["geom"] if isinstance(e, bmesh.types.BMVert)]
+            nfaces = [e for e in res["geom"] if isinstance(e, bmesh.types.BMFace)]
+            for v in nverts:
+                q = (np.array(v.co[:]) - top) * sc
+                if flips[k]:
+                    q[0] = -q[0]            # mirrored copy (the other side of the body)
+                v.co = Vector((q + np.array(dst)).tolist())
+            if flips[k]:
+                bmesh.ops.reverse_faces(bm, faces=nfaces)   # mirroring flips the winding: turn the normals back out
+            made.append((part, k, len(nverts)))
+    bm.to_mesh(mesh.data)
+    bm.free()
+    mesh.data.update()
+    # new vertices were appended in order: record each copy's index range
+    V_new = np.array([v.co[:] for v in mesh.data.vertices])
+    start = len(V)
+    for part, k, n in made:
+        PART_VERTS.setdefault(part["name"], []).append(np.arange(start, start + n))
+        start += n
+    V = V_new
+    RESULT["copy_parts"] = [{"name": part["name"], "copy": k, "verts": n} for part, k, n in made]
+    step(f"补件：{len(made)} 份（{', '.join(part['name'] for part, _, _ in made)}）", t)
 
 
 def uv_area(o) -> float:
@@ -585,6 +709,33 @@ def build_custom_skeleton() -> None:
                     W[idx] = avg / max(avg.sum(), 1e-9)
                 fixed += len(idx)
         reg["island_verts"] = fixed
+    for part in RIG.get("copy_parts", []):
+        # a copied part hangs on its own chain: segment-distance weights among the part's bones only, and its top
+        # `root_fade` metres (where it is attached) blend into the root bone, so the knot stays put and the strands swing
+        pw = part.get("weights")
+        if not pw:
+            continue
+        for k, idx in enumerate(PART_VERTS.get(part["name"], [])):
+            chain = pw["bones"][k] if isinstance(pw["bones"][0], list) else pw["bones"]
+            P_ = V[idx]
+            Dp = np.full((len(idx), len(chain)), np.inf)
+            for j, n in enumerate(chain):
+                a_, b_ = np.array(RIG["bones"][n]["head"]), np.array(RIG["bones"][n]["tail"])
+                ab = b_ - a_
+                u = np.clip(((P_ - a_) @ ab) / max(float(ab @ ab), 1e-9), 0, 1)
+                Dp[:, j] = np.linalg.norm(P_ - (a_ + u[:, None] * ab), axis=1)
+            sw = 1.0 / np.maximum(Dp, 1e-3) ** 4
+            if len(chain) > 2:
+                cut = np.sort(sw, axis=1)[:, -2][:, None]
+                sw = np.where(sw >= cut, sw, 0.0)
+            sw /= sw.sum(1, keepdims=True)
+            ztop = P_[:, 2].max()
+            fade = np.clip((ztop - P_[:, 2]) / max(pw.get("root_fade", 0.04), 1e-6), 0, 1)
+            W[idx] = 0
+            for j, n in enumerate(chain):
+                W[idx, col[n]] = sw[:, j] * fade
+            W[idx, col[pw["root"]]] += 1 - fade
+            reg[f"part_{part['name']}_{k}_verts"] = int(len(idx))
     # Vertices heat diffusion left empty (or emptied by a limit) take their nearest weighted neighbour's weights.
     empty = W.sum(1) < 1e-6
     if empty.any():
@@ -1163,6 +1314,45 @@ def _raster_faces(faces, size: int) -> np.ndarray:
             mask[y0:y1 + 1, x0:x1 + 1] |= inside
     return mask
 
+
+recolors = []
+for rule in RIG.get("recolor", []):
+    # soft band membership in hue (circular) × saturation × value; texels move toward the target hue (keeping
+    # `hue_keep` of their offset), saturation × sat_mul (≤ sat_max), value × val_mul
+    pxc = np.array(bc.pixels[:], np.float32).reshape(size, size, 4)
+    rgb = pxc[..., :3]
+    hh, ss, vv = rgb_hsv(rgb)
+    hc, hw = rule["hue"]
+    soft = rule.get("soft", 0.03)
+    dh = (hh - hc + 0.5) % 1.0 - 0.5
+    w = np.clip((hw + soft - np.abs(dh)) / soft, 0, 1)
+    for key, arr in (("sat", ss), ("val", vv)):
+        if key in rule:
+            a_, b_ = rule[key]
+            w = w * np.clip((arr - (a_ - soft)) / soft, 0, 1) * np.clip(((b_ + soft) - arr) / soft, 0, 1)
+    w = w * (vv > 0.02)                    # never the empty UV gutter
+    if "lch" in rule:
+        # perceptual remap (CIE LCh): lightness × L_mul and chroma × C_mul, each rolled off below a cap (a design swatch's
+        # own L* / C*, so nothing ends up lighter or more colourful than it), hue pulled toward h_to (keeping h_keep)
+        lc = rule["lch"]
+        L, C, Hh = rgb_lch(rgb)
+        dH = (Hh - lc.get("h_to", 0.0) + 180) % 360 - 180
+        out = lch_rgb(soft_cap(L * lc.get("L_mul", 1.0), lc.get("L_max", 100.0)),
+                      soft_cap(C * lc.get("C_mul", 1.0), lc.get("C_max", 150.0)),
+                      (lc.get("h_to", 0.0) + dH * lc.get("h_keep", 1.0)) % 360)
+    else:
+        th = rule.get("to_hue", hc)
+        nh = (th + dh * rule.get("hue_keep", 1.0)) % 1.0
+        ns = np.minimum(ss * rule.get("sat_mul", 1.0) + rule.get("sat_add", 0.0), rule.get("sat_max", 1.0))
+        nv = np.clip(vv * rule.get("val_mul", 1.0), 0, 1)
+        out = hsv_rgb(nh, ns, nv)
+    pxc[..., :3] = rgb * (1 - w[..., None]) + out * w[..., None]
+    bc.pixels.foreach_set(pxc.ravel())
+    recolors.append({"name": rule.get("name", ""), "texels": int((w > 0.5).sum()),
+                     "share": round(float((w > 0.5).sum()) / float((vv > 0.02).sum()), 3)})
+if recolors:
+    RESULT["recolor"] = recolors
+    log(f"底色调色：{recolors}")
 
 cleanups = []
 for fix in RIG.get("texture_cleanup", []):
