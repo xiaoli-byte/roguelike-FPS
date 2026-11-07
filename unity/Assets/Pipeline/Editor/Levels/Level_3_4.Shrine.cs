@@ -977,28 +977,19 @@ namespace Spiritfire.Art.Editor.Levels
             rep.Line($"殿内一圈 {total:F0} m");
         }
 
-        /// <summary>灯：眺台火坛、① 山门门洞（炉火）、② 闸楼炉口、熔岩洞（金）、补给营（暖光，安静）；都不投影</summary>
+        /// <summary>灯：眺台火坛、① 山门门洞（炉火）、② 闸楼炉口、熔岩洞（金）、补给营（暖光，安静）；档位见 LevelKit.InfernoGlows，都不投影</summary>
         static void BuildShrineLights(LevelKit.TerrainSet set, Transform env)
         {
             var root = new GameObject("Lights · 神道").transform;
             root.SetParent(env, false);
-            void Add(string name, Vector2 at, float dy, Color c, float range, float intensity)
-            {
-                var l = new GameObject(name).AddComponent<Light>();
-                l.transform.SetParent(root, false);
-                l.transform.position = set.OnGround(at.x, at.y, dy);
-                l.type = LightType.Point;
-                l.color = c;
-                l.range = range;
-                l.intensity = intensity;
-                l.shadows = LightShadows.None;
-            }
-            var fire = LevelKit.InfernoPalette.FireLight;
-            Add("Overlook Altars", new Vector2(0, -218), 2.5f, fire, 12f, 2.5f);
-            Add("Gatehouse Glow", new Vector2(GatehouseC.x, -138), 4f, fire, 14f, 3f);
-            Add("Sluice Furnace", SluiceTowerAt + new Vector2(-3.5f, 0), 3f, fire, 16f, 3.5f);
-            Add("Lava Cave", CacheAt + new Vector2(0, 2), 2.5f, LevelKit.InfernoPalette.LampLight, 10f, 2.5f);
-            Add("Camp Warm", CampAt + new Vector2(2, -2), 4.5f, LevelKit.InfernoPalette.LampLight, 18f, 2.2f);
+            void Add(string name, Vector2 at, float dy, LevelKit.Ch3PointGlow glow, Color? color = null) =>
+                LevelKit.Ch3PointLight(root, name, set.OnGround(at.x, at.y, dy), glow, color);
+            var lamp = LevelKit.InfernoPalette.LampLight;
+            Add("Overlook Altars", new Vector2(0, -218), 2.5f, LevelKit.InfernoGlows.Altar);
+            Add("Gatehouse Glow", new Vector2(GatehouseC.x, -138), 4f, LevelKit.InfernoGlows.Gate);
+            Add("Sluice Furnace", SluiceTowerAt + new Vector2(-3.5f, 0), 3f, LevelKit.InfernoGlows.Furnace);
+            Add("Lava Cave", CacheAt + new Vector2(0, 2), 2.5f, LevelKit.InfernoGlows.Cave, lamp);
+            Add("Camp Warm", CampAt + new Vector2(2, -2), 4.5f, LevelKit.InfernoGlows.Camp, lamp);
         }
 
         /// <summary>主线节拍（S5 PacingCheck）：出生 → 路遇 → ① → 山门俯瞰 → 熔岩洞岔口 → ② → 补给营 → 首领</summary>

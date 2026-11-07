@@ -268,8 +268,8 @@ namespace Spiritfire.Art.Editor.Levels
             var markers = new GameObject("Markers").transform;
 
             ShowcaseSceneBuilder.BuildLighting(theme, Dir);
-            // 火山口里：主光抬到 55°，殿内地面才照得到；暗部靠环境光与熔岩的辉光
-            if (RenderSettings.sun) RenderSettings.sun.transform.rotation = Quaternion.Euler(55f, 30f, 0);
+            // 火山口里：主光只抬仰角（颜色、强度、方位照主题），殿内地面才照得到；暗部靠环境光与熔岩的辉光
+            LevelKit.Ch3RaiseSun(theme, LevelKit.InfernoLight.CraterSunPitch);
             var set = LevelKit.BuildTerrainSet(new LevelKit.TerrainSpec
             {
                 dir = Dir, name = Name, size = Size, origin = Origin, baseHeight = Base, heightRange = HeightRange,
@@ -279,7 +279,7 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.Backdrop(LevelKit.BackdropFor(theme, Dir, Name, new Vector2(0, -100), -2f, 760, 7), env);
             // 软边界（没有空气墙）：火口壁本身翻不上去，等值线外热风推回 + 兜底环
             LevelKit.Boundary(Dir, Name, env, Playable, new Rect(Origin, Size), Bounds);
-            LevelKit.Weather(env, theme, new Vector2(0.3f, 1f), 0.15f);
+            LevelKit.Weather(env, theme, new Vector2(0.3f, 1f), LevelKit.InfernoLight.AshWindCrater);
 
             var lava = BuildLava(env);
             var shrineLava = BuildShrineLava(env);
@@ -381,10 +381,6 @@ namespace Spiritfire.Art.Editor.Levels
             public readonly List<LavaVolume> moat = new(), channels = new();
         }
 
-        /// <summary>熔岩渠的熔岩面材质：渠只有 1.6 m 宽，共用熔岩材质的岸边硬壳（形状边缘往里 1.5 m）会把整条渠盖成黑壳，这里收窄到 0.3 m</summary>
-        const string ChannelLavaMat = Dir + "/M_Lava_Channel.mat";
-        const float ChannelShoreWidth = 0.3f;
-
         /// <summary>
         /// 熔池（浅碟里的圆）、八段熔岩渠（与地面齐平的熔岩带，流向殿墙）、护城渠（东西横贯，桥两侧各一片：桥高出熔岩面 0.6 m，不算熔岩，
         /// 熔岩体也不跨过桥——否则桥面在熔岩体的形状里、它的中心落在桥上）
@@ -421,33 +417,13 @@ namespace Spiritfire.Art.Editor.Levels
                 }
                 i++;
             }
-            var mat = ChannelMaterial();
+            // 渠只有 1.6 m 宽：共用熔岩材质的岸边硬壳会把整条渠盖成黑壳，换成硬壳收窄的渠材质（{Dir}/M_Lava_Channel.mat）
+            var mat = LevelKit.Ch3LavaChannel(Dir);
             if (mat)
                 foreach (var v in l.channels)
                     if (v && v.surface)
                         v.surface.sharedMaterial = mat;
             return l;
-        }
-
-        /// <summary>熔岩渠材质：共用熔岩材质的副本（每次构建同步一遍），只把岸边硬壳收窄</summary>
-        static Material ChannelMaterial()
-        {
-            var src = LevelKit.LavaMaterial();
-            if (!src) return null;
-            var mat = AssetDatabase.LoadAssetAtPath<Material>(ChannelLavaMat);
-            if (!mat)
-            {
-                mat = new Material(src) { name = "M_Lava_Channel" };
-                AssetDatabase.CreateAsset(mat, ChannelLavaMat);
-            }
-            else
-            {
-                mat.shader = src.shader;
-                mat.CopyPropertiesFromMaterial(src);
-            }
-            if (mat.HasProperty("_ShoreWidth")) mat.SetFloat("_ShoreWidth", ChannelShoreWidth);
-            EditorUtility.SetDirty(mat);
-            return mat;
         }
 
         // ───────────── 圆殿 ─────────────
@@ -753,24 +729,13 @@ namespace Spiritfire.Art.Editor.Levels
             return camp;
         }
 
-        /// <summary>熔池上一盏橙色点光（照亮鼎底和柱脚）、两座炉口各一盏；都不投影</summary>
+        /// <summary>熔池上一盏橙色点光（照亮鼎底和柱脚）、两座炉口各一盏（只补炉口前的地面）；档位见 LevelKit.InfernoGlows，都不投影</summary>
         static void BuildLights(Transform env, QilinFurnace furnace)
         {
-            void Add(string name, Vector3 at, float range, float intensity)
-            {
-                var l = new GameObject(name).AddComponent<Light>();
-                l.transform.SetParent(env, false);
-                l.transform.position = at;
-                l.type = LightType.Point;
-                l.color = LevelKit.InfernoPalette.FireLight;
-                l.range = range;
-                l.intensity = intensity;
-                l.shadows = LightShadows.None;
-            }
-            Add("Pool Glow", furnace.Center + Vector3.up * 2f, 22f, 4f);
+            LevelKit.Ch3PointLight(env, "Pool Glow", furnace.Center + Vector3.up * 2f, LevelKit.InfernoGlows.Pool);
             foreach (var m in furnace.mouths)
                 if (m)
-                    Add($"Furnace Glow {m.name}", m.position + Vector3.up * 2f, 10f, 3f);
+                    LevelKit.Ch3PointLight(env, $"Furnace Glow {m.name}", m.position + Vector3.up * 2f, LevelKit.InfernoGlows.Mouth);
         }
 
         // ───────────── 验收 ─────────────
@@ -804,7 +769,7 @@ namespace Spiritfire.Art.Editor.Levels
             if (rockE < 15f || rockS < 15f) rep.Fail($"岩壁不够高：殿外（30, 0）y = {rockE:F1}，护城渠西头外（−44, −40）y = {rockS:F1}（应 ≥ 15，地形本身是边界）");
             else rep.Line($"✓ 岩壁：殿外 y = {rockE:F1}，护城渠西头外 y = {rockS:F1}");
             rep.Line($"熔岩：熔池 r {PoolR}（熔岩面 {PoolLava}）、护城渠桥两侧 {lava.moat.Count} 片 {(lava.moat.Count > 0 && lava.moat[0] ? $"{lava.moat[0].size.x:F0} × {lava.moat[0].size.y:F1}" : "?")} m（熔岩面 {MoatLava}）、" +
-                     $"熔岩渠 {lava.channels.Count} 段（宽 {ChannelHalf * 2} m，齐地，岸壳 {ChannelShoreWidth} m）");
+                     $"熔岩渠 {lava.channels.Count} 段（宽 {ChannelHalf * 2} m，齐地，岸壳 {LevelKit.InfernoLight.ChannelShoreWidth} m）");
             if (lava.moat.Count != 2) rep.Fail($"护城渠应为桥两侧 2 片熔岩，现在 {lava.moat.Count}");
             foreach (var m in lava.moat)
                 if (m && m.Body.Contains(0, (MoatZ0 + MoatZ1) * 0.5f))

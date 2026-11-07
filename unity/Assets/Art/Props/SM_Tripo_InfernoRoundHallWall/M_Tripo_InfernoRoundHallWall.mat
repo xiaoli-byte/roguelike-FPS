@@ -54,9 +54,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _AmbientStrength: 1
-    - _BumpScale: 1
+    - _BumpScale: 0.35
     - _Cull: 0
     - _Cutoff: 0.5
+    - _Desaturate: 0.12
     - _DstBlend: 0
     - _FlashAmount: 0
     - _Fur: 0
@@ -64,16 +65,16 @@ Material:
     - _FurDetailStrength: 0.6
     - _FurFuzz: 0.5
     - _FurSheen: 0.25
-    - _Metallic: 1
-    - _OcclusionStrength: 1
+    - _Metallic: 0.35
+    - _OcclusionStrength: 0.7
     - _RampSoftness: 0.22
     - _RampThreshold: 0.02
     - _RimPower: 4
-    - _RimStrength: 0.18
+    - _RimStrength: 0.1
     - _Roughness: 1
     - _ShadowLift: 0.2
     - _SpecSize: 0.1
-    - _SpecStrength: 0.25
+    - _SpecStrength: 0.12
     - _SrcBlend: 1
     - _ZWrite: 1
     m_Colors:
@@ -81,7 +82,7 @@ Material:
     - _DissolveEdgeColor: {r: 2.4, g: 1.1, b: 0.4, a: 1}
     - _DissolveParams: {r: 0, g: 0.08, b: 9, a: 0}
     - _DissolvePlane: {r: 0, g: -0.5, b: 0, a: 0}
-    - _EmissionColor: {r: 1.6, g: 1.6, b: 1.6, a: 1.6}
+    - _EmissionColor: {r: 0.96000004, g: 0.96000004, b: 0.96000004, a: 0.96000004}
     - _FlameKey: {r: 0, g: 1, b: 9, a: 0}
     - _FlameKeyColor: {r: 1, g: 0.627, b: 0.251, a: 1}
     - _FlashColor: {r: 1, g: 1, b: 1, a: 1}
@@ -97,8 +98,8 @@ Material:
     - _RegionCenter: {r: 0, g: 0, b: 0, a: 1}
     - _RegionParams: {r: 0, g: 0, b: 0, a: 0}
     - _RimColor: {r: 1, g: 0.9, b: 0.75, a: 1}
-    - _ShadowTint: {r: 0.66, g: 0.62, b: 0.82, a: 1}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadowTint: {r: 0.56, g: 0.5, b: 0.8, a: 1}
+    - _Tint: {r: 0.96, g: 0.94, b: 0.98, a: 1}
     - _VariantCrackColor: {r: 0, g: 0, b: 0, a: 1}
     - _VariantParams: {r: 0, g: 0, b: 14, a: 3}
     - _VariantSandColor: {r: 0.85, g: 0.7, b: 0.47999996, a: 1}

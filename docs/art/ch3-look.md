@@ -45,6 +45,9 @@
 | 熔岩湖（大片、远景多） | 暗壳材质 `LevelKit.Ch3LavaCrust`：开口熔流 0.06、缝宽 0.05、板块 0.08 / m（十来米一块，视野里只剩几道缝）、自发光 1.25、壳下暗红 (0.22, 0.025, 0.008)；3-1 熔湖已用 | `LevelKit.InfernoLook`、`Level_3_1` |
 | 交战场地的光源 | 交战场地 30 m 内的青金引导灯换暗一档（`LevelKit.DimGuideLamp`：灵火固有色 / 自发光压到三成上下、点光 ×0.4）；火坛的跳动火焰焰心不到近白（EnvFlame.Altar）——去色后不比怪亮 | `LevelKit.InfernoLook`、`EnvFlame` |
 | 天气 | 落灰 / 软边界烟尘：紫褐烟 | `WeatherProfiles`（Ashfall、WhiteoutInferno） |
+| 关卡光照 / 天气 / 熔渠 | 四面高壁的图只抬主光仰角（`Ch3RaiseSun`：颜色、强度、方位照主题；火口 55°）；落灰基础风力三档：开阔 0.25 / 风道、盆地 0.2 / 火口 0.15；窄熔岩渠的岸壳收到 0.3 m（`Ch3LavaChannel`） | `LevelKit.InfernoLight`（3-4 已改用；3-1–3-3 还是各自写的数） |
+| 点光档位 | 熔池 22 m / 4、墙上炉口 10 m / 2、炉楼 / 闸楼 16 m / 2.5、门洞 14 m / 3、火坛 12 m / 2.5、洞里金灯 10 m / 2.5、营地暖光 18 m / 2.2；都不投影。本身就发光的炉口，点光只补一圈地面上的暖色 | `LevelKit.InfernoGlows` / `Ch3PointLight` |
+| 个别件的自发光 | 炉口画成近白黄白的件，统一 ×0.6 之后再收一档、染回熔岩橙：圆殿炉口墙段 ×0.3、炉楼 ×0.32（去色后不比吊鼎、怪亮）。只动材质，底色和 `T_*_E` 遮罩不重画 | `LevelKit.InfernoGlowTrim` → `ArtPrefabBuilder.ApplyInfernoEnvLook` |
 
 **地图构建器里不写死颜色**：程序材质用 `LevelKit.Ch3*`，点光色用 `LevelKit.InfernoPalette.FireLight / LampLight`。
 

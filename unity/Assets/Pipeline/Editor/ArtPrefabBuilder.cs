@@ -92,7 +92,7 @@ namespace Spiritfire.Art.Editor
         /// <summary>第三章场景件贴图的 mip 偏移（BC / N / ORM；_E 发光遮罩不偏，发光的形状保持清楚）</summary>
         public const float InfernoEnvMipBias = 0.8f;
 
-        static void ApplyInfernoEnvLook(Material mat)
+        static void ApplyInfernoEnvLook(Material mat, string id)
         {
             mat.SetFloat("_BumpScale", 0.35f);
             mat.SetFloat("_Desaturate", 0.12f);
@@ -102,8 +102,9 @@ namespace Spiritfire.Art.Editor
             mat.SetFloat("_SpecStrength", 0.12f);
             mat.SetFloat("_RimStrength", 0.1f);
             mat.SetColor("_ShadowTint", new Color(0.56f, 0.5f, 0.8f));
-            // 件上的自发光（_E 遮罩：炉口、熔槽、灯）收到六成：最高饱和、最亮的一档留给怪、预警、引导灯和熔岩（composition.md 第 6 节「射击游戏优先」）
-            mat.SetColor("_EmissionColor", mat.GetColor("_EmissionColor") * 0.6f);
+            // 件上的自发光（_E 遮罩：炉口、熔槽、灯）收到六成：最高饱和、最亮的一档留给怪、预警、引导灯和熔岩（composition.md 第 6 节「射击游戏优先」）；
+            // 炉口画成近白的几件再单独收、染回熔岩橙（LevelKit.InfernoGlowTrim）
+            mat.SetColor("_EmissionColor", Levels.LevelKit.InfernoGlowFor(id, mat.GetColor("_EmissionColor") * 0.6f));
         }
 
         public static Material BuildMaterial(ArtSidecar sc, JObject m)
@@ -157,7 +158,7 @@ namespace Spiritfire.Art.Editor
             mat.SetFloat("_FlashAmount", 0f);
             if (IsInfernoEnv(sc.Id) && !IsGlow(name))
             {
-                ApplyInfernoEnvLook(mat);
+                ApplyInfernoEnvLook(mat, sc.Id);
                 foreach (var t in new[] { mat.GetTexture("_BaseMap"), mat.GetTexture("_BumpMap"), mat.GetTexture("_ORMMap") })
                     ArtImportPostprocessor.EnsureMipBias(t as Texture2D);
             }

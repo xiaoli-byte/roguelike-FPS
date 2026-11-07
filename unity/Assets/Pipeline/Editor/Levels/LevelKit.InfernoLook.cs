@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -44,6 +45,112 @@ namespace Spiritfire.Art.Editor.Levels
             /// <summary>程序材质的暗部色（StylizedLit _ShadowTint）：暗部偏紫，不发黑</summary>
             public static readonly Color ShadowTint = new(0.56f, 0.5f, 0.8f);
         }
+
+        /// <summary>
+        /// 第三章各关构建器原来写死的光照 / 天气 / 熔岩渠参数（2026-11-07 3-4 美术收尾收进这里）：主光的颜色、强度、方位一律照
+        /// <see cref="ShowcaseTheme.Inferno"/>，四面高壁的图只抬仰角（<see cref="Ch3RaiseSun"/>）；落灰风力按场地挡不挡风取一档
+        /// </summary>
+        public static class InfernoLight
+        {
+            /// <summary>火口里（3-4 祝融炉心）的主光仰角：主题的 38° 下殿内地面大半压在火口壁的影子里，抬到 55° 才照得到；暗部靠环境光和熔岩辉光</summary>
+            public const float CraterSunPitch = 55f;
+            /// <summary>落灰的基础风力（LevelKit.Weather）：开阔的图 0.25、风道 / 盆地 0.2、火口里 0.15（四面高壁挡风）</summary>
+            public const float AshWindOpen = 0.25f, AshWindSheltered = 0.2f, AshWindCrater = 0.15f;
+            /// <summary>窄熔岩渠（1–2 m 宽）岸边硬壳的宽度：共用 M_Lava 的硬壳从形状边缘往里 1.5 m，会把整条渠盖成黑壳</summary>
+            public const float ChannelShoreWidth = 0.3f;
+        }
+
+        /// <summary>第三章点光的一档：射程（m）和强度；颜色是 <see cref="InfernoPalette.FireLight"/>（熔岩、火口）或 LampLight（灯、营地）</summary>
+        public readonly struct Ch3PointGlow
+        {
+            public readonly float range, intensity;
+            public Ch3PointGlow(float range, float intensity) { this.range = range; this.intensity = intensity; }
+        }
+
+        /// <summary>
+        /// 第三章点光的几档（都不投影）。强度按「去色后不比怪亮」定（ch3-look.md 第三节「交战场地的光源」、composition.md 第 6 节）：
+        /// 炉口、闸楼这种本身就发光的件，点光只补一圈地面上的暖色，不再把炉口照成白热
+        /// </summary>
+        public static class InfernoGlows
+        {
+            /// <summary>熔池 / 大片熔岩上方：照亮鼎底和柱脚</summary>
+            public static readonly Ch3PointGlow Pool = new(22f, 4f);
+            /// <summary>墙上的炉口（圆殿炉口墙段）：只补炉口前的地面</summary>
+            public static readonly Ch3PointGlow Mouth = new(10f, 2f);
+            /// <summary>独立的炉楼 / 闸楼炉口（② 熔流闸口）</summary>
+            public static readonly Ch3PointGlow Furnace = new(16f, 2.5f);
+            /// <summary>门洞里的炉火（山门）</summary>
+            public static readonly Ch3PointGlow Gate = new(14f, 3f);
+            /// <summary>一两座火坛（眺台）</summary>
+            public static readonly Ch3PointGlow Altar = new(12f, 2.5f);
+            /// <summary>洞里的金色灯（熔岩洞宝藏）</summary>
+            public static readonly Ch3PointGlow Cave = new(10f, 2.5f);
+            /// <summary>补给营的暖光（安静、范围大）</summary>
+            public static readonly Ch3PointGlow Camp = new(18f, 2.2f);
+        }
+
+        /// <summary>四面高壁的图把主光抬到 pitch 度：颜色、强度、方位照主题（<see cref="ShowcaseSceneBuilder.BuildLighting"/> 之后调）</summary>
+        public static void Ch3RaiseSun(ShowcaseTheme theme, float pitch)
+        {
+            if (RenderSettings.sun)
+                RenderSettings.sun.transform.rotation = Quaternion.Euler(pitch, theme.sunEuler.y, theme.sunEuler.z);
+        }
+
+        /// <summary>摆一盏第三章点光（不投影）；color 缺省 = 熔岩火光</summary>
+        public static Light Ch3PointLight(Transform parent, string name, Vector3 at, Ch3PointGlow glow, Color? color = null)
+        {
+            var l = new GameObject(name).AddComponent<Light>();
+            l.transform.SetParent(parent, false);
+            l.transform.position = at;
+            l.type = LightType.Point;
+            l.color = color ?? InfernoPalette.FireLight;
+            l.range = glow.range;
+            l.intensity = glow.intensity;
+            l.shadows = LightShadows.None;
+            return l;
+        }
+
+        /// <summary>
+        /// 窄熔岩渠的熔岩面材质：共用 M_Lava 的副本（每次构建同步一遍），只把岸边硬壳收窄到 <see cref="InfernoLight.ChannelShoreWidth"/>。
+        /// 存成 {dir}/M_{name}.mat（3-4 沿用原来的 M_Lava_Channel.mat）
+        /// </summary>
+        public static Material Ch3LavaChannel(string dir, string name = "Lava_Channel")
+        {
+            var src = LavaMaterial();
+            if (!src) return null;
+            string path = $"{dir}/M_{name}.mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (!mat)
+            {
+                mat = new Material(src) { name = $"M_{name}" };
+                AssetDatabase.CreateAsset(mat, path);
+            }
+            else
+            {
+                mat.shader = src.shader;
+                mat.CopyPropertiesFromMaterial(src);
+            }
+            if (mat.HasProperty("_ShoreWidth")) mat.SetFloat("_ShoreWidth", InfernoLight.ChannelShoreWidth);
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
+        /// <summary>
+        /// 个别正式件的自发光再单独收（<see cref="ArtPrefabBuilder"/> 的 ApplyInfernoEnvLook 统一 ×0.6 之后）：炉口画成近白的黄白，
+        /// 去色后比怪、比吊鼎还亮。scale 乘在 _EmissionColor 上，tint 把近白的遮罩染回熔岩橙。只动材质，底色 BC 和遮罩 T_*_E 都不重画，
+        /// 之后底色调色清洗（texture_clean.py）重建件也照样生效
+        /// </summary>
+        public static readonly Dictionary<string, (float scale, Color tint)> InfernoGlowTrim = new()
+        {
+            // 3-4 圆殿 ±72° 两段炉口墙：炉口是一整块亮黄，比殿心的吊鼎还抢眼（×0.45 时去色后炉口均值 123、吊鼎 95，再收到 ×0.3）
+            ["SM_Tripo_InfernoRoundHallFurnace"] = (0.3f, new Color(1f, 0.5f, 0.22f)),
+            // 炉楼（3-4 ② 闸楼、展示广场角楼）：炉口遮罩是一片近白，读成白热
+            ["SM_Tripo_InfernoFurnaceTower"] = (0.32f, new Color(1f, 0.42f, 0.16f)),
+        };
+
+        /// <summary>按 <see cref="InfernoGlowTrim"/> 收一件的自发光色（不在表里的件原样返回）</summary>
+        public static Color InfernoGlowFor(string id, Color emission) =>
+            !string.IsNullOrEmpty(id) && InfernoGlowTrim.TryGetValue(id, out var t) ? emission * t.tint * t.scale : emission;
 
         /// <summary>铸铁（吊桥桥面、铁栏、补给坩埚、锻台铁件）</summary>
         public static Material Ch3Iron(string dir, string name = "Ch3Iron") => Ch3Mat(dir, name, InfernoPalette.Iron, 0.6f);

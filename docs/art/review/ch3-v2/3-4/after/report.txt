@@ -135,8 +135,8 @@
 ✓ 补给营摊位 5（ShopStall）：8/8 个方向可接近，离出生点路径 239 m
 ✓ 补给营摊位 6（ShopStall）：8/8 个方向可接近，离出生点路径 238 m
 ✓ 补给营摊位 7（ShopStall）：8/8 个方向可接近，离出生点路径 237 m
-✓ Cache · 熔岩洞（CachePOI）：8/8 个方向可接近，离出生点路径 178 m
 ✓ Lava Sluice · 闸口熔流闸（LavaSluice）：8/8 个方向可接近，离出生点路径 223 m
+✓ Cache · 熔岩洞（CachePOI）：8/8 个方向可接近，离出生点路径 178 m
 ✓ 铜人神道 宝箱（upgrade）（Chest）：8/8 个方向可接近，离出生点路径 79 m
 ✓ 熔流闸口 宝箱（weapon:min=1）（Chest）：7/8 个方向可接近，离出生点路径 197 m
 — 防越界（走 / 跳 / 冲刺 / 二段跳） —
@@ -144,7 +144,7 @@
 尺度：移速 7.5 m/s · 单跳 1.42 m · 二段跳 2.68 m · 冲刺 3.96 m · 台阶 0.45 m · 坡度 ≤ 45°
 ✓ 出不去：界外 28 m 以外没有一处可达（射线 11663，扫掠 7490）
 ✓ 撤掉不可见墙之后也出不去：地形本身就是边界，空气墙可以直接撤
-（用时 6.9 s）
+（用时 5.3 s）
 — 主线不靠二段跳（玩家可达性） —
 起跳包络（同高最远）：单跳 5.2 m · 冲刺 10.6 m · 二段跳 15.3 m；最高：单跳 1.42 m · 二段跳 2.68 m
 ✓ 出生 · 火口南沿眺台：步行可达
@@ -209,28 +209,27 @@
 低 · 主线 1（出生点 → 铜人神道）（-1, 24, -221）：渲染器 103、三角面 576k、绘制 103（+ 投影 28，投影体 28）
 低 · 主线 2（铜人神道 → 熔流闸口）（0, 14, -163）：渲染器 119、三角面 505k、绘制 119（+ 投影 43，投影体 43）
 低 · 主线 3（熔流闸口 → 火麒麟）（4, 6, -104）：渲染器 79、三角面 351k、绘制 79（+ 投影 45，投影体 45）
-（用时 1.3 s）
 — 俯视地图 —
 ✓ Assets/Art/_Review/level_3-4_map.png（世界 XZ -61…51 × -251…53，坐标映射见同名 .json）
 ✓ 行旅图：Assets/Levels/L3_4_Zhurong/LevelMap_3-4.jpg（566×1536），地点 6 处（场地 3、藏宝 1、补给营 1、首领 1），写进场景「Level Meta」
-规则集：不合格 0 项，提醒 2 条，用时 21.9 s（其中可达性栅格 6.8 s）
+规则集：不合格 0 项，提醒 2 条，用时 14.7 s（其中可达性栅格 5.2 s）
 — 熔岩（L7）—
-✓ Lava · Site1 Pool（9 × 12 m，熔岩面 y 13.30）
-✓ Lava · Sluice Channel 3（6.5 × 11.5 m，熔岩面 y 5.30）
+✓ Lava · Channel 1 Outer（1.6 × 10.2 m，熔岩面 y 0.00）
 ✓ Lava · Channel 2 Inner（1.6 × 2.8 m，熔岩面 y 0.00）
 ✓ Lava · Crater Pit（50 × 40 m，熔岩面 y -6.00）
-✓ Lava · Sluice Channel 1（33 × 11.5 m，熔岩面 y 5.30）
-✓ Lava · Sluice Channel 2（9 × 11.5 m，熔岩面 y 5.30）
-✓ Lava · Channel 3 Inner（1.6 × 2.8 m，熔岩面 y 0.00）
-✓ Lava · Channel 0 Outer（1.6 × 10.2 m，熔岩面 y 0.00）
+✓ Lava · Molten Moat E（33 × 18.5 m，熔岩面 y -0.60）
 ✓ Lava · Molten Pool（圆 r 7 m，熔岩面 y -0.10）
-✓ Lava · Channel 1 Outer（1.6 × 10.2 m，熔岩面 y 0.00）
+✓ Lava · Channel 0 Outer（1.6 × 10.2 m，熔岩面 y 0.00）
+✓ Lava · Channel 2 Outer（1.6 × 10.2 m，熔岩面 y 0.00）
 ✓ Lava · Molten Moat W（33 × 18.5 m，熔岩面 y -0.60）
 ✓ Lava · Channel 0 Inner（1.6 × 2.8 m，熔岩面 y 0.00）
-✓ Lava · Channel 1 Inner（1.6 × 2.8 m，熔岩面 y 0.00）
-✓ Lava · Molten Moat E（33 × 18.5 m，熔岩面 y -0.60）
-✓ Lava · Channel 2 Outer（1.6 × 10.2 m，熔岩面 y 0.00）
 ✓ Lava · Channel 3 Outer（1.6 × 10.2 m，熔岩面 y 0.00）
+✓ Lava · Channel 1 Inner（1.6 × 2.8 m，熔岩面 y 0.00）
+✓ Lava · Channel 3 Inner（1.6 × 2.8 m，熔岩面 y 0.00）
+✓ Lava · Sluice Channel 2（9 × 11.5 m，熔岩面 y 5.30）
+✓ Lava · Site1 Pool（9 × 12 m，熔岩面 y 13.30）
+✓ Lava · Sluice Channel 3（6.5 × 11.5 m，熔岩面 y 5.30）
+✓ Lava · Sluice Channel 1（33 × 11.5 m，熔岩面 y 5.30）
 — 场景内容（L1：只有环境和标记，玩家在 Core 场景）—
 RunPlan：3-4 3-4 · 祝融炉心 · 火麒麟，最后一关 ✗
 ⚠ 3-4 不是 RunPlan 的最后一关：BossEncounter 打完会立出口（Boss Exit 点在神龛前）

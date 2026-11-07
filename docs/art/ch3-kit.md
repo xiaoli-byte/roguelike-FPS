@@ -358,3 +358,20 @@ registry `emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }`
 - **之后**：第三章件的固有色问题由另一条线用 `texture_clean.py` 在 v001 原始贴图上只调色解决：去紫、补斑、提固有色，不做任何平滑。
   3-4 收尾对炉口的处理只动自发光遮罩 T_*_E 和材质 / 光照参数，不重画底色，两边不会互相覆盖（[ch3-look.md](ch3-look.md)）。
 
+### 7.5 3-4 美术收尾（11-07，接 M34 的复查）
+
+M34 的 3-4 复查（[review/ch3-v2/3-4/composition-check.md](review/ch3-v2/3-4/composition-check.md)）留下三件材质层面的事，加上构建器里写死的视觉参数。全部在原贴图上做，不走 Tripo、不做任何滤波：
+
+- **构建器里写死的参数收进 `LevelKit.InfernoLook`**（[ch3-look.md](ch3-look.md) 第三节表格末三行）：
+  - 主光：`Ch3RaiseSun(theme, InfernoLight.CraterSunPitch)`。只抬仰角到 55°，颜色、强度、方位照 `ShowcaseTheme.Inferno`，方位还是 30°，结果和原来一样。
+  - 落灰：`InfernoLight.AshWindCrater` = 0.15。
+  - 熔岩渠材质：`Ch3LavaChannel(Dir)`，岸壳 `InfernoLight.ChannelShoreWidth` = 0.3 m，资产仍是 `M_Lava_Channel.mat`。
+  - 点光：`InfernoGlows` 七档 + `Ch3PointLight`，Level_3_4 / Level_3_4.Shrine 两处都改用它们。
+- **圆殿两段炉口墙段的炉膛**：平涂亮黄，去色后比吊鼎还亮。处理方式是 `InfernoGlowTrim` 把这件的自发光再收到 ×0.3、染回熔岩橙；殿内两盏炉口点光 10 m / 3 → 10 m / 2。底色和 `T_*_E` 都不动。
+- **② 闸楼（SM_Tripo_InfernoFurnaceTower）炉口白热**：自发光遮罩是一片近白。同样 `InfernoGlowTrim` ×0.32、染橙；闸楼点光 16 m / 3.5 → 16 m / 2.5。这件也是展示广场的角楼，那边一起变暗。
+- **弧墙饰带（SM_Tripo_InfernoRoundHallWall build v004）**：v001 原贴图上，只对高度带 0.145–0.315（朱漆铜日纹饰带，两面）做纯颜色映射：
+  - 彩度 ×0.4，亮度向带内均值收 ×0.42，色相不变，所以不会往紫偏；
+  - 熔岩色键命中的纹素不动，其余纹素和 v001 逐像素一致；
+  - 工具 `art/pipeline/tools/frieze_recolor.py`，回执在 `_tripo_inbox/20261107T142047_*_frieze.json`。
+  - 它取**当前**高模的 Tripo 原件，回执不写回溯字段，所以和 `texture_clean.py` 谁先谁后都能叠：后跑的那个在前一个的结果上改。注意 texture_clean 的「提固有色」会把饰带的彩度拉回一些，洗完再跑一次本工具就行。
+

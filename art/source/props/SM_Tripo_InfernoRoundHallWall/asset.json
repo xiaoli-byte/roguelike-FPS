@@ -166,7 +166,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -245,11 +245,37 @@
           "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
           "faces": 12930,
           "source_sha256": "f2f45363692b928e5e17d333c6cf696add861ef70e0e594560f86fc8bf929c85"
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 22:21:51",
+          "files": {
+            "HP_SM_Tripo_InfernoRoundHallWall_v004_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallWall_v004_source.glb",
+              "sha256": "c638594ad6837a682a30558be91c377968e17e8451c0f6561bacf6863012f9a0"
+            },
+            "HP_SM_Tripo_InfernoRoundHallWall_v004.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallWall_v004.glb",
+              "sha256": "9094b87199769d45e21e89e5146c265fa57a16df30be1fb801e5560892b7e313"
+            },
+            "HP_SM_Tripo_InfernoRoundHallWall_v004_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRoundHallWall_v004_graph.json",
+              "sha256": "3d68918de0b0fe7701f4082555da3641b2e799559b20932edb589383741c28fa"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:frieze_recolor",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12930,
+          "source_sha256": "c638594ad6837a682a30558be91c377968e17e8451c0f6561bacf6863012f9a0"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -420,11 +446,65 @@
             "time": "2026-11-07 22:02:26",
             "note": "11-07 否决：Tripo 纹理生成重出的底色偏紫、变糊（用户 11-07「泛紫色、灰色」「贴图模糊」），不发布；见 docs/art/ch3-kit.md 第 7.4 节"
           }
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 22:23:21",
+          "files": {
+            "SM_Tripo_InfernoRoundHallWall_v004.blend": {
+              "path": "03_work/SM_Tripo_InfernoRoundHallWall_v004.blend",
+              "sha256": "76c02b5dfbcfb396c250a40b152019fe9fb75fbba5e03088b344f8f020c4ae43"
+            },
+            "SM_Tripo_InfernoRoundHallWall_v004.glb": {
+              "path": "04_export/SM_Tripo_InfernoRoundHallWall_v004.glb",
+              "sha256": "e6e11d49b2d0e77cd9e8f55fe3bb05408f2ead68d8dffeb24b89408232700b6b"
+            },
+            "SM_Tripo_InfernoRoundHallWall_v004_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoRoundHallWall_v004_metrics.json",
+              "sha256": "97eb2b5ac504500678affb170f577b3384d24fae4a038513cdf0d5d1700860fa"
+            },
+            "T_Tripo_InfernoRoundHallWall_BC.png": {
+              "path": "03_work/textures_v004/T_Tripo_InfernoRoundHallWall_BC.png",
+              "sha256": "ed3d18595dd2b5cc375c59146a4d991a4abd1662578fddcef4feb70848d2710d"
+            },
+            "T_Tripo_InfernoRoundHallWall_E.png": {
+              "path": "03_work/textures_v004/T_Tripo_InfernoRoundHallWall_E.png",
+              "sha256": "531effaac7a52c414a84729b3cdec59514657e2f1db8c452c215cf685cfbf565"
+            },
+            "T_Tripo_InfernoRoundHallWall_N.png": {
+              "path": "03_work/textures_v004/T_Tripo_InfernoRoundHallWall_N.png",
+              "sha256": "d3f6f356c50fe421e9701b9983f462ecbb8a19fd9c9e3e2cd7991a865a9c8ee3"
+            },
+            "T_Tripo_InfernoRoundHallWall_ORM.png": {
+              "path": "03_work/textures_v004/T_Tripo_InfernoRoundHallWall_ORM.png",
+              "sha256": "3d824b132caeb3449ea504d0352f54ea4ad1271fa125baff32c37b486f12ed0e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 4,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.748,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12930,
+              "verts": 7953
+            }
+          ],
+          "export_kb": 1207.2,
+          "seconds": 89.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -470,11 +550,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 22:23:22",
+          "files": {
+            "SM_Tripo_InfernoRoundHallWall_v004_validation_v004.json": {
+              "path": "05_review/SM_Tripo_InfernoRoundHallWall_v004_validation_v004.json",
+              "sha256": "223df837eb3b2caa0b4cc712dbae7db06d2b7ff7a4e3b793c8c9ad98bcd2080e"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -532,11 +627,30 @@
             "note": "11-07 退回 v001 原贴图：试点重出的底色偏紫（紫色偏 0.15/0.00/0.21 → 0.62/0.86/0.84）、锐度下降，和用户 11-07「泛紫色、灰色」「贴图模糊」冲突；见 docs/art/ch3-kit.md 第 7.4 节",
             "time": "2026-11-07 22:02:35"
           }
+        },
+        {
+          "version": 4,
+          "created": "2026-11-07 22:23:34",
+          "files": {
+            "SM_Tripo_InfernoRoundHallWall_v004_review_v004.png": {
+              "path": "05_review/SM_Tripo_InfernoRoundHallWall_v004_review_v004.png",
+              "sha256": "408380b53b99752e934f1b5ebfece4ea85b12ee38186ba6566647005e773e687"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "11-07 3-4 美术收尾：v001 原贴图上只把饰带（高度 0.145–0.315）做纯颜色映射——彩度 ×0.4、亮度向带内均值收 ×0.42，色相不变、不滤波；其余纹素与 v001 一致（tools/frieze_recolor.py）",
+            "time": "2026-11-07 22:23:56"
+          }
         }
       ]
     },
     "publish": {
-      "current": 4,
+      "current": 5,
       "versions": [
         {
           "version": 1,
@@ -584,6 +698,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoRoundHallWall.glb"
+        },
+        {
+          "version": 5,
+          "created": "2026-11-07 22:23:58",
+          "files": {
+            "SM_Tripo_InfernoRoundHallWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoRoundHallWall.glb",
+              "sha256": "e6e11d49b2d0e77cd9e8f55fe3bb05408f2ead68d8dffeb24b89408232700b6b"
+            }
+          },
+          "from_build": 4,
           "url": "assets/props/SM_Tripo_InfernoRoundHallWall.glb"
         }
       ]
