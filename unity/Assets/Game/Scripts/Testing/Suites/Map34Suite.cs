@@ -341,7 +341,7 @@ namespace Spiritfire.Game.Testing
                 if (vitals.Dead) vitals.Revive();
                 if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
                 if (weapons.Active != null) weapons.Active.reserve = weapons.Active.def.reserve;
-                var target = NearestEnemy(eye.position);
+                var target = NearestFoe(eye.position);
                 if (!target)
                 {
                     weapons.testFire = false;
@@ -524,6 +524,30 @@ namespace Spiritfire.Game.Testing
             }
             Line($"  熔流冲完：烧死 {sluice.Kills} 只");
             Shot(cam, "map34_sluice");
+        }
+
+        /// <summary>
+        /// 最近的活敌人（只看 EnemyAI）。基类的 NearestEnemy 什么 Damageable 都算——② 闸渠南岸的间歇熔泉岩壳（LavaGeyser 挂的 1e6 血 Damageable）
+        /// 离机器人站的南岸只有几米，比潜在闸渠里的火鼍近：11-08 那轮机器人一直打岩壳（熔泉喷了 104 次，正常 26 次），火鼍从没被瞄过，
+        /// 「引火鼍上岸」「僵持时走过去」都没触发，210 s 超时
+        /// </summary>
+        static Damageable NearestFoe(Vector3 from)
+        {
+            Damageable best = null;
+            float bestD = float.MaxValue;
+            foreach (var e in EnemyAI.All)
+            {
+                if (!e || e.Dead) continue;
+                var d = e.Health;
+                if (!d || d.Dead || d.untargetable) continue;
+                float dist = Vector3.Distance(from, d.transform.position);
+                if (dist < bestD)
+                {
+                    bestD = dist;
+                    best = d;
+                }
+            }
+            return best;
         }
 
         static bool HasTuo(EncounterSite site) =>

@@ -643,7 +643,7 @@ namespace Spiritfire.Art.Editor.Levels
                 // 祸斗三条 lane：西（牌坊台西阶下）、东（柱丛后）、南（身后的神道口）
                 A("Enemy_1_LaneW", new Vector2(-15, -161), StationRole.Flank, 1).Via(SpawnMode.Gate).Gate(G(new Vector2(-21, -167))),
                 A("Enemy_1_LaneE", new Vector2(17, -165), StationRole.Flank, 2).Via(SpawnMode.Gate).Gate(G(new Vector2(21.5f, -160))),
-                A("Enemy_1_LaneS", new Vector2(-2, -180), StationRole.Flank, 0).Via(SpawnMode.Gate).Gate(G(new Vector2(6, -187))),
+                A("Enemy_1_LaneS", new Vector2(-1, -179), StationRole.Flank, 0).Via(SpawnMode.Gate).Gate(G(new Vector2(6, -187))),
                 // 铜匠：牌坊台上的坩埚旁（俯射层，绕后 / 从东阶上去打它）
                 A("Enemy_1_Terrace", new Vector2(-12, -145.8f), StationRole.Support, 0, true).Via(SpawnMode.Ambush).LookAt(G(Site1C)),
                 // 毕方：飞到铜人旁（它自己挑铜人头顶的 PerchPoint 栖），从火口坑方向飞进来
@@ -675,16 +675,24 @@ namespace Spiritfire.Art.Editor.Levels
                 A("Enemy_2_GateE2", new Vector2(12, -84), StationRole.Assault, 1).Via(SpawnMode.Gate).Gate(eastGate),
                 A("Enemy_2_GateW", new Vector2(-16.5f, -114.5f), StationRole.Assault, 2).Via(SpawnMode.Gate).Gate(caveGate),
                 A("Enemy_2_GateW2", new Vector2(-12.5f, -125.5f), StationRole.Flank, 2).Via(SpawnMode.Gate).Gate(caveGate),
-                // 火鼍：西段闸渠里潜行进场；炭童：从渠里爬上两岸
-                A("Enemy_2_Tuo", new Vector2(-24, -111.8f), StationRole.Assault, 0).Via(SpawnMode.LavaCrawl).Entry(new Vector3(-24, SluiceLava, ChannelZ)),
-                A("Enemy_2_CrawlN", new Vector2(-6, -92.5f), StationRole.Assault, 1).Via(SpawnMode.LavaCrawl).Entry(new Vector3(-4, SluiceLava, ChannelZ)),
-                A("Enemy_2_CrawlS", new Vector2(10, -113), StationRole.Assault, 2).Via(SpawnMode.LavaCrawl).Entry(new Vector3(10.5f, SluiceLava, ChannelZ)),
+                // 火鼍：西段闸渠里潜行进场（只用这个站位，见下面 w2b）；
+                // 炭童 ×2：从渠里爬上北岸，正落在熔流道的槽底中线上（槽壁有一串烘不进导航的小洞，槽底中线离边 ≥ 1.5 m）——
+                // 第二波一开就是「北岸熔流道上一群怪」的拉闸时机；玩家站上闸楼台拉闸，它们得沿熔流道往东绕到北坡道，正迎着熔流头。
+                // 两个站位都是第二波的主 lane（1），原来南岸那个（10, −113）离边 1.0 m，拿掉
+                A("Enemy_2_Tuo", new Vector2(-24, -111.8f), StationRole.Flank, 0).Via(SpawnMode.LavaCrawl).Entry(new Vector3(-20, SluiceLava, ChannelZ)),
+                A("Enemy_2_CrawlN", new Vector2(-10, -94), StationRole.Assault, 1).Via(SpawnMode.LavaCrawl).Entry(new Vector3(-6, SluiceLava, -102)),
+                A("Enemy_2_CrawlNW", new Vector2(-14, -95.2f), StationRole.Assault, 1).Via(SpawnMode.LavaCrawl).Entry(new Vector3(-18, SluiceLava, -101.5f)),
                 // 马面：从闸楼台西沿跃下（落在南半）
                 A("Enemy_2_Drop", new Vector2(-6.5f, -113.5f), StationRole.Ranged, 0).Via(SpawnMode.Drop).DropFrom(G(new Vector2(15.5f, -112), 0.2f)),
             };
             var w2b = G03(tuo: 1, mamian: 1, tantong: 2);
             foreach (var e in w2b.entries)
+            {
                 if (e.enemy == Mamian) e.Via(SpawnMode.Drop);
+                // 火鼍只用自己的站位（西段闸渠，角色 Flank + lane 0）：原来它和炭童同是 Assault、跟着第二波的主 lane 挑熔岩爬出站位，
+                // 会生在两桥之间 9 m 的小池或东段 6.5 m 的池子里（11-08 冒烟：生在东段、玩家在西南岸，每一扑都撞东桥的陡侧壁落回熔岩）
+                if (e.enemy == Tuo) e.As(StationRole.Flank, 0);
+            }
             var spec2 = EncounterSpec.Of(
                     G10(nuo: 1, huodou: 3, tantong: 3, eliteAffix: Shielded).Hint("闸楼台上的傩巫在换脸——先碎面具；祸斗从东洞口和熔岩洞两头包过来"),
                     w2b.Named("闸渠伏鼍").Hint("火鼍从闸渠里爬出来——离岸远点，先缴跃下来的马面的索，再把火鼍引上岸").After(1, 1.8f))
@@ -910,6 +918,7 @@ namespace Spiritfire.Art.Editor.Levels
                          $"触发 {s.triggerRadius} m{(s.roadside ? "，路遇" : $"，奖励 {s.reward}")}");
                 foreach (var w in s.spec.waves) rep.Line($"    · {Describe(w)}");
             }
+            CheckAnchorEdges(rep, ss);
             if (ss.objective)
             {
                 int total = ss.objective.required.Sum(s => s ? s.spec.Total : 0);
@@ -951,6 +960,49 @@ namespace Spiritfire.Art.Editor.Levels
             if (lamps < 8) rep.Fail($"青金引导灯只有 {lamps} 盏（主路岔口、场地出口、桥头）");
             else rep.Line($"✓ 青金引导灯 {lamps} 盏（主路岔口、场地出口、桥头；支路、交战场地里面不放）");
             rep.Line($"白盒（神道）：{sp.placeholders.Count} 个 —— {string.Join("、", sp.placeholders.Where(p => p).Select(p => p.name).Take(8))}");
+        }
+
+        /// <summary>地面站位离人形导航网格边缘至少这么远（米）：贴边的站位出生的怪容易卡边、被挤下网格</summary>
+        const float AnchorEdgeMin = 1.5f;
+
+        /// <summary>
+        /// 站位离导航边缘：路遇、①、② 的地面站位（飞临的站位是飞行目的地，不查）离人形导航网格边缘 ≥ <see cref="AnchorEdgeMin"/> m。
+        /// 11-07 的构建报告里 ② 的 Enemy_2_CrawlN 离边 0.0 m（压在熔流槽的槽壁上：槽壁 0.8 m 宽、0.6 m 深，最陡处超过 45° 烘不进导航，槽两侧一串小洞）
+        /// </summary>
+        static void CheckAnchorEdges(LevelKit.Report rep, ShrineSites ss)
+        {
+            var tight = new List<string>();
+            int n = 0;
+            float nearest = float.PositiveInfinity;
+            string nearestName = "";
+            foreach (var s in new[] { ss.roadside, ss.site1, ss.site2 })
+            {
+                if (!s) continue;
+                foreach (var t in s.anchors)
+                {
+                    if (!t || SpawnAnchor.ModeOf(t) == SpawnMode.FlyIn) continue;
+                    if (!LevelContext.NavPoint(t.position, 2.5f, out var p))
+                    {
+                        rep.Fail($"{s.title} / {t.name} {LevelContext.At(t.position)}：2.5 m 内没有导航网格");
+                        continue;
+                    }
+                    n++;
+                    if (!NavMesh.FindClosestEdge(p, out var edge, LevelContext.Walker)) continue;
+                    if (edge.distance < nearest)
+                    {
+                        nearest = edge.distance;
+                        nearestName = t.name;
+                    }
+                    if (edge.distance < AnchorEdgeMin) tight.Add($"{t.name} {LevelContext.At(p)} 离边 {edge.distance:F1} m（边在 {LevelContext.At(edge.position)}）");
+                }
+            }
+            if (tight.Count > 0) rep.Fail($"地面站位离导航边缘不到 {AnchorEdgeMin} m：{string.Join("；", tight)}");
+            else rep.Line($"✓ {n} 个地面站位离导航边缘都 ≥ {AnchorEdgeMin} m（最近：{nearestName} {nearest:F1} m）");
+            // 第二波炭童的两个熔岩爬出站位要落在熔流道上（拉闸时机，见 BuildShrineSites）
+            if (ss.site2 && ss.sluice)
+                foreach (var t in ss.site2.anchors)
+                    if (t && t.name.StartsWith("Enemy_2_CrawlN") && !ss.sluice.Covers(t.position))
+                        rep.Fail($"{t.name} {LevelContext.At(t.position)} 不在熔流闸的熔流道上");
         }
 
         static Vector3 Flat3(Vector3 v) => new(v.x, 0, v.z);

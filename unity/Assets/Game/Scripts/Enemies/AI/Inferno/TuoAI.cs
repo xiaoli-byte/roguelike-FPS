@@ -18,9 +18,12 @@ namespace Spiritfire.Game
     ///   甩尾：玩家在侧后 5.2 m 内：尾巴蓄 0.55 s（身后半圈预警）→ 横扫 ×0.8，击退约 4 m，优先扫向 7 m 内最近的熔岩（掉进熔岩归熔岩系统结算）；起跳躲得过。
     ///   陆上扑咬：3.1 m 内、正对：0.45 s 前摇 → 咬 ×1。鼍鸣：生命第一次低于 40%（在岸上时）：仰头 0.8 s → 贴地震波 10 m（16 m/s，×0.6 火伤，跳起可躲），
     ///         附近岸边溅起 5 处燃烧的火点。弱点：脊背中段的熔岩接缝（×0.5 + 暴击）。
-    ///   移动：岸上走导航网格；进出熔岩、潜游、扑击时停掉导航代理，脚本推着走（贴熔岩面 / 地面），回到岸上再把代理放回导航网格。
+    ///   移动：岸上走导航网格；进出熔岩、潜游、扑击时停掉导航代理，脚本推着走（贴熔岩面 / 地面），回到岸上再把代理放回导航网格
+    ///         （只落在自己代理类型的干地上：熔岩图里人形网格从岸坡连进熔岩的那几块是 Lava 区，渠里还叠着 LavaSwimmer 网格）。
+    ///   爬岸（兜底）：连续泡在熔岩里 15 s，或自己上岸的那一扑撞了岸壁落回熔岩，就直接爬上朝玩家那边最近的岸，不出招；上岸后 2.5 s 还没落回干地网格就收回到附近的干地。
     /// 没有熔岩（<see cref="InfernoKit.Lava"/> 是兜底）时只在岸上当陆上坦克打。
-    /// 状态：enter → toLava →（regrow →）swim → surge → lunge → bite → land；land → biteWindup → bite / sweepWindup → sweep / roar → land；land → toLava。
+    /// 状态：enter → toLava →（regrow →）swim → surge → lunge → bite → land；land → biteWindup → bite / sweepWindup → sweep / roar → land；land → toLava；
+    ///       swim / 落回熔岩的 bite → climb → land。
     /// </summary>
     public sealed class TuoAI : InfernoEnemyAI, ILavaDweller
     {
@@ -45,6 +48,14 @@ namespace Spiritfire.Game
         public const int FireSpots = 5;
         /// <summary>回熔长甲时长、上岸后多久回熔岩（伏击上岸的更久）、找熔岩的距离、潜下去的深度（模型单位）</summary>
         public const float RegrowTime = 5, LandStay = 7, LandStayEmerged = 12, LavaSeek = 20, Sink = 1.0f;
+        /// <summary>
+        /// 爬岸（不出招、不占重击名额）：连续泡在熔岩里超过 <see cref="MaxSubmerged"/> 秒，或「扑不到人自己上岸」那一扑撞了岸壁又落回熔岩时，
+        /// 直接朝玩家那边最近的干地爬上去（速度、最长时间；撞墙 / 到点就落到岸上的导航点）。
+        /// 3-4 ② 东段闸渠：玩家在西南岸时火鼍每次都扑向东桥的陡侧壁、落回熔岩、5 s 后再扑，一直潜着（11-08 冒烟 210 s 超时）
+        /// </summary>
+        public const float MaxSubmerged = 15, ClimbSpeed = 6, ClimbMax = 3;
+        /// <summary>上岸后多久还没落回干地导航网格（卡在岸边、落点不在自己的网格上）就收回到附近的干地导航点（秒、搜索半径 m）</summary>
+        public const float StrandedMax = 2.5f, AshoreRadius = 12;
 
         /// <summary>岩甲分区：四排（网格 Z 区间，前 → 后）× 左右两列，挂的骨骼</summary>
         static readonly Vector2[] PlateBands = { new(0.85f, 1.35f), new(0.35f, 0.85f), new(-0.15f, 0.35f), new(-0.65f, -0.15f) };
@@ -78,9 +89,9 @@ namespace Spiritfire.Game
         readonly Renderer[] plateGlow = new Renderer[Plates];
         RegionMask region;
         float windTime = BiteWindup, ambushCd, biteCd = 0.8f, sweepCd = 1, landTime, shoreWait, replanAt, swimYaw, rippleAt, sweepSide = 1, sweepYaw;
-        float roarAt = -1;
+        float roarAt = -1, lavaTime, stranded;
         bool roared, emerged, hasBank, alerted;
-        Vector3 lungeTarget, bank;
+        Vector3 lungeTarget, bank, climbTo;
         TelegraphHandle lane, ring;
         IDisposable armour;
 
@@ -177,12 +188,24 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>回到导航网格（4 m 内找；找不到就留在脚本模式，下一帧再试）</summary>
+        /// <summary>
+        /// 岸上的导航查询：自己代理类型的网格、只要干地。不过滤的话熔岩图里会「上岸」到熔岩里——人形网格从岸坡连进熔岩的那几块是 Lava 区，
+        /// 渠 / 池里还叠着一张 LavaSwimmer 网格（代理类型不同，Warp 不上去）
+        /// </summary>
+        NavMeshQueryFilter DryFilter => new()
+        {
+            agentTypeID = agent ? agent.agentTypeID : LavaField.WalkerAgentType,
+            areaMask = LavaField.DryAreaMask,
+        };
+
+        /// <summary>回到导航网格（4 m 内找干地；找不到就留在脚本模式，下一帧再试）</summary>
         bool Land()
         {
             if (!Free) return true;
-            if (!NavMesh.SamplePosition(transform.position, out var hit, 4f, NavMesh.AllAreas)) return false;
+            if (!NavMesh.SamplePosition(transform.position, out var hit, 4f, DryFilter)) return false;
             Free = false;
+            stranded = 0;
+            lavaTime = 0;
             transform.position = hit.position;
             agent.enabled = true;
             agent.Warp(hit.position);
@@ -242,6 +265,8 @@ namespace Spiritfire.Game
                 Sfx("enemy_alert", 0.8f, 0.4f);
             }
             UpdatePlateGlow();
+            // 连续泡在熔岩里多久（潜游、长甲、鼓泡、扑空落回熔岩都算；落回干地网格时清零）
+            if (Free && InfernoKit.Lava.IsLava(transform.position)) lavaTime += dt;
             // 鼍鸣：生命第一次低于 40%（在岸上、不在出招中）
             if (!roared && hp.health <= hp.maxHealth * RoarHp && state == "land")
             {
@@ -267,6 +292,9 @@ namespace Spiritfire.Game
                     break;
                 case "lunge":
                     LungeStep(dt, d);
+                    break;
+                case "climb":
+                    ClimbStep(dt);
                     break;
                 case "land":
                     LandStep(dt, d);
@@ -424,6 +452,8 @@ namespace Spiritfire.Game
                 BeginSurge(true);
                 return;
             }
+            // 兜底：泡得太久（重击名额一直轮不到、自己上岸那一扑总被岸壁弹回来）就直接爬上岸，不出招
+            if (lavaTime >= MaxSubmerged && !playerOnLava && BeginClimb()) return;
             var p = transform.position;
             if (!lava.IsLava(p))
             {
@@ -643,17 +673,65 @@ namespace Spiritfire.Game
             if (!ambush) ReleaseAttack();
         }
 
-        /// <summary>咬完：还泡在熔岩里（扑空了）就接着游，否则上岸</summary>
+        /// <summary>咬完：还泡在熔岩里（扑空了）就接着游——自己上岸的那一扑（撞了岸壁、扑短了）例外，直接爬上去；否则上岸</summary>
         void AfterBite()
         {
             if (Free && InfernoKit.Lava.IsLava(transform.position))
             {
                 ReleaseAttack();
+                if (emerged && BeginClimb()) return;
                 Act("swim", 0.2f);
                 SetState("swim");
                 return;
             }
             ToLand();
+        }
+
+        // ───────────── 爬岸（兜底） ─────────────
+
+        /// <summary>
+        /// 爬岸：目标 = 朝玩家直线方向上的第一块岸旁边的干地导航点（3 m 内）；那边没有（岸是够不着的高台壁）就取离自己最近的干地（12 m 内）。
+        /// 找不到岸返回 false（接着游）
+        /// </summary>
+        bool BeginClimb()
+        {
+            var p = transform.position;
+            NavMeshHit hit = default;
+            bool found = InfernoKit.Lava.ShoreToward(p, PlayerPos, 30f, out var shore) && NavMesh.SamplePosition(shore, out hit, 3f, DryFilter);
+            if (!found) found = NavMesh.SamplePosition(p, out hit, AshoreRadius, DryFilter);
+            if (!found) return false;
+            climbTo = hit.position;
+            HideWarnings();
+            ReleaseAttack();
+            GoFree();
+            emerged = true;
+            shoreWait = 0;
+            HitWall = false;
+            Fx.MoltenSplash(p + Vector3.up * 0.3f, 1.3f * Size, InfernoKit.LavaColor);
+            Act("lunge", 0.15f);
+            SetState("climb");
+            return true;
+        }
+
+        /// <summary>爬岸：脚本推着朝岸边的导航点走（不沉、贴地）；上了干地就落回网格；撞上岸壁（桥侧、台壁）或到点还没上去，直接落到那个导航点上</summary>
+        void ClimbStep(float dt)
+        {
+            var to = climbTo - transform.position;
+            to.y = 0;
+            float dist = to.magnitude;
+            if (dist > 0.05f) TurnTo(InfernoKit.Yaw(to), SwimTurn, dt);
+            FreeMove(dist > 0.05f ? to / dist * (ClimbSpeed * SpeedMult) : Vector3.zero, dt, false);
+            if (!InfernoKit.Lava.IsLava(transform.position) && Land())
+            {
+                ToLand();
+                return;
+            }
+            if (dist < 0.5f || stateTime >= ClimbMax || (HitWall && stateTime > 0.2f))
+            {
+                Fx.MoltenSplash(transform.position + Vector3.up * 0.3f, 1.3f * Size, InfernoKit.LavaColor);
+                transform.position = climbTo;
+                ToLand();
+            }
         }
 
         // ───────────── 陆上 ─────────────
@@ -662,6 +740,14 @@ namespace Spiritfire.Game
         {
             if (Free && !Land())
             {
+                // 卡在岸边太久（落点附近 4 m 没有干地网格）：收回到附近的干地
+                stranded += dt;
+                if (stranded >= StrandedMax && NavMesh.SamplePosition(transform.position, out var near, AshoreRadius, DryFilter))
+                {
+                    transform.position = near.position;
+                    Land();
+                    return;
+                }
                 // 还没回到导航网格（刚扑上岸、卡在岸边）：继续往玩家那边挪
                 var to = PlayerPos - transform.position;
                 to.y = 0;

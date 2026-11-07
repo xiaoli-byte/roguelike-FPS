@@ -312,6 +312,16 @@ namespace Spiritfire.Game.Tests
             Assert.IsTrue(arrived, "1 m 内算到了");
         }
 
+        [Test]
+        public void TuoClimbOutIsABackstopNotTheNormalEmergence()
+        {
+            // 正常路线：扑不到人 EmergeAfter 秒后鼓泡、扑上岸；碎甲回熔先长 RegrowTime 秒甲。爬岸兜底要比这两段加起来晚，不抢正常的伏击 / 上岸
+            Assert.Greater(TuoAI.MaxSubmerged, TuoAI.EmergeAfter + TuoAI.SurgeTime + TuoAI.LungeMax + TuoAI.RegrowTime);
+            // 但不能一直潜着：冒烟里一个场地 150–210 s，泡 MaxSubmerged、岸上停 LandStayEmerged，至少要有五六次上岸挨打的窗口
+            Assert.LessOrEqual(TuoAI.MaxSubmerged + TuoAI.LandStayEmerged, 30f);
+            Assert.GreaterOrEqual(TuoAI.AshoreRadius, 6f, "收回岸边的搜索半径：从 10 m 宽的闸渠正中够得到岸（再加上岸坡）");
+        }
+
         // ───────────── 毕方 ─────────────
 
         [Test]
