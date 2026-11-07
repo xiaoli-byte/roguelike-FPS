@@ -1,5 +1,7 @@
 # 熔心魔将 · 本体与熔心大剑重建（2026-11-01）
 
+> 2026-11-07 按用户选定的 v006 方案 4（重甲剑士）再次重建本体和大剑：出图和 Tripo 记录见 2、3.1 节，绑骨 / 大剑 / 遮罩 / 动作见 4.1 节，Unity 验收见 5.1 节。
+
 第三章 3-3 铸范大坊的领主熔心魔将（`SK_Boss_Warlord`）和他的熔心大剑（`SM_BossWeapon_Greatsword`）重新建模。
 
 - **为什么重建**（用户 2026-11-01）：
@@ -134,6 +136,110 @@
 - 大剑的参考系：原点在右手握点（剑格中心），剑身朝下；`reference_floor = -2.295` 是剑尖到剑格中心的实测距离，避免挂上后沿剑柄滑动。
 - 大剑发布：15,660 面、3.2 × 0.749 × 0.274 m，校验 24 项通过、0 错误；已导出 `public/assets/attachments/SM_BossWeapon_Greatsword.glb` 与 Unity FBX。
 
+### 4.1 v006 重建：绑骨、大剑、遮罩、动作（2026-11-07，W1）
+
+审阅图都在 [review/warlord-remodel/v006/](review/warlord-remodel/v006/)：发布版本体正 / 背 / 左 / 右（`front.jpg` 等）、大剑四视图 `greatsword.jpg`、
+和设定图逐项对照 `concept-vs-model.jpg`、发光遮罩叠在模型上 `glow-mask.jpg`、实战图 `ingame-*.jpg`。
+
+**源检查**：两件都和方案 4 对得上，没有明显缺件、没有画错——人剑分开，本体空手 A 字、手掌张开。
+
+- 本体：48,694 三角面、30,274 顶点，3 个焊接后的网格岛（主体 + 后战旗下摆两条碎布），UV 0..1。
+- 大剑：14,551 三角面，一个岛。
+- 唯一没做出来的小件：设定图 HEAD CLOSE-UP 里双角根部垂着的两条红缨，Tripo 的四视图输入（TV v004）里就没有，模型也没有。
+  缨子很小，不影响读形；要补得重出四视图再进 Tripo。
+
+**本体骨架**（`python art/pipeline/tools/build_warlord_rig.py` → `python art/pipeline/build_tripo_creature.py SK_Boss_Warlord --publish`）：
+
+- 64 根骨：名字、人形层级和 11-01 版一样，`warlord_anims_humanoid.py` 的 33 段动作和 Unity 侧的招式 / 事件直接用。
+- 坐标全部按新网格实测（发布到 4.2 m 后的米制，左侧量、右侧镜像）：
+  - 躯干中线不在 y = 0：胸甲前凸、背后挂战旗，髋 / 脊 / 胸 / 头都放在 y ≈ -0.06 ~ -0.13；
+  - 手臂是小幅 A 字：肩 (±0.70, 3.17) → 肘 (±0.93, 2.67) → 腕 (±1.175, 2.17)。手掌朝内，四指朝外下。
+    四指被 Tripo 熔成一块，按指缝的 y 位置分骨（食 -0.31、中 -0.25、无名 -0.18、小 -0.11），拇指单独；
+  - 腿外撇：髋 (±0.29, 1.90) → 膝 (±0.59, 1.08) → 踝 (±0.72, 0.38)，脚尖外撇约 17°；
+  - 布料四块，各配一条弹簧链：
+    - `skirt_F1..3`：前战旗，腰扣下 z 2.35 → 0.82；
+    - `skirt_B1..3`：后战旗，z 2.36 → 0.76，往后张；
+    - `skirt_L/R1..2`：两侧红披，从肩后的缨穗结垂到 z 0.8，往外后方张开；
+    - `tassel_L/R1..2`：胸前两条缨穗，z 3.1 → 2.6。
+  - 侧披和缨穗是从肩上垂下来的，链根从 hips 改挂 chest。挂 hips 的话上身一前倾，挂在肩上的布就和身体脱开。
+    这两条链不 K 帧，人形骨和 K 帧骨的层级没动。
+- 权重：骨段距离，加五样修正：
+  - 限制盒：手指只在手上、腿不过中线、布链只在各自那块布的范围里；
+  - 颜色偏置（`color_bias`，同旱魃）：Tripo 把布和甲熔成一张网，红布只给布链，甲只给腿 / 髋。
+    `sat_split` 0.62：甲 0.22、铜 0.38、红布 0.82；
+  - 甲裙：腰带一圈跟髋，往下 0.35 m 渐入大腿（`soft_limits`）。抬腿时甲裙跟腿走、不穿腿，腰带也不被扯开；
+  - 靴底：0.15 m 以下整块归最近的脚骨；
+  - 整块件：角盔连双角整块归头，兽首肩甲整块归肩甲骨。
+- 肩甲骨 `pauldron_L/R` 的根放在肩关节，动作脚本让它跟上臂摆 45%。不跟的话一举手，上臂整个插进肩甲里。
+  它也是 `WarlordDef` 肩甲命中区的中心（半径 0.46 m，盖得住整块肩甲）。
+- 挂点：
+  - `socket_sword` = 右拳握心 (-1.178, -0.208, 1.94)：五指收拳后剑柄穿过的位置，不再是手腕；
+  - `socket_sword_tip` = 握心正下方 2.65 m；
+  - `socket_core` = 铜护心镜中心 (0, -0.52, 3.0)，弱点；
+  - `socket_helm` = 角盔盔脊 (0, -0.16, 3.92)；
+  - `socket_pauldron_L/R` = 兽首肩甲顶 (±0.82, -0.05, 3.58)。
+- 发布：4.200 m、贴地、64 骨、48,694 面（只有 `_LOD0`）、影响骨 ≤ 4、未蒙皮 0、UV 0..1。
+  - 2048 版 1.19 MB，`@hi` 4096 版 2.5 MB；
+  - 布 / 甲串色：红布顶点里布链权重不到一半的有 349 个（5.5%）。大多是上臂护甲下面露出的红衬（本来就该跟手臂走），其余在腰带、护颈边上。
+
+**大剑**：
+
+```
+python art/pipeline/assetctl.py blockout SM_BossWeapon_Greatsword
+python art/pipeline/tripo_assets.py adopt SM_BossWeapon_Greatsword --design inferno_boss_warlord_sword
+python art/pipeline/assetctl.py approve SM_BossWeapon_Greatsword concept --by W1
+python art/pipeline/tripo_assets.py import SM_BossWeapon_Greatsword --file art/source/_tripo_inbox/20261106T171133_SM_BossWeapon_Greatsword.glb --task <任务> --model H3.1
+python art/pipeline/assetctl.py build / validate / review / approve … review / publish SM_BossWeapon_Greatsword
+```
+
+- TV v004 第 4 张拆成 `TV_inferno_boss_warlord_sword_v004_{front,left,back,right}.png`：背面水平翻转，同 T1 上传 Tripo 的顺序。
+  这几张按 `.gitignore` 不入库。
+- 实测全长 3.2 m：剑尖 0 → 剑格 2.25–2.49 → 红缠 2.53–2.59 → 剑柄 → 剑穗 2.68–3.04 → 环首 3.20。
+- 原点 = 右拳握心，放在剑格上沿往剑首 0.16 m：拳头宽约 0.26 m，正好盖住剑格到剑穗之间那段剑柄，不压剑格。
+  `reference_floor = -2.65`（剑尖到握心）。
+- `reference_dimensions = [0.77, 3.2, 0.37]`：按原件比例，厚度含剑格和剑穗，保证长度是 3.2 m 那一维定缩放。
+- 对齐：朝向 0°，剪影 IoU 0.749（刃口两个视角剑身薄，IoU 低）。
+- 发布：14,551 面、3.2 × 0.77 × 0.37 m、601 KB，校验 24 通过、1 警告（就是这条 IoU）、0 错误。
+
+**发光遮罩**（`python art/pipeline/tools/emission_mask.py warlord warlord_sword`）：只抠平涂橙的部分。
+
+- 本体 `T_Boss_Warlord_E`（2048²）：
+  - R：面甲眼缝、铜护心镜竖裂、兽首肩甲嘴 / 眼、腰扣狮眼；
+  - G：眼缝和裂纹里最亮的芯。
+  - 月牙铜角同是橙铜色：饱和度 0.63–0.75，比熔岩缝的 0.8+ 低，但高光亮度会混进来。所以角盔只认面甲眼缝那一块，其余只认护颈以下。
+- 大剑 `T_BossWeapon_Greatsword_E`：
+  - R：剑身中线裂纹，只认剑格以下；
+  - G：裂纹最亮的芯。
+  - v006 的刃口是灰石，不再画刃口发光：狂怒时白热的是裂纹芯，剑光、热浪照旧交给 `Fx.Warlord.cs`。
+
+**动作**（`warlord_anims_humanoid.py`，招式设计 `warlord_poses.py` 一个字没改，片段帧数、事件表和 11-01 一样）：
+
+- 握剑：
+  - 剑柄穿过两只拳头。socket_sword 相对右手的朝向固定：剑首方向 = 手掌的食指 → 小指方向，刃朝指节；
+  - 每个姿势按 `sword` / `edge` 把整只右手转过去。两面刃取离当前手腕近的那一面，转动里绕小臂轴的那 60% 分给小臂（护臂是整块）；
+  - 左拳握心放在剑柄上（右拳往剑首 0.27 m），指节和右手同侧，再反解左手腕给两骨 IK；
+  - 11-01 版剑挂在手腕上、手只分担 40% 的转动，剑柄常常横穿拳头。
+- 五指：绕各自「指向 × 掌心法线」的轴往掌心收，(42°, 52°)，按 0.14 m 粗的剑柄留出拳心。
+  以前绕世界 X 轴，A 字绑定下有一只手是往手背翻的。
+- 脚：v006 的腿在绑定姿势里几乎是直的，髋往上提（`drop < 0`）的姿势两骨 IK 够不着，脚离地 6–9 cm。
+  现在这时把髋往下放到正好够得着，只改髋高。
+- 新增 `--glb / --sword / --review <目录>`：
+  - 不导出，每段关键姿势带模型和大剑渲正面 + 俯视；
+  - 每个关键姿势量拉伸 p99、脚底高度、左拳到剑柄的距离、剑尖高度，写 `review.json`。
+- 221 个关键姿势：
+
+  | 项 | 结果 |
+  |---|---|
+  | 拉伸 p99 | 中位数 2.58、最高 3.98（跃击空中收腿；旱魃是 2.9 / 4.45） |
+  | 着地姿势脚底最低点 | 全部 0.000 m（只有步态的摆动脚离地） |
+  | 左拳到剑柄 | 中位数 0.04 m |
+
+- 够不着的：
+  - 熔铜渠「反握举剑过头」（`plant` 第 9 / 13 帧，约 0.15 s）左拳离剑柄 0.375 m；
+  - 跃击落地（`land`）和插剑跪地（`plant` 第 14–30 帧）0.12–0.13 m：左手搭在剑首上。
+  - 原因是新模型的手臂（上臂 0.55 + 小臂 0.56 m）比 11-01 的 T 字模型（0.70 + 0.70 m）短，这几个过头 / 贴地的双手位置伸不到。
+    改姿势就是改招式设计，这次不动；要补可以给这几个姿势单独调 `grip`。
+
 ## 5. Unity 验收
 
 - `bridge.sh sync`：287 个资产通过，0 错误；新本体为人形骨架，战裙和缨穗生成 6 条弹簧链。
@@ -141,3 +247,25 @@
 - `beats-warlord`：107 张节拍条；55 次非截图出手最大事件偏差 19 ms，无缺失片段或兜底；性能对照 −3.2%。
 - EditMode：889 / 889 通过；`csc_check.py` 四个程序集全部通过。
 - 审阅图在 `docs/art/review/warlord-remodel/`：本体正 / 背 / 左右四视图、单把大剑、连斩 / 居合 / 回旋实战图。
+
+### 5.1 v006 重建的 Unity 验收（2026-11-07）
+
+- `python art/pipeline/unity_export.py SK_Boss_Warlord SM_BossWeapon_Greatsword` 后跑 `bridge.sh sync`：
+  - 347 个资产全部通过，0 错误，3 条警告都是别的资产的 A 字上臂；
+  - 33 段关键帧片段全部替换进 `AC_SK_Boss_Warlord`；
+  - 弹簧链 6 条：`skirt_F1×3、skirt_B1×3、skirt_L1×2、skirt_R1×2、tassel_L1×2、tassel_R1×2`。
+- 本体材质改成单面（`_Cull` Back）：v006 的 Tripo 网格是封闭的，战旗、披风都有厚度，全身只有 8 条开放边。
+- `boss-warlord`：九招、两次换阶段、狂怒、熔铜渠漫溢 / 退回、击杀和结算全部通过，运行时报错 0。
+- `beats-warlord` 跑了两遍，都是 107 张节拍条、全部通过，大剑已挂（剑长 2.65 m）：
+  - 第一遍编辑器刚重开，帧时间 12–24 ms、最慢 120 ms：最大偏差 84 ms，性能对照 +24.6%，都是噪声；
+  - 第二遍队列空闲：54 次非截图出手，最大事件偏差 24 ms，没有兜底、没有缺片段。差不多一帧，和 11-01 的 19 ms 同一水平；
+  - 第二遍性能对照 10.47 → 10.86 ms（+3.7%）；
+  - 本体发光遮罩生效：甲缝 / 熔铜芯换挡前 0.96 / 0.60，狂怒后 1.89 / 2.42。
+- EditMode：902 个，通过 898，失败 4 个，都和魔将无关：
+  - 3-2 / 3-3 关卡编制表对不上场景（关卡重建）；
+  - 危险物样机的参考招式数 14 → 15；
+  - 轨道炮模型名被 Gunfire 换了；
+  - 旱魃遮罩 `T_Boss_Hanba_E` 的导入上限被 `bridge.sh fx` 的 `FxBuilder.ConfigureMaskTextures` 统一改回 1024，测试要 2048。
+- `csc_check.py`：四个程序集全部通过。
+- 实战截图：[v006/ingame-combo.jpg](review/warlord-remodel/v006/ingame-combo.jpg)、`ingame-iai.jpg`、`ingame-spin.jpg`。
+  和 11-01 的对照拼在 [v006/ingame-compare.jpg](review/warlord-remodel/v006/ingame-compare.jpg)。

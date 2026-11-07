@@ -20,14 +20,14 @@
   "qaWaivers": {},
   "bounds": {
     "min": [
-      -2.9790024757385254,
+      -1.4324966669082642,
       0,
-      -0.7291061878204346
+      -0.6365997195243835
     ],
     "max": [
-      2.9790024757385254,
+      1.4324966669082642,
       4.199999809265137,
-      0.7291061878204346
+      0.6365997195243835
     ]
   },
   "rig": {
@@ -87,10 +87,6 @@
       "skirt_F1",
       "skirt_F2",
       "skirt_F3",
-      "skirt_L1",
-      "skirt_L2",
-      "skirt_R1",
-      "skirt_R2",
       "spine",
       "chest",
       "neck",
@@ -130,6 +126,10 @@
       "thumb_2_R",
       "pauldron_R",
       "socket_pauldron_R",
+      "skirt_L1",
+      "skirt_L2",
+      "skirt_R1",
+      "skirt_R2",
       "socket_core",
       "tassel_L1",
       "tassel_L2",
@@ -149,8 +149,8 @@
     {
       "name": "SK_Boss_Warlord_LOD0",
       "lod": 0,
-      "tris": 52860,
-      "verts": 68370,
+      "tris": 48694,
+      "verts": 30274,
       "materials": [
         "M_Boss_Warlord"
       ],
@@ -173,7 +173,7 @@
         0,
         0
       ],
-      "doubleSided": true,
+      "doubleSided": false,
       "alphaMode": "OPAQUE",
       "alphaCutoff": 0.5,
       "hasOcclusion": true,
@@ -186,10 +186,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Warlord@hi.glb",
-    "sha256": "4cd366fdddbd6bf92ec226764d15bfcb1071259835949f7f56f447103b0b7846",
+    "sha256": "76c844eaa94f226291c5da7f91c25b813446f4e6e8945424ab3e16dd6f5587e3",
     "hiRes": true,
     "version": {
-      "native_build": 2
+      "native_build": 5
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -198,5 +198,5 @@
     },
     "license": null
   },
-  "exported": "2026-11-01 21:17:38"
+  "exported": "2026-11-07 02:09:34"
 }
