@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Spiritfire.Art;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Spiritfire.Game
 {
@@ -1082,10 +1083,43 @@ namespace Spiritfire.Game
             BeginManualMotion(velocity, gravity);
         }
 
+        /// <summary>
+        /// 冲刺（突刺冲锋、烈焰冲锋……）：同 <see cref="BeginDash"/>，再加两道护栏（<see cref="ScriptedMotion"/>）——最多冲 maxRun 米（预警线多长冲多远，
+        /// 大帧时间下也不冲过头，冲完 <see cref="DashRunSpent"/>）；前方台沿落差超过 ledgeDrop 米或没有导航网格就在台沿前刹住（<see cref="DashHitLedge"/>）。
+        /// 两道都按每一步的整段位移扫，不是只看帧末。预警线长度先用 <see cref="LedgeFreeRun"/> 截好，冲刺就停在线的尽头
+        /// </summary>
+        public void BeginGuardedDash(Vector3 velocity, float gravity, float maxRun, float ledgeDrop = ScriptedMotion.BossLedgeDrop)
+        {
+            HitWall = false;
+            BeginManualMotion(new ScriptedMotion(velocity, gravity, maxRun, ledgeDrop));
+        }
+
+        /// <summary>从 from（脚下）沿水平方向 dir 冲 want 米，台沿 / 没有导航网格的地方之前最远能冲多远（冲刺的预警线按它截短）</summary>
+        public float LedgeFreeRun(Vector3 from, Vector3 dir, float want, float ledgeDrop = ScriptedMotion.BossLedgeDrop) =>
+            ScriptedMotion.LedgeFree(from, dir, want, ledgeDrop);
+
+        /// <summary>
+        /// 落点（跃击这类落地招式）：先夹进场地（离边 margin 米），再贴到 radius 米内最近的导航网格上（贴上去还在场地里才用）；找不到网格时就用夹好的点。
+        /// 落点在网格上，落地交还导航时就不会再被挪开（预警圈画在哪就落在哪）
+        /// </summary>
+        public Vector3 LandingPoint(Vector3 want, float margin, float radius = 4f) => LandingPoint(arena, want, margin, radius);
+
+        /// <summary>同上（场地显式给出；没有场地时只贴导航网格）</summary>
+        public static Vector3 LandingPoint(BossArena arena, Vector3 want, float margin, float radius = 4f)
+        {
+            var p = arena ? arena.Clamp(want, Mathf.Max(0, margin)) : want;
+            if (NavMesh.SamplePosition(p, out var hit, radius, NavMesh.AllAreas) && (!arena || arena.Contains(hit.position, Mathf.Min(margin, 1f)))) return hit.position;
+            return p;
+        }
+
         public void SetDashVelocity(Vector3 v) => SetManualVelocity(v);
         public Vector3 DashVelocity => ManualVelocity;
         /// <summary>脚本位移这一程撞到了墙 / 地形</summary>
         public bool DashHitWall => HitWall;
+        /// <summary>护栏冲刺（<see cref="BeginGuardedDash"/>）在台沿 / 没有导航网格的地方之前刹住了</summary>
+        public bool DashHitLedge => HitLedge;
+        /// <summary>护栏冲刺的里程用完了（冲到预警线尽头）</summary>
+        public bool DashRunSpent => ManualRunSpent;
         public bool DashGrounded => ManualGrounded;
 
         /// <summary>结束脚本位移，交还导航（不在脚本位移里时什么都不做）</summary>

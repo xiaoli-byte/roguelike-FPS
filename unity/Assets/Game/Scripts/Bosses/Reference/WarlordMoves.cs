@@ -29,7 +29,8 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 魔将 · 烈焰冲锋：直线预警（预判玩家 0.3 s、越过玩家 6 m、最长 26 m、截到场地边界）→ 20 m/s 冲锋，沿途每 2.4 m 留一片持续 6 s 的火焰地带；
-    /// 冲过玩家身边（预警半宽以内）撞一下并往侧前方掀开，每次冲锋只撞一下；撞墙硬直 1 s。二阶段起连冲两次（第二次预警 0.65 s）
+    /// 冲过玩家身边（预警半宽以内）撞一下并往侧前方掀开，每次冲锋只撞一下；撞墙硬直 1 s。二阶段起连冲两次（第二次预警 0.65 s）。
+    /// Unity 补的：预警线再截到台沿 / 没有导航网格的地方之前，冲锋走护栏冲刺（冲到线的尽头、台沿前刹住，同突刺冲锋 <see cref="WarlordThrust"/>）
     /// </summary>
     public sealed class WarlordCharge : ReferenceMove
     {
@@ -45,9 +46,10 @@ namespace Spiritfire.Game
         bool hitDone;
         Telegraph.LineHandle line;
 
-        /// <summary>本次留下的火焰地带数、撞中次数（测试用）</summary>
+        /// <summary>本次留下的火焰地带数、撞中次数、在台沿前刹住的次数（测试用）</summary>
         public int Trails { get; private set; }
         public int Hits { get; private set; }
+        public int Ledges { get; private set; }
         /// <summary>正在冲（拖刀奔跑那一段；WarlordBrain 据此甩剑尖火星）</summary>
         public bool Running => leg == Leg.Run && Stage == MoveStage.Active;
 
@@ -79,6 +81,7 @@ namespace Spiritfire.Game
             dir = d < 0.5f ? Dir(Facing) : want / d;
             float edge = ToEdge(from, dir, 1.5f);
             length = Mathf.Clamp(Mathf.Min(d + 6f, 26f), Mathf.Min(8f, edge), Mathf.Max(2f, edge));
+            length = Brain.LedgeFreeRun(from, dir, length);
             leg = Leg.Aim;
             legT = 0;
             Brain.Halt();
@@ -92,7 +95,7 @@ namespace Spiritfire.Game
         {
             var from = Brain.transform.position;
             from.y = Floor;
-            line = WarnLine(from, from + dir * length, WarlordRef.ChargeHalfWidth * 2f, tele, WarlordRef.Warn);
+            line = WarnLine(from, from + dir * Mathf.Max(1f, length), WarlordRef.ChargeHalfWidth * 2f, tele, WarlordRef.Warn);
         }
 
         protected override bool WindupDone => StageT >= tele;
@@ -114,7 +117,7 @@ namespace Spiritfire.Game
             hitDone = false;
             Brain.FaceNow(Brain.transform.position + dir);
             lastPos = Brain.transform.position;
-            Brain.BeginDash(dir * WarlordRef.ChargeSpeed, 30f);
+            Brain.BeginGuardedDash(dir * WarlordRef.ChargeSpeed, 30f, length);
             Sfx("enemy_charge", 1f, 0.55f);
             Brain.Shake(0.2f, 0.25f);
             // 冲锋：身后拖一道火尾（锥尾体积，长度随速度），起步脚下一蓬火星
@@ -185,11 +188,14 @@ namespace Spiritfire.Game
             }
             lastPos = p;
             bool crashed = Brain.DashHitWall && legT > 0.12f;
+            bool ledge = Brain.DashHitLedge && !crashed;
+            bool reached = Brain.DashRunSpent || travelled >= length - 0.02f;
             bool outOfArena = Brain.Arena && !Brain.Arena.Contains(p, Brain.BodyRadius * 0.5f);
-            if (travelled < length && !crashed && !outOfArena && legT <= 2.2f) return;
+            if (!reached && !ledge && !crashed && !outOfArena && legT <= 2.2f) return;
             Brain.EndDash();
             Brain.Halt();
             legT = 0;
+            if (ledge) Ledges++;
             runTrail.Cancel();
             var lord = WarlordRef.Lord(Brain);
             if (crashed)
@@ -432,20 +438,51 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 魔将 · 跃击：蹲伏（0.48 s，二阶段 0.38 s）→ 跃向玩家 0.35 s 后的位置（落点 5 m 圆形预警，填满时刻 = 落地时刻；夹进场地）→ 砸地重击 + 扩散冲击波（5 → 20 m）；
-    /// 二阶段起落点燃起 5 s 火焰。被掩体挡住半路落地（偏离预警圈 2.5 m 以上）或明显提前落地时，撤回落点预警、不结算落点重击，只放冲击波
+    /// 二阶段起落点燃起 5 s 火焰。被掩体挡住半路落地（偏离预警圈 2.5 m 以上）或明显提前落地时，撤回落点预警、不结算落点重击，只放冲击波。
+    /// Unity 补的落点保护：落点夹进场地后贴到导航网格上（<see cref="BossBrain.LandingPoint"/>，落地交还导航时不会再被挪开）；
+    /// 没被挡住（没撞墙、没落在比落点高的东西上）时落地钉在预警圈中心——帧时间大（0.1–0.33 s）时抛物线积分会早一帧着地、差一帧的水平位移，
+    /// 早着地就在落点等到预警填满那一刻再砸
     /// </summary>
     public sealed class WarlordLeap : ReferenceMove
     {
         public override string Id => "warlord_leap";
         public override string Name => "魔将 · 跃击";
 
+        /// <summary>落在比落点高这么多（米）以上的东西上 = 被掩体挡住了</summary>
+        public const float BlockedRise = 0.8f;
+
         Vector3 target;
         float crouch, air, landT;
         bool landed;
         TelegraphHandle warn;
 
-        /// <summary>上次落地是否在预警圈里（测试用）</summary>
+        /// <summary>上次落地是否在预警圈里、抛物线着地点离落点多远（钉到落点之前，米；测试用）</summary>
         public bool LastOnMark { get; private set; }
+        public float LastDrift { get; private set; }
+        /// <summary>这次的落点（预警圈中心）</summary>
+        public Vector3 Target => target;
+
+        /// <summary>落点：预判点夹进场地（离边 3 m）、贴到导航网格上，再贴到那里的地面</summary>
+        public static Vector3 PlanTarget(BossArena arena, Vector3 predicted)
+        {
+            var nav = BossBrain.LandingPoint(arena, predicted, 3f);
+            return new Vector3(nav.x, GroundY(nav, 1.5f), nav.z);
+        }
+
+        /// <summary>着地点 at 是不是被挡住了（撞了墙，或落在比落点高 <see cref="BlockedRise"/> 以上的东西上）</summary>
+        public static bool IsBlocked(Vector3 at, Vector3 target, bool hitWall) => hitWall || at.y > target.y + BlockedRise;
+
+        public enum LandStep { Fly, Pin, Land }
+
+        /// <summary>
+        /// 起跳后第 t 秒（滞空 air 秒）这一帧怎么办：还在空中 → 接着飞；没被挡住却早着地（积分步长大，早一帧着地）→ 钉到落点、等预警填满；
+        /// 着地（或滞空超时）→ 落地（没被挡住时落地也钉到落点）
+        /// </summary>
+        public static LandStep Decide(float t, float air, bool grounded, Vector3 at, Vector3 target, bool hitWall)
+        {
+            if (!((t > 0.15f && grounded) || t > air + 0.8f)) return LandStep.Fly;
+            return t < air - 0.12f && !IsBlocked(at, target, hitWall) ? LandStep.Pin : LandStep.Land;
+        }
 
         public WarlordLeap()
         {
@@ -463,7 +500,8 @@ namespace Spiritfire.Game
             crouch = (Phase >= 1 ? 0.38f : 0.48f) * Brain.WindupScale;
             air = Phase >= 1 ? 0.85f : 1f;
             landed = false;
-            target = OnGround(Brain.ClampToArena(Brain.Predict(0.35f), 3f));
+            LastDrift = 0;
+            target = PlanTarget(Brain.Arena, Brain.Predict(0.35f));
             Brain.Halt();
             Brain.FaceNow(target);
             Sfx("telegraph");
@@ -499,7 +537,24 @@ namespace Spiritfire.Game
         protected override void OnActive(float dt)
         {
             if (landed) return;
-            if ((StageT > 0.15f && Brain.DashGrounded) || StageT > air + 0.8f) Land();
+            switch (Decide(StageT, air, Brain.DashGrounded, Brain.transform.position, target, Brain.DashHitWall))
+            {
+                // 没被挡住却早着地（积分步长大）：钉到落点、等预警填满再砸
+                case LandStep.Pin:
+                    PinToTarget();
+                    break;
+                case LandStep.Land:
+                    Land();
+                    break;
+            }
+        }
+
+        void PinToTarget()
+        {
+            var at = Brain.transform.position;
+            LastDrift = Mathf.Max(LastDrift, new Vector2(at.x - target.x, at.z - target.z).magnitude);
+            Brain.transform.position = target;
+            Brain.SetDashVelocity(Vector3.zero);
         }
 
         protected override bool ActiveDone => landed && StageT - landT >= 0.7f;
@@ -509,6 +564,7 @@ namespace Spiritfire.Game
             bool early = StageT < air - 0.12f;
             landed = true;
             landT = StageT;
+            if (!IsBlocked(Brain.transform.position, target, Brain.DashHitWall)) PinToTarget();
             Brain.EndDash();
             Brain.Halt();
             var p = Brain.transform.position;

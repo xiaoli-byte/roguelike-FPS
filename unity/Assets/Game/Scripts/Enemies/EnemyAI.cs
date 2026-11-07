@@ -65,8 +65,8 @@ namespace Spiritfire.Game
         float tauntUntil, tauntEye;
         static float blockTextAt;
         bool manual;
-        Vector3 manualVelocity;
-        float manualGravity;
+        /// <summary>脚本位移这一程（速度、重力、可选的里程上限 / 防冲下台沿）</summary>
+        ScriptedMotion motion;
 
         public float DamageMult => (1 + (level - 1) * 0.55f) * (elite ? 1.25f : 1f) * auraDamage;
         public float Damage => damage * DamageMult;
@@ -401,7 +401,7 @@ namespace Spiritfire.Game
             if (state != IdleState)
             {
                 InterruptAttack();
-                if (manual) manualVelocity.x = manualVelocity.z = 0;
+                if (manual) motion.velocity.x = motion.velocity.z = 0;
                 PlayLocomotion();
                 SetState(IdleState);
             }
@@ -487,9 +487,11 @@ namespace Spiritfire.Game
                 Combat.Execute(hp, true);
                 return true;
             }
+            // 掉出世界本不该发生（冲锋、跳跃有台沿 / 落点保护）：留一行位置，查是从哪儿掉下去的
+            if (fell) Debug.LogWarning($"[Enemy] {name} 掉出世界（{(finite ? $"({p.x:F1}, {p.y:F1}, {p.z:F1})" : "位置非法")}，最后站过的网格点 ({lastOnMesh.x:F1}, {lastOnMesh.y:F1}, {lastOnMesh.z:F1})，状态 {state}）：传回 ({hit.position.x:F1}, {hit.position.y:F1}, {hit.position.z:F1})");
             InterruptAttack();
             manual = false;
-            manualVelocity = Vector3.zero;
+            motion.velocity = Vector3.zero;
             push = Vector3.zero;
             agent.updatePosition = true;
             transform.position = hit.position;
@@ -681,7 +683,7 @@ namespace Spiritfire.Game
             if (toP.sqrMagnitude < 1e-4f) return;
             toP.Normalize();
             var dir = toP;
-            var v = manual ? manualVelocity : agent.desiredVelocity;
+            var v = manual ? motion.velocity : agent.desiredVelocity;
             v.y = 0;
             if (v.sqrMagnitude > 0.04f)
             {
@@ -697,7 +699,7 @@ namespace Spiritfire.Game
 
         protected void FaceMovement(float rateDeg, float dt)
         {
-            var v = manual ? manualVelocity : agent.velocity;
+            var v = manual ? motion.velocity : agent.velocity;
             v.y = 0;
             if (v.sqrMagnitude > 0.25f) transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(v), rateDeg * dt);
         }
@@ -796,19 +798,28 @@ namespace Spiritfire.Game
         }
 
         /// <summary>离开导航网格的位移（跳跃、冲锋、遁地）：给初速度与重力，脚本按物理推进；落地 / 结束时交还 agent</summary>
-        protected void BeginManualMotion(Vector3 velocity, float gravity)
+        protected void BeginManualMotion(Vector3 velocity, float gravity) => BeginManualMotion(new ScriptedMotion(velocity, gravity));
+
+        /// <summary>
+        /// 同上，带可选的护栏（首领冲锋用）：水平里程上限（预警线多长就冲多远）、防冲下台沿（<see cref="ScriptedMotion.ledgeDrop"/>）。
+        /// 碰到台沿停下水平速度、<see cref="HitLedge"/> 置位（同撞墙的 <see cref="HitWall"/>），里程用完 <see cref="ManualRunSpent"/>
+        /// </summary>
+        protected void BeginManualMotion(ScriptedMotion m)
         {
             launched = false;
             manual = true;
-            manualVelocity = velocity;
-            manualGravity = gravity;
+            motion = m;
+            motion.hitWall = motion.hitLedge = false;
+            HitLedge = false;
             if (agent.isOnNavMesh) agent.isStopped = true;
             agent.updatePosition = false;
         }
 
-        protected void SetManualVelocity(Vector3 v) => manualVelocity = v;
-        protected Vector3 ManualVelocity => manualVelocity;
+        protected void SetManualVelocity(Vector3 v) => motion.velocity = v;
+        protected Vector3 ManualVelocity => motion.velocity;
         protected bool ManualGrounded { get; private set; }
+        /// <summary>这一程的水平里程上限用完了（没设上限时永远 false）</summary>
+        protected bool ManualRunSpent => manual && motion.RunSpent;
 
         protected void EndManualMotion()
         {
@@ -821,31 +832,17 @@ namespace Spiritfire.Game
 
         void StepManual(float dt)
         {
-            manualVelocity.y -= manualGravity * dt;
-            var p = transform.position;
-            var step = manualVelocity * dt;
-            // 撞墙：水平方向被建筑 / 地形挡住就停下水平速度
-            var flat = new Vector3(step.x, 0, step.z);
-            if (flat.sqrMagnitude > 1e-6f && Physics.Raycast(p + Vector3.up * 0.5f, flat.normalized, out var wall, flat.magnitude + 0.4f, Layers.WorldMask, QueryTriggerInteraction.Ignore)
-                && wall.normal.y < 0.5f)
-            {
-                manualVelocity.x = manualVelocity.z = 0;
-                step.x = step.z = 0;
-                HitWall = true;
-            }
-            p += step;
-            float ground = Physics.Raycast(p + Vector3.up * 3f, Vector3.down, out var below, ManualGroundProbe, Layers.WorldMask, QueryTriggerInteraction.Ignore)
-                ? below.point.y : p.y;
-            ManualGrounded = p.y <= ground + 0.02f && manualVelocity.y <= 0;
-            if (p.y < ground)
-            {
-                p.y = ground;
-                if (manualVelocity.y < 0) manualVelocity.y = 0;
-            }
-            transform.position = p;
+            transform.position = motion.Step(transform.position, dt);
+            ManualGrounded = motion.grounded;
+            // 撞墙 / 台沿：同一程里记着，直到下一程开始（子类也会自己清 / 置 HitWall）
+            if (motion.hitWall) HitWall = true;
+            if (motion.hitLedge) HitLedge = true;
+            motion.hitWall = motion.hitLedge = false;
         }
 
         protected bool HitWall { get; set; }
+        /// <summary>这一程脚本位移在台沿前刹住了（开了 <see cref="ScriptedMotion.ledgeDrop"/> 才会置位）</summary>
+        protected bool HitLedge { get; private set; }
 
         protected static float GroundY(Vector3 p)
         {
@@ -965,6 +962,152 @@ namespace Spiritfire.Game
         {
             if (all.Count > 0) all.RemoveAll(e => !e.t || Time.time >= e.until);
             return all;
+        }
+    }
+
+    /// <summary>
+    /// 一程脚本位移（跳、冲锋、被掀飞；<see cref="EnemyAI"/> 每帧调 <see cref="Step"/>）：速度 + 重力推进，水平方向被墙挡住就停下水平速度，
+    /// 落到脚下 <see cref="EnemyAI.ManualGroundProbe"/> 米内的地面上。只有数据和物理 / 导航查询，不碰组件——EditMode 测试按任意 dt 直接驱动。
+    /// 两道可选护栏（首领冲锋用，不开时和原来逐帧一致）：
+    ///   · 水平里程上限 <see cref="runLeft"/>：预警线多长就冲多远，大帧时间下最后一步也不冲过头；
+    ///   · 防冲下台沿 <see cref="ledgeDrop"/>：这一步的整段位移每 <see cref="LedgeProbeStep"/> 米探一点（不是只看步末——帧时间 0.1–0.33 s 时
+    ///     一步有 2–8 m，只看步末会整个越过台沿），某一点脚下 ledgeDrop 米内没有地面、或 <see cref="LedgeNavReach"/> 米内没有导航网格，
+    ///     就停在台沿前 <see cref="LedgeLead"/> 米、停下水平速度、<see cref="hitLedge"/> 置位。
+    /// </summary>
+    public struct ScriptedMotion
+    {
+        /// <summary>
+        /// 台沿扫描：探点间距、停在台沿前多远（身体中心）、一步能踩上去多高（再高的是墙，归撞墙管）、
+        /// 导航网格要在多近（= <see cref="EnemyAI"/> 交还导航时的吸附半径：停在这里交得回导航，不会离网）
+        /// </summary>
+        public const float LedgeProbeStep = 0.5f, LedgeLead = 0.6f, LedgeRise = 1.2f, LedgeNavReach = 4f;
+        /// <summary>首领冲锋的台沿落差（米）：浅渠（0.6 m）、坡道照冲，2 m 以上的台沿、断崖、深坑刹住</summary>
+        public const float BossLedgeDrop = 2f;
+
+        public Vector3 velocity;
+        public float gravity;
+        /// <summary>剩余水平里程（米）；∞ = 不限</summary>
+        public float runLeft;
+        /// <summary>防冲下台沿：前一个探点到下一个探点地面落差超过它（米）就算台沿；0 = 不查</summary>
+        public float ledgeDrop;
+        /// <summary>撞墙 / 在台沿前刹住（置位后一直留着，由调用方清）、上一步落在地上</summary>
+        public bool hitWall, hitLedge, grounded;
+
+        public ScriptedMotion(Vector3 velocity, float gravity, float maxRun = float.PositiveInfinity, float ledgeDrop = 0)
+        {
+            this.velocity = velocity;
+            this.gravity = gravity;
+            runLeft = maxRun > 0 ? maxRun : 0;
+            this.ledgeDrop = Mathf.Max(0, ledgeDrop);
+            hitWall = hitLedge = grounded = false;
+        }
+
+        /// <summary>水平里程上限用完了（没设上限时永远 false）</summary>
+        public bool RunSpent => runLeft <= 1e-3f;
+
+        /// <summary>推进 dt 秒，返回新位置</summary>
+        public Vector3 Step(Vector3 p, float dt)
+        {
+            velocity.y -= gravity * dt;
+            var step = velocity * dt;
+            // 撞墙：水平方向被建筑 / 地形挡住就停下水平速度
+            var flat = new Vector3(step.x, 0, step.z);
+            if (flat.sqrMagnitude > 1e-6f && Physics.Raycast(p + Vector3.up * 0.5f, flat.normalized, out var wall, flat.magnitude + 0.4f, Layers.WorldMask, QueryTriggerInteraction.Ignore)
+                && wall.normal.y < 0.5f)
+            {
+                velocity.x = velocity.z = 0;
+                step.x = step.z = 0;
+                hitWall = true;
+            }
+            // 护栏：里程上限、台沿——都按这一步的整段位移算
+            float run = Mathf.Sqrt(step.x * step.x + step.z * step.z);
+            if (run > 1e-6f && (ledgeDrop > 0 || runLeft < run))
+            {
+                var dir = new Vector3(step.x / run, 0, step.z / run);
+                float allowed = Mathf.Min(run, runLeft);
+                if (ledgeDrop > 0 && allowed > 0)
+                {
+                    float free = LedgeFree(p, dir, allowed, ledgeDrop);
+                    if (free < allowed)
+                    {
+                        allowed = free;
+                        hitLedge = true;
+                    }
+                }
+                if (allowed < run)
+                {
+                    step.x = dir.x * allowed;
+                    step.z = dir.z * allowed;
+                    velocity.x = velocity.z = 0;
+                }
+                run = allowed;
+            }
+            if (!float.IsPositiveInfinity(runLeft)) runLeft = Mathf.Max(0, runLeft - run);
+            float fromY = p.y;
+            p += step;
+            // 找脚下地面：射线从新位置上方 3 m 往下打——但这一步往下沉了 2.5 m 以上时（重力 30、一帧 0.33 s 就沉 3.3 m），
+            // 新位置上方 3 m 已经埋在地面下面，地形打不到、整个穿过去（11-07 boss-warlord 突刺「掉下平台」的根因）。
+            // 起点不低于上一步脚下 + 0.5 m：这一步竖直扫过的整段都查到。正常帧（一步沉不到 2.5 m）起点和原来一样
+            float originY = Mathf.Max(p.y + 3f, fromY + 0.5f);
+            float ground = Physics.Raycast(new Vector3(p.x, originY, p.z), Vector3.down, out var below, EnemyAI.ManualGroundProbe + (originY - p.y - 3f),
+                Layers.WorldMask, QueryTriggerInteraction.Ignore)
+                ? below.point.y : p.y;
+            grounded = p.y <= ground + 0.02f && velocity.y <= 0;
+            if (p.y < ground)
+            {
+                p.y = ground;
+                if (velocity.y < 0) velocity.y = 0;
+            }
+            return p;
+        }
+
+        /// <summary>
+        /// 从 from（脚下）沿水平方向 dir 最多走 distance 米，台沿之前能走多远：每 <see cref="LedgeProbeStep"/> 米探一点、找到台沿后二分到 6 cm，
+        /// 身体中心停在台沿前 lead 米（台沿就在 distance 外 lead 米以内时也提前停）。一路都安全时原样返回 distance
+        /// </summary>
+        public static float LedgeFree(Vector3 from, Vector3 dir, float distance, float maxDrop, float lead = LedgeLead)
+        {
+            if (!(distance > 0)) return 0;
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-8f) return distance;
+            dir.Normalize();
+            float reach = distance + Mathf.Max(0, lead), refY = from.y, safe = 0;
+            int n = Mathf.CeilToInt(reach / LedgeProbeStep);
+            for (int i = 1; i <= n; i++)
+            {
+                float at = Mathf.Min(i * LedgeProbeStep, reach);
+                if (LedgeGround(from + dir * at, refY, maxDrop, out float y))
+                {
+                    refY = y;
+                    safe = at;
+                    continue;
+                }
+                // 台沿在 (safe, at] 之间
+                float lo = safe, hi = at, loY = refY;
+                for (int k = 0; k < 3; k++)
+                {
+                    float mid = (lo + hi) * 0.5f;
+                    if (LedgeGround(from + dir * mid, loY, maxDrop, out float ym))
+                    {
+                        lo = mid;
+                        loY = ym;
+                    }
+                    else hi = mid;
+                }
+                return Mathf.Clamp(lo - lead, 0, distance);
+            }
+            return distance;
+        }
+
+        /// <summary>q 处（水平位置）有没有可站的地面：比 refY 高不过 <see cref="LedgeRise"/>、低不过 maxDrop，且 <see cref="LedgeNavReach"/> 米内有导航网格；y = 地面高度</summary>
+        public static bool LedgeGround(Vector3 q, float refY, float maxDrop, out float y)
+        {
+            y = refY;
+            var top = new Vector3(q.x, refY + LedgeRise, q.z);
+            if (!Physics.Raycast(top, Vector3.down, out var hit, LedgeRise + maxDrop, Layers.WorldMask, QueryTriggerInteraction.Ignore)) return false;
+            if (!NavMesh.SamplePosition(hit.point, out _, LedgeNavReach, NavMesh.AllAreas)) return false;
+            y = hit.point.y;
+            return true;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace Spiritfire.Game
     /// 24 m/s 突进，沿途每 2.4 m 留一片 5 s 的火（冲锋留火保留）；冲过玩家身边（预警半宽以内）刺中一下并往侧前方掀开。
     /// 刹住之后转身「收刀横斩」：朝玩家一个 5.2 m、半角 70° 的扇形（0.42 / 0.36 / 0.32 s 预警）。撞墙硬直 1 s、不横斩（破绽窗口）。
     /// 二阶段起连刺两次（第二次前摇 0.6 s），狂怒前摇再压。
+    /// 台沿：预警线截到台沿 / 没有导航网格的地方之前（<see cref="BossBrain.LedgeFreeRun"/>），突进走护栏冲刺（<see cref="BossBrain.BeginGuardedDash"/>）——
+    /// 冲到线的尽头为止，前方落差 2 m 以上或没有导航网格就在台沿前刹住、照常收刀横斩；两道护栏按每帧的整段位移扫，帧时间再大也不冲下平台。
     /// </summary>
     public sealed class WarlordThrust : WarlordSwordMove
     {
@@ -32,8 +34,14 @@ namespace Spiritfire.Game
         public int CutHits { get; private set; }
         public int Cuts { get; private set; }
         public int Crashes { get; private set; }
-        /// <summary>上一次突进跑了多远（米）</summary>
+        /// <summary>在台沿 / 没有导航网格的地方之前刹住的次数（预警线没截到、护栏兜住的）</summary>
+        public int Ledges { get; private set; }
+        /// <summary>上一次突进跑了多远（米）、预警线多长（米）</summary>
         public float LastRun { get; private set; }
+        public float LastLength { get; private set; }
+        /// <summary>上一次突进的起点、终点（查台沿刹车发生在哪）</summary>
+        public Vector3 LastStart { get; private set; }
+        public Vector3 LastEnd { get; private set; }
         /// <summary>正在突进（WarlordBrain 据此在剑尖甩火星）</summary>
         public bool Running => leg == Leg.Run && Stage == MoveStage.Active;
 
@@ -63,8 +71,8 @@ namespace Spiritfire.Game
             want.y = 0;
             float d = want.magnitude;
             dir = d < 0.5f ? Dir(Facing) : want / d;
-            float edge = ToEdge(from, dir, 1.5f);
-            length = Mathf.Clamp(Mathf.Min(d + 5f, MaxLen), Mathf.Min(8f, edge), Mathf.Max(2f, edge));
+            length = PlanLength(Brain, from, dir, d, ToEdge(from, dir, 1.5f));
+            LastLength = length;
             leg = Leg.Aim;
             legT = 0;
             Brain.Halt();
@@ -75,13 +83,24 @@ namespace Spiritfire.Game
             Sfx("enemy_charge", 1f, 0.8f);
         }
 
+        /// <summary>
+        /// 突进多远：越过玩家 5 m、最长 24 m、截到场地边（edge = 到场地边界的距离，留 1.5 m），再截到台沿 / 没有导航网格的地方之前。
+        /// 场地边截出来的最短 8 m / 2 m 只管场地边，台沿截短不受它限制（掉下平台比冲得短更糟）
+        /// </summary>
+        public static float PlanLength(BossBrain brain, Vector3 from, Vector3 dir, float toPlayer, float edge)
+        {
+            float length = Mathf.Clamp(Mathf.Min(toPlayer + 5f, MaxLen), Mathf.Min(8f, edge), Mathf.Max(2f, edge));
+            return brain ? brain.LedgeFreeRun(from, dir, length) : ScriptedMotion.LedgeFree(from, dir, length, ScriptedMotion.BossLedgeDrop);
+        }
+
         protected override void OnTelegraph() => DrawLine();
 
         void DrawLine()
         {
             var from = Brain.transform.position;
             from.y = Floor;
-            line = WarnLine(from, from + dir * length, HalfWidth * 2f, tele, WarlordSword.Warn);
+            // 贴着台沿时线可能只剩几十厘米：至少画 1 m，看得出方向
+            line = WarnLine(from, from + dir * Mathf.Max(1f, length), HalfWidth * 2f, tele, WarlordSword.Warn);
         }
 
         protected override bool WindupDone => StageT >= tele;
@@ -105,8 +124,8 @@ namespace Spiritfire.Game
             trail = 1.5f;
             hitDone = false;
             Brain.FaceNow(Brain.transform.position + dir);
-            lastPos = Brain.transform.position;
-            Brain.BeginDash(dir * Speed, 30f);
+            lastPos = LastStart = Brain.transform.position;
+            Brain.BeginGuardedDash(dir * Speed, 30f, length);
             Brain.Glow(0, 1);
             Sfx("enemy_charge", 1f, 0.7f);
             runTrail.Cancel();
@@ -179,12 +198,17 @@ namespace Spiritfire.Game
             }
             lastPos = p;
             bool crashed = Brain.DashHitWall && legT > 0.1f;
+            // 台沿：护栏冲刺已经停在台沿前（这一步没越过去），按正常刹住收招
+            bool ledge = Brain.DashHitLedge && !crashed;
+            bool reached = Brain.DashRunSpent || travelled >= length - 0.02f;
             bool outOfArena = Brain.Arena && !Brain.Arena.Contains(p, Brain.BodyRadius * 0.5f);
-            if (travelled < length && !crashed && !outOfArena && legT <= 1.8f) return;
+            if (!reached && !ledge && !crashed && !outOfArena && legT <= 1.8f) return;
             Brain.EndDash();
             Brain.Halt();
             legT = 0;
             LastRun = travelled;
+            LastEnd = p;
+            if (ledge) Ledges++;
             runTrail.Cancel();
             line?.End();
             line = null;
