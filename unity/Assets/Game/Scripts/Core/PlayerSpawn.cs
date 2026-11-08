@@ -5,7 +5,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 关卡场景里的玩家出生标记（docs/unity-parity.md 4.6）：<see cref="SceneFlow"/> 进关时由 <see cref="PlayerFactory"/> 在这里组装玩家，
-    /// 位置 = 脚底（地面上方一点点），朝向只取水平（Y 轴）。一个关卡场景放一个；有多个时取第一个（以后检查点 / 中途续玩再按 id 区分）。
+    /// 位置 = 脚底（地面上方一点点），朝向只取水平（Y 轴）。一个关卡场景放一个；有布局变体（<see cref="LevelLayout"/>）的关卡每种走法一个，只留抽中的那个在场。
     /// 由关卡构建器（Level_x_y）摆放，不手摆。
     /// </summary>
     public sealed class PlayerSpawn : MonoBehaviour
@@ -21,16 +21,20 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>场景里的出生标记；没有则 null</summary>
+        /// <summary>
+        /// 场景里的出生标记；没有则 null。先找在场的（布局变体 <see cref="LevelLayout"/> 停用了别的走法的出生点），一个在场的都没有时才取停用的
+        /// </summary>
         public static PlayerSpawn In(Scene scene)
         {
             if (!scene.IsValid() || !scene.isLoaded) return null;
+            PlayerSpawn inactive = null;
             foreach (var root in scene.GetRootGameObjects())
-            {
-                var s = root.GetComponentInChildren<PlayerSpawn>(true);
-                if (s) return s;
-            }
-            return null;
+                foreach (var s in root.GetComponentsInChildren<PlayerSpawn>(true))
+                {
+                    if (s.enabled && s.gameObject.activeInHierarchy) return s;
+                    if (!inactive) inactive = s;
+                }
+            return inactive;
         }
 
         /// <summary>

@@ -48,6 +48,7 @@
   - 每章第 0–3 关固定 `combat` + `scroll`；第 3 关后进入 Boss。
   - 武器、秘卷等额外收益通过关内探索发现；已有首领前安全区提供商店、强化和战备补给。
   - Boss 清关：奖励宝箱（`weapon`，第一章 Boss 保底史诗、第二章 Boss 保底传说）+ 回满生命，出口通往下一章第 0 关；最终 Boss 清关后 4 秒判定胜利（`ctx.game.endRun(true)`）。
+- **每局不同的地图（Unity，2026-11-08，[docs/level-design/run-variety.md](docs/level-design/run-variety.md)）**：正式开局按局种子把每章的开放大图洗牌（带首领前补给营的那张钉在章内最后，首领永远章末，编号 / 难度按位置），存在 `RunState.route`；同一张图还有几种「走法」（`LevelLayout`：换出生点 / 出口 / 据点先后，编制和奖励跟着走法调）。生涯第一局、调试局按设计顺序和主走法。
 - 难度倍率 `difficultyFor(node) = 1 + chapter × 0.8 + index × 0.12`（第一章 1.00–1.36，第二章 1.80–2.16，第三章 2.60–2.96）。
   敌人生命 × 难度；敌人伤害 × `1 + (难度 − 1) × 0.55`（EnemyBase 已实现）。
 

@@ -21,6 +21,10 @@ namespace Spiritfire.Art.Editor.Levels
     ///   ② ③ 先后不限（都只要求 ①）：② 南侧有一条绕行路通到烽燧西坡道脚；④ 要 ② ③ 都肃清。
     ///   藏宝点：① 北侧长城转角「戍卒窖藏」（无守军）、② 南侧绕行路「商队遗货」（有守军）。
     ///
+    /// 布局变体（<see cref="Spiritfire.Game.LevelLayout"/>，docs/level-design/run-variety.md §2；正式开局按种子抽）：
+    ///   main 主走法 = 上面这条；reverse 逆行「自驼队营地入」：从东头出口祭坛前出生 → ④ 先打（换成开场编制、给第二把枪）→ ② ③ 先后不限
+    ///   → ① 最后打（换成终局编制、给秘卷）→ 西头驿站院里的出口祭坛（<see cref="RevExitAt"/>，NavMesh 烘焙后摆，只在逆行里在场）。
+    ///
     /// 主风向从东北吹向西南：雅丹长轴、沙丘脊线、狼烟的偏斜都按它排，地貌读起来是同一场风塑造的。
     /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、场地与刷怪标记、遭遇战、藏宝点、出口、自举标记 <see cref="Spiritfire.Game.LevelBootstrap"/>；
     /// 玩家、HUD、各系统在常驻的 Core 场景（CoreSceneBuilder），敌人 / 武器 Prefab 在 GameDatabase。直接打开本场景按 Play 时自举标记把 Core 叠加进来。
@@ -47,6 +51,15 @@ namespace Spiritfire.Art.Editor.Levels
             Camp = new(220, 74), Exit = new(250, 58);
         /// <summary>出口祭坛门洞相对祭坛中心沿正面的距离（米）</summary>
         const float ExitDoorOffset = 1.2f;
+        /// <summary>
+        /// 逆行变体：出生在东头出口祭坛正面 6 m（主走法的祭坛照常立着，只是传送门停用——从祭坛里走出来）；
+        /// 出口祭坛立在驿站院内、背靠西墙、面朝古道（古道的西端点就在这堵墙上），驿站的货堆 / 陶瓮藏起来让位
+        /// </summary>
+        static readonly Vector2 RevExitAt = new(16.4f, 36.5f);
+        const float RevExitYaw = 90;
+        static Vector2 RevSpawn => Exit + ExitFace * 6f;
+        /// <summary>东头出口祭坛的正面方向（yaw −100° 的 +Z）</summary>
+        static Vector2 ExitFace => new(Mathf.Sin(-100 * Mathf.Deg2Rad), Mathf.Cos(-100 * Mathf.Deg2Rad));
 
         static readonly (Vector2 c, float r)[] Sites =
         {
@@ -400,6 +413,7 @@ namespace Spiritfire.Art.Editor.Levels
             EditorSceneManager.SaveScene(scene, ScenePath);
             ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
             LevelKit.BakeNavMesh(Dir, Name, env);
+            BuildLayout(terrain, props, markers, playerSpawn, portal, objective);
             EditorSceneManager.SaveScene(scene, ScenePath);
             if (!EditorBuildSettings.scenes.Any(s => s.path == ScenePath))
                 EditorBuildSettings.scenes = EditorBuildSettings.scenes.Append(new EditorBuildSettingsScene(ScenePath, true)).ToArray();
@@ -440,6 +454,8 @@ namespace Spiritfire.Art.Editor.Levels
                         ("BeaconClose", E(new Vector2(173, 132), 2), G(BeaconTower, 7), false),
                         ("Camp", E(new Vector2(206, 94)), G(new Vector2(234, 64), 1), false),
                         ("NorthView", E(new Vector2(180, 150)), G(new Vector2(150, 220), 10), false),
+                        ("RevSpawn", E(RevSpawn), G(Camp, 1.5f), true),
+                        ("RevExit", E(new Vector2(40, 42)), G(RevExitAt, 4f), false),
                     });
                 }
                 finally
@@ -452,7 +468,7 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// L1 规则：关卡场景只有环境和标记——一个 PlayerSpawn、一个自举标记，没有玩家 / 相机 / HUD / 会话 / 敌人目录（这些在 Core 场景和 GameDatabase）；
+        /// L1 规则：关卡场景只有环境和标记——每种走法一个 PlayerSpawn、一个自举标记，没有玩家 / 相机 / HUD / 会话 / 敌人目录（这些在 Core 场景和 GameDatabase）；
         /// M11：测试武器架已撤。顺带重新生成 GameDatabase，报告里列出敌人 / 武器 Prefab 是否齐全
         /// </summary>
         static void CheckSceneContents(LevelKit.Report rep, UnityEngine.SceneManagement.Scene scene)
@@ -462,7 +478,7 @@ namespace Spiritfire.Art.Editor.Levels
                 Object.FindObjectsByType<T>(FindObjectsInactive.Include).Count(c => c.gameObject.scene == scene);
             int spawns = Count<Spiritfire.Game.PlayerSpawn>();
             int boots = Count<Spiritfire.Game.LevelBootstrap>();
-            if (spawns != 1) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 1）");
+            if (spawns != 2) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 2：主走法 + 逆行）");
             if (boots != 1) rep.Fail($"LevelBootstrap 有 {boots} 个（应为 1）");
             void None<T>(string what) where T : Component
             {
@@ -477,7 +493,7 @@ namespace Spiritfire.Art.Editor.Levels
             None<Spiritfire.Game.EnemyCatalog>("敌人目录（改由 GameDatabase 提供）");
             int racks = Count<Spiritfire.Game.WeaponRack>();
             if (racks > 0) rep.Fail($"场景里还有 {racks} 个测试武器架（M11 撤掉了：第二把枪从 ① 的宝箱里拿）");
-            if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话 / 测试武器架");
+            if (spawns == 2 && boots == 1) rep.Line("✓ PlayerSpawn ×2（主走法 / 逆行各一）、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话 / 测试武器架");
             CoreSceneBuilder.BuildDatabase(rep);
         }
 
@@ -601,6 +617,9 @@ namespace Spiritfire.Art.Editor.Levels
 
         // ───────────── 摆放 ─────────────
 
+        /// <summary>驿站院里西墙根的货堆 / 陶瓮：逆行变体在这里立出口祭坛，这两件藏起来</summary>
+        static GameObject[] stationClutter = System.Array.Empty<GameObject>();
+
         static void BuildStation(Terrain t, Transform parent, Transform props)
         {
             // 驿站废墟：夯土院墙（SM_Tripo_DesertPosthouseWall，两端平切可连排）。每段按长度分几块、块长拉伸到正好；矮段按高度缩放（不低于 0.6 倍）、
@@ -629,8 +648,11 @@ namespace Spiritfire.Art.Editor.Levels
                     k++;
                 }
             }
-            LevelKit.PlaceOrBox("SM_Tripo_DesertGoodsPile", props, t, 18, 40, 30, new Vector3(2.5f, 1.6f, 2f));
-            LevelKit.PlaceOrBox("SM_Prop_DesertUrns", props, t, 17, 33, 120, new Vector3(1.5f, 1.2f, 1.5f));
+            stationClutter = new[]
+            {
+                LevelKit.PlaceOrBox("SM_Tripo_DesertGoodsPile", props, t, 18, 40, 30, new Vector3(2.5f, 1.6f, 2f)),
+                LevelKit.PlaceOrBox("SM_Prop_DesertUrns", props, t, 17, 33, 120, new Vector3(1.5f, 1.2f, 1.5f)),
+            };
             LevelKit.PlaceOrBox("SM_Env_DesertRuin", props, t, 8, 52, 20, new Vector3(6, 4, 6));
         }
 
@@ -853,6 +875,10 @@ namespace Spiritfire.Art.Editor.Levels
         /// 出生锚点用 BuildMarkers 摆的 Enemy_&lt;场地&gt;_* 标记，挂 <see cref="Spiritfire.Game.SpawnAnchor"/>（<see cref="AnchorRoles"/>），运行时按角色挑站位。
         /// 敌人 Prefab / 挂件运行时从 GameDatabase 取（L1 起场景里不再放敌人目录）。
         /// </summary>
+        /// <summary>BuildEncounters 摆的四个必清场地（① … ④），布局变体改写先后 / 编制用</summary>
+        static Spiritfire.Game.EncounterSite[] sites = System.Array.Empty<Spiritfire.Game.EncounterSite>();
+        static Spiritfire.Game.EncounterSpec reverseOpening, reverseFinale;
+
         static Spiritfire.Game.LevelObjective BuildEncounters(Terrain t, Transform markers)
         {
             var root = new GameObject("Encounters").transform;
@@ -901,6 +927,15 @@ namespace Spiritfire.Art.Editor.Levels
                     Wave("风沙压境", E("mirage_toad", 1), E("fire_rat", 3), E("tomb_beast", 1).Elite()).After(2, 1.5f)
                         .Hint("沙暴里远程看不清，近战借风沙逼近")), s2, s3);
             s4.reward = "scroll";
+            sites = new[] { s1, s2, s3, s4 };
+
+            // 逆行变体的难度曲线（BuildLayout）：④ 先打 → 开场编制、给第二把枪；① 最后打 → 终局编制（两只精英）、给秘卷
+            reverseOpening = Of(Wave("驼队营地", E("jerboa_blade", 3), E("fire_rat", 2, 0.8f), E("scorpion_archer", 2, 1.4f))
+                .Hint("火浣鼠滚进来逼走位：别站在货摊中间被堵"));
+            reverseFinale = Of(Wave("长城守军", E("jerboa_blade", 4), E("fire_rat", 2, 0.8f), E("scorpion_archer", 1, 1.6f).Elite())
+                    .Hint("蝎卫在河岸上压制：贴着长城残墙推进"),
+                Wave("风沙压境", E("mirage_toad", 1), E("jerboa_blade", 3), E("tomb_beast", 1).Elite()).After(2, 1.5f)
+                    .Hint("镇墓兽冲过来：侧闪，打背后的裂缝"));
 
             // 藏宝点（可选，不影响出口；maps/1-1.md §3）
             var guard = Site("Cache Guard · 商队遗货", "Cache_2_Caravan", "Enemy_C2_", "商队遗货守军", 12, 22,
@@ -930,6 +965,39 @@ namespace Spiritfire.Art.Editor.Levels
             objective.optional = new[] { guard };
             objective.autoCollect = false;
             return objective;
+        }
+
+        /// <summary>
+        /// 布局变体（docs/level-design/run-variety.md §2）：main = 设计稿走法（驿站 → ① → ② ③ → ④ → 东头祭坛）；
+        /// reverse = 逆行（东头祭坛前 → ④ → ② ③ → ① → 驿站院里的祭坛），先后反过来、④ / ① 的编制和奖励对调。
+        /// 在 NavMesh 烘焙之后调：逆行的祭坛不进导航网格（主走法里它停用），运行时由 NavMeshObstacle 挖洞
+        /// </summary>
+        static void BuildLayout(Terrain t, Transform props, Transform markers, Spiritfire.Game.PlayerSpawn mainSpawn, Spiritfire.Game.ExitPortal mainExit,
+            Spiritfire.Game.LevelObjective objective)
+        {
+            var (s1, s2, s3, s4) = (sites[0], sites[1], sites[2], sites[3]);
+            var revSpawn = LevelKit.SpawnMarker("PlayerSpawn · 逆行", markers, t, RevSpawn, Camp);
+            var (shrine, portal) = LevelKit.VariantExit(ShrineId, props, markers, t, RevExitAt, RevExitYaw, new Vector3(6, 6, 4), objective, "Exit · 逆行",
+                ExitDoorOffset);
+            LevelKit.Layout(markers,
+                new Spiritfire.Game.LevelLayout.Variant
+                {
+                    id = "main", title = "自驿站入", spawn = mainSpawn, exit = mainExit,
+                },
+                new Spiritfire.Game.LevelLayout.Variant
+                {
+                    id = "reverse", title = "自驼队营地入", spawn = revSpawn, exit = portal,
+                    only = new[] { shrine },
+                    hide = stationClutter,
+                    requires = new[]
+                    {
+                        LevelKit.Requires(s4), LevelKit.Requires(s2, s4), LevelKit.Requires(s3, s4), LevelKit.Requires(s1, s2, s3),
+                    },
+                    sites = new[]
+                    {
+                        LevelKit.Override(s4, reverseOpening, s1.reward), LevelKit.Override(s1, reverseFinale, s4.reward),
+                    },
+                });
         }
 
         /// <summary>
@@ -1026,6 +1094,9 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("② 雅丹", G(Yardang)).Route("② 低丘顶", G(Mesas[0].c)).Route("② 雅丹", G(Yardang))
                 .Route("② 南侧绕行", G(BypassSouth)).Route("藏宝·商队遗货", G(CacheWreck)).Route("② 东南", G(BypassEast))
                 .Route("西坡道脚", G(RampWFoot)).Route("③ 烽燧台顶", G(Beacon)).Route("④ 营地", G(Camp)).Route("出口", G(Exit))
+                // 逆行变体：东头祭坛前出生 → 沿古道回到驿站院里的出口祭坛前
+                .Route("逆行·出生", G(RevSpawn)).Route("④ 营地", G(Camp)).Route("① 黑戈壁", G(Gravel))
+                .Route("逆行·出口祭坛", G(RevExitAt + new Vector2(Mathf.Sin(RevExitYaw * Mathf.Deg2Rad), Mathf.Cos(RevExitYaw * Mathf.Deg2Rad)) * 4f))
                 .Sight("出生点 → 烽燧狼烟", G(Spawn, 1.62f), smokeAt + Vector3.up * 8)
                 .Sight("① 入口 → 雅丹高丘", G(new Vector2(58, 50), 1.62f), G(Mesas[2].c, Mesas[2].h - 0.5f), 8)
                 .Sight("② 出口 → 烽燧", G(new Vector2(140, 118), 1.62f), smokeAt, 6)

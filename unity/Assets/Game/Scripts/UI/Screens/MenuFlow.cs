@@ -90,10 +90,24 @@ namespace Spiritfire.Game
                 }
                 RunSuspend.Forfeit(dev);
             }
-            RunState.Begin(heroId, Environment.TickCount, RunPlan.First, dev);
+            // 每局路线：每章的开放大图按种子洗牌、每张图抽一种走法（LevelLayout）；
+            // 生涯第一局不带路线 = 规划表的设计顺序 + 主走法，新手先走 1-1 古道认识敌人
+            int seed = Environment.TickCount;
+            RunState.Begin(heroId, seed, null, dev, ShuffleRoute() ? RunRoute.Build(seed) : null);
             Remember(heroId);
             Go(SceneFlow.CorePath);
             return true;
+        }
+
+        /// <summary>这一局要不要排路线（洗牌 + 抽走法）：当前档打过至少一局才排（第一局按规划表的设计顺序和主走法）；读不到生涯时照常排</summary>
+        static bool ShuffleRoute()
+        {
+            try { return CareerStats.Current.Runs > 0; }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                return true;
+            }
         }
 
         /// <summary>主菜单当前档里未完成的征程（续玩档；没有 / 坏了为 null，坏档顺带丢弃并记下提示）</summary>

@@ -42,10 +42,18 @@ namespace Spiritfire.Game
         /// 第二、三章在首领场自己的门槛外（2-4 雪岭营地、3-4 炉心外的营地）。关卡构建器按这一列摆，整局冒烟按这一列查
         /// </summary>
         public readonly bool supplyCamp;
+        /// <summary>
+        /// 这一关用的地图：规划表里的原关。规划表里的关 = 自己；每局路线（<see cref="RunRoute"/>）的槽位 = 这一局抽到这个位置的那张图
+        /// （编号 / 关序 / 位置 / 难度跟槽位走，场景 / 标题 / 种类 / 配乐 / 奖励 / 补给营跟地图走）
+        /// </summary>
+        public readonly StageSpec map;
+        /// <summary>所属的每局路线（规划表里的关 = null：<see cref="RunPlan.Next"/> 等按规划表原顺序走）</summary>
+        public readonly RunRoute route;
 
         public StageSpec(int order, int chapter, int index, string title, string chapterName, string scene, StageKind kind, string music, string clearReward,
             bool supplyCamp = false)
         {
+            map = this;
             this.order = order;
             this.chapter = chapter;
             this.index = index;
@@ -60,6 +68,25 @@ namespace Spiritfire.Game
             difficulty = RunPlan.Difficulty(chapter, index);
         }
 
+        /// <summary>每局路线的槽位：第 <paramref name="order"/> 个位置、章内关序 <paramref name="index"/>，用地图 <paramref name="map"/></summary>
+        internal StageSpec(StageSpec map, RunRoute route, int order, int index)
+        {
+            this.map = map.map;
+            this.route = route;
+            this.order = order;
+            chapter = map.chapter;
+            this.index = index;
+            code = $"{chapter}-{index + 1}";
+            title = map.title;
+            chapterName = map.chapterName;
+            scene = map.scene;
+            kind = map.kind;
+            music = map.music;
+            clearReward = map.clearReward;
+            supplyCamp = map.supplyCamp;
+            difficulty = RunPlan.Difficulty(chapter, index);
+        }
+
         /// <summary>「1-1 · 古道穿越戈壁」</summary>
         public string Label => $"{code} · {title}";
         public bool IsBoss => kind == StageKind.Boss;
@@ -68,12 +95,17 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 整局的关卡规划（代码表，D1–D4）：3 章 × (3 张开放大图 + 1 个首领场) = 12 关，主线顺序固定；
+    /// 整局的关卡规划（代码表，D1–D4）：3 章 × (3 张开放大图 + 1 个首领场) = 12 关；
     /// 第四章「雪域天路」接在第三章之后（C4-1，docs/unity-ch4-port.md）：4-1 → 4-2 → 4-3 彩林海子 → 4-4，整表 16 关。
     ///
     /// 场景还没建好的关（第四章分期建）：<see cref="Ready"/> 为假的关不在路线上——<see cref="Next"/> 跳过它、<see cref="Final"/> /
     /// <see cref="IsLast"/> 落在最后一个建好的关上，所以第四章一关都没生成时整局照旧在 3-4 胜利结算，建好几关就走到几关。
     /// 判定缺省用 <see cref="SceneFlow.CanLoad(StageSpec)"/>（构建设置里有，或编辑器里磁盘上有场景文件），测试可以换 <see cref="SceneReady"/>。
+    ///
+    /// 每局路线（docs/level-design/run-variety.md）：正式开局按局种子把每章的开放大图洗一遍（<see cref="RunRoute"/>，存在 <see cref="RunState.route"/>）。
+    /// 当前局有路线时，<see cref="First"/> / <see cref="Get"/> / <see cref="ForScene"/> / <see cref="Final"/> / <see cref="Playable"/> 都按这条路线答，
+    /// <see cref="Next"/> / <see cref="IsFinal"/> 等按槽位所属的路线答（<see cref="StageSpec.route"/>）；没有局、调试局、旧档按规划表原顺序（下面这些规则）。
+    /// <see cref="Stages"/> / <see cref="Canonical"/> 永远是规划表本身（构建顺序、经济投影、关卡构建器用）。
     ///
     /// 试玩开关（I1）：<see cref="DemoEnd"/> 设成某一关（缺省 null = 完整版）后，这一关就是「最后一关」——<see cref="IsFinal"/> 为真、
     /// <see cref="Next"/> 到此为止：打完 1-4 的首领直接走胜利链 → 整局结算（BossEncounter.Decide / GameSession.CompleteStage 都读 IsFinal），
@@ -113,8 +145,14 @@ namespace Spiritfire.Game
             return f != null ? f(s) : SceneFlow.CanLoad(s);
         }
 
-        /// <summary>完整版的最后一关：表里最后一个建好的关（一个都没建好时是表的最后一关）</summary>
-        public static StageSpec LastReady
+        /// <summary>当前局的路线（没开局 / 调试局 / 旧档 = null：按规划表原顺序）</summary>
+        public static RunRoute CurrentRoute => RunState.Current?.Route;
+
+        /// <summary>完整版的最后一关：当前局路线的最后一关；没有路线时是表里最后一个建好的关（一个都没建好时是表的最后一关）</summary>
+        public static StageSpec LastReady => CurrentRoute?.Last ?? CanonicalLastReady;
+
+        /// <summary>规划表原顺序下的最后一关（不看当前局路线）</summary>
+        static StageSpec CanonicalLastReady
         {
             get
             {
@@ -125,9 +163,13 @@ namespace Spiritfire.Game
             }
         }
 
+        /// <summary>规划表原顺序下这一局的最后一关（不看当前局路线）</summary>
+        static StageSpec CanonicalFinal => Canonical(DemoEnd) is { } d && d.order < CanonicalLastReady.order ? d : CanonicalLastReady;
+
         /// <summary>全部关卡（主线顺序，整表 15 关，不受试玩开关和场景有没有建好影响：构建顺序、经济投影用）</summary>
         public static IReadOnlyList<StageSpec> Stages => stages;
-        public static StageSpec First => stages[0];
+        /// <summary>第一关：当前局路线的第一个槽位；没有路线时是规划表的 1-1</summary>
+        public static StageSpec First => CurrentRoute?.First ?? stages[0];
 
         /// <summary>
         /// 试玩版的最后一关编号（null / 空 = 完整版）。设成不在表里的编号等于关掉。缺省按命令行 / 编译符号解析一次（见类注释）
@@ -151,16 +193,17 @@ namespace Spiritfire.Game
         }
 
         /// <summary>试玩开关开着（DemoEnd 指向表里的一关，而且在完整版的最后一关之前）</summary>
-        public static bool IsDemo => Get(DemoEnd) is { } s && s.order < LastReady.order;
+        public static bool IsDemo => CurrentRoute is { } r ? r.IsDemo : Canonical(DemoEnd) is { } s && s.order < CanonicalLastReady.order;
 
         /// <summary>这一局的最后一关：试玩版 = DemoEnd，完整版 = 最后一个建好的关（第四章建好之前是 3-4）</summary>
-        public static StageSpec Final => IsDemo ? Get(DemoEnd) : LastReady;
+        public static StageSpec Final => CurrentRoute?.Final ?? CanonicalFinal;
 
         /// <summary>这一局要走的关卡（第一关 … <see cref="Final"/>，跳过还没建好的关）</summary>
         public static IReadOnlyList<StageSpec> Playable
         {
             get
             {
+                if (CurrentRoute is { } r) return r.Playable;
                 int end = Final.order;
                 var list = new List<StageSpec>(end + 1);
                 for (int i = 0; i <= end && i < stages.Length; i++)
@@ -170,8 +213,14 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>这一关在不在这一局的路线上（试玩版里 DemoEnd 之后的关卡、还没建好的关卡不在）</summary>
-        public static bool InPlay(StageSpec s) => s != null && s.order <= Final.order && (s.order == Final.order || Ready(s));
+        /// <summary>这一关在不在这一局的路线上（试玩版里 DemoEnd 之后的关卡、还没建好的关卡不在）；路线的槽位按它的路线答，规划表的关按规划表原顺序答</summary>
+        public static bool InPlay(StageSpec s)
+        {
+            if (s == null) return false;
+            if (s.route != null) return s.route.InPlay(s);
+            int end = CanonicalFinal.order;
+            return s.order <= end && (s.order == end || Ready(s));
+        }
 
         /// <summary>命令行 / 编译符号 → 试玩终点（纯函数，EditMode 可测）</summary>
         public static string ResolveDemoEnd(string[] args)
@@ -200,8 +249,9 @@ namespace Spiritfire.Game
         /// <summary>下一关（跳过还没建好的关）；这一局的最后一关（<see cref="IsFinal"/>，试玩版 = DemoEnd）之后返回 null</summary>
         public static StageSpec Next(StageSpec s)
         {
+            if (s?.route != null) return s.route.Next(s);
             if (s == null || IsFinal(s)) return null;
-            int end = Final.order;
+            int end = CanonicalFinal.order;
             for (int i = s.order + 1; i <= end && i < stages.Length; i++)
                 if (i == end || Ready(stages[i]))
                     return stages[i];
@@ -209,13 +259,16 @@ namespace Spiritfire.Game
         }
 
         /// <summary>这一局的最后一关（完整版 = 最后一个建好的关；试玩版 DemoEnd）：打完 = 胜利结算</summary>
-        public static bool IsFinal(StageSpec s) => s != null && s.order >= Final.order;
+        public static bool IsFinal(StageSpec s) => s?.route != null ? s.route.IsFinal(s) : s != null && s.order >= CanonicalFinal.order;
 
         /// <summary>完整版的最后一关（最后一个建好的关：击败全部首领）</summary>
-        public static bool IsLast(StageSpec s) => s != null && s.order >= LastReady.order;
+        public static bool IsLast(StageSpec s) => s?.route != null ? s.route.IsLast(s) : s != null && s.order >= CanonicalLastReady.order;
 
-        /// <summary>按编号取（「1-2」）；没有则 null</summary>
-        public static StageSpec Get(string code)
+        /// <summary>按编号取（「1-2」）：当前局路线上的那个槽位；没有路线 / 路线里没有这个编号时取规划表；都没有则 null</summary>
+        public static StageSpec Get(string code) => CurrentRoute?.Get(code) ?? Canonical(code);
+
+        /// <summary>规划表里按编号取（不看当前局的路线）；没有则 null</summary>
+        public static StageSpec Canonical(string code)
         {
             if (string.IsNullOrEmpty(code)) return null;
             foreach (var s in stages)
@@ -223,8 +276,11 @@ namespace Spiritfire.Game
             return null;
         }
 
-        /// <summary>按场景路径取（不区分大小写，斜杠方向不限）；没有则 null（测试场、展示场景）</summary>
-        public static StageSpec ForScene(string scenePath)
+        /// <summary>按场景路径取（不区分大小写，斜杠方向不限）：当前局路线上用这个场景的槽位，没有路线 / 不在路线上时取规划表；都没有则 null（测试场、展示场景）</summary>
+        public static StageSpec ForScene(string scenePath) => CurrentRoute?.ForScene(scenePath) ?? CanonicalForScene(scenePath);
+
+        /// <summary>规划表里按场景路径取（不看当前局的路线）</summary>
+        public static StageSpec CanonicalForScene(string scenePath)
         {
             if (string.IsNullOrEmpty(scenePath)) return null;
             var p = scenePath.Replace('\\', '/');

@@ -111,7 +111,11 @@ namespace Spiritfire.Game
             nextScan = Time.unscaledTime + RescanEvery;
             var pois = m && m.pois != null && m.pois.Length > 0 ? new List<LevelPoi>(m.pois) : LevelMeta.Collect(m ? m.gameObject.scene : active);
             foreach (var p in pois)
+            {
+                // 布局变体（LevelLayout）停用的地点（别的走法的出口、藏宝点、场地）不标
+                if (p.source && !p.source.gameObject.activeInHierarchy) continue;
                 markers.Add(new MapMarker { kind = p.kind, name = p.name, position = p.position, optional = p.optional, source = p.source });
+            }
             Version++;
         }
 

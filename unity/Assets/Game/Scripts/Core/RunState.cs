@@ -101,17 +101,30 @@ namespace Spiritfire.Game
         /// 之后整局（含暂离后继续征程）都按它生效，主菜单里新买的天赋下一局才生效。null = 没有快照（测试拼的局），按档里当前的天赋
         /// </summary>
         public Dictionary<string, int> talents;
+        /// <summary>
+        /// 这一局的关卡路线：每个槽位用哪张图（规划表编号，按槽位顺序；开局时按种子排好，见 <see cref="RunRoute"/>）。
+        /// null = 规划表原顺序（调试局、测试拼的局、加这个字段之前的旧档）
+        /// </summary>
+        public string[] route;
 
         [NonSerialized] Dictionary<string, RunRng> streams;
+        [NonSerialized] RunRoute routeCache;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => Current = null;
 
-        /// <summary>开一局：设为 <see cref="Current"/>，进入第一关，发 <see cref="GameEvents.RunStarted"/></summary>
-        public static RunState Begin(string heroId, int seed, StageSpec first = null, bool dev = false)
+        /// <summary>
+        /// 开一局：设为 <see cref="Current"/>，进入第一关，发 <see cref="GameEvents.RunStarted"/>。
+        /// <paramref name="route"/> = 这一局的关卡路线（正式开局用 <see cref="RunRoute.Build"/> 按同一个种子排；null = 规划表原顺序）；
+        /// <paramref name="first"/> = 从哪一关开始（null = 路线的第一关；给的是规划表的关时换成路线上用同一张图的槽位）
+        /// </summary>
+        public static RunState Begin(string heroId, int seed, StageSpec first = null, bool dev = false, RunRoute route = null)
         {
             var s = new RunState { heroId = string.IsNullOrEmpty(heroId) ? "fox" : heroId, seed = seed, dev = dev };
-            s.EnterStage(first ?? RunPlan.First);
+            if (route != null) s.route = (string[])route.maps.Clone();
+            var r = s.Route;
+            if (r == null) s.EnterStage(first ?? RunPlan.Stages[0]);
+            else s.EnterStage(first == null ? r.First : first.route == r ? first : r.ForMap(first) ?? r.First);
             Current = s;
             GameEvents.RaiseRunStarted(s);
             return s;
@@ -134,8 +147,19 @@ namespace Spiritfire.Game
             difficulty = s.difficulty;
         }
 
-        /// <summary>当前关的规划（不在 RunPlan 里时为 null）</summary>
-        public StageSpec Stage => RunPlan.Get(stageCode);
+        /// <summary>这一局的关卡路线（<see cref="route"/> 为空 = null：按规划表原顺序）</summary>
+        public RunRoute Route
+        {
+            get
+            {
+                if (route == null || route.Length == 0) return null;
+                if (routeCache == null || !routeCache.Matches(route)) routeCache = RunRoute.FromMaps(route);
+                return routeCache;
+            }
+        }
+
+        /// <summary>当前关：这一局路线上的槽位（没有路线时按规划表；都不在时为 null）</summary>
+        public StageSpec Stage => Route?.Get(stageCode) ?? RunPlan.Canonical(stageCode);
 
         // ───────────── 钱包 ─────────────
 

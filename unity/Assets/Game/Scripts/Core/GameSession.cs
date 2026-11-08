@@ -143,8 +143,14 @@ namespace Spiritfire.Game
         void Announce(bool chapterCard)
         {
             GameUI.SetStage(StageTitle);
+            // 有几种走法的图（LevelLayout）：横幅小字写这一局的走法（「自驼队营地入」），让人知道这次换了进出口
+            var layout = LevelLayout.In(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            string route = layout && layout.variants != null && layout.variants.Length > 1 && layout.Chosen != null && !string.IsNullOrEmpty(layout.Chosen.title)
+                ? layout.Chosen.title
+                : null;
             if (chapterCard && Stage != null)
-                GameUI.Banner($"{ChapterName(Stage.chapter)} · {Stage.chapterName}", Stage.Label, 3.6f);
+                GameUI.Banner($"{ChapterName(Stage.chapter)} · {Stage.chapterName}", route != null ? $"{Stage.Label} · {route}" : Stage.Label, 3.6f);
+            else if (route != null && Stage != null) GameUI.Banner(Stage.title, $"{Stage.code} · {route}", 3f);
             else GameUI.Banner(StageTitle.Replace(" · ", "\n"), null, 3f);
             if (Stage != null) GameEvents.RaiseStageLoaded(Stage);
         }

@@ -76,7 +76,7 @@ namespace Spiritfire.Game
         public string savedAt;
         /// <summary>属于调试档（run.dev.json）</summary>
         public bool dev;
-        public StageSpec Stage => run != null ? RunPlan.Get(run.stageCode) : null;
+        public StageSpec Stage => run?.Stage;
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ namespace Spiritfire.Game
 
         /// <summary>这一局要不要写续玩档：没结算过、在 RunPlan 里；调试局只在调试档开着时写</summary>
         public static bool ShouldWrite(RunState run) =>
-            Enabled && run != null && run.Flag(MetaSave.BankedFlag) == 0 && RunPlan.Get(run.stageCode) != null && (!run.dev || MenuDev);
+            Enabled && run != null && run.Flag(MetaSave.BankedFlag) == 0 && run.Stage != null && (!run.dev || MenuDev);
 
         static void OnStageLoaded(StageSpec stage)
         {
@@ -185,7 +185,7 @@ namespace Spiritfire.Game
             string path = PathFor(dev);
             try
             {
-                var stage = RunPlan.Get(snapshot.stageCode);
+                var stage = snapshot.Stage;
                 var root = new JObject
                 {
                     ["version"] = Version,
@@ -309,15 +309,14 @@ namespace Spiritfire.Game
         static void Validate(RunState run)
         {
             if (string.IsNullOrEmpty(run.heroId) || HeroLibrary.Get(run.heroId) == null) throw new InvalidDataException($"英雄 {run.heroId ?? "（空）"} 不存在");
-            var stage = RunPlan.Get(run.stageCode) ?? throw new InvalidDataException($"关卡 {run.stageCode ?? "（空）"} 不在 RunPlan 里");
-            bool playable = false;
-            foreach (var s in RunPlan.Playable)
-                if (s == stage)
-                {
-                    playable = true;
-                    break;
-                }
-            if (!playable) throw new InvalidDataException($"关卡 {stage.code} 不在这个版本的路线里");
+            if (run.route != null && run.route.Length > 0 && run.Route == null) throw new InvalidDataException($"关卡路线 {string.Join(",", run.route)} 里有不认识的关");
+            var stage = run.Stage ?? throw new InvalidDataException($"关卡 {run.stageCode ?? "（空）"} 不在 RunPlan 里");
+            // 路线上的槽位按这一局的路线查（试玩版终点之后的不算）；旧档没有路线，按规划表原顺序查
+            if (!RunPlan.InPlay(stage)) throw new InvalidDataException($"关卡 {stage.code} 不在这个版本的路线里");
+            // 路线里每张图的场景都要在这个版本里（换了版本删了图 = 这条路线走不完）
+            if (run.Route is { } route)
+                foreach (var s in route.Playable)
+                    if (!RunPlan.Ready(s.map)) throw new InvalidDataException($"路线上的 {s.code} {s.title} 这个版本没有");
             run.flags ??= new Dictionary<string, int>();
             run.scrolls ??= new Dictionary<string, int>();
             run.weapons ??= new List<WeaponSave>();

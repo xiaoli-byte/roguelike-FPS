@@ -73,6 +73,9 @@ namespace Spiritfire.Game
         TimeScaleArbiter.Handle hold;
         string pendingPath;
         HashSet<GameObject> coreRootsBefore;
+        /// <summary>新开一局（<see cref="NewRun"/>）时先排好的种子和路线：第一关要先知道路线才能加载</summary>
+        int pendingSeed;
+        RunRoute pendingRoute;
         static bool coreRequested;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -152,11 +155,17 @@ namespace Spiritfire.Game
             Go(Current, currentPath, Kind.Restart);
         }
 
-        /// <summary>新开一局（全部通关 / 阵亡后的 F）：旧局没结算过的按放弃结算（<see cref="MetaSave.BankRun"/>），新的 RunState 从 RunPlan 第一关开始</summary>
+        /// <summary>
+        /// 新开一局（全部通关 / 阵亡后的 F）：旧局没结算过的按放弃结算（<see cref="MetaSave.BankRun"/>），
+        /// 新的 RunState 按新种子排一条路线（<see cref="RunRoute"/>，每章开放图洗牌），从路线的第一关开始
+        /// </summary>
         public void NewRun()
         {
             if (Busy) return;
-            Go(RunPlan.First, RunPlan.First.scene, Kind.NewRun);
+            pendingSeed = Environment.TickCount;
+            pendingRoute = RunRoute.Build(pendingSeed);
+            var first = pendingRoute.First;
+            Go(first, first.scene, Kind.NewRun);
         }
 
         /// <summary>这一关的场景能不能加载：在构建设置里，或者（编辑器里）磁盘上有这个场景文件</summary>
@@ -295,7 +304,15 @@ namespace Spiritfire.Game
                         if (prev != null)
                             try { MetaSave.BankRun(prev, false); }
                             catch (Exception e) { Debug.LogException(e); }
-                        run = RunState.Begin(prev?.heroId ?? heroId, Environment.TickCount, stage, prev?.dev ?? Debug.isDebugBuild);
+                        if (pendingRoute == null)
+                        {
+                            pendingSeed = Environment.TickCount;
+                            pendingRoute = RunRoute.Build(pendingSeed);
+                        }
+                        run = RunState.Begin(prev?.heroId ?? heroId, pendingSeed, stage, prev?.dev ?? Debug.isDebugBuild, pendingRoute);
+                        stage = run.Stage ?? stage;
+                        pendingRoute = null;
+                        Debug.Log($"[SceneFlow] 新的一局（种子 {run.seed}）：{run.Route?.Describe()}");
                         break;
                     case Kind.Enter:
                         run = prev ?? RunState.Begin(heroId, Environment.TickCount, stage, Debug.isDebugBuild);

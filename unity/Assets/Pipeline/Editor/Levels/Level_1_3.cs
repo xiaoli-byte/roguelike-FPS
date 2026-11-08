@@ -23,6 +23,11 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → 补给营（台基上、寺塔背后的塔院，SupplyCamp + SafeZone + 商店）→ ⑤ 下行坑：贴坑壁绕半圈下到坑底，出口祭坛通往 1-4。
     /// ①–④ 必清、顺序不限；西南埋屋坊的藏宝点有一队守军（可选），北墙墙头还有一处无人看守的藏宝。
     ///
+    /// 布局变体（<see cref="LevelLayout"/>，docs/level-design/run-variety.md §2；正式开局按种子抽）：终点是补给营 + 坑底出口，不能反着走，换的是从哪进城——
+    ///   main「自沙山入」= 上面这条（翻西北墙角的沙扇进 ①）；
+    ///   ne「自北墙缺口入」：从北墙东段塌口（<see cref="SpawnNE"/>）进城，离 ③ 集市最近；
+    ///   west「自西墙缺口入」：从西墙南段塌口（<see cref="SpawnW"/>）进城，先碰上 ④ 寺院前庭——这一走法 ④ 换成开场编制、给秘卷，① 换成终局编制（精英卫队）、给武器。
+    ///
     /// 边界（D14，没有空气墙）：城内由四面城墙芯（地形，8 m 高、翻不上去）围住；北、西两面被沙埋的墙头能走，走出去是城外积沙带，
     /// 沙带外缘是崖顶 21–27 m 的雅丹崖（地形，比沙带高 16 m 以上，崖面 &gt; 75°）。北墙东段、西墙南段各有一处 ≥ 19 m 的断口，把能走的墙头和东、南两面翻不上去的墙隔开。
     /// 遮罩等值线外再由软边界（风沙推回、白化）与远处的兜底环收尾。
@@ -81,6 +86,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         // ───────────── 场地 ─────────────
         static readonly Vector2 Spawn = new(4, 194), Gate = new(46, 170);
+        /// <summary>布局变体的出生点：北墙东段塌口内侧、西墙南段塌口内侧（都在缺口地面上，面朝寺塔）</summary>
+        static readonly Vector2 SpawnNE = new(188, 160), SpawnW = new(19, 42);
         static readonly Vector2 GateSite = new(44, 150), StreetSite = new(104, 144), Market = new(162, 100), Court = new(100, 70), Camp = new(100, 12);
         static readonly Vector2 Pagoda = new(100, 27);
         /// <summary>寺院台基：3 m，北面正中一条 10 m 宽的坡道 + 两侧台阶件，东面通往下行坑、西面通往埋屋坊各一条坡道；南边贴着南城墙</summary>
@@ -453,6 +460,8 @@ namespace Spiritfire.Art.Editor.Levels
                 portal.buildFrame = !shrine;
             }
 
+            BuildLayout(set, markers, playerSpawn, portal, objective, pagodaTop);
+
             EditorSceneManager.SaveScene(scene, ScenePath);
             ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
             LevelKit.BakeNavMesh(Dir, Name, env);
@@ -495,6 +504,8 @@ namespace Spiritfire.Art.Editor.Levels
                         ("Camp", E(new Vector2(113, 19)), G(Camp, 1), false),
                         ("SinkRim", E(SinkRampStart), G(Sink, 0), false),
                         ("SinkFloor", E(new Vector2(166, 22)), G(ShrineAt, 3), false),
+                        ("SpawnNE", E(SpawnNE), pagodaTop, true),
+                        ("SpawnW", E(SpawnW), pagodaTop, true),
                     });
                 }
                 finally
@@ -523,7 +534,7 @@ namespace Spiritfire.Art.Editor.Levels
                 Object.FindObjectsByType<T>(FindObjectsInactive.Include).Count(c => c.gameObject.scene == scene);
             int spawns = Count<PlayerSpawn>();
             int boots = Count<LevelBootstrap>();
-            if (spawns != 1) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 1）");
+            if (spawns != 3) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 3：三种进城走法各一）");
             if (boots != 1) rep.Fail($"LevelBootstrap 有 {boots} 个（应为 1）");
             void None<T>(string what) where T : Component
             {
@@ -536,7 +547,7 @@ namespace Spiritfire.Art.Editor.Levels
             None<Hud>("HUD");
             None<GameSession>("会话");
             None<EnemyCatalog>("敌人目录（改由 GameDatabase 提供）");
-            if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
+            if (spawns == 3 && boots == 1) rep.Line("✓ PlayerSpawn ×3（三种进城走法各一）、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
 
             int camps = Count<SupplyCamp>(), zones = Count<SafeZone>(), portals = Count<ExitPortal>(), caches = Count<CachePOI>();
             var zone = camp ? camp.GetComponent<SafeZone>() : null;
@@ -838,6 +849,27 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>埋屋藏宝的位置（守军场地的中心）</summary>
         static readonly Vector2 BuriedCache = new(44, 66), WallCache = new(156, WallZ1 + 1);
+        static EncounterSpec westOpening, westFinale;
+
+        /// <summary>
+        /// 布局变体（docs/level-design/run-variety.md §2）：三种进城走法共用补给营和坑底出口（终点不动），只换出生点；
+        /// west 走法先碰上 ④，④ / ① 的编制和奖励对调（场地本来就先后不限，不改 requires）
+        /// </summary>
+        static void BuildLayout(LevelKit.TerrainSet set, Transform markers, PlayerSpawn mainSpawn, ExitPortal exit, LevelObjective objective, Vector3 pagodaTop)
+        {
+            var s1 = objective.required[0];
+            var s4 = objective.required[3];
+            var ne = LevelKit.SpawnMarker("PlayerSpawn · 北墙缺口", markers, set.OnGround(SpawnNE.x, SpawnNE.y, 0.05f), pagodaTop);
+            var west = LevelKit.SpawnMarker("PlayerSpawn · 西墙缺口", markers, set.OnGround(SpawnW.x, SpawnW.y, 0.05f), pagodaTop);
+            LevelKit.Layout(markers,
+                new LevelLayout.Variant { id = "main", title = "自沙山入", spawn = mainSpawn, exit = exit },
+                new LevelLayout.Variant { id = "ne", title = "自北墙缺口入", spawn = ne, exit = exit },
+                new LevelLayout.Variant
+                {
+                    id = "west", title = "自西墙缺口入", spawn = west, exit = exit,
+                    sites = new[] { LevelKit.Override(s4, westOpening, s1.reward), LevelKit.Override(s1, westFinale, s4.reward) },
+                });
+        }
 
         static void BuildMarkers(LevelKit.TerrainSet set, Transform root)
         {
@@ -924,6 +956,18 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f).Distance(8, 26), "");
             guard.autoTrigger = false;
             guard.optional = true;
+
+            // west 走法（BuildLayout）：先碰上 ④ → 开场编制、给秘卷；① 最后打 → 终局编制（精英卫队）、给武器
+            westOpening = EncounterSpec.Of(
+                    EncounterSpec.Wave("前庭守卫", E("tomb_beast", 1), E("jerboa_blade", 2), E("scorpion_archer", 1)).Hint("镇墓兽正面格挡——绕到背后打裂缝"),
+                    EncounterSpec.Wave("飞天赐福", E("apsara", 1), E("fire_rat", 2)).After(2, 1.6f).Hint("先打飞天的琵琶，再清火浣鼠"))
+                .Gather(0.6f).Distance(10, 34);
+            westFinale = EncounterSpec.Of(
+                    EncounterSpec.Wave("灌沙伏击", E("jerboa_blade", 2), E("sand_wraith", 1), E("scorpion_archer", 1)).Hint("跳鼠、沙魇从沙坡两翼扑上来，墙头有弩卫"),
+                    EncounterSpec.Wave("沙坡滚火", E("fire_rat", 3), E("mirage_toad", 1)).After(1, 1.6f).Hint("火浣鼠顺坡滚下，往高处让开"),
+                    EncounterSpec.Wave("沙王卫队", E("tomb_beast", 1).Elite(), E("scorpion_archer", 1).Elite(), E("jerboa_blade", 1), E("sand_wraith", 1)).After(1, 2f)
+                        .Hint("精英卫队——退上沙扇高处，别在坡脚被围"))
+                .Gather(0.6f).Distance(10, 30);
 
             var objective = new GameObject("Level Objective").AddComponent<LevelObjective>();
             objective.transform.SetParent(root, false);
@@ -1024,6 +1068,9 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("③ 商铺台", G(new Vector2(189, 108))).Route("④ 前庭", G(new Vector2(100, 82))).Route("④ 巨像台", G(new Vector2(117.3f, 72)))
                 .Route("台基", G(new Vector2(88, 36))).Route("补给营", G(Camp + new Vector2(0, 4))).Route("下行坑口", G(SinkRampStart))
                 .Route("坑底出口", G(new Vector2(ShrineAt.x + 4.7f, ShrineAt.y)))
+                // 布局变体的两个入口：北墙缺口 → ③ 集市，西墙缺口 → ④ 前庭
+                .Route("北墙缺口·出生", G(SpawnNE)).Route("③ 井底", G(new Vector2(152, 100)))
+                .Route("西墙缺口·出生", G(SpawnW)).Route("④ 前庭", G(new Vector2(100, 82)))
                 .Sight("出生点 → 寺塔", G(Spawn, 1.62f), pagodaTop, 6, "SM_Tripo_DesertTemplePagoda")
                 .Sight("① 灌沙坡顶 → 寺塔", G(new Vector2(36, 158), 1.62f), pagodaTop, 6, "SM_Tripo_DesertTemplePagoda")
                 .Sight("② 长街巷口 → 寺塔", G(new Vector2(100, 136), 1.62f), pagodaTop, 6, "SM_Tripo_DesertTemplePagoda")
