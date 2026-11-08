@@ -43,8 +43,101 @@ namespace Spiritfire.Game
         }
         /// <summary>挂点的射向（世界，含父级镜像缩放）</summary>
         public Vector3 MuzzleForward => MuzzleAnchor ? MuzzleAnchor.TransformVector(Vector3.left).normalized : transform.forward;
-        /// <summary>最近一次开火生成的枪口特效（测试用）</summary>
+        /// <summary>最近一次开火播放的枪口特效（测试用）</summary>
         public GameObject LastMuzzleFx { get; private set; }
+        /// <summary>对象池里的枪口特效实例数（测试用）</summary>
+        public int MuzzleFxPooled => muzzlePool.Count;
+
+        /// <summary>
+        /// 连射时烟最多每这么久喷一次：1926_muzzle 每发 5 + 3 团烟、活 1 s，冲锋枪 13 发 / s 连射时在相机空间堆成一堵烟墙挡视线；
+        /// 左轮 / 电磁炮的射速低于这个间隔，每发照旧带烟
+        /// </summary>
+        public static float SmokeInterval = 0.22f;
+        /// <summary>枪口特效池上限：一发的火光 0.35 s、带烟的 1 s，冲锋枪连射同时活着的不超过 8 份；满了重用最早那份</summary>
+        const int MuzzlePoolMax = 10;
+
+        sealed class MuzzleFx
+        {
+            public GameObject go;
+            public ParticleSystem[] systems, smoke;
+            public float playedAt;
+
+            public bool Alive
+            {
+                get
+                {
+                    foreach (var ps in systems) if (ps && ps.IsAlive(false)) return true;
+                    return false;
+                }
+            }
+        }
+
+        readonly System.Collections.Generic.List<MuzzleFx> muzzlePool = new();
+        float lastSmokeAt = float.NegativeInfinity;
+
+        /// <summary>
+        /// 每发从池里取一份枪口特效重播（原来每发 Instantiate 一整棵 30 个节点的预制体、3 s 后销毁，冲锋枪连射同时挂着 40 份）。
+        /// 火光 / 光环 / 射线是局部空间，跟着枪骨骼一起后坐；烟、火星、刺原本是世界空间，第一人称下走路转身会被甩过整个屏幕，
+        /// 改到相机空间：从枪口喷出后留在视野里原处，枪后坐时与枪拉开、自然漂移
+        /// </summary>
+        void PlayMuzzleFx()
+        {
+            var anchor = MuzzleAnchor;
+            if (!muzzlePrefab || !anchor) return;
+            MuzzleFx fx = null, oldest = null;
+            muzzlePool.RemoveAll(f => !f.go);
+            foreach (var f in muzzlePool)
+            {
+                if (!f.Alive)
+                {
+                    fx = f;
+                    break;
+                }
+                if (oldest == null || f.playedAt < oldest.playedAt) oldest = f;
+            }
+            if (fx == null && muzzlePool.Count < MuzzlePoolMax) fx = CreateMuzzleFx(anchor);
+            fx ??= oldest;
+            if (fx == null) return;
+            fx.go.transform.SetParent(anchor, false);
+            fx.go.transform.SetLocalPositionAndRotation(Vector3.zero, MuzzleFxRotation);
+            fx.go.transform.localScale = Vector3.one * MuzzleScale;
+            bool smoke = Time.time - lastSmokeAt >= SmokeInterval;
+            if (smoke) lastSmokeAt = Time.time;
+            foreach (var ps in fx.systems)
+            {
+                if (!ps) continue;
+                ps.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                if (smoke || System.Array.IndexOf(fx.smoke, ps) < 0) ps.Play(false);
+            }
+            fx.playedAt = Time.time;
+            LastMuzzleFx = fx.go;
+        }
+
+        MuzzleFx CreateMuzzleFx(Transform anchor)
+        {
+            var go = Instantiate(muzzlePrefab, anchor, false);
+            PlayerFactory.SetLayer(go, Layers.FirstPerson);
+            var view = ViewSpace;
+            // 预制体里关着的分支（converge 一整支、spark、smoke_01 …）从来不播，不进池
+            var systems = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Where(go.GetComponentsInChildren<ParticleSystem>(false), ps => ps.gameObject.activeInHierarchy));
+            foreach (var ps in systems)
+            {
+                var main = ps.main;
+                if (view && main.simulationSpace == ParticleSystemSimulationSpace.World)
+                {
+                    main.simulationSpace = ParticleSystemSimulationSpace.Custom;
+                    main.customSimulationSpace = view;
+                }
+            }
+            var fx = new MuzzleFx
+            {
+                go = go,
+                systems = systems,
+                smoke = System.Array.FindAll(systems, ps => ps.name.IndexOf("smoke", System.StringComparison.OrdinalIgnoreCase) >= 0),
+            };
+            muzzlePool.Add(fx);
+            return fx;
+        }
 
         Transform viewSpace;
         /// <summary>枪模所在的相机（枪模挂在主相机下）：烟 / 火星的模拟空间</summary>
@@ -92,8 +185,29 @@ namespace Spiritfire.Game
                 audioSource.spatialBlend = 0;
                 audioSource.volume = 0.8f;
             }
-            fireLights = GetComponentsInChildren<Light>(true);
-            foreach (var light in fireLights) light.enabled = false;
+            // 原作左右两套各一盏 FireLight（左套只拿来显示左手），挂在不动的 muzzle 节点上：只留右套那盏，挪到枪口挂点上跟着后坐走，
+            // 白光改成和枪口火光一样的暖黄
+            var lights = GetComponentsInChildren<Light>(true);
+            foreach (var light in lights) light.enabled = false;
+            var keep = System.Array.Find(lights, l => IsUnderRight(l.transform)) ?? (lights.Length > 0 ? lights[0] : null);
+            var anchor = MuzzleAnchor;
+            if (keep && anchor)
+            {
+                keep.transform.SetParent(anchor, false);
+                keep.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                keep.color = FireLightColor;
+                keep.range = Mathf.Min(keep.range, 6f);
+            }
+            fireLights = keep ? new[] { keep } : System.Array.Empty<Light>();
+        }
+
+        static readonly Color FireLightColor = new(1f, 0.78f, 0.45f);
+
+        bool IsUnderRight(Transform t)
+        {
+            for (; t && t != transform; t = t.parent)
+                if (t.name.EndsWith("_Right", System.StringComparison.Ordinal)) return true;
+            return false;
         }
 
         void Start() => Bind(GetComponentInParent<WeaponController>());
@@ -137,29 +251,7 @@ namespace Spiritfire.Game
             if (!Owns(weapon)) return;
             fireCount++;
             Trigger(weaponId == "1008" && fullCharge ? "ForceShot" : "Fire");
-            var muzzle = MuzzleAnchor;
-            if (muzzlePrefab && muzzle)
-            {
-                var fx = Instantiate(muzzlePrefab, muzzle, false);
-                LastMuzzleFx = fx;
-                fx.transform.SetLocalPositionAndRotation(Vector3.zero, MuzzleFxRotation);
-                fx.transform.localScale = Vector3.one * MuzzleScale;
-                PlayerFactory.SetLayer(fx, Layers.FirstPerson);
-                // 火光 / 光环 / 射线是局部空间，跟着枪骨骼一起后坐；烟、火星原本是世界空间，第一人称下走路转身会被甩过整个屏幕，
-                // 改到相机空间：从枪口喷出后留在视野里原处，枪后坐时与枪拉开、自然漂移
-                var view = ViewSpace;
-                foreach (var particles in fx.GetComponentsInChildren<ParticleSystem>(true))
-                {
-                    var main = particles.main;
-                    if (view && main.simulationSpace == ParticleSystemSimulationSpace.World)
-                    {
-                        main.simulationSpace = ParticleSystemSimulationSpace.Custom;
-                        main.customSimulationSpace = view;
-                    }
-                    particles.Play(false);
-                }
-                Destroy(fx, 3f);
-            }
+            PlayMuzzleFx();
             foreach (var light in fireLights) if (light) light.enabled = true;
             lightOffAt = Time.time + 0.06f;
             if (shotClips.Length > 0 && audioSource)

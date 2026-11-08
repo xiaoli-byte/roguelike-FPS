@@ -89,6 +89,12 @@ namespace Spiritfire.Game.Testing
                 Fail($"{weaponId}：没有枪口特效挂点");
                 yield break;
             }
+            // 曳光 / 光束的起点（WeaponController.MuzzleSocket）要和枪口特效同一点；枪口灯光也挂在这里、只留一盏
+            if (wc.MuzzleSocket != fxAnchor) Fail($"{weaponId}：曳光起点 {(wc.MuzzleSocket ? wc.MuzzleSocket.name + "@" + wc.MuzzleSocket.parent?.name : "无")} 不是枪口特效挂点 {fxAnchor.name}");
+            var lights = original.GetComponentsInChildren<Light>(true);
+            int anchoredLights = lights.Count(l => l.transform.parent == fxAnchor);
+            Line($"{weaponId}：曳光起点 {(wc.MuzzleSocket ? wc.MuzzleSocket.name : "无")}，枪口灯光 {lights.Length} 盏（挂在特效挂点上 {anchoredLights} 盏）");
+            if (anchoredLights != 1) Fail($"{weaponId}：枪口灯光应在特效挂点上恰好一盏，实际 {anchoredLights}");
             var restTip = Tip(meshes, cam, out var restAxis);
             var restAnchor = cam.InverseTransformPoint(fxAnchor.position);
             var oldSocket = WeaponSockets.FindDeep(original.transform, WeaponSockets.Muzzle);

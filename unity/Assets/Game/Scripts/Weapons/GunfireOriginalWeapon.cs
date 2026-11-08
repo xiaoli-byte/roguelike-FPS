@@ -32,7 +32,10 @@ namespace Spiritfire.Game
                 renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             var sockets = go.GetComponent<WeaponSockets>() ?? go.AddComponent<WeaponSockets>();
             sockets.weaponId = weaponId;
-            if (!sockets.muzzle) sockets.muzzle = WeaponSockets.FindDeep(go.transform, WeaponSockets.Muzzle);
+            // 枪口（曳光 / 光束 / 投射物的起点）用枪骨骼上的 Att，与枪口特效同一点、开火后坐时跟着枪走；预制体里记的 muzzle 节点不随动画动
+            var anchor = GunfireOriginalAnimation.FindAnchor(go.transform);
+            if (anchor) sockets.muzzle = anchor;
+            else if (!sockets.muzzle) sockets.muzzle = WeaponSockets.FindDeep(go.transform, WeaponSockets.Muzzle);
             return go;
         }
 

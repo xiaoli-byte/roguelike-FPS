@@ -16,7 +16,7 @@ namespace Spiritfire.Game.Testing
         public override string Scene => "Assets/Scenes/TestArena.unity";
 
         // 2026-11-08 实测（TestArena，冲锋枪连射 1.5 s）：修前 +0.279 / +0.294；材质修好、枪口不缩放 +0.126 / +0.262；缩放 0.3 → +0.037 / +0.061；0.12 → +0.024 / +0.041
-        const float MaxMeanRise = 0.06f, MaxPeakRise = 0.15f;
+        const float MaxMeanRise = 0.06f, MaxPeakRise = 0.15f, MaxCoverMean = 0.2f;
 
         protected override IEnumerator Steps()
         {
@@ -44,22 +44,26 @@ namespace Spiritfire.Game.Testing
             SystemsBootstrap.Setup();
             yield return null;
             rig.vitals.invulnerableUntil = Time.time + 9999;
-            float muzzleScale = GunfireOriginalAnimation.MuzzleScale;
+            float muzzleScale = GunfireOriginalAnimation.MuzzleScale, smokeInterval = GunfireOriginalAnimation.SmokeInterval;
             try
             {
-                // 冲锋枪先扫几档枪口缩放，只记数据不判定（看缩放对糊屏的影响），最后按当前默认缩放逐把判定
+                // 冲锋枪先扫几档枪口缩放，只记数据不判定（看缩放对糊屏的影响），再看每发都喷烟（不限频）的对照，最后按当前默认值逐把判定
                 foreach (float scale in new[] { 1f, 0.3f, 0.15f, 0.08f })
                 {
                     GunfireOriginalAnimation.MuzzleScale = scale;
                     yield return WeaponCase(rig, "smg", $"x{scale:0.##}", false);
                 }
                 GunfireOriginalAnimation.MuzzleScale = muzzleScale;
+                GunfireOriginalAnimation.SmokeInterval = 0;
+                yield return WeaponCase(rig, "smg", "smoke-every-shot", false);
+                GunfireOriginalAnimation.SmokeInterval = smokeInterval;
                 foreach (var weaponId in new[] { "smg", "revolver", "railgun" })
                     yield return WeaponCase(rig, weaponId, "default", true);
             }
             finally
             {
                 GunfireOriginalAnimation.MuzzleScale = muzzleScale;
+                GunfireOriginalAnimation.SmokeInterval = smokeInterval;
             }
             rig.weapons.testFire = false;
         }
@@ -80,14 +84,15 @@ namespace Spiritfire.Game.Testing
                 Line($"{weaponId}：不是原作武器，跳过");
                 yield break;
             }
-            float baseline = MeanLuma(rig.cam);
+            var rest = Luma(rig.cam);
+            float baseline = Mean(rest);
             if (judge) Shot(rig.cam, $"glare_{weaponId}_idle");
             var aimRest = rig.cam.transform.rotation;
             float yawRest = rig.motor.Yaw, pitchRest = rig.motor.Pitch;
             int fireBefore = original.fireCount;
             wc.testFire = true;
-            float start = Time.time, sum = 0, peak = 0;
-            int samples = 0, emptyRenderers = 0;
+            float start = Time.time, sum = 0, peak = 0, coverSum = 0, coverPeak = 0;
+            int samples = 0, emptyRenderers = 0, pooled = 0;
             bool shotMid = false;
             while (Time.time - start < 1.5f)
             {
@@ -97,9 +102,13 @@ namespace Spiritfire.Game.Testing
                 // 后坐会把视线抬向天空、亮度跟着变：每帧拉回原视线，只量枪口特效本身
                 rig.motor.SetLook(yawRest, pitchRest);
                 yield return new WaitForEndOfFrame();
-                float l = MeanLuma(rig.cam);
+                var frame = Luma(rig.cam);
+                float l = Mean(frame), cover = Coverage(frame, rest);
                 sum += l;
                 peak = Mathf.Max(peak, l);
+                coverSum += cover;
+                coverPeak = Mathf.Max(coverPeak, cover);
+                pooled = Mathf.Max(pooled, original.MuzzleFxPooled);
                 samples++;
                 emptyRenderers = Mathf.Max(emptyRenderers, CountEmptyTextureRenderers(original.transform, weaponId, samples == 20));
                 if (!shotMid && Time.time - start > 0.9f)
@@ -112,7 +121,9 @@ namespace Spiritfire.Game.Testing
             int shots = original.fireCount - fireBefore;
             float mean = samples > 0 ? sum / samples : 0;
             float drift = Quaternion.Angle(aimRest, rig.cam.transform.rotation);
-            Line($"{weaponId}（枪口缩放 {label} = {GunfireOriginalAnimation.MuzzleScale:0.###}）：连射 {shots} 发，开火前亮度 {baseline:F3}，开火中平均 {mean:F3}（涨 {mean - baseline:+0.000;-0.000}）、峰值 {peak:F3}（涨 {peak - baseline:+0.000;-0.000}），采样空贴图的粒子渲染器 {emptyRenderers}，后坐把视线抬了 {drift:F1}°");
+            float coverMean = samples > 0 ? coverSum / samples : 0;
+            Line($"{weaponId}（枪口缩放 {label} = {GunfireOriginalAnimation.MuzzleScale:0.###}）：连射 {shots} 发，开火前亮度 {baseline:F3}，开火中平均 {mean:F3}（涨 {mean - baseline:+0.000;-0.000}）、峰值 {peak:F3}（涨 {peak - baseline:+0.000;-0.000}），" +
+                 $"遮挡率平均 {coverMean:P1}、峰值 {coverPeak:P1}，特效池 {pooled} 份，采样空贴图的粒子渲染器 {emptyRenderers}，后坐把视线抬了 {drift:F1}°");
             rig.motor.SetLook(yawRest, pitchRest);
             yield return new WaitForSeconds(1.2f);
             if (!judge) yield break;
@@ -120,6 +131,8 @@ namespace Spiritfire.Game.Testing
             if (emptyRenderers > 0) Fail($"{weaponId}：枪口粒子有 {emptyRenderers} 个渲染器在采样空贴图（会画成整片方块）");
             if (mean - baseline > MaxMeanRise) Fail($"{weaponId}：连射时画面平均亮度涨 {mean - baseline:F3}，超过 {MaxMeanRise}（糊屏）");
             if (peak - baseline > MaxPeakRise) Fail($"{weaponId}：连射时画面峰值亮度涨 {peak - baseline:F3}，超过 {MaxPeakRise}（闪白）");
+            if (coverMean > MaxCoverMean) Fail($"{weaponId}：连射时平均 {coverMean:P1} 的画面被枪口特效改变（> {MaxCoverMean:P0}，烟 / 火光挡视线）");
+            if (pooled > 10) Fail($"{weaponId}：枪口特效池涨到 {pooled} 份（上限 10）");
         }
 
         int CountEmptyTextureRenderers(Transform root, string weaponId, bool log)
@@ -139,7 +152,24 @@ namespace Spiritfire.Game.Testing
             return count;
         }
 
-        static float MeanLuma(Camera cam)
+        static float MeanLuma(Camera cam) => Mean(Luma(cam));
+
+        static float Mean(float[] luma)
+        {
+            double sum = 0;
+            foreach (float l in luma) sum += l;
+            return (float)(sum / luma.Length);
+        }
+
+        /// <summary>遮挡率：与开火前那帧相比亮度变化超过 0.1 的像素占比（亮的火光、暗的烟都算；枪模后坐也占一点）</summary>
+        static float Coverage(float[] luma, float[] rest)
+        {
+            int n = 0;
+            for (int i = 0; i < luma.Length; i++) if (Mathf.Abs(luma[i] - rest[i]) > 0.1f) n++;
+            return (float)n / luma.Length;
+        }
+
+        static float[] Luma(Camera cam)
         {
             const int W = 160, H = 90;
             var rt = RenderTexture.GetTemporary(W, H, 24);
@@ -154,10 +184,11 @@ namespace Spiritfire.Game.Testing
             tex.Apply();
             RenderTexture.active = active;
             RenderTexture.ReleaseTemporary(rt);
-            double sum = 0;
-            foreach (var c in tex.GetPixels32()) sum += (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255.0;
+            var pixels = tex.GetPixels32();
+            var luma = new float[pixels.Length];
+            for (int i = 0; i < pixels.Length; i++) luma[i] = (0.2126f * pixels[i].r + 0.7152f * pixels[i].g + 0.0722f * pixels[i].b) / 255f;
             Destroy(tex);
-            return (float)(sum / (W * H));
+            return luma;
         }
     }
 }
