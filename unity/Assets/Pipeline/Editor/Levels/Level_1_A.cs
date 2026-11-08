@@ -30,6 +30,8 @@ namespace Spiritfire.Art.Editor.Levels
     ///   入场点 = 8 个 <see cref="MonsterEntry"/>（窟檐层 / 崖顶跃下、宕泉河上下游、南岸沙丘背后、崖顶北沙山、西头塌崖沙坡、崖顶上空飞临），游荡怪群只从这里进场。
     /// 布局变体（<see cref="LevelLayout"/>）：main「自宕泉南岸入」= 西南沙丘出生、崖顶东头出口；reverse「自崖顶入」= 崖顶东头祭坛前出生、
     /// ③ 先打（开场编制、给武器）、② 最后（终局编制、给保底精良）、西南岸新立的出口祭坛（NavMesh 烘焙之后摆）。
+    /// 打磨（11-08）：出生区近景框景（路碑、半埋塔刹、倒毙驼队）+ 车辙引导线、雾调远（<see cref="FogStart"/>）、砾石散布减量成团；
+    /// 塔基台硬边 + 石砌台沿；崖壁斜道外沿顺坡垛墙；游玩区外陡沙坎（<see cref="OuterRise"/>）。
     /// 场景只放环境和标记（D17 / L1）。生成：Spiritfire ▸ Levels ▸ Build 1-A 千佛崖（或 bridge.sh level 1-A）。
     /// </summary>
     [LevelBuilder("1-A", ScenePath)]
@@ -46,6 +48,13 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>风从西北偏北吹向东南：沙从崖顶往崖脚、往河床落</summary>
         static readonly Vector2 Wind = new Vector2(0.6f, -0.8f).normalized;
         static readonly LevelKit.BoundarySpec Bounds = LevelKit.BoundarySpec.Default;
+        /// <summary>
+        /// 雾（主题默认 40 / 260 m）：调远——出生点到大佛窟 150 m、到崖顶寺塔 190 m，默认雾把崖面冲成一片灰；
+        /// 70 / 420 m 下崖面、窟檐、大佛和寺塔都读得清，远景两圈台地（400–760 m）照样一层层退进雾里
+        /// </summary>
+        const float FogStart = 70f, FogEnd = 420f;
+        /// <summary>游玩区外的沙丘抬升高度（米）：边缘一圈陡沙坎（> 45°），冲刺 / 二段跳翻不出去，不靠空气墙</summary>
+        const float OuterRise = 9f;
         /// <summary>游玩区（等值线外起风推回）</summary>
         static readonly Vector2 PlayMin = new(4, 4), PlayMax = new(300, 212);
 
@@ -186,6 +195,13 @@ namespace Spiritfire.Art.Editor.Levels
 
         // ───────────── 场地 ─────────────
         static readonly Vector2 Spawn = new(30, 28);
+        /// <summary>
+        /// 出生点通向大佛窟的车辙（中景引导线）：南岸 → 宕泉河浅滩 → 北岸 → 窟口广场外。古时香客走的车道，被沙埋了大半
+        /// </summary>
+        static readonly Vector2[] PilgrimRoad =
+        {
+            new(36, 33), new(52, 42), new(70, 52), new(86, 62), new(98, 76), new(110, 88), new(124, 100), new(136, 110),
+        };
         static readonly Vector2 Site1 = Below(NicheX, 16), Site2 = Ledge(78, 0.5f), Site3 = Top(190, 12), Site4 = BarAt;
         /// <summary>河滩遗骸（守军场地中心 = 藏宝点）、藏经洞（西段窟檐层最西头）</summary>
         static readonly Vector2 GuardCache = new(112, 56), SutraCave = Ledge(48, 0.6f);
@@ -268,7 +284,10 @@ namespace Spiritfire.Art.Editor.Levels
             }
 
             // ── 5. 崖顶塔基台 + 两条坡道 ──
-            float pv = Plateau(p, PagodaAt, PagodaHalf, 0, PagodaPlatH, 0.6f, NoRamps);
+            // 台沿一圈石砌台块（BuildPlinth，外脸在台沿外 0.1 m、进深 4 m）：地形台面往里缩 2 m，高度图把硬边抹成的 2–3 m 缓坡落在台块后面，
+            // 台块外脸整面露出来（原来缓坡压在台块外脸上，台块只露个顶，读起来还是个土包）
+            float platSd = LevelKit.BoxSdf(p, PagodaAt - PagodaHalf + new Vector2(2, 2), PagodaAt + PagodaHalf - new Vector2(2, 2));
+            float pv = (1 - Smooth(-0.3f, 0.3f, platSd)) * PagodaPlatH;
             if (pv > 0) h = Mathf.Max(h, Mathf.Lerp(h, TopY + PagodaPlatH, pv / PagodaPlatH));
             float platRamp = 0;
             foreach (var (foot, top, width) in PagodaRamps)
@@ -282,7 +301,7 @@ namespace Spiritfire.Art.Editor.Levels
             // ── 6. 游玩区外：沙丘 / 沙山抬升（软边界的风沙把人推回）──
             float outer = 1 - Playable(p);
             float big = Dunes(p, Wind, 60, 10, 5, 0.7f) * Smooth(0, 0.7f, outer);
-            h += Smooth(0, 1, outer) * 4f + Mathf.Max(0, big);
+            h += Smooth(0, 1, outer) * OuterRise + Mathf.Max(0, big);
 
             // ── 7. 地形外缘 40 m 内落回远景地面 ──
             var local = p - Origin;
@@ -299,7 +318,8 @@ namespace Spiritfire.Art.Editor.Levels
                 Mathf.Max(stair * 0.9f, Mathf.Max(platTop, platRamp * 0.8f)))));
             float sandy = Mathf.Max(Mathf.Max(Smooth(0.25f, 1.4f, drifts), sandRamp * 0.95f), Mathf.Max(Smooth(0.3f, 1.2f, apron) * 0.8f, Smooth(0.2f, 0.8f, outer)));
             float slopeSand = (1 - CliffMask(p.x)) * Smooth(-40, 0, u) * (1 - Smooth(20, 26, u));
-            float patches = 0.5f * Smooth(0.2f, 0.55f, Fbm(p, 24, 3, 7) * 0.5f + 0.5f);
+            // 砾石斑块：大块、低对比（南岸平原原来是一块块深色碎斑，画面花）
+            float patches = 0.3f + 0.35f * Smooth(0.25f, 0.65f, Fbm(p, 44, 2, 7) * 0.5f + 0.5f);
             s.sand = Mathf.Max(Mathf.Max(sandy, slopeSand * 0.9f), patches * (1 - ledgeTop) * (1 - riverBed)) * (1 - Mathf.Clamp01(plaza) * 0.8f) * (1 - platTop) * (1 - stair);
             s.rock = Mathf.Max(wall, bar * 0);
             return s;
@@ -329,6 +349,8 @@ namespace Spiritfire.Art.Editor.Levels
             var markers = new GameObject("Markers").transform;
 
             ShowcaseSceneBuilder.BuildLighting(theme, Dir);
+            RenderSettings.fogStartDistance = FogStart;
+            RenderSettings.fogEndDistance = FogEnd;
             var set = LevelKit.BuildTerrainSet(new LevelKit.TerrainSpec
             {
                 dir = Dir, name = Name, size = Size, origin = Origin, baseHeight = Base, heightRange = HeightRange,
@@ -350,6 +372,7 @@ namespace Spiritfire.Art.Editor.Levels
             BuildCliff(set, arch, props);
             BuildClifftop(set, arch, props);
             BuildPlain(set, arch, props);
+            BuildApproach(set, arch, props);
             BuildScatter(set, env);
             BuildMarkers(set, markers);
             var shrine = Put("SM_Tripo_DesertPortalShrine", arch, set, ExitAt, ExitYaw, 1f, 0.15f, new Vector3(9.7f, 11, 3.3f));
@@ -415,6 +438,8 @@ namespace Spiritfire.Art.Editor.Levels
                         ("EastSlope", E(new Vector2(286, 122)), G(ExitAt, 5), false),
                         ("RevSpawn", E(RevSpawn), G(Site3, 2), true),
                         ("RevExit", E(new Vector2(40, 38)), G(RevExitAt, 4), false),
+                        ("PlinthSW", E(PagodaAt + new Vector2(-26, -22)), G(PagodaAt, 3), false),
+                        ("StairwayEast", E(Ledge(214, 0.3f)), G(StairTop(1), 1), false),
                     });
                 }
                 finally
@@ -532,6 +557,30 @@ namespace Spiritfire.Art.Editor.Levels
                 nRail++;
             }
 
+            // 崖壁斜道外沿（朝窟檐层走道一侧）的垛墙：斜道抬过窟檐层 1 m 以上的那段才有，顺坡倾斜；坡脚、坡顶加宽段留空（上下不挡）
+            var stairRail = new GameObject("Stairway Parapets").transform;
+            stairRail.SetParent(root, false);
+            int nStair = 0;
+            for (int i = 0; i < StairX.Length; i++)
+            {
+                var (x0, x1) = StairX[i];
+                float len = Mathf.Abs(x1 - x0), step = ParapetSize.x * 1.2f * 1.02f;
+                float dir = Mathf.Sign(x1 - x0), slope = (TopY - LedgeY) / len;
+                for (float t = 0.12f; t <= 0.84f; t += step / len)
+                {
+                    float x = Mathf.Lerp(x0, x1, t);
+                    var at = AtU(x, StairUc(x) - StairHalf - 0.15f);
+                    float y = Mathf.Lerp(LedgeY, TopY, t) - 0.12f;
+                    var go = PutAt("SM_Tripo_DesertBeaconParapet", stairRail, at, y, YawOf(Outward(x)), 1.2f, ParapetSize);
+                    if (!go) continue;
+                    // 顺坡倾斜：绕垛墙自己的前后轴转，让长边跟着斜道走
+                    var fwd = go.transform.forward;
+                    float roll = Mathf.Atan(slope) * Mathf.Rad2Deg * dir;
+                    go.transform.rotation = Quaternion.AngleAxis(roll, fwd) * go.transform.rotation;
+                    nStair++;
+                }
+            }
+
             // 窟檐层上的掩体：货堆、塌柱、半埋塔刹（离站位 ≥ 2 m）
             PutAt("SM_Tripo_DesertGoodsPile", props, Ledge(70, 0.55f), LedgeY - 0.05f, 15, 1.2f, GoodsSize);
             PutAt("SM_Tripo_DesertColumnRuin", props, Ledge(91, 0.35f), LedgeY - 0.1f, 80, 1f, ColumnRuinSize);
@@ -563,7 +612,7 @@ namespace Spiritfire.Art.Editor.Levels
             Put("SM_Tripo_DesertFinial", props, set, Below(120, 34), 25, 1f, 1.4f, new Vector3(2.5f, 5.5f, 2.3f));
 
             // 藏经洞：西段窟檐层最西头，窟檐下的舍利龛（藏宝点模型由 BuildCaches 挂）
-            Debug.Log($"[Level] 1-A 窟檐：崖脚 {nLow} 跨、窟檐层 {nHigh} 跨，栏墙 {nRail} 段");
+            Debug.Log($"[Level] 1-A 窟檐：崖脚 {nLow} 跨、窟檐层 {nHigh} 跨，栏墙 {nRail} 段，斜道垛墙 {nStair} 段");
         }
 
         static void BuildClifftop(LevelKit.TerrainSet set, Transform arch, Transform props)
@@ -572,6 +621,7 @@ namespace Spiritfire.Art.Editor.Levels
             root.SetParent(arch, false);
             // ③ 塔院：寺塔立在塔基台上（门朝南，望得见崖下）；台下两通碑、四个火盆，北、东两面夯土院墙残段，院里矮墙与货堆
             float platTop = TopY + PagodaPlatH;
+            BuildPlinth(root, platTop);
             var pagoda = PutAt("SM_Tripo_DesertTemplePagoda", root, PagodaAt, platTop - 0.2f, 180, 1f, new Vector3(9.9f, 22.2f, 10.1f));
             if (pagoda) pagoda.name = "Temple Pagoda (landmark)";
             Put("SM_Prop_DesertStele", root, set, PagodaAt + new Vector2(-6, -PagodaHalf.y - 6), 180, 1f, 0.05f, new Vector3(1.7f, 3.8f, 2.1f));
@@ -600,6 +650,112 @@ namespace Spiritfire.Art.Editor.Levels
             var side = new Vector2(ExitFace.y, -ExitFace.x);
             Put("SM_Tripo_DesertBrazier", root, set, ExitAt + ExitFace * 3.5f + side * 6.5f, 0, 1f, 0.05f, new Vector3(1.3f, 2.4f, 1.2f));
             Put("SM_Tripo_DesertBrazier", root, set, ExitAt + ExitFace * 3.5f - side * 6.5f, 0, 1f, 0.05f, new Vector3(1.3f, 2.4f, 1.2f));
+        }
+
+        static readonly Vector3 PlatformBlockSize = new(4.48f, 2.86f, 3.97f);
+
+        /// <summary>
+        /// 塔基台的石砌台沿：四边一圈台块（SM_Tripo_DesertPlatformBlock，4.5 × 2.9 × 4 m），顶面和台面齐平、外脸压在台沿外 0.1 m，底下埋进崖顶；
+        /// 南、西两条坡道处各留 7 m 的口。台块在台面上占外圈 4 m，人照样能走（顶面就是地面）
+        /// </summary>
+        static void BuildPlinth(Transform parent, float platTop)
+        {
+            var root = new GameObject("Plinth Edge").transform;
+            root.SetParent(parent, false);
+            float d = PlatformBlockSize.z, baseY = platTop - PlatformBlockSize.y + 0.02f, open = 3.5f;
+            var h = PagodaHalf;
+            int n = 0;
+            // 一段边：中线在台沿往里 d/2 - 0.1，from → to（局部，沿边方向的坐标），朝外 face
+            void Row(Vector2 axis, Vector2 face, float inset, float from, float to)
+            {
+                float len = to - from;
+                if (len < 1f) return;
+                int count = Mathf.Max(1, Mathf.CeilToInt(len / PlatformBlockSize.x));
+                float stepLen = len / count;
+                for (int k = 0; k < count; k++)
+                {
+                    float a = from + stepLen * (k + 0.5f);
+                    var at = PagodaAt + axis * a + face * inset;
+                    var go = PutAt("SM_Tripo_DesertPlatformBlock", root, at, baseY, YawOf(face), 1f, PlatformBlockSize);
+                    if (go) n++;
+                }
+            }
+            float insetZ = h.y - d * 0.5f + 0.1f, insetX = h.x - d * 0.5f + 0.1f;
+            // 南（坡道口在中间）、北（整段）；东（整段）、西（坡道口在中间）。东西两边让开南北两边已经占掉的角
+            Row(Vector2.right, Vector2.down, insetZ, -h.x - 0.1f, -open);
+            Row(Vector2.right, Vector2.down, insetZ, open, h.x + 0.1f);
+            Row(Vector2.right, Vector2.up, insetZ, -h.x - 0.1f, h.x + 0.1f);
+            Row(Vector2.up, Vector2.right, insetX, -h.y + d - 0.1f, h.y - d + 0.1f);
+            Row(Vector2.up, Vector2.left, insetX, -h.y + d - 0.1f, -open);
+            Row(Vector2.up, Vector2.left, insetX, open, h.y - d + 0.1f);
+            Debug.Log($"[Level] 1-A 塔基台台沿：台块 {n} 块（南 / 西坡道口各 {open * 2:F0} m）");
+        }
+
+        /// <summary>
+        /// 出生区和通往大佛窟的来路（构图：近景框景 + 中景引导线 + 远景崖面）：
+        ///   近景左手一通路碑（香客道口的界碑）、再往左一截半埋的塔刹和倒伏的石柱；右手倒毙的驼队——残车、货堆、陶罐；
+        ///   中景是一路车辙（<see cref="PilgrimRoad"/>）从脚下伸向宕泉河浅滩、再上北岸到窟口广场；
+        ///   逆行的出生点（崖顶东头祭坛前）左手一截塌柱、右手一段矮墙和一通碑，看向崖顶塔院
+        /// </summary>
+        static void BuildApproach(LevelKit.TerrainSet set, Transform arch, Transform props)
+        {
+            var root = new GameObject("Approach").transform;
+            root.SetParent(arch, false);
+            var look = (new Vector2(PagodaAt.x, PagodaAt.y) - Spawn).normalized * 0.6f + (new Vector2(NicheX, ColossusAt.y) - Spawn).normalized * 0.4f;
+            var fwd = look.normalized;
+            var left = new Vector2(-fwd.y, fwd.x);
+            Vector2 At(float ahead, float side) => Spawn + fwd * ahead + left * side;
+            Put("SM_Prop_DesertStele", root, set, At(8f, 4.2f), YawOf(-fwd) + 15, 1f, 0.15f, new Vector3(1.7f, 3.8f, 2.1f));
+            Put("SM_Tripo_DesertFinial", root, set, At(8.5f, 7f), 25, 1.1f, 1.2f, new Vector3(2.5f, 5.5f, 2.3f));
+            Put("SM_Tripo_DesertColumnRuin", props, set, At(4.5f, 8.5f), YawOf(fwd) + 70, 1f, 0.25f, ColumnRuinSize);
+            Put("SM_Tripo_DesertCaravanWreck", root, set, At(10f, -7.5f), YawOf(fwd) + 105, 1.3f, 0.3f, new Vector3(3.8f, 1.8f, 4));
+            Put("SM_Tripo_DesertGoodsPile", props, set, At(6.5f, -4f), YawOf(fwd) - 30, 1.2f, 0.15f, GoodsSize);
+            Put("SM_Prop_DesertUrns", props, set, At(7.5f, -2.4f), 0, 1.2f, 0.1f, new Vector3(0.8f, 0.8f, 0.8f));
+
+            // 车辙：顺 PilgrimRoad 每 8 m 一片（离地 3 cm、顺坡），离出生点 6 m 内不铺（脚下不压一块贴花）
+            var ruts = new GameObject("Pilgrim Ruts").transform;
+            ruts.SetParent(root, false);
+            const float rutLen = 8f;
+            int placed = 0;
+            for (int i = 0; i + 1 < PilgrimRoad.Length; i++)
+            {
+                var a0 = PilgrimRoad[i];
+                var a1 = PilgrimRoad[i + 1];
+                float seg = Vector2.Distance(a0, a1);
+                int pieces = Mathf.Max(1, Mathf.RoundToInt(seg / rutLen));
+                for (int k = 0; k < pieces; k++)
+                {
+                    var a = Vector2.Lerp(a0, a1, k / (float)pieces);
+                    var b = Vector2.Lerp(a0, a1, (k + 1) / (float)pieces);
+                    var mid = (a + b) * 0.5f;
+                    if (Vector2.Distance(mid, Spawn) < 6f) continue;
+                    var dd = b - a;
+                    float run = dd.magnitude;
+                    float ya = set.GroundY(a.x, a.y), yb = set.GroundY(b.x, b.y);
+                    float yaw = Mathf.Atan2(dd.x, dd.y) * Mathf.Rad2Deg, pitch = -Mathf.Atan2(yb - ya, run) * Mathf.Rad2Deg;
+                    float y = Mathf.Max((ya + yb) * 0.5f, set.GroundY(mid.x, mid.y)) + 0.03f;
+                    var go = LevelKit.PlaceOrBox("SM_Decal_DesertCartRuts", ruts, new Vector3(mid.x, y, mid.y), new Vector3(2.4f, 0.05f, run), yaw);
+                    if (!go || go.name.StartsWith("Placeholder"))
+                    {
+                        if (go) Object.DestroyImmediate(go);
+                        continue;
+                    }
+                    go.transform.SetPositionAndRotation(new Vector3(mid.x, y, mid.y), Quaternion.Euler(pitch, yaw, 0));
+                    go.transform.localScale = new Vector3(1, 1, run / rutLen);
+                    foreach (var c in go.GetComponentsInChildren<Collider>(true)) c.enabled = false;
+                    foreach (var r in go.GetComponentsInChildren<Renderer>(true)) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    placed++;
+                }
+            }
+
+            // 逆行出生点（崖顶东头祭坛前，看向 ③ 塔院）的近景
+            var rf = (Site3 - RevSpawn).normalized;
+            var rl = new Vector2(-rf.y, rf.x);
+            Vector2 RAt(float ahead, float side) => RevSpawn + rf * ahead + rl * side;
+            Put("SM_Tripo_DesertColumnRuin", props, set, RAt(6f, 6.5f), YawOf(rf) + 60, 1f, 0.25f, ColumnRuinSize);
+            Put("SM_Tripo_DesertCoverWall", props, set, RAt(9f, -6.5f), YawOf(rf) + 80, 1f, 0.3f, CoverWallSize);
+            Put("SM_Prop_DesertStele", root, set, RAt(5f, -3f), YawOf(-rf) - 10, 1f, 0.15f, new Vector3(1.7f, 3.8f, 2.1f));
+            Debug.Log($"[Level] 1-A 来路：车辙 {placed} 片");
         }
 
         static void BuildPlain(LevelKit.TerrainSet set, Transform arch, Transform props)
@@ -647,18 +803,30 @@ namespace Spiritfire.Art.Editor.Levels
                 StairHeight(p, out float stairMask);
                 if (stairMask > 0.01f) d = 0;
                 d = Mathf.Min(d, LevelKit.BoxSdf(p, PagodaAt - PagodaHalf - new Vector2(10, 10), PagodaAt + PagodaHalf + new Vector2(10, 4)));
-                d = Mathf.Min(d, Vector2.Distance(p, Spawn) - 8);
+                d = Mathf.Min(d, Vector2.Distance(p, Spawn) - 11);
+                d = Mathf.Min(d, Vector2.Distance(p, RevSpawn) - 9);
+                for (int i = 0; i + 1 < PilgrimRoad.Length; i++)
+                    d = Mathf.Min(d, LevelKit.SegmentDistance(p, PilgrimRoad[i], PilgrimRoad[i + 1], out _) - 2.2f);
                 d = Mathf.Min(d, Vector2.Distance(p, ExitAt) - 10);
                 d = Mathf.Min(d, Vector2.Distance(p, RevExitAt) - 8);
                 if (Mathf.Abs(p.x - NicheX) < NicheHalf + 3) d = Mathf.Min(d, U(p) > -12 ? 0 : d);
                 return Mathf.Max(0, d);
             }
-            var counts = LevelKit.ScatterDetails(set, LevelKit.ScatterPresets.Details("Desert"), Clear, 1f, 180f);
+            // 黑戈壁砾石散布件在这张图里减到三分之一、更成团（满地均匀的小黑团让南岸平原和崖顶看着花）
+            var rules = LevelKit.ScatterPresets.Details("Desert");
+            foreach (var r in rules)
+                if (r.name == "DesertPebbles")
+                {
+                    r.perHundredSqm *= 0.33f;
+                    r.clump = 0.85f;
+                    r.clumpScale = 28;
+                }
+            var counts = LevelKit.ScatterDetails(set, rules, Clear, 1f, 180f);
             var boulders = LevelKit.ScatterPresets.Boulders("Desert");
             var where = boulders.where;
             boulders.where = pt => (where?.Invoke(pt) ?? 1) * (U(pt.p) < -18 ? 1 : 0) * Playable(pt.p)
-                                   * (1 - Disc(pt.p, Spawn, 12, 4)) * (1 - Disc(pt.p, Site1, 26, 4)) * (1 - Disc(pt.p, Site4, 30, 4)) * (1 - Disc(pt.p, GuardCache, 18, 4));
-            var big = LevelKit.ScatterProps(set, env, boulders, new Rect(10, 10, 285, 110), 9f, Clear);
+                                   * (1 - Disc(pt.p, Spawn, 22, 6)) * (1 - Disc(pt.p, Site1, 26, 4)) * (1 - Disc(pt.p, Site4, 30, 4)) * (1 - Disc(pt.p, GuardCache, 18, 4));
+            var big = LevelKit.ScatterProps(set, env, boulders, new Rect(10, 10, 285, 110), 12f, Clear);
             Debug.Log($"[Level] 1-A 散布：{string.Join("、", counts.Select(kv => $"{kv.Key} {kv.Value}"))}；巨砾 {big.Count}");
         }
 
@@ -742,8 +910,8 @@ namespace Spiritfire.Art.Editor.Levels
             new("Enemy_3_North", PagodaAt + new Vector2(0, 16), StationRole.Assault, 1),
             new("Enemy_3_West", PagodaAt + new Vector2(-28, 8), StationRole.Flank, 1),
             new("Enemy_3_East", PagodaAt + new Vector2(22, -6), StationRole.Flank, 2),
-            new("Enemy_3_PlatformW", PagodaAt + new Vector2(-8, 6), StationRole.Ranged),
-            new("Enemy_3_PlatformE", PagodaAt + new Vector2(9, -6), StationRole.Ranged, 1),
+            new("Enemy_3_PlatformW", PagodaAt + new Vector2(-7.4f, 3.5f), StationRole.Ranged),
+            new("Enemy_3_PlatformE", PagodaAt + new Vector2(7.4f, -3.5f), StationRole.Ranged, 1),
             new("Enemy_3_Toad", PagodaAt + new Vector2(18, 16), StationRole.Artillery),
             new AnchorDef("Enemy_3_Air", PagodaAt + new Vector2(0, -13), StationRole.Support, 0, true).Fly(PagodaAt + new Vector2(10, 26)),
             // ④ 河洲驼队：沙洲两头正面，河床两头侧翼，南北两岸远程，北岸跃下河床一处，西南岸蜃楼蟾，飞天飞临
@@ -1023,7 +1191,7 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("出生·宕泉南岸", G(Spawn)).Route("藏宝·河滩遗骸", G(GuardCache + new Vector2(0, -4))).Route("过河", G(new Vector2(130, RiverZ(130))))
                 .Route("① 大佛窟前", G(Site1)).Route("西积沙坡脚", G(SandRamps[0].foot)).Route("西积沙坡顶", G(Ledge(64, 0.45f)))
                 .Route("② 西崖窟檐", G(Site2)).Route("藏宝·藏经洞", G(SutraCave + Outward(SutraCave.x) * 2.5f)).Route("西崖壁斜道脚", G(StairFoot(0)))
-                .Route("西崖壁斜道顶", G(Top(134, 4))).Route("半埋佛塔", G(StupaAt + new Vector2(4, -10))).Route("③ 塔基台", G(PagodaAt + new Vector2(-9, -5)))
+                .Route("西崖壁斜道顶", G(Top(134, 4))).Route("半埋佛塔", G(StupaAt + new Vector2(4, -10))).Route("③ 塔基台", G(PagodaAt + new Vector2(-7.5f, -3)))
                 .Route("东崖壁斜道顶", G(Top(170, 4))).Route("东崖壁斜道脚", G(StairFoot(1))).Route("东积沙坡顶", G(Ledge(228, 0.45f)))
                 .Route("东积沙坡脚", G(SandRamps[1].foot)).Route("④ 河洲驼队", G(Site4)).Route("东头塌崖沙坡", G(Below(eastX - 4, 10)))
                 .Route("出口祭坛前", G(ExitAt + ExitFace * 4.5f))
@@ -1033,7 +1201,8 @@ namespace Spiritfire.Art.Editor.Levels
                 .Sight("出生 → 崖顶寺塔", G(Spawn, 1.62f), pagodaTop, 6, "SM_Tripo_DesertTemplePagoda")
                 .Sight("出生 → 大佛", G(Spawn, 1.62f), colossusHead, 6, "SM_Tripo_DesertSeatedColossus")
                 .Sight("① 窟口 → 大佛", G(Below(NicheX, 30), 1.62f), colossusHead, 6, "SM_Tripo_DesertSeatedColossus")
-                .Sight("② 窟檐层 → 寺塔", G(Ledge(100, 0.3f), 1.62f), pagodaTop, 6, "SM_Tripo_DesertTemplePagoda")
+                // 站在西斜道坡脚以西看（x 100 处离斜道第一段垛墙只有 6 m，视线擦着垛墙顶）
+                .Sight("② 窟檐层 → 寺塔", G(Ledge(90, 0.3f), 1.62f), pagodaTop, 6, "SM_Tripo_DesertTemplePagoda")
                 .Sight("③ 崖顶前沿 → 河洲驼队", G(Top(222, 2), 1.62f), G(Site4, 1.5f), 6)
                 .Sight("④ 河洲 → 寺塔", G(BarAt + new Vector2(-14, 0), 1.62f), pagodaTop, 6, "SM_Tripo_DesertTemplePagoda");
             return spec;

@@ -774,7 +774,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 怪物入场点（<see cref="SG.MonsterEntry"/>，游荡怪群只从这里进场；局部坐标）：北 / 南河道西头的岩壁缺口、中雅丹 NC2 背风尾、
-        /// 屋脊之海北缘、南河道汇流口、塔院南墙根。离两个走法的出生点 ≥ 30 m、不在据点触发圈里
+        /// 屋脊之海北缘、南河道汇流口、塔院南墙根，加 CS3 雅丹岛顶跃下进南河道（别的岛 13–18 m 太高，M1 / 北岩台在据点触发圈里）。
+        /// 离两个走法的出生点 ≥ 30 m、不在据点触发圈里
         /// </summary>
         static void BuildEntries(Transform markers)
         {
@@ -786,6 +787,8 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.Entry(root, "屋脊之海北缘", OnGround(new Vector2(198, 64)), OnGround(Site2));
             LevelKit.Entry(root, "南河道汇流口", OnGround(new Vector2(204, -40)), OnGround(Site3));
             LevelKit.Entry(root, "塔院南墙根", OnGround(new Vector2(234, -44)), OnGround(StupaC));
+            // CS3 是 9 m 的雅丹岛（汇流前，离 ③ 塔尖广场 45 m、离南河道汇流前的驻守点 18 m）：从岛顶跳进南河道
+            LevelKit.Entry(root, "CS3 雅丹顶跃下", OnGround(new Vector2(166, -38)), OnGround(Site3), SG.SpawnMode.Drop, OnGround(new Vector2(167, -26), 0.05f), 3f);
         }
 
         /// <summary>BuildEncounters 摆的四个必清场地（① … ④），布局变体改写编制 / 奖励用</summary>

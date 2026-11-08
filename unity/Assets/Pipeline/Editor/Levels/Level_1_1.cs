@@ -381,6 +381,7 @@ namespace Spiritfire.Art.Editor.Levels
             var smokeAt = BuildBeacon(terrain, built);
             BuildCamp(terrain, built, props);
             BuildCacheDressing(terrain, props);
+            BuildPostDressing(terrain, props);
             var exit = LevelKit.PlaceOrBox(ShrineId, props, terrain, Exit.x, Exit.y, -100, new Vector3(6, 6, 4));
             // 远景地标：敦煌坐像（替换题材不对的胡狼头巨像），面朝游玩区
             var colossusAt = new Vector2(150, 248);
@@ -458,6 +459,7 @@ namespace Spiritfire.Art.Editor.Levels
                         ("NorthView", E(new Vector2(180, 150)), G(new Vector2(150, 220), 10), false),
                         ("PostWestRamp", E(new Vector2(128, 108)), G(Posts[0].at, 1f), false),
                         ("PostEastRamp", E(new Vector2(196, 128)), G(Posts[1].at, 1f), false),
+                        ("PostEastClose", E(Posts[1].at + new Vector2(-9, 11)), G(Posts[1].at, 1.2f), false),
                         ("RevSpawn", E(RevSpawn), G(Camp, 1.5f), true),
                         ("RevExit", E(new Vector2(40, 42)), G(RevExitAt, 4f), false),
                     });
@@ -859,6 +861,48 @@ namespace Spiritfire.Art.Editor.Levels
         /// 「商队遗货」的陈设：一车货翻在雅丹背风处——货堆、陶罐在沙里露一角，拒马挡在蝎卫那一侧当掩体。
         /// 都离藏宝点 ≥ 3.9 m（宝箱从藏宝点原地冒出来，接近位要留空）。「戍卒窖藏」的标志就是长城转角本身
         /// </summary>
+        /// <summary>
+        /// 两处坡道脚驻守点的摆件（埋伏站位在中心 3.5 m 一圈，摆件都在圈外、朝来人一侧当掩体，不压站位）：
+        ///   「倒毙驼队」（西坡道下，古道上）：一辆翻倒的残车横在来路上、旁边散落的货堆，背后一摞陶罐和货包——沙匪就蹲在残车后面；
+        ///   「戍卒残营」（东坡道脚）：营中一个火盆（灶），背后一座破棚架、一堆柴，朝来路一侧一段矮墙，侧后一截夯土残墙
+        /// </summary>
+        static void BuildPostDressing(Terrain t, Transform props)
+        {
+            var root = new GameObject("Post Dressing").transform;
+            root.SetParent(props, false);
+            static float Yaw(Vector2 d) => Mathf.Atan2(d.x, d.y) * Mathf.Rad2Deg;
+            {
+                var (_, _, at, toward, _, _) = Posts[0];
+                var d = (toward - at).normalized;
+                var side = new Vector2(d.y, -d.x);
+                Vector2 P(float ahead, float lateral) => at + d * ahead + side * lateral;
+                var wreck = P(6.4f, 0.5f);
+                LevelKit.PlaceOrBox("SM_Tripo_DesertCaravanWreck", root, LevelKit.OnGround(t, wreck.x, wreck.y, -0.3f), new Vector3(3.8f, 1.8f, 4) * 1.2f, Yaw(side) + 10, 1.2f);
+                var goods = P(5.2f, 4.4f);
+                LevelKit.PlaceOrBox("SM_Tripo_DesertGoodsPile", root, LevelKit.OnGround(t, goods.x, goods.y, -0.15f), new Vector3(1.7f, 1.6f, 1.3f) * 1.2f, Yaw(d) + 35, 1.2f);
+                var urns = P(-5.4f, 1.6f);
+                LevelKit.PlaceOrBox("SM_Prop_DesertUrns", root, LevelKit.OnGround(t, urns.x, urns.y, -0.1f), new Vector3(0.8f, 0.8f, 0.8f) * 1.2f, 20, 1.2f);
+                var pack = P(-5f, -3.4f);
+                LevelKit.PlaceOrBox("SM_Tripo_DesertGoodsPile", root, LevelKit.OnGround(t, pack.x, pack.y, -0.15f), new Vector3(1.7f, 1.6f, 1.3f), Yaw(side) - 20, 1f);
+            }
+            {
+                var (_, _, at, toward, _, _) = Posts[1];
+                var d = (toward - at).normalized;
+                var side = new Vector2(d.y, -d.x);
+                Vector2 P(float ahead, float lateral) => at + d * ahead + side * lateral;
+                LevelKit.PlaceOrBox("SM_Tripo_DesertBrazier", root, LevelKit.OnGround(t, at.x, at.y, -0.05f), new Vector3(1.3f, 2.4f, 1.2f), 0, 1f);
+                var stall = P(-8.5f, -1.5f); // 埋伏站位一圈 3.5 m：棚架放到圈外 5 m 以上（蝎卫半径 1.5 m 也站得下）
+                LevelKit.PlaceOrBox("SM_Tripo_DesertMarketStall", root, LevelKit.OnGround(t, stall.x, stall.y, -0.1f), new Vector3(3.7f, 3.6f, 2.2f), Yaw(d), 1f);
+                var wood = P(-4.2f, 4f);
+                LevelKit.PlaceOrBox("SM_Tripo_DesertBrushwoodPile", root, LevelKit.OnGround(t, wood.x, wood.y, -0.05f), new Vector3(1.2f, 1.3f, 1.2f) * 1.5f, 40, 1.5f);
+                var low = P(6.6f, -0.5f);
+                LevelKit.PlaceOrBox("SM_Tripo_DesertCoverWall", root, LevelKit.OnGround(t, low.x, low.y, -0.3f), new Vector3(4.9f, 2.6f, 1f), Yaw(d), 1f);
+                var ruin = P(-4.5f, -5f);
+                var wallGo = LevelKit.PlaceOrBox(PosthouseWallId, root, LevelKit.OnGround(t, ruin.x, ruin.y, -0.6f), PosthouseWallSize, Yaw(side) + 15, 1f);
+                if (wallGo && !IsPlaceholder(wallGo)) wallGo.transform.localScale = new Vector3(1, 0.7f, 1);
+            }
+        }
+
         static void BuildCacheDressing(Terrain t, Transform props)
         {
             var root = new GameObject("Cache Dressing").transform;
@@ -885,10 +929,10 @@ namespace Spiritfire.Art.Editor.Levels
         /// </summary>
         static readonly (string key, string title, Vector2 at, Vector2 toward, (string id, int n)[] squad, string hint)[] Posts =
         {
-            ("WestRamp", "西坡道下 · 伏兵", new Vector2(146, 122), new Vector2(124, 106),
-                new[] { ("jerboa_blade", 3), ("scorpion_archer", 1) }, "坡道下蹲着一队沙匪——先点掉蝎卫"),
-            ("EastRamp", "东坡道脚 · 伏兵", new Vector2(208, 112), new Vector2(190, 133),
-                new[] { ("fire_rat", 2), ("jerboa_blade", 2), ("scorpion_archer", 1) }, "火浣鼠会顺坡道滚过来——拉开距离"),
+            ("WestRamp", "倒毙驼队", new Vector2(146, 122), new Vector2(124, 106),
+                new[] { ("jerboa_blade", 3), ("scorpion_archer", 1) }, "沙匪蹲在倒毙的驼队后面——先点掉蝎卫"),
+            ("EastRamp", "戍卒残营", new Vector2(208, 112), new Vector2(190, 133),
+                new[] { ("fire_rat", 2), ("jerboa_blade", 2), ("scorpion_archer", 1) }, "残营里火浣鼠会顺坡道滚过来——拉开距离"),
             ("RiverHead", "雅丹西 · 河源沙洲", new Vector2(86, 100), new Vector2(96, 72),
                 new[] { ("mirage_toad", 1), ("jerboa_blade", 3) }, "蜃楼蟾蹲在沙洲上吊射——先打真身"),
             ("EastBank", "河床东岸 · 伏沙", new Vector2(112, 50), new Vector2(90, 62),
