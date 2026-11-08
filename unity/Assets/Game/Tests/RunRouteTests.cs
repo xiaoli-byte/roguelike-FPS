@@ -26,7 +26,8 @@ namespace Spiritfire.Game.Tests
             savedRun = RunState.Current;
             RunState.Current = null;
             RunPlan.DemoEnd = null;
-            RunPlan.SceneReady = s => s.chapter < 4;
+            // 缺省：前三章主图建好，第四章和备选图都还没有（图池另有一项测）
+            RunPlan.SceneReady = s => s.chapter < 4 && !s.alt;
         }
 
         [TearDown]
@@ -99,7 +100,7 @@ namespace Spiritfire.Game.Tests
             CollectionAssert.AreEqual(RunRoute.Build(20261108).maps, RunRoute.Build(20261108).maps);
             // 第四章多建好一张图，不改变前三章的顺序（每章各自派生随机序列）
             var a = RunRoute.Build(777);
-            RunPlan.SceneReady = s => s.chapter < 4 || s.code == "4-1";
+            RunPlan.SceneReady = s => (s.chapter < 4 && !s.alt) || s.code == "4-1";
             var b = RunRoute.Build(777);
             CollectionAssert.AreEqual(a.maps, b.maps.Take(12).ToArray());
         }
@@ -108,7 +109,7 @@ namespace Spiritfire.Game.Tests
         public void UnbuiltMaps_AreSkipped_LaterSlotsMoveUp()
         {
             // 现状：第四章只建好 4-1、4-3（4-2、4-4 还没有场景）
-            RunPlan.SceneReady = s => s.chapter < 4 || s.code == "4-1" || s.code == "4-3";
+            RunPlan.SceneReady = s => (s.chapter < 4 && !s.alt) || s.code == "4-1" || s.code == "4-3";
             for (int seed = 1; seed <= 20; seed++)
             {
                 var r = RunRoute.Build(seed);
@@ -120,6 +121,56 @@ namespace Spiritfire.Game.Tests
                 Assert.AreSame(r.Last, r.Final);
                 Assert.IsNull(r.Next(r.Last));
             }
+        }
+
+        [Test]
+        public void Pool_AltMapsJoinTheShuffle_SameSlotCount()
+        {
+            RunPlan.SceneReady = s => s.chapter < 4; // 备选图也建好了
+            var seen = new HashSet<string>();
+            int withAlt = 0;
+            for (int seed = 1; seed <= 300; seed++)
+            {
+                var r = RunRoute.Build(seed * 104729);
+                Assert.AreEqual(12, r.Count, "槽位数不变：每章 3 张开放图 + 首领");
+                CollectionAssert.AreEqual(new[] { "1-1", "1-2", "1-3", "1-4", "2-1", "2-2", "2-3", "2-4", "3-1", "3-2", "3-3", "3-4" },
+                    r.Slots.Select(s => s.code).ToArray());
+                Assert.AreEqual("1-3", r.Get("1-3").map.code, "补给营那张照样钉在第一章最后");
+                for (int ch = 1; ch <= 3; ch++)
+                {
+                    var maps = r.Slots.Where(s => s.chapter == ch && !s.IsBoss).Select(s => s.map).ToArray();
+                    Assert.AreEqual(3, maps.Distinct().Count(), $"第 {ch} 章三个槽位三张不同的图");
+                    foreach (var m in maps)
+                        Assert.IsTrue(RunPlan.Stages.Contains(m) || RunPlan.Pool.Contains(m), m.code);
+                }
+                foreach (var s in r.Slots)
+                {
+                    seen.Add(s.map.code);
+                    if (s.map.alt)
+                    {
+                        Assert.AreEqual(s.map.scene, s.scene);
+                        Assert.AreEqual("scroll", s.clearReward);
+                    }
+                }
+                if (r.Slots.Any(s => s.map.alt)) withAlt++;
+            }
+            foreach (var code in new[] { "1-1", "1-2", "1-A", "2-1", "2-2", "2-3", "2-A", "3-1", "3-2", "3-3", "3-A" })
+                Assert.IsTrue(seen.Contains(code), $"{code} 在 300 局里至少出现过一次");
+            Assert.Greater(withAlt, 200, "大部分局至少抽到一张备选图");
+
+            // 不洗牌（生涯第一局 / 调试局）不走备选图；规划表原顺序也不认它们
+            Assert.IsFalse(RunRoute.Build(5, false).Slots.Any(s => s.map.alt));
+            var alt = RunPlan.Canonical("1-A");
+            Assert.IsNotNull(alt);
+            Assert.IsTrue(alt.alt);
+            Assert.AreSame(alt, RunPlan.CanonicalForScene(alt.scene));
+            Assert.IsFalse(RunPlan.InPlay(alt));
+            Assert.IsNull(RunPlan.Next(alt));
+            Assert.IsFalse(RunPlan.IsFinal(alt));
+            Assert.AreEqual(16, RunPlan.Stages.Count, "主线表不含备选图（经济投影、平衡表）");
+            // 存档里的路线带着备选图也能读回来
+            var withPool = RunRoute.Build(Enumerable.Range(1, 300).First(sd => RunRoute.Build(sd * 104729).Slots.Any(s => s.map.alt)) * 104729);
+            CollectionAssert.AreEqual(withPool.maps, RunRoute.FromMaps(withPool.maps).maps);
         }
 
         [Test]

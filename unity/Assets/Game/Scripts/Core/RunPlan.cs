@@ -49,15 +49,21 @@ namespace Spiritfire.Game
         public readonly StageSpec map;
         /// <summary>所属的每局路线（规划表里的关 = null：<see cref="RunPlan.Next"/> 等按规划表原顺序走）</summary>
         public readonly RunRoute route;
+        /// <summary>
+        /// 备选图（<see cref="RunPlan.Pool"/>）：不在规划表的主线上（生涯第一局、调试局不走它），只在每局路线洗牌时和本章的主图一起抽，
+        /// 抽中了就占一个开放图槽位。编号是「章-字母」（「1-A」），路线上的槽位照常按位置编号
+        /// </summary>
+        public readonly bool alt;
 
         public StageSpec(int order, int chapter, int index, string title, string chapterName, string scene, StageKind kind, string music, string clearReward,
-            bool supplyCamp = false)
+            bool supplyCamp = false, string altCode = null)
         {
             map = this;
+            alt = !string.IsNullOrEmpty(altCode);
             this.order = order;
             this.chapter = chapter;
             this.index = index;
-            code = $"{chapter}-{index + 1}";
+            code = alt ? altCode : $"{chapter}-{index + 1}";
             this.title = title;
             this.chapterName = chapterName;
             this.scene = scene;
@@ -123,6 +129,7 @@ namespace Spiritfire.Game
         public const string DemoEndArg = "-demoEnd", DemoArg = "-demo";
 
         static readonly StageSpec[] stages = Build();
+        static readonly StageSpec[] pool = BuildPool();
         static string demoEnd;
         static bool demoResolved;
 
@@ -168,6 +175,21 @@ namespace Spiritfire.Game
 
         /// <summary>全部关卡（主线顺序，整表 15 关，不受试玩开关和场景有没有建好影响：构建顺序、经济投影用）</summary>
         public static IReadOnlyList<StageSpec> Stages => stages;
+        /// <summary>
+        /// 备选图（每章多出来的开放图，<see cref="StageSpec.alt"/>）：每局路线洗牌时和本章主图一起抽，抽满本章的开放图槽位
+        /// （槽位数 = 本章建好的主图数）。不在主线上：经济投影、平衡表、规划表原顺序都不算它们
+        /// </summary>
+        public static IReadOnlyList<StageSpec> Pool => pool;
+
+        /// <summary>主线 + 备选图（构建设置、按编号 / 场景查图用）</summary>
+        public static IEnumerable<StageSpec> AllMaps
+        {
+            get
+            {
+                foreach (var s in stages) yield return s;
+                foreach (var s in pool) yield return s;
+            }
+        }
         /// <summary>第一关：当前局路线的第一个槽位；没有路线时是规划表的 1-1</summary>
         public static StageSpec First => CurrentRoute?.First ?? stages[0];
 
@@ -218,6 +240,7 @@ namespace Spiritfire.Game
         {
             if (s == null) return false;
             if (s.route != null) return s.route.InPlay(s);
+            if (s.alt) return false;
             int end = CanonicalFinal.order;
             return s.order <= end && (s.order == end || Ready(s));
         }
@@ -250,7 +273,7 @@ namespace Spiritfire.Game
         public static StageSpec Next(StageSpec s)
         {
             if (s?.route != null) return s.route.Next(s);
-            if (s == null || IsFinal(s)) return null;
+            if (s == null || s.alt || IsFinal(s)) return null;
             int end = CanonicalFinal.order;
             for (int i = s.order + 1; i <= end && i < stages.Length; i++)
                 if (i == end || Ready(stages[i]))
@@ -259,10 +282,10 @@ namespace Spiritfire.Game
         }
 
         /// <summary>这一局的最后一关（完整版 = 最后一个建好的关；试玩版 DemoEnd）：打完 = 胜利结算</summary>
-        public static bool IsFinal(StageSpec s) => s?.route != null ? s.route.IsFinal(s) : s != null && s.order >= CanonicalFinal.order;
+        public static bool IsFinal(StageSpec s) => s?.route != null ? s.route.IsFinal(s) : s != null && !s.alt && s.order >= CanonicalFinal.order;
 
         /// <summary>完整版的最后一关（最后一个建好的关：击败全部首领）</summary>
-        public static bool IsLast(StageSpec s) => s?.route != null ? s.route.IsLast(s) : s != null && s.order >= CanonicalLastReady.order;
+        public static bool IsLast(StageSpec s) => s?.route != null ? s.route.IsLast(s) : s != null && !s.alt && s.order >= CanonicalLastReady.order;
 
         /// <summary>按编号取（「1-2」）：当前局路线上的那个槽位；没有路线 / 路线里没有这个编号时取规划表；都没有则 null</summary>
         public static StageSpec Get(string code) => CurrentRoute?.Get(code) ?? Canonical(code);
@@ -271,7 +294,7 @@ namespace Spiritfire.Game
         public static StageSpec Canonical(string code)
         {
             if (string.IsNullOrEmpty(code)) return null;
-            foreach (var s in stages)
+            foreach (var s in AllMaps)
                 if (s.code == code) return s;
             return null;
         }
@@ -284,7 +307,7 @@ namespace Spiritfire.Game
         {
             if (string.IsNullOrEmpty(scenePath)) return null;
             var p = scenePath.Replace('\\', '/');
-            foreach (var s in stages)
+            foreach (var s in AllMaps)
                 if (string.Equals(s.scene, p, StringComparison.OrdinalIgnoreCase)) return s;
             return null;
         }
@@ -324,6 +347,23 @@ namespace Spiritfire.Game
             Add(4, "大渡河·铁索桥峡谷", Ch4, "L4_2_Dadu");
             Add(4, "彩林海子", Ch4, "L4_3_Cailin");
             Add(4, "神山海子 · 雷泽雷神", Ch4, "L4_4_Haizi", StageKind.Boss, true, 3);
+            return list.ToArray();
+        }
+
+        /// <summary>
+        /// 备选图（docs/level-design/run-variety.md §1.1，2026-11-08）：每章多一张开放图进图池，每局路线从「主图 + 备选图」里抽满本章的开放图槽位。
+        /// 场景没建好（<see cref="Ready"/> 为假）时不进图池，路线照旧只在主图里洗。order 从 1000 起（不在主线上）
+        /// </summary>
+        static StageSpec[] BuildPool()
+        {
+            const string Ch1 = "赤沙古道", Ch2 = "昆仑雪墟", Ch3 = "祝融火狱";
+            var list = new List<StageSpec>();
+            void Alt(string code, int chapter, string title, string chapterName, string scene) =>
+                list.Add(new StageSpec(1000 + list.Count, chapter, 0, title, chapterName, $"Assets/Scenes/{scene}.unity", StageKind.Field, "calm", "scroll",
+                    false, code));
+            Alt("1-A", 1, "千佛崖", Ch1, "L1_A_GrottoCliff");
+            Alt("2-A", 2, "玄冰裂谷", Ch2, "L2_A_Crevasse");
+            Alt("3-A", 3, "赤焰灰原", Ch3, "L3_A_AshPlain");
             return list.ToArray();
         }
     }

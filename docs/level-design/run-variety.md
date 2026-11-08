@@ -24,6 +24,21 @@ Unity 版的关卡是 16 张手工开放大图（地形、套件、光照、构�
 - `RunPlan.First / Get / ForScene / Final / Playable` 在有路线的局里按路线答；`RunPlan.Next / IsFinal / IsLast / InPlay` 按槽位所属的路线答；
   `RunPlan.Stages / Canonical` 永远是规划表本身（构建设置顺序、经济投影、关卡构建器用）。
 
+### 1.1 图池（备选图）
+
+参考《雨中冒险 2》每个关卡位置有 2～3 张图随机抽：每章再加一张备选图（`RunPlan.Pool`，编号「章-字母」），
+洗牌时和本章主图一起抽，抽满本章的开放图槽位（槽位数 = 本章建好的主图数，所以一局的关数不变）——一局可能见不到某张主图、却见到备选图。
+
+| 编号 | 图 | 场景 | 题材 |
+|---|---|---|---|
+| 1-A | 千佛崖 | `L1_A_GrottoCliff` | 莫高窟式断崖石窟：崖脚、窟檐栈道、崖顶三层，大佛窟、干河床 |
+| 2-A | 玄冰裂谷 | `L2_A_Crevasse` | 开阔古冰川：冰裂缝网、冰桥、冰塔林、冰碛垄 |
+| 3-A | 赤焰灰原 | `L3_A_AshPlain` | 火山灰原：熔岩河、石桥 / 玄武岩堤、玄武岩柱林、火坛 |
+
+- 场景没建好时不进图池，路线照旧只在主图里洗。
+- 备选图不在主线上：生涯第一局 / 调试局不走、经济投影和平衡表不算它们；构建设置照样打进包（本章有主图在路线上就启用）。
+- 补给营那张照样钉在本章最后。
+
 ## 2. 图内布局变体（`LevelLayout`）
 
 代码：`unity/Assets/Game/Scripts/World/LevelLayout.cs`；构建部件 `unity/Assets/Pipeline/Editor/Levels/LevelKit.Layout.cs`。

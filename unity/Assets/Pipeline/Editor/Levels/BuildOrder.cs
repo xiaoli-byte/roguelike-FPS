@@ -12,7 +12,7 @@ namespace Spiritfire.Art.Editor.Levels
     /// 构建设置的场景顺序（I1；docs/unity-parity.md 4.9「构建设置里的场景顺序按 RunPlan 生成」，4.12「EditorBuildSettings 只按 RunPlan 重写」）：
     ///   0. Core（常驻场景：打包后从它启动，MenuFlow.Boot 再转去主菜单；SceneFlow 叠加加载关卡）
     ///   1. MainMenu（主菜单 + 选英雄）
-    ///   2… RunPlan 的 12 关，按主线顺序（试玩开关开着时 <see cref="RunPlan.DemoEnd"/> 之后的关卡留在表里但不打进包）
+    ///   2… RunPlan 的 12 关，按主线顺序（试玩开关开着时 <see cref="RunPlan.DemoEnd"/> 之后的关卡留在表里但不打进包），再接各章的备选图（<see cref="RunPlan.Pool"/>）
     ///   之后：其余已登记的关卡（测试场等）按登记顺序 → 其它场景（展示场景、SampleScene 等）原顺序，一律停用——
     ///   正式构建只打 Core、主菜单和 12 关。停用的场景留在表里（编辑器里照样能打开、冒烟测试照样能加载），场景文件不删。
     /// 磁盘上有、却不在构建设置里的 Core / 主菜单 / 关卡场景补进来（SceneFlow / MenuFlow 打包后只能加载构建设置里的场景）。
@@ -90,7 +90,7 @@ namespace Spiritfire.Art.Editor.Levels
             get
             {
                 var list = new List<string> { SceneFlow.CorePath, MenuFlow.MenuScenePath };
-                list.AddRange(RunPlan.Stages.Select(s => s.scene));
+                list.AddRange(RunPlan.AllMaps.Select(s => s.scene));
                 return list;
             }
         }
@@ -116,8 +116,9 @@ namespace Spiritfire.Art.Editor.Levels
             // 游戏场景：Core / 主菜单 / 路线上的关卡启用，试玩版终点之后的关卡不打进包；其余（测试场、展示场景、SampleScene）一律停用
             foreach (var s in sorted)
             {
-                var stage = RunPlan.ForScene(s.path);
-                if (stage != null) s.enabled = RunPlan.InPlay(stage);
+                var stage = RunPlan.CanonicalForScene(s.path);
+                // 备选图（图池）：本章有主图在路线上就打进包（每局路线洗牌时会抽到它）
+                if (stage != null) s.enabled = stage.alt ? RunPlan.Stages.Any(m => m.chapter == stage.chapter && !m.IsBoss && RunPlan.InPlay(m)) : RunPlan.InPlay(stage);
                 else s.enabled = IndexOf(game, s.path) >= 0;
             }
             return sorted;

@@ -10,7 +10,8 @@ namespace Spiritfire.Game
     ///
     /// 规则：章的顺序不变（一章接一章，首领关永远是章末），每章的开放大图按种子洗牌——
     ///   带首领前补给营的开放图（<see cref="StageSpec.supplyCamp"/>，第一章 1-3 沉沙古城的寺院塔院）钉在本章最后一张开放图的位置，补给永远在首领之前；
-    ///   场景还没建好的图（<see cref="RunPlan.Ready"/>）不进路线，后面的槽位往前补（第四章只建了 4-1、4-3 时，这一章是 4-1、4-2 两个槽位）。
+    ///   场景还没建好的图（<see cref="RunPlan.Ready"/>）不进路线，后面的槽位往前补（第四章只建了 4-1、4-3 时，这一章是 4-1、4-2 两个槽位）；
+    ///   每章的备选图（<see cref="RunPlan.Pool"/>，场景建好了的）和主图一起洗，抽满本章的开放图槽位——这一局可能见不到某张主图、却见到备选图。
     /// 槽位的编号 / 关序 / 难度按位置算（第 1 张开放图永远是难度 1.00 的「1-1」），场景 / 标题 / 首领 / 补给营跟着抽到的地图走（<see cref="StageSpec.map"/>）。
     /// 打乱用独立的随机流 <see cref="StreamName"/>（只由局种子决定，掉落 / 刷怪多掷几次不影响路线）。
     ///
@@ -74,9 +75,15 @@ namespace Spiritfire.Game
                     else if (s.supplyCamp) pinned.Add(s);
                     else free.Add(s);
                 }
+                // 槽位数 = 本章建好的主图数（补给营那张占一个）；洗牌时备选图也进来抽，抽满为止
+                int slots = free.Count;
+                if (shuffle)
+                    foreach (var a in RunPlan.Pool)
+                        if (a.chapter == chapter && ready(a))
+                            free.Add(a);
                 // 每章各自派生一个子序列：某一章的图多了 / 少了，不改变别的章的顺序
                 if (shuffle && free.Count > 1) rng.Fork(chapter).Shuffle(free);
-                picked.AddRange(free);
+                for (int k = 0; k < slots && k < free.Count; k++) picked.Add(free[k]);
                 picked.AddRange(pinned);
                 picked.AddRange(bosses);
             }
