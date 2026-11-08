@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 24836,
+    "verts": 15737
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 42.81532,
+    "iou": 0.83,
+    "iou_per_view": {
+      "front": 0.834,
+      "left": 0.813,
+      "back": 0.846,
+      "right": 0.826
+    },
+    "size_m": [
+      42.794,
+      20.801,
+      18.0
+    ],
+    "reference_m": [
+      56.0,
+      24.0,
+      18.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.321,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongHall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongHall_LOD0",
+      "tris": 24836,
+      "verts": 15737,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.9951171875,
+        0.99853515625
+      ],
+      "uv_utilization": 0.286,
+      "bbox_min": [
+        -21.3972,
+        -10.4007,
+        0.0
+      ],
+      "bbox_max": [
+        21.3972,
+        10.4007,
+        18.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongHall/04_export/SM_Tripo_ZhurongHall_v001.glb",
+    "bytes": 1280112
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 26.1,
+  "_seconds": 27.8
+}

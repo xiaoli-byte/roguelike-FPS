@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 7994,
+    "verts": 4187
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 11.00537,
+    "iou": 0.944,
+    "iou_per_view": {
+      "front": 0.964,
+      "left": 0.921,
+      "back": 0.948,
+      "right": 0.932
+    },
+    "size_m": [
+      3.09,
+      3.101,
+      11.0
+    ],
+    "reference_m": [
+      3.0,
+      3.0,
+      11.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.385,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongFallenColumn_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongFallenColumn_LOD0",
+      "tris": 7994,
+      "verts": 4187,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.418,
+      "bbox_min": [
+        -1.5449,
+        -1.5503,
+        0.0
+      ],
+      "bbox_max": [
+        1.5449,
+        1.5503,
+        11.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongFallenColumn/04_export/SM_Tripo_ZhurongFallenColumn_v001.glb",
+    "bytes": 462640
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 27.0,
+  "_seconds": 28.5
+}

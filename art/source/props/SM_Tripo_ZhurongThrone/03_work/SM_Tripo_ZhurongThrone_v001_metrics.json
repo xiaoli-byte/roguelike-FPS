@@ -1,0 +1,90 @@
+{
+  "source": {
+    "tris": 16018,
+    "verts": 8299
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 9.88008,
+    "iou": 0.841,
+    "iou_per_view": {
+      "front": 0.88,
+      "left": 0.813,
+      "back": 0.843,
+      "right": 0.809
+    },
+    "size_m": [
+      9.875,
+      5.659,
+      7.0
+    ],
+    "reference_m": [
+      12.0,
+      7.0,
+      7.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "emissive": {
+    "key": {
+      "hue": [
+        0.02,
+        0.17
+      ],
+      "min_sat": 0.65,
+      "min_val": 0.85
+    },
+    "coverage": 0.0
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.691,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_ZhurongThrone_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_ZhurongThrone_LOD0",
+      "tris": 16018,
+      "verts": 8299,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.998046875
+      ],
+      "uv_utilization": 0.601,
+      "bbox_min": [
+        -4.9376,
+        -2.8294,
+        0.0
+      ],
+      "bbox_max": [
+        4.9376,
+        2.8294,
+        7.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_ZhurongThrone/04_export/SM_Tripo_ZhurongThrone_v001.glb",
+    "bytes": 751800
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 33.3,
+  "_seconds": 35.0
+}

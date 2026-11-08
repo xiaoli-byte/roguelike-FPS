@@ -5437,3 +5437,54 @@ source_provider = "local_blender"
 brief = """
 A chunky dual-grip bone-dragon cannon: dark-iron receiver, faceted ash-ivory cranial armour and segmented muzzle crown, two swept oxblood horns, top carry handle and lower horizontal leather grip. Separate upper and lower jaw pivots support closed and open firing states. No glow, hands, character or scene.
 """
+
+# ───────────── 3-3 首领场「火神殿」场景套件（2026-11-08；拆自 art/reviews/ch3-fire-temple/fire-temple-v2-1.webp，docs/art/fire-temple-33.md）─────────────
+# 提示词：art/pipeline/tripo_studio/firetemple_kit.py；四视图走 Tripo Studio 图片页（GPT Image 2.5），网格走 Tripo 多视图 P2.0，纹理勾「去光处理」。
+
+[assets.SM_Tripo_ZhurongHall]
+display = "火神殿殿身（大件；主焦点：火门空着，王座另成一件放进去；门洞内壁发光 = T_E，火焰走 FX_GateFire）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "firetemple33.hall" }
+reference_mode = "bounds_only"
+reference_dimensions = [56.0, 18.0, 24.0]
+lod_tris = [30000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+fx_points = [
+  { name = "FX_GateFire", pos = [0, 4.5, 9], dir = [0, 1, 0] },
+]
+brief = """A wide ancient Chinese palace hall on its own low plain stone base 1.2m tall. FRONT: thick plain round columns of dark aged bronze (one simple band top and bottom), four on each side of a wide central bay; the SECOND column from the RIGHT end is MISSING, only its round plinth and a short jagged broken stump remain. The central bay is a huge square gateway 11m wide, 8m tall, in a thick plain stone frame with one broad bronze border, opening into a deep EMPTY recess whose back wall is flat bright orange-yellow. Chunky vermilion lacquered beams and big simplified bracket sets above the columns. Heavy double-eaved hip roof of dark cast bronze tiles, gently upturned corners, two big curled ridge ornaments. Plain stone side and back walls. PROPORTIONS: FRONT and BACK about 3.1 times as wide as tall; LEFT and RIGHT about 1.35."""
+
+[assets.SM_Tripo_ZhurongThrone]
+display = "火神王座（中件；火门里的空王座 + 两条铜龙（魔将登场站位在它前面））"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "firetemple33.throne" }
+reference_mode = "bounds_only"
+reference_dimensions = [12.0, 7.0, 7.0]
+lod_tris = [15000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """An empty monumental throne of the fire god on a dais: a three-step square stone dais 12m wide, 7m deep and 1.5m tall; on it, at the back centre, a massive high-backed throne carved from one block of dark warm charcoal-grey stone, 4m wide, its back 5.5m above the dais, with two broad vermilion-and-bronze cloud-scroll bands and thick square armrests; the seat is EMPTY. On the dais at the front LEFT and front RIGHT corners, two cast bronze dragons coiled upright on round drum pedestals, 3m tall, bodies wound in one big S, heads raised and facing forward, chunky simplified forms, warm aged bronze with brown-green patina. PROPORTIONS: FRONT and BACK views about 1.7 times as wide as tall; LEFT and RIGHT views about 1.0 times as wide as tall."""
+
+[assets.SM_Tripo_ZhurongFallenColumn]
+display = "断柱（中件；斜靠殿檐（不对称破口）+ 横躺广场当全掩体；画成竖直一整段，Unity 里转）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "firetemple33.fallenColumn" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.0, 11.0, 3.0]
+lod_tris = [8000]
+emissive_key = { hue = [0.02, 0.17], min_sat = 0.65, min_val = 0.85 }
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.6 }
+brief = """One broken segment of a giant cast bronze column, drawn standing straight upright: a thick plain round shaft 2.4m across and 9m long, dark aged bronze with brown-green patina and soot, one simple raised band near the top. The TOP end keeps the column head: a square stone block 3m wide and 1.2m tall with a short broken stub of a vermilion lacquered beam. The BOTTOM end is snapped off: a jagged broken rim, slightly dented, the broken face dark rough metal. PROPORTIONS: every view about 0.27 times as wide as tall."""

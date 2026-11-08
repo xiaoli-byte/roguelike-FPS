@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_ZhurongFallenColumn",
+  "display": "断柱（中件；斜靠殿檐（不对称破口）+ 横躺广场当全掩体；画成竖直一整段，Unity 里转）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 12:47:53",
+          "files": {
+            "BO_SM_Tripo_ZhurongFallenColumn_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongFallenColumn_v001.json",
+              "sha256": "91d02f9848aed725d1330fc64b9049800c8fdc9b89d87a9c0e2a6e34e33f3746"
+            },
+            "BO_SM_Tripo_ZhurongFallenColumn_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongFallenColumn_v001_views.json",
+              "sha256": "855c6bc0a6640cc0d85d0ba8f864b973d362383fd4dc776d0b8fb3c5509c7527"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "firetemple33.fallenColumn"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.5,
+              0.0,
+              -1.5
+            ],
+            "max": [
+              1.5,
+              11.0,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 12:47:54",
+          "files": {
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_source.png",
+              "sha256": "a6d8b69b53a3db83e56e25989c44ac6a31e524339d3c00eb10a42e66d1d26dea"
+            },
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_front.png",
+              "sha256": "b831c443b6059a829c58fd490ee58848e0f78bc2560ff803adf7a9e4873f9def"
+            },
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_left.png",
+              "sha256": "7e78dc7ca7b34b9c25d545dd6bea501b5418e05d96b71a1eb4f995b3adcaf52f"
+            },
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_back.png",
+              "sha256": "85d9e018ee9a0ab288981bb5f1688e9273078ca42ab8c25f5fe2929ce90727f9"
+            },
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_right.png",
+              "sha256": "7cff9e7fd9a21910a9563772d92a7cd11f43e31a225f8005ae1b6e1e83ac2705"
+            },
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_sheet.png",
+              "sha256": "5ecfeb0990057452d1ecfcd6b417c3fa974501caec2bf244c2c6b7cffe912e67"
+            },
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_prompt.txt",
+              "sha256": "e4564ab2eb51907f1b8f752da84315ac305cca9d5a31ef0b383ffff8bd6cfb47"
+            },
+            "CN_SM_Tripo_ZhurongFallenColumn_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongFallenColumn_v001_registration.json",
+              "sha256": "2d4bc01b32bf7730e6f188e5f3eed98e51007f4e89ffb12c2cdf064343e0f798"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "",
+            "source_image": "FT_FallenColumn_1.webp"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the broken bronze column from it as a standalone game asset, keeping its shapes, proportions and materials, simplified as described below, but NOT the coloured scene lighting of the crop: paint true material colours under even neutral white light (stone is warm charcoal-grey, not violet). Draw it standing straight UP, not leaning, without the rubble.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (warm aged bronze, dark brown-green patina, dark warm charcoal-grey basalt), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (3m wide x 11m tall x 3m deep): One broken segment of a giant cast bronze column, drawn standing straight upright: a thick plain round shaft 2.4m across and 9m long, dark aged bronze with brown-green patina and soot, one simple raised band near the top. The TOP end keeps the column head: a square stone block 3m wide and 1.2m tall with a short broken stub of a vermilion lacquered beam. The BOTTOM end is snapped off: a jagged broken rim, slightly dented, the broken face dark rough metal. PROPORTIONS: every view about 0.27 times as wide as tall.",
+          "source_sha256": "a6d8b69b53a3db83e56e25989c44ac6a31e524339d3c00eb10a42e66d1d26dea",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.0147455208498493,
+              "offset": [
+                130,
+                55
+              ],
+              "size": [
+                252,
+                914
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0047095761381475,
+              "offset": [
+                131,
+                55
+              ],
+              "size": [
+                249,
+                914
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.0147455208498493,
+              "offset": [
+                131,
+                55
+              ],
+              "size": [
+                250,
+                914
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.0069225928256764,
+              "offset": [
+                130,
+                55
+              ],
+              "size": [
+                251,
+                914
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-08 火神殿 3-3：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-08 12:47:54"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:07:31",
+          "files": {
+            "HP_SM_Tripo_ZhurongFallenColumn_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFallenColumn_v001_source.glb",
+              "sha256": "a419f10dc7f26279e4e5c74cb375dc995c96802f939ce0253982415cbcaca004"
+            },
+            "HP_SM_Tripo_ZhurongFallenColumn_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFallenColumn_v001.glb",
+              "sha256": "a574a4509066cc767f04aba31b99e55baa8ead63352b9f5842112d72a9a8d36d"
+            },
+            "HP_SM_Tripo_ZhurongFallenColumn_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongFallenColumn_v001_graph.json",
+              "sha256": "9f7bef70387aee82c8a404fae0122865d58e2b8024c7bd86f25a2dd0ba9d3d8c"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/60a7d8c1-ba49-4514-9f6e-07bec20b82c4",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7994,
+          "source_sha256": "a419f10dc7f26279e4e5c74cb375dc995c96802f939ce0253982415cbcaca004"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:08:00",
+          "files": {
+            "SM_Tripo_ZhurongFallenColumn_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongFallenColumn_v001.blend",
+              "sha256": "5ca372108f79adfa22c9b9c6e4713158309e32ae7aaaa793be615bbc5aae7518"
+            },
+            "SM_Tripo_ZhurongFallenColumn_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongFallenColumn_v001.glb",
+              "sha256": "642ff55c635fc117c680efa51062ef549393aa64fe163119ecc1c535c9bdc3ae"
+            },
+            "SM_Tripo_ZhurongFallenColumn_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongFallenColumn_v001_metrics.json",
+              "sha256": "987051b8ca1b151b095d3a292cb5e98c2daf71612ad06d5c503f26b801d75177"
+            },
+            "T_Tripo_ZhurongFallenColumn_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongFallenColumn_BC.png",
+              "sha256": "169eba08c177b0eb979b6305678c9d6e75d1904979788bb9dbda6f3ecb17feb1"
+            },
+            "T_Tripo_ZhurongFallenColumn_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongFallenColumn_E.png",
+              "sha256": "5630edf42913f842e57308503a7e0977e721d09027a12c453b8878c22108cd37"
+            },
+            "T_Tripo_ZhurongFallenColumn_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongFallenColumn_N.png",
+              "sha256": "e937a489b6655a77ea780a003555345ce78abbf0d6d2845966ee2dde53bb4dc3"
+            },
+            "T_Tripo_ZhurongFallenColumn_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongFallenColumn_ORM.png",
+              "sha256": "6142848d4024259d31842a11f2b27e596503fdbb52f2b5646c1efd3128f38a30"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.944,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7994,
+              "verts": 4187
+            }
+          ],
+          "export_kb": 451.8,
+          "seconds": 28.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:08:00",
+          "files": {
+            "SM_Tripo_ZhurongFallenColumn_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongFallenColumn_v001_validation_v001.json",
+              "sha256": "b55263d4d022ef779720cb035da2d67de428b058663839e99e26b4bdbc3d1925"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:08:07",
+          "files": {
+            "SM_Tripo_ZhurongFallenColumn_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongFallenColumn_v001_review_v001.png",
+              "sha256": "447ea1a097801c9e52043c6dacda61737edb9f507773da8cb90db1a4521a3847"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-08：火神殿 3-3 首领场套件，审核图正常、紫偏 ≤ 5%；用户授权免审",
+            "time": "2026-11-08 13:10:23"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:10:24",
+          "files": {
+            "SM_Tripo_ZhurongFallenColumn.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongFallenColumn.glb",
+              "sha256": "642ff55c635fc117c680efa51062ef549393aa64fe163119ecc1c535c9bdc3ae"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongFallenColumn.glb"
+        }
+      ]
+    }
+  }
+}

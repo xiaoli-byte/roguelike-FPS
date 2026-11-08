@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_ZhurongThrone",
+  "display": "火神王座（中件；火门里的空王座 + 两条铜龙（魔将登场站位在它前面））",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 12:47:51",
+          "files": {
+            "BO_SM_Tripo_ZhurongThrone_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongThrone_v001.json",
+              "sha256": "96c595a2e947c7dede6c876026252b263f717efb030f16360956b2506a912ac3"
+            },
+            "BO_SM_Tripo_ZhurongThrone_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongThrone_v001_views.json",
+              "sha256": "e9a327504495a536eeca8f3b2e43539e77af85cd91ad68832cec836e4d63de64"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "firetemple33.throne"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0.0,
+              -3.5
+            ],
+            "max": [
+              6.0,
+              7.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 12:47:52",
+          "files": {
+            "CN_SM_Tripo_ZhurongThrone_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_source.png",
+              "sha256": "2f8bc1c467ce40fd3788f297d7896f1bab312b280939dae6baa84771c3ade599"
+            },
+            "CN_SM_Tripo_ZhurongThrone_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_front.png",
+              "sha256": "6a1a825bf2cc9cdc1e637bea28f26bf76cb5d84c91a0ed08155f41e454970cf7"
+            },
+            "CN_SM_Tripo_ZhurongThrone_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_left.png",
+              "sha256": "63791682fe30fbd788efeac492fb5ef665897de9066a73b9b18ea69274104572"
+            },
+            "CN_SM_Tripo_ZhurongThrone_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_back.png",
+              "sha256": "c5a4c697c4d88b46a6df2d134b814f13b1d4f54e5454b89e5e6a8e2e48d92409"
+            },
+            "CN_SM_Tripo_ZhurongThrone_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_right.png",
+              "sha256": "6c0cf17e596791a7e1c8ac4bd424c2da5746d08b715cf27f86bcc8bf1d20c4a5"
+            },
+            "CN_SM_Tripo_ZhurongThrone_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_sheet.png",
+              "sha256": "f9a73f5b251a085b9bd2247dbc29bc47ee195d8d33ffe9d7d3a9e204927971d4"
+            },
+            "CN_SM_Tripo_ZhurongThrone_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_prompt.txt",
+              "sha256": "909b664e8ae40ac0a1c75abba62f0d975ca20302337baaa5d584b1a278f7285a"
+            },
+            "CN_SM_Tripo_ZhurongThrone_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongThrone_v001_registration.json",
+              "sha256": "8ea5e693f1503d6d7f1936ef0ccfc641d50f5c3bfe9b2d2a897a35b640cb69b5"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "",
+            "source_image": "FT_Throne_0.webp"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the empty throne with two bronze dragons from it as a standalone game asset, keeping its shapes, proportions and materials, simplified as described below, but NOT the coloured scene lighting of the crop: paint true material colours under even neutral white light (stone is warm charcoal-grey, not violet). Remove all the fire and glow behind it: plain empty background.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark warm charcoal-grey basalt, warm aged bronze, deep vermilion lacquer), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (12m wide x 7m tall x 7m deep): An empty monumental throne of the fire god on a dais: a three-step square stone dais 12m wide, 7m deep and 1.5m tall; on it, at the back centre, a massive high-backed throne carved from one block of dark warm charcoal-grey stone, 4m wide, its back 5.5m above the dais, with two broad vermilion-and-bronze cloud-scroll bands and thick square armrests; the seat is EMPTY. On the dais at the front LEFT and front RIGHT corners, two cast bronze dragons coiled upright on round drum pedestals, 3m tall, bodies wound in one big S, heads raised and facing forward, chunky simplified forms, warm aged bronze with brown-green patina. PROPORTIONS: FRONT and BACK views about 1.7 times as wide as tall; LEFT and RIGHT views about 1.0 times as wide as tall.",
+          "source_sha256": "2f8bc1c467ce40fd3788f297d7896f1bab312b280939dae6baa84771c3ade599",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7326007326007326,
+              "offset": [
+                68,
+                378
+              ],
+              "size": [
+                375,
+                267
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7469654528478057,
+              "offset": [
+                145,
+                378
+              ],
+              "size": [
+                222,
+                267
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7554296506137865,
+              "offset": [
+                70,
+                378
+              ],
+              "size": [
+                372,
+                267
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7448789571694598,
+              "offset": [
+                145,
+                378
+              ],
+              "size": [
+                221,
+                267
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-08 火神殿 3-3：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-08 12:47:52"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:06:45",
+          "files": {
+            "HP_SM_Tripo_ZhurongThrone_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongThrone_v001_source.glb",
+              "sha256": "db9224c973f71b7d9470446f9c2181cf6fb1a69ef9f71eb851d37e7a637e2a2b"
+            },
+            "HP_SM_Tripo_ZhurongThrone_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongThrone_v001.glb",
+              "sha256": "ca82ac7fb81069d5e547877d006a658c9c4f4041f62878280860730bfe1b9a73"
+            },
+            "HP_SM_Tripo_ZhurongThrone_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongThrone_v001_graph.json",
+              "sha256": "cdd0841e5d3f09012e0942ffdcf4ede45ecc6cb101ee5939b711b9e8e5a769dd"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/59fc6c27-7a01-4428-9805-5440861f359b",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 16018,
+          "source_sha256": "db9224c973f71b7d9470446f9c2181cf6fb1a69ef9f71eb851d37e7a637e2a2b"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:07:20",
+          "files": {
+            "SM_Tripo_ZhurongThrone_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongThrone_v001.blend",
+              "sha256": "23c65eff3ea9976f05a705368a6c3fefbd1c51de10a1ce40d72e157a52533048"
+            },
+            "SM_Tripo_ZhurongThrone_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongThrone_v001.glb",
+              "sha256": "9698fec29fe46a6e5efc8ea8254ccc18cfd3e6b3421c7765f4f68eb67a363c35"
+            },
+            "SM_Tripo_ZhurongThrone_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongThrone_v001_metrics.json",
+              "sha256": "42d93d52bece50baf63ef17d7a100326152afa4004fa5d69de7456b0d2ec64ef"
+            },
+            "T_Tripo_ZhurongThrone_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongThrone_BC.png",
+              "sha256": "fc21d5a4ee6019aa984b35782bf092cdf83640b5db6c4e1a46ef27ee6b31c15e"
+            },
+            "T_Tripo_ZhurongThrone_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongThrone_E.png",
+              "sha256": "5630edf42913f842e57308503a7e0977e721d09027a12c453b8878c22108cd37"
+            },
+            "T_Tripo_ZhurongThrone_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongThrone_N.png",
+              "sha256": "9d5e80b918f6171183bf79e0aabfd199cf9d9137d40ca2caf540df283f23ce4e"
+            },
+            "T_Tripo_ZhurongThrone_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongThrone_ORM.png",
+              "sha256": "3121ffaecb3935e6c114c800c02455814518b1fed9f51227cd9a7a80f8fe0c1d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.841,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 16018,
+              "verts": 8299
+            }
+          ],
+          "export_kb": 734.2,
+          "seconds": 35.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:07:21",
+          "files": {
+            "SM_Tripo_ZhurongThrone_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongThrone_v001_validation_v001.json",
+              "sha256": "a156a7dede2e77d2136fad1ec56e551876eba8b7fc1246ad1f2176e31499eb4f"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:07:28",
+          "files": {
+            "SM_Tripo_ZhurongThrone_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongThrone_v001_review_v001.png",
+              "sha256": "c95fc048f1c9cac8ff7d933f7654f063395c5b7dc8a07e317c68586af1ca2011"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-08：火神殿 3-3 首领场套件，审核图正常、紫偏 ≤ 5%；用户授权免审",
+            "time": "2026-11-08 13:10:22"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:10:23",
+          "files": {
+            "SM_Tripo_ZhurongThrone.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongThrone.glb",
+              "sha256": "9698fec29fe46a6e5efc8ea8254ccc18cfd3e6b3421c7765f4f68eb67a363c35"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongThrone.glb"
+        }
+      ]
+    }
+  }
+}

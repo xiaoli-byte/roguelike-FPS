@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongThrone",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "firetemple33.throne"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -4.937629222869873,
+      0,
+      -2.8294286727905273
+    ],
+    "max": [
+      4.937629222869873,
+      7,
+      2.8294286727905273
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongThrone_LOD0",
+      "lod": 0,
+      "tris": 16018,
+      "verts": 20036,
+      "materials": [
+        "M_Tripo_ZhurongThrone"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongThrone",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongThrone_BC.png",
+        "N": "Textures/T_Tripo_ZhurongThrone_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongThrone_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongThrone_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongThrone.glb",
+    "sha256": "9698fec29fe46a6e5efc8ea8254ccc18cfd3e6b3421c7765f4f68eb67a363c35",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-08 13:10:32"
+}

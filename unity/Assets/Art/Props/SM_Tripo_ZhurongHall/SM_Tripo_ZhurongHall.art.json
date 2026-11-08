@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_ZhurongHall",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "firetemple33.hall"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0
+  ],
+  "budget": {
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fxPoints": [
+    {
+      "name": "FX_GateFire",
+      "pos": [
+        0,
+        4.5,
+        9
+      ],
+      "dir": [
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "bounds": {
+    "min": [
+      -21.397212982177734,
+      0,
+      -10.400697708129883
+    ],
+    "max": [
+      21.397212982177734,
+      18,
+      10.400697708129883
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_ZhurongHall_LOD0",
+      "lod": 0,
+      "tris": 24836,
+      "verts": 37575,
+      "materials": [
+        "M_Tripo_ZhurongHall"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_ZhurongHall",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_ZhurongHall_BC.png",
+        "N": "Textures/T_Tripo_ZhurongHall_N.png",
+        "ORM": "Textures/T_Tripo_ZhurongHall_ORM.png",
+        "E": "Textures/T_Tripo_ZhurongHall_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_ZhurongHall.glb",
+    "sha256": "978d865bdea6faecb625cf8155e327db4b504995203382ab11ac14a9b9128a8b",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-11-08 13:10:28"
+}

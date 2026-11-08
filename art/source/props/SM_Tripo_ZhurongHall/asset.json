@@ -1,0 +1,323 @@
+{
+  "id": "SM_Tripo_ZhurongHall",
+  "display": "火神殿殿身（大件；主焦点：火门空着，王座另成一件放进去；门洞内壁发光 = T_E，火焰走 FX_GateFire）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 12:47:48",
+          "files": {
+            "BO_SM_Tripo_ZhurongHall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongHall_v001.json",
+              "sha256": "e8b8cbc8bdddfbc1e61ddd210f54c57eaa0035b6befe63d1ccb16163c864a15e"
+            },
+            "BO_SM_Tripo_ZhurongHall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_ZhurongHall_v001_views.json",
+              "sha256": "420fd20cd89fd306edd6865151809faa946b7f1062c1881790d5d470fcb14fa2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "firetemple33.hall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -28.0,
+              0.0,
+              -12.0
+            ],
+            "max": [
+              28.0,
+              18.0,
+              12.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 12:47:49",
+          "files": {
+            "CN_SM_Tripo_ZhurongHall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_source.png",
+              "sha256": "55fbd13de458f107912ebe5d272c3c2c52858ed916379bc1fcd12227c51dd234"
+            },
+            "CN_SM_Tripo_ZhurongHall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_front.png",
+              "sha256": "7dd8e68f79efd0d81d6a05fad75ca93ff0596e9087d97af5647ef2ae793062b8"
+            },
+            "CN_SM_Tripo_ZhurongHall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_left.png",
+              "sha256": "c3edad8d00918de7a9b4d5aced1b69760ef76f1dafc6bc7b6564ba28172b072d"
+            },
+            "CN_SM_Tripo_ZhurongHall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_back.png",
+              "sha256": "224ee7cc3085d4cfd70c8f8c60d11a14c26367aae6633bbda54f83eb88fe0e5f"
+            },
+            "CN_SM_Tripo_ZhurongHall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_right.png",
+              "sha256": "daca1b999722f61499965a03e896195d88fab46c96945634cb9b91004ee858d3"
+            },
+            "CN_SM_Tripo_ZhurongHall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_sheet.png",
+              "sha256": "bf8ceb4f2e561fe62eeb74fbcd3b150babc7ec1aa5d920a9455c7182d57a973e"
+            },
+            "CN_SM_Tripo_ZhurongHall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_prompt.txt",
+              "sha256": "cf04810a433bd9446ef2ae40acffd5b4b62cbec7343accbdb3d8eab4b5361836"
+            },
+            "CN_SM_Tripo_ZhurongHall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_ZhurongHall_v001_registration.json",
+              "sha256": "bc77fef2c99fa5835d8b796aa706c805d47c6d41a1e4045067844aabe6f4184b"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "GPT Image 2.5",
+          "generation": {
+            "provider": "tripo_studio",
+            "model": "GPT Image 2.5",
+            "size": [
+              1792,
+              1024
+            ],
+            "variants": 4,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout grid"
+            ],
+            "note": "",
+            "source_image": "FT_Hall_0.webp"
+          },
+          "prompt": "MANDATORY: a 2 by 2 GRID of exactly four separate orthographic views of the SAME object: TOP-LEFT = FRONT view; TOP-RIGHT = LEFT side view (object turned so its front points to the LEFT edge of the image); BOTTOM-LEFT = BACK view; BOTTOM-RIGHT = RIGHT side view (object turned so its front points to the RIGHT edge of the image). Each view seen straight on from slightly above (about 15 degrees) so the top surface is just visible, same scale in all four, wide empty gaps between the views, every view complete and not cropped. Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects. No fire, no smoke, no sparks, no lava, no glow halo: hot cracks, ember beds, flame tips and lantern glass are painted only as flat opaque bright orange-yellow colour areas.\n\nREFERENCE: the attached image is a crop of our approved scene concept. Redraw ONLY the palace hall from it as a standalone game asset, keeping its shapes, proportions and materials, simplified as described below, but NOT the coloured scene lighting of the crop: paint true material colours under even neutral white light (stone is warm charcoal-grey, not violet). Remove the throne, dragons and fire: the gateway is an EMPTY recess. Ignore the terrace and stairs below the hall's low base.\n\nSTYLE: stylized hand-painted 3D game environment asset: thick chunky silhouette that still reads as a solid black shape, broad clean faceted planes, two or three dominant colour blocks (dark warm charcoal-grey basalt, warm aged bronze, deep vermilion lacquer), soft painted gradients, a few medium-size ornaments, sparse wear, soot-darkened edges. No photorealism, no micro-grain, no fine brick seams, no dense cracks, no tiny carvings, no harsh highlights. Anything at ground level is basalt, stone or cast iron; timber only high up on buildings.\n\nOBJECT (56m wide x 18m tall x 24m deep): A wide ancient Chinese palace hall on its own low plain stone base 1.2m tall. FRONT: thick plain round columns of dark aged bronze (one simple band top and bottom), four on each side of a wide central bay; the SECOND column from the RIGHT end is MISSING, only its round plinth and a short jagged broken stump remain. The central bay is a huge square gateway 11m wide, 8m tall, in a thick plain stone frame with one broad bronze border, opening into a deep EMPTY recess whose back wall is flat bright orange-yellow. Chunky vermilion lacquered beams and big simplified bracket sets above the columns. Heavy double-eaved hip roof of dark cast bronze tiles, gently upturned corners, two big curled ridge ornaments. Plain stone side and back walls. PROPORTIONS: FRONT and BACK about 3.1 times as wide as tall; LEFT and RIGHT about 1.35.",
+          "source_sha256": "55fbd13de458f107912ebe5d272c3c2c52858ed916379bc1fcd12227c51dd234",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.33935052080878536,
+              "offset": [
+                54,
+                438
+              ],
+              "size": [
+                403,
+                147
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3331945022907122,
+              "offset": [
+                166,
+                438
+              ],
+              "size": [
+                179,
+                147
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.346553715825953,
+              "offset": [
+                57,
+                438
+              ],
+              "size": [
+                397,
+                147
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.33779028852920473,
+              "offset": [
+                167,
+                438
+              ],
+              "size": [
+                177,
+                147
+              ],
+              "physical_height_m": 18.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-08 火神殿 3-3：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-08 12:47:49"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:06:05",
+          "files": {
+            "HP_SM_Tripo_ZhurongHall_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongHall_v001_source.glb",
+              "sha256": "edaee8af53fec2eece5cb6e4bd97d0ec8623d3de5fba06b8e9c23cd6110c26cb"
+            },
+            "HP_SM_Tripo_ZhurongHall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongHall_v001.glb",
+              "sha256": "31f299afd09154dad98d160aeea77a6d40949dde06c830418b089b1a8350ec96"
+            },
+            "HP_SM_Tripo_ZhurongHall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_ZhurongHall_v001_graph.json",
+              "sha256": "0286ddef9fed33d19d699766f06f66704fe4392b255e1b07ef95a4761ad79664"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/1c3f1c0c-2519-4804-9a5f-059af2a741de",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 24836,
+          "source_sha256": "edaee8af53fec2eece5cb6e4bd97d0ec8623d3de5fba06b8e9c23cd6110c26cb"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:06:33",
+          "files": {
+            "SM_Tripo_ZhurongHall_v001.blend": {
+              "path": "03_work/SM_Tripo_ZhurongHall_v001.blend",
+              "sha256": "7c6386d3225446e29aa36ab78bfb7872b7fac1c31072ef80185b65ad54d825b8"
+            },
+            "SM_Tripo_ZhurongHall_v001.glb": {
+              "path": "04_export/SM_Tripo_ZhurongHall_v001.glb",
+              "sha256": "978d865bdea6faecb625cf8155e327db4b504995203382ab11ac14a9b9128a8b"
+            },
+            "SM_Tripo_ZhurongHall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_ZhurongHall_v001_metrics.json",
+              "sha256": "621745cd23acb9dfa956f6384eb04870be5533a513c4ea8de104402e6ac28104"
+            },
+            "T_Tripo_ZhurongHall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongHall_BC.png",
+              "sha256": "d0fff5b7c06389cda23f98f2932e40ef775157d4d6ae89afbfe50d7005429161"
+            },
+            "T_Tripo_ZhurongHall_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongHall_E.png",
+              "sha256": "5630edf42913f842e57308503a7e0977e721d09027a12c453b8878c22108cd37"
+            },
+            "T_Tripo_ZhurongHall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongHall_N.png",
+              "sha256": "bec205fca514b37992ed1a79b4dfb206f082010fd4fa258326fe8ff7af55f00e"
+            },
+            "T_Tripo_ZhurongHall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_ZhurongHall_ORM.png",
+              "sha256": "be3ceaba049ff54bb0427b3294f45f5e2e16754f593c29a8a16bf74ef8cda358"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.83,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 24836,
+              "verts": 15737
+            }
+          ],
+          "export_kb": 1250.1,
+          "seconds": 27.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:06:33",
+          "files": {
+            "SM_Tripo_ZhurongHall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_ZhurongHall_v001_validation_v001.json",
+              "sha256": "7119c9acc15170aa91c1fcfabb484aed210e17e7edcf7a357ea9759d2e847a70"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:06:42",
+          "files": {
+            "SM_Tripo_ZhurongHall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_ZhurongHall_v001_review_v001.png",
+              "sha256": "47fc219ef7f9271de638e89b634c0d08321ededd94db5622fdeb20ed8fad146b"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-08：火神殿 3-3 首领场套件，审核图正常、紫偏 ≤ 5%；用户授权免审",
+            "time": "2026-11-08 13:10:21"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-08 13:10:22",
+          "files": {
+            "SM_Tripo_ZhurongHall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_ZhurongHall.glb",
+              "sha256": "978d865bdea6faecb625cf8155e327db4b504995203382ab11ac14a9b9128a8b"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_ZhurongHall.glb"
+        }
+      ]
+    }
+  }
+}
