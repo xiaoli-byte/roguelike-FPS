@@ -18,6 +18,7 @@ Shader "Spiritfire/Gunfire/Original Particle"
         _MaskTexUVYSpeed ("Mask Tex UV Y Speed", Float) = 0
         _M1GlobalShaderPower ("Global Shader Power", Float) = 1
         _ParticleTexture ("Particle Texture", 2D) = "white" {}
+        _ParticleTextureTilingAndOffset ("Particle Texture Tiling And Offset", Vector) = (1,1,0,0)
         _Color ("Color", Color) = (1,1,1,1)
         _DiffuseColor ("Diffuse Color", Color) = (1,1,1,1)
         _Alpha ("Alpha", Float) = 1

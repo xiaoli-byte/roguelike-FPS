@@ -13,6 +13,12 @@ namespace Spiritfire.Game
         public int fireCount, reloadCount;
         public string lastTrigger;
 
+        /// <summary>
+        /// 枪口特效整体缩放：1926_muzzle 是原作的通用枪口（材质混着 Boss / 怪物 / 技能特效），按原尺寸挂到第一人称枪口上，
+        /// 烟团 2 m 多、光晕 4 m，而枪口离镜头只有约 0.45 m，连射叠起来满屏发白。粒子缩放模式是 Hierarchy，整体缩小即按比例缩小
+        /// </summary>
+        public static float MuzzleScale = 0.12f;
+
         WeaponController controller;
         Animator[] animators = System.Array.Empty<Animator>();
         AudioSource audioSource;
@@ -94,6 +100,7 @@ namespace Spiritfire.Game
             {
                 var fx = Instantiate(muzzlePrefab, muzzle, false);
                 fx.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                fx.transform.localScale = Vector3.one * MuzzleScale;
                 PlayerFactory.SetLayer(fx, Layers.FirstPerson);
                 foreach (var particles in fx.GetComponentsInChildren<ParticleSystem>(true)) particles.Play(false);
                 Destroy(fx, 3f);

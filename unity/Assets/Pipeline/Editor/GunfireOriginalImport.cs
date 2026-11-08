@@ -15,8 +15,11 @@ namespace Spiritfire.Art.Editor
     {
         const string Root = "Assets/Art/Original/Gunfire";
         static readonly string[] Ids = { "1001", "1002", "1202", "1008", "1106", "1301", "1003", "1004", "1005", "1006", "1009", "1010", "1013", "1014", "1101", "1102" };
-        static readonly HashSet<string> ParticleGraph = new() { "2ede01cb45c4c8848ab9ffed09c254e1", "029f197b32f0e1b4a95271fddfe796ed" };
-        static readonly HashSet<string> AlphaBlend = new() { "1faad54a41c7c0842b1735c6ba71dbd9" };
+        // 原工程着色器 GUID（all16 导出：Particle_Additive 83a8…、Particle_AlphaBlend 3aca…、UVAnimInChannel_AlphaBlend 9491… / _Additive 494a…）。
+        // 材质导入后就换成了 Original Particle，重跑时读到的是本工程着色器的 GUID，所以下面还按存下来的贴图槽兜底认
+        static readonly HashSet<string> ParticleGraph = new() { "2ede01cb45c4c8848ab9ffed09c254e1", "029f197b32f0e1b4a95271fddfe796ed", "83a810b2359926f4ebe4b652d9bbd510", "3acae1d435e361d4e89012729e8f50fe" };
+        static readonly HashSet<string> AlphaBlend = new() { "1faad54a41c7c0842b1735c6ba71dbd9", "3acae1d435e361d4e89012729e8f50fe", "9491dcf4673a03044aaf58ec8550b824" };
+        static readonly HashSet<string> UvAnimation = new() { "d23f46ed29477cc409565f73a91be21f", "9491dcf4673a03044aaf58ec8550b824", "494add58952dbe94caddbcbab9ce3988" };
 
         [MenuItem("Spiritfire/Art/Import Native Gunfire Weapons")]
         public static void Run(string[] selected = null)
@@ -102,11 +105,30 @@ namespace Spiritfire.Art.Editor
                 if (isParticle)
                 {
                     bool dissolve = shaderId is "32a99689008ccae42ac566b5574e59bc" or "296b511ef18167e4991b7fd123944eff" or "1faad54a41c7c0842b1735c6ba71dbd9";
-                    bool uvAnimation = shaderId == "d23f46ed29477cc409565f73a91be21f";
+                    bool uvAnimation = UvAnimation.Contains(shaderId) || (!dissolve && material.GetFloat("_EffectMode") > 1.5f);
+                    // UVAnimInChannel 系把主图存在 _MainTexture（平铺在 _MainTexTilingAndOffset），搬到 _MainTex，按 UV 动画走、不画溶解边
+                    var legacyMain = material.GetTexture("_MainTex") ? null : SavedTexture(source, "_MainTexture");
+                    if (legacyMain)
+                    {
+                        var st = SavedVector(source, "_MainTexTilingAndOffset");
+                        material.SetTexture("_MainTex", legacyMain);
+                        material.SetTextureScale("_MainTex", new Vector2(st.x, st.y));
+                        material.SetTextureOffset("_MainTex", new Vector2(st.z, st.w));
+                        var mask = SavedVector(source, "_MaskTexTilingAndOffset");
+                        material.SetTextureScale("_MaskTex", new Vector2(mask.x, mask.y));
+                        material.SetTextureOffset("_MaskTex", new Vector2(mask.z, mask.w));
+                        material.SetFloat("_DissolveEdgeWidth", 0);
+                        uvAnimation = true;
+                    }
+                    // 原 Particle_Additive / AlphaBlend 只采样 _ParticleTexture：只有它有图时一定要切过去，否则采样空的 _MainTex（白图）整片方块 × HDR 主色，连射满屏黄白
+                    bool useParticle = !dissolve && !uvAnimation && (ParticleGraph.Contains(shaderId) || (!material.GetTexture("_MainTex") && material.GetTexture("_ParticleTexture")));
                     material.SetFloat("_EffectMode", uvAnimation ? 2 : dissolve ? 1 : 0);
-                    material.SetFloat("_UseParticleTexture", !dissolve && !uvAnimation && ParticleGraph.Contains(shaderId) ? 1 : 0);
-                    material.SetFloat("_SrcBlend", dissolve || uvAnimation ? 5 : 1);
-                    material.SetFloat("_DstBlend", AlphaBlend.Contains(shaderId) ? 10 : 1);
+                    material.SetFloat("_UseParticleTexture", useParticle ? 1 : 0);
+                    // 没有可采样的贴图（折射遮罩 _RefrectMask 之类本工程不支持）就不画，免得画成白块
+                    if (!material.GetTexture(useParticle ? "_ParticleTexture" : "_MainTex")) material.SetFloat("_Alpha", 0);
+                    // Shader Graph 的叠加是 SrcAlpha One、混合是 SrcAlpha OneMinusSrcAlpha：形状在 alpha 里的贴图用 One 会叠出整张方框
+                    material.SetFloat("_SrcBlend", 5);
+                    material.SetFloat("_DstBlend", AlphaBlend.Contains(shaderId) || material.GetFloat("_DstBlend") > 5 ? 10 : 1);
                     material.SetKeyword(new LocalKeyword(particle, "ENABLE_DISSOLVE_AMOUNT"), (dissolve || uvAnimation) && material.GetFloat("_EnableAlphaToDissolve") > 0.5f);
                     material.SetKeyword(new LocalKeyword(particle, "ENABLE_COLOR_CONTROL_UV_AMOUNT"), dissolve && material.GetFloat("_EnableColorControlUV") > 0.5f);
                     material.SetFloat("_ZZWrite", 0);
@@ -123,6 +145,21 @@ namespace Spiritfire.Art.Editor
                 }
                 EditorUtility.SetDirty(material);
             }
+        }
+
+        /// <summary>材质文件里存着、但当前着色器没声明的贴图（换着色器前的旧槽位）</summary>
+        static Texture SavedTexture(string source, string property)
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(source, @"- " + property + @":\s*\n\s*m_Texture: \{fileID: \d+, guid: (\w{32})");
+            return match.Success ? AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(match.Groups[1].Value)) : null;
+        }
+
+        static Vector4 SavedVector(string source, string property)
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(source, @"- " + property + @": \{r: ([-\d.eE]+), g: ([-\d.eE]+), b: ([-\d.eE]+), a: ([-\d.eE]+)\}");
+            if (!match.Success) return new Vector4(1, 1, 0, 0);
+            float F(int i) => float.Parse(match.Groups[i].Value, System.Globalization.CultureInfo.InvariantCulture);
+            return new Vector4(F(1), F(2), F(3), F(4));
         }
 
         static void CopyEffect(string name)
