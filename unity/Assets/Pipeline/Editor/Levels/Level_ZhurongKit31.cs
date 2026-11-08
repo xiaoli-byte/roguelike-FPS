@@ -146,6 +146,7 @@ namespace Spiritfire.Art.Editor.Levels
             rep.Line("ZR31 熔湖关隘 · 套件样板场景");
 
             ShowcaseSceneBuilder.BuildLighting(theme, Dir);
+            ConceptLook(rep);
             ts = LevelKit.BuildTerrainSet(new LevelKit.TerrainSpec
             {
                 dir = Dir, name = Name, size = Size, origin = Origin, baseHeight = Base, heightRange = HeightRange,
@@ -164,10 +165,10 @@ namespace Spiritfire.Art.Editor.Levels
                 {
                     // 概念图的熔湖 = 暗紫灰硬壳 + 几道细亮缝。近处的亮斑来自三处：热区化开的熔池（molten < 0 关掉）、
                     // 热区自动加宽的裂缝（_HeatCrackWiden 0.1 → 0.015）、壳上的冒泡亮点（_BubbleAmount 0.45 → 0.06）。
-                    // 壳色提到暗紫灰（默认的近黑壳在缝少了以后整片发死）
+                    // 壳色：比默认的近黑亮一点、偏冷的暗紫黑（太亮在暖主光下会照成红褐）
                     crust.SetFloat("_HeatCrackWiden", 0.015f);
                     crust.SetFloat("_BubbleAmount", 0.06f);
-                    crust.SetColor("_CrustColor", new Color(0.17f, 0.13f, 0.18f));
+                    crust.SetColor("_CrustColor", new Color(0.12f, 0.09f, 0.15f));
                     EditorUtility.SetDirty(crust);
                     AssetDatabase.SaveAssetIfDirty(crust);
                     lava.surface.sharedMaterial = crust;
@@ -257,6 +258,9 @@ namespace Spiritfire.Art.Editor.Levels
                 // 熔岩反光：熔岩自发光不照物体，在拱下、税关和鼎墩脚下贴着熔岩面放几盏低矮的橙色点光，拱洞和墙脚才有概念图那圈火光
                 foreach (var at in new[] { Vector2.Lerp(CauseA, CauseB, 0.3f), Vector2.Lerp(CauseA, CauseB, 0.75f), IslandC + new Vector2(-4, -13), PierAt + new Vector2(-6, -6) })
                     PointLight(fx, "Lava bounce", At(at, 0.6f), LevelKit.InfernoPalette.FireLight, 12, 2.2f);
+
+                // 5. 低雾带 + 火星（光影、雾气定氛围）
+                Atmosphere(fx, rep);
 
                 // 套件总览（远处一排）
                 Lineup(rep);
@@ -414,8 +418,9 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var root = new GameObject("Grand Stairs (procedural)").transform;
             root.SetParent(parent, false);
-            var mat = LevelKit.Ch3Basalt(Dir);
-            var cap = LevelKit.Ch3BasaltDeep(Dir);
+            // 石色取洗过贴图的宫墙底色中位数（亮面 / 暗 30%），台阶和宫墙读成同一种石头；第三章的紫灰玄武岩纯色在宫前读成一整块深紫
+            var mat = StoneMat(LevelKit.Ch3Basalt(Dir, "StairStone"), new Color(0.39f, 0.365f, 0.345f));
+            var cap = StoneMat(LevelKit.Ch3BasaltDeep(Dir, "StairStoneDeep"), new Color(0.31f, 0.29f, 0.28f));
             int steps = 20;
             float rise = (TerraceY - QuayY) / steps, run = (StairZ1 - StairZ0) / steps;
             for (int i = 0; i < steps; i++)
@@ -432,6 +437,14 @@ namespace Spiritfire.Art.Editor.Levels
                 }
         }
 
+        static Material StoneMat(Material m, Color c)
+        {
+            m.SetColor("_BaseColor", c);
+            EditorUtility.SetDirty(m);
+            AssetDatabase.SaveAssetIfDirty(m);
+            return m;
+        }
+
         static GameObject Box(Transform root, string name, Vector3 min, Vector3 max, Material m)
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -442,6 +455,120 @@ namespace Spiritfire.Art.Editor.Levels
             go.GetComponent<MeshRenderer>().sharedMaterial = m;
             go.isStatic = true;
             return go;
+        }
+
+        /// <summary>
+        /// 概念图的冷暖分法，只改 ZR31（第三章主题 ShowcaseTheme.Inferno 不动——3-x 关卡为了战斗可读性刻意用冷的淡紫白主光）：
+        ///   主光：逆光——宫门 / 祝融像背后贴地平线的暖光（顺光的琥珀色主光把地形、熔岩壳照成红褐，构成自检报主色不够安静；逆光只给轮廓和顶面）。固有色已经洗成暖灰石（texture_clean.py），暖光照上去是概念图里那种米金色受光面，紫色只留在环境光和暗部；
+        ///   雾：70 → 250 m、淡紫（接近天色），100 m 外的岩峰一层层退进紫雾（概念图的空气透视），宫门 / 祝融像在 120–150 m 还保留六七成；
+        ///   天：天顶灰紫、地平线一窄条橙色辉光（概念图宫门后、峡口里那圈火光）；天和雾都压低饱和——composition.md 的主色要安静（低饱和 ≥ 45%）。
+        /// </summary>
+        static void ConceptLook(LevelKit.Report rep)
+        {
+            if (RenderSettings.sun)
+            {
+                // 逆光（用户 11-08：「光影、雾气对氛围的塑造非常重要」）：主光从宫门 / 祝融像背后、贴着地平线（仰角 10°）照过来——
+                // 天上的日晕正好落在像后，像、宫门、鼓楼压成剪影带一圈暖轮廓；朝镜头的面落进紫色环境光，靠灯和熔岩补光点暖（概念图就是这样）
+                RenderSettings.sun.color = new Color(1f, 0.74f, 0.5f);
+                RenderSettings.sun.intensity = 1.6f;
+                RenderSettings.sun.transform.rotation = Quaternion.Euler(SunPitch, SunYaw, 0);
+            }
+            // 背光面不能黑：环境光托高一档，地面反弹偏暖（熔湖在下面）
+            RenderSettings.ambientSkyColor = new Color(0.24f, 0.2f, 0.38f);
+            RenderSettings.ambientEquatorColor = new Color(0.32f, 0.24f, 0.36f);
+            RenderSettings.ambientGroundColor = new Color(0.38f, 0.2f, 0.12f);
+            RenderSettings.fogColor = new Color(0.3f, 0.24f, 0.36f);
+            RenderSettings.fogStartDistance = 70;
+            RenderSettings.fogEndDistance = 250;
+            if (RenderSettings.skybox is { } sky && sky.shader && sky.shader.name == "Spiritfire/SkyGradient")
+            {
+                sky.SetColor("_TopColor", new Color(0.16f, 0.14f, 0.26f));
+                sky.SetColor("_HorizonColor", new Color(0.72f, 0.36f, 0.2f));
+                sky.SetColor("_BottomColor", new Color(0.12f, 0.08f, 0.14f));
+                sky.SetFloat("_HorizonSharpness", 14f);
+                sky.SetFloat("_HorizonGlow", 0.9f);
+                // 像后的日晕：小日面（大半被像挡住）+ 一大团暖光晕，Bloom 再晕开一圈——全画面最亮的地方在主焦点背后
+                sky.SetColor("_SunColor", new Color(0.95f, 0.5f, 0.24f));
+                sky.SetFloat("_SunSize", 0.0015f);   // 日面半径约 3°（0.02 是 11°，成了一个月亮大的圆盘）
+                sky.SetFloat("_SunHalo", 1.0f);
+                EditorUtility.SetDirty(sky);
+                AssetDatabase.SaveAssetIfDirty(sky);
+            }
+            else rep.Warn("天空不是 Spiritfire/SkyGradient：概念图的地平线辉光没加上");
+            // 熔湖反光的暖补光：从镜头一侧、自下往上（仰角 −12°）打的方向光，不投影——朝镜头的立面和挑檐底被照暖（概念图里关楼、鼎墩正面的金色），
+            // 顶面照不到，逆光的轮廓不受影响
+            var fill = new GameObject("Lava Bounce Fill").AddComponent<Light>();
+            fill.type = LightType.Directional;
+            fill.color = new Color(1f, 0.64f, 0.44f);
+            fill.intensity = 0.45f;
+            fill.shadows = LightShadows.None;
+            fill.transform.rotation = Quaternion.Euler(-12f, ConceptYaw, 0);
+        }
+
+        // 主光方向：从主机位看像在方位 ≈ +8°（世界北偏东），光从那边、仰角 10° 照向镜头
+        const float SunPitch = 10f, SunYaw = 188f;
+
+        /// <summary>
+        /// 低雾带和火星（参考图的手法：贴地 / 贴水的雾把前、中、远景切开，小点缀让画面活）。用 Fx 预设（Resources/Fx/Presets）的粒子系统，
+        /// 改成场景里常驻的世界空间发射器；审核截图会把粒子模拟 14 s，所以截得到。运行时由 EnvFxHost 另外加跟镜头的氛围粒子，这里只放定点的雾和火星。
+        /// </summary>
+        static void Atmosphere(Transform parent, LevelKit.Report rep)
+        {
+            var root = new GameObject("Atmosphere").transform;
+            root.SetParent(parent, false);
+            var mist = new Color(0.66f, 0.56f, 0.64f, 0.55f);
+            var mistFar = new Color(0.6f, 0.54f, 0.66f, 0.7f);
+            int n = 0;
+            // 湖面：贴着熔岩的一层淡雾（2 m 高），整片湖读成「隔着热气」
+            n += Emitter(root, "EnvMist", "lake", new Vector3(CraterC.x, 1.2f, CraterC.y - 6), 0, new Vector3(120, 130, 2), 140, 22, (10, 20), (0.05f, 0.2f), -0.01f, mist) ? 1 : 0;
+            // 宫前台地脚：把湖心税关（中景）和宫门（远景）切开
+            n += Emitter(root, "EnvMist", "terrace foot", new Vector3(8, 3.5f, 33), 0, new Vector3(140, 8, 3), 70, 20, (9, 16), (0.05f, 0.15f), -0.008f, mist) ? 1 : 0;
+            // 峡口：雾顺着峡谷往外涌，渡槽半隐在雾里
+            var gorge = GorgeAt + GorgeDir * 30;
+            n += Emitter(root, "EnvMist", "gorge", new Vector3(gorge.x, 6, gorge.y), YawZ(GorgeDir), new Vector3(22, 70, 6), 60, 24, (12, 22), (0.05f, 0.2f), -0.01f, mistFar) ? 1 : 0;
+            // 火口崖脚三面：远处的崖底泡在雾里，崖身才像退到后面
+            n += Emitter(root, "EnvMist", "west foot", new Vector3(-62, 5, 20), 0, new Vector3(16, 120, 6), 60, 24, (14, 24), (0.05f, 0.2f), -0.01f, mistFar) ? 1 : 0;
+            n += Emitter(root, "EnvMist", "east foot", new Vector3(70, 5, 20), 0, new Vector3(16, 120, 6), 60, 24, (14, 24), (0.05f, 0.2f), -0.01f, mistFar) ? 1 : 0;
+            n += Emitter(root, "EnvMist", "north foot", new Vector3(10, 30, 104), 0, new Vector3(140, 14, 8), 60, 24, (14, 26), (0.05f, 0.2f), -0.01f, mistFar) ? 1 : 0;
+            // 火星：从近、中景的熔岩上慢慢升起（远处一颗几厘米的火星看不见，只铺镜头前 70 m）
+            n += Emitter(root, "EnvEmber", "embers", new Vector3(-4, 0.6f, -18), 0, new Vector3(70, 60, 1), 320, 6, (0.2f, 0.4f), (0.4f, 1.2f), 0f, new Color(1f, 0.5f, 0.18f)) ? 1 : 0;
+            rep.Line($"氛围：{n} 个定点发射器（湖面 / 台地脚 / 峡口 / 崖脚三面低雾 + 火星）");
+        }
+
+        /// <summary>从 Fx 预设复制一个常驻发射器：盒形区域（宽 × 长 × 高，长沿 yaw 方向）里往上发，预热好</summary>
+        static bool Emitter(Transform parent, string preset, string name, Vector3 center, float yaw, Vector3 box, int max, float life,
+                            (float, float) size, (float, float) speed, float gravity, Color color)
+        {
+            var src = Resources.Load<GameObject>($"Fx/Presets/{preset}");
+            if (!src) return false;
+            var go = Object.Instantiate(src, parent);
+            go.name = $"Atmosphere · {name}";
+            go.transform.SetPositionAndRotation(center, Quaternion.Euler(0, yaw, 0));
+            go.transform.localScale = Vector3.one;
+            var ps = go.GetComponent<ParticleSystem>();
+            if (!ps) { Object.DestroyImmediate(go); return false; }
+            var main = ps.main;
+            main.loop = true;
+            main.prewarm = true;
+            main.playOnAwake = true;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.duration = Mathf.Max(5, life);
+            main.maxParticles = max;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(life * 0.8f, life * 1.2f);
+            main.startSize = new ParticleSystem.MinMaxCurve(size.Item1, size.Item2);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(speed.Item1, speed.Item2);
+            if (gravity != 0) main.gravityModifier = gravity;
+            if (color != Color.white) main.startColor = color;
+            var em = ps.emission;
+            em.enabled = true;
+            em.rateOverTime = max / life;
+            var sh = ps.shape;
+            sh.enabled = true;
+            sh.shapeType = ParticleSystemShapeType.Box;
+            sh.rotation = new Vector3(-90, 0, 0);   // 盒子的 +Z（发射方向）朝上；局部 x → 世界宽，局部 y → 世界长（沿 yaw），局部 z → 世界高
+            sh.position = Vector3.zero;
+            sh.scale = box;
+            return true;
         }
 
         static void PointLight(Transform parent, string name, Vector3 at, Color c, float range, float intensity)
