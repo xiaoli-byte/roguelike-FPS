@@ -20,6 +20,9 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → 两岸都肃清后 D 瑶台 (0, 78) 才有守军：半圆台 +4.2 m、一层玉阶 +1.6、二层玉阶 +3.6（出口祭坛在上面）。
     /// A / B / C 必清、顺序不限，D 写 requires = { B, C }（D27：开放图任意顺序）。藏宝：西北湖面的冻船（惊动伏兵，可选场地）、东南岸的渔营（无守军）。
     ///
+    /// 怪点三类（docs/level-design/maps/2-3.md §11，2026-11-08）：驻守点 = 湖岸四角 4 处路遇埋伏（<see cref="Roadsides"/>）；
+    /// 据点 = A–D 四个必清场地（多波，A 第二波 / D 第一波的三青鸟从雪岭飞临）；入场点 = 7 个 <see cref="MonsterEntry"/>（<see cref="BuildEntries"/>）。
+    ///
     /// 动态环境是冰面（L8）：整片湖按行切成长条 SurfaceZone（<see cref="LevelKit.IceSheet"/>），冲刺余速在冰上滑出约 8 m；
     /// 两处冰窟窿和三个冰钓窟窿是开放水面（WaterVolume，涉水减速，能拿来刹车），大冰窟窿围一圈冰窟边缘段（掩体 + 预警）。
     /// 边界（D14，没有空气墙）：游玩区是一个起伏的椭圆，界外 8–13 m 内陡升成 16–30 m 的雪崖（崖面切几级够不着的窄雪台），边界外 2 m 起就叠雪峰——
@@ -226,6 +229,30 @@ namespace Spiritfire.Art.Editor.Levels
             ("Enemy_G_Flank_A", "G", new Vector2(-34, 32), StationRole.Flank, 1, false, 2.2f),
             ("Enemy_G_Flank_B", "G", new Vector2(-62, 12), StationRole.Flank, 2, false, 2.2f),
             ("Enemy_G_Precision", "G", new Vector2(-30, 14), StationRole.Precision, 0, false, 2.2f),
+            // 驻守点（路遇埋伏，场地 R1–R4，见 Roadsides）：开局就站在湖岸上
+            ("Enemy_R1_A", "R1", new Vector2(-68, -58), StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_R1_B", "R1", new Vector2(-73, -62), StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_R1_C", "R1", new Vector2(-71, -55), StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_R2_A", "R2", new Vector2(88, -48), StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_R2_B", "R2", new Vector2(93, -52), StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_R2_C", "R2", new Vector2(90, -45), StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_R3_A", "R3", new Vector2(-78, 53), StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_R3_B", "R3", new Vector2(-83, 57), StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_R3_C", "R3", new Vector2(-80, 60), StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_R4_A", "R4", new Vector2(76, 50), StationRole.Assault, 0, false, 1.2f),
+            ("Enemy_R4_B", "R4", new Vector2(81, 54), StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_R4_C", "R4", new Vector2(78, 57), StationRole.Auto, 0, false, 1.2f),
+        };
+
+        /// <summary>
+        /// 驻守点（路遇埋伏）：场地键、名字、中心、触发圈、看守方向（站岗朝向：玩家从哪来）。湖岸四角，都离必清场地「对方触发圈 + 自己触发圈 + 6 m」以外、离出生点 ≥ 35 m
+        /// </summary>
+        static readonly (string site, string title, Vector2 c, float trigger, Vector2 watch)[] Roadsides =
+        {
+            ("R1", "西南岸 · 冰碛哨", new Vector2(-70, -58), 12, new Vector2(0, -70)),
+            ("R2", "东南岸 · 渔营外", new Vector2(90, -48), 12, new Vector2(56, -44)),
+            ("R3", "西北岸 · 雪松哨", new Vector2(-80, 57), 12, new Vector2(-60, 30)),
+            ("R4", "东北岸 · 冰碛垄", new Vector2(78, 54), 12, new Vector2(60, 20)),
         };
 
         /// <summary>岸上的行走线（散布避让用；冰面上本来就不散布）</summary>
@@ -535,6 +562,7 @@ namespace Spiritfire.Art.Editor.Levels
                 var objective = BuildEncounters(markers);
                 BuildCaches(markers, objective);
                 var portal = BuildExit(shrine, objective, markers);
+                BuildEntries(markers);
 
                 EditorSceneManager.SaveScene(scene, ScenePath);
                 ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
@@ -553,6 +581,7 @@ namespace Spiritfire.Art.Editor.Levels
                 ReportRim(rep);
                 LevelValidator.Run(Spec(pavTop, wayshrineTop, lighthouseTop, exitTop, mastTop), rep);
                 CheckSceneContents(rep, scene, ice, waters, portal);
+                LevelKit.CheckEntries(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
                 rep.Save($"{LevelKit.ReviewDir}/level_2-3_report.txt");
 
@@ -626,6 +655,9 @@ namespace Spiritfire.Art.Editor.Levels
                     ("FishingCamp", E(new Vector2(50, -46)), OnGround(CampPoi, 1.5f), false),
                     ("Yaotai", E(new Vector2(0, 46)), exitTop, false),
                     ("Dais", E(new Vector2(-5, 91)), OnGround(PavC, 8), false),
+                    // 驻守点：从玩家来的方向看过去（西南岸冰碛哨、东北岸冰碛垄）
+                    ("PostSW", E(new Vector2(-40, -72)), OnGround(Roadsides[0].c, 1.2f), false),
+                    ("PostNE", E(new Vector2(56, 22)), OnGround(Roadsides[3].c, 1.2f), false),
                 });
             }
             finally
@@ -946,7 +978,7 @@ namespace Spiritfire.Art.Editor.Levels
 
             var sA = Site("A", "湖心冰光", SiteA, 22, 32, EncounterSpec.Of(
                     Wave("冰光隔湖", E(Fuzhu, 2), E(Jelly, 1), E(Haozhi, 2)).Hint("夫诸隔着冰面蓄力射冰光——躲到湖心亭或小岛后面，断开水母的连线"),
-                    Wave("冰上冲锋", E(Haozhi, 2), E(Jiaoren, 3), E(Qingniao, 1)).After(1, 1.8f).Hint("豪彘在冰上刹不住——侧冲让开，看它滑过去"))
+                    Wave("冰上冲锋", E(Haozhi, 2), E(Jiaoren, 3), E(Qingniao, 1).Via(SpawnMode.FlyIn)).After(1, 1.8f).Hint("豪彘在冰上刹不住——侧冲让开，看它滑过去"))
                 .Gather(0.6f).Distance(10, 40), "weapon");
             var sB = Site("B", "西岸祭坛", SiteB, 22, 28, EncounterSpec.Of(
                     Wave("岸边鲛群", E(Jiaoren, 4), E(Puffer, 2)).Hint("鲛人冲上岸先投矛再突刺，河豚从湖面飘来——上祭坛拉开距离"),
@@ -957,7 +989,7 @@ namespace Spiritfire.Art.Editor.Levels
                     Wave("灯塔下", E(Puffer, 2), E(Jelly, 1), E(Jiaoren, 2), E(Qingniao, 1)).After(1, 1.8f).Hint("先打水母的灯芯，断开它给同伴的回血"))
                 .Gather(0.6f).Distance(10, 36).Elites(1, "frenzied"), "upgrade");
             var sD = Site("D", "瑶台", SiteD, 24, 30, EncounterSpec.Of(
-                    Wave("狐巫冰壁", E(Fox, 2), E(Xingxing, 2), E(Qingniao, 1)).Hint("狐巫在立冰壁——打碎她的铜镜，冰壁就立不起来"),
+                    Wave("狐巫冰壁", E(Fox, 2), E(Xingxing, 2), E(Qingniao, 1).Via(SpawnMode.FlyIn)).Hint("狐巫在立冰壁——打碎她的铜镜，冰壁就立不起来"),
                     Wave("冰甲旋龟", E(XuanGui, 1).Elite("shielded"), E(Haozhi, 2), E(Fuzhu, 1), E(Jelly, 1)).After(1, 2f)
                         .Hint("精英旋龟缩壳旋转，会在冰壁之间反弹——等它过热翻倒再打散热孔"))
                 .Gather(1.5f).Distance(10, 36), "weapon:min=1");
@@ -967,6 +999,33 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f).Distance(8, 28), "");
             sG.autoTrigger = false;
             sG.optional = true;
+
+            // 据点的出场站位：A 第二波、D 第一波的三青鸟从北面雪岭飞临
+            void Mode(EncounterSite site, SpawnAnchor a)
+            {
+                a.LookAt(site.transform.position);
+                site.anchors = site.anchors.Append(a.transform).ToArray();
+            }
+            Mode(sA, SpawnAnchor.Create(markers, "Mode_A_FlyIn", At(new Vector2(14, 20), 7f), StationRole.Ranged, 0, true, 1.5f)
+                .Via(SpawnMode.FlyIn).Entry(At(new Vector2(60, 90), 35f)));
+            Mode(sD, SpawnAnchor.Create(markers, "Mode_D_FlyIn", At(new Vector2(10, 70), YaoY + 6f), StationRole.Ranged, 0, true, 1.5f)
+                .Via(SpawnMode.FlyIn).Entry(At(new Vector2(40, 140), 40f)));
+
+            // 驻守点（路遇埋伏）：开局就站在湖岸上、玩家先看见；进触发圈 / 开枪整组苏醒。可选、不计目标、不落宝箱
+            var squads = new Dictionary<string, WaveEntry[]>
+            {
+                ["R1"] = new[] { E(Jiaoren, 3), E(Fuzhu, 1) },
+                ["R2"] = new[] { E(Xingxing, 3), E(Haozhi, 1) },
+                ["R3"] = new[] { E(Jiaoren, 2), E(Xingxing, 2) },
+                ["R4"] = new[] { E(Haozhi, 2), E(Fuzhu, 1), E(Jiaoren, 1) },
+            };
+            foreach (var r in Roadsides)
+            {
+                foreach (var e in squads[r.site]) e.Via(SpawnMode.Ambush);
+                var rs = Site(r.site, r.title, r.c, r.trigger, r.trigger + 4, EncounterSpec.Of(Wave(r.title, squads[r.site])).Gather(0.3f).Distance(7, 24), "")
+                    .AsRoadside(r.trigger, r.trigger + 4);
+                foreach (var t in rs.anchors) t.GetComponent<SpawnAnchor>().Via(SpawnMode.Ambush).LookAt(OnGround(r.watch));
+            }
 
             var objective = new GameObject("Level Objective").AddComponent<LevelObjective>();
             objective.transform.SetParent(root, false);
@@ -1010,6 +1069,23 @@ namespace Spiritfire.Art.Editor.Levels
             Cache("冻船", JunkPoi, new Vector2(-36, 14), "pet", guard, JadeHoardId, new Vector2(-2f, -1.5f), 0.8f);
         }
 
+        /// <summary>
+        /// 怪物入场点（<see cref="MonsterEntry"/>，游荡怪群只从这里进场）：西岸北雪坡、东岸灯塔南、瑶台两翼雪坳、南岸东雪坡、大冰窟窿边（鲛人从冰下钻出的地方）、
+        /// 北小岛的青鸟飞临点（只放飞的）。全部在可玩区里、离出生点 ≥ 30 m（验收 <see cref="LevelKit.CheckEntries"/>）
+        /// </summary>
+        static void BuildEntries(Transform markers)
+        {
+            var root = new GameObject("Monster Entries").transform;
+            root.SetParent(markers, false);
+            LevelKit.Entry(root, "西岸北雪坡", OnGround(new Vector2(-126, 32)), OnGround(SiteB));
+            LevelKit.Entry(root, "东岸灯塔南", OnGround(new Vector2(124, -40)), OnGround(SiteC));
+            LevelKit.Entry(root, "瑶台西翼雪坳", OnGround(new Vector2(-46, 92)), OnGround(SiteD));
+            LevelKit.Entry(root, "瑶台东翼雪坳", OnGround(new Vector2(46, 92)), OnGround(SiteD));
+            LevelKit.Entry(root, "南岸东雪坡", OnGround(new Vector2(44, -80)), OnGround(SiteA));
+            LevelKit.Entry(root, "大冰窟窿边", OnGround(new Vector2(40, -19)), OnGround(SiteA), SpawnMode.Appear, null, 3f);
+            LevelKit.Entry(root, "北小岛 · 青鸟飞临", OnGround(Islets[0].c), OnGround(SiteA), SpawnMode.FlyIn, At(new Vector2(60, 140), 40f), 3f, true);
+        }
+
         /// <summary>出口传送门：嵌在二层玉阶上出口祭坛的正面（没有祭坛模型时自己立石门框），关卡目标完成后升起、落清关宝箱</summary>
         static ExitPortal BuildExit(GameObject shrine, LevelObjective objective, Transform markers)
         {
@@ -1049,8 +1125,8 @@ namespace Spiritfire.Art.Editor.Levels
 
             int sites = Count<EncounterSite>(), caches = Count<CachePOI>(), portals = Count<ExitPortal>(), zones = Count<SurfaceZone>(), pools = Count<WaterVolume>();
             float iceArea = ice.Sum(z => z.transform.localScale.x * z.transform.localScale.z);
-            rep.Line($"遭遇场地 {sites}（必清 4 + 可选 1），藏宝 {caches}，出口 {portals}；冰面牵引区 {zones} 条（约 {iceArea:F0} m²），冰窟窿水体 {pools} 处");
-            if (sites != 5) rep.Fail($"遭遇场地有 {sites} 个（应为 5）");
+            rep.Line($"遭遇场地 {sites}（必清 4 + 可选 1 + 驻守点 {Roadsides.Length}），藏宝 {caches}，出口 {portals}；冰面牵引区 {zones} 条（约 {iceArea:F0} m²），冰窟窿水体 {pools} 处");
+            if (sites != 5 + Roadsides.Length) rep.Fail($"遭遇场地有 {sites} 个（应为 {5 + Roadsides.Length}）");
             if (caches != 2) rep.Fail($"藏宝点有 {caches} 处（应为 2：渔营、冻船）");
             if (portals != 1 || !portal || !portal.objective) rep.Fail($"出口传送门 {portals} 个（应 1，且接上 LevelObjective）");
             else rep.Line($"✓ 出口传送门在二层玉阶，接关卡目标（必清 {portal.objective.required.Length} 处，可选 {portal.objective.optional.Length} 处）；下一关 {RunPlan.Next(RunPlan.Get("2-3"))?.Label ?? "?"}");

@@ -24,6 +24,9 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → 北翼神道（21.6 → 25.2）→ ④ 玉京殿前 (0, 282) y 25.2：两座殿前月台，北崖下天阙（青铜门阙）框住出口祭坛 (0, 300)。
     ///   藏宝：东路 U2 东端崖边小径尽头的钟亭（A，无守军）；西台地西缘凿进崖里的玉库（B，惊动 ⑤ 守军）。
     ///
+    /// 怪点三类（docs/level-design/maps/2-2.md §12，2026-11-08）：驻守点 = 4 处路遇埋伏（<see cref="Roadsides"/>：东西玉阶顶、东西天阶 U2 端头）；
+    /// 据点 = 四个必清场地（多波，② 第二波从西门 / 东门冲出、④ 援军从两座殿前月台跳下）；入场点 = 7 个 <see cref="SG.MonsterEntry"/>（<see cref="BuildEntries"/>）。
+    ///
     /// 台阶全部是 <see cref="LevelKit.TerraceFlight"/>（贴墙斜填的直台阶，只填不挖）；挡土墙在地形里是 1.2 m 宽的陡坎，
     /// 上面沿墙线连排 SM_Tripo_FrostJadeRetainingWall（<see cref="LevelKit.TerraceWallRuns"/>，台阶处自动断开）。
     /// 边界（D14，没有空气墙）：游玩区闭合多边形 + 两条岔道，线外 8–13 m 内陡升成比该处台面高 16–30 m 的雪岭绝壁（坡脚以上 10 m 起切窄雪台），防越界由地形保证；软边界（主题 Frost）只做兜底。
@@ -220,6 +223,31 @@ namespace Spiritfire.Art.Editor.Levels
             ("Enemy_5_Flank", 5, new Vector2(-70, 236), SG.StationRole.Flank, 1, false, 2.2f),
             ("Enemy_5_Ranged", 5, new Vector2(-78, 202), SG.StationRole.Ranged, 0, false, 2.2f),
             ("Enemy_5_Auto", 5, new Vector2(-60, 222), SG.StationRole.Auto, 2, false, 2.2f),
+            // 驻守点（路遇埋伏，场地 11–14，见 Roadsides）：开局就站在这里
+            ("Enemy_11_A", 11, new Vector2(-48, 64), SG.StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_11_B", 11, new Vector2(-53, 68), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_11_C", 11, new Vector2(-50, 72), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_12_A", 12, new Vector2(49, 66), SG.StationRole.Assault, 0, false, 1.2f),
+            ("Enemy_12_B", 12, new Vector2(54, 70), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_12_C", 12, new Vector2(51, 73), SG.StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_13_A", 13, new Vector2(77, 148), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_13_B", 13, new Vector2(81, 153), SG.StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_13_C", 13, new Vector2(75, 154), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_14_A", 14, new Vector2(-77, 148), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_14_B", 14, new Vector2(-81, 153), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_14_C", 14, new Vector2(-75, 154), SG.StationRole.Ranged, 0, false, 1.2f),
+        };
+
+        /// <summary>
+        /// 驻守点（路遇埋伏）：场地号、名字、中心、触发圈、看守方向（站岗朝向：玩家从哪来）。都离必清场地「对方触发圈 + 自己触发圈 + 6 m」以外、离出生点 ≥ 35 m，
+        /// 站在玉阶 / 天阶顶这类合乎情理的高处，不扎在中路上
+        /// </summary>
+        static readonly (int site, string title, Vector2 c, float trigger, Vector2 watch)[] Roadsides =
+        {
+            (11, "西玉阶顶 · 狌狌哨", new Vector2(-50, 68), 12, new Vector2(-44, 40)),
+            (12, "东玉阶顶 · 豪彘哨", new Vector2(51, 69), 12, new Vector2(40, 40)),
+            (13, "东天阶 · 钟亭岔口", new Vector2(78, 151), 12, new Vector2(64, 147)),
+            (14, "西天阶 · U2 西端", new Vector2(-78, 151), 12, new Vector2(-62, 140)),
         };
 
         /// <summary>路线标记（冒烟测试读）：三道门的门脚 / 天阶顶、东路的 U1 / U2 平台、钟亭小径、东西两翼口</summary>
@@ -530,6 +558,7 @@ namespace Spiritfire.Art.Editor.Levels
                 new GameObject("Level Bootstrap").AddComponent<SG.LevelBootstrap>();
                 var objective = BuildEncounters(markers);
                 BuildExit(shrine, objective);
+                BuildEntries(markers);
 
                 EditorSceneManager.SaveScene(scene, ScenePath);
                 ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
@@ -553,6 +582,7 @@ namespace Spiritfire.Art.Editor.Levels
                 LevelValidator.Run(Spec(), rep);
                 CheckSiteCenters(rep, scene);
                 CheckSceneContents(rep, scene);
+                LevelKit.CheckEntries(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
                 rep.Save($"{LevelKit.ReviewDir}/level_2-2_report.txt");
 
@@ -589,6 +619,9 @@ namespace Spiritfire.Art.Editor.Levels
                     ("Bastion", E(new Vector2(-30, 186)), OnGround(new Vector2(20, 230), 2), false),
                     ("Treasury", E(new Vector2(-80, 220)), OnGround(new Vector2(-108, 220), 1), false),
                     ("Hall", E(new Vector2(0, 250)), TianqueLintel, false),
+                    // 驻守点：从玩家来的方向看过去（西玉阶顶、东天阶钟亭岔口）
+                    ("PostWestStair", E(new Vector2(-44, 40)), OnGround(Roadsides[0].c, 1.2f), false),
+                    ("PostBell", E(new Vector2(62, 140)), OnGround(Roadsides[2].c, 1.2f), false),
                 });
             }
             finally
@@ -921,7 +954,7 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f).Distance(10, 42), "weapon");
             var s2 = Site(2, "九门外庭", Site2, 30, 34, SG.EncounterSpec.Of(
                     Wave("九门混战", E(Xingxing, 3), E(Qingniao, 1), E(Haozhi, 2)).Hint("抢门阙下的高处——豪彘冲过来会炸冰刺"),
-                    Wave("门上冷箭", E(Fuzhu, 1), E(Xingxing, 2), E(Haozhi, 1)).After(1, 2f).Hint("夫诸在台上蓄力冰光——躲到门阙后断开视线"))
+                    Wave("门上冷箭", E(Fuzhu, 1), E(Xingxing, 2).Via(SG.SpawnMode.Gate), E(Haozhi, 1)).After(1, 2f).Hint("夫诸在台上蓄力冰光，狌狌从西门 / 东门冲下来——躲到门阙后断开视线"))
                 .Gather(0.6f).Distance(10, 40), "scroll");
             // 圆心在基座南坡道（CourtCenter），宝箱仍落在 (−8, 184)：南翼西侧
             var s3 = Site(3, "开明兽庭", CourtCenter, 30, 36, SG.EncounterSpec.Of(
@@ -930,13 +963,44 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(1.5f).Distance(10, 44).Elites(1, "frenzied"), "weapon:min=1", Site3 + new Vector2(-8, -30) - CourtCenter);
             var s4 = Site(4, "玉京殿前", Site4, 26, 32, SG.EncounterSpec.Of(
                     Wave("玉京禁卫", E(XuanGui, 1).Elite("shielded"), E(FoxWitch, 1), E(Qingniao, 2), E(Haozhi, 2)).Hint("先碎铜镜，再等旋龟翻倒"),
-                    Wave("殿前援军", E(Xingxing, 3), E(Fuzhu, 1)).After(1, 2f).Hint("援军从两侧殿前月台上下来"))
+                    Wave("殿前援军", E(Xingxing, 3).Via(SG.SpawnMode.Drop), E(Fuzhu, 1)).After(1, 2f).Hint("援军从两侧殿前月台上跳下来"))
                 .Gather(0.6f).Distance(10, 40), "upgrade");
             var s5 = Site(5, "玉库守军", Site5, 14, 18, SG.EncounterSpec.Of(
                     Wave("玉库守军", E(Xingxing, 2), E(Fuzhu, 1).Elite("swift"), E(Haozhi, 1)))
                 .Gather(0.4f), "");
             s5.autoTrigger = false;
             s5.optional = true;
+
+            // 据点的出场站位：② 第二波狌狌从西门 / 东门冲出（门后是 U1）；④ 援军从两座殿前月台上跳下
+            void Mode(SG.EncounterSite site, SG.SpawnAnchor a)
+            {
+                a.LookAt(site.transform.position);
+                site.anchors = site.anchors.Append(a.transform).ToArray();
+            }
+            Mode(s2, SG.SpawnAnchor.Create(markers, "Mode_2_GateW", OnGround(new Vector2(-58, 112)), SG.StationRole.Flank, 1, false, 2f)
+                .Via(SG.SpawnMode.Gate).Gate(OnGround(new Vector2(-58, 131))));
+            Mode(s2, SG.SpawnAnchor.Create(markers, "Mode_2_GateE", OnGround(new Vector2(58, 112)), SG.StationRole.Flank, 2, false, 2f)
+                .Via(SG.SpawnMode.Gate).Gate(OnGround(new Vector2(58, 131))));
+            Mode(s4, SG.SpawnAnchor.Create(markers, "Mode_4_DropW", OnGround(new Vector2(-31, 280)), SG.StationRole.Assault, 1, false, 2f)
+                .Via(SG.SpawnMode.Drop).DropFrom(At(new Vector2(-31, 291), PlatformY + 0.05f)));
+            Mode(s4, SG.SpawnAnchor.Create(markers, "Mode_4_DropE", OnGround(new Vector2(31, 280)), SG.StationRole.Assault, 2, false, 2f)
+                .Via(SG.SpawnMode.Drop).DropFrom(At(new Vector2(31, 291), PlatformY + 0.05f)));
+
+            // 驻守点（路遇埋伏）：开局就站在场上、玩家先看见；进触发圈 / 开枪整组苏醒。可选、不计目标、不落宝箱
+            var squads = new Dictionary<int, SG.WaveEntry[]>
+            {
+                [11] = new[] { E(Xingxing, 3), E(Fuzhu, 1) },
+                [12] = new[] { E(Haozhi, 2), E(Xingxing, 2) },
+                [13] = new[] { E(Fuzhu, 1), E(Xingxing, 2), E(Haozhi, 1) },
+                [14] = new[] { E(Xingxing, 3), E(Haozhi, 1) },
+            };
+            foreach (var r in Roadsides)
+            {
+                foreach (var e in squads[r.site]) e.Via(SG.SpawnMode.Ambush);
+                var rs = Site(r.site, r.title, r.c, r.trigger, r.trigger + 4, SG.EncounterSpec.Of(Wave(r.title, squads[r.site])).Gather(0.3f).Distance(7, 24), "")
+                    .AsRoadside(r.trigger, r.trigger + 4);
+                foreach (var t in rs.anchors) t.GetComponent<SG.SpawnAnchor>().Via(SG.SpawnMode.Ambush).LookAt(OnGround(r.watch));
+            }
 
             var objective = new GameObject("Level Objective").AddComponent<SG.LevelObjective>();
             objective.transform.SetParent(root, false);
@@ -961,6 +1025,23 @@ namespace Spiritfire.Art.Editor.Levels
             Cache("Cache A · 钟亭供奉", "钟亭供奉", CacheA, new Vector2(92, 152), "scroll", null, 12);
             Cache("Cache B · 玉库秘藏", "玉库秘藏", CacheB, Site5, "pet", s5, 12);
             return objective;
+        }
+
+        /// <summary>
+        /// 怪物入场点（<see cref="SG.MonsterEntry"/>，游荡怪群只从这里进场）：西门 / 东门门洞（门后是 U1，增援门）、西雪坡下、钟亭崖径、
+        /// 东西殿侧雪坳、巨像北的青鸟飞临点（只放飞的）。全部在可玩区里、离出生点 ≥ 30 m（验收 <see cref="LevelKit.CheckEntries"/>）
+        /// </summary>
+        static void BuildEntries(Transform markers)
+        {
+            var root = new GameObject("Monster Entries").transform;
+            root.SetParent(markers, false);
+            LevelKit.Entry(root, "西门洞", OnGround(new Vector2(-58, 110)), OnGround(Site2), SG.SpawnMode.Gate, OnGround(new Vector2(-58, 131)));
+            LevelKit.Entry(root, "东门洞", OnGround(new Vector2(58, 110)), OnGround(Site2), SG.SpawnMode.Gate, OnGround(new Vector2(58, 131)));
+            LevelKit.Entry(root, "西雪坡下", OnGround(new Vector2(-54, 36)), OnGround(Site1));
+            LevelKit.Entry(root, "钟亭崖径", OnGround(new Vector2(98, 152)), OnGround(new Vector2(64, 147)), SG.SpawnMode.Appear, null, 3f);
+            LevelKit.Entry(root, "西殿侧雪坳", OnGround(new Vector2(-70, 272)), OnGround(Site4));
+            LevelKit.Entry(root, "东殿侧雪坳", OnGround(new Vector2(70, 272)), OnGround(Site4));
+            LevelKit.Entry(root, "巨像北 · 青鸟飞临", OnGround(new Vector2(30, 248)), OnGround(CourtCenter), SG.SpawnMode.FlyIn, At(new Vector2(20, 330), 55f), 3f, true);
         }
 
         /// <summary>出口传送门：嵌在出口祭坛正面（没有祭坛模型时自己立石门框），关卡目标完成后升起、落清关宝箱</summary>
@@ -1034,8 +1115,8 @@ namespace Spiritfire.Art.Editor.Levels
             None<SG.GameSession>("会话");
             None<SG.EnemyCatalog>("敌人目录（改由 GameDatabase 提供）");
             int sites = Count<SG.EncounterSite>(), caches = Count<SG.CachePOI>(), portals = Count<SG.ExitPortal>();
-            rep.Line($"遭遇场地 {sites}（必清 4 + 可选 1），藏宝 {caches}，出口 {portals}");
-            if (sites != 5) rep.Fail($"遭遇场地有 {sites} 个（应为 5）");
+            rep.Line($"遭遇场地 {sites}（必清 4 + 可选 1 + 驻守点 {Roadsides.Length}），藏宝 {caches}，出口 {portals}");
+            if (sites != 5 + Roadsides.Length) rep.Fail($"遭遇场地有 {sites} 个（应为 {5 + Roadsides.Length}）");
             if (caches != 2) rep.Fail($"藏宝点有 {caches} 处（应为 2）");
             if (portals != 1) rep.Fail($"出口传送门有 {portals} 个（应为 1）");
             if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");

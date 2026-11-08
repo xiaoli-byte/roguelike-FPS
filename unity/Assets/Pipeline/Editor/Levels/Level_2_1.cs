@@ -23,6 +23,9 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → ⑤ 瀑顶冰潭 (0, 250)：Ø45 的冰面，潭心冰岛立开明兽，四周 47.6 m 的石阶环台 → 出口祭坛 (0, 280)。
     /// 冰瀑三段叠成 45 m，背贴瀑口陡坎，是全图地标。五个必清场地任意顺序；藏宝 A 在谷底河槽尽头（冰瀑脚下），藏宝 B 在西岸低台北端（守军 ⑥）。
     ///
+    /// 怪点三类（docs/level-design/maps/2-1.md §10，2026-11-08）：驻守点 = 4 处路遇埋伏（<see cref="Roadsides"/>：开局就站在台地 / 栈道口上，走近 / 开枪整组苏醒）；
+    /// 据点 = 五个必清场地（多波，② 狌狌从北龛跃下、③ 灯水母从冰拱飞临、⑤ 青鸟从瀑顶飞临）；入场点 = 7 个 <see cref="SG.MonsterEntry"/>（<see cref="BuildEntries"/>，游荡怪群只从这里进场）。
+    ///
     /// 边界（D14，没有空气墙）：游玩区是一个闭合多边形 <see cref="Envelope"/>，界外 6 m 内陡升成绝壁，崖顶 34 m（下游）→ 72 m（冰潭），
     /// 比任何能站的面高 24 m 以上，L5 防越界由地形本身保证；软边界（风雪白化）沿同一个遮罩只做兜底。
     /// 场景只放环境和标记（D17 / L1）。生成：Spiritfire ▸ Levels ▸ Build 2-1 冰瀑栈道（或 bridge.sh level 2-1）。冒烟：bridge.sh playtest map-2-1（Map21Suite）。
@@ -220,6 +223,31 @@ namespace Spiritfire.Art.Editor.Levels
             ("Enemy_6_A", 6, new Vector2(-24, 108), SG.StationRole.Auto, 0, false, 1.5f),
             ("Enemy_6_B", 6, new Vector2(-34, 104), SG.StationRole.Auto, 1, false, 1.5f),
             ("Enemy_6_C", 6, new Vector2(-27, 113), SG.StationRole.Auto, 2, false, 1.2f),
+            // 驻守点（路遇埋伏，场地 11–14，见 Roadsides）：开局就站在这里
+            ("Enemy_11_A", 11, new Vector2(-28, 45), SG.StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_11_B", 11, new Vector2(-34, 41), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_11_C", 11, new Vector2(-32, 49), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_12_A", 12, new Vector2(38, 47), SG.StationRole.Assault, 0, false, 1.2f),
+            ("Enemy_12_B", 12, new Vector2(43, 50), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_12_C", 12, new Vector2(41, 44), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_13_A", 13, new Vector2(-50, 197), SG.StationRole.Ranged, 0, false, 1.2f),
+            ("Enemy_13_B", 13, new Vector2(-55, 202), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_13_C", 13, new Vector2(-47, 203), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_14_A", 14, new Vector2(52, 150), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_14_B", 14, new Vector2(56, 155), SG.StationRole.Auto, 0, false, 1.2f),
+            ("Enemy_14_C", 14, new Vector2(49, 156), SG.StationRole.Ranged, 0, false, 1.2f),
+        };
+
+        /// <summary>
+        /// 驻守点（路遇埋伏）：场地号、名字、中心、触发圈、看守方向（站岗朝向：玩家从哪来）。都离必清场地「对方触发圈 + 自己触发圈 + 6 m」以外、离出生点 ≥ 35 m，
+        /// 站在台地 / 栈道口这类合乎情理的高处，不扎在路中间
+        /// </summary>
+        static readonly (int site, string title, Vector2 c, float trigger, Vector2 watch)[] Roadsides =
+        {
+            (11, "西岸低台 · 冰碛哨", new Vector2(-31, 45), 12, new Vector2(-4, 30)),
+            (12, "东岸低台 · 坡顶哨", new Vector2(41, 47), 12, new Vector2(22, 44)),
+            (13, "西岸上台 · 栈道顶", new Vector2(-51, 200), 12, new Vector2(-60, 186)),
+            (14, "东岸中台 · 栈道口", new Vector2(53, 153), 12, new Vector2(62, 142)),
         };
 
         /// <summary>
@@ -535,6 +563,7 @@ namespace Spiritfire.Art.Editor.Levels
                 new GameObject("Level Bootstrap").AddComponent<SG.LevelBootstrap>();
                 var objective = BuildEncounters(markers);
                 BuildExit(shrine, objective);
+                BuildEntries(markers);
 
                 EditorSceneManager.SaveScene(scene, ScenePath);
                 ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
@@ -558,6 +587,7 @@ namespace Spiritfire.Art.Editor.Levels
                 rep.Line($"栈道 / 断桥栏杆（按世界方向复核）：{railOk} 段本来就朝外，{railFixed} 段翻过来才朝外，{railUnknown} 段两侧一样高（没探出栏杆）");
                 LevelValidator.Run(Spec(), rep);
                 CheckSceneContents(rep, scene);
+                LevelKit.CheckEntries(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
                 rep.Save($"{LevelKit.ReviewDir}/level_2-1_report.txt");
 
@@ -595,6 +625,9 @@ namespace Spiritfire.Art.Editor.Levels
                     ("Forest", E(new Vector2(50, 196)), kaimingAim, false),
                     ("Pool", E(new Vector2(-14, 236)), shrineAim, false),
                     ("CacheA", E(new Vector2(0, 176)), OnGround(CacheA, 1), false),
+                    // 驻守点：从玩家来的方向看过去（西岸低台的冰碛哨、东岸中台的栈道口）
+                    ("PostWT", E(new Vector2(-6, 26)), OnGround(Roadsides[0].c, 1.2f), false),
+                    ("PostE2", At(new Vector2(64, 136), BenchY + 1.62f), OnGround(Roadsides[3].c, 1.2f), false),
                 });
             }
             finally
@@ -1315,12 +1348,12 @@ namespace Spiritfire.Art.Editor.Levels
                     Wave("豪彘冲阵", E(Haozhi, 2), E(Jiaoren, 1), E(Qingniao, 1)).After(1, 1.6f).Hint("冰棘豪彘在冰上刹不住——侧身让开，它会滑倒"))
                 .Gather(0.4f), 42), "weapon", new Vector3(0, 0, -10));
             var s2 = Site(2, "东岸台地", OnGround(Site2), 22, 28, Far(SG.EncounterSpec.Of(
-                    Wave("栈道冷箭", E(Fuzhu, 2), E(Xingxing, 3)).Hint("夫诸在栈道和石龛上——雪狌狌会翻上石龛，高处不是安全区"),
+                    Wave("栈道冷箭", E(Fuzhu, 2), E(Xingxing, 3).Via(SG.SpawnMode.Drop)).Hint("夫诸在栈道和石龛上——雪狌狌从北龛上跳下来，高处不是安全区"),
                     Wave("狐巫结阵", E(FoxWitch, 1), E(Xingxing, 2), E(Puffer, 1)).After(1, 2f).Hint("先打九尾狐巫，她的冰壁会挡子弹"))
                 .Gather(0.6f), 40), "scroll", Vector3.zero);
             var s3 = Site(3, "冰桥", At(Site3, BenchY), 24, 32, Far(SG.EncounterSpec.Of(
                     Wave("桥头夹击", E(XuanGui, 1), E(Jiaoren, 3), E(Qingniao, 1)).Hint("旋龟从对岸冲上桥——射落头顶的冰棱砸它，碎冰就是掩体"),
-                    Wave("两端合围", E(FrostCrab, 1), E(Jiaoren, 2).As(SG.StationRole.Flank), E(Jelly, 1)).After(1, 2f)
+                    Wave("两端合围", E(FrostCrab, 1), E(Jiaoren, 2).As(SG.StationRole.Flank), E(Jelly, 1).Via(SG.SpawnMode.FlyIn)).After(1, 2f)
                         .Hint("身后的桥头也来了敌人——冰拱脚和碎冰堆能挡"))
                 .Gather(0.8f), 48), "weapon:min=1", Vector3.zero);
             var s4 = Site(4, "冰柱林", OnGround(Site4), 32, 30, Far(SG.EncounterSpec.Of(
@@ -1328,7 +1361,7 @@ namespace Spiritfire.Art.Editor.Levels
                     Wave("冰河豚群", E(Haozhi, 2), E(Puffer, 2), E(Fuzhu, 1)).After(1, 2f).Hint("冰河豚会撞上来自爆——在冰柱之间绕"))
                 .Gather(0.6f).Elites(1, "frenzied"), 40), "upgrade", new Vector3(6, 0, -2));
             var s5 = Site(5, "瀑顶冰潭", OnGround(new Vector2(0, 236)), 28, 34, Far(SG.EncounterSpec.Of(
-                    Wave("冰潭守望", E(IceWhale, 1), E(Jiaoren, 4), E(Qingniao, 1)).Hint("冰鲸在环台上架炮——冰面会让你滑，站上石阶打"),
+                    Wave("冰潭守望", E(IceWhale, 1), E(Jiaoren, 4), E(Qingniao, 1).Via(SG.SpawnMode.FlyIn)).Hint("冰鲸在环台上架炮——冰面会让你滑，站上石阶打"),
                     Wave("开明之前", E(FrostCrab, 1).Elite("shielded"), E(Fuzhu, 1), E(Xingxing, 2), E(Jelly, 1)).After(1, 2f)
                         .Hint("精英玄冰巨蟹带护盾——先打灯水母"))
                 .Gather(1.5f), 40), "scroll:min=1", Vector3.zero);
@@ -1337,6 +1370,35 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f), "", Vector3.zero);
             s6.autoTrigger = false;
             s6.optional = true;
+
+            // 据点的出场站位（据点多波：合乎地形的几处换出场方式）：② 狌狌从北龛跃下，③ 灯水母从冰拱上飞临，⑤ 青鸟从瀑顶飞临
+            void Mode(SG.EncounterSite site, SG.SpawnAnchor a)
+            {
+                a.LookAt(site.transform.position);
+                site.anchors = site.anchors.Append(a.transform).ToArray();
+            }
+            Mode(s2, SG.SpawnAnchor.Create(markers, "Mode_2_DropNiche", OnGround(new Vector2(50, 84)), SG.StationRole.Flank, 1, false, 2f)
+                .Via(SG.SpawnMode.Drop).DropFrom(At(new Vector2(60, 84), NicheY + 0.05f)));
+            Mode(s3, SG.SpawnAnchor.Create(markers, "Mode_3_FlyArch", At(new Vector2(-10, BridgeZ - 6), BenchY + 5f), SG.StationRole.Support, 0, true, 1.5f)
+                .Via(SG.SpawnMode.FlyIn).Entry(At(new Vector2(0, BridgeZ), ArchTop + 4f)));
+            Mode(s5, SG.SpawnAnchor.Create(markers, "Mode_5_FlyCrest", At(new Vector2(10, 262), RingY + 6f), SG.StationRole.Ranged, 0, true, 1.5f)
+                .Via(SG.SpawnMode.FlyIn).Entry(At(new Vector2(0, 300), RingY + 18f)));
+
+            // 驻守点（路遇埋伏）：开局就站在场上、玩家先看见；进触发圈 / 开枪整组苏醒。可选、不计目标、不落宝箱
+            var squads = new Dictionary<int, SG.WaveEntry[]>
+            {
+                [11] = new[] { E(Jiaoren, 3), E(Fuzhu, 1) },
+                [12] = new[] { E(Haozhi, 1), E(Xingxing, 3) },
+                [13] = new[] { E(Fuzhu, 2), E(Jiaoren, 2) },
+                [14] = new[] { E(Xingxing, 2), E(Haozhi, 1), E(Fuzhu, 1) },
+            };
+            foreach (var r in Roadsides)
+            {
+                foreach (var e in squads[r.site]) e.Via(SG.SpawnMode.Ambush);
+                var rs = Site(r.site, r.title, AnchorPos(r.c), r.trigger, r.trigger + 4, SG.EncounterSpec.Of(Wave(r.title, squads[r.site]))
+                    .Gather(0.3f).Distance(7, 24), "", Vector3.zero).AsRoadside(r.trigger, r.trigger + 4);
+                foreach (var t in rs.anchors) t.GetComponent<SG.SpawnAnchor>().Via(SG.SpawnMode.Ambush).LookAt(OnGround(r.watch));
+            }
 
             var objective = new GameObject("Level Objective").AddComponent<SG.LevelObjective>();
             objective.transform.SetParent(root, false);
@@ -1361,6 +1423,23 @@ namespace Spiritfire.Art.Editor.Levels
             Cache("Cache A · 冰瀑下的冻供", "冰瀑下的冻供", CacheA, new Vector2(0, 176), "coins", null, 12);
             Cache("Cache B · 冰封驿亭", "冰封驿亭", CacheB, Site6, "pet", s6, 12);
             return objective;
+        }
+
+        /// <summary>
+        /// 怪物入场点（<see cref="SG.MonsterEntry"/>，游荡怪群只从这里进场）：怪从哪来看得懂——北龛上跳下来、冰碛坡顶、栈道口、西岸上台北端、
+        /// 环台东北、冰拱上飞临（只放飞的）、冰瀑脚的河槽。全部在可玩区里、离出生点 ≥ 30 m（验收 <see cref="LevelKit.CheckEntries"/>）
+        /// </summary>
+        static void BuildEntries(Transform markers)
+        {
+            var root = new GameObject("Monster Entries").transform;
+            root.SetParent(markers, false);
+            LevelKit.Entry(root, "南龛跃下", OnGround(new Vector2(50, 70)), OnGround(Site1), SG.SpawnMode.Drop, At(new Vector2(60, 70), NicheY + 0.05f), 3f);
+            LevelKit.Entry(root, "西岸冰碛坡顶", OnGround(new Vector2(-46, 150)), OnGround(Site3));
+            LevelKit.Entry(root, "东岸中台北", OnGround(new Vector2(52, 176)), OnGround(Site3));
+            LevelKit.Entry(root, "西岸上台北", OnGround(new Vector2(-52, 228)), OnGround(PoolC));
+            LevelKit.Entry(root, "环台东北", OnGround(new Vector2(26, 264)), OnGround(PoolC));
+            LevelKit.Entry(root, "冰拱飞临", OnGround(new Vector2(24, 166)), At(Site3, BenchY), SG.SpawnMode.FlyIn, At(new Vector2(0, BridgeZ), ArchTop + 3f), 3f, true);
+            LevelKit.Entry(root, "冰瀑脚河槽", OnGround(new Vector2(0, 192)), At(Site3, BenchY));
         }
 
         /// <summary>出口传送门：嵌在出口祭坛正面（没有祭坛模型时自己立石门框），关卡目标完成后升起、落清关宝箱</summary>
@@ -1398,8 +1477,8 @@ namespace Spiritfire.Art.Editor.Levels
             None<SG.EnemyCatalog>("敌人目录（改由 GameDatabase 提供）");
             int sites = Count<SG.EncounterSite>(), ice = Count<SG.SurfaceZone>(), icicles = Count<SG.IcefallIcicle>(), caches = Count<SG.CachePOI>(),
                 portals = Count<SG.ExitPortal>(), perches = Count<SG.PerchPoint>(), links = Count<NavMeshLink>();
-            rep.Line($"遭遇场地 {sites}（必清 5 + 可选 1），冰面区域 {ice}，冰棱 {icicles}，藏宝 {caches}，出口 {portals}，栖落点 {perches}，攀爬连线 {links}");
-            if (sites != 6) rep.Fail($"遭遇场地有 {sites} 个（应为 6）");
+            rep.Line($"遭遇场地 {sites}（必清 5 + 可选 1 + 驻守点 {Roadsides.Length}），冰面区域 {ice}，冰棱 {icicles}，藏宝 {caches}，出口 {portals}，栖落点 {perches}，攀爬连线 {links}");
+            if (sites != 6 + Roadsides.Length) rep.Fail($"遭遇场地有 {sites} 个（应为 {6 + Roadsides.Length}）");
             if (ice < 4) rep.Fail($"冰面区域只有 {ice} 块（① 冰河、河槽、冰潭至少 4 块）");
             if (icicles != IcicleX.Length) rep.Fail($"冰棱有 {icicles} 根（应为 {IcicleX.Length}）");
             if (caches != 2) rep.Fail($"藏宝有 {caches} 处（应为 2）");
