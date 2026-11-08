@@ -402,6 +402,7 @@ namespace Spiritfire.Art.Editor.Levels
             playerSpawn.transform.SetPositionAndRotation(spawnAt, spawnRot);
             new GameObject("Level Bootstrap").AddComponent<Spiritfire.Game.LevelBootstrap>();
             var objective = BuildEncounters(terrain, markers);
+            BuildEntries(terrain, markers);
             // 出口传送门：嵌在出口祭坛正面，关卡目标完成后升起、落清关宝箱；下一关读 RunPlan（1-1 → 1-2 雅丹迷城）
             var portal = new GameObject("Exit Portal").AddComponent<Spiritfire.Game.ExitPortal>();
             var face = exit.transform.forward;
@@ -426,6 +427,7 @@ namespace Spiritfire.Art.Editor.Levels
             rep.Line($"散布：{string.Join("、", scatter.Select(kv => $"{kv.Key} {kv.Value}"))}；古道车辙贴花 {ruts} 片");
             LevelValidator.Run(Spec(terrain, smokeAt), rep); // 主线、坡度、视线 + L5 规则集，见文件末尾的 Spec
             CheckSceneContents(rep, scene);
+            LevelKit.CheckEntries(rep, scene);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
             rep.Save($"{LevelKit.ReviewDir}/level_1-1_report.txt");
 
@@ -454,6 +456,8 @@ namespace Spiritfire.Art.Editor.Levels
                         ("BeaconClose", E(new Vector2(173, 132), 2), G(BeaconTower, 7), false),
                         ("Camp", E(new Vector2(206, 94)), G(new Vector2(234, 64), 1), false),
                         ("NorthView", E(new Vector2(180, 150)), G(new Vector2(150, 220), 10), false),
+                        ("PostWestRamp", E(new Vector2(128, 108)), G(Posts[0].at, 1f), false),
+                        ("PostEastRamp", E(new Vector2(196, 128)), G(Posts[1].at, 1f), false),
                         ("RevSpawn", E(RevSpawn), G(Camp, 1.5f), true),
                         ("RevExit", E(new Vector2(40, 42)), G(RevExitAt, 4f), false),
                     });
@@ -875,6 +879,39 @@ namespace Spiritfire.Art.Editor.Levels
         /// 出生锚点用 BuildMarkers 摆的 Enemy_&lt;场地&gt;_* 标记，挂 <see cref="Spiritfire.Game.SpawnAnchor"/>（<see cref="AnchorRoles"/>），运行时按角色挑站位。
         /// 敌人 Prefab / 挂件运行时从 GameDatabase 取（L1 起场景里不再放敌人目录）。
         /// </summary>
+        /// <summary>
+        /// 驻守点（docs/level-design/maps/1-1.md §怪点）：据点之间、路线上的路遇小队，开局就站在那里（埋伏，玩家先看见），走近 / 开枪整组苏醒。
+        /// 每处离任一据点触发圈 + 9 m + 6 m 以外、离两个走法的出生点 ≥ 35 m，都在可玩区遮罩里（验算见设计稿）
+        /// </summary>
+        static readonly (string key, string title, Vector2 at, Vector2 toward, (string id, int n)[] squad, string hint)[] Posts =
+        {
+            ("WestRamp", "西坡道下 · 伏兵", new Vector2(146, 122), new Vector2(124, 106),
+                new[] { ("jerboa_blade", 3), ("scorpion_archer", 1) }, "坡道下蹲着一队沙匪——先点掉蝎卫"),
+            ("EastRamp", "东坡道脚 · 伏兵", new Vector2(208, 112), new Vector2(190, 133),
+                new[] { ("fire_rat", 2), ("jerboa_blade", 2), ("scorpion_archer", 1) }, "火浣鼠会顺坡道滚过来——拉开距离"),
+            ("RiverHead", "雅丹西 · 河源沙洲", new Vector2(86, 100), new Vector2(96, 72),
+                new[] { ("mirage_toad", 1), ("jerboa_blade", 3) }, "蜃楼蟾蹲在沙洲上吊射——先打真身"),
+            ("EastBank", "河床东岸 · 伏沙", new Vector2(112, 50), new Vector2(90, 62),
+                new[] { ("jerboa_blade", 2), ("sand_wraith", 1), ("scorpion_archer", 1) }, "沙魇伏在河床沙里——脚下亮圈就跑开"),
+        };
+
+        /// <summary>
+        /// 怪物入场点（<see cref="Spiritfire.Game.MonsterEntry"/>，游荡怪群只从这里进场）：北沙丘背后、干河床下游、雅丹高丘顶跃下、
+        /// 营地东侧（沙暴来向）、长城南段外沙窝、烽燧东北沙丘。离两个走法的出生点 ≥ 30 m、在可玩区遮罩里
+        /// </summary>
+        static void BuildEntries(Terrain t, Transform markers)
+        {
+            var root = new GameObject("Monster Entries").transform;
+            root.SetParent(markers, false);
+            Vector3 G(Vector2 q, float dy = 0) => LevelKit.OnGround(t, q.x, q.y, dy);
+            LevelKit.Entry(root, "北沙丘背后", G(new Vector2(170, 168)), G(Beacon));
+            LevelKit.Entry(root, "干河床下游", G(new Vector2(104, 34)), G(Gravel));
+            LevelKit.Entry(root, "雅丹高丘跃下", G(new Vector2(110, 130)), G(Yardang), Spiritfire.Game.SpawnMode.Drop, G(new Vector2(116, 121), 0.05f), 3f);
+            LevelKit.Entry(root, "营地东侧 · 沙暴来向", G(new Vector2(238, 90)), G(Camp));
+            LevelKit.Entry(root, "长城南段外沙窝", G(new Vector2(58, 30)), G(new Vector2(54, 48)));
+            LevelKit.Entry(root, "烽燧东北沙丘", G(new Vector2(200, 165)), G(Beacon));
+        }
+
         /// <summary>BuildEncounters 摆的四个必清场地（① … ④），布局变体改写先后 / 编制用</summary>
         static Spiritfire.Game.EncounterSite[] sites = System.Array.Empty<Spiritfire.Game.EncounterSite>();
         static Spiritfire.Game.EncounterSpec reverseOpening, reverseFinale;
@@ -916,7 +953,19 @@ namespace Spiritfire.Art.Editor.Levels
             s1.reward = "weapon:beam";
             var s2 = Site("Site 2 · 雅丹石阵", "Site_2_Yardang", "Enemy_2_", "雅丹石阵", 18, 30,
                 Of(Wave("雅丹石阵", E("mirage_toad", 2), E("jerboa_blade", 3, 0.6f)).Hint("蜃楼蟾在岩丘后吊射：低丘顶能看到它们"),
-                    Wave("绕岩伏击", E("jerboa_blade", 2), E("sand_wraith", 1)).After(2, 1.2f).Hint("跳鼠从岩丘背后绕过来，沙魇在沙下潜行——脚下亮圈就跑开")), s1);
+                    Wave("绕岩伏击", E("jerboa_blade", 2).Via(Spiritfire.Game.SpawnMode.Drop), E("sand_wraith", 1)).After(2, 1.2f)
+                        .Hint("跳鼠从低丘顶上跳下来，沙魇在沙下潜行——脚下亮圈就跑开")), s1);
+            {
+                // 跃下站位：低丘（Mesas[0]，3.5 m）朝场地一侧的顶沿起跳，落在丘脚外
+                var c = Mesas[0].c;
+                var dir = (Yardang - c).normalized;
+                var top = c + dir * 2.5f;
+                var land = c + dir * 9f;
+                var drop = Spiritfire.Game.SpawnAnchor.Create(markers, "Enemy_2_Jerboa_DropMesa", LevelKit.OnGround(t, land.x, land.y), Spiritfire.Game.StationRole.Flank, 1)
+                    .Via(Spiritfire.Game.SpawnMode.Drop).DropFrom(LevelKit.OnGround(t, top.x, top.y, 0.05f));
+                drop.LookAt(LevelKit.OnGround(t, Yardang.x, Yardang.y));
+                s2.anchors = s2.anchors.Append(drop.transform).ToArray();
+            }
             s2.reward = "pet"; // 旧场景没重建时由 PetBootstrap 在运行时把 ② 的 scroll 换成 pet
             var s3 = Site("Site 3 · 烽燧台地", "Site_3_BeaconPlateau", "Enemy_3_", "烽燧台地", 20, 30,
                 Of(Wave("冲坡", E("tomb_beast", 1), E("apsara", 1, 1.5f)).Hint("镇墓兽冲上坡：侧闪，打背后的裂缝；先打台顶的飞天"),
@@ -957,6 +1006,30 @@ namespace Spiritfire.Art.Editor.Levels
             }
             Cache("Cache 1 · 戍卒窖藏", "Cache_1_HanWall", "戍卒窖藏", "coins", null);
             Cache("Cache 2 · 商队遗货", "Cache_2_Caravan", "商队遗货", "upgrade", guard);
+
+            // 驻守点（路遇：开局就站在场上、玩家先看见，走近 / 开枪整组苏醒；不计目标、不落宝箱）
+            foreach (var post in Posts)
+            {
+                var site = new GameObject($"Post · {post.title}").AddComponent<Spiritfire.Game.EncounterSite>();
+                site.transform.SetParent(root, false);
+                site.transform.position = LevelKit.OnGround(t, post.at.x, post.at.y);
+                site.title = post.title;
+                var entries = post.squad.Select(q => E(q.id, q.n).Via(Spiritfire.Game.SpawnMode.Ambush)).ToArray();
+                site.spec = Spiritfire.Game.EncounterSpec.Of(Wave(post.title, entries).Hint(post.hint)).Gather(0.3f).Distance(6, 22);
+                site.AsRoadside(9f, 14f);
+                var face = LevelKit.OnGround(t, post.toward.x, post.toward.y);
+                var list = new List<Transform>();
+                for (int k = 0; k < 4; k++)
+                {
+                    float a = (k * 90f + 45f) * Mathf.Deg2Rad;
+                    var q = post.at + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 3.5f;
+                    var anchor = Spiritfire.Game.SpawnAnchor.Create(markers, $"Post_{post.key}_{k}", LevelKit.OnGround(t, q.x, q.y), Spiritfire.Game.StationRole.Auto, 0, false, 1.2f)
+                        .Via(Spiritfire.Game.SpawnMode.Ambush);
+                    anchor.LookAt(face);
+                    list.Add(anchor.transform);
+                }
+                site.anchors = list.ToArray();
+            }
 
             var objective = new GameObject("Level Objective").AddComponent<Spiritfire.Game.LevelObjective>();
             objective.transform.SetParent(root, false);

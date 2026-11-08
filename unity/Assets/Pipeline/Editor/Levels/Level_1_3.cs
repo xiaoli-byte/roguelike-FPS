@@ -445,6 +445,7 @@ namespace Spiritfire.Art.Editor.Levels
             new GameObject("Level Bootstrap").AddComponent<LevelBootstrap>();
 
             var objective = BuildEncounters(set, markers);
+            BuildEntries(set, markers);
             BuildCaches(set, markers, objective);
             var camp = BuildSupplyCamp(set, markers);
             // 出口传送门：嵌在坑底出口祭坛的门洞里，四个必清场地肃清后升起、落清关宝箱（RunPlan 1-3 的 clearReward）；下一关读 RunPlan = 1-4
@@ -478,6 +479,7 @@ namespace Spiritfire.Art.Editor.Levels
                      $"西墙走道端 y = {set.GroundY(WallX0, WalkWEnd + 1):F1} / 南壁 y = {set.GroundY(WallX0, SheerW1 - 2):F1}");
             LevelValidator.Run(Spec(set), rep); // 主线、坡度、视线 + L5 规则集，见文件末尾的 Spec
             CheckSceneContents(rep, scene, camp, portal);
+            LevelKit.CheckEntries(rep, scene);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
             rep.Save($"{LevelKit.ReviewDir}/level_1-3_report.txt");
 
@@ -504,6 +506,8 @@ namespace Spiritfire.Art.Editor.Levels
                         ("Camp", E(new Vector2(113, 19)), G(Camp, 1), false),
                         ("SinkRim", E(SinkRampStart), G(Sink, 0), false),
                         ("SinkFloor", E(new Vector2(166, 22)), G(ShrineAt, 3), false),
+                        ("PostRoof", E(new Vector2(118, 158)), G(Posts[1].at, 1), false),
+                        ("PostWest", E(new Vector2(58, 126)), G(Posts[0].at, 1), false),
                         ("SpawnNE", E(SpawnNE), pagodaTop, true),
                         ("SpawnW", E(SpawnW), pagodaTop, true),
                     });
@@ -852,6 +856,39 @@ namespace Spiritfire.Art.Editor.Levels
         static EncounterSpec westOpening, westFinale;
 
         /// <summary>
+        /// 驻守点（docs/level-design/maps/1-3.md §怪点）：街巷、屋顶沙台、井台外巷子上的路遇小队，开局就站在那里（埋伏），走近 / 开枪整组苏醒。
+        /// 离任一据点触发圈 + 15 m 以外、离三个入城出生点 ≥ 35 m、在城墙立面以内
+        /// </summary>
+        static readonly (string key, string title, Vector2 at, Vector2 toward, (string id, int n)[] squad, string hint)[] Posts =
+        {
+            ("WestFan", "西坊 · 沙扇脚巷口", new Vector2(40, 108), new Vector2(44, 150),
+                new[] { ("jerboa_blade", 3), ("sand_wraith", 1) }, "沙扇脚下伏着一队——沙魇在沙里，脚下亮圈就跑开"),
+            ("Roof", "屋顶沙台 · 东段", new Vector2(142, 156), new Vector2(104, 144),
+                new[] { ("scorpion_archer", 2), ("jerboa_blade", 2) }, "蝎卫守在沙台上——从巷口坡道摸上去"),
+            ("WellLane", "井台东南 · 巷子", new Vector2(176, 56), new Vector2(162, 100),
+                new[] { ("fire_rat", 2), ("jerboa_blade", 2), ("mirage_toad", 1) }, "巷子里的火浣鼠会滚出来——别在窄处被堵"),
+            ("TerraceNorth", "商铺台北口", new Vector2(198, 122), new Vector2(162, 100),
+                new[] { ("jerboa_blade", 3), ("scorpion_archer", 1) }, "商铺台下蹲着一队沙匪——先点掉蝎卫"),
+        };
+
+        /// <summary>
+        /// 怪物入场点（<see cref="MonsterEntry"/>，游荡怪群只从这里进场）：西墙 / 北墙墙头跃下、东墙根井台东巷、坑东南墙根、西南坊巷口、集市北巷口。
+        /// 离三个入城出生点 ≥ 30 m、不在据点触发圈和补给营安全区里
+        /// </summary>
+        static void BuildEntries(LevelKit.TerrainSet set, Transform markers)
+        {
+            var root = new GameObject("Monster Entries").transform;
+            root.SetParent(markers, false);
+            Vector3 G(float x, float z, float dy = 0) => set.OnGround(x, z, dy);
+            LevelKit.Entry(root, "西墙墙头跃下", G(28, 126), G(60, 126), SpawnMode.Drop, G(WallX0, 126, 0.05f), 3f);
+            LevelKit.Entry(root, "北墙墙头跃下", G(84, 158), G(84, 140), SpawnMode.Drop, G(84, WallZ1, 0.05f), 3f);
+            LevelKit.Entry(root, "东墙根 · 井台东巷", G(200, 80), G(Market.x, Market.y));
+            LevelKit.Entry(root, "坑东 · 南墙根", G(184, 2), G(164, 40));
+            LevelKit.Entry(root, "西南坊巷口", G(60, 20), G(100, 40));
+            LevelKit.Entry(root, "集市北巷口", G(146, 124), G(Market.x, Market.y));
+        }
+
+        /// <summary>
         /// 布局变体（docs/level-design/run-variety.md §2）：三种进城走法共用补给营和坑底出口（终点不动），只换出生点；
         /// west 走法先碰上 ④，④ / ① 的编制和奖励对调（场地本来就先后不限，不改 requires）
         /// </summary>
@@ -940,14 +977,16 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f).Distance(10, 30), "scroll");
             var s2 = Site(2, "三路长街", StreetSite, 22, 30, EncounterSpec.Of(
                     EncounterSpec.Wave("长街伏兵", E("jerboa_blade", 3), E("scorpion_archer", 2)).Hint("弩卫在沙台和墙头，走马道绕上去"),
-                    EncounterSpec.Wave("墙头与屋檐", E("tomb_beast", 1), E("apsara", 1), E("jerboa_blade", 2)).After(1, 1.6f).Hint("镇墓兽顺街冲锋——上沙台躲开，先打飞天的琵琶"))
+                    EncounterSpec.Wave("墙头与屋檐", E("tomb_beast", 1), E("apsara", 1), E("jerboa_blade", 2).Via(SpawnMode.Drop)).After(1, 1.6f)
+                        .Hint("跳鼠从北墙墙头跳下沙台，镇墓兽顺街冲锋——上沙台躲开，先打飞天的琵琶"))
                 .Gather(0.4f).Distance(10, 34), "weapon", new Vector3(0, 0, -8));
             var s3 = Site(3, "集市井台", Market, 22, 28, EncounterSpec.Of(
                     EncounterSpec.Wave("井台蜃影", E("mirage_toad", 2), E("jerboa_blade", 3)).Hint("蜃楼蟾在井沿上吊射，分身打不坏真身"),
                     EncounterSpec.Wave("集市乱战", E("fire_rat", 3), E("jerboa_blade", 1), E("scorpion_archer", 1)).After(1, 1.6f).Hint("火浣鼠滚进井底，上台阶或坡道"))
                 .Gather(0.4f).Distance(10, 32).Elites(1), "scroll", new Vector3(0, 0, -8));
             var s4 = Site(4, "寺院前庭", Court, 24, 30, EncounterSpec.Of(
-                    EncounterSpec.Wave("前庭守卫", E("tomb_beast", 1), E("jerboa_blade", 2), E("scorpion_archer", 2)).Hint("镇墓兽正面格挡——绕到背后打裂缝"),
+                    EncounterSpec.Wave("前庭守卫", E("tomb_beast", 1), E("jerboa_blade", 2).Via(SpawnMode.Drop), E("scorpion_archer", 2))
+                        .Hint("跳鼠从西回廊二层跳下来，镇墓兽正面格挡——绕到背后打裂缝"),
                     EncounterSpec.Wave("飞天赐福", E("apsara", 1), E("fire_rat", 3), E("mirage_toad", 1)).After(2, 1.6f).Hint("先打飞天的琵琶，再清火浣鼠"),
                     EncounterSpec.Wave("沙王卫队", E("tomb_beast", 1).Elite(), E("scorpion_archer", 1).Elite(), E("jerboa_blade", 1), E("sand_wraith", 1)).After(1, 2f).Hint("精英卫队——巨像台上有俯射位"))
                 .Gather(0.6f).Distance(10, 34), "weapon:min=1");
@@ -956,6 +995,39 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f).Distance(8, 26), "");
             guard.autoTrigger = false;
             guard.optional = true;
+
+            // 跃下站位：② 北墙墙头 → 店铺背后的沙台；④ 西回廊二层（约 3 m）→ 前庭
+            SpawnAnchor DropAnchor(string name, Vector2 land, Vector3 from, Vector2 look, int lane)
+            {
+                var a = SpawnAnchor.Create(markers, name, set.OnGround(land.x, land.y), StationRole.Flank, lane, false, 1.8f).Via(SpawnMode.Drop).DropFrom(from);
+                a.LookAt(set.OnGround(look.x, look.y));
+                return a;
+            }
+            s2.anchors = s2.anchors.Append(DropAnchor("Enemy_2_DropWall", new Vector2(124, 157), set.OnGround(124, WallZ1, 0.05f), StreetSite, 1).transform).ToArray();
+            s4.anchors = s4.anchors.Append(DropAnchor("Enemy_4_DropCloister", new Vector2(84, 58), set.OnGround(76, 60, 3.1f), Court, 1).transform).ToArray();
+
+            // 驻守点（路遇：开局就站在场上、玩家先看见，走近 / 开枪整组苏醒；不计目标、不落宝箱）
+            foreach (var post in Posts)
+            {
+                var site = new GameObject($"Post · {post.title}").AddComponent<EncounterSite>();
+                site.transform.SetParent(root, false);
+                site.transform.position = set.OnGround(post.at.x, post.at.y);
+                site.title = post.title;
+                var entries = post.squad.Select(q => E(q.id, q.n).Via(SpawnMode.Ambush)).ToArray();
+                site.spec = EncounterSpec.Of(EncounterSpec.Wave(post.title, entries).Hint(post.hint)).Gather(0.3f).Distance(6, 22);
+                site.AsRoadside(9f, 14f);
+                var face = set.OnGround(post.toward.x, post.toward.y);
+                var list = new List<Transform>();
+                for (int k = 0; k < 4; k++)
+                {
+                    float ang = (k * 90f + 45f) * Mathf.Deg2Rad;
+                    var q = post.at + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * 3.5f;
+                    var anchor = SpawnAnchor.Create(markers, $"Post_{post.key}_{k}", set.OnGround(q.x, q.y), StationRole.Auto, 0, false, 1.2f).Via(SpawnMode.Ambush);
+                    anchor.LookAt(face);
+                    list.Add(anchor.transform);
+                }
+                site.anchors = list.ToArray();
+            }
 
             // west 走法（BuildLayout）：先碰上 ④ → 开场编制、给秘卷；① 最后打 → 终局编制（精英卫队）、给武器
             westOpening = EncounterSpec.Of(

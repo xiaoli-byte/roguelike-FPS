@@ -479,6 +479,7 @@ namespace Spiritfire.Art.Editor.Levels
                 playerSpawn.transform.SetPositionAndRotation(spawnAt, spawnRot);
                 new GameObject("Level Bootstrap").AddComponent<SG.LevelBootstrap>();
                 var objective = BuildEncounters(markers);
+                BuildEntries(markers);
                 var mainExit = BuildExit(shrine, objective);
 
                 EditorSceneManager.SaveScene(scene, ScenePath);
@@ -496,6 +497,7 @@ namespace Spiritfire.Art.Editor.Levels
                          $"广场 {OnGround(Site3).y:F1}，环台 {OnGround(Lobe1).y:F1} / {OnGround(StupaC + new Vector2(0, -10f)).y:F1}，岩台 {OnGround(ShelfC).y:F1}，拱下 {OnGround(ArchC).y:F1}");
                 LevelValidator.Run(Spec(spireTop, archLintel, cityTop), rep);
                 CheckSceneContents(rep, scene);
+                LevelKit.CheckEntries(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
                 rep.Save($"{LevelKit.ReviewDir}/level_1-2_report.txt");
 
@@ -531,6 +533,8 @@ namespace Spiritfire.Art.Editor.Levels
                     ("ArchCourt", E(new Vector2(244, 6)), archLintel, false),
                     ("UnderArch", E(ArchC), cityTop, false),
                     ("CacheA", E(new Vector2(104, 50)), OnGround(CacheA, 1), false),
+                    ("PostNorth", E(new Vector2(40, 36)), OnGround(Posts[0].at, 1), false),
+                    ("PostMid", E(new Vector2(116, -2)), OnGround(Posts[2].at, 1), false),
                     ("RevSpawn", E(RevSpawn), OnGround(Site4, 1.62f), true),
                     ("RevExit", E(new Vector2(24, 0)), OnGround(RevExit, 5), false),
                 });
@@ -752,6 +756,38 @@ namespace Spiritfire.Art.Editor.Levels
         /// 沙魇（EN1）：② 屋脊之海首波的两只跳鼠换成沙魇（只数不变）——沙盆是流沙地，沙魇潜沙逼近；屋面比沙盆高 3.2 m，
         /// 超过它潜沙突袭的 2.5 m 高差，上屋顶就是解法（同一句提示管流沙和沙魇）。1-1 ② 先见过一只，这里第一次成对。
         /// </summary>
+        /// <summary>
+        /// 驻守点（局部坐标，docs/level-design/maps/1-2.md §怪点）：三条干河道和汇流口上的路遇小队，开局就站在那里（埋伏），走近 / 开枪整组苏醒。
+        /// 离任一据点触发圈 + 15 m 以外、离两个走法的出生点 ≥ 35 m、离雅丹岛 ≥ 1.3 倍岛半径
+        /// </summary>
+        static readonly (string key, string title, Vector2 at, Vector2 toward, (string id, int n)[] squad, string hint)[] Posts =
+        {
+            ("North", "北河道 · 狮身背后", new Vector2(66, 46), new Vector2(32, 30),
+                new[] { (Jerboa, 3), (Scorpion, 1) }, "狮身雅丹背后蹲着一队沙匪——先点掉蝎卫"),
+            ("South", "南河道 · 缺口", new Vector2(60, -46), new Vector2(32, -30),
+                new[] { (FireRat, 2), (Jerboa, 2) }, "火浣鼠会顺河道滚过来——拉开距离"),
+            ("Mid", "中河道 · 汇流口", new Vector2(138, -6), new Vector2(96, -3),
+                new[] { (Toad, 1), (Jerboa, 2), (Scorpion, 1) }, "蜃楼蟾在河道里吊射——先打真身"),
+            ("Confluence", "南河道 · 汇流前", new Vector2(184, -40), new Vector2(160, -44),
+                new[] { (Jerboa, 2), (Wraith, 1), (Scorpion, 1) }, "沙魇伏在河道沙里——脚下亮圈就跑开"),
+        };
+
+        /// <summary>
+        /// 怪物入场点（<see cref="SG.MonsterEntry"/>，游荡怪群只从这里进场；局部坐标）：北 / 南河道西头的岩壁缺口、中雅丹 NC2 背风尾、
+        /// 屋脊之海北缘、南河道汇流口、塔院南墙根。离两个走法的出生点 ≥ 30 m、不在据点触发圈里
+        /// </summary>
+        static void BuildEntries(Transform markers)
+        {
+            var root = new GameObject("Monster Entries").transform;
+            root.SetParent(markers, false);
+            LevelKit.Entry(root, "北河道西口", OnGround(new Vector2(50, 52)), OnGround(new Vector2(70, 46)));
+            LevelKit.Entry(root, "南河道西段", OnGround(new Vector2(44, -46)), OnGround(new Vector2(72, -46)));
+            LevelKit.Entry(root, "中雅丹背风尾", OnGround(new Vector2(148, 12)), OnGround(new Vector2(130, -5)));
+            LevelKit.Entry(root, "屋脊之海北缘", OnGround(new Vector2(198, 64)), OnGround(Site2));
+            LevelKit.Entry(root, "南河道汇流口", OnGround(new Vector2(204, -40)), OnGround(Site3));
+            LevelKit.Entry(root, "塔院南墙根", OnGround(new Vector2(234, -44)), OnGround(StupaC));
+        }
+
         /// <summary>BuildEncounters 摆的四个必清场地（① … ④），布局变体改写编制 / 奖励用</summary>
         static SG.EncounterSite[] sites = Array.Empty<SG.EncounterSite>();
         static SG.EncounterSpec reverseOpening, reverseFinale;
@@ -788,8 +824,16 @@ namespace Spiritfire.Art.Editor.Levels
 
             var s1 = Site(1, "河口三叉", Site1, 22, 30, SG.EncounterSpec.Of(
                     Wave("河口伏击", E(Jerboa, 3), E(Scorpion, 2)).Hint("跳鼠从两侧河道的缺口包抄——背靠岩丘、守住缺口"),
-                    Wave("侧河道包抄", E(Jerboa, 3), E(FireRat, 2)).After(1, 1.6f).Hint("火浣鼠滚过来会炸——上河心洲拉开距离"))
+                    Wave("侧河道包抄", E(Jerboa, 3).Via(SG.SpawnMode.Drop), E(FireRat, 2)).After(1, 1.6f).Hint("跳鼠从低雅丹顶上跳下来，火浣鼠滚过来会炸——上河心洲拉开距离"))
                 .Gather(0.4f), "weapon");
+            {
+                // 跃下站位：低雅丹 M1（4 m）南沿顶上起跳，落进中河道
+                var land = new Vector2(90, -2);
+                var drop = SG.SpawnAnchor.Create(markers, "Enemy_1_Drop_M1", OnGround(land), SG.StationRole.Flank, 2, false, 1.8f)
+                    .Via(SG.SpawnMode.Drop).DropFrom(At(new Vector2(92, 5), Ground0(M1) + 4.05f));
+                drop.LookAt(OnGround(Site1));
+                s1.anchors = s1.anchors.Append(drop.transform).ToArray();
+            }
             var s2 = Site(2, "屋脊之海", Site2, 22, 30, SG.EncounterSpec.Of(
                     Wave("沙下的街", E(FireRat, 3), E(Wraith, 2), E(Apsara, 1)).Hint("流沙会往下拖，沙魇从沙里钻出来——从积沙坡上屋顶走"),
                     Wave("飞天降临", E(Apsara, 1), E(FireRat, 2), E(Scorpion, 2)).After(1, 2f).Hint("先打飞天的琵琶，她在给同伴加护"))
@@ -808,6 +852,29 @@ namespace Spiritfire.Art.Editor.Levels
             s5.autoTrigger = false;
             s5.optional = true;
             sites = new[] { s1, s2, s3, s4 };
+
+            // 驻守点（路遇：开局就站在场上、玩家先看见，走近 / 开枪整组苏醒；不计目标、不落宝箱）
+            foreach (var post in Posts)
+            {
+                var site = new GameObject($"Post · {post.title}").AddComponent<SG.EncounterSite>();
+                site.transform.SetParent(root, false);
+                site.transform.position = OnGround(post.at);
+                site.title = post.title;
+                var entries = post.squad.Select(q => E(q.id, q.n).Via(SG.SpawnMode.Ambush)).ToArray();
+                site.spec = SG.EncounterSpec.Of(Wave(post.title, entries).Hint(post.hint)).Gather(0.3f).Distance(6, 22);
+                site.AsRoadside(9f, 14f);
+                var face = OnGround(post.toward);
+                var list = new List<Transform>();
+                for (int k = 0; k < 4; k++)
+                {
+                    float a = (k * 90f + 45f) * Mathf.Deg2Rad;
+                    var q = post.at + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 3.5f;
+                    var anchor = SG.SpawnAnchor.Create(markers, $"Post_{post.key}_{k}", OnGround(q), SG.StationRole.Auto, 0, false, 1.2f).Via(SG.SpawnMode.Ambush);
+                    anchor.LookAt(face);
+                    list.Add(anchor.transform);
+                }
+                site.anchors = list.ToArray();
+            }
             // 逆行变体（BuildLayout）：④ 先打 → 开场编制（没有精英）、给第二把枪；① 最后打 → 终局编制（多一只蜃楼蟾、一只自爆精英）、给强化
             reverseOpening = SG.EncounterSpec.Of(
                     Wave("守门小队", E(Scorpion, 2), E(Jerboa, 3)).Hint("拱门下是唯一的出路——先清岩台上的弩卫"))
@@ -901,8 +968,8 @@ namespace Spiritfire.Art.Editor.Levels
             None<SG.GameSession>("会话");
             None<SG.EnemyCatalog>("敌人目录（改由 GameDatabase 提供）");
             int sites = Count<SG.EncounterSite>(), pits = Count<SG.Quicksand>(), caches = Count<SG.CachePOI>(), portals = Count<SG.ExitPortal>();
-            rep.Line($"遭遇场地 {sites}（必清 4 + 可选 1），流沙 {pits}，藏宝 {caches}，出口 {portals}");
-            if (sites != 5) rep.Fail($"遭遇场地有 {sites} 个（应为 5）");
+            rep.Line($"遭遇场地 {sites}（必清 4 + 可选 1 + 驻守点 {Posts.Length}），流沙 {pits}，藏宝 {caches}，出口 {portals}");
+            if (sites != 5 + Posts.Length) rep.Fail($"遭遇场地有 {sites} 个（应为 {5 + Posts.Length}）");
             if (pits < 3) rep.Fail($"屋脊之海的流沙只有 {pits} 块（应为 3）");
             if (portals != 2) rep.Fail($"出口传送门有 {portals} 个（应为 2：主走法 + 逆行）");
             if (spawns == 2 && boots == 1) rep.Line("✓ PlayerSpawn ×2（主走法 / 逆行各一）、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
