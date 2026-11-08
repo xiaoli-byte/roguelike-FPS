@@ -27,6 +27,11 @@ namespace Spiritfire.Art.Editor.Levels
     /// 怪点三类（docs/level-design/maps/2-2.md §12，2026-11-08）：驻守点 = 4 处路遇埋伏（<see cref="Roadsides"/>：东西玉阶顶、东西天阶 U2 端头）；
     /// 据点 = 四个必清场地（多波，② 第二波从西门 / 东门冲出、④ 援军从两座殿前月台跳下）；入场点 = 7 个 <see cref="SG.MonsterEntry"/>（<see cref="BuildEntries"/>）。
     ///
+    /// 布局变体（<see cref="SG.LevelLayout"/>，docs/level-design/maps/2-2.md §13、run-variety.md §2；正式开局按种子抽）：main「自山门入」= 上面这条往上登；
+    /// reverse「自玉京殿侧入」：在东殿侧雪坳出生（<see cref="RevSpawn"/>：出口祭坛前在 ④ 的触发圈里，挪到殿侧，离 ④ 中心 71 m）→ ④ 先打（开场编制，给 ① 的武器）
+    /// → ③ ② 顺天阶 / 九门往下（requires ④）→ ① 玉阶月台最后打（终局编制：精英旋龟 + 狐巫，给 ④ 的强化；requires ②③④）
+    /// → 山门：逆行里来时的封门藏起来，原处立出口祭坛（<see cref="RevExitAt"/>，NavMesh 烘焙后摆）。逆行里「东殿侧雪坳」入场点就是出生点，藏起来。
+    ///
     /// 台阶全部是 <see cref="LevelKit.TerraceFlight"/>（贴墙斜填的直台阶，只填不挖）；挡土墙在地形里是 1.2 m 宽的陡坎，
     /// 上面沿墙线连排 SM_Tripo_FrostJadeRetainingWall（<see cref="LevelKit.TerraceWallRuns"/>，台阶处自动断开）。
     /// 边界（D14，没有空气墙）：游玩区闭合多边形 + 两条岔道，线外 8–13 m 内陡升成比该处台面高 16–30 m 的雪岭绝壁（坡脚以上 10 m 起切窄雪台），防越界由地形保证；软边界（主题 Frost）只做兜底。
@@ -82,6 +87,8 @@ namespace Spiritfire.Art.Editor.Levels
         // ───────────── 场地（世界 XZ）─────────────
         static readonly Vector2 Spawn = new(-4, 4), Site1 = new(2, 50), Site2 = new(6, 104), Site3 = new(0, 214), Site4 = new(0, 282), Site5 = new(-74, 220),
             ShrineC = new(0, 300), GatewayC = new(0, 307.5f), CacheA = new(108.7f, 152), CacheB = new(-101, 220), BellC = new(113, 152);
+        /// <summary>逆行变体：出生在东殿侧雪坳（面朝殿前），出口祭坛立在山门（封门）原处、面朝雪坳</summary>
+        static readonly Vector2 RevSpawn = new(68, 271), RevExitAt = new(-4, -11.5f);
         /// <summary>
         /// ③ 开明兽庭的场地中心（遭遇触发圈 / 刷怪兜底圈的圆心、L5 场地圆心）：基座南坡道上、基座南沿前 2 m（地形，和出生点连通）。
         /// 不用 <see cref="Site3"/>：那是巨像的位置，脚下的导航网格被巨像围成孤岛（整局冒烟：从出生点没有完整路径，传送到中心刷不出怪）
@@ -557,12 +564,13 @@ namespace Spiritfire.Art.Editor.Levels
                 playerSpawn.transform.SetPositionAndRotation(spawnAt, spawnRot);
                 new GameObject("Level Bootstrap").AddComponent<SG.LevelBootstrap>();
                 var objective = BuildEncounters(markers);
-                BuildExit(shrine, objective);
+                var mainExit = BuildExit(shrine, objective);
                 BuildEntries(markers);
 
                 EditorSceneManager.SaveScene(scene, ScenePath);
                 ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
                 LevelKit.BakeNavMesh(Dir, Name, env);
+                BuildLayout(kit, markers, playerSpawn, mainExit, objective);
                 EditorSceneManager.SaveScene(scene, ScenePath);
                 // 构建设置只补进本场景（顺序由 levels 命令按 RunPlan 重排，parity 4.12）
                 if (!EditorBuildSettings.scenes.Any(s => s.path == ScenePath))
@@ -622,6 +630,9 @@ namespace Spiritfire.Art.Editor.Levels
                     // 驻守点：从玩家来的方向看过去（西玉阶顶、东天阶钟亭岔口）
                     ("PostWestStair", E(new Vector2(-44, 40)), OnGround(Roadsides[0].c, 1.2f), false),
                     ("PostBell", E(new Vector2(62, 140)), OnGround(Roadsides[2].c, 1.2f), false),
+                    // 逆行变体：东殿侧雪坳往殿前看；从雪坳往山门处的新祭坛看
+                    ("RevSpawn", E(RevSpawn), OnGround(Site4, 6f), true),
+                    ("RevExit", E(new Vector2(-6, 22)), OnGround(RevExitAt, 5f), false),
                 });
             }
             finally
@@ -824,10 +835,13 @@ namespace Spiritfire.Art.Editor.Levels
             Kit(TowerId, kit, new Vector2(-88, 232.5f), TopY - 0.3f, 90, TowerScale);
         }
 
+        /// <summary>出生雪坳南侧来时的山门（封门）：逆行变体在原处立出口祭坛，这扇门藏起来</summary>
+        static GameObject spawnGate;
+
         /// <summary>出生雪坳：南侧来时的山门、路龛、经幡石堆、F0 台阶脚的冰灯</summary>
         static void BuildSpawnHollow(Transform props)
         {
-            KitOnGround(SealedGateId, props, new Vector2(-4, -11.5f), 0, 1, 0.3f);
+            spawnGate = KitOnGround(SealedGateId, props, new Vector2(-4, -11.5f), 0, 1, 0.3f);
             KitOnGround("SM_Env_FrostWayshrine", props, new Vector2(-22, 8), 70);
             KitOnGround("SM_Prop_FrostPrayerCairn", props, new Vector2(12, 10), 20);
             KitOnGround("SM_Prop_FrostPrayerCairn", props, new Vector2(-18, 18), -30);
@@ -917,6 +931,12 @@ namespace Spiritfire.Art.Editor.Levels
         /// 遭遇（docs/level-design/maps/2-2.md §6，遭遇框架 v2）：四个必清场地任意顺序，⑤ 是藏宝 B（玉库）的守军（可选、不自动触发）。
         /// 难度由 RunPlan 给（2-2 = 1.96），场地不写死。站位标记挂 SpawnAnchor（<see cref="Anchors"/>）。
         /// </summary>
+        /// <summary>BuildEncounters 摆的四个必清场地（① … ④），布局变体改写先后 / 编制用</summary>
+        static SG.EncounterSite[] sites = Array.Empty<SG.EncounterSite>();
+        static SG.EncounterSpec reverseOpening, reverseFinale;
+        /// <summary>「东殿侧雪坳」入场点：逆行出生点就在这里，逆行里藏起来</summary>
+        static GameObject eastHallEntry;
+
         static SG.LevelObjective BuildEncounters(Transform markers)
         {
             var root = new GameObject("Encounters").transform;
@@ -970,6 +990,17 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f), "");
             s5.autoTrigger = false;
             s5.optional = true;
+            sites = new[] { s1, s2, s3, s4 };
+            // 逆行变体（BuildLayout）：④ 先打 → 开场编制（没有精英），给 ① 的武器；① 最后打 → 终局编制（精英旋龟 + 狐巫），给 ④ 的强化
+            reverseOpening = SG.EncounterSpec.Of(
+                    Wave("殿前哨", E(Xingxing, 3), E(Fuzhu, 1), E(Qingniao, 1)).Hint("夫诸在殿前蓄力冰光——躲到殿前月台的墙后断开视线"),
+                    Wave("殿前援军", E(Xingxing, 3).Via(SG.SpawnMode.Drop), E(Haozhi, 1)).After(1, 2f).Hint("援军从两侧殿前月台上跳下来"))
+                .Gather(0.6f).Distance(10, 40);
+            reverseFinale = SG.EncounterSpec.Of(
+                    Wave("月台狌狌群", E(Xingxing, 5), E(Qingniao, 1)).Hint("狌狌会翻上月台追人——高台不再安全"),
+                    Wave("山门禁卫", E(XuanGui, 1).Elite("shielded"), E(FoxWitch, 1), E(Haozhi, 2), E(Qingniao, 1)).After(1, 2f)
+                        .Hint("先碎狐巫的铜镜，再等旋龟翻倒打散热孔"))
+                .Gather(0.6f).Distance(10, 42);
 
             // 据点的出场站位：② 第二波狌狌从西门 / 东门冲出（门后是 U1）；④ 援军从两座殿前月台上跳下
             void Mode(SG.EncounterSite site, SG.SpawnAnchor a)
@@ -1040,12 +1071,43 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.Entry(root, "西雪坡下", OnGround(new Vector2(-54, 36)), OnGround(Site1));
             LevelKit.Entry(root, "钟亭崖径", OnGround(new Vector2(98, 152)), OnGround(new Vector2(64, 147)), SG.SpawnMode.Appear, null, 3f);
             LevelKit.Entry(root, "西殿侧雪坳", OnGround(new Vector2(-70, 272)), OnGround(Site4));
-            LevelKit.Entry(root, "东殿侧雪坳", OnGround(new Vector2(70, 272)), OnGround(Site4));
+            eastHallEntry = LevelKit.Entry(root, "东殿侧雪坳", OnGround(new Vector2(70, 272)), OnGround(Site4)).gameObject;
             LevelKit.Entry(root, "巨像北 · 青鸟飞临", OnGround(new Vector2(30, 248)), OnGround(CourtCenter), SG.SpawnMode.FlyIn, At(new Vector2(20, 330), 55f), 3f, true);
         }
 
+        /// <summary>
+        /// 布局变体（docs/level-design/maps/2-2.md §13）：main = 设计稿走法（山门 → 往上登 → 天阙下的祭坛）；
+        /// reverse = 逆行（东殿侧雪坳 → ④ → 往下 → ① → 山门原处的新祭坛），④ / ① 的编制和奖励对调。
+        /// 在 NavMesh 烘焙之后调：逆行的祭坛不进导航网格（主走法里它停用），运行时由 NavMeshObstacle 挖洞；封门在逆行里藏起来（它的导航洞留着，门洞后本来就是绝壁）
+        /// </summary>
+        static void BuildLayout(Transform kit, Transform markers, SG.PlayerSpawn mainSpawn, SG.ExitPortal mainExit, SG.LevelObjective objective)
+        {
+            var (s1, s2, s3, s4) = (sites[0], sites[1], sites[2], sites[3]);
+            var revSpawn = LevelKit.SpawnMarker("PlayerSpawn · 逆行", markers, OnGround(RevSpawn, 0.05f), OnGround(Site4));
+            var shrine = KitOnGround(ShrineId, kit, RevExitAt, 0, 1, 0.15f);
+            if (shrine && !IsPlaceholder(shrine)) shrine.name = "Exit · 逆行 Shrine";
+            if (shrine) LevelKit.CarveObstacle(shrine);
+            var portal = LevelKit.PortalAt("Exit · 逆行 Portal", markers, (x, z) => ts.OnGround(x, z), shrine, objective);
+            var hide = new List<GameObject>();
+            if (spawnGate) hide.Add(spawnGate);
+            if (eastHallEntry) hide.Add(eastHallEntry);
+            LevelKit.Layout(markers,
+                new SG.LevelLayout.Variant { id = "main", title = "自山门入", spawn = mainSpawn, exit = mainExit },
+                new SG.LevelLayout.Variant
+                {
+                    id = "reverse", title = "自玉京殿侧入", spawn = revSpawn, exit = portal,
+                    only = shrine ? new[] { shrine } : Array.Empty<GameObject>(),
+                    hide = hide.ToArray(),
+                    requires = new[]
+                    {
+                        LevelKit.Requires(s4), LevelKit.Requires(s3, s4), LevelKit.Requires(s2, s4), LevelKit.Requires(s1, s2, s3, s4),
+                    },
+                    sites = new[] { LevelKit.Override(s4, reverseOpening, s1.reward), LevelKit.Override(s1, reverseFinale, s4.reward) },
+                });
+        }
+
         /// <summary>出口传送门：嵌在出口祭坛正面（没有祭坛模型时自己立石门框），关卡目标完成后升起、落清关宝箱</summary>
-        static void BuildExit(GameObject shrine, SG.LevelObjective objective)
+        static SG.ExitPortal BuildExit(GameObject shrine, SG.LevelObjective objective)
         {
             var portal = new GameObject("Exit Portal").AddComponent<SG.ExitPortal>();
             var face = shrine ? shrine.transform.forward : Vector3.back;
@@ -1055,6 +1117,7 @@ namespace Spiritfire.Art.Editor.Levels
             portal.transform.SetPositionAndRotation(ts.OnGround(at.x, at.y), Quaternion.LookRotation(-face));
             portal.objective = objective;
             portal.buildFrame = !shrine || IsPlaceholder(shrine);
+            return portal;
         }
 
         /// <summary>
@@ -1101,7 +1164,7 @@ namespace Spiritfire.Art.Editor.Levels
             int Count<T>() where T : Component =>
                 Object.FindObjectsByType<T>(FindObjectsInactive.Include).Count(c => c.gameObject.scene == scene);
             int spawns = Count<SG.PlayerSpawn>(), boots = Count<SG.LevelBootstrap>();
-            if (spawns != 1) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 1）");
+            if (spawns != 2) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 2：主走法 + 逆行）");
             if (boots != 1) rep.Fail($"LevelBootstrap 有 {boots} 个（应为 1）");
             void None<T>(string what) where T : Component
             {
@@ -1118,8 +1181,8 @@ namespace Spiritfire.Art.Editor.Levels
             rep.Line($"遭遇场地 {sites}（必清 4 + 可选 1 + 驻守点 {Roadsides.Length}），藏宝 {caches}，出口 {portals}");
             if (sites != 5 + Roadsides.Length) rep.Fail($"遭遇场地有 {sites} 个（应为 {5 + Roadsides.Length}）");
             if (caches != 2) rep.Fail($"藏宝点有 {caches} 处（应为 2）");
-            if (portals != 1) rep.Fail($"出口传送门有 {portals} 个（应为 1）");
-            if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
+            if (portals != 2) rep.Fail($"出口传送门有 {portals} 个（应为 2：主走法 + 逆行）");
+            if (spawns == 2 && boots == 1) rep.Line("✓ PlayerSpawn ×2（主走法 / 逆行各一）、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
             CoreSceneBuilder.BuildDatabase(rep);
         }
 
@@ -1155,6 +1218,10 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("西翼", G(new Vector2(-38, 214))).Route("③ 开明兽庭（北翼神道）", G(new Vector2(0, 246))).Route("④ 玉京殿前", G(Site4))
                 .Route("西殿前月台", G(new Vector2(-28, 292))).Route("东殿前月台", G(new Vector2(28, 292))).Route("出口祭坛前", G(ShrineC + new Vector2(0, -4.5f)))
                 .Route("藏宝 A · 钟亭", G(CacheA)).Route("藏宝 B · 玉库", G(CacheB))
+                // 逆行变体：东殿侧雪坳出生 → 殿前 → 北翼神道 → 兽庭 → 中门天阶 → 外庭 → 月台 → 山门处的新祭坛前（下行全程走台阶）
+                .Route("逆行·出生", G(RevSpawn)).Route("④ 玉京殿前", G(Site4)).Route("③ 北翼神道", G(new Vector2(0, 246)))
+                .Route("③ 开明兽庭", G(CourtCenter)).Route("中门天阶顶", G(new Vector2(0, 176))).Route("② 九门外庭", G(Site2))
+                .Route("① 玉阶月台", G(Site1)).Route("逆行·出口祭坛", G(RevExitAt + new Vector2(0, 4.5f)))
                 .Sight("出生 → 巨像", G(Spawn, 1.62f), KaimingHead, 6, KaimingId)
                 .Sight("① 挡墙月台 → 巨像", G(new Vector2(-2, 43.5f), 1.62f), KaimingHead, 6, KaimingId)
                 .Sight("② 中门前 → 巨像", G(new Vector2(0, 100), 1.62f), KaimingHead, 6, KaimingId)

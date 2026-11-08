@@ -26,6 +26,11 @@ namespace Spiritfire.Art.Editor.Levels
     /// 怪点三类（docs/level-design/maps/2-1.md §10，2026-11-08）：驻守点 = 4 处路遇埋伏（<see cref="Roadsides"/>：开局就站在台地 / 栈道口上，走近 / 开枪整组苏醒）；
     /// 据点 = 五个必清场地（多波，② 狌狌从北龛跃下、③ 灯水母从冰拱飞临、⑤ 青鸟从瀑顶飞临）；入场点 = 7 个 <see cref="SG.MonsterEntry"/>（<see cref="BuildEntries"/>，游荡怪群只从这里进场）。
     ///
+    /// 布局变体（<see cref="SG.LevelLayout"/>，docs/level-design/maps/2-1.md §11、run-variety.md §2；正式开局按种子抽）：main「自冰河尾碛入」= 上面这条往上爬；
+    /// reverse「自瀑顶入」：在瀑顶出口祭坛前偏西出生（<see cref="RevSpawn"/>，离 ⑤ 中心 38 m，在触发圈外）→ ⑤ 先打（换成开场编制、给 ① 的武器）→ ④ ③ ② 顺栈道 / 环台 / 冰桥往下
+    /// → ① 冰河最后打（终局编制：精英玄冰巨蟹，给 ⑤ 的秘卷；requires = ②③④⑤）→ 尾碛丘上新立的出口祭坛（<see cref="RevExitAt"/>，NavMesh 烘焙后摆，只在逆行里在场）。
+    /// 逆行里「环台东北」入场点离出生点不到 30 m，藏起来。
+    ///
     /// 边界（D14，没有空气墙）：游玩区是一个闭合多边形 <see cref="Envelope"/>，界外 6 m 内陡升成绝壁，崖顶 34 m（下游）→ 72 m（冰潭），
     /// 比任何能站的面高 24 m 以上，L5 防越界由地形本身保证；软边界（风雪白化）沿同一个遮罩只做兜底。
     /// 场景只放环境和标记（D17 / L1）。生成：Spiritfire ▸ Levels ▸ Build 2-1 冰瀑栈道（或 bridge.sh level 2-1）。冒烟：bridge.sh playtest map-2-1（Map21Suite）。
@@ -133,6 +138,10 @@ namespace Spiritfire.Art.Editor.Levels
         // ───────────── 场地 / 藏宝 / 出口 ─────────────
         static readonly Vector2 Site1 = new(0, 74), Site2 = new(46, 92), Site3 = new(0, BridgeZ), Site4 = new(34, 206), Site5 = PoolC, Site6 = new(-28, 114);
         static readonly Vector2 CacheA = new(0, 204), CacheB = new(-30, 121), ExitAt = new(0, 280);
+        /// <summary>逆行变体：出生在瀑顶出口祭坛正面 6 m（主走法的祭坛照常立着、传送门停用）；出口祭坛立在尾碛丘顶南沿、面朝峡谷（主走法的出生点就在它前面 5 m）</summary>
+        static readonly Vector2 RevSpawn = new(-9, 273), RevExitAt = new(0, -9.5f);
+        /// <summary>逆行出生的朝向点：开明兽偏到画面右三分之一，左边露出冰瀑口和下面的峡谷</summary>
+        static readonly Vector2 RevLook = new(9, 150);
         static readonly Vector2 DashWest = new(5.2f, BrokenZ), DashEast = new(13f, BrokenZ);
 
         /// <summary>游玩区多边形（西岸自南往北，再绕冰潭北岸，东岸自北往南）：外面是连续绝壁</summary>
@@ -562,12 +571,13 @@ namespace Spiritfire.Art.Editor.Levels
                 playerSpawn.transform.SetPositionAndRotation(spawnAt, spawnRot);
                 new GameObject("Level Bootstrap").AddComponent<SG.LevelBootstrap>();
                 var objective = BuildEncounters(markers);
-                BuildExit(shrine, objective);
+                var mainExit = BuildExit(shrine, objective);
                 BuildEntries(markers);
 
                 EditorSceneManager.SaveScene(scene, ScenePath);
                 ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
                 LevelKit.BakeNavMesh(Dir, Name, env);
+                BuildLayout(kit, markers, playerSpawn, mainExit, objective);
                 EditorSceneManager.SaveScene(scene, ScenePath);
                 // 构建设置只补进本场景（顺序由 levels 命令按 RunPlan 重排，parity 4.12）
                 if (!EditorBuildSettings.scenes.Any(s => s.path == ScenePath))
@@ -628,6 +638,9 @@ namespace Spiritfire.Art.Editor.Levels
                     // 驻守点：从玩家来的方向看过去（西岸低台的冰碛哨、东岸中台的栈道口）
                     ("PostWT", E(new Vector2(-6, 26)), OnGround(Roadsides[0].c, 1.2f), false),
                     ("PostE2", At(new Vector2(64, 136), BenchY + 1.62f), OnGround(Roadsides[3].c, 1.2f), false),
+                    // 逆行变体：瀑顶祭坛前往下看冰潭和峡谷；从冰河往尾碛丘上的新祭坛看
+                    ("RevSpawn", E(RevSpawn), OnGround(RevLook, 10f), true),
+                    ("RevExit", E(new Vector2(0, 26)), OnGround(RevExitAt, 5f), false),
                 });
             }
             finally
@@ -1307,6 +1320,12 @@ namespace Spiritfire.Art.Editor.Levels
         /// 遭遇（docs/level-design/maps/2-1.md §5，遭遇框架 v2）：五个必清场地任意顺序，⑥ 是藏宝 B 的守军（可选、不自动触发）。
         /// 难度由 RunPlan 给（2-1 = 1.80），场地不写死。站位标记挂 SpawnAnchor（<see cref="Anchors"/>）。
         /// </summary>
+        /// <summary>BuildEncounters 摆的五个必清场地（① … ⑤），布局变体改写先后 / 编制用</summary>
+        static SG.EncounterSite[] sites = Array.Empty<SG.EncounterSite>();
+        static SG.EncounterSpec reverseOpening, reverseFinale;
+        /// <summary>「环台东北」入场点：逆行出生点在它旁边，逆行里藏起来</summary>
+        static GameObject ringEntry;
+
         static SG.LevelObjective BuildEncounters(Transform markers)
         {
             var root = new GameObject("Encounters").transform;
@@ -1370,6 +1389,18 @@ namespace Spiritfire.Art.Editor.Levels
                 .Gather(0.4f), "", Vector3.zero);
             s6.autoTrigger = false;
             s6.optional = true;
+            sites = new[] { s1, s2, s3, s4, s5 };
+            // 逆行变体（BuildLayout）：⑤ 先打 → 开场编制（没有冰鲸 / 精英），给 ① 的武器；① 最后打 → 终局编制（三波，精英玄冰巨蟹），给 ⑤ 的秘卷
+            reverseOpening = Far(SG.EncounterSpec.Of(
+                    Wave("冰潭哨", E(Jiaoren, 3), E(Fuzhu, 1), E(Qingniao, 1).Via(SG.SpawnMode.FlyIn)).Hint("冰面会让你滑——站上石阶打"),
+                    Wave("环台援军", E(Haozhi, 2), E(Xingxing, 2)).After(1, 1.6f).Hint("冰棘豪彘在冰上刹不住——侧身让开，它会滑倒"))
+                .Gather(1f), 40);
+            reverseFinale = Far(SG.EncounterSpec.Of(
+                    Wave("冰河伏击", E(Jiaoren, 4), E(Qingniao, 1)).Hint("冻鲛人贴着冰面滑过来——退到砾石洲上打"),
+                    Wave("豪彘冲阵", E(Haozhi, 2), E(Jiaoren, 2), E(Puffer, 1)).After(1, 1.6f).Hint("冰棘豪彘在冰上刹不住——侧身让开"),
+                    Wave("冰河守将", E(FrostCrab, 1).Elite("shielded"), E(Fuzhu, 1), E(Xingxing, 2), E(Jelly, 1)).After(1, 2f)
+                        .Hint("精英玄冰巨蟹带护盾——先打灯水母，再绕到身后打背缝"))
+                .Gather(0.6f), 42);
 
             // 据点的出场站位（据点多波：合乎地形的几处换出场方式）：② 狌狌从北龛跃下，③ 灯水母从冰拱上飞临，⑤ 青鸟从瀑顶飞临
             void Mode(SG.EncounterSite site, SG.SpawnAnchor a)
@@ -1437,13 +1468,38 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.Entry(root, "西岸冰碛坡顶", OnGround(new Vector2(-46, 150)), OnGround(Site3));
             LevelKit.Entry(root, "东岸中台北", OnGround(new Vector2(52, 176)), OnGround(Site3));
             LevelKit.Entry(root, "西岸上台北", OnGround(new Vector2(-52, 228)), OnGround(PoolC));
-            LevelKit.Entry(root, "环台东北", OnGround(new Vector2(26, 264)), OnGround(PoolC));
+            ringEntry = LevelKit.Entry(root, "环台东北", OnGround(new Vector2(26, 264)), OnGround(PoolC)).gameObject;
             LevelKit.Entry(root, "冰拱飞临", OnGround(new Vector2(24, 166)), At(Site3, BenchY), SG.SpawnMode.FlyIn, At(new Vector2(0, BridgeZ), ArchTop + 3f), 3f, true);
             LevelKit.Entry(root, "冰瀑脚河槽", OnGround(new Vector2(0, 192)), At(Site3, BenchY));
         }
 
+        /// <summary>
+        /// 布局变体（docs/level-design/maps/2-1.md §11）：main = 设计稿走法（尾碛丘 → 往上爬 → 瀑顶祭坛）；
+        /// reverse = 逆行（瀑顶祭坛前 → ⑤ → 往下 → ① → 尾碛丘上的新祭坛），⑤ / ① 的编制和奖励对调，① 要求其余四处都肃清。
+        /// 在 NavMesh 烘焙之后调：逆行的祭坛不进导航网格（主走法里它停用），运行时由 NavMeshObstacle 挖洞
+        /// </summary>
+        static void BuildLayout(Transform kit, Transform markers, SG.PlayerSpawn mainSpawn, SG.ExitPortal mainExit, SG.LevelObjective objective)
+        {
+            var (s1, s2, s3, s4, s5) = (sites[0], sites[1], sites[2], sites[3], sites[4]);
+            var revSpawn = LevelKit.SpawnMarker("PlayerSpawn · 逆行", markers, OnGround(RevSpawn, 0.05f), OnGround(RevLook));
+            var shrine = Kit(ShrineId, kit, OnGround(RevExitAt, -0.15f), 0);
+            if (shrine && !IsPlaceholder(shrine)) shrine.name = "Exit · 逆行 Shrine";
+            if (shrine) LevelKit.CarveObstacle(shrine);
+            var portal = LevelKit.PortalAt("Exit · 逆行 Portal", markers, (x, z) => ts.OnGround(x, z), shrine, objective);
+            LevelKit.Layout(markers,
+                new SG.LevelLayout.Variant { id = "main", title = "自冰河尾碛入", spawn = mainSpawn, exit = mainExit },
+                new SG.LevelLayout.Variant
+                {
+                    id = "reverse", title = "自瀑顶入", spawn = revSpawn, exit = portal,
+                    only = shrine ? new[] { shrine } : Array.Empty<GameObject>(),
+                    hide = ringEntry ? new[] { ringEntry } : Array.Empty<GameObject>(),
+                    requires = new[] { LevelKit.Requires(s5), LevelKit.Requires(s1, s2, s3, s4, s5) },
+                    sites = new[] { LevelKit.Override(s5, reverseOpening, s1.reward), LevelKit.Override(s1, reverseFinale, s5.reward) },
+                });
+        }
+
         /// <summary>出口传送门：嵌在出口祭坛正面（没有祭坛模型时自己立石门框），关卡目标完成后升起、落清关宝箱</summary>
-        static void BuildExit(GameObject shrine, SG.LevelObjective objective)
+        static SG.ExitPortal BuildExit(GameObject shrine, SG.LevelObjective objective)
         {
             var portal = new GameObject("Exit Portal").AddComponent<SG.ExitPortal>();
             var face = shrine ? shrine.transform.forward : Vector3.back;
@@ -1453,6 +1509,7 @@ namespace Spiritfire.Art.Editor.Levels
             portal.transform.SetPositionAndRotation(OnGround(at), Quaternion.LookRotation(-face));
             portal.objective = objective;
             portal.buildFrame = !shrine || IsPlaceholder(shrine);
+            return portal;
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；顺带核对冰面、冰棱、藏宝、出口，并重新生成 GameDatabase（同 1-1）</summary>
@@ -1462,7 +1519,7 @@ namespace Spiritfire.Art.Editor.Levels
             int Count<T>() where T : Component =>
                 Object.FindObjectsByType<T>(FindObjectsInactive.Include).Count(c => c.gameObject.scene == scene);
             int spawns = Count<SG.PlayerSpawn>(), boots = Count<SG.LevelBootstrap>();
-            if (spawns != 1) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 1）");
+            if (spawns != 2) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 2：主走法 + 逆行）");
             if (boots != 1) rep.Fail($"LevelBootstrap 有 {boots} 个（应为 1）");
             void None<T>(string what) where T : Component
             {
@@ -1482,8 +1539,8 @@ namespace Spiritfire.Art.Editor.Levels
             if (ice < 4) rep.Fail($"冰面区域只有 {ice} 块（① 冰河、河槽、冰潭至少 4 块）");
             if (icicles != IcicleX.Length) rep.Fail($"冰棱有 {icicles} 根（应为 {IcicleX.Length}）");
             if (caches != 2) rep.Fail($"藏宝有 {caches} 处（应为 2）");
-            if (portals != 1) rep.Fail($"出口传送门有 {portals} 个（应为 1）");
-            if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
+            if (portals != 2) rep.Fail($"出口传送门有 {portals} 个（应为 2：主走法 + 逆行）");
+            if (spawns == 2 && boots == 1) rep.Line("✓ PlayerSpawn ×2（主走法 / 逆行各一）、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
             CoreSceneBuilder.BuildDatabase(rep);
         }
 
@@ -1517,6 +1574,10 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("④ 西岸上台", G(new Vector2(-40, 200))).Route("④ 断桥西段", At(new Vector2(-8, BrokenZ), W3Y))
                 .Route("④ 冰柱林", G(new Vector2(40, 204))).Route("④ 冰台", G(new Vector2(27, 208)))
                 .Route("⑤ 环台", G(new Vector2(-24, 262))).Route("⑤ 冰潭", G(new Vector2(0, 236))).Route("出口", G(new Vector2(0, 275)))
+                // 逆行变体：瀑顶祭坛前出生 → 冰潭 → 冰柱林 → 冰桥 → 东岸台地 → 冰河 → 尾碛丘上的新祭坛前（下行全程能走，不靠跳崖）
+                .Route("逆行·出生", G(RevSpawn)).Route("⑤ 冰潭", G(new Vector2(0, 236))).Route("④ 冰柱林", G(new Vector2(40, 204)))
+                .Route("③ 东桥头", G(new Vector2(30, 160))).Route("② 东岸台地", G(Site2)).Route("① 冰河", G(new Vector2(0, 62)))
+                .Route("逆行·出口祭坛", G(RevExitAt + new Vector2(0, 4.5f)))
                 .Sight("出生 → 冰瀑", G(Knoll, 1.62f), icefallAim, 6, IcefallTopId)
                 .Sight("① 冰河 → 冰拱", G(new Vector2(0, 50), 1.62f), archAim, 6, IceBridgeId)
                 .Sight("② 东岸台地 → 冰拱", G(new Vector2(44, 100), 1.62f), archEastAim, 6, IceBridgeId)
