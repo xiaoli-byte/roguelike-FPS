@@ -173,6 +173,17 @@ namespace Spiritfire.Game.Testing
             if (spread < 0 || spread > MaxSpread) Fail($"{weaponId}：枪口喷出的火星 / 刺 / 烟没有朝枪管前方（重心夹角 {spread:F0}° > {MaxSpread}°）");
             if (flashAhead < MinFlashAhead) Fail($"{weaponId}：跟枪的火光没有在枪口前方（最靠前的子系统只在前 {flashAhead * 100:F1} cm < {MinFlashAhead * 100:F0} cm）");
             yield return new WaitForSeconds(0.6f);
+
+            // 再开一枪，在星芒长到最大的时刻（开火后约 0.08 s）拍一张，看射线 / 光晕的大小（第 2 帧时它们还没长开）
+            int peakBefore = original.fireCount;
+            wc.testFire = true;
+            start = Time.time;
+            while (original.fireCount == peakBefore && Time.time - start < 3f) yield return null;
+            wc.testFire = false;
+            float firedAt = Time.time;
+            while (Time.time - firedAt < 0.08f) yield return null;
+            Shot(rig.cam, $"align_{weaponId}_peak");
+            yield return new WaitForSeconds(0.6f);
         }
 
         /// <summary>开火第 4 帧所有活粒子相对挂点的分布：返回重心方向与射向的夹角（没有粒子返回 -1），记各子系统的重心 / 速度（相机空间）</summary>
