@@ -32,8 +32,24 @@ namespace Spiritfire.Game
         public bool holdBack = true;
         [Tooltip("出场方式（S1，默认现身）：场地里有同一方式的站位时只在那些站位出场，没有就退回现身")]
         public SpawnMode via;
+        [Tooltip("这一条目自己的出生距离带（米；上限 ≤ 0 = 用场地的距离带）：专门摆的出场站位（熔岩爬出、潜行进场）玩家站在场地里哪儿都要用得上、场地的带框不住时用")]
+        public float minPlayerDistance, maxPlayerDistance;
+
+        /// <summary>写了自己的距离带（上限 &gt; 0；旧场景里没有这两个字段，读出来是 0 = 用场地的）</summary>
+        public bool OwnDistance => maxPlayerDistance > 0;
 
         public WaveEntry Clone() => (WaveEntry)MemberwiseClone();
+
+        /// <summary>
+        /// 这一条目自己的出生距离带（链式，米）：代替场地的 <see cref="EncounterSpec.Distance"/>，选点、预警复检、卡住放宽都按它算。
+        /// 给专门摆的出场站位用——场地的距离带是给现身 / 兜底随机点定的，框不住「玩家在场地另一头也该从这里出来」的站位
+        /// </summary>
+        public WaveEntry Distance(float min, float max)
+        {
+            minPlayerDistance = Mathf.Max(0, min);
+            maxPlayerDistance = Mathf.Max(minPlayerDistance, max, 0.01f);
+            return this;
+        }
 
         /// <summary>出场方式（链式，S1）：埋伏 / 余烬起身 / 熔岩爬出 / 飞临 / 跃下 / 增援门；场地里没有这种站位时退回现身</summary>
         public WaveEntry Via(SpawnMode mode)
@@ -145,7 +161,7 @@ namespace Spiritfire.Game
         public string squadAffix = "";
         [Tooltip("全场同时在场的敌人上限（含本场地正在预警的）")]
         public int maxAlive = 10;
-        [Tooltip("出生点离玩家的水平距离（米）：太近不刷、太远不刷（卡住 2 s 后放宽到 6–48 m）")]
+        [Tooltip("出生点离玩家的水平距离（米）：太近不刷、太远不刷（卡住 2 s 后放宽到 6–48 m）；条目可以写自己的（WaveEntry.Distance）")]
         public float minPlayerDistance = 10f, maxPlayerDistance = 36f;
         [Tooltip("同一条目里相邻两只的出场间隔（秒）")]
         public float stagger = 0.18f;
@@ -198,6 +214,10 @@ namespace Spiritfire.Game
             maxPlayerDistance = Mathf.Max(minPlayerDistance, max);
             return this;
         }
+
+        /// <summary>条目实际用的出生距离带：条目写了自己的（<see cref="WaveEntry.Distance"/>）用它，否则用场地的</summary>
+        public (float min, float max) BandFor(WaveEntry e) =>
+            e != null && e.OwnDistance ? (e.minPlayerDistance, e.maxPlayerDistance) : (minPlayerDistance, maxPlayerDistance);
 
         /// <summary>精英升格只数 + 小队词缀（链式）</summary>
         public EncounterSpec Elites(int count, string affix = "")

@@ -689,12 +689,19 @@ namespace Spiritfire.Art.Editor.Levels
                 A("Enemy_2_Drop", new Vector2(-6.5f, -113.5f), StationRole.Ranged, 0).Via(SpawnMode.Drop).DropFrom(G(new Vector2(15.5f, -112), 0.2f)),
             };
             var w2b = G03(tuo: 1, mamian: 1, tantong: 2);
+            // 熔岩爬出的两条（炭童 ×2 爬上北岸熔流道、火鼍潜在西段闸渠）用自己的出生距离带，不用场地的 8–34 m：这三个站位是专门摆的
+            // （第二波一开 = 拉闸时机），开波时玩家站在场地里哪儿都该从这里出来。11-08 冒烟：玩家在闸楼台南头 (23.8, −115.3) 时三个站位都超出 34 m，
+            // 炭童 / 火鼍退回兜底随机点（火鼍直接在岸上现身）；在拉杆前 (15.2, −95.4) 时火鼍自己的站位 42 m，改用 CrawlN、从两桥之间的小池爬出；
+            // 站在北岸站位旁边 (−9.3, −89.2) 时 CrawlN 不到 8 m 被拒。上限 60 m 框住整个场地圈（圈里离火鼍站位最远约 55 m，CheckEntryBands 查）；
+            // 炭童下限 4 m（两个站位相隔 4.2 m，玩家站在哪一个上面另一个都用得上；熔岩冒泡预告 0.8 s）；火鼍是从渠里冒出来的（冒出点离岸上的站位 8.8 m），站位不设下限
+            const float CrawlMin = 4f, CrawlMax = 60f;
             foreach (var e in w2b.entries)
             {
                 if (e.enemy == Mamian) e.Via(SpawnMode.Drop);
                 // 火鼍只用自己的站位（西段闸渠，角色 Flank + lane 0）：原来它和炭童同是 Assault、跟着第二波的主 lane 挑熔岩爬出站位，
                 // 会生在两桥之间 9 m 的小池或东段 6.5 m 的池子里（11-08 冒烟：生在东段、玩家在西南岸，每一扑都撞东桥的陡侧壁落回熔岩）
-                if (e.enemy == Tuo) e.As(StationRole.Flank, 0);
+                if (e.enemy == Tuo) e.As(StationRole.Flank, 0).Distance(0, CrawlMax);
+                else if (e.via == SpawnMode.LavaCrawl) e.Distance(CrawlMin, CrawlMax);
             }
             var spec2 = EncounterSpec.Of(
                     G10(nuo: 1, huodou: 3, tantong: 3, eliteAffix: Shielded).Hint("闸楼台上的傩巫在换脸——先碎面具；祸斗从东洞口和熔岩洞两头包过来"),
@@ -923,6 +930,7 @@ namespace Spiritfire.Art.Editor.Levels
             }
             CheckAnchorEdges(rep, ss);
             CheckEntryAnchors(rep, set, ss);
+            CheckEntryBands(rep, ss);
             if (ss.objective)
             {
                 int total = ss.objective.required.Sum(s => s ? s.spec.Total : 0);
@@ -1030,10 +1038,10 @@ namespace Spiritfire.Art.Editor.Levels
                     rep.Fail($"{s.title}：出生点沿人形导航走不进场地的触发圈");
                     continue;
                 }
-                float min = s.spec.minPlayerDistance, max = s.spec.maxPlayerDistance;
                 foreach (var e in s.spec.waves[0].entries)
                 {
                     if (e == null || e.count <= 0) continue;
+                    var (min, max) = s.spec.BandFor(e);
                     var want = SpawnStations.ModeFor(s.anchors, e.via, out _);
                     if (want == SpawnMode.Appear) continue;
                     var def = EnemyRoster.Get(e.enemy);
@@ -1063,6 +1071,114 @@ namespace Spiritfire.Art.Editor.Levels
             }
             if (bad.Count > 0) rep.Fail($"首波站位从主线进场点用不上（开战时退回兜底随机点）：{string.Join("；", bad)}");
             else rep.Line($"✓ 首波 {good.Count} 个条目从主线进场点都有合用的站位（{string.Join("、", good)}）");
+        }
+
+        /// <summary>
+        /// 条目自己的出生距离带（<see cref="WaveEntry.Distance"/>）要框住整个场地圈：开波时玩家可能站在场地里任何地方（② 打闸楼台上的傩巫时常在闸楼台南头，拉闸时在拉杆前）。
+        /// 场地圈（arenaRadius）里每 2 m 取一个玩家站得上的点（<see cref="ArenaSpots"/>），每个点上，出场方式、角色对得上的站位里至少有一个候选点
+        /// （中心或朝玩家转开的 6 个散开点，同 <see cref="SpawnStations.Pick"/>）离它在条目的距离带里，不然算不合格。
+        /// 11-08：② 第二波的爬岸炭童 / 火鼍原来用场地的 8–34 m——玩家在闸楼台南头时三个站位都超出 34 m（退回兜底随机点，火鼍在岸上现身），
+        /// 在拉杆前时火鼍自己的站位 42 m（改从两桥之间的小池爬出），站在北岸站位旁边时 CrawlN 不到 8 m 被拒
+        /// </summary>
+        static void CheckEntryBands(LevelKit.Report rep, ShrineSites ss)
+        {
+            Physics.SyncTransforms();
+            var dry = LavaField.WalkerFilter(LavaField.DryAreaMask);
+            foreach (var s in new[] { ss.roadside, ss.site1, ss.site2 })
+            {
+                if (!s || s.spec?.waves == null) continue;
+                List<Vector3> spots = null;
+                for (int wi = 0; wi < s.spec.waves.Length; wi++)
+                {
+                    var w = s.spec.waves[wi];
+                    if (w?.entries == null) continue;
+                    foreach (var e in w.entries)
+                    {
+                        if (e == null || e.count <= 0 || !e.OwnDistance) continue;
+                        var want = SpawnStations.ModeFor(s.anchors, e.via, out _);
+                        if (SpawnModes.PrePlaced(want)) continue;
+                        var def = EnemyRoster.Get(e.enemy);
+                        var role = SpawnStations.Resolve(e.role, def);
+                        var stations = new List<(Vector3 c, float spread)>();
+                        var names = new List<string>();
+                        foreach (var t in s.anchors)
+                        {
+                            if (!t || SpawnAnchor.ModeOf(t) != want) continue;
+                            var (ar, _, elevated, spread) = SpawnAnchor.Read(t);
+                            if (ar != StationRole.Auto && ar != role) continue;
+                            if (elevated && def != null && def.groundOnly) continue;
+                            stations.Add((t.position, spread));
+                            names.Add(t.name);
+                        }
+                        string what = $"{s.title} 第 {wi + 1} 波 {e.enemy}（{SpawnModes.Label(want)}、{role}，自己的距离带 {e.minPlayerDistance:F0}–{e.maxPlayerDistance:F0} m）";
+                        if (stations.Count == 0)
+                        {
+                            rep.Fail($"{what}：没有对得上的站位");
+                            continue;
+                        }
+                        spots ??= ArenaSpots(s, dry);
+                        if (spots.Count == 0)
+                        {
+                            rep.Fail($"{what}：场地圈里一个玩家站得上的导航点都没采到");
+                            continue;
+                        }
+                        float farNearest = 0, nearFarthest = float.PositiveInfinity;
+                        var miss = new List<string>();
+                        foreach (var p in spots)
+                        {
+                            bool ok = false;
+                            float dMin = float.PositiveInfinity, dMax = 0;
+                            foreach (var (c, spread) in stations)
+                                foreach (var q in StationPoints(c, spread, p))
+                                {
+                                    float d = (Flat3(q) - Flat3(p)).magnitude;
+                                    dMin = Mathf.Min(dMin, d);
+                                    dMax = Mathf.Max(dMax, d);
+                                    if (d >= e.minPlayerDistance && d <= e.maxPlayerDistance) ok = true;
+                                }
+                            farNearest = Mathf.Max(farNearest, dMin);
+                            nearFarthest = Mathf.Min(nearFarthest, dMax);
+                            if (!ok) miss.Add($"{LevelContext.At(p)}（站位 {dMin:F1}–{dMax:F1} m）");
+                        }
+                        string stats = $"场地圈 {spots.Count} 个导航点离最近的站位最远 {farNearest:F0} m、离最远的候选点最近 {nearFarthest:F1} m（{string.Join(" / ", names)}）";
+                        if (miss.Count > 0) rep.Fail($"{what}：{miss.Count} 个导航点上没有站位在带里——{string.Join("；", miss.Take(4))}；{stats}");
+                        else rep.Line($"✓ {what}：{stats}");
+                    }
+                }
+            }
+        }
+
+        /// <summary>一个站位的候选点：中心 + 朝玩家那一侧转开的 6 个散开点（同 <see cref="SpawnStations.Pick"/>）</summary>
+        static IEnumerable<Vector3> StationPoints(Vector3 c, float spread, Vector3 player)
+        {
+            yield return c;
+            if (spread <= 0.05f) yield break;
+            var toward = Flat3(player - c);
+            float a0 = toward.sqrMagnitude > 0.01f ? Mathf.Atan2(toward.x, toward.z) : 0;
+            for (int i = 0; i < 6; i++)
+            {
+                float a = a0 + Mathf.PI / 6 + i * Mathf.PI / 3;
+                yield return c + new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * spread;
+            }
+        }
+
+        /// <summary>场地圈里每 2 m 一个玩家站得上的点：从场地上空往下打到最上层的地面（闸楼台台顶也算），0.75 m 内有人形干地导航</summary>
+        static List<Vector3> ArenaSpots(EncounterSite s, NavMeshQueryFilter dry)
+        {
+            var list = new List<Vector3>();
+            var c = s.transform.position;
+            float r = s.arenaRadius;
+            for (float x = -r; x <= r; x += 2f)
+            for (float z = -r; z <= r; z += 2f)
+            {
+                if (x * x + z * z > r * r) continue;
+                var top = new Vector3(c.x + x, c.y + 40f, c.z + z);
+                if (!Physics.Raycast(top, Vector3.down, out var hit, 80f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) continue;
+                if (!NavMesh.SamplePosition(hit.point, out var nav, 1f, dry)) continue;
+                if ((Flat3(nav.position) - Flat3(hit.point)).magnitude > 0.75f) continue;
+                list.Add(nav.position);
+            }
+            return list;
         }
 
         /// <summary>出生点沿人形导航走向场地中心、第一次进到「触发半径 − 站进去的深度」的位置</summary>

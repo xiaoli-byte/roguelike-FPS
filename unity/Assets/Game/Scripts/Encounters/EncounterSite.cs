@@ -17,6 +17,7 @@ namespace Spiritfire.Game
     ///         到点时按角色选站位（<see cref="SpawnStations"/>：站位角色 / lane / 高台、远程上高台、冲锋型从场地远端进、按体型查出生净空），
     ///         先闪 0.8 s 地面预警（<see cref="Telegraph"/> 圆形，精英金色）；预警结束再复检一次，玩家站上去了或场景变了就收掉预警、换点、重新给足 0.8 s。
     ///         全场同时在场最多 maxAlive 只。选不到点时这只稍后重试并逐步放宽：卡 2 s 放宽距离带到 6–48 m，卡 6 s 接受不完整路径。
+    ///         距离带用场地的（<see cref="EncounterSpec.Distance"/>），条目写了自己的（<see cref="WaveEntry.Distance"/>）就用条目的。
     ///   提示：开战横幅（场地名 + 第一波提示）、多波时每波横幅「第 2 / 3 波 · 名字」、目标栏「场地 · 第 i/n 波 · 剩余敌人」。
     ///   肃清：全部波次出完且全部死亡 → 横幅「区域肃清」→ Cleared 事件（宝箱由 LootDirector、目标图由 <see cref="LevelObjective"/> 处理）。
     ///   防卡：30 s 没有进展、只剩 ≤ 2 只时，把它们传送到玩家附近的合法站位。
@@ -191,6 +192,8 @@ namespace Spiritfire.Game
             public MonoBehaviour door;
             public GameObject cue;
             public int lane, wave;
+            /// <summary>条目自己的出生距离带（maxDist ≤ 0 = 用场地的，见 <see cref="WaveEntry.Distance"/>）</summary>
+            public float minDist, maxDist;
             public float warnAt, at;
             public bool warned, hasPos, elevated, relocated;
             public Vector3 pos;
@@ -392,12 +395,13 @@ namespace Spiritfire.Game
                     {
                         bool late = hold && k == e.count - 1;
                         var r = late ? StationRole.Flank : role;
+                        var (minDist, maxDist) = run.BandFor(e);
                         int lane = e.lane >= 0 ? e.lane
                             : r == StationRole.Flank ? (lanes.Count > 1 ? lanes[(baseIdx + 1 + flankIdx++ % 2) % lanes.Count] : lanes.Count == 1 ? lanes[0] : 1)
                             : mainLane;
                         pending.Add(new Pending
                         {
-                            id = e.enemy, def = def, elite = e.elite, role = r, lane = lane, wave = index, mode = e.via,
+                            id = e.enemy, def = def, elite = e.elite, role = r, lane = lane, wave = index, mode = e.via, minDist = minDist, maxDist = maxDist,
                             affix = SquadAffixes.Resolve(def, e.elite, e.affix, run.squadAffix, Rng),
                             warnAt = now + arrival + k * Mathf.Max(0, run.stagger) + (late ? HoldBackDelay : 0),
                         });
@@ -555,12 +559,14 @@ namespace Spiritfire.Game
         {
             float stalledFor = p.blockedSince < 0 ? 0 : Time.time - p.blockedSince;
             bool wide = stalledFor > 2f;
+            // 条目自己的距离带（WaveEntry.Distance）优先：专门摆的出场站位不受场地距离带的限制
+            float min = p.maxDist > 0 ? p.minDist : run.minPlayerDistance, max = p.maxDist > 0 ? p.maxDist : run.maxPlayerDistance;
             return new SpawnStations.Query
             {
                 def = p.def, elite = p.elite, role = p.role, lane = p.lane,
                 player = player, playerForward = forward, center = transform.position, arenaRadius = arenaRadius,
-                minDist = wide ? Mathf.Min(6f, run.minPlayerDistance) : run.minPlayerDistance,
-                maxDist = wide ? Mathf.Max(48f, run.maxPlayerDistance) : run.maxPlayerDistance,
+                minDist = wide ? Mathf.Min(6f, min) : min,
+                maxDist = wide ? Mathf.Max(48f, max) : max,
                 partialOk = stalledFor > 6f,
                 anchors = anchors, recent = recent, now = Time.time, mode = p.mode,
             };

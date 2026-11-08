@@ -51,6 +51,22 @@ namespace Spiritfire.Game.Tests
         }
 
         [Test]
+        public void EntryDistanceOverridesSiteBand()
+        {
+            var s = TwoWaves().Distance(8, 34);
+            var plain = s.waves[0].entries[0];
+            Assert.IsFalse(plain.OwnDistance, "没写的条目（旧场景里两个字段读出来是 0）不算有自己的带");
+            Assert.AreEqual((8f, 34f), s.BandFor(plain), "没写的条目用场地的距离带");
+            s.waves[1].entries[0].Distance(4, 60);
+            s.waves[1].entries[1].Distance(0, 60);
+            Assert.AreEqual((4f, 60f), s.BandFor(s.waves[1].entries[0]));
+            Assert.AreEqual((0f, 60f), s.BandFor(s.waves[1].entries[1]), "下限可以是 0（潜行进场：冒出点不在站位上）");
+            Assert.AreEqual((5f, 5f), s.BandFor(EncounterSpec.E("jerboa_blade").Distance(5, 2)), "上限不小于下限");
+            var c = s.Clone();
+            Assert.AreEqual((4f, 60f), c.BandFor(c.waves[1].entries[0]), "复制品（开战时的编排、升格出的精英条目）带着自己的距离带");
+        }
+
+        [Test]
         public void LegacySquadsKeepTimingAndElites()
         {
             var squads = new[]
