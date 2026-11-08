@@ -14,7 +14,8 @@ namespace Spiritfire.Game.Testing
     ///   1. 开局：SceneFlow 认领的关卡是 3-4、局难度 = RunPlan；目标图（必清 2：① 铜人神道、② 熔流闸口）、路遇 1（不计目标）、熔岩洞藏宝 1、补给营 1、
     ///      场景里没有出口；首领关流程停用（FoundryLordGate 没解锁、BossEncounter 关着）；没有空气墙；出生点看得见炉心殿南门（熔铁闸门门框）；
     ///      出生点到 ①、②、补给营、炉心殿入场点的 NavMesh 路径都完整。提前踏进炉心殿：只提示「先肃清神道」，不开打。
-    ///   2. 机器人沿主线真走（角色控制器沿 NavMesh 拐点走）：路上被路遇缠上就先打；挑最近的必清场地走过去，等它开战，瞄最近的敌人打（四成打弱点），
+    ///   2. 机器人沿主线真走（角色控制器沿 NavMesh 拐点走）：路上被路遇缠上就先打；挑最近的必清场地走过去，等它开战，瞄最近的敌人打（四成打弱点；
+    ///      还能浇铜甲的铜匠看得见就先打它——① 的钥匙），
     ///      被挡住换位，隔 4 s 放技能；只剩潜在闸渠里的火鼍就退到离熔岩最远处引它上岸。玩家临时 +5000 生命、伤害 ×3。每处 150 s 内肃清，场地宝箱要出现。
     ///      记：各场地的精英（应 2 只：① 铁牛·狂暴、② 傩巫·坚盾）、火鼍出场、熔岩击杀。
     ///   3. ①② 肃清 → 目标完成 → FoundryLordGate 解锁、BossEncounter 启用。
@@ -46,6 +47,8 @@ namespace Spiritfire.Game.Testing
         LavaSluice sluice;
         List<LavaGeyser> geysers = new();
         int partialPaths, skillCasts, stalls, lures, edgeSkips;
+        /// <summary>② 交战中熔流道上同时站过的地面敌人最多几只（道上 / 道边 4 m 内）：没拉闸时看是凑不齐还是别的原因</summary>
+        int flowMax, flowMax4;
         float walked;
 
         protected override IEnumerator Steps()
@@ -222,7 +225,7 @@ namespace Spiritfire.Game.Testing
                 if (sluice)
                 {
                     Line($"熔流闸：放了 {sluice.Fired} 次，烧死 {sluice.Kills} 只（{sluice.Phase}）");
-                    if (sluice.Fired == 0) Fail("② 打完熔流闸一次都没放");
+                    if (sluice.Fired == 0) Fail($"② 打完熔流闸一次都没放（熔流道上最多同时 {flowMax} 只地面敌人、道边 4 m 内最多 {flowMax4} 只）");
                     else if (sluice.Kills == 0) Fail("② 的熔流闸没有烧死敌人");
                 }
             }
@@ -284,7 +287,17 @@ namespace Spiritfire.Game.Testing
             if (stalls >= 8) Fail($"机器人沿 NavMesh 走时卡住 {stalls} 次（看上面的位置：坡道 / 门洞 / 桥头？）");
         }
 
-        void OnSpawned(EncounterSite s, EncounterSite.SpawnRecord r) => spawned.Add(r);
+        void OnSpawned(EncounterSite s, EncounterSite.SpawnRecord r)
+        {
+            spawned.Add(r);
+            // 没用上站位的（11-08 以前 ① 的铜匠、② 的傩巫每次都是：埋伏站位标了高台、它们是贴地的）：记下来，构建器的 CheckEntryAnchors 管首波
+            if (!r.anchor)
+                Line($"  ⚠ {s.title}：{r.id}{(r.elite ? "★" : "")} 没用上站位，退回兜底随机点 ({r.point.x:F1}, {r.point.z:F1})（离玩家 {Flat(r.point - r.player):F0} m，第 {r.wave + 1} 波）");
+            // ② 第二波（爬岸炭童 = 拉闸时机）落在哪、是不是在熔流道上：两个爬岸站位要过 8–34 m 的出生距离带，开波时玩家离得太近 / 太远就落不到熔流道上
+            if (sluice && r.wave >= 1 && Flat(sluice.transform.position - s.transform.position) < s.arenaRadius + 10f)
+                Line($"  · {Time.time:F0}s 出场 {r.id}：第 {r.wave + 1} 波，站位 {(r.anchor ? r.anchor.name : "兜底")}，方式 {SpawnModes.Label(r.mode)}，落点 ({r.point.x:F1}, {r.point.z:F1})" +
+                     $"{(sluice.Covers(r.point) ? " 在熔流道上" : "")}，玩家 ({r.player.x:F1}, {r.player.y:F1}, {r.player.z:F1})");
+        }
 
         /// <summary>补给营安全区西沿外 1 m 的导航点（安全区在导航网格上挖了洞，中心采不到）</summary>
         static Vector3 CampApproach(SupplyCamp camp)
@@ -336,12 +349,31 @@ namespace Spiritfire.Game.Testing
             float dmg0 = Runner.playerDamage;
             Runner.killsById.Clear();
             Line($"遭遇「{site.title}」开始：{site.Total} 只，{site.WaveCount} 波，升格精英 {site.Promoted}{(site.roadside ? "（路遇）" : "")}");
+            // 被瞄最久的几只（打完记一行）：瞄了多久、其中看得见多久、在场地外多久、被铜匠浇过几次铜甲——以后哪处又拖长，先看卡在谁身上
+            var aimed = new Dictionary<EnemyAI, (string tag, Vector3 t, int bronze)>();
+            var bronzed = new HashSet<EnemyAI>();
+            void CountBronze()
+            {
+                foreach (var e in EnemyAI.All)
+                {
+                    if (!e || e.Dead) continue;
+                    if (FounderAI.Bronze.On(e) == null) bronzed.Remove(e);
+                    else if (bronzed.Add(e))
+                    {
+                        (string tag, Vector3 t, int bronze) a = aimed.TryGetValue(e, out var v) ? v : (Tag(e), Vector3.zero, 0);
+                        aimed[e] = (a.tag, a.t, a.bronze + 1);
+                    }
+                }
+            }
+            static string Tag(EnemyAI e) => $"{e.enemyId}{(e.elite ? "★" : "")}";
+            int waveSeen = -1;
             while (site.phase != EncounterSite.Phase.Cleared && Time.time - start < limit)
             {
+                CountBronze();
                 if (vitals.Dead) vitals.Revive();
                 if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
                 if (weapons.Active != null) weapons.Active.reserve = weapons.Active.def.reserve;
-                var target = NearestFoe(eye.position);
+                var target = PickFoe(eye.position);
                 if (!target)
                 {
                     weapons.testFire = false;
@@ -399,6 +431,14 @@ namespace Spiritfire.Game.Testing
                 // 飞行敌人（火口坑上空的飞鸦、栖柱的毕方）：远了朝它脚下的地面走（Step 只走完整的干地路径，坑上空的就不动）；
                 // 被挡住先在自己身边 6 m 内换个看得见的位置，换不到再朝它脚下走几步
                 bool flyer = target.GetComponentInParent<FlyingEnemyAI>() || target.GetComponentInParent<BifangAI>();
+                if (target.TryGetComponent(out EnemyAI te))
+                {
+                    (string tag, Vector3 t, int bronze) a = aimed.TryGetValue(te, out var v) ? v : (Tag(te), Vector3.zero, 0);
+                    a.t.x += Time.deltaTime;
+                    if (!Combat.Blocked(eye.position, aim, target.GetComponent<Collider>())) a.t.y += Time.deltaTime;
+                    if (outside) a.t.z += Time.deltaTime;
+                    aimed[te] = a;
+                }
                 if (outside)
                 {
                     if (flyer && Time.time >= flankAt && Combat.Blocked(eye.position, aim, target.GetComponent<Collider>()))
@@ -434,6 +474,17 @@ namespace Spiritfire.Game.Testing
                 // 同玩家：看见熔流道上有一群怪才拉，不到点硬拉（以前 60 s 到点就拉，S1 增援门的怪那一刻正好不在北岸时熔流冲空；
                 // 只有 1 只时拉闸前摇 1 s 它就走开了）。整场都没有成群的怪走上熔流道，才算熔流闸不合格
                 float fightT = Time.time - start;
+                if (sluice && Flat(sluice.transform.position - site.transform.position) < site.arenaRadius + 10f)
+                {
+                    flowMax = Mathf.Max(flowMax, CoveredByFlow());
+                    flowMax4 = Mathf.Max(flowMax4, CoveredByFlow(4f));
+                    // 第二波开波时机器人在哪（同上：爬岸站位离它的距离决定炭童落不落在熔流道上）
+                    if (site.Wave != waveSeen && site.Wave >= 1)
+                    {
+                        Line($"  · {Time.time:F0}s 第 {site.Wave + 1} 波开：机器人 ({motor.transform.position.x:F1}, {motor.transform.position.y:F1}, {motor.transform.position.z:F1})，熔流道上 {CoveredByFlow()} 只");
+                    }
+                    waveSeen = site.Wave;
+                }
                 if (sluice && sluice.CanRelease && Flat(sluice.transform.position - site.transform.position) < site.arenaRadius + 10f &&
                     (CoveredByFlow() >= 2 || (fightT > 30f && CoveredByFlow() >= 1 && CoveredByFlow(4f) >= 3)))
                 {
@@ -448,6 +499,9 @@ namespace Spiritfire.Game.Testing
             bool cleared = site.phase == EncounterSite.Phase.Cleared;
             int burned = (LavaField.Instance ? LavaField.Instance.Burned : 0) - burned0;
             Line($"  {(cleared ? "已肃清" : "超时")}：用时 {Time.time - start:F0} s，击杀 {Runner.kills - kills0}（{byId}），熔岩烧死 {burned}，敌人对玩家伤害 {Runner.playerDamage - dmg0:F0}");
+            var longest = aimed.Values.Where(a => a.t.x >= 5f).OrderByDescending(a => a.t.x).Take(3).ToList();
+            if (longest.Count > 0)
+                Line($"  被瞄最久：{string.Join("、", longest.Select(a => $"{a.tag} {a.t.x:F0} s（看得见 {a.t.y:F0} s{(a.t.z >= 1f ? $"、在场地外 {a.t.z:F0} s" : "")}{(a.bronze > 0 ? $"，铜甲 {a.bronze} 次" : "")}）"))}");
             if (!cleared)
             {
                 Line($"  机器人在 {motor.transform.position}（导航网格 {(NavMesh.SamplePosition(motor.transform.position, out var mh, 1.5f, Dry) ? "上" : "外")}），僵持时走过去 {pushes} 次");
@@ -548,6 +602,30 @@ namespace Spiritfire.Game.Testing
                 }
             }
             return best;
+        }
+
+        /// <summary>
+        /// 这一帧瞄谁：还能浇铜甲的熔铜匠（坩埚没裂）看得见就先打它，否则打最近的（<see cref="NearestFoe"/>）。
+        /// 同玩家照 ① 的钥匙打（G13 提示「先杀牌坊台上浇铜的铜匠」）：11-08 那轮机器人只打最近的，精英铁牛一直贴在 3–6 m，
+        /// 铜匠站在 9–13 m 外全程看得见、半血，100 s 里只被瞄过 1 s——它给铁牛浇了 8 次铜甲（每副 = 铁牛最大生命 60% 的护甲，冷了受伤 ×0.5，
+        /// 铁甲本来就只吃 20%），① 拖到 121 s。看不见的铜匠不追：先打眼前的，它要跟着同伴走出来
+        /// </summary>
+        Damageable PickFoe(Vector3 from)
+        {
+            Damageable key = null;
+            float keyD = float.MaxValue;
+            foreach (var e in EnemyAI.All)
+            {
+                if (e is not FounderAI f || f.Dead || f.Silenced) continue;
+                var h = f.Health;
+                if (!h || h.Dead || h.untargetable) continue;
+                var c = BodyCenter(h);
+                float d = Vector3.Distance(from, c);
+                if (d >= keyD || d > 34f || Combat.Blocked(from, c, h.GetComponent<Collider>())) continue;
+                keyD = d;
+                key = h;
+            }
+            return key ? key : NearestFoe(from);
         }
 
         static bool HasTuo(EncounterSite site) =>

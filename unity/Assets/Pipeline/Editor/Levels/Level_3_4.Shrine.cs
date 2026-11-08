@@ -644,8 +644,10 @@ namespace Spiritfire.Art.Editor.Levels
                 A("Enemy_1_LaneW", new Vector2(-15, -161), StationRole.Flank, 1).Via(SpawnMode.Gate).Gate(G(new Vector2(-21, -167))),
                 A("Enemy_1_LaneE", new Vector2(17, -165), StationRole.Flank, 2).Via(SpawnMode.Gate).Gate(G(new Vector2(21.5f, -160))),
                 A("Enemy_1_LaneS", new Vector2(-1, -179), StationRole.Flank, 0).Via(SpawnMode.Gate).Gate(G(new Vector2(6, -187))),
-                // 铜匠：牌坊台上的坩埚旁（俯射层，绕后 / 从东阶上去打它）
-                A("Enemy_1_Terrace", new Vector2(-12, -145.8f), StationRole.Support, 0, true).Via(SpawnMode.Ambush).LookAt(G(Site1C)),
+                // 铜匠：牌坊台上的坩埚旁（俯射层，绕后 / 从东阶上去打它）。不标高台站位：熔铜匠是贴地的（groundOnly），高台站位它不站——
+                // 11-08 以前标着 elevated，埋伏预生成和出生选点都跳过这里，铜匠每次都退回场地里的兜底随机点、一出场就贴着铁牛浇铜甲。
+                // 牌坊台有东西两道石阶连着导航网格，不是柱顶那种只有飞的才上得去的栖点（见 CheckEntryAnchors）
+                A("Enemy_1_Terrace", new Vector2(-12, -145.8f), StationRole.Support).Via(SpawnMode.Ambush).LookAt(G(Site1C)),
                 // 毕方：飞到铜人旁（它自己挑铜人头顶的 PerchPoint 栖），从火口坑方向飞进来
                 A("Enemy_1_PerchW", new Vector2(-5, -166.5f), StationRole.Precision, 1).Via(SpawnMode.FlyIn).Entry(new Vector3(-10, 22, -192)),
                 A("Enemy_1_PerchE", new Vector2(6.5f, -166), StationRole.Precision, 2).Via(SpawnMode.FlyIn).Entry(new Vector3(8, 24, -194)),
@@ -668,8 +670,9 @@ namespace Spiritfire.Art.Editor.Levels
             var caveGate = G(new Vector2(-37, -114));
             var a2 = new List<SpawnAnchor>
             {
-                // 傩巫：闸楼台上跳傩（精英·坚盾）
-                A("Enemy_2_Sluice", new Vector2(17, -97.5f), StationRole.Support, 0, true).Via(SpawnMode.Ambush).LookAt(G(Site2C)),
+                // 傩巫：闸楼台上跳傩（精英·坚盾）。不标高台站位：变脸傩巫是贴地的（groundOnly），标了 elevated 它就不站这里、退回兜底随机点
+                // （同 ① 的牌坊台）；闸楼台南北两条坡道连着导航网格
+                A("Enemy_2_Sluice", new Vector2(17, -97.5f), StationRole.Support).Via(SpawnMode.Ambush).LookAt(G(Site2C)),
                 // 增援门：东洞口（北半）、熔岩洞（南半）
                 A("Enemy_2_GateE", new Vector2(21, -83.5f), StationRole.Flank, 1).Via(SpawnMode.Gate).Gate(eastGate),
                 A("Enemy_2_GateE2", new Vector2(12, -84), StationRole.Assault, 1).Via(SpawnMode.Gate).Gate(eastGate),
@@ -919,6 +922,7 @@ namespace Spiritfire.Art.Editor.Levels
                 foreach (var w in s.spec.waves) rep.Line($"    · {Describe(w)}");
             }
             CheckAnchorEdges(rep, ss);
+            CheckEntryAnchors(rep, set, ss);
             if (ss.objective)
             {
                 int total = ss.objective.required.Sum(s => s ? s.spec.Total : 0);
@@ -1003,6 +1007,86 @@ namespace Spiritfire.Art.Editor.Levels
                 foreach (var t in ss.site2.anchors)
                     if (t && t.name.StartsWith("Enemy_2_CrawlN") && !ss.sluice.Covers(t.position))
                         rep.Fail($"{t.name} {LevelContext.At(t.position)} 不在熔流闸的熔流道上");
+        }
+
+        /// <summary>
+        /// 首波站位用得上：路遇、①、② 第一波的每个条目，在出场方式对得上的站位里（角色对得上或站位角色是 Auto；贴地的敌人不算高台站位），
+        /// 至少有一个能用——埋伏是开战前预生成的，有站位就行；别的方式还要离主线进场点在场地的出生距离带里（散开点按 spread 算）。
+        /// 进场点 = 出生点沿人形导航走向场地中心、第一次进到「触发半径 − 站进去的深度」的位置（玩家就是在这里开打的）。
+        /// 出场方式在场地里没有站位的条目（现身）不查。
+        /// 11-08：① 牌坊台、② 闸楼台的埋伏站位标着高台（elevated），而铜匠、傩巫都是贴地的（groundOnly）——两处的「钥匙」从没站上去过，
+        /// 每次都退回场地里的兜底随机点：① 的铜匠一出场就贴着铁牛给它浇铜甲（冒烟 ① 拖到 121–149 s 的一半原因）
+        /// </summary>
+        static void CheckEntryAnchors(LevelKit.Report rep, LevelKit.TerrainSet set, ShrineSites ss)
+        {
+            var from = set.OnGround(SpawnAt.x, SpawnAt.y, 0);
+            var bad = new List<string>();
+            var good = new List<string>();
+            foreach (var s in new[] { ss.roadside, ss.site1, ss.site2 })
+            {
+                if (!s || s.spec?.waves == null || s.spec.waves.Length == 0 || s.spec.waves[0]?.entries == null) continue;
+                if (!EntryPoint(from, s, out var entry))
+                {
+                    rep.Fail($"{s.title}：出生点沿人形导航走不进场地的触发圈");
+                    continue;
+                }
+                float min = s.spec.minPlayerDistance, max = s.spec.maxPlayerDistance;
+                foreach (var e in s.spec.waves[0].entries)
+                {
+                    if (e == null || e.count <= 0) continue;
+                    var want = SpawnStations.ModeFor(s.anchors, e.via, out _);
+                    if (want == SpawnMode.Appear) continue;
+                    var def = EnemyRoster.Get(e.enemy);
+                    var role = SpawnStations.Resolve(e.role, def);
+                    bool band = !SpawnModes.PrePlaced(want), ok = false;
+                    float nearest = float.PositiveInfinity;
+                    string nearestName = "（没有）";
+                    foreach (var t in s.anchors)
+                    {
+                        if (!t || SpawnAnchor.ModeOf(t) != want) continue;
+                        var (ar, _, elevated, spread) = SpawnAnchor.Read(t);
+                        if (ar != StationRole.Auto && ar != role) continue;
+                        if (elevated && def != null && def.groundOnly) continue;
+                        float d = (Flat3(t.position) - Flat3(entry)).magnitude;
+                        if (!band || (d - spread <= max && d + spread >= min)) ok = true;
+                        if (Mathf.Abs(d - Mathf.Clamp(d, min, max)) < Mathf.Abs(nearest - Mathf.Clamp(nearest, min, max)))
+                        {
+                            nearest = d;
+                            nearestName = t.name;
+                        }
+                    }
+                    string what = $"{s.title} 首波 {e.enemy}（{SpawnModes.Label(want)}、{role}）";
+                    if (ok) good.Add($"{e.enemy} {(band ? $"{nearest:F0} m" : $"埋伏 {nearestName}")}");
+                    else if (float.IsInfinity(nearest)) bad.Add($"{what}：没有对得上的站位（角色 / 出场方式不符，或高台站位而它是贴地的）");
+                    else bad.Add($"{what}：对得上的站位离进场点 {LevelContext.At(entry)} 最近 {nearest:F0} m（{nearestName}），不在出生距离带 {min:F0}–{max:F0} m 里");
+                }
+            }
+            if (bad.Count > 0) rep.Fail($"首波站位从主线进场点用不上（开战时退回兜底随机点）：{string.Join("；", bad)}");
+            else rep.Line($"✓ 首波 {good.Count} 个条目从主线进场点都有合用的站位（{string.Join("、", good)}）");
+        }
+
+        /// <summary>出生点沿人形导航走向场地中心、第一次进到「触发半径 − 站进去的深度」的位置</summary>
+        static bool EntryPoint(Vector3 from, EncounterSite s, out Vector3 entry)
+        {
+            entry = default;
+            if (!LevelContext.NavPoint(from, 4f, out var a) || !LevelContext.NavPoint(s.transform.position, 6f, out var b)) return false;
+            var path = new NavMeshPath();
+            if (!NavMesh.CalculatePath(a, b, LevelContext.Walker, path) || path.status != NavMeshPathStatus.PathComplete) return false;
+            float r = Mathf.Max(1f, s.triggerRadius - Mathf.Max(0, s.entryDepth));
+            var c = Flat3(s.transform.position);
+            var pts = path.corners;
+            for (int i = 0; i + 1 < pts.Length; i++)
+            {
+                int n = Mathf.Max(1, Mathf.CeilToInt(Vector3.Distance(pts[i], pts[i + 1]) / 0.5f));
+                for (int k = 0; k <= n; k++)
+                {
+                    var p = Vector3.Lerp(pts[i], pts[i + 1], k / (float)n);
+                    if ((Flat3(p) - c).magnitude > r) continue;
+                    entry = p;
+                    return true;
+                }
+            }
+            return false;
         }
 
         static Vector3 Flat3(Vector3 v) => new(v.x, 0, v.z);
