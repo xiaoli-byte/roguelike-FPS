@@ -19,6 +19,48 @@ namespace Spiritfire.Game
         /// </summary>
         public static float MuzzleScale = 0.12f;
 
+        /// <summary>
+        /// 枪口特效相对挂点的旋转：1926_muzzle 自身沿 -Y 喷（火星 / 刺 / 烟的速度、光晕和烟的位置都在 -Y），
+        /// 挂点（枪骨骼）的射向是 -X；不转的话整团火光朝枪管侧面炸开
+        /// </summary>
+        public static Quaternion MuzzleFxRotation = Quaternion.Euler(0, 0, -90);
+
+        Transform muzzleAnchor;
+        /// <summary>
+        /// 枪口特效挂点：枪根骨骼下的 Att（原作在枪管口的挂点，开火动画后坐时跟着枪走）。
+        /// 原 muzzle 节点挂在不动的 Home / _Right 下，后坐时留在原地；没有 Att 才退回它
+        /// </summary>
+        public Transform MuzzleAnchor => muzzleAnchor ? muzzleAnchor : muzzleAnchor = FindAnchor(transform);
+
+        public static Transform FindAnchor(Transform gun)
+        {
+            if (!gun) return null;
+            Transform side = gun;
+            foreach (Transform child in gun)
+                if (child.name.EndsWith("_Right", System.StringComparison.Ordinal)) side = child;
+            var att = WeaponSockets.FindDeep(side, "Att");
+            return att ? att : WeaponSockets.FindDeep(side, WeaponSockets.Muzzle);
+        }
+        /// <summary>挂点的射向（世界，含父级镜像缩放）</summary>
+        public Vector3 MuzzleForward => MuzzleAnchor ? MuzzleAnchor.TransformVector(Vector3.left).normalized : transform.forward;
+        /// <summary>最近一次开火生成的枪口特效（测试用）</summary>
+        public GameObject LastMuzzleFx { get; private set; }
+
+        Transform viewSpace;
+        /// <summary>枪模所在的相机（枪模挂在主相机下）：烟 / 火星的模拟空间</summary>
+        Transform ViewSpace
+        {
+            get
+            {
+                if (!viewSpace)
+                {
+                    var cam = GetComponentInParent<Camera>(true);
+                    viewSpace = cam ? cam.transform : null;
+                }
+                return viewSpace;
+            }
+        }
+
         WeaponController controller;
         Animator[] animators = System.Array.Empty<Animator>();
         AudioSource audioSource;
@@ -95,14 +137,27 @@ namespace Spiritfire.Game
             if (!Owns(weapon)) return;
             fireCount++;
             Trigger(weaponId == "1008" && fullCharge ? "ForceShot" : "Fire");
-            var muzzle = WeaponSockets.FindDeep(transform, WeaponSockets.Muzzle);
+            var muzzle = MuzzleAnchor;
             if (muzzlePrefab && muzzle)
             {
                 var fx = Instantiate(muzzlePrefab, muzzle, false);
-                fx.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                LastMuzzleFx = fx;
+                fx.transform.SetLocalPositionAndRotation(Vector3.zero, MuzzleFxRotation);
                 fx.transform.localScale = Vector3.one * MuzzleScale;
                 PlayerFactory.SetLayer(fx, Layers.FirstPerson);
-                foreach (var particles in fx.GetComponentsInChildren<ParticleSystem>(true)) particles.Play(false);
+                // 火光 / 光环 / 射线是局部空间，跟着枪骨骼一起后坐；烟、火星原本是世界空间，第一人称下走路转身会被甩过整个屏幕，
+                // 改到相机空间：从枪口喷出后留在视野里原处，枪后坐时与枪拉开、自然漂移
+                var view = ViewSpace;
+                foreach (var particles in fx.GetComponentsInChildren<ParticleSystem>(true))
+                {
+                    var main = particles.main;
+                    if (view && main.simulationSpace == ParticleSystemSimulationSpace.World)
+                    {
+                        main.simulationSpace = ParticleSystemSimulationSpace.Custom;
+                        main.customSimulationSpace = view;
+                    }
+                    particles.Play(false);
+                }
                 Destroy(fx, 3f);
             }
             foreach (var light in fireLights) if (light) light.enabled = true;
