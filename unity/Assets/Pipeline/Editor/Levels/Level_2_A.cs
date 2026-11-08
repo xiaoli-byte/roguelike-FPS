@@ -13,7 +13,7 @@ namespace Spiritfire.Art.Editor.Levels
 {
     /// <summary>
     /// 2-A 玄冰裂谷（第二章备选图，docs/level-design/maps/2-A.md；每局路线的图池 RunPlan.Pool）：昆仑雪墟北坡一条古冰川的冰舌。
-    /// 关卡坐标 = 世界 XZ（米，x 东、z 北）。游玩区是起伏的椭圆（中心 (0, 6)、半径 150 × 112 m），外面是同 2-3 的雪崖 + 雪峰。
+    /// 关卡坐标 = 世界 XZ（米，x 东、z 北）。游玩区是起伏的椭圆（中心 (0, 6)、半径 150 × 112 m），外圈按方位分谷壁 / 北冰瀑坎 + 冰舌 / 南终碛（见 <see cref="Rim"/>）。
     ///
     ///   出生·冰碛营地 (−76, −50) → B 冰封角楼 (−18, −40)：半埋的古祠台基 +2.4 m，两座角楼插出冰面
     ///   / A 冰塔林 (−82, 26)：十座冰塔，塔间巷子，四座有雪坡上顶 / C 冰碛垄 (88, −24)：两道冰碛垄夹一条垄沟
@@ -26,10 +26,13 @@ namespace Spiritfire.Art.Editor.Levels
     /// 入场点 = 游荡怪群（CombatDirector）进场的 7 处 MonsterEntry（缝口积雪坡、冰塔顶 / 冰坎跃下、垄背后、两处飞临）。
     /// 布局变体（<see cref="LevelLayout"/>）：main 自冰碛营地入；reverse 自冰川源头入（北头祭坛前出生 → 西南营地旁的新祭坛，B / D 编制奖励对调）。
     /// 冰壁的分层：章节规则把陡坡涂成岩，这张图换成自己的规则（<see cref="GlacierSplat"/>）——样本的 gravelBias 记「冰壁」，陡处改涂冰层。
+    /// 打磨（2026-11-08，maps/2-A.md §9，Level_2_A.Polish.cs）：冰桥 / 雪桥是程序化的冰拱 / 雪拱（雪桥处缝底挖通、桥下能走）、冰塔套多面体冰壳、
+    /// 外圈按方位分三种（北 = 冰瀑坎 + 往上游缓升的冰舌，主视线；南 = 陡内坡的终碛垄、几道豁口望下游河谷；东西 = 高低错落的谷壁，不再是一圈台阶崖）、
+    /// 冰瀑碎块、四处低雾、本图自己的光照（西南偏南的太阳、渐变天、本图后处理）。
     /// 生成：Spiritfire ▸ Levels ▸ Build 2-A 玄冰裂谷（或 bridge.sh level 2-A）。
     /// </summary>
     [LevelBuilder("2-A", ScenePath)]
-    public static class Level_2_A
+    public static partial class Level_2_A
     {
         public const string Dir = "Assets/Levels/L2_A_Crevasse";
         public const string ScenePath = "Assets/Scenes/L2_A_Crevasse.unity";
@@ -38,7 +41,7 @@ namespace Spiritfire.Art.Editor.Levels
         // 高度场里 Base 米 = 世界 y 0；冰缝挖到 −8，冰坎顶约 12，崖 + 雪峰再高 66
         const float Base = 16f, HeightRange = 104f, FarY = -3f;
         static readonly Vector2 Origin = new(-256, -256), Size = new(512, 512);
-        const float FogStart = 55f, FogEnd = 360f;
+        const float FogStart = 62f, FogEnd = 360f;
         /// <summary>盛行风：冰川上游（北）吹下来的下降风</summary>
         static readonly Vector2 Wind = new Vector2(0.2f, -1f).normalized;
         static readonly LevelKit.BoundarySpec Bounds = FrostBounds();
@@ -56,8 +59,11 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2[] Envelope = BuildEnvelope();
         const float RimApron = 0.9f, RimApronWidth = 3f;
         const float CliffMin = 16f, CliffMax = 30f, FaceMin = 8f, FaceMax = 13f, FaceGully = 0.45f;
-        const float LedgeFirst = 6f, LedgePhase = 2f, LedgeStep = 5.5f, LedgeRiserMin = 0.55f, LedgeRiserMax = 0.7f;
-        const float PeakStart = 2f, PeakRun = 40f, PeakMin = 8f, PeakMax = 40f;
+        const float PeakStart = 2f, PeakRun = 40f;
+        /// <summary>
+        /// 外圈的三个方位扇区（度，椭圆归一的方位角，0 = 东、90 = 北）：北 = 冰川上游（冰瀑坎 + 冰舌，主视线），南 = 终碛（碛垄 + 下游河谷），其余是谷壁
+        /// </summary>
+        const float NorthAz = 84f, NorthHalf = 22f, NorthFade = 14f, SouthAz = -84f, SouthHalf = 30f, SouthFade = 16f;
 
         // ───────────── 场地 ─────────────
         static readonly Vector2 Spawn = new(-76, -50), SiteB = new(-18, -40), SiteA = new(-82, 26), SiteC = new(88, -24), SiteD = new(22, 72),
@@ -68,7 +74,7 @@ namespace Spiritfire.Art.Editor.Levels
         static Vector2 YawDir(float yaw) => new(Mathf.Sin(yaw * Mathf.Deg2Rad), Mathf.Cos(yaw * Mathf.Deg2Rad));
         static Vector2 RevSpawn => ExitAt + YawDir(ExitYaw) * 7.5f;
 
-        // ── 冰裂缝：折线、宽、深、两头收浅的长度；spans = 雪桥（陡边平顶）/ 积雪坡（缓坡下到缝底），按世界点投影到缝上 ──
+        // ── 冰裂缝：折线、宽、深、两头收浅的长度；spans = 雪桥（程序化雪拱，缝底从桥下穿过）/ 积雪坡（缓坡下到缝底），按世界点投影到缝上 ──
         sealed class Crevasse
         {
             public string name;
@@ -364,24 +370,74 @@ namespace Spiritfire.Art.Editor.Levels
 
         static float Playable(Vector2 p) => Smooth(-4, 4, Inside(p));
 
-        static float Rim(Vector2 p, float ins, out float lip)
+        /// <summary>方位角（度，0 = 东、90 = 北），按游玩区椭圆归一</summary>
+        static float Azimuth(Vector2 p)
         {
+            var d = p - EnvC;
+            return Mathf.Atan2(d.y / EnvR.y, d.x / EnvR.x) * Mathf.Rad2Deg;
+        }
+
+        /// <summary>扇区权重：离中心方位 half 度内 1，再 fade 度淡出到 0</summary>
+        static float Sector(float az, float center, float half, float fade) => 1 - Smooth(half, half + fade, Mathf.Abs(Mathf.DeltaAngle(az, center)));
+
+        /// <summary>终碛垄上的两道豁口（0–1）：豁口处碛垄矮一半，望得见下游河谷</summary>
+        static float Notch(float az) =>
+            Mathf.Max(1 - Smooth(2f, 6f, Mathf.Abs(Mathf.DeltaAngle(az, SouthAz - 13f))), 1 - Smooth(2f, 6f, Mathf.Abs(Mathf.DeltaAngle(az, SouthAz + 12f))));
+
+        /// <summary>外圈涂层用：冰瀑坎（涂冰）、冰舌（雪 + 蓝冰带）、终碛（碎石）</summary>
+        struct RimLayers
+        {
+            public float ice, glacier, moraine;
+        }
+
+        /// <summary>
+        /// 外圈高度（相对 Land0 + 2.4）。按方位分三种（2026-11-08 打磨，替掉原来一圈台阶崖——台阶的雪沿在分层图上会锯成一排排白点，整圈读成「碗」）：
+        ///   谷壁（东西）：崖面 16–30 m 陡起，崖顶后面是高低错落的山肩（10–46 m）和山嘴 / 冲沟；
+        ///   北（冰川上游，主视线）：10–13 m 宽的冰瀑坎陡起 13–16 m（坎面上一块块碎冰），坎顶往上游是 10° 缓升的冰舌（一道道横向冰拱），扇区边上收进谷壁；
+        ///   南（终碛）：内坡 4–6 m 宽陡起 10–13 m 的碛垄（两道豁口矮一半），外坡落向下游河谷（低于冰面 15 m），碛垄外坡起伏。
+        /// 陡面都翻不上去（越界由地形本身挡住，软边界兜底）
+        /// </summary>
+        static float Rim(Vector2 p, float ins, out RimLayers layers)
+        {
+            layers = default;
+            float d = Mathf.Max(0, -ins);
+            float az = Azimuth(p);
+            float wN = Smooth(0.12f, 0.85f, Sector(az, NorthAz, NorthHalf, NorthFade));
+            float wS = Smooth(0.1f, 0.9f, Sector(az, SouthAz, SouthHalf, SouthFade));
+
+            // 谷壁
             var (cliffH, _) = CliffAt(p);
             float faceW = FaceWidth(p);
-            float t = Mathf.Clamp01(-ins / faceW);
+            float t = Mathf.Clamp01(d / faceW);
             float face = cliffH * Mathf.Lerp(t, t * t * (3 - 2 * t), 0.35f);
-            float peakH = Mathf.Lerp(PeakMin, PeakMax, Ridged(p, 90, 4, 37));
-            float rel = face + peakH * Smooth(-PeakStart, -PeakStart - PeakRun, ins);
-            float first = LedgeFirst + LedgePhase * Smooth(-0.4f, 0.4f, Fbm(p, 55, 2, 51));
-            float keep = Smooth(-0.2f, 0.1f, Fbm(p, 70, 2, 49)) * (1 - Smooth(cliffH - 2, cliffH + 2, rel)), above = 99, below = first - rel;
-            if (rel > first)
-            {
-                float riser = Mathf.Lerp(LedgeRiserMin, LedgeRiserMax, Smooth(-0.4f, 0.4f, Fbm(p, 35, 2, 47)));
-                float q = (rel - first) / LedgeStep, frac = q - Mathf.Floor(q);
-                (above, below) = (frac * LedgeStep, (1 - frac) * LedgeStep);
-                rel = Mathf.Lerp(rel, first + Terrace(rel - first, LedgeStep, riser), keep);
-            }
-            lip = keep * Mathf.Max(1 - Smooth(1.6f, 3f, above), 1 - Smooth(0.6f, 2f, below)) * Smooth(0, -1.5f, ins);
+            float shoulder = Mathf.Lerp(10f, 46f, Ridged(p, 110, 4, 37)) * Smooth(PeakStart, PeakStart + PeakRun, d);
+            float spur = (Ridged(p, 38, 3, 91) - 0.45f) * 14f * Smooth(faceW, faceW + 25, d);
+            float wall = face + Mathf.Max(0, shoulder + spur);
+
+            // 北：冰瀑坎 + 冰舌
+            float fallW = 10f + 3f * Fbm(p, 60, 2, 93);
+            float tf = Mathf.Clamp01(d / fallW);
+            float fallH = 13f + 3f * Fbm(p, 45, 2, 95);
+            float blocks = (Ridged(p, 6.5f, 2, 97) - 0.45f) * 3.2f * Smooth(1f, fallW * 0.6f, d) * (1 - Smooth(fallW + 18, fallW + 40, d));
+            float ogive = Mathf.Sin(d * 0.21f + Fbm(p, 30, 2, 99) * 2.5f) * 0.7f * Smooth(fallW + 8, fallW + 30, d);
+            // 冰舌 13° 缓升：从冰原上看得见它一路抬上去（太缓会被冰瀑坎挡成一条线）
+            float glacier = fallH * (tf * tf * (3 - 2 * tf)) + blocks + Mathf.Max(0, d - fallW) * 0.24f + ogive;
+
+            // 南：终碛垄 → 下游河谷
+            float notch = Notch(az);
+            // 碛垄：顶高起伏（碎石堆起来的，不是一道平顶墙），内坡上鼓包，外坡丘状
+            float crest = (9f + 2.5f * Fbm(p, 50, 2, 101)) * (1 + 0.2f * Fbm(p, 11, 2, 105)) * Mathf.Lerp(1f, 0.6f, notch);
+            float inner = Mathf.Lerp(6f, 4.5f, notch);
+            float lumps = Fbm(p, 6, 2, 109) * 1.3f * Smooth(0, inner * 0.7f, d);
+            float moraine = d < inner
+                ? crest * Smooth(0, inner, d) + lumps * (1 - Smooth(inner * 0.6f, inner, d))
+                : crest - (d - inner) * 0.34f + Fbm(p, 14, 3, 103) * 1.6f * Smooth(inner, inner + 10, d);
+            moraine = Mathf.Max(moraine, -15f);
+
+            float rel = Mathf.Lerp(Mathf.Lerp(wall, glacier, wN), moraine, wS);
+            layers.ice = wN * Smooth(0.5f, 2f, d) * (1 - Smooth(fallW + 4, fallW + 22, d));
+            layers.glacier = wN * Smooth(fallW, fallW + 12, d);
+            layers.moraine = wS * Smooth(0.5f, 3f, d);
             return RimApron * Smooth(RimApronWidth, 0, ins) + rel;
         }
 
@@ -442,12 +498,13 @@ namespace Spiritfire.Art.Editor.Levels
                 if (d > hw + 0.6f) continue;
                 float along = t * c.length;
                 float k = Smooth(0, c.taper, along) * Smooth(0, c.taper, c.length - along);
+                // 积雪坡处缓缓收浅（缓坡下到缝底）；雪桥处缝不再断开——雪桥是程序化雪拱（BuildSnowArches），缝底从桥下穿过去
                 for (int i = 0; i < c.spans.Length; i++)
                 {
+                    if (!c.spans[i].drift) continue;
                     float s = Mathf.Abs(along - c.spanAlong[i]);
                     float half = c.spans[i].half;
-                    float m = c.spans[i].drift ? 1 - Smooth(half, half + c.depth * 1.9f, s) : 1 - Smooth(half, half + 0.9f, s);
-                    k *= 1 - m;
+                    k *= Smooth(half, half + c.depth * 1.9f, s);
                 }
                 float cross = 1 - Smooth(hw - CrevWall, hw, d);
                 float cut = c.depth * k * cross;
@@ -526,9 +583,9 @@ namespace Spiritfire.Art.Editor.Levels
             float cut = CrevasseCut(p, out float iceWall, out float crevFloor);
             h -= cut;
 
-            // ── 雪崖 + 雪峰（界外）──
-            float lip = 0;
-            if (ins < RimApronWidth) h = Mathf.Max(h, Land0(p) + 2.4f + Rim(p, ins, out lip));
+            // ── 外圈（界外：谷壁 / 北冰瀑坎 + 冰舌 / 南终碛）──
+            RimLayers rim = default;
+            if (ins < RimApronWidth) h = Mathf.Max(h, Land0(p) + 2.4f + Rim(p, ins, out rim));
 
             // ── 地形外缘 36 m 内落回远景地面 ──
             var local = p - Origin;
@@ -541,13 +598,14 @@ namespace Spiritfire.Art.Editor.Levels
             float face = Smooth(-StepEdge * 0.5f, StepEdge * 0.5f, p.y - StepFace(p.x) + Fbm(p, 9, 2, 63) * 0.35f);
             float wallBand = Mathf.Max(iceWall, Mathf.Max(serac * (1 - Smooth(0.9f, 0.99f, serac)), face * (1 - face) * 4f * StepFade(p.x)));
             wallBand = Mathf.Max(wallBand, mound * (1 - Smooth(0.9f, 0.99f, mound)));
-            s.gravelBias = Mathf.Clamp01(wallBand * 1.4f);
+            s.gravelBias = Mathf.Clamp01(Mathf.Max(wallBand * 1.4f, rim.ice * 1.3f));
             float blueIce = Smooth(0.12f, 0.38f, Fbm(p, 45, 3, 61)) * glacier * (1 - rampAny) * (1 - seracTop) * (1 - crevFloor);
-            s.fluid = blueIce * 0.85f;
+            s.fluid = Mathf.Max(blueIce * 0.85f, rim.glacier * Smooth(0.05f, 0.35f, Fbm(p, 22, 3, 107)) * 0.8f);
             float medial = (1 - Smooth(2.5f, 6f, Mathf.Abs(p.x - 30 - 10 * Mathf.Sin(p.y / 40f)))) * glacier * 0.55f;
-            s.packed = Mathf.Max(Mathf.Max(marg * 0.85f, ridgeMask * 0.8f), Mathf.Max(medial, rampAny * 0.5f));
-            s.sand = Mathf.Max(Mathf.Max(0.72f * (1 - marg * 0.6f) * (1 - ridgeMask * 0.5f), crevFloor * 0.95f),
-                Mathf.Max(Mathf.Max(seracTop, Smooth(0.9f, 0.99f, mound)) * 0.9f, Mathf.Max(lip, pad * 0.7f)));
+            s.packed = Mathf.Max(Mathf.Max(Mathf.Max(marg * 0.85f, ridgeMask * 0.8f), Mathf.Max(medial, rampAny * 0.5f)), rim.moraine * 0.8f);
+            float morSnow = rim.moraine * Smooth(0.08f, 0.4f, Fbm(p, 9, 2, 111)) * 0.85f;
+            s.sand = Mathf.Max(Mathf.Max(Mathf.Max(0.72f * (1 - marg * 0.6f) * (1 - ridgeMask * 0.5f) * (1 - rim.moraine * 0.55f), morSnow), crevFloor * 0.95f),
+                Mathf.Max(Mathf.Max(seracTop, Smooth(0.9f, 0.99f, mound)) * 0.9f, Mathf.Max(rim.glacier * 0.85f, pad * 0.7f)));
             return s;
         }
 
@@ -556,7 +614,10 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var v = LevelKit.Splat.Frost(s, c);
             float w = Mathf.Clamp01(s.gravelBias) * Smooth(18, 38, c.slope);
-            return w > 0 ? Vector4.Lerp(v, new Vector4(0, 0, 1, 0), w) : v;
+            if (w > 0) v = Vector4.Lerp(v, new Vector4(0, 0, 1, 0), w);
+            // 碛垄（侧碛 / 终碛）陡处也是碎石，不涂成岩壁（章节规则陡坡一律涂岩，终碛会读成一道平顶岩墙）
+            float mor = Smooth(0.62f, 0.78f, s.packed) * Smooth(26, 40, c.slope) * (1 - Smooth(0.5f, 0.8f, s.sand));
+            return mor > 0 ? Vector4.Lerp(v, new Vector4(0.25f, 0.75f, 0, 0), mor * 0.85f) : v;
         }
 
         static readonly LevelKit.Ground GlacierGround = new()
@@ -587,6 +648,7 @@ namespace Spiritfire.Art.Editor.Levels
             Directory.CreateDirectory(Dir);
             LevelKit.ResetCache();
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            PolishMaterials();
             var env = new GameObject("Environment").transform;
             var kit = new GameObject("Kit").transform;
             var props = new GameObject("Props").transform;
@@ -594,6 +656,7 @@ namespace Spiritfire.Art.Editor.Levels
             var markers = new GameObject("Markers").transform;
 
             ShowcaseSceneBuilder.BuildLighting(theme, Dir);
+            LocalLook();
             RenderSettings.fogStartDistance = FogStart;
             RenderSettings.fogEndDistance = FogEnd;
             ts = LevelKit.BuildTerrainSet(new LevelKit.TerrainSpec
@@ -604,6 +667,10 @@ namespace Spiritfire.Art.Editor.Levels
             try
             {
                 var backdrop = LevelKit.BackdropFor(theme, Dir, Name, EnvC, FarY, 760, 7);
+                // 地平线色 = 本图雾色；南面（终碛外的下游河谷）远景压低一道，望得出去
+                backdrop.horizon = LookFog;
+                backdrop.gapAngle = SouthAz;
+                backdrop.gapWidth = 36;
                 LevelKit.Backdrop(backdrop, env);
                 LevelKit.FarGround(Dir, Name, env, new Rect(Origin, Size), FarY, theme.groundA, 3000);
                 LevelKit.Boundary(Dir, Name, env, Playable, new Rect(Origin, Size), Bounds);
@@ -616,6 +683,10 @@ namespace Spiritfire.Art.Editor.Levels
                 BuildMoraine(props);
                 var (shrine, gateTop, exitTop) = BuildSource(kit, props);
                 var bridgeAim = BuildIceBridge(kit);
+                BuildSnowArches(kit);
+                IcefallBlocks(env);
+                FarMassif(env);
+                MoraineBoulders(env);
                 BuildScatter(props, theme);
                 BuildMarkers(markers);
                 BuildModeAnchors(markers);
@@ -642,6 +713,7 @@ namespace Spiritfire.Art.Editor.Levels
 
                 var rep = new LevelKit.Report();
                 rep.Line("2-A 玄冰裂谷 · 验收");
+                Mist(env, rep);
                 rep.Line($"高度：出生 {OnGround(Spawn).y:F1}，B 台基 {OnGround(MoundC).y:F1}，A 冰面 {OnGround(SiteA).y:F1}，C 垄沟 {OnGround(SiteC).y:F1}，" +
                          $"D 坎上 {OnGround(SiteD).y:F1}（坎下 {OnGround(new Vector2(22, 50)).y:F1}），出口 {OnGround(ExitAt).y:F1}");
                 rep.Line($"主裂谷：缝沿 {OnGround(new Vector2(-50, -2)).y:F1}，缝底 {OnGround(CrevCache).y:F1}（长 {Great.length:F0} m），冰桥处缝底 {OnGround(BridgeAt).y:F1}");
@@ -689,6 +761,18 @@ namespace Spiritfire.Art.Editor.Levels
             rep.Line($"离边界（坡脚）：{string.Join("，", parts)}");
         }
 
+        /// <summary>沿主裂谷从冰桥往西 along 米、横向 lateral 米（正 = 北岸）的机位，高 dy（相对缝沿；负 = 缝底）</summary>
+        static Vector3 BridgeView(float along, float lateral, float dy) => CrevView(Great, BridgeAt, along, lateral, dy);
+
+        /// <summary>沿某道冰缝、从 at 往沿缝方向 along 米、横向 lateral 米的机位，高 dy（相对 at 处的缝沿；负 = 往缝底）</summary>
+        static Vector3 CrevView(Crevasse cr, Vector2 at, float along, float lateral, float dy)
+        {
+            var (axis, tangent) = BridgeFrame(cr, at);
+            var q = at + tangent * along + axis * lateral;
+            float rim = OnGround(at + axis * (cr.width * 0.5f + 2.5f)).y;
+            return At(q, rim + dy);
+        }
+
         static void Review(Vector3 spawnAt, Quaternion spawnRot, Vector3 towerTop, Vector3 gateTop, Vector3 exitTop, Vector3 bridgeAim)
         {
             Vector3 E(Vector2 q, float dy = 1.62f) => OnGround(q, dy);
@@ -715,6 +799,14 @@ namespace Spiritfire.Art.Editor.Levels
                     ("GuardShrine", E(new Vector2(-46, 66)), OnGround(SiteG, 2), false),
                     ("RevSpawn", E(RevSpawn), OnGround(new Vector2(10, 40), 2), true),
                     ("RevExit", E(new Vector2(-62, -50)), OnGround(RevExitAt, 5), false),
+                    // 打磨机位：冰拱桥侧面 / 桥下、东雪拱、北面主视线（冰瀑 + 冰舌）、南面终碛豁口、背光（朝西南看）
+                    ("BridgeSide", BridgeView(-17f, Great.width * 0.5f + 2f, 1.62f), At(BridgeAt, OnGround(BridgeAt + new Vector2(0, 7)).y - 2.5f), false),
+                    ("UnderBridge", BridgeView(-11f, 0f, -Great.depth + 1.62f), At(BridgeAt, OnGround(BridgeAt + new Vector2(0, 7)).y - 1.5f), false),
+                    ("SnowArch", CrevView(Great, new Vector2(78, 13), -16f, 0f, -Great.depth + 1.62f), OnGround(new Vector2(78, 13) + new Vector2(0, 8)) - Vector3.up * 2.5f, false),
+                    ("SnowArchRim", CrevView(Great, new Vector2(78, 13), -20f, Great.width * 0.5f + 2.5f, 1.62f), OnGround(new Vector2(78, 13) + new Vector2(0, 8)) - Vector3.up * 3f, false),
+                    ("NorthView", E(new Vector2(-4, -22)), At(RimPoint(NorthAz, 60), 40), false),
+                    ("SouthNotch", E(new Vector2(14, -60)), At(RimPoint(SouthAz, 20), 6), false),
+                    ("Backlit", E(new Vector2(40, 30)), OnGround(new Vector2(-40, -40), 3), false),
                 });
             }
             finally
@@ -790,9 +882,10 @@ namespace Spiritfire.Art.Editor.Levels
             return At(towerNE, top - 4.2f + DesignSize[TowerId].y - 1f);
         }
 
-        /// <summary>A 冰塔林：冰塔是地形（侧壁冰层），塔脚散冰柱、冰棱碎块当矮掩体</summary>
+        /// <summary>A 冰塔林：冰塔是地形（碰撞 / 站位 / 雪坡），外面套多面体冰壳（Level_2_A.Polish.SeracSkins）；塔脚散冰柱、冰棱碎块当矮掩体</summary>
         static void BuildSeracs(Transform kit, Transform props)
         {
+            SeracSkins(kit);
             foreach (var (q, y, s) in new[] { (new Vector2(-78, 2), 20f, 1.1f), (new Vector2(-94, 26), 140f, 0.9f), (new Vector2(-62, 28), 60f, 1.2f), (new Vector2(-104, 6), 200f, 1f) })
                 Put(PillarId, kit, q, y, s, 0.2f);
             foreach (var (q, y) in new[] { (new Vector2(-76, 30), 30f), (new Vector2(-88, 18), 100f), (new Vector2(-66, 44), 170f), (new Vector2(-96, 44), 250f) })
@@ -835,51 +928,6 @@ namespace Spiritfire.Art.Editor.Levels
             var shrine = Put(ShrineId, kit, ExitAt, ExitYaw, 1, 0.15f);
             float gy = OnGround(gateAt).y - 0.3f, ey = OnGround(ExitAt).y - 0.15f;
             return (shrine, At(gateAt, gy + DesignSize[GatewayId].y - 1.5f), At(ExitAt, ey + DesignSize[ShrineId].y - 1.5f));
-        }
-
-        /// <summary>
-        /// 主裂谷中段的冰桥：走行面是显式碰撞盒（两头搭到缝沿外 BridgeLand 米、顶面取两岸冰面较高的），两件冰桥半跨（细头对接）只做外观、压扁到 BridgeSy；
-        /// 桥下离缝底还有 4 m 多（走缝底不碰头）。返回桥心上方的视线目标
-        /// </summary>
-        static Vector3 BuildIceBridge(Transform kit)
-        {
-            var root = new GameObject("主裂谷冰桥").transform;
-            root.SetParent(kit, false);
-            var (_, t) = Polyline(BridgeAt, Great.path);
-            int i = Mathf.Clamp(Mathf.FloorToInt(t * (Great.path.Count - 1)), 0, Great.path.Count - 2);
-            var tangent = (Great.path[i + 1] - Great.path[i]).normalized;
-            var axis = new Vector2(-tangent.y, tangent.x);
-            float halfSpan = Great.width * 0.5f + BridgeLand;
-            var a2 = BridgeAt - axis * halfSpan;
-            var b2 = BridgeAt + axis * halfSpan;
-            float top = Mathf.Max(OnGround(a2 - axis * 0.5f).y, OnGround(b2 + axis * 0.5f).y) + 0.03f;
-            LevelKit.Deck("冰桥桥面 Collision", root, At(a2 - axis * 0.8f, top), At(b2 + axis * 0.8f, top), BridgeWidth, 1.2f);
-            var d = DesignSize[IceBridgeId];
-            float yaw = Mathf.Atan2(axis.x, axis.y) * Mathf.Rad2Deg - 90f; // 局部 +X 沿桥轴
-            foreach (int side in new[] { -1, 1 })
-            {
-                var c = BridgeAt + axis * (side * (halfSpan * 0.5f - 0.5f));
-                var scale = new Vector3(halfSpan / d.x, BridgeSy, (BridgeWidth + 0.6f) / d.z);
-                var go = PutAt(IceBridgeId, root, c, top - d.y * BridgeSy, yaw, scale);
-                if (!go) continue;
-                go.name = IsPlaceholder(go) ? go.name : $"{IceBridgeId} ({(side < 0 ? "南半" : "北半")})";
-                if (!IsPlaceholder(go))
-                {
-                    // 厚头 = 底面低的那头，要朝岸（side 方向）；局部 +X 在世界里是 axis
-                    var (minus, plus) = LevelKit.ProbeEnds(go, d.x * 0.4f, new[] { -1.5f, 0f, 1.5f }, -1f, true);
-                    bool thickPlus = !float.IsNaN(plus) && (float.IsNaN(minus) || plus < minus);
-                    if (thickPlus != side > 0) go.transform.rotation = Quaternion.Euler(0, yaw + 180, 0);
-                }
-                LevelKit.VisualOnly(go);
-            }
-            // 桥头冰柱：两头各一对，立在桥面两侧外 1.2 m（远处一眼看出这里能过缝）
-            foreach (int side in new[] { -1, 1 })
-            foreach (int lat in new[] { -1, 1 })
-            {
-                var q = BridgeAt + axis * (side * (halfSpan + 1.2f)) + tangent * (lat * (BridgeWidth * 0.5f + 1.4f));
-                Put(PillarId, root, q, side * 37 + lat * 61, 1.15f, 0.3f);
-            }
-            return At(BridgeAt, top + 1.2f);
         }
 
         /// <summary>散布：冰棱 / 冻石细节避开冰缝、冰塔顶、台面、坡道；雪松只长在侧碛和冰碛垄上，避开场地、站位、走法和视线</summary>
@@ -1232,6 +1280,8 @@ namespace Spiritfire.Art.Editor.Levels
         static LevelSpec Spec(Vector3 towerTop, Vector3 gateTop, Vector3 exitTop, Vector3 bridgeAim)
         {
             Vector3 G(Vector2 q, float dy = 0) => OnGround(q, dy);
+            // 雪桥路点：桥面顶（雪拱下缝底挖通了，贴地会落到缝底）
+            Vector3 Arch(Vector2 q) => archTops.TryGetValue(q, out float y) ? At(q, y) : G(q);
             SiteSpec S(string name, Vector2 c, float size, int cover = -1, int layers = -1, bool overlook = false, bool combat = true) =>
                 new() { name = name, center = G(c), size = size, minCover = cover, minLayers = layers, overlook = overlook, combat = combat };
             var (mx, mz) = Axes(MoundYaw);
@@ -1252,11 +1302,11 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("B 北坡脚", G(MoundC + mz * (MoundHalf.y + 10f))).Route("主裂谷冰桥南", G(BridgeAt + new Vector2(-1, -9)))
                 .Route("主裂谷冰桥北", G(BridgeAt + new Vector2(1, 9))).Route("中北缝东头", G(new Vector2(6, 38)))
                 .Route("冰坎坡脚", G(new Vector2(16, StepFace(16) - 15.5f))).Route("D 冰川源头", G(SiteD)).Route("出口", G(ExitAt + YawDir(ExitYaw) * 4.5f))
-                .Route("逆行·出生", G(RevSpawn)).Route("东北缝积雪坡", G(new Vector2(58, 41))).Route("主裂谷东雪桥", G(new Vector2(78, 13)))
-                .Route("C 冰碛垄", G(SiteC)).Route("C 东垄顶", G(new Vector2(104, -32))).Route("南缝雪桥", G(new Vector2(30, -80)))
-                .Route("主裂谷西积雪坡", G(new Vector2(-68, -14))).Route("冰缝遗骨", G(CrevCache + new Vector2(3, 0)))
-                .Route("主裂谷西雪桥", G(new Vector2(-100, -12))).Route("A 冰塔林", G(SiteA)).Route("A 冰塔顶", G(new Vector2(-68, 20)))
-                .Route("冰塔林北缝雪桥", G(new Vector2(-90, 63.5f))).Route("G 经幡祠", G(SiteG + new Vector2(4, -8)))
+                .Route("逆行·出生", G(RevSpawn)).Route("东北缝积雪坡", G(new Vector2(58, 41))).Route("主裂谷东雪桥", Arch(new Vector2(78, 13)))
+                .Route("C 冰碛垄", G(SiteC)).Route("C 东垄顶", G(new Vector2(104, -32))).Route("南缝雪桥", Arch(new Vector2(30, -80)))
+                .Route("主裂谷西积雪坡", G(new Vector2(-68, -14))).Route("冰缝遗骨", G(CrevCache + new Vector2(3, 0))).Route("东雪桥下缝底", G(new Vector2(78, 13)))
+                .Route("主裂谷西雪桥", Arch(new Vector2(-100, -12))).Route("A 冰塔林", G(SiteA)).Route("A 冰塔顶", G(new Vector2(-68, 20)))
+                .Route("冰塔林北缝雪桥", Arch(new Vector2(-90, 63.5f))).Route("G 经幡祠", G(SiteG + new Vector2(4, -8)))
                 .Route("逆行·出口祭坛", G(RevExitAt + YawDir(RevExitYaw) * 4.5f)).Route("路遇·冰塔哨", G(Roadsides[1].at)).Route("路遇·冰坎西头", G(Roadsides[3].at))
                 .Route("路遇·冰桥头", G(Roadsides[0].at)).Route("路遇·垄尾", G(Roadsides[2].at))
                 .Sight("出生 → B 角楼", G(Spawn, 1.62f), towerTop, 6, TowerId)
