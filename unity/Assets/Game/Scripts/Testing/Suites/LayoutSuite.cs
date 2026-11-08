@@ -11,7 +11,7 @@ namespace Spiritfire.Game.Testing
     /// 每局不同的地图（docs/level-design/run-variety.md）实机冒烟：bridge.sh playtest layout
     ///   1. Core 开局后按正式流程「新的一局」（SceneFlow.NewRun）：这一局有洗过的路线，进的是路线的第一个槽位（编号 1-1、难度 1.00，场景 = 抽到的图）；
     ///   2. 进下一关：按路线走到第二个槽位；
-    ///   3. 第一章的每张有变体的图逐个走法（LevelLayout.Force）进一遍：出生在这个走法的出生点、只有这个走法的出口在场、
+    ///   3. 每张有变体的开放图（主图 + 备选图，场景建好的；不在这一局路线上的按规划表的图去）逐个走法（LevelLayout.Force）进一遍：出生在这个走法的出生点、只有这个走法的出口在场、
     ///      场地先后 / 编制 / 奖励按变体改写、关卡目标只收在场的场地、行旅图只标一个出口；
     ///   4. 不指定时同一局同一关重来两次抽到同一个变体（随机流只由种子 + 关卡编号决定）。
     /// </summary>
@@ -63,9 +63,10 @@ namespace Spiritfire.Game.Testing
                 else if (flow.CurrentScene.path != second.scene) Fail($"第二关加载的场景 {flow.CurrentScene.path} 不对（应为 {second.scene}）");
                 else Line($"✓ 下一关按路线：{second.Label}（难度 {run.difficulty:F2}）");
 
-                // ── 3. 第一章有变体的图：每种走法进一遍 ──
-                foreach (var slot in route.Slots.Where(s => s.chapter == 1 && !s.IsBoss))
+                // ── 3. 每张有变体的开放图（主图 + 图池）：每种走法进一遍 ──
+                foreach (var map in RunPlan.AllMaps.Where(m => !m.IsBoss && RunPlan.Ready(m)).ToList())
                 {
+                    var slot = route.ForMap(map) ?? map;
                     LevelLayout.Force = null;
                     before = flow.Transitions;
                     if (!flow.GoTo(slot))
