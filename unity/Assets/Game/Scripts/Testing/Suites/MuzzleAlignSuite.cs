@@ -19,7 +19,7 @@ namespace Spiritfire.Game.Testing
 
         // 网格前端主轴估的枪管方向会被准星 / 护木带偏（电磁炮估成竖直），射向夹角只记不判；挂点用原作 Att（枪骨骼上的枪口点）
         // 2026-11-08：原 muzzle 节点（不动）后坐时相对枪管口漂 7.9 cm；改挂 Att 后 ≤ 1.6 cm（剩下是网格前端估算的抖动）
-        // 喷出物（相机空间的火星 / 刺 / 烟）重心要朝开火时的射向；跟枪的火光里光晕在枪口前、光环沿枪管往后滑，所以只要求最靠前的子系统在枪口前方。
+        // 喷出的火星 / 刺（相机空间）平均速度要朝开火时的射向；跟枪的火光里光晕在枪口前、光环沿枪管往后滑，所以只要求最靠前的子系统在枪口前方。
         // 2026-11-08 特效没转正时：喷出物与射向夹 60°–113°、光晕只在前 0.5 cm（整团朝枪管侧面炸开）；转正后 11°–25°、光晕在前 7.6 cm
         const float MaxRestOffset = 0.05f, MaxFollow = 0.025f, MaxSpread = 50f, MinFlashAhead = 0.03f;
 
@@ -95,6 +95,7 @@ namespace Spiritfire.Game.Testing
             int anchoredLights = lights.Count(l => l.transform.parent == fxAnchor);
             Line($"{weaponId}：曳光起点 {(wc.MuzzleSocket ? wc.MuzzleSocket.name : "无")}，枪口灯光 {lights.Length} 盏（挂在特效挂点上 {anchoredLights} 盏）");
             if (anchoredLights != 1) Fail($"{weaponId}：枪口灯光应在特效挂点上恰好一盏，实际 {anchoredLights}");
+            Line($"{weaponId}：枪口挂点父骨骼 {fxAnchor.parent?.name}，枪管口顶点主要蒙在 {TipBones(meshes, fxAnchor)}");
             var restTip = Tip(meshes, cam, out var restAxis);
             var restAnchor = cam.InverseTransformPoint(fxAnchor.position);
             var oldSocket = WeaponSockets.FindDeep(original.transform, WeaponSockets.Muzzle);
@@ -106,11 +107,12 @@ namespace Spiritfire.Game.Testing
             float start = Time.time;
             while (original.fireCount == fireBefore && Time.time - start < 3f) yield return null;
             wc.testFire = false;
+            float restScale = fxAnchor.lossyScale.y, maxScale = restScale;
             var emitAnchor = cam.InverseTransformPoint(fxAnchor.position);
             var emitForward = cam.InverseTransformDirection(original.MuzzleForward);
             // 枪管口用网格最前端顶点估（会被准星 / 击锤带偏几 cm），所以不要求挂点与它重合，只要求后坐过程中两者相对位置不变（挂点刚性跟着枪走）
             var restRel = restAnchor - restTip;
-            float follow = 0, maxAngle = 0, tipTravel = 0, anchorTravel = 0, spread = -1, flashAhead = 0;
+            float follow = 0, maxAngle = 0, tipTravel = 0, anchorTravel = 0, spread = -1, flashAhead = float.NegativeInfinity;
             for (int frame = 0; frame < 24; frame++)
             {
                 yield return new WaitForEndOfFrame();
@@ -123,11 +125,48 @@ namespace Spiritfire.Game.Testing
                 anchorTravel = Mathf.Max(anchorTravel, (anchor - restAnchor).magnitude);
                 if (frame == 1)
                 {
+                    // 截图那帧很慢（读回整张图），之后游戏时间被拉长、0.1–0.35 s 的火光会播完：粒子分布在截图前量
+                    ParticleSpread(original.LastMuzzleFx, cam, anchor, forward, emitAnchor, emitForward, weaponId, out _);
                     Shot(rig.cam, $"align_{weaponId}_shot");
                     Line($"{weaponId}：开火第 2 帧 屏幕 枪管口 {Screen(tip)} 挂点 {Screen(anchor)}");
                 }
-                if (frame == 3) spread = ParticleSpread(original.LastMuzzleFx, cam, anchor, forward, emitAnchor, emitForward, weaponId, out flashAhead);
+                maxScale = Mathf.Max(maxScale, fxAnchor.lossyScale.y);
+                // 火星 / 刺有的晚一两帧才喷：取开火后第一帧有它们的速度方向
+                if (spread < 0 && frame < 10) spread = SparkAngle(original.LastMuzzleFx, cam, emitForward);
+                // 跟枪的火光（局部空间）有的晚一两帧出：开火后 10 帧内最靠前的子系统
+                if (frame < 10) flashAhead = Mathf.Max(flashAhead, LocalAhead(original.LastMuzzleFx, cam, anchor, forward));
+                if (frame < 14 && original.LastMuzzleFx)
+                    foreach (var ps in original.LastMuzzleFx.GetComponentsInChildren<ParticleSystem>())
+                    {
+                        if (ps.particleCount == 0) continue;
+                        var b = ps.GetComponent<ParticleSystemRenderer>().bounds;
+                        float size = Mathf.Max(b.size.x, b.size.y, b.size.z);
+                        string key = ps.name;
+                        if (!sizes.TryGetValue(key, out float old) || size > old) sizes[key] = size;
+                    }
             }
+            float barrel = BarrelDiameter(meshes, cam), runtimeBarrel = original.BarrelDiameter;
+            Line($"{weaponId}：枪管口直径 测试量 {barrel * 100:F1} cm / 运行时量 {runtimeBarrel * 100:F1} cm；枪口特效各子系统开火后 14 帧内包围盒最大 " +
+                 string.Join("，", sizes.OrderByDescending(kv => kv.Value).Select(kv => $"{kv.Key} {kv.Value * 100:F1} cm（{kv.Value / Mathf.Max(barrel, 1e-4f):F1} 倍）")));
+            // 测试这边按相机 z 取最前一圈（会被准星 / 护套带偏），只作对照；尺寸判定按运行时以 Att 为轴量的枪管口
+            if (runtimeBarrel <= 0.005f || runtimeBarrel > 0.1f) Fail($"{weaponId}：运行时量的枪管口直径 {runtimeBarrel * 100:F1} cm 不合理");
+            barrel = runtimeBarrel;
+            Line($"{weaponId}：枪口挂点缩放 静止 {restScale:F3}，开火中最大 {maxScale:F3}（{maxScale / Mathf.Max(restScale, 1e-6f):F2} 倍）；封顶时 {original.FitDebug}；现在 挂点 {fxAnchor.lossyScale} 特效根 {(original.LastMuzzleFx ? original.LastMuzzleFx.transform.lossyScale.ToString() : "无")}");
+            if (original.LastMuzzleFx)
+                foreach (var ps in original.LastMuzzleFx.GetComponentsInChildren<ParticleSystem>())
+                {
+                    int cap = System.Array.FindIndex(GunfireOriginalAnimation.SizeCaps, c => c.name == ps.name);
+                    if (cap < 0) continue;
+                    // 左轮开火动画对枪骨骼做挤压拉伸（沿枪管拉长到 1.25 倍），特效跟着拉伸是原作的冲击感，判定时扣掉
+                    var s = fxAnchor.lossyScale;
+                    float stretch = Mathf.Max(Mathf.Abs(s.x), Mathf.Abs(s.y), Mathf.Abs(s.z)) / Mathf.Max(restScale, 1e-6f);
+                    float limit = GunfireOriginalAnimation.SizeCaps[cap].ratio * runtimeBarrel, size = GunfireOriginalAnimation.MaxVisualSize(ps) / stretch;
+                    if (size > limit * 1.02f) Fail($"{weaponId}：{ps.name} 最大 {size * 100:F1} cm，超过枪管口 {GunfireOriginalAnimation.SizeCaps[cap].ratio} 倍（{limit * 100:F1} cm）");
+                }
+            foreach (var ring in RingSystems)
+                if (sizes.TryGetValue(ring, out float s) && s > MaxRingRatio * barrel)
+                    Fail($"{weaponId}：枪口光环 {ring} 包围盒最大 {s * 100:F1} cm，是枪管口的 {s / barrel:F1} 倍（> {MaxRingRatio} 倍）");
+            sizes.Clear();
             Line($"{weaponId}：开火 24 帧内 枪管口后坐位移 {tipTravel * 100:F1} cm，挂点位移 {anchorTravel * 100:F1} cm，挂点相对枪管口最多漂 {follow * 100:F1} cm，射向与枪管夹角最大 {maxAngle:F1}°");
             if (restRel.magnitude > MaxRestOffset) Fail($"{weaponId}：枪口特效挂点离枪管口 {restRel.magnitude * 100:F1} cm（> {MaxRestOffset * 100:F0} cm）");
             if (follow > MaxFollow) Fail($"{weaponId}：后坐时枪口特效挂点没跟住枪管口（相对漂 {follow * 100:F1} cm > {MaxFollow * 100:F1} cm）");
@@ -146,7 +185,7 @@ namespace Spiritfire.Game.Testing
                 Line($"{weaponId}：没拿到枪口特效实例");
                 return -1;
             }
-            Vector3 sumLocal = Vector3.zero, sumDetached = Vector3.zero;
+            Vector3 sumLocal = Vector3.zero, sumDetached = Vector3.zero, sparkVelocity = Vector3.zero;
             int nLocal = 0, nDetached = 0;
             var parts = new List<string>();
             var buffer = new ParticleSystem.Particle[256];
@@ -171,6 +210,7 @@ namespace Spiritfire.Game.Testing
                     vFx += fx.transform.InverseTransformVector(v).normalized;
                     vCam += cam.InverseTransformVector(v).normalized;
                 }
+                if (detached && ps.name.IndexOf("smoke", System.StringComparison.OrdinalIgnoreCase) < 0) sparkVelocity += vCam;
                 if (detached) { sumDetached += c - anchor * n; nDetached += n; }
                 else { sumLocal += c - anchor * n; nLocal += n; }
                 c /= n;
@@ -186,8 +226,106 @@ namespace Spiritfire.Game.Testing
             float angleLocal = nLocal > 0 ? Vector3.Angle(sumLocal / nLocal, axisNow) : 0;
             float angleDetached = nDetached > 0 ? Vector3.Angle(sumDetached / nDetached, axisEmit) : 0;
             Line($"{weaponId}：跟枪粒子 {nLocal} 个重心与当前射向夹角 {angleLocal:F0}°（前 {(nLocal > 0 ? Vector3.Dot(sumLocal / nLocal, axisNow) * 100 : 0):F1} cm），" +
-                 $"相机空间粒子 {nDetached} 个重心与开火时射向夹角 {angleDetached:F0}°（前 {(nDetached > 0 ? Vector3.Dot(sumDetached / nDetached, axisEmit) * 100 : 0):F1} cm）｜" + string.Join("；", parts));
-            return nDetached > 0 ? angleDetached : -1;
+                 $"相机空间粒子 {nDetached} 个重心与开火时射向夹角 {angleDetached:F0}°（前 {(nDetached > 0 ? Vector3.Dot(sumDetached / nDetached, axisEmit) * 100 : 0):F1} cm），" +
+                 $"火星 / 刺平均速度与射向夹角 {(sparkVelocity.sqrMagnitude > 1e-6f ? Vector3.Angle(sparkVelocity, axisEmit) : -1):F0}°｜" + string.Join("；", parts));
+            // 喷出方向按火星 / 刺的速度判（烟本来就绕枪口径向散开，按重心判会抖）
+            return sparkVelocity.sqrMagnitude > 1e-6f ? Vector3.Angle(sparkVelocity, axisEmit) : -1;
+        }
+
+        /// <summary>局部空间（跟枪）子系统里最靠前那个的粒子重心在射向上离挂点多远（m）；没有粒子返回 -∞</summary>
+        static float LocalAhead(GameObject fx, Transform cam, Vector3 anchor, Vector3 axis)
+        {
+            float best = float.NegativeInfinity;
+            if (!fx) return best;
+            var buffer = new ParticleSystem.Particle[64];
+            foreach (var ps in fx.GetComponentsInChildren<ParticleSystem>())
+            {
+                if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) continue;
+                int n = ps.GetParticles(buffer);
+                if (n == 0) continue;
+                var c = Vector3.zero;
+                for (int i = 0; i < n; i++) c += cam.InverseTransformPoint(ps.transform.TransformPoint(buffer[i].position));
+                best = Mathf.Max(best, Vector3.Dot(c / n - anchor, axis));
+            }
+            return best;
+        }
+
+        /// <summary>火星 / 刺（相机空间、名字不含 smoke）平均速度方向与开火时射向的夹角；还没有就返回 -1</summary>
+        static float SparkAngle(GameObject fx, Transform cam, Vector3 axisEmit)
+        {
+            if (!fx) return -1;
+            var sum = Vector3.zero;
+            var buffer = new ParticleSystem.Particle[256];
+            foreach (var ps in fx.GetComponentsInChildren<ParticleSystem>())
+            {
+                var main = ps.main;
+                if (main.simulationSpace == ParticleSystemSimulationSpace.Local || ps.name.IndexOf("smoke", System.StringComparison.OrdinalIgnoreCase) >= 0) continue;
+                var space = main.simulationSpace == ParticleSystemSimulationSpace.Custom ? main.customSimulationSpace : null;
+                int n = ps.GetParticles(buffer);
+                for (int i = 0; i < n; i++)
+                {
+                    var v = space ? space.TransformVector(buffer[i].velocity) : buffer[i].velocity;
+                    sum += cam.InverseTransformVector(v).normalized;
+                }
+            }
+            return sum.sqrMagnitude > 1e-6f ? Vector3.Angle(sum, axisEmit) : -1;
+        }
+
+        /// <summary>枪管口一圈顶点（离挂点 3 cm 内）的骨骼权重排行</summary>
+        static string TipBones(SkinnedMeshRenderer[] meshes, Transform anchor)
+        {
+            var weight = new Dictionary<string, float>();
+            var mesh = new Mesh();
+            foreach (var smr in meshes)
+            {
+                smr.BakeMesh(mesh, true);
+                mesh.GetVertices(verts);
+                var m = smr.transform.localToWorldMatrix;
+                var bw = smr.sharedMesh.boneWeights;
+                var bones = smr.bones;
+                for (int i = 0; i < verts.Count && i < bw.Length; i++)
+                {
+                    if ((m.MultiplyPoint3x4(verts[i]) - anchor.position).sqrMagnitude > 0.03f * 0.03f) continue;
+                    void Add(int index, float w)
+                    {
+                        if (w <= 0 || index < 0 || index >= bones.Length || !bones[index]) return;
+                        weight.TryGetValue(bones[index].name, out float old);
+                        weight[bones[index].name] = old + w;
+                    }
+                    Add(bw[i].boneIndex0, bw[i].weight0);
+                    Add(bw[i].boneIndex1, bw[i].weight1);
+                    Add(bw[i].boneIndex2, bw[i].weight2);
+                    Add(bw[i].boneIndex3, bw[i].weight3);
+                }
+            }
+            Destroy(mesh);
+            return weight.Count == 0 ? "（挂点 3 cm 内没有顶点）" : string.Join("、", weight.OrderByDescending(kv => kv.Value).Take(3).Select(kv => $"{kv.Key} {kv.Value:F0}"));
+        }
+
+        readonly Dictionary<string, float> sizes = new();
+        // 2026-11-08 封顶前包围盒实测：ring_01 (2) 是枪管口 16–20 倍、ring_01 (1) 8–11 倍、kuosan 13–22 倍
+        static readonly string[] RingSystems = { "ring_01 (1)", "ring_01 (2)", "kuosan" };
+        // 包围盒偏保守，左轮开火动画还把枪沿枪管拉长 1.25 倍，所以判定线放在 4 倍（封顶后实测 1.6–3.7 倍）
+        const float MaxRingRatio = 4f;
+
+        /// <summary>枪管口直径：枪身网格最前 1.5 cm 顶点在相机 xy 平面上离中心的距离（取 80 分位）× 2</summary>
+        static float BarrelDiameter(SkinnedMeshRenderer[] meshes, Transform cam)
+        {
+            var all = new List<Vector3>();
+            var mesh = new Mesh();
+            foreach (var smr in meshes)
+            {
+                smr.BakeMesh(mesh, true);
+                mesh.GetVertices(verts);
+                var m = smr.transform.localToWorldMatrix;
+                foreach (var v in verts) all.Add(cam.InverseTransformPoint(m.MultiplyPoint3x4(v)));
+            }
+            Destroy(mesh);
+            float maxZ = all.Max(v => v.z);
+            var front = all.Where(v => v.z > maxZ - 0.015f).ToList();
+            var c = front.Aggregate(Vector3.zero, (a, v) => a + v) / front.Count;
+            var d = front.Select(v => new Vector2(v.x - c.x, v.y - c.y).magnitude).OrderBy(x => x).ToList();
+            return d[Mathf.Clamp((int)(d.Count * 0.8f), 0, d.Count - 1)] * 2;
         }
 
         static readonly List<Vector3> verts = new();

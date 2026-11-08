@@ -25,21 +25,92 @@ namespace Spiritfire.Game
         /// </summary>
         public static Quaternion MuzzleFxRotation = Quaternion.Euler(0, 0, -90);
 
+        public const string AnchorName = "MuzzleFx";
+
         Transform muzzleAnchor;
         /// <summary>
-        /// 枪口特效挂点：枪根骨骼下的 Att（原作在枪管口的挂点，开火动画后坐时跟着枪走）。
-        /// 原 muzzle 节点挂在不动的 Home / _Right 下，后坐时留在原地；没有 Att 才退回它
+        /// 枪口特效挂点：Awake 时在枪管口顶点实际蒙皮的那根骨骼下建的 MuzzleFx，放在 Att（原作标定的枪口点）上。
+        /// Att 挂在枪根骨骼上，但枪管口往往蒙在它的子骨骼上（左轮 1202_Bone003：开火时枪管 / 转轮这组单独上翻，挂 Att 会漂 4 cm）；
+        /// 原 muzzle 节点挂在不动的 Home / _Right 下，后坐时留在原地
         /// </summary>
-        public Transform MuzzleAnchor => muzzleAnchor ? muzzleAnchor : muzzleAnchor = FindAnchor(transform);
+        public Transform MuzzleAnchor => muzzleAnchor ? muzzleAnchor : muzzleAnchor = BuildAnchor();
 
+        /// <summary>曳光起点等外部用：已建好的 MuzzleFx，没有就 Att，再没有就 muzzle 节点</summary>
         public static Transform FindAnchor(Transform gun)
         {
             if (!gun) return null;
-            Transform side = gun;
-            foreach (Transform child in gun)
-                if (child.name.EndsWith("_Right", System.StringComparison.Ordinal)) side = child;
+            var side = RightSide(gun);
+            var built = WeaponSockets.FindDeep(side, AnchorName);
+            if (built) return built;
             var att = WeaponSockets.FindDeep(side, "Att");
             return att ? att : WeaponSockets.FindDeep(side, WeaponSockets.Muzzle);
+        }
+
+        static Transform RightSide(Transform gun)
+        {
+            foreach (Transform child in gun)
+                if (child.name.EndsWith("_Right", System.StringComparison.Ordinal)) return child;
+            return gun;
+        }
+
+        Transform BuildAnchor()
+        {
+            var side = RightSide(transform);
+            var existing = WeaponSockets.FindDeep(side, AnchorName);
+            if (existing) return existing;
+            var att = FindAnchor(transform);
+            if (!att) return null;
+            var bone = TipBone(att) ?? att.parent;
+            if (!bone) return att;
+            var anchor = new GameObject(AnchorName).transform;
+            anchor.SetParent(bone, false);
+            // 骨骼与 Att 之间没有镜像，用矩阵求相对位姿（父级里有 -X 缩放，直接设世界旋转不可靠）
+            var rel = bone.worldToLocalMatrix * att.localToWorldMatrix;
+            anchor.localPosition = rel.GetColumn(3);
+            anchor.localRotation = Quaternion.LookRotation(rel.GetColumn(2), rel.GetColumn(1));
+            anchor.localScale = new Vector3(((Vector3)rel.GetColumn(0)).magnitude, ((Vector3)rel.GetColumn(1)).magnitude, ((Vector3)rel.GetColumn(2)).magnitude);
+            anchor.gameObject.layer = att.gameObject.layer;
+            return anchor;
+        }
+
+        /// <summary>Att 周围 3 cm 内枪身顶点（不含手臂）权重最大的骨骼</summary>
+        Transform TipBone(Transform att)
+        {
+            var weight = new System.Collections.Generic.Dictionary<Transform, float>();
+            var mesh = new Mesh();
+            foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                if (!smr.enabled || !smr.sharedMesh || smr.name.StartsWith("hero_fpp_", System.StringComparison.Ordinal)) continue;
+                smr.BakeMesh(mesh, true);
+                mesh.GetVertices(bakedVerts);
+                var m = smr.transform.localToWorldMatrix;
+                var bw = smr.sharedMesh.boneWeights;
+                var bones = smr.bones;
+                for (int i = 0; i < bakedVerts.Count && i < bw.Length; i++)
+                {
+                    if ((m.MultiplyPoint3x4(bakedVerts[i]) - att.position).sqrMagnitude > 0.03f * 0.03f) continue;
+                    void Add(int index, float w)
+                    {
+                        if (w <= 0 || index < 0 || index >= bones.Length || !bones[index]) return;
+                        weight.TryGetValue(bones[index], out float old);
+                        weight[bones[index]] = old + w;
+                    }
+                    Add(bw[i].boneIndex0, bw[i].weight0);
+                    Add(bw[i].boneIndex1, bw[i].weight1);
+                    Add(bw[i].boneIndex2, bw[i].weight2);
+                    Add(bw[i].boneIndex3, bw[i].weight3);
+                }
+            }
+            Destroy(mesh);
+            Transform best = null;
+            float most = 0;
+            foreach (var kv in weight)
+                if (kv.Value > most)
+                {
+                    most = kv.Value;
+                    best = kv.Key;
+                }
+            return best;
         }
         /// <summary>挂点的射向（世界，含父级镜像缩放）</summary>
         public Vector3 MuzzleForward => MuzzleAnchor ? MuzzleAnchor.TransformVector(Vector3.left).normalized : transform.forward;
@@ -60,7 +131,8 @@ namespace Spiritfire.Game
         {
             public GameObject go;
             public ParticleSystem[] systems, smoke;
-            public float playedAt;
+            public Vector3[] baseScales;
+            public float playedAt, fittedScale = float.NaN;
 
             public bool Alive
             {
@@ -101,6 +173,7 @@ namespace Spiritfire.Game
             fx.go.transform.SetParent(anchor, false);
             fx.go.transform.SetLocalPositionAndRotation(Vector3.zero, MuzzleFxRotation);
             fx.go.transform.localScale = Vector3.one * MuzzleScale;
+            if (!(fx.fittedScale == MuzzleScale)) FitToBarrel(fx);
             bool smoke = Time.time - lastSmokeAt >= SmokeInterval;
             if (smoke) lastSmokeAt = Time.time;
             foreach (var ps in fx.systems)
@@ -134,9 +207,113 @@ namespace Spiritfire.Game
                 go = go,
                 systems = systems,
                 smoke = System.Array.FindAll(systems, ps => ps.name.IndexOf("smoke", System.StringComparison.OrdinalIgnoreCase) >= 0),
+                baseScales = System.Array.ConvertAll(systems, ps => ps.transform.localScale),
             };
             muzzlePool.Add(fx);
             return fx;
+        }
+
+        /// <summary>
+        /// 各子系统最大尺寸相对枪管口直径的上限：1926_muzzle 按整体缩放挂上来，光环 / 扩散环仍是枪管口的 8–19 倍、光晕 23 倍、射线 10 倍、烟 20 倍。
+        /// 光环贴着枪口一圈（1.5 倍），射线 / 爆点 5 倍，光晕 6 倍，烟 5 倍（团在枪口四周，大了像一圈黑甜甜圈）；火星、刺本来就细，不限
+        /// </summary>
+        public static readonly (string name, float ratio)[] SizeCaps =
+        {
+            ("ring_01 (1)", 1.5f), ("ring_01 (2)", 1.5f), ("kuosan", 1.5f),
+            ("ray", 5f), ("ray (2)", 5f), ("baodian", 5f), ("glow_02", 6f),
+            ("Smoke", 5f), ("smoke_02 (1)", 5f),
+        };
+
+        /// <summary>最近一次封顶时的缩放（测试用）</summary>
+        public string FitDebug { get; private set; }
+
+        float barrelDiameter = -1;
+        /// <summary>枪管口直径（世界，m）：首次开火时烘焙枪身网格量一次</summary>
+        public float BarrelDiameter => barrelDiameter >= 0 ? barrelDiameter : barrelDiameter = MeasureBarrel();
+
+        /// <summary>按枪管口直径给各子系统的最大尺寸封顶（只缩不放）：缩子系统自己的 Transform，粒子缩放模式是 Hierarchy，尺寸 / 发射半径 / 速度一起按比例缩</summary>
+        void FitToBarrel(MuzzleFx fx)
+        {
+            for (int i = 0; i < fx.systems.Length; i++)
+                if (fx.systems[i]) fx.systems[i].transform.localScale = fx.baseScales[i];
+            fx.fittedScale = MuzzleScale;
+            float barrel = BarrelDiameter;
+            FitDebug = $"挂点 {MuzzleAnchor.lossyScale} 特效根 {fx.go.transform.lossyScale} 枪管口 {barrel * 100:F1} cm";
+            if (barrel <= 0) return;
+            foreach (var ps in fx.systems)
+            {
+                if (!ps) continue;
+                int cap = System.Array.FindIndex(SizeCaps, c => c.name == ps.name);
+                if (cap < 0) continue;
+                float size = MaxVisualSize(ps), limit = SizeCaps[cap].ratio * barrel;
+                if (size > limit) ps.transform.localScale *= limit / size;
+            }
+        }
+
+        /// <summary>粒子最大可见尺寸（世界，m）：起始尺寸上限 × 尺寸随生命曲线上限 × 网格外形（网格模式）× 层级缩放</summary>
+        public static float MaxVisualSize(ParticleSystem ps)
+        {
+            var main = ps.main;
+            var start = main.startSize3D ? new Vector3(Max(main.startSizeX), Max(main.startSizeY), Max(main.startSizeZ)) : Vector3.one * Max(main.startSize);
+            var sol = ps.sizeOverLifetime;
+            float life = !sol.enabled ? 1 : sol.separateAxes ? Mathf.Max(Max(sol.x), Max(sol.y), Max(sol.z)) : Max(sol.size);
+            var renderer = ps.GetComponent<ParticleSystemRenderer>();
+            var shape = renderer && renderer.renderMode == ParticleSystemRenderMode.Mesh && renderer.mesh ? renderer.mesh.bounds.size : Vector3.one;
+            var s = ps.transform.lossyScale;
+            float lossy = Mathf.Max(Mathf.Abs(s.x), Mathf.Abs(s.y), Mathf.Abs(s.z));
+            return Mathf.Max(start.x * shape.x, start.y * shape.y, start.z * shape.z) * life * lossy;
+        }
+
+        static float Max(ParticleSystem.MinMaxCurve c) => c.mode switch
+        {
+            ParticleSystemCurveMode.Constant => c.constant,
+            ParticleSystemCurveMode.TwoConstants => Mathf.Max(c.constantMin, c.constantMax),
+            ParticleSystemCurveMode.Curve => c.curveMultiplier * MaxKey(c.curve),
+            ParticleSystemCurveMode.TwoCurves => c.curveMultiplier * Mathf.Max(MaxKey(c.curveMin), MaxKey(c.curveMax)),
+            _ => 1,
+        };
+
+        static float MaxKey(AnimationCurve curve)
+        {
+            if (curve == null || curve.length == 0) return 1;
+            float max = float.NegativeInfinity;
+            foreach (var k in curve.keys) max = Mathf.Max(max, k.value);
+            return max;
+        }
+
+        static readonly System.Collections.Generic.List<Vector3> bakedVerts = new();
+
+        /// <summary>
+        /// 枪管口直径：以 Att（原作标定的枪口中心）为轴，枪身网格（不含手臂）离轴 4 cm 内、沿射向最靠前 1 cm 的顶点离轴距离的中位数 × 2
+        /// （取中位数，准星 / 护套这类凸出不把枪口量大）
+        /// </summary>
+        float MeasureBarrel()
+        {
+            var anchor = MuzzleAnchor;
+            if (!anchor) return 0;
+            var axis = MuzzleForward;
+            var origin = anchor.position;
+            var points = new System.Collections.Generic.List<Vector3>();
+            var mesh = new Mesh();
+            foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                if (!smr.enabled || !smr.sharedMesh || smr.name.StartsWith("hero_fpp_", System.StringComparison.Ordinal)) continue;
+                smr.BakeMesh(mesh, true);
+                mesh.GetVertices(bakedVerts);
+                var m = smr.transform.localToWorldMatrix;
+                foreach (var v in bakedVerts)
+                {
+                    var p = m.MultiplyPoint3x4(v) - origin;
+                    if (Vector3.ProjectOnPlane(p, axis).sqrMagnitude < 0.04f * 0.04f) points.Add(p);
+                }
+            }
+            Destroy(mesh);
+            if (points.Count == 0) return 0;
+            float front = float.NegativeInfinity;
+            foreach (var p in points) front = Mathf.Max(front, Vector3.Dot(p, axis));
+            var radii = points.FindAll(p => Vector3.Dot(p, axis) > front - 0.01f).ConvertAll(p => Vector3.ProjectOnPlane(p, axis).magnitude);
+            radii.Sort();
+            return radii[radii.Count / 2] * 2;
         }
 
         Transform viewSpace;
@@ -199,6 +376,9 @@ namespace Spiritfire.Game
                 keep.range = Mathf.Min(keep.range, 6f);
             }
             fireLights = keep ? new[] { keep } : System.Array.Empty<Light>();
+            // 枪模是在未激活的 rig 下实例化的，GunfireOriginalWeapon.Instantiate 设曳光起点时 MuzzleFx 还没建（只能先指 Att）：建好后改指它
+            var sockets = GetComponent<WeaponSockets>();
+            if (sockets && anchor) sockets.muzzle = anchor;
         }
 
         static readonly Color FireLightColor = new(1f, 0.78f, 0.45f);
