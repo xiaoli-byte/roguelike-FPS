@@ -85,6 +85,12 @@ namespace Spiritfire.Game
                 if (d.noReward || kill.info.Has(DamageTag.Purge)) return;
                 var def = DefOf(d);
                 int essence = EssenceFor(def, d.rank);
+                // 据点加量摊薄 / 游荡怪每关上限（docs/balance.md 第十二节）
+                if (RewardScale.Of(d) is { } scale)
+                {
+                    essence = RewardScale.Scale(essence, scale.essence);
+                    if (scale.roaming) essence = CombatDirector.ClaimRoamingEssence(essence);
+                }
                 RunKills++;
                 RunEssence += essence;
                 var reward = new KillReward { enemy = d, def = def, rank = d.rank, essence = essence, info = kill.info };

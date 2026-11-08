@@ -21,9 +21,17 @@ namespace Spiritfire.Game.Tests
         static readonly Regex Entry = new(@"- enemy: (\S+)\s*\n\s*count: (\d+)\s*\n\s*elite: (\d)", RegexOptions.Compiled);
         static readonly Regex Promote = new(@"\n\s+promote: (\d+)", RegexOptions.Compiled);
         static readonly Regex Reward = new(@"^  reward: (.*)$", RegexOptions.Compiled | RegexOptions.Multiline);
+        static readonly Regex Roadside = new(@"^  roadside: 1\s*$", RegexOptions.Compiled | RegexOptions.Multiline);
+
+        /// <summary>场景里驻守点（路遇小队，roadside）的编制合计（docs/balance.md 第十二节：奖励减半，单列）</summary>
+        static Dictionary<string, (int count, int elites)> ScanRoadside(string scene) => ScanScene(scene, true).squads;
 
         /// <summary>场景里的遭遇：(编制合计, 升格, 灵石窖藏, 强化奖励, 全部奖励串)</summary>
-        static (Dictionary<string, (int count, int elites)> squads, int promote, int caches, int upgrades, List<string> rewards) ScanScene(string scene)
+        static (Dictionary<string, (int count, int elites)> squads, int promote, int caches, int upgrades, List<string> rewards) ScanScene(string scene) =>
+            ScanScene(scene, false);
+
+        /// <summary>roadsideOnly = false：只数非驻守点的场地（+ 藏宝点）；true：只数驻守点</summary>
+        static (Dictionary<string, (int count, int elites)> squads, int promote, int caches, int upgrades, List<string> rewards) ScanScene(string scene, bool roadsideOnly)
         {
             string site = AssetDatabase.AssetPathToGUID("Assets/Game/Scripts/Encounters/EncounterSite.cs");
             string cache = AssetDatabase.AssetPathToGUID("Assets/Game/Scripts/Encounters/CachePOI.cs");
@@ -36,6 +44,8 @@ namespace Spiritfire.Game.Tests
             {
                 bool isSite = block.Contains($"guid: {site}"), isCache = block.Contains($"guid: {cache}");
                 if (!isSite && !isCache) continue;
+                bool road = isSite && Roadside.IsMatch(block);
+                if (road != roadsideOnly) continue;
                 foreach (Match m in Reward.Matches(block))
                 {
                     string r = m.Groups[1].Value.Trim();
@@ -74,12 +84,17 @@ namespace Spiritfire.Game.Tests
                     continue;
                 }
                 var (squads, promote, caches, upgrades, _) = ScanScene(s.scene);
+                var road = ScanRoadside(s.scene);
                 var have = load.squads.ToDictionary(q => q.enemy, q => (q.count, q.elites));
-                bool same = promote == load.promote && caches == load.coinCaches && upgrades == load.upgrades && squads.Count == have.Count &&
-                            squads.All(kv => have.TryGetValue(kv.Key, out var h) && h == kv.Value);
+                var haveRoad = load.roadside.ToDictionary(q => q.enemy, q => (q.count, q.elites));
+                bool Same(Dictionary<string, (int, int)> a, Dictionary<string, (int count, int elites)> b) =>
+                    a.Count == b.Count && a.All(kv => b.TryGetValue(kv.Key, out var h) && h == kv.Value);
+                bool same = promote == load.promote && caches == load.coinCaches && upgrades == load.upgrades && Same(squads, have) && Same(road, haveRoad);
                 if (same) continue;
-                string line = string.Join(", ", squads.Select(kv => kv.Value.Item2 > 0 ? $"S(\"{kv.Key}\", {kv.Value.Item1}, {kv.Value.Item2})" : $"S(\"{kv.Key}\", {kv.Value.Item1})"));
-                problems.Add($"{s.code} 场景是 new(\"{s.code}\", {promote}, {caches}, {upgrades}, {line})");
+                string Line(Dictionary<string, (int, int)> d) =>
+                    string.Join(", ", d.Select(kv => kv.Value.Item2 > 0 ? $"S(\"{kv.Key}\", {kv.Value.Item1}, {kv.Value.Item2})" : $"S(\"{kv.Key}\", {kv.Value.Item1})"));
+                string tail = road.Count > 0 ? $" {{ roadside = new[] {{ {Line(road)} }} }}" : "";
+                problems.Add($"{s.code} 场景是 new(\"{s.code}\", {promote}, {caches}, {upgrades}, {Line(squads)}){tail}");
             }
             Assert.IsEmpty(problems, "编制表和场景对不上（把下面的行贴进 BalanceModel.Stages，再看 docs/balance.md 的数字）：\n" + string.Join("\n", problems));
         }

@@ -80,6 +80,23 @@ namespace Spiritfire.Game
         /// <summary>每清一关 / 胜利额外的魂晶（击杀魂晶见 <see cref="KillResolver.EssenceFor"/>）</summary>
         public const int EssencePerStage = 10, EssenceVictory = 200;
 
+        /// <summary>
+        /// 游荡怪（<see cref="CombatDirector"/>）每关的灵石额度基数（× 击杀章节系数，<see cref="RoamingCoinCap"/>）：约一张开放图击杀灵石的四分之一，
+        /// 一局多出约一成半灵石（docs/balance.md 第十二节）；额度用完游荡怪只掉弹药 / 生命
+        /// </summary>
+        public const int RoamingCoinsPerStage = 35;
+        /// <summary>游荡怪每关最多给的魂晶（一局多约 70，天赋节奏快不到一成）</summary>
+        public const int RoamingEssencePerStage = 8;
+
+        /// <summary>
+        /// 驻守点（路遇小队，<see cref="EncounterSite.roadside"/>）的击杀灵石 / 魂晶倍率：驻守点是「怪要多」加的怪，奖励减半，
+        /// 不让每张图多出来的十几只怪把灵石 / 魂晶推出平衡带（docs/balance.md 第十二节）
+        /// </summary>
+        public const float RoadsideRewardMult = 0.5f;
+
+        /// <summary>这一章每关游荡怪的灵石额度</summary>
+        public static int RoamingCoinCap(int chapter) => Mathf.RoundToInt(RoamingCoinsPerStage * KillChapterMult(chapter));
+
         // ───────────── 公式 ─────────────
 
         /// <summary>

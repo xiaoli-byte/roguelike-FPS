@@ -204,6 +204,17 @@ namespace Spiritfire.Game
         }
 
         EncounterSpec run;
+        /// <summary>这一次开打每只怪的奖励倍率（据点加量后摊薄，见 CombatDirector.Densify；1 = 原样）</summary>
+        float rewardScale = 1f;
+
+        /// <summary>这个场地每只怪的奖励倍率：据点加量摊薄 × 驻守点（路遇）的 <see cref="EconomyConfig.RoadsideRewardMult"/>（docs/balance.md 第十二节）</summary>
+        float RewardFactor => rewardScale * (roadside ? EconomyConfig.RoadsideRewardMult : 1f);
+
+        void TagReward(EnemyAI ai)
+        {
+            float f = RewardFactor;
+            if (ai && f < 1f) RewardScale.Apply(ai, f, f);
+        }
         readonly List<Pending> pending = new();
 
         /// <summary>预生成的埋伏单位</summary>
@@ -333,7 +344,10 @@ namespace Spiritfire.Game
             phase = Phase.Active;
             if (!active.Contains(this)) active.Add(this);
             run = CurrentSpec().Clone();
-            CombatDirector.Densify(run); // 正式的局：普通单位加量（怪要多，见 CombatDirector）
+            // 正式的局：普通单位加量（怪要多，见 CombatDirector）；据点的灵石 / 魂晶总量不变，平摊到每只（已经预生成的埋伏单位也摊）
+            rewardScale = CombatDirector.Densify(run);
+            foreach (var d in dormant)
+                if (d?.ai) TagReward(d.ai);
             Promoted = run.promote > 0 ? EncounterSpec.Promote(run, run.promote, Rng) : 0;
             Total = run.Total;
             killed = 0;
@@ -664,6 +678,7 @@ namespace Spiritfire.Game
                 UpdateObjective();
                 return;
             }
+            TagReward(ai);
             if (p.present != SpawnMode.Appear) SkipMaterialize(ai);
             switch (p.present)
             {
@@ -768,6 +783,7 @@ namespace Spiritfire.Game
                         var ai = EnemyRoster.Spawn(e.enemy, pos, Quaternion.LookRotation(face.sqrMagnitude > 0.01f ? face.normalized : Vector3.forward), difficulty, e.elite,
                             new SpawnOptions { parent = transform, affix = affix });
                         if (!ai) continue;
+                        TagReward(ai);
                         // 栖在柱顶 / 台沿的（高台站位）：生成器会把它吸到 4 m 内的导航网格上，这里放回站位
                         if (elevated && def != null && def.flying) ai.transform.position = pos;
                         SkipMaterialize(ai);

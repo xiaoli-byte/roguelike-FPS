@@ -78,6 +78,8 @@ namespace Spiritfire.Game
             public readonly string code;
             public readonly int promote, coinCaches, upgrades;
             public readonly Squad[] squads;
+            /// <summary>驻守点（路遇小队）的编制：战斗用时照算，灵石 / 魂晶 × <see cref="EconomyConfig.RoadsideRewardMult"/>（docs/balance.md 第十二节）</summary>
+            public Squad[] roadside = System.Array.Empty<Squad>();
 
             public StageLoad(string code, int promote, int coinCaches, int upgrades, params Squad[] squads)
             {
@@ -94,6 +96,7 @@ namespace Spiritfire.Game
                 {
                     int n = 0;
                     foreach (var s in squads) n += s.count;
+                    foreach (var s in roadside) n += s.count;
                     return n;
                 }
             }
@@ -113,18 +116,15 @@ namespace Spiritfire.Game
         /// </summary>
         public static readonly StageLoad[] Stages =
         {
-            new("1-1", 0, 1, 1, S("tomb_beast", 2, 1), S("apsara", 1), S("jerboa_blade", 17), S("scorpion_archer", 5, 1), S("fire_rat", 6), S("mirage_toad", 3), S("sand_wraith", 1)),
-            new("1-2", 1, 1, 1, S("jerboa_blade", 16), S("scorpion_archer", 8, 1), S("fire_rat", 9), S("tomb_beast", 2, 1), S("mirage_toad", 2), S("apsara", 3), S("sand_wraith", 2)),
-            new("1-3", 1, 0, 1, S("tomb_beast", 3, 1), S("jerboa_blade", 17), S("scorpion_archer", 8, 1), S("apsara", 2), S("fire_rat", 8), S("mirage_toad", 3), S("sand_wraith", 3)),
-            new("2-1", 1, 1, 1, S("xuangui", 1), S("jiaoren", 16), S("qingniao", 4), S("frost_crab", 2, 1), S("lantern_jelly", 3), S("fuzhu", 5, 1), S("haozhi", 5), S("xingxing", 10),
-                S("fox_witch", 2), S("ice_puffer", 3), S("ice_whale", 1)),
-            new("2-2", 1, 0, 1, S("xingxing", 21), S("qingniao", 7), S("fuzhu", 4, 1), S("haozhi", 8), S("xuangui", 2, 1), S("fox_witch", 2)),
-            new("2-3", 1, 1, 1, S("jiaoren", 14), S("ice_puffer", 6), S("fuzhu", 6, 1), S("fox_witch", 2), S("xingxing", 5), S("qingniao", 3), S("xuangui", 1, 1), S("haozhi", 6),
-                S("lantern_jelly", 3), S("frost_crab", 1)),
-            new("3-1", 0, 0, 1, S("bifang", 8), S("tantong", 36), S("mamian", 6, 2), S("tuo", 2), S("huodou", 15, 1)),
-            new("3-2", 1, 1, 1, S("firecracker", 4), S("tantong", 20), S("mamian", 6, 1), S("huodou", 10), S("bifang", 2), S("fire_crow", 6), S("iron_ox", 1, 1)),
-            new("3-3", 1, 0, 1, S("mamian", 3, 1), S("nuo", 2), S("tantong", 22), S("fire_crow", 5), S("firecracker", 5), S("iron_ox", 2, 1), S("tuo", 1), S("huodou", 4), S("founder", 1),
-                S("bifang", 1)),
+            new("1-1", 0, 1, 1, S("jerboa_blade", 17), S("scorpion_archer", 5, 1), S("tomb_beast", 2, 1), S("apsara", 1), S("mirage_toad", 3), S("sand_wraith", 1), S("fire_rat", 6)) { roadside = new[] { S("fire_rat", 2), S("jerboa_blade", 10), S("scorpion_archer", 3), S("sand_wraith", 1), S("mirage_toad", 1) } },
+            new("1-2", 1, 1, 1, S("scorpion_archer", 8, 1), S("jerboa_blade", 16), S("fire_rat", 9), S("mirage_toad", 2), S("tomb_beast", 2, 1), S("apsara", 3), S("sand_wraith", 2)) { roadside = new[] { S("jerboa_blade", 9), S("sand_wraith", 1), S("scorpion_archer", 3), S("fire_rat", 2), S("mirage_toad", 1) } },
+            new("1-3", 1, 0, 1, S("jerboa_blade", 17), S("sand_wraith", 3), S("scorpion_archer", 8, 1), S("fire_rat", 8), S("tomb_beast", 3, 1), S("apsara", 2), S("mirage_toad", 3)) { roadside = new[] { S("scorpion_archer", 3), S("jerboa_blade", 10), S("sand_wraith", 1), S("fire_rat", 2), S("mirage_toad", 1) } },
+            new("2-1", 1, 1, 1, S("ice_whale", 1), S("jiaoren", 16), S("qingniao", 4), S("frost_crab", 2, 1), S("fuzhu", 5, 1), S("xingxing", 10), S("lantern_jelly", 3), S("fox_witch", 2), S("haozhi", 5), S("ice_puffer", 3), S("xuangui", 1)) { roadside = new[] { S("haozhi", 2), S("xingxing", 5), S("fuzhu", 4), S("jiaoren", 5) } },
+            new("2-2", 1, 0, 1, S("xuangui", 2, 1), S("fuzhu", 4, 1), S("xingxing", 21), S("fox_witch", 2), S("haozhi", 8), S("qingniao", 7)) { roadside = new[] { S("xingxing", 10), S("haozhi", 4), S("fuzhu", 2) } },
+            new("2-3", 1, 1, 1, S("jiaoren", 14), S("ice_puffer", 6), S("fuzhu", 6, 1), S("frost_crab", 1), S("lantern_jelly", 3), S("qingniao", 3), S("xingxing", 5), S("haozhi", 6), S("fox_witch", 2), S("xuangui", 1, 1)) { roadside = new[] { S("jiaoren", 6), S("fuzhu", 2), S("xingxing", 5), S("haozhi", 3) } },
+            new("3-1", 0, 0, 1, S("huodou", 15, 1), S("tantong", 24), S("tuo", 2), S("mamian", 6, 2), S("bifang", 5)) { roadside = new[] { S("tantong", 12), S("bifang", 3) } },
+            new("3-2", 0, 1, 1, S("mamian", 5, 2), S("tantong", 19), S("huodou", 4), S("bifang", 2), S("fire_crow", 9), S("iron_ox", 2, 1), S("firecracker", 6)) { roadside = new[] { S("tantong", 5), S("bifang", 1) } },
+            new("3-3", 0, 0, 1, S("founder", 2, 1), S("firecracker", 6), S("tantong", 23), S("nuo", 2), S("huodou", 11, 1), S("mamian", 4, 1), S("fire_crow", 7), S("iron_ox", 2, 1)) { roadside = new[] { S("tantong", 5), S("bifang", 1) } },
             new("4-1", 0, 0, 1, S("aoyin", 2), S("leiyak", 3), S("jufu", 5), S("marmot", 10), S("manman", 3), S("liangu", 3), S("tiangou", 10), S("dijiang", 7)),
             new("4-2", 1, 1, 1, S("jufu", 4), S("tiangou", 10), S("liangu", 3), S("manman", 4), S("dijiang", 6), S("aoyin", 1), S("leiyak", 2), S("marmot", 6)),
             new("4-3", 0, 0, 1, S("tiangou", 8), S("jufu", 5), S("liangu", 2), S("marmot", 9), S("dijiang", 5), S("manman", 2), S("aoyin", 2), S("leiyak", 3)),
@@ -230,15 +230,24 @@ namespace Spiritfire.Game
                 Kill(ref e, def, q.elites + up, true, difficulty, killMult);
                 Kill(ref e, def, normals - up, false, difficulty, killMult);
             }
+            // 驻守点：不参与升格，奖励减半
+            foreach (var q in load.roadside)
+            {
+                var def = EnemyRoster.Get(q.enemy);
+                if (def == null) continue;
+                e.kills += q.count;
+                Kill(ref e, def, q.elites, true, difficulty, killMult, EconomyConfig.RoadsideRewardMult);
+                Kill(ref e, def, q.count - q.elites, false, difficulty, killMult, EconomyConfig.RoadsideRewardMult);
+            }
         }
 
-        static void Kill(ref StageEstimate e, EnemyDef def, float n, bool elite, float difficulty, float killMult)
+        static void Kill(ref StageEstimate e, EnemyDef def, float n, bool elite, float difficulty, float killMult, float reward = 1f)
         {
             if (n <= 0) return;
             if (elite) e.elites += n;
             float coins = (def.coins.x + def.coins.y) * 0.5f * (elite ? EconomyConfig.EliteKillCoinMult : 1);
-            e.killCoins += n * coins * killMult;
-            e.essence += n * KillResolver.EssenceFor(def, elite ? Rank.Elite : Rank.Normal);
+            e.killCoins += n * coins * killMult * reward;
+            e.essence += n * KillResolver.EssenceFor(def, elite ? Rank.Elite : Rank.Normal) * reward;
             e.fieldEhp += n * Bulk(def) * (elite ? EliteHpMult : 1) * difficulty;
         }
 

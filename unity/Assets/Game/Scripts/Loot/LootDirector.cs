@@ -79,6 +79,12 @@ namespace Spiritfire.Game
             var def = KillResolver.DefOf(d);
             var range = def != null ? def.coins : BulkCoins(d);
             int coins = EconomyConfig.KillCoins(range, d.rank, chapter, rng);
+            // 据点加量摊薄 / 游荡怪每关上限（docs/balance.md 第十二节）
+            if (RewardScale.Of(d) is { } scale)
+            {
+                coins = RewardScale.Scale(coins, scale.coins, rng);
+                if (scale.roaming) coins = CombatDirector.ClaimRoamingCoins(coins);
+            }
             if (coins > 0) DropCoins(pos, coins, d.IsBoss ? EconomyConfig.BossCoinToss : d.elite ? EconomyConfig.EliteCoinToss : 1f);
 
             if (d.IsBoss)

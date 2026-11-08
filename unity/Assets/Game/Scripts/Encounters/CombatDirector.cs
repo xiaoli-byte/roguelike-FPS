@@ -18,6 +18,8 @@ namespace Spiritfire.Game
     ///     重型单位（耐久 ≥ 表中位数 2.5 倍）一群最多一只。刷出来的怪直接锁定玩家（敌人 AI 本来就全图追玩家）。
     ///   · 场上游荡怪最多 <see cref="MaxAlive"/> 只；据点交战中、玩家在安全区（补给营）附近、关卡目标完成之后、玩家阵亡时暂停。
     ///   · 据点加量（<see cref="Densify"/>）：据点开打时普通单位（非精英、条目 ≥ 2 只）× <see cref="SiteDensity"/>，精英和单只重型不变。
+    ///   · 经济（docs/balance.md 第十二节）：据点加量后灵石 / 魂晶总量不变（每只按比例摊薄，<see cref="RewardScale"/>）；
+    ///     游荡怪照常掉，但每关游荡怪的灵石 / 魂晶有上限（<see cref="EconomyConfig.RoamingCoinCap"/> / <see cref="EconomyConfig.RoamingEssencePerStage"/>）。
     /// 只在首领关以外的开放图里跑。调试局（直接打开场景 / 冒烟测试）缺省不跑，免得打乱按固定编制写的测试；<see cref="Force"/> 或调试命令可以打开。
     /// </summary>
     [GameSystem(160)]
@@ -63,6 +65,7 @@ namespace Spiritfire.Game
         {
             Force = null;
             Instance = null;
+            roamingCoins = roamingEssence = 0;
         }
 
         void Awake() => Instance = this;
@@ -83,15 +86,51 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>据点开打时按 <see cref="SiteDensity"/> 给普通单位加量（<see cref="EncounterSite"/> 克隆编制后调；不是 <see cref="Live"/> 的局原样返回）</summary>
-        public static void Densify(EncounterSpec spec)
+        /// <summary>
+        /// 据点开打时按 <see cref="SiteDensity"/> 给普通单位加量（<see cref="EncounterSite"/> 克隆编制后调；不是 <see cref="Live"/> 的局原样返回）。
+        /// 返回这个据点每只怪的奖励倍率 = 原只数 ÷ 加量后只数：据点的灵石 / 魂晶总量不变，平摊到更多的怪上（docs/balance.md 第十二节）；没加量返回 1
+        /// </summary>
+        public static float Densify(EncounterSpec spec)
         {
-            if (spec?.waves == null || !Live) return;
+            if (spec?.waves == null || !Live) return 1f;
+            int before = 0, after = 0;
             foreach (var w in spec.waves)
                 if (w?.entries != null)
                     foreach (var e in w.entries)
-                        if (e != null && !e.elite && e.count >= 2)
-                            e.count = Mathf.CeilToInt(e.count * SiteDensity);
+                    {
+                        if (e == null || e.count <= 0) continue;
+                        before += e.count;
+                        if (!e.elite && e.count >= 2) e.count = Mathf.CeilToInt(e.count * SiteDensity);
+                        after += e.count;
+                    }
+            return after > before && before > 0 ? (float)before / after : 1f;
+        }
+
+        // ───────────── 游荡怪的奖励上限（docs/balance.md 第十二节）─────────────
+
+        static int roamingCoins, roamingEssence;
+
+        /// <summary>这一关游荡怪已经给出去的灵石 / 魂晶</summary>
+        public static int RoamingCoinsGiven => roamingCoins;
+        public static int RoamingEssenceGiven => roamingEssence;
+
+        /// <summary>新的一关：游荡怪奖励额度清零（进关时自动调；测试手动调）</summary>
+        public static void ResetRoamingBudget() => roamingCoins = roamingEssence = 0;
+
+        /// <summary>游荡怪想掉 want 灵石：这一关游荡怪的灵石额度（<see cref="EconomyConfig.RoamingCoinCap"/>）里还剩多少就给多少</summary>
+        public static int ClaimRoamingCoins(int want)
+        {
+            int give = Mathf.Clamp(EconomyConfig.RoamingCoinCap(EconomyConfig.Chapter) - roamingCoins, 0, Mathf.Max(0, want));
+            roamingCoins += give;
+            return give;
+        }
+
+        /// <summary>游荡怪想给 want 魂晶：这一关游荡怪的魂晶额度（<see cref="EconomyConfig.RoamingEssencePerStage"/>）里还剩多少就给多少</summary>
+        public static int ClaimRoamingEssence(int want)
+        {
+            int give = Mathf.Clamp(EconomyConfig.RoamingEssencePerStage - roamingEssence, 0, Mathf.Max(0, want));
+            roamingEssence += give;
+            return give;
         }
 
         void Update()
@@ -156,6 +195,7 @@ namespace Spiritfire.Game
             pending = false;
             stageStart = Time.time;
             nextPack = Time.time + Warmup;
+            ResetRoamingBudget();
             BuildRoster(s);
         }
 
@@ -359,6 +399,7 @@ namespace Spiritfire.Game
                     new SpawnOptions { parent = parent });
                 if (!ai) continue;
                 Enter(ai, mode, from, pos);
+                RewardScale.Apply(ai, 1f, 1f, roaming: true);
                 alive.Add(ai);
                 Spawned++;
             }
