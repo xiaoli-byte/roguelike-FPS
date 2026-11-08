@@ -333,6 +333,7 @@ namespace Spiritfire.Game
             phase = Phase.Active;
             if (!active.Contains(this)) active.Add(this);
             run = CurrentSpec().Clone();
+            CombatDirector.Densify(run); // 正式的局：普通单位加量（怪要多，见 CombatDirector）
             Promoted = run.promote > 0 ? EncounterSpec.Promote(run, run.promote, Rng) : 0;
             Total = run.Total;
             killed = 0;

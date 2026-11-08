@@ -94,6 +94,71 @@ namespace Spiritfire.Art.Editor.Levels
             return layout;
         }
 
+        /// <summary>
+        /// 怪物入场点（<see cref="MonsterEntry"/>）：落地点 at（世界，贴地后的点）、进场后朝 toward 走；跃下 / 增援门给 from（起跳点 / 门后）。
+        /// 摆在怪「从哪来」看得懂的地方：沙丘 / 岩丘背后、峡口、门洞、崖顶、熔岩边；离出生点 ≥ 30 m，不在补给营安全区里
+        /// </summary>
+        public static MonsterEntry Entry(Transform parent, string label, Vector3 at, Vector3 toward, SpawnMode mode = SpawnMode.Appear, Vector3? from = null,
+            float spread = 4f, bool flyersOnly = false)
+        {
+            var go = new GameObject($"Entry · {label}");
+            go.transform.SetParent(parent, false);
+            var d = toward - at;
+            d.y = 0;
+            go.transform.SetPositionAndRotation(at, Quaternion.LookRotation(d.sqrMagnitude > 1e-4f ? d : Vector3.forward));
+            var e = go.AddComponent<MonsterEntry>();
+            e.label = label;
+            e.mode = mode;
+            e.spread = spread;
+            e.flyersOnly = flyersOnly;
+            if (from.HasValue)
+            {
+                var f = new GameObject("From").transform;
+                f.SetParent(go.transform, false);
+                f.position = from.Value;
+                e.from = f;
+            }
+            return e;
+        }
+
+        /// <summary>
+        /// 验收：场景里每个入场点在导航网格上（2 m 内）、从出生点走得到；离出生点 &lt; 30 m 的记不合格。NavMesh 烘焙之后调
+        /// </summary>
+        public static void CheckEntries(Report rep, UnityEngine.SceneManagement.Scene scene)
+        {
+            rep.Line("— 怪物入场点（游荡怪群只从这里进场）—");
+            var entries = new System.Collections.Generic.List<MonsterEntry>();
+            foreach (var root in scene.GetRootGameObjects()) entries.AddRange(root.GetComponentsInChildren<MonsterEntry>(true));
+            if (entries.Count == 0)
+            {
+                rep.Warn("没有怪物入场点：游荡怪群会退回到随机找导航网格刷");
+                return;
+            }
+            var spawn = PlayerSpawn.Resolve(scene).position;
+            var path = new NavMeshPath();
+            int ok = 0;
+            foreach (var e in entries)
+            {
+                var p = e.transform.position;
+                string name = string.IsNullOrEmpty(e.label) ? e.name : e.label;
+                if (!NavMesh.SamplePosition(p, out var hit, 2f, NavMesh.AllAreas))
+                {
+                    rep.Fail($"入场点「{name}」{p:F0} 不在导航网格上");
+                    continue;
+                }
+                float d = Vector3.Distance(new Vector3(hit.position.x, 0, hit.position.z), new Vector3(spawn.x, 0, spawn.z));
+                if (d < 30f) rep.Fail($"入场点「{name}」离出生点只有 {d:F0} m（应 ≥ 30 m）");
+                if (!NavMesh.CalculatePath(hit.position, spawn, NavMesh.AllAreas, path) || path.status != NavMeshPathStatus.PathComplete)
+                {
+                    rep.Fail($"入场点「{name}」{p:F0} 走不到出生点");
+                    continue;
+                }
+                ok++;
+            }
+            rep.Line($"{(ok == entries.Count ? "✓" : "✗")} 入场点 {ok}/{entries.Count} 个在导航网格上、走得到：" +
+                     string.Join("、", entries.ConvertAll(e => $"{(string.IsNullOrEmpty(e.label) ? e.name : e.label)}（{SpawnModes.Label(e.mode)}）")));
+        }
+
         /// <summary>改写场地先后的一条</summary>
         public static LevelLayout.SiteRequires Requires(EncounterSite site, params EncounterSite[] requires) =>
             new() { site = site, requires = requires ?? System.Array.Empty<EncounterSite>() };
