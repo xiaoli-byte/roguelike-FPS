@@ -13,6 +13,12 @@ export const SHAPE_GLOW = 0;
 export const SHAPE_SPARK = 1;
 export const SHAPE_SMOKE = 2;
 export const SHAPE_CHUNK = 3;
+/** 火舌：下宽上尖，轮廓被噪声啃过，每颗不一样、越老啃得越深；三段色阶（亮芯 / 主色 / 暗边） */
+export const SHAPE_FLAME = 4;
+/** 四角星芒：光屑、暴击的小星 */
+export const SHAPE_STAR = 5;
+/** 符点：方折笔画的小符（篆书式的横竖折，按每颗的种子组出来） */
+export const SHAPE_GLYPH = 6;
 
 // 透明度曲线
 /** 线性淡出 */
@@ -46,6 +52,17 @@ export const STYLE_MOTE: ParticleStyle = { gravity: -3.5, drag: 1.4, grow: 0.15,
 export const STYLE_SMOKE: ParticleStyle = { gravity: -0.9, drag: 2.2, grow: 2.2, alpha: 0.5, shape: SHAPE_SMOKE, fade: FADE_SMOKE, bounce: false };
 export const STYLE_DUST: ParticleStyle = { gravity: 0.6, drag: 4.0, grow: 2.2, alpha: 0.45, shape: SHAPE_SMOKE, fade: FADE_SMOKE, bounce: false };
 export const STYLE_CHUNK: ParticleStyle = { gravity: 22, drag: 0.6, grow: 0.7, alpha: 1, shape: SHAPE_CHUNK, fade: FADE_HOLD, bounce: true };
+// 分层用的几种（docs/art/fx-style.md 第五节）
+/** 火舌：往上窜、很快慢下来；不靠透明度淡出，靠轮廓被啃掉消失 */
+export const STYLE_FLAME: ParticleStyle = { gravity: -2.2, drag: 2.4, grow: 1.2, alpha: 0.95, shape: SHAPE_FLAME, fade: FADE_HOLD, bounce: false };
+/** 光屑：几乎不动的小星芒，闪一下就没 */
+export const STYLE_GLINT: ParticleStyle = { gravity: 1.5, drag: 3, grow: 0.25, alpha: 1, shape: SHAPE_STAR, fade: FADE_FLICKER, bounce: false };
+/** 跳火星：落地会弹、带闪的火星，比普通火星活得久 */
+export const STYLE_SKITTER: ParticleStyle = { gravity: 15, drag: 0.5, grow: 0.5, alpha: 1, shape: SHAPE_SPARK, fade: FADE_FLICKER, bounce: true };
+/** 符点：散开往上飘 */
+export const STYLE_GLYPH: ParticleStyle = { gravity: -2.5, drag: 1, grow: 0.7, alpha: 1, shape: SHAPE_GLYPH, fade: FADE_FLICKER, bounce: false };
+/** 余温 / 魂火的拖尾：原地慢慢暗下去的一小团光 */
+export const STYLE_LINGER: ParticleStyle = { gravity: 0, drag: 4, grow: 0.5, alpha: 0.8, shape: SHAPE_GLOW, fade: FADE_OUT, bounce: false };
 
 const VERT = /* glsl */ `
 attribute vec3 aColor;
@@ -56,10 +73,13 @@ uniform float uScale;
 varying vec3 vColor;
 varying float vAlpha;
 varying float vShape;
+varying float vSeed;
 #include <fog_pars_vertex>
 void main() {
   vColor = aColor;
   vShape = aShape;
+  // 每个槽位一个固定的随机数：同一种粒子没有两颗长一样
+  vSeed = fract(sin(float(gl_VertexID) * 12.9898) * 43758.5453);
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
   float depth = -mvPosition.z;
   // 贴脸的粒子淡掉，避免满屏大光斑
@@ -79,37 +99,83 @@ const FRAG = /* glsl */ `
 varying vec3 vColor;
 varying float vAlpha;
 varying float vShape;
+varying float vSeed;
 #include <fog_pars_fragment>
+float pHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float pNoise(vec2 p) {
+  vec2 i = floor(p), f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(pHash(i), pHash(i + vec2(1.0, 0.0)), f.x), mix(pHash(i + vec2(0.0, 1.0)), pHash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
 void main() {
   vec2 c = gl_PointCoord * 2.0 - 1.0;
   float d = dot(c, c);
+  // aShape = 形状号 + 0.95 × 年龄比例（0 出生 → 1 寿终）
+  float shape = floor(vShape + 0.001);
+  float t = clamp((vShape - shape) / 0.95, 0.0, 1.0);
   vec3 col = vColor;
   float a;
-  if (vShape < 0.5) {
+  if (shape < 0.5) {
     // 柔光：平方衰减 + 白热核心
     if (d > 1.0) discard;
     float f = 1.0 - d;
     a = f * f;
     col += vec3(0.85) * pow(f, 8.0);
-  } else if (vShape < 1.5) {
+  } else if (shape < 1.5) {
     // 火花：小而硬的亮核 + 光晕
     if (d > 1.0) discard;
     float f = 1.0 - d;
     a = f * f * f * 0.7 + smoothstep(0.22, 0.0, d);
     col = mix(col, vec3(1.0), smoothstep(0.18, 0.0, d) * 0.75);
-  } else if (vShape < 2.5) {
-    // 烟：柔边圆，边缘略带起伏
+  } else if (shape < 2.5) {
+    // 烟：团块状，边缘被噪声啃得不齐，越老从外往里蚀得越多；上亮下暗
     if (d > 1.0) discard;
-    float ang = atan(c.y, c.x);
-    float edge = 1.0 - 0.12 * sin(ang * 5.0 + vColor.r * 40.0);
-    a = smoothstep(edge, 0.05, d) * 0.9;
-    col *= 0.85 + 0.3 * (1.0 - gl_PointCoord.y);
-  } else {
+    float n = pNoise(c * 1.7 + vSeed * 17.0 + vec2(0.0, t * 0.7)) * 0.6 + pNoise(c * 4.0 + vSeed * 5.0) * 0.4;
+    float r = sqrt(d) + (n - 0.5) * (0.5 + 0.5 * t);
+    a = (1.0 - smoothstep(0.42 - 0.2 * t, 0.95, r)) * 0.9;
+    col *= 0.8 + 0.35 * smoothstep(-0.6, 0.8, -c.y + (n - 0.5));
+  } else if (shape < 3.5) {
     // 碎屑：硬边菱形，上亮下暗
     float m = abs(c.x) + abs(c.y);
     if (m > 0.9) discard;
     a = 1.0;
     col *= 0.55 + 0.6 * (1.0 - gl_PointCoord.y);
+  } else if (shape < 4.5) {
+    // 火舌：q.y 向上为正；越往上越窄，轮廓被两层往上跑的噪声啃，年龄越大啃得越深，最后整条被吃掉
+    vec2 q = vec2(c.x, -c.y);
+    float n = pNoise(q * 2.1 + vSeed * 31.0 + vec2(0.0, -t * 2.2)) * 0.6 + pNoise(q * 4.6 - vSeed * 13.0 + vec2(0.0, -t * 3.6)) * 0.4;
+    float body = 1.0 - length(q * vec2(1.35 + 0.8 * max(q.y, 0.0), 0.95)) - (n - 0.3) * (0.55 + 0.8 * t) - t * 0.5;
+    a = smoothstep(0.0, 0.08, body) * smoothstep(0.0, 0.06, t + 0.03);
+    if (a < 0.01) discard;
+    // 三段色阶（软阶梯）：亮芯 / 主色 / 暗边
+    float hot = clamp(body * 1.25 * (1.0 - 0.5 * t), 0.0, 1.0);
+    vec3 rim = vColor * vec3(0.72, 0.3, 0.2);
+    vec3 core = mix(vColor, vec3(1.0, 0.96, 0.82), 0.78);
+    col = mix(rim, vColor, smoothstep(0.16, 0.24, hot));
+    col = mix(col, core, smoothstep(0.5, 0.6, hot));
+  } else if (shape < 5.5) {
+    // 四角星芒
+    float f = max(1.0 - sqrt(d), 0.0);
+    float rays = max(max(1.0 - abs(c.x) * 7.0 - abs(c.y), 0.0), max(1.0 - abs(c.y) * 7.0 - abs(c.x), 0.0));
+    a = f * f * f + 0.8 * rays * rays;
+    if (a < 0.01) discard;
+    col = mix(col, vec3(1.0), smoothstep(0.5, 1.0, a) * 0.7);
+  } else {
+    // 符点：方框里几道横竖折（3 × 3 格，哪几道有由种子定），读作一个篆书式的小符
+    vec2 g = c * 1.15;
+    vec2 ag = abs(g);
+    if (max(ag.x, ag.y) > 1.0) discard;
+    float w = 0.13;
+    float I = 1.0 - smoothstep(w, w + 0.06, abs(max(ag.x, ag.y) - 0.84));
+    float b0 = step(0.5, fract(vSeed * 2.0)), b1 = step(0.5, fract(vSeed * 4.0)), b2 = step(0.5, fract(vSeed * 8.0)), b3 = step(0.5, fract(vSeed * 16.0));
+    I = max(I, b0 * (1.0 - smoothstep(w, w + 0.06, abs(g.y - 0.36))) * step(ag.x, 0.6));
+    I = max(I, b1 * (1.0 - smoothstep(w, w + 0.06, abs(g.y + 0.36))) * step(ag.x, 0.6));
+    I = max(I, b2 * (1.0 - smoothstep(w, w + 0.06, abs(g.x - 0.36))) * step(ag.y, 0.36));
+    I = max(I, b3 * (1.0 - smoothstep(w, w + 0.06, abs(g.x + 0.36))) * step(ag.y, 0.36));
+    I = max(I, (1.0 - smoothstep(w, w + 0.06, ag.y)) * step(ag.x, 0.6));
+    a = I;
+    if (a < 0.01) discard;
+    col = mix(col, vec3(1.0), 0.35);
   }
   a *= vAlpha;
 #ifdef ADDITIVE
@@ -143,6 +209,8 @@ export class ParticlePool {
   private readonly size: Float32Array;
   private readonly alpha: Float32Array;
   private readonly shape: Float32Array;
+  /** 形状号（aShape 每帧写成 形状号 + 0.95 × 年龄比例，着色器靠它做「越老啃得越深」） */
+  private readonly shape0: Uint8Array;
 
   private readonly vel: Float32Array;
   private readonly life: Float32Array;
@@ -168,6 +236,7 @@ export class ParticlePool {
     this.size = new Float32Array(n);
     this.alpha = new Float32Array(n);
     this.shape = new Float32Array(n);
+    this.shape0 = new Uint8Array(n);
     this.vel = new Float32Array(n * 3);
     this.life = new Float32Array(n);
     this.maxLife = new Float32Array(n);
@@ -249,6 +318,7 @@ export class ParticlePool {
     this.alpha0[i] = style.alpha;
     this.alpha[i] = style.fade === FADE_SMOKE ? 0 : style.alpha;
     this.shape[i] = style.shape;
+    this.shape0[i] = style.shape;
     this.grav[i] = gravity;
     this.drag[i] = style.drag;
     this.fade[i] = style.fade;
@@ -308,6 +378,7 @@ export class ParticlePool {
         pos[i3 + 2] = pz;
 
         const t = 1 - l / maxLife[i];
+        this.shape[i] = this.shape0[i] + 0.95 * t;
         size[i] = this.size0[i] * (1 + (this.grow[i] - 1) * t);
         const a0 = this.alpha0[i];
         switch (this.fade[i]) {
@@ -352,14 +423,14 @@ export class ParticlePool {
     this.aAlpha.clearUpdateRanges();
     this.aAlpha.addUpdateRange(0, range);
     this.aAlpha.needsUpdate = true;
+    this.aShape.clearUpdateRanges();
+    this.aShape.addUpdateRange(0, range);
+    this.aShape.needsUpdate = true;
     if (this.dirtyMax >= 0) {
       const lo = this.dirtyMin, cnt = this.dirtyMax - this.dirtyMin + 1;
       this.aColor.clearUpdateRanges();
       this.aColor.addUpdateRange(lo * 3, cnt * 3);
       this.aColor.needsUpdate = true;
-      this.aShape.clearUpdateRanges();
-      this.aShape.addUpdateRange(lo, cnt);
-      this.aShape.needsUpdate = true;
       this.dirtyMin = Infinity;
       this.dirtyMax = -1;
     }

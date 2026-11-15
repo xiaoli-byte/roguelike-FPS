@@ -7,6 +7,7 @@ import { TAU } from '../../core/math';
 import {
   EffectSession, HIDDEN_PROJECTILE, type HeroSkillDef, SKILL_COLORS, flyProp, groundYBelow, handOrigin, radiusScale, skillHit, spawnGroundCrack, throwVelocity,
 } from './common';
+import { fxExtras, type SealHandle } from '../../fx/extras';
 
 // ───────────────────────────── 数值 ─────────────────────────────
 
@@ -30,6 +31,8 @@ const FOXFIRE_HOMING = 7;
 const FOXFIRE_RANGE = 45;
 
 const EMBER_BONUS = 0.2;
+/** 烙在地上的法印：比火色暗、偏红（是烧过的痕，不是光源） */
+const BRAND_COLOR = 0xff5c14;
 
 const _pos = new THREE.Vector3();
 const _vel = new THREE.Vector3();
@@ -37,6 +40,7 @@ const _c = new THREE.Vector3();
 const _aim = new THREE.Vector3();
 const _to = new THREE.Vector3();
 const _cands: IEnemy[] = [];
+const _still = new THREE.Vector3();
 
 // ───────────────────────────── E：燃爆雷（爆竹手雷） ─────────────────────────────
 
@@ -82,13 +86,17 @@ function buildCracker(): { root: THREE.Group; spark: THREE.Mesh } {
  */
 function grenadeImpactFx(ctx: GameContext, point: THREE.Vector3, r: number): void {
   _c.copy(point);
-  ctx.fx.burst(_c, SKILL_COLORS.ember, 34, 9, 0.9, 0.09, 9);
-  ctx.fx.burst(_c, SKILL_COLORS.fireCore, 14, 5, 0.45, 0.14, 0);
+  // 分层（docs/art/fx-style.md 第五节）：甩出去的火舌、落地还会蹦的炭火，慢半拍的金色符点和烟；贴地时落点烙下一枚法印
+  const extras = fxExtras(ctx);
+  if (extras) extras.flameBurst(_c, SKILL_COLORS.fire, r / GRENADE_RADIUS);
+  else ctx.fx.burst(_c, SKILL_COLORS.ember, 34, 9, 0.9, 0.09, 9);
+  ctx.fx.burst(_c, SKILL_COLORS.fireCore, 10, 5, 0.45, 0.14, 0);
   const gy = groundYBelow(ctx, _c);
   const nearGround = _c.y - gy < 1.2;
   if (nearGround) {
     _c.y = gy + 0.08;
     spawnGroundCrack(ctx, _c, r * 0.55, SKILL_COLORS.fire, 1.4);
+    extras?.seal(_c, null, r * 0.6, BRAND_COLOR, { write: 0.14, hold: 0.5, fade: 1.9, sides: 6, spin: 0.25, gain: 1.5 });
   }
   ctx.fx.ring(_c, r, SKILL_COLORS.fire, 0.4);
   ctx.audio.play('skill_fire', { position: point, volume: 0.9 });
@@ -126,6 +134,8 @@ const blazeGrenade: HeroSkillDef = {
         sparkT = 0;
         cracker.spark.getWorldPosition(_c);
         ctx.fx.burst(_c, SKILL_COLORS.ember, 3, 1.6, 0.25, 0.03, 1);
+        // 引信一路落下小火舌（飞行物本身不发光，读出轨迹靠它身后这一串）
+        fxExtras(ctx)?.flameShed(_c, _still, SKILL_COLORS.ember, 0.13);
       }
       void p;
     });
@@ -148,6 +158,15 @@ const blazeGrenade: HeroSkillDef = {
         grenadeImpactFx(ctx, point, r);
       },
     });
+    // 出手：手边一枚小法印一笔写出就散、一束往前的火星
+    const extras = fxExtras(ctx);
+    if (extras) {
+      ctx.player.getAimDirection(_aim);
+      _c.copy(_pos).addScaledVector(_aim, 0.35);
+      _to.copy(_aim).negate();
+      extras.seal(_c, _to, 0.22, SKILL_COLORS.fire, { write: 0.08, hold: 0.06, fade: 0.22, sides: 6, spin: 3, gain: 2.2 });
+      extras.castSparks(_pos, _aim, SKILL_COLORS.fireCore);
+    }
     ctx.audio.play('skill_throw', { volume: 0.9 });
     return true;
   },
@@ -184,9 +203,13 @@ let foxLaunched = 0;
 /** 本次释放中每个敌人被瞄准的次数，用于把狐火分散到多个目标 */
 const foxTargeted = new Map<number, number>();
 
+/** 脚下那枚法印：九团发完（或被打断）才散 */
+let foxSeal: SealHandle | null = null;
 const foxSession = new EffectSession(() => {
   for (const o of orbs) o.removeFromParent();
   foxTargeted.clear();
+  foxSeal?.end(0.45);
+  foxSeal = null;
 });
 
 function orbPosition(ctx: GameContext, i: number, out: THREE.Vector3): THREE.Vector3 {
@@ -263,9 +286,16 @@ function launchFoxfire(ctx: GameContext, i: number): void {
     color: SKILL_COLORS.fire,
     visual: 'flame',
     scale: 1.3,
-    onImpact: (point) => ctx.fx.burst(point, SKILL_COLORS.ember, 12, 4.5, 0.4, 0.08, 4),
+    // 命中：一闪 → 火舌窜起 + 火星 → 余烬
+    onImpact: (point) => {
+      const extras = fxExtras(ctx);
+      if (extras) extras.flameHit(point, SKILL_COLORS.fire);
+      else ctx.fx.burst(point, SKILL_COLORS.ember, 12, 4.5, 0.4, 0.08, 4);
+    },
   });
-  ctx.fx.burst(_pos, SKILL_COLORS.fireCore, 6, 2, 0.25, 0.06, 0);
+  const extras = fxExtras(ctx);
+  if (extras) extras.castSparks(_pos, _vel, SKILL_COLORS.fireCore);
+  else ctx.fx.burst(_pos, SKILL_COLORS.fireCore, 6, 2, 0.25, 0.06, 0);
   ctx.audio.play('skill_fire', { volume: 0.45, pitch: 1.15 + Math.random() * 0.25 });
 }
 
@@ -290,8 +320,14 @@ const nineTails: HeroSkillDef = {
     }
     const p = ctx.player;
     _c.set(p.position.x, p.position.y + 1.1, p.position.z);
-    ctx.fx.burst(_c, SKILL_COLORS.fire, 26, 4, 0.6, 0.1, -1);
+    ctx.fx.burst(_c, SKILL_COLORS.fire, 14, 4, 0.6, 0.1, -1);
     _c.y = p.position.y + 0.08;
+    // 蓄：脚下一枚九边法印 0.32 秒写出、跟着人走；四周的火星盘旋着向身上收拢
+    const extras = fxExtras(ctx);
+    if (extras) {
+      foxSeal = extras.seal(_c, null, 1.5, SKILL_COLORS.fire, { write: 0.32, hold: -1, fade: 0.45, sides: 9, spin: 0.5, gain: 1.8, follow: p.position });
+      extras.gather(_c, SKILL_COLORS.ember, 16, 2.6, p.position, 1);
+    }
     ctx.fx.ring(_c, 3.2, SKILL_COLORS.fire, 0.45);
     ctx.audio.play('skill_buff', { volume: 0.7, pitch: 1.1 });
     ctx.audio.play('skill_fire', { volume: 0.8, pitch: 0.8 });

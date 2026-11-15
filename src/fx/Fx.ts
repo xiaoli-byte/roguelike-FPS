@@ -15,8 +15,10 @@ import type { DamageNumberOpts, GameContext, IFx } from '../core/types';
 import { clamp01 } from '../core/math';
 import {
   ParticlePool, particleScaleUniform,
-  STYLE_CHUNK, STYLE_DUST, STYLE_EMBER, STYLE_FIREBALL, STYLE_GLOW, STYLE_MOTE, STYLE_SMOKE, STYLE_SPARK,
+  STYLE_CHUNK, STYLE_DUST, STYLE_EMBER, STYLE_FIREBALL, STYLE_FLAME, STYLE_GLINT, STYLE_GLOW, STYLE_GLYPH, STYLE_LINGER, STYLE_MOTE, STYLE_SKITTER,
+  STYLE_SMOKE, STYLE_SPARK,
 } from './Particles';
+import { SealEffects, type SealHandle, type SealOptions } from './Seal';
 import { SparkStreaks } from './Sparks';
 import { RibbonBatch } from './Ribbons';
 import { TrailEffects } from './Trails';
@@ -40,6 +42,36 @@ const DUST = 0x8c8274;
 const SMOKE_DARK = 0x2b2623;
 const CHUNK_DARK = 0x3b322b;
 const HOT_YELLOW = 0xffe38a;
+// 元素色（core/types.ts 的 ELEMENT_COLORS）：弹着点按颜色认元素，留下各自的后果
+const EL_FIRE = 0xff6a1f;
+const EL_SHOCK = 0x6fd8ff;
+const EL_CORRODE = 0x9dff4a;
+const SOOT = 0x3a2a26;
+const EMBER_SPOT = 0xff6b1a;
+
+// 余韵层的限流（docs/art/fx-style.md 5.5）：任何一层被限掉都不影响读感
+const AFTER_PER_FRAME = 3;
+const WAKE_PER_FRAME = 12;
+const THROUGH_PER_FRAME = 4;
+const DEATH_PER_FRAME = 3;
+const LATERS = 48;
+const SOULS = 96;
+
+/** 慢半拍才出的层（烟、尘、第二响）：闪光过去之后再升起来 */
+const enum LaterKind { Dust, Soot, Arc, Bubbles, Fume, DeathEcho, SkillEcho }
+interface Later {
+  t: number; kind: LaterKind;
+  x: number; y: number; z: number; nx: number; ny: number; nz: number;
+  color: number; s: number;
+}
+/** 被吸过去的光点：先迸开悬一悬，再盘旋着飞向目标，到了就消失 */
+interface Soul {
+  live: boolean;
+  x: number; y: number; z: number; vx: number; vy: number; vz: number;
+  age: number; life: number; hang: number; pull: number; swirl: number; size: number;
+  r: number; g: number; b: number;
+  target: THREE.Vector3; offY: number;
+}
 
 const EMITTERS = 32;
 const SPAWN_DURATION = 0.7;
@@ -62,6 +94,9 @@ const _n = new THREE.Vector3();
 const _camPos = new THREE.Vector3();
 const _camFwd = new THREE.Vector3();
 const _buf = new THREE.Vector2();
+const _t1 = new THREE.Vector3();
+const _t2 = new THREE.Vector3();
+const _c4 = new THREE.Color();
 
 /** 出生特效的持续发射器 */
 interface Emitter {
@@ -87,6 +122,22 @@ export class FxSystem implements IFx {
   private readonly emitters: Emitter[] = [];
   private emitterStamp = 0;
   private time = 0;
+  private readonly seals = new SealEffects();
+  private readonly laters: Later[] = [];
+  private readonly souls: Soul[] = [];
+  private soulsLive = 0;
+  private afterN = 0;
+  private wakeN = 0;
+  private throughN = 0;
+  private deathN = 0;
+  private shotFrame = -1;
+  private shotCount = 0;
+  private airAt = -10;
+  private kickAt = -10;
+  private markAt = -10;
+  private lightAt = -10;
+  /** 余韵层的累计计数（自查用）：气浪 / 扬尘 / 光屑 / 落点余韵 / 击穿 / 死亡余韵 / 魂火发出 / 魂火到达 */
+  readonly stats = { air: 0, kick: 0, wake: 0, after: 0, through: 0, death: 0, souls: 0, arrived: 0 };
   /** 上次预编译时的雾类型（0 无 / 1 线性 / 2 指数），变化时重新预编译 */
   private compiledFog = -1;
 
@@ -95,7 +146,23 @@ export class FxSystem implements IFx {
     this.trails = new TrailEffects(this.glow, this.sparks);
     this.glow.points.renderOrder = ORDER_GLOW;
     this.smoke.points.renderOrder = ORDER_SMOKE;
-    this.root.add(this.smoke.points, this.glow.points, this.ribbons.mesh, this.ground.group, this.flashes.group);
+    this.root.add(this.smoke.points, this.glow.points, this.ribbons.mesh, this.ground.group, this.flashes.group, this.seals.group);
+    for (let i = 0; i < LATERS; i++) this.laters.push({ t: -1, kind: LaterKind.Dust, x: 0, y: 0, z: 0, nx: 0, ny: 1, nz: 0, color: 0, s: 1 });
+    for (let i = 0; i < SOULS; i++) {
+      this.souls.push({
+        live: false, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, age: 0, life: 2, hang: 0.2, pull: 40, swirl: 0.5, size: 0.12, r: 1, g: 1, b: 1,
+        target: _camPos, offY: 0,
+      });
+    }
+    // 法印写出时，领笔的亮点沿外圈甩出光屑
+    this.seals.onGlint = (pos, radial, normal, color) => {
+      mixColor(color, WHITE, 0.45, _c4);
+      const sp = rand(0.6, 1.6), up = rand(0.6, 1.8);
+      this.glow.spawn(
+        STYLE_GLINT, pos.x, pos.y, pos.z, radial.x * sp + normal.x * up, radial.y * sp + normal.y * up, radial.z * sp + normal.z * up,
+        _c4, rand(0.07, 0.12), rand(0.25, 0.45),
+      );
+    };
     for (let i = 0; i < EMITTERS; i++) {
       this.emitters.push({ active: false, x: 0, y: 0, z: 0, color: new THREE.Color(), age: 0, acc: 0, finale: false, stamp: 0 });
     }
@@ -190,6 +257,7 @@ export class FxSystem implements IFx {
     }
     // 弹孔（只有打在几何表面且是小型命中时）
     if (hasNormal && s <= 1.6) this.ground.hole(point, n, 0.11 * s + 0.04, 0.8);
+    this.impactAfter(px, py, pz, n, color, s);
   }
 
   enemyHit(point: THREE.Vector3, color = DEFAULT_HIT, crit = false): void {
@@ -232,11 +300,15 @@ export class FxSystem implements IFx {
         this.sparks.spawn(px, py, pz, Math.cos(a) * sp, jitter(3) + 1, Math.sin(a) * sp, _c3, rand(0.1, 0.16), 0.026, 3);
       }
     }
+    this.hitThrough(px, py, pz, crit);
   }
 
   tracer(from: THREE.Vector3, to: THREE.Vector3, color = DEFAULT_TRACER, width = 0.05): void {
     if (!finite3(from) || !finite3(to)) return;
-    this.trails.tracer(from, to, color, Math.min(0.5, posOr(width, 0.05)));
+    const w = Math.min(0.5, posOr(width, 0.05));
+    this.trails.tracer(from, to, color, w);
+    this.tracerWake(from, to, color, w);
+    this.shotWorld(from, to, color, w);
   }
 
   explosion(center: THREE.Vector3, radius: number, color = DEFAULT_EXPLOSION): void {
@@ -517,7 +589,521 @@ export class FxSystem implements IFx {
     }
     // 地面小冲击环
     _p.set(px, this.groundBelow(pos), pz);
-    if (py - _p.y < s * 1.5) this.ground.ring(_p, s * 1.2, color, 0.38, false);
+    const grounded = py - _p.y < s * 1.5;
+    if (grounded) this.ground.ring(_p, s * 1.2, color, 0.38, false);
+    this.deathAfter(pos, _p.y, grounded, color, s);
+  }
+
+  // ───────────── 余韵与世界回应（docs/art/fx-style.md 第五节） ─────────────
+
+  private later(kind: LaterKind, delay: number, x: number, y: number, z: number, n: THREE.Vector3 | null, color: number, s: number): void {
+    for (const l of this.laters) {
+      if (l.t >= 0) continue;
+      l.t = delay; l.kind = kind;
+      l.x = x; l.y = y; l.z = z;
+      l.nx = n ? n.x : 0; l.ny = n ? n.y : 1; l.nz = n ? n.z : 0;
+      l.color = color; l.s = s;
+      return;
+    }
+  }
+
+  /** 一盏短灯（照亮周围）：全场只有三盏，0.06 秒内不重复点 */
+  private afterLight(x: number, y: number, z: number, color: number, peak: number, distance: number, life: number): void {
+    if (this.ctx.settings.quality === 'low' || this.time - this.lightAt < 0.06) return;
+    this.lightAt = this.time;
+    this.flashes.light(_t2.set(x, y, z), color, peak, distance, life);
+  }
+
+  /**
+   * 弹着点的余韵：无元素 = 还在蹦的火星 + 余温 + 慢半拍的一小团尘；火 = 几条火舌舔上来 + 余烬 + 晚一拍的烟；
+   * 雷 = 电弧贴着表面爬两拍 + 光屑；蚀 = 蚀液往下滴 + 冒泡 + 一小团绿烟。重弹和元素弹再闪一盏短灯。每帧最多 3 处。
+   */
+  private impactAfter(px: number, py: number, pz: number, n: THREE.Vector3, color: number, s: number): void {
+    if (this.afterN >= AFTER_PER_FRAME) return;
+    this.afterN++;
+    this.stats.after++;
+    const rs = Math.sqrt(s);
+    hexToColor(color, _c);
+    mixColor(_c, WHITE, 0.3, _hot);
+    const el = color === EL_FIRE ? 1 : color === EL_SHOCK ? 2 : color === EL_CORRODE ? 3 : 0;
+    if (el === 1) {
+      const flames = Math.min(3, 1 + Math.round(s));
+      for (let i = 0; i < flames; i++) {
+        const sp = rand(0.3, 0.9);
+        this.glow.spawn(
+          STYLE_FLAME, px + n.x * 0.05 + jitter(0.08), py + n.y * 0.05, pz + n.z * 0.05 + jitter(0.08),
+          n.x * sp + jitter(0.3), n.y * sp + 0.9, n.z * sp + jitter(0.3), _c, rand(0.28, 0.42) * rs, rand(0.35, 0.6),
+        );
+      }
+      const embers = this.count(Math.min(8, 2 + 2 * s));
+      for (let i = 0; i < embers; i++) {
+        randomDir(_dir).addScaledVector(n, 0.6).normalize();
+        const sp = rand(1, 3);
+        this.glow.spawn(STYLE_EMBER, px, py, pz, _dir.x * sp, _dir.y * sp + 1.2, _dir.z * sp, _c, rand(0.05, 0.09), rand(0.7, 1.2));
+      }
+      this.later(LaterKind.Soot, 0.12, px, py, pz, n, color, s);
+    } else if (el === 2) {
+      this.arcs(px, py, pz, n, color, 3, 0.22 * rs);
+      this.later(LaterKind.Arc, 0.07, px, py, pz, n, color, s);
+      for (let i = 0; i < 3; i++) {
+        randomDir(_dir).addScaledVector(n, 0.7).normalize();
+        const sp = rand(2, 5);
+        this.glow.spawn(STYLE_GLINT, px, py, pz, _dir.x * sp, _dir.y * sp, _dir.z * sp, _hot, rand(0.07, 0.11), rand(0.2, 0.35));
+      }
+    } else if (el === 3) {
+      const drops = this.count(Math.min(6, 2 + 2 * s));
+      for (let i = 0; i < drops; i++) {
+        randomDir(_dir).addScaledVector(n, 0.8).normalize();
+        const sp = rand(1.5, 3.5);
+        this.glow.spawn(STYLE_SKITTER, px, py, pz, _dir.x * sp, _dir.y * sp + 1, _dir.z * sp, _c, rand(0.07, 0.11), rand(0.5, 0.8), 9);
+      }
+      this.later(LaterKind.Bubbles, 0.1, px, py, pz, n, color, s);
+      this.later(LaterKind.Fume, 0.08, px, py, pz, n, color, s);
+    } else {
+      const skitter = Math.min(4, 1 + Math.round(s));
+      for (let i = 0; i < skitter; i++) {
+        randomDir(_dir);
+        const d = _dir.dot(n);
+        if (d < 0) _dir.addScaledVector(n, -2 * d);
+        _dir.addScaledVector(n, 0.5).normalize();
+        const sp = rand(3, 7) * rs;
+        this.glow.spawn(STYLE_SKITTER, px, py, pz, _dir.x * sp, _dir.y * sp + 1.5, _dir.z * sp, _hot, rand(0.05, 0.08), rand(0.5, 0.9));
+      }
+      // 余温：弹孔上一小团慢慢暗下去的橙光
+      hexToColor(EMBER_SPOT, _c2);
+      this.glow.spawn(STYLE_LINGER, px, py, pz, 0, 0, 0, _c2, 0.2 * rs, rand(0.4, 0.5));
+      this.later(LaterKind.Dust, 0.05, px, py, pz, n, color, s);
+    }
+    if (s >= 1.15 || el !== 0) this.afterLight(px + n.x * 0.25, py + n.y * 0.25, pz + n.z * 0.25, color, el !== 0 ? 7 : 5, 3.2, 0.09);
+  }
+
+  /** 贴着表面爬的几道小电弧（法线所在平面里随机方向） */
+  private arcs(px: number, py: number, pz: number, n: THREE.Vector3, color: number, count: number, reach: number): void {
+    for (let i = 0; i < count; i++) {
+      randomDir(_dir);
+      _dir.addScaledVector(n, -_dir.dot(n));
+      if (_dir.lengthSq() < 1e-4) continue;
+      _dir.normalize();
+      const len = reach * rand(0.7, 1.6);
+      _t1.set(px + n.x * 0.04, py + n.y * 0.04, pz + n.z * 0.04);
+      _t2.copy(_t1).addScaledVector(_dir, len).addScaledVector(n, rand(0, 0.08));
+      this.trails.lightning(_t1, _t2, color);
+    }
+  }
+
+  /**
+   * 弹道沿途掉下的光屑：从 4 米外开始、每 5–7 米一颗，横向慢慢飘开，0.16–0.3 秒熄灭；远处的略大。
+   * 整条曳光 0.1 秒就没了，光屑多留 0.2 秒，读得出走向。细的（霰弹弹丸）每条只掉一颗。每帧最多 12 颗。
+   */
+  private tracerWake(from: THREE.Vector3, to: THREE.Vector3, color: number, width: number): void {
+    if (this.wakeN >= WAKE_PER_FRAME) return;
+    _t1.subVectors(to, from);
+    const len = _t1.length();
+    if (!(len >= 6)) return;
+    _t1.multiplyScalar(1 / len);
+    hexToColor(color, _c);
+    mixColor(_c, WHITE, 0.5, _hot);
+    const end = Math.min(len - 1, 34);
+    const pellet = width < 0.016;
+    const cap = pellet ? 1 : 4;
+    let t = pellet ? rand(4, Math.max(4.5, end)) : rand(4, 6);
+    for (let i = 0; i < cap && t < end && this.wakeN < WAKE_PER_FRAME; i++) {
+      const size = rand(0.07, 0.11) * (1 + t / 25);
+      this.glow.spawn(
+        STYLE_GLINT, from.x + _t1.x * t, from.y + _t1.y * t, from.z + _t1.z * t,
+        _t1.x * 2 + jitter(1), _t1.y * 2 + jitter(1), _t1.z * 2 + jitter(1), _hot, size, rand(0.16, 0.3),
+      );
+      this.wakeN++;
+      this.stats.wake++;
+      t += rand(5, 7);
+    }
+  }
+
+  /**
+   * 开枪对世界的回应（曳光从相机 1.6 米内出发 = 玩家开的枪，每帧只算一次）：往前推开的气浪丝（从枪口前 0.9 米起，不挡视野）；
+   * 枪口前下方 2.6 米内有地面就掀起一片尘。重枪每发都有，轻枪气浪隔发、扬尘每 5 发。
+   */
+  private shotWorld(from: THREE.Vector3, to: THREE.Vector3, color: number, width: number): void {
+    const frame = this.ctx.time.frame;
+    if (frame === this.shotFrame) return;
+    const cam = this.ctx.camera.position;
+    if (from.distanceToSquared(cam) > 1.6 * 1.6) return;
+    _t1.subVectors(to, from);
+    const len = _t1.length();
+    if (!(len > 2)) return;
+    _t1.multiplyScalar(1 / len);
+    this.shotFrame = frame;
+    this.shotCount++;
+    // 分量：细的一束 = 霰弹（重），其余按曳光粗细
+    const pellet = width < 0.016;
+    const w = pellet ? 1.4 : Math.min(1.6, Math.max(0.4, width / 0.03));
+    const heavy = w >= 0.9;
+    if (this.time - this.airAt >= 0.045 && (heavy || (this.shotCount & 1) === 0)) {
+      this.airAt = this.time;
+      this.stats.air++;
+      // 垂直于枪管的两个方向
+      _t2.set(0, 1, 0).cross(_t1);
+      if (_t2.lengthSq() < 1e-4) _t2.set(1, 0, 0);
+      _t2.normalize();
+      _p.crossVectors(_t1, _t2);
+      if (color === EL_FIRE || color === EL_SHOCK || color === EL_CORRODE) mixColor(hexToColor(color, _c), WHITE, 0.55, _c4);
+      else _c4.setRGB(1, 0.95, 0.85);
+      _c4.multiplyScalar(0.55);
+      const n = this.count(w * 5);
+      const cone = pellet ? 0.22 : 0.1;
+      for (let i = 0; i < n; i++) {
+        const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random());
+        const ca = Math.cos(a), sa = Math.sin(a);
+        const sx = _t2.x * ca + _p.x * sa, sy = _t2.y * ca + _p.y * sa, sz = _t2.z * ca + _p.z * sa;
+        const off = rand(0.9, 1.7), spread = r * 0.14 * (0.6 + w), sp = rand(20, 32);
+        this.sparks.spawn(
+          from.x + _t1.x * off + sx * spread, from.y + _t1.y * off + sy * spread, from.z + _t1.z * off + sz * spread,
+          (_t1.x + sx * r * cone) * sp, (_t1.y + sy * r * cone) * sp, (_t1.z + sz * r * cone) * sp,
+          _c4, rand(0.12, 0.22), 0.012 + 0.004 * w, 0,
+        );
+      }
+    }
+    if (this.time - this.kickAt >= 0.12 && (heavy || this.shotCount % 5 === 0)) {
+      const gx = from.x + _t1.x * 1.2, gz = from.z + _t1.z * 1.2, top = from.y + _t1.y * 1.2;
+      const gy = this.ctx.world.groundHeight(gx, gz, top + 0.1);
+      const drop = top - gy;
+      if (Number.isFinite(gy) && drop > -0.1 && drop < 2.6) {
+        this.kickAt = this.time;
+        this.stats.kick++;
+        const near = 1 - clamp01(drop / 2.6);
+        const k = w * (0.5 + 0.7 * near);
+        const fl = Math.hypot(_t1.x, _t1.z) || 1;
+        const fx = _t1.x / fl, fz = _t1.z / fl;
+        hexToColor(DUST, _c2);
+        const puffs = this.count(Math.min(5, 1 + 2 * k));
+        for (let i = 0; i < puffs; i++) {
+          const sp = rand(1.2, 3.2) * Math.sqrt(k);
+          const shade = rand(0.85, 1.15);
+          _c3.setRGB(_c2.r * shade, _c2.g * shade, _c2.b * shade);
+          this.smoke.spawn(
+            STYLE_DUST, gx + jitter(0.3), gy + 0.06, gz + jitter(0.3), fx * sp + jitter(0.8), rand(0.5, 1.4), fz * sp + jitter(0.8),
+            _c3, rand(0.35, 0.6) * Math.sqrt(k), rand(0.6, 1),
+          );
+        }
+        hexToColor(CHUNK_DARK, _c3);
+        const grit = this.count(Math.min(8, 1 + 3 * k));
+        for (let i = 0; i < grit; i++) {
+          const sp = rand(2, 5);
+          this.smoke.spawn(STYLE_CHUNK, gx + jitter(0.2), gy + 0.05, gz + jitter(0.2), fx * sp + jitter(1.5), rand(1.5, 3.5), fz * sp + jitter(1.5), _c3, rand(0.03, 0.05), rand(0.4, 0.7));
+        }
+      }
+    }
+  }
+
+  /** 打中敌人：沿子弹来的方向（相机 → 命中点）从背后带出去的一束，而不是原地一个球。每帧最多 4 束 */
+  private hitThrough(px: number, py: number, pz: number, crit: boolean): void {
+    if (this.throughN >= THROUGH_PER_FRAME) return;
+    const cam = this.ctx.camera.position;
+    _t1.set(px - cam.x, py - cam.y, pz - cam.z);
+    const dist = _t1.length();
+    if (!(dist > 0.5) || dist > 60) return;
+    _t1.multiplyScalar(1 / dist);
+    this.throughN++;
+    this.stats.through++;
+    // _c / _hot 还是 enemyHit 设的命中色
+    const n = this.count(crit ? 6 : 3);
+    for (let i = 0; i < n; i++) {
+      randomDir(_dir).multiplyScalar(0.4).add(_t1).normalize();
+      const sp = rand(7, 14);
+      this.sparks.spawn(px + _t1.x * 0.15, py + _t1.y * 0.15, pz + _t1.z * 0.15, _dir.x * sp, _dir.y * sp, _dir.z * sp, i & 1 ? _c : _hot, rand(0.12, 0.22), 0.018, 8);
+    }
+    for (let i = 0; i < 2; i++) {
+      randomDir(_dir).multiplyScalar(0.55).add(_t1).normalize();
+      const sp = rand(3, 6);
+      this.glow.spawn(STYLE_SPARK, px, py, pz, _dir.x * sp, _dir.y * sp + 1, _dir.z * sp, _c, rand(0.06, 0.1), rand(0.3, 0.5), 9);
+    }
+  }
+
+  /**
+   * 击杀之后的几层：敌人色的短灯；慢 0.09 秒的第二响（符点散开往上飘 + 余烬 + 一下小闪）；魂火先迸开再盘旋着归到玩家身上；
+   * 够大的敌人在脚下留一块焦痕。每帧最多 3 个。
+   */
+  private deathAfter(pos: THREE.Vector3, groundY: number, grounded: boolean, color: number, s: number): void {
+    if (this.deathN >= DEATH_PER_FRAME) return;
+    this.deathN++;
+    this.stats.death++;
+    this.afterLight(pos.x, pos.y, pos.z, color, 8 + 2 * s, 3 + 1.2 * s, 0.16);
+    this.later(LaterKind.DeathEcho, 0.09, pos.x, pos.y, pos.z, null, color, s);
+    const cam = this.ctx.camera.position;
+    if (pos.distanceToSquared(cam) < 45 * 45) {
+      hexToColor(color, _c4);
+      mixColor(_c4, WHITE, 0.4, _c4);
+      const n = Math.min(10, Math.max(4, Math.round(3 + 2 * s)));
+      // 归到胸口（相机下方 0.35 米）：不往脸上飞
+      for (let i = 0; i < n; i++) {
+        this.soul(pos.x + jitter(0.25), pos.y + jitter(0.25), pos.z + jitter(0.25), 3 + 0.6 * s, _c4, cam, -0.35, 0.24, 42, 0.55, 0.11 + 0.015 * s);
+      }
+    }
+    if (grounded && s >= 1 && this.time - this.markAt > 0.15) {
+      this.markAt = this.time;
+      _t2.set(pos.x, groundY, pos.z);
+      _n.set(0, 1, 0);
+      this.ground.hole(_t2, _n, Math.min(3.2, s * 0.9), 0.35, 8);
+    }
+  }
+
+  private soul(
+    x: number, y: number, z: number, speed: number, color: THREE.Color, target: THREE.Vector3, offY: number,
+    hang: number, pull: number, swirl: number, size: number, inward = false,
+  ): void {
+    for (const o of this.souls) {
+      if (o.live) continue;
+      o.live = true;
+      o.x = x; o.y = y; o.z = z;
+      if (inward) {
+        // 收拢：先沿切向慢慢转
+        const dx = x - target.x, dz = z - target.z, l = Math.hypot(dx, dz) || 1;
+        const sp = rand(0.5, 1.5);
+        o.vx = (-dz / l) * sp; o.vy = 0.3; o.vz = (dx / l) * sp;
+      } else {
+        randomDir(_dir);
+        const sp = speed * rand(0.55, 1);
+        o.vx = _dir.x * sp; o.vy = Math.abs(_dir.y) * sp * 0.8 + 0.6; o.vz = _dir.z * sp;
+      }
+      o.age = 0;
+      o.life = inward ? 1.6 : 2.2;
+      o.hang = hang * rand(0.7, 1.4);
+      o.pull = pull * rand(0.8, 1.2);
+      o.swirl = swirl * (inward || Math.random() < 0.5 ? 1 : -1) * rand(0.6, 1.2);
+      o.size = size * rand(0.75, 1.15);
+      o.r = color.r; o.g = color.g; o.b = color.b;
+      o.target = target;
+      o.offY = offY;
+      this.soulsLive++;
+      this.stats.souls++;
+      return;
+    }
+  }
+
+  private updateSouls(dt: number): void {
+    if (this.soulsLive === 0) return;
+    const slow = Math.exp(-0.9 * dt), slowHang = Math.exp(-4.5 * dt);
+    let live = 0;
+    for (const o of this.souls) {
+      if (!o.live) continue;
+      o.age += dt;
+      const dx = o.target.x - o.x, dy = o.target.y + o.offY - o.y, dz = o.target.z - o.z;
+      const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      if (o.age >= o.life) {
+        o.live = false;
+        continue;
+      }
+      if (o.age < o.hang) {
+        // 迸开的那一下：很快慢下来，悬一悬
+        o.vx *= slowHang; o.vy = o.vy * slowHang + 1.2 * dt; o.vz *= slowHang;
+      } else if (r < 0.45) {
+        o.live = false;
+        this.stats.arrived++;
+        continue;
+      } else {
+        // 吸力随距离衰减，带一点绕竖直轴的切向：盘着进去；越近越收，别绕着目标转圈
+        const g = (o.pull * dt) / (1 + r * 0.12) / r;
+        o.vx = o.vx * slow + (dx + dz * o.swirl) * g;
+        o.vy = o.vy * slow + dy * g;
+        o.vz = o.vz * slow + (dz - dx * o.swirl) * g;
+        if (r < 1.6) {
+          const sp = Math.sqrt(o.vx * o.vx + o.vy * o.vy + o.vz * o.vz), k = Math.min(1, dt * 9);
+          o.vx += ((dx / r) * sp - o.vx) * k;
+          o.vy += ((dy / r) * sp - o.vy) * k;
+          o.vz += ((dz / r) * sp - o.vz) * k;
+        }
+      }
+      o.x += o.vx * dt; o.y += o.vy * dt; o.z += o.vz * dt;
+      live++;
+      // 每帧在当前位置留一小团很快暗下去的光：连起来就是一道彗尾
+      const k = o.age / o.life;
+      _c4.setRGB(o.r, o.g, o.b).multiplyScalar(1 - k * k);
+      this.glow.spawn(STYLE_LINGER, o.x, o.y, o.z, 0, 0, 0, _c4, o.size, 0.13);
+    }
+    this.soulsLive = live;
+  }
+
+  private updateLaters(dt: number): void {
+    for (const l of this.laters) {
+      if (l.t < 0) continue;
+      l.t -= dt;
+      if (l.t > 0) continue;
+      l.t = -1;
+      const rs = Math.sqrt(l.s);
+      _n.set(l.nx, l.ny, l.nz);
+      switch (l.kind) {
+        case LaterKind.Dust: {
+          hexToColor(DUST, _c2);
+          const sp = rand(0.4, 0.9);
+          this.smoke.spawn(
+            STYLE_DUST, l.x + l.nx * 0.06, l.y + l.ny * 0.06, l.z + l.nz * 0.06, l.nx * sp + jitter(0.2), l.ny * sp + 0.5, l.nz * sp + jitter(0.2),
+            _c2, rand(0.32, 0.5) * rs, rand(0.9, 1.4),
+          );
+          break;
+        }
+        case LaterKind.Soot: {
+          hexToColor(SOOT, _c2);
+          this.smoke.spawn(
+            STYLE_SMOKE, l.x + l.nx * 0.08, l.y + l.ny * 0.08, l.z + l.nz * 0.08, l.nx * 0.4 + jitter(0.2), l.ny * 0.4 + 0.6, l.nz * 0.4 + jitter(0.2),
+            _c2, rand(0.3, 0.4) * rs, rand(0.8, 1.1),
+          );
+          break;
+        }
+        case LaterKind.Arc:
+          this.arcs(l.x, l.y, l.z, _n, l.color, 2, 0.34 * rs);
+          break;
+        case LaterKind.Bubbles: {
+          hexToColor(l.color, _c);
+          for (let i = 0; i < 3; i++) {
+            this.glow.spawn(STYLE_MOTE, l.x + jitter(0.15), l.y + jitter(0.08), l.z + jitter(0.15), jitter(0.2), rand(0.2, 0.6), jitter(0.2), _c, rand(0.05, 0.09), rand(0.5, 0.9));
+          }
+          break;
+        }
+        case LaterKind.Fume: {
+          hexToColor(0x4a6a2a, _c2);
+          this.smoke.spawn(STYLE_SMOKE, l.x + l.nx * 0.08, l.y + l.ny * 0.08, l.z + l.nz * 0.08, jitter(0.2), 0.5, jitter(0.2), _c2, rand(0.3, 0.45) * rs, rand(0.8, 1.2));
+          break;
+        }
+        case LaterKind.DeathEcho: {
+          hexToColor(l.color, _c);
+          mixColor(_c, WHITE, 0.35, _hot);
+          this.glow.spawn(STYLE_GLOW, l.x, l.y, l.z, 0, 0, 0, _hot, l.s * 0.8, 0.1);
+          const glyphs = Math.min(6, Math.max(2, Math.round(1 + 1.2 * l.s)));
+          for (let i = 0; i < glyphs; i++) {
+            randomDir(_dir);
+            const sp = rand(0.4, 1.2), off = l.s * 0.35 * Math.random();
+            this.glow.spawn(
+              STYLE_GLYPH, l.x + _dir.x * off, l.y + Math.abs(_dir.y) * off, l.z + _dir.z * off, _dir.x * sp, Math.abs(_dir.y) * sp + 0.8, _dir.z * sp,
+              _hot, rand(0.2, 0.3) * rs, rand(0.8, 1.2),
+            );
+          }
+          const embers = this.count(Math.min(12, 3 + 2 * l.s));
+          for (let i = 0; i < embers; i++) {
+            randomDir(_dir);
+            const sp = rand(1, 2.5), off = l.s * 0.3 * Math.random();
+            this.glow.spawn(
+              STYLE_EMBER, l.x + _dir.x * off, l.y + Math.abs(_dir.y) * off, l.z + _dir.z * off, _dir.x * sp, Math.abs(_dir.y) * sp + 1, _dir.z * sp,
+              _c, rand(0.06, 0.1), rand(0.9, 1.5),
+            );
+          }
+          break;
+        }
+        case LaterKind.SkillEcho: {
+          // 技能落点的第二响：金色符点散开往上飘 + 晚出的烟
+          hexToColor(0xffd27a, _hot);
+          for (let i = 0; i < 5; i++) {
+            const a = Math.random() * Math.PI * 2, off = rand(0.4, 1.2) * rs, sp = rand(1, 2.5);
+            this.glow.spawn(
+              STYLE_GLYPH, l.x + Math.cos(a) * off, l.y + rand(0.1, 0.5), l.z + Math.sin(a) * off, Math.cos(a) * sp, rand(0.7, 1.7), Math.sin(a) * sp,
+              _hot, rand(0.24, 0.34), rand(0.9, 1.3),
+            );
+          }
+          hexToColor(SOOT, _c2);
+          const puffs = this.count(Math.min(4, 1 + 2 * l.s));
+          for (let i = 0; i < puffs; i++) {
+            this.smoke.spawn(STYLE_SMOKE, l.x + jitter(0.5 * rs), l.y + rand(0.1, 0.4), l.z + jitter(0.5 * rs), jitter(0.5), rand(0.8, 1.4), jitter(0.5), _c2, rand(0.7, 1) * rs, rand(1.2, 1.8));
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  // ───────────── 技能用的分层入口（IFxExtras，见 ./extras.ts） ─────────────
+
+  /** 画一枚法印（见 Seal.ts）：center 贴地时传地面点，normal 为空 = 朝上 */
+  seal(center: THREE.Vector3, normal: THREE.Vector3 | null, radius: number, color: number, opts?: SealOptions): SealHandle {
+    return this.seals.spawn(center, normal, radius, color, opts);
+  }
+
+  /** 蓄力：center 周围 radius 的一圈光点盘旋着向 target（+ offY）收拢 */
+  gather(center: THREE.Vector3, color: number, count: number, radius: number, target: THREE.Vector3, offY = 1): void {
+    if (!finite3(center) || !(radius > 0)) return;
+    hexToColor(color, _c4);
+    const n = this.count(count);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, r = radius * rand(0.6, 1);
+      this.soul(center.x + Math.cos(a) * r, center.y + rand(0.1, 1.1), center.z + Math.sin(a) * r, 0, _c4, target, offY, 0.14, 30, 0.9, 0.09, true);
+    }
+  }
+
+  /** 出手：沿 dir 的一束拉丝火星 + 一闪 */
+  castSparks(pos: THREE.Vector3, dir: THREE.Vector3, color: number): void {
+    if (!finite3(pos) || !finite3(dir)) return;
+    hexToColor(color, _c);
+    mixColor(_c, WHITE, 0.4, _hot);
+    this.glow.spawn(STYLE_GLOW, pos.x, pos.y, pos.z, 0, 0, 0, _hot, 0.35, 0.08);
+    _t1.copy(dir).normalize();
+    for (let i = 0; i < 5; i++) {
+      randomDir(_dir).multiplyScalar(0.45).add(_t1).normalize();
+      const sp = rand(5, 10);
+      this.sparks.spawn(pos.x, pos.y, pos.z, _dir.x * sp, _dir.y * sp, _dir.z * sp, i & 1 ? _c : _hot, rand(0.15, 0.3), 0.018, 5);
+    }
+  }
+
+  /** 飞行物身后落下的一条火舌（每隔一小段距离调一次）：带走飞行速度的 12% 再往上窜；偶尔甩一颗火星 */
+  flameShed(pos: THREE.Vector3, vel: THREE.Vector3, color: number, size = 0.32): void {
+    if (!finite3(pos) || !finite3(vel)) return;
+    hexToColor(color, _c);
+    this.glow.spawn(
+      STYLE_FLAME, pos.x + jitter(0.06), pos.y + jitter(0.06), pos.z + jitter(0.06), vel.x * 0.12 + jitter(0.6), vel.y * 0.12 + 0.8, vel.z * 0.12 + jitter(0.6),
+      _c, size * rand(0.8, 1.25), rand(0.22, 0.38),
+    );
+    if (Math.random() < 0.3) {
+      mixColor(_c, WHITE, 0.3, _hot);
+      this.glow.spawn(STYLE_EMBER, pos.x, pos.y, pos.z, vel.x * 0.25 + jitter(3), vel.y * 0.25 + jitter(3), vel.z * 0.25 + jitter(3), _hot, rand(0.05, 0.09), rand(0.5, 1));
+    }
+  }
+
+  /** 火系命中（火灵）：一闪 → 火舌窜起 + 火星 → 余烬；带一盏短灯 */
+  flameHit(pos: THREE.Vector3, color: number, scale = 1): void {
+    if (!finite3(pos)) return;
+    const k = Math.min(3, Math.max(0.3, posOr(scale, 1))), rs = Math.sqrt(k);
+    hexToColor(color, _c);
+    mixColor(_c, WHITE, 0.45, _hot);
+    this.glow.spawn(STYLE_GLOW, pos.x, pos.y, pos.z, 0, 0, 0, _hot, 0.7 * k, 0.09);
+    for (let i = 0; i < 3; i++) {
+      this.glow.spawn(STYLE_FLAME, pos.x + jitter(0.15), pos.y + jitter(0.1), pos.z + jitter(0.15), jitter(0.8), rand(1, 2.2), jitter(0.8), _c, rand(0.4, 0.6) * rs, rand(0.35, 0.55));
+    }
+    const sparks = this.count(6);
+    for (let i = 0; i < sparks; i++) {
+      randomDir(_dir);
+      const sp = rand(6, 12);
+      this.sparks.spawn(pos.x, pos.y, pos.z, _dir.x * sp, _dir.y * sp, _dir.z * sp, i & 1 ? _c : _hot, rand(0.12, 0.25), 0.018, 10);
+    }
+    const embers = this.count(6);
+    for (let i = 0; i < embers; i++) {
+      randomDir(_dir);
+      const sp = rand(2, 5);
+      this.glow.spawn(STYLE_EMBER, pos.x, pos.y, pos.z, _dir.x * sp, Math.abs(_dir.y) * sp + 0.5, _dir.z * sp, _c, rand(0.06, 0.1), rand(0.6, 1.1));
+    }
+    this.afterLight(pos.x, pos.y, pos.z, color, 8, 4, 0.14);
+  }
+
+  /**
+   * 火系技能落点（燃爆雷，scale = 半径 / 4.5）：甩出去的火舌、落地还会蹦的炭火；0.08 秒后第二响（金色符点 + 烟）。
+   * 爆炸本体（火球、闪光、震屏）由 explosion 出，这里只补它没有的层。
+   */
+  flameBurst(pos: THREE.Vector3, color: number, scale = 1): void {
+    if (!finite3(pos)) return;
+    const k = Math.min(3, Math.max(0.3, posOr(scale, 1))), rs = Math.sqrt(k);
+    hexToColor(color, _c);
+    mixColor(_c, WHITE, 0.35, _hot);
+    const flames = this.count(Math.min(14, 4 + 5 * k));
+    for (let i = 0; i < flames; i++) {
+      randomDir(_dir);
+      if (_dir.y < -0.2) _dir.y = -_dir.y * 0.5;
+      const sp = rand(2.5, 7) * rs, off = 0.5 * k * Math.random();
+      this.glow.spawn(STYLE_FLAME, pos.x + _dir.x * off, pos.y + _dir.y * off, pos.z + _dir.z * off, _dir.x * sp, _dir.y * sp + 1.5, _dir.z * sp, _c, rand(0.5, 0.8) * rs, rand(0.4, 0.7));
+    }
+    const cinders = this.count(Math.min(22, 6 + 8 * k));
+    for (let i = 0; i < cinders; i++) {
+      randomDir(_dir);
+      if (_dir.y < -0.2) _dir.y = -_dir.y * 0.5;
+      const sp = rand(5, 12) * rs;
+      this.glow.spawn(STYLE_SKITTER, pos.x, pos.y, pos.z, _dir.x * sp, _dir.y * sp + 3, _dir.z * sp, i % 3 === 0 ? _hot : _c, rand(0.08, 0.13), rand(0.9, 1.6));
+    }
+    this.later(LaterKind.SkillEcho, 0.08, pos.x, pos.y, pos.z, null, color, k);
   }
 
   // ───────────── 生命周期 ─────────────
@@ -541,7 +1127,12 @@ export class FxSystem implements IFx {
     this.glow.update(d, floorY);
     this.smoke.update(d, floorY);
     this.sparks.update(d, floorY);
-    if (d > 0) this.updateEmitters(d);
+    if (d > 0) {
+      this.updateEmitters(d);
+      this.updateLaters(d);
+      this.updateSouls(d);
+    }
+    this.afterN = this.wakeN = this.throughN = this.deathN = 0;
 
     // 线状特效先占批次容量，火花拖尾在后（容量不足时先丢火花）
     this.ribbons.begin(_camPos, this.time);
@@ -551,6 +1142,7 @@ export class FxSystem implements IFx {
 
     this.ground.update(d);
     this.flashes.update(d);
+    this.seals.update(d);
     this.numbers.update(d, cam, _camPos, _camFwd, ctx.settings.damageNumbers);
   }
 
@@ -564,7 +1156,11 @@ export class FxSystem implements IFx {
     this.ground.clear();
     this.flashes.clear();
     this.numbers.clear();
+    this.seals.clear();
     for (const e of this.emitters) e.active = false;
+    for (const l of this.laters) l.t = -1;
+    for (const o of this.souls) o.live = false;
+    this.soulsLive = 0;
   }
 
   // ───────────── 出生发射器 ─────────────
