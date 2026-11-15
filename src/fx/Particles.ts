@@ -161,18 +161,20 @@ void main() {
     if (a < 0.01) discard;
     col = mix(col, vec3(1.0), smoothstep(0.5, 1.0, a) * 0.7);
   } else {
-    // 符点：方框里几道横竖折（3 × 3 格，哪几道有由种子定），读作一个篆书式的小符
-    vec2 g = c * 1.15;
+    // 符点：一竖为骨、上中下三横俱全（中横长短不一），两侧短竖有无由种子定——读作篆书式的小字（王 / 田 / 目 一类）。
+    // 三横必须都有：少一横就读成拉丁字母 T / I 了
+    vec2 g = c * 1.2;
     vec2 ag = abs(g);
     if (max(ag.x, ag.y) > 1.0) discard;
-    float w = 0.13;
-    float I = 1.0 - smoothstep(w, w + 0.06, abs(max(ag.x, ag.y) - 0.84));
+    float w = 0.085;
     float b0 = step(0.5, fract(vSeed * 2.0)), b1 = step(0.5, fract(vSeed * 4.0)), b2 = step(0.5, fract(vSeed * 8.0)), b3 = step(0.5, fract(vSeed * 16.0));
-    I = max(I, b0 * (1.0 - smoothstep(w, w + 0.06, abs(g.y - 0.36))) * step(ag.x, 0.6));
-    I = max(I, b1 * (1.0 - smoothstep(w, w + 0.06, abs(g.y + 0.36))) * step(ag.x, 0.6));
-    I = max(I, b2 * (1.0 - smoothstep(w, w + 0.06, abs(g.x - 0.36))) * step(ag.y, 0.36));
-    I = max(I, b3 * (1.0 - smoothstep(w, w + 0.06, abs(g.x + 0.36))) * step(ag.y, 0.36));
-    I = max(I, (1.0 - smoothstep(w, w + 0.06, ag.y)) * step(ag.x, 0.6));
+    float I = (1.0 - smoothstep(w, w + 0.07, ag.x)) * step(ag.y, 0.74);
+    I = max(I, (1.0 - smoothstep(w, w + 0.07, abs(g.y + 0.7))) * step(ag.x, 0.72));
+    I = max(I, (1.0 - smoothstep(w, w + 0.07, abs(g.y - 0.7))) * step(ag.x, 0.72));
+    I = max(I, (1.0 - smoothstep(w, w + 0.07, ag.y)) * step(ag.x, mix(0.4, 0.72, b1)));
+    float sideL = max(b3, 1.0 - b2), sideR = max(b2, b0);
+    I = max(I, sideR * (1.0 - smoothstep(w, w + 0.07, abs(g.x - 0.68))) * step(ag.y, 0.74));
+    I = max(I, sideL * (1.0 - smoothstep(w, w + 0.07, abs(g.x + 0.68))) * step(ag.y, mix(0.74, 0.36, b0)));
     a = I;
     if (a < 0.01) discard;
     col = mix(col, vec3(1.0), 0.35);

@@ -748,23 +748,23 @@ export class FxSystem implements IFx {
       _p.crossVectors(_t1, _t2);
       if (color === EL_FIRE || color === EL_SHOCK || color === EL_CORRODE) mixColor(hexToColor(color, _c), WHITE, 0.55, _c4);
       else _c4.setRGB(1, 0.95, 0.85);
-      _c4.multiplyScalar(0.55);
+      _c4.multiplyScalar(0.85);
       const n = this.count(w * 5);
       const cone = pellet ? 0.22 : 0.1;
       for (let i = 0; i < n; i++) {
         const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random());
         const ca = Math.cos(a), sa = Math.sin(a);
         const sx = _t2.x * ca + _p.x * sa, sy = _t2.y * ca + _p.y * sa, sz = _t2.z * ca + _p.z * sa;
-        const off = rand(0.9, 1.7), spread = r * 0.14 * (0.6 + w), sp = rand(20, 32);
+        const off = rand(0.9, 1.7), spread = r * 0.14 * (0.6 + w), sp = rand(16, 26);
         this.sparks.spawn(
           from.x + _t1.x * off + sx * spread, from.y + _t1.y * off + sy * spread, from.z + _t1.z * off + sz * spread,
           (_t1.x + sx * r * cone) * sp, (_t1.y + sy * r * cone) * sp, (_t1.z + sz * r * cone) * sp,
-          _c4, rand(0.12, 0.22), 0.012 + 0.004 * w, 0,
+          _c4, rand(0.16, 0.28), 0.022 + 0.008 * w, 0,
         );
       }
     }
     if (this.time - this.kickAt >= 0.12 && (heavy || this.shotCount % 5 === 0)) {
-      const gx = from.x + _t1.x * 1.2, gz = from.z + _t1.z * 1.2, top = from.y + _t1.y * 1.2;
+      const gx = from.x + _t1.x * 1.6, gz = from.z + _t1.z * 1.6, top = from.y + _t1.y * 1.6;
       const gy = this.ctx.world.groundHeight(gx, gz, top + 0.1);
       const drop = top - gy;
       if (Number.isFinite(gy) && drop > -0.1 && drop < 2.6) {
@@ -775,14 +775,14 @@ export class FxSystem implements IFx {
         const fl = Math.hypot(_t1.x, _t1.z) || 1;
         const fx = _t1.x / fl, fz = _t1.z / fl;
         hexToColor(DUST, _c2);
-        const puffs = this.count(Math.min(5, 1 + 2 * k));
+        const puffs = this.count(Math.min(3, 1 + 1.4 * k));
         for (let i = 0; i < puffs; i++) {
           const sp = rand(1.2, 3.2) * Math.sqrt(k);
           const shade = rand(0.85, 1.15);
           _c3.setRGB(_c2.r * shade, _c2.g * shade, _c2.b * shade);
           this.smoke.spawn(
             STYLE_DUST, gx + jitter(0.3), gy + 0.06, gz + jitter(0.3), fx * sp + jitter(0.8), rand(0.5, 1.4), fz * sp + jitter(0.8),
-            _c3, rand(0.35, 0.6) * Math.sqrt(k), rand(0.6, 1),
+            _c3, rand(0.24, 0.4) * Math.sqrt(k), rand(0.5, 0.85),
           );
         }
         hexToColor(CHUNK_DARK, _c3);
@@ -901,17 +901,18 @@ export class FxSystem implements IFx {
         this.stats.arrived++;
         continue;
       } else {
-        // 吸力随距离衰减，带一点绕竖直轴的切向：盘着进去；越近越收，别绕着目标转圈
-        const g = (o.pull * dt) / (1 + r * 0.12) / r;
-        o.vx = o.vx * slow + (dx + dz * o.swirl) * g;
-        o.vy = o.vy * slow + dy * g;
-        o.vz = o.vz * slow + (dz - dx * o.swirl) * g;
-        if (r < 1.6) {
-          const sp = Math.sqrt(o.vx * o.vx + o.vy * o.vy + o.vz * o.vz), k = Math.min(1, dt * 9);
-          o.vx += ((dx / r) * sp - o.vx) * k;
-          o.vy += ((dy / r) * sp - o.vy) * k;
-          o.vz += ((dz / r) * sp - o.vz) * k;
-        }
+        // 吸力随距离衰减；切向（绕竖直轴）只在头 0.45 秒有、之后收掉，横向速度持续被阻尼掉：
+        // 先盘一小段弧，然后直奔目标（切向一直加的话会绕着目标转圈、永远到不了）
+        const ux = dx / r, uy = dy / r, uz = dz / r;
+        const sw = o.swirl * Math.max(0, 1 - (o.age - o.hang) / 0.45);
+        const acc = (o.pull / (1 + r * 0.12)) * dt;
+        o.vx = o.vx * slow + (ux + uz * sw) * acc;
+        o.vy = o.vy * slow + uy * acc;
+        o.vz = o.vz * slow + (uz - ux * sw) * acc;
+        const along = o.vx * ux + o.vy * uy + o.vz * uz, keep = Math.exp(-5 * dt);
+        o.vx = ux * along + (o.vx - ux * along) * keep;
+        o.vy = uy * along + (o.vy - uy * along) * keep;
+        o.vz = uz * along + (o.vz - uz * along) * keep;
       }
       o.x += o.vx * dt; o.y += o.vy * dt; o.z += o.vz * dt;
       live++;

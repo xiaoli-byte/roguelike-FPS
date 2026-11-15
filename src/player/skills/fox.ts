@@ -32,7 +32,7 @@ const FOXFIRE_RANGE = 45;
 
 const EMBER_BONUS = 0.2;
 /** 烙在地上的法印：比火色暗、偏红（是烧过的痕，不是光源） */
-const BRAND_COLOR = 0xff5c14;
+const BRAND_COLOR = 0xd9480f;
 
 const _pos = new THREE.Vector3();
 const _vel = new THREE.Vector3();
@@ -96,7 +96,7 @@ function grenadeImpactFx(ctx: GameContext, point: THREE.Vector3, r: number): voi
   if (nearGround) {
     _c.y = gy + 0.08;
     spawnGroundCrack(ctx, _c, r * 0.55, SKILL_COLORS.fire, 1.4);
-    extras?.seal(_c, null, r * 0.6, BRAND_COLOR, { write: 0.14, hold: 0.5, fade: 1.9, sides: 6, spin: 0.25, gain: 1.5 });
+    extras?.seal(_c, null, r * 0.6, BRAND_COLOR, { write: 0.14, hold: 0.3, fade: 1.6, sides: 6, spin: 0.25, gain: 0.8 });
   }
   ctx.fx.ring(_c, r, SKILL_COLORS.fire, 0.4);
   ctx.audio.play('skill_fire', { position: point, volume: 0.9 });
@@ -325,7 +325,7 @@ const nineTails: HeroSkillDef = {
     // 蓄：脚下一枚九边法印 0.32 秒写出、跟着人走；四周的火星盘旋着向身上收拢
     const extras = fxExtras(ctx);
     if (extras) {
-      foxSeal = extras.seal(_c, null, 1.5, SKILL_COLORS.fire, { write: 0.32, hold: -1, fade: 0.45, sides: 9, spin: 0.5, gain: 1.8, follow: p.position });
+      foxSeal = extras.seal(_c, null, 1.5, SKILL_COLORS.fire, { write: 0.32, hold: -1, fade: 0.45, sides: 9, spin: 0.5, gain: 1.1, follow: p.position });
       extras.gather(_c, SKILL_COLORS.ember, 16, 2.6, p.position, 1);
     }
     ctx.fx.ring(_c, 3.2, SKILL_COLORS.fire, 0.45);
