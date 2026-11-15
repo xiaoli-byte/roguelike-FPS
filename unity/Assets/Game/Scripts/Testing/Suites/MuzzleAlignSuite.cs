@@ -166,6 +166,9 @@ namespace Spiritfire.Game.Testing
             foreach (var ring in RingSystems)
                 if (sizes.TryGetValue(ring, out float s) && s > MaxRingRatio * barrel)
                     Fail($"{weaponId}：枪口光环 {ring} 包围盒最大 {s * 100:F1} cm，是枪管口的 {s / barrel:F1} 倍（> {MaxRingRatio} 倍）");
+            foreach (var flame in FlameSystems)
+                if (!sizes.TryGetValue(flame, out float s) || s < MinFlameRatio * barrel)
+                    Fail($"{weaponId}：枪口火焰 / 星芒 {flame} 最大只有 {(sizes.TryGetValue(flame, out float f) ? f * 100 : 0):F1} cm，不到枪管口的 {MinFlameRatio} 倍（被缩没了）");
             sizes.Clear();
             Line($"{weaponId}：开火 24 帧内 枪管口后坐位移 {tipTravel * 100:F1} cm，挂点位移 {anchorTravel * 100:F1} cm，挂点相对枪管口最多漂 {follow * 100:F1} cm，射向与枪管夹角最大 {maxAngle:F1}°");
             if (restRel.magnitude > MaxRestOffset) Fail($"{weaponId}：枪口特效挂点离枪管口 {restRel.magnitude * 100:F1} cm（> {MaxRestOffset * 100:F0} cm）");
@@ -174,14 +177,16 @@ namespace Spiritfire.Game.Testing
             if (flashAhead < MinFlashAhead) Fail($"{weaponId}：跟枪的火光没有在枪口前方（最靠前的子系统只在前 {flashAhead * 100:F1} cm < {MinFlashAhead * 100:F0} cm）");
             yield return new WaitForSeconds(0.6f);
 
-            // 再开一枪，在星芒长到最大的时刻（开火后约 0.08 s）拍一张，看射线 / 光晕的大小（第 2 帧时它们还没长开）
+            // 再开一枪，在火焰本体（kuosan，只活 0.1 s）出来、开火后至少 0.025 s 的第一帧拍一张，看火焰 / 星芒 / 光晕的大小
             int peakBefore = original.fireCount;
             wc.testFire = true;
             start = Time.time;
             while (original.fireCount == peakBefore && Time.time - start < 3f) yield return null;
             wc.testFire = false;
             float firedAt = Time.time;
-            while (Time.time - firedAt < 0.08f) yield return null;
+            var flameSystem = original.LastMuzzleFx ? original.LastMuzzleFx.GetComponentsInChildren<ParticleSystem>().FirstOrDefault(p => p.name == "kuosan") : null;
+            while (Time.time - firedAt < 0.15f && (Time.time - firedAt < 0.025f || (flameSystem && flameSystem.particleCount == 0))) yield return null;
+            Line($"{weaponId}：火焰截图在开火后 {(Time.time - firedAt) * 1000:F0} ms，火焰粒子 {(flameSystem ? flameSystem.particleCount : -1)}");
             Shot(rig.cam, $"align_{weaponId}_peak");
             yield return new WaitForSeconds(0.6f);
         }
@@ -314,8 +319,12 @@ namespace Spiritfire.Game.Testing
         }
 
         readonly Dictionary<string, float> sizes = new();
-        // 2026-11-08 封顶前包围盒实测：ring_01 (2) 是枪管口 16–20 倍、ring_01 (1) 8–11 倍、kuosan 13–22 倍
-        static readonly string[] RingSystems = { "ring_01 (1)", "ring_01 (2)", "kuosan" };
+        // 光环按贴图认：ray 是圆环、ray (2) 是成环的拖尾网格、ring_01 是波纹旋环（kuosan 是锯齿火焰本体，不算环）。
+        // 2026-11-08 封顶前包围盒实测：ring_01 (2) 是枪管口 16–20 倍、ring_01 (1) 8–11 倍、ray / ray (2) 10–11 倍
+        static readonly string[] RingSystems = { "ray", "ray (2)", "ring_01 (1)", "ring_01 (2)" };
+        // 火焰本体 / 星芒不能被缩没（11-08 曾把 kuosan 当成环缩到 1.5 倍，左轮的星芒没了）
+        static readonly string[] FlameSystems = { "kuosan", "baodian" };
+        const float MinFlameRatio = 5f;
         // 包围盒偏保守，左轮开火动画还把枪沿枪管拉长 1.25 倍，所以判定线放在 4 倍（封顶后实测 1.6–3.7 倍）
         const float MaxRingRatio = 4f;
 
