@@ -1,13 +1,14 @@
 import * as THREE from 'three';
+import { EventBus } from '../core/EventBus';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { Atmosphere, atmosphereForChapter } from '../world/Atmosphere';
 
 /**
  * 空气透视检视页（atmosphere-lab.html）：同一个机位开 / 关对比。
  *   ?map=1-1      读 Unity 导出的场景（public/assets/unity-levels/scenes）；不带 map 是一片程序生成的层叠山谷
- *   ?atmo=0       关掉空气透视（只剩场景原有的雾）；?cloud=0 只关云影
+ *   ?atmosphere=0 关掉空气透视（只剩场景原有的雾；Unity 场景的环境也认这个参数，线性雾起点不会被往后推）；?cloud=0 只关云影
  *   ?view=sun|cross|vista|spawn   机位：朝太阳 / 侧对太阳 / 升到 34 m 俯瞰 / 出生朝向
- *   ?base=12      低雾基准高度（默认：出生点脚下往下 2 m）；?t=30 云影推进到第几秒；?still 只出一帧
+ *   ?base=12      低雾基准高度（默认：Unity 场景按图自动算的低处，层叠山谷是出生点脚下 2 m）；?t=30 云影推进到第几秒；?still 只出一帧
  * 操作：点画面锁定鼠标转视角，WASD 飞行（Shift 加速），F 开关空气透视，C 开关云影。
  */
 const params = new URLSearchParams(location.search);
@@ -29,7 +30,7 @@ const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 4
 camera.rotation.order = 'YXZ';
 
 const mapId = params.get('map');
-let chapter = 1, spawn = new THREE.Vector3(0, 0, 40), spawnYaw = 0, updateScene: (dt: number, t: number) => void = () => {};
+let chapter = 1, spawn = new THREE.Vector3(0, 0, 40), spawnYaw = 0, sceneBaseY: number | null = null, updateScene: (dt: number, t: number) => void = () => {};
 if (mapId) {
   // Unity 场景的网页端读取模块还没入库：用 glob 按需载入（文件不在时是空表），检视页不对它们形成编译期依赖
   const modules = import.meta.glob<any>(['../world/UnitySceneView.ts', '../world/UnityLevelLibrary.ts', '../world/Collision.ts']);
@@ -38,12 +39,18 @@ if (mapId) {
     if (!loader) throw new Error(`缺少 ${path}：Unity 场景的网页端读取模块不在这个工作区`);
     return loader();
   };
-  const [{ UnitySceneView }, { UnityLevelLibrary }, { CollisionWorld }] = await Promise.all([load('../world/UnitySceneView.ts'), load('../world/UnityLevelLibrary.ts'), load('../world/Collision.ts')]);
+  const [{ UnitySceneView, unityAtmosphereBaseY }, { UnityLevelLibrary }, { CollisionWorld }] = await Promise.all([load('../world/UnitySceneView.ts'), load('../world/UnityLevelLibrary.ts'), load('../world/Collision.ts')]);
   const response = await fetch(`/assets/unity-levels/scenes/${mapId}.json`);
   if (!response.ok) throw new Error(`Unity 场景 ${mapId} 尚未导出`);
   const doc = await response.json();
   await UnityLevelLibrary.preload(doc, (loaded: number, total: number) => { status.textContent = `${mapId} · 读取 ${loaded}/${total}`; });
-  const view = new UnitySceneView({ scene, camera, world: new CollisionWorld(), settings: { quality: 'high' }, renderer }, doc, { environment: true, groundCover: true, colliders: false });
+  // 平台、机关、水体会读游戏上下文（玩家、事件、时间、提示、特效、随机数）：检视页没有游戏，给一组不做事的桩，玩家放到地底下不触发任何东西
+  const stubs = {
+    player: { position: new THREE.Vector3(0, -1000, 0), radius: 0.4, onGround: true },
+    events: new EventBus(), time: { now: 0 }, stage: {}, ui: { toast: () => {} }, fx: { ring: () => {} }, rng: { next: () => Math.random() },
+  };
+  const view = new UnitySceneView({ scene, camera, world: new CollisionWorld(), settings: { quality: 'high' }, renderer, ...stubs }, doc, { environment: true, groundCover: true, colliders: false });
+  if (typeof unityAtmosphereBaseY === 'function') sceneBaseY = unityAtmosphereBaseY(doc);
   scene.add(view.group);
   await view.ready;
   chapter = Number(mapId[0]) || 1;
@@ -66,8 +73,8 @@ const profile = atmosphereForChapter(chapter);
 // 调参：网址里带上字段名就覆盖默认值（?mistDensity=0.004&cloudShadow=0.5&cloudTile=600）
 for (const key of Object.keys(profile) as (keyof typeof profile)[]) if (params.has(key)) profile[key] = Number(params.get(key));
 const cloudShadow = profile.cloudShadow;
-let on = params.get('atmo') !== '0', clouds = params.get('cloud') !== '0';
-const baseY = params.has('base') ? Number(params.get('base')) : spawn.y - 2;
+let on = params.get('atmosphere') !== '0' && params.get('atmo') !== '0', clouds = params.get('cloud') !== '0';
+const baseY = params.has('base') ? Number(params.get('base')) : sceneBaseY ?? spawn.y - 2;
 const apply = (): void => {
   if (on) {
     profile.cloudShadow = clouds ? cloudShadow : 0;
