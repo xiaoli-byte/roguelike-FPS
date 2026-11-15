@@ -73,6 +73,7 @@ export abstract class EnemyBase implements IEnemy {
   stunTime = 0;
   slowMult = 1;
   damageTakenMult = 1;
+  weakpointDamageMult = 1;
   knockbackResist: number;
 
   /** 攻击伤害倍率（等级与精英加成），子类攻击时乘上 */

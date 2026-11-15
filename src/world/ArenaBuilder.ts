@@ -4,7 +4,7 @@
  *  - 半球光 + 平行光（阴影相机按竞技场包围盒精确拟合）+ 数量恒定（LIGHT_COUNT）的闪烁点光源；
  *  - 雾、天空穹顶、远山、环境粒子、地面法阵、火盆火焰（实例化网格动画）。
  * 所有本关创建的几何体 / 材质 / 纹理都登记在 disposables，dispose() 时统一释放。
- * 另提供 addCollision：把布局盒子写入碰撞世界（地面一整块大盒子，顶面 y = floorY）。
+ * 另提供 addCollision：把布局盒子写入碰撞世界（无 Unity 高度场时，地面使用整块大盒子，顶面 y = floorY）。
  */
 import * as THREE from 'three';
 import { Rng } from '../core/Rng';
@@ -41,8 +41,11 @@ interface Disposable { dispose(): void }
 /** 布局 → 碰撞世界 */
 export function addCollision(world: CollisionWorld, L: LevelLayout): void {
   const pad = L.wallThickness + 12;
-  world.addBox(L.minX - pad, L.floorY - 4, L.minZ - pad, L.maxX + pad, L.floorY, L.maxZ + pad, 'floor');
-  for (const b of L.boxes) world.addBox(b.minX, b.minY, b.minZ, b.maxX, b.maxY, b.maxZ, b.tag, b.noRaycast);
+  if (!L.unityHeightfield) world.addBox(L.minX - pad, L.floorY - 4, L.minZ - pad, L.maxX + pad, L.floorY, L.maxZ + pad, 'floor');
+  for (const b of L.boxes) {
+    if (b.obb) world.addObb(new THREE.Vector3().fromArray(b.obb.center), new THREE.Vector3().fromArray(b.obb.size), new THREE.Quaternion().fromArray(b.obb.rotation), b.tag, b.noRaycast);
+    else world.addBox(b.minX, b.minY, b.minZ, b.maxX, b.maxY, b.maxZ, b.tag, b.noRaycast);
+  }
 }
 
 // 火焰几何（模块级缓存，永不释放）

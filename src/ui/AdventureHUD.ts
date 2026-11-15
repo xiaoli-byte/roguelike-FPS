@@ -43,6 +43,8 @@ export class AdventureHUD {
   private offsetX = 0;
   private offsetZ = 0;
   private dpr = 1;
+  private mapImage: HTMLImageElement | null = null;
+  private mapImageUrl = '';
 
   constructor(parent: HTMLElement, private readonly ctx: GameContext) {
     this.root = h('div', 'gf-adventure gf-hud__corner', parent);
@@ -77,6 +79,8 @@ export class AdventureHUD {
     this.shownDiscoveries = '';
     this.shownDirection = Infinity;
     this.shownZone = '';
+    this.mapImage = null;
+    this.mapImageUrl = '';
     this.mapCtx?.clearRect(0, 0, MAP_W, MAP_H);
     this.terrainCtx?.clearRect(0, 0, MAP_W, MAP_H);
   }
@@ -163,13 +167,27 @@ export class AdventureHUD {
     }
     this.mapCtx?.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     this.terrainCtx?.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-    this.scale = Math.min((MAP_W - MAP_PAD * 2) / Math.max(1, arena.maxX - arena.minX),
-      (MAP_H - MAP_PAD * 2) / Math.max(1, arena.maxZ - arena.minZ));
-    this.offsetX = (MAP_W - (arena.maxX - arena.minX) * this.scale) / 2 - arena.minX * this.scale;
-    this.offsetZ = (MAP_H - (arena.maxZ - arena.minZ) * this.scale) / 2 - arena.minZ * this.scale;
+    const area = info.mapImage?.area ?? [arena.minX, arena.maxX, arena.minZ, arena.maxZ];
+    const [minX, maxX, minZ, maxZ] = area;
+    this.scale = Math.min((MAP_W - MAP_PAD * 2) / Math.max(1, maxX - minX),
+      (MAP_H - MAP_PAD * 2) / Math.max(1, maxZ - minZ));
+    this.offsetX = (MAP_W - (maxX - minX) * this.scale) / 2 - minX * this.scale;
+    this.offsetZ = (MAP_H - (maxZ - minZ) * this.scale) / 2 - minZ * this.scale;
     const c = this.terrainCtx;
     if (!c) return;
     c.clearRect(0, 0, MAP_W, MAP_H);
+    if (info.mapImage) {
+      if (this.mapImageUrl !== info.mapImage.url) {
+        this.mapImageUrl = info.mapImage.url;
+        this.mapImage = new Image();
+        this.mapImage.onload = () => {
+          const context = this.terrainCtx;
+          if (context && this.mapImage) context.drawImage(this.mapImage, 0, 0, MAP_W, MAP_H);
+        };
+        this.mapImage.src = info.mapImage.url;
+      } else if (this.mapImage?.complete) c.drawImage(this.mapImage, 0, 0, MAP_W, MAP_H);
+      return;
+    }
     for (const rect of info.floorRects ?? []) {
       c.fillStyle = 'rgba(200, 215, 225, .2)';
       c.fillRect(this.x(rect.minX), this.z(rect.minZ), (rect.maxX-rect.minX)*this.scale, (rect.maxZ-rect.minZ)*this.scale);

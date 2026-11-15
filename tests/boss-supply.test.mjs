@@ -30,7 +30,7 @@ const { ShopManager } = await import(await ts('../src/progression/loot/Shop.ts',
   './physics': await ts('../src/progression/loot/physics.ts'), './PriceTag': await ts('../src/progression/loot/PriceTag.ts'),
   './weaponPrompt': await ts('../src/progression/loot/weaponPrompt.ts', { '../../core/types': typesUrl }),
 }));
-const { CollisionWorld } = await import(await ts('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await ts('../src/world/Collision.ts', { './UnityTriangles': await ts('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await ts('../src/world/UnityHeightSampling.ts') }));
 const navUrl = await ts('../src/world/NavGrid.ts', { '../core/math': await ts('../src/core/math.ts') });
 const { NavGrid } = await import(navUrl);
 const waveUrl = await ts('../src/world/WaveRunner.ts', { '../enemies/Registry': data(`export function getEnemyDef(id){const boss=id.startsWith('boss_');return {isBoss:boss,radius:boss?2:.6,height:boss?4:1.8};}`) });
@@ -41,10 +41,15 @@ const { StageDirector } = await import(await ts('../src/world/StageDirector.ts',
   './ArenaBuilder': data(`import * as THREE from '${threeUrl}'; export function addCollision(world,L){for(const b of L.boxes)world.addBox(b.minX,b.minY,b.minZ,b.maxX,b.maxY,b.maxZ,b.tag,b.noRaycast);} export class ArenaView {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
   './LevelGen': data('export function generateLevel(){throw new Error("Unexpected legacy map");}'),
   './Lava': await ts('../src/world/Lava.ts'),
-  './NavGrid': navUrl, './Portal': data('export class Portal{constructor(ctx){ctx.portals++;}update(){}dispose(){}}'),
+  './NavGrid': navUrl, './UnityNavigation': data('export class UnityNavigation {}'),
+  './Portal': data('export class Portal{constructor(ctx){ctx.portals++;}update(){}dispose(){}}'),
   './Themes': data('export function themeDef(id){return {id,name:id};} export function redesignThemeDef(id){return {id,name:id};}'), './WaveRunner': waveUrl,
   './AdventureBeacon': data('export class AdventureBeacon{constructor(){throw new Error("Duplicate altar");}}'),
   './WhiteboxMode': data('export function usesAuthoredLayout(){return true;} export function usesRedesignLayout(){return globalThis.__redesign === true;}'), './WhiteboxGen': genUrl, './WhiteboxEncounters': fightUrl,
+  './UnitySceneData': data('export const UNITY_SCENE_DATA = {};'),
+  './UnitySceneAdapter': data('export function unityLayout(){} export function unityFights(){return [];}'),
+  './UnitySceneView': data(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group(); artInspectionViews=[]; artBrief=''; update(){} dispose(){this.group.removeFromParent();}}`),
+  './UnityLevelLibrary': data('export const UnityLevelLibrary={scene:()=>null}; export function unityHeights(){return new Float32Array();} export function unityPoint(){return {};} export async function prepareUnityScene(){}'),
 }));
 globalThis.document = { createElement: () => ({ width: 0, height: 0, getContext: () => null }) };
 const nodeFor = plan => ({ chapter: ['desert', 'frost', 'inferno'].indexOf(plan.chapter), index: plan.index - 1,

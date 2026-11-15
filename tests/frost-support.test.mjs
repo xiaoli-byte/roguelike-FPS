@@ -41,7 +41,7 @@ const shared = {
 const foxUrl = await tsModule('../src/enemies/types/FoxWitch.ts', shared);
 const fox = await import(foxUrl);
 const jelly = await import(await tsModule('../src/enemies/types/LanternJelly.ts', { ...shared, './FoxWitch': foxUrl }));
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { NativePose } = await import(await tsModule('../src/assets/NativeRig.ts', {
   'three/addons/utils/SkeletonUtils.js': new URL('../node_modules/three/examples/jsm/utils/SkeletonUtils.js', import.meta.url).href,
 }));

@@ -48,7 +48,7 @@ const { XuanGui, XUANGUI_DEF } = await import(await tsModule('../src/enemies/typ
 const { FrostCrab, FROST_CRAB_DEF } = await import(await tsModule('../src/enemies/types/FrostCrab.ts', deps));
 const { attackDirector } = await import(tokensUrl);
 const { TaskRunner } = await import(await tsModule('../src/core/Tasks.ts'));
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { NavGrid } = await import(await tsModule('../src/world/NavGrid.ts', { '../core/math': mathUrl }));
 
 const DT = 1 / 60;

@@ -39,7 +39,7 @@ const bodyDefs = Object.fromEntries(await Promise.all([
 const registryUrl = moduleUrl(`const defs=${JSON.stringify(bodyDefs)}; export function getEnemyDef(id){return defs[id];}`);
 const waveUrl = await ts('../src/world/WaveRunner.ts', { '../enemies/Registry': registryUrl });
 const { WaveRunner } = await import(waveUrl);
-const { CollisionWorld } = await import(await ts('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await ts('../src/world/Collision.ts', { './UnityTriangles': await ts('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await ts('../src/world/UnityHeightSampling.ts') }));
 const navUrl = await ts('../src/world/NavGrid.ts', { '../core/math': await ts('../src/core/math.ts') });
 const { NavGrid } = await import(navUrl);
 const directorUrl = await ts('../src/world/StageDirector.ts', {
@@ -50,6 +50,7 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
   './ArenaBuilder': moduleUrl(`import * as THREE from '${threeUrl}'; export function addCollision(world,L){for(const b of L.boxes)world.addBox(b.minX,b.minY,b.minZ,b.maxX,b.maxY,b.maxZ,b.tag,b.noRaycast);} export class ArenaView {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
   './LevelGen': moduleUrl('export function generateLevel(){throw new Error("Unexpected legacy map");}'),
   './NavGrid': navUrl,
+  './UnityNavigation': moduleUrl('export class UnityNavigation {}'),
   './Lava': await ts('../src/world/Lava.ts'),
   './Portal': moduleUrl('export class Portal{constructor(ctx,node,position){ctx.portals.push({node,position});}update(){}dispose(){}}'),
   './Themes': moduleUrl('export function themeDef(id){return {id,name:id};} export function redesignThemeDef(id){return {id,name:id};}'),
@@ -58,13 +59,19 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
   './WhiteboxMode': moduleUrl('export function usesAuthoredLayout(){return true;} export function usesRedesignLayout(){return globalThis.__redesign === true;}'),
   './WhiteboxGen': genUrl,
   './WhiteboxEncounters': encountersUrl,
+  './UnitySceneData': moduleUrl('export const UNITY_SCENE_DATA = {};'),
+  './UnitySceneAdapter': moduleUrl('export function unityLayout(){} export function unityFights(){return [];}'),
+  './UnitySceneView': moduleUrl(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group(); artInspectionViews=[]; artBrief=''; update(){} dispose(){this.group.removeFromParent();}}`),
+  './UnityLevelLibrary': moduleUrl('export const UnityLevelLibrary={scene:()=>null}; export function unityHeights(){return new Float32Array();} export function unityPoint(){return {};} export async function prepareUnityScene(){}'),
 });
 const { StageDirector } = await import(directorUrl);
+const legacyStages = [0, 1, 2].flatMap(chapter => [0, 1, 2, 3, 4].map(index => ({ chapter, index, type: index === 4 ? 'boss' : 'combat', reward: index === 4 ? 'weapon' : 'scroll', title: '旧测试关', available: true })));
 const { RunPlanner } = await import(await ts('../src/progression/RunPlan.ts', {
   '../core/types': await ts('../src/core/types.ts'),
   '../world/StageDesign': moduleUrl('export function getStageDesign(){return {title:"主线"};}'),
   '../world/WhiteboxMode': moduleUrl('export function usesAuthoredLayout(){return true;} export function usesRedesignLayout(){return globalThis.__redesign === true;}'),
   '../world/WhiteboxGen': genUrl,
+  '../world/UnityStages': moduleUrl(`const stages=${JSON.stringify(legacyStages)}; export const UNITY_STAGES=stages; export const UNITY_FINAL_STAGE=stages.at(-1);`),
 }));
 const chapter = theme => ['desert', 'frost', 'inferno'].indexOf(theme);
 const nodeFor = (plan, type = plan.index === 5 ? 'boss' : 'combat') => ({ chapter: chapter(plan.chapter), index: plan.index - 1, type, theme: plan.chapter, reward: 'coins' });
@@ -369,15 +376,15 @@ test('whitebox director exposes a blocked station and clears the hint as soon as
   f.advance(2); assert.equal(f.spawns.length, total(fight)); f.director.unload();
 });
 
-test('a broken authored plan falls back to the procedural map instead of throwing through the load', () => {
+test('a broken authored plan falls back to the procedural map instead of throwing through the load', async () => {
   const plan = WHITEBOX_PLANS.find(p => p.id === 'desert-2'), roster = WHITEBOX_SQUADS[plan.id], f = context();
   delete WHITEBOX_SQUADS[plan.id];
   try {
     // This fixture stubs the procedural generator to throw, so reaching it proves the fallback ran.
-    assert.throws(() => f.director.load(nodeFor(plan)), /Unexpected legacy map/);
+    await assert.rejects(f.director.load(nodeFor(plan)), /Unexpected legacy map/);
   } finally { WHITEBOX_SQUADS[plan.id] = roster; }
   f.director.unload();
-  f.director.load(nodeFor(plan)); assert.equal(f.director.whitebox.planId, plan.id, 'restored plan loads normally');
+  await f.director.load(nodeFor(plan)); assert.equal(f.director.whitebox.planId, plan.id, 'restored plan loads normally');
   f.director.unload();
 });
 

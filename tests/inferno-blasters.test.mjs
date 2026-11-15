@@ -72,7 +72,7 @@ const { attackDirector } = await import(tokensUrl);
 const { Stats } = await import(statsUrl);
 const { TaskRunner } = await import(tasksUrl);
 const { NativePose } = await import(nativeRigUrl);
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { NavGrid } = await import(await tsModule('../src/world/NavGrid.ts', { '../core/math': mathUrl }));
 
 const ASSET = { firecracker: 'SK_Enemy_Firecracker', fire_crow: 'SK_Enemy_FireCrow' };

@@ -54,7 +54,7 @@ const { Shaman } = await import(await tsModule('../src/enemies/types/Shaman.ts',
 
 const typesUrl = await tsModule('../src/core/types.ts');
 const enemyBaseUrl = await tsModule('../src/enemies/EnemyBase.ts', { '../core/types': typesUrl, '../core/math': mathUrl });
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { NavGrid } = await import(await tsModule('../src/world/NavGrid.ts', { '../core/math': mathUrl }));
 // 移动/接触回归使用生产 EnemyBase 的 update、积分、导航与近战判定，仅隔离渲染/攻击导演。
 const movementBaseUrl = dataModule(`

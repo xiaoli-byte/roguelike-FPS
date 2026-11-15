@@ -33,7 +33,7 @@ const { Fuzhu, FUZHU_DEF } = await import(await tsModule('../src/enemies/types/F
 const { IceWhale, ICE_WHALE_DEF } = await import(await tsModule('../src/enemies/types/IceWhale.ts', enemyImports));
 const fx = await import(fxUrl);
 const { attackDirector } = await import(tokensUrl);
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { NavGrid } = await import(await tsModule('../src/world/NavGrid.ts', { '../core/math': mathUrl }));
 const { TaskRunner } = await import(await tsModule('../src/core/Tasks.ts'));
 

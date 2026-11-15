@@ -11,6 +11,7 @@ import { FIRE_RAT_DEF, FireRat } from './types/FireRat';
 import { GRUNT_DEF, Grunt } from './types/Grunt';
 import { JERBOA_BLADE_DEF, JerboaBlade } from './types/JerboaBlade';
 import { SCORPION_ARCHER_DEF, ScorpionArcher } from './types/ScorpionArcher';
+import { SAND_WRAITH_DEF, SandWraith } from './types/SandWraith';
 import { TOMB_BEAST_DEF, TombBeast } from './types/TombBeast';
 import { MARKSMAN_DEF, Marksman } from './types/Marksman';
 import { MIRAGE_TOAD_DECOY_DEF, MIRAGE_TOAD_DEF, MirageToad, MirageToadDecoy } from './types/MirageToad';
@@ -19,6 +20,7 @@ import { SHAMAN_DEF, Shaman } from './types/Shaman';
 import { WISP_DEF, Wisp } from './types/Wisp';
 import { registerFrostEnemies } from './frost';
 import { registerInfernoEnemies } from './inferno';
+import { registerPlateauEnemies } from './plateau';
 
 /** 普通敌人 id（与 DESIGN.md 第 8 节一致） */
 export const STANDARD_ENEMY_IDS = ['grunt', 'archer', 'brute', 'bomber', 'wisp', 'shaman', 'mortar', 'marksman'] as const;
@@ -42,6 +44,7 @@ export function registerStandardEnemies(): void {
   registerEnemy(MIRAGE_TOAD_DECOY_DEF, (ctx, opts) => new MirageToadDecoy(ctx, opts));
   registerEnemy(JERBOA_BLADE_DEF, (ctx, opts) => new JerboaBlade(ctx, opts));
   registerEnemy(SCORPION_ARCHER_DEF, (ctx, opts) => new ScorpionArcher(ctx, opts));
+  registerEnemy(SAND_WRAITH_DEF, (ctx, opts) => new SandWraith(ctx, opts));
   registerEnemy(FIRE_RAT_DEF, (ctx, opts) => new FireRat(ctx, opts));
   // 坦克位：三彩镇墓兽（2026-10-07 替换驼碑力士）
   registerEnemy(TOMB_BEAST_DEF, (ctx, opts) => new TombBeast(ctx, opts));
@@ -51,4 +54,5 @@ export function registerStandardEnemies(): void {
   registerFrostEnemies();
   // 第三章新阵容：分组注册（src/enemies/inferno/）
   registerInfernoEnemies();
+  registerPlateauEnemies();
 }

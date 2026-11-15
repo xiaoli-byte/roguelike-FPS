@@ -180,9 +180,9 @@ export type StageType = 'combat' | 'elite' | 'treasure' | 'shop' | 'boss';
 export type RewardType = 'scroll' | 'weapon' | 'coins' | 'heal' | 'upgrade' | 'none';
 export type ThemeId = 'desert' | 'frost' | 'inferno';
 
-export const CHAPTER_COUNT = 3;
+export const CHAPTER_COUNT = 4;
 /** 每章关卡数（最后一关是 Boss） */
-export const STAGES_PER_CHAPTER = 5;
+export const STAGES_PER_CHAPTER = 4;
 
 export interface StageNode {
   chapter: number;      // 0-based
@@ -251,6 +251,7 @@ export interface GameEvents {
   'enemy:spawned': { enemy: IEnemy };
   'enemy:damaged': { enemy: IEnemy; result: DamageResult };
   'enemy:killed': { enemy: IEnemy; result: DamageResult };
+  'enemy:bossPhase': { enemy: IEnemy; phase: number };
   'enemy:statusApplied': { enemy: IEnemy; status: StatusId; stacks: number };
   'enemy:shieldBroken': { enemy: IEnemy };
   'enemy:armorBroken': { enemy: IEnemy };
@@ -590,6 +591,7 @@ export interface IEnemy {
   slowMult: number;
   /** 受到伤害倍率（蚀化等写入），1 = 正常 */
   damageTakenMult: number;
+  weakpointDamageMult?: number;
   knockbackResist: number;
   /**
    * 不可选中（例如 Boss 登场、阶段转换）：EnemyManager 的 raycast/queryRadius/nearest 跳过它，
@@ -804,6 +806,8 @@ export interface AdventureInfo {
   phase: 'explore' | 'battle' | 'cleared';
   title?: string;
   routeHint?: string;
+  /** Unity LevelMeta map image and its world XZ bounds [minX, maxX, minZ, maxZ]. */
+  mapImage?: { url: string; area: [number, number, number, number] };
   /** Whitebox room-entry fights do not require activating an altar. */
   automaticEncounters?: boolean;
   /** An arrival is waiting for an unoccupied safe station, excluding normal telegraphs. */
@@ -839,7 +843,7 @@ export interface IStageDirector extends System {
   /** 波次总数；只有 Boss 一波的关卡为 0（HUD 不显示波次） */
   readonly waveCount: number;
   /** 生成并搭建关卡（几何、碰撞、导航、灯光、传送门、商店/宝箱、刷怪计划），并把玩家放到出生点 */
-  load(stage: StageNode): void;
+  load(stage: StageNode): Promise<void>;
   /** 移除关卡几何 */
   unload(): void;
 }

@@ -517,7 +517,7 @@ export class JerboaBlade extends StandardEnemy {
   private leapSpeed = 0;
 
   /** 跳着走时脸朝前进方向（跳鼠不会侧着蹦）；贴近或几乎不动时才转向玩家 */
-  private faceTravel(dt: number): void {
+  protected faceTravel(dt: number): void {
     if (Math.hypot(this.velocity.x, this.velocity.z) > 2 && this.distToPlayerXZ() > 2.4) this.faceMovement(10, dt);
     else this.facePlayer(10, dt);
   }
@@ -572,7 +572,7 @@ export class JerboaBlade extends StandardEnemy {
   }
 
   /** 交叉斩：两道斜刀光交成 X */
-  private crossSlashFx(): void {
+  protected crossSlashFx(): void {
     const k = this.sizeScale;
     _arc.set(this.position.x, this.position.y + 0.55 * k, this.position.z);
     for (const s of [1, -1] as const) {

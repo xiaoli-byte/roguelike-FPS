@@ -23,7 +23,7 @@ const bodyDefs = Object.fromEntries(await Promise.all([
   const scale = Number(source.match(/^\s*scale:\s*([\d.]+)/m)?.[1] ?? 1);
   return [id, { radius: Number(source.match(/radius:\s*([\d.]+)/)[1]) * scale, height: Number(source.match(/height:\s*([\d.]+)/)[1]) * scale }];
 })));
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const navUrl = await tsModule('../src/world/NavGrid.ts', { '../core/math': await tsModule('../src/core/math.ts') });
 const { NavGrid } = await import(navUrl);
 const stageDesignUrl = await tsModule('../src/world/StageDesign.ts');

@@ -27,7 +27,7 @@ const shopUrl = await ts('../src/progression/loot/Shop.ts', {
   './shopLayout': layoutUrl,
 });
 const { ShopManager } = await import(shopUrl);
-const { CollisionWorld } = await import(await ts('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await ts('../src/world/Collision.ts', { './UnityTriangles': await ts('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await ts('../src/world/UnityHeightSampling.ts') }));
 // PriceTag's real materials, texture ownership and sprite cleanup run; canvas painting is irrelevant here.
 globalThis.document = { createElement: () => ({ width: 0, height: 0, getContext: () => null }) };
 

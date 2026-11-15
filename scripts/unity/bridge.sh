@@ -107,7 +107,7 @@ case "$cmd" in
   petcompare) method=Spiritfire.Art.Editor.PetStyleCompare.BatchRun ;;
   fur) method=Spiritfire.Art.Editor.FurReview.BatchRun ;;
   furbench) method=Spiritfire.Art.Editor.FurBench.BatchRun ;;
-  level|levels|ui|fx|blade|menu|audio|gunfire|gunfirenative|gunfirearena|buildgunfire)
+  level|levels|ui|fx|blade|menu|audio|gunfire|gunfirenative|gunfirearena|buildgunfire|webexport|webpublish|webgameplay)
     # 和编辑器里走同一套命令分发（PipelineBridge.BatchRun），回应写 response-batch-<命令>.json
     batch=(-bridgeCommand "$cmd")
     for a in ${args[@]+"${args[@]}"}; do batch+=(-bridgeArg "$a"); done

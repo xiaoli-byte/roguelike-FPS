@@ -431,6 +431,7 @@ export class ProjectileSystem implements IProjectileSystem {
           _origin.addScaledVector(_wallN, 0.02);
           continue;
         }
+        if (p.owner === 'player') wh?.box.onHit?.(p.damage?.base ?? p.enemyDamage);
         const floorLike = _wallN.y > 0.7;
         if (p.canRoll && floorLike && p.gravity > 0 && -vn < ROLL_SPEED) {
           // 贴地滚动：去掉法向速度 + 摩擦

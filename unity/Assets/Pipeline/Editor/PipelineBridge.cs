@@ -158,6 +158,9 @@ namespace Spiritfire.Art.Editor
                 if (command == "gunfire") GunfireWeaponImport.Run();
                 if (command == "gunfirenative") GunfireOriginalImport.Run(args);
                 if (command == "buildgunfire") GunfirePlayerBuild.Run();
+                if (command == "webexport") WebSceneExporter.ExportAll();
+                if (command == "webpublish") WebSceneExporter.Publish();
+                if (command == "webgameplay") WebGameplayExporter.ExportAll();
                 if (all || command == "scenes") ShowcaseSceneBuilder.BuildAll();
                 if (all || command == "capture") ReviewCapture.CaptureAll();
                 if (all || command == "sheets") AnimReviewSheet.RenderAll();

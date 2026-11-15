@@ -192,7 +192,10 @@ export class Ballistics {
       dmgMult *= PIERCE_KEEP;
     }
     const k = shot.strength;
-    if (!stopped && wh) ctx.fx.impact(_wh.point, _wh.normal, color, def.impactSize * (0.6 + 0.4 * k));
+    if (!stopped && wh) {
+      wh.box.onHit?.(def.damage);
+      ctx.fx.impact(_wh.point, _wh.normal, color, def.impactSize * (0.6 + 0.4 * k));
+    }
     if (endDist > 1.2) {
       _end.copy(origin).addScaledVector(dir, endDist);
       ctx.fx.tracer(_muzzle, _end, color, def.tracerWidth * k);
@@ -326,6 +329,7 @@ export class Ballistics {
       out.enemy = null;
       out.headshot = false;
       if (wh) {
+        wh.box.onHit?.(R.damage);
         out.hitWall = true;
         out.point.copy(_wh.point);
         out.normal.copy(_wh.normal);

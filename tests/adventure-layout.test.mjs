@@ -21,7 +21,7 @@ const { generateAdventure } = await import(adventureUrl);
 const { rotateLayout, validateAndRepair, LIGHT_COUNT } = await import(checkUrl);
 const { Rng } = await import(await tsModule('../src/core/Rng.ts'));
 const { labelComponents, rasterizeBlocked, NAV_FOOT } = await import(navUrl);
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const libraryUrl = dataModule('export const AssetLibrary = { get: id => globalThis.__adventureTestAssets?.get(id) ?? null, preload: () => globalThis.__terrainPreload ?? Promise.resolve() };');
 const { AdventureTerrain, adventureRockMatrix } = await import(await tsModule('../src/world/AdventureTerrain.ts', {
   '../assets/AssetLibrary': libraryUrl, '../assets/ArtEnvironment': dataModule('export function applyArtEnvironment() {}'),

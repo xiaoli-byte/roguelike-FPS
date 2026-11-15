@@ -5,8 +5,12 @@ import { defineConfig } from 'vite';
 // unity/). Chokidar holds a handle on every folder it watches, and on Windows that blocks renaming the parent folder:
 // while `npm run dev` ran, Unity's package manager could not move a freshly extracted package into
 // unity/Library/PackageCache (EPERM), which made every -batchmode run exit 1.
+// Also out: the gunfire-reborn-replica symlink (a whole Unity project on another drive; chokidar follows symlinks),
+// Library/ and logfile/ (binary dumps), and the ~2 GB raw Unity scene export (public/assets/unity-levels.next/,
+// rewritten wholesale by every `bridge.sh webexport`). With those watched the server stopped answering any request.
 const repoRoot = fileURLToPath(new URL('.', import.meta.url)).replace(/\\/g, '/').toLowerCase();
-const unwatchedDirs = ['unity/', '.claude/'].map((dir) => repoRoot + dir);
+const unwatchedDirs = ['unity/', '.claude/', 'gunfire-reborn-replica/', 'library/', 'logfile/', 'public/assets/unity-levels.next/', 'tests/.cache/']
+  .map((dir) => repoRoot + dir);
 const isUnwatched = (path: string) => {
   const dir = path.replace(/\\/g, '/').toLowerCase() + '/';
   return unwatchedDirs.some((prefix) => dir.startsWith(prefix));
@@ -18,6 +22,6 @@ export default defineConfig(({ mode }) => ({
   server: { port: 5173, strictPort: false, open: false, watch: { ignored: [isUnwatched] } },
   build: {
     target: 'es2022', chunkSizeWarningLimit: 2000,
-    rollupOptions: { input: mode === 'labs' ? { game: 'index.html', whitebox: 'whitebox-lab.html', plateau: 'plateau-lab.html', originalWeapon: 'original-weapon.html' } : { game: 'index.html' } },
+    rollupOptions: { input: mode === 'labs' ? { game: 'index.html', whitebox: 'whitebox-lab.html', plateau: 'plateau-lab.html', originalWeapon: 'original-weapon.html', unityMap: 'unity-map.html' } : { game: 'index.html' } },
   },
 }));

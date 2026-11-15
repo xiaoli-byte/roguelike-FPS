@@ -11,6 +11,7 @@ import { buildEncounterWaves, buildWaves } from '../enemies/Waves';
 import { ArenaView, addCollision } from './ArenaBuilder';
 import { generateLevel, type LevelLayout } from './LevelGen';
 import { NavGrid, type NavRamp } from './NavGrid';
+import { UnityNavigation } from './UnityNavigation';
 import { LavaSystem } from './Lava';
 import { Portal } from './Portal';
 import { redesignThemeDef, themeDef } from './Themes';
@@ -21,6 +22,9 @@ import { usesAuthoredLayout, usesRedesignLayout } from './WhiteboxMode';
 import { generateWhitebox } from './WhiteboxGen';
 import { buildWhiteboxAdventure, buildWhiteboxFights, whiteboxPlansForApproach, whiteboxSpawnRegion, type WhiteboxFight } from './WhiteboxEncounters';
 import type { WhiteboxMetadata, WhiteboxPlan } from './WhiteboxTypes';
+import { unityFights, unityLayout } from './UnitySceneAdapter';
+import { UnitySceneView } from './UnitySceneView';
+import { UnityLevelLibrary, prepareUnityScene, unityHeights, unityPoint, type UnitySceneDocument } from './UnityLevelLibrary';
 
 /** 进场后第一波开始的时间（秒） */
 const FIRST_WAVE_AT = 2;
@@ -134,7 +138,8 @@ export class StageDirector implements IStageDirector {
   get artBrief() { return this.view?.artBrief ?? null; }
 
   private layout: LevelLayout | null = null;
-  private view: ArenaView | null = null;
+  private view: ArenaView | UnitySceneView | null = null;
+  private unityDocument: UnitySceneDocument | null = null;
   /** Chapter-3 lava floor (WhiteboxLava): hurts and returns the player, burns enemies knocked in. */
   private lava: LavaSystem | null = null;
   /** The current level's lava runtime (dev tools, tests); null on levels without lava. */
@@ -178,9 +183,21 @@ export class StageDirector implements IStageDirector {
 
   // ───────────── 载入 / 卸载 ─────────────
 
-  load(stage: StageNode): void {
+  load(stage: StageNode): Promise<void> {
+    const pending = UnityLevelLibrary.scene(`${stage.chapter + 1}-${stage.index + 1}`) as UnitySceneDocument | Promise<UnitySceneDocument | null> | null;
+    if (pending && typeof (pending as Promise<UnitySceneDocument | null>).then === 'function') {
+      return Promise.resolve(pending).then(document => this.loadResolved(stage, document));
+    }
+    return this.loadResolved(stage, pending as UnitySceneDocument | null);
+  }
+
+  private async loadResolved(stage: StageNode, document: UnitySceneDocument | null): Promise<void> {
+    if (document) {
+      await this.loadWith(stage, false, document);
+      return;
+    }
     try {
-      this.loadWith(stage, false);
+      await this.loadWith(stage, false, null);
     } catch (err) {
       // An authored plan that fails (missing roster, unreachable entrance, bad data) must not leave a
       // black, input-locked screen: fall back to the procedural map for this stage. Game handles a
@@ -188,21 +205,25 @@ export class StageDirector implements IStageDirector {
       if (!usesAuthoredLayout()) throw err;
       console.error('[StageDirector] authored stage failed, using procedural fallback', err);
       this.unload();
-      this.loadWith(stage, true);
+      await this.loadWith(stage, true, null);
       this.ctx.ui.toast('本关布局载入失败，已改用备用地图', '#ff8a6a');
     }
   }
 
-  private loadWith(stage: StageNode, procedural: boolean): void {
+  private async loadWith(stage: StageNode, procedural: boolean, unityDocument: UnitySceneDocument | null): Promise<void> {
     if (this.stage || this.view) this.unload();
     const ctx = this.ctx;
     this.stage = stage;
 
     const rng = new Rng(ctx.run.seed ^ (stage.chapter * 7919 + stage.index * 104729 + 17));
-    // Classic inspection disables generated art, so retain the existing visible
-    // courtyard instead of loading a region made of invisible rock colliders.
-    const L = usesAuthoredLayout() && !procedural ? generateWhitebox(stage, { redesign: usesRedesignLayout(stage.theme) }) : generateLevel(rng, stage, { adventure: AssetLibrary.enabled });
-    if (L.whitebox) {
+    this.unityDocument = unityDocument;
+    if (unityDocument) await prepareUnityScene(unityDocument);
+    const L = unityDocument ? unityLayout(unityDocument, stage)
+      : usesAuthoredLayout() && !procedural ? generateWhitebox(stage, { redesign: usesRedesignLayout(stage.theme) }) : generateLevel(rng, stage, { adventure: AssetLibrary.enabled });
+    if (unityDocument) {
+      this.whiteboxFights = unityFights(unityDocument);
+      if (L.adventure && unityDocument.map) L.adventure.mapImage = { url: unityDocument.map.url, area: unityDocument.map.area };
+    } else if (L.whitebox) {
       this.whiteboxFights = buildWhiteboxFights(L, stage);
       L.adventure = buildWhiteboxAdventure(L, this.whiteboxFights);
     }
@@ -217,11 +238,20 @@ export class StageDirector implements IStageDirector {
     this.bossPoint.set(L.bossPoint.x, L.floorY, L.bossPoint.z);
 
     addCollision(ctx.world, L);
+    if (unityDocument) for (const field of unityDocument.heightfields) ctx.world.addHeightfield({
+      origin: unityPoint(field.origin), scale: unityPoint(field.scale), resolution: field.resolution, heights: unityHeights(field),
+    });
     try {
       const vis = rng.fork(0x51ed);
-      this.view = new ArenaView(ctx, L, theme, () => vis.next());
+      this.view = unityDocument ? new UnitySceneView(ctx, unityDocument) : new ArenaView(ctx, L, theme, () => vis.next());
       ctx.scene.add(this.view.group);
+      if (this.view instanceof UnitySceneView && this.view.ready) await this.view.ready;
     } catch (err) {
+      if (unityDocument) {
+        this.view?.dispose();
+        this.view = null;
+        throw err;
+      }
       // An authored scene that cannot be drawn would be an invisible maze; load() retries this stage
       // on the procedural map instead. That map's own failure keeps collision and play (old behaviour).
       if (usesAuthoredLayout() && !procedural) throw err;
@@ -229,6 +259,7 @@ export class StageDirector implements IStageDirector {
       console.error('[StageDirector] arena build failed', err);
       this.view = null;
     }
+    if (ctx.nav instanceof UnityNavigation) ctx.nav.setUnityDocument(unityDocument);
     // Lava has no collision box: navigation blocks it directly (set before the grid is built).
     if (ctx.nav instanceof NavGrid) ctx.nav.setLava(L.whitebox?.lava ?? null);
     ctx.nav.build(arena);
@@ -291,11 +322,13 @@ export class StageDirector implements IStageDirector {
     this.lava?.dispose(); this.lava = null;
     ctx.world.clear();
     if (ctx.nav instanceof NavGrid) { ctx.nav.setRamps([]); ctx.nav.setLava(null); }
+    if (ctx.nav instanceof UnityNavigation) ctx.nav.setUnityDocument(null);
     ctx.scene.fog = null;
     if (this.bosses.length > 0) ctx.ui.setBoss(null);
     this.stage = null;
     this.arena = null;
     this.layout = null;
+    this.unityDocument = null;
     this.waves = null;
     this.exits = null;
     this.bosses = [];
@@ -340,6 +373,7 @@ export class StageDirector implements IStageDirector {
       ...(L.whitebox ? { automaticEncounters: true, objectiveLabel: this.whiteboxFights.find(f => f.final)?.label ?? '终点',
         floorRects: L.whitebox.floorRects } : {}),
       title: adventure.title, routeHint: adventure.routeHint,
+      mapImage: adventure.mapImage,
       encounters: (adventure.encounters ?? []).map(e => ({
         id: e.id, label: e.label, kind: e.kind, position: v(e), radius: e.arenaRadius, triggerRadius: e.triggerRadius,
         phase: 'undiscovered', siteId: e.siteId,
@@ -374,7 +408,10 @@ export class StageDirector implements IStageDirector {
         : plan.rooms.find(r => r.id === room)!.labelAt;
       const position = new THREE.Vector3(at[0] - plan.bounds[0] / 2, arena.floorY, at[1] - plan.bounds[1] / 2);
       const safe = new THREE.Vector3();
-      if (!this.ctx.nav.nearestWalkable(position, safe)) throw new Error(`${plan.id}/${room}: no reachable challenge entrance`);
+      if (!this.ctx.nav.nearestWalkable(position, safe)) {
+        if (!this.unityDocument) throw new Error(`${plan.id}/${room}: no reachable challenge entrance`);
+        safe.copy(position);
+      }
       this.sideRooms.add(room);
       L.whitebox!.checkpoints.push({ id: `challenge-${room}`, label: `隐秘入口 · ${plan.rooms.find(r => r.id === room)!.label}`,
         x: safe.x, z: safe.z, yaw: Math.atan2(position.x - arena.center.x, position.z - arena.center.z) });

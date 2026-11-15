@@ -15,7 +15,7 @@ const plansUrl = await tsModule('../src/world/WhiteboxPlans.ts');
 const { WHITEBOX_PLANS } = await import(plansUrl);
 const { generateWhitebox, getWhiteboxPlan, whiteboxPoint } = await import(await tsModule('../src/world/WhiteboxGen.ts', { './WhiteboxPlans': plansUrl }));
 const { NavGrid } = await import(await tsModule('../src/world/NavGrid.ts', { '../core/math': await tsModule('../src/core/math.ts') }));
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const stageFor = plan => ({ type: plan.index === 5 ? 'boss' : 'combat', theme: plan.chapter, chapter: ['desert', 'frost', 'inferno'].indexOf(plan.chapter), index: plan.index - 1, reward: 'coins' });
 const vec = p => new THREE.Vector3(p.x, 0.0001, p.z);
 function collision(L) {

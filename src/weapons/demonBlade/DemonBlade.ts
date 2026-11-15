@@ -678,6 +678,7 @@ export class DemonBlade {
     dir.normalize();
     const origin = ctx.player.eye.clone().addScaledVector(dir, 0.4);
     const wall = ctx.world.raycast(origin, dir, P.union.waveRange);
+    wall?.box.onHit?.(base);
     const range = wall ? Math.max(1, wall.distance) : P.union.waveRange;
     const roll = idx === 0 ? 0.6 : idx === 1 ? -0.4 : 0;
     const slot = this.effects.wave(origin, dir, roll, range, WAVE_TIME);

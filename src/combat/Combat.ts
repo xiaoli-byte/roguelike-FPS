@@ -132,6 +132,7 @@ export class Combat implements ICombat, ReactionHost {
 
     // 2) 倍率（含封脉首领「脉滞」易伤）
     let mult = statMultiplier(stats, enemy, req) * enemy.damageTakenMult * this.reactions.vulnMult(enemy);
+    if (req.headshot) mult *= enemy.weakpointDamageMult ?? 1;
     if (req.element === 'shock' && enemy.statuses.has('shock')) mult *= SHOCK_MARK_BONUS;
     if (isCrit) mult *= (Number.isFinite(req.critMult) ? Math.max(0, req.critMult!) : 2) * stats.mult('critDamagePct');
     mult *= this.outgoingMultiplier(enemy, req, isCrit);

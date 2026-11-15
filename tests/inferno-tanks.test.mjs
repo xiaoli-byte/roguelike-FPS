@@ -57,7 +57,7 @@ const { Tuo, TUO_DEF } = await import(await tsModule('../src/enemies/types/Tuo.t
 const { slagWalls, SLAG, INFERNO } = await import(fxUrl);
 const { attackDirector } = await import(tokensUrl);
 const { TaskRunner } = await import(await tsModule('../src/core/Tasks.ts'));
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { NavGrid } = await import(await tsModule('../src/world/NavGrid.ts', { '../core/math': mathUrl }));
 const { LavaSystem, onLava } = await import(await tsModule('../src/world/Lava.ts'));
 

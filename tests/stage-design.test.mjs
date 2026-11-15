@@ -23,7 +23,7 @@ const { generateLevel } = await import(await tsModule('../src/world/LevelGen.ts'
 const { generateAdventure } = await import(await tsModule('../src/world/AdventureGen.ts'));
 const { rotateLayout } = await import(await tsModule('../src/world/LevelCheck.ts'));
 const { NavGrid } = await import(await tsModule('../src/world/NavGrid.ts'));
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { Rng } = await import(await tsModule('../src/core/Rng.ts'));
 const themes = ['desert', 'frost', 'inferno'];
 const stage = (chapter, index, type = index === 4 ? 'boss' : 'combat') =>

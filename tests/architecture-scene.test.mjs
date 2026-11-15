@@ -16,7 +16,7 @@ const { generateAdventure } = await import(await tsModule('../src/world/Adventur
 const { rotateLayout, validateAndRepair } = await import(await tsModule('../src/world/LevelCheck.ts', { './NavGrid': navUrl }));
 const { Rng } = await import(await tsModule('../src/core/Rng.ts'));
 const { NAV_FOOT, rasterizeBlocked } = await import(navUrl);
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const libraryUrl = dataModule(`export const AssetLibrary = {
  get: id => globalThis.__architectureAssets?.get(id) ?? null,
  preload: () => globalThis.__architecturePreload ?? Promise.resolve()

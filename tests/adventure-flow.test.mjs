@@ -26,6 +26,7 @@ const directorUrl = await tsModule('../src/world/StageDirector.ts', {
   './ArenaBuilder': dataModule(`import * as THREE from '${threeUrl}'; export function addCollision(){} export class ArenaView {group=new THREE.Group(); update(){} dispose(){this.group.removeFromParent();}}`),
   './LevelGen': dataModule('export function generateLevel(rng,stage,options){ globalThis.__adventureGenerationOptions = options; const layout = structuredClone(globalThis.__adventureLayoutFixture); if(options.adventure === false) delete layout.adventure; return layout; }'),
   './NavGrid': dataModule('export class NavGrid {}'),
+  './UnityNavigation': dataModule('export class UnityNavigation {}'),
   './Lava': await tsModule('../src/world/Lava.ts'),
   './Portal': dataModule('export class Portal { constructor(ctx,node,position){this.ctx=ctx;this.node=node;ctx.portalRecords.push(this);}update(){}dispose(){this.disposed=true;} }'),
   './Themes': dataModule('export function themeDef(id){return {id,name:id};} export function redesignThemeDef(id){return {id,name:id};}'),
@@ -34,6 +35,10 @@ const directorUrl = await tsModule('../src/world/StageDirector.ts', {
   './WhiteboxMode': dataModule('export function usesAuthoredLayout(){return false;} export function usesRedesignLayout(){return false;}'),
   './WhiteboxGen': dataModule('export function generateWhitebox(){throw new Error("Unexpected whitebox generation");}'),
   './WhiteboxEncounters': dataModule('export function buildWhiteboxAdventure(){} export function buildWhiteboxFights(){return [];} export function whiteboxPlansForApproach(){} export function whiteboxSpawnRegion(){}'),
+  './UnitySceneData': dataModule('export const UNITY_SCENE_DATA = {};'),
+  './UnitySceneAdapter': dataModule('export function unityLayout(){} export function unityFights(){return [];}'),
+  './UnitySceneView': dataModule(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group(); artInspectionViews=[]; artBrief=''; update(){} dispose(){this.group.removeFromParent();}}`),
+  './UnityLevelLibrary': dataModule('export const UnityLevelLibrary={scene:()=>null}; export function unityHeights(){return new Float32Array();} export function unityPoint(){return {};} export async function prepareUnityScene(){}'),
 });
 const { StageDirector } = await import(directorUrl);
 

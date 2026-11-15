@@ -112,7 +112,8 @@ class Library {
     // three r186 的 DRACOLoader 默认用 import.meta.url 定位解码器，Vite 会把它打进产物，不需要另外拷贝
     const draco = new DRACOLoader();
     this.loader = new GLTFLoader().setDRACOLoader(draco);
-    await Promise.all(Object.keys(this.entries).map((id) => this.load(id)));
+    const ids = Object.keys(this.entries);
+    for (let i = 0; i < ids.length; i += 6) await Promise.all(ids.slice(i, i + 6).map((id) => this.load(id)));
     draco.dispose();
     console.info(`[assets] 已加载 ${this.loaded.size}/${Object.keys(this.entries).length} 个美术资产`);
   }

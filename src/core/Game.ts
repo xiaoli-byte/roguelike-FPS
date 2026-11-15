@@ -20,7 +20,7 @@ import { registerStandardEnemies } from '../enemies';
 import { registerBosses } from '../enemies/bosses';
 import { Combat } from '../combat/Combat';
 import { ProjectileSystem } from '../combat/Projectiles';
-import { NavGrid } from '../world/NavGrid';
+import { UnityNavigation } from '../world/UnityNavigation';
 import { StageDirector } from '../world/StageDirector';
 import { FxSystem } from '../fx/Fx';
 import { AudioSystem } from '../audio/AudioSystem';
@@ -125,7 +125,7 @@ export class Game implements IGame {
     c.audio = new AudioSystem(this.ctx);
     c.fx = new FxSystem(this.ctx);
     c.ui = new UIManager(this.ctx);
-    c.nav = new NavGrid(this.ctx);
+    c.nav = new UnityNavigation(this.ctx);
     c.stage = new StageDirector(this.ctx);
     c.combat = new Combat(this.ctx);
     c.projectiles = new ProjectileSystem(this.ctx);
@@ -291,8 +291,8 @@ export class Game implements IGame {
     ctx.events.emit('run:started', { run: ctx.run });
 
     this.setState('transition');
-    ctx.ui.fade(1, 0.01).then(() => {
-      if (!this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(); return; }
+    ctx.ui.fade(1, 0.01).then(async () => {
+      if (!await this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(); return; }
       ctx.ui.showHUD(true);
       ctx.weapons.setViewmodelVisible(true);
       this.setState('playing');
@@ -308,8 +308,8 @@ export class Game implements IGame {
     this.setState('transition');
     ctx.input.enabled = false;
     ctx.audio.play('portal');
-    ctx.ui.fade(1, 0.35).then(() => {
-      if (!this.loadStage(next)) { this.toMenu(); return; }
+    ctx.ui.fade(1, 0.35).then(async () => {
+      if (!await this.loadStage(next)) { this.toMenu(); return; }
       this.setState('playing');
       ctx.input.enabled = true;
       ctx.input.flushMouse();
@@ -318,7 +318,7 @@ export class Game implements IGame {
   }
 
   /** False when the stage could not be built; callers return to the menu instead of a black screen. */
-  private loadStage(node: StageNode): boolean {
+  private async loadStage(node: StageNode): Promise<boolean> {
     const ctx = this.ctx;
     const run = ctx.run;
     run.chapter = node.chapter;
@@ -328,10 +328,16 @@ export class Game implements IGame {
     this.clearStage(false);
     ctx.stage.unload();
     try {
-      ctx.stage.load(node);
+      await ctx.stage.load(node);
     } catch (err) {
       console.error('[Game] stage load failed', err);
-      ctx.ui.toast('关卡载入失败，已返回主菜单', '#ff8a6a');
+      if (new URLSearchParams(location.search).has('debugStage')) {
+        const output = document.createElement('pre');
+        output.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:99999;max-width:90vw;white-space:pre-wrap;background:#200;color:#ff9b8a;font:16px monospace';
+        output.textContent = `关卡载入失败：${err instanceof Error ? `${err.message}\n${err.stack ?? ''}` : String(err)}`;
+        document.body.appendChild(output);
+      }
+      ctx.ui.toast(`关卡载入失败：${err instanceof Error ? err.message : String(err)}`, '#ff8a6a');
       return false;
     }
     ctx.events.emit('stage:loaded', { stage: node });

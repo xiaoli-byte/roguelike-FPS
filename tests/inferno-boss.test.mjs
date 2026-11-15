@@ -32,7 +32,7 @@ const { TaskRunner } = await import(await ts('../src/core/Tasks.ts'));
 const plansUrl = await ts('../src/world/WhiteboxPlans.ts');
 const { WHITEBOX_REDESIGN_PLANS } = await import(plansUrl);
 const { generateWhitebox, whiteboxPoint } = await import(await ts('../src/world/WhiteboxGen.ts', { './WhiteboxPlans': plansUrl }));
-const { CollisionWorld } = await import(await ts('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await ts('../src/world/Collision.ts', { './UnityTriangles': await ts('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await ts('../src/world/UnityHeightSampling.ts') }));
 const { NavGrid } = await import(await ts('../src/world/NavGrid.ts', { '../core/math': mathUrl }));
 const { LavaSystem, onLava } = await import(await ts('../src/world/Lava.ts'));
 

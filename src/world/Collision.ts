@@ -1,9 +1,11 @@
 import * as THREE from 'three';
+import { groundUnityTriangles, overlapUnityTriangles, rayUnityTriangles, sphereUnityTriangles, type UnityTriangleMesh } from './UnityTriangles';
+import { sampleUnityHeight } from './UnityHeightSampling';
 
 /**
- * 静态碰撞世界：一组轴对齐包围盒（AABB）+ XZ 平面均匀网格加速。
+ * 静态碰撞世界：AABB、Unity 旋转包围盒（OBB）与三角网格 + XZ 平面均匀网格加速。
  * 玩家 / 敌人都用「脚底中心 + 半宽 + 高度」的 AABB 做运动碰撞；
- * 射线（子弹、视线）与 AABB 做 slab 求交。
+ * 射线（子弹、视线）与 AABB / OBB 做 slab 求交，与 Unity 三角网格做精确求交。
  */
 export interface StaticBox {
   minX: number; minY: number; minZ: number;
@@ -14,6 +16,23 @@ export interface StaticBox {
   noRaycast?: boolean;
   /** 查询去重用 */
   _stamp: number;
+  obb?: {
+    center: THREE.Vector3;
+    halfSize: THREE.Vector3;
+    rotation: THREE.Matrix3;
+    inverse: THREE.Matrix3;
+    normal: THREE.Vector3;
+    depth: number;
+  };
+  triangles?: UnityTriangleMesh;
+  onHit?: (damage?: number) => void;
+}
+
+export interface Heightfield {
+  origin: THREE.Vector3;
+  scale: THREE.Vector3;
+  resolution: number;
+  heights: Float32Array;
 }
 
 export interface MoveResult {
@@ -56,8 +75,69 @@ function cellKey(ix: number, iz: number): number {
   return (ix + 32768) * 65536 + (iz + 32768);
 }
 
+const _satAxes = Array.from({ length: 15 }, () => new THREE.Vector3());
+const _satU = new THREE.Vector3(), _satV = new THREE.Vector3(), _satW = new THREE.Vector3();
+const _satDelta = new THREE.Vector3(), _satAxis = new THREE.Vector3();
+const _obbOrigin = new THREE.Vector3(), _obbDirection = new THREE.Vector3();
+
+function overlapObb(box: StaticBox, minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): boolean {
+  const obb = box.obb!;
+  obb.rotation.extractBasis(_satU, _satV, _satW);
+  const cx = (minX + maxX) * 0.5, cy = (minY + maxY) * 0.5, cz = (minZ + maxZ) * 0.5;
+  const hx = (maxX - minX) * 0.5, hy = (maxY - minY) * 0.5, hz = (maxZ - minZ) * 0.5;
+  _satDelta.set(cx - obb.center.x, cy - obb.center.y, cz - obb.center.z);
+  _satAxes[0].set(1, 0, 0); _satAxes[1].set(0, 1, 0); _satAxes[2].set(0, 0, 1);
+  _satAxes[3].copy(_satU); _satAxes[4].copy(_satV); _satAxes[5].copy(_satW);
+  const worlds = [_satAxes[0], _satAxes[1], _satAxes[2]], locals = [_satU, _satV, _satW];
+  let index = 6;
+  for (const a of worlds) for (const b of locals) _satAxes[index++].crossVectors(a, b);
+  let depth = Infinity;
+  _satAxis.set(0, 0, 0);
+  for (const axis of _satAxes) {
+    const lengthSq = axis.lengthSq();
+    if (lengthSq < 1e-10) continue;
+    axis.multiplyScalar(1 / Math.sqrt(lengthSq));
+    const projection = _satDelta.dot(axis);
+    const ra = hx * Math.abs(axis.x) + hy * Math.abs(axis.y) + hz * Math.abs(axis.z);
+    const rb = obb.halfSize.x * Math.abs(axis.dot(_satU)) + obb.halfSize.y * Math.abs(axis.dot(_satV)) + obb.halfSize.z * Math.abs(axis.dot(_satW));
+    const overlap = ra + rb - Math.abs(projection);
+    if (overlap <= EPS) return false;
+    if (overlap < depth) {
+      depth = overlap;
+      _satAxis.copy(axis).multiplyScalar(projection < 0 ? -1 : 1);
+    }
+  }
+  obb.depth = depth;
+  obb.normal.copy(_satAxis);
+  return true;
+}
+
+function rayObb(box: StaticBox, origin: THREE.Vector3, direction: THREE.Vector3, maxDist: number, outNormal: THREE.Vector3): number {
+  const obb = box.obb!;
+  _obbOrigin.copy(origin).sub(obb.center).applyMatrix3(obb.inverse);
+  _obbDirection.copy(direction).applyMatrix3(obb.inverse);
+  let enter = 0, exit = maxDist, axis = -1, sign = 0;
+  for (let i = 0; i < 3; i++) {
+    const o = _obbOrigin.getComponent(i), d = _obbDirection.getComponent(i), half = obb.halfSize.getComponent(i);
+    if (Math.abs(d) < 1e-9) {
+      if (o < -half || o > half) return Infinity;
+      continue;
+    }
+    let a = (-half - o) / d, b = (half - o) / d;
+    let face = d > 0 ? -1 : 1;
+    if (a > b) { const swap = a; a = b; b = swap; face = -face; }
+    if (a > enter) { enter = a; axis = i; sign = face; }
+    exit = Math.min(exit, b);
+    if (enter > exit) return Infinity;
+  }
+  if (axis < 0) outNormal.copy(direction).multiplyScalar(-1);
+  else outNormal.set(axis === 0 ? sign : 0, axis === 1 ? sign : 0, axis === 2 ? sign : 0).applyMatrix3(obb.rotation).normalize();
+  return enter;
+}
+
 export class CollisionWorld {
   readonly boxes: StaticBox[] = [];
+  readonly heightfields: Heightfield[] = [];
   /** 每次增删自增，NavGrid 等可据此判断是否需要重建 */
   version = 0;
 
@@ -99,6 +179,47 @@ export class CollisionWorld {
     return this.addBox(cx - sx / 2, y, cz - sz / 2, cx + sx / 2, y + sy, cz + sz / 2, tag, noRaycast);
   }
 
+  addObb(center: THREE.Vector3, size: THREE.Vector3, rotation: THREE.Quaternion, tag = 'wall', noRaycast = false): StaticBox {
+    const matrix = new THREE.Matrix4().compose(center, rotation, new THREE.Vector3(1, 1, 1));
+    const basis = new THREE.Matrix3().setFromMatrix4(matrix);
+    const inverse = basis.clone().invert();
+    const e = basis.elements, half = size.clone().multiplyScalar(0.5);
+    const ex = Math.abs(e[0]) * half.x + Math.abs(e[3]) * half.y + Math.abs(e[6]) * half.z;
+    const ey = Math.abs(e[1]) * half.x + Math.abs(e[4]) * half.y + Math.abs(e[7]) * half.z;
+    const ez = Math.abs(e[2]) * half.x + Math.abs(e[5]) * half.y + Math.abs(e[8]) * half.z;
+    const box = this.addBox(center.x - ex, center.y - ey, center.z - ez, center.x + ex, center.y + ey, center.z + ez, tag, noRaycast);
+    box.obb = { center: center.clone(), halfSize: half, rotation: basis, inverse, normal: new THREE.Vector3(), depth: 0 };
+    return box;
+  }
+
+  addMesh(positions: Float32Array, indices: Uint32Array, tag = 'wall', noRaycast = false): StaticBox {
+    let minX = Infinity, minY = Infinity, minZ = Infinity, maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+    for (let i = 0; i < positions.length; i += 3) {
+      minX = Math.min(minX, positions[i]); maxX = Math.max(maxX, positions[i]);
+      minY = Math.min(minY, positions[i + 1]); maxY = Math.max(maxY, positions[i + 1]);
+      minZ = Math.min(minZ, positions[i + 2]); maxZ = Math.max(maxZ, positions[i + 2]);
+    }
+    if (!Number.isFinite(minX + minY + minZ) || indices.length < 3) throw new Error('Invalid Unity collision mesh');
+    const box = this.addBox(minX, minY, minZ, maxX, maxY, maxZ, tag, noRaycast);
+    box.triangles = { positions, indices, normal: new THREE.Vector3(), depth: 0 };
+    return box;
+  }
+
+  addHeightfield(field: Heightfield): void {
+    this.heightfields.push(field);
+    this.version++;
+  }
+
+  private terrainHeight(x: number, z: number, field: Heightfield): number {
+    return sampleUnityHeight(field, x, z);
+  }
+
+  private highestTerrain(x: number, z: number): number {
+    let height = -Infinity;
+    for (const field of this.heightfields) height = Math.max(height, this.terrainHeight(x, z, field));
+    return height;
+  }
+
   remove(b: StaticBox): void {
     const i = this.boxes.indexOf(b);
     if (i < 0) return;
@@ -109,6 +230,7 @@ export class CollisionWorld {
 
   clear(): void {
     this.boxes.length = 0;
+    this.heightfields.length = 0;
     this.grid.clear();
     this.rayWindows.clear(); this.activeRayWindows.length = 0;
     this.version++;
@@ -197,6 +319,15 @@ export class CollisionWorld {
   overlaps(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): StaticBox | null {
     const list = this.query(minX, minZ, maxX, maxZ, this.scratch);
     for (const b of list) {
+      if (b.triangles) {
+        if (minX < b.maxX - EPS && maxX > b.minX + EPS && minY < b.maxY - EPS && maxY > b.minY + EPS && minZ < b.maxZ - EPS && maxZ > b.minZ + EPS
+          && overlapUnityTriangles(b, minX, minY, minZ, maxX, maxY, maxZ)) return b;
+        continue;
+      }
+      if (b.obb) {
+        if (overlapObb(b, minX, minY, minZ, maxX, maxY, maxZ)) return b;
+        continue;
+      }
       if (minX < b.maxX - EPS && maxX > b.minX + EPS &&
           minY < b.maxY - EPS && maxY > b.minY + EPS &&
           minZ < b.maxZ - EPS && maxZ > b.minZ + EPS) return b;
@@ -206,7 +337,14 @@ export class CollisionWorld {
 
   /** 以脚底中心的实体包围盒测试重叠 */
   overlapsBody(x: number, y: number, z: number, halfW: number, height: number): StaticBox | null {
-    return this.overlaps(x - halfW, y, z - halfW, x + halfW, y + height, z + halfW);
+    const box = this.overlaps(x - halfW, y, z - halfW, x + halfW, y + height, z + halfW);
+    if (box) return box;
+    const ground = this.highestTerrain(x, z);
+    if (ground > y + EPS) return {
+      minX: x - halfW, maxX: x + halfW, minY: -Infinity, maxY: ground,
+      minZ: z - halfW, maxZ: z + halfW, tag: 'floor', _stamp: 0,
+    };
+    return null;
   }
 
   /** 球是否与静态几何重叠（投射物用） */
@@ -214,12 +352,26 @@ export class CollisionWorld {
     const list = this.query(c.x - r, c.z - r, c.x + r, c.z + r, this.scratch);
     for (const b of list) {
       if (b.noRaycast) continue;
+      if (b.triangles) {
+        if (sphereUnityTriangles(b, c, r)) return true;
+        continue;
+      }
+      if (b.obb) {
+        const obb = b.obb;
+        _obbOrigin.copy(c).sub(obb.center).applyMatrix3(obb.inverse);
+        _obbOrigin.x = THREE.MathUtils.clamp(_obbOrigin.x, -obb.halfSize.x, obb.halfSize.x);
+        _obbOrigin.y = THREE.MathUtils.clamp(_obbOrigin.y, -obb.halfSize.y, obb.halfSize.y);
+        _obbOrigin.z = THREE.MathUtils.clamp(_obbOrigin.z, -obb.halfSize.z, obb.halfSize.z);
+        _obbDirection.copy(_obbOrigin).applyMatrix3(obb.rotation).add(obb.center);
+        if (_obbDirection.distanceToSquared(c) < r * r) return true;
+        continue;
+      }
       const dx = Math.max(b.minX - c.x, 0, c.x - b.maxX);
       const dy = Math.max(b.minY - c.y, 0, c.y - b.maxY);
       const dz = Math.max(b.minZ - c.z, 0, c.z - b.maxZ);
       if (dx * dx + dy * dy + dz * dz < r * r) return true;
     }
-    return false;
+    return c.y - r <= this.highestTerrain(c.x, c.z);
   }
 
   pointInside(p: THREE.Vector3): boolean {
@@ -234,8 +386,15 @@ export class CollisionWorld {
     let best = -Infinity;
     for (const b of list) {
       if (x - halfW < b.maxX && x + halfW > b.minX && z - halfW < b.maxZ && z + halfW > b.minZ) {
-        if (b.maxY <= fromY + 0.05 && b.maxY > best) best = b.maxY;
+        if (b.triangles) {
+          const height = groundUnityTriangles(b, x, z, fromY);
+          if (height > best) best = height;
+        } else if (b.maxY <= fromY + 0.05 && b.maxY > best) best = b.maxY;
       }
+    }
+    for (const dx of [-halfW, halfW]) for (const dz of [-halfW, halfW]) {
+      const height = this.highestTerrain(x + dx, z + dz);
+      if (height <= fromY + 0.05 && height > best) best = height;
     }
     return best;
   }
@@ -290,6 +449,7 @@ export class CollisionWorld {
   }
 
   private moveAxis(pos: THREE.Vector3, hw: number, h: number, axis: 0 | 1 | 2, d: number, stepHeight: number, r: MoveResult): void {
+    const previousY = pos.y;
     if (axis === 0) pos.x += d;
     else if (axis === 1) pos.y += d;
     else pos.z += d;
@@ -298,6 +458,32 @@ export class CollisionWorld {
       const b = this.overlapsBody(pos.x, pos.y, pos.z, hw, h);
       if (!b) return;
 
+      if (b.triangles) {
+        if (axis === 1 && d < 0) {
+          const ground = groundUnityTriangles(b, pos.x, pos.z, previousY + 0.05);
+          if (ground > -Infinity) {
+            pos.y = ground + EPS;
+            r.onGround = true;
+            r.groundY = ground;
+            continue;
+          }
+        }
+        pos.addScaledVector(b.triangles.normal, b.triangles.depth + EPS);
+        if (axis === 1) {
+          if (b.triangles.normal.y > 0.4) {
+            r.onGround = true;
+            r.groundY = pos.y;
+          } else if (b.triangles.normal.y < -0.4) r.hitCeiling = true;
+          else {
+            r.hitWall = true;
+            r.wallNormal.add(b.triangles.normal);
+          }
+        } else {
+          r.hitWall = true;
+          r.wallNormal.add(b.triangles.normal);
+        }
+        continue;
+      }
       if (axis === 1) {
         if (d < 0) {
           pos.y = b.maxY + EPS;
@@ -324,6 +510,11 @@ export class CollisionWorld {
       }
 
       r.hitWall = true;
+      if (b.obb) {
+        pos.addScaledVector(b.obb.normal, b.obb.depth + EPS);
+        r.wallNormal.add(b.obb.normal);
+        continue;
+      }
       if (axis === 0) {
         if (d > 0) { pos.x = b.minX - hw - EPS; r.wallNormal.x -= 1; }
         else { pos.x = b.maxX + hw + EPS; r.wallNormal.x += 1; }
@@ -350,6 +541,24 @@ export class CollisionWorld {
 
     for (const b of list) {
       if (b.noRaycast) continue;
+      if (b.triangles) {
+        const distance = rayUnityTriangles(b, origin, dir, bestT, this.windowNormal);
+        if (distance < bestT) {
+          bestT = distance;
+          bestBox = b;
+          bestAxis = -2;
+        }
+        continue;
+      }
+      if (b.obb) {
+        const distance = rayObb(b, origin, dir, bestT, this.windowNormal);
+        if (distance < bestT) {
+          bestT = distance;
+          bestBox = b;
+          bestAxis = -2;
+        }
+        continue;
+      }
       let tmin = 0;
       let tmax = bestT;
       let axis = -1;
@@ -397,6 +606,38 @@ export class CollisionWorld {
       if (!Number.isFinite(distance) || distance < cut.enter - EPS || distance > far + EPS) continue;
       bestT = distance; bestBox = this.windowHit.box; bestAxis = -2;
       this.windowNormal.copy(this.windowHit.normal);
+    }
+
+    if (this.heightfields.length > 0) {
+      const horizontal = Math.hypot(dir.x, dir.z);
+      const steps = Math.min(4096, Math.max(1, Math.ceil(maxDist * Math.max(horizontal, 0.05) * 2)));
+      let previousT = 0;
+      let previousGap = origin.y - this.highestTerrain(origin.x, origin.z);
+      for (let i = 1; i <= steps; i++) {
+        const t = maxDist * i / steps;
+        if (t > bestT) break;
+        const x = origin.x + dir.x * t, y = origin.y + dir.y * t, z = origin.z + dir.z * t;
+        const gap = y - this.highestTerrain(x, z);
+        if (gap <= 0 && previousGap >= 0) {
+          let lo = previousT, hi = t;
+          for (let j = 0; j < 12; j++) {
+            const mid = (lo + hi) * 0.5;
+            const my = origin.y + dir.y * mid;
+            const mg = my - this.highestTerrain(origin.x + dir.x * mid, origin.z + dir.z * mid);
+            if (mg > 0) lo = mid; else hi = mid;
+          }
+          bestT = hi;
+          bestBox = {
+            minX: x, maxX: x, minY: -Infinity, maxY: y,
+            minZ: z, maxZ: z, tag: 'floor', _stamp: 0,
+          };
+          bestAxis = 1;
+          bestSign = 1;
+          break;
+        }
+        previousT = t;
+        previousGap = gap;
+      }
     }
 
     if (!bestBox) return null;

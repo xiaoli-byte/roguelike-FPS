@@ -30,7 +30,7 @@ const architectureUrl = await tsModule('../src/world/SceneArchitecture.ts', {
 const occlusionUrl = await tsModule('../src/world/AuthoredArtOcclusion.ts', {
   '../assets/AssetLibrary': libraryUrl, './SceneArchitecture': architectureUrl,
 });
-const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
+const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const { AuthoredSceneView, bakeAuthoredGroundField } = await import(await tsModule('../src/world/AuthoredSceneView.ts', {
   '../core/Rng': await tsModule('../src/core/Rng.ts'),
   '../assets/AssetLibrary': libraryUrl,

@@ -9,6 +9,7 @@ import { CONTROLS, cnNum } from './labels';
 import { HeroSelect } from './HeroSelect';
 import { TalentPanel } from './TalentPanel';
 import { SettingsPanel } from './SettingsPanel';
+import { UNITY_STAGES } from '../world/UnityStages';
 
 type SubView = 'heroes' | 'talents' | 'settings' | 'controls';
 type View = 'home' | SubView;
@@ -191,7 +192,7 @@ export class MainMenu {
       s = null;
     }
     if (!s || s.runs <= 0) {
-      h('span', 'gf-menu__stat gf-menu__stat--first', this.statsEl, '尚无出征记录。三章十五关，击败三位首领即可通关。');
+      h('span', 'gf-menu__stat gf-menu__stat--first', this.statsEl, `尚无出征记录。共 ${UNITY_STAGES.filter(stage => stage.available).length} 关，击败沿途全部首领即可通关。`);
       return;
     }
     const items: [string, string][] = [

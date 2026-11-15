@@ -30,6 +30,7 @@ export interface AdventureLayout {
   designId?: string;
   title?: string;
   routeHint?: string;
+  mapImage?: { url: string; area: [number, number, number, number] };
   encounters?: AdventureEncounter[];
   spawnAnchors?: AdventureSpawnAnchor[];
   objective: P2;
@@ -58,6 +59,7 @@ export interface LayoutBox {
   noRaycast: boolean;
   /** 0..1 视觉随机值 */
   v: number;
+  obb?: { center: [number, number, number]; size: [number, number, number]; rotation: [number, number, number, number] };
 }
 
 export type DecoKind =
@@ -154,4 +156,5 @@ export interface LevelLayout {
   architecture?: SceneArchitecturePlacement[];
   /** Authored technical blockout, drawn and collided from the same metre-scale data. */
   whitebox?: WhiteboxMetadata;
+  unityHeightfield?: boolean;
 }
