@@ -2,6 +2,12 @@
 
 设计与架构见 [DESIGN.md](DESIGN.md)，美术管线见 `art/README.md`。回复用户一律用简体中文。
 
+## 方向：全部迁回 Three.js（2026-11-15）
+
+- 用户确认 Unity 版停止开发，游戏整体迁回网页版（Three.js + TypeScript + Vite，源码在 `src/`）。原话：「可以不落到unity里，我希望全部迁移到threeJS」「是，全部迁回」。
+- **新的玩法、场景、特效、美术工作一律落在网页版**，不要再往 `unity/` 里加新功能；动手前先确认落点是 `src/`。
+- 下面 Git 约定里和 Unity 有关的条目（`csc_check.py`、`dlp-unity-fix.mjs`）只在确实动到 `unity/` 时适用；网页版改动跑 `npm run typecheck`。
+
 ## Git：提交与推送
 
 - **远端只用 SSH**：`git@github.com:xiaoli-byte/roguelike-FPS.git`。这台机器上 HTTPS 推送会卡在 Git Credential Manager 的登录框，不要用。
