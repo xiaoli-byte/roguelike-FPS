@@ -12,6 +12,8 @@ import { Atmosphere, ATMOSPHERE_WIND_GLSL, atmosphereNoise } from './Atmosphere'
  * 熔火章的天是烟：white = 0 时不发白，亮面只到雾色，底下被地面的火映红（ember），不要白云。
  * 日晕（sunGlow）：烘焙的天空盒里往往没有太阳，开了之后在平行光的方向画日盘和光晕，被云遮住；
  *     逆光的光柱（SunShafts）就是从这块够亮的天取光的。原天空已经画了太阳的图给 0。
+ *     天空盒（scene.background 是立方体贴图）里画没画太阳会自己查一遍：六个面里有一小团烧白的像素就算有，
+ *     这时不再画日晕——天空盒里的太阳和平行光往往不在一个方向（2-1），再画一个就是两个太阳。
  * 颜色是显示空间的（和 Atmosphere 一样，直接出到画布）。
  *
  * 用法（先 Atmosphere.bind；风、时间、日光、雾色都读它的，不用每帧调别的）：
@@ -45,8 +47,8 @@ export interface CloudSkyProfile {
  */
 export const CLOUD_SKY_PROFILES = {
   desert: { low: 0.7, mid: 0.3, high: 0.55, height: 520, white: 1, lit: 1, shade: 0.82, ember: [0, 0, 0], sunGlow: 0.7 },
-  frost: { low: 0.85, mid: 0.55, high: 0.3, height: 430, white: 0.9, lit: 0.96, shade: 0.74, ember: [0, 0, 0], sunGlow: 0.5 },
-  inferno: { low: 0, mid: 0.8, high: 0.65, height: 380, white: 0, lit: 0.8, shade: 0.42, ember: [0.26, 0.08, 0.03], sunGlow: 0.25 },
+  frost: { low: 0.7, mid: 0.5, high: 0.3, height: 430, white: 0.9, lit: 0.9, shade: 0.74, ember: [0, 0, 0], sunGlow: 0.5 },
+  inferno: { low: 0, mid: 0.8, high: 0.65, height: 380, white: 0, lit: 0.8, shade: 0.42, ember: [0.26, 0.08, 0.03], sunGlow: 0 },
   plateau: { low: 0.95, mid: 0.22, high: 0.4, height: 650, white: 1, lit: 1.04, shade: 0.84, ember: [0, 0, 0], sunGlow: 0.7 },
 } satisfies Record<string, CloudSkyProfile>;
 
@@ -173,10 +175,33 @@ void main() {
 }
 `;
 
+/** 立方体天空盒里是不是已经画了太阳：每个面缩到 48×48，有三个以上烧白的像素（亮度 ≥ 0.95）就算有 */
+function skyboxHasSun(texture: THREE.CubeTexture): boolean {
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 48;
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    if (!context) return false;
+    for (const image of texture.image as CanvasImageSource[]) {
+      context.drawImage(image, 0, 0, 48, 48);
+      const data = context.getImageData(0, 0, 48, 48).data;
+      let hot = 0;
+      for (let i = 0; i < data.length; i += 4) if (data[i] * 0.3 + data[i + 1] * 0.5 + data[i + 2] * 0.2 >= 243) hot++;
+      if (hot >= 3) return true;
+    }
+  } catch {
+    // 读不了像素（没有 DOM、跨域贴图）：当作没有
+  }
+  return false;
+}
+
 export class CloudSky {
   readonly mesh: THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>;
   /** 可以随时改字段，下一帧生效 */
   readonly profile: CloudSkyProfile;
+  /** 当前的天空盒里已经画了太阳（这时不画日晕）；检视 / 调试用 */
+  skyboxSun = false;
+  private checked: unknown = undefined;
 
   constructor(profile: CloudSkyProfile) {
     this.profile = profile;
@@ -196,11 +221,16 @@ export class CloudSky {
     this.mesh.name = 'CloudSky';
     this.mesh.frustumCulled = false;
     this.mesh.renderOrder = -900; // 透明队列里最先画：后面的雾带、水面、粒子都叠在云上
-    this.mesh.onBeforeRender = () => {
-      const p = this.profile, u = material.uniforms;
+    this.mesh.onBeforeRender = (_renderer, scene) => {
+      const p = this.profile, u = material.uniforms, background = (scene as THREE.Scene).background;
+      // 天空盒是异步换上的：每次换了就重新查一遍里面有没有太阳
+      if (background !== this.checked) {
+        this.checked = background;
+        this.skyboxSun = background instanceof THREE.CubeTexture && skyboxHasSun(background);
+      }
       u.uOn.value = Atmosphere.active ? 1 : 0;
       u.uCover.value.set(p.low, p.mid, p.high, p.white);
-      u.uShape.value.set(p.height, p.lit, p.shade, p.sunGlow);
+      u.uShape.value.set(p.height, p.lit, p.shade, this.skyboxSun ? 0 : p.sunGlow);
       u.uEmber.value.fromArray(p.ember);
     };
   }
