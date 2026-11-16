@@ -6,11 +6,15 @@ import { Atmosphere, atmosphereForChapter } from '../world/Atmosphere';
 import { CloudSky, cloudSkyForChapter } from '../world/CloudSky';
 import { MistStreams, mistBand, type MistStream } from '../world/MistStreams';
 import { SunShafts } from '../world/SunShafts';
+import { UnityAtmosphereDressing } from '../world/unityAtmosphereDressing';
+import type { AtmosphereLayoutSource, UnityAtmosphereLayout } from '../world/unityAtmosphereLayout';
 
 /**
  * 空气透视检视页（atmosphere-lab.html）：同一个机位开 / 关对比。
  *   ?map=1-1      读 Unity 导出的场景（public/assets/unity-levels/scenes）；不带 map 是一片程序生成的层叠山谷
  *   ?atmosphere=0 关掉空气透视（只剩场景原有的雾；Unity 场景的环境也认这个参数，线性雾起点不会被往后推）；?cloud=0 只关云影
+ *   Unity 场景的雾带 / 水面雾 / 落叶 / 鸟按这张图的数据摆（unityAtmosphereLayout.ts）；?layout=debug 把摆位画成线：
+ *                 橙 = 崖脚雾带，红 = 内圈，品红 = 外圈，白 = 最远一圈，绿 = 谷底，青 / 蓝 = 水面，黄圈 = 遭遇场地，橙 = 落叶的树，白圈 = 鸟
  *   ?mist=0       关掉流动雾带；?mist=x,y,z,长,半宽,雾团直径[,不透明度[,流速倍率]];…  自己摆几条顺风的直雾带（代替默认的那几条）
  *   ?shafts=0     关掉逆光的光柱；?shaft=0.3 强度，?shaftLength= ?shaftRadius= ?shaftProtect= 同名参数
  *   ?sky=0        关掉云天；?sky_low=0.5 这样带 sky_ 前缀的字段名覆盖云天的参数（low mid high height white lit shade sunGlow）
@@ -41,6 +45,7 @@ camera.rotation.order = 'YXZ';
 
 const mapId = params.get('map');
 const valleyCrowns: LeafCrown[] = [];
+let sceneDoc: (AtmosphereLayoutSource & { encounters?: { position: number[]; arenaRadius: number }[] }) | null = null;
 let chapter = 1, spawn = new THREE.Vector3(0, 0, 40), spawnYaw = 0, sceneBaseY: number | null = null, updateScene: (dt: number, t: number) => void = () => {};
 if (mapId) {
   // Unity 场景的网页端读取模块还没入库：用 glob 按需载入（文件不在时是空表），检视页不对它们形成编译期依赖
@@ -66,6 +71,9 @@ if (mapId) {
   if (typeof unityAtmosphereBaseY === 'function') sceneBaseY = unityAtmosphereBaseY(doc);
   scene.add(view.group);
   await view.ready;
+  sceneDoc = doc;
+  // 环境自己已经接了云天 / 光柱（以及按图的摆位）：检视页用自己那一份（能用网址调参、单独开关），把环境的拿掉，免得画两遍
+  for (const name of ['CloudSky', 'SunShafts', 'UnityAtmosphereDressing']) for (let found = view.group.getObjectByName(name); found; found = view.group.getObjectByName(name)) found.removeFromParent();
   chapter = Number(mapId[0]) || 1;
   spawn = new THREE.Vector3().fromArray(doc.spawn.position);
   spawnYaw = Math.atan2(-doc.spawn.forward[0], -doc.spawn.forward[2]);
@@ -98,14 +106,18 @@ const apply = (): void => {
     Atmosphere.bind(scene, profile, { baseY });
   } else Atmosphere.unbind();
   mist.mesh.visible = on && flags.mist;
+  if (dressing?.waterMist) dressing.waterMist.mesh.visible = on && flags.mist;
   shafts.mesh.visible = on && flags.shafts;
   cloudSky.mesh.visible = on && flags.sky;
   life.group.visible = on && flags.life;
 };
 // 雾带要读风向，先接上空气透视再建
 Atmosphere.bind(scene, profile, { baseY });
-const mist = new MistStreams(mistLayout());
-scene.add(mist.mesh);
+// Unity 场景：雾带 / 水面雾 / 落叶 / 鸟按这张图的数据摆；网址给了 ?mist=x,y,z,… 就只用手摆的那几条
+const dressing = sceneDoc && !/[,;]/.test(params.get('mist') ?? '') ? new UnityAtmosphereDressing(sceneDoc) : null;
+const mist = dressing?.mist ?? new MistStreams(dressing ? [] : mistLayout());
+scene.add(dressing ? dressing.group : mist.mesh);
+if (dressing && sceneDoc && params.get('layout') === 'debug') scene.add(layoutDebug(dressing.layout, sceneDoc));
 const number = (key: string): number | undefined => params.has(key) ? Number(params.get(key)) : undefined;
 const shafts = new SunShafts({ strength: number('shaft'), length: number('shaftLength'), radius: number('shaftRadius'), protect: number('shaftProtect') });
 scene.add(shafts.mesh);
@@ -117,12 +129,12 @@ const cloudSky = new CloudSky(skyProfile);
 scene.add(cloudSky.mesh);
 // 小活物：层叠山谷里三棵树（buildValley 种的）下的落叶、朝太阳那一侧的一团尘、远处一群鸟
 const ahead = new THREE.Vector3(-Math.sin(spawnYaw), 0, -Math.cos(spawnYaw));
-const life = new AirLife({
+const life = dressing ? { group: dressing.life?.group ?? new THREE.Group() } : new AirLife({
   leaves: mapId ? [] : valleyCrowns,
   birds: [{ center: [spawn.x + ahead.x * 220, spawn.y + 85, spawn.z + ahead.z * 220], radius: 70 }],
   motes: mapId ? [] : [{ center: [spawn.x + toSun.x * 9, spawn.y + 2.6, spawn.z + toSun.z * 9], size: [9, 4.5, 9] }],
 });
-scene.add(life.group);
+if (!dressing) scene.add(life.group);
 apply();
 
 // ?softdepth=1：多画一遍场景深度（只写深度），给雾带做软相交
@@ -137,6 +149,8 @@ function renderDepth(): void {
   }
   const visible = mist.mesh.visible, rays = shafts.mesh.visible, cloudy = cloudSky.mesh.visible, alive = life.group.visible, shadows = renderer.shadowMap.autoUpdate;
   mist.mesh.visible = shafts.mesh.visible = cloudSky.mesh.visible = life.group.visible = false;
+  const water = dressing?.waterMist?.mesh.visible ?? false;
+  if (dressing?.waterMist) dressing.waterMist.mesh.visible = false;
   scene.overrideMaterial = depthOnly;
   renderer.shadowMap.autoUpdate = false;
   renderer.setRenderTarget(depthTarget);
@@ -148,6 +162,7 @@ function renderDepth(): void {
   shafts.mesh.visible = rays;
   cloudSky.mesh.visible = cloudy;
   life.group.visible = alive;
+  if (dressing?.waterMist) dressing.waterMist.mesh.visible = water;
   mist.useSceneDepth(depthTarget.depthTexture);
 }
 
@@ -194,13 +209,13 @@ renderer.setAnimationLoop(() => {
   if (move.lengthSq() > 0) camera.position.add(move.normalize().applyQuaternion(camera.quaternion).multiplyScalar((keys.has('ShiftLeft') ? 60 : 14) * dt));
   draw(dt);
   if (++frames === 3) document.title = 'rendered';
-  status.textContent = `${mapId ?? '层叠山谷'} · 空气透视 ${on ? '开' : '关'}（F）· 云影 ${on && clouds && cloudShadow > 0 ? '开' : '关'}（C）· 雾带 ${mist.mesh.visible ? `开 ${mist.count} 团` : '关'}（M）· 光柱 ${shafts.mesh.visible ? `开 ${shafts.level.toFixed(2)}` : '关'}（G）· 云天 ${cloudSky.mesh.visible ? '开' : '关'}（K）· 小活物 ${life.group.visible ? '开' : '关'}（L）· 基准高度 ${baseY.toFixed(1)} m\n` +
+  status.textContent = `${mapId ?? '层叠山谷'} · 空气透视 ${on ? '开' : '关'}（F）· 云影 ${on && clouds && cloudShadow > 0 ? '开' : '关'}（C）· 雾带 ${mist.mesh.visible ? `开 ${mist.count + (dressing?.waterMist?.count ?? 0)} 团` : '关'}（M）· 光柱 ${shafts.mesh.visible ? `开 ${shafts.level.toFixed(2)}` : '关'}（G）· 云天 ${cloudSky.mesh.visible ? '开' : '关'}（K）· 小活物 ${life.group.visible ? '开' : '关'}（L）· 基准高度 ${baseY.toFixed(1)} m\n` +
     `${calls} calls / ${triangles} tris`;
 });
 
 // 控制台 / 自动化用：开关模块、换时间、量耗时
 (window as unknown as { lab: unknown }).lab = {
-  camera, scene, renderer, profile, flags, shafts, skyProfile,
+  camera, scene, renderer, profile, flags, shafts, skyProfile, cloudSky,
   set(change: Partial<typeof flags> & { atmosphere?: boolean; clouds?: boolean; t?: number }): void {
     if (change.atmosphere !== undefined) on = change.atmosphere;
     if (change.clouds !== undefined) clouds = change.clouds;
@@ -219,13 +234,13 @@ renderer.setAnimationLoop(() => {
     gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
     return Math.round((performance.now() - start) / n * 100) / 100;
   },
-  stats: () => ({ calls, triangles, mist: mist.count, shafts: shafts.level }),
+  stats: () => ({ calls, triangles, mist: mist.count + (dressing?.waterMist?.count ?? 0), shafts: shafts.level }),
+  layout: dressing?.layout ?? null, doc: sceneDoc,
 };
 
 /**
- * 雾带怎么摆。层叠山谷：每两排山之间一条，顺风从右往左绕过去，越远越大越浓越慢；镜头前的开阔地上只有几缕碎絮。
- * Unity 场景：检视页不知道每张图的地形，只在出生点前方按距离摆三条顺风的直雾带，用来确认模块在真实场景里能用；
- * 正式的摆位由各图自己给（网址 ?mist=… 可以先试）。
+ * 检视页自己摆的雾带。层叠山谷：每两排山之间一条，顺风从右往左绕过去，越远越大越浓越慢；镜头前的开阔地上只有几缕碎絮。
+ * 网址 ?mist=x,y,z,长,半宽,直径[,不透明度[,流速]];… 时是那几条顺风的直雾带（Unity 场景里试摆位用，代替按图算出来的）。
  */
 function mistLayout(): MistStream[] {
   const custom = params.get('mist');
@@ -251,13 +266,7 @@ function mistLayout(): MistStream[] {
       arc(545, 44, 62, 112, { opacity: 0.78, speed: 0.42 }),
     ];
   }
-  const forward = new THREE.Vector3(-Math.sin(spawnYaw), 0, -Math.cos(spawnYaw));
-  const ahead = (distance: number, lift: number): [number, number, number] => [spawn.x + forward.x * distance, baseY + lift, spawn.z + forward.z * distance];
-  return [
-    mistBand(ahead(110, 7), 220, { halfWidth: 16, size: 28, bow: 14 }, { opacity: 0.36, speed: 0.7 }),
-    mistBand(ahead(190, 13), 360, { halfWidth: 26, size: 46, bow: 24 }, { opacity: 0.5, speed: 0.6 }),
-    mistBand(ahead(300, 22), 520, { halfWidth: 40, size: 72, bow: 36 }, { opacity: 0.64, speed: 0.5 }),
-  ];
+  return [];
 }
 
 /** 没有地图时的检视场景：一条山谷，五排越远越高的山，低角度侧光，雾终点在最远一排之外 */
@@ -317,4 +326,30 @@ function buildValley(target: THREE.Scene): void {
       target.add(peak);
     }
   }
+}
+
+/** ?layout=debug：把按图算出来的摆位画成线（不吃深度、不吃雾，俯视时一眼看清和地形、遭遇场地的关系） */
+function layoutDebug(layout: UnityAtmosphereLayout, doc: AtmosphereLayoutSource): THREE.Group {
+  const group = new THREE.Group();
+  group.name = 'LayoutDebug';
+  const line = (points: THREE.Vector3[], color: number, loop = false): void => {
+    const material = new THREE.LineBasicMaterial({ color, depthTest: false, fog: false, toneMapped: false });
+    const object = loop ? new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), material) : new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), material);
+    object.renderOrder = 8000;
+    object.frustumCulled = false;
+    group.add(object);
+  };
+  const circle = (x: number, y: number, z: number, radius: number, color: number): void =>
+    line(Array.from({ length: 40 }, (_, i) => new THREE.Vector3(x + Math.cos(i / 40 * 6.2832) * radius, y, z + Math.sin(i / 40 * 6.2832) * radius)), color, true);
+  for (const stream of layout.mist) {
+    const size = stream.keys[1].size;
+    line(stream.keys.map(key => new THREE.Vector3(...key.position)), size <= 18 ? 0xffa020 : size <= 26 ? 0xff3030 : size <= 28 ? 0x30ff60 : size <= 48 ? 0xff30ff : 0xffffff);
+  }
+  for (const stream of layout.waterMist) line(stream.keys.map(key => new THREE.Vector3(...key.position)), stream.flat ? 0x30d0ff : 0x3060ff);
+  for (const site of doc.encounters ?? []) circle(site.position[0], site.position[1] + 1, site.position[2], site.arenaRadius, 0xffe030);
+  for (const boss of doc.bosses ?? []) circle(boss.center[0], boss.center[1] + 1, boss.center[2], boss.radius, 0xff9020);
+  circle(doc.spawn.position[0], doc.spawn.position[1] + 1, doc.spawn.position[2], 4, 0xffffff);
+  for (const tree of layout.leaves) line([new THREE.Vector3(tree.position[0], tree.ground, tree.position[2]), new THREE.Vector3(...tree.position)], 0xff8020);
+  for (const flock of layout.birds) circle(flock.center[0], flock.center[1], flock.center[2], flock.radius, 0xffffff);
+  return group;
 }
