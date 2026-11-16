@@ -58,7 +58,7 @@ void main() {
 		+ texture2D( tFrame, vUv + uTexel * vec2( -1.0, 1.0 ) ).rgb + texture2D( tFrame, vUv + uTexel * vec2( 1.0, 1.0 ) ).rgb );
 	float l = dot( c, vec3( 0.3, 0.5, 0.2 ) );
 	vec2 q = ( vUv - uSun ) * vec2( uAspect, 1.0 );
-	float core = smoothstep( 0.9, 1.0, l );
+	float core = smoothstep( 0.955, 1.0, l );
 	gl_FragColor = vec4( c * uTint * ( exp( -dot( q, q ) * uMask.z ) * ( smoothstep( uMask.x, uMask.y, l ) + uMask.w * core * core ) ), 1.0 );
 }
 `;
@@ -101,8 +101,8 @@ uniform vec4 uShaft;
 varying vec2 vUv;
 void main() {
 	vec3 s = texture2D( tShaft, vUv ).rgb * uShaft.x;
-	// 膝：太阳跟前不再往上堆成一团白，远处拖出去的那点光原样保留
-	s /= 1.0 + 1.5 * dot( s, vec3( 0.3, 0.5, 0.2 ) );
+	// 膝：太阳跟前不往上堆成一团白（一个像素最多加 0.3 左右），远处拖出去的那点光原样保留
+	s /= 1.0 + 3.3 * dot( s, vec3( 0.3, 0.5, 0.2 ) );
 	// 暗处保护：原画面越暗的地方加得越少，逆光的剪影保持是剪影
 	float l = dot( texture2D( tFrame, vUv ).rgb, vec3( 0.3, 0.5, 0.2 ) );
 	s *= mix( 1.0, smoothstep( 0.04, 0.6, l ), uShaft.y );

@@ -236,4 +236,52 @@ Atmosphere.unbind();                                              // 卸载这�
 - 颜色不用配：每帧读场景当前的雾色、太阳、半球光天色。要调的是 `AtmosphereProfile` 里的密度、标高、云影强度（章节默认值在 `ATMOSPHERE_PROFILES`）。
 - **接上之后把原来的线性雾往后推**（起点 ≥ 120 m，终点不动）：原先 40 m 起的线性雾会把这一层盖掉，层次还是平的。
 - 自己写的 `ShaderMaterial`（`fog: true`）要把 `Atmosphere.uniforms` 并进去，否则这一层对它不生效。
-- 检视页 `atmosphere-lab.html`：`?map=1-2&view=vista` 看某张导出的图，F 开关、C 开关云影，网址里带字段名可以直接覆盖参数（`?mistDensity=0.004&cloudShadow=0.6`）。
+- **一个风**：云影、雾带、云、之后的落叶和尘都读 `Atmosphere` 的同一个风向、风速（= `cloudSpeed`）和时间；自己写的着色器拼上 `ATMOSPHERE_WIND_GLSL` 就有 `sfWind` 和一张阵风表 `sfGust(xz)`（一道道顺风扫过的锋面，同一道锋面到来时所有东西一起动）。
+
+下面三样是叠在这一层上的独立模块：只依赖 three 和 `Atmosphere`，**默认不启用，由各图显式接入**；都要先 `Atmosphere.bind`（风、时间、日光、雾色读它的），之后不用每帧调别的，卸载时 `dispose()`。
+
+#### 流动雾带 `src/world/MistStreams.ts`
+```ts
+import { MistStreams, mistBand } from '../world/MistStreams';
+const mist = new MistStreams([
+  // 一条雾带 = 一组按流向排的关键点（位置 / 半宽 / 雾团直径 / 不透明度）；首尾给 0，雾团在两头淡入淡出
+  { opacity: 0.5, speed: 0.6, keys: [
+    { position: [150, 16, -90], halfWidth: 22, size: 42, opacity: 0 },
+    { position: [60, 15, -120], halfWidth: 22, size: 42 },
+    { position: [-70, 17, -110], halfWidth: 22, size: 42 },
+    { position: [-150, 20, -80], halfWidth: 22, size: 42, opacity: 0 },
+  ] },
+  mistBand([0, 26, -300], 520, { halfWidth: 36, size: 66, bow: 30 }, { opacity: 0.64, speed: 0.5 }), // 顺风的一条直雾带
+]);
+group.add(mist.mesh);
+```
+- **只摆在层与层的交界**（8.2）：两排山之间、崖沿、水面、瀑布脚。越远的越大、越浓、越慢（参考：105 m 处直径 26 / 不透明度 0.36，320 m 处 66 / 0.64，550 m 处 112 / 0.78）。浓的（≥ 0.5）只放在交战场地以外；开阔地上最多几缕 `opacity` 0.15、`stretch` 2 的碎絮。
+- 已经替你做的：离相机 22 m 以内不画、约 60 m + 雾团直径处才到全浓（`clearDistance` 可调）；颜色读当前低雾色和日光，逆光发亮、云影扫过变暗；远处被空气透视吃掉，雾终点之外不画。
+- 水面 / 平地上的雾带给 `floorY`（水面高度），扎进地里的下半截会淡掉；贴水面的用 `flat: true`，并单独建一组、`renderOrder` 给得比水面大。
+- 软相交：默认只有深度测试（主游戏没有场景深度贴图，实测硬相交在雾团边缘被噪声撕碎后不显眼）。有水面的图已经画过一遍深度，把那张深度贴图传给 `mist.useSceneDepth(texture)` 就是软相交；不要为雾另画一遍场景。
+- 整组一次绘制调用，雾团位置全在顶点着色器里算。一张图 60–120 团足够。
+
+#### 逆光光柱 `src/world/SunShafts.ts`
+```ts
+import { SunShafts } from '../world/SunShafts';
+const shafts = new SunShafts();          // { strength: 0.22, protect: 0.6 } 是默认值
+scene.add(shafts.mesh);                  // 世界场景里最后画；第一人称武器那一层在它之后，不受影响
+```
+- 太阳在画面里或画面边上时，把太阳附近天空里足够亮的部分沿「离开太阳」的方向拖出去，被山尖、殿脊切成一道道光。做法是世界画完后拷一份画布、四分之一分辨率径向模糊、再加色叠回去——全在这个网格自己的 `onBeforeRender` 里，**不改 `Game` 的渲染流程、不多画一遍场景**（绘制调用 +5；太阳不在画面附近时零开销）。
+- **天空里要有够亮的太阳才有光柱**。烘焙的天空盒往往没有（1-2 就是），那就接云天并把 `sunGlow` 打开。
+- 克制是默认的：太阳跟前有膝（一个像素最多加 0.3 左右），叠回去时按原画面亮度加权（`protect`），逆光的敌人和山的剪影不被照灰。别把 `strength` 调过 0.35；熔火章给 0.1 以下或不接。
+- 只在直接画到画布时生效（画到渲染目标时自动不出）。
+
+#### 云天 `src/world/CloudSky.ts`
+```ts
+import { CloudSky, cloudSkyForChapter } from '../world/CloudSky';
+const clouds = new CloudSky(cloudSkyForChapter(chapter));   // 展开成新对象可以再改字段
+group.add(clouds.mesh);
+```
+- 叠在原有天空（渐变天球 / 天空盒 / 纯色背景）之上，只画天空像素。三层：**低云读的就是云影图**，按云底高度沿光线投回天上——天上的云和地上的影子是同一批、同向同速；中云更高、看上去更慢；高云是顺风拉成丝的卷云。云底偏冷、薄边透亮、朝太阳的一侧偏暖，近地平线处吃空气透视。
+- 章节默认值在 `CLOUD_SKY_PROFILES`：沙寺云少、高处有丝；霜山云厚偏冷；**熔火没有白云**（`white: 0`），是两层慢慢滚的烟，底下被火映红；雪域是一朵朵清楚的积云。
+- `sunGlow`：在平行光的方向画日盘和光晕（被云遮住）。原天空已经画了太阳的图给 0，否则是两个太阳。
+- 低云的云量由云影图决定（约四成）；要少云就把 `low` 调低（那是浓度），或者把 `Atmosphere` 的 `cloudShadow` 一起调低，天和地保持一致。
+
+#### 检视页
+`atmosphere-lab.html`：不带参数是程序生成的层叠山谷，`?map=1-2&view=vista` 看某张导出的图（`view=sun|cross|vista|spawn`，或 `?pos=x,y,z&yaw=&pitch=`）。F 空气透视、C 云影、M 雾带、G 光柱、K 云天；网址里带字段名直接覆盖参数（`?mistDensity=0.004&cloudShadow=0.6`、云天带 `sky_` 前缀、`?shaft=0.3`）；`?mist=x,y,z,长,半宽,直径[,不透明度[,流速]];…` 先试几条顺风的直雾带再写进图里。控制台 `lab.set({ mist: false })` 开关模块，`lab.bench()` 量每帧耗时。

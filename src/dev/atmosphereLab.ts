@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { EventBus } from '../core/EventBus';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { Atmosphere, atmosphereForChapter } from '../world/Atmosphere';
+import { CloudSky, cloudSkyForChapter } from '../world/CloudSky';
 import { MistStreams, mistBand, type MistStream } from '../world/MistStreams';
 import { SunShafts } from '../world/SunShafts';
 
@@ -11,10 +12,11 @@ import { SunShafts } from '../world/SunShafts';
  *   ?atmosphere=0 关掉空气透视（只剩场景原有的雾；Unity 场景的环境也认这个参数，线性雾起点不会被往后推）；?cloud=0 只关云影
  *   ?mist=0       关掉流动雾带；?mist=x,y,z,长,半宽,雾团直径[,不透明度[,流速倍率]];…  自己摆几条顺风的直雾带（代替默认的那几条）
  *   ?shafts=0     关掉逆光的光柱；?shaft=0.3 强度，?shaftLength= ?shaftRadius= ?shaftProtect= 同名参数
+ *   ?sky=0        关掉云天；?sky_low=0.5 这样带 sky_ 前缀的字段名覆盖云天的参数（low mid high height white lit shade sunGlow）
  *   ?softdepth=1  检视页自己多画一遍场景深度，喂给雾带做软相交（主游戏里只有带水面的图有现成的深度）
  *   ?view=sun|cross|vista|spawn   机位：朝太阳 / 侧对太阳 / 升到 34 m 俯瞰 / 出生朝向；?pos=x,y,z ?yaw=弧度 ?pitch=弧度 直接给机位
  *   ?base=12      低雾基准高度（默认：Unity 场景按图自动算的低处，层叠山谷是出生点脚下 2 m）；?t=30 云影推进到第几秒；?still 只出一帧
- * 操作：点画面锁定鼠标转视角，WASD 飞行（Shift 加速），F 开关空气透视，C 开关云影，M 开关雾带，G 开关光柱。
+ * 操作：点画面锁定鼠标转视角，WASD 飞行（Shift 加速），F 开关空气透视，C 开关云影，M 开关雾带，G 开关光柱，K 开关云天。
  * 控制台：lab.set({ mist: false }) 开关模块，lab.bench() 连画 40 帧量每帧耗时（毫秒，含 GPU）。
  */
 const params = new URLSearchParams(location.search);
@@ -85,7 +87,7 @@ const profile = atmosphereForChapter(chapter);
 for (const key of Object.keys(profile) as (keyof typeof profile)[]) if (params.has(key)) profile[key] = Number(params.get(key));
 const cloudShadow = profile.cloudShadow;
 let on = params.get('atmosphere') !== '0' && params.get('atmo') !== '0', clouds = params.get('cloud') !== '0';
-const flags = { mist: params.get('mist') !== '0', shafts: params.get('shafts') !== '0' };
+const flags = { mist: params.get('mist') !== '0', shafts: params.get('shafts') !== '0', sky: params.get('sky') !== '0' };
 const baseY = params.has('base') ? Number(params.get('base')) : sceneBaseY ?? spawn.y - 2;
 const apply = (): void => {
   if (on) {
@@ -94,6 +96,7 @@ const apply = (): void => {
   } else Atmosphere.unbind();
   mist.mesh.visible = on && flags.mist;
   shafts.mesh.visible = on && flags.shafts;
+  cloudSky.mesh.visible = on && flags.sky;
 };
 // 雾带要读风向，先接上空气透视再建
 Atmosphere.bind(scene, profile, { baseY });
@@ -102,6 +105,12 @@ scene.add(mist.mesh);
 const number = (key: string): number | undefined => params.has(key) ? Number(params.get(key)) : undefined;
 const shafts = new SunShafts({ strength: number('shaft'), length: number('shaftLength'), radius: number('shaftRadius'), protect: number('shaftProtect') });
 scene.add(shafts.mesh);
+const skyProfile = cloudSkyForChapter(chapter);
+for (const key of ['low', 'mid', 'high', 'height', 'white', 'lit', 'shade', 'sunGlow'] as const) if (params.has(`sky_${key}`)) skyProfile[key] = Number(params.get(`sky_${key}`));
+// 层叠山谷自己的渐变天已经画了太阳
+if (!mapId && !params.has('sky_sunGlow')) skyProfile.sunGlow = 0;
+const cloudSky = new CloudSky(skyProfile);
+scene.add(cloudSky.mesh);
 apply();
 
 // ?softdepth=1：多画一遍场景深度（只写深度），给雾带做软相交
@@ -114,8 +123,8 @@ function renderDepth(): void {
     depthTarget?.dispose();
     depthTarget = new THREE.WebGLRenderTarget(bufferSize.x, bufferSize.y, { depthTexture: new THREE.DepthTexture(bufferSize.x, bufferSize.y, THREE.UnsignedIntType) });
   }
-  const visible = mist.mesh.visible, rays = shafts.mesh.visible, shadows = renderer.shadowMap.autoUpdate;
-  mist.mesh.visible = shafts.mesh.visible = false;
+  const visible = mist.mesh.visible, rays = shafts.mesh.visible, cloudy = cloudSky.mesh.visible, shadows = renderer.shadowMap.autoUpdate;
+  mist.mesh.visible = shafts.mesh.visible = cloudSky.mesh.visible = false;
   scene.overrideMaterial = depthOnly;
   renderer.shadowMap.autoUpdate = false;
   renderer.setRenderTarget(depthTarget);
@@ -125,6 +134,7 @@ function renderDepth(): void {
   scene.overrideMaterial = null;
   mist.mesh.visible = visible;
   shafts.mesh.visible = rays;
+  cloudSky.mesh.visible = cloudy;
   mist.useSceneDepth(depthTarget.depthTexture);
 }
 
@@ -144,6 +154,7 @@ addEventListener('keydown', event => {
   if (event.code === 'KeyC') { clouds = !clouds; apply(); }
   if (event.code === 'KeyM') { flags.mist = !flags.mist; apply(); }
   if (event.code === 'KeyG') { flags.shafts = !flags.shafts; apply(); }
+  if (event.code === 'KeyK') { flags.sky = !flags.sky; apply(); }
 });
 addEventListener('keyup', event => keys.delete(event.code));
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
@@ -169,13 +180,13 @@ renderer.setAnimationLoop(() => {
   if (move.lengthSq() > 0) camera.position.add(move.normalize().applyQuaternion(camera.quaternion).multiplyScalar((keys.has('ShiftLeft') ? 60 : 14) * dt));
   draw(dt);
   if (++frames === 3) document.title = 'rendered';
-  status.textContent = `${mapId ?? '层叠山谷'} · 空气透视 ${on ? '开' : '关'}（F）· 云影 ${on && clouds && cloudShadow > 0 ? '开' : '关'}（C）· 雾带 ${mist.mesh.visible ? `开 ${mist.count} 团` : '关'}（M）· 光柱 ${shafts.mesh.visible ? `开 ${shafts.level.toFixed(2)}` : '关'}（G）· 基准高度 ${baseY.toFixed(1)} m\n` +
+  status.textContent = `${mapId ?? '层叠山谷'} · 空气透视 ${on ? '开' : '关'}（F）· 云影 ${on && clouds && cloudShadow > 0 ? '开' : '关'}（C）· 雾带 ${mist.mesh.visible ? `开 ${mist.count} 团` : '关'}（M）· 光柱 ${shafts.mesh.visible ? `开 ${shafts.level.toFixed(2)}` : '关'}（G）· 云天 ${cloudSky.mesh.visible ? '开' : '关'}（K）· 基准高度 ${baseY.toFixed(1)} m\n` +
     `${calls} calls / ${triangles} tris`;
 });
 
 // 控制台 / 自动化用：开关模块、换时间、量耗时
 (window as unknown as { lab: unknown }).lab = {
-  camera, scene, renderer, profile, flags, shafts,
+  camera, scene, renderer, profile, flags, shafts, skyProfile,
   set(change: Partial<typeof flags> & { atmosphere?: boolean; clouds?: boolean; t?: number }): void {
     if (change.atmosphere !== undefined) on = change.atmosphere;
     if (change.clouds !== undefined) clouds = change.clouds;
