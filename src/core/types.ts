@@ -190,6 +190,8 @@ export interface StageNode {
   type: StageType;
   reward: RewardType;   // 清关后宝箱给什么
   theme: ThemeId;
+  /** 这一关用的地图（规划表编号「1-2」/ 备选图「1-A」，= Unity 场景文档 id）；每局路线洗牌后可能和槽位编号不同。缺省 = 槽位编号 */
+  map?: string;
 }
 
 export interface RunState {
@@ -214,6 +216,10 @@ export interface RunState {
    *  - glide: >0 时空中按住跳跃可滑翔（雷隼被动写入，玩家控制器读取；换关时不归零）
    */
   flags: Record<string, number>;
+  /** 这一局的关卡路线：各槽位用的地图编号（progression/RunRoute；缺省 = 规划表原顺序：生涯第一局、调试局） */
+  route?: string[];
+  /** 调试局（?debugStage= 直接进关）：不排路线、不刷游荡怪（Unity RunState.dev） */
+  dev?: boolean;
 }
 
 export interface RunSummary {
@@ -966,6 +972,8 @@ export interface IRunPlan {
   themeFor(chapter: number): ThemeId;
   stageLabel(node: StageNode): string;
   rewardLabel(reward: RewardType): string;
+  /** 开局后、进第一关前：等场景清单读到（备选图要它），必要时按清单重排这一局的路线 */
+  prepare?(run: RunState): Promise<void>;
 }
 
 // ───────────────────────────── 表现层 ─────────────────────────────

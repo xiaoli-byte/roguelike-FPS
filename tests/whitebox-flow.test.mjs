@@ -60,18 +60,19 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
   './WhiteboxGen': genUrl,
   './WhiteboxEncounters': encountersUrl,
   './UnitySceneData': moduleUrl('export const UNITY_SCENE_DATA = {};'),
-  './UnitySceneAdapter': moduleUrl('export function unityLayout(){} export function unityFights(){return [];}'),
+  './UnitySceneAdapter': moduleUrl('export function unityLayout(){} export function unityFights(){return [];} export function unityFightRewardFactor(){return 1;}'),
+  './CombatDirector': moduleUrl('export class CombatDirector{static live(){return false;} static applySiteReward(){} update(){} dispose(){}}'),
+  './LevelLayout': moduleUrl('export function chooseLevelLayout(d){return {document:d,variant:null,index:-1,allEncounters:d.encounters};}'),
   './UnitySceneView': moduleUrl(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group(); artInspectionViews=[]; artBrief=''; update(){} dispose(){this.group.removeFromParent();}}`),
   './UnityLevelLibrary': moduleUrl('export const UnityLevelLibrary={scene:()=>null}; export function unityHeights(){return new Float32Array();} export function unityPoint(){return {};} export async function prepareUnityScene(){}'),
 });
 const { StageDirector } = await import(directorUrl);
-const legacyStages = [0, 1, 2].flatMap(chapter => [0, 1, 2, 3, 4].map(index => ({ chapter, index, type: index === 4 ? 'boss' : 'combat', reward: index === 4 ? 'weapon' : 'scroll', title: '旧测试关', available: true })));
+// 局流程是 Unity 的规划表（progression/StagePlan，UnityStages.ts 给出哪些图导出了）；路线洗牌等见 tests/unity-run-route.test.mjs
+const runRngUrl = await ts('../src/progression/RunRng.ts');
+const stagePlanUrl = await ts('../src/progression/StagePlan.ts', { '../world/UnityStages': await ts('../src/world/UnityStages.ts') });
 const { RunPlanner } = await import(await ts('../src/progression/RunPlan.ts', {
-  '../core/types': await ts('../src/core/types.ts'),
-  '../world/StageDesign': moduleUrl('export function getStageDesign(){return {title:"主线"};}'),
-  '../world/WhiteboxMode': moduleUrl('export function usesAuthoredLayout(){return true;} export function usesRedesignLayout(){return globalThis.__redesign === true;}'),
-  '../world/WhiteboxGen': genUrl,
-  '../world/UnityStages': moduleUrl(`const stages=${JSON.stringify(legacyStages)}; export const UNITY_STAGES=stages; export const UNITY_FINAL_STAGE=stages.at(-1);`),
+  './RunRng': runRngUrl, './StagePlan': stagePlanUrl,
+  './RunRoute': await ts('../src/progression/RunRoute.ts', { './RunRng': runRngUrl, './StagePlan': stagePlanUrl }),
 }));
 const chapter = theme => ['desert', 'frost', 'inferno'].indexOf(theme);
 const nodeFor = (plan, type = plan.index === 5 ? 'boss' : 'combat') => ({ chapter: chapter(plan.chapter), index: plan.index - 1, type, theme: plan.chapter, reward: 'coins' });
@@ -216,25 +217,31 @@ test('guarded optional supplies unlock once, other rooms cannot overlap encounte
   assert.equal(f.director.cleared, true); assert.equal(f.spawns.length, total(guard) + total(final));
 });
 
-test('the actual planner advances all 15 main stages through one exit regardless of seed or prior branch type', () => {
-  const planner = new RunPlanner({});
+test('the actual planner walks the Unity plan (first career run: designed order) through one exit regardless of seed or prior branch type', () => {
+  const planner = new RunPlanner({ meta: { save: { stats: { runs: 0 } } } });
+  // UnityStages.ts：前三章 12 关 + 第四章已建的 4-1、4-3
+  const codes = ['1-1', '1-2', '1-3', '1-4', '2-1', '2-2', '2-3', '2-4', '3-1', '3-2', '3-3', '3-4', '4-1', '4-3'];
   for (const seed of [0, 1, 20261005, 0xffffffff]) {
     const run = planner.createRun('fox', seed);
-    for (let slot = 0; slot < 15; slot++) {
-      assert.equal(run.stage.chapter, Math.floor(slot / 5));
-      assert.equal(run.stage.index, slot % 5);
-      assert.equal(run.stage.type, slot % 5 === 4 ? 'boss' : 'combat');
-      assert.equal(run.stage.reward, slot % 5 === 4 ? 'weapon' : 'scroll');
+    assert.equal(run.route, undefined, 'first career run has no shuffled route');
+    for (let slot = 0; slot < codes.length; slot++) {
+      const [chapter, index] = codes[slot].split('-').map(Number);
+      assert.equal(run.stage.chapter, chapter - 1);
+      assert.equal(run.stage.index, index - 1);
+      assert.equal(run.stage.map, codes[slot]);
+      assert.equal(run.stage.type, index === 4 ? 'boss' : 'combat');
+      assert.equal(run.stage.reward, index === 4 ? 'weapon' : 'scroll');
+      assert.equal(planner.isFinalStage(run.stage), slot === codes.length - 1);
       const next = planner.nextOptions(run);
       assert.deepEqual(planner.nextOptions(run), next, 'repeated planning is stable');
-      assert.equal(next.length, slot === 14 ? 0 : 1);
+      assert.equal(next.length, slot === codes.length - 1 ? 0 : 1);
       if (next.length) run.stage = next[0];
     }
   }
   for (const type of ['elite', 'shop', 'treasure']) {
     const run = planner.createRun('fox', 20261005);
-    run.stage = { ...run.stage, index: 2, type };
-    assert.deepEqual(planner.nextOptions(run).map(n => [n.index, n.type]), [[3, 'combat']], 'legacy branch advances back onto main sequence');
+    run.stage = { ...run.stage, index: 2, type, map: undefined };
+    assert.deepEqual(planner.nextOptions(run).map(n => [n.index, n.type]), [[3, 'boss']], 'legacy branch advances back onto main sequence');
   }
 });
 

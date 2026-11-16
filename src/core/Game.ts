@@ -292,6 +292,8 @@ export class Game implements IGame {
 
     this.setState('transition');
     ctx.ui.fade(1, 0.01).then(async () => {
+      // 每局路线要等场景清单（备选图）：清单晚到时按它重排这一局的路线
+      await ctx.runPlan.prepare?.(ctx.run);
       if (!await this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(); return; }
       ctx.ui.showHUD(true);
       ctx.weapons.setViewmodelVisible(true);

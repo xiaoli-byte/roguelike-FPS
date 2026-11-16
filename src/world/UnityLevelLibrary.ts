@@ -21,6 +21,7 @@ export interface UnityRenderer {
   rotation: [number, number, number, number];
   scale: [number, number, number];
   terrain?: UnityTerrain;
+  scenePath?: string;
 }
 
 export interface UnityHeightfield {
@@ -66,6 +67,7 @@ export interface UnityEncounter {
   chestOffset: [number, number, number];
   difficulty: number;
   waves: UnityWave[];
+  scenePath?: string;
 }
 
 export interface UnityNavigationData {
@@ -129,6 +131,7 @@ export interface UnityPlatform {
   callRadius: number;
   startPowered: boolean;
   powerSite: string | null;
+  scenePath?: string;
 }
 
 export interface UnityWater {
@@ -144,6 +147,7 @@ export interface UnityWater {
   drownBurst: number;
   spring: boolean;
   beds: [number, number, number][];
+  scenePath?: string;
 }
 
 export interface UnityActivator {
@@ -166,6 +170,79 @@ export interface UnityActivator {
   onColor: [number, number, number, number];
   offColor: [number, number, number, number];
   targets: string[];
+  scenePath?: string;
+}
+
+/** 场景清单里的一张图（manifest.json 的 stages[]）；每局路线的备选图（1-A / 2-A / 3-A）带 pool: true */
+export interface UnityManifestStage {
+  id: string;
+  title?: string;
+  chapter?: number;
+  index?: number;
+  kind?: string;
+  reward?: string;
+  scene?: string;
+  available: boolean;
+  url?: string;
+  pool?: boolean;
+}
+
+export interface UnityLevelManifest {
+  schema?: number;
+  source?: string;
+  stages: UnityManifestStage[];
+}
+
+// ───────────── 每局变化（M3 / M4）：以下字段都是可选的，旧导出没有时运行时原样跑 ─────────────
+//
+// scenePath：物体在场景里的层级路径（根物体名 / 子物体名 / …，同名兄弟在名字后加 #序号）。LevelLayout 的变体用路径引用物体，
+// 一个导出项「在某个物体下」= 它的 scenePath 等于该路径或以「该路径/」开头（停用父物体 = 停用整棵子树，同 Unity SetActive）。
+
+/**
+ * 怪物入场点（Unity MonsterEntry）：据点之外持续涌来的游荡怪群（CombatDirector）只从这些地方进场。
+ * 位置 = 落地点（导航网格上），forward = 进场后往哪走。
+ */
+export interface UnityMonsterEntry {
+  scenePath?: string;
+  position: [number, number, number];
+  forward: [number, number, number];
+  /** SpawnMode：0 现身 1 埋伏（入场点按现身处理）2 余烬起身 3 熔岩爬出 4 飞临 5 跃下 6 增援门 */
+  mode: number;
+  /** 一群在落地点周围散开的半径（米） */
+  spread: number;
+  /** 名字（报告 / 调试用：「北沙丘背后」） */
+  label: string;
+  /** 跃下的起跳点 / 增援门的门后；null = 落地点 */
+  from: [number, number, number] | null;
+  /** 只放飞行敌人（飞临入场点） */
+  flyersOnly: boolean;
+}
+
+/** LevelLayout 的一种走法（Unity LevelLayout.Variant） */
+export interface UnityLayoutVariant {
+  /** 变体 id（main / reverse…） */
+  id: string;
+  /** 变体名（进关提示：「自驼队营地入」） */
+  title: string;
+  /** 抽中的权重（≤ 0 = 不参与随机，只能指定） */
+  weight: number;
+  /** 这一走法的出生点（PlayerSpawn 的路径和位置 / 朝向）；null = 用文档的 spawn */
+  spawn: { scenePath: string; position: [number, number, number]; forward: [number, number, number] } | null;
+  /** 这一走法的出口（ExitPortal 的路径，对应 exits[].scenePath）；null = 不换 */
+  exit: string | null;
+  /** 只在这个走法里出现的物体路径（别的走法里停用） */
+  only: string[];
+  /** 这个走法里停用的物体路径 */
+  hide: string[];
+  /** 这个走法里改写的场地先后（site / requires 都是据点的 title，同 encounters[].requires） */
+  requires: { site: string; requires: string[] }[];
+  /** 这个走法里换编制（spec 非 null）/ 换肃清奖励（reward 非 null）的场地 */
+  sites: { site: string; spec: { waves: UnityWave[] } | null; reward: string | null }[];
+}
+
+/** 图内布局变体（Unity LevelLayout）：第一个变体 = 设计稿的走法（主变体） */
+export interface UnityLevelLayout {
+  variants: UnityLayoutVariant[];
 }
 
 export interface UnitySceneDocument {
@@ -178,7 +255,7 @@ export interface UnitySceneDocument {
   visualBounds?: { min: [number, number, number]; max: [number, number, number] };
   map?: { url: string; area: [number, number, number, number] };
   renderers: UnityRenderer[];
-  colliders: { kind: string; name: string; min: [number, number, number]; max: [number, number, number]; platform?: string; activator?: string; url?: string; center?: [number, number, number]; size?: [number, number, number]; rotation?: [number, number, number, number] }[];
+  colliders: { kind: string; name: string; min: [number, number, number]; max: [number, number, number]; platform?: string; activator?: string; url?: string; center?: [number, number, number]; size?: [number, number, number]; rotation?: [number, number, number, number]; scenePath?: string }[];
   platforms: UnityPlatform[];
   water: UnityWater[];
   activators: UnityActivator[];
@@ -188,10 +265,14 @@ export interface UnitySceneDocument {
   navigation: UnityNavigationData;
   environment: UnityEnvironment;
   encounters: UnityEncounter[];
-  exits: { position: [number, number, number]; rotation: [number, number, number, number]; reward: string; requires: string[] }[];
-  caches: { title: string; position: [number, number, number]; reward: string; discoverRadius: number; guard: string | null }[];
-  camps: { title: string; position: [number, number, number]; yaw: number; safeRadius: number; openShop: boolean }[];
+  exits: { position: [number, number, number]; rotation: [number, number, number, number]; reward: string; requires: string[]; scenePath?: string }[];
+  caches: { title: string; position: [number, number, number]; reward: string; discoverRadius: number; guard: string | null; scenePath?: string }[];
+  camps: { title: string; position: [number, number, number]; yaw: number; safeRadius: number; openShop: boolean; scenePath?: string }[];
   bosses: { id: string; position: [number, number, number]; center: [number, number, number]; floorY: number; radius: number; reward: [number, number, number]; stronghold: boolean }[];
+  /** 怪物入场点（MonsterEntry）；没有 = 老图，战斗导演退回视野外随机导航点 */
+  entries?: UnityMonsterEntry[];
+  /** 图内布局变体（LevelLayout）；没有 / 空 = 只有一种走法 */
+  layout?: UnityLevelLayout | null;
 }
 
 const BASE = import.meta.env.BASE_URL;
@@ -203,17 +284,25 @@ class Library {
   private readonly meshes = new Map<string, Promise<GLTF>>();
   private readonly textures = new Map<string, Promise<THREE.Texture>>();
   private readonly scenes = new Map<string, Promise<UnitySceneDocument | null>>();
-  private manifest: Promise<{ stages: { id: string; available: boolean; url?: string }[] }> | null = null;
+  private manifestPending: Promise<UnityLevelManifest> | null = null;
+
+  /** 场景清单（public/assets/unity-levels/manifest.json）：局路线按它判断哪些图导出了（备选图带 pool: true） */
+  manifest(): Promise<UnityLevelManifest> {
+    this.manifestPending ??= fetch(`${BASE}assets/unity-levels/manifest.json`).then(response => {
+      if (!response.ok) throw new Error(`Unity 场景清单读取失败：${response.status}`);
+      return response.json() as Promise<UnityLevelManifest>;
+    }).catch(error => {
+      this.manifestPending = null;
+      throw error;
+    });
+    return this.manifestPending;
+  }
 
   async scene(id: string): Promise<UnitySceneDocument | null> {
     let pending = this.scenes.get(id);
     if (!pending) {
       pending = (async () => {
-        this.manifest ??= fetch(`${BASE}assets/unity-levels/manifest.json`).then(response => {
-          if (!response.ok) throw new Error(`Unity 场景清单读取失败：${response.status}`);
-          return response.json();
-        });
-        const item = (await this.manifest).stages.find(stage => stage.id === id);
+        const item = (await this.manifest()).stages.find(stage => stage.id === id);
         if (!item) return null;
         if (!item.available || !item.url) throw new Error(`Unity 场景 ${id} 尚未生成，不能使用旧网页地图代替`);
         const response = await fetch(`${BASE}${item.url}`);
@@ -224,7 +313,7 @@ class Library {
     }
     return pending.catch(error => {
       this.scenes.delete(id);
-      this.manifest = null;
+      this.manifestPending = null;
       throw error;
     });
   }
