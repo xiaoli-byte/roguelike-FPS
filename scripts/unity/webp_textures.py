@@ -47,10 +47,13 @@ def convert(job: tuple[str, str, str]) -> tuple[str, int, int]:
             image = image.convert("RGBA")
         if image.getchannel("A").getextrema() == (255, 255):
             image = image.convert("RGB")
+        # exact=True: libwebp otherwise zeroes RGB wherever alpha == 0. Splat maps keep layer 3's weight in A, so
+        # without it layers 0-2 vanish wherever layer 3 is absent (98% of 1-1's terrain); cut-out colour textures
+        # would get black fringes under bilinear filtering.
         if role == "lossless":
-            image.save(target, "WEBP", lossless=True, quality=100, method=4)
+            image.save(target, "WEBP", lossless=True, quality=100, method=4, exact=True)
         else:
-            image.save(target, "WEBP", quality=90, method=4)
+            image.save(target, "WEBP", quality=90, method=4, exact=image.mode == "RGBA")
     return Path(source).name, Path(source).stat().st_size, Path(target).stat().st_size
 
 

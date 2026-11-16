@@ -13,10 +13,15 @@ async function exists(url) {
   try { await stat(new URL(url, root)); return true; } catch { return false; }
 }
 
-test('Unity run plan exposes 16 stages and every generated Unity scene', () => {
-  assert.equal(manifest.stages.length, 16);
+test('Unity run plan exposes 16 main stages, the map pool and every generated Unity scene', () => {
+  const main = manifest.stages.filter(stage => !stage.pool);
+  const pool = manifest.stages.filter(stage => stage.pool);
+  assert.equal(main.length, 16);
   assert.ok(available.length >= 13);
-  assert.deepEqual(manifest.stages.map(stage => stage.id), ['1-1', '1-2', '1-3', '1-4', '2-1', '2-2', '2-3', '2-4', '3-1', '3-2', '3-3', '3-4', '4-1', '4-2', '4-3', '4-4']);
+  assert.deepEqual(main.map(stage => stage.id), ['1-1', '1-2', '1-3', '1-4', '2-1', '2-2', '2-3', '2-4', '3-1', '3-2', '3-3', '3-4', '4-1', '4-2', '4-3', '4-4']);
+  // 图池备选图（RunPlan.Pool）：只进清单和场景目录，不进 UnityStages.ts 的主线表
+  assert.deepEqual(pool.map(stage => stage.id), ['1-A', '2-A', '3-A']);
+  assert.ok(pool.every(stage => stage.available && stage.url), 'every pool map is exported');
   assert.deepEqual(unavailable, manifest.stages.filter(stage => !stage.available).map(stage => stage.id));
 });
 

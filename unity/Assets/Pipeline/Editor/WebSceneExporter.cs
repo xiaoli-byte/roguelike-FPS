@@ -18,7 +18,6 @@ namespace Spiritfire.Art.Editor
     public static class WebSceneExporter
     {
         const string Output = "../public/assets/unity-levels.next";
-        const string Published = "../public/assets/unity-levels";
         static readonly Dictionary<string, string> Meshes = new();
         static readonly Dictionary<string, string> Textures = new();
         static readonly JObject SceneDocs = new();
@@ -40,7 +39,9 @@ namespace Spiritfire.Art.Editor
             SceneDocs.RemoveAll();
             var index = new JArray();
             var stages = new JArray();
-            foreach (var stage in RunPlan.Stages)
+            // 主线关卡 + 图池备选图（1-A / 2-A / 3-A）。备选图只进清单和场景目录（pool = true），
+            // 不进 UnityStages.ts 的主线表：网页的每局路线自己决定什么时候抽它们
+            foreach (var stage in RunPlan.Stages.Concat(RunPlan.Pool))
             {
                 bool exists = File.Exists(stage.scene);
                 string id = stage.code;
@@ -55,12 +56,14 @@ namespace Spiritfire.Art.Editor
                     ["scene"] = stage.scene,
                     ["available"] = exists,
                 };
+                if (stage.alt) item["pool"] = true;
                 if (exists)
                 {
                     item["url"] = $"assets/unity-levels/scenes/{id}.json";
                     ExportScene(stage, id);
                 }
                 index.Add(item);
+                if (stage.alt) continue;
                 stages.Add(new JObject
                 {
                     ["chapter"] = stage.chapter - 1,
@@ -85,25 +88,14 @@ namespace Spiritfire.Art.Editor
             string sceneData = "import type { UnitySceneDocument } from './UnityLevelLibrary';\n\n" +
                 "export const UNITY_SCENE_DATA: Record<string, UnitySceneDocument> = {};\n";
             File.WriteAllText("../src/world/UnitySceneData.ts", sceneData);
-            Publish();
+            // 发布（压缩进 public/assets/unity-levels）改由 npm run unity:web:publish 做，不再整份拷贝原样导出
             Debug.Log($"[WebExport] {index.Count(s => (bool)s["available"])} scenes, {Meshes.Count} mesh variants, {Textures.Count} textures");
         }
 
+        /// <summary>旧的整份拷贝发布（2 GB 原样进发布目录）已停用：发布走 scripts/unity/optimize-web-levels.mjs。</summary>
         public static void Publish()
         {
-            if (!File.Exists(Output + "/manifest.json")) throw new InvalidOperationException("No completed web export to publish");
-            Directory.CreateDirectory(Published);
-            foreach (string folder in new[] { "scenes", "meshes", "textures" })
-            {
-                string source = Output + "/" + folder;
-                string target = Published + "/" + folder;
-                Directory.CreateDirectory(target);
-                var incoming = new HashSet<string>(Directory.GetFiles(source).Select(Path.GetFileName), StringComparer.OrdinalIgnoreCase);
-                foreach (string oldFile in Directory.GetFiles(target))
-                    if (!incoming.Contains(Path.GetFileName(oldFile))) File.Delete(oldFile);
-                foreach (string file in Directory.GetFiles(source)) File.Copy(file, Path.Combine(target, Path.GetFileName(file)), true);
-            }
-            File.Copy(Output + "/manifest.json", Published + "/manifest.json", true);
+            throw new InvalidOperationException("webpublish 已停用：在仓库根目录跑 npm run unity:web:publish（scripts/unity/optimize-web-levels.mjs）");
         }
 
         static void ExportScene(StageSpec stage, string id)

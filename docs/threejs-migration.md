@@ -62,7 +62,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 ```
 
 - `WebSceneExporter`（`P/Editor/`）每关写一份场景文档：渲染件（网格 + 材质）、碰撞体、地形高度场与 splat、导航网格、环境（雾 / 环境光 / 太阳 / 天空盒 / 灯）、遭遇（波次、锚点、条件、奖励）、出口、宝箱、营地、首领场、平台、水体、机关、植被、草皮，并顺手生成 `src/world/UnityStages.ts`。
-- 发布步骤 `optimize-web-levels.mjs`（取代 `bridge.sh webpublish` 的整份拷贝）：
+- 发布步骤 `optimize-web-levels.mjs`（`bridge.sh webpublish` 的整份拷贝已停用，`ExportAll` 也不再顺手拷贝）：
   - 地形 GLB 只留材质。几何体在运行时由高度场重建（`UnityTerrainMesh.ts`），原样导出里 1025² 顶点的地形网格从来不画，单张 56 MB，共 855 MB。
   - 其余网格的顶点 / 索引缓冲走 `EXT_meshopt_compression`（无过滤器，逐字节无损，1.25 GB → 110 MB）；碰撞网格去掉用不到的法线和 UV。网页加载器挂 `MeshoptDecoder`。
   - 贴图 PNG → WebP（`S/webp_textures.py`）：颜色 q90；地形 splat 无损；**法线贴图先解包再 q95**（见第 8 节第 1 条）。
@@ -77,7 +77,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 |---|---|---|---|
 | M0 | 删除 Unreal | — | ✅ 2026-11-15 |
 | M1 | 场景：14 张主线图的几何、碰撞、导航、环境、遭遇锚点、平台、水、机关进网页；发布瘦身；法线修正 | 导出器 1.1k | 🔶 见 4.1 |
-| M2 | 数据桥：网页读 `defs.json` 覆盖 TS 定义表；导出器改 Newtonsoft（`JsonUtility` 丢 `projectile` / `blade` / `innate` / `spreadTuned`，枚举成了整数）；补首领 tiers / phases、敌人 ai / role / rank / element、持枪手感 / 词条 / 灵宠表 | 0.1k | ⬜ |
+| M2 | 数据桥：导出器改 Newtonsoft 整份序列化（✅ 2026-11-16，`defs.json` schema 2：武器的 `spreadTuned` / `projectile` / `blade` / `innate`、首领 `tiers` / `phases` / `forms` / `hitZones`、敌人 `ai` / `role` / `rank` / `element` 都在，枚举写名字）。Unity 已冻结，不做运行时覆盖：一次性把 TS 定义表对齐 `defs.json`，再加对照测试锁住；持枪手感 / 词条 / 灵宠表随各自的期补导 | 0.1k | 🔶 |
 | M3 | 局流程：RunPlan / RunRoute / RunRng / RunState / EconomyConfig，图池洗牌 | 0.9k + 0.3k | ⬜ |
 | M4 | 遭遇与导演：EncounterSite v2、LevelLayout、CombatDirector、MonsterEntry、RewardScale | 4.4k | ⬜ |
 | M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ⬜ |
@@ -100,8 +100,8 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 
 - ✅ 接手 2026-11-08 的半成品：导出器（`WebSceneExporter.cs` / `WebGameplayExporter.cs` / `PipelineBridge` 三条命令）、`src/world/Unity*.ts`、`StageDirector` 异步载入 Unity 场景、`RunPlan` 改成 Unity 的 14 关、`Game.ts` 换 `UnityNavigation`、检视页、8 份 `tests/unity-*.test.mjs`。
 - ✅ 发布瘦身（2.2 GB → 约 340 MB）与法线贴图修正。
-- ⬜ 重新导出：网页这份是 11-08 导出的，之后 Unity 又改了一周（1-A 千佛崖 / 2-A 玄冰裂谷打磨、走法、入场点、3-3 火神殿）。要等 Unity 编辑器空出来（别的会话在用时导出会挨个打开场景、打断它们）。
-- ⬜ 导出器补：备选图（`RunPlan.Pool`）、LevelLayout 变体（现在编辑态导出可能把各走法的出生点 / 出口混在一起）、MonsterEntry、PerchPoint、SpawnAnchor 的 mode / from、熔岩 / 闸 / 间歇泉、流沙、地表区、边界区、可破坏物、风场、灵坛、传说碑、关卡目标。
+- ✅ 重新导出（2026-11-16，批处理模式，16 分钟）：带上 11-08 之后一周的 Unity 改动；三张备选图 1-A / 2-A / 3-A 进清单（`pool: true`）和场景目录，不进 `UnityStages.ts` 主线表。原样 2.5 GB → 发布 390 MB。
+- ⬜ 导出器补：LevelLayout 变体（现在编辑态导出可能把各走法的出生点 / 出口混在一起）、MonsterEntry、PerchPoint、SpawnAnchor 的 mode / from、熔岩 / 闸 / 间歇泉、流沙、地表区、边界区、可破坏物、风场、灵坛、传说碑、关卡目标。
 - ⬜ 场景文档里的高度场 / 草皮密度 / 植被实例（4-3 一份 26 MB）拆成按内容寻址的二进制文件：重导出时地形没变就不产生新数据。
 - ⬜ 天空盒立方体贴图是 HDR，导出器 Blit 进 ARGB32 会截断高光。
 - ✅ 接上空气透视 / 云影层（`src/world/Atmosphere.ts`，「游戏场景搭建」会话做的网页独有层，用户 2026-11-15 定的「全部迁移到 Three.js、不必落到 Unity」）：`UnityEnvironmentView` 在雾 / 环境光 / 太阳建好后 `Atmosphere.bind`，每帧 `update(t)`，卸载时 `unbind`；Unity 自写着色器（水、熔岩 / 流体）挂上它的共享 uniform；低雾基准高度取最低水面，没有水取导航网格顶点高度的 5% 分位；接上后线性雾起点推到 ≥ 120 m（终点不动）。网址带 `atmosphere=0` 关掉，看 Unity 原样的雾。这是在 Unity 规格之上**有意加的一层**。
@@ -140,7 +140,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 
 ## 6.1 资源体积
 
-- 关卡发布目录 343 MB（网格 110、贴图 109、场景文档 131）。
+- 关卡发布目录 390 MB（网格 134、贴图 110、场景文档 155；17 张图）。
 - 场景导出器按网格逐件写道具，没有引用 `public/assets` 里已有的道具 GLB，同一件道具在网页里存了两份。导出器改成引用资产 ID 后还能再省一截。
 - 贴图以后转 KTX2（省显存，不只是省下载）。
 
@@ -152,4 +152,5 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 ## 8. 已知问题
 
 1. **法线贴图（已修）**：Unity 工程是线性色彩空间，`WebSceneExporter.ExportTexture` 把贴图 Blit 进默认（sRGB）的 ARGB32 渲染纹理。sRGB 贴图（颜色、地形 splat）来回一编一解没事；线性贴图（法线）的 RGB 被多套了一层 sRGB 曲线，再加上 Unity 法线贴图的 DXT5nm 打包布局（R=1、G=y、A=x），网页当普通 RGB 法线读，所有 Unity 道具的法线方向都是错的。发布步骤按 `UnpackNormalmapRGorAG` 解包修正；导出器本身下次改成线性渲染纹理（`RenderTextureReadWrite.Linear`）并直接写 RGB 法线。
-2. 主线 14 关里没有 4-2、4-4（Unity 里第四章本来就只建了 4-1、4-3）。
+2. **地形 splat 贴图（已修，2026-11-16）**：libwebp 无损编码默认把 alpha = 0 处的 RGB 清零，而 splat 的 A 通道存第 4 层权重，前 3 层权重在没有第 4 层的地方全丢了（1-1 有 98% 的像素权重和 < 0.5）。`webp_textures.py` 改为 `exact=True`，64 张 splat 解码后与 Unity 导出逐像素一致。
+3. 主线 14 关里没有 4-2、4-4（Unity 里第四章本来就只建了 4-1、4-3）。
