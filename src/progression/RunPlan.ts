@@ -258,6 +258,13 @@ export class RunPlanner implements IRunPlan {
 
   async prepare(run: RunState): Promise<void> {
     await this.ensureCatalog();
+    if (run.stagesCleared > 0) return;
+    // ?debugStage=1-A：备选图要等清单才知道导出了没有
+    const debug = this.debugStage();
+    if (debug) {
+      if (!run.dev || specOf(run, run.stage)?.map !== debug.map) beginRun(run, debug, null, true);
+      return;
+    }
     // 清单在开局之后才读到（备选图、主线可用性可能变了）：还没进过关的正式局按新清单重排
     if (run.dev || !run.route || run.stagesCleared > 0 || this.routeVersion.get(run) === stageCatalogVersion()) return;
     beginRun(run, null, RunRoute.build(run.seed));

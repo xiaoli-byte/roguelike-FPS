@@ -92,17 +92,27 @@ test('debugStage opens generated Unity scenes and never substitutes missing scen
   const { stripTypeScriptTypes } = await import('node:module');
   const stageSource = await readFile(new URL('../src/world/UnityStages.ts', import.meta.url), 'utf8');
   const stagesUrl = `data:text/javascript;base64,${Buffer.from(stripTypeScriptTypes(stageSource, { mode: 'transform' })).toString('base64')}`;
-  const source = await readFile(new URL('../src/progression/RunPlan.ts', import.meta.url), 'utf8');
-  const url = `data:text/javascript;base64,${Buffer.from(stripTypeScriptTypes(source.replaceAll("'../world/UnityStages'", `'${stagesUrl}'`), { mode: 'transform' })).toString('base64')}`;
-  const { RunPlanner } = await import(url);
+  // 局流程（progression/RunPlan → RunRoute / StagePlan / RunRng）：?debugStage= 开调试局，从那张图开始；没导出的图不顶替
+  const module = async (path, imports = {}) => {
+    let text = await readFile(new URL(path, import.meta.url), 'utf8');
+    for (const [key, value] of Object.entries(imports)) text = text.replaceAll(`'${key}'`, `'${value}'`);
+    return `data:text/javascript;base64,${Buffer.from(stripTypeScriptTypes(text, { mode: 'transform' })).toString('base64')}`;
+  };
+  const rngUrl = await module('../src/progression/RunRng.ts');
+  const planUrl = await module('../src/progression/StagePlan.ts', { '../world/UnityStages': stagesUrl });
+  const routeUrl = await module('../src/progression/RunRoute.ts', { './RunRng': rngUrl, './StagePlan': planUrl });
+  const { RunPlanner } = await import(await module('../src/progression/RunPlan.ts', { './RunRng': rngUrl, './RunRoute': routeUrl, './StagePlan': planUrl }));
+  const first = () => { const planner = new RunPlanner({}); return planner.firstStage(planner.createRun('fox', 1)); };
   const previous = globalThis.location;
   try {
     globalThis.location = { search: '?debugStage=1-2' };
-    assert.equal(new RunPlanner({}).firstStage({}).index, 1);
+    assert.equal(first().index, 1);
+    assert.equal(first().map, '1-2');
     globalThis.location = { search: '?debugStage=1-4' };
-    assert.equal(new RunPlanner({}).firstStage({}).type, 'boss');
+    assert.equal(first().type, 'boss');
     globalThis.location = { search: '?debugStage=4-2' };
-    assert.equal(new RunPlanner({}).firstStage({}).index, 0);
+    assert.equal(first().index, 0);
+    assert.notEqual(first().map, '4-2');
   } finally {
     if (previous === undefined) delete globalThis.location;
     else globalThis.location = previous;

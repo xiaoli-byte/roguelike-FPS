@@ -80,7 +80,7 @@ function context() {
 for (const stage of manifest.stages.filter(stage => stage.available)) test(`${stage.id}: Unity scene initializes in StageDirector`, async () => {
   const ctx = context();
   const director = new StageDirector(ctx);
-  await director.load({ chapter: stage.chapter - 1, index: stage.index, type: stage.kind, reward: stage.reward, theme: 'desert' });
+  await director.load({ chapter: stage.chapter - 1, index: stage.index, type: stage.kind, reward: stage.reward, theme: 'desert', map: stage.id });
   assert.ok(director.arena);
   assert.ok(director.whitebox);
   director.unload();
