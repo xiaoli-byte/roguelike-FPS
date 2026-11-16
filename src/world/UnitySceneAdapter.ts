@@ -5,6 +5,8 @@ import type { WhiteboxFight } from './WhiteboxEncounters';
 import { buildWhiteboxAdventure } from './WhiteboxEncounters';
 import type { WhiteboxMetadata, WhiteboxPlan, WhiteboxPoint } from './WhiteboxTypes';
 import type { UnityEncounter, UnitySceneDocument } from './UnityLevelLibrary';
+import { CombatDirector } from './CombatDirector';
+import { ROADSIDE_REWARD_MULT } from '../progression/Economy';
 
 const ROLES = ['assault', 'flank', 'ranged', 'precision', 'artillery', 'support'] as const;
 const BOSS_IDS: Readonly<Record<string, string>> = {
@@ -67,11 +69,36 @@ function planFor(document: UnitySceneDocument, spawn: P2, exit: P2): WhiteboxPla
   };
 }
 
-function fightsFor(document: UnitySceneDocument): WhiteboxFight[] {
+/**
+ * 每个据点每只怪的击杀奖励倍率（Unity EncounterSite.RewardFactor = 据点加量摊薄 × 驻守点 0.5）：
+ * StageDirector 在这个据点刷出来的怪上挂 RewardScale（< 1 才挂）。首领场 / 没加量的普通据点 = 1
+ */
+const rewardFactors = new WeakMap<WhiteboxFight, number>();
+
+export function unityFightRewardFactor(fight: WhiteboxFight | null | undefined): number {
+  return fight ? rewardFactors.get(fight) ?? 1 : 1;
+}
+
+export interface UnityFightOptions {
+  /** 正式的局（CombatDirector.live）：据点普通单位 × 1.5 加量，奖励按比例摊薄 */
+  live?: boolean;
+}
+
+function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}): WhiteboxFight[] {
   const regular = document.encounters.map((site: UnityEncounter, index): WhiteboxFight => {
     const position = { x: site.position[0], z: site.position[2] };
     const facing = { x: position.x, z: position.z + 1 };
-    return {
+    const plans = site.waves.map(wave => ({
+      label: wave.label, hint: wave.hint, triggerRemaining: wave.triggerRemaining, delay: wave.delay,
+      entries: wave.entries.map(entry => ({
+        enemyId: entry.enemy, count: entry.count, elite: entry.elite,
+        affix: entry.affix || undefined, placement: ROLES[Math.max(0, Math.min(ROLES.length - 1, entry.role))],
+        arrivalDelay: entry.arrivalDelay >= 0 ? entry.arrivalDelay : undefined,
+      })),
+    }));
+    // 据点加量（每关新建的编制拷贝，改它不动文档）；奖励倍率 = 摊薄 × 驻守点减半
+    const factor = CombatDirector.densify(plans, !!options.live) * (site.roadside ? ROADSIDE_REWARD_MULT : 1);
+    const fight: WhiteboxFight = {
       id: site.title || `E${index}`, label: site.title, room: site.title || `E${index}`,
       final: false, optional: site.optional, position, facing,
       anchors: site.anchors.map(anchor => ({
@@ -80,15 +107,10 @@ function fightsFor(document: UnitySceneDocument): WhiteboxFight[] {
       points: [position], radius: site.arenaRadius,
       contains: (point, halfWidth = 0) => Math.hypot(point.x - position.x, point.z - position.z) <= site.arenaRadius + halfWidth,
       entryDepth: site.entryDepth, requires: site.requires,
-      plans: site.waves.map(wave => ({
-        label: wave.label, hint: wave.hint, triggerRemaining: wave.triggerRemaining, delay: wave.delay,
-        entries: wave.entries.map(entry => ({
-          enemyId: entry.enemy, count: entry.count, elite: entry.elite,
-          affix: entry.affix || undefined, placement: ROLES[Math.max(0, Math.min(ROLES.length - 1, entry.role))],
-          arrivalDelay: entry.arrivalDelay >= 0 ? entry.arrivalDelay : undefined,
-        })),
-      })),
+      plans,
     };
+    if (factor < 1) rewardFactors.set(fight, factor);
+    return fight;
   });
   const bosses = document.bosses.map((boss, index): WhiteboxFight => {
     const position = { x: boss.position[0], z: boss.position[2] };

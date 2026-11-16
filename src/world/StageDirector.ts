@@ -22,7 +22,9 @@ import { usesAuthoredLayout, usesRedesignLayout } from './WhiteboxMode';
 import { generateWhitebox } from './WhiteboxGen';
 import { buildWhiteboxAdventure, buildWhiteboxFights, whiteboxPlansForApproach, whiteboxSpawnRegion, type WhiteboxFight } from './WhiteboxEncounters';
 import type { WhiteboxMetadata, WhiteboxPlan } from './WhiteboxTypes';
-import { unityFights, unityLayout } from './UnitySceneAdapter';
+import { unityFightRewardFactor, unityFights, unityLayout } from './UnitySceneAdapter';
+import { CombatDirector } from './CombatDirector';
+import { chooseLevelLayout } from './LevelLayout';
 import { UnitySceneView } from './UnitySceneView';
 import { UnityLevelLibrary, prepareUnityScene, unityHeights, unityPoint, type UnitySceneDocument } from './UnityLevelLibrary';
 
@@ -140,6 +142,8 @@ export class StageDirector implements IStageDirector {
   private layout: LevelLayout | null = null;
   private view: ArenaView | UnitySceneView | null = null;
   private unityDocument: UnitySceneDocument | null = null;
+  /** 战斗导演（游荡怪群；每张 Unity 图一个，正式的局才真正刷） */
+  private director: CombatDirector | null = null;
   /** Chapter-3 lava floor (WhiteboxLava): hurts and returns the player, burns enemies knocked in. */
   private lava: LavaSystem | null = null;
   /** The current level's lava runtime (dev tools, tests); null on levels without lava. */
@@ -184,7 +188,8 @@ export class StageDirector implements IStageDirector {
   // ───────────── 载入 / 卸载 ─────────────
 
   load(stage: StageNode): Promise<void> {
-    const pending = UnityLevelLibrary.scene(`${stage.chapter + 1}-${stage.index + 1}`) as UnitySceneDocument | Promise<UnitySceneDocument | null> | null;
+    // 每局路线洗牌后槽位「1-1」可能用别的图（stage.map）
+    const pending = UnityLevelLibrary.scene(stage.map ?? `${stage.chapter + 1}-${stage.index + 1}`) as UnitySceneDocument | Promise<UnitySceneDocument | null> | null;
     if (pending && typeof (pending as Promise<UnitySceneDocument | null>).then === 'function') {
       return Promise.resolve(pending).then(document => this.loadResolved(stage, document));
     }
@@ -216,12 +221,18 @@ export class StageDirector implements IStageDirector {
     this.stage = stage;
 
     const rng = new Rng(ctx.run.seed ^ (stage.chapter * 7919 + stage.index * 104729 + 17));
+    // 图内布局变体（LevelLayout）：这一局怎么走这张图——在搭场景之前把别的走法的出生点 / 出口 / 物体滤掉
+    const layout = unityDocument ? chooseLevelLayout(unityDocument, ctx.run) : null;
+    if (layout) unityDocument = layout.document;
     this.unityDocument = unityDocument;
     if (unityDocument) await prepareUnityScene(unityDocument);
     const L = unityDocument ? unityLayout(unityDocument, stage)
       : usesAuthoredLayout() && !procedural ? generateWhitebox(stage, { redesign: usesRedesignLayout(stage.theme) }) : generateLevel(rng, stage, { adventure: AssetLibrary.enabled });
     if (unityDocument) {
-      this.whiteboxFights = unityFights(unityDocument);
+      this.whiteboxFights = unityFights(unityDocument, { live: CombatDirector.live(ctx.run) });
+      this.director = new CombatDirector(ctx, unityDocument, stage, {
+        siteActive: () => this.activeWhiteboxFight !== null, completed: () => this.cleared,
+      }, layout?.allEncounters);
       if (L.adventure && unityDocument.map) L.adventure.mapImage = { url: unityDocument.map.url, area: unityDocument.map.area };
     } else if (L.whitebox) {
       this.whiteboxFights = buildWhiteboxFights(L, stage);
@@ -304,6 +315,7 @@ export class StageDirector implements IStageDirector {
     const ctx = this.ctx;
     this.waves?.cancel();
     this.encounterWaves?.cancel(); this.encounterWaves = null;
+    this.director?.dispose(); this.director = null;
     this.activeEncounterId = null; this.nextEncounterAt = 0;
     this.whiteboxFights = [];
     this.activeWhiteboxFight = null;
@@ -631,6 +643,7 @@ export class StageDirector implements IStageDirector {
     this.beacon?.update(dt, t);
     for (const entrance of this.challengeEntrances) entrance.update(dt, t);
     this.updateEncounters();
+    this.director?.update(dt);
     this.discoverSites();
     for (const p of this.portals) p.update(dt, t);
 
@@ -685,6 +698,8 @@ export class StageDirector implements IStageDirector {
   private onEnemySpawned(e: IEnemy): void {
     if (!this.stage) return;
     this.lastProgress = this.t;
+    // 据点加量摊薄 / 驻守点减半（Unity EncounterSite.RewardFactor）
+    CombatDirector.applySiteReward(e, unityFightRewardFactor(this.activeWhiteboxFight));
     if (!e.isBoss) return;
     if (this.bosses.includes(e)) return;
     this.bosses.push(e);

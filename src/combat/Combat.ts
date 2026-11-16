@@ -28,6 +28,7 @@ import {
 import { STATUS_DOT_ELEMENT, STATUS_POWER_CAP, StatusSystem } from './Status';
 import { HitFeedback } from './Feedback';
 import { blastPlayer, explosionShake, lineClear } from './Blast';
+import { scaleKillEssence } from '../progression/RewardScale';
 import { ReactionSystem } from './Reactions';
 import type { AttachSource, ReactionHost } from './Reactions';
 
@@ -285,7 +286,8 @@ export class Combat implements ICombat, ReactionHost {
     if (!hasTag(result.request, PURGE_TAG)) {
       const run = ctx.run;
       run.kills++;
-      const essence = (enemy.def.essence ?? (enemy.isBoss ? 60 : 1)) * (enemy.isElite ? 5 : 1);
+      // 据点加量摊薄 / 驻守点减半 / 游荡怪每关上限（Unity KillResolver + RewardScale）
+      const essence = scaleKillEssence(enemy, (enemy.def.essence ?? (enemy.isBoss ? 60 : 1)) * (enemy.isElite ? 5 : 1));
       if (essence > 0 && Number.isFinite(essence)) run.essence += essence;
 
       const p = ctx.player;

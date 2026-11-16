@@ -7,6 +7,7 @@ import { ChestManager } from './loot/Chests';
 import { ShopManager } from './loot/Shop';
 import { weaponRewardMinRarity } from './loot/rewardRules';
 import { isPurgeKill } from './scrolls/ScrollKit';
+import { rewardScaleOf, scaleKillCoins } from './RewardScale';
 
 /**
  * 掉落与奖励：
@@ -244,7 +245,9 @@ export class LootSystem implements ILoot {
     if (hi > 0) {
       let base = ctx.rng.int(Math.max(0, Math.round(lo)), Math.max(0, Math.round(hi)));
       if (enemy.isElite) base *= 3;
-      const amount = Math.round(base * chapterMult * gain);
+      let amount = Math.round(base * chapterMult * gain);
+      // 据点加量摊薄 / 驻守点减半 / 游荡怪每关上限（Unity LootDirector：倍率作用在灵石获取之前）
+      if (rewardScaleOf(enemy)) amount = Math.round(scaleKillCoins(enemy, Math.round(base * chapterMult), Math.max(0, ctx.run.chapter), ctx.rng) * gain);
       if (amount > 0) this.pickups.dropCoins(pos, amount, enemy.isBoss ? 2.2 : enemy.isElite ? 1.4 : 1);
     }
 

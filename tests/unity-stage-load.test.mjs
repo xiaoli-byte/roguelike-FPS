@@ -15,7 +15,20 @@ const rngUrl = await ts('../src/core/Rng.ts');
 const encountersUrl = await ts('../src/world/WhiteboxEncounters.ts', {
   './WhiteboxGen': data('export function whiteboxPoint(plan,p){return {x:p[0]-plan.bounds[0]/2,z:p[1]-plan.bounds[1]/2};} export function whiteboxInsidePolygon(){return true;}'),
 });
+// 局流程 / 导演的真模块（敌人定义表留空：怪物表为空，导演不刷怪，只验证能随场景建起来）
+const economyUrl = await ts('../src/progression/Economy.ts');
+const rewardScaleUrl = await ts('../src/progression/RewardScale.ts', { './Economy': economyUrl });
+const combatDirectorUrl = await ts('../src/world/CombatDirector.ts', {
+  '../enemies/Registry': data('export function getEnemyDef(){return undefined;}'), '../progression/RewardScale': rewardScaleUrl,
+});
+const runRngUrl = await ts('../src/progression/RunRng.ts');
+const stagePlanUrl = await ts('../src/progression/StagePlan.ts', { '../world/UnityStages': await ts('../src/world/UnityStages.ts') });
+const runRouteUrl = await ts('../src/progression/RunRoute.ts', { './RunRng': runRngUrl, './StagePlan': stagePlanUrl });
+const runPlanUrl = await ts('../src/progression/RunPlan.ts', { './RunRng': runRngUrl, './RunRoute': runRouteUrl, './StagePlan': stagePlanUrl });
+const levelLayoutUrl = await ts('../src/world/LevelLayout.ts', { '../progression/RunRng': runRngUrl, '../progression/RunPlan': runPlanUrl });
 const directorUrl = await ts('../src/world/StageDirector.ts', {
+  './CombatDirector': combatDirectorUrl,
+  './LevelLayout': levelLayoutUrl,
   './ChallengeEntrance': data('export class ChallengeEntrance{constructor(){}update(){}dispose(){}}'),
   '../core/Rng': rngUrl,
   '../assets/AssetLibrary': data('export const AssetLibrary={enabled:true};'),
@@ -33,7 +46,10 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
   './WhiteboxGen': data('export function generateWhitebox(){throw new Error("Unexpected whitebox");}'),
   './WhiteboxEncounters': encountersUrl,
   './UnitySceneData': data('export const UNITY_SCENE_DATA={};'),
-  './UnitySceneAdapter': await ts('../src/world/UnitySceneAdapter.ts', { './WhiteboxEncounters': encountersUrl, '../core/math': await ts('../src/core/math.ts') }),
+  './UnitySceneAdapter': await ts('../src/world/UnitySceneAdapter.ts', {
+    './WhiteboxEncounters': encountersUrl, '../core/math': await ts('../src/core/math.ts'),
+    './CombatDirector': combatDirectorUrl, '../progression/Economy': economyUrl,
+  }),
   './UnitySceneView': data(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group();artInspectionViews=[];artBrief='';update(){}dispose(){this.group.removeFromParent();}}`),
   './UnityLevelLibrary': data(`import {readFile} from 'node:fs/promises'; export const UnityLevelLibrary={scene:async id=>JSON.parse(await readFile(process.cwd()+'/public/assets/unity-levels/scenes/'+id+'.json','utf8'))}; export function unityHeights(){return new Float32Array();} export function unityPoint(v){return {x:v[0],y:v[1],z:v[2]};} export async function prepareUnityScene(){}`),
 });
