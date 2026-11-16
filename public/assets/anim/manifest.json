@@ -1,0 +1,1065 @@
+{
+ "schema": 1,
+ "fps": 30,
+ "about": "scripts/web/export-native-anims.mjs 生成；采样片段（native-anim）+ Unity 状态机。pending = Unity 里只有 Blender 手 K 来源、网页还没有片段的状态",
+ "assets": {
+  "SK_Boss_Feilian": {
+   "file": "SK_Boss_Feilian.json",
+   "glb": "assets/characters/SK_Boss_Feilian.glb",
+   "defId": "boss_feilian",
+   "clips": 16,
+   "nativeClips": 15,
+   "eventClips": 8,
+   "events": 17,
+   "keyframed": [
+    "Idle",
+    "gust",
+    "charge",
+    "blades",
+    "sidestep",
+    "tornado",
+    "wheel",
+    "stormburst",
+    "roar",
+    "down"
+   ],
+   "pending": [
+    "sidestepL",
+    "wheelR"
+   ],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 9609,
+   "frames": 1045,
+   "bytes": 147179
+  },
+  "SK_Boss_Huashe": {
+   "file": "SK_Boss_Huashe.json",
+   "glb": "assets/characters/SK_Boss_Huashe.glb",
+   "defId": "boss_huashe",
+   "clips": 13,
+   "nativeClips": 12,
+   "eventClips": 5,
+   "events": 9,
+   "keyframed": [
+    "Idle",
+    "spit",
+    "lunge",
+    "wingslap",
+    "roar",
+    "dive",
+    "tailsweep",
+    "rise",
+    "choke"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.4
+   },
+   "keys": 7311,
+   "frames": 911,
+   "bytes": 114039
+  },
+  "SK_Boss_Kui": {
+   "file": "SK_Boss_Kui.json",
+   "glb": "assets/characters/SK_Boss_Kui.glb",
+   "defId": "boss_kui",
+   "clips": 16,
+   "nativeClips": 15,
+   "eventClips": 8,
+   "events": 18,
+   "keyframed": [
+    "Idle",
+    "hop",
+    "leap",
+    "leapChain",
+    "turnLeap",
+    "knuckle",
+    "clap",
+    "drum",
+    "drum5",
+    "roar",
+    "rise",
+    "kneel"
+   ],
+   "pending": [
+    "sink"
+   ],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 5661,
+   "frames": 1159,
+   "bytes": 92104
+  },
+  "SK_Boss_Kun": {
+   "file": "SK_Boss_Kun.json",
+   "glb": "assets/characters/SK_Boss_Kun.glb",
+   "defId": "boss_kunpeng",
+   "clips": 10,
+   "nativeClips": 10,
+   "eventClips": 8,
+   "events": 29,
+   "keyframed": [
+    "inhale",
+    "bite",
+    "slamWind",
+    "slam",
+    "spit",
+    "sink",
+    "erupt"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0.2276,
+    "rotDeg": 14.47
+   },
+   "keys": 1488,
+   "frames": 650,
+   "bytes": 29812
+  },
+  "SK_Boss_Peng": {
+   "file": "SK_Boss_Peng.json",
+   "glb": "assets/characters/SK_Boss_Peng.glb",
+   "defId": "boss_kunpeng",
+   "clips": 9,
+   "nativeClips": 9,
+   "eventClips": 8,
+   "events": 32,
+   "keyframed": [
+    "swoopReady",
+    "dive",
+    "perch",
+    "takeoff",
+    "gust",
+    "spread",
+    "roar"
+   ],
+   "pending": [
+    "death",
+    "deathRest",
+    "perchRest",
+    "spreadEnd",
+    "spreadShed",
+    "swoopHold"
+   ],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.37
+   },
+   "keys": 5376,
+   "frames": 568,
+   "bytes": 82026
+  },
+  "SK_Boss_Qilin": {
+   "file": "SK_Boss_Qilin.json",
+   "glb": "assets/characters/SK_Boss_Qilin.glb",
+   "defId": "boss_qilin",
+   "clips": 14,
+   "nativeClips": 14,
+   "eventClips": 11,
+   "events": 16,
+   "keyframed": [
+    "rear",
+    "scalesFire",
+    "drink",
+    "breath",
+    "stun",
+    "pant",
+    "tuck",
+    "leap",
+    "stomp",
+    "paw"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0.0635,
+    "rotDeg": 21.44
+   },
+   "keys": 2787,
+   "frames": 777,
+   "bytes": 51706
+  },
+  "SK_Boss_QilinBurn": {
+   "file": "SK_Boss_QilinBurn.json",
+   "glb": "assets/characters/SK_Boss_QilinBurn.glb",
+   "defId": "boss_qilin",
+   "clips": 13,
+   "nativeClips": 13,
+   "eventClips": 11,
+   "events": 16,
+   "keyframed": [
+    "Move",
+    "rear",
+    "scalesFire",
+    "breath",
+    "stun",
+    "pant",
+    "tuck",
+    "leap",
+    "stomp",
+    "paw"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.38
+   },
+   "keys": 2435,
+   "frames": 705,
+   "bytes": 45951
+  },
+  "SK_Enemy_Aoyin": {
+   "file": "SK_Enemy_Aoyin.json",
+   "glb": "assets/characters/SK_Enemy_Aoyin.glb",
+   "defId": "aoyin",
+   "clips": 11,
+   "nativeClips": 10,
+   "eventClips": 4,
+   "events": 14,
+   "keyframed": [
+    "stampede",
+    "slam"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 4063,
+   "frames": 687,
+   "bytes": 65504
+  },
+  "SK_Enemy_Apsara": {
+   "file": "SK_Enemy_Apsara.json",
+   "glb": "assets/characters/SK_Enemy_Apsara.glb",
+   "defId": "apsara",
+   "clips": 8,
+   "nativeClips": 7,
+   "eventClips": 5,
+   "events": 29,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 5169,
+   "frames": 264,
+   "bytes": 82889
+  },
+  "SK_Enemy_Bifang": {
+   "file": "SK_Enemy_Bifang.json",
+   "glb": "assets/characters/SK_Enemy_Bifang.glb",
+   "defId": "bifang",
+   "clips": 11,
+   "nativeClips": 10,
+   "eventClips": 8,
+   "events": 11,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.38
+   },
+   "keys": 2579,
+   "frames": 393,
+   "bytes": 43860
+  },
+  "SK_Enemy_Dijiang": {
+   "file": "SK_Enemy_Dijiang.json",
+   "glb": "assets/characters/SK_Enemy_Dijiang.glb",
+   "defId": "dijiang",
+   "clips": 7,
+   "nativeClips": 6,
+   "eventClips": 1,
+   "events": 4,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.32
+   },
+   "keys": 3088,
+   "frames": 378,
+   "bytes": 45035
+  },
+  "SK_Enemy_Firecracker": {
+   "file": "SK_Enemy_Firecracker.json",
+   "glb": "assets/characters/SK_Enemy_Firecracker.glb",
+   "defId": "firecracker",
+   "clips": 12,
+   "nativeClips": 11,
+   "eventClips": 6,
+   "events": 33,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.34
+   },
+   "keys": 3529,
+   "frames": 505,
+   "bytes": 59186
+  },
+  "SK_Enemy_FireCrow": {
+   "file": "SK_Enemy_FireCrow.json",
+   "glb": "assets/characters/SK_Enemy_FireCrow.glb",
+   "defId": "fire_crow",
+   "clips": 7,
+   "nativeClips": 6,
+   "eventClips": 2,
+   "events": 3,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.32
+   },
+   "keys": 1768,
+   "frames": 383,
+   "bytes": 26894
+  },
+  "SK_Enemy_FireRat": {
+   "file": "SK_Enemy_FireRat.json",
+   "glb": "assets/characters/SK_Enemy_FireRat.glb",
+   "defId": "fire_rat",
+   "clips": 8,
+   "nativeClips": 7,
+   "eventClips": 2,
+   "events": 2,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.38
+   },
+   "keys": 4757,
+   "frames": 454,
+   "bytes": 67157
+  },
+  "SK_Enemy_Founder": {
+   "file": "SK_Enemy_Founder.json",
+   "glb": "assets/characters/SK_Enemy_Founder.glb",
+   "defId": "founder",
+   "clips": 11,
+   "nativeClips": 10,
+   "eventClips": 5,
+   "events": 12,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.34
+   },
+   "keys": 5202,
+   "frames": 397,
+   "bytes": 83453
+  },
+  "SK_Enemy_FoxWitch": {
+   "file": "SK_Enemy_FoxWitch.json",
+   "glb": "assets/characters/SK_Enemy_FoxWitch.glb",
+   "defId": "fox_witch",
+   "clips": 12,
+   "nativeClips": 11,
+   "eventClips": 6,
+   "events": 9,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.45
+   },
+   "keys": 8079,
+   "frames": 375,
+   "bytes": 128948
+  },
+  "SK_Enemy_FrostCrab": {
+   "file": "SK_Enemy_FrostCrab.json",
+   "glb": "assets/characters/SK_Enemy_FrostCrab.glb",
+   "defId": "frost_crab",
+   "clips": 11,
+   "nativeClips": 10,
+   "eventClips": 5,
+   "events": 12,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.44
+   },
+   "keys": 4658,
+   "frames": 400,
+   "bytes": 71111
+  },
+  "SK_Enemy_Fuzhu": {
+   "file": "SK_Enemy_Fuzhu.json",
+   "glb": "assets/characters/SK_Enemy_Fuzhu.glb",
+   "defId": "fuzhu",
+   "clips": 10,
+   "nativeClips": 9,
+   "eventClips": 5,
+   "events": 8,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.37
+   },
+   "keys": 3727,
+   "frames": 387,
+   "bytes": 56189
+  },
+  "SK_Enemy_Haozhi": {
+   "file": "SK_Enemy_Haozhi.json",
+   "glb": "assets/characters/SK_Enemy_Haozhi.glb",
+   "defId": "haozhi",
+   "clips": 9,
+   "nativeClips": 8,
+   "eventClips": 2,
+   "events": 2,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 5705,
+   "frames": 443,
+   "bytes": 77096
+  },
+  "SK_Enemy_Huodou": {
+   "file": "SK_Enemy_Huodou.json",
+   "glb": "assets/characters/SK_Enemy_Huodou.glb",
+   "defId": "huodou",
+   "clips": 12,
+   "nativeClips": 11,
+   "eventClips": 5,
+   "events": 9,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 3823,
+   "frames": 328,
+   "bytes": 67293
+  },
+  "SK_Enemy_IcePuffer": {
+   "file": "SK_Enemy_IcePuffer.json",
+   "glb": "assets/characters/SK_Enemy_IcePuffer.glb",
+   "defId": "ice_puffer",
+   "clips": 8,
+   "nativeClips": 7,
+   "eventClips": 2,
+   "events": 3,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0
+   },
+   "keys": 2388,
+   "frames": 452,
+   "bytes": 37980
+  },
+  "SK_Enemy_IceWhale": {
+   "file": "SK_Enemy_IceWhale.json",
+   "glb": "assets/characters/SK_Enemy_IceWhale.glb",
+   "defId": "ice_whale",
+   "clips": 10,
+   "nativeClips": 9,
+   "eventClips": 4,
+   "events": 9,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.37
+   },
+   "keys": 2513,
+   "frames": 462,
+   "bytes": 40957
+  },
+  "SK_Enemy_IronOx": {
+   "file": "SK_Enemy_IronOx.json",
+   "glb": "assets/characters/SK_Enemy_IronOx.glb",
+   "defId": "iron_ox",
+   "clips": 11,
+   "nativeClips": 10,
+   "eventClips": 6,
+   "events": 18,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 2059,
+   "frames": 439,
+   "bytes": 38245
+  },
+  "SK_Enemy_JerboaBlade": {
+   "file": "SK_Enemy_JerboaBlade.json",
+   "glb": "assets/characters/SK_Enemy_JerboaBlade.glb",
+   "defId": "jerboa_blade",
+   "clips": 12,
+   "nativeClips": 11,
+   "eventClips": 6,
+   "events": 8,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.43
+   },
+   "keys": 4858,
+   "frames": 367,
+   "bytes": 74862
+  },
+  "SK_Enemy_Jiaoren": {
+   "file": "SK_Enemy_Jiaoren.json",
+   "glb": "assets/characters/SK_Enemy_Jiaoren.glb",
+   "defId": "jiaoren",
+   "clips": 12,
+   "nativeClips": 11,
+   "eventClips": 6,
+   "events": 8,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.41
+   },
+   "keys": 3669,
+   "frames": 385,
+   "bytes": 58188
+  },
+  "SK_Enemy_Jufu": {
+   "file": "SK_Enemy_Jufu.json",
+   "glb": "assets/characters/SK_Enemy_Jufu.glb",
+   "defId": "jufu",
+   "clips": 11,
+   "nativeClips": 10,
+   "eventClips": 4,
+   "events": 12,
+   "keyframed": [
+    "throw"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.35
+   },
+   "keys": 2649,
+   "frames": 625,
+   "bytes": 43476
+  },
+  "SK_Enemy_LanternJelly": {
+   "file": "SK_Enemy_LanternJelly.json",
+   "glb": "assets/characters/SK_Enemy_LanternJelly.glb",
+   "defId": "lantern_jelly",
+   "clips": 7,
+   "nativeClips": 6,
+   "eventClips": 2,
+   "events": 4,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.35
+   },
+   "keys": 3248,
+   "frames": 259,
+   "bytes": 53748
+  },
+  "SK_Enemy_Mamian": {
+   "file": "SK_Enemy_Mamian.json",
+   "glb": "assets/characters/SK_Enemy_Mamian.glb",
+   "defId": "mamian",
+   "clips": 16,
+   "nativeClips": 15,
+   "eventClips": 9,
+   "events": 18,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.4
+   },
+   "keys": 5501,
+   "frames": 404,
+   "bytes": 96152
+  },
+  "SK_Enemy_Manman": {
+   "file": "SK_Enemy_Manman.json",
+   "glb": "assets/characters/SK_Enemy_Manman.glb",
+   "defId": "manman",
+   "clips": 10,
+   "nativeClips": 9,
+   "eventClips": 2,
+   "events": 6,
+   "keyframed": [
+    "sweep"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 3566,
+   "frames": 588,
+   "bytes": 50636
+  },
+  "SK_Enemy_Marmot": {
+   "file": "SK_Enemy_Marmot.json",
+   "glb": "assets/characters/SK_Enemy_Marmot.glb",
+   "defId": "marmot",
+   "clips": 10,
+   "nativeClips": 9,
+   "eventClips": 3,
+   "events": 10,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.37
+   },
+   "keys": 3706,
+   "frames": 539,
+   "bytes": 58148
+  },
+  "SK_Enemy_MirageToad": {
+   "file": "SK_Enemy_MirageToad.json",
+   "glb": "assets/characters/SK_Enemy_MirageToad.glb",
+   "defId": "mirage_toad",
+   "clips": 8,
+   "nativeClips": 7,
+   "eventClips": 3,
+   "events": 3,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.23
+   },
+   "keys": 4663,
+   "frames": 403,
+   "bytes": 70791
+  },
+  "SK_Enemy_Nuo": {
+   "file": "SK_Enemy_Nuo.json",
+   "glb": "assets/characters/SK_Enemy_Nuo.glb",
+   "defId": "nuo",
+   "clips": 10,
+   "nativeClips": 9,
+   "eventClips": 4,
+   "events": 7,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.34
+   },
+   "keys": 16147,
+   "frames": 459,
+   "bytes": 230980
+  },
+  "SK_Enemy_Qingniao": {
+   "file": "SK_Enemy_Qingniao.json",
+   "glb": "assets/characters/SK_Enemy_Qingniao.glb",
+   "defId": "qingniao",
+   "clips": 13,
+   "nativeClips": 12,
+   "eventClips": 5,
+   "events": 8,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.34
+   },
+   "keys": 6233,
+   "frames": 571,
+   "bytes": 92343
+  },
+  "SK_Enemy_Qiongqi": {
+   "file": "SK_Enemy_Qiongqi.json",
+   "glb": "assets/characters/SK_Enemy_Qiongqi.glb",
+   "defId": "qiongqi",
+   "clips": 12,
+   "nativeClips": 11,
+   "eventClips": 4,
+   "events": 15,
+   "keyframed": [
+    "glide"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.41
+   },
+   "keys": 6555,
+   "frames": 661,
+   "bytes": 100598
+  },
+  "SK_Enemy_ScorpionArcher": {
+   "file": "SK_Enemy_ScorpionArcher.json",
+   "glb": "assets/characters/SK_Enemy_ScorpionArcher.glb",
+   "defId": "scorpion_archer",
+   "clips": 13,
+   "nativeClips": 12,
+   "eventClips": 6,
+   "events": 14,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.39
+   },
+   "keys": 11324,
+   "frames": 464,
+   "bytes": 153982
+  },
+  "SK_Enemy_SnowXingxing": {
+   "file": "SK_Enemy_SnowXingxing.json",
+   "glb": "assets/characters/SK_Enemy_SnowXingxing.glb",
+   "defId": "xingxing",
+   "clips": 15,
+   "nativeClips": 14,
+   "eventClips": 9,
+   "events": 14,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 3719,
+   "frames": 390,
+   "bytes": 61542
+  },
+  "SK_Enemy_Tantong": {
+   "file": "SK_Enemy_Tantong.json",
+   "glb": "assets/characters/SK_Enemy_Tantong.glb",
+   "defId": "tantong",
+   "clips": 13,
+   "nativeClips": 12,
+   "eventClips": 6,
+   "events": 10,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.36
+   },
+   "keys": 3135,
+   "frames": 395,
+   "bytes": 51565
+  },
+  "SK_Enemy_Tiangou": {
+   "file": "SK_Enemy_Tiangou.json",
+   "glb": "assets/characters/SK_Enemy_Tiangou.glb",
+   "defId": "tiangou",
+   "clips": 9,
+   "nativeClips": 8,
+   "eventClips": 2,
+   "events": 7,
+   "keyframed": [
+    "pounce"
+   ],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.36
+   },
+   "keys": 4245,
+   "frames": 503,
+   "bytes": 65426
+  },
+  "SK_Enemy_TombBeast": {
+   "file": "SK_Enemy_TombBeast.json",
+   "glb": "assets/characters/SK_Enemy_TombBeast.glb",
+   "defId": "tomb_beast",
+   "clips": 10,
+   "nativeClips": 9,
+   "eventClips": 5,
+   "events": 34,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.35
+   },
+   "keys": 4489,
+   "frames": 421,
+   "bytes": 68908
+  },
+  "SK_Enemy_Tuo": {
+   "file": "SK_Enemy_Tuo.json",
+   "glb": "assets/characters/SK_Enemy_Tuo.glb",
+   "defId": "tuo",
+   "clips": 15,
+   "nativeClips": 14,
+   "eventClips": 9,
+   "events": 27,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.4
+   },
+   "keys": 6322,
+   "frames": 679,
+   "bytes": 95245
+  },
+  "SK_Enemy_XuanGui": {
+   "file": "SK_Enemy_XuanGui.json",
+   "glb": "assets/characters/SK_Enemy_XuanGui.glb",
+   "defId": "xuangui",
+   "clips": 14,
+   "nativeClips": 13,
+   "eventClips": 9,
+   "events": 20,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.35
+   },
+   "keys": 5052,
+   "frames": 590,
+   "bytes": 81247
+  },
+  "SK_Hero_FlyingSquirrel": {
+   "file": "SK_Hero_FlyingSquirrel.json",
+   "glb": "assets/characters/SK_Hero_FlyingSquirrel.glb",
+   "defId": "falcon",
+   "clips": 2,
+   "nativeClips": 2,
+   "eventClips": 0,
+   "events": 0,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0.6737,
+    "rotDeg": 168.71
+   },
+   "keys": 4479,
+   "frames": 335,
+   "bytes": 68085
+  },
+  "SK_Hero_Pangolin": {
+   "file": "SK_Hero_Pangolin.json",
+   "glb": "assets/characters/SK_Hero_Pangolin.glb",
+   "defId": "bear",
+   "clips": 2,
+   "nativeClips": 2,
+   "eventClips": 0,
+   "events": 0,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0.6005,
+    "rotDeg": 177.9
+   },
+   "keys": 3892,
+   "frames": 354,
+   "bytes": 59713
+  },
+  "SK_Hero_RedPanda": {
+   "file": "SK_Hero_RedPanda.json",
+   "glb": "assets/characters/SK_Hero_RedPanda.glb",
+   "defId": "fox",
+   "clips": 2,
+   "nativeClips": 2,
+   "eventClips": 0,
+   "events": 0,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0.5082,
+    "rotDeg": 170.11
+   },
+   "keys": 3748,
+   "frames": 225,
+   "bytes": 58167
+  },
+  "SK_Pet_Baize": {
+   "file": "SK_Pet_Baize.json",
+   "glb": "assets/characters/SK_Pet_Baize.glb",
+   "defId": "baize",
+   "clips": 5,
+   "nativeClips": 5,
+   "eventClips": 2,
+   "events": 2,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.35
+   },
+   "keys": 2004,
+   "frames": 383,
+   "bytes": 30484
+  },
+  "SK_Pet_Chongming": {
+   "file": "SK_Pet_Chongming.json",
+   "glb": "assets/characters/SK_Pet_Chongming.glb",
+   "defId": "chongming",
+   "clips": 5,
+   "nativeClips": 5,
+   "eventClips": 1,
+   "events": 1,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.36
+   },
+   "keys": 4254,
+   "frames": 389,
+   "bytes": 56832
+  },
+  "SK_Pet_Dangkang": {
+   "file": "SK_Pet_Dangkang.json",
+   "glb": "assets/characters/SK_Pet_Dangkang.glb",
+   "defId": "dangkang",
+   "clips": 6,
+   "nativeClips": 6,
+   "eventClips": 1,
+   "events": 1,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.33
+   },
+   "keys": 3217,
+   "frames": 368,
+   "bytes": 46478
+  },
+  "SK_Pet_Huan": {
+   "file": "SK_Pet_Huan.json",
+   "glb": "assets/characters/SK_Pet_Huan.glb",
+   "defId": "huan",
+   "clips": 5,
+   "nativeClips": 5,
+   "eventClips": 1,
+   "events": 2,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.36
+   },
+   "keys": 3959,
+   "frames": 352,
+   "bytes": 57068
+  },
+  "SK_Pet_Jingwei": {
+   "file": "SK_Pet_Jingwei.json",
+   "glb": "assets/characters/SK_Pet_Jingwei.glb",
+   "defId": "jingwei",
+   "clips": 4,
+   "nativeClips": 4,
+   "eventClips": 1,
+   "events": 1,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.38
+   },
+   "keys": 2683,
+   "frames": 274,
+   "bytes": 35786
+  },
+  "SK_Pet_Suanni": {
+   "file": "SK_Pet_Suanni.json",
+   "glb": "assets/characters/SK_Pet_Suanni.glb",
+   "defId": "suanni",
+   "clips": 5,
+   "nativeClips": 5,
+   "eventClips": 1,
+   "events": 1,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.3
+   },
+   "keys": 2177,
+   "frames": 369,
+   "bytes": 32541
+  },
+  "SK_Pet_Yinglong": {
+   "file": "SK_Pet_Yinglong.json",
+   "glb": "assets/characters/SK_Pet_Yinglong.glb",
+   "defId": "yinglong",
+   "clips": 5,
+   "nativeClips": 5,
+   "eventClips": 2,
+   "events": 2,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.38
+   },
+   "keys": 4921,
+   "frames": 481,
+   "bytes": 69911
+  },
+  "SK_Pet_Zheng": {
+   "file": "SK_Pet_Zheng.json",
+   "glb": "assets/characters/SK_Pet_Zheng.glb",
+   "defId": "zheng",
+   "clips": 6,
+   "nativeClips": 6,
+   "eventClips": 1,
+   "events": 5,
+   "keyframed": [],
+   "pending": [],
+   "restDeviation": {
+    "pos": 0,
+    "rotDeg": 0.35
+   },
+   "keys": 5562,
+   "frames": 371,
+   "bytes": 81544
+  }
+ },
+ "skipped": {
+  "SK_Boss_Warlord": "GLB 里没有采样骨架的 25/25 根骨骼（j_r, j_0, j_0_0…）：采样之后模型换过骨架，Unity 也接不上这些曲线"
+ },
+ "keyframedOnly": {
+  "SK_Boss_Hanba": [
+   "Hit",
+   "Idle",
+   "apsaraCall",
+   "crackPalm",
+   "death",
+   "droughtGale",
+   "eclipse",
+   "intro",
+   "summonWraiths",
+   "sunSweep"
+  ],
+  "SK_Npc_Merchant": [
+   "Idle",
+   "Talk"
+  ]
+ },
+ "totals": {
+  "assets": 52,
+  "nativeClips": 469,
+  "eventClips": 231,
+  "bytes": 3659060
+ }
+}
