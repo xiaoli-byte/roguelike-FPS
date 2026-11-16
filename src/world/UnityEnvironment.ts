@@ -60,6 +60,14 @@ export interface UnityAtmosphereOptions {
 /** 接上空气层后线性雾起点至少推到这里（终点不动），否则 40 m 起的线性雾会把低雾 / 空气层盖平 */
 const ATMOSPHERE_FOG_START = 120;
 
+/** 阴影框半边长（m）：Unity 管线的阴影距离 90 m */
+const SHADOW_EXTENT = 90;
+/** 太阳放在阴影框中心沿光线往回这么远（阴影相机近 / 远平面按它算） */
+const SUN_DISTANCE = 250;
+const _lightBasis = new THREE.Matrix4(), _lightInverse = new THREE.Matrix4();
+const _center = new THREE.Vector3(), _origin = new THREE.Vector3();
+const _yAxis = new THREE.Vector3(0, 1, 0), _zAxis = new THREE.Vector3(0, 0, 1);
+
 function atmosphereEnabled(): boolean {
   return typeof location === 'undefined' || new URLSearchParams(location.search).get('atmosphere') !== '0';
 }
@@ -68,6 +76,8 @@ export class UnityEnvironmentView {
   ready: Promise<void> = Promise.resolve();
   private atmosphere = false;
   private sun: THREE.DirectionalLight | null = null;
+  private readonly sunForward = new THREE.Vector3(0, -1, 0);
+  private shadowTexel = 0;
   private readonly sky: THREE.Mesh | null;
   private cube: THREE.CubeTexture | null = null;
   private readonly localLights: THREE.Light[] = [];
@@ -90,19 +100,26 @@ export class UnityEnvironmentView {
     report?.('sun');
     if (data.sun) {
       const sun = new THREE.DirectionalLight(color(data.sun.color), data.sun.intensity);
-      sun.position.fromArray(data.sun.forward).multiplyScalar(-120);
+      this.sunForward.fromArray(data.sun.forward).normalize();
+      sun.position.copy(this.sunForward).multiplyScalar(-SUN_DISTANCE);
       sun.target.position.set(0, 0, 0);
       sun.castShadow = data.sun.shadows > 0 && ctx.settings.quality !== 'low';
-      sun.shadow.bias = -0.0003;
-      sun.shadow.normalBias = 0.08;
-      sun.shadow.camera.left = -140;
-      sun.shadow.camera.right = 140;
-      sun.shadow.camera.top = 140;
-      sun.shadow.camera.bottom = -140;
+      // 照 Unity 管线（2048 阴影贴图、阴影距离 90 m）：阴影框跟着相机走（update 里按光源空间像素网格对齐，
+      // 走动时阴影边不闪）。原先固定罩在原点 ±140 m、three 默认 512 贴图：一像素 0.55 m，满地自遮挡条纹，离原点远处干脆没有阴影
+      const size = ctx.settings.quality === 'high' ? 2048 : 1024;
+      sun.shadow.mapSize.set(size, size);
+      sun.shadow.camera.left = -SHADOW_EXTENT;
+      sun.shadow.camera.right = SHADOW_EXTENT;
+      sun.shadow.camera.top = SHADOW_EXTENT;
+      sun.shadow.camera.bottom = -SHADOW_EXTENT;
       sun.shadow.camera.near = 1;
-      sun.shadow.camera.far = 500;
+      sun.shadow.camera.far = SUN_DISTANCE * 2;
+      const texel = (SHADOW_EXTENT * 2) / size;
+      sun.shadow.bias = -0.0004;
+      sun.shadow.normalBias = texel * 1.5;
       parent.add(sun, sun.target);
       this.sun = sun;
+      this.shadowTexel = texel;
     }
     report?.('local lights');
     for (const item of data.lights) {
@@ -135,6 +152,7 @@ export class UnityEnvironmentView {
 
   update(t = 0): void {
     if (this.atmosphere) Atmosphere.update(t);
+    this.followShadow();
     for (const light of this.localLights) light.userData.cameraDistance = light.position.distanceToSquared(this.ctx.camera.position);
     this.localLights.sort((a, b) => a.userData.cameraDistance - b.userData.cameraDistance);
     for (let i = 0; i < this.localLights.length; i++) {
@@ -143,6 +161,21 @@ export class UnityEnvironmentView {
       light.visible = i < 8 && light.userData.cameraDistance <= (range + 35) ** 2;
     }
     if (this.sky) this.sky.position.copy(this.ctx.camera.position);
+  }
+
+  /** 阴影框中心放在相机脚下，先换到光源空间按阴影像素取整，再换回世界：框跟人走，阴影边不随走动抖 */
+  private followShadow(): void {
+    const sun = this.sun;
+    if (!sun || !sun.castShadow || this.shadowTexel <= 0) return;
+    _lightBasis.lookAt(_origin, this.sunForward, Math.abs(this.sunForward.y) > 0.99 ? _zAxis : _yAxis);
+    _lightInverse.copy(_lightBasis).invert();
+    _center.copy(this.ctx.camera.position).applyMatrix4(_lightInverse);
+    _center.x = Math.round(_center.x / this.shadowTexel) * this.shadowTexel;
+    _center.y = Math.round(_center.y / this.shadowTexel) * this.shadowTexel;
+    _center.applyMatrix4(_lightBasis);
+    sun.target.position.copy(_center);
+    sun.position.copy(_center).addScaledVector(this.sunForward, -SUN_DISTANCE);
+    sun.target.updateMatrixWorld();
   }
 
   dispose(): void {
