@@ -78,8 +78,8 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M0 | 删除 Unreal | — | ✅ 2026-11-15 |
 | M1 | 场景：14 张主线图的几何、碰撞、导航、环境、遭遇锚点、平台、水、机关进网页；发布瘦身；法线修正 | 导出器 1.1k | 🔶 见 4.1 |
 | M2 | 数据桥：导出器改 Newtonsoft 整份序列化（✅ 2026-11-16，`defs.json` schema 2：武器的 `spreadTuned` / `projectile` / `blade` / `innate`、首领 `tiers` / `phases` / `forms` / `hitZones`、敌人 `ai` / `role` / `rank` / `element` 都在，枚举写名字）。Unity 已冻结，不做运行时覆盖：一次性把 TS 定义表对齐 `defs.json`，再加对照测试锁住；持枪手感 / 词条 / 灵宠表随各自的期补导 | 0.1k | 🔶 |
-| M3 | 局流程：RunPlan / RunRoute / RunRng / RunState / EconomyConfig，图池洗牌 | 0.9k + 0.3k | ⬜ |
-| M4 | 遭遇与导演：EncounterSite v2、LevelLayout、CombatDirector、MonsterEntry、RewardScale | 4.4k | ⬜ |
+| M3 | 局流程：RunPlan / RunRoute / RunRng / RunState / EconomyConfig，图池洗牌 | 0.9k + 0.3k | ✅ 2026-11-16（3679d15f）：`src/progression/` 的 RunRng（具名流）、StagePlan（16 关 + 图池 + ready 判定 + 试玩终点）、RunRoute、Economy、RewardScale；生涯第一局 / 调试局不排路线；Unity 的 RunRoute / RunPlan 对照测试原样迁成 `tests/unity-run-route.test.mjs`。没迁：经济投影（依赖 BalanceModel）、续玩存档 |
+| M4 | 遭遇与导演：EncounterSite v2、LevelLayout、CombatDirector、MonsterEntry、RewardScale | 4.4k | 🔶 导演 / 入场点 / 布局变体 / 奖励倍率的运行时 ✅（89668cb3，`src/world/CombatDirector.ts`、`LevelLayout.ts`，对照测试 `tests/unity-combat-director.test.mjs`）。待办：导出器写 `entries` / `layout` / 各项 `scenePath`（格式见 4.2）；入场方式的专属声光与跃下 / 飞临动作、驻守点伏击、EncounterSite v2 其余部分 |
 | M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ⬜ |
 | M6 | 首领框架 + 登场镜头 + 旱魃 + 魔将 v2 + 鲲鹏 / 麒麟数值阶段 + 三领主 | ~20k | ⬜ |
 | M7 | 地图机关：熔岩 v2、流沙 / 地表 / 边界 / 可破坏 / 断桥 / 风场、天气、各图专属脚本 | ~10k | ⬜ |
@@ -106,6 +106,24 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 - ⬜ 天空盒立方体贴图是 HDR，导出器 Blit 进 ARGB32 会截断高光。
 - ✅ 接上空气透视 / 云影层（`src/world/Atmosphere.ts`，「游戏场景搭建」会话做的网页独有层，用户 2026-11-15 定的「全部迁移到 Three.js、不必落到 Unity」）：`UnityEnvironmentView` 在雾 / 环境光 / 太阳建好后 `Atmosphere.bind`，每帧 `update(t)`，卸载时 `unbind`；Unity 自写着色器（水、熔岩 / 流体）挂上它的共享 uniform；低雾基准高度取最低水面，没有水取导航网格顶点高度的 5% 分位；接上后线性雾起点推到 ≥ 120 m（终点不动）。网址带 `atmosphere=0` 关掉，看 Unity 原样的雾。这是在 Unity 规格之上**有意加的一层**。
 - ✅ vite 开发服务器不再监视 `gunfire-reborn-replica/`（指向另一块盘上整个 Unity 工程的符号链接，chokidar 会跟进去）、`Library/`、`logfile/`、`public/assets/unity-levels.next/`：之前它对所有请求都不响应。
+
+### 4.2 导出器待写的字段（M4 运行时已就绪，缺数据时照旧跑）
+
+```
+"entries": [{ "scenePath": "...", "position": [x,y,z], "forward": [x,y,z],
+  "mode": 0-6,            // SpawnMode：现身 埋伏 余烬 熔岩 飞临 跃下 增援门
+  "spread": 4, "label": "北沙丘背后", "from": [x,y,z] | null, "flyersOnly": false }],
+"layout": { "variants": [{ "id": "main", "title": "自驼队营地入", "weight": 1,
+  "spawn": { "scenePath": "...", "position": [..], "forward": [..] } | null,
+  "exit": "<ExitPortal 的 scenePath>" | null,
+  "only": ["<scenePath>"], "hide": ["<scenePath>"],
+  "requires": [{ "site": "<据点 title>", "requires": ["<title>"] }],
+  "sites": [{ "site": "<title>", "spec": { "waves": [UnityWave…] } | null, "reward": "weapon" | null }] }] } | null
+```
+
+- renderers、colliders、encounters、exits、caches、camps、platforms、water、activators、entries 每项加 `scenePath`：层级名用 `/` 连接，同名兄弟加 `#兄弟序号`；某物体「下」= 路径相等或以「该路径/」开头。
+- 被任何变体引用的物体，即使在保存的场景里停用，也连同子树导出；顶层 `spawn` 保持主走法的出生点。
+- 渲染观感（M11a）还要：材质 `_ORMMap`、`_ADDITIVE` / `_EMISSION` 关键字，地形材质参数（现在写死在 `TERRAIN_STYLES`）。
 
 ## 5. Unity 能力 → 网页对照
 
