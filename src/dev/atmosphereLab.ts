@@ -66,6 +66,8 @@ if (mapId) {
     events: new EventBus(), time: { now: 0 }, stage: {}, ui: { toast: () => {} }, fx: { ring: () => {}, burst: () => {} }, rng: { next: () => Math.random() },
     // 水面每帧要查玩家和怪泡在水里多深（4-1 的海子）：没有怪、没有导航、不结算
     enemies: { list: [] }, audio: { play: () => {} }, combat: { damagePlayer: () => {} }, nav: { nearestWalkable: () => false },
+    // 机关要登记交互点和定时任务（3-2 的炉门 / 吊台）：登记了也没人触发
+    interact: { add: () => () => {} }, tasks: { add: () => () => {}, delay: () => {} },
   };
   const view = new UnitySceneView({ scene, camera, world: new CollisionWorld(), settings: { quality: 'high' }, renderer, ...stubs }, doc, { environment: true, groundCover: true, colliders: false });
   if (typeof unityAtmosphereBaseY === 'function') sceneBaseY = unityAtmosphereBaseY(doc);
