@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { EventBus } from '../core/EventBus';
 import { MouseLookFilter } from '../core/MouseLookFilter';
+import { AirLife, type LeafCrown } from '../world/AirLife';
 import { Atmosphere, atmosphereForChapter } from '../world/Atmosphere';
 import { CloudSky, cloudSkyForChapter } from '../world/CloudSky';
 import { MistStreams, mistBand, type MistStream } from '../world/MistStreams';
@@ -13,10 +14,11 @@ import { SunShafts } from '../world/SunShafts';
  *   ?mist=0       关掉流动雾带；?mist=x,y,z,长,半宽,雾团直径[,不透明度[,流速倍率]];…  自己摆几条顺风的直雾带（代替默认的那几条）
  *   ?shafts=0     关掉逆光的光柱；?shaft=0.3 强度，?shaftLength= ?shaftRadius= ?shaftProtect= 同名参数
  *   ?sky=0        关掉云天；?sky_low=0.5 这样带 sky_ 前缀的字段名覆盖云天的参数（low mid high height white lit shade sunGlow）
+ *   ?life=0       关掉小活物（层叠山谷：三棵树下的落叶、远处一群鸟、出生点旁一团光里的尘；Unity 场景只有一群鸟）
  *   ?softdepth=1  检视页自己多画一遍场景深度，喂给雾带做软相交（主游戏里只有带水面的图有现成的深度）
  *   ?view=sun|cross|vista|spawn   机位：朝太阳 / 侧对太阳 / 升到 34 m 俯瞰 / 出生朝向；?pos=x,y,z ?yaw=弧度 ?pitch=弧度 直接给机位
  *   ?base=12      低雾基准高度（默认：Unity 场景按图自动算的低处，层叠山谷是出生点脚下 2 m）；?t=30 云影推进到第几秒；?still 只出一帧
- * 操作：点画面锁定鼠标转视角，WASD 飞行（Shift 加速），F 开关空气透视，C 开关云影，M 开关雾带，G 开关光柱，K 开关云天。
+ * 操作：点画面锁定鼠标转视角，WASD 飞行（Shift 加速），F 开关空气透视，C 开关云影，M 开关雾带，G 开关光柱，K 开关云天，L 开关小活物。
  * 控制台：lab.set({ mist: false }) 开关模块，lab.bench() 连画 40 帧量每帧耗时（毫秒，含 GPU）。
  */
 const params = new URLSearchParams(location.search);
@@ -38,6 +40,7 @@ const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 4
 camera.rotation.order = 'YXZ';
 
 const mapId = params.get('map');
+const valleyCrowns: LeafCrown[] = [];
 let chapter = 1, spawn = new THREE.Vector3(0, 0, 40), spawnYaw = 0, sceneBaseY: number | null = null, updateScene: (dt: number, t: number) => void = () => {};
 if (mapId) {
   // Unity 场景的网页端读取模块还没入库：用 glob 按需载入（文件不在时是空表），检视页不对它们形成编译期依赖
@@ -87,7 +90,7 @@ const profile = atmosphereForChapter(chapter);
 for (const key of Object.keys(profile) as (keyof typeof profile)[]) if (params.has(key)) profile[key] = Number(params.get(key));
 const cloudShadow = profile.cloudShadow;
 let on = params.get('atmosphere') !== '0' && params.get('atmo') !== '0', clouds = params.get('cloud') !== '0';
-const flags = { mist: params.get('mist') !== '0', shafts: params.get('shafts') !== '0', sky: params.get('sky') !== '0' };
+const flags = { mist: params.get('mist') !== '0', shafts: params.get('shafts') !== '0', sky: params.get('sky') !== '0', life: params.get('life') !== '0' };
 const baseY = params.has('base') ? Number(params.get('base')) : sceneBaseY ?? spawn.y - 2;
 const apply = (): void => {
   if (on) {
@@ -97,6 +100,7 @@ const apply = (): void => {
   mist.mesh.visible = on && flags.mist;
   shafts.mesh.visible = on && flags.shafts;
   cloudSky.mesh.visible = on && flags.sky;
+  life.group.visible = on && flags.life;
 };
 // 雾带要读风向，先接上空气透视再建
 Atmosphere.bind(scene, profile, { baseY });
@@ -111,6 +115,14 @@ for (const key of ['low', 'mid', 'high', 'height', 'white', 'lit', 'shade', 'sun
 if (!mapId && !params.has('sky_sunGlow')) skyProfile.sunGlow = 0;
 const cloudSky = new CloudSky(skyProfile);
 scene.add(cloudSky.mesh);
+// 小活物：层叠山谷里三棵树（buildValley 种的）下的落叶、朝太阳那一侧的一团尘、远处一群鸟
+const ahead = new THREE.Vector3(-Math.sin(spawnYaw), 0, -Math.cos(spawnYaw));
+const life = new AirLife({
+  leaves: mapId ? [] : valleyCrowns,
+  birds: [{ center: [spawn.x + ahead.x * 220, spawn.y + 85, spawn.z + ahead.z * 220], radius: 70 }],
+  motes: mapId ? [] : [{ center: [spawn.x + toSun.x * 9, spawn.y + 2.6, spawn.z + toSun.z * 9], size: [9, 4.5, 9] }],
+});
+scene.add(life.group);
 apply();
 
 // ?softdepth=1：多画一遍场景深度（只写深度），给雾带做软相交
@@ -123,8 +135,8 @@ function renderDepth(): void {
     depthTarget?.dispose();
     depthTarget = new THREE.WebGLRenderTarget(bufferSize.x, bufferSize.y, { depthTexture: new THREE.DepthTexture(bufferSize.x, bufferSize.y, THREE.UnsignedIntType) });
   }
-  const visible = mist.mesh.visible, rays = shafts.mesh.visible, cloudy = cloudSky.mesh.visible, shadows = renderer.shadowMap.autoUpdate;
-  mist.mesh.visible = shafts.mesh.visible = cloudSky.mesh.visible = false;
+  const visible = mist.mesh.visible, rays = shafts.mesh.visible, cloudy = cloudSky.mesh.visible, alive = life.group.visible, shadows = renderer.shadowMap.autoUpdate;
+  mist.mesh.visible = shafts.mesh.visible = cloudSky.mesh.visible = life.group.visible = false;
   scene.overrideMaterial = depthOnly;
   renderer.shadowMap.autoUpdate = false;
   renderer.setRenderTarget(depthTarget);
@@ -135,6 +147,7 @@ function renderDepth(): void {
   mist.mesh.visible = visible;
   shafts.mesh.visible = rays;
   cloudSky.mesh.visible = cloudy;
+  life.group.visible = alive;
   mist.useSceneDepth(depthTarget.depthTexture);
 }
 
@@ -155,6 +168,7 @@ addEventListener('keydown', event => {
   if (event.code === 'KeyM') { flags.mist = !flags.mist; apply(); }
   if (event.code === 'KeyG') { flags.shafts = !flags.shafts; apply(); }
   if (event.code === 'KeyK') { flags.sky = !flags.sky; apply(); }
+  if (event.code === 'KeyL') { flags.life = !flags.life; apply(); }
 });
 addEventListener('keyup', event => keys.delete(event.code));
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
@@ -180,7 +194,7 @@ renderer.setAnimationLoop(() => {
   if (move.lengthSq() > 0) camera.position.add(move.normalize().applyQuaternion(camera.quaternion).multiplyScalar((keys.has('ShiftLeft') ? 60 : 14) * dt));
   draw(dt);
   if (++frames === 3) document.title = 'rendered';
-  status.textContent = `${mapId ?? '层叠山谷'} · 空气透视 ${on ? '开' : '关'}（F）· 云影 ${on && clouds && cloudShadow > 0 ? '开' : '关'}（C）· 雾带 ${mist.mesh.visible ? `开 ${mist.count} 团` : '关'}（M）· 光柱 ${shafts.mesh.visible ? `开 ${shafts.level.toFixed(2)}` : '关'}（G）· 云天 ${cloudSky.mesh.visible ? '开' : '关'}（K）· 基准高度 ${baseY.toFixed(1)} m\n` +
+  status.textContent = `${mapId ?? '层叠山谷'} · 空气透视 ${on ? '开' : '关'}（F）· 云影 ${on && clouds && cloudShadow > 0 ? '开' : '关'}（C）· 雾带 ${mist.mesh.visible ? `开 ${mist.count} 团` : '关'}（M）· 光柱 ${shafts.mesh.visible ? `开 ${shafts.level.toFixed(2)}` : '关'}（G）· 云天 ${cloudSky.mesh.visible ? '开' : '关'}（K）· 小活物 ${life.group.visible ? '开' : '关'}（L）· 基准高度 ${baseY.toFixed(1)} m\n` +
     `${calls} calls / ${triangles} tris`;
 });
 
@@ -277,6 +291,18 @@ function buildValley(target: THREE.Scene): void {
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   target.add(ground);
+  // 出生点附近三棵树：落叶只从它们的树冠下掉
+  const bark = new THREE.MeshStandardMaterial({ color: 0x4a3a2c, roughness: 1 }), foliage = new THREE.MeshStandardMaterial({ color: 0xa8482c, roughness: 1, flatShading: true });
+  for (const [x, z, height, radius] of [[-9, 22, 7.5, 3.6], [11, 14, 9, 4.2], [3, 2, 6.5, 3.2]]) {
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.42, height, 7), bark);
+    trunk.position.set(x, height / 2, z);
+    const crown = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 1), foliage);
+    crown.position.set(x, height, z);
+    crown.scale.y = 0.72;
+    trunk.castShadow = crown.castShadow = true;
+    target.add(trunk, crown);
+    valleyCrowns.push({ position: [x, height, z], radius: radius * 0.9, ground: 0, count: 12 });
+  }
   const rock = new THREE.MeshStandardMaterial({ color: 0x7c7468, roughness: 1, flatShading: true });
   let seed = 7;
   const rnd = (): number => (seed = (seed * 16807) % 2147483647) / 2147483647;

@@ -283,5 +283,18 @@ group.add(clouds.mesh);
 - `sunGlow`：在平行光的方向画日盘和光晕（被云遮住）。原天空已经画了太阳的图给 0，否则是两个太阳。
 - 低云的云量由云影图决定（约四成）；要少云就把 `low` 调低（那是浓度），或者把 `Atmosphere` 的 `cloudShadow` 一起调低，天和地保持一致。
 
+#### 小活物 `src/world/AirLife.ts`
+```ts
+import { AirLife } from '../world/AirLife';
+const life = new AirLife({
+  leaves: [{ position: [12, 9, -30], radius: 4, ground: 0.2, color: 0xb5452a }],   // 树冠中心、半径、树脚下地面的高度
+  birds: [{ center: [0, 90, -260], radius: 70 }],                                   // 盘旋的圆心（y 是飞行高度）和半径
+  motes: [{ center: [4, 2.5, -12], size: [6, 4, 6] }],                              // 一盒光里的尘
+});
+group.add(life.group);
+```
+- 照 8.3：**落叶只给树冠**（每棵树循环 10 片，同时在空中的三四片，落在自己的树底下，阵风锋面扫到时被带远一点）；**鸟放在 80 m 以外的高处**（中景里会动的黑点就是假敌人）；**尘只摆在有光漏进来的地方**（门洞、殿内、林下），只有被太阳照到、逆着光看才亮，28 m 外不画。
+- 三样各一次绘制调用，位置全在顶点着色器里算；不给的那一样不建。
+
 #### 检视页
-`atmosphere-lab.html`：不带参数是程序生成的层叠山谷，`?map=1-2&view=vista` 看某张导出的图（`view=sun|cross|vista|spawn`，或 `?pos=x,y,z&yaw=&pitch=`）。F 空气透视、C 云影、M 雾带、G 光柱、K 云天；网址里带字段名直接覆盖参数（`?mistDensity=0.004&cloudShadow=0.6`、云天带 `sky_` 前缀、`?shaft=0.3`）；`?mist=x,y,z,长,半宽,直径[,不透明度[,流速]];…` 先试几条顺风的直雾带再写进图里。控制台 `lab.set({ mist: false })` 开关模块，`lab.bench()` 量每帧耗时。
+`atmosphere-lab.html`：不带参数是程序生成的层叠山谷，`?map=1-2&view=vista` 看某张导出的图（`view=sun|cross|vista|spawn`，或 `?pos=x,y,z&yaw=&pitch=`）。F 空气透视、C 云影、M 雾带、G 光柱、K 云天、L 小活物；网址里带字段名直接覆盖参数（`?mistDensity=0.004&cloudShadow=0.6`、云天带 `sky_` 前缀、`?shaft=0.3`）；`?mist=x,y,z,长,半宽,直径[,不透明度[,流速]];…` 先试几条顺风的直雾带再写进图里。控制台 `lab.set({ mist: false })` 开关模块，`lab.bench()` 量每帧耗时。
