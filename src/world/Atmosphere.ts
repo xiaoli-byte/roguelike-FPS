@@ -139,7 +139,28 @@ function f4(): { value: Float32Array } {
 const shared = {
   sfCloudTex: { value: null as THREE.Texture | null },
   sfAtmoA: f4(), sfAtmoB: f4(), sfAtmoMist: f4(), sfAtmoAir: f4(), sfAtmoSun: f4(), sfAtmoSunDir: f4(), sfCloud: f4(), sfCloudSlope: f4(),
+  // 下面两个内置材质不读，给同一套风向 / 光照的模块用（MistStreams、CloudSky、SunShafts……）
+  sfWind: f4(),     // xy 风向（XZ，单位向量）, z 风速 m/s（= 云影漂移速度）, w 游戏时间（秒）
+  sfSunLight: f4(), // rgb 日光色（显示空间，太阳落到地平线下时收到 0）, w 太阳还在地平线上的份额 0..1
 };
+
+/**
+ * 自己写的着色器要读「同一个风」时拼进去（顶点、片段都行）：sfWind 的声明，加一张阵风表。
+ * 阵风是一道道顺风扫过的锋面（每 9 秒一道，26 m/s，强弱不一，锋线带一点弯）；所有读它的东西
+ * （雾、落叶、尘）在同一道锋面到来时一起动，一阵风才能从一样东西跟到另一样东西上。
+ *   sfGust( xz ).x  被推着走的量 0..1：锋面过后 0.5 秒冲到头，三秒多松回去（软的东西：雾、烟）
+ *   sfGust( xz ).y  锋面刚到的那一下 0..1（密度鼓一下、叶子被掀起来）
+ */
+export const ATMOSPHERE_WIND_GLSL = /* glsl */ `
+uniform vec4 sfWind;
+vec2 sfGust( vec2 xz ) {
+	float ph = ( sfWind.w - dot( xz, sfWind.xy ) / 26.0 ) / 9.0 + 0.07 * sin( dot( xz, vec2( -sfWind.y, sfWind.x ) ) * 0.013 );
+	float k = floor( ph ), tau = ( ph - k ) * 9.0;
+	float a = 0.35 + 0.65 * fract( sin( k * 12.9898 ) * 43758.5453 );
+	float q = tau - 0.3;
+	return vec2( a * ( 1.0 - exp( -tau / 0.45 ) ) * exp( -tau / 3.2 ), a * exp( -q * q / 0.10 ) );
+}
+`;
 
 let installed = false;
 
@@ -226,6 +247,44 @@ function cloudTexture(): THREE.DataTexture {
   return tex;
 }
 
+let noiseTex: THREE.DataTexture | null = null;
+
+/**
+ * 一张共用的可平铺噪声（RGBA8，256²，每个通道拉满 0..1），第一次要的时候才生成：
+ *   r 大块 fbm（雾带的侵蚀、云的大形）  g 另一组 fbm（明暗起伏）  b 细碎 fbm（边缘撕碎）  a 鼓包（脊状 fbm，云的团块感）
+ */
+export function atmosphereNoise(): THREE.DataTexture {
+  if (noiseTex) return noiseTex;
+  const N = 256, px = new Uint8Array(N * N * 4), channel = new Float32Array(N * N);
+  const fill = (c: number, f0: number, seed: number, billow: boolean): void => {
+    let lo = Infinity, hi = -Infinity;
+    for (let j = 0, k = 0; j < N; j++) for (let i = 0; i < N; i++, k++) {
+      const u = (i + 0.5) / N, v = (j + 0.5) / N;
+      let sum = 0, w = 0.5;
+      for (let o = 0, f = f0; o < 4; o++, f *= 2, w *= 0.5) {
+        const n = noise(u, v, f, seed + o * 7);
+        sum += w * (billow ? 1 - Math.abs(2 * n - 1) : n);
+      }
+      channel[k] = sum;
+      if (sum < lo) lo = sum;
+      if (sum > hi) hi = sum;
+    }
+    for (let k = 0; k < N * N; k++) px[k * 4 + c] = Math.round(255 * (channel[k] - lo) / (hi - lo));
+  };
+  fill(0, 4, 101, false);
+  fill(1, 6, 211, false);
+  fill(2, 10, 307, false);
+  fill(3, 5, 401, true);
+  noiseTex = new THREE.DataTexture(px, N, N, THREE.RGBAFormat, THREE.UnsignedByteType);
+  noiseTex.wrapS = noiseTex.wrapT = THREE.RepeatWrapping;
+  noiseTex.magFilter = THREE.LinearFilter;
+  noiseTex.minFilter = THREE.LinearMipmapLinearFilter;
+  noiseTex.generateMipmaps = true;
+  noiseTex.colorSpace = THREE.NoColorSpace;
+  noiseTex.needsUpdate = true;
+  return noiseTex;
+}
+
 // ───────────── 每张图 ─────────────
 
 const DEFAULT_WIND: [number, number] = [-0.82, -0.57];
@@ -235,7 +294,7 @@ const rgb = { r: 0, g: 0, b: 0 };
 let bound: { scene: THREE.Scene; profile: AtmosphereProfile; baseY: number; sun: THREE.DirectionalLight | null; sky: THREE.Light | null; wind: [number, number]; phase: [number, number] } | null = null;
 
 function zero(): void {
-  for (const u of [shared.sfAtmoA, shared.sfAtmoB, shared.sfAtmoSun, shared.sfCloud]) u.value.fill(0);
+  for (const u of [shared.sfAtmoA, shared.sfAtmoB, shared.sfAtmoSun, shared.sfCloud, shared.sfSunLight]) u.value.fill(0);
 }
 
 function display(color: THREE.Color): typeof rgb {
@@ -248,6 +307,11 @@ export const Atmosphere = {
 
   get active(): boolean {
     return bound !== null;
+  },
+
+  /** 当前的风：XZ 单位向量 + 风速（m/s）。没接上时是默认风向、风速 0 */
+  get wind(): { x: number; z: number; speed: number } {
+    return bound ? { x: bound.wind[0], z: bound.wind[1], speed: bound.profile.cloudSpeed } : { x: DEFAULT_WIND[0], z: DEFAULT_WIND[1], speed: 0 };
   },
 
   /** 给当前这张图接上空气透视：场景的雾、太阳、环境光建好之后调。profile 之后还可以直接改字段，下一帧生效 */
@@ -273,6 +337,7 @@ export const Atmosphere = {
   update(seconds: number): void {
     if (!bound) return;
     const { scene, profile: p, sun, sky } = bound;
+    shared.sfWind.value.set([bound.wind[0], bound.wind[1], p.cloudSpeed, seconds]);
     const fog = scene.fog;
     if (!fog) {
       zero();
@@ -295,9 +360,11 @@ export const Atmosphere = {
       const c = display(tmpColor.copy(sun.color));
       const s = p.sunScatter * up;
       shared.sfAtmoSun.value.set([c.r * s, c.g * s, c.b * s, 0]);
+      shared.sfSunLight.value.set([c.r * up, c.g * up, c.b * up, up]);
       cloud = Math.min(1, Math.max(0, p.cloudShadow));
     } else {
       shared.sfAtmoSun.value.fill(0);
+      shared.sfSunLight.value.fill(0);
     }
     shared.sfAtmoB.value.set([Math.min(1, Math.max(0, p.maxOpacity)), Math.max(0, p.startDistance), Math.min(1, Math.max(0, p.airHighFade)), cloud]);
     shared.sfAtmoSunDir.value.set([tmpDir.x, tmpDir.y, tmpDir.z, 0]);
