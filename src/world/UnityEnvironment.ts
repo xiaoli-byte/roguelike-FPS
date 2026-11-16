@@ -3,6 +3,8 @@ import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import type { GameContext } from '../core/types';
 import type { UnityEnvironment as EnvironmentData } from './UnityLevelLibrary';
 import { Atmosphere, atmosphereForChapter } from './Atmosphere';
+import { CloudSky, cloudSkyForChapter } from './CloudSky';
+import { SunShafts } from './SunShafts';
 
 type Rgba = [number, number, number, number];
 
@@ -75,6 +77,8 @@ function atmosphereEnabled(): boolean {
 export class UnityEnvironmentView {
   ready: Promise<void> = Promise.resolve();
   private atmosphere = false;
+  private clouds: CloudSky | null = null;
+  private shafts: SunShafts | null = null;
   private sun: THREE.DirectionalLight | null = null;
   private readonly sunForward = new THREE.Vector3(0, -1, 0);
   private shadowTexel = 0;
@@ -146,6 +150,14 @@ export class UnityEnvironmentView {
       if (ctx.scene.fog instanceof THREE.Fog) ctx.scene.fog.near = Math.min(Math.max(ctx.scene.fog.near, ATMOSPHERE_FOG_START), ctx.scene.fog.far);
       Atmosphere.bind(ctx.scene, atmosphereForChapter(atmosphere.chapter), { baseY: atmosphere.baseY, sun: this.sun });
       this.atmosphere = true;
+      // 云天 + 逆光光柱（CloudSky / SunShafts，网页独有，docs/art/composition.md 8.5）。渐变天球和 Procedural 天空
+      // 自己画了太阳，云天的日晕给 0，免得两个太阳；立方体天空盒里没有太阳，保留章节默认的日晕。熔火章天是烟，光柱压到很弱
+      const clouds = cloudSkyForChapter(atmosphere.chapter);
+      if (this.sky) clouds.sunGlow = 0;
+      this.clouds = new CloudSky(clouds);
+      parent.add(this.clouds.mesh);
+      this.shafts = new SunShafts(atmosphere.chapter === 3 ? { strength: 0.08 } : {});
+      parent.add(this.shafts.mesh);
     }
     report?.('environment complete');
   }
@@ -179,6 +191,10 @@ export class UnityEnvironmentView {
   }
 
   dispose(): void {
+    this.shafts?.dispose();
+    this.shafts = null;
+    this.clouds?.dispose();
+    this.clouds = null;
     if (this.atmosphere) Atmosphere.unbind();
     this.atmosphere = false;
     this.cube?.dispose();
