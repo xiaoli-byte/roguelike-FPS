@@ -75,7 +75,9 @@ test('Unity triangle collision preserves sloped ground, rays and projectiles', (
 test('Unity water slows wading, rescues from deep water and follows spring phases', async () => {
   const data = source => `data:text/javascript;base64,${Buffer.from(stripTypeScriptTypes(source, { mode: 'transform' })).toString('base64')}`;
   const library = `import * as THREE from '${threeUrl}'; export function unityPoint(v){return new THREE.Vector3(...v)} export function unityQuaternion(v){return new THREE.Quaternion(...v)}`;
-  const waterUrl = data((await readFile(new URL('../src/world/UnityWater.ts', import.meta.url), 'utf8')).replaceAll("'three'", `'${threeUrl}'`).replaceAll("'./UnityLevelLibrary'", `'${data(library)}'`));
+  const hooks = data(await readFile(new URL('../src/enemies/bosses/framework/StageHooks.ts', import.meta.url), 'utf8'));
+  const waterUrl = data((await readFile(new URL('../src/world/UnityWater.ts', import.meta.url), 'utf8')).replaceAll("'three'", `'${threeUrl}'`).replaceAll("'./UnityLevelLibrary'", `'${data(library)}'`)
+    .replaceAll("'../enemies/bosses/framework/StageHooks'", `'${hooks}'`));
   const { UnityWaterView } = await import(waterUrl);
   const { Stats } = await import(data(await readFile(new URL('../src/core/Stats.ts', import.meta.url), 'utf8')));
   const { EventBus } = await import(data(await readFile(new URL('../src/core/EventBus.ts', import.meta.url), 'utf8')));

@@ -30,6 +30,8 @@ export class UnityWaterView implements StageWaterHook {
   private dropAcc = 0;
   private readonly off: (() => void)[] = [];
   private surfaces: { object: THREE.Object3D; y: number }[] | null = null;
+  /** 首领经钩子接手了泉水（之后不再按事件自己吸干 / 复涌） */
+  private driven = false;
 
   constructor(private readonly ctx: GameContext, document: UnitySceneDocument, roots: ReadonlyMap<string, THREE.Object3D[]>) {
     this.safe = ctx.player.position.clone();
@@ -43,8 +45,18 @@ export class UnityWaterView implements StageWaterHook {
         inverse: quaternion.clone().invert(), level: 1, from: 1, to: 1, seconds: 1, time: 0,
       });
     }
-    // 月牙泉的吸干 / 复涌由旱魃经 StageHooks 驱动（Unity HanbaSpring：二阶段演出里吸干、倒下后泉眼复涌）
+    // 月牙泉的吸干 / 复涌由旱魃经 StageHooks 驱动（Unity HanbaSpring：二阶段演出里吸干、倒下后泉眼复涌）；
+    // 没有首领接手时（driven 为 false）照旧按首领阶段 / 击杀事件自己吸干、复涌
     if (this.bodies.length > 0) stageHooks.water = this;
+    this.off.push(ctx.events.on('enemy:bossPhase', ({ enemy, phase }) => {
+      if (this.driven || enemy.def.id !== 'boss_hanba' || phase !== 1) return;
+      enemy.getHeadCenter(_sink);
+      for (const body of this.bodies) if (body.spring) this.transition(body, 0, 3.2);
+    }));
+    this.off.push(ctx.events.on('enemy:killed', ({ enemy }) => {
+      if (this.driven || enemy.def.id !== 'boss_hanba') return;
+      for (const body of this.bodies) if (body.spring) this.transition(body, 1, 4.2);
+    }));
   }
 
   // ───────────── StageWaterHook ─────────────
@@ -65,6 +77,7 @@ export class UnityWaterView implements StageWaterHook {
   }
 
   springTo(target: number, seconds: number, sink?: THREE.Vector3 | null): void {
+    this.driven = true;
     if (sink) _sink.copy(sink);
     for (const body of this.bodies) if (body.spring) this.transition(body, target, seconds);
   }
@@ -73,7 +86,7 @@ export class UnityWaterView implements StageWaterHook {
   private springSurfaces(level: number, animating: boolean): void {
     if (!this.surfaces) {
       this.surfaces = [];
-      this.ctx.scene.traverse(o => {
+      this.ctx.scene?.traverse(o => {
         if (/crescent ?spring/i.test(o.name) && /surface/i.test(o.name)) this.surfaces!.push({ object: o, y: o.position.y });
       });
     }
