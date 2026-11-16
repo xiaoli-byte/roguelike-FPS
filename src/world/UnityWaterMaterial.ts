@@ -240,14 +240,18 @@ export function renderUnityWaterDepth(ctx: GameContext, materials: ReadonlySet<T
     hidden.push({ object, visible: object.visible });
     object.visible = false;
   });
-  ctx.scene.overrideMaterial = depthMaterial;
-  renderer.shadowMap.autoUpdate = false;
-  renderer.setRenderTarget(depthTarget);
-  renderer.render(ctx.scene, ctx.camera);
-  renderer.setRenderTarget(target);
-  renderer.shadowMap.autoUpdate = shadows;
-  ctx.scene.overrideMaterial = override;
-  for (const item of hidden) item.object.visible = item.visible;
+  // 深度这一遍出错（首帧编译着色器时被打断等）也必须还原：否则覆盖材质和渲染目标卡在深度通道上，之后每帧都是黑的
+  try {
+    ctx.scene.overrideMaterial = depthMaterial;
+    renderer.shadowMap.autoUpdate = false;
+    renderer.setRenderTarget(depthTarget);
+    renderer.render(ctx.scene, ctx.camera);
+  } finally {
+    renderer.setRenderTarget(target);
+    renderer.shadowMap.autoUpdate = shadows;
+    ctx.scene.overrideMaterial = override;
+    for (const item of hidden) item.object.visible = item.visible;
+  }
   for (const material of materials) {
     material.uniforms.uDepth.value = depthTarget.depthTexture;
     material.uniforms.uDepthValid.value = 1;
