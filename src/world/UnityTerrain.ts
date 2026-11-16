@@ -1,36 +1,31 @@
 import * as THREE from 'three';
-import { UnityLevelLibrary, type UnityTerrain } from './UnityLevelLibrary';
+import { UnityLevelLibrary, type UnitySceneDocument, type UnityTerrain } from './UnityLevelLibrary';
+import { stylizeTerrain, terrainStyle } from './UnityStylizedLit';
 
-export function applyUnityTerrain(material: THREE.MeshStandardMaterial, terrain: UnityTerrain): void {
-  void Promise.all([
-    ...terrain.layers.map(layer => UnityLevelLibrary.loadTexture(layer.url, true)),
-    ...terrain.alphamaps.map(url => UnityLevelLibrary.loadTexture(url, false)),
-  ]).then(textures => {
-    const layers = textures.slice(0, terrain.layers.length);
-    const splats = textures.slice(terrain.layers.length);
-    material.onBeforeCompile = shader => {
-      let declarations = '';
-      let blend = 'vec4 terrainColor = vec4(0.0);\nfloat terrainWeightSum = 0.0;\n';
-      for (let i = 0; i < layers.length; i++) {
-        const splat = Math.floor(i / 4), channel = i % 4;
-        const layer = terrain.layers[i];
-        shader.uniforms[`uUnityLayer${i}`] = { value: layers[i] };
-        shader.uniforms[`uUnityScale${i}`] = { value: new THREE.Vector2(terrain.size[0] / layer.tileSize[0], terrain.size[2] / layer.tileSize[1]) };
-        shader.uniforms[`uUnityOffset${i}`] = { value: new THREE.Vector2(layer.tileOffset[0] / layer.tileSize[0], layer.tileOffset[1] / layer.tileSize[1]) };
-        declarations += `uniform sampler2D uUnityLayer${i};\nuniform vec2 uUnityScale${i};\nuniform vec2 uUnityOffset${i};\n`;
-        blend += `float terrainWeight${i} = texture2D(uUnitySplat${splat}, vMapUv).${'rgba'[channel]};\n`;
-        blend += `terrainWeightSum += terrainWeight${i};\n`;
-        blend += `terrainColor += texture2D(uUnityLayer${i}, vMapUv * uUnityScale${i} + uUnityOffset${i}) * terrainWeight${i};\n`;
-      }
-      for (let i = 0; i < splats.length; i++) {
-        shader.uniforms[`uUnitySplat${i}`] = { value: splats[i] };
-        declarations += `uniform sampler2D uUnitySplat${i};\n`;
-      }
-      blend += 'diffuseColor *= terrainColor / max(terrainWeightSum, 0.0001);\n';
-      shader.fragmentShader = declarations + shader.fragmentShader;
-      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', blend);
-    };
-    material.customProgramCacheKey = () => `unity-terrain-${terrain.layers.length}-${terrain.alphamaps.length}`;
-    material.needsUpdate = true;
-  }).catch(error => console.error('[UnityTerrain] texture load failed', error));
+/**
+ * Unity 地形材质 Spiritfire/StylizedTerrain（SF_StylizedTerrain.shader）：四层按高度混合、宏观色斑、坡度压暗、
+ * 冰原 / 火狱 / 高原的陡坡三平面 + 崖面去重复，光照同 StylizedLit。着色器在 UnityStylizedLit.ts。
+ * 分层图只取第一张（Unity 着色器也只认 _ControlMap + 四层）。贴图读完才改材质，返回的 Promise 等它。
+ */
+export async function applyUnityTerrain(material: THREE.MeshStandardMaterial, terrain: UnityTerrain, document?: Pick<UnitySceneDocument, 'id' | 'environment'>): Promise<void> {
+  if (!material.map || terrain.layers.length === 0 || terrain.alphamaps.length === 0) return;
+  try {
+    const [control, ...layers] = await Promise.all([
+      UnityLevelLibrary.loadTexture(terrain.alphamaps[0], false),
+      ...terrain.layers.slice(0, 4).map(layer => UnityLevelLibrary.loadTexture(layer.url, true)),
+    ]);
+    // 分层图是权重数据：线性、夹边、不要各向异性外的滤波花样
+    control.wrapS = control.wrapT = THREE.ClampToEdgeWrapping;
+    control.colorSpace = THREE.NoColorSpace;
+    control.needsUpdate = true;
+    // Unity 的地表层贴图 anisoLevel 8（TerrainTextureGen.Write）；Three 会按显卡上限截
+    for (const layer of layers) {
+      if (layer.anisotropy >= 8) continue;
+      layer.anisotropy = 8;
+      layer.needsUpdate = true;
+    }
+    stylizeTerrain(material, { control, layers, tiles: terrain.layers.slice(0, 4).map(layer => layer.tileSize[0]) }, terrainStyle(document?.id), document?.environment);
+  } catch (error) {
+    console.error('[UnityTerrain] texture load failed', error);
+  }
 }

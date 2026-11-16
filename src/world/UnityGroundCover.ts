@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { UnityLevelLibrary, unityHeights, unityPoint, type UnityGroundCover, type UnityHeightfield, type UnitySceneDocument } from './UnityLevelLibrary';
 import { sampleUnityHeight, type UnityHeightSamples } from './UnityHeightSampling';
+import { applyUnityMaterial } from './UnityMaterials';
 
 interface Patch {
   mesh: THREE.InstancedMesh;
@@ -44,7 +45,10 @@ export class UnityGroundCoverView {
       const source = (await UnityLevelLibrary.load(layer.url)).scene.getObjectByProperty('isMesh', true) as THREE.Mesh | undefined;
       if (!source) return;
       geometry = source.geometry;
-      material = source.material;
+      // 草皮原型是场景件的 StylizedLit 材质（Unity 里 GPU 实例化的细节网格直接用原型材质）
+      material = Array.isArray(source.material)
+        ? source.material.map(item => item instanceof THREE.MeshStandardMaterial ? applyUnityMaterial(item, document.environment) : item)
+        : source.material instanceof THREE.MeshStandardMaterial ? applyUnityMaterial(source.material, document.environment) : source.material;
     } else {
       if (!layer.texture) return;
       geometry = new THREE.PlaneGeometry(1, 1).translate(0, 0.5, 0);

@@ -39,6 +39,7 @@ export class UnitySceneView {
     ]).then(async () => {
       if (this.disposed) return;
       const roots = new Map<string, THREE.Object3D[]>();
+      const terrainMaterials: Promise<void>[] = [];
       await Promise.all(document.renderers.map(async renderer => {
         const gltf = await UnityLevelLibrary.load(renderer.url);
         const terrainIndex = document.renderers.filter(item => item.terrain).indexOf(renderer);
@@ -65,7 +66,7 @@ export class UnitySceneView {
               this.animatedMaterials.add(material);
               mesh.castShadow = false;
             } else if (material instanceof THREE.MeshStandardMaterial) {
-              if (renderer.terrain) applyUnityTerrain(material, renderer.terrain);
+              if (renderer.terrain) terrainMaterials.push(applyUnityTerrain(material, renderer.terrain, document));
               applyUnityMaterialQuality(material, ctx.renderer);
             }
             if (material !== source) {
@@ -83,6 +84,7 @@ export class UnitySceneView {
         }
         this.group.add(root);
       }));
+      await Promise.all(terrainMaterials);
       for (const def of document.platforms ?? []) {
         for (const root of roots.get(def.id) ?? []) this.platforms.push(new UnityPlatformView(ctx, def, root, document));
       }

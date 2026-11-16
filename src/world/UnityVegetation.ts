@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { UnityLevelLibrary, unityPoint, unityQuaternion, type UnitySceneDocument } from './UnityLevelLibrary';
+import { applyUnityMaterial } from './UnityMaterials';
 
 export async function createUnityVegetation(document: UnitySceneDocument, highQuality: boolean): Promise<THREE.Group> {
   const group = new THREE.Group();
@@ -11,7 +12,11 @@ export async function createUnityVegetation(document: UnitySceneDocument, highQu
     const source = gltf.scene.getObjectByProperty('isMesh', true) as THREE.Mesh | undefined;
     if (!source) continue;
     const instances = vegetation.instances.filter(instance => instance.prototype === prototype.index);
-    const mesh = new THREE.InstancedMesh(source.geometry, source.material, instances.length);
+    // 树冠走 Spiritfire/Foliage（风、逆光透光、球形法线），其余按材质的 Unity 着色器转
+    const material = Array.isArray(source.material)
+      ? source.material.map(item => item instanceof THREE.MeshStandardMaterial ? applyUnityMaterial(item, document.environment) : item)
+      : source.material instanceof THREE.MeshStandardMaterial ? applyUnityMaterial(source.material, document.environment) : source.material;
+    const mesh = new THREE.InstancedMesh(source.geometry, material, instances.length);
     mesh.name = prototype.name;
     mesh.castShadow = highQuality;
     mesh.receiveShadow = true;

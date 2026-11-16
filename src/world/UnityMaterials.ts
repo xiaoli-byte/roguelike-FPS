@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Atmosphere } from './Atmosphere';
 import { createUnityWaterMaterial } from './UnityWaterMaterial';
+import { createStylizedFoliage, createStylizedLit } from './UnityStylizedLit';
 import type { UnityEnvironment } from './UnityLevelLibrary';
 
 type Properties = { unityShader?: string; unityFloats?: Record<string, number>; unityColors?: Record<string, [number, number, number, number]> };
@@ -152,6 +153,9 @@ void main() {
 
 export function applyUnityMaterial(source: THREE.MeshStandardMaterial, environment?: UnityEnvironment): THREE.Material {
   const properties = source.userData as Properties;
+  // 风格化光照（SF_StylizedLit / SF_Foliage → UnityStylizedLit.ts）：场景件、草皮、树冠
+  if (properties.unityShader === 'Spiritfire/StylizedLit') return createStylizedLit(source, environment);
+  if (properties.unityShader === 'Spiritfire/Foliage') return createStylizedFoliage(source, environment);
   if (properties.unityShader === 'Spiritfire/Water' && environment) return createUnityWaterMaterial(source, environment);
   if (properties.unityShader === 'Spiritfire/Backdrop') {
     return new THREE.MeshBasicMaterial({
