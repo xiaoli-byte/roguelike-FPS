@@ -15,6 +15,7 @@
  * onImpact(point 副本, hitEnemy) 在碰到敌人（穿透时每个敌人一次）、玩家、墙体 / 地面时触发；
  * 没有伤害也没有爆炸的「载体」投射物（手雷、信标）到期时也会在原地触发一次（hitEnemy = null）。
  */
+import { fxExtras } from '../fx/extras';
 import * as THREE from 'three';
 import type { DamageRequest, Element, GameContext, IEnemy, IProjectileSystem, ProjectileSpec, ProjectileVisual, ProjectileWard } from '../core/types';
 import type { StaticBox, WorldRayHit } from '../world/Collision';
@@ -498,6 +499,14 @@ export class ProjectileSystem implements IProjectileSystem {
       if (p.smokeTimer <= 0) {
         p.smokeTimer = 0.05;
         this.ctx.fx.burst(_tail, 0x8b857c, 1, 0.5, 0.7, 0.26 * p.size, -0.6);
+      }
+    } else if (p.visual === 'flame' && p.owner === 'player' && p.lifetime > 1) {
+      // 火团身后一路落下火舌（docs/art/fx-style.md 5.2「飞行」）：飞行物本身只是亮芯，读出走向靠它身后这一串。
+      // 只给玩家的、飞得久的火团（火灵）：喷火器的火流本来就是一串火，敌人的火弹要保持干净好认
+      p.smokeTimer -= dt;
+      if (p.smokeTimer <= 0) {
+        p.smokeTimer = 0.035;
+        fxExtras(this.ctx)?.flameShed(p.pos, p.vel, p.color, 0.26 * p.size);
       }
     }
   }

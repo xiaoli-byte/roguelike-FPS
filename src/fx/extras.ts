@@ -21,6 +21,10 @@ export interface IFxExtras {
   flameHit(pos: THREE.Vector3, color: number, scale?: number): void;
   /** 火系技能落点：甩出去的火舌、会蹦的炭火，慢半拍的符点和烟 */
   flameBurst(pos: THREE.Vector3, color: number, scale?: number): void;
+  /** 砸地（土系）：碎石往外崩、贴地火星，慢半拍沿半径一圈尘团和几枚符点 */
+  earthBurst(center: THREE.Vector3, color: number, radius: number): void;
+  /** 落雷点 / 雷系出手：电弧贴地爬两拍、光屑迸开、一盏短灯 */
+  arcBurst(center: THREE.Vector3, color: number, scale?: number): void;
 }
 
 export function fxExtras(ctx: GameContext): IFxExtras | null {

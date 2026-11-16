@@ -132,7 +132,8 @@ void main() {
     if (d > 1.0) discard;
     float n = pNoise(c * 1.7 + vSeed * 17.0 + vec2(0.0, t * 0.7)) * 0.6 + pNoise(c * 4.0 + vSeed * 5.0) * 0.4;
     float r = sqrt(d) + (n - 0.5) * (0.5 + 0.5 * t);
-    a = (1.0 - smoothstep(0.42 - 0.2 * t, 0.95, r)) * 0.9;
+    // 噪声会把 r 往里拉，点精灵的圆边上可能还有透明度——圆边再收一次，否则大团烟尘的边会显方
+    a = (1.0 - smoothstep(0.42 - 0.2 * t, 0.95, r)) * (1.0 - smoothstep(0.62, 0.98, d)) * 0.9;
     col *= 0.8 + 0.35 * smoothstep(-0.6, 0.8, -c.y + (n - 0.5));
   } else if (shape < 3.5) {
     // 碎屑：硬边菱形，上亮下暗

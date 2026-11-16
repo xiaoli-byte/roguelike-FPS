@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import type { GameContext, HeroDef } from '../../core/types';
 import { EffectSession, type HeroSkillDef, SKILL_COLORS, cancelDash, radiusScale, shockwave } from './common';
+import { fxExtras } from '../../fx/extras';
 
 // ───────────────────────────── 数值 ─────────────────────────────
 
@@ -61,6 +62,15 @@ function slam(ctx: GameContext): void {
     secondaryColor: SKILL_COLORS.gold,
     crack: true,
   });
+  // 分层（docs/art/fx-style.md 第五节）：碎石往外崩、慢半拍一圈尘团和符点；落点烙一枚四方印，1.4 秒暗下去
+  const extras = fxExtras(ctx);
+  if (extras) {
+    const r = SLAM_RADIUS * radiusScale(ctx);
+    extras.earthBurst(_c, SKILL_COLORS.gold, r);
+    _c.y += 0.08;
+    extras.seal(_c, null, r * 0.55, SKILL_COLORS.earth, { write: 0.12, hold: 0.3, fade: 1.4, sides: 4, spin: 0.2, gain: 0.8 });
+    _c.y -= 0.08;
+  }
   ctx.fx.shake(0.8, 0.35);
   ctx.audio.play('skill_earth', { volume: 1 });
   ctx.audio.play('explosion', { volume: 0.5, pitch: 0.6 });
@@ -169,6 +179,7 @@ function bastionBurst(ctx: GameContext): void {
     secondaryColor: SKILL_COLORS.earth,
     crack: true,
   });
+  fxExtras(ctx)?.earthBurst(_c, SKILL_COLORS.gold, BASTION_WAVE_RADIUS * radiusScale(ctx));
   ctx.fx.shake(0.5, 0.3);
   ctx.audio.play('skill_earth', { volume: 0.9, pitch: 1.1 });
 }
@@ -200,7 +211,9 @@ const bastion: HeroSkillDef = {
     _c.set(p.position.x, p.position.y + 0.08, p.position.z);
     ctx.fx.ring(_c, 5, SKILL_COLORS.gold, 0.5);
     _c.y = p.position.y + 1;
-    ctx.fx.burst(_c, SKILL_COLORS.gold, 32, 4.5, 0.6, 0.08, -2);
+    ctx.fx.burst(_c, SKILL_COLORS.gold, 18, 4.5, 0.6, 0.08, -2);
+    // 蓄：四周的金色光点盘旋着向身上收拢（脚下已有自己的符环，不再叠法印）
+    fxExtras(ctx)?.gather(p.position, SKILL_COLORS.gold, 18, 3, p.position, 1);
     ctx.fx.shake(0.3, 0.25);
     ctx.audio.play('skill_buff', { volume: 0.9, pitch: 0.85 });
     ctx.audio.play('skill_earth', { volume: 0.6, pitch: 1.3 });

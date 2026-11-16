@@ -6,6 +6,7 @@ import type { DamageRequest, DamageResult, GameContext, HeroDef, IEnemy } from '
 import {
   EffectSession, type HeroSkillDef, SKILL_COLORS, groundYBelow, handOrigin, nearestEnemies, radiusScale, skillHit, throwVelocity, HIDDEN_PROJECTILE, flyProp,
 } from './common';
+import { fxExtras } from '../../fx/extras';
 
 // ───────────────────────────── 数值 ─────────────────────────────
 
@@ -215,7 +216,13 @@ function deployBeacon(ctx: GameContext, point: THREE.Vector3): void {
 
   _a.set(center.x, gy + 0.06, center.z);
   ctx.fx.ring(_a, radius, SKILL_COLORS.shock, 0.5);
-  ctx.fx.burst(top, SKILL_COLORS.shock, 22, 5, 0.5, 0.06, 2);
+  ctx.fx.burst(top, SKILL_COLORS.shock, 12, 5, 0.5, 0.06, 2);
+  // 分层（docs/art/fx-style.md 第五节）：落点电弧贴地爬两拍；地上一枚五边雷印写出、0.9 秒暗下去
+  const extras = fxExtras(ctx);
+  if (extras) {
+    extras.arcBurst(_a, SKILL_COLORS.shock, 1.2);
+    extras.seal(_a, null, Math.min(2.2, radius * 0.4), SKILL_COLORS.shock, { write: 0.2, hold: 0.25, fade: 0.9, sides: 5, spin: 0.6, gain: 0.8 });
+  }
   ctx.audio.play('skill_shock', { position: center, volume: 0.9 });
 
   let t = 0;
@@ -360,13 +367,21 @@ const hawkVerdict: HeroSkillDef = {
     _a.set(p.position.x, p.position.y + 0.08, p.position.z);
     ctx.fx.ring(_a, 4, SKILL_COLORS.shock, 0.45);
     _a.y = p.position.y + 1.2;
-    ctx.fx.burst(_a, SKILL_COLORS.shock, 30, 5, 0.55, 0.06, -1);
+    ctx.fx.burst(_a, SKILL_COLORS.shock, 16, 5, 0.55, 0.06, -1);
+    // 蓄：脚下七边雷印跟着人走 0.9 秒、四周的电光向身上收拢
+    const extras = fxExtras(ctx);
+    if (extras) {
+      _a.y = p.position.y + 0.08;
+      extras.seal(_a, null, 1.4, SKILL_COLORS.shock, { write: 0.28, hold: 0.6, fade: 0.4, sides: 7, spin: 0.7, gain: 0.9, follow: p.position });
+      extras.gather(p.position, SKILL_COLORS.shock, 14, 2.6, p.position, 1.1);
+    }
     // 天雷落在身前
     p.getForward(_vel);
     _pos.set(p.position.x + _vel.x * 2.2, p.position.y + 0.05, p.position.z + _vel.z * 2.2);
     _b.set(_pos.x, _pos.y + 11, _pos.z);
     ctx.fx.lightning(_b, _pos, SKILL_COLORS.shockCore);
     ctx.fx.burst(_pos, SKILL_COLORS.shock, 12, 3, 0.35, 0.05, 4);
+    fxExtras(ctx)?.arcBurst(_pos, SKILL_COLORS.shock, 1.4);
     ctx.fx.shake(0.2, 0.2);
     ctx.audio.play('skill_buff', { volume: 0.8, pitch: 1.15 });
     ctx.audio.play('skill_shock', { volume: 0.7 });

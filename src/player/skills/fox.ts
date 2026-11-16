@@ -158,13 +158,14 @@ const blazeGrenade: HeroSkillDef = {
         grenadeImpactFx(ctx, point, r);
       },
     });
-    // 出手：手边一枚小法印一笔写出就散、一束往前的火星
+    // 出手：手边一枚小法印一笔写出就散、一束往前的火星。印要小（半径 6 厘米）且留在手边：
+    // 实测半径 0.22 米时离镜头太近，在画面中央占一大块，正好挡住敌人和准星
     const extras = fxExtras(ctx);
     if (extras) {
       ctx.player.getAimDirection(_aim);
-      _c.copy(_pos).addScaledVector(_aim, 0.35);
+      _c.copy(_pos).addScaledVector(_aim, 0.5);
       _to.copy(_aim).negate();
-      extras.seal(_c, _to, 0.22, SKILL_COLORS.fire, { write: 0.08, hold: 0.06, fade: 0.22, sides: 6, spin: 3, gain: 2.2 });
+      extras.seal(_c, _to, 0.06, SKILL_COLORS.fire, { write: 0.06, hold: 0.04, fade: 0.14, sides: 6, spin: 3, gain: 1.6 });
       extras.castSparks(_pos, _aim, SKILL_COLORS.fireCore);
     }
     ctx.audio.play('skill_throw', { volume: 0.9 });

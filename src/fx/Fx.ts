@@ -58,7 +58,7 @@ const LATERS = 48;
 const SOULS = 96;
 
 /** 慢半拍才出的层（烟、尘、第二响）：闪光过去之后再升起来 */
-const enum LaterKind { Dust, Soot, Arc, Bubbles, Fume, DeathEcho, SkillEcho }
+const enum LaterKind { Dust, Soot, Arc, Bubbles, Fume, DeathEcho, SkillEcho, DustRing }
 interface Later {
   t: number; kind: LaterKind;
   x: number; y: number; z: number; nx: number; ny: number; nz: number;
@@ -705,8 +705,10 @@ export class FxSystem implements IFx {
     mixColor(_c, WHITE, 0.5, _hot);
     const end = Math.min(len - 1, 34);
     const pellet = width < 0.016;
-    const cap = pellet ? 1 : 4;
-    let t = pellet ? rand(4, Math.max(4.5, end)) : rand(4, 6);
+    // 粗曳光（左轮、狙击）一发最多 4 颗；细的（冲锋枪连射）2 颗、间隔拉开——实测 13 发 / 秒各掉 4 颗会在远处攒成一片散点
+    const thin = width < 0.028;
+    const cap = pellet ? 1 : thin ? 2 : 4;
+    let t = pellet ? rand(4, Math.max(4.5, end)) : rand(4, thin ? 9 : 6);
     for (let i = 0; i < cap && t < end && this.wakeN < WAKE_PER_FRAME; i++) {
       const size = rand(0.07, 0.11) * (1 + t / 25);
       this.glow.spawn(
@@ -715,7 +717,7 @@ export class FxSystem implements IFx {
       );
       this.wakeN++;
       this.stats.wake++;
-      t += rand(5, 7);
+      t += thin ? rand(9, 13) : rand(5, 7);
     }
   }
 
@@ -989,6 +991,25 @@ export class FxSystem implements IFx {
           }
           break;
         }
+        case LaterKind.DustRing: {
+          // 砸地的第二响：沿半径一圈尘团（章节环境色）升起来，中间飘几枚符点；l.s = 半径
+          hexToColor(DUST, _c2);
+          const puffs = this.count(Math.min(7, 3 + l.s * 0.7));
+          const a0 = Math.random() * Math.PI * 2;
+          for (let i = 0; i < puffs; i++) {
+            const a = a0 + (i / puffs) * Math.PI * 2 + jitter(0.3), rr = l.s * rand(0.45, 0.7), sp = rand(0.8, 1.8);
+            const shade = rand(0.85, 1.15);
+            _c3.setRGB(_c2.r * shade, _c2.g * shade, _c2.b * shade);
+            this.smoke.spawn(STYLE_DUST, l.x + Math.cos(a) * rr, l.y + 0.15, l.z + Math.sin(a) * rr, Math.cos(a) * sp, rand(0.6, 1.3), Math.sin(a) * sp, _c3, rand(0.5, 0.8), rand(0.9, 1.4));
+          }
+          hexToColor(l.color, _c);
+          mixColor(_c, WHITE, 0.35, _hot);
+          for (let i = 0; i < 4; i++) {
+            const a = Math.random() * Math.PI * 2, off = l.s * rand(0.1, 0.35);
+            this.glow.spawn(STYLE_GLYPH, l.x + Math.cos(a) * off, l.y + rand(0.2, 0.6), l.z + Math.sin(a) * off, Math.cos(a) * 0.8, rand(0.8, 1.6), Math.sin(a) * 0.8, _hot, rand(0.24, 0.32), rand(0.9, 1.3));
+          }
+          break;
+        }
         case LaterKind.SkillEcho: {
           // 技能落点的第二响：金色符点散开往上飘 + 晚出的烟
           hexToColor(0xffd27a, _hot);
@@ -1000,9 +1021,10 @@ export class FxSystem implements IFx {
             );
           }
           hexToColor(SOOT, _c2);
-          const puffs = this.count(Math.min(4, 1 + 2 * l.s));
+          // 烟只补 1–2 小团：爆炸本体已经有烟，再多就把落点附近的敌人盖住了
+          const puffs = Math.min(2, this.count(1 + l.s));
           for (let i = 0; i < puffs; i++) {
-            this.smoke.spawn(STYLE_SMOKE, l.x + jitter(0.5 * rs), l.y + rand(0.1, 0.4), l.z + jitter(0.5 * rs), jitter(0.5), rand(0.8, 1.4), jitter(0.5), _c2, rand(0.7, 1) * rs, rand(1.2, 1.8));
+            this.smoke.spawn(STYLE_SMOKE, l.x + jitter(0.5 * rs), l.y + rand(0.1, 0.4), l.z + jitter(0.5 * rs), jitter(0.5), rand(0.8, 1.4), jitter(0.5), _c2, rand(0.5, 0.75) * rs, rand(1, 1.5));
           }
           break;
         }
@@ -1054,6 +1076,56 @@ export class FxSystem implements IFx {
       mixColor(_c, WHITE, 0.3, _hot);
       this.glow.spawn(STYLE_EMBER, pos.x, pos.y, pos.z, vel.x * 0.25 + jitter(3), vel.y * 0.25 + jitter(3), vel.z * 0.25 + jitter(3), _hot, rand(0.05, 0.09), rand(0.5, 1));
     }
+  }
+
+  /**
+   * 砸地（土系技能落点，radius = 波及半径）：碎石往外往上崩、落地还会滚；0.07 秒后沿半径一圈尘团升起来，中间飘几枚符点。
+   * 冲击环、裂纹、震屏由调用方原有的 shockwave 出，这里只补它没有的层。
+   */
+  earthBurst(center: THREE.Vector3, color: number, radius: number): void {
+    if (!finite3(center) || !(radius > 0)) return;
+    const r = Math.min(12, radius), rs = Math.sqrt(r / 4);
+    hexToColor(CHUNK_DARK, _c3);
+    hexToColor(color, _c);
+    const chunks = this.count(Math.min(20, 6 + 2 * r));
+    for (let i = 0; i < chunks; i++) {
+      const a = Math.random() * Math.PI * 2, off = r * rand(0.1, 0.45), sp = rand(3, 8) * rs;
+      const shade = rand(0.7, 1.3);
+      _c2.setRGB(_c3.r * shade, _c3.g * shade, _c3.b * shade);
+      this.smoke.spawn(STYLE_CHUNK, center.x + Math.cos(a) * off, center.y + 0.1, center.z + Math.sin(a) * off, Math.cos(a) * sp, rand(4, 9) * rs, Math.sin(a) * sp, _c2, rand(0.09, 0.2), rand(0.9, 1.5));
+    }
+    // 贴地往外窜的拉丝火星（技能色）：读出「力是从中心往外的」
+    const streaks = this.count(Math.min(14, 4 + 1.5 * r));
+    for (let i = 0; i < streaks; i++) {
+      const a = Math.random() * Math.PI * 2, sp = rand(8, 15) * rs;
+      this.sparks.spawn(center.x, center.y + 0.15, center.z, Math.cos(a) * sp, rand(0.5, 2.5), Math.sin(a) * sp, _c, rand(0.18, 0.35), 0.022, 9);
+    }
+    this.later(LaterKind.DustRing, 0.07, center.x, center.y, center.z, null, color, r);
+    this.afterLight(center.x, center.y + 0.6, center.z, color, 7, 4 + r * 0.6, 0.14);
+  }
+
+  /**
+   * 落雷点 / 雷系出手（scale ≈ 1）：电弧贴着地面往外爬两拍，光屑迸开，一盏短灯；可选一枚雷色符点往上飘。
+   * 主闪电由调用方的 lightning 出。
+   */
+  arcBurst(center: THREE.Vector3, color: number, scale = 1): void {
+    if (!finite3(center)) return;
+    const k = Math.min(3, Math.max(0.3, posOr(scale, 1))), rs = Math.sqrt(k);
+    _n.set(0, 1, 0);
+    this.arcs(center.x, center.y, center.z, _n, color, 4, 0.5 * rs);
+    this.later(LaterKind.Arc, 0.08, center.x, center.y, center.z, _n, color, k * 2.2);
+    hexToColor(color, _c);
+    mixColor(_c, WHITE, 0.5, _hot);
+    const glints = this.count(8);
+    for (let i = 0; i < glints; i++) {
+      randomDir(_dir);
+      const sp = rand(2, 6) * rs;
+      this.glow.spawn(STYLE_GLINT, center.x, center.y + 0.1, center.z, _dir.x * sp, Math.abs(_dir.y) * sp + 0.5, _dir.z * sp, _hot, rand(0.08, 0.13), rand(0.2, 0.4));
+    }
+    for (let i = 0; i < 2; i++) {
+      this.glow.spawn(STYLE_GLYPH, center.x + jitter(0.4 * rs), center.y + rand(0.2, 0.5), center.z + jitter(0.4 * rs), jitter(0.5), rand(0.8, 1.5), jitter(0.5), _hot, rand(0.22, 0.3), rand(0.7, 1.1));
+    }
+    this.afterLight(center.x, center.y + 0.5, center.z, color, 8, 4.5, 0.12);
   }
 
   /** 火系命中（火灵）：一闪 → 火舌窜起 + 火星 → 余烬；带一盏短灯 */
