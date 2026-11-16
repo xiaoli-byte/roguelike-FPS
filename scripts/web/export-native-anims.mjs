@@ -417,6 +417,8 @@ const manifest = { schema: 1, fps: 30, about: 'scripts/web/export-native-anims.m
 if (want.length && prevManifest) Object.assign(manifest.assets, prevManifest.assets), Object.assign(manifest.skipped, prevManifest.skipped);
 
 let stale = 0;
+/** 发布文件按 LF 比（本机 core.autocrlf = true，检出的 manifest.json 是 CRLF） */
+const readLf = (path) => readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 mkdirSync(OUT_DIR, { recursive: true });
 for (const id of targets) {
   const r = exportAsset(unityDir, id, warn);
@@ -430,7 +432,7 @@ for (const id of targets) {
   const text = JSON.stringify(r.doc);
   const file = join(OUT_DIR, `${id}.json`);
   manifest.assets[id] = { file: `${id}.json`, glb: r.doc.glb, ...r.info, bytes: Buffer.byteLength(text) };
-  const old = existsSync(file) ? readFileSync(file, 'utf8') : null;
+  const old = existsSync(file) ? readLf(file) : null;
   if (old !== text) {
     stale++;
     if (!check) writeFileSync(file, text);
@@ -456,7 +458,7 @@ manifest.totals = {
   bytes: vals.reduce((a, x) => a + x.bytes, 0),
 };
 const mtext = JSON.stringify(manifest, null, 1) + '\n';
-const oldManifest = existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : null;
+const oldManifest = existsSync(manifestPath) ? readLf(manifestPath) : null;
 if (oldManifest !== mtext) {
   stale++;
   if (!check) writeFileSync(manifestPath, mtext);

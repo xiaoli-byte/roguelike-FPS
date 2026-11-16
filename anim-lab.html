@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>动画检视</title>
+    <style>
+      html, body { margin: 0; overflow: hidden; background: #14171f; color: #e9dcc0; font: 13px "Microsoft YaHei", sans-serif; }
+      #view { display: block; width: 100vw; height: 100vh; }
+      #panel { position: fixed; left: 12px; top: 12px; width: 300px; max-height: calc(100vh - 190px); overflow: auto; z-index: 2;
+        background: rgba(16, 19, 27, 0.86); border: 1px solid #3a3f4d; border-radius: 6px; padding: 10px 12px; }
+      #panel h1 { font-size: 15px; margin: 0 0 6px; color: #f6d48b; }
+      #panel .meta { color: #a9a49a; font-size: 12px; line-height: 1.5; white-space: pre-line; margin-bottom: 8px; }
+      #panel select, #panel input[type=range] { width: 100%; }
+      #panel .row { display: flex; gap: 6px; margin: 6px 0; align-items: center; flex-wrap: wrap; }
+      #panel button { background: #262b37; color: #e9dcc0; border: 1px solid #454b5b; border-radius: 4px; padding: 3px 7px; cursor: pointer; font: inherit; }
+      #panel button.on { background: #6b4b1c; border-color: #d39b3b; color: #fff4dc; }
+      #panel button.keyed { border-style: dashed; }
+      #clips { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+      #clips button { text-align: left; display: flex; justify-content: space-between; }
+      #clips button small { color: #a9a49a; }
+      #state { position: fixed; right: 12px; top: 12px; z-index: 2; width: 260px; white-space: pre-line; font-size: 12px; line-height: 1.5;
+        background: rgba(16, 19, 27, 0.8); border: 1px solid #3a3f4d; border-radius: 6px; padding: 8px 10px; }
+      #timeline { position: fixed; left: 12px; bottom: 12px; width: calc(100vw - 24px); height: 150px; z-index: 2; background: rgba(16, 19, 27, 0.86);
+        border: 1px solid #3a3f4d; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <div id="panel"><h1>动画检视</h1><div class="meta" id="meta">正在读取…</div><div id="controls"></div><div id="clips"></div></div>
+    <div id="state"></div>
+    <canvas id="timeline"></canvas>
+    <canvas id="view"></canvas>
+    <script type="module" src="/src/dev/animLab.ts"></script>
+  </body>
+</html>
