@@ -91,7 +91,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M11c | 界面：USS → CSS、四层路由、字体、约 10 个新界面、HUD 部件重做 | 13.5k | ⬜ |
 | M11d | 核心：存档迁移、续玩、时间仲裁、卡帧、模态栈、画质档、剔除 | 7.6k 中约一半 | ⬜ |
 | M11e | 音频：改播烘好的 ogg + WebAudio 总线 | 1.3k | ⬜ |
-| M12 | 动画：native-anim → AnimationClip、Blender 片段导 GLB、控制器状态机与事件、CreatureRig | 1.8k 运行时 | ⬜ |
+| M12 | 动画：native-anim → AnimationClip、Blender 片段导 GLB、控制器状态机与事件、CreatureRig | 1.8k 运行时 | 🔶 第一期 ✅ 2026-11-16（51e4bf35）：`npm run` 外的 `node scripts/web/export-native-anims.mjs` 把 52 个资产 469 个采样片段导成 `public/assets/anim/*.json`（3.5 MB，带 231 个片段的事件）；`src/anim/` 复刻 Animator（一维混合树、任意状态 / 退出时刻转换、加法受击层、逐帧事件）、CreatureRig（脚步探地 + 两骨 IK、看向、受击弹簧、弹簧骨）、CreatureLocomotion；检视页 `anim-lab.html`。待办：敌人类改用 `CreatureAnimator`（接法见 `src/anim/CreatureAnimator.ts`）；Blender 手 K 片段（15 个资产约 123 个，旱魃 / 商人只有手 K）加 GLB 导出；魔将 11-07 换骨架后采样片段失效；布娃娃 |
 | M13 | Unity EditMode 对照测试 → `node --test` | — | ⬜ |
 
 依赖：M2 → M3 → M4；M5 → M6；M8 → M9；M10 依赖 M12 的武器挂点命名；M7 依赖 M1 的体积导出。M11 / M12 可与玩法并行。
