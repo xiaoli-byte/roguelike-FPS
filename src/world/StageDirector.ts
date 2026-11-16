@@ -26,6 +26,7 @@ import { unityFightRewardFactor, unityFights, unityLayout } from './UnitySceneAd
 import { CombatDirector } from './CombatDirector';
 import { chooseLevelLayout } from './LevelLayout';
 import { UnitySceneView } from './UnitySceneView';
+import { UnityAtmosphereDressing } from './unityAtmosphereDressing';
 import { UnityLevelLibrary, prepareUnityScene, unityHeights, unityPoint, type UnitySceneDocument } from './UnityLevelLibrary';
 
 /** 进场后第一波开始的时间（秒） */
@@ -141,6 +142,8 @@ export class StageDirector implements IStageDirector {
 
   private layout: LevelLayout | null = null;
   private view: ArenaView | UnitySceneView | null = null;
+  /** 这张 Unity 场景按图摆的雾带 / 水面雾 / 落叶 / 鸟（docs/art/composition.md 8.5「按图摆位」） */
+  private dressing: UnityAtmosphereDressing | null = null;
   private unityDocument: UnitySceneDocument | null = null;
   /** 战斗导演（游荡怪群；每张 Unity 图一个，正式的局才真正刷） */
   private director: CombatDirector | null = null;
@@ -257,6 +260,16 @@ export class StageDirector implements IStageDirector {
       this.view = unityDocument ? new UnitySceneView(ctx, unityDocument) : new ArenaView(ctx, L, theme, () => vis.next());
       ctx.scene.add(this.view.group);
       if (this.view instanceof UnitySceneView && this.view.ready) await this.view.ready;
+      if (unityDocument && this.view instanceof UnitySceneView) {
+        // 氛围摆位是锦上添花：出了错只是这张图没有雾，不能挡住进关
+        try {
+          this.dressing = new UnityAtmosphereDressing(unityDocument);
+          this.view.group.add(this.dressing.group);
+        } catch (err) {
+          console.warn('[StageDirector] 氛围摆位没建起来', err);
+          this.dressing = null;
+        }
+      }
     } catch (err) {
       if (unityDocument) {
         this.view?.dispose();
@@ -327,6 +340,9 @@ export class StageDirector implements IStageDirector {
     this.shopDisposers.length = 0;
     for (const p of this.portals) p.dispose();
     this.portals.length = 0;
+    // 先于场景视图释放：视图卸载时会解绑空气透视
+    this.dressing?.dispose();
+    this.dressing = null;
     if (this.view) {
       this.view.dispose();
       this.view = null;
