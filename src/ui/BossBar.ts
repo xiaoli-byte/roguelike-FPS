@@ -119,7 +119,8 @@ export class BossBar {
     this.layerText = '';
     this.trail = clamp01(enemy.hp / Math.max(1, enemy.maxHp));
     this.hpTrail.style.transform = `scaleX(${this.trail.toFixed(4)})`;
-    this.buildTicks(BOSS_TICKS[enemy.def.id] ?? DEFAULT_TICKS);
+    // 首领框架（framework/BossBrain）的首领自己给刻度（BossDef 的阶段阈值，Unity D23）
+    this.buildTicks((enemy as { barTicks?: readonly number[] }).barTicks ?? BOSS_TICKS[enemy.def.id] ?? DEFAULT_TICKS);
     this.passed = this.ticks.map((t) => this.trail <= t);
     this.tickEls.forEach((el, i) => el.classList.toggle('is-passed', this.passed[i]));
     this.shieldRow.hidden = !(enemy.maxShield > 0);

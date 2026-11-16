@@ -41,15 +41,21 @@ test('boss definitions use Unity vitals and include all current chapter bosses',
 });
 
 test('Hanba has its own registered three-phase behavior and Unity vitals', async () => {
-  const [source, registry, adapter] = await Promise.all([
+  const [source, def, plans, registry, adapter] = await Promise.all([
     readFile(new URL('../src/enemies/bosses/Hanba.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../src/enemies/bosses/HanbaDef.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../src/enemies/bosses/HanbaPlans.ts', import.meta.url), 'utf8'),
     readFile(new URL('../src/enemies/bosses/index.ts', import.meta.url), 'utf8'),
     readFile(new URL('../src/world/UnitySceneAdapter.ts', import.meta.url), 'utf8'),
   ]);
   assert.match(source, /id: 'boss_hanba'/);
-  assert.match(source, /thresholds = \[0\.6, 0\.3\]/);
   assert.match(source, /hp: 7700 \/ 1\.48, shield: 3850 \/ 1\.48/);
-  for (const id of ['sun_sweep', 'hot_wind', 'sand_wraiths', 'scorch_crack', 'apsara_call', 'eclipse']) assert.ok(source.includes(`id: '${id}'`), id);
+  assert.match(source, /extends BossBrain/);
+  assert.match(def, /ScorchedAt = 0\.6/);
+  assert.match(def, /RedEarthAt = 0\.3/);
+  assert.match(def, /TierHp = 7700/);
+  assert.match(def, /TierShield = 3850/);
+  for (const id of ['sun_sweep', 'hot_wind', 'sand_wraiths', 'scorch_crack', 'apsara_call', 'eclipse']) assert.ok(plans.includes(`id: '${id}'`), id);
   assert.match(registry, /new Hanba\(ctx, opts\)/);
   assert.ok(adapter.includes("boss_hanba: 'boss_hanba'"));
   assert.ok(!adapter.includes("boss_hanba: 'boss_colossus'"));

@@ -721,7 +721,8 @@ export class StageDirector implements IStageDirector {
     this.bosses.push(e);
     // 名号横幅与血条由关卡导演负责（Boss 登场结束时只补一条弱点提示）；吼叫与震屏由 Boss 自己的登场演出负责
     const ctx = this.ctx;
-    ctx.ui.banner(e.displayName, this.arena ? `首领 · ${this.arena.theme.name}` : '首领', 3);
+    // 有登场演出的首领（旱魃）由演出自己打电影式名字卡
+    if (!(e as { introDirected?: boolean }).introDirected) ctx.ui.banner(e.displayName, this.arena ? `首领 · ${this.arena.theme.name}` : '首领', 3);
     ctx.ui.setBoss(e);
   }
 
@@ -853,7 +854,7 @@ export class StageDirector implements IStageDirector {
       const p = e.position;
       const bad = !Number.isFinite(p.x + p.y + p.z)
         || p.x < a.minX - 0.5 || p.x > a.maxX + 0.5 || p.z < a.minZ - 0.5 || p.z > a.maxZ + 0.5
-        || p.y < a.floorY - 3 || p.y > a.floorY + 40;
+        || (p.y < a.floorY - 3 && !(ctx.world.groundHeight(p.x, p.z, p.y + 1) > p.y - 3)) || p.y > a.floorY + 40;
       if (!bad) continue;
       _v.set(
         Number.isFinite(p.x) ? Math.min(a.maxX - 1, Math.max(a.minX + 1, p.x)) : a.center.x,
@@ -891,7 +892,8 @@ export class StageDirector implements IStageDirector {
 
     // 玩家掉出世界兜底
     const pp = ctx.player.position;
-    if (ctx.player.alive && (!Number.isFinite(pp.x + pp.y + pp.z) || pp.y < a.floorY - 15
+    // 低于 floorY 15 m 但脚下还有地面的不算掉出去（Unity 1-4：floorY 是台地上的出生点，月牙泉泉床低 17 m）
+    if (ctx.player.alive && (!Number.isFinite(pp.x + pp.y + pp.z) || (pp.y < a.floorY - 15 && !(ctx.world.groundHeight(pp.x, pp.z, pp.y + 1) > pp.y - 3))
       || pp.x < a.minX - 3 || pp.x > a.maxX + 3 || pp.z < a.minZ - 3 || pp.z > a.maxZ + 3)) {
       ctx.player.teleport(a.playerSpawn.clone(), a.playerYaw);
     }

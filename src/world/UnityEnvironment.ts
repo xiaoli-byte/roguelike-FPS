@@ -5,6 +5,7 @@ import type { UnityEnvironment as EnvironmentData } from './UnityLevelLibrary';
 import { Atmosphere, atmosphereForChapter } from './Atmosphere';
 import { CloudSky, cloudSkyForChapter } from './CloudSky';
 import { SunShafts } from './SunShafts';
+import { stageHooks } from '../enemies/bosses/framework/StageHooks';
 
 type Rgba = [number, number, number, number];
 
@@ -67,7 +68,7 @@ const SHADOW_EXTENT = 90;
 /** 太阳放在阴影框中心沿光线往回这么远（阴影相机近 / 远平面按它算） */
 const SUN_DISTANCE = 250;
 const _lightBasis = new THREE.Matrix4(), _lightInverse = new THREE.Matrix4();
-const _center = new THREE.Vector3(), _origin = new THREE.Vector3();
+const _center = new THREE.Vector3(), _origin = new THREE.Vector3(), _forward = new THREE.Vector3();
 const _yAxis = new THREE.Vector3(0, 1, 0), _zAxis = new THREE.Vector3(0, 0, 1);
 
 function atmosphereEnabled(): boolean {
@@ -96,11 +97,10 @@ export class UnityEnvironmentView {
       : null;
     report?.('ambient');
     const ambient = data.ambient;
-    if (ambient.mode === 0 || ambient.mode === 3) {
-      parent.add(new THREE.AmbientLight(color(ambient.light), ambient.intensity));
-    } else {
-      parent.add(new THREE.HemisphereLight(color(ambient.sky), color(ambient.ground), ambient.intensity));
-    }
+    const ambientLight = ambient.mode === 0 || ambient.mode === 3
+      ? new THREE.AmbientLight(color(ambient.light), ambient.intensity)
+      : new THREE.HemisphereLight(color(ambient.sky), color(ambient.ground), ambient.intensity);
+    parent.add(ambientLight);
     report?.('sun');
     if (data.sun) {
       const sun = new THREE.DirectionalLight(color(data.sun.color), data.sun.intensity);
@@ -124,6 +124,8 @@ export class UnityEnvironmentView {
       parent.add(sun, sun.target);
       this.sun = sun;
       this.shadowTexel = texel;
+      // 首领（旱魃的太阳驱动）经这个钩子推太阳、压暗环境，不伸手进这里
+      stageHooks.sun = { scene: ctx.scene, light: sun, ambients: [ambientLight] };
     }
     report?.('local lights');
     for (const item of data.lights) {
@@ -175,10 +177,15 @@ export class UnityEnvironmentView {
     if (this.sky) this.sky.position.copy(this.ctx.camera.position);
   }
 
-  /** 阴影框中心放在相机脚下，先换到光源空间按阴影像素取整，再换回世界：框跟人走，阴影边不随走动抖 */
+  /**
+   * 阴影框中心放在相机脚下，先换到光源空间按阴影像素取整，再换回世界：框跟人走，阴影边不随走动抖。
+   * 方向每帧从灯本身读（position − target）：首领（旱魃的太阳驱动）经 stageHooks.sun 绕 target 转太阳，这里只平移、不改方向。
+   */
   private followShadow(): void {
     const sun = this.sun;
     if (!sun || !sun.castShadow || this.shadowTexel <= 0) return;
+    _forward.subVectors(sun.target.position, sun.position);
+    if (_forward.lengthSq() > 1e-8) this.sunForward.copy(_forward.normalize());
     _lightBasis.lookAt(_origin, this.sunForward, Math.abs(this.sunForward.y) > 0.99 ? _zAxis : _yAxis);
     _lightInverse.copy(_lightBasis).invert();
     _center.copy(this.ctx.camera.position).applyMatrix4(_lightInverse);
@@ -195,6 +202,7 @@ export class UnityEnvironmentView {
     this.shafts = null;
     this.clouds?.dispose();
     this.clouds = null;
+    if (stageHooks.sun?.light === this.sun) stageHooks.sun = null;
     if (this.atmosphere) Atmosphere.unbind();
     this.atmosphere = false;
     this.cube?.dispose();

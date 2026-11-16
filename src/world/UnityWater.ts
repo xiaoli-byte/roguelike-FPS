@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 import type { GameContext } from '../core/types';
 import { unityPoint, unityQuaternion, type UnitySceneDocument, type UnityWater } from './UnityLevelLibrary';
+import { isSpringWater, stageHooks, type StageWaterBody, type StageWaterHook } from '../enemies/bosses/framework/StageHooks';
 
 interface Body {
   def: UnityWater;
+  spring: boolean;
+  quaternion: THREE.Quaternion;
   renderers: THREE.Object3D[];
   center: THREE.Vector3;
   inverse: THREE.Quaternion;
@@ -19,13 +22,14 @@ interface Body {
 const SOURCE = 'unity.water';
 const _local = new THREE.Vector3(), _point = new THREE.Vector3(), _sink = new THREE.Vector3();
 
-export class UnityWaterView {
+export class UnityWaterView implements StageWaterHook {
   private readonly bodies: Body[] = [];
   private readonly safe: THREE.Vector3;
   private slow = 1;
   private wasInWater = false;
   private dropAcc = 0;
   private readonly off: (() => void)[] = [];
+  private surfaces: { object: THREE.Object3D; y: number }[] | null = null;
 
   constructor(private readonly ctx: GameContext, document: UnitySceneDocument, roots: ReadonlyMap<string, THREE.Object3D[]>) {
     this.safe = ctx.player.position.clone();
@@ -33,20 +37,54 @@ export class UnityWaterView {
       const renderers = roots.get(def.id) ?? [];
       const scale = new THREE.Vector3().fromArray(def.scale);
       const center = unityPoint(def.center);
+      const quaternion = unityQuaternion(def.rotation);
       this.bodies.push({
-        def, renderers, center, scale, bottom: center.y - scale.y * 0.5,
-        inverse: unityQuaternion(def.rotation).invert(), level: 1, from: 1, to: 1, seconds: 1, time: 0,
+        def, spring: isSpringWater(def.name ?? '', def.spring), quaternion, renderers, center, scale, bottom: center.y - scale.y * 0.5,
+        inverse: quaternion.clone().invert(), level: 1, from: 1, to: 1, seconds: 1, time: 0,
       });
     }
-    this.off.push(ctx.events.on('enemy:bossPhase', ({ enemy, phase }) => {
-      if (enemy.def.id !== 'boss_hanba' || phase !== 1) return;
-      enemy.getHeadCenter(_sink);
-      for (const body of this.bodies) if (body.def.spring) this.transition(body, 0, 3.2);
-    }));
-    this.off.push(ctx.events.on('enemy:killed', ({ enemy }) => {
-      if (enemy.def.id !== 'boss_hanba') return;
-      for (const body of this.bodies) if (body.def.spring) this.transition(body, 1, 4.2);
-    }));
+    // 月牙泉的吸干 / 复涌由旱魃经 StageHooks 驱动（Unity HanbaSpring：二阶段演出里吸干、倒下后泉眼复涌）
+    if (this.bodies.length > 0) stageHooks.water = this;
+  }
+
+  // ───────────── StageWaterHook ─────────────
+
+  waterBodies(): readonly StageWaterBody[] {
+    return this.bodies.map(b => ({ name: b.def.name ?? '', spring: b.spring, center: b.center, scale: b.scale, quaternion: b.quaternion, bottom: b.bottom }));
+  }
+
+  depthAt(p: THREE.Vector3, springOnly = false): number {
+    let deepest = 0;
+    for (const body of this.bodies) if (!springOnly || body.spring) deepest = Math.max(deepest, this.depth(body, p));
+    return deepest;
+  }
+
+  springLevel(): number {
+    const body = this.bodies.find(b => b.spring);
+    return body ? body.level : NaN;
+  }
+
+  springTo(target: number, seconds: number, sink?: THREE.Vector3 | null): void {
+    if (sink) _sink.copy(sink);
+    for (const body of this.bodies) if (body.spring) this.transition(body, target, seconds);
+  }
+
+  /** 整弯泉共用的水面（名字带 CrescentSpring Surface 的渲染件）：按水位落到泉床最低处，水位 0 时隐去 */
+  private springSurfaces(level: number, animating: boolean): void {
+    if (!this.surfaces) {
+      this.surfaces = [];
+      this.ctx.scene.traverse(o => {
+        if (/crescent ?spring/i.test(o.name) && /surface/i.test(o.name)) this.surfaces!.push({ object: o, y: o.position.y });
+      });
+    }
+    if (this.surfaces.length === 0) return;
+    let lowest = Infinity;
+    for (const b of this.bodies) if (b.spring) lowest = Math.min(lowest, b.bottom);
+    for (const s of this.surfaces) {
+      s.object.visible = level > 0.001 || animating;
+      const floor = Number.isFinite(lowest) ? Math.min(lowest, s.y) : s.y;
+      s.object.position.y = floor + (s.y - floor) * level;
+    }
   }
 
   private transition(body: Body, target: number, seconds: number): void {
@@ -80,6 +118,7 @@ export class UnityWaterView {
         const t = body.time / body.seconds;
         body.level = THREE.MathUtils.lerp(body.from, body.to, t * t * (3 - 2 * t));
         if (body.to < body.from) this.droplets(body, dt);
+        if (body.spring) this.springSurfaces(body.level, body.time < body.seconds);
       }
       const active = body.level > 0.001 || body.to > body.from;
       for (const renderer of body.renderers) {
@@ -131,6 +170,7 @@ export class UnityWaterView {
   }
 
   dispose(): void {
+    if (stageHooks.water === this) stageHooks.water = null;
     for (const off of this.off) off();
     this.off.length = 0;
     this.ctx.player.stats.removeSource(SOURCE);

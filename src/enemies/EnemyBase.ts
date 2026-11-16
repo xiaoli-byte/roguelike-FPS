@@ -268,9 +268,9 @@ export abstract class EnemyBase implements IEnemy {
     this.root.rotation.y = this.facing;
     this.animate(dt);
 
-    // 掉出世界保护
+    // 掉出世界保护（Unity 关卡的地面高低差很大：1-4 的 floorY 是台地上的出生点，月牙泉泉床低 17 m——脚下还有地面就不算掉出去）
     const arena = this.ctx.stage.arena;
-    if (arena && this.position.y < arena.floorY - 12) {
+    if (arena && this.position.y < arena.floorY - 12 && !(this.ctx.world.groundHeight(this.position.x, this.position.z, this.position.y + 1) > this.position.y - 3)) {
       this.ctx.nav.nearestWalkable(arena.center, _v1);
       this.position.set(_v1.x, arena.floorY + 0.5, _v1.z);
       this.velocity.set(0, 0, 0);

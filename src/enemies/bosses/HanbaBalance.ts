@@ -94,7 +94,7 @@ export function simulate(def: HanbaDef, p: Profile, seed = 1, difficulty = Hanba
   const moves: SimMove[] = def.moves.map(m => ({ move: m, readyAt: Math.max(0, m.firstDelay) }));
   let phase = 0;
   let t = 0, stageLeft = Math.max(0, def.intro.firstRest), waitAcc = 0, weakGrace = 0, addsLeft = 0, wardLeft = 0, staggerTaken = 1;
-  let stage: Stage = 'rest';
+  let stage = 'rest' as Stage;
   let cur: SimMove | null = null;
   let plan: HanbaMovePlan = { windup: 0, active: 0, recover: 0 };
   let lastId: string | null = null, queued: string | null = null;
@@ -205,7 +205,7 @@ export function simulate(def: HanbaDef, p: Profile, seed = 1, difficulty = Hanba
     stageLeft -= dt;
     weakGrace -= dt;
     addsLeft -= dt;
-    switch (stage) {
+    switch (stage as Stage) {
       case 'rest':
         if (stageLeft <= 0) pick();
         break;
