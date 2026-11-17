@@ -377,6 +377,12 @@ export class HazardSet {
     return this.addTele(decal, duration, 0, scope);
   }
 
+  /** 环带预警（inner 以内安全，Unity BossHazards.AnnulusWarning）。返回取消函数（同 groundWarning） */
+  annulusWarning(x: number, y: number, z: number, inner: number, outer: number, duration: number, color: number, scope: WarnScope = 'move'): () => void {
+    const decal = GroundDecal.acquire(this.parent, color).circle(x, y, z, outer, Math.max(0, Math.min(inner, outer - 0.1)));
+    return this.addTele(decal, duration, 0, scope);
+  }
+
   private addTele(decal: GroundDecal, duration: number, hold: number, scope: WarnScope): () => void {
     decal.fill = 0;
     const t: Telegraph = { decal, age: 0, dur: duration, hold: Math.max(0, hold), scope, cancelAt: -1, done: false };
