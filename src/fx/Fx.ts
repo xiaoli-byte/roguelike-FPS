@@ -922,10 +922,15 @@ export class FxSystem implements IFx {
       }
       o.x += o.vx * dt; o.y += o.vy * dt; o.z += o.vz * dt;
       live++;
-      // 每帧在当前位置留一小团很快暗下去的光：连起来就是一道彗尾
+      // 每帧沿这一步走过的路留几小团很快暗下去的光：连起来是一道彗尾。飞得快时一步的距离比光团大，只留一团会断成一串圆点
       const k = o.age / o.life;
       _c4.setRGB(o.r, o.g, o.b).multiplyScalar(1 - k * k);
-      this.glow.spawn(STYLE_LINGER, o.x, o.y, o.z, 0, 0, 0, _c4, o.size, 0.13);
+      const stepLen = Math.sqrt(o.vx * o.vx + o.vy * o.vy + o.vz * o.vz) * dt;
+      const dots = Math.min(4, Math.max(1, Math.ceil(stepLen / (o.size * 0.6))));
+      for (let j = 0; j < dots; j++) {
+        const back = (j / dots) * dt;
+        this.glow.spawn(STYLE_LINGER, o.x - o.vx * back, o.y - o.vy * back, o.z - o.vz * back, 0, 0, 0, _c4, o.size, 0.13);
+      }
     }
     this.soulsLive = live;
   }

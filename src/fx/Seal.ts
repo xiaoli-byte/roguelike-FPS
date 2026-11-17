@@ -113,6 +113,9 @@ void main() {
   vec3 col = uColor * (min(I, 1.6) + halo) + max(I - 1.0, 0.0) * 0.35;
   gl_FragColor = vec4(col * uParams.w, 1.0);
   #include <colorspace_fragment>
+  // 预乘输出：笔画除了加光，还遮住身后六成。纯加法的印在雪地、亮沙地上被洗成一片奶白，认不出是哪种颜色的印；
+  // 遮一部分之后亮地面上是有颜色的笔画，暗地面上和原来几乎一样
+  gl_FragColor.a = clamp(min(I, 1.0) * 0.6 * min(uParams.w, 1.0), 0.0, 0.6);
 }
 `;
 
@@ -191,7 +194,11 @@ export class SealEffects {
       transparent: true,
       depthWrite: false,
       side: THREE.DoubleSide,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.CustomBlending,
+      blendSrc: THREE.OneFactor,
+      blendDst: THREE.OneMinusSrcAlphaFactor,
+      blendSrcAlpha: THREE.ZeroFactor,
+      blendDstAlpha: THREE.OneFactor,
       polygonOffset: true,
       polygonOffsetFactor: -2,
       polygonOffsetUnits: -2,
