@@ -56,7 +56,8 @@ export class HanbaSunDriver {
   private readonly ambients: { light: THREE.Light; intensity: number }[];
   private fogColor: THREE.Color | null = null;
   private bgColor: THREE.Color | null = null;
-  private bgIntensity = 1;
+  /** 天空盒背景的原亮度：第一次压暗时记下，之后都以它为基准（不能每次重读，已压暗的值再乘 k 会层层复合到全黑） */
+  private bgIntensity: number | null = null;
   private fromElev = 0;
   private toElev = 0;
   private azimuth = 0;
@@ -213,7 +214,7 @@ export class HanbaSunDriver {
       this.bgColor ??= scene.background.clone();
       scene.background.copy(this.bgColor).multiplyScalar(k);
     } else if (scene.background) {
-      if (this.bgColor === null) this.bgIntensity = scene.backgroundIntensity;
+      this.bgIntensity ??= scene.backgroundIntensity;
       scene.backgroundIntensity = this.bgIntensity * k;
     }
   }

@@ -37,15 +37,17 @@ try {
   log('state', await b.eval('window.__game.state'));
   await b.eval('window.__step(2)');
   log('arena', JSON.stringify(await b.eval(`(() => { const a = window.__ctx.stage.arena; return [a.minX, a.maxX, a.minZ, a.maxZ, a.floorY]; })()`)));
-  // 玩家沿出生点 → 首领场中心走到台地边缘（离中心 42 m 以内、和台地同高），让关卡自己触发首领战（WaveRunner 刷首领）
+  // 玩家沿出生点 → 首领场中心走进首领场（离中心 42 m 以内、站在首领场自己的地面上：1-4 是泉床 0 m，不是 16 m 的出生台地），
+  // 让关卡自己触发首领战（同 Unity BossEncounter：场地范围内且脚在首领场地面 ±6 m；WaveRunner 刷首领）
   const rim = await b.eval(`(() => {
-    const c = window.__ctx, V = c.player.position.constructor, a = c.stage.arena;
-    const from = c.player.position.clone(), center = new V(2, 0, 4);
+    const c = window.__ctx, V = c.player.position.constructor, boss = c.stage.unityDocument?.bosses?.[0];
+    const floor = boss ? boss.floorY : c.stage.arena.floorY;
+    const from = c.player.position.clone(), center = boss ? new V(boss.center[0], floor, boss.center[2]) : new V(2, 0, 4);
     for (let k = 0; k <= 60; k++) {
       const p = from.clone().lerp(center, k / 60);
       if (Math.hypot(p.x - center.x, p.z - center.z) > 42) continue;
       const y = c.world.groundHeight(p.x, p.z, 60, 0.3);
-      if (!Number.isFinite(y) || Math.abs(y - a.floorY) > 2.5) continue;
+      if (!Number.isFinite(y) || Math.abs(y - floor) > 2.5) continue;
       p.y = y + 0.05;
       c.player.teleport(p, Math.atan2(-(center.x - p.x), -(center.z - p.z)));
       return p.toArray();
