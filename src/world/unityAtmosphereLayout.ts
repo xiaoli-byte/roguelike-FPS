@@ -12,7 +12,8 @@ import type { MistKey, MistStream } from './MistStreams';
  *            每个方位上只在「从场地里看得见」的位置里挑（沿高度场查视线：遭遇场地正中、出生点、出口的人眼高度）：
  *            雾要有比它暗的背景才读得出来，所以先要岩面前的（陡坡：崖脚、台地脚下），再要背后是天或远处的（山口、豁口，
  *            雾在这儿把前后两层切开），最后才是贴在缓坡前的（沙 / 雪 / 草面，按章节打折，沙寺不要）；同一档里取最低的。
- *            沙丘背后看不见的洼地不摆。再只留这一圈里偏低的那几段，断断续续，不是一个环。雾在敌人身后，不在玩家和敌人之间。
+ *            沙丘背后看不见的洼地不摆。再只留这一圈里偏低的那几段，断断续续，不是一个环。
+ *            每一段离遭遇场地都隔开一个雾团包络（半宽 + 0.75 × 直径）：场内任意两点的连线都碰不到雾，雾在敌人身后，不在玩家和敌人之间。
  *   谷底雾    只有大图（场地半径 ≥ 220 m）：可走范围里最低的两成地面、避开所有遭遇点和出生点的地方，几条很薄的。
  *   水面      够大的静水（湖、泉、海子）铺一层贴水面的平雾；大湖中线上再浮一条半人高以下的低雾。河（一段段往下流的）不铺。
  *   落叶      只给落叶的树（落叶松、枫……，不给云杉 / 雪松），只挑遭遇场地边上和出生点附近的几棵。
@@ -92,6 +93,12 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
     ...(doc.bosses ?? []).map(b => ({ x: b.center[0], z: b.center[2], r: b.radius })),
   ];
   const bossOnly = (doc.encounters?.length ?? 0) === 0 && (doc.bosses?.length ?? 0) > 0;
+  /**
+   * 雾团的包络：沿雾带路径、半径 = 半宽 + 0.75 × 直径（最大的雾团散到最边上时够得到的范围，取得偏大）。
+   * 包络碰得到遭遇场地，雾团就可能落在场内两点的连线上——挡在玩家和敌人之间。所以每一段雾带离场地都要隔开一个包络。
+   */
+  const envelope = (halfWidth: number, size: number): number => halfWidth + 0.75 * size;
+  const clearOf = (x: number, z: number, margin: number): boolean => encounters.every(e => Math.hypot(x - e.x, z - e.z) > e.r + margin);
   /** 顺风排：雾团从路径的头走到尾，头在上风 */
   const downwind = (keys: MistKey[]): MistKey[] => {
     const a = keys[0].position, b = keys[keys.length - 1].position;
@@ -163,7 +170,6 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
     const centerX = sumX / Math.max(1, count), centerZ = sumZ / Math.max(1, count);
     let radius = 0;
     for (let k = 0; k < W * H; k++) if (walk[k]) radius = Math.max(radius, Math.hypot(cx(k % W) - centerX, cz(Math.floor(k / W)) - centerZ));
-    const clearOf = (x: number, z: number, margin: number): boolean => encounters.every(e => Math.hypot(x - e.x, z - e.z) > e.r + margin);
 
     // ───────────── 外圈雾带 ─────────────
     const fogEnd = doc.environment?.fog?.mode === 1 ? doc.environment.fog.end : 400;
@@ -232,7 +238,7 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
       if (known.length < 3) return;
       const limit = percentile(known, 0.8) + 3;
       // 只留低处；最里一圈再让开遭遇场地
-      const keep = low.map(p => p !== null && p.y <= limit && (r > 1 || clearOf(p.x, p.z, r === 0 ? 4 : 14)));
+      const keep = low.map(p => p !== null && p.y <= limit && clearOf(p.x, p.z, envelope(ring.halfWidth, ring.size)));
       const start = keep.indexOf(false);
       const order = Array.from({ length: bins }, (_, i) => (i + Math.max(0, start)) % bins);
       let run: number[] = [];
@@ -303,12 +309,12 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
         }
         lo = Math.max(lo, -110); hi = Math.min(hi, 110);
         if (hi - lo < 50) continue;
-        const heights = patch.map(c => height[c]).sort((a, b) => a - b), size = INTERIOR_MIST_SIZE;
+        const heights = patch.map(c => height[c]).sort((a, b) => a - b), size = INTERIOR_MIST_SIZE, half = Math.min(26, Math.max(10, across / patch.length * 1.6));
         const keys = [0, 0.15, 0.5, 0.85, 1].map((t): MistKey => {
           const along = lo + (hi - lo) * t, x = mx + ax * along, z = mz + az * along, ground = heightAt(x, z);
-          return { position: [x, (Number.isNaN(ground) ? percentile(heights, 0.5) : Math.max(ground, percentile(heights, 0.3))) + size * 0.2 + 0.5, z], halfWidth: Math.min(26, Math.max(10, across / patch.length * 1.6)), size };
+          return { position: [x, (Number.isNaN(ground) ? percentile(heights, 0.5) : Math.max(ground, percentile(heights, 0.3))) + size * 0.2 + 0.5, z], halfWidth: half, size, opacity: clearOf(x, z, envelope(half, size)) ? 1 : 0 };
         });
-        layout.mist.push({ keys: fade(keys), opacity: 0.34 * interior, speed: 0.6, torn: 0.05, lit: CHAPTER_LIT[chapter] ?? 0 });
+        if (fade(keys).some(key => (key.opacity ?? 1) > 0)) layout.mist.push({ keys, opacity: 0.34 * interior, speed: 0.6, torn: 0.05, lit: CHAPTER_LIT[chapter] ?? 0 });
       }
     }
 
@@ -379,8 +385,13 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
       }
       // 大湖：中线上再浮一条低雾（顶到半人高以下的不算遮挡，这条在膝盖到胸口，只给够宽的水面，离岸远）
       if (Math.min(length, width) >= 60) {
-        const keys = [0, 0.16, 0.5, 0.84, 1].map((t): MistKey => ({ position: at(alongLo + length * (0.08 + 0.84 * t), (sideLo + sideHi) / 2, surface + 2.2), halfWidth: width * 0.26, size: 16, halfHeight: 0.8 }));
-        layout.waterMist.push({ keys: fade(keys), opacity: 0.3 * waterGain, speed: 0.5, stretch: 1.8, floorY: surface, soft: 3 });
+        // 岸边有遭遇场地的那几段不出（这条雾有一人多高，落在场内的视线上就是挡在玩家和敌人之间）；整条都靠着场地就不要了
+        const half = Math.min(30, width * 0.26);
+        const keys = [0, 0.12, 0.3, 0.5, 0.7, 0.88, 1].map((t): MistKey => {
+          const position = at(alongLo + length * (0.08 + 0.84 * t), (sideLo + sideHi) / 2, surface + 2.2);
+          return { position, halfWidth: half, size: 16, halfHeight: 0.8, opacity: clearOf(position[0], position[2], envelope(half, 16)) ? 1 : 0 };
+        });
+        if (fade(keys).some(key => (key.opacity ?? 1) > 0)) layout.waterMist.push({ keys, opacity: 0.3 * waterGain, speed: 0.5, stretch: 1.8, floorY: surface, soft: 3 });
       }
     }
   }
