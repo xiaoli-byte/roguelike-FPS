@@ -188,6 +188,12 @@ void main() {
 #endif
   gl_FragColor = vec4(col, a);
   #include <colorspace_fragment>
+#ifdef ADDITIVE
+  // 发光粒子按预乘输出：颜色照旧是加上去的，另带一份「遮住身后多少」。只有火舌遮（七成）——
+  // 纯加法的火在亮沙地、亮天空前会被洗成一片白，看不出颜色和形状；其余形状遮盖为 0，和原来的加法混合逐像素相同
+  float cover = (shape > 3.5 && shape < 4.5) ? 0.7 : 0.0;
+  gl_FragColor = vec4(gl_FragColor.rgb * a, a * cover);
+#endif
 }
 `;
 
@@ -275,7 +281,11 @@ export class ParticlePool {
       depthWrite: false,
       depthTest: true,
       fog: true,
-      blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+      // 发光池：预乘的「加 + 部分遮盖」（One, OneMinusSrcAlpha），遮盖量由片元给（见 FRAG 末尾）；目标 alpha 不动
+      blending: additive ? THREE.CustomBlending : THREE.NormalBlending,
+      ...(additive
+        ? { blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor, blendSrcAlpha: THREE.ZeroFactor, blendDstAlpha: THREE.OneFactor }
+        : {}),
       defines: additive ? { ADDITIVE: '' } : {},
     });
     // 缩放 uniform 共享同一个对象（merge 会克隆，这里在之后挂上）
