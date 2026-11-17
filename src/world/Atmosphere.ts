@@ -151,7 +151,8 @@ const shared = {
   sfAtmoA: f4(), sfAtmoB: f4(), sfAtmoMist: f4(), sfAtmoAir: f4(), sfAtmoSun: f4(), sfAtmoSunDir: f4(), sfCloud: f4(), sfCloudSlope: f4(),
   // 下面两个内置材质不读，给同一套风向 / 光照的模块用（MistStreams、CloudSky、SunShafts……）
   sfWind: f4(),     // xy 风向（XZ，单位向量）, z 风速 m/s（= 云影漂移速度）, w 游戏时间（秒）
-  sfSunLight: f4(), // rgb 日光色（显示空间，太阳落到地平线下时收到 0）, w 太阳还在地平线上的份额 0..1
+  sfSunLight: f4(), // rgb 日光色（显示空间，已乘主光能量；太阳落到地平线下时收到 0）, w 太阳还在地平线上的份额 0..1
+  sfDaylight: f4(), // x 主光能量（当前强度 / 接上时的强度，再乘地平线上的份额）, y 环境亮度（当前雾色亮度 / 接上时的）
 };
 
 /**
@@ -301,10 +302,21 @@ const DEFAULT_WIND: [number, number] = [-0.82, -0.57];
 const tmpColor = new THREE.Color(), tmpSky = new THREE.Color(), tmpDir = new THREE.Vector3(), tmpTarget = new THREE.Vector3();
 const rgb = { r: 0, g: 0, b: 0 };
 
-let bound: { scene: THREE.Scene; profile: AtmosphereProfile; baseY: number; sun: THREE.DirectionalLight | null; sky: THREE.Light | null; wind: [number, number]; phase: [number, number] } | null = null;
+/** 环境被压暗时（首领日蚀把雾色压到线性的四成），远处空气里的天色不低于原来的这么多（显示空间的比值，约合线性的三成半）：别让远景和云底一起黑掉 */
+const AIR_FLOOR = 0.62;
+
+let bound: {
+  scene: THREE.Scene; profile: AtmosphereProfile; baseY: number; sun: THREE.DirectionalLight | null; sky: THREE.Light | null; wind: [number, number]; phase: [number, number];
+  /** 接上时主光的强度、雾色的亮度：之后谁把它们压暗 / 提亮（首领日蚀、天气），云、雾、光柱的日光都按比例跟着走 */
+  sunBase: number; fogBase: number;
+} | null = null;
+
+function luminance(c: { r: number; g: number; b: number }): number {
+  return 0.3 * c.r + 0.5 * c.g + 0.2 * c.b;
+}
 
 function zero(): void {
-  for (const u of [shared.sfAtmoA, shared.sfAtmoB, shared.sfAtmoSun, shared.sfCloud, shared.sfSunLight]) u.value.fill(0);
+  for (const u of [shared.sfAtmoA, shared.sfAtmoB, shared.sfAtmoSun, shared.sfCloud, shared.sfSunLight, shared.sfDaylight]) u.value.fill(0);
 }
 
 function display(color: THREE.Color): typeof rgb {
@@ -333,7 +345,11 @@ export const Atmosphere = {
       if (!sky && (object instanceof THREE.HemisphereLight || object instanceof THREE.AmbientLight)) sky = object;
     });
     const wind = options.wind ?? DEFAULT_WIND, len = Math.hypot(wind[0], wind[1]) || 1;
-    bound = { scene, profile, baseY: options.baseY ?? 0, sun, sky, wind: [wind[0] / len, wind[1] / len], phase: options.cloudPhase ?? [0, 0] };
+    // 同一个场景、同一盏太阳再接一次（换参数）不重新取基准：否则正压着光的时候重接，压暗后的值就成了「原样」
+    const same = bound !== null && bound.scene === scene && bound.sun === sun;
+    const sunBase = same ? bound!.sunBase : (sun as THREE.DirectionalLight | null)?.intensity ?? 0;
+    const fogBase = same ? bound!.fogBase : scene.fog ? luminance(display(tmpColor.copy(scene.fog.color))) : 0;
+    bound = { scene, profile, baseY: options.baseY ?? 0, sun, sky, wind: [wind[0] / len, wind[1] / len], phase: options.cloudPhase ?? [0, 0], sunBase, fogBase };
     Atmosphere.update(0);
   },
 
@@ -357,6 +373,9 @@ export const Atmosphere = {
     const fr = fogRgb.r, fg = fogRgb.g, fb = fogRgb.b;
     const skyRgb = display(sky ? tmpSky.copy(sky.color) : tmpSky.copy(fog.color));
     const k = p.airSkyBlend;
+    // 环境亮度：雾色比接上时暗了多少。空气里的天色跟着暗（光看环境光的颜色不知道它被压了），但留一个下限
+    const ambient = bound.fogBase > 1e-3 ? Math.min(2, (0.3 * fr + 0.5 * fg + 0.2 * fb) / bound.fogBase) : 1, airLevel = Math.min(1, Math.max(AIR_FLOOR, ambient));
+    skyRgb.r *= airLevel; skyRgb.g *= airLevel; skyRgb.b *= airLevel;
     shared.sfAtmoA.value.set([Math.max(0, p.mistDensity), 1 / Math.max(1, p.mistScaleHeight), bound.baseY, Math.max(0, p.airDensity)]);
     shared.sfAtmoMist.value.set([fr * p.mistTint, fg * p.mistTint, fb * p.mistTint, 1]);
     shared.sfAtmoAir.value.set([fr + (skyRgb.r - fr) * k, fg + (skyRgb.g - fg) * k, fb + (skyRgb.b - fb) * k, 1]);
@@ -368,13 +387,17 @@ export const Atmosphere = {
       // 太阳贴近地平线以下时散射收掉，别让地底下的光把雾照亮
       const up = Math.min(1, Math.max(0, tmpDir.y * 6 + 0.3));
       const c = display(tmpColor.copy(sun.color));
-      const s = p.sunScatter * up;
+      // 主光能量：强度比接上时压了多少（日蚀）/ 提了多少（耀斑）。散进雾里的日光、云和雾的受光面、光柱都乘它
+      const energy = bound.sunBase > 1e-4 ? Math.min(1.5, sun.intensity / bound.sunBase) : 1;
+      const s = p.sunScatter * up * energy, e = up * energy;
       shared.sfAtmoSun.value.set([c.r * s, c.g * s, c.b * s, 0]);
-      shared.sfSunLight.value.set([c.r * up, c.g * up, c.b * up, up]);
+      shared.sfSunLight.value.set([c.r * e, c.g * e, c.b * e, up]);
+      shared.sfDaylight.value.set([e, ambient, 0, 0]);
       cloud = Math.min(1, Math.max(0, p.cloudShadow));
     } else {
       shared.sfAtmoSun.value.fill(0);
       shared.sfSunLight.value.fill(0);
+      shared.sfDaylight.value.set([0, ambient, 0, 0]);
     }
     shared.sfAtmoB.value.set([Math.min(1, Math.max(0, p.maxOpacity)), Math.max(0, p.startDistance), Math.min(1, Math.max(0, p.airHighFade)), cloud]);
     shared.sfAtmoSunDir.value.set([tmpDir.x, tmpDir.y, tmpDir.z, 0]);

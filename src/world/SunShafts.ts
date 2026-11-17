@@ -171,14 +171,16 @@ export class SunShafts {
     this.level = 0;
     const sunLight = Atmosphere.uniforms.sfSunLight.value as Float32Array, sunDir = Atmosphere.uniforms.sfAtmoSunDir.value as Float32Array;
     // 只在直接画到画布时做；空气透视没接上、太阳落山时不做
-    if (!Atmosphere.active || renderer.getRenderTarget() !== null || sunLight[3] <= 0 || o.strength <= 0) return;
+    // 主光能量（× 太阳在地平线上的份额）：首领日蚀把主光压暗时光柱跟着收
+    const day = (Atmosphere.uniforms.sfDaylight.value as Float32Array)[0];
+    if (!Atmosphere.active || renderer.getRenderTarget() !== null || day <= 0 || o.strength <= 0) return;
     camera.getWorldDirection(this.forward);
     const facing = this.forward.x * sunDir[0] + this.forward.y * sunDir[1] + this.forward.z * sunDir[2];
     if (facing < 0.12) return;
     this.sun.set(sunDir[0], sunDir[1], sunDir[2]).multiplyScalar(1000).add(camera.getWorldPosition(this.forward)).project(camera);
     // 太阳离开画面越远越弱：出画一个画面高度之外就没有了
     const out = Math.max(Math.abs(this.sun.x) - 1, Math.abs(this.sun.y) - 1, 0);
-    const level = o.strength * sunLight[3] * Math.min(1, (facing - 0.12) / 0.2) * Math.max(0, 1 - out / 0.9);
+    const level = o.strength * Math.min(1, day) * Math.min(1, (facing - 0.12) / 0.2) * Math.max(0, 1 - out / 0.9);
     if (level < 0.004) return;
 
     renderer.getDrawingBufferSize(this.size);

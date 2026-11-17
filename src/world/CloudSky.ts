@@ -78,6 +78,7 @@ uniform vec4 sfCloudSlope; // xy 太阳方向 xz / y
 uniform vec4 sfAtmoA;      // z 基准高度
 uniform vec4 sfAtmoSunDir;
 uniform vec4 sfSunLight;
+uniform vec4 sfDaylight;   // x 主光能量 × 太阳在地平线上的份额, y 环境亮度（都相对接上时）
 uniform vec4 sfAtmoAir;
 uniform vec4 sfAtmoMist;
 uniform vec4 uCover; // 低, 中, 高, 发白
@@ -118,10 +119,16 @@ void main() {
 	vec3 sun = sfAtmoSunDir.xyz;
 	float toward = max( dot( d, sun ), 0.0 ), t2 = toward * toward, t4 = t2 * t2, t16 = t4 * t4 * t4 * t4;
 	vec3 fog = sfAtmoMist.rgb, sunColor = sfSunLight.rgb;
-	vec3 lit = mix( fog, mix( vec3( 1.0 ), sunColor, 0.5 ), uCover.w ) * uShape.y * ( 0.55 + 0.45 * sfSunLight.w );
+	// 云的亮面靠主光（七成）和天光（三成）：主光被压暗时（首领日蚀压到一成多）白云不能还是白的，跟着暗到接近云底
+	float day = clamp( 0.3 * sfDaylight.y + 0.7 * sfDaylight.x, 0.1, 1.2 );
+	float sunPeak = max( sunColor.r, max( sunColor.g, sunColor.b ) );
+	vec3 sunHue = sunPeak > 1e-3 ? sunColor / sunPeak : vec3( 1.0 );
+	vec3 lit = mix( fog, mix( vec3( 1.0 ), sunHue, 0.5 ) * day, uCover.w ) * uShape.y;
 	// 云底：空气色往蓝灰里偏（云下偏冷）；烟（white = 0）不偏，就是雾色压暗
 	vec3 air = mix( fog, sfAtmoAir.rgb, 0.6 );
 	vec3 shade = mix( air, vec3( 0.86, 0.93, 1.08 ) * dot( air, vec3( 0.3, 0.5, 0.2 ) ), 0.6 * uCover.w ) * uShape.z;
+	// 亮面不比云底暗（压得很暗时两者接近，别反过来）
+	lit = max( lit, shade * 1.04 );
 	float rim = t16 * uCover.w * 0.45;
 
 	vec3 color = vec3( 0.0 );
