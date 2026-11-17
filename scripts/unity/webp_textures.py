@@ -1,8 +1,9 @@
 """PNG → WebP for the Unity web export (called by optimize-web-levels.mjs).
 
-usage: python -I webp_textures.py <source dir> <target dir> <roles json>
+usage: python -I webp_textures.py <source dir> <target dir> <job json>
 
-roles json maps texture file name → role:
+job json: {"roles": {source name: role}, "names": {source name: published name}}. Published names are content hashes
+(optimize-web-levels.mjs), so identical sources share one output, converted once. Roles:
   "normal"   Unity normal map. WebSceneExporter blits textures into an sRGB render texture, so a linear
              normal map arrives sRGB-encoded in R/G/B (alpha is never encoded) and in Unity's packed layout
              (DXT5nm: R=1, G=y, A=x; BC5: R=x, G=y, A=1). Unpacked here like Unity's UnpackNormalmapRGorAG
@@ -59,10 +60,17 @@ def convert(job: tuple[str, str, str]) -> tuple[str, int, int]:
 
 def main() -> None:
     source_dir, target_dir, roles_file = map(Path, sys.argv[1:4])
-    roles: dict[str, str] = json.loads(roles_file.read_text(encoding="utf-8"))
+    job = json.loads(roles_file.read_text(encoding="utf-8"))
+    roles: dict[str, str] = job.get("roles", {})
+    names: dict[str, str] = job.get("names", {})
     jobs = []
+    seen: set[str] = set()
     for path in sorted(source_dir.glob("*.png")):
-        jobs.append((str(path), str(target_dir / (path.stem + ".webp")), roles.get(path.name, "color")))
+        target = names.get(path.name, path.stem + ".webp")
+        if target in seen:
+            continue
+        seen.add(target)
+        jobs.append((str(path), str(target_dir / target), roles.get(path.name, "color")))
     before = after = 0
     with ProcessPoolExecutor() as pool:
         for i, (_, a, b) in enumerate(pool.map(convert, jobs, chunksize=4), 1):

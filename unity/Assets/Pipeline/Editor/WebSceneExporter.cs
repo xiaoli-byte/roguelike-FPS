@@ -102,6 +102,8 @@ namespace Spiritfire.Art.Editor
         {
             var scene = EditorSceneManager.OpenScene(stage.scene, OpenSceneMode.Single);
             var spawn = PlayerSpawn.Resolve(scene);
+            // 顶层出生点 = 保存状态里的出生点（主走法）；之后把各走法引用的物体临时激活，停用的出生点 / 出口 / 场地也导出来（场景不保存）
+            ActivateLayoutObjects(scene);
             var doc = new JObject
             {
                 ["schema"] = 1,
@@ -135,6 +137,7 @@ namespace Spiritfire.Art.Editor
                 var item = new JObject
                 {
                     ["name"] = renderer.name,
+                    ["scenePath"] = ScenePath(renderer.transform),
                     ["url"] = url,
                     ["position"] = Point(renderer.transform.position),
                     ["rotation"] = Rotation(renderer.transform.rotation),
@@ -164,12 +167,16 @@ namespace Spiritfire.Art.Editor
             {
                 if (!collider.enabled || collider.isTrigger || collider.gameObject.scene != scene || collider is TerrainCollider) continue;
                 var data = ExportCollider(collider);
-                if (data != null) ((JArray)doc["colliders"]).Add(data);
+                if (data == null) continue;
+                data["scenePath"] = ScenePath(collider.transform);
+                ((JArray)doc["colliders"]).Add(data);
             }
             foreach (var site in UnityEngine.Object.FindObjectsByType<EncounterSite>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
                 if (site.gameObject.scene != scene) continue;
-                ((JArray)doc["encounters"]).Add(Encounter(site));
+                var encounter = Encounter(site);
+                encounter["scenePath"] = ScenePath(site.transform);
+                ((JArray)doc["encounters"]).Add(encounter);
             }
             foreach (var exit in UnityEngine.Object.FindObjectsByType<ExitPortal>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
@@ -180,6 +187,7 @@ namespace Spiritfire.Art.Editor
                     ["rotation"] = Rotation(exit.transform.rotation),
                     ["reward"] = exit.clearReward,
                     ["requires"] = new JArray(exit.requires.Where(s => s).Select(s => s.title)),
+                    ["scenePath"] = ScenePath(exit.transform),
                 });
             }
             foreach (var cache in UnityEngine.Object.FindObjectsByType<CachePOI>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
@@ -192,6 +200,7 @@ namespace Spiritfire.Art.Editor
                     ["reward"] = cache.reward,
                     ["discoverRadius"] = cache.discoverRadius,
                     ["guard"] = cache.guard ? cache.guard.title : null,
+                    ["scenePath"] = ScenePath(cache.transform),
                 });
             }
             foreach (var camp in UnityEngine.Object.FindObjectsByType<SupplyCamp>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
@@ -204,8 +213,28 @@ namespace Spiritfire.Art.Editor
                     ["yaw"] = -camp.transform.eulerAngles.y * Mathf.Deg2Rad,
                     ["safeRadius"] = camp.safeRadius,
                     ["openShop"] = camp.openShop,
+                    ["scenePath"] = ScenePath(camp.transform),
                 });
             }
+            // 怪物入场点（MonsterEntry）：据点之外的游荡怪群只从这些地方进场（网页 CombatDirector）
+            var entries = new JArray();
+            foreach (var entry in UnityEngine.Object.FindObjectsByType<MonsterEntry>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if (entry.gameObject.scene != scene) continue;
+                entries.Add(new JObject
+                {
+                    ["scenePath"] = ScenePath(entry.transform),
+                    ["position"] = Point(entry.transform.position),
+                    ["forward"] = Direction(entry.Facing),
+                    ["mode"] = (int)entry.mode,
+                    ["spread"] = entry.spread,
+                    ["label"] = entry.label,
+                    ["from"] = entry.from ? Point(entry.from.position) : JValue.CreateNull(),
+                    ["flyersOnly"] = entry.flyersOnly,
+                });
+            }
+            doc["entries"] = entries;
+            doc["layout"] = Layout(scene);
             foreach (var boss in UnityEngine.Object.FindObjectsByType<BossEncounter>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
                 if (boss.gameObject.scene != scene) continue;
@@ -253,6 +282,7 @@ namespace Spiritfire.Art.Editor
                 {
                     ["id"] = deck.gameObject.GetEntityId().ToString(),
                     ["name"] = deck.name,
+                    ["scenePath"] = ScenePath(deck),
                     ["path"] = new JArray(path.Select(Point)),
                     ["at"] = at,
                     ["size"] = new JArray(platform.deckSize.x, platform.deckThickness, platform.deckSize.y),
@@ -278,6 +308,7 @@ namespace Spiritfire.Art.Editor
                 {
                     ["id"] = water.gameObject.GetEntityId().ToString(),
                     ["name"] = water.name,
+                    ["scenePath"] = ScenePath(water.transform),
                     ["center"] = Point(water.transform.position),
                     ["scale"] = Scale(water.transform.lossyScale),
                     ["rotation"] = Rotation(water.transform.rotation),
@@ -299,6 +330,7 @@ namespace Spiritfire.Art.Editor
                 activators.Add(new JObject
                 {
                     ["id"] = activator.gameObject.GetEntityId().ToString(),
+                    ["scenePath"] = ScenePath(activator.transform),
                     ["position"] = Point(activator.transform.position),
                     ["byShot"] = activator.byShot,
                     ["byInteract"] = activator.byInteract,
@@ -570,7 +602,13 @@ namespace Spiritfire.Art.Editor
                 ["reward"] = site.reward,
                 ["chestOffset"] = Point(site.chestOffset),
                 ["difficulty"] = site.difficulty,
-                ["waves"] = new JArray(waves.Select(w => new JObject
+                ["waves"] = Waves(waves),
+            };
+        }
+
+        static JArray Waves(System.Collections.Generic.IEnumerable<WaveSpec> waves)
+        {
+            return new JArray(waves.Where(w => w != null).Select(w => new JObject
                 {
                     ["label"] = w.label,
                     ["hint"] = w.hint,
@@ -587,6 +625,79 @@ namespace Spiritfire.Art.Editor
                         ["lane"] = e.lane,
                         ["holdBack"] = e.holdBack,
                         ["via"] = (int)e.via,
+                    })),
+                }));
+        }
+
+        /// <summary>
+        /// 物体在场景里的层级路径（网页 LevelLayout 用它判断导出项属于哪个物体）：根物体名 / 子物体名 / …，
+        /// 同一个父物体下有同名兄弟时，名字后加「#它在同名兄弟里的序号」
+        /// </summary>
+        static string ScenePath(Transform t)
+        {
+            var parts = new System.Collections.Generic.List<string>();
+            for (var x = t; x; x = x.parent)
+            {
+                var siblings = x.parent
+                    ? Enumerable.Range(0, x.parent.childCount).Select(i => x.parent.GetChild(i))
+                    : x.gameObject.scene.GetRootGameObjects().Select(g => g.transform);
+                var same = siblings.Where(o => o.name == x.name).ToList();
+                parts.Add(same.Count > 1 ? $"{x.name}#{same.IndexOf(x)}" : x.name);
+            }
+            parts.Reverse();
+            return string.Join("/", parts);
+        }
+
+        /// <summary>被任何走法引用的物体（出生点 / 出口 / only / hide）连同祖先临时激活：场景不保存，只为让停用的那套也导出来</summary>
+        static void ActivateLayoutObjects(Scene scene)
+        {
+            var layout = LevelLayout.In(scene);
+            if (!layout) return;
+            foreach (var v in layout.variants)
+            {
+                if (v == null) continue;
+                var objects = new System.Collections.Generic.List<GameObject>();
+                if (v.spawn) objects.Add(v.spawn.gameObject);
+                if (v.exit) objects.Add(v.exit.gameObject);
+                objects.AddRange(v.only.Where(g => g));
+                objects.AddRange(v.hide.Where(g => g));
+                foreach (var go in objects)
+                    for (var t = go.transform; t; t = t.parent)
+                        if (!t.gameObject.activeSelf) t.gameObject.SetActive(true);
+            }
+        }
+
+        /// <summary>图内布局变体（LevelLayout.variants），格式见 docs/threejs-migration.md 4.2；没有布局时 null</summary>
+        static JToken Layout(Scene scene)
+        {
+            var layout = LevelLayout.In(scene);
+            if (!layout || layout.variants == null || layout.variants.Length == 0) return JValue.CreateNull();
+            return new JObject
+            {
+                ["variants"] = new JArray(layout.variants.Where(v => v != null).Select(v => new JObject
+                {
+                    ["id"] = v.id,
+                    ["title"] = v.title,
+                    ["weight"] = v.weight,
+                    ["spawn"] = v.spawn ? new JObject
+                    {
+                        ["scenePath"] = ScenePath(v.spawn.transform),
+                        ["position"] = Point(v.spawn.transform.position),
+                        ["forward"] = Direction(v.spawn.transform.rotation * Vector3.forward),
+                    } : JValue.CreateNull(),
+                    ["exit"] = v.exit ? ScenePath(v.exit.transform) : null,
+                    ["only"] = new JArray(v.only.Where(g => g).Select(g => ScenePath(g.transform))),
+                    ["hide"] = new JArray(v.hide.Where(g => g).Select(g => ScenePath(g.transform))),
+                    ["requires"] = new JArray(v.requires.Where(r => r != null && r.site).Select(r => new JObject
+                    {
+                        ["site"] = r.site.title,
+                        ["requires"] = new JArray(r.requires.Where(x => x).Select(x => x.title)),
+                    })),
+                    ["sites"] = new JArray(v.sites.Where(o => o != null && o.site).Select(o => new JObject
+                    {
+                        ["site"] = o.site.title,
+                        ["spec"] = o.replaceSpec && o.spec != null && !o.spec.IsEmpty ? new JObject { ["waves"] = Waves(o.spec.waves) } : JValue.CreateNull(),
+                        ["reward"] = o.replaceReward ? o.reward : null,
                     })),
                 })),
             };

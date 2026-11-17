@@ -107,7 +107,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 - ✅ 接上空气透视 / 云影层（`src/world/Atmosphere.ts`，「游戏场景搭建」会话做的网页独有层，用户 2026-11-15 定的「全部迁移到 Three.js、不必落到 Unity」）：`UnityEnvironmentView` 在雾 / 环境光 / 太阳建好后 `Atmosphere.bind`，每帧 `update(t)`，卸载时 `unbind`；Unity 自写着色器（水、熔岩 / 流体）挂上它的共享 uniform；低雾基准高度取最低水面，没有水取导航网格顶点高度的 5% 分位；接上后线性雾起点推到 ≥ 120 m（终点不动）。网址带 `atmosphere=0` 关掉，看 Unity 原样的雾。这是在 Unity 规格之上**有意加的一层**。
 - ✅ vite 开发服务器不再监视 `gunfire-reborn-replica/`（指向另一块盘上整个 Unity 工程的符号链接，chokidar 会跟进去）、`Library/`、`logfile/`、`public/assets/unity-levels.next/`：之前它对所有请求都不响应。
 
-### 4.2 导出器待写的字段（M4 运行时已就绪，缺数据时照旧跑）
+### 4.2 走法变体 / 入场点的导出格式（✅ 2026-11-17 已导出：第一、二章主图与三张备选图各 2–3 种走法、6–8 个入场点；三四章老图还没有）
 
 ```
 "entries": [{ "scenePath": "...", "position": [x,y,z], "forward": [x,y,z],
@@ -123,6 +123,8 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 
 - renderers、colliders、encounters、exits、caches、camps、platforms、water、activators、entries 每项加 `scenePath`：层级名用 `/` 连接，同名兄弟加 `#兄弟序号`；某物体「下」= 路径相等或以「该路径/」开头。
 - 被任何变体引用的物体，即使在保存的场景里停用，也连同子树导出；顶层 `spawn` 保持主走法的出生点。
+- 导出时被任何走法引用、但在保存的场景里停用的物体会临时激活后再导（场景不保存）；`?variant=<id>` 指定走法。
+- 发布时贴图按内容哈希命名（`t_<sha1>.webp`），重导时没变的贴图和网格逐字节不变。
 - 渲染观感（M11a）还要：材质 `_ORMMap`、`_ADDITIVE` / `_EMISSION` 关键字，地形材质参数（现在写死在 `TERRAIN_STYLES`）。
 
 ## 5. Unity 能力 → 网页对照
@@ -171,4 +173,5 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 
 1. **法线贴图（已修）**：Unity 工程是线性色彩空间，`WebSceneExporter.ExportTexture` 把贴图 Blit 进默认（sRGB）的 ARGB32 渲染纹理。sRGB 贴图（颜色、地形 splat）来回一编一解没事；线性贴图（法线）的 RGB 被多套了一层 sRGB 曲线，再加上 Unity 法线贴图的 DXT5nm 打包布局（R=1、G=y、A=x），网页当普通 RGB 法线读，所有 Unity 道具的法线方向都是错的。发布步骤按 `UnpackNormalmapRGorAG` 解包修正；导出器本身下次改成线性渲染纹理（`RenderTextureReadWrite.Linear`）并直接写 RGB 法线。
 2. **地形 splat 贴图（已修，2026-11-16）**：libwebp 无损编码默认把 alpha = 0 处的 RGB 清零，而 splat 的 A 通道存第 4 层权重，前 3 层权重在没有第 4 层的地方全丢了（1-1 有 98% 的像素权重和 < 0.5）。`webp_textures.py` 改为 `exact=True`，64 张 splat 解码后与 Unity 导出逐像素一致。
-3. 主线 14 关里没有 4-2、4-4（Unity 里第四章本来就只建了 4-1、4-3）。
+3. **旧的美术资产测试（23 个失败）**：nature-scene、gunfire-assets、setdressing-assets、native-hero-grip、authored-scene-layout、travel-deck、handling、cargo-hoist、articulation、architecture-scene、whitebox-flow 里按「三级 LOD + Draco」旧契约写的检查（missing LOD1、pose_geometry_audit 读不到网格、熊 / 隼 / 狐的 Tripo 契约）。发布的模型 2026-10-25 起只有一级 LOD，测试要按现行契约改写。
+4. 主线 14 关里没有 4-2、4-4（Unity 里第四章本来就只建了 4-1、4-3）。

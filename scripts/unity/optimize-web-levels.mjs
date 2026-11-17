@@ -195,8 +195,23 @@ function compressBuffers(json, bin) {
   return Buffer.concat(compressed);
 }
 
+/**
+ * 发布名按内容哈希取（t_<sha1 前 20 位>.webp）：Unity 导出时贴图按编辑器会话里的对象编号命名，每次导出编号都变，
+ * 引用它的网格文件跟着全变（一次重导改写 2700 多个 GLB）。按内容命名后没变的贴图、网格逐字节不变；内容相同的贴图合成一份。
+ */
+let textureNames = null;
+function buildTextureNames() {
+  textureNames = new Map();
+  for (const name of readdirSync(join(SOURCE, 'textures'))) {
+    if (!/\.png$/i.test(name)) continue;
+    const hash = createHash('sha1').update(readFileSync(join(SOURCE, 'textures', name))).digest('hex').slice(0, 20);
+    textureNames.set(name, `t_${hash}.webp`);
+  }
+}
+
 function textureName(uri) {
-  return basename(uri).replace(/\.png$/i, '.webp');
+  const name = basename(uri);
+  return textureNames?.get(name) ?? name.replace(/\.png$/i, '.webp');
 }
 
 function optimizeMesh(file, out) {
@@ -212,7 +227,7 @@ function optimizeMesh(file, out) {
 }
 
 function rewriteSceneTextures(text) {
-  return text.replace(/(assets\/unity-levels\/textures\/[^"]+?)\.png"/g, '$1.webp"');
+  return text.replace(/assets\/unity-levels\/textures\/([^"]+?\.png)"/g, (_, name) => `assets/unity-levels/textures/${textureName(name)}"`);
 }
 
 /**
@@ -251,9 +266,10 @@ async function main() {
   if (!existsSync(join(SOURCE, 'manifest.json'))) {
     throw new Error(`没有原样导出：${SOURCE}（先在 Unity 里跑 bash scripts/unity/bridge.sh webexport）`);
   }
+  buildTextureNames();
   if (CHECK) return check();
   await MeshoptEncoder.ready;
-  rmSync(TARGET, { recursive: true, force: true });
+  emptyDir(TARGET);
   for (const folder of ['scenes', 'meshes', 'textures']) mkdirSync(join(TARGET, folder), { recursive: true });
 
   const sourceSize = folderSize(SOURCE);
@@ -272,7 +288,7 @@ async function main() {
   console.log(`meshes ${meshes.length} (terrain stripped: ${terrains})`);
 
   const listFile = join(TARGET, '.texture-roles.json');
-  writeFileSync(listFile, JSON.stringify(textureRoles()));
+  writeFileSync(listFile, JSON.stringify({ roles: textureRoles(), names: Object.fromEntries(textureNames) }));
   const python = process.env.PYTHON ?? 'python';
   const result = spawnSync(python, ['-I', join(ROOT, 'scripts', 'unity', 'webp_textures.py'), join(SOURCE, 'textures'), join(TARGET, 'textures'), listFile], { stdio: 'inherit' });
   rmSync(listFile, { force: true });
@@ -280,6 +296,19 @@ async function main() {
 
   verifyReferences();
   console.log(`unity-levels: ${(sourceSize / 2 ** 20).toFixed(0)} MiB → ${(folderSize(TARGET) / 2 ** 20).toFixed(0)} MiB`);
+}
+
+/**
+ * 清空发布目录里的文件，目录本身留着：别的进程（文件监视、杀毒 / DLP 扫描）占着目录句柄时，在 Windows 上删目录本身会 EPERM
+ * （删到一半就停，发布目录残缺）
+ */
+function emptyDir(path) {
+  if (!existsSync(path)) return;
+  for (const entry of readdirSync(path, { withFileTypes: true })) {
+    const full = join(path, entry.name);
+    if (entry.isDirectory()) emptyDir(full);
+    else rmSync(full, { force: true });
+  }
 }
 
 function folderSize(path) {
@@ -321,7 +350,7 @@ function check() {
   const targetMeshes = new Set(readdirSync(join(TARGET, 'meshes')));
   for (const name of sourceMeshes) if (!targetMeshes.has(name)) problems.push(`缺网格 ${name}`);
   for (const name of targetMeshes) if (!sourceMeshes.has(name)) problems.push(`多余网格 ${name}`);
-  const sourceTextures = new Set(readdirSync(join(SOURCE, 'textures')).map(name => name.replace(/\.png$/i, '.webp')));
+  const sourceTextures = new Set(readdirSync(join(SOURCE, 'textures')).map(name => textureName(name)));
   const targetTextures = new Set(readdirSync(join(TARGET, 'textures')));
   for (const name of sourceTextures) if (!targetTextures.has(name)) problems.push(`缺贴图 ${name}`);
   if (hashFile(join(SOURCE, 'manifest.json')) !== hashFile(join(TARGET, 'manifest.json'))) problems.push('manifest 过期');
