@@ -15,7 +15,6 @@
  * onImpact(point 副本, hitEnemy) 在碰到敌人（穿透时每个敌人一次）、玩家、墙体 / 地面时触发；
  * 没有伤害也没有爆炸的「载体」投射物（手雷、信标）到期时也会在原地触发一次（hitEnemy = null）。
  */
-import { fxExtras } from '../fx/extras';
 import * as THREE from 'three';
 import type { DamageRequest, Element, GameContext, IEnemy, IProjectileSystem, ProjectileSpec, ProjectileVisual, ProjectileWard } from '../core/types';
 import type { StaticBox, WorldRayHit } from '../world/Collision';
@@ -506,7 +505,9 @@ export class ProjectileSystem implements IProjectileSystem {
       p.smokeTimer -= dt;
       if (p.smokeTimer <= 0) {
         p.smokeTimer = 0.035;
-        fxExtras(this.ctx)?.flameShed(p.pos, p.vel, p.color, 0.26 * p.size);
+        // 不 import fx/extras：测试按模块名给本文件打桩，多一个引用就整份加载失败；这里只按能力判断
+        const shed = (this.ctx.fx as unknown as { flameShed?: (pos: THREE.Vector3, vel: THREE.Vector3, color: number, size?: number) => void }).flameShed;
+        if (typeof shed === 'function') shed.call(this.ctx.fx, p.pos, p.vel, p.color, 0.26 * p.size);
       }
     }
   }
