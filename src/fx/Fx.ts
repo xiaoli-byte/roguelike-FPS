@@ -48,6 +48,8 @@ const EL_SHOCK = 0x6fd8ff;
 const EL_CORRODE = 0x9dff4a;
 const SOOT = 0x3a2a26;
 const EMBER_SPOT = 0xff6b1a;
+/** 雷的暗边（fx-style 2.1：靛紫）：垫在电弧底下的一小团暗底，亮地面上电弧才读得出来 */
+const SHOCK_UNDER = 0x2a2f6e;
 
 // 余韵层的限流（docs/art/fx-style.md 5.5）：任何一层被限掉都不影响读感
 const AFTER_PER_FRAME = 3;
@@ -677,8 +679,10 @@ export class FxSystem implements IFx {
     if (s >= 1.15 || el !== 0) this.afterLight(px + n.x * 0.25, py + n.y * 0.25, pz + n.z * 0.25, color, el !== 0 ? 7 : 5, 3.2, 0.09);
   }
 
-  /** 贴着表面爬的几道小电弧（法线所在平面里随机方向） */
+  /** 贴着表面爬的几道小电弧（法线所在平面里随机方向）；底下垫一小团很快散掉的靛紫暗底（加法的电弧叠在亮沙地、雪地上会淡到看不见） */
   private arcs(px: number, py: number, pz: number, n: THREE.Vector3, color: number, count: number, reach: number): void {
+    hexToColor(SHOCK_UNDER, _c3);
+    this.smoke.spawn(STYLE_SMOKE, px + n.x * 0.05, py + n.y * 0.05, pz + n.z * 0.05, 0, 0, 0, _c3, Math.max(0.3, reach * 1.6), 0.28, 0);
     for (let i = 0; i < count; i++) {
       randomDir(_dir);
       _dir.addScaledVector(n, -_dir.dot(n));
