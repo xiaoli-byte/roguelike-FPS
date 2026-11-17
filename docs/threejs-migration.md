@@ -81,13 +81,13 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M3 | 局流程：RunPlan / RunRoute / RunRng / RunState / EconomyConfig，图池洗牌 | 0.9k + 0.3k | ✅ 2026-11-16（3679d15f）：`src/progression/` 的 RunRng（具名流）、StagePlan（16 关 + 图池 + ready 判定 + 试玩终点）、RunRoute、Economy、RewardScale；生涯第一局 / 调试局不排路线；Unity 的 RunRoute / RunPlan 对照测试原样迁成 `tests/unity-run-route.test.mjs`。没迁：经济投影（依赖 BalanceModel）、续玩存档 |
 | M4 | 遭遇与导演：EncounterSite v2、LevelLayout、CombatDirector、MonsterEntry、RewardScale | 4.4k | 🔶 导演 / 入场点 / 布局变体 / 奖励倍率的运行时 ✅（89668cb3，`src/world/CombatDirector.ts`、`LevelLayout.ts`，对照测试 `tests/unity-combat-director.test.mjs`）。待办：导出器写 `entries` / `layout` / 各项 `scenePath`（格式见 4.2）；入场方式的专属声光与跃下 / 飞临动作、驻守点伏击、EncounterSite v2 其余部分 |
 | M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ⬜ |
-| M6 | 首领框架 + 登场镜头 + 旱魃 + 魔将 v2 + 鲲鹏 / 麒麟数值阶段 + 三领主 | ~20k | ⬜ |
+| M6 | 首领框架 + 登场镜头 + 旱魃 + 魔将 v2 + 鲲鹏 / 麒麟数值阶段 + 三领主 | ~20k | 🔶 首领框架（`src/enemies/bosses/framework/`：BossDef 定档 / 阶段表、BossBrain、BossMove、破防条、召唤上限、领主梯度、倒下演出、时间缩放仲裁、关卡钩子）、登场演出导演（`bosses/intro/`）、旱魃全套 ✅ 2026-11-17（87cd9188…fed45ef1；对照测试 `tests/hanba-boss.test.mjs`、`tests/boss-intro.test.mjs`；实机脚本 `scripts/hanba/fight-shots.mjs`）。1-4 走进泉床正常触发（c33c5467）。待办：魔将 v2、鲲鹏 / 麒麟改用框架并换 Unity 数值与阶段、三领主；旱魃的日火贴花 / 水幕沙幕 / 发光遮罩闪等特效随 M11b；邪飞天的和弦护盾 / 赐福 |
 | M7 | 地图机关：熔岩 v2、流沙 / 地表 / 边界 / 可破坏 / 断桥 / 风场、天气、各图专属脚本 | ~10k | ⬜ |
 | M8 | 玩家与战斗增量：战斗契约（灵宠伤害源、弱点倍率、命中区）、状态（寒意 / 引燃 / 日灼，带电随第四章）、弹体（弱点判定、护罩、落地滚动）、镜头手感 / 卡帧 / 安全落点 / 移动特效、武器（散布手调、冲刺禁射、喷火锥、磁轨光束）、技能（施法姿势、特效换风格） | ~12k | ⬜ |
 | M9 | 灵宠（全新） | 4.1k | ⬜ |
 | M10 | 第一人称持枪手感 + 碎刃表现 | 5.8k | ⬜ |
 | M11a | 渲染观感：StylizedLit / Terrain / Foliage / Fur 着色、材质参数导入、后处理栈、三色环境光 / 雾 / 天空、CSM | 7.6k 着色器 | 🔶 材质 ✅ 2026-11-16（1f213358，`src/world/UnityStylizedLit.ts`：色阶、阴影染色、阶梯高光、边缘光、地形高度混合 / 宏观噪声 / 坡度压暗 / 陡坡三向投影、植被风摆与背光透射，Trilight 投成 SH 环境光）；太阳阴影照 Unity 管线（0564dd10，2048 贴图、90 m、跟相机）；云天 + 逆光光柱接入（52c719c6）。待办：后处理栈（URP Neutral 色调映射、Volume 调色烘 LUT、Bloom、暗角、AO）、Fur、导出器补 `_ORMMap` / 关键字 / 地形材质参数、流动雾带与小活物逐图摆位 |
-| M11b | 特效核心：预设 JSON + 粒子引擎、线条、灯光池、贴花、预警圈、溶解、状态皮肤（首领专属特效随 M6） | 5k + 6.4k | ⬜ |
+| M11b | 特效核心：预设 JSON + 粒子引擎、线条、灯光池、贴花、预警圈、溶解、状态皮肤（首领专属特效随 M6） | 5k + 6.4k | ⬜ 注意：网页版已有一批「特效分层」（703950b2 / dd6db46d / 49b82303：`Fx.ts` 的余韵、`Seal.ts` 国风法印、三种新粒子形状、狐 / 熊 / 隼技能，准则 docs/art/fx-style.md 第五节），换粒子引擎时要一起迁过去，不能丢 |
 | M11c | 界面：USS → CSS、四层路由、字体、约 10 个新界面、HUD 部件重做 | 13.5k | ⬜ |
 | M11d | 核心：存档迁移、续玩、时间仲裁、卡帧、模态栈、画质档、剔除 | 7.6k 中约一半 | ⬜ |
 | M11e | 音频：改播烘好的 ogg + WebAudio 总线 | 1.3k | ⬜ |
