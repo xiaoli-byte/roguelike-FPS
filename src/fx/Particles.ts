@@ -115,6 +115,8 @@ void main() {
   float t = clamp((vShape - shape) / 0.95, 0.0, 1.0);
   vec3 col = vColor;
   float a;
+  // 遮住身后多少（只有火舌给，见末尾的预乘输出）
+  float cover = 0.0;
   if (shape < 0.5) {
     // 柔光：平方衰减 + 白热核心
     if (d > 1.0) discard;
@@ -150,10 +152,13 @@ void main() {
     if (a < 0.01) discard;
     // 三段色阶（软阶梯）：亮芯 / 主色 / 暗边
     float hot = clamp(body * 1.25 * (1.0 - 0.5 * t), 0.0, 1.0);
-    vec3 rim = vColor * vec3(0.72, 0.3, 0.2);
+    vec3 rim = vColor * vec3(0.85, 0.42, 0.28);
     vec3 core = mix(vColor, vec3(1.0, 0.96, 0.82), 0.78);
     col = mix(rim, vColor, smoothstep(0.16, 0.24, hot));
     col = mix(col, core, smoothstep(0.5, 0.6, hot));
+    // 遮盖跟着亮度走：主色和亮芯遮住身后七成，暗边不遮、只加光。
+    // 暗边也遮的话，烧到后半段的火舌（大半都是暗边）在亮地面上是一团深褐色的块，像煤烟
+    cover = 0.7 * smoothstep(0.2, 0.34, hot);
   } else if (shape < 5.5) {
     // 四角星芒
     float f = max(1.0 - sqrt(d), 0.0);
@@ -189,9 +194,8 @@ void main() {
   gl_FragColor = vec4(col, a);
   #include <colorspace_fragment>
 #ifdef ADDITIVE
-  // 发光粒子按预乘输出：颜色照旧是加上去的，另带一份「遮住身后多少」。只有火舌遮（七成）——
-  // 纯加法的火在亮沙地、亮天空前会被洗成一片白，看不出颜色和形状；其余形状遮盖为 0，和原来的加法混合逐像素相同
-  float cover = (shape > 3.5 && shape < 4.5) ? 0.7 : 0.0;
+  // 发光粒子按预乘输出：颜色照旧是加上去的，另带一份「遮住身后多少」（cover）。只有火舌的主色和亮芯遮——
+  // 纯加法的火在亮沙地、亮天空前会被洗成一片白，看不出颜色和形状；其余形状 cover = 0，和原来的加法混合逐像素相同
   gl_FragColor = vec4(gl_FragColor.rgb * a, a * cover);
 #endif
 }
@@ -441,8 +445,15 @@ export class ParticlePool {
     this.aShape.needsUpdate = true;
     if (this.dirtyMax >= 0) {
       const lo = this.dirtyMin, cnt = this.dirtyMax - this.dirtyMin + 1;
-      this.aColor.clearUpdateRanges();
-      this.aColor.addUpdateRange(lo * 3, cnt * 3);
+      // 不先清待传区间：两次 update 之间没有渲染时（暂停后一次补多步、检视页逐步推进、标签页在后台），
+      // 上一次的区间还没传到显卡，清掉就再也不传了——那批粒子在显卡上是旧槽位的颜色（往往是黑的）。
+      // 渲染器传完会自己清；攒得太多就并成一段
+      if (this.aColor.updateRanges.length >= 8) {
+        this.aColor.clearUpdateRanges();
+        this.aColor.addUpdateRange(0, Math.max(range, this.dirtyMax + 1) * 3);
+      } else {
+        this.aColor.addUpdateRange(lo * 3, cnt * 3);
+      }
       this.aColor.needsUpdate = true;
       this.dirtyMin = Infinity;
       this.dirtyMax = -1;

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>特效检视</title>
+    <style>
+      html, body { margin: 0; overflow: hidden; background: #151923; color: #f3d9a0; font: 14px "Microsoft YaHei", sans-serif; }
+      #view { display: block; width: 100vw; height: 100vh; }
+      #status { position: fixed; left: 16px; top: 12px; white-space: pre-line; z-index: 2; text-shadow: 0 1px 2px #000; }
+      #world { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+    </style>
+  </head>
+  <body>
+    <div id="status">正在准备…</div>
+    <div id="world"></div>
+    <canvas id="view"></canvas>
+    <script type="module" src="/src/dev/fxLab.ts"></script>
+  </body>
+</html>

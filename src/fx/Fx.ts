@@ -1140,7 +1140,8 @@ export class FxSystem implements IFx {
     mixColor(_c, WHITE, 0.45, _hot);
     this.glow.spawn(STYLE_GLOW, pos.x, pos.y, pos.z, 0, 0, 0, _hot, 0.7 * k, 0.09);
     for (let i = 0; i < 3; i++) {
-      this.glow.spawn(STYLE_FLAME, pos.x + jitter(0.15), pos.y + jitter(0.1), pos.z + jitter(0.15), jitter(0.8), rand(1, 2.2), jitter(0.8), _c, rand(0.4, 0.6) * rs, rand(0.35, 0.55));
+      // 火舌不大于 0.45 米：命中点就在敌人身上，九团火灵连中时再大会把上半身盖住一瞬
+      this.glow.spawn(STYLE_FLAME, pos.x + jitter(0.15), pos.y + jitter(0.1), pos.z + jitter(0.15), jitter(0.8), rand(1, 2.2), jitter(0.8), _c, rand(0.3, 0.45) * rs, rand(0.3, 0.5));
     }
     const sparks = this.count(6);
     for (let i = 0; i < sparks; i++) {
