@@ -7,7 +7,7 @@ import { CloudSky, cloudSkyForChapter } from '../world/CloudSky';
 import { MistStreams, mistBand, type MistStream } from '../world/MistStreams';
 import { SunShafts } from '../world/SunShafts';
 import { UnityAtmosphereDressing } from '../world/unityAtmosphereDressing';
-import type { AtmosphereLayoutSource, UnityAtmosphereLayout } from '../world/unityAtmosphereLayout';
+import { INTERIOR_MIST_SIZE, type AtmosphereLayoutSource, type UnityAtmosphereLayout } from '../world/unityAtmosphereLayout';
 
 /**
  * 空气透视检视页（atmosphere-lab.html）：同一个机位开 / 关对比。
@@ -345,7 +345,7 @@ function layoutDebug(layout: UnityAtmosphereLayout, doc: AtmosphereLayoutSource)
     line(Array.from({ length: 40 }, (_, i) => new THREE.Vector3(x + Math.cos(i / 40 * 6.2832) * radius, y, z + Math.sin(i / 40 * 6.2832) * radius)), color, true);
   for (const stream of layout.mist) {
     const size = stream.keys[1].size;
-    line(stream.keys.map(key => new THREE.Vector3(...key.position)), size <= 18 ? 0xffa020 : size <= 26 ? 0xff3030 : size <= 28 ? 0x30ff60 : size <= 48 ? 0xff30ff : 0xffffff);
+    line(stream.keys.map(key => new THREE.Vector3(...key.position)), size === INTERIOR_MIST_SIZE ? 0x30ff60 : size <= 22 ? 0xffa020 : size <= 34 ? 0xff3030 : size <= 60 ? 0xff30ff : 0xffffff);
   }
   for (const stream of layout.waterMist) line(stream.keys.map(key => new THREE.Vector3(...key.position)), stream.flat ? 0x30d0ff : 0x3060ff);
   for (const site of doc.encounters ?? []) circle(site.position[0], site.position[1] + 1, site.position[2], site.arenaRadius, 0xffe030);

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Atmosphere, ATMOSPHERE_WIND_GLSL, atmosphereNoise } from './Atmosphere';
+import { Atmosphere, ATMOSPHERE_FUNCTIONS_GLSL, ATMOSPHERE_WIND_GLSL, atmosphereNoise } from './Atmosphere';
 
 /**
  * 流动雾带（docs/art/composition.md 第 8.2 节「雾带摆在层与层的交界」）。
@@ -51,7 +51,7 @@ export interface MistStream {
   floorY?: number;
   /** 软相交距离（m），默认 6：floorY 以上这么高之内渐显；有场景深度时，离后面的表面这么近之内渐隐 */
   soft?: number;
-  /** 向阳偏置：大于 0 整条更亮（瀑布脚的水雾 0.1–0.2） */
+  /** 向阳偏置：大于 0 整条更亮、更偏日光色（瀑布脚的水雾 0.1–0.2；要在同色的沙地 / 雪面前读出来的沙尘、雪雾 0.3–0.5） */
   lit?: number;
   /** 撕碎程度 0..0.3，默认 0：越大越碎越稀 */
   torn?: number;
@@ -74,11 +74,23 @@ ${ATMOSPHERE_WIND_GLSL}
 attribute vec4 aP; // 第几条, 起始相位, 横向 -1..1, 纵向 -1..1
 attribute vec4 aQ; // 大小倍率, 种子, 不透明度倍率, 速度抖动
 uniform sampler2D tPath;
-uniform vec4 sfAtmoSunDir;
+${ATMOSPHERE_FUNCTIONS_GLSL}
+#ifdef USE_FOG
+	#ifdef FOG_EXP2
+		uniform float fogDensity;
+	#else
+		uniform float fogNear;
+		uniform float fogFar;
+	#endif
+#endif
 varying vec2 vUv;
 varying vec2 vNuv;
 varying vec2 vAL; // 不透明度, 向阳份额
 varying vec4 vK;  // 软相交距离, 撕碎, floorY, 近处清空距离
+varying float vLit; // 向阳偏置
+// 雾团又大又叠得多，逐像素算空气透视太贵：这几样变化都很缓，在顶点里算好插值过去，片段里只剩一次噪声采样
+varying vec4 vHaze; // rgb 空气透视加进来的颜色, a 原色剩下的份额
+varying vec3 vSun;  // 云影外的日照份额, 逆光散射, 场景雾份额
 void main() {
 	int row = int( aP.x + 0.5 ) * 3;
 	vec4 K0 = texelFetch( tPath, ivec2( 0, row + 2 ), 0 ); // 流速（每米风程走多少路径）, 拉长, 软相交, 平铺
@@ -130,10 +142,27 @@ void main() {
 	a *= smoothstep( K2.z + 0.3 * size, K2.z + 38.0 + size, dc );
 	vAL = vec2( a, dot( off, sfAtmoSunDir.xyz ) / ( 0.5 * size ) + K1.y );
 	vK = vec4( K0.z, K1.z, K1.w, K2.z );
+	vLit = max( K1.y, 0.0 );
 	vec4 mvPosition = viewMatrix * vec4( wp, 1.0 );
 	gl_Position = projectionMatrix * mvPosition;
 	#include <fog_vertex>
-	#ifndef USE_FOG
+	#ifdef USE_FOG
+		vec3 h0 = sfAtmosphere( vec3( 0.0 ), wp ), h1 = sfAtmosphere( vec3( 1.0 ), wp );
+		vHaze = vec4( h0, h1.r - h0.r );
+		vec3 view = normalize( wp - cameraPosition );
+		float fw = max( dot( view, sfAtmoSunDir.xyz ), 0.0 ), f2 = fw * fw, f8 = f2 * f2 * f2 * f2;
+		float depth = -mvPosition.z;
+		#ifdef FOG_EXP2
+			float ff = 1.0 - exp( -fogDensity * fogDensity * depth * depth ), nearest = 1.0 - exp( -fogDensity * fogDensity * max( dc - size, 0.0 ) * max( dc - size, 0.0 ) );
+		#else
+			float ff = smoothstep( fogNear, fogFar, depth ), nearest = smoothstep( fogNear, fogFar, dc - size );
+		#endif
+		vSun = vec3( sfSunShare( wp ), 0.45 * f2 + f8, ff );
+		// 整团都在雾终点之外：不画
+		if ( nearest > 0.995 ) a = 0.0;
+	#else
+		vHaze = vec4( 0.0, 0.0, 0.0, 1.0 );
+		vSun = vec3( 1.0, 0.0, 0.0 );
 		a = 0.0;
 	#endif
 	if ( a < 0.004 ) gl_Position = vec4( 2.0, 2.0, 2.0, 1.0 );
@@ -152,6 +181,9 @@ varying vec2 vUv;
 varying vec2 vNuv;
 varying vec2 vAL;
 varying vec4 vK;
+varying float vLit;
+varying vec4 vHaze;
+varying vec3 vSun;
 void main() {
 	#ifdef USE_FOG
 		vec2 q = vUv * 2.0 - 1.0;
@@ -167,24 +199,17 @@ void main() {
 			a *= clamp( ( sceneZ - vFogDepth ) / vK.x, 0.0, 1.0 );
 		}
 		// 雾终点之外不画：那里的东西已经全是雾色，再画只是天上一块平的色斑
-		#ifdef FOG_EXP2
-			float ff = 1.0 - exp( -fogDensity * fogDensity * vFogDepth * vFogDepth );
-		#else
-			float ff = smoothstep( fogNear, fogFar, vFogDepth );
-		#endif
-		a *= 1.0 - smoothstep( 0.72, 1.0, ff );
+		a *= 1.0 - smoothstep( 0.72, 1.0, vSun.z );
 		if ( a < 0.003 ) discard;
 		// 雾很薄，背光的一侧也差不多亮：向阳份额只在 0.3–1 之间走
 		float sh = clamp( 0.56 + 0.24 * vAL.y + ( puff - 0.5 ) * 0.3 + ( nz.g - 0.5 ) * 0.6, 0.0, 1.0 );
-		vec3 v = normalize( vSfWorld - cameraPosition );
-		float fw = max( dot( v, sfAtmoSunDir.xyz ), 0.0 ), f2 = fw * fw, f8 = f2 * f2 * f2 * f2;
-		float share = sfSunShare( vSfWorld );
-		vec3 c = sfAtmoMist.rgb * ( 0.84 + 0.16 * sh ) + sfSunLight.rgb * share * ( 0.05 + 0.20 * sh ) + sfAtmoSun.rgb * share * ( 0.45 * f2 + 1.0 * f8 );
+		vec3 c = sfAtmoMist.rgb * ( 0.84 + 0.16 * sh ) + sfSunLight.rgb * vSun.x * ( 0.05 + 0.20 * sh + 0.3 * vLit ) + sfAtmoSun.rgb * ( vSun.x * vSun.y );
 		// 不烧成一块白：过亮的部分压回去
 		float peak = max( c.r, max( c.g, c.b ) );
 		c *= 1.0 / max( 1.0, peak / 0.97 );
-		gl_FragColor = vec4( c, a );
-		#include <fog_fragment>
+		// 空气透视和场景雾（顶点里算好的份额）
+		c = c * vHaze.a + vHaze.rgb;
+		gl_FragColor = vec4( mix( c, fogColor, vSun.z ), a );
 	#else
 		discard;
 	#endif

@@ -89,10 +89,13 @@ export interface AtmosphereBinding {
 
 // ───────────── 着色器 ─────────────
 
-const PARS_FRAGMENT = /* glsl */ `
-#ifdef USE_FOG
-	#define SF_ATMOSPHERE
-	varying vec3 vSfWorld;
+/**
+ * 空气透视的 uniform 声明和两个函数（sfSunShare / sfAtmosphere）。内置材质的片段着色器里已经有了；
+ * 自己写的着色器想在顶点阶段算（大片半透明、逐像素算太贵的东西，比如雾带）就把它拼进顶点着色器：
+ *   vec3 h0 = sfAtmosphere( vec3( 0.0 ), wp ), h1 = sfAtmosphere( vec3( 1.0 ), wp );   // 结果是线性的
+ *   片段里 col = col * ( h1.r - h0.r ) + h0;
+ */
+export const ATMOSPHERE_FUNCTIONS_GLSL = /* glsl */ `
 	uniform sampler2D sfCloudTex;
 	uniform vec4 sfAtmoA;      // x 低雾密度, y 1 / 标高, z 基准高度, w 空气密度
 	uniform vec4 sfAtmoB;      // x 不透明度上限, y 起始距离, z 高处空气变淡, w 云影强度
@@ -127,6 +130,13 @@ const PARS_FRAGMENT = /* glsl */ `
 		vec3 haze = ( mist * tm + air * ta ) / max( tm + ta, 1e-6 );
 		return mix( col, haze, min( 1.0 - exp( -( tm + ta ) ), sfAtmoB.x ) );
 	}
+`;
+
+const PARS_FRAGMENT = `
+#ifdef USE_FOG
+	#define SF_ATMOSPHERE
+	varying vec3 vSfWorld;
+${ATMOSPHERE_FUNCTIONS_GLSL}
 #endif
 `;
 

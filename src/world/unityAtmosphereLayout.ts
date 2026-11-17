@@ -64,13 +64,17 @@ const TUNING: Record<string, Tuning> = {};
 const CELL = 6;
 const RINGS = [
   // 崖脚：紧贴场地外沿，只在岩面前（rockOnly）——围着场地的崖壁、台地脚下一条矮雾，把场地的地面和围墙切开
-  { near: 8, far: 28, size: 18, halfWidth: 6, opacity: 0.46, speed: 0.75, rockOnly: true },
-  { near: 30, far: 60, size: 26, halfWidth: 11, opacity: 0.5, speed: 0.7, rockOnly: false },
-  { near: 80, far: 125, size: 48, halfWidth: 22, opacity: 0.66, speed: 0.55, rockOnly: false },
-  { near: 200, far: 280, size: 92, halfWidth: 44, opacity: 0.76, speed: 0.45, rockOnly: false },
+  { near: 8, far: 28, size: 22, halfWidth: 7, opacity: 0.62, speed: 0.75, rockOnly: true },
+  { near: 26, far: 60, size: 34, halfWidth: 13, opacity: 0.66, speed: 0.7, rockOnly: false },
+  { near: 80, far: 125, size: 60, halfWidth: 26, opacity: 0.8, speed: 0.55, rockOnly: false },
+  { near: 200, far: 280, size: 100, halfWidth: 46, opacity: 0.85, speed: 0.45, rockOnly: false },
 ];
-/** 贴在缓坡前的雾（背后 80 m 内是沙 / 雪 / 草面）按章节打几折：沙寺沙色对沙色，不要；霜山白对白，留三成；熔火是烟对暗地，雪域是白雾对绿坡，都读得出来 */
-const SLOPE_MIST: Record<number, number> = { 1: 0, 2: 0.3, 3: 0.8, 4: 1 };
+/** 谷底雾的雾团直径（检视页按这个数认它） */
+export const INTERIOR_MIST_SIZE = 28;
+/** 贴在缓坡前的雾（背后 80 m 内是沙 / 雪 / 草面）按章节打几折：沙寺沙色对沙色、霜山白对白，反差小，各留五成半 / 七成；熔火是烟对暗地，雪域是白雾对绿坡，都读得出来 */
+const SLOPE_MIST: Record<number, number> = { 1: 0.55, 2: 0.7, 3: 1, 4: 1 };
+/** 各章雾带的向阳偏置（MistStream.lit）：沙尘、雪雾要比沙地、雪面亮一档才读得出来；熔火的烟不提亮 */
+const CHAPTER_LIT: Record<number, number> = { 1: 0.5, 2: 0.3, 3: 0, 4: 0.2 };
 const LEAF_TREE = /larch|maple|birch|poplar|ginkgo/i;
 /** 流水（一段段往下走，水面不是一个平面）：不铺水面雾 */
 const FLOWING_WATER = /river|stream|creek|brook|waterfall/i;
@@ -207,7 +211,7 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
       if (gain <= 0 || (r === 3 && fogEnd < 900)) return;
       const bins = Math.min(96, Math.max(24, Math.round(2 * Math.PI * (radius * 0.7 + (ring.near + ring.far) / 2) / 18)));
       const low: ({ x: number; y: number; z: number; grade: number } | null)[] = new Array(bins).fill(null), reach = new Float32Array(bins);
-      const slope = SLOPE_MIST[chapter] ?? 1;
+      const slope = SLOPE_MIST[chapter] ?? 1, lit = CHAPTER_LIT[chapter] ?? 0;
       for (let k = 0; k < W * H; k++) {
         const d = dist[k], h = height[k], i = k % W, j = Math.floor(k / W);
         // 高度场最外面两格不要：那里是地形和远景地面的接缝，沿着它摆出来是一条直线
@@ -218,7 +222,7 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
         const best = low[bin];
         if (best && best.grade === 3 && h >= best.y) continue;
         // 先要岩面前的，再要背后是天 / 远处的，最后才是缓坡前的（沙寺不要：沙色的雾贴在沙坡前读不出来）；同一档里取最低的
-        const grade = seenFrom(x, h + ring.size * 0.24 + 0.5, z);
+        const grade = seenFrom(x, h + ring.size * 0.3 + 0.5, z);
         if (grade === 0 || (grade === 1 && slope <= 0) || (ring.rockOnly && grade !== 3)) continue;
         if (!best || grade > best.grade || (grade === best.grade && h < best.y)) low[bin] = { x, y: h, z, grade };
       }
@@ -226,7 +230,7 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
       for (let bin = 0; bin < bins; bin++) if (reach[bin] < ring.near + (ring.far - ring.near) * 0.6) low[bin] = null;
       const known = low.filter(Boolean).map(p => p!.y).sort((a, b) => a - b);
       if (known.length < 3) return;
-      const limit = percentile(known, 0.65) + 2;
+      const limit = percentile(known, 0.8) + 3;
       // 只留低处；最里一圈再让开遭遇场地
       const keep = low.map(p => p !== null && p.y <= limit && (r > 1 || clearOf(p.x, p.z, r === 0 ? 4 : 14)));
       const start = keep.indexOf(false);
@@ -242,9 +246,13 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
             const p = low[bin]!, q = low[(bin + 1) % bins] ?? p, o = low[(bin + bins - 1) % bins] ?? p;
             // 前后各抹一下：取每个方位最低点连成的线是锯齿的
             // 背后是天的那几处抬高一点，雾团一半露在天际线上面
-            return { position: [(o.x + 2 * p.x + q.x) / 4, (o.y + 2 * p.y + q.y) / 4 + ring.size * (p.grade === 2 ? 0.38 : 0.24) + 0.5, (o.z + 2 * p.z + q.z) / 4], halfWidth: ring.halfWidth, size: ring.size, opacity: p.grade === 1 ? slope : 1 };
+            return { position: [(o.x + 2 * p.x + q.x) / 4, (o.y + 2 * p.y + q.y) / 4 + ring.size * (p.grade === 2 ? 0.45 : 0.3) + 0.5, (o.z + 2 * p.z + q.z) / 4], halfWidth: ring.halfWidth, size: ring.size, opacity: p.grade === 1 ? slope : 1 };
           });
-          layout.mist.push({ keys: fade(downwind(keys)), opacity: ring.opacity * gain, speed: ring.speed });
+          let length = 0;
+          for (let i = 1; i < keys.length; i++) length += Math.hypot(keys[i].position[0] - keys[i - 1].position[0], keys[i].position[2] - keys[i - 1].position[2]);
+          // 雾团只比默认略多：浓度靠不透明度，不靠叠得多（大雾团叠多了填充太贵）
+          const count = Math.round(Math.min(96, Math.max(8, 1.75 * (length / ring.size) * (1 + ring.halfWidth / ring.size))));
+          layout.mist.push({ keys: fade(downwind(keys)), opacity: ring.opacity * gain, speed: ring.speed, lit, count });
         }
         run = [];
       };
@@ -295,12 +303,12 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
         }
         lo = Math.max(lo, -110); hi = Math.min(hi, 110);
         if (hi - lo < 50) continue;
-        const heights = patch.map(c => height[c]).sort((a, b) => a - b), size = 28;
+        const heights = patch.map(c => height[c]).sort((a, b) => a - b), size = INTERIOR_MIST_SIZE;
         const keys = [0, 0.15, 0.5, 0.85, 1].map((t): MistKey => {
           const along = lo + (hi - lo) * t, x = mx + ax * along, z = mz + az * along, ground = heightAt(x, z);
           return { position: [x, (Number.isNaN(ground) ? percentile(heights, 0.5) : Math.max(ground, percentile(heights, 0.3))) + size * 0.2 + 0.5, z], halfWidth: Math.min(26, Math.max(10, across / patch.length * 1.6)), size };
         });
-        layout.mist.push({ keys: fade(keys), opacity: 0.24 * interior, speed: 0.6, torn: 0.05 });
+        layout.mist.push({ keys: fade(keys), opacity: 0.34 * interior, speed: 0.6, torn: 0.05, lit: CHAPTER_LIT[chapter] ?? 0 });
       }
     }
 
@@ -367,12 +375,12 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
         const side = (sideLo + sideHi) / 2 + (l - (lanes - 1) / 2) * lane;
         const keys = [0, 0.14, 0.5, 0.86, 1].map((t): MistKey => ({ position: at(alongLo + length * t, side, surface + 0.14), halfWidth: lane * 0.5, size }));
         // 平铺在水面上：出了水岸的那部分在地面以下，被地形挡掉
-        layout.waterMist.push({ keys: fade(keys), flat: true, opacity: 0.2 * waterGain, speed: 0.45, stretch: 1.6, torn: 0.04, count: Math.round(Math.min(64, Math.max(10, length * lane / (size * size * 1.4)))) });
+        layout.waterMist.push({ keys: fade(keys), flat: true, opacity: 0.3 * waterGain, speed: 0.45, stretch: 1.6, torn: 0.04, count: Math.round(Math.min(64, Math.max(10, length * lane / (size * size * 1.4)))) });
       }
       // 大湖：中线上再浮一条低雾（顶到半人高以下的不算遮挡，这条在膝盖到胸口，只给够宽的水面，离岸远）
       if (Math.min(length, width) >= 60) {
         const keys = [0, 0.16, 0.5, 0.84, 1].map((t): MistKey => ({ position: at(alongLo + length * (0.08 + 0.84 * t), (sideLo + sideHi) / 2, surface + 2.2), halfWidth: width * 0.26, size: 16, halfHeight: 0.8 }));
-        layout.waterMist.push({ keys: fade(keys), opacity: 0.22 * waterGain, speed: 0.5, stretch: 1.8, floorY: surface, soft: 3 });
+        layout.waterMist.push({ keys: fade(keys), opacity: 0.3 * waterGain, speed: 0.5, stretch: 1.8, floorY: surface, soft: 3 });
       }
     }
   }
