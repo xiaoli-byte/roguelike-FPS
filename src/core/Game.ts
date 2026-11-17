@@ -22,6 +22,7 @@ import { Combat } from '../combat/Combat';
 import { ProjectileSystem } from '../combat/Projectiles';
 import { UnityNavigation } from '../world/UnityNavigation';
 import { StageDirector } from '../world/StageDirector';
+import { AssetLibrary } from '../assets/AssetLibrary';
 import { FxSystem } from '../fx/Fx';
 import { AudioSystem } from '../audio/AudioSystem';
 import { UIManager } from '../ui/UI';
@@ -294,6 +295,9 @@ export class Game implements IGame {
     ctx.ui.fade(1, 0.01).then(async () => {
       // 每局路线要等场景清单（备选图）：清单晚到时按它重排这一局的路线
       await ctx.runPlan.prepare?.(ctx.run);
+      // 美术资源（角色 / 首领 / 道具 GLB）要在第一关刷怪前到齐：开局就站在场上的驻守怪、调试局直进的首领场，
+      // 刷出来时模型没到会一直是程序化占位体（同 Unity：进图时资源已就绪）。模块加载时已在后台开始读，这里只等它读完
+      await AssetLibrary.preload();
       if (!await this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(); return; }
       ctx.ui.showHUD(true);
       ctx.weapons.setViewmodelVisible(true);

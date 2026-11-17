@@ -114,11 +114,15 @@ function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}
   });
   const bosses = document.bosses.map((boss, index): WhiteboxFight => {
     const position = { x: boss.position[0], z: boss.position[2] };
+    const ground = { ...position, y: boss.position[1] };
     return {
       id: `boss:${boss.id}:${index}`, label: boss.id, room: `boss:${boss.id}:${index}`,
       final: true, optional: false, position, facing: { x: position.x, z: position.z + 1 },
-      anchors: [{ ...position, role: 'assault', lane: 0 }], points: [position], radius: boss.radius,
-      contains: (point, halfWidth = 0) => Math.hypot(point.x - boss.center[0], point.z - boss.center[2]) <= boss.radius + halfWidth,
+      // 锚点带上 Unity 首领锚点的真实高度：不带的话会被补成关卡 floorY（1-4 是出生台地 16 m），首领要刷在泉床上空
+      anchors: [{ ...ground, role: 'assault', lane: 0 }], points: [ground], radius: boss.radius,
+      // 同 Unity BossEncounter.PlayerInArena：场地范围内，且脚在首领场自己的地面高度 6 m 以内（1-4 的泉床低于出生台地 16 m）
+      contains: (point: { x: number; z: number; y?: number }, halfWidth = 0) => Math.hypot(point.x - boss.center[0], point.z - boss.center[2]) <= boss.radius + halfWidth
+        && (point.y === undefined || Math.abs(point.y - boss.floorY) < 6),
       entryDepth: 2, requires: [],
       plans: [{ entries: [{ enemyId: BOSS_IDS[boss.id] ?? boss.id, count: 1 }], label: boss.id }],
     };

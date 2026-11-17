@@ -150,7 +150,9 @@ export class WaveRunner {
   private pointSafe(point: THREE.Vector3, enemy: SpawnBody): boolean {
     if (!Number.isFinite(point.x + point.y + point.z)) return false;
     // Raised stations stand on a stair-served deck top; everything else is on the arena floor.
-    const raised = Math.abs(point.y - this.arena.floorY) > .1;
+    // Unity open terrain has no single floor height (1-4's spring bed sits 16 m below the spawn mesa): no deck test there,
+    // the navmesh walkability + path checks below decide.
+    const raised = !this.arena.openTerrain && Math.abs(point.y - this.arena.floorY) > .1;
     if (raised && !this.ctx.nav.platformAt?.(point)) return false;
     // Bodies scaled up with their art (def.scale, e.g. the 1.8x scorpion) reserve their real size, like EnemyBase.
     const def = getEnemyDef(enemy.id), scale = ((def as { scale?: number } | undefined)?.scale ?? 1) * (enemy.elite ? 1.25 : 1);

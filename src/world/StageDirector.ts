@@ -83,6 +83,7 @@ function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
     shopPoint: v(L.shopPoint),
     center: v(L.center),
     theme,
+    openTerrain: !!L.unityHeightfield,
   };
 }
 
@@ -546,7 +547,9 @@ export class StageDirector implements IStageDirector {
     }
     if ((state.phase !== 'explore' && state.phase !== 'cleared') || this.t < this.nextEncounterAt || ctx.enemies.aliveCount() > 0) return;
     const player = ctx.player.position;
-    if (Math.abs(player.y - arena.floorY) > 3) return;
+    // 白盒关卡是一整块平地，按 floorY 判断在不在场地层；Unity 开放图的高低起伏大，同 Unity EncounterSite 只看水平距离，
+    // 首领场的高度由它自己的 contains 判断（UnitySceneAdapter：首领场地面 ±6 m）
+    if (!this.unityDocument && Math.abs(player.y - arena.floorY) > 3) return;
     const plan = this.layout?.whitebox?.plan;
     if (this.stage?.type === 'boss' && plan?.preparation
       && insidePlanRoom(plan, plan.preparation.room, player)) return;
@@ -571,7 +574,7 @@ export class StageDirector implements IStageDirector {
     info.position.set(candidate.position.x, arena.floorY, candidate.position.z);
     const anchors = candidate.anchors.map(p => ({ position: new THREE.Vector3(p.x, p.y ?? arena.floorY, p.z), role: p.role, lane: p.lane }));
     const local: ArenaInfo = { ...arena, center: info.position.clone(), spawnAnchors: anchors,
-      spawnPoints: candidate.points.map(p => new THREE.Vector3(p.x, arena.floorY, p.z)) };
+      spawnPoints: candidate.points.map(p => new THREE.Vector3(p.x, (p as { y?: number }).y ?? arena.floorY, p.z)) };
     info.phase = 'active'; this.activeEncounterId = candidate.id; this.activeWhiteboxFight = candidate; this.lastProgress = this.t;
     const plans = whiteboxPlansForApproach(candidate, this.layout!, player);
     const boss = plans.some(w => w.entries.some(e => isBossId(e.enemyId)));

@@ -788,6 +788,8 @@ export interface ArenaInfo {
   /** 竞技场中心 */
   center: THREE.Vector3;
   theme: ThemeDef;
+  /** Unity 开放地形（高度场）：没有统一的地面高度，刷怪点不按 floorY 区分「地面 / 高台」 */
+  openTerrain?: boolean;
 }
 
 export interface INavGrid {
