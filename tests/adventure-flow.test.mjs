@@ -40,6 +40,7 @@ const directorUrl = await tsModule('../src/world/StageDirector.ts', {
   './CombatDirector': dataModule('export class CombatDirector{static live(){return false;} static applySiteReward(){} update(){} dispose(){}}'),
   './LevelLayout': dataModule('export function chooseLevelLayout(d){return {document:d,variant:null,index:-1,allEncounters:d.encounters};}'),
   './UnitySceneView': dataModule(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group(); artInspectionViews=[]; artBrief=''; update(){} dispose(){this.group.removeFromParent();}}`),
+  './unityAtmosphereDressing': dataModule(`import * as THREE from '${threeUrl}'; export class UnityAtmosphereDressing {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
   './UnityLevelLibrary': dataModule('export const UnityLevelLibrary={scene:()=>null}; export function unityHeights(){return new Float32Array();} export function unityPoint(){return {};} export async function prepareUnityScene(){}'),
 });
 const { StageDirector } = await import(directorUrl);

@@ -51,6 +51,7 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
     './CombatDirector': combatDirectorUrl, '../progression/Economy': economyUrl,
   }),
   './UnitySceneView': data(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group();artInspectionViews=[];artBrief='';update(){}dispose(){this.group.removeFromParent();}}`),
+  './unityAtmosphereDressing': data(`import * as THREE from '${threeUrl}'; export class UnityAtmosphereDressing {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
   './UnityLevelLibrary': data(`import {readFile} from 'node:fs/promises'; export const UnityLevelLibrary={scene:async id=>JSON.parse(await readFile(process.cwd()+'/public/assets/unity-levels/scenes/'+id+'.json','utf8'))}; export function unityHeights(){return new Float32Array();} export function unityPoint(v){return {x:v[0],y:v[1],z:v[2]};} export async function prepareUnityScene(){}`),
 });
 const { StageDirector } = await import(directorUrl);

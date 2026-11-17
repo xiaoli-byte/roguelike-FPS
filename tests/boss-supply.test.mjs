@@ -51,6 +51,7 @@ const { StageDirector } = await import(await ts('../src/world/StageDirector.ts',
   './CombatDirector': data('export class CombatDirector{static live(){return false;} static applySiteReward(){} update(){} dispose(){}}'),
   './LevelLayout': data('export function chooseLevelLayout(d){return {document:d,variant:null,index:-1,allEncounters:d.encounters};}'),
   './UnitySceneView': data(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group(); artInspectionViews=[]; artBrief=''; update(){} dispose(){this.group.removeFromParent();}}`),
+  './unityAtmosphereDressing': data(`import * as THREE from '${threeUrl}'; export class UnityAtmosphereDressing {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
   './UnityLevelLibrary': data('export const UnityLevelLibrary={scene:()=>null}; export function unityHeights(){return new Float32Array();} export function unityPoint(){return {};} export async function prepareUnityScene(){}'),
 }));
 globalThis.document = { createElement: () => ({ width: 0, height: 0, getContext: () => null }) };
