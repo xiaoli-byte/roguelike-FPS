@@ -1,0 +1,65 @@
+/*
+ * 由 scripts/web/convert-uss.mjs 从 unity/Assets/Game/Resources/UI/dialog.uss 生成，不要手改（改 USS 后重跑脚本）。
+ * :root → .sf-root（层根）；-unity-* 属性按脚本里的 MAPPED 表换成等价 CSS，UNSUPPORTED 表里的留注释。
+ */
+
+.sf-dialog-screen {
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-dialog__backdrop {
+    background-color: rgba(6, 5, 8, 0.7);
+}
+
+.sf-dialog {
+    width: 640px;
+    padding: 30px 36px 26px;
+    border-color: var(--line);
+    border-top-width: 2px;
+    border-top-color: var(--cinnabar);
+}
+
+.sf-dialog__title {
+    font-size: 28px;
+    letter-spacing: 8px;
+    color: var(--paper);
+    margin-bottom: 16px;
+}
+
+.sf-dialog__message {
+    font-size: 18px;
+    color: var(--paper);
+    text-wrap-mode: wrap;
+    margin-bottom: 10px;
+}
+
+.sf-dialog__detail {
+    font-size: 13.5px;
+    color: var(--paper-3);
+    text-wrap-mode: wrap;
+}
+
+.sf-dialog__foot {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-dialog__foot > .sf-btn {
+    margin-left: 12px;
+}
+
+.sf-btn--danger-solid {
+    background-color: var(--cinnabar-lo);
+    border-color: var(--cinnabar-hi);
+}
+
+.sf-btn--danger-solid:hover,
+.sf-btn--danger-solid:focus {
+    background-color: var(--cinnabar);
+    border-color: var(--gold-hi);
+}

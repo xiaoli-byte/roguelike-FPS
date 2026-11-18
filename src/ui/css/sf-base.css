@@ -1,0 +1,145 @@
+/*
+ * 灵火破晓 · Unity 界面的网页基准（手写；样式本体在 ./unity/*.css，由 scripts/web/convert-uss.mjs 从 USS 转出）。
+ *
+ * UI Toolkit 和浏览器的默认值不一样，这里把 .sf-root（四层面板的根，src/ui/toolkit/UIRoot.ts）下面的元素拉回 UI Toolkit 的默认：
+ *   每个元素都是纵向 flex 容器、border-box、最小尺寸 0（Yoga 的默认，能被压到比内容还窄）、没有外边距、实线边框（宽度 0）；
+ *   文字标签（.sf-text，Unity 的 FitLabel）恢复浏览器的 min-width: auto：按内容收缩时放得下的一行不被挤断（FitLabel 的用意）；
+ *   行高（UI Toolkit 写在字体资产里）：正文 1.5、标题 1.3、数字 1.15。
+ * 全部用 :where() 写成零优先级，转出来的类规则总能盖过它。
+ */
+@import './sf-fonts.css';
+
+:root {
+  --sf-font-body: "SF Body", "SF Body Ext", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --sf-font-title: "SF Title", "SF Body", "SF Body Ext", "STKaiti", "KaiTi", serif;
+  --sf-font-num: "SF Number", "SF Body", "SF Body Ext", "Bahnschrift", "DIN Alternate", sans-serif;
+}
+
+/* 层容器（网页）：每层一个不缩放的壳（旧的 gf-* 界面也挂在这里，自己管缩放），里面是按 1920×1080 缩放的 .sf-root */
+.ui-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ui-layer--hud { z-index: 1; }
+.ui-layer--overlay { z-index: 2; }
+.ui-layer--modal { z-index: 3; }
+.ui-layer--toast { z-index: 4; }
+
+.sf-root {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* 宽高 = 屏幕 ÷ 缩放（UIRoot 写），transform 缩放回屏幕大小：样式里的像素都是 1920×1080 的设计像素 */
+  transform-origin: 0 0;
+  pointer-events: none;
+  font-family: var(--sf-font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-text-stroke-color: #000;
+  /* UI Toolkit 的文字里 
+ 总是换行（不管 white-space）：保留换行、折叠空格；能不能自动折行由 text-wrap-mode 管（转换脚本把 white-space 转成它） */
+  white-space-collapse: preserve-breaks;
+  user-select: none;
+}
+
+:where(.sf-root, .sf-root *:not(svg, svg *, .sf-rich *)) {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 1;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0 solid transparent;
+  position: relative;
+}
+
+:where(.sf-root) [hidden] {
+  display: none !important;
+}
+
+/* 文字标签：FitLabel（见 toolkit/FitLabel.ts） */
+:where(.sf-root .sf-text) {
+  min-width: auto;
+}
+
+/* 富文本标签（<color> / <size> / <b> 换成内联元素）：里面按普通文字排，不是 flex */
+:where(.sf-root .sf-rich) {
+  display: block;
+}
+
+:where(.sf-root button, .sf-root input) {
+  font: inherit;
+  color: inherit;
+  background: none;
+  text-align: inherit;
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 只有界面层接指针（Unity：Modal 层之外整层 PickingMode.Ignore）；界面根自己接 */
+.sf-layer--modal .sf-screen {
+  pointer-events: auto;
+}
+
+/* 图标：内联 SVG 用 currentColor，颜色 = USS 的 -unity-background-image-tint-color（转成 --sf-tint） */
+.sf-root .sf-icon {
+  color: var(--sf-tint, currentColor);
+}
+
+.sf-root .sf-icon > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* 竖向滚动区（ScreenKit.Scroll）：细滚动条 */
+.sf-root .sf-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 169, 85, 0.35) transparent;
+}
+
+/* 圆环 / 弧（RingElement / ArcElement）：SVG 铺满元素 */
+.sf-root .sf-ring > svg,
+.sf-root .sf-arc > svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* 滑条（SettingsScreen 的 Slider）：Unity 默认主题里 Slider 的几何（轨道居中、拖块按值定位），样式在 screens.css 的 .sf-slider 规则 */
+:where(.sf-root .unity-base-slider) {
+  height: 24px;
+  cursor: pointer;
+}
+
+:where(.sf-root .unity-base-slider__drag-container) {
+  flex-grow: 1;
+  height: 100%;
+}
+
+:where(.sf-root .unity-base-slider__tracker) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-width: 1px;
+}
+
+:where(.sf-root .unity-base-slider__dragger) {
+  position: absolute;
+  top: 50%;
+  border-width: 1px;
+}
