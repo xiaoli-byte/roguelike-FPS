@@ -50,6 +50,8 @@ export const XINGXING_DEF: ScaledEnemyDef = {
   headRadius: 0.2,
   knockbackResist: 0,
   color: 0xbfe6ff,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'head', role: 'melee', placement: 'assault', groundOnly: true,
 };
 
 const GRAVITY = 26;

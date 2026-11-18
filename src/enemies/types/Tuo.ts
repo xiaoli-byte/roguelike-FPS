@@ -52,6 +52,8 @@ export const TUO_DEF: ScaledEnemyDef = {
   color: 0xff5a1a,
   // 美术按 1.9 米（含背棘）制作，游戏里放大 1.3 倍：命中盒、弱点、特效一起放大
   scale: 1.3,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'spine', hitboxes: 'ragdoll', role: 'heavy', placement: 'assault', groundOnly: true,
 };
 
 /** 伤害倍率：完好的岩甲 ×0.25、碎甲露出的熔肉 ×2、脊背接缝 ×0.5（爆头另算暴击）、潜在熔岩里一律 ×0.5 */

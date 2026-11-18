@@ -50,6 +50,8 @@ export const MAMIAN_DEF: ScaledEnemyDef = {
   headRadius: 0.1,
   knockbackResist: 0.45,
   color: 0xff5a2a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'forearm_L', hitboxes: 'ragdoll', role: 'heavy', placement: 'ranged', groundOnly: true,
 };
 
 /** 保持距离（米） */

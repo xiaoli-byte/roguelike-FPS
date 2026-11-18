@@ -9,6 +9,8 @@ export const SAND_WRAITH_DEF: ScaledEnemyDef = {
   id: 'sand_wraith', name: '沙魇', scale: 1.4, hp: 55, speed: 5.6, damage: 12,
   radius: 0.34, height: 1.1, headY: 0.92, headRadius: 0.19, knockbackResist: 0.2,
   coins: [1, 3], essence: 1, color: 0xd9b27a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'bell', role: 'melee', placement: 'flank', groundOnly: true,
 };
 
 const _target = new THREE.Vector3(), _direction = new THREE.Vector3();

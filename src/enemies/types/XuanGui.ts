@@ -53,6 +53,8 @@ export const XUANGUI_DEF: ScaledEnemyDef = {
   color: 0x8fd8ff,
   // 美术按 1.7 米高、3.5 米长制作，游戏里放大到约 2.6 米高：命中盒、弱点、特效一起放大
   scale: 1.5,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'snake', role: 'heavy', placement: 'assault', groundOnly: true, charger: true,
 };
 
 /** 正面格挡：来自正面这个夹角（余弦）以内的伤害乘以 GUARD_FACTOR；旋转时全方位乘以 SPIN_ARMOR */

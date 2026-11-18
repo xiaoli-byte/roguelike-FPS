@@ -47,6 +47,8 @@ export const QINGNIAO_DEF: ScaledEnemyDef = {
   headRadius: 0.17,
   knockbackResist: 0.4,
   color: 0x5fc8ff,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'chest', hitboxes: 'ragdoll', role: 'ranged', placement: 'ranged',
 };
 
 /** 美术网格整体下移这么多（模型单位）：脚爪落在原点，尾羽垂到脚底以下 */

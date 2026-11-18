@@ -52,6 +52,8 @@ export const IRON_OX_DEF: ScaledEnemyDef = {
   color: 0xff6a1a,
   // 美术按 2.4 米（头顶）制作，游戏里放大到约 3.4 米：命中盒、弱点、特效一起放大
   scale: 1.4,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'chest', role: 'heavy', placement: 'assault', groundOnly: true, element: 'fire',
 };
 
 /** 铁甲减伤：炉门敞开时打进炉膛 ×3，其余（含关着的炉门）一律 ×0.2；持续伤害（状态）不受铁甲影响 */

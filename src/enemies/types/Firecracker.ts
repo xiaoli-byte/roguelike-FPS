@@ -52,6 +52,8 @@ export const FIRECRACKER_DEF: ScaledEnemyDef = {
   headRadius: 0.2,
   knockbackResist: 0.3,
   color: 0xff5a2a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'chest', role: 'heavy', placement: 'artillery', element: 'fire', affixExclusions: ['volatile'],
 };
 
 /** 保持距离（米）、开炮距离、不需要视线的开炮距离 */

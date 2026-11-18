@@ -423,7 +423,7 @@ export const FALCON: HeroDef = {
   secondary: stormBeacon,
   passive: {
     name: '凌空',
-    description: `可在空中额外跳跃 1 次；身处空中时造成的伤害提高 ${Math.round(AIR_BONUS * 100)}%；下落时按住空格可张开飞膜滑翔，大幅减缓下落。`,
+    description: `可在空中额外跳跃 1 次；身处空中时造成的伤害提高 ${Math.round(AIR_BONUS * 100)}%；下落时按住跳跃键可张开飞膜滑翔，大幅减缓下落。`,
     apply(ctx) {
       const off = ctx.combat.addOutgoingModifier((_enemy, req) =>
         !ctx.player.onGround && req.source !== 'status' ? 1 + AIR_BONUS : 1,

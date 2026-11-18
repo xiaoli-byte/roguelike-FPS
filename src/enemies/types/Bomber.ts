@@ -29,6 +29,8 @@ export const BOMBER_DEF: EnemyDef = {
   headRadius: 0.26,
   knockbackResist: 0,
   color: 0xff7a2a,
+  // 自己就会自爆：精英不随机「爆裂」
+  affixExclusions: ['volatile'],
 };
 
 const TRIGGER_RANGE = 2.5;

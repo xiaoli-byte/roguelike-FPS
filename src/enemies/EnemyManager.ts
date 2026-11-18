@@ -79,10 +79,11 @@ export class EnemyManager implements IEnemyManager {
       if (arena) this.ctx.nav.nearestWalkable(arena.center, _spawnPos);
       position = _spawnPos;
     }
-    const elite = !!opts.elite;
+    // 名册即精英（def.rank = 'elite'，穷奇）总按精英生成，同 Unity QiongqiAI.Spawn(lvl, true)
+    const elite = !!opts.elite || entry.def.rank === 'elite';
     const o: SpawnOptions = { position, elite, level };
     // 词缀只属于普通敌人里的精英：精英没有（或给了无法识别的）词缀时随机一个；非精英 / Boss 一律无词缀
-    if (elite && !entry.def.isBoss) o.affix = isAffixId(opts.affix) ? opts.affix : rollAffix(this.ctx.rng, defId);
+    if (elite && !entry.def.isBoss) o.affix = isAffixId(opts.affix) ? opts.affix : rollAffix(this.ctx.rng, entry.def.affixExclusions);
 
     let e: EnemyBase;
     try {

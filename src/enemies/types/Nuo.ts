@@ -52,6 +52,8 @@ export const NUO_DEF: ScaledEnemyDef = {
   color: C.red,
   // 美术按 1.8 米制作（含羽冠），游戏里放大约 1.2 倍
   scale: 1.2,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'mask', role: 'melee', placement: 'support', groundOnly: true, element: 'fire',
 };
 
 /** 三张脸：光环倍率、光环颜色、换脸着色（null = 原贴图）、眼睛自发光颜色 */

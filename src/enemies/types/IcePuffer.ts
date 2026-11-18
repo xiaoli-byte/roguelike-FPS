@@ -45,6 +45,8 @@ export const ICE_PUFFER_DEF: ScaledEnemyDef = {
   headRadius: 0.34,
   knockbackResist: 0.1,
   color: 0x7fe6ff,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'body', role: 'melee', placement: 'flank',
 };
 
 /** 飘行：身体底部离地（或离玩家脚底）的高度区间、上下浮动 */

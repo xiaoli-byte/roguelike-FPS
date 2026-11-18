@@ -46,6 +46,8 @@ export const JIAOREN_DEF: ScaledEnemyDef = {
   headRadius: 0.21,
   knockbackResist: 0,
   color: 0x7fd8ff,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'head', role: 'melee', placement: 'flank', groundOnly: true,
 };
 
 /** 投矛距离带（米）、前摇、矛速与弹道重力、预判比例、重新冻出一支矛的时间 */

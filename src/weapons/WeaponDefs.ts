@@ -8,6 +8,10 @@
  * 狙击 120（107），作为必须开镜、射速最慢的精准武器有意略高。
  * 所有角度为弧度「半角」；射速为「每秒发数」（burst 为每秒轮数，beam 为每秒跳数，charge 为松手后冷却 1 / fireRate）。
  * 碎刃（docs/demon-blade-v2.md）：玩法参数在 blade；根字段描述「千刃出窍」的结算（damage / fireRate），供描述与词条换算。
+ *
+ * M2（docs/threejs-migration.md）：数值以 Unity 冻结的 WeaponLibrary 为准（public/assets/unity-gameplay/defs.json），
+ * tests/unity-defs-parity.test.mjs 逐字段对照；改这里的数要么同步 Unity 的值，要么在 scripts/web/defs-parity.mjs 的例外表里写明原因。
+ * 上面的 DPS 实测是 D11 散布收紧与 I3 赤蛟霰铳降伤之前的数。
  */
 import type { Element, ProjectileVisual, SfxId } from '../core/types';
 
@@ -45,7 +49,24 @@ export interface ProjectileParams {
   color: number;
   /** 撞墙反弹次数 */
   bounces: number;
+  /**
+   * 反弹用完后贴地滚动到 lifetime 耗尽再炸（青冥雷蛊）；false = 下一次触地就炸。
+   * // Unity 字段，运行时待 M8 接入（Unity ProjectileSpec.rollAfter，「弹体：落地滚动」）
+   */
+  rollAfter: boolean;
 }
+
+/** 散布五项：锥角为半角弧度，恢复 = 停火后每秒收回的弧度（Unity SpreadParams） */
+export interface SpreadParams {
+  hip: number;
+  aim: number;
+  perShot: number;
+  max: number;
+  recovery: number;
+}
+
+/** Unity D11：有效散布 = TS 原值 × 0.4（锥角四项；恢复速度不缩）。收紧到约 40% 是为了「射得爽」 */
+export const SPREAD_SCALE = 0.4;
 
 export interface RecoilParams {
   /** 每发上跳（弧度） */
@@ -125,11 +146,21 @@ export interface WeaponDef {
   /** 逐发装填：开始前的准备时间 */
   reloadStart: number;
   reloadStyle: ReloadStyle;
+  /** 散布原值（TS 设计值；Unity spreadTs 照抄）。运行时不直接读，读下面的有效值 */
+  spreadTs: SpreadParams;
+  /** 有效散布 = 原值 × spreadScale（锥角四项；恢复不缩），缺省 SPREAD_SCALE */
+  spreadScale: number;
+  /** 手调覆盖（D11 之前逐项按手感调过的 6 把，比例并不统一）：有值时原样生效；新武器留空 */
+  spreadTuned: SpreadParams | null;
+  /**
+   * 有效散布（def() 按 Unity WeaponDef.spreadHip… 属性算好：spreadTuned ?? spreadTs × spreadScale）：
+   * 腰射 / 开镜基础锥角、每发增量、累积上限（半角弧度）
+   */
   spreadHip: number;
   spreadAim: number;
   spreadPerShot: number;
   spreadMax: number;
-  /** 停火后散布恢复速度（弧度/秒） */
+  /** 停火后散布恢复速度（弧度/秒；= spreadTuned?.recovery ?? spreadTs.recovery） */
   spreadRecovery: number;
   /** 霰弹弹丸锥角（半角） */
   pelletCone: number;
@@ -203,14 +234,26 @@ export const MAX_LEVEL = 5;
 export const LEVEL_DAMAGE = 0.12;
 
 type DefInput = Omit<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'projectile' | 'pierce' | 'spinup' | 'moveSlow' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'
-    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'blade'>
+    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'blade'
+    | 'spreadScale' | 'spreadTuned' | 'spreadHip' | 'spreadAim' | 'spreadPerShot' | 'spreadMax' | 'spreadRecovery'>
   & Partial<Pick<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'pierce' | 'spinup' | 'moveSlow' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'
-    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'blade'>>
+    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'blade' | 'spreadScale' | 'spreadTuned'>>
   & { projectile?: Partial<ProjectileParams> & Pick<ProjectileParams, 'speed' | 'visual'> };
 
 function def(d: DefInput): WeaponDef {
   const p = d.projectile;
+  // 有效散布：同 Unity WeaponDef.spreadHip… 计算属性
+  const raw = d.spreadTs;
+  const scale = d.spreadScale ?? SPREAD_SCALE;
+  const tuned = d.spreadTuned ?? null;
   return {
+    spreadScale: scale,
+    spreadTuned: tuned,
+    spreadHip: tuned ? tuned.hip : raw.hip * scale,
+    spreadAim: tuned ? tuned.aim : raw.aim * scale,
+    spreadPerShot: tuned ? tuned.perShot : raw.perShot * scale,
+    spreadMax: tuned ? tuned.max : raw.max * scale,
+    spreadRecovery: tuned ? tuned.recovery : raw.recovery,
     burstCount: 1,
     burstInterval: 0,
     shellTime: 0,
@@ -251,6 +294,7 @@ function def(d: DefInput): WeaponDef {
           explodeOnExpire: false,
           color: 0xffd9a0,
           bounces: 0,
+          rollAfter: false,
           ...p,
         }
       : null,
@@ -261,10 +305,12 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'revolver', name: '赤铜左轮', category: '手枪', kind: 'pistol', mode: 'semi',
     damage: 38, fireRate: 3.5, mag: 8, reserve: 64, reloadTime: 1.6, reloadStyle: 'cylinder',
-    spreadHip: 0.004, spreadAim: 0.0012, spreadPerShot: 0.014, spreadMax: 0.04, spreadRecovery: 0.16,
+    spreadTs: { hip: 0.004, aim: 0.0012, perShot: 0.014, max: 0.04, recovery: 0.16 },
+    // Unity 手调散布（D11 之前逐项调过），原样生效
+    spreadTuned: { hip: 0.003, aim: 0.001, perShot: 0.005, max: 0.014, recovery: 0.4 },
     recoil: { pitch: 0.022, yaw: 0.004, bias: 0, climb: 0 },
     critMult: 2.5, range: 80, falloff: [35, 80, 0.7],
-    elementChance: 0.3, aimFov: -12, sfx: 'shot_pistol', knockback: 1.5,
+    elementChance: 0.3, aimFov: -12, sfx: 'shot_pistol', sfxVolume: 1.0 /* Unity 手调（缺省 0.8） */, knockback: 1.5,
     tracerWidth: 0.03, impactSize: 0.9, kick: { back: 0.06, rot: 0.22 }, shake: 0.09, flash: 0.12,
     viewOffset: [0.2, -0.17, -0.42], aimOffset: [0, -0.089, -0.34], worldScale: 1.9,
     description: '赤铜铸就的八膛转轮手枪，弹道笔直，爆头倍率极高。',
@@ -273,7 +319,8 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'smg', name: '蜂鸣冲锋枪', category: '冲锋枪', kind: 'smg', mode: 'auto',
     damage: 11, fireRate: 13, mag: 36, reserve: 252, reloadTime: 1.7, reloadStyle: 'mag',
-    spreadHip: 0.03, spreadAim: 0.016, spreadPerShot: 0.0035, spreadMax: 0.07, spreadRecovery: 0.2,
+    spreadTs: { hip: 0.03, aim: 0.016, perShot: 0.0035, max: 0.07, recovery: 0.2 },
+    spreadTuned: { hip: 0.012, aim: 0.005, perShot: 0.001, max: 0.026, recovery: 0.6 },
     recoil: { pitch: 0.0045, yaw: 0.0026, bias: 0.0002, climb: 0.015 },
     critMult: 2, range: 45, falloff: [16, 40, 0.55],
     elementChance: 0.08, aimFov: -10, sfx: 'shot_smg', sfxVolume: 0.6, knockback: 0.25,
@@ -285,7 +332,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'rifle', name: '裂风步枪', category: '步枪', kind: 'rifle', mode: 'auto',
     damage: 18, fireRate: 8, mag: 30, reserve: 210, reloadTime: 2.4, reloadStyle: 'mag',
-    spreadHip: 0.016, spreadAim: 0.004, spreadPerShot: 0.003, spreadMax: 0.045, spreadRecovery: 0.14,
+    spreadTs: { hip: 0.016, aim: 0.004, perShot: 0.003, max: 0.045, recovery: 0.14 },
     recoil: { pitch: 0.0062, yaw: 0.0018, bias: 0.0003, climb: 0.02 },
     critMult: 2, range: 90, falloff: [40, 90, 0.75],
     elementChance: 0.12, aimFov: -16, sfx: 'shot_rifle', sfxVolume: 0.7, knockback: 0.4,
@@ -297,7 +344,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'burst', name: '三叠点射枪', category: '步枪', kind: 'rifle', mode: 'burst',
     damage: 24, fireRate: 1.6, burstCount: 3, burstInterval: 0.065, mag: 24, reserve: 168, reloadTime: 2.1, reloadStyle: 'mag',
-    spreadHip: 0.012, spreadAim: 0.003, spreadPerShot: 0.004, spreadMax: 0.035, spreadRecovery: 0.14,
+    spreadTs: { hip: 0.012, aim: 0.003, perShot: 0.004, max: 0.035, recovery: 0.14 },
     recoil: { pitch: 0.007, yaw: 0.0014, bias: 0.0002, climb: 0.01 },
     critMult: 2.2, range: 90, falloff: [45, 90, 0.75],
     elementChance: 0.14, aimFov: -16, sfx: 'shot_rifle', sfxVolume: 0.7, knockback: 0.5,
@@ -309,7 +356,8 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'shotgun', name: '碎岩霰弹', category: '霰弹枪', kind: 'shotgun', mode: 'semi',
     damage: 12, pellets: 9, fireRate: 1.4, mag: 6, reserve: 42, reloadTime: 3.6, shellTime: 0.48, reloadStart: 0.4, reloadStyle: 'shell',
-    spreadHip: 0.008, spreadAim: 0.004, spreadPerShot: 0.012, spreadMax: 0.03, spreadRecovery: 0.1, pelletCone: 0.075,
+    spreadTs: { hip: 0.008, aim: 0.004, perShot: 0.012, max: 0.03, recovery: 0.1 }, pelletCone: 0.06 /* Unity 手调（TS 原值 0.075） */,
+    spreadTuned: { hip: 0.004, aim: 0.002, perShot: 0.004, max: 0.012, recovery: 0.3 },
     recoil: { pitch: 0.035, yaw: 0.006, bias: 0, climb: 0 },
     critMult: 2, range: 32, falloff: [9, 30, 0.35],
     elementChance: 0.06, aimFov: -10, sfx: 'shot_shotgun', sfxVolume: 0.9, knockback: 0.9,
@@ -321,7 +369,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'sniper', name: '鹰隼狙击', category: '狙击枪', kind: 'sniper', mode: 'semi',
     damage: 160, fireRate: 0.9, mag: 5, reserve: 30, reloadTime: 3.2, reloadStyle: 'mag',
-    spreadHip: 0.028, spreadAim: 0, spreadPerShot: 0.03, spreadMax: 0.07, spreadRecovery: 0.12,
+    spreadTs: { hip: 0.028, aim: 0, perShot: 0.03, max: 0.07, recovery: 0.12 },
     recoil: { pitch: 0.042, yaw: 0.005, bias: 0, climb: 0 },
     critMult: 3, range: 220, pierce: 2,
     elementChance: 0.7, aimFov: -45, aimSpeed: 11, sfx: 'shot_sniper', sfxVolume: 1, knockback: 5,
@@ -333,7 +381,8 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'launcher', name: '焚城榴弹', category: '发射器', kind: 'launcher', mode: 'semi',
     damage: 110, fireRate: 1.1, mag: 4, reserve: 20, reloadTime: 2.4, reloadStyle: 'tube',
-    spreadHip: 0.012, spreadAim: 0.005, spreadPerShot: 0.012, spreadMax: 0.03, spreadRecovery: 0.1,
+    spreadTs: { hip: 0.012, aim: 0.005, perShot: 0.012, max: 0.03, recovery: 0.1 },
+    spreadTuned: { hip: 0.005, aim: 0.002, perShot: 0.005, max: 0.012, recovery: 0.3 },
     recoil: { pitch: 0.03, yaw: 0.004, bias: 0, climb: 0 },
     critMult: 1.8, range: 120, element: 'fire',
     projectile: { speed: 34, gravity: 9, radius: 0.14, explosionRadius: 4, lifetime: 3.2, visual: 'grenade', scale: 1.1, explodeOnExpire: true, color: 0xff8a3a },
@@ -346,7 +395,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'crossbow', name: '追魂连弩', category: '弩', kind: 'crossbow', mode: 'semi',
     damage: 55, fireRate: 2, mag: 10, reserve: 60, reloadTime: 2.1, reloadStyle: 'mag',
-    spreadHip: 0.008, spreadAim: 0.0015, spreadPerShot: 0.008, spreadMax: 0.03, spreadRecovery: 0.12,
+    spreadTs: { hip: 0.008, aim: 0.0015, perShot: 0.008, max: 0.03, recovery: 0.12 },
     recoil: { pitch: 0.012, yaw: 0.002, bias: 0, climb: 0 },
     critMult: 2.2, range: 150, pierce: 3,
     projectile: { speed: 95, gravity: 3, radius: 0.09, lifetime: 1.6, visual: 'arrow', color: 0xd8e6ff },
@@ -359,7 +408,8 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'beam', name: '雷弧发射器', category: '光束', kind: 'beam', mode: 'beam',
     damage: 8, fireRate: 10, mag: 100, reserve: 400, reloadTime: 2.2, reloadStyle: 'cell',
-    spreadHip: 0.012, spreadAim: 0.006, spreadPerShot: 0, spreadMax: 0, spreadRecovery: 1,
+    spreadTs: { hip: 0.012, aim: 0.006, perShot: 0, max: 0, recovery: 1 },
+    spreadTuned: { hip: 0.005, aim: 0.0025, perShot: 0, max: 0, recovery: 1 },
     recoil: { pitch: 0.0004, yaw: 0.0006, bias: 0, climb: 0 },
     critMult: 1.8, range: 25, element: 'shock', chainFraction: 0.4, chainRange: 7,
     elementChance: 0.1, aimFov: -10, sfx: 'shot_beam', sfxVolume: 0.35, knockback: 0,
@@ -371,7 +421,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'minigun', name: '旋风机炮', category: '重武器', kind: 'heavy', mode: 'spinup',
     damage: 7.5, fireRate: 20, mag: 120, reserve: 480, reloadTime: 3.4, reloadStyle: 'box', spinup: 0.6, moveSlow: 2,
-    spreadHip: 0.04, spreadAim: 0.028, spreadPerShot: 0.0012, spreadMax: 0.065, spreadRecovery: 0.2,
+    spreadTs: { hip: 0.04, aim: 0.028, perShot: 0.0012, max: 0.065, recovery: 0.2 },
     recoil: { pitch: 0.003, yaw: 0.0022, bias: 0, climb: 0.005 },
     critMult: 1.8, range: 60, falloff: [25, 60, 0.6],
     elementChance: 0.06, aimFov: -10, sfx: 'shot_heavy', sfxVolume: 0.55, knockback: 0.3,
@@ -383,7 +433,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'swarm', name: '蜂群飞弹', category: '发射器', kind: 'launcher', mode: 'semi',
     damage: 30, fireRate: 0.75, mag: 4, reserve: 20, reloadTime: 2.8, reloadStyle: 'tube',
-    spreadHip: 0.02, spreadAim: 0.01, spreadPerShot: 0.01, spreadMax: 0.03, spreadRecovery: 0.1,
+    spreadTs: { hip: 0.02, aim: 0.01, perShot: 0.01, max: 0.03, recovery: 0.1 },
     recoil: { pitch: 0.009, yaw: 0.003, bias: 0, climb: 0 },
     critMult: 1.8, range: 150,
     projectile: { speed: 24, radius: 0.12, explosionRadius: 1.8, lifetime: 3.5, visual: 'rocket', scale: 0.6, homing: 4.5, count: 5, stagger: 0.06, fan: 0.16, explodeOnExpire: true, color: 0xffc860 },
@@ -399,7 +449,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'flamer', name: '朱雀吐息', category: '喷火器', kind: 'heavy', mode: 'auto',
     damage: 7.5, fireRate: 14, mag: 70, reserve: 280, reloadTime: 2.6, reloadStyle: 'cell',
-    spreadHip: 0.05, spreadAim: 0.035, spreadPerShot: 0, spreadMax: 0.05, spreadRecovery: 0.3,
+    spreadTs: { hip: 0.05, aim: 0.035, perShot: 0, max: 0.05, recovery: 0.3 },
     recoil: { pitch: 0.0012, yaw: 0.0015, bias: 0, climb: 0 },
     critMult: 1.5, range: 11, pierce: 3,
     projectile: { speed: 24, gravity: -3, radius: 0.32, lifetime: 0.42, visual: 'flame', scale: 1.1, color: 0xff7a2a },
@@ -412,12 +462,13 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'stormpod', name: '青冥雷蛊', category: '发射器', kind: 'launcher', mode: 'semi',
     damage: 95, fireRate: 1.2, mag: 5, reserve: 30, reloadTime: 2.5, reloadStyle: 'cylinder',
-    spreadHip: 0.012, spreadAim: 0.005, spreadPerShot: 0.012, spreadMax: 0.03, spreadRecovery: 0.1,
+    spreadTs: { hip: 0.012, aim: 0.005, perShot: 0.012, max: 0.03, recovery: 0.1 },
+    spreadTuned: { hip: 0.005, aim: 0.002, perShot: 0.005, max: 0.012, recovery: 0.3 },
     recoil: { pitch: 0.04, yaw: 0.008, bias: 0, climb: 0 },
     critMult: 1.6, range: 90, element: 'corrode', elementChance: 0.6,
-    projectile: { speed: 30, gravity: 14, radius: 0.15, explosionRadius: 3.2, lifetime: 1.8, visual: 'orb', scale: 0.9, bounces: 2, explodeOnExpire: true, color: 0x9dff4a },
+    projectile: { speed: 30, gravity: 14, radius: 0.15, explosionRadius: 3.2, lifetime: 1.8, visual: 'orb', scale: 0.9, bounces: 2, rollAfter: true, explodeOnExpire: true, color: 0x9dff4a },
     innate: [{ id: 'subShock', value: 0.4 }],
-    aimFov: -10, sfx: 'shot_launcher', sfxVolume: 0.8, knockback: 4,
+    aimFov: -10, sfx: 'shot_launcher', sfxVolume: 0.5 /* Unity 手调（TS 0.8） */, knockback: 4,
     tracerWidth: 0, impactSize: 0.9, kick: { back: 0.06, rot: 0.12 }, shake: 0.13, flash: 0.2,
     viewOffset: [0.23, -0.24, -0.52], aimOffset: [0.08, -0.17, -0.44], worldScale: 1.4,
     description: '以青铜蛊罐封存雷蛊与蚀毒的弹跳榴弹，落地翻滚，炸开一片青雷。',
@@ -425,8 +476,9 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   }),
   def({
     id: 'magmashot', name: '赤蛟霰铳', category: '霰弹枪', kind: 'shotgun', mode: 'semi',
-    damage: 11, pellets: 8, fireRate: 2.5, mag: 2, reserve: 36, reloadTime: 1.4, shellTime: 0.55, reloadStart: 0.3, reloadStyle: 'shell',
-    spreadHip: 0.01, spreadAim: 0.005, spreadPerShot: 0.015, spreadMax: 0.035, spreadRecovery: 0.12, pelletCone: 0.09,
+    // I3（Unity docs/balance.md 第 2 节）：每粒 11 → 10，裸秒伤回到设计的 80 左右
+    damage: 10, pellets: 8, fireRate: 2.5, mag: 2, reserve: 36, reloadTime: 1.4, shellTime: 0.55, reloadStart: 0.3, reloadStyle: 'shell',
+    spreadTs: { hip: 0.01, aim: 0.005, perShot: 0.015, max: 0.035, recovery: 0.12 }, pelletCone: 0.09,
     recoil: { pitch: 0.06, yaw: 0.014, bias: 0, climb: 0 },
     critMult: 2, range: 28, falloff: [8, 26, 0.35],
     element: 'fire', elementChance: 0.07,
@@ -440,7 +492,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'trinity', name: '三才转轮', category: '手枪', kind: 'pistol', mode: 'semi',
     damage: 42, fireRate: 3.0, mag: 6, reserve: 54, reloadTime: 1.8, reloadStyle: 'cylinder',
-    spreadHip: 0.005, spreadAim: 0.0015, spreadPerShot: 0.016, spreadMax: 0.045, spreadRecovery: 0.16,
+    spreadTs: { hip: 0.005, aim: 0.0015, perShot: 0.016, max: 0.045, recovery: 0.16 },
     recoil: { pitch: 0.04, yaw: 0.009, bias: 0, climb: 0 },
     critMult: 2.4, range: 80, falloff: [35, 80, 0.7],
     element: 'fire', cycle: ['fire', 'shock', 'corrode'], elementChance: 0.45,
@@ -454,7 +506,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     id: 'railgun', name: '贯虹灵炮', category: '蓄能炮', kind: 'rifle', mode: 'charge',
     damage: 155, fireRate: 2, mag: 6, reserve: 36, reloadTime: 2.4, reloadStyle: 'cell',
     chargeTime: 0.9, chargeMinMult: 0.2, chargeFullPierce: 3, chargeDetonate: true,
-    spreadHip: 0.01, spreadAim: 0, spreadPerShot: 0.02, spreadMax: 0.05, spreadRecovery: 0.15,
+    spreadTs: { hip: 0.01, aim: 0, perShot: 0.02, max: 0.05, recovery: 0.15 },
     recoil: { pitch: 0.05, yaw: 0.008, bias: 0, climb: 0 },
     critMult: 2.5, range: 200, pierce: 1,
     element: 'none', elementChance: 0.35,
@@ -467,7 +519,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   def({
     id: 'lantern', name: '蚀蛊灯', category: '蛊灯', kind: 'launcher', mode: 'semi',
     damage: 55, fireRate: 1.6, mag: 8, reserve: 48, reloadTime: 2.0, reloadStyle: 'cell',
-    spreadHip: 0.01, spreadAim: 0.004, spreadPerShot: 0.006, spreadMax: 0.02, spreadRecovery: 0.1,
+    spreadTs: { hip: 0.01, aim: 0.004, perShot: 0.006, max: 0.02, recovery: 0.1 },
     recoil: { pitch: 0.012, yaw: 0.004, bias: 0, climb: 0 },
     critMult: 1.8, range: 60, pierce: 6,
     projectile: { speed: 14, gravity: -0.3, radius: 0.38, lifetime: 3.2, visual: 'orb', scale: 1.5, homing: 2.2, color: 0x9dff4a },
@@ -486,7 +538,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     id: 'demon_blade', name: '碎刃', category: '刀', kind: 'blade', mode: 'auto',
     // 根字段 = 千刃出窍的一次结算（每 0.1 秒 6 点，单体 60 DPS）；没有弹药与换弹（mag 1 只为不触发应急补给）
     damage: 6, fireRate: 10, mag: 1, reserve: 0, reloadTime: 0, reloadStyle: 'box',
-    spreadHip: 0, spreadAim: 0, spreadPerShot: 0, spreadMax: 0, spreadRecovery: 0,
+    spreadTs: { hip: 0, aim: 0, perShot: 0, max: 0, recovery: 0 },
     recoil: { pitch: 0, yaw: 0, bias: 0, climb: 0 },
     critMult: 2.0, range: 22, pierce: 0,
     element: 'none', elementChance: 0.35,

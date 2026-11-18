@@ -43,6 +43,8 @@ export const FUZHU_DEF: ScaledEnemyDef = {
   headRadius: 0.16,
   knockbackResist: 0.35,
   color: 0x9fe8ff,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'gem', hitboxes: 'ragdoll', role: 'heavy', placement: 'precision', groundOnly: true,
 };
 
 /** 保持距离的区间（米） */

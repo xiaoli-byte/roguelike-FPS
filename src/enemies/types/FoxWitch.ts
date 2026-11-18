@@ -52,6 +52,8 @@ export const FOX_WITCH_DEF: ScaledEnemyDef = {
   color: 0x8fdcff,
   // 美术按 1.8 米制作，游戏里放大约 1.15 倍（约 2.1 米）
   scale: 1.15,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'socket_mirror', role: 'ranged', placement: 'support', groundOnly: true,
 };
 
 /** 冰壁：狐巫召出的可破坏掩体（不算阵容，只由狐巫生成） */

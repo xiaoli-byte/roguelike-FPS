@@ -15,16 +15,13 @@ export const AFFIX_IDS: readonly AffixId[] = ['swift', 'shielded', 'volatile', '
 export const AFFIX_NAMES: Record<AffixId, string> = { swift: '迅捷', shielded: '坚盾', volatile: '爆裂', frenzied: '狂暴' };
 export const AFFIX_COLORS: Record<AffixId, number> = { swift: 0x49d8ff, shielded: 0x4f8dff, volatile: 0xff6a1f, frenzied: 0xff2a18 };
 
-/** 与敌人自身机制重复的词缀不随机给它 */
-const EXCLUDE: Record<string, readonly AffixId[]> = { bomber: ['volatile'] };
-
 export function isAffixId(s: unknown): s is AffixId {
   return typeof s === 'string' && (AFFIX_IDS as readonly string[]).includes(s);
 }
 
-export function rollAffix(rng: Rng, defId: string): AffixId {
-  const ex = EXCLUDE[defId];
-  const pool = ex ? AFFIX_IDS.filter((a) => !ex.includes(a)) : AFFIX_IDS;
+/** 随机一个精英词缀；exclude = 与敌人自身机制重复、不随机给它的（定义表的 affixExclusions，同 Unity EnemyDef.affixExclusions） */
+export function rollAffix(rng: Rng, exclude?: readonly string[]): AffixId {
+  const pool = exclude?.length ? AFFIX_IDS.filter((a) => !exclude.includes(a)) : AFFIX_IDS;
   return rng.pick(pool);
 }
 

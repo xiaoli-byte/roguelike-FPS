@@ -47,6 +47,8 @@ export const LANTERN_JELLY_DEF: ScaledEnemyDef = {
   color: 0x6fe8ff,
   // 美术按 1.8 米制作（含触须），游戏里放大 1.1 倍
   scale: 1.1,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'core', role: 'melee', placement: 'support', element: 'shock',
 };
 
 /** 回血连线 */

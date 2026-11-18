@@ -51,6 +51,8 @@ export const FIRE_CROW_DEF: ScaledEnemyDef = {
   headRadius: 0.24,
   knockbackResist: 0.2,
   color: 0xff7a2a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'body', role: 'ranged', placement: 'flank', element: 'fire', affixExclusions: ['volatile'],
 };
 
 /** 盘旋高度（离地 / 离玩家脚底，米）、绕圈半径、角速度（弧度/秒） */

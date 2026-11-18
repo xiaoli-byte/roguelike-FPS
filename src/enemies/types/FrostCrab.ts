@@ -46,6 +46,8 @@ export const FROST_CRAB_DEF: ScaledEnemyDef = {
   color: 0x5fe8e0,
   // 美术按 2.2 米（含背上木杆）制作，游戏里放大 1.5 倍：命中盒、弱点、特效一起放大
   scale: 1.5,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'vent', role: 'heavy', placement: 'assault', groundOnly: true,
 };
 
 /** 正面格挡：来自正面这个夹角（余弦）以内的伤害乘以 GUARD_FACTOR；巨钳碎了只剩 BROKEN_GUARD */

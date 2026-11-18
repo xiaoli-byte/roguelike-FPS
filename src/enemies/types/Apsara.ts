@@ -44,11 +44,13 @@ export const APSARA_DEF: ScaledEnemyDef = {
   flying: true,
   // 弱点 = 悬浮琵琶上的琴轸：判定球挂在琵琶挂点上（随琵琶的位置和转动走）
   headY: 1.35,
-  headRadius: 0.24,
+  headRadius: 0.3,
   knockbackResist: 0.3,
   color: 0xe0b060,
   // 美术按 1.9 米制作，游戏里放大约 1.3 倍（约 2.5 米）
   scale: 1.3,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'socket_pipa', role: 'ranged', placement: 'support',
 };
 
 /** 悬停：离地高度（脚底，米）、上下浮动幅度 / 角频率 */

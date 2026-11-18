@@ -548,6 +548,33 @@ export interface EnemyDef {
   knockbackResist?: number;
   /** 敌人主题色，用于特效 */
   color?: number;
+
+  // ── Unity EnemyDef 的字段（M2：对齐 public/assets/unity-gameplay/defs.json；缺省同 Unity 的字段初值）──
+  /** 天生级别（Unity Rank）：'elite' = 名册即精英，EnemyManager 生成时总按精英（穷奇：生命按 ×2.6 折算过）；缺省 normal */
+  rank?: 'normal' | 'elite' | 'boss';
+  /** 不随机给它的精英词缀（与自身机制重复的；Unity affixExclusions），rollAffix 读 */
+  affixExclusions?: readonly string[];
+  /** 冲锋型：遭遇里正面位只从场地远端进场、导演按 1.5 倍体量算（Unity charger），CombatDirector 读 */
+  charger?: boolean;
+  /** 遭遇编排的站位角色（Unity placementRole）。// Unity 字段，运行时待 M4 接入（现在 WhiteboxEncounters / WaveRunner 各有一张按 id 的表） */
+  placement?: EnemyPlacement;
+  /** 只站地面、不占高台站位（Unity groundOnly）。// Unity 字段，运行时待 M4 接入 */
+  groundOnly?: boolean;
+  /** 出手名额类别（Unity AttackTokens.Kind）。// Unity 字段，运行时待 M5 接入（现在各敌人类在代码里写死） */
+  role?: 'melee' | 'ranged' | 'heavy';
+  /** 攻击元素（Unity element：占位体 / 发光色）。// Unity 字段，运行时待 M11b 接入 */
+  element?: Element;
+  /** 弱点挂的骨骼名（包含匹配；Unity weakBone）。// Unity 字段，运行时待 M5 接入（命中区；现在弱点由 headY / 各类自己的命中球给出） */
+  weakBone?: string | null;
+  /** 命中区生成方式（Unity HitboxMode：capsule = 角色胶囊 + 弱点球，ragdoll = 存活时布娃娃胶囊）。// Unity 字段，运行时待 M5 接入 */
+  hitboxes?: 'capsule' | 'ragdoll';
+  /**
+   * 韧性（第四章受击四层）：2 秒内累计的韧性伤害超过它就硬直；0 = 不用韧性，Infinity = 不硬直。staggerSeconds = 硬直秒数（缺省 0.6），
+   * hitch = 每挨一枪顿一下的秒数（缺省 0）。// Unity 字段，运行时待 M5 接入（第四章敌人现在由 world/plateau/play/foes.ts 的 FOE_SPECS 驱动，数值相同）
+   */
+  poise?: number;
+  staggerSeconds?: number;
+  hitch?: number;
 }
 
 export interface SpawnOptions {

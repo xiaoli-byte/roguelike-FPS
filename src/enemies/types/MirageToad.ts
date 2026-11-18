@@ -32,6 +32,8 @@ export const MIRAGE_TOAD_DEF: EnemyDef = {
   headRadius: 0.42,
   knockbackResist: 0.7,
   color: 0xffd27a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'sac', role: 'heavy', placement: 'artillery', groundOnly: true, element: 'fire',
 };
 
 /** 蜃景分身：同一具身体（共用美术），血量很低、不掉落、只会虚张声势 */
@@ -39,10 +41,14 @@ export const MIRAGE_TOAD_DECOY_DEF: EnemyDef = {
   ...MIRAGE_TOAD_DEF,
   id: 'mirage_toad_decoy',
   name: '蜃景',
+  // 只会虚张声势，没有伤害（Unity damage 0）
+  damage: 0,
   hp: 30,
   coins: [0, 0],
   essence: 0,
   knockbackResist: 0.3,
+  // 分身吐的是幻影火珠，不带元素（Unity element None）
+  element: 'none',
 };
 
 const MIN_RANGE = 13;

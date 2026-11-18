@@ -45,6 +45,8 @@ export const ICE_WHALE_DEF: ScaledEnemyDef = {
   headRadius: 0.28,
   knockbackResist: 1,
   color: 0x7fd8ff,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'blowhole', hitboxes: 'ragdoll', role: 'heavy', placement: 'artillery', groundOnly: true,
 };
 
 /** 保持距离（米）：太近后撤，太远靠近，区间内原地转向玩家 */

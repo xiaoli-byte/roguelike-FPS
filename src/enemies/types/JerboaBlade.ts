@@ -37,6 +37,8 @@ export const JERBOA_BLADE_DEF: ScaledEnemyDef = {
   headRadius: 0.17,
   knockbackResist: 0,
   color: 0xffb860,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'bell', role: 'melee', placement: 'flank', groundOnly: true,
 };
 
 const LEAP_MIN = 4;

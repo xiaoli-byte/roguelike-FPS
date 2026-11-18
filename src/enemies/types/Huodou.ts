@@ -45,9 +45,11 @@ export const HUODOU_DEF: ScaledEnemyDef = {
   essence: 1,
   // 命中判定是挂在骨骼上的几颗球（长条身体）；headY 只用于视线和头顶血条
   headY: 0.92,
-  headRadius: 0.12,
+  headRadius: 0.11,
   knockbackResist: 0,
   color: 0xff6a1a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'chest', hitboxes: 'ragdoll', role: 'melee', placement: 'flank', groundOnly: true, element: 'fire',
 };
 
 /** 包抄：正面守位距离、侧后包抄距离、就位判定、各角色相对玩家视线的方位（弧度，0 = 正前方） */

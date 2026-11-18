@@ -43,9 +43,11 @@ export const FIRE_RAT_DEF: ScaledEnemyDef = {
   essence: 1,
   // 弱点 =「全身」：判定球罩住身体中段和头（球心离地 0.24），跟着身体移动（人立、蜷成球、滚动时也是）
   headY: 0.24,
-  headRadius: 0.26,
+  headRadius: 0.3,
   knockbackResist: 0,
   color: 0xff7a2a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'spine', role: 'melee', placement: 'flank', groundOnly: true, element: 'fire',
 };
 
 const ROLL_RANGE = 14;

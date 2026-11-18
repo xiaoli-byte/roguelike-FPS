@@ -52,6 +52,8 @@ export const HAOZHI_DEF: ScaledEnemyDef = {
   headRadius: 0.26,
   knockbackResist: 0.25,
   color: 0x9fd8ff,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'quill_2', hitboxes: 'ragdoll', role: 'melee', placement: 'assault', groundOnly: true, charger: true,
 };
 
 const CHARGE_RANGE = 16;

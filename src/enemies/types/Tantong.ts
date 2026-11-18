@@ -48,6 +48,8 @@ export const TANTONG_DEF: ScaledEnemyDef = {
   headRadius: 0.15,
   knockbackResist: 0,
   color: 0xff6a1a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'head', role: 'melee', placement: 'assault', groundOnly: true, element: 'fire',
 };
 
 /** 复燃站起来的炭童：半血、不掉落、再死不留炭堆（与本体共用美术） */
@@ -76,6 +78,8 @@ export const TANTONG_EMBER_DEF: ScaledEnemyDef = {
   headRadius: 0.3,
   knockbackResist: 1,
   color: 0xff6a1a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'ember_core', role: 'melee', placement: 'assault', groundOnly: true, element: 'fire',
 };
 
 /** 扑抓：触发距离、前摇、扑跳速度 / 起跳竖直速度 / 最长时间、乱抓（两下的时刻、总时长、距离、每下伤害倍率）、收势 */

@@ -34,7 +34,7 @@ export const FOE_SPECS: Record<MonsterKind, FoeSpec> = {
     spheres: [{ bone: 'chest', r: 0.42, mult: 1 }, { bone: 'eye', r: 0.18, mult: 2.5 }] },
   liangu: { model: 'SM_EnemyPart_LianguCore', scale: 1, gait: 'quad', hp: 220, speed: 4, stride: 1, sight: 34, poise: 80, staggerTime: 0.5, centerY: 0,
     spheres: [{ bone: '', r: 0.5, mult: 1, part: 'core' }, ...[0, 1, 2, 3, 4, 5].map(i => ({ bone: '', r: 0.4, mult: 1, part: `drum${i}` }))] },
-  dijiang: { model: 'SK_Enemy_Dijiang', scale: 1.2, gait: 'hexa', hp: 50, speed: 8, stride: 0.5, sight: 30, poise: Infinity, staggerTime: 0, glowBone: 'core', glowSize: 1.2, centerY: 0.5,
+  dijiang: { model: 'SK_Enemy_Dijiang', scale: 1.2, gait: 'hexa', hp: 50, speed: 8, stride: 0.5, sight: 30, poise: Infinity, staggerTime: 0, hitch: 0.12, glowBone: 'core', glowSize: 1.2, centerY: 0.5,
     spheres: [{ bone: 'body', r: 0.6, mult: 1 }, { bone: 'core', r: 0.25, mult: 2 }] },
   qiongqi: { model: 'SK_Enemy_Qiongqi', scale: 1.25, gait: 'quad', hp: 1100, speed: 5.5, stride: 1.4, sight: 34, poise: 150, staggerTime: 0.7, glowBone: 'crown', glowSize: 1.4, centerY: 0.9,
     spheres: [

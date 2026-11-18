@@ -51,6 +51,8 @@ export const BIFANG_DEF: ScaledEnemyDef = {
   headRadius: 0.09,
   knockbackResist: 0.5,
   color: 0xff6a2a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'head', hitboxes: 'ragdoll', role: 'ranged', placement: 'precision', element: 'fire',
 };
 
 /** 落脚点：离玩家的水平距离、比玩家所在地面高多少（优先 / 最低）、落脚面最小边长 */

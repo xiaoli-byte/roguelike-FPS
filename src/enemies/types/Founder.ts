@@ -50,6 +50,8 @@ export const FOUNDER_DEF: ScaledEnemyDef = {
   color: C.molten,
   // 美术按 1.6 米制作（含流嘴），游戏里放大约 1.3 倍
   scale: 1.3,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'bronze', role: 'melee', placement: 'support', groundOnly: true, element: 'fire',
 };
 
 /** 浇铜甲 */

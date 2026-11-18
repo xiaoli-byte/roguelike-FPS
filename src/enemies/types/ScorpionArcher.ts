@@ -35,9 +35,11 @@ export const SCORPION_ARCHER_DEF: ScaledEnemyDef = {
   essence: 1,
   // 弱点 = 尾巴弧顶的毒囊（囊心离地约 1.6，在她头部后上方约 0.8 米）；判定球跟着尾巴移动
   headY: 1.6,
-  headRadius: 0.22,
+  headRadius: 0.26,
   knockbackResist: 0.5,
   color: 0xffd27a,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'sac', role: 'ranged', placement: 'ranged', groundOnly: true,
 };
 
 const MIN_RANGE = 12;

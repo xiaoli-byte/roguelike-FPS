@@ -46,6 +46,8 @@ export const TOMB_BEAST_DEF: ScaledEnemyDef = {
   color: 0xc9a25a,
   // 美术按 2.2 米（含独角）制作，游戏里放大到约 3.7 米：命中盒、弱点、特效一起放大
   scale: 1.7,
+  // Unity 名册（M2，defs.json）：弱点骨骼、出手名额、站位、元素…
+  weakBone: 'crack', role: 'heavy', placement: 'assault', groundOnly: true, charger: true,
 };
 
 /** 正面格挡：来自正面这个夹角（余弦）以内的伤害乘以 GUARD_FACTOR */
