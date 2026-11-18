@@ -87,6 +87,14 @@ export const INTERIOR_MIST_SIZE = 28;
 const SLOPE_MIST: Record<number, number> = { 1: 0.55, 2: 0.7, 3: 1, 4: 1 };
 /** 各章雾带的向阳偏置（MistStream.lit）：沙尘、雪雾要比沙地、雪面亮一档才读得出来；熔火的烟不提亮 */
 const CHAPTER_LIT: Record<number, number> = { 1: 0.5, 2: 0.3, 3: 0, 4: 0.2 };
+/**
+ * 背后是天的那几段（崖顶、沙脊、豁口上方）：抬多高（× 雾团直径，默认 0.45）、雾团上下散开多少（× 直径，默认 0.15）、浓度倍率。
+ * 沙寺的天际线是泛白的沙色，和沙尘同色；熔火的低空是紫灰，和烟同色——只露半团在天际线上面读不出来。
+ * 这两章抬高、拉高，让沙尘 / 烟被风扬到天际线以上、落在更蓝 / 更暗的天上。包络离场地只会更远（只往上抬）
+ */
+const SKY_RISE: Record<number, number> = { 1: 0.7, 3: 0.7 };
+const SKY_TALL: Record<number, number> = { 1: 0.32, 3: 0.32 };
+const SKY_GAIN: Record<number, number> = { 1: 1.25, 3: 1.25 };
 const LEAF_TREE = /larch|maple|birch|poplar|ginkgo/i;
 /** 流水（一段段往下走，水面不是一个平面）：不铺水面雾 */
 const FLOWING_WATER = /river|stream|creek|brook|waterfall/i;
@@ -228,7 +236,7 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
       if (gain <= 0 || (r === 3 && fogEnd < 900)) return;
       const bins = Math.min(96, Math.max(24, Math.round(2 * Math.PI * (radius * 0.7 + (ring.near + ring.far) / 2) / 18)));
       const low: ({ x: number; y: number; z: number; grade: number } | null)[] = new Array(bins).fill(null), reach = new Float32Array(bins);
-      const slope = SLOPE_MIST[chapter] ?? 1, lit = CHAPTER_LIT[chapter] ?? 0;
+      const slope = SLOPE_MIST[chapter] ?? 1, lit = CHAPTER_LIT[chapter] ?? 0, skyRise = SKY_RISE[chapter] ?? 0.45, skyTall = SKY_TALL[chapter] ?? 0, skyGain = Math.min(SKY_GAIN[chapter] ?? 1, 1 / (ring.opacity * gain));
       for (let k = 0; k < W * H; k++) {
         const d = dist[k], h = height[k], i = k % W, j = Math.floor(k / W);
         // 高度场最外面两格不要：那里是地形和远景地面的接缝，沿着它摆出来是一条直线
@@ -262,8 +270,8 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
           const keys = part.map((bin): MistKey => {
             const p = low[bin]!, q = low[(bin + 1) % bins] ?? p, o = low[(bin + bins - 1) % bins] ?? p;
             // 前后各抹一下：取每个方位最低点连成的线是锯齿的
-            // 背后是天的那几处抬高一点，雾团一半露在天际线上面
-            return { position: [(o.x + 2 * p.x + q.x) / 4, (o.y + 2 * p.y + q.y) / 4 + ring.size * (p.grade === 2 ? 0.45 : 0.3) + 0.5, (o.z + 2 * p.z + q.z) / 4], halfWidth: ring.halfWidth, size: ring.size, opacity: p.grade === 1 ? slope : 1 };
+            // 背后是天的那几处抬高一点，雾团一半露在天际线上面（沙寺、熔火抬得更高、更浓，见 SKY_RISE）
+            return { position: [(o.x + 2 * p.x + q.x) / 4, (o.y + 2 * p.y + q.y) / 4 + ring.size * (p.grade === 2 ? skyRise : 0.3) + 0.5, (o.z + 2 * p.z + q.z) / 4], halfWidth: ring.halfWidth, size: ring.size, halfHeight: p.grade === 2 && skyTall ? ring.size * skyTall : undefined, opacity: p.grade === 1 ? slope : p.grade === 2 ? skyGain : 1 };
           });
           let length = 0;
           for (let i = 1; i < keys.length; i++) length += Math.hypot(keys[i].position[0] - keys[i - 1].position[0], keys[i].position[2] - keys[i - 1].position[2]);
