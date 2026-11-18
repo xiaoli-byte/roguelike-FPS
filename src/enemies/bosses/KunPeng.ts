@@ -1,51 +1,50 @@
 /**
- * 鲲鹏（第二章首领，北冥冰台）：《庄子》北冥之鱼，化而为鸟。两个形态各是一个模型，阶段转换时在冰雾里换模型。
- *
- * 场地：环形祭台围着中央冰窟（KunPengArena.locateIceHole 从导航网格找出冰窟的圆心、半径和环台外缘）。
- * 鲲始终在冰窟里，鹏在环台上空盘旋。冰窟本身的海水、浮冰、寒雾由 KunPengFx 画。
- *
- * 一阶段 · 鲲（头和前半身探出冰窟，冰线以下不建模）：
- *  - 吞吸：仰头张口 0.9 秒（面前扇形预警），随后 3 秒把扇形里的玩家一阵阵拉向冰窟（冰柱、矮墙挡得住）；
- *    收尾一口咬在冰沿上（冰沿圆形预警），被拉到冰沿的人吃重击并被甩开。
- *  - 猛砸：人立蓄力 1.1 秒（落点圆 + 冰浪扇形预警），整个前身砸在环台上：落点重击，再掀起一道沿扇形扩散的贴地冰浪（跳起躲开，
- *    掩体挡得住）。血量低于 75% 后连掀两道。砸下后头趴在环台上 0.8 秒——额头的鲛珠离地很近，是一阶段最好的输出窗口。
- *  - 潜袭：沉入冰窟（不可选中），在玩家所在的那一侧冰沿冒泡、亮出预警，1.3 秒后破冰而出（爆点重击 + 冰浪），环台上没有安全的角落。
- *  - 吐冰：玩家离得远时，朝玩家和两侧各吐一块带落点预警的抛物线冰弹。
- *  - 平时在冰窟里慢慢绕到玩家那一侧，转头盯着玩家。弱点：额头的鲛珠。
- * 转换（50%）：鲲吼叫着沉入冰窟，冰海炸开（整圈冰浪），冰雾爆闪盖住冰窟——在最浓的一刻换成鹏，鹏从雾里升空。
- * 二阶段 · 鹏（完整的展翅巨鸟，在环台上空盘旋）：
- *  - 扇翼狂风：飞到冰窟上空蓄力，环台外缘亮起一圈冻风带；随后 3.4 秒把玩家一阵阵推向外缘（冰柱后面不受风），外缘冻风带持续伤害。
- *  - 俯冲掠台：在玩家身边画出一条沿环台切线的长条预警，贴地高速掠过（侧移 / 冲刺躲开）；撞上冰柱、祭台会撞晕 1.8 秒。
- *    血量低于 25% 时连续俯冲两次。
- *  - 羽刃雨：拔高展翅，从翼尖洒下 10（25% 以下 14）枚冰羽刃，前三枚瞄准玩家，其余散落在玩家周围，落点都有预警。
- *  - 落台歇翼：飞累了（出两招之后）落到环台上收翼歇 4.8 秒——额头的鲛珠离地近、亮起来，是二阶段的主要输出窗口；
- *    落地与起飞各有一次有预警的翼风冲击。弱点：额头的鲛珠。
- * 美术：SK_Boss_Kun / SK_Boss_Peng（原生骨架，见 KunPengModel.ts）；资产缺失或 ?classic 时用程序化兜底模型，招式不变。
+ * 鲲鹏（Unity KunPeng/KunPengBrain.cs + KunPengDeath 的网页版；定义 KunPengDef.ts，招式 KunPengMoves.ts，场地 KunPengArena.ts，登场 KunPengIntro.ts）。
+ * 第二章首领，2-4 北冥冰台：《庄子》北冥之鱼，化而为鸟。两个形态各是一个模型，阶段转换时在冰雾里换模型。
+ * 首领框架（framework/BossBrain）之上加这几层：
+ *   · 冰窟（IceHoleInfo）：Unity 场景从关卡水体反推（2-4 的北冥海），白盒关卡从导航网格反推，都没有就按场地建虚拟冰窟。
+ *     场地圆（框架的 bossCenter / arenaRadius）= 冰窟圆心 / 外缘 + 2。
+ *   · 不走导航：鲲的逻辑位置钉在冰窟里（方位 theta、离圆心 半径 − 4.6，y = 环台地面）；鹏在空中（EnemyBase 的飞行积分：水平按 accel 追期望速度，
+ *     竖直追 地面 + hoverAlt，飞越冰窟时不低于 11.5 m，盘旋时上下起伏 0.5 m）。
+ *   · 运行时姿态：鲲的沉浮 sunk（0 = 露出水面，1 = 完全沉下去 13 m）+ 按动作的俯仰 / 抬身，平切口始终压在水面下 0.3 m（KunPengMath.cutCeiling）；
+ *     鹏转换时从雾里升起（riseOffset）。骨骼是程序化摆姿势（同 Unity 的代理 / 占位体那条路；采样片段换 AnimationClip 随 M12）。
+ *   · 鲛珠：两个形态的弱点都是额头的 pearl，平时微光，猛砸趴台 / 落台歇翼 / 撞柱硬直时大亮。
+ *   · 生命刻度：75% 鲲怒（鲲的招式喘息 × 0.8、猛砸连掀两道冰浪、吐冰多一块）；25% 鹏狂怒（框架的狂怒：喘息 × 0.78、俯冲连掠、羽刃 14 枚）。
+ *   · 特效（KunPengFx）：水面翻涌、吞吸气流、狂风风痕、冰雾爆闪、羽刃。
+ *   · 演出：登场演出（KunPengIntro，代码驱动机位），化鹏（漩涡 → 水击三千里 → 扶摇 → 展翅），倒下（鲲沉回冰窟 / 鹏坠落砸冰面，之后冻雾）。
+ * 网址带 ?dev 时（只在开发服务器里）挂 window.__kunpeng 调试钩子（跳演出、跳阶段、强制出招），生产构建里整段不存在。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../../core/types';
-import { angleDiff, clamp, rotateTowards, TAU } from '../../core/math';
-import { BossBase, type HitShape } from './BossBase';
+import { clamp, TAU } from '../../core/math';
+import type { HitShape } from './BossBase';
 import { attachEnemyArt } from '../../assets/EnemyArt';
 import type { NativeBody } from '../../assets/NativeRig';
-import { holeAngle, holePoint, locateIceHole, type IceHole } from './KunPengArena';
+import { BossBrain, hexColor } from './framework/BossBrain';
+import type { BossFormDef, BossPhaseDef } from './framework/BossDef';
+import type { BossMove } from './framework/BossMove';
+import { stageHooks } from './framework/StageHooks';
+import { BossIntroDirector, introEnabled, type DirectedBoss } from './intro/BossIntroDirector';
+import { holeFromWater, IceHoleInfo, locateIceHole } from './KunPengArena';
+import { KunPengDef, KunPengMath } from './KunPengDef';
 import { KunPengFx } from './KunPengFx';
-import {
-  anchorOn, buildKunProc, buildPengProc, KUN_POINTS, PENG_POINTS, ProcPose, type KPPose, type ProcBody,
-} from './KunPengModel';
-import { easeInOut, easeOutCubic, span } from './parts';
+import { kunPengIntro, setIntroHole } from './KunPengIntro';
+import { anchorOn, buildKunProc, buildPengProc, KUN_POINTS, PENG_POINTS, ProcPose, type KPPose, type ProcBody } from './KunPengModel';
+import { createKunPengMove } from './KunPengMoves';
+import { KunPengDeath, PENG } from './KunPengPlans';
 
+/** 敌人名册里的条目（首领自己的耐久按 KunPengDef 的定档表另算；这里的是难度 1 的参考值） */
 export const KUNPENG_DEF: EnemyDef = {
   id: 'boss_kunpeng',
   name: '鲲鹏',
-  hp: 4000,
-  shield: 1200,
+  hp: KunPengDef.TierHp / KunPengDef.StageDifficulty,
+  shield: KunPengDef.TierShield / KunPengDef.StageDifficulty,
   speed: 9,
   radius: 3,
   height: 8,
   flying: true,
   damage: 14,
-  coins: [70, 110],
+  coins: [60, 100],
   essence: 60,
   isBoss: true,
   headY: 7.5,
@@ -54,42 +53,24 @@ export const KUNPENG_DEF: EnemyDef = {
   color: 0x7fe8ff,
 };
 
-/** 两个形态的模型缩放（美术按 8 米制作）：鲲约 10.4 米高，鹏约 9.2 米 */
-const KUN_SCALE = 1.3;
-const PENG_SCALE = 1.15;
-/** 鲲露出水面时模型原点（平切口）在水面下多深：切口永远藏在水里 */
-const KUN_BASE_Y = -1.0;
-/** 完全沉下去时的深度 */
-const KUN_SUNK_Y = -14;
-/**
- * 平切口的范围（模型单位，未缩放；creature_rigs/SK_Boss_Kun.json 的 spine_1 包围盒往里收一点）：往后、往前、往两侧。
- * animateKun 按当前俯仰 / 侧倾算出切口最高点，保证它始终在水面下 KUN_CUT_MARGIN 米（抬身 / 前扑时整只往下压）。
- */
-const KUN_CUT_BACK = 3.0;
-const KUN_CUT_FRONT = 2.8;
-const KUN_CUT_SIDE = 2.8;
-const KUN_CUT_MARGIN = 0.3;
-/** 鲲身体中心离冰沿多远（往冰窟里收）：头部刚好探到冰沿上方 */
-const KUN_INSET = 4.6;
-/** 鹏盘旋高度（离地，模型原点 = 双爪）；飞越冰窟时不低于 PENG_OVER_HOLE（冰窟的白盒碰撞块高 10 米） */
-const PENG_HOVER = 13.5;
-const PENG_OVER_HOLE = 11.5;
-
-const WARN = 0x7fd8ff;
-const ICE = 0xd8f6ff;
-const PEARL = 0x7ff0ff;
-const GUST = 0xbfe9ff;
+const KUN_SCALE = KunPengDef.KunScale;
+const PENG_SCALE = KunPengDef.PengScale;
+const KUN_BASE_Y = KunPengDef.KunBaseY;
+const KUN_SUNK_Y = KunPengDef.KunSunkY;
+const WARN = KunPengDef.Warn;
+const ICE = KunPengDef.Ice;
+const PEARL = KunPengDef.Pearl;
+const DEG = Math.PI / 180;
+const { span, easeInOut, easeOutCubic, deltaAngle, moveTowardsAngle } = KunPengMath;
 
 const AX = new THREE.Vector3(1, 0, 0);
 const AY = new THREE.Vector3(0, 1, 0);
 const AZ = new THREE.Vector3(0, 0, 1);
 const _v = new THREE.Vector3();
 const _w = new THREE.Vector3();
-const _a = new THREE.Vector3();
-const _b = new THREE.Vector3();
-const _prev = new THREE.Vector3();
 const _save = new THREE.Vector3();
-const _imp = new THREE.Vector3();
+const _dir = new THREE.Vector3();
+const _hit = { distance: 0, point: new THREE.Vector3(), normal: new THREE.Vector3(), box: null as never };
 
 export type FormId = 'kun' | 'peng';
 
@@ -103,68 +84,64 @@ interface Form {
   shapes: HitShape[];
 }
 
-type SwoopStage = 'aim' | 'tele' | 'dive' | 'recover' | 'crash';
-type PerchStage = 'approach' | 'descend' | 'rest' | 'takeoff';
-
 const mix = (a: number, b: number, k: number): number => a + (b - a) * k;
 
-/**
- * 鲲的模型原点（平切口中心）最高能放到多高（相对水面所在的逻辑高度）：前倾时切口后缘翘起、后仰时前缘翘起、
- * 侧倾时一侧翘起——都要留在水面（KunPengFx 的海面在 +0.06）下 KUN_CUT_MARGIN 米。
- */
-export function kunCutCeiling(pitch: number, roll: number): number {
-  const sp = Math.sin(pitch);
-  const lift = KUN_SCALE * (Math.max(KUN_CUT_BACK * sp, -KUN_CUT_FRONT * sp, 0) + KUN_CUT_SIDE * Math.abs(Math.sin(roll)));
-  return 0.06 - KUN_CUT_MARGIN - lift;
+/** 场景文档里的首领场（StageDirector 的 Unity 场景文档；只读需要的字段） */
+interface SceneBossDoc {
+  id: string;
+  center: number[];
+  floorY: number;
+  radius: number;
 }
 
-export class KunPeng extends BossBase {
-  private hole!: IceHole;
-  private fx: KunPengFx | null = null;
-  private kun!: Form;
-  private peng!: Form;
-  private form: FormId = 'kun';
+export class KunPeng extends BossBrain implements DirectedBoss {
+  readonly kdef: KunPengDef;
+  hole!: IceHoleInfo;
+  /** 冰窟从哪来：scene（关卡水体）/ nav（白盒导航）/ fallback（虚拟） */
+  holeSource: 'scene' | 'nav' | 'fallback' = 'fallback';
+  fx: KunPengFx | null = null;
+  kun!: Form;
+  peng!: Form;
+  director: BossIntroDirector | null = null;
+  /** StageDirector 读：登场演出自己打名字卡，不再打横幅 */
+  introDirected = false;
+  readonly introOffset = new THREE.Vector3();
 
   // ── 鲲 ──
-  /** 鲲当前在冰窟的哪个方位（facing 约定，相对冰窟圆心） */
-  private theta = 0;
+  /** 鲲在冰窟的哪个方位（相对圆心的 yaw，度） */
+  theta = 0;
   /** 0 = 露出水面，1 = 完全沉没（视觉） */
-  private sunk = 1;
-  /** 沉在水下：不可选中 */
-  private submerged = false;
-  private nextTheta = 0;
-  private readonly impact = new THREE.Vector3();
-  private readonly mouthPt = new THREE.Vector3();
-  private pullAcc = 0;
-  private inhaleTold = false;
-  private bubbleAcc = 0;
-  private enragedTold = false;
-  private rageTold = false;
+  sunk = 1;
+  /** 沉在水下：不可选中（潜袭） */
+  submerged = false;
+  /** 75% 以下：猛砸连掀两道冰浪、吐冰多一块、喘息 × 0.8 */
+  kunFury = false;
+  /** 平切口一圈最高点离水面多高（米；测试用，正常 ≤ −0.2） */
+  cutTop = -Infinity;
 
   // ── 鹏 ──
-  private hoverAlt = PENG_HOVER;
+  /** 目标高度（离环台地面） */
+  hoverAlt = 13.5;
+  /** 上次落台歇翼之后出过几招（≥ 2 才会落台） */
+  movesSincePerch = 0;
+  /** 转换演出里鹏从雾里升起的偏移（米，负 = 在下面） */
+  riseOffset = 0;
+  perched = false;
+  diving = false;
+
+  // ── 鲛珠 / 演出 ──
+  pearlBright = false;
+  pearlGlow = 0.3;
+  lastAct: string | null = null;
+  private readonly told = new Set<string>();
   private orbit = 0;
-  private orbitDir: 1 | -1 = 1;
+  private orbitDir = 1;
   private orbitTimer = 6;
   private flapPhase = 0;
-  private movesSincePerch = 0;
-  private gustTold = false;
-  private perchTold = false;
-  private swoopStage: SwoopStage = 'aim';
-  private stageT = 0;
-  private swoopsLeft = 1;
-  private readonly swoopFrom = new THREE.Vector3();
-  private swoopYaw = 0;
-  private swoopLen = 20;
-  private swoopTravel = 0;
-  private swoopHit = false;
-  private perchStage: PerchStage = 'approach';
-  private readonly perchAt = new THREE.Vector3();
-  private rainCount = 10;
-  private rainFired = 0;
-  private trailAcc = 0;
-
-  // ── 动画参数（平滑） ──
+  private transPrev = -1;
+  private spreadDone = false;
+  private introRoared = false;
+  // 动画参数（平滑）
   private pRear = 0;
   private pWind = 0;
   private pSlam = 0;
@@ -176,48 +153,74 @@ export class KunPeng extends BossBase {
   private pTuck = 1;
   private pFlap = 1;
   private pPitch = 0;
-  private pearlGlow = 0.3;
-  private riseOffset = 0;
-  private transFired = 0;
-  private transPrev = -1;
-  private entranceRoared = false;
-  private splashAcc = 0;
+  private kRise = 0;
+  // 倒下演出（KunPengDeath）
+  private deathKun = true;
+  private deathStartY = 0;
+  private deathDrop = 0;
+  private deathLanded = false;
+  private deathLingered = false;
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
-    super(ctx, KUNPENG_DEF, opts);
+    const def = new KunPengDef();
+    super(ctx, KUNPENG_DEF, def, opts);
+    this.kdef = def;
     this.displayName = '鲲鹏 · 鲲';
-    this.thresholds = [0.5];
-    this.spawnDuration = 3.0;
-    this.deathDuration = 3.2;
-    this.transitionDuration = 4.6;
-    this.accel = 22;
-    this.registerMoves();
+    this.hoverAlt = def.pengHover;
+    this.accel = def.pengAccel;
   }
 
   // ───────────── 场地 / 模型 ─────────────
 
   override init(): void {
     // 在 BossBase.init（夹到竞技场、登场第一帧）之前就位：刷新点在冰窟哪一侧，鲲就从那一侧第一次探头
-    this.hole = locateIceHole(this.ctx.nav, this.ctx.stage.arena, this.position);
-    const d = Math.hypot(this.position.x - this.hole.center.x, this.position.z - this.hole.center.z);
-    this.theta = d > 0.5 ? holeAngle(this.hole, this.position.x, this.position.z) : 0;
-    this.placeKun(this.theta);
-    this.facing = this.theta;
-    this.position.y = this.hole.center.y;
+    this.hole = this.resolveHole();
+    this.bossCenter.copy(this.hole.center);
+    this.arenaRadius = this.hole.outer + 2;
+    const d = this.hole.distance(this.position);
+    this.theta = d > 0.5 ? this.hole.angle(this.position) : 0;
+    this.orbit = this.theta;
+    this.sunk = 1;
+    this.placeKun();
+    this.setFacingDeg(this.theta);
     this.flyTargetY = this.position.y;
     this.velocity.set(0, 0, 0);
     super.init();
   }
 
-  /** 冰窟半径里鲲身体中心所在的圈 */
-  private kunRing(): number {
-    return Math.max(1, this.hole.radius - KUN_INSET);
+  /** 冰窟：关卡水体（Unity 场景）→ 白盒导航 → 虚拟冰窟（场景文档的首领场 / 竞技场中心） */
+  private resolveHole(): IceHoleInfo {
+    const doc = (this.ctx.stage as unknown as { unityDocument?: { bosses?: SceneBossDoc[] } | null }).unityDocument;
+    const boss = doc?.bosses?.find(b => b.id === KunPengDef.Id) ?? doc?.bosses?.[0] ?? null;
+    const near = boss ? new THREE.Vector3(boss.center[0], boss.floorY, boss.center[2]) : this.position;
+    const water = stageHooks.water?.waterBodies() ?? [];
+    const fromWater = holeFromWater(water, near, boss ? boss.radius : null);
+    if (fromWater) {
+      this.holeSource = 'scene';
+      return fromWater;
+    }
+    if (!boss) {
+      const nav = locateIceHole(this.ctx.nav, this.ctx.stage.arena, this.position);
+      this.holeSource = nav.found ? 'nav' : 'fallback';
+      return nav;
+    }
+    this.holeSource = 'fallback';
+    return IceHoleInfo.fallback(near, boss.radius, this.position);
   }
 
-  private placeKun(theta: number): void {
-    holePoint(this.hole, theta, this.kunRing(), _v);
-    this.position.x = _v.x;
-    this.position.z = _v.z;
+  /** 冰窟半径里鲲身体中心所在的圈 */
+  get kunRing(): number {
+    return Math.max(1, this.hole.radius - this.kdef.kunInset);
+  }
+
+  /** 把鲲钉在冰窟里当前方位（离圆心 kunRing，y = 环台地面） */
+  placeKun(): void {
+    this.hole.point(this.theta, this.kunRing, _v);
+    this.position.set(_v.x, this.hole.floorY, _v.z);
+    if (this.formId !== PENG) {
+      this.flyTargetY = this.position.y;
+      this.velocity.set(0, 0, 0);
+    }
   }
 
   protected override buildModel(): THREE.Object3D {
@@ -237,6 +240,10 @@ export class KunPeng extends BossBase {
     this.kun = { host: kunHost, proc: kp, pose: new ProcPose(kp.joints), native: null, pts: {}, shapes: [] };
     this.peng = { host: pengHost, proc: pp, pose: new ProcPose(pp.joints), native: null, pts: {}, shapes: [] };
     return root;
+  }
+
+  protected override createMove(id: string): BossMove | null {
+    return createKunPengMove(this, id);
   }
 
   protected override onModelReady(): void {
@@ -267,8 +274,8 @@ export class KunPeng extends BossBase {
       { anchor: K.pearl, radius: 0.6, halfHeight: 0, weak: true },
       { anchor: K.head, radius: 2.0, halfHeight: 0, weak: false },
       { anchor: K.snout, radius: 0.9, halfHeight: 0, weak: false },
-      { anchor: K.neck, radius: 2.8, halfHeight: 0, weak: false },
-      { anchor: K.body, radius: 3.0, halfHeight: 0, weak: false },
+      { anchor: K.neck, radius: 2.2, halfHeight: 0, weak: false },
+      { anchor: K.body, radius: this.kdef.kunBodyRadius, halfHeight: 0, weak: false },
     ];
     const P = this.peng.pts;
     this.peng.shapes = [
@@ -280,8 +287,15 @@ export class KunPeng extends BossBase {
       { anchor: P.wingR, radius: 1.6, halfHeight: 0, weak: false },
     ];
     this.useForm('kun');
-    this.fx = new KunPengFx(this.ctx, this.hole);
+    this.fx = new KunPengFx(this.ctx, this.hole, { sceneWater: this.holeSource === 'scene', waterY: this.hole.waterY });
     this.fx.setAgitation(1);
+    if (introEnabled() && kunPengIntro.validate().length === 0) {
+      setIntroHole(this.hole);
+      this.director = new BossIntroDirector(this.ctx, kunPengIntro, this, this.position.clone());
+      this.introHold = this.director;
+      this.introDirected = true;
+    }
+    if (devHookEnabled()) installDevHook(this);
   }
 
   private buildAnchors(f: Form, table: Record<string, { bone: string; at: readonly [number, number, number] }>): void {
@@ -292,7 +306,6 @@ export class KunPeng extends BossBase {
   }
 
   private useForm(id: FormId): void {
-    this.form = id;
     const f = id === 'kun' ? this.kun : this.peng;
     this.kun.host.visible = id === 'kun';
     this.peng.host.visible = id === 'peng';
@@ -301,20 +314,56 @@ export class KunPeng extends BossBase {
     this.muzzleAnchor = id === 'kun' ? f.pts.mouth : f.pts.beak;
   }
 
-  /** 契约 IEnemy.untargetable：BossBase 的登场 / 转换之外，鲲沉在水下时也不可选中 */
-  override get untargetable(): boolean {
-    return super.untargetable || this.submerged;
+  get isKun(): boolean {
+    return this.formId !== PENG;
+  }
+
+  get isPeng(): boolean {
+    return this.formId === PENG;
+  }
+
+  // ───────────── DirectedBoss ─────────────
+
+  get name(): string {
+    return this.kdef.name;
+  }
+
+  get title(): string | null {
+    return this.kdef.title;
+  }
+
+  introOverlay(color: number, amount: number): void {
+    if (amount > 0.001) this.setEmissive(new THREE.Color(color), amount);
+    else this.setEmissive(new THREE.Color(0x000000), 0);
+  }
+
+  get barTicks(): readonly number[] {
+    return this.kdef.barTicks;
+  }
+
+  // ───────────── 契约 ─────────────
+
+  /** 鲲沉在水下时也不可选中 */
+  protected override get extraUntargetable(): boolean {
+    return this.submerged;
+  }
+
+  /** 环台地面（冰窟里的「脚下」是冰窟底，招式都按环台地面结算） */
+  protected override floorY(): number {
+    return this.hole ? this.hole.floorY : super.floorY();
   }
 
   override getBodyCenter(out: THREE.Vector3): THREE.Vector3 {
-    const f = this.form === 'kun' ? this.kun : this.peng;
-    const a = this.form === 'kun' ? f?.pts.neck : f?.pts.chest;
+    const f = this.isKun ? this.kun : this.peng;
+    const a = this.isKun ? f?.pts.neck : f?.pts.chest;
     return a ? a.getWorldPosition(out) : super.getBodyCenter(out);
   }
 
+  // ───────────── 每帧 ─────────────
+
   override update(dt: number): void {
     if (!this.alive) {
-      // 死亡演出由模型完成：逻辑位置钉住（鲲在冰窟的碰撞块里，重力下落会被推到块顶上；鹏的坠落是模型动画）
+      // 倒下演出由模型完成：逻辑位置钉住（鹏的坠落是模型动画）
       _save.copy(this.position);
       super.update(dt);
       this.position.copy(_save);
@@ -323,831 +372,495 @@ export class KunPeng extends BossBase {
       super.update(dt);
     }
     this.fx?.update(dt);
+    if (this.waitingForSpawn || !this.alive) return;
+    if (this.isKun) this.stepKun(dt);
+    else this.stepPeng();
+    // 登场动作期间 EnemyBase 不调 animate（生成缩放那一段）
+    if (!this.introDone && this.age < this.spawnDuration) this.animate(dt);
+    const want = this.pearlBright || this.staggered ? 1 : 0.3;
+    this.pearlGlow += (want - this.pearlGlow) * Math.min(1, dt * 4);
   }
 
-  // ───────────── 招式 ─────────────
-
-  private isKun(): boolean {
-    return this.phase === 0 && this.form === 'kun';
+  /** 鲲：逻辑位置钉在冰窟里；不在潜袭 / 转换 / 登场里时慢慢浮出水面 */
+  private stepKun(dt: number): void {
+    if (this.introDone && !this.transitioning && this.currentMove?.id !== 'dive') this.sunk = Math.max(0, this.sunk - dt * 2);
+    this.placeKun();
   }
 
-  private isPeng(): boolean {
-    return this.phase >= 1 && this.form === 'peng';
+  /** 鹏：竖直追目标高度（招式间隙飞越冰窟时不低于 11.5 m，盘旋时上下起伏 0.5 m） */
+  private stepPeng(): void {
+    const alt = this.currentMove || this.transitioning || this.staggered ? this.hoverAlt : this.overHoleAlt(this.hoverAlt);
+    const low = this.perched || this.diving || this.staggered || alt <= 0.7;
+    const bob = low ? 0 : Math.sin(this.age * 1.3) * 0.5;
+    this.flyTargetY = this.hole.floorY + alt + bob;
   }
 
-  private enraged(): boolean {
-    return this.phase >= 1 && this.phaseFraction() <= 0.25;
+  // ───────────── 给招式用的工具 ─────────────
+
+  get facingDeg(): number {
+    return this.facing / DEG;
   }
 
-  private registerMoves(): void {
-    // ── 鲲 · 吞吸 ──
-    this.addMove({
-      id: 'inhale', cooldown: 11, recovery: 1.2,
-      weight: () => (this.isKun() ? (this.distToPlayerXZ() > 14 ? 3 : 1.8) : 0),
-      start: () => {
-        this.setAnim('inhale', true);
-        this.aimKunAtPlayer(1);
-        this.computeMouth();
-        const yaw = this.facing;
-        this.hazards.sectorWarning(this.mouthPt.x, this.floorY(), this.mouthPt.z, yaw, 0.62, 22, 0.9, WARN);
-        this.ctx.audio.play('telegraph', { position: this.position, pitch: 0.7 });
-        this.ctx.audio.play('enemy_charge', { position: this.position, pitch: 0.5, volume: 0.9 });
-        this.pullAcc = 0;
-        if (!this.inhaleTold) {
-          this.inhaleTold = true;
-          this.ctx.ui.toast('鲲在吞吸——离开它面前的扇形，或者躲到冰柱后面！', '#8fe3ff');
-        }
-      },
-      tick: (t, dt) => {
-        this.stopMoving();
-        this.holdKun();
-        if (t >= 0.9 && t < 3.9) {
-          this.fx?.suction(true, this.mouthPt, this.facing);
-          this.fx?.setAgitation(1);
-          this.pullAcc += dt;
-          while (this.pullAcc >= 0.18) {
-            this.pullAcc -= 0.18;
-            this.pullPlayer();
-          }
-        }
-        if (this.at(3.1)) {
-          this.biteSpot(_v);
-          this.hazards.groundWarning(_v.x, this.floorY(), _v.z, 5.5, 0.8, WARN);
-        }
-        if (this.at(3.9)) {
-          this.fx?.suction(false);
-          this.setAnim('bite', true);
-          this.biteSpot(_v);
-          this.hazards.blast(_v.x, this.floorY(), _v.z, 5.5, 32, { maxHeight: 4, knockback: 13, knockUp: 6 });
-          this.ctx.fx.burst(_w.set(_v.x, this.floorY() + 1, _v.z), ICE, 26, 9, 0.8, 0.35, 10);
-          this.ctx.fx.shake(0.45, 0.35);
-          this.ctx.audio.play('enemy_melee', { position: this.position, pitch: 0.5, volume: 1 });
-          this.ctx.audio.play('boss_slam', { position: this.position, pitch: 1.2, volume: 0.6 });
-        }
-        return t >= 4.6;
-      },
-      end: () => {
-        this.fx?.suction(false);
-        this.fx?.setAgitation(0.35);
-      },
-    }, 2);
-
-    // ── 鲲 · 猛砸冰浪 ──
-    this.addMove({
-      id: 'slam', cooldown: 7, recovery: 1.1,
-      weight: () => (this.isKun() ? 2.6 : 0),
-      start: () => {
-        this.setAnim('slamWind', true);
-        this.aimKunAtPlayer(0.9);
-        const reach = (KUN_INSET + 3.2) * (KUN_SCALE / 1.3);
-        this.impact.set(this.position.x + Math.sin(this.facing) * reach, this.floorY(), this.position.z + Math.cos(this.facing) * reach);
-        const I = this.impact;
-        this.hazards.groundWarning(I.x, I.y, I.z, 5, 1.1, WARN);
-        this.hazards.sectorWarning(I.x, I.y, I.z, this.facing, 0.55, 26, 1.1, WARN);
-        if (this.phaseFraction() <= 0.75) {
-          this.hazards.sectorWarning(I.x, I.y, I.z, this.facing + 0.75, 0.3, 18, 1.1, WARN);
-          this.hazards.sectorWarning(I.x, I.y, I.z, this.facing - 0.75, 0.3, 18, 1.1, WARN);
-        }
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.8, volume: 0.8 });
-      },
-      tick: (t) => {
-        this.stopMoving();
-        this.holdKun();
-        if (this.at(1.1)) {
-          this.setAnim('slam', true);
-          const I = this.impact;
-          this.hazards.blast(I.x, I.y, I.z, 5, 30, { maxHeight: 3, knockback: 9, knockUp: 7 });
-          this.hazards.wave({ x: I.x, y: I.y, z: I.z, speed: 15, maxRadius: 28, damage: 20, color: WARN, startRadius: 2.5,
-            width: 1.2, height: 0.9, arcCenter: this.facing, arcHalf: 0.55, knockback: 9, dust: ICE });
-          if (this.phaseFraction() <= 0.75) {
-            for (const s of [-1, 1]) {
-              this.hazards.wave({ x: I.x, y: I.y, z: I.z, speed: 13, maxRadius: 18, damage: 16, color: WARN, startRadius: 2.5,
-                width: 1.1, height: 0.9, arcCenter: this.facing + 0.75 * s, arcHalf: 0.3, knockback: 8, dust: ICE });
-            }
-          }
-          const fx = this.ctx.fx;
-          fx.explosion(_v.set(I.x, I.y + 0.6, I.z), 4.5, ICE);
-          fx.burst(_v, ICE, 40, 11, 1.0, 0.45, 16);
-          fx.ring(_w.set(I.x, I.y + 0.1, I.z), 9, WARN, 0.7);
-          fx.shake(0.7, 0.5);
-          this.ctx.audio.play('boss_slam', { position: this.position, volume: 1 });
-          this.ctx.audio.play('explosion', { position: this.position, pitch: 0.7, volume: 0.8 });
-        }
-        if (this.phaseFraction() <= 0.75 && this.at(1.55)) {
-          const I = this.impact;
-          this.hazards.wave({ x: I.x, y: I.y, z: I.z, speed: 18, maxRadius: 28, damage: 16, color: WARN, startRadius: 2.5,
-            width: 1.1, height: 0.9, arcCenter: this.facing, arcHalf: 0.55, knockback: 8, dust: ICE });
-          this.ctx.audio.play('boss_slam', { position: this.position, pitch: 1.3, volume: 0.6 });
-        }
-        // 头趴在环台上 0.8 秒（额头鲛珠离地近）后收回
-        if (this.at(1.95)) this.setAnim('idle');
-        return t >= 2.5;
-      },
-    }, 0.5);
-
-    // ── 鲲 · 潜袭（从玩家那一侧破冰而出） ──
-    this.addMove({
-      id: 'dive', cooldown: 9, recovery: 0.8,
-      weight: () => {
-        if (!this.isKun()) return 0;
-        const pl = this.ctx.player.position;
-        const off = Math.abs(angleDiff(this.theta, holeAngle(this.hole, pl.x, pl.z)));
-        return off > 1.2 ? 4 : 1.6;
-      },
-      start: () => {
-        this.setAnim('sink', true);
-        this.ctx.audio.play('boss_slam', { position: this.position, pitch: 0.6, volume: 0.6 });
-        this.bubbleAcc = 0;
-      },
-      tick: (t, dt) => {
-        this.stopMoving();
-        if (t >= 0.5) this.submerged = true;
-        if (this.at(0.7)) {
-          const pl = this.ctx.player.position;
-          this.nextTheta = holeAngle(this.hole, pl.x, pl.z) + this.ctx.rng.range(-0.35, 0.35);
-          holePoint(this.hole, this.nextTheta, this.hole.radius + 1.5, this.impact);
-          this.hazards.groundWarning(this.impact.x, this.floorY(), this.impact.z, 4.5, 1.3, WARN);
-          this.ctx.audio.play('telegraph', { position: this.impact, pitch: 0.6 });
-        }
-        if (t > 0.7 && t < 2.0) {
-          this.bubbleAcc += dt;
-          if (this.bubbleAcc >= 0.12) {
-            this.bubbleAcc = 0;
-            holePoint(this.hole, this.nextTheta, this.hole.radius - 1.5 - Math.random() * 3, _v);
-            _v.y = this.floorY() + 0.3;
-            this.ctx.fx.burst(_v, ICE, 5, 4, 0.6, 0.3, 6);
-          }
-        }
-        if (this.at(1.6)) {
-          // 水下换位：鲲在新方位、面朝冰沿外
-          this.theta = this.nextTheta;
-          this.placeKun(this.theta);
-          this.facing = this.theta;
-          this.flyTargetY = this.position.y;
-        }
-        if (this.at(2.0)) {
-          this.setAnim('erupt', true);
-          this.submerged = false;
-          const I = this.impact;
-          this.hazards.blast(I.x, this.floorY(), I.z, 4.5, 26, { maxHeight: 4, knockback: 10, knockUp: 8 });
-          this.hazards.wave({ x: I.x, y: this.floorY(), z: I.z, speed: 12, maxRadius: 12, damage: 14, color: WARN, startRadius: 2,
-            width: 1, height: 0.85, arcCenter: this.theta, arcHalf: 1.2, knockback: 7, dust: ICE });
-          this.ctx.fx.explosion(_v.set(I.x, this.floorY() + 0.8, I.z), 4, ICE);
-          this.ctx.fx.burst(_v, ICE, 36, 12, 1.0, 0.45, 14);
-          this.ctx.fx.shake(0.55, 0.45);
-          this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.9 });
-        }
-        return t >= 3.0;
-      },
-      end: () => {
-        this.submerged = false;
-        this.setAnim('idle');
-      },
-    }, 6);
-
-    // ── 鲲 · 吐冰 ──
-    this.addMove({
-      id: 'spit', cooldown: 5, recovery: 0.9,
-      weight: () => (this.isKun() && this.distToPlayerXZ() > 12 ? 1.6 : 0),
-      start: () => {
-        this.setAnim('spit', true);
-        this.ctx.audio.play('enemy_charge', { position: this.position, pitch: 0.7 });
-      },
-      tick: (t, dt) => {
-        this.stopMoving();
-        this.holdKun();
-        this.facePlayer(1.2, dt);
-        if (this.at(0.7)) {
-          this.getMuzzle(_a);
-          const pl = this.ctx.player;
-          const n = this.phaseFraction() <= 0.75 ? 4 : 3;
-          for (let i = 0; i < n; i++) {
-            const side = i === 0 ? 0 : (i % 2 ? 1 : -1) * (3.2 + Math.floor((i - 1) / 2) * 3);
-            _b.set(pl.position.x + pl.velocity.x * 0.6, this.floorY(), pl.position.z + pl.velocity.z * 0.6);
-            const yaw = this.yawTo(_b.x, _b.z);
-            _b.x += Math.cos(yaw) * side;
-            _b.z -= Math.sin(yaw) * side;
-            this.clampToRing(_b);
-            this.hazards.lob({ from: _a, to: _b, time: 1.15, arc: 7, radius: 2.6, damage: 16, color: WARN, kind: 'ice', scale: 1.4 });
-          }
-          this.ctx.audio.play('enemy_shot', { position: this.position, pitch: 0.6, volume: 0.9 });
-        }
-        return t >= 1.3;
-      },
-    }, 3);
-
-    // ── 鹏 · 扇翼狂风 ──
-    this.addMove({
-      id: 'gust', cooldown: 12, recovery: 1.2,
-      weight: () => (this.isPeng() ? 2.0 : 0),
-      start: () => {
-        this.setAnim('gust', true);
-        this.hoverAlt = PENG_OVER_HOLE + 1;
-        this.accel = 26;
-        this.movesSincePerch++;
-      },
-      tick: (t, dt) => {
-        const C = this.hole.center;
-        if (t < 1.6) this.moveTo(C, 14, 1);
-        else this.stopMoving();
-        this.facePlayer(2, dt);
-        if (this.at(1.0)) {
-          const o = this.hole.outer;
-          this.hazards.zone({ x: C.x, y: this.floorY(), z: C.z, radius: o + 1, innerRadius: Math.max(this.hole.radius + 4, o - 5),
-            duration: 3.6, arm: 1.0, damage: 8, interval: 0.4, color: GUST, element: 'none', maxHeight: 3, embers: 0xeaf8ff });
-          this.ctx.audio.play('telegraph', { position: this.position, pitch: 0.8 });
-          if (!this.gustTold) {
-            this.gustTold = true;
-            this.ctx.ui.toast('鹏扇起狂风——躲到冰柱后面，别被吹到环台外缘的冻风带里！', '#bfe9ff');
-          }
-        }
-        if (t >= 2.0 && t < 5.4) {
-          this.fx?.gust(true, C, this.hole.radius, this.hole.outer);
-          this.pullAcc += dt;
-          while (this.pullAcc >= 0.18) {
-            this.pullAcc -= 0.18;
-            this.gustPush();
-          }
-          this.trailAcc += dt;
-          if (this.trailAcc >= 0.5) {
-            this.trailAcc = 0;
-            this.ctx.fx.shake(0.12, 0.3);
-            this.ctx.audio.play('enemy_charge', { position: this.position, pitch: 0.4, volume: 0.5 });
-          }
-        }
-        if (this.at(5.4)) this.fx?.gust(false);
-        return t >= 5.8;
-      },
-      end: () => {
-        this.fx?.gust(false);
-        this.hoverAlt = PENG_HOVER;
-        this.accel = 22;
-        this.pullAcc = 0;
-      },
-    }, 1.5);
-
-    // ── 鹏 · 俯冲掠台 ──
-    this.addMove({
-      id: 'swoop', cooldown: 7, recovery: 1.0,
-      weight: () => (this.isPeng() ? (this.distToPlayerXZ() > 10 ? 2.6 : 1.6) : 0),
-      start: () => {
-        this.swoopsLeft = this.enraged() ? 2 : 1;
-        this.movesSincePerch++;
-        this.beginSwoopAim();
-      },
-      tick: (_t, dt) => this.tickSwoop(dt),
-      end: () => {
-        this.accel = 22;
-        this.hoverAlt = PENG_HOVER;
-        this.pDive = 0;
-      },
-    }, 3.5);
-
-    // ── 鹏 · 羽刃雨 ──
-    this.addMove({
-      id: 'rain', cooldown: 9, recovery: 1.0,
-      weight: () => (this.isPeng() ? 2.0 : 0),
-      start: () => {
-        this.setAnim('spread', true);
-        this.hoverAlt = 17;
-        this.rainCount = this.enraged() ? 14 : 10;
-        this.rainFired = 0;
-        this.movesSincePerch++;
-        this.ctx.audio.play('telegraph', { position: this.position, pitch: 1.3 });
-      },
-      tick: (t, dt) => {
-        this.stopMoving();
-        this.facePlayer(2, dt);
-        const t0 = 0.9;
-        while (this.rainFired < this.rainCount && t >= t0 + this.rainFired * 0.11) this.fireFeather(this.rainFired++);
-        return t >= t0 + this.rainCount * 0.11 + 0.6;
-      },
-      end: () => {
-        this.hoverAlt = PENG_HOVER;
-      },
-    }, 5);
-
-    // ── 鹏 · 落台歇翼（输出窗口） ──
-    this.addMove({
-      id: 'perch', cooldown: 14, recovery: 0.6,
-      weight: () => (this.isPeng() && this.movesSincePerch >= 2 ? 3.4 : 0),
-      start: () => {
-        this.perchStage = 'approach';
-        this.stageT = 0;
-        this.setAnim('idle');
-        this.pickPerchSpot();
-        this.hoverAlt = Math.max(9, this.overHoleAlt(9));
-        this.accel = 30;
-      },
-      tick: (_t, dt) => this.tickPerch(dt),
-      end: () => {
-        this.movesSincePerch = 0;
-        this.hoverAlt = PENG_HOVER;
-        this.accel = 22;
-        this.pPerch = 0;
-      },
-    }, 10);
+  setFacingDeg(yawDeg: number): void {
+    this.facing = yawDeg * DEG;
   }
 
-  // ── 鲲：工具 ──
-
-  /** 鲲在冰窟里的位置随 theta 固定；逻辑位置不靠速度移动（白盒里冰窟是碰撞块，零速度时不做碰撞推挤） */
-  private holdKun(): void {
-    this.flyTargetY = this.position.y;
-    this.velocity.set(0, 0, 0);
+  /** 按角速度（度/秒）转向某点 */
+  faceDeg(p: THREE.Vector3, degPerSec: number, dt: number): void {
+    this.faceTowards(p, degPerSec * DEG, dt);
   }
 
-  /** 转向玩家（限制在冰窟外法线方向两侧 0.9 弧度内：鲲不会背对冰沿） */
-  private aimKunAtPlayer(k: number): void {
-    const want = clamp(angleDiff(this.theta, this.yawToPlayer()), -0.9, 0.9);
-    this.facing = this.theta + want * k;
+  /** 首领 → 玩家的 yaw（度） */
+  get yawToPlayerDeg(): number {
+    const p = this.ctx.player.position;
+    const dx = p.x - this.position.x, dz = p.z - this.position.z;
+    return dx * dx + dz * dz > 1e-4 ? Math.atan2(dx, dz) / DEG : this.facingDeg;
   }
 
-  /** 口部投影到地面（吞吸气流的终点） */
-  private computeMouth(): void {
-    const reach = 3.4 * KUN_SCALE;
-    this.mouthPt.set(this.position.x + Math.sin(this.facing) * reach, this.floorY() + 4.2, this.position.z + Math.cos(this.facing) * reach);
+  /** 玩家在冰窟的哪个方位（度） */
+  get playerAngle(): number {
+    return this.hole.angle(this.ctx.player.position);
   }
 
-  /** 吞吸收尾那一口咬在冰沿上的位置 */
-  private biteSpot(out: THREE.Vector3): THREE.Vector3 {
-    const r = KUN_INSET + 1.6;
-    return out.set(this.position.x + Math.sin(this.facing) * r, this.floorY(), this.position.z + Math.cos(this.facing) * r);
+  /** 转向玩家，但不超出冰窟外法线两侧 51.57°（鲲不会背对冰沿）；k = 偏转比例 */
+  aimKunAtPlayer(k: number): void {
+    const lim = this.kdef.kunAimLimit;
+    const want = clamp(deltaAngle(this.theta, this.yawToPlayerDeg), -lim, lim);
+    this.setFacingDeg(this.theta + want * k);
   }
 
-  /** 吞吸：扇形内、看得见（掩体挡气流）的玩家被一阵阵拉向口部 */
-  private pullPlayer(): void {
-    const pl = this.ctx.player;
-    if (!pl.alive) return;
-    const dx = this.mouthPt.x - pl.position.x;
-    const dz = this.mouthPt.z - pl.position.z;
-    const d = Math.hypot(dx, dz);
-    if (d < 0.5 || d > 30) return;
-    const off = Math.abs(angleDiff(this.facing, Math.atan2(-dx, -dz)));
-    if (off > 0.75) return;
-    // 气流从冰沿上方吹过来：从冰沿外 1 米、胸口高度连到玩家胸口，掩体挡住就不受影响
-    this.biteSpot(_a);
-    _a.y = this.floorY() + 1.3;
-    _b.set(pl.position.x, pl.position.y + 1.2, pl.position.z);
-    if (this.ctx.world.segmentBlocked(_a, _b)) return;
-    const k = clamp(1.25 - d / 32, 0.5, 1.1);
-    pl.applyImpulse(_imp.set((dx / d) * 3.4 * k, 0, (dz / d) * 3.4 * k));
+  /** 按角速度把头转向玩家（同样夹在外法线两侧） */
+  turnKunToward(degPerSec: number, dt: number): void {
+    const lim = this.kdef.kunAimLimit;
+    const want = this.theta + clamp(deltaAngle(this.theta, this.yawToPlayerDeg), -lim, lim);
+    this.setFacingDeg(moveTowardsAngle(this.facingDeg, want, degPerSec * dt));
   }
 
-  /** 点夹到环台上（冰窟外 1 米、外缘内 1.5 米） */
-  private clampToRing(p: THREE.Vector3): THREE.Vector3 {
-    const C = this.hole.center;
-    const dx = p.x - C.x;
-    const dz = p.z - C.z;
-    const d = Math.hypot(dx, dz) || 1;
-    const r = clamp(d, this.hole.radius + 1, this.hole.outer - 1.5);
-    p.x = C.x + (dx / d) * r;
-    p.z = C.z + (dz / d) * r;
-    return p;
+  /** 口部投影（吞吸气流的终点）：往前 3.4 × 体型，高 4.2 */
+  mouthPoint(out: THREE.Vector3): THREE.Vector3 {
+    KunPengMath.dir(this.facingDeg, out).multiplyScalar(3.4 * KUN_SCALE).add(this.position);
+    out.y = this.position.y + 4.2;
+    return out;
   }
 
-  // ── 鹏：工具 ──
+  /** 吞吸收尾那一口咬在冰沿上的位置：往前 kunInset + 1.6 */
+  biteSpot(out: THREE.Vector3): THREE.Vector3 {
+    KunPengMath.dir(this.facingDeg, out).multiplyScalar(this.kdef.kunInset + 1.6).add(this.position);
+    out.y = this.hole.floorY;
+    return out;
+  }
+
+  /** 嘴 / 喙（吐冰的出手点） */
+  muzzle(out: THREE.Vector3): THREE.Vector3 {
+    return this.getMuzzle(out);
+  }
+
+  /** 两侧翼尖（鹏的 wing_*_2 锚点） */
+  wingTip(left: boolean, out: THREE.Vector3): THREE.Vector3 {
+    return this.peng.pts[left ? 'wingL' : 'wingR'].getWorldPosition(out);
+  }
+
+  talons(out: THREE.Vector3): THREE.Vector3 {
+    return this.peng.pts.talons.getWorldPosition(out);
+  }
+
+  chest(out: THREE.Vector3): THREE.Vector3 {
+    return this.peng.pts.chest.getWorldPosition(out);
+  }
+
+  /** 玩家 lead 秒后的位置（按当前速度） */
+  predict(lead: number, out: THREE.Vector3): THREE.Vector3 {
+    const p = this.ctx.player;
+    return out.copy(p.position).addScaledVector(p.velocity, lead);
+  }
+
+  /** 这一帧往 target 飞（水平，speed 米/秒，arrive 米内减速）；返回是否已到 */
+  flyTo(target: THREE.Vector3, speed: number, arrive: number): boolean {
+    const dx = target.x - this.position.x, dz = target.z - this.position.z;
+    const dist = Math.hypot(dx, dz);
+    if (dist < 1e-3) {
+      this.stopMoving();
+      return true;
+    }
+    const v = speed * Math.min(1, dist / Math.max(0.5, arrive * 2));
+    this.setMove(dx, dz, Math.max(v, Math.min(speed, 2)));
+    return dist <= arrive;
+  }
+
+  /** 这一帧按给定的水平速度飞（俯冲） */
+  flyVelocityTo(vx: number, vz: number): void {
+    this.setMove(vx, vz, Math.hypot(vx, vz));
+  }
+
+  hover(): void {
+    this.stopMoving();
+  }
 
   /** 飞越冰窟上空时至少多高 */
-  private overHoleAlt(alt: number): number {
-    const d = Math.hypot(this.position.x - this.hole.center.x, this.position.z - this.hole.center.z);
-    return d < this.hole.radius + this.radius + 1 && this.hole.found ? Math.max(alt, PENG_OVER_HOLE) : alt;
+  overHoleAlt(alt: number): number {
+    return this.hole.found && this.hole.distance(this.position) < this.hole.radius + this.radius + 1 ? Math.max(alt, this.kdef.pengOverHole) : alt;
   }
 
-  /** 狂风：冰窟上空吹向外缘；冰柱 / 矮墙后面不受风 */
-  private gustPush(): void {
-    const pl = this.ctx.player;
-    if (!pl.alive) return;
-    const C = this.hole.center;
-    const dx = pl.position.x - C.x;
-    const dz = pl.position.z - C.z;
-    const d = Math.hypot(dx, dz);
-    if (d < 1) return;
-    // 风从冰沿上空横扫环台：从玩家方向的冰沿外 0.5 米、2 米高连到玩家胸口，冰柱 / 矮墙挡住就不受风
-    holePoint(this.hole, Math.atan2(dx, dz), this.hole.radius + 0.5, _a);
-    _a.y = this.floorY() + 2;
-    _b.set(pl.position.x, pl.position.y + 1.2, pl.position.z);
-    if (d > this.hole.radius + 1 && this.ctx.world.segmentBlocked(_a, _b)) return;
-    pl.applyImpulse(_imp.set((dx / d) * 3.6, 0, (dz / d) * 3.6));
+  /** 某点正下方的地面（打不到时：冰窟上空 −∞，否则环台地面） */
+  groundBelow(p: THREE.Vector3): number {
+    const from = Math.max(p.y, this.hole.floorY) + 3;
+    const g = this.ctx.world.groundHeight(p.x, p.z, from, 0);
+    if (Number.isFinite(g) && g > this.hole.floorY - 12) return g;
+    return this.hole.overHole(p) ? -Infinity : this.hole.floorY;
   }
 
-  private beginSwoopAim(): void {
-    this.swoopStage = 'aim';
-    this.stageT = 0;
-    this.setAnim('swoopReady', true);
-    // 俯冲线：过玩家、沿环台切线方向；离冰窟太近就整条线外移，两端都留在环台内
-    const pl = this.ctx.player.position;
-    const C = this.hole.center;
-    let ra = holeAngle(this.hole, pl.x, pl.z);
-    let rp = Math.hypot(pl.x - C.x, pl.z - C.z);
-    if (!(rp > 0.5)) { ra = this.facing; rp = this.hole.radius + 3; }
-    rp = clamp(rp, this.hole.radius + 3, this.hole.outer - 4);
-    const tangent = ra + (this.ctx.rng.next() < 0.5 ? Math.PI / 2 : -Math.PI / 2);
-    const half = Math.min(16, Math.sqrt(Math.max(4, (this.hole.outer - 3) ** 2 - rp * rp)));
-    holePoint(this.hole, ra, rp, _v);
-    this.swoopYaw = tangent;
-    this.swoopFrom.set(_v.x - Math.sin(tangent) * half, this.floorY(), _v.z - Math.cos(tangent) * half);
-    this.swoopLen = half * 2;
-    this.hoverAlt = this.overHoleAlt(PENG_OVER_HOLE + 0.5);
-    this.accel = 40;
-    this.ctx.audio.play('enemy_alert', { position: this.position, pitch: 0.7 });
+  /**
+   * 鹏脚下（整个碰撞方块范围内）最高的地面：平地 = 环台地面，压到祭台 / 冰柱时 = 台顶。
+   * Unity 是脚印圆上 9 根射线；网页用碰撞世界的方形脚底查询（边长 2 × 脚印半径，包住整个圆，夹在两根射线之间的台角也算上）
+   */
+  groundUnder(p: THREE.Vector3, footprint = -1): number {
+    const r = footprint > 0 ? footprint : this.radius * 0.85;
+    const top = this.hole.floorY + 8;
+    const g = this.ctx.world.groundHeight(p.x, p.z, top, r);
+    return Number.isFinite(g) && g < top ? Math.max(this.hole.floorY, g) : this.hole.floorY;
   }
 
-  private tickSwoop(dt: number): boolean {
-    this.stageT += dt;
-    const F = this.swoopFrom;
-    if (this.swoopStage === 'aim') {
-      const arrived = this.moveTo(F, 22, 2.5);
-      this.faceTowards(F, 4, dt);
-      if (arrived || this.stageT > 1.8) {
-        this.swoopStage = 'tele';
-        this.stageT = 0;
-        this.stopMoving();
-        this.hoverAlt = 7;
-        this.hazards.lineWarning(F.x, this.floorY(), F.z, this.swoopYaw, this.swoopLen, 2.3, 0.9, WARN);
-        this.ctx.audio.play('telegraph', { position: this.position });
-      }
-      return false;
-    }
-    if (this.swoopStage === 'tele') {
-      this.stopMoving();
-      this.facing = rotateTowards(this.facing, this.swoopYaw, 5 * dt);
-      if (this.stageT >= 0.9) {
-        this.swoopStage = 'dive';
-        this.stageT = 0;
-        this.swoopTravel = 0;
-        this.swoopHit = false;
-        this.accel = 90;
-        this.hoverAlt = 0.6;
-        this.velocity.y = Math.min(this.velocity.y, -10);
-        this.setAnim('dive', true);
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.5, volume: 0.8 });
-        this.peng.pts.talons.getWorldPosition(_prev);
-      }
-      return false;
-    }
-    if (this.swoopStage === 'dive') {
-      this.setMove(Math.sin(this.swoopYaw), Math.cos(this.swoopYaw), 26);
-      this.facing = this.swoopYaw;
-      this.swoopTravel += Math.hypot(this.velocity.x, this.velocity.z) * dt;
-      // 判定：从双爪到胸口的一段（随俯冲姿势倾斜），加上这一帧双爪扫过的路径
-      this.peng.pts.talons.getWorldPosition(_a);
-      this.peng.pts.chest.getWorldPosition(_b);
-      if (!this.swoopHit && (this.hazards.segmentHitsPlayer(_a, _b, 1.6) || this.hazards.segmentHitsPlayer(_prev, _a, 1.6))) {
-        this.swoopHit = true;
-        this.hazards.hurt(30, 'none', this.position);
-        this.ctx.player.applyImpulse(_imp.set(Math.sin(this.swoopYaw) * 12, 6, Math.cos(this.swoopYaw) * 12));
-        this.ctx.fx.shake(0.5, 0.35);
-        this.ctx.audio.play('enemy_melee', { position: this.position, pitch: 0.7 });
-      }
-      _prev.copy(_a);
-      this.trailAcc += dt;
-      if (this.trailAcc >= 0.05) {
-        this.trailAcc = 0;
-        this.ctx.fx.burst(_a, ICE, 4, 2, 0.6, 0.35, -1);
-      }
-      const crashed = this.moveResult.hitWall && this.stageT > 0.2;
-      if (this.swoopTravel >= this.swoopLen || crashed || this.stageT > 2.6) {
-        this.stageT = 0;
-        this.stopMoving();
-        this.accel = 22;
-        if (crashed) {
-          this.swoopStage = 'crash';
-          this.setAnim('crash', true);
-          this.hoverAlt = 0;
-          this.ctx.fx.shake(0.5, 0.4);
-          this.ctx.fx.burst(_a, ICE, 24, 8, 0.9, 0.4, 12);
-          this.ctx.audio.play('boss_slam', { position: this.position, pitch: 1.1 });
-        } else {
-          this.swoopStage = 'recover';
-          this.setAnim('idle');
-          this.hoverAlt = PENG_HOVER;
-        }
-      }
-      return false;
-    }
-    this.stopMoving();
-    this.facePlayer(2.5, dt);
-    const wait = this.swoopStage === 'crash' ? 1.8 : 0.6;
-    if (this.stageT >= wait) {
-      this.swoopsLeft--;
-      if (this.swoopsLeft > 0) {
-        this.beginSwoopAim();
-        return false;
-      }
-      return true;
+  /** 冰窟边缘段（Unity 的 rimRoot：气流和狂风越过它）：冰窟半径外 3.2 m 以内的碰撞 */
+  private isRim(p: THREE.Vector3): boolean {
+    return this.hole.found && this.hole.distance(p) < this.hole.radius + 3.2 && p.y < this.hole.floorY + 2.6;
+  }
+
+  /** 从 a 到 b 被地形 / 建筑挡住（冰柱、矮墙、祭台）：忽略冰窟边缘段 */
+  coverBlocks(a: THREE.Vector3, b: THREE.Vector3): boolean {
+    _v.copy(a);
+    for (let k = 0; k < 4; k++) {
+      _dir.subVectors(b, _v);
+      const len = _dir.length();
+      if (len < 0.05) return false;
+      _dir.divideScalar(len);
+      if (!this.ctx.world.raycast(_v, _dir, len - 0.01, _hit)) return false;
+      if (!this.isRim(_hit.point)) return true;
+      _v.copy(_hit.point).addScaledVector(_dir, 0.05);
     }
     return false;
   }
 
-  private fireFeather(i: number): void {
-    const pl = this.ctx.player;
-    const tip = this.peng.pts[i % 2 ? 'wingL' : 'wingR'];
-    tip.getWorldPosition(_a);
-    if (i < 3) {
-      const lead = 0.6 + i * 0.25;
-      _b.set(pl.position.x + pl.velocity.x * lead, this.floorY(), pl.position.z + pl.velocity.z * lead);
-    } else {
-      const a = this.ctx.rng.range(0, TAU);
-      const r = 2.5 + this.ctx.rng.range(0, 7);
-      _b.set(pl.position.x + Math.sin(a) * r, this.floorY(), pl.position.z + Math.cos(a) * r);
+  /** 从 origin 沿 dir 看 dist 米内第一处陡面（法线朝上分量 < 0.5，不算冰窟边缘段）离多远；没有 = ∞ */
+  steepAhead(origin: THREE.Vector3, dir: THREE.Vector3, dist: number): number {
+    _w.copy(origin);
+    let travelled = 0;
+    for (let k = 0; k < 4 && travelled < dist; k++) {
+      if (!this.ctx.world.raycast(_w, dir, dist - travelled, _hit)) return Infinity;
+      if (_hit.normal.y < 0.5 && !this.isRim(_hit.point) && _hit.distance > 0) return travelled + _hit.distance;
+      travelled += _hit.distance + 0.05;
+      _w.copy(_hit.point).addScaledVector(dir, 0.05);
     }
-    if (this.hole.found) this.clampToRing(_b);
-    const dur = 1.05;
-    const to = _b.clone();
-    const ok = this.fx?.launchFeather(_a, to, dur, (p) => {
-      if (!this.alive) return;
-      this.hazards.blast(p.x, p.y, p.z, 2.1, 15, { maxHeight: 2.2, knockback: 4, knockUp: 3 });
-      this.ctx.fx.burst(_v.set(p.x, p.y + 0.3, p.z), ICE, 10, 6, 0.6, 0.3, 14);
-      this.ctx.audio.play('enemy_shot', { position: _v, pitch: 1.6, volume: 0.45 });
-    });
-    if (ok) {
-      this.hazards.groundWarning(to.x, to.y, to.z, 2.1, dur, WARN, 'hazard');
-      if (i % 3 === 0) this.ctx.audio.play('enemy_shot', { position: this.position, pitch: 1.3, volume: 0.5 });
+    return Infinity;
+  }
+
+  /** 每场第一次的提示（同一件事只说一次） */
+  tellOnce(key: string, text: string, color: string): void {
+    if (!key || this.told.has(key)) return;
+    this.told.add(key);
+    this.ctx.ui.toast(text, color);
+  }
+
+  /** 播一个动作（程序化姿势按名字切换） */
+  override playAct(state: string, _seconds: number): void {
+    if (!state) return;
+    this.lastAct = state;
+    this.setAnim(state, true);
+  }
+
+  // ───────────── 框架钩子 ─────────────
+
+  protected override introTick(t: number, dt: number): void {
+    // 鲲从冰窟里升起：水面翻涌、冰沿炸起冰屑，升到一半时吼叫
+    this.sunk = 1 - easeOutCubic(span(t, 0.1, 0.8));
+    this.aimKunAtPlayer(0.5);
+    if (t < 0.8 && dt > 0 && Math.random() < dt / 0.08) {
+      const p = this.hole.point(this.theta + (Math.random() * 2 - 1) * 23, this.kunRing + Math.random() * 3, _v);
+      p.y = this.hole.waterY + 0.3;
+      this.ctx.fx.burst(p, ICE, 6, 6, 0.7, 0.35, 10);
     }
+    if (t >= 0.72 && !this.introRoared) {
+      this.introRoared = true;
+      this.playAct('roar', 2.4);
+      this.playSfx('boss_roar', 1, 0.75);
+      const ring = this.hole.point(this.theta, this.hole.radius + 1, _v);
+      this.ctx.fx.ring(ring.setY(this.hole.floorY + 0.1), 12, WARN, 1);
+      this.quake(0.6, 1);
+    }
+  }
+
+  protected override onIntroEnd(): void {
+    this.playAct('idle', 1);
+    this.fx?.setAgitation(0.35);
+    // 名字卡已由登场打过，这里补一条弱点提示
+    this.tellOnce('intro', '北冥之鲲——它会从冰窟各处探头，额头的鲛珠是弱点', '#8fe3ff');
+  }
+
+  /** 招式间隙：鲲在冰窟里慢慢绕到玩家那一侧、转头盯着玩家；鹏绕冰窟盘旋（环台中线上空），隔 5–9 s 掉头 */
+  protected override idleMove(dt: number): void {
+    const d = this.kdef;
+    if (this.isKun) {
+      this.theta = moveTowardsAngle(this.theta, this.playerAngle, d.kunCircleRate * dt);
+      this.placeKun();
+      this.turnKunToward(d.kunTurnRate, dt);
+      return;
+    }
+    this.orbitTimer -= dt;
+    if (this.orbitTimer <= 0) {
+      this.orbitDir = -this.orbitDir;
+      this.orbitTimer = this.ctx.rng.range(d.pengOrbitFlip[0], d.pengOrbitFlip[1]);
+    }
+    this.orbit += this.orbitDir * d.pengOrbitRate * dt;
+    this.flyTo(this.hole.point(this.orbit, this.hole.midRing, _v), this.kdef.speed * 0.95, 1.5);
+    this.faceDeg(this.ctx.player.position, 126, dt);
+    this.hoverAlt = this.overHoleAlt(d.pengHover);
+  }
+
+  protected override passiveTick(): void {
+    // 鹏狂怒（25%）：只在鹏形态（鲲形态的刻度只画在血条上）
+    if (this.isPeng && !this.enraged && this.phaseFraction() <= KunPengDef.RageAt) this.enrage('health');
+    const id = this.currentMove?.id;
+    this.fx?.setAgitation(this.isKun ? (id === 'inhale' || id === 'dive' ? 1 : 0.35) : 0.25);
+  }
+
+  protected override onMark(id: string): void {
+    if (id !== KunPengDef.FuryMark || this.kunFury) return;
+    this.kunFury = true;
+    // 鲲怒：鲲的招式喘息 × 0.8，猛砸连掀两道冰浪、吐冰多一块（招式里读 kunFury）
+    for (const m of this.moveList) if (m.forms?.includes(KunPengDef.KunForm)) m.recovery *= 0.8;
+    if (this.isKun) this.tellOnce('fury', '鲲怒了——猛砸会连掀两道冰浪', '#8fe3ff');
+  }
+
+  protected override onPhase(): void {
+    this.transPrev = -1;
+    this.spreadDone = false;
+    this.submerged = false;
+    this.fx?.suction(false);
+    this.fx?.gust(false);
+    this.fx?.setAgitation(1);
   }
 
   /**
-   * 落台点：玩家所在方位往一侧偏 0.55–1.1 弧度的环台中线。优先选脚下（鹏的碰撞方块那么大）全是平地的点——
-   * 东西两座 2.5 米祭台和台阶不落；实在找不到平地，就按实际落脚高度（祭台顶）结算落地冲击和预警。
+   * 化鹏：0.6–1.4 s 鲲边吼边沉，冰窟卷成漩涡 → 1.3 s「水击三千里」：冰爆、整圈冰浪推到外缘 → 1.4 s 冰窟中心拔起扶摇柱（到 3.4 s）；
+   * 框架在 1.55 s 换模型 → 鹏从水下 14 m 在柱里升起 → 3.6 s 展翅：柱子炸散成风环 + 雪羽，长啸。冰雾 1.2–2.6 s 最浓
    */
-  private pickPerchSpot(): void {
-    const pl = this.ctx.player.position;
-    const floor = this.floorY();
-    const side = this.ctx.rng.sign();
-    const base = holeAngle(this.hole, pl.x, pl.z);
-    const first = this.ctx.rng.range(0.55, 1.1);
-    const foot = this.radius * 0.85 + 0.3;
-    let fallback = false;
-    for (const off of [first, first + 0.35, first - 0.3, first + 0.7, -first, -first - 0.35, first + 1.1, -first + 0.3]) {
-      holePoint(this.hole, base + side * off, (this.hole.radius + this.hole.outer) / 2, _v);
-      if (!this.ctx.nav.nearestWalkable(_v, _w)) _w.copy(_v);
-      const gy = this.ctx.world.groundHeight(_w.x, _w.z, floor + 8, foot);
-      const top = Number.isFinite(gy) ? Math.max(gy, floor) : floor;
-      // （foot 比碰撞方块略宽：落点离祭台 / 冰柱留 0.3 米余量）
-      if (!fallback) {
-        this.perchAt.set(_w.x, top, _w.z);
-        fallback = true;
-      }
-      if (top - floor < 0.3) {
-        this.perchAt.set(_w.x, top, _w.z);
-        return;
-      }
-    }
-  }
-
-  /** 鹏脚下（整个碰撞方块范围内）最高的地面：平地 = floorY，压到祭台 / 冰柱时 = 台顶 */
-  private groundUnder(x: number, z: number): number {
-    const floor = this.floorY();
-    const gy = this.ctx.world.groundHeight(x, z, floor + 8, this.radius * 0.85);
-    return Number.isFinite(gy) ? Math.max(floor, gy) : floor;
-  }
-
-  private tickPerch(dt: number): boolean {
-    this.stageT += dt;
-    const L = this.perchAt;
-    if (this.perchStage === 'approach') {
-      this.hoverAlt = this.overHoleAlt(9);
-      const arrived = this.moveTo(L, 16, 1.2);
-      this.faceTowards(L, 3, dt);
-      if (arrived || this.stageT > 3) {
-        this.perchStage = 'descend';
-        this.stageT = 0;
-        this.stopMoving();
-        // 就地落下（离落点不远时以自己脚下为准），落地冲击按脚下实际的地面高度结算（平地，或万不得已时的祭台顶）
-        const floor = this.floorY();
-        if (Math.hypot(this.position.x - L.x, this.position.z - L.z) < 2.5) {
-          L.x = this.position.x;
-          L.z = this.position.z;
-        }
-        L.y = this.groundUnder(L.x, L.z);
-        this.hoverAlt = L.y - floor;
-        // 收住冲过头的速度：就地垂直落下，不往前滑出预警圈
-        this.velocity.x *= 0.25;
-        this.velocity.z *= 0.25;
-        this.hazards.groundWarning(L.x, L.y, L.z, 5, 0.9, WARN);
-        this.ctx.audio.play('telegraph', { position: L, pitch: 0.9 });
-      }
-      return false;
-    }
-    this.stopMoving();
-    if (this.perchStage === 'descend') {
-      this.facePlayer(2, dt);
-      this.moveTo(L, 6, 0.3);
-      if (this.stageT >= 0.9) {
-        this.perchStage = 'rest';
-        this.stageT = 0;
-        this.setAnim('perch', true);
-        // 落地冲击在实际落脚处、按脚下实际的地面高度结算
-        L.set(this.position.x, this.groundUnder(this.position.x, this.position.z), this.position.z);
-        this.hazards.blast(L.x, L.y, L.z, 5, 18, { maxHeight: 3, knockback: 9, knockUp: 4 });
-        this.hazards.wave({ x: L.x, y: L.y, z: L.z, speed: 12, maxRadius: 11, damage: 10, color: WARN, startRadius: 3, width: 0.9, height: 0.8, knockback: 6, dust: ICE });
-        this.ctx.fx.shake(0.55, 0.4);
-        this.ctx.fx.burst(_v.set(L.x, L.y + 0.5, L.z), ICE, 30, 9, 0.9, 0.4, 12);
-        this.ctx.audio.play('boss_slam', { position: L, pitch: 0.9 });
-        if (!this.perchTold) {
-          this.perchTold = true;
-          this.ctx.ui.toast('鹏落台歇翼——趁现在打它额头的鲛珠！', '#ffe08a');
-        }
-      }
-      return false;
-    }
-    if (this.perchStage === 'rest') {
-      this.facePlayer(0.8, dt);
-      if (this.stageT >= 4.0 && this.stageT - dt < 4.0) {
-        this.hazards.groundWarning(L.x, L.y, L.z, 7, 0.8, WARN);
-        this.ctx.audio.play('telegraph', { position: L, pitch: 1.1 });
-      }
-      if (this.stageT >= 4.8) {
-        this.perchStage = 'takeoff';
-        this.stageT = 0;
-        this.setAnim('takeoff', true);
-        this.hazards.blast(L.x, L.y, L.z, 7, 14, { maxHeight: 4, knockback: 13, knockUp: 5 });
-        this.ctx.fx.ring(_v.set(L.x, L.y + 0.1, L.z), 8, GUST, 0.6);
-        this.ctx.fx.burst(_v.set(L.x, L.y + 1, L.z), ICE, 26, 10, 0.8, 0.4, 4);
-        this.ctx.audio.play('boss_roar', { position: L, pitch: 1.3, volume: 0.8 });
-        this.hoverAlt = PENG_HOVER;
-      }
-      return false;
-    }
-    return this.stageT >= 0.8;
-  }
-
-  // ───────────── 阶段 ─────────────
-
-  protected override onPhase(_phase: number): void {
-    this.transFired = 0;
-    this.transPrev = -1;
-    this.submerged = false;
-    this.fx?.suction(false);
-    this.fx?.setAgitation(1);
-    this.setAnim('roar', true);
-    this.ctx.ui.toast('鲲沉入冰窟——北冥要炸开了！', '#8fe3ff');
-  }
-
   protected override transitionTick(t: number, dt: number): void {
     const was = this.transPrev;
     this.transPrev = t;
     const crossed = (x: number): boolean => was < x && t >= x;
-    const C = this.hole.center;
-    if (this.form === 'kun') {
-      this.holdKun();
+    const c = this.hole.center;
+    const water = _w.set(c.x, this.hole.waterY, c.z);
+    if (this.isKun) {
+      this.placeKun();
       this.aimKunAtPlayer(0.6);
       this.sunk = span(t, 0.6, 1.4);
     }
-    if (crossed(1.3)) {
-      // 冰海炸开：整圈冰浪 + 冰屑冲天
-      const fx = this.ctx.fx;
-      fx.explosion(_v.set(C.x, C.y + 1.5, C.z), Math.max(6, this.hole.radius * 0.6), ICE);
-      fx.burst(_v, ICE, 60, 16, 1.4, 0.6, 12);
-      fx.burst(_v.set(C.x, C.y + 4, C.z), 0xffffff, 40, 10, 1.6, 0.8, -2);
-      fx.shake(0.85, 1.0);
-      this.hazards.wave({ x: C.x, y: C.y, z: C.z, speed: 16, maxRadius: this.hole.outer + 2, damage: 10, color: WARN,
-        startRadius: this.hole.radius, width: 1.2, height: 1.0, knockback: 8, dust: ICE });
-      this.ctx.audio.play('explosion', { position: C, pitch: 0.55, volume: 1 });
-      this.ctx.audio.play('shield_break', { position: C, pitch: 0.5, volume: 1 });
+    const fx = this.ctx.fx;
+    if (crossed(0.6)) {
+      // 北冥漩涡：鲲往下沉，水面跟着卷
+      fx.ring(water, Math.max(4, this.hole.radius * 0.85), WARN, 1.4);
+      fx.ring(water, Math.max(3, this.hole.radius * 0.5), 0xeefcff, 1.2);
     }
-    // 冰雾爆闪：1.2 → 1.55 涌满，保持到 2.6，4.0 散尽
+    if (t > 0.6 && t < 1.4 && Math.random() < dt / 0.05) {
+      const a = t * 9 + Math.random(), r = this.hole.radius * (0.85 - 0.6 * span(t, 0.6, 1.4)) * Math.random();
+      fx.burst(_v.set(c.x + Math.sin(a) * r, this.hole.waterY + 0.1, c.z + Math.cos(a) * r), 0xeefcff, 3, 2, 0.6, 0.22, 3);
+    }
+    if (crossed(1.3)) {
+      // 水击三千里（释放帧）：冰爆 + 水柱、整圈冰浪推到外缘
+      fx.explosion(_v.set(c.x, c.y + 1.5, c.z), clamp(this.hole.radius * 0.6, 6, 8), ICE);
+      fx.burst(_v, ICE, 60, 16, 1.4, 0.6, 12);
+      fx.burst(_v.set(c.x, c.y + 4, c.z), 0xffffff, 40, 10, 1.6, 0.8, -2);
+      for (let i = 0; i < 12; i++) {
+        const p = this.hole.point(i * 30, this.hole.radius - 0.5, _v);
+        fx.burst(p.setY(this.hole.waterY + 0.5), 0xeefcff, 10, 7, 0.9, 0.35, 9);
+      }
+      this.quake(0.85, 1, 90);
+      this.hazards.wave({
+        x: c.x, y: c.y, z: c.z, speed: 16, maxRadius: this.hole.outer + 2, damage: this.moveDamage(10 / Math.max(1, this.bdef.damage)), color: WARN,
+        startRadius: this.hole.radius, width: 1.2, height: 1, knockback: 8, dust: ICE,
+      });
+      this.playSfx('explosion', 1, 0.55);
+      this.playSfx('shield_break', 1, 0.5);
+    }
+    // 扶摇柱：螺旋上升的风线（到展翅为止）
+    if (t > 1.4 && t < 3.4 && !this.spreadDone && Math.random() < dt / 0.03) {
+      const a = t * 7 + Math.random() * TAU, h = (t - 1.4) * 12 * Math.random();
+      fx.burst(_v.set(c.x + Math.sin(a) * 6, this.hole.waterY + h, c.z + Math.cos(a) * 6), 0xeaf8ff, 2, 3, 0.6, 0.22, -4);
+    }
     const fog = t < 1.2 ? 0 : t < 1.55 ? (t - 1.2) / 0.35 : t < 2.6 ? 1 : Math.max(0, 1 - (t - 2.6) / 1.4);
     this.fx?.flash(fog);
-    if (crossed(1.55)) this.swapToPeng();
-    if (this.form === 'peng') {
-      // 鹏从雾里升起
-      this.riseOffset = -14 * (1 - easeOutCubic(span(t, 1.55, 4.0)));
-      this.facePlayer(1.5, dt);
-      this.hoverAlt = PENG_OVER_HOLE + 1;
+    if (this.isPeng) {
+      this.riseOffset = -14 * (1 - easeOutCubic(span(t, KunPengDef.TransitionSwap, 3.4)));
+      this.faceDeg(this.ctx.player.position, 86, dt);
+      this.hoverAlt = this.kdef.pengOverHole + 1;
     }
-    if (crossed(3.6)) {
-      this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.45, volume: 1 });
-      this.ctx.fx.shake(0.4, 0.8);
-      this.getBodyCenter(_v);
-      this.ctx.fx.burst(_v, ICE, 30, 10, 1.0, 0.4, 0);
-    }
-    if (t >= this.transitionDuration - dt * 1.5) {
-      this.riseOffset = 0;
-      this.fx?.flash(0);
+    if (crossed(3.6) && this.isPeng && !this.spreadDone) this.spreadBurst();
+    if (crossed(3.65)) {
+      this.playSfx('boss_roar', 1, 1.45);
+      this.quake(0.4, 0.8);
     }
   }
 
-  /** 化鹏：在冰雾最浓的一刻换模型（期间不可选中） */
-  private swapToPeng(): void {
-    const C = this.hole.center;
+  /** 化而为鸟的展翅（释放帧）：扶摇柱炸散成一圈风环 + 雪羽、白闪 */
+  private spreadBurst(): void {
+    if (this.spreadDone) return;
+    this.spreadDone = true;
+    const c = this.getBodyCenter(_v);
+    this.ctx.fx.burst(c, ICE, 30, 10, 1.0, 0.4, 0);
+    this.ctx.fx.burst(c, 0xffffff, 24, 14, 0.6, 0.3, 0);
+    this.ctx.fx.ring(c, 14, KunPengDef.Gust, 0.8);
+    this.ctx.fx.ring(_w.set(c.x, this.hole.waterY + 0.1, c.z), 18, KunPengDef.Gust, 1);
+    this.quake(0.5, 0.5);
+  }
+
+  protected override onTransitionEnd(_phase: BossPhaseDef): void {
+    this.riseOffset = 0;
+    this.fx?.flash(0);
+    if (this.isPeng) this.hoverAlt = this.kdef.pengHover;
+  }
+
+  /** 换形（框架在 1.55 s 换）：换模型、鹏落在冰窟正上方 12.5 m、从水下 14 m 升起；护盾重凝、第一招狂风由形态定义给 */
+  protected override onFormChanged(_prev: BossFormDef | null, next: BossFormDef): void {
+    this.diving = this.perched = false;
+    if (next.id !== PENG) return;
+    const d = this.kdef;
+    const c = this.hole.center;
     this.useForm('peng');
     this.sunk = 1;
-    this.position.set(C.x, this.floorY() + PENG_OVER_HOLE + 1, C.z);
+    const alt = d.pengOverHole + 1;
+    this.position.set(c.x, this.hole.floorY + alt, c.z);
     this.velocity.set(0, 0, 0);
     this.flyTargetY = this.position.y;
-    this.hoverAlt = PENG_OVER_HOLE + 1;
+    this.hoverAlt = alt;
     this.riseOffset = -14;
-    this.orbit = holeAngle(this.hole, this.ctx.player.position.x, this.ctx.player.position.z) + Math.PI;
+    this.orbit = this.playerAngle + 180;
+    this.accel = d.pengAccel;
+    const left = this.bdef.phases.length > 0 ? Math.max(0.5, this.bdef.phases[0].seconds - KunPengDef.TransitionSwap) : 3;
+    this.playAct('roar', left);
     this.displayName = '鲲鹏 · 鹏';
-    // 化身后护盾重凝六成
-    this.shield = Math.max(this.shield, this.maxShield * 0.6);
     this.ctx.ui.setBoss(this);
-    this.ctx.ui.toast('北冥之鲲化而为鹏——它累了会落到环台上歇翼，额头的鲛珠仍是弱点', '#bfe9ff');
     this.fx?.setAgitation(0.5);
-    this.queueMove('gust');
+    this.tellOnce('peng', '北冥之鲲化而为鹏——它累了会落到环台上歇翼，额头的鲛珠仍是弱点', '#bfe9ff');
   }
 
-  protected override restFactor(): number {
-    if (this.phase === 0) return this.phaseFraction() <= 0.75 ? 0.8 : 1;
-    return this.enraged() ? 0.7 : 0.9;
+  protected override onStaggered(): void {
+    this.diving = false;
+    if (this.isPeng) this.hoverAlt = Math.max(0, this.groundUnder(this.position) - this.hole.floorY);
   }
 
-  // ───────────── 常规行为 ─────────────
-
-  protected override idle(dt: number): void {
-    if (this.form === 'kun') {
-      // 在冰窟里慢慢绕到玩家那一侧，转头盯着玩家
-      this.stopMoving();
-      const pl = this.ctx.player.position;
-      this.theta = rotateTowards(this.theta, holeAngle(this.hole, pl.x, pl.z), 0.12 * dt);
-      this.placeKun(this.theta);
-      this.holdKun();
-      const want = this.theta + clamp(angleDiff(this.theta, this.yawToPlayer()), -0.9, 0.9);
-      this.facing = rotateTowards(this.facing, want, 1.2 * dt);
-      return;
+  protected override onDefeated(_result: DamageResult): void {
+    this.submerged = false;
+    const fx = this.fx;
+    if (fx) {
+      fx.clearFeathers();
+      fx.suction(false);
+      fx.gust(false);
+      fx.flash(0);
+      fx.setAgitation(1);
     }
-    // 鹏：绕冰窟盘旋，隔一阵掉头
-    this.orbitTimer -= dt;
-    if (this.orbitTimer <= 0 || (this.moveResult.hitWall && this.orbitTimer < 4)) {
-      this.orbitDir = this.orbitDir > 0 ? -1 : 1;
-      this.orbitTimer = this.ctx.rng.range(5, 9);
+    this.ctx.ui.toast(this.isKun ? '北冥之鲲沉入了冰海' : '鹏坠入北冥——冰海重归平静', '#bfe9ff');
+    this.director?.abort('首领倒下');
+    // 倒下演出（KunPengDeath 的程序化那条路）：鲲沉回冰窟；鹏收翼坠落、55% 砸到冰面（死在冰窟上空就坠进北冥）
+    this.deathKun = this.isKun;
+    this.deathLanded = this.deathLingered = false;
+    const host = this.deathKun ? this.kun.host : this.peng.host;
+    this.deathStartY = host.position.y;
+    let ground = this.hole.floorY;
+    if (!this.deathKun) {
+      if (this.hole.found && this.hole.distance(this.position) < this.hole.radius - 0.5) ground = this.hole.waterY;
+      else {
+        const g = this.ctx.world.groundHeight(this.position.x, this.position.z, this.position.y + 0.5, 0);
+        if (Number.isFinite(g)) ground = Math.max(this.hole.floorY, g);
+      }
     }
-    this.orbit += this.orbitDir * 0.24 * dt;
-    holePoint(this.hole, this.orbit, (this.hole.radius + this.hole.outer) / 2, _v);
-    this.moveTo(_v, this.def.speed * 0.95, 1.5);
-    this.facePlayer(2.2, dt);
-    this.hoverAlt = this.overHoleAlt(PENG_HOVER);
+    this.deathDrop = Math.max(0, this.position.y + this.deathStartY - ground);
   }
 
-  protected override passive(dt: number): void {
-    if (this.form === 'peng') {
-      const bob = this.anim === 'dive' || this.anim === 'perch' || this.hoverAlt <= 0.6 ? 0 : Math.sin(this.age * 1.3) * 0.5;
-      const alt = this.current ? this.hoverAlt : this.overHoleAlt(this.hoverAlt);
-      this.flyTargetY = this.floorY() + alt + bob;
+  /** 倒下的模型动画（t 0 → 1；第 88% 时框架炸开、模型隐去） */
+  protected override animateDeath(t: number): void {
+    const dt = this.ctx.time.dt;
+    if (this.deathKun) {
+      // 鲲仰头长啸后沉回冰窟，没顶时水面炸起水冠、大涟漪
+      this.sunk = easeInOut(span(t, 0.25, KunPengDeath.SunkAt));
+      this.anim = 'roar';
+      this.animateKun(dt);
+      if (!this.deathLanded && t >= KunPengDeath.SunkAt) {
+        this.deathLanded = true;
+        const w = _v.set(this.hole.center.x, this.hole.waterY, this.hole.center.z);
+        this.impact(w, 1.6);
+        this.ctx.fx.ring(w, Math.max(8, this.hole.radius * 0.8), 0xeefcff, 1.6);
+      }
     } else {
-      this.holdKun();
+      // 鹏收翼坠落（模型动画：逻辑位置钉住），55% 砸到冰面，之后趴着头一抬一落地抽两下
+      const f = span(t, 0, KunPengDeath.LandAt);
+      const host = this.peng.host;
+      host.position.y = this.deathStartY - this.deathDrop * f * f;
+      const twitch = this.deathLanded ? Math.sin((t - KunPengDeath.LandAt) * 22) * 4 * DEG * (1 - span(t, KunPengDeath.LandAt, 0.85)) : 0;
+      host.rotation.x = 0.3 + Math.min(t, KunPengDeath.LandAt) / KunPengDeath.LandAt + twitch;
+      host.rotation.z = Math.sin(t * 9) * 0.2 * (1 - f);
+      const P = this.peng.pose;
+      P.reset();
+      for (const [side, s] of [['L', 1], ['R', -1]] as const) {
+        P.rotate(`wing_${side}_1`, AZ, s * 0.25 * f);
+        P.rotate(`wing_${side}_low`, AZ, s * 0.2 * f);
+      }
+      P.rotate('head', AX, 0.25 * f);
+      if (!this.deathLanded && t >= KunPengDeath.LandAt) {
+        this.deathLanded = true;
+        const g = this.peng.pts.chest.getWorldPosition(_v);
+        g.y = this.position.y + this.deathStartY - this.deathDrop;
+        this.impact(g, 1);
+      }
     }
-    if (this.phase === 0 && this.phaseFraction() <= 0.75 && !this.enragedTold) {
-      this.enragedTold = true;
-      this.ctx.ui.toast('鲲怒了——猛砸会连掀两道冰浪', '#8fe3ff');
+    const f = this.isKun ? this.kun : this.peng;
+    if (f.native?.glowShell) f.native.glowShell.opacity = 0.6 * Math.max(0, 1 - t);
+    this.setRoleOpacity('pearlHalo', 0.4 * Math.max(0, 1 - t));
+    if (t >= 0.88) {
+      this.model.visible = false;
+      if (!this.deathLingered) {
+        // 炸开之后的余韵：落点一片冻雾 + 霜斑
+        this.deathLingered = true;
+        const g = this.deathKun ? _v.copy(this.hole.center) : _v.set(this.position.x, this.hole.floorY, this.position.z);
+        this.ctx.fx.burst(g.setY(g.y + 0.6), 0xeaf8ff, 40, 3, 2.4, 0.9, -0.5);
+        this.ctx.fx.ring(g, 7, ICE, 2);
+      }
     }
-    if (this.enraged() && !this.rageTold) {
-      this.rageTold = true;
-      this.ctx.ui.toast('鹏狂怒了——俯冲会连掠两次，羽刃更密', '#bfe9ff');
-    }
-    // 鲛珠亮度：平时微光，猛砸趴台 / 鹏歇翼时大亮
-    const bright = this.anim === 'slam' || this.anim === 'perch' || this.anim === 'crash';
-    this.pearlGlow += ((bright ? 1 : 0.3) - this.pearlGlow) * Math.min(1, dt * 4);
-    this.fx?.setAgitation(this.form === 'kun' ? (this.current?.id === 'inhale' || this.current?.id === 'dive' ? 1 : 0.35) : 0.25);
   }
 
-  // ───────────── 登场 / 动画 ─────────────
-
-  protected override entrance(t: number, dt: number): void {
-    // 鲲从冰窟里升起：水面翻涌、冰沿炸起冰屑，升到一半时吼叫
-    this.sunk = 1 - easeOutCubic(span(t, 0.1, 0.8));
-    if (t >= 1) {
-      this.sunk = 0;
-      return;
-    }
-    this.splashAcc += dt;
-    if (this.splashAcc >= 0.08 && t < 0.8) {
-      this.splashAcc = 0;
-      holePoint(this.hole, this.theta + (Math.random() - 0.5) * 0.8, this.kunRing() + Math.random() * 3, _v);
-      _v.y = this.floorY() + 0.4;
-      this.ctx.fx.burst(_v, ICE, 6, 6, 0.7, 0.35, 10);
-    }
-    if (t >= 0.72 && !this.entranceRoared) {
-      this.entranceRoared = true;
-      this.setAnim('roar', true);
-      this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.75 });
-      holePoint(this.hole, this.theta, this.hole.radius + 1, _v);
-      this.ctx.fx.ring(_v.setY(this.floorY() + 0.1), 12, WARN, 1.0);
-      this.ctx.fx.shake(0.6, 1.0);
-    } else if (!this.entranceRoared) {
-      this.setAnim('rise');
-    }
-    this.animate(dt);
+  /** 鹏砸上冰面 / 鲲没顶：碎冰、冰环、震屏、闷响 */
+  private impact(ground: THREE.Vector3, k: number): void {
+    const fx = this.ctx.fx;
+    fx.explosion(_w.copy(ground).setY(ground.y + 0.5), 2.2 * k, ICE);
+    fx.burst(_w, ICE, Math.round(30 * k), 9, 1.0, 0.4, 12);
+    fx.ring(_w.copy(ground).setY(ground.y + 0.1), 6 * k, ICE, 0.8);
+    fx.ring(_w, 4.5 * k, WARN, 0.6);
+    const d = ground.distanceTo(this.ctx.player.position);
+    const s = 0.7 * Math.max(0, 1 - d / 70);
+    if (s > 0.01) fx.shake(s, 0.6);
+    this.ctx.audio.play('boss_slam', { position: ground, volume: 1, pitch: 0.8 });
   }
 
-  protected override onEntranceEnd(): void {
-    this.setAnim('idle');
-    this.restLeft = 1.2;
-    this.fx?.setAgitation(0.35);
-    // 名称横幅已由关卡导演在刷出时显示，这里只补一条弱点提示
-    this.ctx.ui.toast('北冥之鲲——它会从冰窟各处探头，额头的鲛珠是弱点', '#8fe3ff');
+  protected override onReleased(): void {
+    this.fx?.dispose();
+    this.fx = null;
+    for (const f of [this.kun, this.peng]) {
+      if (!f) continue;
+      f.native?.dispose();
+      f.native = null;
+    }
+    this.director?.abort('首领释放');
+    if (devHook?.boss === this) devHook = null;
   }
+
+  // ───────────── 动画 ─────────────
 
   protected override animate(dt: number): void {
-    if (this.form === 'kun') this.animateKun(dt);
+    if (this.isKun) this.animateKun(dt);
     else this.animatePeng(dt);
     this.updatePearl();
   }
 
   private updatePearl(): void {
-    const f = this.form === 'kun' ? this.kun : this.peng;
+    const f = this.isKun ? this.kun : this.peng;
     const pulse = 0.5 + 0.5 * Math.sin(this.age * 5);
     const k = this.pearlGlow;
     if (f.native?.glowShell) f.native.glowShell.opacity = (0.15 + 0.55 * k) * (0.75 + 0.25 * pulse);
@@ -1155,24 +868,25 @@ export class KunPeng extends BossBase {
   }
 
   /**
-   * 鲲的骨骼动画（creature_rigs/SK_Boss_Kun.json，角度不超过注册表 SK_Boss_Kun.rom）。模型空间：X = 生物左侧，Y = 上，Z = 前；
-   * 绕 +X 正转 = 前倾。整个露出水面的身体绕水线（模型原点）俯仰 / 升降——切口在水下，大幅前扑不靠拉扯网格。
-   * 切口始终压在水面下（kunCutCeiling）：前倾 / 后仰 / 抬身时整只往下沉，所以猛砸只前倾约 0.42 弧度——
-   * 沉下去之后下巴刚好落在冰沿外约 1 米的环台上、额珠离地约 2 米（再倾就把头砸进环台里）。
+   * 鲲的骨骼动画（creature_rigs/SK_Boss_Kun.json，角度不超过注册表 SK_Boss_Kun.rom）。模型空间：X = 生物左侧，Y = 上，Z = 前；绕 +X 正转 = 前倾。
+   * 整个露出水面的身体绕水线（模型原点）俯仰 / 升降——切口在水下；按 cutCeiling 把切口压在水面下 0.3 m（前倾 / 后仰 / 抬身时整只往下沉）。
+   * 俯仰 / 抬身照 Unity KunPengBrain.ProcKunPose 的状态表：猛砸的出手段前倾 0.42、吞吸的收招段（扑咬）前倾 0.35。
    */
   private animateKun(dt: number): void {
     const a = this.anim;
     const t = this.animT;
+    const m = this.currentMove;
     let rear = 0, wind = 0, slam = 0, roar = 0, flare = 0.1;
     let pitch = 0, rise = 0, lam = 6;
     if (a === 'inhale') { rear = 1; flare = 0.8; pitch = -0.12; lam = 5; }
     else if (a === 'bite') { slam = 0.55; pitch = 0.35; rise = -0.4; lam = 16; }
     else if (a === 'slamWind') { wind = 1; flare = 1; pitch = -0.25; rise = 1.6; lam = 4; }
-    else if (a === 'slam') { slam = 1; pitch = t < 0.85 ? 0.42 : 0.38; rise = -0.6; lam = t < 0.2 ? 20 : 6; }
+    else if (a === 'slam') { slam = 1; pitch = 0.42; rise = -0.6; lam = t < 0.2 ? 20 : 6; }
     else if (a === 'spit') { rear = t < 0.6 ? 0.8 : 0; slam = t >= 0.6 && t < 1.0 ? 0.4 : 0; pitch = t < 0.6 ? -0.1 : 0.12; lam = 9; }
     else if (a === 'roar' || a === 'rise') { roar = 1; flare = 1; pitch = -0.08; lam = 6; }
     else if (a === 'erupt') { roar = 0.7; flare = 1; rise = 1.2 * Math.max(0, 1 - t * 1.5); lam = 8; }
     else if (a === 'sink') { roar = 0.4; }
+    if (m?.id === 'slam' && m.stage === 'active') { pitch = 0.42; rise = -0.6; lam = 20; }
     const k = 1 - Math.exp(-lam * dt);
     this.pRear = mix(this.pRear, rear, k);
     this.pWind = mix(this.pWind, wind, k);
@@ -1180,23 +894,20 @@ export class KunPeng extends BossBase {
     this.pRoar = mix(this.pRoar, roar, k);
     this.pFlare = mix(this.pFlare, flare, k);
     this.pPitch = mix(this.pPitch, pitch, k);
-    this.riseOffset = mix(this.riseOffset, rise, k);
-    // 潜袭：0.0–0.7 沉、1.6 换位、2.0–2.8 浮起（转换与登场由各自的演出写 sunk）
-    if (this.current?.id === 'dive') {
-      const mt = this.moveT;
-      this.sunk = mt < 2.0 ? easeInOut(span(mt, 0, 0.7)) : 1 - easeOutCubic(span(mt, 2.0, 2.7));
-    } else if (this.transitionLeft <= 0 && this.entranceDone && this.alive) {
-      this.sunk = Math.max(0, this.sunk - dt * 2);
-    }
-    let dy = this.yawToPlayer() - this.facing;
-    dy = Math.atan2(Math.sin(dy), Math.cos(dy));
-    this.pLook = mix(this.pLook, clamp(dy, -0.8, 0.8), 1 - Math.exp(-4 * dt));
+    this.kRise = mix(this.kRise, rise, k);
+    const look = Math.atan2(Math.sin(this.yawToPlayerDeg * DEG - this.facing), Math.cos(this.yawToPlayerDeg * DEG - this.facing));
+    this.pLook = mix(this.pLook, clamp(look, -0.8, 0.8), 1 - Math.exp(-4 * dt));
 
     const host = this.kun.host;
-    host.position.y = KUN_BASE_Y + this.riseOffset + (KUN_SUNK_Y - KUN_BASE_Y) * this.sunk;
     host.rotation.x = this.pPitch + Math.sin(this.age * 0.7) * 0.02;
     host.rotation.z = Math.sin(this.age * 0.45) * 0.03;
-    host.position.y = Math.min(host.position.y, kunCutCeiling(host.rotation.x, host.rotation.z));
+    // 平切口压在水面下：水面相对逻辑位置（环台地面）的高度 + 按俯仰 / 侧倾算出的上限；沉浮整体往下叠
+    const waterRel = this.hole.waterY - this.position.y;
+    const drop = (KUN_SUNK_Y - KUN_BASE_Y) * this.sunk;
+    const cc = KunPengMath.cutCeiling(host.rotation.x, host.rotation.z, KUN_SCALE);
+    host.position.y = Math.min(KUN_BASE_Y + this.kRise + drop, waterRel + cc + drop);
+    // 切口一圈最高点（相对水面）：原点 + 俯仰 / 侧倾翘起的高度（= −cutCeiling − 边距）
+    this.cutTop = this.position.y + host.position.y + (-cc - KunPengDef.CutMargin) - this.hole.waterY;
 
     const P = this.kun.pose;
     P.reset();
@@ -1222,9 +933,8 @@ export class KunPeng extends BossBase {
   }
 
   /**
-   * 鹏的骨骼动画（creature_rigs/SK_Boss_Peng.json，角度不超过注册表 SK_Boss_Peng.rom）。
-   * 扇翼：上半扇（wing_*_1..3）绕前后轴向外下压，下压时下半扇（wing_*_low）向外上张开，整扇像折扇；上提时两半一起收回。
-   * 飞行时整只鸟绕双爪前倾、双爪收向身后；俯冲收翼伸爪；歇翼时直立（绑定姿势就是四视图里举翼的站姿）。
+   * 鹏的骨骼动画（creature_rigs/SK_Boss_Peng.json）。扇翼：上半扇绕前后轴向外下压，下压时下半扇向外上张开；
+   * 飞行时整只鸟绕双爪前倾、双爪收向身后；俯冲收翼伸爪；歇翼时直立。
    */
   private animatePeng(dt: number): void {
     const a = this.anim;
@@ -1237,7 +947,7 @@ export class KunPeng extends BossBase {
     else if (a === 'gust') { flap = 1.3; rate = 1.7; pitch = 0.1; }
     else if (a === 'spread') { flap = 0.45; rate = 0.9; pitch = 0.2; }
     else if (a === 'roar') { flap = 1.2; rate = 1.5; pitch = 0.05; }
-    if (this.transitionLeft > 0) { flap = 1.3; rate = 1.8; pitch = 0.05; tuck = 0.6; }
+    if (this.transitioning) { flap = 1.3; rate = 1.8; pitch = 0.05; tuck = 0.6; }
     const k = 1 - Math.exp(-lam * dt);
     this.pDive = mix(this.pDive, dive, k);
     this.pPerch = mix(this.pPerch, perch, k);
@@ -1245,9 +955,8 @@ export class KunPeng extends BossBase {
     this.pFlap = mix(this.pFlap, flap, k);
     this.pPitch = mix(this.pPitch, pitch, k);
     this.flapPhase += dt * rate * TAU;
-    let dy = this.yawToPlayer() - this.facing;
-    dy = Math.atan2(Math.sin(dy), Math.cos(dy));
-    this.pLook = mix(this.pLook, clamp(dy, -1, 1), 1 - Math.exp(-4 * dt));
+    const look = Math.atan2(Math.sin(this.yawToPlayerDeg * DEG - this.facing), Math.cos(this.yawToPlayerDeg * DEG - this.facing));
+    this.pLook = mix(this.pLook, clamp(look, -1, 1), 1 - Math.exp(-4 * dt));
 
     const host = this.peng.host;
     host.position.y = this.riseOffset;
@@ -1258,7 +967,6 @@ export class KunPeng extends BossBase {
     P.reset();
     const fl = this.pFlap, dv = this.pDive, pr = this.pPerch, tk = this.pTuck;
     const ph = this.flapPhase;
-    // 上半扇：外下压为负（左翼），范围 [-0.7, +0.2]；歇翼时收拢 +0.2
     const w1 = fl * -(0.25 + 0.45 * Math.sin(ph)) + 0.2 * pr + 0.25 * dv;
     const w2 = fl * -(0.12 + 0.12 * Math.sin(ph - 0.4)) + 0.15 * pr;
     const w3 = fl * -(0.06 + 0.09 * Math.sin(ph - 0.8));
@@ -1270,7 +978,6 @@ export class KunPeng extends BossBase {
       P.rotate(`wing_${side}_3`, AZ, s * w3);
       P.rotate(`wing_${side}_low`, AX, -0.2 * dv);
       P.rotate(`wing_${side}_low`, AZ, s * wl);
-      // 腿：飞行收向身后，俯冲前伸张爪
       P.rotate(`thigh_${side}`, AX, 0.45 * tk - 0.45 * dv);
       P.rotate(`shin_${side}`, AX, 0.2 * tk);
       P.rotate(`talon_${side}`, AX, 0.35 * tk - 0.3 * dv);
@@ -1287,61 +994,45 @@ export class KunPeng extends BossBase {
     P.rotate('tail_3', AY, 0.12 * Math.sin(this.age * 0.9 - 0.5));
     P.rotate('tail_2', AX, -0.1 * (1 - pr));
   }
-
-  // ───────────── 死亡 ─────────────
-
-  protected override onBossDeath(_result: DamageResult): void {
-    this.submerged = false;
-    this.fx?.clearFeathers();
-    this.fx?.suction(false);
-    this.fx?.gust(false);
-    this.fx?.flash(0);
-    this.fx?.setAgitation(1);
-    this.ctx.ui.toast(this.form === 'kun' ? '北冥之鲲沉入了冰海' : '鹏坠入北冥——冰海重归平静', '#bfe9ff');
-  }
-
-  protected override animateDeath(t: number): void {
-    const dt = this.ctx.time.dt;
-    if (this.form === 'kun') {
-      // 鲲仰头长啸后沉回冰窟
-      this.sunk = easeInOut(span(t, 0.25, 1));
-      this.anim = 'roar';
-      this.animateKun(dt);
-    } else {
-      // 鹏收翼坠落（模型动画：逻辑位置钉住），落到地面高度后碎成冰屑
-      const drop = Math.max(0, this.position.y - this.floorY());
-      const e = t * t;
-      this.peng.host.position.y = -drop * Math.min(1, e * 1.2);
-      this.peng.host.rotation.x = 0.3 + 1.0 * t;
-      this.peng.host.rotation.z = Math.sin(t * 9) * 0.2 * (1 - t);
-      const P = this.peng.pose;
-      P.reset();
-      for (const [side, s] of [['L', 1], ['R', -1]] as const) {
-        P.rotate(`wing_${side}_1`, AZ, s * 0.25 * t);
-        P.rotate(`wing_${side}_low`, AZ, s * 0.2 * t);
-      }
-      P.rotate('head', AX, 0.25 * t);
-    }
-    this.setRoleOpacity('pearlHalo', 0.4 * Math.max(0, 1 - t));
-    const f = this.form === 'kun' ? this.kun : this.peng;
-    if (f.native?.glowShell) f.native.glowShell.opacity = 0.6 * Math.max(0, 1 - t);
-    if (t >= 0.82) this.model.scale.setScalar(Math.max(0.01, 1 - (t - 0.82) / 0.18));
-  }
-
-  protected override onBossDispose(): void {
-    this.fx?.dispose();
-    this.fx = null;
-    for (const f of [this.kun, this.peng]) {
-      if (!f) continue;
-      f.native?.dispose();
-      f.native = null;
-    }
-  }
 }
 
 /** 测试与检视用：当前形态与场地（只读） */
-export function kunPengDebug(b: KunPeng): { form: FormId; hole: IceHole; submerged: boolean } {
-  const x = b as unknown as { form: FormId; hole: IceHole; submerged: boolean };
-  return { form: x.form, hole: x.hole, submerged: x.submerged };
+export function kunPengDebug(b: KunPeng): { form: FormId; hole: IceHoleInfo; submerged: boolean } {
+  return { form: b.isKun ? 'kun' : 'peng', hole: b.hole, submerged: b.submerged };
 }
 
+// ───────────────────────────── 开发钩子（?dev，只在开发服务器里） ─────────────────────────────
+
+interface DevHook {
+  boss: KunPeng;
+}
+
+let devHook: DevHook | null = null;
+
+function devHookEnabled(): boolean {
+  return !!import.meta.env?.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('dev');
+}
+
+function installDevHook(boss: KunPeng): void {
+  devHook = { boss };
+  (window as unknown as Record<string, unknown>).__kunpeng = {
+    get boss() { return boss; },
+    skipIntro: () => boss.director?.requestSkip(true) ?? false,
+    /** 把生命层打到某个比例（门槛照常起作用：每次只越一道线） */
+    setHealth: (fraction: number) => {
+      boss.shield = 0;
+      boss.hp = Math.max(1, boss.maxHp * fraction);
+    },
+    forceMove: (id: string) => boss.forceMove(id),
+    state: () => ({
+      pos: boss.position.toArray().map(v => +v.toFixed(2)), cam: boss.ctx.camera.position.toArray().map(v => +v.toFixed(2)),
+      form: boss.isKun ? 'kun' : 'peng', phase: boss.phase, introDone: boss.introDone, transitioning: boss.transitioning,
+      move: boss.currentMove?.id ?? null, stage: boss.currentMove?.stage ?? null, hp: Math.round(boss.hp), maxHp: boss.maxHp,
+      shield: Math.round(boss.shield), maxShield: boss.maxShield, sunk: +boss.sunk.toFixed(2), submerged: boss.submerged, theta: +boss.theta.toFixed(1),
+      hoverAlt: boss.hoverAlt, enraged: boss.enraged, kunFury: boss.kunFury, staggered: boss.staggered, untargetable: boss.untargetable,
+      hole: { source: boss.holeSource, c: boss.hole.center.toArray().map(v => +v.toFixed(2)), r: +boss.hole.radius.toFixed(2), outer: +boss.hole.outer.toFixed(2), waterY: +boss.hole.waterY.toFixed(2) },
+      director: boss.director ? { stage: boss.director.stage, shot: boss.director.shotName, t: boss.director.t, released: boss.director.released } : null,
+      act: boss.lastAct, movesStarted: boss.movesStarted, telegraphs: boss.telegraphs, color: hexColor(boss.kdef.color),
+    }),
+  };
+}

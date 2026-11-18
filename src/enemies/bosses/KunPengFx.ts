@@ -7,6 +7,8 @@
  *  - 狂风：贴地的白色风痕从冰窟向外飞掠（实例化网格）。
  *  - 羽刃：鹏洒下的冰羽刃，从翼尖飞向落点，落地回调（伤害由首领结算）。
  * 所有网格常驻场景、不用时透明度为 0：着色器在登场时就编译好，第一次化鹏不卡顿。
+ * 场景自带水体时（Unity 2-4 的北冥海，sceneWater）：海水圆面退成水面下 0.15 m 的不透明深海遮罩（同 Unity IceHole 的水面遮罩切口：
+ * 挡住鲲的平切口与地形洞壁），冰沿的碎冰棱不画（场景里有冰窟边缘的美术件）。
  */
 import * as THREE from 'three';
 import type { GameContext } from '../../core/types';
@@ -147,8 +149,9 @@ export class KunPengFx {
   private gustOuter = 1;
   private readonly gustCenter = new THREE.Vector3();
 
-  constructor(private readonly ctx: GameContext, private readonly hole: IceHole) {
+  constructor(private readonly ctx: GameContext, private readonly hole: IceHole, opts: { sceneWater?: boolean; waterY?: number } = {}) {
     const R = hole.radius;
+    const waterRel = (opts.waterY ?? hole.center.y + 0.06) - hole.center.y;
     const c = hole.center;
     this.group.name = 'kunpeng_fx';
     this.group.position.set(c.x, c.y, c.z);
@@ -164,7 +167,7 @@ export class KunPengFx {
     });
     this.water = new THREE.Mesh(wGeo, wMat);
     this.water.rotation.x = -Math.PI / 2;
-    this.water.position.y = 0.06;
+    this.water.position.y = opts.sceneWater ? waterRel - 0.15 : waterRel;
     this.water.receiveShadow = false;
     this.group.add(this.water);
 
@@ -209,6 +212,7 @@ export class KunPengFx {
       sh.scale.set(0.8 + Math.random() * 0.6, h, 0.8 + Math.random() * 0.6);
       sh.rotation.set(Math.cos(a) * 0.45, 0, -Math.sin(a) * 0.45, 'XYZ');
       sh.castShadow = false;
+      sh.visible = !opts.sceneWater;
       this.shards.push(sh);
       this.group.add(sh);
     }

@@ -1,6 +1,8 @@
 // 鲲鹏（boss_kunpeng）无头回归：在真实的北冥冰台（frost-5 V2 白盒）导航网格上找冰窟，构造首领，逐招推进一阶段的鲲，
 // 强制越过 50% 血线，验证冰雾里换成鹏（模型、受击形状、血条名称、飞行高度）以及鹏的第一招。
 // 渲染与美术资产不参与：EnemyArt 换成空实现（等同 ?classic 的程序化兜底模型）。
+// 2026-11-18（docs/threejs-migration.md M6）：鲲鹏改用首领框架（framework/BossBrain）、数值与时间轴换成 Unity：
+// 载入改成递归载入（框架的依赖链）；招式状态从招式对象上读（currentMove / moveById）；倒下演出 4.4 s（Unity defeat.seconds）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
@@ -15,33 +17,35 @@ async function ts(path, imports = {}) {
   return data(source + '\n//# sourceURL=' + new URL(path, import.meta.url).href);
 }
 
-const typesUrl = await ts('../src/core/types.ts');
-const mathUrl = await ts('../src/core/math.ts');
+/** 递归载入：相对 import 换成 data: URL，stubs 按文件 URL 的结尾替换（美术挂载换成空实现） */
+const loaded = new Map();
+async function load(url, stubs) {
+  for (const [suffix, stub] of Object.entries(stubs)) if (url.href.endsWith(suffix)) return stub;
+  if (loaded.has(url.href)) return loaded.get(url.href);
+  const pending = (async () => {
+    let source = stripTypeScriptTypes(await readFile(url, 'utf8'), { mode: 'transform' });
+    source = source.replaceAll("'three'", `'${threeUrl}'`);
+    const specs = [...source.matchAll(/from\s+'(\.{1,2}\/[^']+)'/g)].map(m => m[1]);
+    for (const spec of new Set(specs)) source = source.replaceAll(`'${spec}'`, `'${await load(new URL(`${spec}.ts`, url), stubs)}'`);
+    return data(`${source}\n//# sourceURL=${url.href}`);
+  })();
+  loaded.set(url.href, pending);
+  return pending;
+}
+
 const { Rng } = await import(await ts('../src/core/Rng.ts'));
 const { TaskRunner } = await import(await ts('../src/core/Tasks.ts'));
+const mathUrl = await ts('../src/core/math.ts');
 const plansUrl = await ts('../src/world/WhiteboxPlans.ts');
 const { WHITEBOX_REDESIGN_PLANS } = await import(plansUrl);
 const { generateWhitebox, whiteboxPoint } = await import(await ts('../src/world/WhiteboxGen.ts', { './WhiteboxPlans': plansUrl }));
 const { CollisionWorld } = await import(await ts('../src/world/Collision.ts', { './UnityTriangles': await ts('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await ts('../src/world/UnityHeightSampling.ts') }));
 const { NavGrid } = await import(await ts('../src/world/NavGrid.ts', { '../core/math': mathUrl }));
 
-const partsUrl = await ts('../src/enemies/bosses/parts.ts');
-const visualsUrl = await ts('../src/enemies/bosses/Visuals.ts');
-const hazardsUrl = await ts('../src/enemies/bosses/Hazards.ts', { '../../core/math': mathUrl, './Visuals': visualsUrl, './parts': partsUrl });
-const enemyBaseUrl = await ts('../src/enemies/EnemyBase.ts', { '../core/types': typesUrl, '../core/math': mathUrl });
-const tokensUrl = await ts('../src/enemies/AttackTokens.ts');
 const artStub = data('export function attachEnemyArt(){ return { body: null, native: null, parts: [] }; }');
-const bossBaseUrl = await ts('../src/enemies/bosses/BossBase.ts', {
-  '../EnemyBase': enemyBaseUrl, '../AttackTokens': tokensUrl, '../../core/math': mathUrl, './Hazards': hazardsUrl, '../../assets/EnemyArt': artStub,
-});
-const arenaUrl = await ts('../src/enemies/bosses/KunPengArena.ts');
-const { locateIceHole } = await import(arenaUrl);
-const fxUrl = await ts('../src/enemies/bosses/KunPengFx.ts');
-const modelUrl = await ts('../src/enemies/bosses/KunPengModel.ts', { './parts': partsUrl });
-const { KunPeng, KUNPENG_DEF, kunPengDebug } = await import(await ts('../src/enemies/bosses/KunPeng.ts', {
-  '../../core/math': mathUrl, './BossBase': bossBaseUrl, '../../assets/EnemyArt': artStub, './KunPengArena': arenaUrl,
-  './KunPengFx': fxUrl, './KunPengModel': modelUrl, './parts': partsUrl,
-}));
+const stubs = { '/src/assets/EnemyArt.ts': artStub };
+const { locateIceHole } = await import(await load(new URL('../src/enemies/bosses/KunPengArena.ts', import.meta.url), stubs));
+const { KunPeng, KUNPENG_DEF, kunPengDebug } = await import(await load(new URL('../src/enemies/bosses/KunPeng.ts', import.meta.url), stubs));
 
 const plan = WHITEBOX_REDESIGN_PLANS.find(p => p.id === 'frost-5-v2');
 const DT = 1 / 30;
@@ -117,7 +121,7 @@ function runMove(env, id, maxT = 8) {
   let seen = false;
   for (let t = 0; t < maxT; t += DT) {
     step(env.ctx, env.boss, DT);
-    if (env.boss.current?.id === id) seen = true;
+    if (env.boss.currentMove?.id === id) seen = true;
     else if (seen) return true;
   }
   return seen;
@@ -184,8 +188,8 @@ test('phase 1 attacks: inhale pulls toward the hole, slam throws an ice wave, di
   boss.queueMove('slam');
   boss.restLeft = 0;
   step(ctx, boss, DT * 2);
-  assert.equal(boss.current?.id, 'slam');
-  const impact = boss.impact.clone();
+  assert.equal(boss.currentMove?.id, 'slam');
+  const impact = boss.moveById('slam').impact.clone();
   ctx.player.position.set(impact.x, impact.y, impact.z);
   const hits = log.damage.length;
   step(ctx, boss, 1.3);
@@ -198,7 +202,7 @@ test('phase 1 attacks: inhale pulls toward the hole, slam throws an ice wave, di
   boss.queueMove('dive');
   boss.restLeft = 0;
   step(ctx, boss, 1.0);
-  assert.equal(boss.current?.id, 'dive');
+  assert.equal(boss.currentMove?.id, 'dive');
   assert.equal(boss.untargetable, true, 'submerged Kun is untargetable');
   step(ctx, boss, 2.3);
   assert.equal(boss.untargetable, false);
@@ -266,19 +270,21 @@ test('phase 2 moves run headlessly: swoop, feather rain, perch rest window', () 
   boss.movesSincePerch = 2;
   boss.queueMove('perch');
   boss.restLeft = 0;
+  const perch = boss.moveById('perch');
   let landed = false;
   for (let t = 0; t < 18 && !landed; t += DT) {
     step(ctx, boss, DT);
-    if (boss.current?.id === 'perch' && boss.perchStage === 'rest' && boss.stageT > 0.6 && boss.position.y - hole.center.y < 3) landed = true;
+    if (boss.currentMove === perch && perch.stage === 'active' && perch.stageT > 0.6 && boss.position.y - hole.center.y < 3) landed = true;
   }
   assert.ok(landed, 'Peng lands on the ring (or an altar on it) to rest: main damage window');
-  const d = Math.hypot(boss.perchAt.x - hole.center.x, boss.perchAt.z - hole.center.z);
+  assert.equal(boss.pearlBright, true, 'pearl lights up while perched');
+  const d = Math.hypot(perch.spot.x - hole.center.x, perch.spot.z - hole.center.z);
   assert.ok(d > hole.radius && d < hole.outer, 'landing point is on the ring');
-  assert.ok(Math.abs(boss.position.y - boss.perchAt.y) < 0.35, `landing impact is resolved at the height Peng actually stands on (${boss.position.y.toFixed(2)} vs ${boss.perchAt.y.toFixed(2)})`);
-  // 死亡：逻辑位置钉住，3.2 秒后移除
+  assert.ok(Math.abs(boss.position.y - perch.spot.y) < 0.35, `landing impact is resolved at the height Peng actually stands on (${boss.position.y.toFixed(2)} vs ${perch.spot.y.toFixed(2)})`);
+  // 死亡：逻辑位置钉住，4.4 秒后移除（Unity defeat.seconds）
   boss.onKilled({ request: { base: 0, element: 'none', source: 'weapon', canCrit: false, procDepth: 0, tags: [] }, dealt: 1, isCrit: false, killed: true,
     layer: 'health', shieldBroken: false, armorBroken: false, element: 'none', statusApplied: null });
-  step(ctx, boss, 3.4);
+  step(ctx, boss, 4.6);
   assert.equal(boss.removed, true);
   boss.dispose();
 });
@@ -288,11 +294,12 @@ test('Peng picks flat ring spots to perch (not the 2.5 m altars); forced onto an
   const { boss, ctx, arena } = env;
   const { hole } = kunPengDebug(boss);
   const floor = arena.floorY;
+  const perch = boss.moveById('perch');
   for (let i = 0; i < 16; i++) {
     placePlayer(env, (i / 16) * Math.PI * 2, hole.radius + 12);
-    boss.pickPerchSpot();
-    const top = ctx.world.groundHeight(boss.perchAt.x, boss.perchAt.z, floor + 8, boss.radius * 0.85);
-    assert.ok(boss.perchAt.y - floor < 0.3 && top - floor < 0.3, `perch spot ${i} is flat ground (spot y ${boss.perchAt.y.toFixed(2)}, ground ${top.toFixed(2)})`);
+    const { spot, flat } = perch.pickSpot(new THREE.Vector3());
+    const top = ctx.world.groundHeight(spot.x, spot.z, floor + 8, boss.radius * 0.85);
+    assert.ok(flat && spot.y - floor < 0.3 && top - floor < 0.3, `perch spot ${i} is flat ground (spot y ${spot.y.toFixed(2)}, ground ${top.toFixed(2)})`);
   }
   // 硬把落点放到东侧祭台中央：落地后站在台顶，落地冲击也按台顶结算
   placePlayer(env, 0.4, hole.radius + 12);
@@ -307,15 +314,15 @@ test('Peng picks flat ring spots to perch (not the 2.5 m altars); forced onto an
   let forced = false, rest = false;
   for (let t = 0; t < 20 && !rest; t += DT) {
     step(ctx, boss, DT);
-    if (boss.current?.id === 'perch' && !forced) {
+    if (boss.currentMove === perch && !forced) {
       forced = true;
-      boss.perchAt.set(hole.center.x + 36, floor, hole.center.z);
+      perch.spot.set(hole.center.x + 36, floor, hole.center.z);
     }
-    if (boss.current?.id === 'perch' && boss.perchStage === 'rest') rest = true;
+    if (boss.currentMove === perch && perch.stage === 'active' && perch.stageT > 0.5) rest = true;
   }
   assert.ok(rest, 'Peng reached the rest stage');
   assert.ok(boss.position.y - floor > 2.2, `stands on the altar top (${(boss.position.y - floor).toFixed(2)} m)`);
-  assert.ok(Math.abs(boss.perchAt.y - boss.position.y) < 0.35, `impact height = altar top (${(boss.perchAt.y - floor).toFixed(2)} m)`);
+  assert.ok(Math.abs(perch.spot.y - boss.position.y) < 0.35, `impact height = altar top (${(perch.spot.y - floor).toFixed(2)} m)`);
   boss.dispose();
 });
 
@@ -346,6 +353,54 @@ test('Kun keeps its flat cut under the water through slam, dive bite and the sla
   assert.ok(worst < -0.2, `flat cut stays under the water surface (highest rim ${worst.toFixed(2)} m)`);
   // 猛砸时头趴在环台上：额珠离地近，但不埋进地面
   assert.ok(pearlLow > 0.5 && pearlLow < 4, `pearl rests low over the ring during the slam (${pearlLow.toFixed(2)} m)`);
+  assert.ok(boss.cutTop < -0.2, `cutTop bookkeeping agrees (${boss.cutTop.toFixed(2)} m)`);
+  boss.dispose();
+});
+
+test('Unity numbers: tier vitals at 2-4, 75% Kun fury (kun moves rest × 0.8, slam side waves), 25% Peng enrage (14 feathers)', () => {
+  const env = makeCtx();
+  const p = whiteboxPoint(plan, plan.encounters.find(e => e.id === 'BOSS').at);
+  const boss = new KunPeng(env.ctx, { position: new THREE.Vector3(p.x, 0, p.z), level: 2.28 });
+  boss.init();
+  env.boss = boss;
+  const { ctx } = env;
+  assert.equal(boss.maxHp, 16000, '2-4 定档生命');
+  assert.equal(boss.maxShield, 4800, '2-4 定档护盾');
+  assert.deepEqual([...boss.barTicks], [0.75, 0.5, 0.25]);
+  const { hole } = kunPengDebug(boss);
+  placePlayer(env, Math.PI, hole.radius + 9);
+  step(ctx, boss, 3.3);
+  const slam = boss.moveById('slam');
+  const rec = slam.recovery;
+  boss.shield = 0;
+  boss.hp = boss.maxHp * 0.74;
+  step(ctx, boss, DT * 2);
+  assert.equal(boss.kunFury, true, '75% 鲲怒');
+  assert.ok(Math.abs(slam.recovery - rec * 0.8) < 1e-6, '鲲的招式喘息 × 0.8');
+  for (let t = 0; t < 8 && !(boss.currentMove === slam && slam.stage === 'recover'); t += DT) {
+    if (!boss.currentMove) { boss.queueMove('slam'); boss.restLeft = 0; }
+    step(ctx, boss, DT);
+  }
+  assert.equal(slam.fury, true);
+  assert.equal(slam.waves, 4, '鲲怒的猛砸：正面一道 + 两侧两道 + 0.45 s 后补一道');
+  // 化鹏后 25% 鹏狂怒：羽刃 14 枚
+  boss.hp = boss.maxHp * 0.45;
+  step(ctx, boss, 6.5);
+  assert.equal(kunPengDebug(boss).form, 'peng');
+  assert.equal(boss.transitioning, false);
+  assert.ok(boss.shield >= boss.maxShield * 0.6 - 1, '化鹏后护盾重凝六成');
+  assert.equal(boss.enraged, false);
+  boss.shield = 0;
+  boss.hp = boss.maxHp * 0.24;
+  step(ctx, boss, DT * 2);
+  assert.equal(boss.enraged, true, '25% 鹏狂怒');
+  const rain = boss.moveById('rain');
+  for (let t = 0; t < 14 && !(boss.currentMove === rain && rain.stage === 'recover'); t += DT) {
+    if (!boss.currentMove) { boss.queueMove('rain'); boss.restLeft = 0; }
+    step(ctx, boss, DT);
+  }
+  assert.equal(rain.count, 14, '狂怒羽刃 14 枚');
+  assert.equal(rain.fired, 14);
   boss.dispose();
 });
 
