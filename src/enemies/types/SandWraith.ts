@@ -66,7 +66,8 @@ export class SandWraith extends JerboaBlade {
   chains = 0;
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
-    super(ctx, opts);
+    // 自己的名册（55 生命 / 5.6 移速 / 12 伤害 / 体型 1.4）：原来漏传，跑起来用的是跳鼠刀兵的定义
+    super(ctx, opts, SAND_WRAITH_DEF);
     this.state = 'stalk';
     this.burrowCd = ctx.rng.range(1, 3.5);
     this.spawnDuration = W.riseTime;

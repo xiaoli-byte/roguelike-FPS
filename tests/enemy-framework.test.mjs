@@ -385,9 +385,27 @@ test('sand wraith: move constants and roster entry match SandWraithAI / Enemy_Sa
   assert.match(src, /windupFrac\(W\.slashWindup, 0\.24\)/);
   assert.match(ai, /Windup\(SurfaceTime, 0\.45f\)/);
   assert.match(src, /windupFrac\(W\.surfaceTime, 0\.45\)/);
+  // 用自己的名册生成（原来漏传，跑起来是跳鼠刀兵的 42 生命 / 7 移速 / 体型 1.3）
+  assert.match(src, /super\(ctx, opts, SAND_WRAITH_DEF\)/);
+  const roster = await cs('Enemies/Defs/Desert/Enemy_SandWraith.cs');
+  assert.match(roster, /scale = 1\.4f, hp = 55, speed = 5\.6f, damage = 12/);
+  assert.match(src, /scale: 1\.4, hp: 55, speed: 5\.6, damage: 12/);
 });
 
 // ───────────── 第四章招式表（PlateauKit.PlateauMoves ↔ foes.ts defineMoves） ─────────────
+
+test('plateau: leash range and haste numbers match PlateauEnemyAI', async () => {
+  const ai = await cs('Enemies/AI/Plateau/PlateauEnemyAI.cs');
+  const adapter = await readFile(new URL('../src/enemies/plateau/PlateauFoeAdapter.ts', import.meta.url), 'utf8');
+  assert.equal(csConsts(ai).LeashRange, Number(adapter.match(/const LEASH_RANGE = (\d+);/)[1]), '脱战距离');
+  assert.match(ai, /DistToPlayer > 60f/);
+  assert.match(adapter, /<= 60\) return;/);
+  assert.match(ai, /new BuffMods\(1, 1\.4f, 1\.4f, 1\)/, '连鼓灵加速：攻速 / 移速 ×1.4');
+  const foe = await readFile(new URL('../src/world/plateau/play/foe.ts', import.meta.url), 'utf8');
+  assert.match(foe, /this\.haste > 0 \? 1\.4 : 1/);
+  assert.match(ai, /hp\.Heal\(hp\.maxHealth \* 0\.3f \* dt\)/, '未警觉时每秒回 30%');
+  assert.match(foe, /if \(this\.hp < this\.maxHp\) this\.hp = Math\.min\(this\.maxHp, this\.hp \+ this\.maxHp \* 0\.3 \* dt\)/);
+});
 
 test('plateau: every Unity PlateauMove has the same timings / flags / events as foes.ts', async () => {
   const kit = await cs('Enemies/AI/Plateau/PlateauKit.cs');

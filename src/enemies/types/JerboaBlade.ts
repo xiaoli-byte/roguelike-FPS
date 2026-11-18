@@ -218,8 +218,9 @@ export class JerboaBlade extends StandardEnemy {
   /** 当前的触地段比例（见 STANCE_RANGE）；AI 用它判断是否着地 */
   private stanceFrac = 0.2;
 
-  constructor(ctx: GameContext, opts: SpawnOptions) {
-    super(ctx, JERBOA_BLADE_DEF, opts);
+  /** def：共用这具身体的变体（沙魇）传自己的定义（生命 / 速度 / 体型 / 名字按它） */
+  constructor(ctx: GameContext, opts: SpawnOptions, def: EnemyDef = JERBOA_BLADE_DEF) {
+    super(ctx, def, opts);
     this.walkScale = 1;
     this.stepRate = 2.4;
     this.accel = 34;

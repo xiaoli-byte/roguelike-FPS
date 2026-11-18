@@ -558,8 +558,9 @@ export abstract class Foe implements Actor {
     if (back > 1.5 && this.spec.speed > 0) {
       const moved = this.steer(this.home.x, this.home.z, this.spec.speed * 0.6, dt);
       this.anim.move = moved > 0 ? 0.6 : 0;
-      this.hp = Math.min(this.maxHp, this.hp + this.maxHp * 0.3 * dt);
     }
+    // 没发现玩家就一直回血（Unity PlateauEnemyAI.Roam：每秒 30%，不只是走回家的路上）
+    if (this.hp < this.maxHp) this.hp = Math.min(this.maxHp, this.hp + this.maxHp * 0.3 * dt);
     const sight = this.sentinel ? 48 : this.spec.sight;
     if (dist < sight && this.ctx.player.alive && this.sees()) this.notice();
   }

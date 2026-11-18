@@ -28,6 +28,9 @@ const _impulse = new THREE.Vector3();
  * 群内令牌 → 全局出手名额（Unity PlateauEnemyAI.TakeToken 的 global 参数）：扑咬 / 天狗扑咬 / 獓狠挑角 = 近战，远投 / 电弹 / 雷吠 = 远程；
  * 持有上限秒数取各怪 Unity 调用的典型值（啸獭 1.5–2、帝江 1.2、獓狠 1.6；举父 2.5、蛮蛮 3.5、天狗雷吠 3）
  */
+/** 玩家跑出领地多远脱战（Unity PlateauEnemyAI.LeashRange） */
+const LEASH_RANGE = 90;
+
 const GLOBAL_TOKEN: Record<PackToken, { kind: TokenKind; hold: number }> = {
   melee: { kind: 'melee', hold: 1.6 },
   pounce: { kind: 'melee', hold: 1.6 },
@@ -504,6 +507,7 @@ export class PlateauFoeAdapter extends EnemyBase implements AffixHost {
       this.foe.speedMul = this.slowMult * this.speedMult;
       this.foe.rateMul = this.attackRate;
       this.foe.held = this.affixAttackBusy;
+      this.leash();
       if (this.push.x * this.push.x + this.push.z * this.push.z >= 0.0004 && dt > 0) {
         this.foe.shove(this.push.x * dt, this.push.z * dt);
         this.push.multiplyScalar(Math.exp(-KNOCKBACK.decay * dt));
@@ -536,6 +540,19 @@ export class PlateauFoeAdapter extends EnemyBase implements AffixHost {
     // 死了：挂件（金环、词缀）跟着身体一起没
     if (!this.alive) this.model.visible = this.foe.host.visible;
     if (!this.foe.host.visible && !this.foe.alive) this.removed = true;
+  }
+
+  /**
+   * 脱战（Unity PlateauEnemyAI.Think：玩家离领地 90 m 外、离它 60 m 外，不在出招）：回到没发现玩家的状态，回家、回血。
+   * 穷奇游猎自己管（Unity Leashes = false）
+   */
+  private leash(): void {
+    const f = this.foe;
+    if (f.state !== 'alert' || f.move.busy || f instanceof Roamer) return;
+    const p = this.ctx.player.position;
+    if (Math.hypot(p.x - f.home.x, p.z - f.home.z) <= LEASH_RANGE || Math.hypot(p.x - f.pos.x, p.z - f.pos.z) <= 60) return;
+    f.state = 'idle';
+    if (f.enc) f.enc.alerted = false;
   }
 
   override dispose(): void {

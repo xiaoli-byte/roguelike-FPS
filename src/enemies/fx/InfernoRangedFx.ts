@@ -312,7 +312,7 @@ function hookGeometry(): THREE.BufferGeometry {
   return g;
 }
 
-/** 铁链材质：底色冷铁；每个实例的颜色当作自发光（热度），不去染底色 */
+/** 铁链材质：底色冷铁；每个实例的颜色当作自发光（热度），不去染底色（vColor 在新版 three 里可能是 vec4，只取 rgb） */
 function chainMaterial(): THREE.MeshStandardMaterial {
   const m = new THREE.MeshStandardMaterial({ color: INFERNO.iron, roughness: 0.55, metalness: 0.75 });
   m.onBeforeCompile = (shader) => {
@@ -320,7 +320,7 @@ function chainMaterial(): THREE.MeshStandardMaterial {
       .replace('#include <color_fragment>', '')
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
       #if defined( USE_INSTANCING_COLOR ) || defined( USE_COLOR )
-        totalEmissiveRadiance += vColor * 1.6;
+        totalEmissiveRadiance += vColor.rgb * 1.6;
       #endif`);
   };
   m.customProgramCacheKey = () => 'inferno-chain';
