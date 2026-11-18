@@ -61,6 +61,11 @@ export const STYLE_GLINT: ParticleStyle = { gravity: 1.5, drag: 3, grow: 0.25, a
 export const STYLE_SKITTER: ParticleStyle = { gravity: 15, drag: 0.5, grow: 0.5, alpha: 1, shape: SHAPE_SPARK, fade: FADE_FLICKER, bounce: true };
 /** 符点：散开往上飘 */
 export const STYLE_GLYPH: ParticleStyle = { gravity: -2.5, drag: 1, grow: 0.7, alpha: 1, shape: SHAPE_GLYPH, fade: FADE_FLICKER, bounce: false };
+/**
+ * 爆炸的烟：比普通烟升得快（终速约 2 m/s）、长得少、淡一点——要在半秒内离开人身高那一段，
+ * 不在爆点后面立一堵墙（fx-style.md 5.6「烟和尘不盖住敌人」）
+ */
+export const STYLE_BLAST_SMOKE: ParticleStyle = { gravity: -2.6, drag: 1.3, grow: 1.7, alpha: 0.42, shape: SHAPE_SMOKE, fade: FADE_SMOKE, bounce: false };
 /** 余温 / 魂火的拖尾：原地慢慢暗下去的一小团光 */
 export const STYLE_LINGER: ParticleStyle = { gravity: 0, drag: 4, grow: 0.5, alpha: 0.8, shape: SHAPE_GLOW, fade: FADE_OUT, bounce: false };
 

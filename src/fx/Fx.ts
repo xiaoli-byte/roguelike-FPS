@@ -16,7 +16,7 @@ import { clamp01 } from '../core/math';
 import {
   ParticlePool, particleScaleUniform,
   STYLE_CHUNK, STYLE_DUST, STYLE_EMBER, STYLE_FIREBALL, STYLE_FLAME, STYLE_GLINT, STYLE_GLOW, STYLE_GLYPH, STYLE_LINGER, STYLE_MOTE, STYLE_SKITTER,
-  STYLE_SMOKE, STYLE_SPARK,
+  STYLE_BLAST_SMOKE, STYLE_SMOKE, STYLE_SPARK,
 } from './Particles';
 import { SealEffects, type SealHandle, type SealOptions } from './Seal';
 import { SparkStreaks } from './Sparks';
@@ -60,7 +60,7 @@ const LATERS = 48;
 const SOULS = 96;
 
 /** 慢半拍才出的层（烟、尘、第二响）：闪光过去之后再升起来 */
-const enum LaterKind { Dust, Soot, Arc, Bubbles, Fume, DeathEcho, SkillEcho, DustRing }
+const enum LaterKind { Dust, Soot, Arc, Bubbles, Fume, DeathEcho, SkillEcho, DustRing, BlastSmoke }
 interface Later {
   t: number; kind: LaterKind;
   x: number; y: number; z: number; nx: number; ny: number; nz: number;
@@ -356,23 +356,10 @@ export class FxSystem implements IFx {
       const sp = rand(2, 6);
       this.glow.spawn(STYLE_EMBER, cx + _dir.x * r * 0.4, cy + _dir.y * r * 0.3, cz + _dir.z * r * 0.4, _dir.x * sp, Math.abs(_dir.y) * sp + 1, _dir.z * sp, _c, rand(0.06, 0.12), rand(0.9, 1.7));
     }
-    // 烟
-    hexToColor(SMOKE_DARK, _c3);
-    mixColor(_c3, _c, 0.18, _c3);
-    const smoke = Math.min(26, Math.round((7 + r * 2.5) * d));
-    for (let i = 0; i < smoke; i++) {
-      randomDir(_dir);
-      const off = r * 0.35 * Math.random();
-      const sp = r * rand(0.4, 1.1);
-      const shade = rand(0.7, 1.25);
-      _c2.setRGB(_c3.r * shade, _c3.g * shade, _c3.b * shade);
-      this.smoke.spawn(
-        STYLE_SMOKE,
-        cx + _dir.x * off, cy + Math.abs(_dir.y) * off, cz + _dir.z * off,
-        _dir.x * sp, Math.abs(_dir.y) * sp + 0.8, _dir.z * sp,
-        _c2, r * rand(0.4, 0.7), rand(1.1, 2.1),
-      );
-    }
+    // 烟：等闪光过去（0.06 秒）再出，往上冒而不是往四周铺（见 updateLaters 的 BlastSmoke）。
+    // 原来是 7 + 2.5r 团（4.5 米的爆炸 18 团）、每团直径 0.4–0.7r 再长到 2.2 倍、横着甩出去 0.4–1.1r m/s、活 2 秒，
+    // 在爆点后面立起一堵六七米宽的墙：检视页里 4.5 米爆炸后 0.6 秒，正后方敌人的剪影还有一半被盖着
+    this.later(LaterKind.BlastSmoke, 0.06, cx, cy, cz, null, color, r);
     // 碎石
     hexToColor(CHUNK_DARK, _c3);
     const chunks = Math.min(22, Math.round((5 + r * 1.5) * d));
@@ -996,6 +983,28 @@ export class FxSystem implements IFx {
             this.glow.spawn(
               STYLE_EMBER, l.x + _dir.x * off, l.y + Math.abs(_dir.y) * off, l.z + _dir.z * off, _dir.x * sp, Math.abs(_dir.y) * sp + 1, _dir.z * sp,
               _c, rand(0.06, 0.1), rand(0.9, 1.5),
+            );
+          }
+          break;
+        }
+        case LaterKind.BlastSmoke: {
+          // 爆炸的烟（l.s = 半径）：3 + r 团、最多 10 团，直径 0.2–0.32r（不超过 2.4 米）；
+          // 挤在爆心 0.3r 以内，横向只有 0.15–0.4r m/s，主要往上冒，活 0.9–1.5 秒
+          const r = l.s;
+          hexToColor(SMOKE_DARK, _c3);
+          hexToColor(l.color, _c);
+          mixColor(_c3, _c, 0.18, _c3);
+          const puffs = Math.min(10, Math.max(2, Math.round((3 + r) * this.density())));
+          for (let i = 0; i < puffs; i++) {
+            const a = Math.random() * Math.PI * 2, off = r * 0.3 * Math.sqrt(Math.random());
+            const ca = Math.cos(a), sa = Math.sin(a), sp = r * rand(0.15, 0.4);
+            const shade = rand(0.75, 1.2);
+            _c2.setRGB(_c3.r * shade, _c3.g * shade, _c3.b * shade);
+            this.smoke.spawn(
+              STYLE_BLAST_SMOKE,
+              l.x + ca * off, l.y + rand(0, 0.4) + r * 0.08, l.z + sa * off,
+              ca * sp, rand(1.8, 3) + r * 0.12, sa * sp,
+              _c2, Math.min(2.4, r * rand(0.2, 0.32)), rand(0.9, 1.5),
             );
           }
           break;
