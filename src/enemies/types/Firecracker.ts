@@ -465,8 +465,8 @@ export class Firecracker extends StandardEnemy implements ExplosiveKin {
         this.march(d, dt);
         if (this.cooldown <= 0 && canLob && d >= FIRE_RANGE[0] && d <= FIRE_RANGE[1]) {
           if (this.requestAttack('heavy', BRACE_TIME + FUSE_TIME + VOLLEY_TIME + 1.2)) {
-            this.braceTime = this.windup(BRACE_TIME, 0.25);
-            this.fuseTime = this.windup(FUSE_TIME, 0.8);
+            this.braceTime = this.windupFrac(BRACE_TIME, 0.25);
+            this.fuseTime = this.windupFrac(FUSE_TIME, 0.8);
             this.setState('brace');
             this.ctx.audio.play('telegraph', { position: this.position, volume: 0.7, pitch: 0.9 });
           } else {
@@ -510,7 +510,7 @@ export class Firecracker extends StandardEnemy implements ExplosiveKin {
         this.stopMoving();
         this.facePlayer(4, dt);
         this.glowTarget[0] = 0.3;
-        if (!this.stompDone && this.stateTime >= this.windup(STOMP_TIME, 0.3)) {
+        if (!this.stompDone && this.stateTime >= this.windupFrac(STOMP_TIME, 0.3)) {
           this.stompDone = true;
           this.scatterRats();
         }

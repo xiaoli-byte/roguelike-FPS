@@ -471,7 +471,7 @@ export class Tantong extends StandardEnemy {
     }
     const reach = this.verticalReach(1.3);
     if (this.cooldown <= 0 && this.sees && reach && this.onGround && d <= POUNCE_RANGE && this.requestAttack('melee', 1.6)) {
-      this.windTime = this.windup(POUNCE_WINDUP, 0.25);
+      this.windTime = this.windupFrac(POUNCE_WINDUP, 0.25);
       this.setState('pounceWindup');
       ctx.audio.play('enemy_alert', { position: this.position, volume: 0.4, pitch: 1.7 });
       return;
@@ -481,7 +481,7 @@ export class Tantong extends StandardEnemy {
     if (this.cooldown <= 0 && this.sees && this.onGround && d >= THROW_RANGE[0] && d <= THROW_RANGE[1]
       && now - Tantong.throwGate >= THROW_GAP && this.requestAttack('ranged', THROW_WINDUP + 0.6)) {
       Tantong.throwGate = now;
-      this.windTime = this.windup(THROW_WINDUP, 0.3);
+      this.windTime = this.windupFrac(THROW_WINDUP, 0.3);
       this.setState('throwWindup');
       return;
     }

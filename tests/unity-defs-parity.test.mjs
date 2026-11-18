@@ -80,7 +80,9 @@ test('chapter 4 roster agrees with the plateau runtime specs (FOE_SPECS)', () =>
 test('def-driven behaviour: roster elites always spawn elite, affix exclusions come from the definition', async () => {
   const manager = await readFile(new URL('../src/enemies/EnemyManager.ts', import.meta.url), 'utf8');
   assert.match(manager, /const elite = !!opts\.elite \|\| entry\.def\.rank === 'elite';/);
-  assert.match(manager, /rollAffix\(this\.ctx\.rng, entry\.def\.affixExclusions\)/);
+  // Unity EliteAffixes.Resolve：写死的词缀也要过排除表，否则从没被排除的里随机
+  assert.match(manager, /const ex = entry\.def\.affixExclusions;/);
+  assert.match(manager, /isAffixId\(opts\.affix\) && !ex\?\.includes\(opts\.affix\) \? opts\.affix : rollAffix\(this\.ctx\.rng, ex\)/);
   assert.equal(web.enemies.qiongqi.rank, 'elite');
 
   const threeUrl = new URL('../node_modules/three/build/three.module.js', import.meta.url).href;
@@ -91,7 +93,7 @@ test('def-driven behaviour: roster elites always spawn elite, affix exclusions c
     return dataModule(stripTypeScriptTypes(source, { mode: 'transform' }));
   };
   const mathUrl = await tsModule('../src/core/math.ts');
-  const { rollAffix, AFFIX_IDS } = await import(await tsModule('../src/enemies/Affixes.ts', {
+  const { rollAffix, AFFIX_IDS } = await import(await tsModule('../src/enemies/Affixes.ts', { './AttackTokens': await tsModule('../src/enemies/AttackTokens.ts'), './EliteTornado': await tsModule('../src/enemies/EliteTornado.ts'), './fx/SlashArc': await tsModule('../src/enemies/fx/SlashArc.ts'), './bosses/Visuals': await tsModule('../src/enemies/bosses/Visuals.ts'), 
     './Models': await tsModule('../src/enemies/Models.ts', { '../core/math': mathUrl }),
     './Hazards': await tsModule('../src/enemies/Hazards.ts', { '../core/math': mathUrl }),
   }));

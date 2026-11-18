@@ -239,7 +239,7 @@ export class LanternJelly extends StandardEnemy {
         const dy = pl.y - (this.position.y - this.hoverHeight);
         if (this.shockCd <= 0 && this.distToPlayerXZ() <= SHOCK.range && dy > -1 && dy < SHOCK.rise
           && this.requestAttack('melee', SHOCK.windup + 0.4)) {
-          this.windTime = this.windup(SHOCK.windup, 0.55);
+          this.windTime = this.windupFrac(SHOCK.windup, 0.55);
           this.setState('shockWindup');
           this.groundPoint(_p);
           this.cancelWarning = this.ctx.fx.groundWarning(_p, SHOCK.range, this.windTime, C.shock);

@@ -185,8 +185,12 @@ export function shockwave(ctx: GameContext, center: THREE.Vector3, o: ShockwaveO
     }
     if (!e.alive) continue;
     const k = 1 - 0.5 * t;
-    _imp.set(dx * o.knockback * k, o.lift * k, dz * o.knockback * k);
+    // 同 Unity SkillFx：先记水平击退，再上抛——launchUp 把还没推完的水平击退一起带上天（地面敌人，StandardEnemy）；
+    // 没有 launchUp 的（首领、第四章适配层）照旧把上抛并进击退冲量
+    const launch = (e as { launchUp?: (v: number) => boolean }).launchUp;
+    _imp.set(dx * o.knockback * k, launch ? 0 : o.lift * k, dz * o.knockback * k);
     e.knockback(_imp);
+    if (launch && o.lift > 0) launch.call(e, o.lift * k);
     if (o.stun) stunEnemy(ctx, e, o.stun);
   }
 

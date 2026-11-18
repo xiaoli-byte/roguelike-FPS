@@ -512,7 +512,8 @@ export class IronOx extends StandardEnemy {
       const dist = Math.hypot(dx, dz);
       if (dist > this.radius + e.radius + 0.5 || dist < 1e-3 || dx * fx + dz * fz <= 0) continue;
       const side = dx * fz - dz * fx >= 0 ? 1 : -1;
-      _v.set(fz * side * 6 + fx * 2, 1.5, -fx * side * 6 + fz * 2);
+      // Unity IronOxAI：Knockback(right × side × 6 + forward × 2)，只有水平
+      _v.set(fz * side * 6 + fx * 2, 0, -fx * side * 6 + fz * 2);
       e.knockback(_v);
     }
   }
@@ -593,7 +594,7 @@ export class IronOx extends StandardEnemy {
   // ───────────── 熔铁喷吐 ─────────────
 
   private beginSpit(): void {
-    this.windTime = this.windup(SPIT_WINDUP, 0.35);
+    this.windTime = this.windupFrac(SPIT_WINDUP, 0.35);
     this.setState('spitWindup');
     this.spitYaw = this.facing;
     this.inhaleCd = this.ctx.rng.range(INHALE_COOLDOWN[0], INHALE_COOLDOWN[1]);
@@ -656,7 +657,7 @@ export class IronOx extends StandardEnemy {
   // ───────────── 顶角掀地 ─────────────
 
   private beginToss(): void {
-    this.windTime = this.windup(TOSS_WINDUP, 0.35);
+    this.windTime = this.windupFrac(TOSS_WINDUP, 0.35);
     this.setState('tossWindup');
     this.stopMoving();
     this.struck = false;

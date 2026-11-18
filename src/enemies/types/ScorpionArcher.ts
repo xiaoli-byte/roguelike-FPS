@@ -59,7 +59,7 @@ const TUNNEL_MAX = 2.6;
 const EMERGE_TIME = 0.5;
 const EMERGE_RADIUS = 1.5;
 /** 钻沙时身体沉入地面的深度（米，按体型缩放） */
-const SINK_DEPTH = 1.25;
+const SINK_DEPTH = 1.8; // Unity ScorpionArcherAI.SinkDepth（原 1.25）
 /** 钳击距离 / 钻出掀沙半径（美术 2 米版的数值，按 sizeScale 放大） */
 const SNAP_RANGE = 1.8;
 const SNAP_WINDUP = 0.35;
@@ -132,9 +132,9 @@ export class ScorpionArcher extends StandardEnemy {
     this.burrowCd = ctx.rng.range(2, 4);
   }
 
-  /** 潜在沙里时不可选中（射线 / 范围 / 伤害全部忽略） */
-  get untargetable(): boolean {
-    return this.state === 'tunnel' || (this.state === 'dive' && this.sink > 0.6) || (this.state === 'emerge' && this.sink > 0.6);
+  /** 潜在沙里时不可选中（射线 / 范围 / 伤害全部忽略）；出生 / 出场中同基类 */
+  override get untargetable(): boolean {
+    return super.untargetable || this.state === 'tunnel' || (this.state === 'dive' && this.sink > 0.6) || (this.state === 'emerge' && this.sink > 0.6);
   }
 
   protected override afterInit(): void {
@@ -366,7 +366,7 @@ export class ScorpionArcher extends StandardEnemy {
         this.stopMoving();
         this.facePlayer(7, dt);
         this.glowTarget[2] = clamp01(this.stateTime / SNAP_WINDUP);
-        if (this.stateTime >= this.windup(SNAP_WINDUP, 0.2)) this.setState('snap');
+        if (this.stateTime >= this.windupFrac(SNAP_WINDUP, 0.2)) this.setState('snap');
         break;
       }
       case 'snap': {
@@ -404,7 +404,7 @@ export class ScorpionArcher extends StandardEnemy {
       this.cooldown = this.ctx.rng.range(0.4, 0.9);
       return;
     }
-    this.aimTime = this.windup(time, 0.3);
+    this.aimTime = this.windupFrac(time, 0.3);
     this.setState('aim');
     this.ctx.audio.play('telegraph', { position: this.position, volume: 0.5, pitch: 1.6 });
   }

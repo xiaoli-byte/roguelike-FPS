@@ -61,7 +61,7 @@ const CHARGE_WINDUP = 1.0;
 const CHARGE_COOLDOWN = [5, 7] as const;
 const CHARGE_SPEED = 15;
 const CHARGE_LENGTH = 20;
-const CHARGE_HALF_WIDTH = 0.75;
+const CHARGE_HALF_WIDTH = 0.9; // Unity TombBeastAI.ChargeHalfWidth（原 0.75）
 const CHARGE_DAMAGE_MULT = 1.4;
 const CHARGE_KNOCK = 16;
 const DAZED_TIME = 1.8;
@@ -470,7 +470,7 @@ export class TombBeast extends StandardEnemy {
   }
 
   private beginCharge(windup = CHARGE_WINDUP): void {
-    this.windTime = this.windup(windup, 0.45);
+    this.windTime = this.windupFrac(windup, 0.45);
     this.setState('chargeWindup');
     this.stopMoving();
     this.roar(0.7);
@@ -585,7 +585,7 @@ export class TombBeast extends StandardEnemy {
   }
 
   private beginStomp(): void {
-    this.windTime = this.windup(STOMP_WINDUP, 0.4);
+    this.windTime = this.windupFrac(STOMP_WINDUP, 0.5);
     this.setState('stompWindup');
     this.stopMoving();
     this.ctx.audio.play('telegraph', { position: this.position, volume: 0.8, pitch: 0.5 });

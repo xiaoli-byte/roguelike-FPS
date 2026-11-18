@@ -589,7 +589,7 @@ export class FoxWitch extends StandardEnemy {
   }
 
   private beginCast(state: string, windup: number): void {
-    this.windTime = this.windup(windup, windup * 0.6);
+    this.windTime = this.windupFrac(windup, windup * 0.6);
     this.setState(state);
     this.ctx.audio.play('telegraph', { position: this.position, volume: 0.45, pitch: state === 'mirrorCharge' ? 1.5 : 1.15 });
   }

@@ -368,7 +368,7 @@ export class FireRat extends StandardEnemy {
           this.pathClear = this.sees && d <= ROLL_RANGE && this.verticalReach(1.2) && (d < 4 || this.directPathClear(pl.position));
         }
         if (this.cooldown <= 0 && this.pathClear && d <= ROLL_RANGE) {
-          this.curlTime = this.windup(CURL_TIME, 0.4);
+          this.curlTime = this.windupFrac(CURL_TIME, 0.4);
           this.setState('curl');
           this.stopMoving();
           this.ctx.audio.play('telegraph', { position: this.position, volume: 0.8, pitch: 1.7 });

@@ -407,7 +407,7 @@ export class Fuzhu extends StandardEnemy {
   }
 
   private beginCharge(): void {
-    this.chargeTime = this.windup(CHARGE_TIME, 0.9);
+    this.chargeTime = this.windupFrac(CHARGE_TIME, 0.9);
     this.setState('charge');
     this.stopMoving();
     this.chargeAcc = 0;

@@ -72,10 +72,10 @@ const STOP_DIST = 2.6;
 /** 熔岩里：游速、转身、重新寻路间隔、伏击距离与冷却、躲岸多久后自己上岸 */
 const SWIM_SPEED = 7;
 const SWIM_TURN = 3.2;
-const REPLAN = 0.5;
+const REPLAN = 0.25; // Unity TuoAI.Replan（原 0.5）
 const AMBUSH_RANGE = 7;
 const AMBUSH_COOLDOWN = [2.5, 3.5] as const;
-const EMERGE_AFTER = 8;
+const EMERGE_AFTER = 5; // Unity TuoAI.EmergeAfter（原 8）
 const EMERGE_DIST = 11;
 /** 伏击：鼓泡前摇、扑击速度与最长时间、扑咬命中距离（米，中心算）与倍率 */
 const SURGE_TIME = 0.6;
@@ -770,7 +770,7 @@ export class Tuo extends StandardEnemy {
 
   private beginSurge(emerge: boolean): void {
     const L = this.lava;
-    this.windTime = this.windup(SURGE_TIME, 0.45);
+    this.windTime = this.windupFrac(SURGE_TIME, 0.45);
     this.setState('surge');
     this.stopMoving();
     this.emerged = emerge;
@@ -866,7 +866,7 @@ export class Tuo extends StandardEnemy {
       return;
     }
     if (this.biteCd <= 0 && d <= BITE_RANGE && fd > 0.75 && this.verticalReach(1.8) && this.requestAttack('melee', 1.2)) {
-      this.windTime = this.windup(BITE_WINDUP, 0.3);
+      this.windTime = this.windupFrac(BITE_WINDUP, 0.3);
       this.setState('biteWindup');
       this.stopMoving();
       this.struck = false;
@@ -881,7 +881,7 @@ export class Tuo extends StandardEnemy {
   // ───────────── 甩尾 ─────────────
 
   private beginSweep(): void {
-    this.windTime = this.windup(SWEEP_WINDUP, 0.4);
+    this.windTime = this.windupFrac(SWEEP_WINDUP, 0.4);
     this.setState('sweepWindup');
     this.stopMoving();
     this.struck = false;

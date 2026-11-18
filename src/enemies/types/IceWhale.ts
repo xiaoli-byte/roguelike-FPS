@@ -345,7 +345,7 @@ export class IceWhale extends StandardEnemy {
         this.crawlRange(d, dt);
         if (this.cooldown <= 0 && canLob && d >= FIRE_RANGE[0] && d <= FIRE_RANGE[1]) {
           if (this.requestAttack('heavy', SWELL_TIME + SPOUT_TIME + 1.5)) {
-            this.swellTime = this.windup(SWELL_TIME, 0.7);
+            this.swellTime = this.windupFrac(SWELL_TIME, 0.7);
             this.setState('swell');
             this.ctx.audio.play('boss_roar', { position: this.position, volume: 0.45, pitch: 1.6 });
           } else {
@@ -502,7 +502,7 @@ export class IceWhale extends StandardEnemy {
   }
 
   private beginRear(): void {
-    this.rearTime = this.windup(REAR_TIME, 0.6);
+    this.rearTime = this.windupFrac(REAR_TIME, 0.6);
     this.setState('rear');
     this.stopMoving();
     this.slamCd = this.ctx.rng.range(SLAM_COOLDOWN[0], SLAM_COOLDOWN[1]);

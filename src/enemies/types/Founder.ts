@@ -544,7 +544,7 @@ export class Founder extends StandardEnemy {
 
   private beginPour(t: IEnemy): void {
     this.target = t;
-    this.windTime = this.windup(POUR.windup, 0.5);
+    this.windTime = this.windupFrac(POUR.windup, 0.5);
     this.setState('pourWindup');
     this.targetDecal?.release();
     this.targetDecal = GroundDecal.acquire(this.ctx.stageGroup, C.molten);
@@ -604,7 +604,7 @@ export class Founder extends StandardEnemy {
   // ───────────── 泼铜 ─────────────
 
   private beginFling(): void {
-    this.windTime = this.windup(FLING.windup, 0.4);
+    this.windTime = this.windupFrac(FLING.windup, 0.4);
     this.setState('flingWindup');
     this.flingDecal?.release();
     this.flingDecal = GroundDecal.acquire(this.ctx.stageGroup, C.ember);

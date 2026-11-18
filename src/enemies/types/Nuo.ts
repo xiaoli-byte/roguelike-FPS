@@ -603,7 +603,7 @@ export class Nuo extends StandardEnemy {
   // ───────────── 吐火 ─────────────
 
   private beginSpit(): void {
-    this.windTime = this.windup(SPIT.windup, 0.35);
+    this.windTime = this.windupFrac(SPIT.windup, 0.35);
     this.spitYaw = this.facing;
     // 从玩家那一侧的反面扫起（扫过玩家）
     const pl = this.ctx.player.position;

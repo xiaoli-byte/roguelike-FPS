@@ -383,7 +383,7 @@ export class FireCrow extends StandardEnemy implements ExplosiveKin {
     const pl = ctx.player.position;
     const gy = ctx.world.groundHeight(pl.x, pl.z, pl.y + 0.5);
     this.diveTarget.set(pl.x, Number.isFinite(gy) ? gy : pl.y, pl.z);
-    this.igniteTime = this.windup(IGNITE_TIME, 0.5);
+    this.igniteTime = this.windupFrac(IGNITE_TIME, 0.5);
     this.setState('ignite');
     this.stopMoving();
     // 俯冲线：从飞鸦脚下的地面投影到落点

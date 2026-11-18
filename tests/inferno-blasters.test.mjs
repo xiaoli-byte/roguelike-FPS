@@ -35,7 +35,7 @@ const tasksUrl = await tsModule('../src/core/Tasks.ts');
 const modelsUrl = await tsModule('../src/enemies/Models.ts', { '../core/math': mathUrl });
 const tokensUrl = await tsModule('../src/enemies/AttackTokens.ts');
 const hazardsUrl = await tsModule('../src/enemies/Hazards.ts', { '../core/math': mathUrl });
-const affixesUrl = await tsModule('../src/enemies/Affixes.ts', { './Models': modelsUrl, './Hazards': hazardsUrl });
+const affixesUrl = await tsModule('../src/enemies/Affixes.ts', { './AttackTokens': await tsModule('../src/enemies/AttackTokens.ts'), './EliteTornado': await tsModule('../src/enemies/EliteTornado.ts'), './fx/SlashArc': await tsModule('../src/enemies/fx/SlashArc.ts'), './bosses/Visuals': await tsModule('../src/enemies/bosses/Visuals.ts'),  './Models': modelsUrl, './Hazards': hazardsUrl });
 const levelsUrl = await tsModule('../src/enemies/Levels.ts');
 const enemyBaseUrl = await tsModule('../src/enemies/EnemyBase.ts', { '../core/types': typesUrl, '../core/math': mathUrl });
 const nativeRigUrl = await tsModule('../src/assets/NativeRig.ts', {
@@ -49,6 +49,7 @@ const enemyArtUrl = dataModule(`
   }
 `);
 const standardUrl = await tsModule('../src/enemies/StandardEnemy.ts', {
+  './HitReaction': await tsModule('../src/enemies/HitReaction.ts'), './SpawnEntrance': await tsModule('../src/enemies/SpawnEntrance.ts'),
   '../core/math': mathUrl, './EnemyBase': enemyBaseUrl, './AttackTokens': tokensUrl, './Affixes': affixesUrl,
   './Levels': levelsUrl, './Models': modelsUrl, '../assets/EnemyArt': enemyArtUrl,
 });

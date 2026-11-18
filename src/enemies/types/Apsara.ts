@@ -876,7 +876,7 @@ export class Apsara extends StandardEnemy {
   }
 
   private beginCast(state: string, windup: number, pitch: number): void {
-    this.windTime = this.windup(windup, windup * 0.6);
+    this.windTime = this.windupFrac(windup, 0.6);
     this.setState(state);
     this.pipa.getWorldPosition(_p);
     this.ctx.audio.play('pipa_roll', { position: _p, volume: 0.55, pitch: pitch * 1.2 });

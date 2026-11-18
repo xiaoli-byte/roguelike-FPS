@@ -31,6 +31,7 @@ const enemyBaseUrl = await tsModule('../src/enemies/EnemyBase.ts', { '../core/ty
 const affixesUrl = dataModule('export const AFFIX_NAMES = {}; export function isAffixId() { return false; } export function createAffix() { return null; }');
 const enemyArtUrl = dataModule('export function attachEnemyArt() { return { body: null, native: null, parts: [] }; }');
 const standardUrl = await tsModule('../src/enemies/StandardEnemy.ts', {
+  './HitReaction': await tsModule('../src/enemies/HitReaction.ts'), './SpawnEntrance': await tsModule('../src/enemies/SpawnEntrance.ts'),
   '../core/math': mathUrl, './EnemyBase': enemyBaseUrl, './AttackTokens': tokensUrl, './Affixes': affixesUrl,
   './Levels': levelsUrl, './Models': modelsUrl, '../assets/EnemyArt': enemyArtUrl,
 });

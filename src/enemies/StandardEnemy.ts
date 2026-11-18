@@ -7,6 +7,10 @@
  *
  * 另外提供：攻击令牌、带卡死绕行的 navigate、能上下高台的 approachPlayer、远程寻找视线站位、
  * 发光部件通道、随动画移动的头部判定锚点、词缀接入（精英名称 / 视觉 / 数值）以及若干几何小工具。
+ *
+ * 受击四层（Unity EnemyAI.HitStagger / HitStun / Hitch + Poise，见 HitReaction.ts）：def.poise / hitch 不为 0 的敌人
+ * 按韧性累计硬直、每挨一枪顿一下；外部的反制 / 剧本可以直接调 hitStagger / hitStun。前三章的敌人韧性都是 0，不进这两条。
+ * 词缀招式（迅捷的前行龙卷）接管期间 affixAttackBusy = true：基础 AI 停手（Unity EnemyAI.AffixAttackBusy）。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../core/types';
@@ -14,14 +18,33 @@ import { clamp01, damp } from '../core/math';
 import { EnemyBase } from './EnemyBase';
 import { attackDirector, type TokenKind } from './AttackTokens';
 import { AFFIX_NAMES, createAffix, isAffixId, type AffixController } from './Affixes';
+import { DEFAULT_STAGGER_SECONDS, PoiseMeter, STUN_TAKEN_MULT, isDotHit, poiseDamage, type HitCause, type HitLayer } from './HitReaction';
+import { ENTRANCE, entranceAt, entrancePlan, type EntranceKind, type EntrancePlan } from './SpawnEntrance';
 import { levelAt, playerLevel, type LevelSpot } from './Levels';
 import { glowPartMat, part, type HumanoidRig } from './Models';
 import { attachEnemyArt } from '../assets/EnemyArt';
 import type { NativeBody } from '../assets/NativeRig';
+import type { MoveResult } from '../world/Collision';
 import type { SkinnedBody } from '../assets/SkinnedBody';
 
 const _a = new THREE.Vector3();
 const _b = new THREE.Vector3();
+const _push = new THREE.Vector3();
+const _pushMove: MoveResult = { onGround: false, hitWall: false, hitCeiling: false, stepped: false, groundY: 0, wallNormal: new THREE.Vector3() };
+
+/**
+ * 击退（Unity EnemyAI.Knockback / LaunchUp）：水平冲量 × (1 − 抗性) 叠到一个推力上（上限 9 m/s），按 8/s 指数衰减推开；
+ * 冲量 > 2 m/s 时失控 0.25 × (1 − 抗性) 秒（knockedBack，熔岩据此判「被打进去」）。竖直不走这里——上抛走 launchUp（重力 26）
+ */
+export const KNOCKBACK = { maxPush: 9, decay: 8, controlLossImpulse: 2, controlLossTime: 0.25, launchGravity: 26, minLaunch: 0.5 } as const;
+
+/** 眩晕期间受伤 +25%（hitStun 进的眩晕）：每个 GameContext 挂一次全局伤害修正 */
+const stunTakenInstalled = new WeakSet<object>();
+function installStunTaken(ctx: GameContext): void {
+  if (stunTakenInstalled.has(ctx)) return;
+  stunTakenInstalled.add(ctx);
+  ctx.combat.addOutgoingModifier((enemy) => (enemy instanceof StandardEnemy && enemy.hitStunTaken && enemy.stunTime > 0 ? STUN_TAKEN_MULT : 1));
+}
 
 /** 发光通道数：0 = 主前摇发光；1、2 供子类区分不同招式 */
 const GLOW_CHANNELS = 3;
@@ -41,6 +64,13 @@ export abstract class StandardEnemy extends EnemyBase {
   attackRate = 1;
   /** 狂暴词缀已触发 */
   frenzied = false;
+  /** 词缀招式（迅捷的前行龙卷）接管中：基础 AI 不同时出手（Unity EnemyAI.AffixAttackBusy，由词缀控制器设置与解除） */
+  affixAttackBusy = false;
+  /** hitStun 进的眩晕：醒来前受伤 × STUN_TAKEN_MULT */
+  hitStunTaken = false;
+  /** 韧性破过几次、最近进的是受击哪一层（测试 / 冒烟读） */
+  poiseBreaks = 0;
+  lastHitLayer: HitLayer | null = null;
 
   protected affixCtl: AffixController | null = null;
   protected state = 'chase';
@@ -71,6 +101,16 @@ export abstract class StandardEnemy extends EnemyBase {
   private strafeTimer: number;
   private wasStunned = false;
   private tokenKind: TokenKind | null = null;
+  /** 受击四层：韧性计量（def.poise / hitch 都是 0 时为 null）、每枪顿多久、硬直 / 顿一下的剩余秒数 */
+  private readonly poiseMeter: PoiseMeter | null;
+  private readonly hitchSeconds: number;
+  private hitStaggerLeft = 0;
+  private hitchLeft = 0;
+  /** 出场位移（跃下 / 飞临 / 熔岩爬出，Unity SpawnEntrance）与落地后的出生站稳剩余秒数 */
+  private entrance: { plan: EntrancePlan; from: THREE.Vector3; to: THREE.Vector3; t: number; trail: number } | null = null;
+  private settleLeft = 0;
+  /** 还没推完的水平击退速度（m/s，Unity EnemyAI.PendingPush） */
+  readonly pendingPush = new THREE.Vector3();
   /** 美术资产身体（清单里有绑定本敌人的骨骼网格时） */
   private artBody: SkinnedBody | null = null;
   /** 原生骨架美术（按骨骼名驱动的动画用）；没有时为 null */
@@ -103,6 +143,10 @@ export abstract class StandardEnemy extends EnemyBase {
     // 出生后错开首次攻击，避免整波同步
     this.cooldown = ctx.rng.range(0.6, 2.0);
     this.stuckRef.copy(this.position);
+    // 第四章受击四层：有韧性 / 顿一下的敌人才挂计量（Unity Poise.Attach：前三章都是 0，不挂）
+    const poise = def.poise ?? 0;
+    this.hitchSeconds = Math.max(0, def.hitch ?? 0);
+    this.poiseMeter = poise > 0 || this.hitchSeconds > 0 ? new PoiseMeter(poise) : null;
   }
 
   // ───────────── 子类接口 ─────────────
@@ -147,6 +191,28 @@ export abstract class StandardEnemy extends EnemyBase {
   protected override think(dt: number): void {
     this.stateTime += dt;
     if (this.cooldown > 0) this.cooldown -= dt * this.attackRate;
+    // 出场落地后的出生站稳（Unity：AI 交还后还有 spawn 状态的 0.7 s）：站着面向玩家，已经能打
+    if (this.settleLeft > 0) {
+      this.settleLeft -= dt;
+      this.stopMoving();
+      this.facePlayer(6, dt);
+      return;
+    }
+    // 受击四层：硬直中停摆（到点回到初始状态）；轻怪挨一枪顿一下（不打断招式）。前三章的敌人从不进这两个分支
+    if (this.hitStaggerLeft > 0) {
+      this.hitStaggerLeft -= dt;
+      this.glowTarget[0] = 0;
+      this.stopMoving();
+      if (this.hitStaggerLeft <= 0) {
+        this.hitStaggerLeft = 0;
+        this.onHitStaggerEnd();
+      }
+      return;
+    }
+    if (this.hitchLeft > 0) {
+      this.hitchLeft -= dt;
+      return;
+    }
     if (!this.ctx.player.alive) {
       if (this.state !== 'idle') {
         this.cancelAttack();
@@ -164,6 +230,11 @@ export abstract class StandardEnemy extends EnemyBase {
       this.strafeSign = -this.strafeSign;
       this.strafeTimer = this.ctx.rng.range(1.5, 3.2);
     }
+    // 词缀招式接管期间：基础 AI 停手、站住（Unity EnemyAI.Update 的 AffixAttackBusy 分支）
+    if (this.affixAttackBusy) {
+      this.stopMoving();
+      return;
+    }
     this.ai(dt);
   }
 
@@ -179,7 +250,10 @@ export abstract class StandardEnemy extends EnemyBase {
       this.cancelAttack();
       this.releaseAttack();
     }
+    // 醒了：hitStun 的受伤加成撤掉（Unity EnemyAI：醒来时 stunTaken.Dispose）
+    if (!stunned && this.wasStunned) this.hitStunTaken = false;
     this.wasStunned = stunned;
+    this.poiseMeter?.tick(dt);
     if (stunned) this.glowTarget[0] = 0;
 
     for (let i = 0; i < GLOW_CHANNELS; i++) this.glowLevel[i] = damp(this.glowLevel[i], this.glowTarget[i], 14, dt);
@@ -194,9 +268,85 @@ export abstract class StandardEnemy extends EnemyBase {
     const k = r.isCrit ? 0.7 : 0.38;
     this.hurtKick = Math.min(1.1, this.hurtKick + k * (0.5 + Math.min(1, r.dealt / Math.max(1, this.maxHp * 0.25))));
     this.affixCtl?.onHurt(r);
+    this.poiseHit(r);
   }
 
+  // ───────────── 受击四层（Unity EnemyAI.HitStagger / HitStun / Hitch、Poise.OnDamaged） ─────────────
+
+  /** 霸体：此刻硬直打不断（招式标了霸体、大招）。缺省 false；子类按当前招式覆写 */
+  get superArmor(): boolean {
+    return false;
+  }
+
+  /** 正在硬直（受击四层的硬直，不是元素眩晕） */
+  get hitStaggered(): boolean {
+    return this.hitStaggerLeft > 0;
+  }
+
+  /** 每次受伤：轻怪顿一下（持续伤害不算），韧性累计满了硬直（Unity Poise.OnDamaged） */
+  private poiseHit(r: DamageResult): void {
+    const meter = this.poiseMeter;
+    if (!meter || r.killed || !(r.dealt > 0) || !this.alive) return;
+    const req = r.request;
+    if (this.hitchSeconds > 0 && !isDotHit(req)) this.hitch(this.hitchSeconds);
+    if (!meter.add(poiseDamage(req, r.dealt))) return;
+    if (this.hitStagger(this.def.staggerSeconds ?? DEFAULT_STAGGER_SECONDS, req.point ?? null, 'poise')) this.poiseBreaks++;
+  }
+
+  /**
+   * 硬直（韧性破、反制、机关）：统一入口。死了 / 出生中 / 霸体时返回 false；否则交给 onHitStagger
+   * （缺省：打断招式、撤预警、停下、后仰，停摆 seconds 秒，到点 onHitStaggerEnd）
+   */
+  hitStagger(seconds: number, from: THREE.Vector3 | null = null, cause: HitCause = 'poise'): boolean {
+    if (!this.alive || this.age < this.spawnDuration || !(seconds > 0) || !Number.isFinite(seconds) || this.superArmor) return false;
+    let ok = false;
+    try {
+      ok = this.onHitStagger(seconds, from, cause);
+    } catch (err) {
+      console.error('[StandardEnemy] onHitStagger threw', err);
+    }
+    if (ok) this.lastHitLayer = 'stagger';
+    return ok;
+  }
+
+  /** 眩晕（反制、破防、封脉）：走元素眩晕（精英 ×0.75、首领另有规则），期间受伤 +25%。死了 / 出生中返回 false */
+  hitStun(seconds: number, _cause: HitCause = 'script'): boolean {
+    if (!this.alive || this.age < this.spawnDuration || !(seconds > 0) || !Number.isFinite(seconds)) return false;
+    const before = this.stunTime;
+    this.ctx.combat.applyStatus(this, 'stun', 0, seconds);
+    const ok = this.stunTime > before || (before > 0 && this.stunTime > 0);
+    if (!ok) return false;
+    installStunTaken(this.ctx);
+    this.hitStunTaken = true;
+    this.lastHitLayer = 'stun';
+    return true;
+  }
+
+  /** 顿一下（轻怪每挨一枪）：AI 停 seconds 秒、不打断招式（已经在顿的取较长） */
+  hitch(seconds: number): void {
+    if (!this.alive || this.age < this.spawnDuration || !(seconds > 0) || !Number.isFinite(seconds)) return;
+    const was = this.hitchLeft > 0;
+    this.hitchLeft = Math.max(this.hitchLeft, seconds);
+    if (!was) this.lastHitLayer = 'flinch';
+  }
+
+  /** 硬直的表现与状态（子类覆写表现；返回 false = 不进）。缺省：停下、打断招式、后仰、停摆 seconds 秒 */
+  protected onHitStagger(seconds: number, _from: THREE.Vector3 | null, _cause: HitCause): boolean {
+    this.stopMoving();
+    this.releaseAttack();
+    this.cancelAttack();
+    this.glowTarget[0] = 0;
+    this.hitStaggerLeft = Math.max(this.hitStaggerLeft, seconds);
+    this.hurtKick = Math.min(1.1, this.hurtKick + 0.8);
+    return true;
+  }
+
+  /** 硬直结束（缺省什么也不做：cancelAttack 已经把子类送回默认状态） */
+  protected onHitStaggerEnd(): void {}
+
   protected override onDeath(r: DamageResult): void {
+    this.hitStaggerLeft = this.hitchLeft = 0;
+    this.hitStunTaken = false;
     this.releaseAttack();
     this.cancelAttack();
     // 眼睛 / 核心熄灭
@@ -212,6 +362,141 @@ export abstract class StandardEnemy extends EnemyBase {
     this.artBody?.dispose();
     this.artBody = null;
     this.nativeBody = null;
+  }
+
+  // ───────────── 出生 / 出场（Unity EnemyAI.Spawn 的不可选中、SpawnEntrance） ─────────────
+
+  /**
+   * 不可选中：出生显形的 0.7 s（Unity EnemyAI.Spawn 把 hp.untargetable 留到 spawn 状态结束）、出场位移中。
+   * 子类覆写时并上 super.untargetable
+   */
+  get untargetable(): boolean {
+    if (!this.alive) return false;
+    if (this.entrance) return true;
+    return this.age < this.spawnDuration;
+  }
+
+  /** 正在出场位移（跃下 / 飞临 / 熔岩爬出） */
+  get entering(): boolean {
+    return this.entrance !== null;
+  }
+
+  /**
+   * 开始一段出场位移（Unity SpawnEntrance.Begin）：敌人刚生成在落点 to 上，这一帧挪到起点 from，按 kind 走到 to；
+   * 期间 AI 不思考、不吃击退、不可选中，不播出生显形；落地后站稳 0.7 s 再交给 AI
+   */
+  beginEntrance(kind: EntranceKind, from: THREE.Vector3, to: THREE.Vector3): boolean {
+    if (!this.alive || !Number.isFinite(from.x + from.y + from.z) || !Number.isFinite(to.x + to.y + to.z)) return false;
+    this.entrance = { plan: entrancePlan(kind, from, to), from: from.clone(), to: to.clone(), t: 0, trail: 0 };
+    this.settleLeft = 0;
+    this.position.copy(from);
+    this.velocity.set(0, 0, 0);
+    this.model.scale.setScalar(this.sizeScale);
+    const dx = to.x - from.x, dz = to.z - from.z;
+    if (dx * dx + dz * dz > 1e-6) this.facing = Math.atan2(dx, dz);
+    this.root.rotation.y = this.facing;
+    // 熔岩爬出：起跳点一团熔岩溅（Unity SpawnCues.LavaSplash）
+    if (kind === 'hop') {
+      _a.copy(from).y += 0.2;
+      this.ctx.fx.burst(_a, 0xff6a1f, 14, 4, 0.6, 0.14, 8);
+    }
+    return true;
+  }
+
+  override update(dt: number): void {
+    const en = this.entrance;
+    if (!en) {
+      super.update(dt);
+      this.stepPush(dt);
+      return;
+    }
+    if (!this.alive) {
+      this.entrance = null;
+      super.update(dt);
+      return;
+    }
+    this.age += dt;
+    en.t += dt;
+    const u = entranceAt(en.plan, en.from, en.to, en.t, _a);
+    if (dt > 0) this.velocity.set((_a.x - this.position.x) / dt, (_a.y - this.position.y) / dt, (_a.z - this.position.z) / dt);
+    const dx = _a.x - this.position.x, dz = _a.z - this.position.z;
+    this.position.copy(_a);
+    if (dx * dx + dz * dz > 1e-6) this.facing = Math.atan2(dx, dz);
+    // 飞临：一路拖尾焰（每 0.04 s 两颗）
+    if (en.plan.kind === 'fly' && en.t > en.plan.delay) {
+      en.trail += dt;
+      while (en.trail > 0.04) {
+        en.trail -= 0.04;
+        this.ctx.fx.burst(this.position, 0xff8a3a, 2, 0.6, 0.45, 0.1, -0.5);
+      }
+    }
+    if (u >= 1 && en.t >= en.plan.delay) {
+      this.position.copy(en.to);
+      this.velocity.set(0, 0, 0);
+      this.entrance = null;
+      this.settleLeft = ENTRANCE.settle;
+      if (this.age < this.spawnDuration) this.age = this.spawnDuration;
+      // 跃下：落地一震（Unity SpawnCues.Land）
+      if (en.plan.kind === 'jump') {
+        _a.copy(en.to).y += 0.06;
+        this.ctx.fx.ring(_a, 1.6, 0xc8a878, 0.35);
+        this.ctx.fx.burst(_a, 0xc8a878, 10, 3, 0.5, 0.16, 4);
+        this.ctx.audio.play('land', { position: en.to, volume: 0.7 });
+      }
+    }
+    this.root.rotation.y = this.facing;
+    this.animate(dt);
+  }
+
+  /**
+   * 击退（Unity EnemyAI.Knockback）：地面单位只取水平分量，叠到推力上（上限 9 m/s）、按 8/s 衰减推开；
+   * 冲量够大时失控。飞行单位照旧加到速度上（Unity FlyingEnemyAI.AirKnockback）。出场位移中不吃击退
+   */
+  override knockback(impulse: THREE.Vector3): void {
+    if (this.entrance) return;
+    if (this.flying) {
+      super.knockback(impulse);
+      return;
+    }
+    if (!this.alive) return;
+    const k = 1 - this.knockbackResist;
+    if (k <= 0) return;
+    const p = this.pendingPush;
+    p.x += impulse.x * k;
+    p.z += impulse.z * k;
+    const len = Math.hypot(p.x, p.z);
+    if (len > KNOCKBACK.maxPush) p.multiplyScalar(KNOCKBACK.maxPush / len);
+    if (impulse.x * impulse.x + impulse.z * impulse.z > KNOCKBACK.controlLossImpulse ** 2) {
+      this.controlLoss = Math.max(this.controlLoss, KNOCKBACK.controlLossTime * k);
+    }
+  }
+
+  /**
+   * 击飞上抛（Unity EnemyAI.LaunchUp；裂地重击、磐石壁垒、厚皮的冲击波）：上抛速度 × (1 − 抗性)，
+   * 连同还没推完的水平击退一起带上天，重力 26，落地前不受控。首领（抗性 1）、飞行、出生 / 出场中的不受影响；不到 0.5 m/s 不掀。返回是否掀起来了
+   */
+  launchUp(velocity: number): boolean {
+    const vy = velocity * (1 - this.knockbackResist);
+    if (!this.alive || this.entrance || this.age < this.spawnDuration || this.flying || !(velocity > 0) || vy < KNOCKBACK.minLaunch) return false;
+    this.velocity.x += this.pendingPush.x;
+    this.velocity.z += this.pendingPush.z;
+    this.pendingPush.set(0, 0, 0);
+    this.velocity.y = Math.max(this.velocity.y, vy);
+    this.onGround = false;
+    // 落地前不受控（Unity：整段交给脚本位移，AI 的移动不生效）：失控时长 = 腾空时间
+    this.controlLoss = Math.max(this.controlLoss, (2 * vy) / KNOCKBACK.launchGravity);
+    return true;
+  }
+
+  /** 推力推开、衰减（Unity EnemyAI.StepPush：agent.Move(push × dt)，push × e^(−8dt)） */
+  private stepPush(dt: number): void {
+    const p = this.pendingPush;
+    if (p.x * p.x + p.z * p.z < 0.0004 || !(dt > 0)) return;
+    if (this.alive) {
+      _push.set(p.x * dt, 0, p.z * dt);
+      this.ctx.world.moveBody(this.position, this.radius * 0.85, this.height, _push, this.onGround, 0.55, _pushMove);
+    }
+    p.multiplyScalar(Math.exp(-KNOCKBACK.decay * dt));
   }
 
   // ───────────── 美术资产 ─────────────
@@ -340,9 +625,17 @@ export abstract class StandardEnemy extends EnemyBase {
     this.stateTime = 0;
   }
 
-  /** 前摇时长：攻速只缩短一部分，且不低于 min（保证可读） */
+  /**
+   * 前摇时长（秒下限版）：攻速加成只缩短一部分前摇——按 1/√攻速 缩（Unity EnemyAI.Windup），且不低于 min 秒（保证可读）。
+   * 等价于 Unity 的 Windup(base, min / base)（Unity 里写成 XxxWindupMin / XxxWindup 的那些调用）
+   */
   protected windup(base: number, min = 0.25): number {
-    return Math.max(Math.min(base, min), base / (1 + (this.attackRate - 1) * 0.45));
+    return Math.max(Math.min(base, min), base / Math.sqrt(Math.max(0.1, this.attackRate)));
+  }
+
+  /** 前摇时长（Unity EnemyAI.Windup(time, minFraction) 原样）：time × max(minFraction, 1/√攻速) */
+  protected windupFrac(time: number, minFraction: number): number {
+    return time * Math.max(minFraction, 1 / Math.sqrt(Math.max(0.1, this.attackRate)));
   }
 
   /** 随机冷却，打散同类敌人的节奏 */

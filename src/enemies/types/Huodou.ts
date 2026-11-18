@@ -457,7 +457,7 @@ export class Huodou extends StandardEnemy {
     this.glowTarget[0] = 0.15 + 0.1 * this.meals;
     const reach = this.verticalReach(1.4);
     if (this.cooldown <= 0 && this.sees && reach && this.onGround && d <= BITE_RANGE && this.requestAttack('melee', 1.4)) {
-      this.windTime = this.windup(BITE_WINDUP, 0.22);
+      this.windTime = this.windupFrac(BITE_WINDUP, 0.22);
       this.setState('biteWindup');
       ctx.audio.play('enemy_alert', { position: this.position, volume: 0.5, pitch: 1.1 });
       return;
@@ -609,7 +609,7 @@ export class Huodou extends StandardEnemy {
     this.spitYaw = Math.atan2(pl.x - this.position.x, pl.z - this.position.z);
     this.facing = this.spitYaw;
     this.spitRange = this.spitReach;
-    this.windTime = this.windup(SPIT_WINDUP, 0.45);
+    this.windTime = this.windupFrac(SPIT_WINDUP, 0.45);
     this.cone?.release();
     this.cone = new BreathCone(this.ctx, this.position.clone(), this.spitYaw, this.spitRange, SPIT_HALF, MOUTH.y * this.sizeScale * this.growth * 0.95);
     this.setState('spitWindup');

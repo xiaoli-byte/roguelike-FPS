@@ -395,7 +395,7 @@ export class JerboaBlade extends StandardEnemy {
         this.accel = grounded ? 70 : 4;
         if (this.cooldown <= 0 && reach && this.sees && grounded) {
           if (d <= SLASH_RANGE + 0.3 && this.requestAttack('melee', 1.2)) {
-            this.windTime = this.windup(SLASH_WINDUP, 0.22);
+            this.windTime = this.windupFrac(SLASH_WINDUP, 0.22);
             this.setState('slashWindup');
             this.ctx.audio.play('enemy_alert', { position: this.position, volume: 0.35, pitch: 1.9 + this.ctx.rng.range(0, 0.2) });
             break;
@@ -525,7 +525,7 @@ export class JerboaBlade extends StandardEnemy {
   }
 
   private beginCrouch(time: number): void {
-    this.windTime = this.windup(time, 0.26);
+    this.windTime = this.windupFrac(time, 0.26);
     this.setState('crouch');
     this.ctx.audio.play('enemy_charge', { position: this.position, volume: 0.45, pitch: 1.9 + this.ctx.rng.range(0, 0.2) });
   }

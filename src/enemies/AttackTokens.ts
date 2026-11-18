@@ -6,8 +6,9 @@
  *  - ranged：普通远程（弩矢、光球）
  *  - heavy：高伤远程（狙击瞄准、炮击、法阵），单独更严格的上限
  *
- * 令牌带过期时间，持有者死亡 / 被清理而没有归还时也会自动回收。
- * 由 EnemyManager 在 clear() 时 reset()。
+ * 令牌带过期时间，持有者死亡 / 被清理而没有归还时也会自动回收（Unity AttackTokens.Prune：过期、或持有者已死 / 已销毁的，
+ * 下一次申请时顺手清掉——持有者是否还活着由 EnemyManager 通过 setLiveness 告诉调度器）。
+ * 由 EnemyManager 在 clear() 时 reset()（Unity 在换关 StageLoaded 时 Reset）。
  */
 export type TokenKind = 'melee' | 'ranged' | 'heavy';
 
@@ -24,6 +25,13 @@ class AttackDirector {
   private lastGrant: Record<TokenKind, number> = { melee: -99, ranged: -99, heavy: -99 };
   /** 为 true 时正在被 killAll 清场：死亡爆炸等附带效果应跳过 */
   purging = false;
+  /** 持有者还活着吗（EnemyManager 注入）；没注入时只按过期回收 */
+  private liveness: ((id: number) => boolean) | null = null;
+
+  /** 注入「持有者还活着」的查询（Unity Prune 的 who.Dead / 已销毁判断） */
+  setLiveness(fn: ((id: number) => boolean) | null): void {
+    this.liveness = fn;
+  }
 
   /** 各类令牌的同时持有上限（随章节放宽） */
   cap(kind: TokenKind, chapter: number): number {
@@ -70,6 +78,13 @@ class AttackDirector {
     return this.holds.has(id);
   }
 
+  /** 当前持有某类名额的个数（不清理过期，测试 / 调试用；同 Unity Count） */
+  count(kind: TokenKind): number {
+    let n = 0;
+    for (const h of this.holds.values()) if (h.kind === kind) n++;
+    return n;
+  }
+
   reset(): void {
     this.holds.clear();
     this.lastGrant.melee = this.lastGrant.ranged = this.lastGrant.heavy = -99;
@@ -83,7 +98,8 @@ class AttackDirector {
       this.lastGrant.melee = this.lastGrant.ranged = this.lastGrant.heavy = -99;
       return;
     }
-    for (const [id, h] of this.holds) if (h.until <= now) this.holds.delete(id);
+    const live = this.liveness;
+    for (const [id, h] of this.holds) if (h.until <= now || (live && !live(id))) this.holds.delete(id);
   }
 }
 

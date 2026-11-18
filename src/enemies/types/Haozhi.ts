@@ -248,7 +248,7 @@ export class Haozhi extends StandardEnemy {
           break;
         }
         if (this.cooldown <= 0 && this.pathClear && d <= CHARGE_RANGE) {
-          this.scrapeTime = this.windup(SCRAPE_TIME, 0.3);
+          this.scrapeTime = this.windupFrac(SCRAPE_TIME, 0.3);
           this.setState('scrape');
           this.stopMoving();
           this.ctx.audio.play('telegraph', { position: this.position, volume: 0.7, pitch: 0.8 });
@@ -314,7 +314,7 @@ export class Haozhi extends StandardEnemy {
   }
 
   private startBristle(): void {
-    this.bristleTime = this.windup(BRISTLE_TIME, 0.5);
+    this.bristleTime = this.windupFrac(BRISTLE_TIME, 0.5);
     this.setState('bristle');
     this.accel = 22;
     this.stopMoving();

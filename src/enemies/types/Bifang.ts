@@ -630,7 +630,7 @@ export class Bifang extends StandardEnemy {
   }
 
   private beginCry(): void {
-    this.cryTime = this.windup(CRY_TIME, 0.55);
+    this.cryTime = this.windupFrac(CRY_TIME, 0.55);
     this.setState('cryBi');
     this.aimLine?.release();
     this.aimLine = new AimLine(this.ctx);

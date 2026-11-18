@@ -65,7 +65,7 @@ const BODY_Y = 0.78;
 const HOP_TIME = 0.95;
 /** 只在腾空段前进：腾空时的移速倍率与着地时的残余倍率（整段平均约等于 1） */
 const HOP_AIR = [0.3, 0.68] as const;
-const HOP_AIR_SPEED = 2.3;
+const HOP_AIR_SPEED = 2.8; // Unity MirageToadAI.HopAirSpeed（原 2.3）
 const HOP_GROUND_SPEED = 0.2;
 /** 美术喉囊半径（米，管线拟合值），白模喉囊发光件按它放大 */
 const ART_SAC_RADIUS = 0.55;
@@ -266,7 +266,7 @@ export class MirageToad extends StandardEnemy {
         this.facePlayer(3, dt);
         if (this.cooldown <= 0 && canLob && d >= 5 && d <= 32) {
           if (this.isDecoy || this.requestAttack('heavy', PUFF_TIME + 1.2)) {
-            this.windTime = this.windup(PUFF_TIME, 0.6);
+            this.windTime = this.windupFrac(PUFF_TIME, 0.6);
             this.setState('puff');
             this.ctx.audio.play('telegraph', { position: this.position, volume: 0.75, pitch: 0.55 });
           } else {

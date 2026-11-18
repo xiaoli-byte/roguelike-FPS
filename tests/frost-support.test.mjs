@@ -30,6 +30,7 @@ const artStub = dataModule('export function attachEnemyArt(o) { const n = global
 const affixStub = dataModule("export const AFFIX_NAMES = {}; export function createAffix() { return null; } export function isAffixId() { return false; }");
 const levelsStub = dataModule('export function levelAt() {} export function playerLevel() { return { route: null, onTop: false }; }');
 const standardUrl = await tsModule('../src/enemies/StandardEnemy.ts', {
+  './HitReaction': await tsModule('../src/enemies/HitReaction.ts'), './SpawnEntrance': await tsModule('../src/enemies/SpawnEntrance.ts'),
   '../core/math': mathUrl, './EnemyBase': enemyBaseUrl, './AttackTokens': tokensUrl, './Affixes': affixStub,
   './Levels': levelsStub, './Models': modelsUrl, '../assets/EnemyArt': artStub,
 });

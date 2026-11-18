@@ -51,6 +51,8 @@ export class EnemyManager implements IEnemyManager {
 
   constructor(readonly ctx: GameContext) {
     this.blobs = new BlobShadows(ctx);
+    // 出手名额：持有者死了 / 被回收了，下一次申请时顺手收回（Unity AttackTokens.Prune）
+    attackDirector.setLiveness((id) => this.enemies.some((e) => e.id === id && e.alive && !e.removed));
   }
 
   /** 当前所有敌人（含播放死亡动画中的） */
@@ -82,8 +84,13 @@ export class EnemyManager implements IEnemyManager {
     // 名册即精英（def.rank = 'elite'，穷奇）总按精英生成，同 Unity QiongqiAI.Spawn(lvl, true)
     const elite = !!opts.elite || entry.def.rank === 'elite';
     const o: SpawnOptions = { position, elite, level };
-    // 词缀只属于普通敌人里的精英：精英没有（或给了无法识别的）词缀时随机一个；非精英 / Boss 一律无词缀
-    if (elite && !entry.def.isBoss) o.affix = isAffixId(opts.affix) ? opts.affix : rollAffix(this.ctx.rng, entry.def.affixExclusions);
+    // 词缀只属于普通敌人里的精英（Unity EliteAffixes.Resolve）：写死的词缀登记过、又不在这种敌人的排除表里就用它，
+    // 否则从没被排除的词缀里均匀随机一个（全被排除时没有词缀）；非精英 / Boss 一律无词缀
+    if (elite && !entry.def.isBoss) {
+      const ex = entry.def.affixExclusions;
+      const affix = isAffixId(opts.affix) && !ex?.includes(opts.affix) ? opts.affix : rollAffix(this.ctx.rng, ex);
+      if (affix) o.affix = affix;
+    }
 
     let e: EnemyBase;
     try {

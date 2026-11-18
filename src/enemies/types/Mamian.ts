@@ -489,7 +489,7 @@ export class Mamian extends StandardEnemy {
         // 前冲半步
         const fwd = this.stateTime > PUNCH_WIND * 0.5 ? 3 : 0;
         this.setMove(Math.sin(this.facing), Math.cos(this.facing), fwd);
-        if (this.stateTime >= this.windup(PUNCH_WIND, 0.22)) {
+        if (this.stateTime >= this.windupFrac(PUNCH_WIND, 0.22)) {
           this.setState('punch');
           if (this.melee(PUNCH_RANGE * this.reach() + 0.3, this.def.damage * PUNCH_MULT, 0.4)) {
             this.punchHit = true;
@@ -520,7 +520,7 @@ export class Mamian extends StandardEnemy {
   }
 
   private beginSpin(): void {
-    this.spinTime = this.windup(SPIN_TIME, 0.6);
+    this.spinTime = this.windupFrac(SPIN_TIME, 0.6);
     this.spinPhase = 0;
     this.snort = 1;
     this.setState('spin');

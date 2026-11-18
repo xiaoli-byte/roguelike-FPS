@@ -98,6 +98,38 @@ interface PackPick {
 interface PendingPack {
   at: number;
   picks: PackPick[];
+  /** 入场方式与起点（跃下的墙头 / 增援门后；没有 = 落地点），落地后按它出场（Unity CombatDirector.Enter） */
+  mode?: SpawnMode;
+  from?: THREE.Vector3;
+}
+
+/** 能做出场位移的敌人（StandardEnemy.beginEntrance，Unity SpawnEntrance） */
+interface EntranceHost {
+  beginEntrance?(kind: 'hop' | 'fly' | 'jump', from: THREE.Vector3, to: THREE.Vector3): boolean;
+}
+
+/**
+ * 入场动作（Unity CombatDirector.Enter）：跃下从起跳点跳到落点、飞临从入场点飞进来（落点上方 2 m）；
+ * 熔岩爬出 / 余烬起身在 Unity 里只有落点的声光（SpawnCues），这里给一团对应颜色的溅射
+ */
+export function enterSpawn(ctx: GameContext, enemy: IEnemy, mode: SpawnMode, from: THREE.Vector3, to: THREE.Vector3): void {
+  const host = enemy as unknown as EntranceHost;
+  switch (mode) {
+    case 'drop':
+      host.beginEntrance?.('jump', from, to);
+      break;
+    case 'flyIn':
+      host.beginEntrance?.('fly', from, to.clone().setY(to.y + 2));
+      break;
+    case 'lavaCrawl':
+      ctx.fx.burst(to, 0xff6a1f, 14, 4, 0.6, 0.14, 8);
+      break;
+    case 'ember':
+      ctx.fx.burst(to, 0xffa040, 16, 2.5, 0.9, 0.08, -2);
+      break;
+    default:
+      break;
+  }
 }
 
 type EnemyDefLookup = (id: string) => EnemyDef | undefined;
@@ -380,7 +412,9 @@ export class CombatDirector {
       const cancel = ctx.fx.groundWarning(position, Math.max(1.1, def.radius + 0.3), cue, e ? WARN_ELITE : WARN_COLOR);
       picks.push({ def, position, elite: e, cancel: typeof cancel === 'function' ? cancel : undefined });
     }
-    this.pending = { at: this.now + cue, picks };
+    const f = entry?.from;
+    const from = f && f.length >= 3 && Number.isFinite(f[0] + f[1] + f[2]) ? new THREE.Vector3(f[0], f[1], f[2]) : anchor.clone();
+    this.pending = { at: this.now + cue, picks, mode, from };
   }
 
   private finishPack(): void {
@@ -401,6 +435,13 @@ export class CombatDirector {
         console.error('[CombatDirector] spawn failed', def.id, err);
       }
       if (!enemy) continue;
+      if (pack.mode && pack.mode !== 'appear' && pack.from) {
+        try {
+          enterSpawn(ctx, enemy, pack.mode, pack.from, position);
+        } catch (err) {
+          console.error('[CombatDirector] entrance failed', def.id, err);
+        }
+      }
       applyRewardScale(enemy, 1, 1, true);
       this.alive.push(enemy);
       this.spawned++;
