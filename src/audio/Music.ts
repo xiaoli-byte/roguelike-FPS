@@ -10,7 +10,7 @@
  */
 import type { MusicId } from '../core/types';
 import type { SynthKit, Voice } from './Synth';
-import { BossTrack, CalmTrack, CombatTrack, MenuTrack, type Track } from './MusicTracks';
+import { BossTrack, CalmTrack, CombatTrack, HanbaTrack, MenuTrack, type Track } from './MusicTracks';
 
 const TICK_MS = 25;
 const LOOKAHEAD = 0.3;
@@ -18,8 +18,15 @@ const LOOKAHEAD_HIDDEN = 1.4;
 const FADE_OUT = 1.6;
 const FADE_IN = 1.3;
 
+/** 合成配乐能放的曲目（烘焙片段读不到时的退路，见 AudioSystem）：配乐 id + 旱魃主题 */
+export type SynthMusicId = MusicId | 'boss_hanba';
+
+/** 合成配方里有没有这条曲目 */
+export const isSynthMusic = (id: string): id is SynthMusicId =>
+  id === 'none' || id === 'menu' || id === 'calm' || id === 'combat' || id === 'boss' || id === 'boss_hanba';
+
 interface Player {
-  id: MusicId;
+  id: SynthMusicId;
   track: Track;
   gain: GainNode;
   send: GainNode;
@@ -29,8 +36,10 @@ interface Player {
   stopAt: number;
 }
 
-function createTrack(id: Exclude<MusicId, 'none'>): Track {
+function createTrack(id: Exclude<SynthMusicId, 'none'>): Track {
   switch (id) {
+    case 'boss_hanba':
+      return new HanbaTrack();
     case 'menu':
       return new MenuTrack();
     case 'calm':
@@ -44,17 +53,17 @@ function createTrack(id: Exclude<MusicId, 'none'>): Track {
 
 export class MusicEngine {
   private players: Player[] = [];
-  private current: MusicId = 'none';
+  private current: SynthMusicId = 'none';
   private timer: ReturnType<typeof setInterval> | null = null;
 
   constructor(private readonly kit: SynthKit, private readonly dry: AudioNode, private readonly wet: AudioNode) {}
 
-  get playing(): MusicId {
+  get playing(): SynthMusicId {
     return this.current;
   }
 
   /** 切换曲目（相同曲目忽略） */
-  set(id: MusicId): void {
+  set(id: SynthMusicId): void {
     if (id === this.current) return;
     this.current = id;
     const ac = this.kit.ac;

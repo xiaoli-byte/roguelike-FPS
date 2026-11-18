@@ -52,25 +52,31 @@ export function unlockAudio(ctx: GameContext): void {
   }
 }
 
-let lastHoverAt = 0;
-
 /**
- * 绑定按钮：悬停播放 ui_hover（节流），点击先解锁音频并播放 ui_click，再执行回调。
+ * 绑定按钮：悬停播放 ui_hover，点击先解锁音频再出按钮音，再执行回调。按钮音的规则（节流 40 ms、禁用出 ui_deny、
+ * sf-sound-confirm / sf-sound-deny / sf-silent 换音）照 Unity UISound，由音频系统实现（audio/UISound.ts）。
  * 回调在 click 处理函数内同步执行（便于重新锁定鼠标等需要用户手势的操作）。
  */
 export function bindButton(ctx: GameContext, el: HTMLElement, onClick: (e: MouseEvent) => void): void {
   el.addEventListener('pointerenter', () => {
     if (el.classList.contains('is-disabled') || (el as HTMLButtonElement).disabled) return;
-    const now = performance.now();
-    if (now - lastHoverAt < 70) return;
-    lastHoverAt = now;
-    sfx(ctx, 'ui_hover', 0.6);
+    buttonSound(ctx, el, false);
   });
   el.addEventListener('click', (e) => {
     unlockAudio(ctx);
-    sfx(ctx, 'ui_click');
+    buttonSound(ctx, el, true);
     onClick(e);
   });
+}
+
+/** 按钮音交给音频系统（IAudio.uiClick / uiHover，可选）：音频系统出错不应影响按钮逻辑 */
+function buttonSound(ctx: GameContext, el: HTMLElement, click: boolean): void {
+  try {
+    if (click) ctx.audio.uiClick?.(el);
+    else ctx.audio.uiHover?.(el);
+  } catch (err) {
+    console.warn('[UI] button sound failed', err);
+  }
 }
 
 /** 创建一个按钮并绑定音效与回调 */

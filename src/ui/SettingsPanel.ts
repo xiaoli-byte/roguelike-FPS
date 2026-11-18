@@ -8,7 +8,7 @@ import { DEFAULT_SETTINGS } from '../core/settings';
 
 const DEFAULTS: Settings = DEFAULT_SETTINGS;
 
-type NumKey = 'sensitivity' | 'fov' | 'masterVolume' | 'sfxVolume' | 'musicVolume' | 'screenShake';
+type NumKey = 'sensitivity' | 'fov' | 'masterVolume' | 'sfxVolume' | 'musicVolume' | 'ambienceVolume' | 'uiVolume' | 'screenShake';
 type BoolKey = 'damageNumbers' | 'invertY';
 
 interface Control {
@@ -56,6 +56,8 @@ export class SettingsPanel {
     this.slider(g3, '主音量', 'masterVolume', 0, 1, 0.01, pct, true);
     this.slider(g3, '音效', 'sfxVolume', 0, 1, 0.01, pct, true);
     this.slider(g3, '音乐', 'musicVolume', 0, 1, 0.01, pct);
+    this.slider(g3, '环境音', 'ambienceVolume', 0, 1, 0.01, pct);
+    this.slider(g3, '界面音', 'uiVolume', 0, 1, 0.01, pct, true);
 
     const foot = h('div', 'gf-panel__foot', this.root);
     button(ctx, 'gf-btn gf-btn--ghost', foot, '恢复默认', () => {

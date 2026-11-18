@@ -5,9 +5,12 @@ export const SETTINGS_KEY = 'gunflame.settings.v1';
 export const DEFAULT_SETTINGS: Settings = {
   sensitivity: 1,
   fov: 80,
-  masterVolume: 0.8,
-  sfxVolume: 0.9,
-  musicVolume: 0.5,
+  // 音量缺省同 Unity GameSettings（全 1）：基础电平（主 0.8 / 音效 0.9 / 音乐 0.3）在音频清单的 mix 里，不在玩家推子上
+  masterVolume: 1,
+  sfxVolume: 1,
+  musicVolume: 1,
+  ambienceVolume: 1,
+  uiVolume: 1,
   quality: 'high',
   shadowQuality: 'medium',
   damageNumbers: true,

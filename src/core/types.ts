@@ -243,6 +243,9 @@ export interface Settings {
   masterVolume: number;    // 0..1
   sfxVolume: number;
   musicVolume: number;
+  /** 环境音（声床）、界面音：Unity 设置的另外两档，各自的混音台推子 */
+  ambienceVolume: number;
+  uiVolume: number;
   quality: 'low' | 'medium' | 'high';
   /** 太阳阴影贴图精度：低 1024 / 中 2048 / 高 4096（画质为「低」时不渲染阴影） */
   shadowQuality: 'low' | 'medium' | 'high';
@@ -1073,6 +1076,9 @@ export interface IAudio extends System {
   play(id: SfxId, opts?: { position?: THREE.Vector3; volume?: number; pitch?: number }): void;
   setMusic(id: MusicId): void;
   applyVolumes(master: number, sfx: number, music: number): void;
+  /** 按钮音（Unity UISound）：被激活时按按钮的类挑音、悬停节流；ui/dom.ts 的 bindButton 调，没实现就不出声 */
+  uiClick?(button: HTMLElement): void;
+  uiHover?(button: HTMLElement): void;
 }
 
 export interface IUI extends System {
