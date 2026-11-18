@@ -94,6 +94,11 @@ export function glowSprite(color: THREE.ColorRepresentation, size: number): THRE
 }
 
 export abstract class Foe implements Actor {
+  /**
+   * 下一只生成的体型倍率（主框架的精英 ×1.25，Unity EnemyAI.Spawn：localScale × 1.25）：PlateauFoeAdapter 生成前设、生成后复位。
+   * 模型、命中球、步幅、身体中心都按 spec.scale 走，所以直接放大这一只的 spec
+   */
+  static nextScale = 1;
   readonly label: string;
   readonly spec: FoeSpec;
   readonly host: THREE.Group;
@@ -121,6 +126,16 @@ export abstract class Foe implements Actor {
   deathKind: DeathKind = 'normal';
   /** 领主召来的帮手：算领主一群 */
   owner: unknown = null;
+  /** 主框架写进来的移速 / 出手速度倍率（元素减速、精英词缀；Unity SpeedMult / auraAttackRate），缺省 1 */
+  speedMul = 1;
+  rateMul = 1;
+  /** 身上常驻的底色（精英词缀的着色，Unity EnemyBody 覆盖色通道 affix）：自发光 = 底色 × 强度 + 闪白 */
+  readonly tint = new THREE.Color(0, 0, 0);
+  tintIntensity = 0;
+  /** 这次眩晕是反制 / 破防打出来的（Unity HitStun：期间受伤 +25%）；元素眩晕（雷殛叠满）不加 */
+  protected stunTaken = false;
+  /** 词缀招式（迅捷的龙卷）接管中：AI 不选招、不走位（Unity EnemyAI.AffixAttackBusy） */
+  held = false;
   protected cd = 0;
   protected readonly mem: Record<string, number> = {};
   protected readonly vel = new THREE.Vector3();
@@ -146,6 +161,7 @@ export abstract class Foe implements Actor {
   private ragSpin = 0;
 
   constructor(readonly kind: MonsterKind, readonly ctx: PlayCtx, spec: FoeSpec, at: THREE.Vector3, hover: number, names: Record<MonsterKind, string>, body?: { host: THREE.Group; body: NativeBody | null }) {
+    if (Foe.nextScale !== 1) spec = { ...spec, scale: spec.scale * Foe.nextScale };
     this.spec = spec;
     this.label = names[kind];
     this.hp = this.maxHp = spec.hp;
@@ -209,7 +225,7 @@ export abstract class Foe implements Actor {
       return 0;
     }
     const part = this.partMul(info.sphere, info, dmg);
-    let d = dmg * mult * part * (this.stunT > 0 ? 1.25 : 1);
+    let d = dmg * mult * part * (this.stunT > 0 && this.stunTaken ? 1.25 : 1);
     if (d <= 0) { this.alarm(); return 0; }
     this.hp -= d;
     this.flash = 1;
@@ -267,7 +283,29 @@ export abstract class Foe implements Actor {
     if (!this.alive || sec <= 0) return;
     this.interrupt();
     this.stunT = Math.max(this.stunT, sec);
+    this.stunTaken = true;
     this.ctx.say(`${this.label}：${why}`, 1.2);
+  }
+
+  /** 元素眩晕（主框架的雷殛叠满 / 状态眩晕，Unity EnemyStatus.Stun）：打断招式、停摆，不加受伤倍率、不出字 */
+  applyStun(sec: number): void {
+    if (!this.alive || !(sec > 0)) return;
+    if (this.stunT <= 0) {
+      this.interrupt();
+      this.stunTaken = false;
+    }
+    this.stunT = Math.max(this.stunT, sec);
+  }
+
+  /** 被推开（主框架的击退推力，Unity EnemyAI.StepPush）：地面单位按能不能站往外挪；返回挪了没有 */
+  shove(dx: number, dz: number): boolean {
+    if (!this.alive || this.hover > 0.5 || dx * dx + dz * dz < 1e-8) return false;
+    const nx = this.pos.x + dx, nz = this.pos.z + dz;
+    if (!this.canStand(nx, nz)) return false;
+    this.pos.x = nx;
+    this.pos.z = nz;
+    this.pos.y = this.groundY(nx, nz);
+    return true;
   }
 
   // ─────────────── 令牌 ───────────────
@@ -275,15 +313,21 @@ export abstract class Foe implements Actor {
   protected takeToken(kind: TokenKind): boolean {
     if (this.token === kind) return true;
     const E = this.enc;
-    if (!E) { this.token = kind; return true; }
-    const used = E.foes.filter(f => f.alive && f.token === kind).length;
-    // 玩家刚被击飞 / 打倒：冻结令牌（不连段到死）
-    if (used >= TOKEN_LIMITS[kind] || this.ctx.time - this.ctx.player.lastHurt < 0.6 && kind !== 'ranged') return false;
+    if (E) {
+      const used = E.foes.filter(f => f.alive && f.token === kind).length;
+      // 玩家刚被击飞 / 打倒：冻结令牌（不连段到死）
+      if (used >= TOKEN_LIMITS[kind] || this.ctx.time - this.ctx.player.lastHurt < 0.6 && kind !== 'ranged') return false;
+    }
+    // 群内拿到了，再要全局名额（Unity TakeToken：拿不到全局的就把群内的还回去）
+    if (this.ctx.globalToken && !this.ctx.globalToken(this, kind)) return false;
     this.token = kind;
     return true;
   }
 
-  protected giveToken(): void { this.token = null; }
+  protected giveToken(): void {
+    if (this.token) this.ctx.releaseGlobalToken?.(this);
+    this.token = null;
+  }
 
   /** 强制出某一招（试玩脚本、以后烘焙 Unity 片段的强制场景用；子类按需要先摆好条件） */
   force(id: string): boolean {
@@ -409,7 +453,7 @@ export abstract class Foe implements Actor {
   /** 朝目标走一步，被挡就左右试几个角度绕；返回走过的距离 */
   protected steer(tx: number, tz: number, speed: number, dt: number, keep = 0): number {
     const ctx = this.ctx;
-    speed *= (this.status.slow > 0 ? 0.6 : 1) * (this.haste > 0 ? 1.4 : 1);
+    speed *= (this.status.slow > 0 ? 0.6 : 1) * (this.haste > 0 ? 1.4 : 1) * this.speedMul;
     const goal = Math.hypot(tx - this.pos.x, tz - this.pos.z);
     if (goal <= keep + 0.05) return 0;
     // 追玩家（目标在玩家身边）、离得还远，或者上一步卡住了：按寻路场走下一个路点，绕开墙和房子
@@ -455,7 +499,8 @@ export abstract class Foe implements Actor {
       if (this.host.visible) this.render(near, dt);
       return;
     }
-    this.cd -= dt;
+    // 出手冷却按出手速度走（Unity EnemyAI：cooldown −= dt × auraAttackRate，加速与词缀都算）
+    this.cd -= dt * this.rateMul * (this.haste > 0 ? 1.4 : 1);
     this.haste = Math.max(0, this.haste - dt);
     this.chargeT = Math.max(0, this.chargeT - dt);
     this.poiseAcc = Math.max(0, this.poiseAcc - this.spec.poise * 0.5 * dt);
@@ -470,10 +515,10 @@ export abstract class Foe implements Actor {
       this.staggerT -= dt;
       this.anim.stagger = Math.min(1, this.anim.stagger + dt * 8);
       this.anim.move = 0;
-    } else if (this.hitchT <= 0) {
+    } else if (this.hitchT <= 0 && !this.held) {
       this.anim.stun = Math.max(0, this.anim.stun - dt * 3);
       this.anim.stagger = Math.max(0, this.anim.stagger - dt * 5);
-      this.move.speed = this.haste > 0 ? 1.4 : 1;
+      this.move.speed = Math.max(1, (this.haste > 0 ? 1.4 : 1) * this.rateMul);
       for (const ev of this.move.update(dt)) this.onEvent(ev, dist);
       if (!this.move.busy) this.giveTokenIfIdle();
       if (this.state === 'idle') this.idle(dt, dist);
@@ -580,7 +625,8 @@ export abstract class Foe implements Actor {
       if (this.body) {
         const m = this.body.materials[0] as THREE.MeshStandardMaterial;
         const ch = this.alive && this.charged() ? 0.05 + 0.05 * Math.max(0, Math.sin(ctx.time * 20)) : 0;
-        m.emissive.setRGB(this.flash * 0.9 + ch, this.flash * 0.9 + ch * 0.3, this.flash * 0.9 + ch);
+        const t = this.tint, ti = this.alive ? this.tintIntensity : 0;
+        m.emissive.setRGB(this.flash * 0.9 + ch + t.r * ti, this.flash * 0.9 + ch * 0.3 + t.g * ti, this.flash * 0.9 + ch + t.b * ti);
       }
       this.host.updateMatrixWorld(true);
       this.placeExtras();

@@ -134,6 +134,13 @@ export interface PlayCtx {
   invulnerable(): boolean;
   /** 伤害结算之后（伤害数字、反应浮字） */
   dealt(at: THREE.Vector3, d: number, weak: boolean, info: DamageInfo): void;
+  /**
+   * 全局出手名额（主框架 AttackTokens；Unity PlateauEnemyAI.TakeToken = 群内令牌 + 全局名额）：拿不到返回 false。
+   * 试玩页（独立的高原玩法）不提供，只看群内令牌
+   */
+  globalToken?(foe: Actor, kind: 'melee' | 'pounce' | 'ranged' | 'howl'): boolean;
+  /** 归还全局名额（出手结束、被打断、死亡） */
+  releaseGlobalToken?(foe: Actor): void;
 }
 
 export const PLAYER_R = 0.55;

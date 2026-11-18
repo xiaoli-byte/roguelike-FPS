@@ -90,7 +90,10 @@ test('all eight Unity plateau enemies reuse native AI, models and exact hit sphe
   assert.match(adapter, /createFoe\(kind, this\.runtime/);
   assert.match(adapter, /new Roamer\(this\.runtime/);
   assert.match(adapter, /this\.foe\.spheres\(\)/);
-  assert.match(adapter, /this\.foe\.hp = Math\.min\(this\.foe\.maxHp, this\.hp \+ result\.dealt\)/);
+  // 分层结算先扣护盾（坚盾词缀），只有扣到生命的那部分交给 Foe（M5）
+  assert.match(adapter, /const hpLoss = Math\.max\(0, this\.lastHp - this\.hp\)/);
+  assert.match(adapter, /this\.foe\.hp = Math\.min\(this\.foe\.maxHp, this\.lastHp\)/);
+  assert.match(adapter, /this\.foe\.hit\(hpLoss \/ mult, mult, point, info\)/);
   assert.match(foes, /case 'qiongqi': throw new Error\('穷奇用 Roamer'\)/);
 });
 

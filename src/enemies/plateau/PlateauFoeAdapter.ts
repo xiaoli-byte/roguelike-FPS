@@ -3,7 +3,7 @@ import type { Actor, BoltOpts, DamageInfo, Elem, HitSphere, KnockBack, PlayCtx, 
 import type { Cinema } from '../../world/plateau/play/cinema';
 import type { ElementSystem, ReactionId } from '../../world/plateau/play/elements';
 import { CombatFx } from '../../world/plateau/play/fx';
-import type { EncounterState, Foe } from '../../world/plateau/play/foe';
+import { Foe, type EncounterState, type TokenKind as PackToken } from '../../world/plateau/play/foe';
 import { Manman, Marmot, MarmotNet, Roamer, createFoe } from '../../world/plateau/play/foes';
 import type { Kit } from '../../world/plateau/play/kit';
 import type { NavField } from '../../world/plateau/play/nav';
@@ -16,9 +16,24 @@ import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../../co
 import { raySphere } from '../../core/math';
 import { sampleUnityHeight } from '../../world/UnityHeightSampling';
 import { EnemyBase } from '../EnemyBase';
+import { attackDirector, type TokenKind } from '../AttackTokens';
+import { AFFIX_NAMES, createAffix, isAffixId, type AffixController, type AffixHost } from '../Affixes';
+import { BLAST_POISE, isBlastHit, isDotHit, isReactionHit } from '../HitReaction';
+import { KNOCKBACK } from '../StandardEnemy';
 
 const _point = new THREE.Vector3();
 const _impulse = new THREE.Vector3();
+
+/**
+ * 群内令牌 → 全局出手名额（Unity PlateauEnemyAI.TakeToken 的 global 参数）：扑咬 / 天狗扑咬 / 獓狠挑角 = 近战，远投 / 电弹 / 雷吠 = 远程；
+ * 持有上限秒数取各怪 Unity 调用的典型值（啸獭 1.5–2、帝江 1.2、獓狠 1.6；举父 2.5、蛮蛮 3.5、天狗雷吠 3）
+ */
+const GLOBAL_TOKEN: Record<PackToken, { kind: TokenKind; hold: number }> = {
+  melee: { kind: 'melee', hold: 1.6 },
+  pounce: { kind: 'melee', hold: 1.6 },
+  ranged: { kind: 'ranged', hold: 3 },
+  howl: { kind: 'ranged', hold: 3 },
+};
 const _from = new THREE.Vector3();
 const _to = new THREE.Vector3();
 
@@ -140,20 +155,38 @@ export class PlateauCombatRuntime implements PlayCtx {
   }
 
   hurt(dmg: number, source: string, knock?: KnockBack, elem?: Elem): void {
+    this.hurtFrom(this.current, dmg, source, knock, elem);
+  }
+
+  /** 打玩家：伤害 × 出手者的伤害倍率（等级 × 精英 × 狂暴；Unity PlateauEnemyAI.Strike：dmg × DamageMult） */
+  private hurtFrom(enemy: PlateauFoeAdapter | null, dmg: number, source: string, knock?: KnockBack, elem?: Elem): void {
     if (this.invulnerable()) return;
-    const enemy = this.current;
-    this.ctx.combat.damagePlayer(dmg, elem ?? 'none', enemy, enemy?.position ?? this.feet);
+    this.ctx.combat.damagePlayer(dmg * (enemy?.damageMult ?? 1), elem ?? 'none', enemy, enemy?.position ?? this.feet);
     if (knock) this.ctx.player.applyImpulse(_impulse.set(knock.x, knock.up ?? 0, knock.z));
     if (source) this.lastSource = source;
+  }
+
+  /** 全局出手名额（主框架 AttackTokens，第四章章序夹到 2：近战 6 / 远程 4 / 重击 2） */
+  globalToken(actor: Actor, kind: PackToken): boolean {
+    const enemy = this.enemyFor(actor);
+    if (!enemy) return true;
+    const g = GLOBAL_TOKEN[kind];
+    return attackDirector.tryAcquire(enemy.id, g.kind, this.ctx.time.now, g.hold, this.ctx.run.chapter);
+  }
+
+  releaseGlobalToken(actor: Actor): void {
+    const enemy = this.enemyFor(actor);
+    if (enemy) attackDirector.release(enemy.id);
   }
 
   private lastSource = '';
 
   bolt(x: number, z: number, opts: BoltOpts): void {
     const radius = opts.r ?? 3.2;
+    const caster = this.current;
     this.fx.telegraph(x, z, radius, opts.delay ?? 1.2, () => {
       this.fx.bolt(x, z);
-      if (Math.hypot(this.feet.x - x, this.feet.z - z) <= radius) this.hurt(opts.dmg ?? 18, opts.source, undefined, 'shock');
+      if (Math.hypot(this.feet.x - x, this.feet.z - z) <= radius) this.hurtFrom(caster, opts.dmg ?? 18, opts.source, undefined, 'shock');
       for (const actor of this.actors()) {
         const distance = Math.hypot(actor.pos.x - x, actor.pos.z - z);
         const foe = actor as Foe;
@@ -241,7 +274,7 @@ export class PlateauCombatRuntime implements PlayCtx {
     }
   }
 
-  private enemyFor(actor: Actor): PlateauFoeAdapter | null {
+  enemyFor(actor: Actor): PlateauFoeAdapter | null {
     for (const adapter of this.adapters) if (adapter.foe === actor) return adapter;
     return null;
   }
@@ -254,11 +287,30 @@ function runtimeFor(ctx: GameContext): PlateauCombatRuntime {
   return runtime;
 }
 
-export class PlateauFoeAdapter extends EnemyBase {
+/**
+ * 第四章雷魅进主框架（M5）：行为仍由 world/plateau/play/foes.ts 的各 Foe 类驱动（Unity 的 AI/Plateau/* 就是照它译的，招式表逐项相同，
+ * tests/enemy-framework.test.mjs 对照），这一层把它们接到和其他章同样的 EnemyBase / Registry / 定义表路径上：
+ *   · 生命按难度 / 精英缩放（EnemyBase），精英体型 ×1.25（Foe.nextScale）、金环、词缀（AffixHost：迅捷的龙卷、坚盾的护盾层、爆裂、狂暴）；
+ *   · 打玩家 × 伤害倍率（等级 × 精英 × 狂暴）；出手拿群内令牌之外再拿全局名额（AttackTokens）；
+ *   · 元素眩晕（雷殛叠满）→ Foe 停摆；减速 / 词缀移速 / 出手速度 → Foe 的 speedMul / rateMul；
+ *   · 击退走主框架的推力（Unity EnemyAI.Knockback，飞的不吃）；韧性按 HitReaction 的口径（持续伤害 0、爆炸 / 反应 ×3、弱点 ×2）。
+ */
+export class PlateauFoeAdapter extends EnemyBase implements AffixHost {
   readonly foe: Foe;
   readonly runtime: PlateauCombatRuntime;
+  /** 词缀写入的倍率（AffixHost） */
+  speedMult = 1;
+  attackRate = 1;
+  frenzied = false;
+  affixAttackBusy = false;
+  private affixCtl: AffixController | null = null;
   private pathAt = -Infinity;
   private readonly pathPoint = new THREE.Vector3();
+  /** 还没推完的水平击退（m/s） */
+  private readonly push = new THREE.Vector3();
+  /** 上一次同步后的生命：Combat 的分层结算先扣护盾（坚盾），只有扣到生命的那部分交给 Foe */
+  private lastHp: number;
+  private readonly lastPos = new THREE.Vector3();
 
   constructor(ctx: GameContext, def: EnemyDef, opts: SpawnOptions) {
     super(ctx, def, opts);
@@ -267,22 +319,64 @@ export class PlateauFoeAdapter extends EnemyBase {
     const hover = kind === 'manman' || kind === 'liangu' ? 3 : 0;
     const at = opts.position.clone();
     if (hover > 0) at.y += hover;
-    this.foe = kind === 'qiongqi'
-      ? new Roamer(this.runtime, at, MONSTER_NAMES, [[at.x, at.z]], [at.x, at.z])
-      : createFoe(kind, this.runtime, at, hover, MONSTER_NAMES);
+    // 精英 ×1.25（穷奇的规格本来就按精英折算过）
+    Foe.nextScale = this.isElite && kind !== 'qiongqi' ? 1.25 : 1;
+    try {
+      this.foe = kind === 'qiongqi'
+        ? new Roamer(this.runtime, at, MONSTER_NAMES, [[at.x, at.z]], [at.x, at.z])
+        : createFoe(kind, this.runtime, at, hover, MONSTER_NAMES);
+    } finally {
+      Foe.nextScale = 1;
+    }
     this.foe.maxHp = this.maxHp;
     this.foe.hp = this.hp;
+    this.lastHp = this.hp;
     this.position.copy(this.foe.pos);
+    this.lastPos.copy(this.position);
     this.spawnDuration = 0;
     this.runtime.add(this);
   }
 
   override init(): void {
+    // 词缀挂件 / 金环挂在 model 下：model 跟着 Foe 的位置与朝向，按体型缩放（挂件按设计尺寸摆）
+    this.root.add(this.model);
+    this.model.scale.setScalar(this.sizeScale);
+    this.root.rotation.y = this.facing = this.foe.yaw;
     this.ctx.scene.add(this.root);
+    if (this.isElite && !this.flying) {
+      const mat = this.ownMaterial(new THREE.MeshBasicMaterial({ color: 0xffc233, transparent: true, opacity: 0.85, depthWrite: false }));
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(1, 0.06, 6, 32), mat);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 0.05;
+      ring.scale.setScalar(this.def.radius * 1.6);
+      this.model.add(ring);
+    }
+    const affix = this.affix;
+    if (this.isElite && isAffixId(affix)) {
+      try {
+        this.affixCtl = createAffix(this, affix);
+        this.displayName = `精英·${AFFIX_NAMES[affix]} ${this.def.name}`;
+      } catch (err) {
+        console.error('[PlateauFoeAdapter] affix failed', err);
+      }
+    }
   }
 
   protected buildModel(): THREE.Object3D { return new THREE.Group(); }
   protected think(_dt: number): void {}
+
+  // ───────────── AffixHost ─────────────
+
+  /** 身上常驻的底色（词缀）：Foe 的自发光 = 底色 × 强度 + 闪白 */
+  tintBody(color: number, intensity: number, _persistent = false): void {
+    this.foe.tint.setHex(color);
+    this.foe.tintIntensity = intensity;
+  }
+
+  ownMaterial<T extends THREE.Material>(m: T): T {
+    this.clonedMats.push(m);
+    return m;
+  }
 
   nextNavPoint(x: number, z: number): [number, number] | null {
     if (this.timeForPath()) {
@@ -302,7 +396,8 @@ export class PlateauFoeAdapter extends EnemyBase {
       this.foe.status[id] = status?.remaining ?? 0;
       if (id === 'burn') this.foe.status.burnDps = status?.power ?? 0;
     }
-    this.foe.status.slow = this.slowMult < 1 ? 1 : 0;
+    // 减速按实际倍率走 speedMul（Unity SpeedMult = 元素减速的 SlowMult），不再用试玩页的固定 0.6
+    this.foe.status.slow = 0;
   }
 
   override getHeadCenter(out: THREE.Vector3): THREE.Vector3 {
@@ -332,37 +427,102 @@ export class PlateauFoeAdapter extends EnemyBase {
   override onDamaged(result: DamageResult): void {
     this.runtime.updateContextOnly(this);
     this.lastHurtTime = this.ctx.time.now;
-    const point = result.request.point ?? this.foe.center(_point);
+    try {
+      this.affixCtl?.onHurt(result);
+    } catch (err) {
+      console.error('[PlateauFoeAdapter] affix onHurt failed', err);
+    }
+    // 分层结算已经扣过护盾（坚盾的额外护盾）：只有扣到生命的那部分交给 Foe（它再按部位、眩晕易伤结算）
+    const hpLoss = Math.max(0, this.lastHp - this.hp);
+    if (hpLoss <= 0) {
+      this.hp = this.lastHp;
+      return;
+    }
+    const req = result.request;
+    const point = req.point ?? this.foe.center(_point);
     let sphere: HitSphere | undefined;
     let distance = Infinity;
     for (const candidate of this.foe.spheres()) {
       const d = candidate.c.distanceToSquared(point);
       if (d < distance) { distance = d; sphere = candidate; }
     }
-    const mult = result.request.headshot ? Math.max(1, sphere?.mult ?? 2) : 1;
-    const kind = result.request.tags?.includes('explosion') ? 'blast' : result.request.source === 'status' ? 'dot' : 'bullet';
+    const mult = req.headshot ? Math.max(1, sphere?.mult ?? 2) : 1;
+    const dot = isDotHit(req);
+    const blast = isBlastHit(req);
+    const kind = dot ? 'dot' : isReactionHit(req) ? 'reaction' : blast ? 'blast' : 'bullet';
     const info: DamageInfo = {
       kind, elem: result.element === 'none' ? undefined : result.element as Elem,
-      sphere, from: result.request.point,
+      sphere, from: req.point,
+      // 韧性口径同 HitReaction.PoiseDamage：持续伤害 0、爆炸 / 反应 ×3（弱点 ×2 由 Foe 按 mult 给）
+      poise: dot ? 0 : blast ? BLAST_POISE : undefined,
     };
-    this.foe.hp = Math.min(this.foe.maxHp, this.hp + result.dealt);
-    this.foe.hit(result.dealt / mult, mult, point, info);
+    this.foe.hp = Math.min(this.foe.maxHp, this.lastHp);
+    this.foe.hit(hpLoss / mult, mult, point, info);
     this.hp = Math.max(0, this.foe.hp);
+    this.lastHp = this.hp;
   }
 
-  override onKilled(_result: DamageResult): void {
+  override onKilled(result: DamageResult): void {
+    if (!this.alive) return;
     this.alive = false;
     if (this.foe.alive) this.foe.die();
     this.hp = 0;
+    this.push.set(0, 0, 0);
+    if (!attackDirector.purging && !result.request.tags?.includes('purge')) {
+      try {
+        this.affixCtl?.onDeath(result);
+      } catch (err) {
+        console.error('[PlateauFoeAdapter] affix onDeath failed', err);
+      }
+    }
   }
 
-  override knockback(_impulse: THREE.Vector3): void {}
+  /** 击退（Unity EnemyAI.Knockback）：地面的按推力推开（上限 9 m/s、8/s 衰减），冲量够大时失控；飞的不吃 */
+  override knockback(impulse: THREE.Vector3): void {
+    if (!this.alive || this.foe.hover > 0.5) return;
+    const k = 1 - this.knockbackResist;
+    if (k <= 0) return;
+    const p = this.push;
+    p.x += impulse.x * k;
+    p.z += impulse.z * k;
+    const len = Math.hypot(p.x, p.z);
+    if (len > KNOCKBACK.maxPush) p.multiplyScalar(KNOCKBACK.maxPush / len);
+    if (impulse.x * impulse.x + impulse.z * impulse.z > KNOCKBACK.controlLossImpulse ** 2) {
+      this.controlLoss = Math.max(this.controlLoss, KNOCKBACK.controlLossTime * k);
+    }
+  }
 
   override update(dt: number): void {
     this.age += dt;
+    if (this.alive) {
+      // 元素眩晕（雷殛叠满、封脉）：Foe 停摆、打断招式；stunTime 由这里递减（EnemyBase.update 被整个接管了）
+      if (this.stunTime > 0) {
+        this.foe.applyStun(this.stunTime);
+        this.stunTime = Math.max(0, this.stunTime - dt);
+      }
+      if (this.controlLoss > 0) this.controlLoss -= dt;
+      this.foe.speedMul = this.slowMult * this.speedMult;
+      this.foe.rateMul = this.attackRate;
+      this.foe.held = this.affixAttackBusy;
+      if (this.push.x * this.push.x + this.push.z * this.push.z >= 0.0004 && dt > 0) {
+        this.foe.shove(this.push.x * dt, this.push.z * dt);
+        this.push.multiplyScalar(Math.exp(-KNOCKBACK.decay * dt));
+      }
+    }
     this.runtime.update(this, dt);
     this.position.copy(this.foe.pos);
+    if (dt > 0) this.velocity.subVectors(this.position, this.lastPos).divideScalar(dt);
+    this.lastPos.copy(this.position);
+    this.root.rotation.y = this.facing = this.foe.yaw;
     this.hp = Math.max(0, this.foe.hp);
+    this.lastHp = this.hp;
+    if (this.alive) {
+      try {
+        this.affixCtl?.update(dt);
+      } catch (err) {
+        console.error('[PlateauFoeAdapter] affix update failed', err);
+      }
+    }
     if (!this.foe.alive && this.alive) {
       const result: DamageResult = {
         request: { base: 0, element: 'none', source: 'status', point: this.position.clone() },
@@ -373,12 +533,23 @@ export class PlateauFoeAdapter extends EnemyBase {
       this.ctx.events.emit('enemy:killed', { enemy: this, result });
       this.statuses.clear();
     }
+    // 死了：挂件（金环、词缀）跟着身体一起没
+    if (!this.alive) this.model.visible = this.foe.host.visible;
     if (!this.foe.host.visible && !this.foe.alive) this.removed = true;
   }
 
   override dispose(): void {
+    try {
+      this.affixCtl?.dispose();
+    } catch (err) {
+      console.error('[PlateauFoeAdapter] affix dispose failed', err);
+    }
+    this.affixCtl = null;
+    attackDirector.release(this.id);
     this.foe.dispose();
     this.runtime.remove(this);
     this.root.removeFromParent();
+    for (const m of this.clonedMats) m.dispose();
+    this.clonedMats.length = 0;
   }
 }
