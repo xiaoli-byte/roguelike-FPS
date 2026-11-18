@@ -12,6 +12,11 @@ const ROLES = ['assault', 'flank', 'ranged', 'precision', 'artillery', 'support'
 const BOSS_IDS: Readonly<Record<string, string>> = {
   boss_hanba: 'boss_hanba', boss_kunpeng: 'boss_kunpeng', boss_warlord: 'boss_warlord', boss_qilin: 'boss_qilin',
 };
+/** 首领战在行旅图 / 遭遇提示里的名字（首领定义里的 name 去掉副标题；这里不 import 首领模块，免得关卡载入拖进首领的全部依赖） */
+const BOSS_LABELS: Readonly<Record<string, string>> = {
+  boss_hanba: '旱魃', boss_kunpeng: '鲲鹏', boss_warlord: '熔心魔将', boss_qilin: '火麒麟',
+};
+const bossLabel = (id: string) => BOSS_LABELS[id] ?? id;
 
 function room(id: string, label: string, center: WhiteboxPoint, radius: number) {
   const r = Math.max(4, radius);
@@ -34,7 +39,7 @@ function planFor(document: UnitySceneDocument, spawn: P2, exit: P2): WhiteboxPla
   }));
   for (const [index, boss] of document.bosses.entries()) encounters.push({
     id: `boss:${boss.id}:${index}`, at: at({ x: boss.position[0], z: boss.position[2] }),
-    room: `boss:${boss.id}:${index}`, label: boss.id, roster: '首领战', timing: '首领',
+    room: `boss:${boss.id}:${index}`, label: bossLabel(boss.id), roster: '首领战', timing: '首领',
     facing: at({ x: boss.position[0], z: boss.position[2] + 1 }), requires: [],
   });
   const entryId = 'entry', exitId = 'exit';
@@ -121,7 +126,7 @@ function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}
     const atSpawn = (point: { x: number; z: number; y?: number }, halfWidth: number) => Math.hypot(point.x - boss.position[0], point.z - boss.position[2]) <= 3 + halfWidth
       && (point.y === undefined || Math.abs(point.y - boss.position[1]) < 6);
     return {
-      id: `boss:${boss.id}:${index}`, label: boss.id, room: `boss:${boss.id}:${index}`,
+      id: `boss:${boss.id}:${index}`, label: bossLabel(boss.id), room: `boss:${boss.id}:${index}`,
       final: true, optional: false, position, facing: { x: position.x, z: position.z + 1 },
       // 锚点带上 Unity 首领锚点的真实高度：不带的话会被补成关卡 floorY（1-4 是出生台地 16 m），首领要刷在泉床上空
       anchors: [{ ...ground, role: 'assault', lane: 0 }], points: [ground], radius,
