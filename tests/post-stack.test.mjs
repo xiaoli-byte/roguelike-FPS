@@ -95,7 +95,11 @@ test('3-3 局部 Volume（火神王座）：盒子、优先级、混合距离；
   assert.equal(doc.scenes['2-A'].resolved.ColorAdjustments.postExposure, -0.62, '优先级 5 的盖过 0 的');
 });
 
-test('导出器 --check：入库的 volumes.json 和当前 Unity 资产一致', () => {
+// Unity 版已冻结：工作区里编辑器重存过、没提交的 Volume 资产不算数（入库的 volumes.json 按已提交的资产生成）
+const volumeSources = ['unity/Assets/Levels', 'unity/Assets/Scenes', 'unity/Assets/Settings'];
+const dirtyUnity = spawnSync('git', ['status', '--porcelain', '--', ...volumeSources], { cwd: root, encoding: 'utf8' }).stdout?.trim();
+
+test('导出器 --check：入库的 volumes.json 和当前 Unity 资产一致', { skip: dirtyUnity ? 'Unity 场景 / Volume 资产有未提交的改动' : false }, () => {
   const r = spawnSync(process.execPath, ['scripts/web/export-volume-profiles.mjs', '--check'], { cwd: root, encoding: 'utf8' });
   assert.equal(r.status, 0, r.stderr + r.stdout);
 });

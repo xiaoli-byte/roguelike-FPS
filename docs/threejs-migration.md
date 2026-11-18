@@ -86,7 +86,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M8 | 玩家与战斗增量：战斗契约（灵宠伤害源、弱点倍率、命中区）、状态（寒意 / 引燃 / 日灼，带电随第四章）、弹体（弱点判定、护罩、落地滚动）、镜头手感 / 卡帧 / 安全落点 / 移动特效、武器（散布手调、冲刺禁射、喷火锥、磁轨光束）、技能（施法姿势、特效换风格） | ~12k | ⬜ |
 | M9 | 灵宠（全新） | 4.1k | ⬜ |
 | M10 | 第一人称持枪手感 + 碎刃表现 | 5.8k | ⬜ |
-| M11a | 渲染观感：StylizedLit / Terrain / Foliage / Fur 着色、材质参数导入、后处理栈、三色环境光 / 雾 / 天空、CSM | 7.6k 着色器 | 🔶 材质 ✅ 2026-11-16（1f213358，`src/world/UnityStylizedLit.ts`：色阶、阴影染色、阶梯高光、边缘光、地形高度混合 / 宏观噪声 / 坡度压暗 / 陡坡三向投影、植被风摆与背光透射，Trilight 投成 SH 环境光）；太阳阴影照 Unity 管线（0564dd10，2048 贴图、90 m、跟相机）；云天 + 逆光光柱接入（52c719c6）。待办：后处理栈（URP Neutral 色调映射、Volume 调色烘 LUT、Bloom、暗角、AO）、Fur、导出器补 `_ORMMap` / 关键字 / 地形材质参数、流动雾带与小活物逐图摆位 |
+| M11a | 渲染观感：StylizedLit / Terrain / Foliage / Fur 着色、材质参数导入、后处理栈、三色环境光 / 雾 / 天空、CSM | 7.6k 着色器 | 🔶 材质 ✅ 2026-11-16（1f213358，`src/world/UnityStylizedLit.ts`：色阶、阴影染色、阶梯高光、边缘光、地形高度混合 / 宏观噪声 / 坡度压暗 / 陡坡三向投影、植被风摆与背光透射，Trilight 投成 SH 环境光）；太阳阴影照 Unity 管线（0564dd10，2048 贴图、90 m、跟相机）；云天 + 逆光光柱接入（52c719c6）；后处理栈 ✅ 2026-11-18（646f7eae，`src/render/PostStack.ts`：HDR 目标 + URP Bloom + 照 URP Color.hlsl 写的 Neutral + 每关 Volume 调色烘 LUT + 暗角 + 色差 + 低血 / 受击 / 冲刺玩法屏效；`scripts/web/export-volume-profiles.mjs` 从 27 份 Profile 导出 `volumes.json`，含 3-3 火神王座局部 Volume 的盒子混合；`?post=0` 或低画质绕开）。待办：AO、3-3 第一人称手被泛光吹白、1-2 比 Unity 偏灰（大气在 ACES 下调的，要按 Neutral 重调）、Fur、导出器补 `_ORMMap` / 关键字 / 地形材质参数、流动雾带与小活物逐图摆位 |
 | M11b | 特效核心：预设 JSON + 粒子引擎、线条、灯光池、贴花、预警圈、溶解、状态皮肤（首领专属特效随 M6） | 5k + 6.4k | ⬜ 注意：网页版已有一批「特效分层」（703950b2 / dd6db46d / 49b82303：`Fx.ts` 的余韵、`Seal.ts` 国风法印、三种新粒子形状、狐 / 熊 / 隼技能，准则 docs/art/fx-style.md 第五节），换粒子引擎时要一起迁过去，不能丢 |
 | M11c | 界面：USS → CSS、四层路由、字体、约 10 个新界面、HUD 部件重做 | 13.5k | ⬜ |
 | M11d | 核心：存档迁移、续玩、时间仲裁、卡帧、模态栈、画质档、剔除 | 7.6k 中约一半 | ⬜ |
