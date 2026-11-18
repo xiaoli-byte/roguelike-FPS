@@ -144,12 +144,13 @@ export class HaiziTerrain extends HeightGrid {
         // 水线上下一圈湿石头
         c.lerp(PAL.gravelWet, (1 - smoothstep(0.05, 0.35, h)) * 0.6);
       }
-      // 高山草甸：湖岸外圈和南面谷口一块块的（牛奶海边草很少，越往外越多）
+      // 高山草甸：只长在可玩区外的冰斗脚和南面谷口（概念图 4-4 v5：湖岸是一整片平的碎石滩，交战区里不长草、不长杜鹃，
+      // 安静的大块面才衬得出怪；草和杜鹃都按这个通道撒，所以这里收住，撒点跟着收）
       if (h > 0.4 && slope < 0.5) {
-        const patch = smoothstep(0.52, 0.72, n1 + n2 * 0.25) * smoothstep(58, 72, r) * (1 - smoothstep(18, 34, h));
-        const southBoost = smoothstep(0.5, 0.9, Math.cos(angDiff(Math.atan2(x, -z), Math.PI))) * 0.3;
-        grass = clamp01(patch + southBoost * smoothstep(60, 80, r) * (1 - smoothstep(18, 34, h)));
-        if (ISLAND.r + 1 > Math.hypot(x - ISLAND.x, z - ISLAND.z) && h > 0.6) grass = Math.max(grass, smoothstep(0.45, 0.7, n2) * 0.6);
+        // 只剩南面谷口（出生点身后）一块块的；冰斗壁上不长（概念图里是雪和岩）
+        const south = smoothstep(0.5, 0.9, Math.cos(angDiff(Math.atan2(x, -z), Math.PI)));
+        const patch = smoothstep(0.52, 0.72, n1 + n2 * 0.25) * south * smoothstep(84, 100, r) * (1 - smoothstep(18, 34, h));
+        grass = clamp01(patch + south * 0.3 * smoothstep(86, 104, r) * (1 - smoothstep(18, 34, h)));
         c.lerp(n2 > 0.5 ? PAL.grass : PAL.grassDry, grass * 0.85);
       }
       // 岩：冰斗壁的陡坡、岩脊
@@ -159,9 +160,15 @@ export class HaiziTerrain extends HeightGrid {
         tmp.copy(PAL.rock).lerp(PAL.rockDark, smoothstep(0.4, 0.7, n2)).lerp(PAL.rockCool, smoothstep(0.5, 0.8, n1) * 0.5);
         c.lerp(tmp, rock);
       }
-      // 雪：坡上 14 m 往上，北坡（阴面）更低；太陡的岩壁挂不住雪
+      // 岩带：冰斗壁上几道顺坡的深色岩脊（概念图 4-4 v5：大块雪面里只留几条，不碎）
+      if (r > LAKE.shoreOuterR + 10) rock = Math.max(rock, smoothstep(0.62, 0.8, ridged(x * 0.012, z * 0.012, 3, 78)) * smoothstep(10, 30, h) * 0.85);
+      if (rock > 0) {
+        tmp.copy(PAL.rockDark).lerp(PAL.rockCool, 0.4);
+        c.lerp(tmp, rock * 0.35);
+      }
+      // 雪：4600 m 的冰斗，冰斗壁 8 m 往上就是雪（北坡、阴面更低）；太陡的岩壁和岩带挂不住雪
       const north = Math.max(0, -z / Math.max(1, r));
-      snow = smoothstep(34 - north * 10, 60 - north * 10, h + (n1 - 0.5) * 18) * (1 - smoothstep(0.95, 1.25, slope) * 0.75);
+      snow = smoothstep(8 - north * 4, 22 - north * 6, h + (n1 - 0.5) * 8) * (1 - smoothstep(0.95, 1.25, slope) * 0.75) * (1 - rock * 0.8);
       // 坡上残雪：背阴的冲沟里一条条
       snow = Math.max(snow, smoothstep(0.62, 0.78, fbm(x * 0.05, z * 0.05, 3, 77)) * smoothstep(8, 20, h) * (0.4 + north * 0.6));
       if (snow > 0) {
@@ -178,7 +185,8 @@ export class HaiziTerrain extends HeightGrid {
   }
 }
 
-const FAR_ROCK = new THREE.Color('#77716b'), FAR_GRAVEL = new THREE.Color('#9d968b'), FAR_SNOW = new THREE.Color('#f2f6fb'), FAR_GRASS = new THREE.Color('#5f7a4a');
+// 远景没有绿：4600 m 的冰斗外面是碎石、岩和雪（原来的草绿在垭口外神山脚下拉出一条绿带，和概念图的雪色对不上）
+const FAR_ROCK = new THREE.Color('#77716b'), FAR_GRAVEL = new THREE.Color('#9d968b'), FAR_SNOW = new THREE.Color('#f2f6fb'), FAR_GRASS = new THREE.Color('#8c877e');
 
 /** 图外 1.4 km 的地形：同一个地形函数往外延伸（冰斗壁、朝神山的谷地），图内部分不画（由高度图负责） */
 export function buildFarTerrain(terrain: HaiziTerrain): THREE.Mesh {

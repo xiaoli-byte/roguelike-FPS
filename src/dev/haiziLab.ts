@@ -7,12 +7,14 @@
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { SKY } from '../world/plateau/backdrop';
+import { Atmosphere, atmosphereForChapter } from '../world/Atmosphere';
+import { MistStreams, type MistStream } from '../world/MistStreams';
 import { FIRE_STATE } from '../world/plateau/landmarks';
 import { WORLD_UNIFORMS } from '../world/plateau/materials';
 import { CollisionWorld, EYE, Walker } from '../world/plateau/walker';
 import { Weather } from '../world/plateau/weather';
-import { buildHaizi } from '../world/haizi/scene';
-import { COIL, ISLAND, LAKE, MAP, PILLARS, PLACEMENTS, SPAWN, VIEWPOINTS, type Viewpoint } from '../world/haizi/spec';
+import { DAWN_SUN_DIR, buildHaizi } from '../world/haizi/scene';
+import { COIL, DAWN, ISLAND, LAKE, MAP, PILLARS, PLACEMENTS, SPAWN, VIEWPOINTS, type Viewpoint } from '../world/haizi/spec';
 import { HaiziTerrain } from '../world/haizi/terrain';
 import { LeizePlay } from '../world/haizi/play';
 
@@ -59,11 +61,12 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(SKY.horizon, 260, 4200);
+// 黎明（DAWN，概念图 4-4 v5）：冷调的天光撑住湖盆，低角度的金色太阳从东南偏东来，东面冰斗壁的影子罩住湖
+scene.fog = new THREE.Fog(DAWN.fog, 260, 4200);
 const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, 0.1, 7000);
-const hemi = new THREE.HemisphereLight('#c4dbff', '#7a8a7a', 1.25);
+const hemi = new THREE.HemisphereLight(DAWN.hemiSky, DAWN.hemiGround, DAWN.hemiIntensity);
 scene.add(hemi);
-const sun = new THREE.DirectionalLight('#fff2dc', 2.9);
+const sun = new THREE.DirectionalLight(DAWN.sun, DAWN.sunIntensity);
 sun.castShadow = true;
 sun.shadow.mapSize.set(4096, 4096);
 Object.assign(sun.shadow.camera, { left: -140, right: 140, top: 140, bottom: -140, near: 10, far: 1000 });
@@ -85,6 +88,25 @@ const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
 }, terrain, conductors);
+
+// 空气透视 + 雾带（composition.md 8.5）：章节默认值，云影压低（开阔碎石岸上斑驳的明暗会给怪打掩护）
+Atmosphere.bind(scene, { ...atmosphereForChapter(4), cloudShadow: DAWN.cloudShadow }, { baseY: LAKE.level });
+// 雾只摆在玩家和雷神之间以外的地方：湖的北半边（从出生点看在湖心岛后面）贴水面一层，冰斗脚（可玩区外 20 m）一圈
+const ringKeys = (r: number, from: number, to: number, n: number): MistStream['keys'] => Array.from({ length: n }, (_, i) => {
+  const a = from + ((to - from) * i) / (n - 1), x = Math.sin(a) * r, z = -Math.cos(a) * r;
+  return { position: [x, terrain.heightAt(x, z) + 3, z] as [number, number, number], halfWidth: 9, size: 28, opacity: i === 0 || i === n - 1 ? 0 : 1 };
+});
+const lakeMist = new MistStreams([{
+  opacity: 0.45, speed: 0.35, flat: true, floorY: LAKE.level, stretch: 2,
+  keys: [
+    { position: [-40, LAKE.level + 0.6, -14], halfWidth: 10, size: 22, halfHeight: 1.2, opacity: 0 },
+    { position: [-18, LAKE.level + 0.6, -24], halfWidth: 12, size: 24, halfHeight: 1.2 },
+    { position: [16, LAKE.level + 0.6, -26], halfWidth: 12, size: 24, halfHeight: 1.2 },
+    { position: [40, LAKE.level + 0.6, -14], halfWidth: 10, size: 22, halfHeight: 1.2, opacity: 0 },
+  ],
+}], { renderOrder: 2 });
+const footMist = new MistStreams([{ opacity: 0.42, speed: 0.5, keys: ringKeys(100, -1.95, 1.95, 9) }]);
+scene.add(lakeMist.mesh, footMist.mesh);
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────
@@ -355,10 +377,11 @@ function tick(dt: number, render: boolean): void {
   shadowCenter.set(Math.round(ahead.x / 8) * 8, 0, Math.round(ahead.z / 8) * 8);
   shadowCenter.y = terrain.heightAt(shadowCenter.x, shadowCenter.z);
   sun.target.position.copy(shadowCenter);
-  sun.position.copy(shadowCenter).addScaledVector(SKY.sunDir, 450);
+  sun.position.copy(shadowCenter).addScaledVector(DAWN_SUN_DIR, 450);
   grass.update(camera.position);
   for (const a of anim) a.update(time, dt);
   weather.update(dt, camera.position);
+  Atmosphere.update(time);
   lake.update();
   if (!render) return;
   adaptResolution(dt);

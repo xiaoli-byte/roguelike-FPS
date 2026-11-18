@@ -57,7 +57,7 @@ function run() {
     sectors.push(Math.round((got / tot) * 100));
   }
   // 出生 + 入场点：docs/art/concepts/ch4-631/README.md 3.2（2026-11-18 按本探针修正过）；__cand 可以追加候选点
-  const PTS: [string, number, number][] = [['出生', SPAWN.x, SPAWN.z], ['E1 北垭口', 14, -77], ['E2 冰舌脚', -66, -40], ['E3 东坡', 76, -14], ['E4 西南雪坡', -56, 52],
+  const PTS: [string, number, number][] = [['出生', SPAWN.x, SPAWN.z], ['E1 北垭口', 14, -77], ['E2 冰舌脚', -40, -66], ['E3 东坡', 76, -14], ['E4 西南雪坡', -56, 52],
     ['E5 西北岸（飞临落点）', -48, -32], ['E6 东岸（飞临落点）', 50, 24], ...((window as any).__cand ?? [])];
   const pts = PTS.map(([id, x, z]) => ({ id, x, z, r: +Math.hypot(x, z).toFixed(1), h: +terrain.heightAt(x, z).toFixed(1), slope: +(terrain.slopeAt(x, z) * 180 / Math.PI).toFixed(0),
     wet: +(terrain.waterLevelAt(x, z) - terrain.heightAt(x, z)).toFixed(2), bound: +terrain.basin[gi(x, z)].toFixed(1), reach: hit(x, z), nearest: hit(x, z) ? null : near(x, z) }));

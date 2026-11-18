@@ -1,18 +1,22 @@
 /**
  * 4-4 神山海子的场景组装：地形瓦片、镜面湖、四根导雷石柱、湖岸掩体与经幡、湖心岛灵火坛、天空、远景、草与碎石。
- * 湖面用平面反射（three/examples 的 Reflector，半分辨率）：近处像镜子一样映着神山，俯看时是牛奶海的乳白青绿；
+ * 湖面用平面反射（three/examples 的 Reflector，半分辨率）：近处像镜子一样映着神山，俯看时是牛奶海的乳白青灰；
  * setTint / setGlow 把湖水变成通电的紫红（雷泽雷神二阶段「雷泽」）。
+ * 光和色照概念图 docs/art/concepts/ch4-631/4-4_haizi_scene_v5.jpg：黎明，湖盆在冷调阴影里，只有神山上半截吃到金光（DAWN）；
+ * 西北偏西的冰斗壁上一条冰舌（glacier.ts）。
  */
 import * as THREE from 'three';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { buildMountains, buildSky } from '../plateau/backdrop';
+import { srgb } from '../plateau/fx';
 import { FlagSystem } from '../plateau/flags';
 import { GeoBuilder } from '../plateau/geo';
 import { buildPlacements, type Animated, type MapIcon, type SmokeEmitter } from '../plateau/landmarks';
 import { WORLD_UNIFORMS, materials } from '../plateau/materials';
 import { GrassField, buildStaticScatter } from '../plateau/scatter';
 import type { CollisionWorld } from '../plateau/walker';
-import { FLAG_LINES, ISLAND, LAKE, PEAKS, PILLARS, PLACEMENTS, type PillarSpec } from './spec';
+import { buildGlacier } from './glacier';
+import { DAWN, FLAG_LINES, ISLAND, LAKE, PEAKS, PILLARS, PLACEMENTS, type PillarSpec } from './spec';
 import { buildFarTerrain, type HaiziTerrain } from './terrain';
 
 // ───────────────────────────── 湖面 ─────────────────────────────
@@ -160,6 +164,52 @@ function linearSky(sky: THREE.Mesh): THREE.Mesh {
   return mesh;
 }
 
+// ───────────────────────────── 黎明 ─────────────────────────────
+
+/** 指向太阳的单位向量（4-4 的黎明，不用 4-1 的午后太阳） */
+export const DAWN_SUN_DIR = new THREE.Vector3(...DAWN.sunDir).normalize();
+
+/** 天空换成黎明的配色和太阳方向（要在 linearSky 克隆之前改） */
+function dawnSky(sky: THREE.Mesh): void {
+  const u = (sky.material as THREE.ShaderMaterial).uniforms;
+  u.uTop.value = srgb(DAWN.sky.top);
+  u.uMid.value = srgb(DAWN.sky.mid);
+  u.uHorizon.value = srgb(DAWN.sky.horizon);
+  u.uSunDir = { value: DAWN_SUN_DIR };
+}
+
+/**
+ * 金顶：远山（顶点色）在 from 以上、朝太阳的那一面往金色染。远景件，光直接烘进颜色——
+ * 1.4 km 外的山不在阴影贴图范围里，实时光照做不出「湖盆还在阴影里、只有山尖亮」。
+ */
+function summitGlow(mountains: THREE.Object3D): void {
+  const gold = new THREE.Color(DAWN.summit.color), c = new THREE.Color(), center = new THREE.Vector3();
+  const sunXZ = new THREE.Vector2(DAWN_SUN_DIR.x, DAWN_SUN_DIR.z).normalize(), out = new THREE.Vector2();
+  const seen = new Set<THREE.BufferGeometry>();
+  mountains.traverse(o => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh || seen.has(m.geometry)) return;
+    seen.add(m.geometry);
+    const g = m.geometry;
+    const pos = g.attributes.position as THREE.BufferAttribute;
+    const col = g.attributes.color as THREE.BufferAttribute | undefined;
+    if (!col) return;
+    // 朝向按顶点相对山心的水平方向判断（远山网格的法线有的朝下，材质是双面的，看不出来，但不能拿来判朝向）
+    g.computeBoundingBox();
+    g.boundingBox!.getCenter(center);
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i) + m.position.y;
+      const k = THREE.MathUtils.smoothstep(y, DAWN.summit.from, DAWN.summit.to);
+      if (k <= 0) continue;
+      out.set(pos.getX(i) - center.x, pos.getZ(i) - center.z);
+      const face = out.lengthSq() < 1 ? 0.6 : Math.max(0, out.normalize().dot(sunXZ) + 0.25);
+      c.fromBufferAttribute(col, i).lerp(gold, Math.min(1, k * face * 1.6) * DAWN.summit.strength);
+      col.setXYZ(i, c.r, c.g, c.b);
+    }
+    col.needsUpdate = true;
+  });
+}
+
 // ───────────────────────────── 导雷石柱 ─────────────────────────────
 
 export interface Pillar {
@@ -275,8 +325,11 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   }
   scene.add(terrainGroup);
   const sky = buildSky();
+  dawnSky(sky);
   const skyLin = linearSky(sky);
-  scene.add(sky, skyLin, buildMountains(PEAKS), buildFarTerrain(terrain));
+  const mountains = buildMountains(PEAKS);
+  summitGlow(mountains);
+  scene.add(sky, skyLin, mountains, buildFarTerrain(terrain), buildGlacier());
 
   const lake = new LakeSurface(terrain, reflectW, reflectH);
   // 反射那一遍换成线性色的天空，渲染完换回来

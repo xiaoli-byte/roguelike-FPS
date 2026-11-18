@@ -1,7 +1,8 @@
 // 第四章三张概念图的白模底图：在真实（或按设计稿搭的）场景里从概念机位渲染一张白模，
 // 并用同一台相机把据点 / 驻守点 / 入场点 / 路线投影成画面坐标（带地形 / 墙块遮挡）→ tools/views/<图>.json。
 // 概念图在这张白模上重绘（图生图），叠标按投影坐标画（route_maps.py），所以画里的东西和标注都在真实位置上。
-//   node docs/art/concepts/ch4-631/tools/render_blockouts.mjs [4-2] [4-4] [4-A]
+//   node docs/art/concepts/ch4-631/tools/render_blockouts.mjs [4-2] [4-4] [4-A] [--out <目录>]
+// --out：截图和投影写到别的目录（拿改过的场景和概念图对照时用，不覆盖概念图的白模底图）。
 // 4-2 / 4-4 打包检视页 src/dev/gorgeLab.ts、haiziLab.ts；4-A 还没有场景，打包 tools/fortress_blockout.ts（按 maps/4-A.md 搭的最简白模）。
 // 打成 iife 在无头 Chromium（scripts/plateau/cdp.mjs）里跑 file:// 页面，不用开 dev 服务器。
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
@@ -22,7 +23,11 @@ const VIEWS = {
   '4-4': { entry: 'src/dev/haiziLab.ts', page: 'lab', file: '4-4_haizi', yaw: -15, pitch: 3, fov: 50, pos: null },
   '4-A': { entry: 'docs/art/concepts/ch4-631/tools/fortress_blockout.ts', page: 'bare', file: '4-A_fortress', yaw: -52, pitch: 5, fov: 36, pos: [-150, 130] },
 };
-const wanted = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(VIEWS);   // 4-2b = 西桥头机位（铁索桥）
+const argv = process.argv.slice(2);
+const oi = argv.indexOf('--out');
+const outDir = oi >= 0 ? resolve(argv[oi + 1]) : null;
+const ids = argv.filter((_, i) => oi < 0 || (i !== oi && i !== oi + 1));
+const wanted = ids.length ? ids : Object.keys(VIEWS);   // 4-2b = 西桥头机位（铁索桥）
 
 // rolldown 原生库包缺 package.json 时（node_modules 装坏过）直接指过去
 const bindingDir = join(root, 'node_modules/@rolldown');
@@ -62,7 +67,7 @@ const HAIZI = {
   points: [
     ['lord', '首', '雷泽雷神升起处', 0, -16, 6], ['exit', '坛', '终局灵火坛', 0, 0, null, 1.5],
     ['poi', '', '北柱', 0, -60, null, 7], ['poi', '', '东柱', 60, 0, null, 7], ['poi', '', '西柱', -60, 0, null, 7], ['poi', '', '南柱', 0, 60, null, 7],
-    ['entry', 'E', 'E1 北垭口', 14, -77], ['entry', 'E', 'E2 冰舌脚', -66, -40], ['entry', 'E', 'E3 东坡', 76, -14], ['entry', 'E', 'E4 西南雪坡', -56, 52],
+    ['entry', 'E', 'E1 北垭口', 14, -77], ['entry', 'E', 'E2 冰舌脚', -40, -66], ['entry', 'E', 'E3 东坡', 76, -14], ['entry', 'E', 'E4 西南雪坡', -56, 52],
     ['entry', 'E', 'E5 西北岸（飞临）', -48, -32], ['entry', 'E', 'E6 东岸（飞临）', 50, 24],
   ],
   routes: [['main', [ring(195, 330)]], ['main', [ring(165, 30)]], ['alt', [[[-18, 67, null], [-14, 50, -0.5], [-22, 30, 0.5], [-12, 14, 0.5], [-4, 7, 1.5]]]]],
@@ -157,8 +162,9 @@ async function shoot(id) {
     return JSON.stringify({ W: ${W}, H: ${H}, points, routes });
   })()`);
       }
-      writeFileSync(join(HERE, 'tools/views', `${id}.json`), r);
-      await b.shot(join(HERE, `${v.file}_blockout.jpg`), 88);
+      if (outDir) mkdirSync(outDir, { recursive: true });
+      writeFileSync(join(outDir ?? join(HERE, 'tools/views'), `${id}.json`), r);
+      await b.shot(join(outDir ?? HERE, `${v.file}_blockout.jpg`), 88);
       console.log('ok', id);
       return;
     } catch (e) {
