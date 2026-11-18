@@ -321,23 +321,38 @@ export class FxSystem implements IFx {
     hexToColor(color, _c);
     hexToColor(HOT_YELLOW, _hot);
 
-    // 闪光球：白热核心 + 主色火球
-    this.flashes.sphere(center, r * 0.25, r * 0.95, color, 0.3);
-    this.flashes.sphere(center, r * 0.15, r * 0.5, HOT_YELLOW, 0.15);
-    this.glow.spawn(STYLE_GLOW, cx, cy, cz, 0, 0, 0, WHITE, r * 1.8, 0.1);
+    // 闪光：白热亮芯第一帧到峰值、0.07 秒就没（fx-style 5.6「越亮的越短」）；闪光球收到 0.6r、0.22 秒
+    this.flashes.sphere(center, r * 0.2, r * 0.6, color, 0.22);
+    this.flashes.sphere(center, r * 0.12, r * 0.4, HOT_YELLOW, 0.12);
+    this.glow.spawn(STYLE_GLOW, cx, cy, cz, 0, 0, 0, WHITE, r * 0.9, 0.07);
 
-    // 火团
-    const fire = Math.min(60, Math.round((12 + r * 6) * d));
+    // 火团：加法的光团只留一小簇亮芯，火的形状和颜色交给火舌（火舌遮住身后一部分，亮地面上也是橙色、有轮廓）。
+    // 原来是 12 + 6r 团加法光团（4.5 米的爆炸 39 团、每团长到 4.7 米、往外甩 5–14 m/s），叠起来是没有形状的一整团白：
+    // 检视页雪地上，爆点正后方的敌人从 0.05 到 0.3 秒完全看不见
+    const fire = Math.min(24, Math.round((6 + r * 2.5) * d));
     for (let i = 0; i < fire; i++) {
       randomDir(_dir);
-      const off = r * 0.3 * Math.random();
-      const sp = r * rand(1.2, 3.2);
+      const off = r * 0.2 * Math.random();
+      const sp = r * rand(0.6, 1.6);
       mixColor(_hot, _c, Math.random(), _c2);
       this.glow.spawn(
         STYLE_FIREBALL,
         cx + _dir.x * off, cy + _dir.y * off, cz + _dir.z * off,
         _dir.x * sp, _dir.y * sp + 1.2, _dir.z * sp,
-        _c2, r * rand(0.35, 0.65), rand(0.3, 0.6),
+        _c2, r * rand(0.22, 0.4), rand(0.18, 0.35),
+      );
+    }
+    const tongues = Math.min(16, Math.round((5 + r * 1.5) * d));
+    for (let i = 0; i < tongues; i++) {
+      randomDir(_dir);
+      if (_dir.y < 0) _dir.y = -_dir.y * 0.4;
+      const off = r * 0.25 * Math.random();
+      const sp = r * rand(0.4, 1.1);
+      this.glow.spawn(
+        STYLE_FLAME,
+        cx + _dir.x * off, cy + _dir.y * off * 0.5, cz + _dir.z * off,
+        _dir.x * sp, _dir.y * sp + 1.0, _dir.z * sp,
+        _c, Math.min(1.8, r * rand(0.22, 0.36)), rand(0.25, 0.4),
       );
     }
     // 火花
@@ -1181,12 +1196,13 @@ export class FxSystem implements IFx {
     const k = Math.min(3, Math.max(0.3, posOr(scale, 1))), rs = Math.sqrt(k);
     hexToColor(color, _c);
     mixColor(_c, WHITE, 0.35, _hot);
-    const flames = this.count(Math.min(14, 4 + 5 * k));
+    // 甩得远的几条火舌（爆炸本体已经有贴着爆心的火舌，这里只补往外甩出去的，少而短）
+    const flames = this.count(Math.min(10, 2 + 3 * k));
     for (let i = 0; i < flames; i++) {
       randomDir(_dir);
       if (_dir.y < -0.2) _dir.y = -_dir.y * 0.5;
-      const sp = rand(2.5, 7) * rs, off = 0.5 * k * Math.random();
-      this.glow.spawn(STYLE_FLAME, pos.x + _dir.x * off, pos.y + _dir.y * off, pos.z + _dir.z * off, _dir.x * sp, _dir.y * sp + 1.5, _dir.z * sp, _c, rand(0.5, 0.8) * rs, rand(0.4, 0.7));
+      const sp = rand(3.5, 7) * rs, off = 0.5 * k * Math.random();
+      this.glow.spawn(STYLE_FLAME, pos.x + _dir.x * off, pos.y + _dir.y * off, pos.z + _dir.z * off, _dir.x * sp, _dir.y * sp + 1.2, _dir.z * sp, _c, rand(0.4, 0.65) * rs, rand(0.3, 0.5));
     }
     const cinders = this.count(Math.min(22, 6 + 8 * k));
     for (let i = 0; i < cinders; i++) {
