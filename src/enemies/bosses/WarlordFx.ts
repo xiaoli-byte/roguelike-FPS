@@ -337,7 +337,8 @@ export function landing(ctx: GameContext, ground: THREE.Vector3, radius: number,
   impact(ctx, ground, radius * 0.75, fury);
   const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
   for (const d of [fwd, fwd.clone().negate(), right, right.clone().negate()]) cleaveLine(ctx, ground, d.clone().normalize(), radius * 0.9, fury);
-  ctx.fx.explosion(_a.copy(ground).setY(ground.y + 0.6), radius * 0.45, Pal.copperAt(fury));
+  // 闪光压低贴地（不用大爆炸团）：落地的身体始终在画面里
+  ctx.fx.ring(_a.copy(ground).setY(ground.y + 0.05), radius * 1.2, Pal.hotAt(fury), 0.35);
   smoke(ctx, _a.copy(ground).setY(ground.y + 0.4), radius * 0.5, 5);
 }
 
@@ -431,7 +432,12 @@ export function moltenBurst(ctx: GameContext, at: THREE.Vector3, size: number, c
 
 /** 火柱（Fx.FlamePillar） */
 export function flamePillar(ctx: GameContext, at: THREE.Vector3, radius: number, height: number): void {
-  for (let i = 0; i < 4; i++) ctx.fx.burst(_a.copy(at).setY(at.y + (i / 4) * height), FIRE, 6, 1.2 + radius, 0.6, 0.35 + radius * 0.4, -6);
+  // 一串细小的火舌往上窜（粒子小、数量多：大颗粒会叠成一串白球）
+  const n = Math.max(3, Math.round(height / 0.45));
+  for (let i = 0; i < n; i++) {
+    ctx.fx.burst(_a.copy(at).setY(at.y + (i / n) * height), i % 3 === 0 ? Pal.FuryDeep : FIRE, 5, 0.8 + radius, 0.45, 0.12 + radius * 0.2, -9);
+  }
+  ctx.fx.burst(_a.copy(at).setY(at.y + height), EMBERS, 6, 2.5, 0.7, 0.06, -4);
 }
 
 /** 地面残火（FlameTongues.Ground）：一圈小火苗 */

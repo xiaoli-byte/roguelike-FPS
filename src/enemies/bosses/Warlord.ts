@@ -202,7 +202,7 @@ export class Warlord extends BossBrain implements DirectedBoss {
       if (core) {
         const mat = new THREE.MeshBasicMaterial({ color: Pal.Hot, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false });
         this.clonedMats.push(mat);
-        this.coreGlowMesh = new THREE.Mesh(new THREE.SphereGeometry(0.32, 12, 8), mat);
+        this.coreGlowMesh = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 8), mat);
         this.coreGlowMesh.renderOrder = 2;
         core.add(this.coreGlowMesh);
       }
@@ -360,8 +360,8 @@ export class Warlord extends BossBrain implements DirectedBoss {
     }
     if (this.coreGlowMesh) {
       const m = this.coreGlowMesh.material as THREE.MeshBasicMaterial;
-      m.color.setHex(Pal.hotAt(this.furyLook));
-      m.opacity = Math.min(0.95, Math.max(0, (this.coreGlow - 0.1) * 0.32));
+      m.color.setHex(Pal.lerp(Pal.copperAt(this.furyLook), Pal.hotAt(this.furyLook), Math.min(1, exposed + pulse)));
+      m.opacity = Math.min(0.9, Math.max(0, (this.coreGlow - 0.1) * 0.22));
       this.coreGlowMesh.scale.setScalar(0.8 + 0.25 * exposed);
     }
     this.strikeFlare = Math.max(0, this.strikeFlare - dt / 0.35);
@@ -382,7 +382,7 @@ export class Warlord extends BossBrain implements DirectedBoss {
         const b = this.animator.bone(n);
         if (!b) continue;
         b.getWorldPosition(_a);
-        this.ctx.fx.burst(_a, Math.random() < 0.5 ? Pal.FuryHot : Pal.FuryCopper, 2, 0.9 * k, 0.45, 0.28 * k * this.furyLook, -7);
+        this.ctx.fx.burst(_a, Math.random() < 0.3 ? Pal.FuryHot : Math.random() < 0.6 ? Pal.FuryCopper : Pal.FuryDeep, 2, 0.9 * k, 0.4, 0.2 * k * this.furyLook, -8);
       }
     }
     this.smokeAcc += dt;
@@ -978,14 +978,19 @@ export class Warlord extends BossBrain implements DirectedBoss {
     if (!this.landed) {
       if (dt > 0 && this.animator.state !== 'fall') this.act('fall', 1);
       this.setDrop(d.dropHeight * (1 - fall * fall));
-      // 下坠时往后甩的火星与身上的火（火尾体积换成粒子）
+      // 下坠的火尾（Unity Surge.Trail：从身上拖到天上的锥形火尾，长度随速度、最长 14 m）+ 往后甩的火星；火尾体积换成一串粒子
       this.fxAcc += dt;
-      if (this.fxAcc >= 0.05 && dt > 0) {
+      if (this.fxAcc >= 0.03 && dt > 0) {
         this.fxAcc = 0;
-        const top = _a.copy(this.position).setY(this.position.y + this.dropNow + 1.5);
-        this.ctx.fx.burst(top, EMBERS, 3, 2.5, 0.6, 0.14, -3);
-        this.ctx.fx.burst(top.setY(top.y + 1.2), FIRE, 4, 1.5, 0.45, 0.5, -8);
-        this.ctx.fx.burst(top.setY(top.y + 2.5), RAGE, 3, 1, 0.5, 0.6, -10);
+        const base = this.position.y + this.dropNow + 2.2;
+        const speed = 2 * d.dropHeight * fall / Math.max(0.05, d.dropFraction * this.wdef.intro.seconds);
+        const len = Math.min(14, 2 + speed * 0.35);
+        for (let i = 0; i < 6; i++) {
+          const k = i / 5;
+          _a.set(this.position.x + (Math.random() - 0.5) * 0.5, base + k * len, this.position.z + (Math.random() - 0.5) * 0.5);
+          this.ctx.fx.burst(_a, k < 0.35 ? Pal.copperAt(0) : k < 0.7 ? FIRE : RAGE, 2, 0.6, 0.35 + 0.3 * (1 - k), 0.55 * (1 - k * 0.6), 0);
+        }
+        this.ctx.fx.burst(_b.copy(this.position).setY(base - 0.7), EMBERS, 3, 2.5, 0.6, 0.12, -3);
       }
       if (fall >= 1) this.land();
     }
