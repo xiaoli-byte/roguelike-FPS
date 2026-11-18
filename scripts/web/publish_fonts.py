@@ -53,6 +53,13 @@ def read(path):
     return data
 
 
+def same_text(path, data):
+    """文本文件按 LF 比较（Git 在 Windows 上可能把检出的文件换成 CRLF）"""
+    if not os.path.exists(path):
+        return False
+    return read(path).replace(b'\r\n', b'\n') == data.replace(b'\r\n', b'\n')
+
+
 def unicode_ranges(font):
     """字体 cmap 里的码位 → 合并成 U+XXXX-YYYY 段"""
     cps = sorted(font.getBestCmap().keys())
@@ -135,19 +142,19 @@ def main():
         data = read(os.path.join(SRC, lic))
         manifest['licenses'].append({'file': lic, 'sha256': sha(data)})
         out_path = os.path.join(OUT, lic)
-        if not os.path.exists(out_path) or read(out_path) != data:
+        if not same_text(out_path, data):
             if check:
                 problems.append(f'{lic} 和 Unity 里的不一致')
             else:
                 writes.append((out_path, data))
     css = build_css(entries).encode('utf-8')
-    if not os.path.exists(CSS) or read(CSS) != css:
+    if not same_text(CSS, css):
         if check:
             problems.append('src/ui/css/sf-fonts.css 不是最新的')
         else:
             writes.append((CSS, css))
     man = (json.dumps(manifest, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
-    if not os.path.exists(MANIFEST) or read(MANIFEST) != man:
+    if not same_text(MANIFEST, man):
         if check:
             problems.append('public/assets/fonts/fonts.json 不是最新的')
         else:

@@ -6,6 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { FILES, MAPPED, UNSUPPORTED, convertUss, indexCss, mapDecl, mapSelector, parseUss } from '../scripts/web/convert-uss.mjs';
 
 const root = new URL('../', import.meta.url);
+const lf = (s) => s.replace(/\r\n/g, '\n');
 const decls = (css) => Object.fromEntries([...css.matchAll(/^\s+([-\w]+): ([^;]+);$/gm)].map((m) => [m[1], m[2]]));
 
 test('-unity-text-align 拆成横向 text-align + 纵向 flex 对齐（看本规则的 flex-direction）', () => {
@@ -68,11 +69,11 @@ test('仓库里的 src/ui/css/unity/*.css 是当前 USS 转出来的（= convert
     const out = convertUss(src, f);
     const path = new URL(`src/ui/css/unity/${f}.css`, root);
     assert.ok(existsSync(path), `${f}.css 没有生成`);
-    assert.equal(readFileSync(path, 'utf8'), out.css, `${f}.css 不是最新的（跑 node scripts/web/convert-uss.mjs）`);
+    assert.equal(lf(readFileSync(path, 'utf8')), out.css, `${f}.css 不是最新的（跑 node scripts/web/convert-uss.mjs）`);
     unsupported += out.unsupported.length;
     rules += out.rules;
   }
-  assert.equal(readFileSync(new URL('src/ui/css/unity/index.css', root), 'utf8'), indexCss());
+  assert.equal(lf(readFileSync(new URL('src/ui/css/unity/index.css', root), 'utf8')), indexCss());
   assert.ok(rules > 700, `规则数 ${rules}`);
   // 现在 9 份 USS 里转不了的只有 theme 的段间距
   assert.equal(unsupported, 1);
@@ -84,6 +85,6 @@ test('仓库里的 src/ui/css/unity/*.css 是当前 USS 转出来的（= convert
   const fonts = JSON.parse(readFileSync(new URL('public/assets/fonts/fonts.json', root), 'utf8'));
   assert.deepEqual(fonts.fonts.map((x) => x.family), ['SF Body', 'SF Body Ext', 'SF Title', 'SF Number']);
   for (const x of fonts.fonts) assert.ok(existsSync(new URL(`public/assets/fonts/${x.file}`, root)), x.file);
-  const css = readFileSync(new URL('src/ui/css/sf-fonts.css', root), 'utf8');
+  const css = lf(readFileSync(new URL('src/ui/css/sf-fonts.css', root), 'utf8'));
   for (const x of fonts.fonts) assert.match(css, new RegExp(`font-family: "${x.family}";\\n  src: url\\("/assets/fonts/${x.file}"\\)`));
 });

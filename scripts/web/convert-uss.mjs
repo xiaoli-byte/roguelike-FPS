@@ -267,7 +267,8 @@ function main() {
 
   const stale = [];
   for (const [path, css] of outputs) {
-    const cur = existsSync(path) ? readFileSync(path, 'utf8') : null;
+    // Git 在 Windows 上可能把检出的文件换成 CRLF：按 LF 比较
+    const cur = existsSync(path) ? readFileSync(path, 'utf8').replace(/\r\n/g, '\n') : null;
     if (cur === css) continue;
     stale.push(rel(path));
     if (!check) {
