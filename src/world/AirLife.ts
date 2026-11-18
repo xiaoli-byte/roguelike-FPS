@@ -240,7 +240,8 @@ export class AirLife {
       const drop = Math.max(1, crown.position[1] - crown.ground);
       for (let i = 0; i < (crown.count ?? 10); i++, o++) {
         aCrown.set([...crown.position, crown.radius], o * 4);
-        aLeaf.set([rnd(), drop * (2.4 + 1.2 * rnd()) + 4, crown.ground, 0.22 + 0.12 * rnd()], o * 4);
+        // 叶片 0.3–0.46 m：和这批低面数树的大块树冠一个尺度；按真叶子的大小画，十来米外只剩两三个像素
+        aLeaf.set([rnd(), drop * (2.4 + 1.2 * rnd()) + 4, crown.ground, 0.3 + 0.16 * rnd()], o * 4);
         aTint.set([tint.r, tint.g, tint.b], o * 3);
       }
     }

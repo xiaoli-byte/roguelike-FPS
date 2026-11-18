@@ -59,8 +59,19 @@ interface Tuning {
   motes?: MoteBox[];
 }
 
+/** 崖后的一条烟带：沿 z 从北往南（顺风）排，两头淡出 */
+const rimSmoke = (x: number, y: number, zFrom: number, zTo: number): MistStream => {
+  const keys: MistKey[] = [];
+  for (let i = 0; i <= 4; i++) keys.push({ position: [x + (i % 2 ? 6 : -4), y + (i % 2 ? 3 : 0), zFrom + (zTo - zFrom) * i / 4], halfWidth: 16, size: 48, opacity: i === 0 || i === 4 ? 0 : 1 });
+  return { keys, opacity: 0.7, speed: 0.5, count: 12 };
+};
+
 /** 按地图编号的微调。没列的图全用规矩算出来的 */
-const TUNING: Record<string, Tuning> = {};
+const TUNING: Record<string, Tuning> = {
+  // 炉心是一口窄坑，地形只比可走范围宽出 35–40 m，规矩一条也摆不出；手摆两条崖后的烟带（崖顶约 30 m，烟带浮在崖顶上面）。
+  // 包络（16 + 0.75 × 48 = 52 m）离可走范围（x −37..47）还隔着 20 m 以上
+  '3-4': { mist: [rimSmoke(-112, 58, -30, -230), rimSmoke(122, 58, -10, -205)] },
+};
 
 const CELL = 6;
 const RINGS = [
@@ -424,9 +435,10 @@ export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: nu
       }
       for (const tree of chosen) {
         const name = vegetation.prototypes[tree.prototype].name;
-        // 这批树高约 19.6 m、冠半径约 3.2 m（模型包围盒）：叶子从树身中段往下掉
+        // 这批树高约 19.6 m、冠半径约 3.2 m（模型包围盒）：叶子从树身中段往下掉。
+        // 每棵 26 片轮着掉，同时在空中的八九片——只有三片在空中时站在树下也看不出在落叶
         layout.leaves.push({
-          position: [tree.position[0], tree.position[1] + 11 * tree.scale[1], tree.position[2]], radius: 2.6 * tree.scale[0], ground: tree.position[1] + 0.1, count: 9,
+          position: [tree.position[0], tree.position[1] + 11 * tree.scale[1], tree.position[2]], radius: 2.6 * tree.scale[0], ground: tree.position[1] + 0.1, count: 26,
           color: LEAF_COLORS.find(([pattern]) => pattern.test(name))?.[1] ?? 0xb5452a,
         });
       }
