@@ -33,8 +33,14 @@ STYLE = {
     "exit": ((70, 205, 110), "square"),     # 出口
     "poi": ((70, 200, 230), "square"),      # 补给 / 机关 / 导体
 }
-LEGEND = [("spawn", "出生"), ("site", "据点（多波 · 灵火坛）"), ("lord", "领主 / 首领"), ("guard", "驻守点（路遇埋伏）"),
-          ("entry", "怪物入场点"), ("exit", "出口"), ("poi", "机关 / 导体 / 掩体")]
+# （种类, 图例里画在标记上的字, 说明）
+LEGEND = [("spawn", "S", "出生点"),
+          ("site", "1", "据点：守灵火坛，一波接一波刷怪"),
+          ("lord", "3", "领主 / 首领"),
+          ("guard", "G", "驻守点：路上的伏兵，开局就在场上，走近整组醒"),
+          ("entry", "E", "入场点：游荡怪群和增援从这里进场"),
+          ("exit", "出", "出口"),
+          ("poi", "", "机关 / 导体 / 掩体")]
 
 
 def marker(d: ImageDraw.ImageDraw, xy, kind: str, text: str = "", r: int = 17, label: str = "", lf=None, anchor: str = "r"):
@@ -95,14 +101,14 @@ def arrow_line(d: ImageDraw.ImageDraw, pts, col=(255, 255, 255), w: int = 6, das
 
 def legend(d: ImageDraw.ImageDraw, x: int, y: int, lines=(), scale: float = 1.0, routes=()):
     f = font(int(22 * scale), True)
-    row = int(40 * scale)
+    row = int(44 * scale)
     small = font(int(19 * scale))
-    w = int(max([430 * scale] + [small.getlength(t) + 30 * scale for t in lines] + [f.getlength(n) + 80 * scale for _, n in LEGEND] + [f.getlength(n) + 80 * scale for *_, n in routes]))
+    w = int(max([430 * scale] + [small.getlength(t) + 30 * scale for t in lines] + [f.getlength(n) + 80 * scale for _, _, n in LEGEND] + [f.getlength(n) + 80 * scale for *_, n in routes]))
     h = row * (len(LEGEND) + len(routes) + len(lines)) + int(24 * scale)
     d.rounded_rectangle([x, y, x + w, y + h], radius=12, fill=(18, 20, 26, 215), outline=(230, 230, 230), width=2)
     cy = y + int(30 * scale)
-    for kind, name in LEGEND:
-        marker(d, (x + int(30 * scale), cy), kind, r=int(12 * scale))
+    for kind, letter, name in LEGEND:
+        marker(d, (x + int(30 * scale), cy), kind, letter, r=int(16 * scale))
         d.text((x + int(58 * scale), cy), name, font=f, fill=(245, 245, 245), anchor="lm")
         cy += row
     for col, dash, name in routes:
@@ -183,7 +189,7 @@ OVERLAYS = {
     ),
     "4-A_fortress": dict(
         src="4-A_fortress_scene_v4.jpg", title="4-A 雪域宫堡（第四章备选图）", sub="概念机位 = 出生点（西南草甸）· 上宫堡三条路 · 五处灵火点亮三处，顶殿后山口开门",
-        legend_at=(395, 104),
+        legend_at=(395, 88),
         routes=[
             (WHITE, 0, [(170, 660), (380, 640), (600, 612), (760, 588), (875, 560), (985, 505), (945, 468), (975, 440), (905, 395), (795, 352), (880, 330), (975, 285), (880, 222), (800, 205), (880, 160), (905, 95)]),
             (GOLD, 14, [(380, 640), (330, 560), (300, 490)]),
@@ -202,12 +208,12 @@ OVERLAYS = {
             ("lord", (905, 95), "6", "⑥ 顶殿前庭 3 波", "l"),
             ("exit", (1010, 55), "出", "后山口经幡门", "r"),
             ("guard", (850, 588), "G", "石桥：蛮蛮 + 帝江", "b"),
-            ("guard", (735, 300), "G", "西坡缺口：举父", "l"),
+            ("guard", (735, 300), "G", "西坡缺口：举父", "b"),
             ("guard", (610, 470), "G", "上游冰滩：雷牦", "t"),
             ("entry", (30, 580), "E", "西口山道 · 牦群", "r"),
             ("entry", (215, 395), "E", "村北林线", "r"),
             ("entry", (450, 580), "E", "啸獭洞", "r"),
-            ("entry", (560, 340), "E", "溪上游 · 飞临", "t"),
+            ("entry", (560, 340), "E", "溪上游 · 飞临", "b"),
             ("entry", (975, 418), "E", "山门 · 增援门", "t"),
             ("entry", (790, 240), "E", "西墙头 · 跃下", "l"),
             ("entry", (1150, 100), "E", "后山口", "r"),
