@@ -115,14 +115,19 @@ function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}
   const bosses = document.bosses.map((boss, index): WhiteboxFight => {
     const position = { x: boss.position[0], z: boss.position[2] };
     const ground = { ...position, y: boss.position[1] };
+    // 矩形场地（3-3 神范台 88 × 88 m）导出的 radius 只是圆形场地的缺省 20 m：半径至少盖到首领出生点（魔将出生在火神殿高台上，离中心 39.5 m）
+    const radius = Math.max(boss.radius, Math.hypot(boss.position[0] - boss.center[0], boss.position[2] - boss.center[2]) + 4);
+    // 首领出生点（Unity BossArena.BossSpawnPoint，可以在高台上）本身总在场内：刷首领时校验刷怪点不会把它挡在外面
+    const atSpawn = (point: { x: number; z: number; y?: number }, halfWidth: number) => Math.hypot(point.x - boss.position[0], point.z - boss.position[2]) <= 3 + halfWidth
+      && (point.y === undefined || Math.abs(point.y - boss.position[1]) < 6);
     return {
       id: `boss:${boss.id}:${index}`, label: boss.id, room: `boss:${boss.id}:${index}`,
       final: true, optional: false, position, facing: { x: position.x, z: position.z + 1 },
       // 锚点带上 Unity 首领锚点的真实高度：不带的话会被补成关卡 floorY（1-4 是出生台地 16 m），首领要刷在泉床上空
-      anchors: [{ ...ground, role: 'assault', lane: 0 }], points: [ground], radius: boss.radius,
+      anchors: [{ ...ground, role: 'assault', lane: 0 }], points: [ground], radius,
       // 同 Unity BossEncounter.PlayerInArena：场地范围内，且脚在首领场自己的地面高度 6 m 以内（1-4 的泉床低于出生台地 16 m）
-      contains: (point: { x: number; z: number; y?: number }, halfWidth = 0) => Math.hypot(point.x - boss.center[0], point.z - boss.center[2]) <= boss.radius + halfWidth
-        && (point.y === undefined || Math.abs(point.y - boss.floorY) < 6),
+      contains: (point: { x: number; z: number; y?: number }, halfWidth = 0) => atSpawn(point, halfWidth)
+        || (Math.hypot(point.x - boss.center[0], point.z - boss.center[2]) <= radius + halfWidth && (point.y === undefined || Math.abs(point.y - boss.floorY) < 6)),
       entryDepth: 2, requires: [],
       plans: [{ entries: [{ enemyId: BOSS_IDS[boss.id] ?? boss.id, count: 1 }], label: boss.id }],
     };

@@ -565,8 +565,9 @@ export class StageDirector implements IStageDirector {
       const atApproach = Math.hypot(player.x - fight.facing.x, player.z - fight.facing.z) <= 3;
       if (!fight.contains(player, fight.entryDepth) && !atApproach) return false;
       // Unity 首领场同 Unity BossEncounter.PlayerInArena：场地范围 + 首领场地面 ±6 m（UnitySceneAdapter 的 contains）就开打，不看视线——
-      // 2-4 的首领锚点在冰窟对岸、冰沿一圈 2.2 m 的冰窟边缘段挡着，出生营地又低于环台 8 m，看视线的话首领战永远不触发
-      if (this.unityDocument && fight.final) return true;
+      // 2-4 的首领锚点在冰窟对岸、冰沿一圈 2.2 m 的冰窟边缘段挡着，出生营地又低于环台 8 m；3-3 的魔将出生在 10 m 高的火神殿高台上。
+      // 只对首领场（boss:），普通遭遇照旧看视线
+      if (this.unityDocument && fight.id.startsWith('boss:')) return true;
       this.encounterEye.copy(player); this.encounterEye.y += 1.2;
       this.encounterTarget.set(fight.facing.x, arena.floorY + 1.2, fight.facing.z);
       return !ctx.world.segmentBlocked(this.encounterEye, this.encounterTarget);
