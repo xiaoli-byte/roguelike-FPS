@@ -3,19 +3,38 @@
 // 记平均 / 中位的整帧耗时（无头 Chromium + 软件合成，只能看相对差，绝对值不可信）。
 //   node scripts/web/post-shots.mjs [端口=5681] [输出目录=docs/art/review/threejs-migration] [图=1-1,1-2,2-1,3-3,4-1]
 // 输出：<目录>/post-<图>-before.jpg、post-<图>-after.jpg，帧时间打印成 JSON（最后一行）。
+// 全程只开一个 Chromium（几张图轮流在同一个标签页里载入）；结束时把这个进程起过的 Chromium 全部杀掉——
+// cdp.mjs 起不来时只杀主进程，子进程会留下（机器上同时有别的会话在跑无头浏览器，内存很紧）。
+import { spawnSync } from 'node:child_process';
 import { launch } from '../plateau/cdp.mjs';
 
 const port = process.argv[2] ?? '5681';
 const out = process.argv[3] ?? 'docs/art/review/threejs-migration';
 const maps = (process.argv[4] ?? '1-1,1-2,2-1,3-3,4-1').split(',');
 const FRAMES = Number(process.env.POST_FRAMES ?? 90);
+const ROUNDS = Number(process.env.POST_ROUNDS ?? 3);
 const log = (...a) => console.log('[post-shots]', ...a);
 const results = {};
 
+/** 杀掉本进程起的 Chromium（cdp.mjs 的配置目录名是 ch4-cdp-<pid>-<端口>） */
+function killStrays() {
+  if (process.platform !== 'win32') return;
+  const filter = `Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" | Where-Object { $_.CommandLine -match 'ch4-cdp-${process.pid}-' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`;
+  spawnSync('powershell', ['-NoProfile', '-Command', filter], { stdio: 'ignore' });
+}
+
+let b = null;
+try {
+  b = await launch({ width: 1280, height: 720 });
+} catch (err) {
+  killStrays();
+  throw err;
+}
+process.on('exit', killStrays);
+
 for (const map of maps) {
-  let b = null;
   try {
-    b = await launch({ width: 1280, height: 720 });
+    b.logs.length = 0;
     await b.goto(`http://localhost:${port}/?debug&perf=1&debugStage=${map}`);
     await b.waitFor('window.__game && window.__ctx && window.__post', 180000);
     for (let k = 0; k < 1200 && !b.logs.some(l => l.includes('[assets] 已加载')); k++) await new Promise(r => setTimeout(r, 250));
@@ -54,15 +73,25 @@ for (const map of maps) {
     const info = await b.eval(`(() => { const s = window.__post.stack; return { active: s.active, scene: window.__post.scene.sceneId, overlays: window.__post.scene.overlays.length, stats: s.stats, lut: window.__post.lutCheck(), state: window.__game.state }; })()`);
     log(map, JSON.stringify(info));
 
+    // 帧时间：关 / 开交替测 ROUNDS 轮（每轮先推 0.5 s 让切换后的首帧编译过去），取各轮中位数的中位数
+    const rounds = { before: [], after: [] };
+    for (let k = 0; k < ROUNDS; k++) {
+      for (const [disabled, name] of [[true, 'before'], [false, 'after']]) {
+        await b.eval(`(() => { window.__post.stack.disabled = ${disabled}; window.__step(0.5); return true; })()`);
+        rounds[name].push(await b.eval(`window.__timeFrames(${FRAMES})`));
+      }
+    }
+    const pick = list => {
+      const med = list.map(t => t.median).sort((x, y) => x - y);
+      return { median: med[Math.floor(med.length / 2)], rounds: list.map(t => Math.round(t.median * 10) / 10) };
+    };
     const shoot = async (disabled, name) => {
       await b.eval(`(() => { window.__post.stack.disabled = ${disabled}; window.__step(0.5); return true; })()`);
-      const timing = await b.eval(`window.__timeFrames(${FRAMES})`);
-      await b.eval('window.__step(1 / 60)');
       await b.shot(`${out}/post-${map}-${name}.jpg`, 88);
-      return timing;
     };
-    const before = await shoot(true, 'before');
-    const after = await shoot(false, 'after');
+    await shoot(true, 'before');
+    await shoot(false, 'after');
+    const before = pick(rounds.before), after = pick(rounds.after);
     results[map] = { before, after, shafts: info.stats?.shafts, mips: info.stats?.bloomMips, lut: info.lut };
     log(map, 'before', JSON.stringify(before), 'after', JSON.stringify(after));
 
@@ -98,9 +127,9 @@ for (const map of maps) {
     if (errors.length) log(map, 'errors:\n' + errors.join('\n'));
   } catch (err) {
     log(map, 'FAILED', err.message);
-    if (b) log(b.logs.slice(-20).join('\n'));
-  } finally {
-    await b?.close();
+    log(b.logs.slice(-20).join('\n'));
   }
 }
+await b.close();
+killStrays();
 console.log(JSON.stringify(results));
