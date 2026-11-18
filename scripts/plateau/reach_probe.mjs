@@ -29,7 +29,7 @@ mkdirSync(out, { recursive: true });
 const three = join(root, 'node_modules/three').split('\\').join('/');
 await build({
   configFile: false, root, logLevel: 'warn', publicDir: false,
-  resolve: { alias: [{ find: /^three$/, replacement: `${three}/build/three.module.js` }, { find: /^three\/(.*)$/, replacement: `${three}/$1` }] },
+  resolve: { alias: [{ find: /^three$/, replacement: `${three}/build/three.module.js` }, { find: /^three\/addons\/(.*)$/, replacement: `${three}/examples/jsm/$1` }, { find: /^three\/(.*)$/, replacement: `${three}/$1` }] },
   build: { outDir: out, emptyOutDir: false, copyPublicDir: false, minify: false, target: 'es2022',
     lib: { entry: join(root, `scripts/plateau/reach/${name}.ts`), name: `reach_${name}`, formats: ['iife'], fileName: () => `${name}.js` } },
 });

@@ -1,4 +1,4 @@
-"""第四章三张概念图的路线 / 遭遇标注：每张图一张俯视规划图（世界坐标）+ 一张概念图叠标。
+"""第四章三张概念图的路线 / 遭遇标注：每张图一张俯视规划图（世界坐标）+ 一张概念图叠标（按白模相机投影的真实位置）。
 
 用法：python docs/art/concepts/ch4-631/tools/route_maps.py   （在仓库根目录）
 数据就写在本文件里：4-2 / 4-4 的坐标抄自 src/world/gorge/spec.ts、src/world/haizi/spec.ts，
@@ -81,6 +81,8 @@ def arrow_line(d: ImageDraw.ImageDraw, pts, col=(255, 255, 255), w: int = 6, das
             d.line([a, b], fill=colour, width=width)
             return
         L = math.dist(a, b)
+        if L < 1e-6:
+            return
         n = max(1, int(L // (dash * 2)))
         for i in range(n + 1):
             t0, t1 = i * 2 * dash / L, min(1, (i * 2 * dash + dash) / L)
@@ -135,125 +137,112 @@ WHITE, GOLD, CYAN, PURPLE = (255, 255, 255), (255, 214, 90), (110, 225, 240), (1
 ROUTES = [(WHITE, 0, "主路线（推荐走法）"), (GOLD, 14, "支线 / 另一种走法"), (PURPLE, 10, "精英游猎 / 冲撞线")]
 
 # ───────────────────────────── 概念图叠标 ─────────────────────────────
-# 坐标按 1280×720 的预览量，画的时候乘到原图
+# 概念图是在白模上重绘的（*_blockout.jpg），白模渲染时用同一台相机把点位和路线投影成画面坐标，
+# 并按地形 / 墙块判断看不看得见：tools/views/<图>.json（1536×864 像素；渲染脚本见 README 第 6 节）。
+# 所以叠标的位置就是真实位置：看得见的点实心，被挡住的点半透明，画面外的列在底部。
 
 OVERLAYS = {
-    "4-2_gorge": dict(
-        src="4-2_gorge_scene_v2.jpg", title="4-2 大渡河 · 铁索桥峡谷", sub="概念机位：西岸坡肩，朝上游（北偏东）· 五处灵火点亮三处开出口",
-        legend_at=(1052, 478),
-        routes=[
-            (WHITE, 0, [(150, 600), (330, 560), (470, 520), (575, 498), (700, 512), (830, 528), (960, 505), (1075, 472), (1120, 420), (1150, 300), (1215, 255), (1262, 205)]),
-            (GOLD, 14, [(330, 560), (430, 455), (400, 395), (330, 350), (250, 300)]),
-            (GOLD, 14, [(575, 498), (620, 560), (660, 640), (700, 706)]),
-            (GOLD, 14, [(250, 300), (420, 255), (600, 250), (735, 262)]),
-            (PURPLE, 10, [(60, 420), (200, 360), (330, 420), (500, 470), (540, 560)]),
-        ],
-        marks=[
-            ("spawn", (150, 600), "S", "出生 · 西岸坡顶", "t"),
-            ("site", (250, 300), "1", "① 甲居寨坡 2 波", "t"),
-            ("site", (575, 498), "2", "② 铁索桥 2 波", "b"),
-            ("lord", (782, 300), "3", "③ 江嘴 · 领主大鹗", "r"),
-            ("site", (1238, 150), "4", "④ 绝壁驿站 2 波 ↗", "l"),
-            ("site", (760, 690), "5", "⑤ 河滩磨坊 2 波 ↓", "r"),
-            ("exit", (1240, 60), "出", "⑦ 古驿道 ↗", "l"),
-            ("guard", (1160, 330), "G", "栈道岩龛：帝江", "l"),
-            ("guard", (432, 430), "G", "回头弯：啸獭小窝", "l"),
-            ("entry", (70, 215), "E", "寨后林线 · 跃下", "r"),
-            ("entry", (720, 440), "E", "江嘴尖卵石滩 · 飞临", "l"),
-            ("entry", (905, 165), "E", "江嘴北脊 · 跃下", "r"),
-            ("entry", (1075, 655), "E", "东岸水边 · 上岸", "l"),
-            ("entry", (40, 470), "E", "岩洞 · 穷奇巢", "r"),
-            ("poi", (1090, 440), "", "东桥头雷桩", "b"),
-            ("poi", (600, 452), "", "西桥头雷桩", "t"),
-        ],
-    ),
-    "4-4_haizi": dict(
-        src="4-4_haizi_scene_v3.jpg", title="4-4 神山海子 · 雷泽雷神", sub="概念机位 = 出生点（南岸偏西，面朝湖心岛）· 环岸两个方向 + 六段拱身上岛",
-        legend_at=(1048, 14),
-        routes=[
-            (WHITE, 0, [(600, 690), (420, 655), (230, 560), (120, 450), (140, 372)]),
-            (WHITE, 0, [(700, 690), (900, 655), (1090, 565), (1190, 450), (1200, 372)]),
-            (GOLD, 14, [(640, 640), (648, 520), (655, 420)]),
-        ],
-        ellipses=[((660, 438), 300, 62, CYAN)],
-        marks=[
-            ("spawn", (650, 690), "S", "出生 · 南岸", "t"),
-            ("lord", (660, 345), "首", "雷泽雷神升起处（湖心岛北）", "t"),
-            ("exit", (662, 392), "坛", "", "r"),
-            ("poi", (150, 322), "", "西柱", "t"),
-            ("poi", (1198, 322), "", "东柱", "t"),
-            ("poi", (943, 352), "", "北柱", "t"),
-            ("poi", (1215, 610), "", "巨石（全掩体）", "l"),
-            ("poi", (215, 640), "", "玛尼堆（挡雷息）", "r"),
-            ("entry", (790, 300), "E", "北垭口 · 现身", "r"),
-            ("entry", (330, 300), "E", "冰舌脚 · 跃下", "r"),
-            ("entry", (1090, 255), "E", "东坡 · 跃下", "l"),
-            ("entry", (420, 395), "E", "西北岸 · 飞临", "t"),
-            ("entry", (1120, 520), "E", "东岸 · 飞临", "l"),
-        ],
-        notes=[((330, 522), "青色虚线：龙身盘踞圈（半径 28 m），六段轮流拱起 = 上岛的路")],
-    ),
-    "4-A_fortress": dict(
-        src="4-A_fortress_scene_v4.jpg", title="4-A 雪域宫堡（第四章备选图）", sub="概念机位 = 出生点（西南草甸）· 上宫堡三条路 · 五处灵火点亮三处，顶殿后山口开门",
-        legend_at=(395, 88),
-        routes=[
-            (WHITE, 0, [(170, 660), (380, 640), (600, 612), (760, 588), (875, 560), (985, 505), (945, 468), (975, 440), (905, 395), (795, 352), (880, 330), (975, 285), (880, 222), (800, 205), (880, 160), (905, 95)]),
-            (GOLD, 14, [(380, 640), (330, 560), (300, 490)]),
-            (GOLD, 14, [(300, 490), (470, 470), (600, 440), (690, 380), (735, 300)]),
-            (GOLD, 14, [(985, 505), (1120, 520), (1262, 470)]),
-            (GOLD, 14, [(300, 490), (200, 380), (120, 250)]),
-            (PURPLE, 10, [(120, 250), (240, 420), (430, 560), (700, 600)]),
-        ],
-        marks=[
-            ("spawn", (170, 660), "S", "出生 · 草甸玛尼堆", "t"),
-            ("site", (300, 490), "1", "① 河畔村寨 2 波", "b"),
-            ("site", (1080, 452), "2", "② 山门下院 3 波", "b"),
-            ("site", (1035, 318), "3", "③ 坡道中台 2 波", "r"),
-            ("site", (1250, 420), "4", "④ 煨桑台 2 波 →", "l"),
-            ("site", (105, 205), "5", "⑤ 残碉 · 穷奇巢", "t"),
-            ("lord", (905, 95), "6", "⑥ 顶殿前庭 3 波", "l"),
-            ("exit", (1010, 55), "出", "后山口经幡门", "r"),
-            ("guard", (850, 588), "G", "石桥：蛮蛮 + 帝江", "b"),
-            ("guard", (735, 300), "G", "西坡缺口：举父", "b"),
-            ("guard", (610, 470), "G", "上游冰滩：雷牦", "t"),
-            ("entry", (30, 580), "E", "西口山道 · 牦群", "r"),
-            ("entry", (215, 395), "E", "村北林线", "r"),
-            ("entry", (450, 580), "E", "啸獭洞", "r"),
-            ("entry", (560, 340), "E", "溪上游 · 飞临", "b"),
-            ("entry", (975, 418), "E", "山门 · 增援门", "t"),
-            ("entry", (790, 240), "E", "西墙头 · 跃下", "l"),
-            ("entry", (1150, 100), "E", "后山口", "r"),
-        ],
-    ),
+    "4-2_gorge": dict(src="4-2_gorge_scene_v5.jpg", view="4-2.json", title="4-2 大渡河 · 铁索桥峡谷",
+                      sub="机位：出生台前沿 (−160, 100)，朝北偏东 40°、俯 10°、竖直视角 45° · 白模 = src/world/gorge 检视页",
+                      legend_at=(0.73, 0.70)),
+    "4-4_haizi": dict(src="4-4_haizi_scene_v5.jpg", view="4-4.json", title="4-4 神山海子 · 雷泽雷神",
+                      sub="机位 = 出生点 (−18, 67.6)，面朝湖心岛（北偏东 15°）、仰 3°、竖直视角 50° · 白模 = src/world/haizi 检视页",
+                      legend_at=(0.74, 0.70),
+                      notes=[((0.30, 0.79), "金线 = 踩拱起的龙身上岛（只在首领战里有路）；白线 = 环岸两个方向")]),
+    "4-A_fortress": dict(src="4-A_fortress_scene_v7.jpg", view="4-A.json", title="4-A 雪域宫堡（第四章备选图）",
+                         sub="机位 = 出生点 (−150, 130)，朝北偏东 52°、仰 5°、竖直视角 36° · 白模 = tools/fortress_blockout.ts（按设计稿）",
+                         legend_at=(0.80, 0.09)),
 }
+VIEW_W = 1536
+ROUTE_STYLE = {"main": (WHITE, 0, 6), "alt": (GOLD, 14, 5), "roam": (PURPLE, 10, 4)}
+
+
+def _boxes_overlap(a, b, pad=4):
+    return not (a[2] + pad < b[0] or b[2] + pad < a[0] or a[3] + pad < b[1] or b[3] + pad < a[1])
 
 
 def draw_overlay(key: str):
+    import json
     o = OVERLAYS[key]
     im = Image.open(HERE / o["src"]).convert("RGB")
-    k = im.width / 1280
-    # 整体压暗一点，标记才跳得出来
-    im = Image.blend(im, Image.new("RGB", im.size, (10, 12, 18)), 0.22)
-    d = ImageDraw.Draw(im, "RGBA")
-    S = lambda p: (p[0] * k, p[1] * k)
-    for (c, rx, ry, col) in o.get("ellipses", []):
-        cx, cy = S(c)
-        n = 72
-        for i in range(n):
-            if i % 12 in (5, 6, 7, 8, 9, 10, 11) and False:
-                continue
-            a0, a1 = 2 * math.pi * i / n, 2 * math.pi * (i + 0.55) / n
-            d.line([(cx + math.cos(a0) * rx * k, cy + math.sin(a0) * ry * k), (cx + math.cos(a1) * rx * k, cy + math.sin(a1) * ry * k)], fill=col, width=int(4 * k))
-    for col, dash, pts in o["routes"]:
-        arrow_line(d, [S(p) for p in pts], col=col, w=int(5 * k), dash=int(dash * k))
+    W, H = im.size
+    k = W / VIEW_W
+    view = json.load(open(HERE / "tools" / "views" / o["view"], encoding="utf-8"))
+    im = Image.blend(im, Image.new("RGB", im.size, (10, 12, 18)), 0.22)   # 整体压暗一点，标记才跳得出来
+    base = ImageDraw.Draw(im, "RGBA")
+    ghost = Image.new("RGBA", im.size, (0, 0, 0, 0))                      # 被挡住的点和路画在这一层，半透明
+    gd = ImageDraw.Draw(ghost, "RGBA")
+    S = lambda q: (q[0] * k, q[1] * k)
+    # 路线：画面里连续的一段一段画；看得见的实线，被地形 / 墙挡住的画在半透明层
+    for r in view["routes"]:
+        if r["style"] == "roam":
+            continue                                                       # 游猎圈只画在俯视图上，透视里会糊成一片
+        col, dash, w = ROUTE_STYLE[r["style"]]
+        run, vis = [], None
+        def flush():
+            if len(run) > 1:
+                arrow_line(base if vis else gd, run, col=col, w=int(w * k) if vis else int((w - 1) * k), dash=int(dash * k) if dash else (0 if vis else int(8 * k)), head=False)
+        for q in r["pts"]:
+            ok = q[2] == 1 and q[4] >= 25                                  # 机位脚边 25 m 以内的路不画（透视会拉成横贯画面的线）
+            v = q[3] == 1
+            if not ok:
+                flush(); run, vis = [], None; continue
+            if vis is not None and v != vis:
+                run.append(S(q)); flush(); run = [S(q)]
+            else:
+                run.append(S(q))
+            vis = v
+        flush()
+    # 点：先放标记，再贪心摆标签（右 → 左 → 上 → 下，避开已经摆过的框）
     lf = font(int(17 * k), True)
-    for kind, xy, text, label, anchor in o["marks"]:
-        marker(d, S(xy), kind, text, r=int(13 * k), label=label, lf=lf, anchor=anchor)
-    for xy, text in o.get("notes", []):
-        d.text(S(xy), text, font=font(int(16 * k)), fill=(200, 245, 250), anchor="lm", stroke_width=3, stroke_fill=(15, 15, 20))
-    title(d, o["title"], o["sub"], x=int(22 * k), y=int(14 * k), scale=k * 0.72)
+    r_mark = int(12 * k)
+    placed = []
+    off = []
+    pts = sorted(view["points"], key=lambda p: -p["s"][4])                # 远的先画，近的压在上面
+    for p in pts:
+        x, y, inframe, los, dist = p["s"]
+        if not inframe or not (0 <= x <= VIEW_W and 0 <= y <= view.get("H", 864)):
+            off.append(p["label"]); continue
+        X, Y = S((x, y))
+        placed.append((X - r_mark, Y - r_mark, X + r_mark, Y + r_mark))
+    for p in pts:
+        x, y, inframe, los, dist = p["s"]
+        if not inframe or not (0 <= x <= VIEW_W and 0 <= y <= view.get("H", 864)):
+            continue
+        X, Y = S((x, y))
+        label = p["label"] + (f" {dist:.0f} m" if los else "（挡）")
+        bw = lf.getlength(label) + 8
+        bh = lf.size + 8
+        choice = None
+        for a in ("r", "l", "t", "b", "r2", "l2"):
+            if a == "r": bx = (X + r_mark + 6, Y - bh / 2)
+            elif a == "l": bx = (X - r_mark - 6 - bw, Y - bh / 2)
+            elif a == "t": bx = (X - bw / 2, Y - r_mark - 6 - bh)
+            elif a == "b": bx = (X - bw / 2, Y + r_mark + 6)
+            elif a == "r2": bx = (X + r_mark + 6, Y - bh / 2 - bh - 4)
+            else: bx = (X - r_mark - 6 - bw, Y + bh / 2 + 4)
+            box = (bx[0], bx[1], bx[0] + bw, bx[1] + bh)
+            if box[0] < 4 or box[2] > W - 4 or box[1] < 4 or box[3] > H - 4:
+                continue
+            mine = (X - r_mark, Y - r_mark, X + r_mark, Y + r_mark)
+            if not any(_boxes_overlap(box, b) for b in placed if b != mine):
+                choice = box; break
+        if choice is None:
+            choice = (X + r_mark + 6, Y - bh / 2, X + r_mark + 6 + bw, Y + bh / 2)
+        placed.append(choice)
+        layer = base if los else gd
+        marker(layer, (X, Y), p["kind"], p["letter"], r=r_mark)
+        layer.text((choice[0] + 4, choice[1] + bh / 2), label, font=lf, fill=(255, 255, 255), anchor="lm", stroke_width=3, stroke_fill=(15, 15, 20))
+    ghost.putalpha(ghost.getchannel("A").point(lambda a: int(a * 0.55)))
+    im = Image.alpha_composite(im.convert("RGBA"), ghost).convert("RGB")
+    d = ImageDraw.Draw(im, "RGBA")
+    for (fx, fy), text in o.get("notes", []):
+        d.text((fx * W, fy * H), text, font=font(int(16 * k)), fill=(230, 245, 250), anchor="lm", stroke_width=3, stroke_fill=(15, 15, 20))
+    if off:
+        d.text((int(16 * k), H - int(16 * k)), "画面外：" + "、".join(off), font=font(int(15 * k)), fill=(225, 225, 225), anchor="ls", stroke_width=3, stroke_fill=(15, 15, 20))
+    title(d, o["title"], o["sub"], x=int(16 * k), y=int(10 * k), scale=k * 0.6)
     lx, ly = o["legend_at"]
-    legend(d, int(lx * k), int(ly * k), scale=k * 0.5, routes=ROUTES)
+    legend(d, int(lx * W), int(ly * H), scale=k * 0.42, routes=ROUTES[:2], lines=("半透明 +（挡）= 被地形 / 墙挡住", "数字 = 离机位的水平距离"))
     out = HERE / f"{key}_route_overlay.jpg"
     im.save(out, quality=88)
     print("saved", out.name)
