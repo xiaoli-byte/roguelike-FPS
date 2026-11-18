@@ -110,8 +110,9 @@ try {
   await step(0.6);
   await b.eval(`window.__kunpeng.forceMove('slam')`);
   await look();
-  await step(1.25);
-  await look('window.__kunpeng.boss.moveById("slam").impact.clone().setY(window.__kunpeng.boss.hole.floorY + 3)', 0.6);
+  // 出手后 0.45 s：头趴在环台上、鲛珠大亮，冰浪往外推（释放帧那一下的白闪已经过去）
+  await step(1.55);
+  await look('window.__kunpeng.boss.moveById("slam").impact.clone().setY(window.__kunpeng.boss.hole.floorY + 2.5)', 0.6);
   log('phase1 slam', await state());
   await b.shot(`${out}/kunpeng-phase1-slam.jpg`);
   await step(2);
@@ -145,8 +146,9 @@ try {
   await b.shot(`${out}/kunpeng-phase2-gust.jpg`);
   for (let k = 0; k < 40 && (await b.eval('!!window.__kunpeng.state().move')); k++) await step(0.2);
   await b.eval(`window.__kunpeng.forceMove('rain')`);
-  await step(1.35);
-  await look('window.__kunpeng.boss.getBodyCenter(new V()).lerp(window.__ctx.player.position, 0.6)', 0.9);
+  // 羽刃在空中、落点预警亮在玩家周围：看向玩家前方的地面，鹏在画面上沿
+  await step(1.55);
+  await look('window.__ctx.player.position.clone().lerp(window.__kunpeng.boss.position.clone().setY(window.__ctx.player.position.y), 0.25).setY(window.__ctx.player.position.y + 4)', 1);
   log('phase2 rain', await state());
   await b.shot(`${out}/kunpeng-phase2-rain.jpg`);
   await step(2.5);

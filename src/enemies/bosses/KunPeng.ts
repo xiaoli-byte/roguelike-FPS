@@ -686,8 +686,9 @@ export class KunPeng extends BossBrain implements DirectedBoss {
       const a = t * 7 + Math.random() * TAU, h = (t - 1.4) * 12 * Math.random();
       fx.burst(_v.set(c.x + Math.sin(a) * 6, this.hole.waterY + h, c.z + Math.cos(a) * 6), 0xeaf8ff, 2, 3, 0.6, 0.22, -4);
     }
+    // 冰雾：1.2–2.6 s 起一层偏冷的蓝灰，最浓 0.35（Unity 不再整幅冷白；换形由扶摇柱和冰海炸开挡着）
     const fog = t < 1.2 ? 0 : t < 1.55 ? (t - 1.2) / 0.35 : t < 2.6 ? 1 : Math.max(0, 1 - (t - 2.6) / 1.4);
-    this.fx?.flash(fog);
+    this.fx?.flash(fog * 0.35);
     if (this.isPeng) {
       this.riseOffset = -14 * (1 - easeOutCubic(span(t, KunPengDef.TransitionSwap, 3.4)));
       this.faceDeg(this.ctx.player.position, 86, dt);

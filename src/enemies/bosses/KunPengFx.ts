@@ -91,12 +91,27 @@ void main() {
   gl_FragColor = vec4(uColor, a);
 }
 `;
+/** 冰雾穹顶：轮廓处（视线擦过球面）淡掉，不留一圈硬边（Unity 化鹏的冰雾是一层偏冷的蓝灰，最浓 0.35） */
+const DOME_VERT = /* glsl */ `
+varying vec2 vUv;
+varying vec3 vW;
+varying float vFacing;
+void main() {
+  vUv = uv;
+  vec4 w = modelMatrix * vec4(position, 1.0);
+  vW = w.xyz;
+  vec3 n = normalize(mat3(modelMatrix) * normal);
+  vFacing = abs(dot(n, normalize(cameraPosition - w.xyz)));
+  gl_Position = projectionMatrix * viewMatrix * w;
+}
+`;
 const DOME_FRAG = /* glsl */ `
 uniform float uTime;
 uniform float uAmount;
 uniform vec3 uColor;
 varying vec2 vUv;
 varying vec3 vW;
+varying float vFacing;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
   vec2 i = floor(p), f = fract(p);
@@ -105,7 +120,7 @@ float noise(vec2 p) {
 }
 void main() {
   float n = noise(vW.xz * 0.12 + vec2(uTime * 0.3, -uTime * 0.2)) * 0.6 + noise(vW.xy * 0.3 + uTime * 0.5) * 0.4;
-  float a = uAmount * (0.78 + 0.3 * n);
+  float a = uAmount * (0.78 + 0.3 * n) * smoothstep(0.0, 0.6, vFacing);
   gl_FragColor = vec4(uColor * (0.92 + 0.12 * n), clamp(a, 0.0, 1.0));
 }
 `;
@@ -185,8 +200,8 @@ export class KunPengFx {
     // 冰雾爆闪：半球浓雾（双面：站在里面的玩家同样被白雾遮住）
     const dGeo = new THREE.SphereGeometry(R * 1.3, 32, 14, 0, TAU, 0, Math.PI / 2);
     const dMat = new THREE.ShaderMaterial({
-      vertexShader: MIST_VERT, fragmentShader: DOME_FRAG, transparent: true, depthWrite: false, side: THREE.DoubleSide,
-      uniforms: { uTime: { value: 0 }, uAmount: { value: 0 }, uColor: { value: new THREE.Color(0xeaf8ff) } },
+      vertexShader: DOME_VERT, fragmentShader: DOME_FRAG, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+      uniforms: { uTime: { value: 0 }, uAmount: { value: 0 }, uColor: { value: new THREE.Color(0xbdd2e4) } },
     });
     this.dome = new THREE.Mesh(dGeo, dMat);
     this.dome.renderOrder = 6;
@@ -200,6 +215,8 @@ export class KunPengFx {
     for (let i = 0; i < MAX_FLOE; i++) {
       this.floeSeeds.push({ a: (i / MAX_FLOE) * TAU + Math.random() * 0.2, r: R * (0.72 + Math.random() * 0.24), s: 0.7 + Math.random() * 1.1, ph: Math.random() * TAU, yaw: Math.random() * TAU });
     }
+    // 场景自带水体时不画浮冰（Unity 的冰窟只有水面 + 遮罩；俯拍时这一圈浮冰在浅色水面上是一片深色六边形）
+    this.floes.visible = !opts.sceneWater;
     this.group.add(this.floes);
     // 冰沿碎冰：斜插在冰沿上、向外倾的冰棱
     const sGeo = new THREE.ConeGeometry(0.45, 1, 5);

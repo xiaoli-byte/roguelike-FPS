@@ -564,6 +564,9 @@ export class StageDirector implements IStageDirector {
       // Inside means some metres past the threshold (entryDepth), so the fight opens among the room's cover.
       const atApproach = Math.hypot(player.x - fight.facing.x, player.z - fight.facing.z) <= 3;
       if (!fight.contains(player, fight.entryDepth) && !atApproach) return false;
+      // Unity 首领场同 Unity BossEncounter.PlayerInArena：场地范围 + 首领场地面 ±6 m（UnitySceneAdapter 的 contains）就开打，不看视线——
+      // 2-4 的首领锚点在冰窟对岸、冰沿一圈 2.2 m 的冰窟边缘段挡着，出生营地又低于环台 8 m，看视线的话首领战永远不触发
+      if (this.unityDocument && fight.final) return true;
       this.encounterEye.copy(player); this.encounterEye.y += 1.2;
       this.encounterTarget.set(fight.facing.x, arena.floorY + 1.2, fight.facing.z);
       return !ctx.world.segmentBlocked(this.encounterEye, this.encounterTarget);
@@ -584,7 +587,8 @@ export class StageDirector implements IStageDirector {
       (i, n, hasBoss) => this.onWaveStart(i, n, hasBoss), whiteboxSpawnRegion(candidate, arena.floorY));
     if (candidate.final) { state.phase = 'battle'; this.waves = runner; }
     else this.encounterWaves = runner;
-    ctx.ui.banner(candidate.label, candidate.final ? '清除终点守卫后开启出口' : '当前房间遭遇 · 清场后可继续选路', 2.5);
+    // Unity 首领场的 label 是首领 id（boss_kunpeng…），首领刷出时另有名字横幅 / 登场演出的名字卡：这里不再压一条
+    if (!(this.unityDocument && candidate.final)) ctx.ui.banner(candidate.label, candidate.final ? '清除终点守卫后开启出口' : '当前房间遭遇 · 清场后可继续选路', 2.5);
   }
 
   private discoverSites(): void {
