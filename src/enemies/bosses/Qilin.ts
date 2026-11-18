@@ -86,6 +86,8 @@ const HOOVES = ['hoofFL', 'hoofHR', 'hoofFR', 'hoofHL'];
 const _v = new THREE.Vector3(), _w = new THREE.Vector3(), _a = new THREE.Vector3(), _b = new THREE.Vector3(), _imp = new THREE.Vector3();
 
 const mix = (a: number, b: number, k: number): number => a + (b - a) * k;
+/** 踏云找身下障碍物的高度上限（离殿内地面，米）：石柱 5.8 m + 余量 */
+const UNDER_TOP = 8.5;
 const span = (t: number, a: number, b: number): number => Math.min(1, Math.max(0, (t - a) / Math.max(1e-4, b - a)));
 /** Unity QilinBrain.EaseInOut（smoothstep）/ EaseOutCubic */
 const easeInOut = (k: number): number => k * k * (3 - 2 * k);
@@ -171,7 +173,7 @@ export class Qilin extends BossBrain implements DirectedBoss {
   private pPitch = 0;
   private readonly prevPos = new THREE.Vector3();
   private moveSpeed = 0;
-  private heartHalo: THREE.Mesh | null = null;
+  private heartHalo: THREE.Sprite | null = null;
   lastAct: string | null = null;
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
@@ -291,9 +293,9 @@ export class Qilin extends BossBrain implements DirectedBoss {
     };
     this.xuan.shapes = shapes(this.xuan, ['pearl']);
     this.burn.shapes = shapes(this.burn, ['pearl', 'heart']);
-    // 胸口火心的光晕（Unity 的光晕精灵 + 点光：喘息时大亮）
-    const halo = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 8), new THREE.MeshBasicMaterial({
-      color: 0xff8a2a, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, fog: false,
+    // 胸口火心的光晕（Unity 的光晕精灵：中心亮、边缘软；喘息时大亮）
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: glowTexture(), color: 0xff8a2a, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, fog: false,
     }));
     halo.name = 'qilin-heart-halo';
     halo.renderOrder = 3;
@@ -505,8 +507,10 @@ export class Qilin extends BossBrain implements DirectedBoss {
   groundUnder(p: THREE.Vector3): number {
     const floor = this.hallFloor;
     const r = clamp(this.radius * 0.6, 0.4, 2);
-    const y = this.ctx.world.groundHeight(p.x, p.z, Math.max(p.y, floor) + 12, r);
-    return Number.isFinite(y) ? Math.max(y, floor - 1.2) : floor;
+    // 只找殿里的东西（石柱 5.8 m、倒鼎、祭台）：从离地 UNDER_TOP 米往下找。Unity 从身子上方 12 m 往下扫——网页的场景碰撞里殿顶、
+    // 檐口这些高处的面也算「朝上的表面」，从身子上方找会一路抬升（实测踏云抬到 22–26 m）
+    const y = this.ctx.world.groundHeight(p.x, p.z, floor + UNDER_TOP, r);
+    return Number.isFinite(y) ? clamp(y, floor - 1.2, floor + UNDER_TOP) : floor;
   }
 
   /** 身子放在 feet 这里会不会插进石柱（离地 0.6 m 以上有东西） */
@@ -841,13 +845,23 @@ export class Qilin extends BossBrain implements DirectedBoss {
   // ───────────── 每帧 ─────────────
 
   override update(dt: number): void {
+    const before = _keep.copy(this.position);
     super.update(dt);
+    this.undoFalloutGuard(before);
     if (this.waitingForSpawn) return;
     this.cauldron?.update(dt);
     this.fx?.update(dt, this.alive ? this.bladeResolver : null);
     this.flood?.tick(dt);
     this.crown?.update(dt);
     if (!this.alive) return;
+    // 身下的地面（Unity StepSky：p.y < ground 时放到 ground 上）：飞行体低空横冲进石柱时，碰撞解算会把整个身子从柱底往下推出去
+    if (this.introDone && !this.transitioning) {
+      const ground = this.isBurn ? this.groundUnder(this.position) : this.hallFloor;
+      if (this.position.y < ground - 0.05) {
+        this.position.y = ground;
+        if (this.velocity.y < 0) this.velocity.y = 0;
+      }
+    }
     if (this.crackLeft > 0) {
       this.crackLeft -= dt;
       if (this.crackLeft <= 0) this.endCrack();
@@ -868,6 +882,20 @@ export class Qilin extends BossBrain implements DirectedBoss {
         this.hazards.hurt(this.dmg(this.qdef.printDamage), 'fire', pl.position);
       }
     }
+  }
+
+  /**
+   * EnemyBase 的「掉出世界」保护按关卡的 floorY 判（3-4 是山门出生点的 24 m，殿内地面 0 m）：低于 floorY − 12、脚下 3 m 内没有地面就瞬移回关卡中心——
+   * 焚身踏云（4.5–7.5 m）、饮熔跃起（6 m）在殿内半空时正好落进这个判定，会被拽出殿外。这里认出那一下瞬移（落到 floorY + 0.5、跳了好几米）并撤回；
+   * 真掉出殿外（离殿心超过殿墙 + 6 m）时照常交给它
+   */
+  private undoFalloutGuard(before: THREE.Vector3): void {
+    const a = this.ctx.stage.arena;
+    if (!a || !this.alive || !this.furnace) return;
+    if (Math.abs(this.position.y - (a.floorY + 0.5)) > 1e-4 || before.y >= a.floorY - 12) return;
+    if (this.position.distanceToSquared(before) < 16 || this.furnace.radiusOf(before) > this.furnace.wallRadius + 6) return;
+    this.position.copy(before);
+    this.velocity.set(0, 0, 0);
   }
 
   /** 鳞刃：撞到掩体就碎；扫过玩家（贴地 0.2–2.4 米高的竖薄片）就伤人 */
@@ -1189,7 +1217,7 @@ export class Qilin extends BossBrain implements DirectedBoss {
     if (t > 0.5) this.fx?.eruption(0);
     this.setRoleOpacity('pearlHalo', 0.4 * Math.max(0, 1 - t));
     this.setRoleOpacity('heartHalo', 0.4 * Math.max(0, 1 - t));
-    if (this.heartHalo) (this.heartHalo.material as THREE.MeshBasicMaterial).opacity = 0;
+    if (this.heartHalo) this.heartHalo.material.opacity = 0;
     if (this.F.native?.glowShell) this.F.native.glowShell.opacity = 0.6 * Math.max(0, 1 - t);
     if (t >= 0.82) this.model.scale.setScalar(Math.max(0.01, 1 - (t - 0.82) / 0.18));
   }
@@ -1271,8 +1299,9 @@ export class Qilin extends BossBrain implements DirectedBoss {
     if (this.heartHalo) {
       const g = this.heartGlow * (0.85 + 0.15 * Math.sin(this.age * 7));
       this.heartHalo.visible = this.isBurn;
+      // Unity：光晕边长 1.2 + 2.2 × 亮度（米），透明度 0.35 + 0.6 × 亮度；宿主有体型缩放，这里除回去
       this.heartHalo.scale.setScalar((1.2 + 2.2 * g) / SCALE);
-      (this.heartHalo.material as THREE.MeshBasicMaterial).opacity = 0.2 + 0.5 * g;
+      (this.heartHalo.material as THREE.SpriteMaterial).opacity = 0.35 + 0.6 * g;
     }
   }
 
@@ -1361,6 +1390,28 @@ export class Qilin extends BossBrain implements DirectedBoss {
 }
 
 const _hitW = { distance: 0, point: new THREE.Vector3(), normal: new THREE.Vector3(), box: null as never };
+const _keep = new THREE.Vector3();
+
+let glowTex: THREE.Texture | null = null;
+
+/** 软边光晕贴图（径向渐变，中心白、边缘透明）；没有 DOM（node 测试）时不用贴图 */
+function glowTexture(): THREE.Texture | null {
+  if (glowTex || typeof document === 'undefined') return glowTex;
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const g = c.getContext('2d');
+  if (!g) return null;
+  const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grad.addColorStop(0, 'rgba(255,255,255,1)');
+  grad.addColorStop(0.25, 'rgba(255,230,180,0.75)');
+  grad.addColorStop(0.6, 'rgba(255,160,80,0.22)');
+  grad.addColorStop(1, 'rgba(255,120,40,0)');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 64, 64);
+  glowTex = new THREE.CanvasTexture(c);
+  glowTex.colorSpace = THREE.SRGBColorSpace;
+  return glowTex;
+}
 
 /** 测试与检视用：当前形态、场地、锁扣、吊鼎（只读） */
 export function qilinDebug(b: Qilin): {

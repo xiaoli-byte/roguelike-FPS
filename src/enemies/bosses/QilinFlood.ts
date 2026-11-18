@@ -20,8 +20,10 @@ type Stage = 'warn' | 'on' | 'gap';
 interface Sheet {
   strip: FloodStrip;
   mesh: THREE.Mesh;
-  /** 当前 / 目标高度（相对殿内地面）与插值速度 */
+  /** 当前 / 目标高度（相对 base）与插值速度 */
   level: number;
+  /** 熔流带所在的地面高度（世界 y）：殿内地面在场景网格里不全是 0 m，熔岩面要贴着实际地面涨上来，否则埋在地面下看不见 */
+  base: number;
   target: number;
   speed: number;
 }
@@ -188,8 +190,8 @@ export class QilinFlood {
     if (this.dmgAcc < 0.5) return;
     this.dmgAcc = 0;
     const pl = this.q.ctx.player;
-    if (!pl.alive || pl.position.y - this.q.hallFloor > 0.4) return;
-    if (this.sheetsFor(qd).some(s => s.level > -0.2 && inStrip(s.strip, pl.position))) this.q.hazards.hurt(this.q.dmg(10), 'fire', pl.position);
+    if (!pl.alive) return;
+    if (this.sheetsFor(qd).some(s => s.level > -0.2 && inStrip(s.strip, pl.position) && pl.position.y - s.base < 0.4)) this.q.hazards.hurt(this.q.dmg(10), 'fire', pl.position);
   }
 
   /** 某一点（XZ）此刻在不在涨着的熔流里 */
@@ -214,7 +216,9 @@ export class QilinFlood {
       mesh.castShadow = false;
       mesh.visible = false;
       this.group.add(mesh);
-      list.push({ strip: s, mesh, level: -FLOOD.SunkDepth, target: -FLOOD.SunkDepth, speed: 1 });
+      const g = this.q.ctx.world.groundHeight(s.center.x, s.center.z, this.q.hallFloor + 2, 0.3);
+      const base = Number.isFinite(g) && Math.abs(g - this.q.hallFloor) < 1 ? Math.max(g, this.q.hallFloor) : this.q.hallFloor;
+      list.push({ strip: s, mesh, level: -FLOOD.SunkDepth, target: -FLOOD.SunkDepth, speed: 1, base });
     }
     this.sheets.set(qd, list);
     return list;
@@ -228,7 +232,7 @@ export class QilinFlood {
         if (!s.mesh.visible) continue;
         const d = s.target - s.level;
         s.level += Math.sign(d) * Math.min(Math.abs(d), s.speed * dt);
-        s.mesh.position.y = floor + s.level;
+        s.mesh.position.y = s.base + s.level + 0.04; // 比碰撞地面高一点点：场景的地面网格和碰撞高度场有几厘米的出入
         if (s.level <= -FLOOD.SunkDepth + 1e-3 && s.target <= -FLOOD.SunkDepth) s.mesh.visible = false;
         else if (s.level > -0.2 && Math.random() < dt * 6) {
           // 涨着的熔流冒火星

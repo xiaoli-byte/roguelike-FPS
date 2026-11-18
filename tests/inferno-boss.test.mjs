@@ -585,7 +585,9 @@ test('soak: 90 s of free move choice in each phase keeps 火麒麟 inside the ha
       assert.ok(Number.isFinite(p.x + p.y + p.z), 'finite position');
       const r = Math.hypot(p.x - f.center.x, p.z - f.center.z);
       assert.ok(r < f.wallRadius + 1, `inside the hall (${r.toFixed(1)} m at ${ctx.time.now.toFixed(1)} s, ${boss.currentMove?.id})`);
-      assert.ok(p.y - f.center.y > -0.5 && p.y - f.center.y < maxAlt, `height ${(p.y - f.center.y).toFixed(1)} (${boss.currentMove?.id})`);
+      const m = boss.currentMove;
+      assert.ok(p.y - f.center.y > -0.5 && p.y - f.center.y < maxAlt,
+        `height ${(p.y - f.center.y).toFixed(1)} (${m?.id} ${m?.stage} ${m?.leg ?? ''}) at ${p.x.toFixed(1)}, ${p.z.toFixed(1)} r ${r.toFixed(1)}, target ${m?.target ? m.target.toArray().map(v => v.toFixed(1)) : '-'}, fly ${boss.flyTargetY.toFixed(1)}`);
     }
   };
   run(90, 7.5);
