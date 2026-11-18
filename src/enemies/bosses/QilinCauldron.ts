@@ -12,14 +12,16 @@
 import * as THREE from 'three';
 import type { GameContext } from '../../core/types';
 import type { StaticBox } from '../../world/Collision';
-import type { Furnace } from './QilinArena';
+import type { QilinFurnace } from './QilinFurnace';
 import { geo, glow, mesh, std } from './parts';
 
 /** 鼎身半宽、半高；足长；吊着时鼎身中心离地多高 */
 const HALF = 2.6;
 const HALF_Y = 1.8;
 const LEG = 2.4;
-const HANG_Y = 13.2;
+/** Unity QilinCauldron.hangHeight 缺省 7.2（3-4 Level_3_4.HangHeight） */
+export const HANG_Y = 7.2;
+const DEG = Math.PI / 180;
 /** 角足在鼎身局部的位置（角往里收一点） */
 const LEG_IN = HALF - 0.45;
 const LINKS = 44;
@@ -40,6 +42,7 @@ interface Chain {
 }
 
 const _m = new THREE.Matrix4();
+const _mi = new THREE.Matrix4();
 const _q = new THREE.Quaternion();
 const _q2 = new THREE.Quaternion();
 const _s = new THREE.Vector3();
@@ -80,7 +83,11 @@ export class QilinCauldron {
   private readonly moltenMat: THREE.MeshBasicMaterial;
   private dirty = true;
 
-  constructor(private readonly ctx: GameContext, private readonly furnace: Furnace, lockPoints: readonly THREE.Vector3[]) {
+  /** 场景里的正式件（SM_Prop_QilinCauldron，Unity 的 Model 子物体）：跟着鼎的姿势走；有它时程序方鼎藏起来 */
+  private art: THREE.Object3D | null = null;
+  private readonly artLocal = new THREE.Matrix4();
+
+  constructor(private readonly ctx: GameContext, private readonly furnace: QilinFurnace, lockPoints: readonly THREE.Vector3[], private readonly hangY = HANG_Y) {
     this.group.name = 'qilin-cauldron';
     const bronze = std(0x5a4422, { emissive: 0x2a1204, ei: 0.35, rough: 0.5, metal: 0.65 });
     const verdigris = std(0x3e5040, { emissive: 0x101808, ei: 0.2, rough: 0.7, metal: 0.4 });
@@ -114,11 +121,11 @@ export class QilinCauldron {
     this.group.add(D);
 
     // 鼎的四个角朝四个象限中线（锁扣方向）：局部角方向 (±1, ±1)/√2，整体绕 Y 转 yaw0
-    this.yaw0 = (furnace.quadrants[0] ?? Math.PI / 4) - Math.PI / 4;
+    this.yaw0 = ((furnace.quadrantCount > 0 ? furnace.quadrantYaw(0) : 45) - 45) * DEG;
     const corners = [[1, 1], [-1, 1], [-1, -1], [1, -1]].map(([x, z]) => new THREE.Vector3(x, 0, z).normalize());
-    for (let i = 0; i < furnace.quadrants.length; i++) {
+    for (let i = 0; i < furnace.quadrantCount; i++) {
       // 找出转过 yaw0 之后最接近象限 i 的那个局部角
-      const q = furnace.quadrants[i];
+      const q = furnace.quadrantYaw(i) * DEG;
       let best = corners[0], bestD = Infinity;
       for (const c of corners) {
         const a = Math.atan2(c.x, c.z) + this.yaw0;
@@ -128,7 +135,7 @@ export class QilinCauldron {
       this.cornerDirs.push(best.clone());
     }
     const C = furnace.center;
-    this.restPos.set(C.x, C.y + HANG_Y, C.z);
+    this.restPos.set(C.x, C.y + this.hangY, C.z);
     this.restQ.setFromAxisAngle(UP, this.yaw0);
     this.ding.position.copy(this.restPos);
     this.ding.quaternion.copy(this.restQ);
@@ -196,13 +203,14 @@ export class QilinCauldron {
     if (!ch || ch.state !== 'taut') return null;
     this.snap(i);
     const f = this.furnace;
-    const ang = f.quadrants[i];
+    const ang = f.quadrantYaw(i) * DEG;
     const D = _d.set(Math.sin(ang), 0, Math.cos(ang));
     // 目标姿势：先转到吊着的朝向，再绕 (up × D) 倾斜 TILT_CORNER（D 一侧朝下）
     _a.set(D.z, 0, -D.x).normalize();
     this.toQ.setFromAxisAngle(_a, TILT_CORNER).multiply(this.restQ);
     // 平移：让那一角的足尖正好落在池沿撞击点
-    this.impact.set(f.center.x + D.x * (f.pool + 0.6), f.center.y + 1.0, f.center.z + D.z * (f.pool + 0.6));
+    // Unity CornerImpactPoint：象限方向、池沿外 impactOut（1 m）、离地 1 m
+    this.impact.set(f.center.x + D.x * (f.poolRadius + 1), f.center.y + 1.0, f.center.z + D.z * (f.poolRadius + 1));
     const dir = this.cornerDirs[i];
     _p.set(dir.x * LEG_IN * Math.SQRT2, -HALF_Y - LEG + 0.2, dir.z * LEG_IN * Math.SQRT2).applyQuaternion(this.toQ);
     this.toPos.copy(this.impact).sub(_p);
@@ -217,7 +225,7 @@ export class QilinCauldron {
     if (this.state === 'falling' || this.state === 'fallen') return;
     for (let i = 0; i < this.chains.length; i++) if (this.chains[i].state === 'taut') this.snap(i);
     const f = this.furnace;
-    const side = this.droppedCorner >= 0 ? f.quadrants[this.droppedCorner] : (f.quadrants[0] ?? 0);
+    const side = (this.droppedCorner >= 0 ? f.quadrantYaw(this.droppedCorner) : f.quadrantCount > 0 ? f.quadrantYaw(0) : 0) * DEG;
     _a.set(Math.cos(side), 0, -Math.sin(side)).normalize();
     this.toQ.setFromAxisAngle(_a, TILT_FALLEN).multiply(this.restQ);
     _q2.setFromAxisAngle(UP, 0.5);
@@ -272,6 +280,60 @@ export class QilinCauldron {
     }
     this.moltenMat.color.setHex(0xff6a1a).multiplyScalar(0.8 + 0.2 * Math.sin(this.age * 3));
     this.updateChains(dt);
+    this.driveArt();
+  }
+
+  /** 晃一下（登场演出：熔池涌动时吊鼎晃动）：摆幅至少 amount 倍（平时 0.12，落定余摆 1）。坠落中 / 落定后无效 */
+  rattle(amount: number): void {
+    if (this.state === 'falling' || this.state === 'fallen' || !(amount > 0) || !Number.isFinite(amount)) return;
+    this.sway = Math.max(this.sway, Math.min(amount, 4));
+  }
+
+  /** 已经落定成池中掩体 */
+  get isCover(): boolean {
+    return this.box !== null;
+  }
+
+  /** 鼎身中心（世界） */
+  get dingObject(): THREE.Object3D {
+    return this.ding;
+  }
+
+  /** p 落在鼎的局部盒（鼎身 + 足，外扩 pad 米）里 */
+  insideLocal(p: THREE.Vector3, pad: number): boolean {
+    this.ding.updateMatrixWorld(true);
+    const l = this.ding.worldToLocal(_p.copy(p));
+    const half = HALF + pad;
+    return Math.abs(l.x) < half && Math.abs(l.z) < half && l.y > -(HALF_Y + LEG) - pad && l.y < HALF_Y + 0.6;
+  }
+
+  /**
+   * 认领场景里的正式件（Unity 关卡把 SM_Prop_QilinCauldron 摆在吊着的姿势上，网页场景视图把它画成静态网格）：
+   * 记下它相对鼎身（吊着的姿势）的局部变换，之后每帧跟着鼎走；程序方鼎藏起来（熔岩口留着）
+   */
+  adoptArt(art: THREE.Object3D): void {
+    this.ding.updateMatrixWorld(true);
+    art.updateMatrixWorld(true);
+    this.art = art;
+    this.artLocal.copy(this.ding.matrixWorld).invert().multiply(art.matrixWorld);
+    for (const c of this.ding.children) if (c !== this.molten) c.visible = false;
+    this.molten.visible = false;
+  }
+
+  get hasArt(): boolean {
+    return this.art !== null;
+  }
+
+  private driveArt(): void {
+    const art = this.art;
+    if (!art) return;
+    this.ding.updateMatrixWorld(true);
+    _m.multiplyMatrices(this.ding.matrixWorld, this.artLocal);
+    if (art.parent) {
+      art.parent.updateMatrixWorld(true);
+      _m.premultiply(_mi.copy(art.parent.matrixWorld).invert());
+    }
+    _m.decompose(art.position, art.quaternion, art.scale);
   }
 
   private land(): void {
@@ -331,9 +393,15 @@ export class QilinCauldron {
     return out.copy(this.ding.position);
   }
 
-  dispose(): void {
+  /** 首领释放（倒下后）：掩体盒撤掉，鼎和正式件留在原地（关卡换掉时随 stageGroup / 场景视图一起清） */
+  release(): void {
     if (this.box) this.ctx.world.remove(this.box);
     this.box = null;
+    this.art = null;
+  }
+
+  dispose(): void {
+    this.release();
     this.group.removeFromParent();
     this.links.dispose();
     this.moltenMat.dispose();

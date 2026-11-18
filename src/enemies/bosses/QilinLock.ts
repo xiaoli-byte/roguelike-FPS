@@ -1,5 +1,5 @@
 /**
- * 吊鼎锁扣：火麒麟（boss_qilin）在炉心殿东南西北四面外墙上召出的可射击目标（离地约 3.5 米）。巨鼎的四条铁链各拴在
+ * 吊鼎锁扣：火麒麟（boss_qilin）在炉心殿东南西北四面外墙上召出的可射击目标（Unity QilinLock：象限中线上、离圆心 23.1 m、离地 12 m，血量 110 × 难度）。巨鼎的四条铁链各拴在
  * 一个锁扣上：打碎一个，鼎的那一角坠下——麒麟正在那一侧熔池边饮熔时砸中它（眩晕 4 秒、鳞甲崩裂），否则砸空、白费一个。
  * 不移动、不攻击、不掉落；锁扣碎掉时通知首领（owner.onLockBroken）。55% 时剩下的铁链全断，首领把锁扣静默移除。
  */
@@ -32,6 +32,7 @@ export interface LockOwner {
 }
 
 const _a = new THREE.Vector3();
+const _m = new THREE.Matrix4(), _mi = new THREE.Matrix4();
 
 export class QilinLock extends EnemyBase {
   owner: LockOwner | null = null;
@@ -44,11 +45,15 @@ export class QilinLock extends EnemyBase {
   private glowK = 0;
   private core: THREE.Mesh | null = null;
   private halo: THREE.Mesh | null = null;
+  private body: THREE.Object3D | null = null;
+  /** 场景里的正式件（SM_Prop_QilinChainLock）：跟着锁身走，碎了 / 移除时藏起来 */
+  private art: THREE.Object3D | null = null;
+  private readonly artLocal = new THREE.Matrix4();
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
     super(ctx, QILIN_LOCK_DEF, opts);
     this.spawnDuration = 0.5;
-    this.deathDuration = 0.5;
+    this.deathDuration = 0.6;
     this.flyTargetY = opts.position.y;
   }
 
@@ -57,6 +62,7 @@ export class QilinLock extends EnemyBase {
     const iron = std(0x1e1a18, { rough: 0.6, metal: 0.6 });
     const root = new THREE.Group();
     const body = pivot(root, 0, 0, 0);
+    this.body = body;
     // 背板（嵌在墙上）+ 锁身 + 锁梁 + 兽面锁芯
     mesh(body, geo.box(1.3, 1.5, 0.25), iron, 0, 0.75, -0.25);
     mesh(body, geo.box(0.95, 0.75, 0.5), bronze, 0, 0.55, 0);
@@ -85,6 +91,39 @@ export class QilinLock extends EnemyBase {
     const k = 0.75 + 0.25 * Math.sin(this.age * (4 + 6 * this.glowK) + this.index);
     if (this.halo) this.halo.scale.setScalar((0.9 + 0.2 * k) * (1 + 0.9 * this.glowK));
     if (this.core) this.core.rotation.z += 0.02 + 0.08 * this.glowK;
+    this.driveArt();
+  }
+
+  /**
+   * 认领场景里的正式件（Unity 关卡把锁扣正式件贴墙摆好，网页场景视图把它画成静态网格）：之后跟着锁身走（碎了往下掉），
+   * 程序锁身藏起来，只留发光锁芯（弱点）和光晕
+   */
+  adoptArt(art: THREE.Object3D): void {
+    this.root.updateMatrixWorld(true);
+    art.updateMatrixWorld(true);
+    this.art = art;
+    this.artLocal.copy(this.model.matrixWorld).invert().multiply(art.matrixWorld);
+    if (this.body) for (const c of this.body.children) if (c !== this.core && c !== this.halo) c.visible = false;
+    // 锁芯往殿心挪一点，露在正式件的正面
+    this.core?.position.setZ(0.45);
+    this.halo?.position.setZ(0.4);
+  }
+
+  private driveArt(): void {
+    const art = this.art;
+    if (!art) return;
+    this.root.updateMatrixWorld(true);
+    _m.multiplyMatrices(this.model.matrixWorld, this.artLocal);
+    if (art.parent) {
+      art.parent.updateMatrixWorld(true);
+      _m.premultiply(_mi.copy(art.parent.matrixWorld).invert());
+    }
+    _m.decompose(art.position, art.quaternion, art.scale);
+  }
+
+  protected override onDispose(): void {
+    if (this.art) this.art.visible = false;
+    this.art = null;
   }
 
   protected override onDeath(result: DamageResult): void {
@@ -103,5 +142,11 @@ export class QilinLock extends EnemyBase {
     this.model.position.y = -3 * t * t;
     this.model.rotation.x = t * 1.4;
     this.model.scale.setScalar(Math.max(0.01, 1 - t * 0.6));
+    this.driveArt();
+    // 碎完（Unity CollapseTime 0.6 s）：正式件跟着藏起来
+    if (t >= 0.95 && this.art) {
+      this.art.visible = false;
+      this.art = null;
+    }
   }
 }

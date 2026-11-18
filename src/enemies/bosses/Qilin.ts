@@ -1,102 +1,68 @@
 /**
- * 火麒麟（第三章首领，祝融炉心殿 inferno-5）：祝融炉心的守炉兽。两个形态各是一个模型，共用一套四足马鹿骨架，
- * 55% 时在熔岩柱里换模型。
- *
- * 场地：圆形炉心殿，中央熔池上方吊着巨鼎，四条巨链拉到东南西北外墙的锁扣；四条放射状熔岩渠把地面切成四个象限，
- * 沿外墙一圈是外环跑道（QilinArena.locateFurnace 从熔岩掩码 / 导航网格找出熔池、殿墙、渠、桥、象限）。
- * 巨鼎、铁链是首领自带的场景道具（QilinCauldron），锁扣是可射击的小目标（QilinLock，boss_qilin_lock）。
- *
- * 一阶段 · 玄鳞（100–55%，玄铁鳞甲 = 护甲层）：
- *  - 踏火奔驰：沿外环跑道绕场狂奔，蹄印留火 4 秒（踩到被烧），撞到跑道上的人；然后停步转身、地面亮出一条冲撞线，
- *    横穿一个象限冲撞过去（侧移躲开）。冲撞撞上玄武岩柱会撞晕 1.6 秒（一个小输出窗口）。
- *  - 张鳞：人立 1 秒（全身鳞缝发亮、脚下预警圈），然后 360° 射出一圈红热鳞刃（血量 85% 以下连射两圈、错开半格），
- *    鳞刃撞到石柱 / 墙就碎——躲到玄武岩柱后面。
- *  - 麟火：玩家离得近时，面前扇形预警后短距离吐火扫射（石柱挡得住）。
- *  - 饮熔：血量到 85% 和 70% 时跳到熔池边低头饮熔 4 秒，两侧炉口各钻出 2 只炭童；饮完鳞甲回满、火鬃更旺。
- *    它身后那面外墙上的锁扣会发亮：打碎它，巨鼎那一角坠下砸中麒麟——眩晕 4 秒、鳞甲崩裂（全身都算弱点、受伤 ×2）。
- *    不饮熔时（或打错锁扣）鼎角砸空，白费一个锁扣。
- *  - 弱点：角根的火珠。
- * 转换（55%）：剩下的铁链全断，巨鼎整个砸进熔池、熔岩冲天；麒麟跳进熔池沉下去，鳞片炸飞，在熔岩柱里换成焚身跃出。
- * 二阶段 · 焚身（55–0%，鳞甲没了）：
- *  - 踏云：在 3.5–5.5 米高处绕殿弧线奔跑，越过熔岩渠；蹄下火云。
- *  - 俯冲踏地：连续三次——飞到玩家头顶、落点预警圈、砸下来炸出一圈贴地火环（起跳躲过）；三次之后落地喘息。
- *  - 喘息：落地喘 3.5 秒，胸口火心大亮——二阶段的主要输出窗口（弱点：胸口火心 + 角根火珠）。
- *  - 麟火吐息：落到熔池对岸，扇形预警盖住一个象限，然后吐息从象限一侧扫到另一侧——躲到柱后或池中的倒鼎后。
- *  - 熔流轮转：倒鼎压满熔池，熔岩溢进四条渠，按顺时针轮流涨宽到 4 米（LavaSystem.addLavaArea），
- *    每次淹一个象限的外侧 6 秒（狂怒时 4 秒），涨之前地面亮出预警条带。
- *  - 火云雨：顶上落火球（每个都有落点预警），高处排烟口刷神火飞鸦。
- *  - 狂怒（< 15%）：熔流轮转更快、出招间隙更短。
- * 美术：SK_Boss_Qilin / SK_Boss_QilinBurn（原生骨架，见 QilinModel.ts）；资产缺失或 ?classic 时用程序化兜底模型，招式不变。
+ * 火麒麟（Unity Qilin/QilinBrain.cs 的网页版；定义 QilinDef.ts，招式 QilinMoves.ts，殿的几何 QilinFurnace.ts，熔流 QilinFlood.ts，登场 QilinIntro.ts）。
+ * 首领框架（framework/BossBrain）之上加这几层：
+ *   · 场地：炉心殿几何（Unity 场景 3-4：场景文档的首领场地 + Level_3_4 的常量；白盒 inferno-5：QilinArena 从熔岩掩码反推）、吊鼎与四个锁扣
+ *     （QilinCauldron / QilinLock；Unity 场景里的正式件 SM_Prop_QilinCauldron / SM_Prop_QilinChainLock 由它们认领、跟着动）、熔岩柱（QilinFx）。
+ *   · 登场：从池心的熔岩柱里跃出（模型偏移，逻辑位置不动），落在熔池北沿人立长啸；登场演出（intro/BossIntroDirector）接管镜头；登场结束锁扣上膛（110 × 难度）。
+ *   · 饮熔：85% / 70% 两道生命刻度（onMark）排上饮熔；饮熔时打碎它身后那面墙上的锁扣 → 鼎角砸中：护甲清零、硬直 4 s（受伤 × 2，框架 stagger）、鳞甲崩裂（全身弱点）。
+ *   · 转换（55%，5.2 s）：链全断、锁扣静默移除、巨鼎坠池（池中掩体，冲出一圈火浪）；跳进熔池沉下去，1.9 s 在熔岩柱里换成焚身（框架换形），
+ *     2.2 s 起从熔岩里冲出、跃回熔池另一侧的岸上；鳞甲炸飞（护甲清零）。逻辑位置在 1.1 s 扎进熔池时瞬移到池里、落地时瞬移到上岸点。
+ *   · 走位：玄鳞在外环跑道上小跑、绕到玩家那一侧；焚身踏云（招式间隙 4.5 m、俯冲蓄势 / 火云雨 7.5 m、喘息 / 吐息落地 0，身下有石柱、倒鼎时抬过去），
+ *     沿外环跑道上空绕殿弧线奔跑，5–9 s 掉一次头。网页的首领是飞行体（EnemyBase 的 flyTargetY），每帧在 think 之后定高度。
+ *   · 熔流轮转（QilinFlood）由这里推进；15% 狂怒排上狂怒长啸（BurnRage）。胸口火心喘息时大亮。
+ *   · 倒下：身上冒熔浆、落地溅一圈熔浆、熔池最后喷一股、净火归瑞的淡金光点（DefeatTimeline，ctx.fx 精神对齐）。
+ * 动作：网页没有火麒麟的动作片段（M12 待办），沿用程序化骨骼姿势（QilinModel 的原生骨架 / 程序化兜底），招式的 playAct 状态名映射到姿势参数；出手按时间兜底。
+ * 网址带 ?dev 时（只在开发服务器里）挂 window.__qilin 调试钩子（跳演出、跳阶段、强制出招）。
  */
 import * as THREE from 'three';
-import type { DamageResult, EnemyDef, GameContext, IEnemy, SpawnOptions } from '../../core/types';
-import { angleDiff, clamp, rotateTowards, TAU } from '../../core/math';
-import { BossBase, type HitShape } from './BossBase';
+import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../../core/types';
+import { clamp, TAU } from '../../core/math';
 import { attachEnemyArt } from '../../assets/EnemyArt';
 import type { NativeBody } from '../../assets/NativeRig';
-import type { LavaFlood, LavaSystem } from '../../world/Lava';
+import type { LavaSystem } from '../../world/Lava';
 import { attackDirector } from '../AttackTokens';
 import { getEnemyDef } from '../Registry';
-import {
-  clockwiseNext, floodShapes, furnaceAngle, furnacePoint, locateFurnace, quadrantOf, type Furnace,
-} from './QilinArena';
+import type { HitShape } from './BossBase';
+import { BossBrain, hexColor } from './framework/BossBrain';
+import type { BossFormDef, BossPhaseDef } from './framework/BossDef';
+import type { BossMove } from './framework/BossMove';
+import { DefeatTimeline } from './framework/DefeatSequence';
+import { summonOptions } from './framework/Summons';
+import { BossIntroDirector, introEnabled, type DirectedBoss } from './intro/BossIntroDirector';
+import { anchorOn, ProcPose, type KPPose } from './KunPengModel';
+import type { BeamMesh } from './Visuals';
+import { locateFurnace } from './QilinArena';
 import { QilinCauldron } from './QilinCauldron';
+import { QilinDef, SKY, STUN_LIE_UNTIL } from './QilinDef';
+import { QilinFlood } from './QilinFlood';
+import { QilinFurnace } from './QilinFurnace';
 import { QilinFx, type Blade } from './QilinFx';
+import { qilinIntro, type QilinIntroStage } from './QilinIntro';
 import { QILIN_LOCK_DEF, QilinLock } from './QilinLock';
 import { BURN_POINTS, buildQilinProc, XUAN_POINTS, type QilinPoint } from './QilinModel';
-import { anchorOn, ProcPose, type KPPose } from './KunPengModel';
-import { easeInOut, easeOutCubic, span } from './parts';
+import { createQilinMove, dirOf, type BreathMove, type SweepMove } from './QilinMoves';
+import { QilinScaleCrown } from './QilinScaleCrown';
 
+/** 敌人名册里的条目（首领自己的耐久按 QilinDef 的定档表另算；这里的是难度 1 的参考值） */
 export const QILIN_DEF: EnemyDef = {
   id: 'boss_qilin',
   name: '火麒麟',
-  hp: 5000,
+  hp: 9090,
   // 玄铁鳞甲：一阶段的护甲层（饮熔回满，坠鼎砸中时崩裂，化焚身时炸飞）
-  armor: 1500,
-  speed: 10,
+  armor: 780,
+  speed: 6.5,
   radius: 2.0,
   height: 7.2,
   flying: true,
   damage: 16,
-  coins: [80, 120],
-  essence: 70,
+  coins: [60, 100],
+  essence: 60,
   isBoss: true,
   headY: 6,
   headRadius: 0.5,
   knockbackResist: 1,
   color: 0xff6a1a,
 };
-
-/** 两个形态的模型缩放（美术按 6 米高到独角尖制作，头高约 4.5 米）：游戏里约 7.5 米 */
-const SCALE = 1.25;
-/** 饮熔的血量线（一阶段） */
-const DRINK_AT = [0.85, 0.7];
-const DRINK_TIME = 4;
-const STUN_TIME = 4;
-/** 二阶段踏云高度（离地，模型原点 = 四蹄） */
-const SKY_ALT = 4.5;
-const FLOOD_ON = 6;
-const FLOOD_ON_RAGE = 4;
-const FLOOD_WARN = 1.5;
-
-const WARN = 0xff7a2a;
-const FIRE = 0xff6a1a;
-const HOT = 0xffd070;
-const EMBER = 0xff8a3a;
-const SCALE_DARK = 0x2a2420;
-
-const AX = new THREE.Vector3(1, 0, 0);
-const AY = new THREE.Vector3(0, 1, 0);
-const AZ = new THREE.Vector3(0, 0, 1);
-const _v = new THREE.Vector3();
-const _w = new THREE.Vector3();
-const _a = new THREE.Vector3();
-const _b = new THREE.Vector3();
-const _imp = new THREE.Vector3();
-
-/** 炭童、神火飞鸦（第三章阵容）：注册了才召 */
-const TANTONG = 'tantong';
-const FIRE_CROW = 'fire_crow';
 
 export type FormId = 'xuan' | 'burn';
 
@@ -111,97 +77,88 @@ interface Form {
   table: Record<string, QilinPoint>;
 }
 
-type GallopStage = 'toTrack' | 'run' | 'aim' | 'charge' | 'crash' | 'recover';
-type DrinkStage = 'leap' | 'sip' | 'done';
-type DiveStage = 'rise' | 'tele' | 'dive' | 'recover';
-type BreathStage = 'approach' | 'tele' | 'sweep';
-type PantStage = 'descend' | 'rest' | 'takeoff';
-
-interface FloodCycle {
-  order: number[];
-  i: number;
-  stage: 'warn' | 'on' | 'gap';
-  t: number;
-  floods: LavaFlood[];
-  /** 没有熔岩系统时的兜底：自己按多边形结算伤害 */
-  polys: [number, number][][];
-  dmgAcc: number;
-}
+const SCALE = QilinDef.ModelScale;
+const AX = new THREE.Vector3(1, 0, 0);
+const AY = new THREE.Vector3(0, 1, 0);
+const AZ = new THREE.Vector3(0, 0, 1);
+const DEG = Math.PI / 180;
+const HOOVES = ['hoofFL', 'hoofHR', 'hoofFR', 'hoofHL'];
+const _v = new THREE.Vector3(), _w = new THREE.Vector3(), _a = new THREE.Vector3(), _b = new THREE.Vector3(), _imp = new THREE.Vector3();
 
 const mix = (a: number, b: number, k: number): number => a + (b - a) * k;
+const span = (t: number, a: number, b: number): number => Math.min(1, Math.max(0, (t - a) / Math.max(1e-4, b - a)));
+/** Unity QilinBrain.EaseInOut（smoothstep）/ EaseOutCubic */
+const easeInOut = (k: number): number => k * k * (3 - 2 * k);
+const easeOutCubic = (k: number): number => 1 - Math.pow(1 - k, 3);
 
-function inPoly(poly: readonly [number, number][], x: number, z: number): boolean {
-  let yes = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const [ax, az] = poly[i], [bx, bz] = poly[j];
-    if ((az > z) !== (bz > z) && x < ((bx - ax) * (z - az)) / (bz - az) + ax) yes = !yes;
-  }
-  return yes;
+/** 场景文档里的首领场地（StageDirector.unityDocument 的 bosses[]） */
+interface SceneBoss {
+  id: string;
+  center: number[];
+  floorY: number;
+  radius: number;
 }
 
-export class Qilin extends BossBase {
-  private furnace!: Furnace;
-  private fx: QilinFx | null = null;
-  private cauldron: QilinCauldron | null = null;
-  private xuan!: Form;
-  private burn!: Form;
-  private form: FormId = 'xuan';
-  /** 四个锁扣（与 furnace.quadrants 同序；null = 已碎 / 没召出来） */
-  private readonly locks: (QilinLock | null)[] = [];
-  private readonly lockBroken: boolean[] = [];
+export class Qilin extends BossBrain implements DirectedBoss {
+  readonly qdef: QilinDef;
+  furnace!: QilinFurnace;
+  fx: QilinFx | null = null;
+  cauldron: QilinCauldron | null = null;
+  flood: QilinFlood | null = null;
+  crown: QilinScaleCrown | null = null;
+  director: BossIntroDirector | null = null;
+  /** StageDirector 读：登场演出自己打名字卡，不再打横幅 */
+  introDirected = false;
+  readonly introOffset = new THREE.Vector3();
+
+  // ───── 饮熔 / 锁扣 ─────
+  sipping = false;
+  drinkQuadrant = -1;
+  drinksQueued = 0;
+  drinksStarted = 0;
+  drinksFinished = 0;
+  cauldronHits = 0;
+  wastedCorners = 0;
+  crackLeft = 0;
+  maneHeat = 0;
+  printsDropped = 0;
+  readonly locks: (QilinLock | null)[] = [];
+  readonly lockBroken: boolean[] = [];
   private readonly lockPts: THREE.Vector3[] = [];
   private locksSpawned = false;
+  private pendingCorner = -1;
+  private wastedPending = false;
+  private lockArt: THREE.Object3D[] = [];
 
-  // ── 一阶段 ──
-  private gallopStage: GallopStage = 'toTrack';
-  private stageT = 0;
-  private gallopDir: 1 | -1 = 1;
-  private runFor = 4;
-  private theta = 0;
-  private readonly chargeFrom = new THREE.Vector3();
-  private chargeYaw = 0;
-  private chargeLen = 20;
-  private chargeTravel = 0;
-  private chargeHit = false;
-  private printAcc = 0;
-  private printSide = 0;
-  private trampleAt = -10;
-  private printHurtAcc = 0;
-  private bladeRings = 0;
-  private breathAcc = 0;
-  private drinksDone = 0;
-  private drinkStage: DrinkStage = 'leap';
-  private drinkQ = 0;
-  private readonly drinkSpot = new THREE.Vector3();
-  private readonly leapFrom = new THREE.Vector3();
-  private cornerHitPending = false;
-  /** 鳞甲崩裂剩余秒数（受伤 ×2、全身都算弱点） */
-  private crackLeft = 0;
-  private dmgTaken = 1;
-  private maneHeat = 0;
-
-  // ── 二阶段 ──
-  private alt = 0;
+  // ───── 焚身 ─────
+  skyTarget: number = SKY.Alt;
+  holdGround = false;
+  heartBright = false;
+  heartGlow = 0.3;
+  rageRoars = 0;
+  crowsSummoned = 0;
+  private placed = false;
   private orbit = 0;
-  private orbitDir: 1 | -1 = 1;
+  private orbitDir = 1;
   private orbitTimer = 6;
-  private divesLeft = 0;
-  private diveStage: DiveStage = 'rise';
-  private readonly diveAt = new THREE.Vector3();
-  private readonly diveFrom = new THREE.Vector3();
-  private breathStage: BreathStage = 'approach';
-  private readonly breathSpot = new THREE.Vector3();
-  private breathYaw0 = 0;
-  private breathYaw1 = 0;
-  private breathRange = 30;
-  private pantStage: PantStage = 'descend';
-  private readonly pantAt = new THREE.Vector3();
-  private flood: FloodCycle | null = null;
+  private beam: BeamMesh | null = null;
   private cloudAcc = 0;
-  private rageTold = false;
-  private readonly told = new Set<string>();
 
-  // ── 动画参数（平滑） ──
+  // ───── 演出 / 动画 ─────
+  private xuan!: Form;
+  private burn!: Form;
+  private formVis: FormId = 'xuan';
+  private introRoared = false;
+  private readonly modelOffset = new THREE.Vector3();
+  private readonly leapFrom = new THREE.Vector3();
+  private readonly diveAt = new THREE.Vector3();
+  private readonly landAt = new THREE.Vector3();
+  private diveWarped = false;
+  private landWarped = false;
+  private transPrev = -1;
+  private pearlGlow = 0.3;
+  private printSide = 0;
+  private printHurtAcc = 0;
   private gaitPhase = 0;
   private pGait = 0;
   private pRear = 0;
@@ -212,60 +169,74 @@ export class Qilin extends BossBase {
   private pJaw = 0;
   private pLook = 0;
   private pPitch = 0;
-  private sinkY = 0;
-  private pearlGlow = 0.3;
-  private heartGlow = 0.3;
-  private transPrev = -1;
-  private swapped = false;
-  private entranceRoared = false;
-  private readonly entranceFrom = new THREE.Vector3();
   private readonly prevPos = new THREE.Vector3();
   private moveSpeed = 0;
+  private heartHalo: THREE.Mesh | null = null;
+  lastAct: string | null = null;
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
-    super(ctx, QILIN_DEF, opts);
+    const def = new QilinDef();
+    super(ctx, QILIN_DEF, def, opts);
+    this.qdef = def;
+    this.accel = SKY.Accel;
     this.displayName = '火麒麟 · 玄鳞';
-    this.thresholds = [0.55];
-    this.spawnDuration = 3.2;
-    this.deathDuration = 3.4;
-    this.transitionDuration = 5.2;
-    this.accel = 30;
-    // 鳞甲崩裂的受伤 ×2：状态系统每帧会把 damageTakenMult 重置成状态倍率，这里在它上面再乘崩裂倍率
-    Object.defineProperty(this, 'damageTakenMult', {
-      get: () => this.dmgTaken * (this.crackLeft > 0 ? 2 : 1),
-      set: (v: number) => { this.dmgTaken = v; },
-      configurable: true,
-      enumerable: true,
-    });
-    this.registerMoves();
   }
 
-  // ───────────── 场地 / 模型 ─────────────
+  // ───────────── 场地 ─────────────
 
   private lavaSystem(): LavaSystem | null {
     return (this.ctx.stage as unknown as { lavaSystem?: LavaSystem | null }).lavaSystem ?? null;
   }
 
+  private sceneBoss(): SceneBoss | null {
+    const doc = (this.ctx.stage as unknown as { unityDocument?: { bosses?: SceneBoss[] } | null }).unityDocument;
+    return doc?.bosses?.find(b => b.id === QilinDef.Id) ?? null;
+  }
+
+  /** 炉心殿：Unity 场景的首领场地（3-4）→ 白盒熔岩掩码 → 按场地推一份 */
+  private resolveFurnace(): QilinFurnace {
+    const sb = this.sceneBoss();
+    if (sb) {
+      const f = QilinFurnace.level34(new THREE.Vector3(sb.center[0], sb.floorY, sb.center[2]));
+      this.arenaRadius = sb.radius;
+      return f;
+    }
+    const legacy = locateFurnace(this.ctx.nav, this.ctx.stage.arena, this.lavaSystem()?.lava ?? null, this.position);
+    const f = QilinFurnace.fromLegacy(legacy);
+    this.arenaRadius = f.wallRadius - 0.5;
+    return f;
+  }
+
+  get hallFloor(): number {
+    return this.furnace.floorY;
+  }
+
+  protected override floorY(): number {
+    return this.furnace ? this.furnace.floorY : super.floorY();
+  }
+
   override init(): void {
-    // 在 BossBase.init（夹到竞技场、登场第一帧）之前就位：从熔池里朝刷新点那一侧跃出，落在池边
-    this.furnace = locateFurnace(this.ctx.nav, this.ctx.stage.arena, this.lavaSystem()?.lava ?? null, this.position);
+    // 在 BossBase.init（夹到竞技场、登场第一帧）之前就位：熔池北沿（场地的出生点那一侧）池外 4.5 m，面朝熔池
+    this.furnace = this.resolveFurnace();
     const f = this.furnace;
-    const d = Math.hypot(this.position.x - f.center.x, this.position.z - f.center.z);
-    this.theta = d > 0.5 ? furnaceAngle(f, this.position.x, this.position.z) : (f.quadrants[0] ?? 0);
-    furnacePoint(f, this.theta, f.pool + 4.5, _v);
-    this.position.set(_v.x, f.center.y, _v.z);
-    this.entranceFrom.copy(f.center);
-    this.facing = this.theta;
-    this.flyTargetY = this.position.y;
+    this.bossCenter.copy(f.center);
+    const theta = f.radiusOf(this.position) > 0.5 ? f.yawOf(this.position) : f.quadrantYaw(1);
+    f.point(theta, f.poolRadius + 4.5, _v);
+    this.position.set(_v.x, f.floorY, _v.z);
+    this.facing = (theta + 180) * DEG;
+    this.flyTargetY = f.floorY;
     this.velocity.set(0, 0, 0);
     this.prevPos.copy(this.position);
-    for (let i = 0; i < f.quadrants.length; i++) {
-      this.lockPts.push(furnacePoint(f, f.quadrants[i], f.wall - 0.5, new THREE.Vector3()).setY(f.center.y + 3));
+    // 锁扣：象限中线上、离圆心 23.1 m（殿墙 24 内 0.9）、锁身中心离地 12 m（Unity Level_3_4.LockR / LockHeight）
+    for (let i = 0; i < f.quadrantCount; i++) {
+      this.lockPts.push(f.point(f.quadrantYaw(i), f.wallRadius - 0.9, new THREE.Vector3()).setY(f.floorY + this.qdef.lockHeight - 0.75));
       this.locks.push(null);
       this.lockBroken.push(false);
     }
     super.init();
   }
+
+  // ───────────── 模型 ─────────────
 
   protected override buildModel(): THREE.Object3D {
     const root = new THREE.Group();
@@ -281,6 +252,10 @@ export class Qilin extends BossBase {
     this.burn = mk('qilin_burn_host', true, BURN_POINTS);
     this.burn.host.visible = false;
     return root;
+  }
+
+  protected override createMove(id: string): BossMove | null {
+    return createQilinMove(this, id);
   }
 
   protected override onModelReady(): void {
@@ -308,24 +283,64 @@ export class Qilin extends BossBase {
         f.pts[name] = anchorOn(f.host, bone, p.at, `ql_${name}`);
       }
     }
-    const S = SCALE;
     const shapes = (f: Form, weak: string[]): HitShape[] => {
       const out: HitShape[] = [];
-      for (const w of weak) out.push({ anchor: f.pts[w], radius: Math.max(0.38, f.table[w].r * S), halfHeight: 0, weak: true });
-      for (const n of ['head', 'neck', 'chest', 'body', 'hips']) out.push({ anchor: f.pts[n], radius: f.table[n].r * S, halfHeight: 0, weak: false });
+      for (const w of weak) out.push({ anchor: f.pts[w], radius: Math.max(0.38, f.table[w].r * SCALE), halfHeight: 0, weak: true });
+      for (const n of ['head', 'neck', 'chest', 'body', 'hips']) out.push({ anchor: f.pts[n], radius: f.table[n].r * SCALE, halfHeight: 0, weak: false });
       return out;
     };
     this.xuan.shapes = shapes(this.xuan, ['pearl']);
     this.burn.shapes = shapes(this.burn, ['pearl', 'heart']);
+    // 胸口火心的光晕（Unity 的光晕精灵 + 点光：喘息时大亮）
+    const halo = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 8), new THREE.MeshBasicMaterial({
+      color: 0xff8a2a, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, fog: false,
+    }));
+    halo.name = 'qilin-heart-halo';
+    halo.renderOrder = 3;
+    this.burn.pts.heart.add(halo);
+    this.heartHalo = halo;
     this.useForm('xuan');
+
     const f = this.furnace;
-    this.fx = new QilinFx(this.ctx, f.center, f.pool);
+    this.fx = new QilinFx(this.ctx, f.center, f.poolRadius);
     this.cauldron = new QilinCauldron(this.ctx, f, this.lockPts);
     this.cauldron.onImpact = (kind, at) => this.onCauldronImpact(kind, at);
+    this.crown = new QilinScaleCrown(this.ctx);
+    this.adoptSceneArt();
+    if (introEnabled() && qilinIntro.validate().length === 0) {
+      this.director = new BossIntroDirector(this.ctx, qilinIntro, this, this.position.clone());
+      const st: QilinIntroStage = {
+        pool: f.center.clone(), poolRadius: f.poolRadius,
+        cauldron: () => this.cauldron ? this.cauldron.center(new THREE.Vector3()) : null,
+        rattle: (k) => this.cauldron?.rattle(k),
+      };
+      this.director.ctx.bag.set('qilin', st);
+      this.introHold = this.director;
+      this.introDirected = true;
+    }
+    this.introTick(0, 0);
+    if (devHookEnabled()) installDevHook(this);
+  }
+
+  /** Unity 场景里的吊鼎 / 锁扣正式件（场景视图画成静态网格）：吊鼎交给 QilinCauldron 跟着动，锁扣等锁扣生成时认领 */
+  private adoptSceneArt(): void {
+    const f = this.furnace;
+    let ding: THREE.Object3D | null = null, best = 10;
+    const locks: THREE.Object3D[] = [];
+    this.ctx.scene.traverse((o) => {
+      if (o.name.startsWith('SM_Prop_QilinCauldron')) {
+        const d = f.radiusOf(o.getWorldPosition(_v));
+        if (d < best) { best = d; ding = o; }
+      } else if (o.name.startsWith('SM_Prop_QilinChainLock')) {
+        if (Math.abs(f.radiusOf(o.getWorldPosition(_v)) - f.wallRadius) < 3) locks.push(o);
+      }
+    });
+    if (ding) this.cauldron?.adoptArt(ding);
+    this.lockArt = locks;
   }
 
   private useForm(id: FormId): void {
-    this.form = id;
+    this.formVis = id;
     const f = id === 'xuan' ? this.xuan : this.burn;
     this.xuan.host.visible = id === 'xuan';
     this.burn.host.visible = id === 'burn';
@@ -335,7 +350,43 @@ export class Qilin extends BossBase {
   }
 
   private get F(): Form {
-    return this.form === 'xuan' ? this.xuan : this.burn;
+    return this.formVis === 'xuan' ? this.xuan : this.burn;
+  }
+
+  get isXuan(): boolean {
+    return this.formId === QilinDef.XuanForm;
+  }
+
+  get isBurn(): boolean {
+    return this.formId === QilinDef.BurnForm;
+  }
+
+  /** 离殿内地面多高（蹄下） */
+  get altitude(): number {
+    return this.position.y - this.hallFloor;
+  }
+
+  get airborne(): boolean {
+    return this.isBurn && this.altitude > 1;
+  }
+
+  // ───────────── DirectedBoss ─────────────
+
+  get name(): string {
+    return this.qdef.name;
+  }
+
+  get title(): string | null {
+    return this.qdef.title;
+  }
+
+  introOverlay(color: number, amount: number): void {
+    if (amount > 0.001) this.setEmissive(new THREE.Color(color), amount);
+    else this.setEmissive(new THREE.Color(0x000000), 0);
+  }
+
+  get barTicks(): readonly number[] {
+    return this.qdef.barTicks;
   }
 
   override getBodyCenter(out: THREE.Vector3): THREE.Vector3 {
@@ -343,521 +394,312 @@ export class Qilin extends BossBase {
     return a ? a.getWorldPosition(out) : super.getBodyCenter(out);
   }
 
-  override update(dt: number): void {
-    super.update(dt);
-    this.cauldron?.update(dt);
-    this.fx?.update(dt, this.alive ? this.bladeResolver : null);
+  // ───────────── 给招式用的点 / 工具 ─────────────
+
+  mouthPoint(out: THREE.Vector3): THREE.Vector3 {
+    return this.F.pts.mouth.getWorldPosition(out);
   }
 
-  /** 鳞刃：撞到掩体就碎；扫过玩家（贴地 0.2–2.4 米高的竖薄片）就伤人 */
-  private readonly bladeResolver = (b: Blade): 'hit' | 'block' | null => {
-    if (this.ctx.world.segmentBlocked(b.prev, b.pos)) return 'block';
-    _a.copy(b.prev).setY(this.floorY() + 0.4);
-    _b.copy(b.pos).setY(this.floorY() + 0.4);
-    const top = this.floorY() + 2.2;
-    const pl = this.ctx.player;
-    if (pl.position.y > top) return null;
-    if (this.hazards.segmentHitsPlayer(_a, _b, 0.55)) {
-      this.hazards.hurt(20, 'fire', b.pos);
-      pl.applyImpulse(_imp.copy(b.dir).multiplyScalar(4).setY(2));
-      return 'hit';
-    }
-    return null;
-  };
-
-  // ───────────── 招式 ─────────────
-
-  private isXuan(): boolean {
-    return this.phase === 0 && this.form === 'xuan';
+  headPoint(out: THREE.Vector3): THREE.Vector3 {
+    return this.F.pts.head.getWorldPosition(out);
   }
 
-  private isBurn(): boolean {
-    return this.phase >= 1 && this.form === 'burn';
+  chestPoint(out: THREE.Vector3): THREE.Vector3 {
+    return this.F.pts.chest.getWorldPosition(out);
   }
 
-  private enraged(): boolean {
-    return this.phase >= 1 && this.phaseFraction() <= 0.15;
+  hipsPoint(out: THREE.Vector3): THREE.Vector3 {
+    return this.F.pts.hips.getWorldPosition(out);
   }
 
-  private tell(key: string, text: string, color = '#ffb070'): void {
+  /** 下一只落蹄（0 左前、1 右后、2 右前、3 左后：横向跑步的落蹄顺序）的地面点 */
+  nextHoofPoint(out: THREE.Vector3): THREE.Vector3 {
+    const a = this.F.pts[HOOVES[this.printSide++ % 4]];
+    if (a) a.getWorldPosition(out);
+    else out.copy(this.position);
+    out.y = this.hallFloor;
+    return out;
+  }
+
+  /** 招式伤害：TS 写的是难度 1 的绝对伤害 → × 狂怒倍率（难度由危险物再乘） */
+  dmg(tsBase: number): number {
+    return this.moveDamage(tsBase / Math.max(1, this.qdef.damage));
+  }
+
+  predict(seconds: number, out: THREE.Vector3): THREE.Vector3 {
+    const p = this.ctx.player;
+    return out.set(p.position.x + p.velocity.x * seconds, p.position.y, p.position.z + p.velocity.z * seconds);
+  }
+
+  /** 只提示一次 */
+  private readonly told = new Set<string>();
+  tell(key: string, text: string, color = '#ffb070'): void {
     if (this.told.has(key)) return;
     this.told.add(key);
     this.ctx.ui.toast(text, color);
   }
 
-  private trackR(): number {
-    return Math.max(this.furnace.bridge[1] + 3, this.furnace.wall - 3.2);
+  steer(dx: number, dz: number, speed: number): void {
+    this.setMove(dx, dz, speed);
   }
 
-  private registerMoves(): void {
-    // ── 玄鳞 · 踏火奔驰 + 横穿冲撞 ──
-    this.addMove({
-      id: 'gallop', cooldown: 9, recovery: 1.0,
-      weight: () => (this.isXuan() ? 2.6 : 0),
-      start: () => {
-        this.gallopStage = 'toTrack';
-        this.stageT = 0;
-        const pl = this.ctx.player.position;
-        const me = furnaceAngle(this.furnace, this.position.x, this.position.z);
-        this.theta = me;
-        this.gallopDir = angleDiff(me, furnaceAngle(this.furnace, pl.x, pl.z)) >= 0 ? 1 : -1;
-        this.runFor = this.ctx.rng.range(3.2, 4.6);
-        this.printAcc = 0;
-        this.accel = 34;
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.1, volume: 0.7 });
-        this.tell('gallop', '火麒麟沿外环跑道狂奔——别站在跑道上，蹄印上的火会烧人', '#ffb070');
-      },
-      tick: (_t, dt) => this.tickGallop(dt),
-      end: () => {
-        this.accel = 30;
-      },
-    }, 0.5);
-
-    // ── 玄鳞 · 张鳞 ──
-    this.addMove({
-      id: 'scales', cooldown: 11, recovery: 1.2,
-      weight: () => (this.isXuan() ? 2.0 : 0),
-      start: () => {
-        this.setAnim('rear', true);
-        this.bladeRings = 0;
-        const p = this.position;
-        this.hazards.groundWarning(p.x, this.floorY(), p.z, 6.5, 1.0, WARN);
-        this.ctx.fx.ring(_v.set(p.x, this.floorY() + 0.1, p.z), 24, WARN, 1.0);
-        this.ctx.audio.play('telegraph', { position: p, pitch: 0.75 });
-        this.ctx.audio.play('boss_roar', { position: p, pitch: 0.9, volume: 0.8 });
-        this.tell('scales', '火麒麟人立张鳞——躲到玄武岩柱后面！', '#ff9a4a');
-      },
-      tick: (t) => {
-        this.stopMoving();
-        // 人立时鳞缝喷火星
-        if (t < 1.0 && Math.random() < 0.6) {
-          this.getBodyCenter(_v);
-          _w.set((Math.random() - 0.5) * 6, 2 + Math.random() * 3, (Math.random() - 0.5) * 6);
-          this.fx?.emit(_v.add(_a.set((Math.random() - 0.5) * 2, Math.random() * 2, (Math.random() - 0.5) * 2)), _w, 0.5, 0.2, EMBER, 2, 0);
-        }
-        if (this.at(1.0)) this.fireRing(0);
-        if (this.phaseFraction() <= 0.85 && this.at(1.4)) this.fireRing(0.5);
-        return t >= 2.2;
-      },
-    }, 2.5);
-
-    // ── 玄鳞 · 麟火（短距离吐火） ──
-    this.addMove({
-      id: 'breath', cooldown: 7, recovery: 0.9,
-      weight: () => (this.isXuan() && this.distToPlayerXZ() < 15 ? 2.4 : 0),
-      start: () => {
-        this.setAnim('breath', true);
-        this.facing = this.yawToPlayer();
-        const m = this.mouthGround(_v);
-        this.hazards.sectorWarning(m.x, this.floorY(), m.z, this.facing, 0.42, 14, 0.8, WARN);
-        this.ctx.audio.play('enemy_charge', { position: this.position, pitch: 0.6, volume: 0.9 });
-        this.breathAcc = 0;
-      },
-      tick: (t, dt) => {
-        this.stopMoving();
-        if (t < 0.8) return false;
-        this.facing = rotateTowards(this.facing, this.yawToPlayer(), 0.5 * dt);
-        this.breatheAlong(this.facing, 0.42, 14, 6, dt);
-        return t >= 2.4;
-      },
-    }, 1.5);
-
-    // ── 玄鳞 · 饮熔（85% / 70%，只由血量线排队） ──
-    this.addMove({
-      id: 'drink', cooldown: 1, recovery: 0.6,
-      weight: () => 0,
-      start: () => this.beginDrink(),
-      tick: (t, dt) => this.tickDrink(t, dt),
-      end: () => this.endDrink(),
-    });
-
-    // ── 玄鳞 · 被鼎角砸中（眩晕 4 秒、鳞甲崩裂） ──
-    this.addMove({
-      id: 'stunned', cooldown: 0, recovery: 0.8,
-      weight: () => 0,
-      start: () => {
-        this.setAnim('stun', true);
-        this.stopMoving();
-        this.flyTargetY = this.floorY();
-      },
-      tick: (t) => {
-        this.stopMoving();
-        if (Math.random() < 0.25) {
-          this.F.pts.head.getWorldPosition(_v);
-          this.ctx.fx.burst(_v, HOT, 2, 2, 0.5, 0.2, 2);
-        }
-        return t >= STUN_TIME;
-      },
-      end: () => {
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.8, volume: 0.9 });
-      },
-    });
-
-    // ── 焚身 · 连续三次俯冲踏地 ──
-    this.addMove({
-      id: 'dives', cooldown: 10, recovery: 0.4,
-      weight: () => (this.isBurn() ? 2.8 : 0),
-      start: () => {
-        this.divesLeft = 3;
-        this.beginDive();
-        this.tell('dives', '焚身俯冲踏地——落点会炸出一圈火环，跳起来躲；连踏三次之后它会落地喘息', '#ffb070');
-      },
-      tick: (_t, dt) => this.tickDive(dt),
-      end: () => {
-        this.accel = 30;
-        this.alt = SKY_ALT;
-      },
-    }, 2.5);
-
-    // ── 焚身 · 喘息（三次俯冲之后排队） ──
-    this.addMove({
-      id: 'pant', cooldown: 0, recovery: 0.6,
-      weight: () => 0,
-      start: () => this.beginPant(),
-      tick: (_t, dt) => this.tickPant(dt),
-      end: () => {
-        this.alt = SKY_ALT;
-        this.accel = 30;
-      },
-    });
-
-    // ── 焚身 · 麟火吐息扫象限 ──
-    this.addMove({
-      id: 'sweep', cooldown: 10, recovery: 1.0,
-      weight: () => (this.isBurn() ? 2.2 : 0),
-      start: () => this.beginSweep(),
-      tick: (_t, dt) => this.tickSweep(dt),
-      end: () => {
-        this.alt = SKY_ALT;
-        this.pJaw = Math.min(this.pJaw, 0.3);
-      },
-    }, 6);
-
-    // ── 焚身 · 熔流轮转 ──
-    this.addMove({
-      id: 'flood', cooldown: 34, recovery: 0.6,
-      weight: () => (this.isBurn() && !this.flood ? 3 : 0),
-      start: () => {
-        this.setAnim('roar', true);
-        this.alt = 5.5;
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.7, volume: 1 });
-        this.tell('flood', '熔岩溢进四条渠——渠会顺时针轮流涨宽，淹掉一个象限的外侧，看地上的预警条带！', '#ff9a4a');
-      },
-      tick: (t) => {
-        this.moveTo(this.furnace.center, 16, 1.5);
-        this.facePlayer(2, this.ctx.time.dt);
-        this.fx?.eruption(t < 1.6 ? 0.45 : 0);
-        if (this.at(1.2)) this.startFloodCycle();
-        return t >= 2.0;
-      },
-      end: () => {
-        this.fx?.eruption(0);
-        this.alt = SKY_ALT;
-      },
-    }, 0);
-
-    // ── 焚身 · 火云雨 + 排烟口神火飞鸦 ──
-    this.addMove({
-      id: 'rain', cooldown: 13, recovery: 1.0,
-      weight: () => (this.isBurn() ? 1.8 : 0),
-      start: () => {
-        this.setAnim('roar', true);
-        this.alt = 7.5;
-        this.ctx.audio.play('telegraph', { position: this.position, pitch: 1.2 });
-      },
-      tick: (t) => {
-        this.stopMoving();
-        this.facePlayer(2, this.ctx.time.dt);
-        if (this.at(0.7)) this.fireRain();
-        if (this.at(1.0)) this.summonCrows();
-        return t >= 2.6;
-      },
-      end: () => {
-        this.alt = SKY_ALT;
-      },
-    }, 4);
+  get moveHitWall(): boolean {
+    return this.moveResult.hitWall;
   }
 
-  // ── 玄鳞：踏火奔驰 ──
+  /** 落一个燃烧的蹄印（4 s；玩家贴地踩到每 0.4 s 烧 7） */
+  dropPrint(at: THREE.Vector3): void {
+    this.fx?.hoofprint(at.x, at.z, this.facing);
+    this.printsDropped++;
+  }
 
-  private tickGallop(dt: number): boolean {
-    this.stageT += dt;
-    const f = this.furnace;
-    const R = this.trackR();
-    if (this.gallopStage === 'toTrack') {
-      this.theta = furnaceAngle(f, this.position.x, this.position.z);
-      furnacePoint(f, this.theta + this.gallopDir * 0.25, R, _v);
-      const there = this.moveTo(_v, 15, 1.5);
-      this.faceMovement(5, dt);
-      if (there || Math.abs(Math.hypot(this.position.x - f.center.x, this.position.z - f.center.z) - R) < 1.2 || this.stageT > 2.5) {
-        this.gallopStage = 'run';
-        this.stageT = 0;
-      }
-      return false;
+  /** 这一帧想往 target 飞（水平，speed 米/秒，arrive 米内减速）；返回是否已到 */
+  flyTo(target: THREE.Vector3, speed: number, arrive: number): boolean {
+    const dx = target.x - this.position.x, dz = target.z - this.position.z;
+    const dist = Math.hypot(dx, dz);
+    if (dist < 1e-3) {
+      this.hover();
+      return true;
     }
-    if (this.gallopStage === 'run') {
-      const speed = 18;
-      this.theta = furnaceAngle(f, this.position.x, this.position.z) + this.gallopDir * 0.3;
-      furnacePoint(f, this.theta, R, _v);
-      this.moveTo(_v, speed, 0.2);
-      this.faceMovement(6, dt);
-      this.dropPrints(dt, 0.13);
-      this.trample();
-      const pl = this.ctx.player.position;
-      const ahead = angleDiff(furnaceAngle(f, this.position.x, this.position.z), furnaceAngle(f, pl.x, pl.z)) * this.gallopDir;
-      if (this.stageT >= this.runFor || (this.stageT > 2 && ahead > 0.5 && ahead < 1.3)) this.beginCharge();
-      return false;
-    }
-    if (this.gallopStage === 'aim') {
-      this.stopMoving();
-      this.facing = rotateTowards(this.facing, this.chargeYaw, 7 * dt);
-      if (this.stageT >= 1.0) {
-        this.gallopStage = 'charge';
-        this.stageT = 0;
-        this.chargeTravel = 0;
-        this.chargeHit = false;
-        this.accel = 90;
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.3, volume: 0.9 });
-      }
-      return false;
-    }
-    if (this.gallopStage === 'charge') {
-      this.setMove(Math.sin(this.chargeYaw), Math.cos(this.chargeYaw), 30);
-      this.facing = this.chargeYaw;
-      this.chargeTravel += Math.hypot(this.velocity.x, this.velocity.z) * dt;
-      this.dropPrints(dt, 0.1);
-      this.F.pts.chest.getWorldPosition(_a);
-      this.F.pts.hips.getWorldPosition(_b);
-      _a.y = _b.y = this.floorY() + 1.2;
-      if (!this.chargeHit && this.hazards.segmentHitsPlayer(_a, _b, 1.6)) {
-        this.chargeHit = true;
-        this.hazards.hurt(34, 'none', this.position);
-        const side = Math.sign(angleDiff(this.chargeYaw, this.yawToPlayer())) || 1;
-        this.ctx.player.applyImpulse(_imp.set(Math.sin(this.chargeYaw + side * 1.2) * 13, 7, Math.cos(this.chargeYaw + side * 1.2) * 13));
-        this.ctx.fx.shake(0.55, 0.35);
-        this.ctx.audio.play('enemy_melee', { position: this.position, pitch: 0.6 });
-      }
-      const crashed = this.moveResult.hitWall && this.stageT > 0.15;
-      if (this.chargeTravel >= this.chargeLen || crashed || this.stageT > 2.4) {
-        this.stopMoving();
-        this.accel = 30;
-        this.stageT = 0;
-        if (crashed) {
-          this.gallopStage = 'crash';
-          this.setAnim('stun', true);
-          this.F.pts.head.getWorldPosition(_v);
-          this.ctx.fx.burst(_v, 0x4a4040, 30, 8, 1.0, 0.4, 14);
-          this.ctx.fx.shake(0.6, 0.4);
-          this.ctx.audio.play('boss_slam', { position: this.position, pitch: 0.9 });
-          this.tell('crash', '火麒麟一头撞上石柱，晕了——快打角根的火珠！', '#ffe08a');
-        } else {
-          this.gallopStage = 'recover';
-          this.setAnim('idle');
-        }
-      }
-      return false;
-    }
+    const v = speed * clamp(dist / Math.max(0.5, arrive * 2), 0, 1);
+    this.setMove(dx, dz, Math.max(v, Math.min(speed, 2)));
+    return dist <= arrive;
+  }
+
+  hover(): void {
     this.stopMoving();
-    this.facePlayer(2, dt);
-    return this.stageT >= (this.gallopStage === 'crash' ? 1.6 : 0.5);
   }
 
-  /** 横穿冲撞：从当前位置过玩家（预判 0.35 秒）一直冲到对面跑道 */
-  private beginCharge(): void {
-    const f = this.furnace;
-    const pl = this.ctx.player;
-    _v.set(pl.position.x + pl.velocity.x * 0.35, 0, pl.position.z + pl.velocity.z * 0.35);
-    this.chargeYaw = this.yawTo(_v.x, _v.z);
-    // 直线与跑道圆（半径 R）的远交点
-    const R = this.trackR();
-    const ox = this.position.x - f.center.x, oz = this.position.z - f.center.z;
-    const dx = Math.sin(this.chargeYaw), dz = Math.cos(this.chargeYaw);
-    const b = ox * dx + oz * dz, c = ox * ox + oz * oz - R * R;
-    const disc = b * b - c;
-    this.chargeLen = clamp(disc > 0 ? -b + Math.sqrt(disc) : 20, 10, 2 * R);
-    this.chargeFrom.copy(this.position);
-    this.gallopStage = 'aim';
-    this.stageT = 0;
+  brake(keep = 0.2): void {
+    this.velocity.x *= keep;
+    this.velocity.z *= keep;
+  }
+
+  /** 这一帧直接把位置放到 p（俯冲、降落、跃向池边这类脚本轨迹）：高度控制跳过这一帧，速度清零 */
+  skyPlace(p: THREE.Vector3): void {
+    if (!Number.isFinite(p.x) || !Number.isFinite(p.y) || !Number.isFinite(p.z)) return;
+    this.position.copy(p);
+    this.velocity.set(0, 0, 0);
     this.stopMoving();
-    this.hazards.lineWarning(this.position.x, this.floorY(), this.position.z, this.chargeYaw, this.chargeLen, 2.0, 1.0, WARN);
-    this.ctx.audio.play('telegraph', { position: this.position });
-    this.setAnim('paw', true);
-    this.tell('charge', '地上亮线——火麒麟要横穿象限冲撞，侧移躲开！', '#ffb070');
+    this.flyTargetY = p.y;
+    this.placed = true;
   }
 
-  /** 奔跑时左右交替落下燃烧的蹄印 */
-  private dropPrints(dt: number, every: number): void {
-    this.printAcc += dt;
-    if (this.printAcc < every) return;
-    this.printAcc = 0;
-    const names = ['hoofFL', 'hoofHR', 'hoofFR', 'hoofHL'];
-    const a = this.F.pts[names[this.printSide++ % 4]];
-    if (!a) return;
-    a.getWorldPosition(_v);
-    this.fx?.hoofprint(_v.x, _v.z, this.facing);
-    if (this.printSide % 2) this.ctx.fx.burst(_v.setY(this.floorY() + 0.2), EMBER, 4, 3, 0.4, 0.15, 6);
+  place(p: THREE.Vector3): void {
+    this.skyPlace(p);
   }
 
-  /** 奔驰时撞到跑道上的玩家 */
-  private trample(): void {
-    const pl = this.ctx.player;
-    if (!pl.alive || this.ctx.time.now - this.trampleAt < 1.0) return;
-    this.getBodyCenter(_v);
-    const d = Math.hypot(pl.position.x - _v.x, pl.position.z - _v.z);
-    if (d > this.radius + 1.0 || pl.position.y - this.floorY() > 3) return;
-    this.trampleAt = this.ctx.time.now;
-    this.hazards.hurt(24, 'none', this.position);
-    const out = Math.atan2(pl.position.x - _v.x, pl.position.z - _v.z);
-    pl.applyImpulse(_imp.set(Math.sin(out) * 11, 6, Math.cos(out) * 11));
-    this.ctx.fx.shake(0.4, 0.3);
-    this.ctx.audio.play('enemy_melee', { position: this.position, pitch: 0.7 });
+  /** 熔池上空朝 p 那一侧的悬停点（离圆心 = 熔池半径 × 0.75） */
+  poolEdgeToward(p: THREE.Vector3, out: THREE.Vector3): THREE.Vector3 {
+    const f = this.furnace;
+    let dx = p.x - f.center.x, dz = p.z - f.center.z;
+    if (dx * dx + dz * dz < 1e-4) {
+      dx = this.position.x - f.center.x;
+      dz = this.position.z - f.center.z;
+    }
+    const l = Math.hypot(dx, dz) || 1;
+    return out.set(f.center.x + dx / l * f.poolRadius * 0.75, f.floorY, f.center.z + dz / l * f.poolRadius * 0.75);
   }
 
-  // ── 玄鳞：张鳞 ──
-
-  private fireRing(offsetFrac: number): void {
-    const n = 36;
-    this.setAnim('scalesFire', true);
-    this.getBodyCenter(_v);
-    this.fx?.fireRing(_v.setY(this.floorY()), n, this.facing + (offsetFrac * TAU) / n, 21, this.furnace.wall * 2.2, 2.4);
-    this.bladeRings++;
-    this.ctx.fx.burst(_v.setY(this.floorY() + 3), EMBER, 30, 10, 0.6, 0.3, 6);
-    this.ctx.fx.shake(0.35, 0.3);
-    this.ctx.audio.play('enemy_shot', { position: this.position, pitch: 0.55, volume: 1 });
-    this.ctx.audio.play('shield_break', { position: this.position, pitch: 1.4, volume: 0.6 });
+  /** p 正下方（身体半径的六成以内）最高的朝上表面：石柱顶、倒鼎、地面；打不到时殿内地面 */
+  groundUnder(p: THREE.Vector3): number {
+    const floor = this.hallFloor;
+    const r = clamp(this.radius * 0.6, 0.4, 2);
+    const y = this.ctx.world.groundHeight(p.x, p.z, Math.max(p.y, floor) + 12, r);
+    return Number.isFinite(y) ? Math.max(y, floor - 1.2) : floor;
   }
 
-  // ── 吐息（两个形态共用的判定） ──
+  /** 身子放在 feet 这里会不会插进石柱（离地 0.6 m 以上有东西） */
+  bodyFits(feet: THREE.Vector3): boolean {
+    const r = clamp(this.radius * 0.7, 0.4, 2.2);
+    const y = this.ctx.world.groundHeight(feet.x, feet.z, this.hallFloor + 6, r);
+    return !(Number.isFinite(y) && y > this.hallFloor + 0.6);
+  }
 
-  /** 口部投影到地面 */
-  private mouthGround(out: THREE.Vector3): THREE.Vector3 {
-    this.F.pts.mouth.getWorldPosition(out);
-    out.y = this.floorY();
+  /** 把落点从石柱里推出来（最多推 4 m） */
+  pushClear(feet: THREE.Vector3): THREE.Vector3 {
+    if (this.bodyFits(feet)) return feet;
+    const f = this.furnace;
+    for (let ring = 1; ring <= 8; ring++) {
+      const step = ring * 0.5;
+      for (let k = 0; k < 8; k++) {
+        const a = (k * 45 + ring * 17) * DEG;
+        _w.set(feet.x + Math.sin(a) * step, feet.y, feet.z + Math.cos(a) * step);
+        if (f.radiusOf(_w) > f.wallRadius - this.radius - 0.5) continue;
+        if (this.bodyFits(_w)) return feet.copy(_w);
+      }
+    }
+    return feet;
+  }
+
+  /** 焚身找落脚点（喘息、吐息）：池外、墙内、不在涨着的熔流 / 熔岩渠上、不压石柱 */
+  landingSpot(near: THREE.Vector3, out: THREE.Vector3): THREE.Vector3 {
+    const f = this.furnace;
+    out.copy(near).setY(this.hallFloor);
+    const r = f.radiusOf(out);
+    const minR = f.poolRadius + this.radius * 0.7 + 0.6, maxR = f.wallRadius - this.radius - 0.6;
+    const yaw = r > 0.5 ? f.yawOf(out) : f.yawOf(this.ctx.player.position);
+    if (r < minR) f.point(yaw, minR, out);
+    else if (r > maxR) f.point(yaw, maxR, out);
+    for (const rad of [0, 1.5, 3, 5, 8]) {
+      for (let k = 0; k < (rad === 0 ? 1 : 8); k++) {
+        const a = (k * 45 + rad * 13) * DEG;
+        _w.set(out.x + Math.sin(a) * rad, this.hallFloor, out.z + Math.cos(a) * rad);
+        if (f.radiusOf(_w) < f.poolRadius + 0.5 || f.radiusOf(_w) > maxR + 0.3) continue;
+        if (f.onChannel(_w, this.radius * 0.5) || this.flood?.flooded(_w) || !this.bodyFits(_w)) continue;
+        return out.copy(_w);
+      }
+    }
     return out;
   }
 
-  /** 沿 yaw 方向吐火：粒子 + 每 0.15 秒判定一次（扇形 halfAngle、射程 range、口到玩家胸口不被挡） */
-  private breatheAlong(yaw: number, halfAngle: number, range: number, damage: number, dt: number): void {
-    this.F.pts.mouth.getWorldPosition(_a);
-    _w.set(Math.sin(yaw), -0.12, Math.cos(yaw)).normalize();
-    this.fx?.breath(_a, _w, Math.min(26, range * 1.4), 0.35, 3);
-    this.breathAcc += dt;
-    if (this.breathAcc < 0.15) return;
-    this.breathAcc = 0;
-    const pl = this.ctx.player;
-    if (!pl.alive) return;
-    const m = this.mouthGround(_v);
-    const dx = pl.position.x - m.x, dz = pl.position.z - m.z;
-    const d = Math.hypot(dx, dz);
-    if (d > range || Math.abs(angleDiff(yaw, Math.atan2(dx, dz))) > halfAngle) return;
-    _b.set(pl.position.x, pl.position.y + 1.2, pl.position.z);
-    if (this.ctx.world.segmentBlocked(_a, _b)) return;
-    this.hazards.hurt(damage, 'fire', _a);
-  }
-
-  // ── 玄鳞：饮熔 ──
-
-  private beginDrink(): void {
-    if (this.phase > 0) {
-      this.drinkStage = 'done';
-      return;
-    }
-    const f = this.furnace;
-    // 饮熔点：离自己最近、锁扣还在的象限（都断了就随便一个）
-    const me = furnaceAngle(f, this.position.x, this.position.z);
-    let best = -1, bestD = Infinity;
-    for (let i = 0; i < f.quadrants.length; i++) {
-      if (this.lockBroken[i] || !(this.cauldron?.chainIntact(i) ?? true)) continue;
-      const d = Math.abs(angleDiff(me, f.quadrants[i]));
-      if (d < bestD) { bestD = d; best = i; }
-    }
-    if (best < 0) best = quadrantOf(f, this.position.x, this.position.z);
-    this.drinkQ = best;
-    furnacePoint(f, f.quadrants[best], f.pool + 3.1, this.drinkSpot);
-    this.leapFrom.copy(this.position);
-    this.drinkStage = 'leap';
-    this.cornerHitPending = false;
-    this.setAnim('leap', true);
-    this.hazards.groundWarning(this.drinkSpot.x, this.floorY(), this.drinkSpot.z, 4.5, 1.0, WARN);
-    this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.85, volume: 1 });
-  }
-
-  private tickDrink(t: number, dt: number): boolean {
-    if (this.drinkStage === 'done') return true;
-    const f = this.furnace;
-    if (this.drinkStage === 'leap') {
-      // 1 秒的抛物线跃向池边（直接驱动位置：首领飞行体，零速度不受碰撞推挤）
-      const k = easeInOut(span(t, 0, 1.0));
-      this.position.x = mix(this.leapFrom.x, this.drinkSpot.x, k);
-      this.position.z = mix(this.leapFrom.z, this.drinkSpot.z, k);
-      this.position.y = this.floorY() + Math.sin(Math.PI * k) * 6;
-      this.flyTargetY = this.position.y;
-      this.velocity.set(0, 0, 0);
-      this.facing = rotateTowards(this.facing, f.quadrants[this.drinkQ] + Math.PI, 5 * dt);
-      if (t >= 1.0) {
-        this.drinkStage = 'sip';
-        this.position.y = this.floorY();
-        this.flyTargetY = this.floorY();
-        this.facing = f.quadrants[this.drinkQ] + Math.PI;
-        this.setAnim('drink', true);
-        const L = this.drinkSpot;
-        this.hazards.blast(L.x, this.floorY(), L.z, 4.5, 24, { maxHeight: 3, knockback: 9, knockUp: 5 });
-        this.ctx.fx.shake(0.5, 0.4);
-        this.ctx.fx.burst(_v.set(L.x, this.floorY() + 0.4, L.z), EMBER, 26, 8, 0.8, 0.3, 10);
-        this.ctx.audio.play('boss_slam', { position: L, pitch: 0.9 });
-        this.summonTantong();
-        this.highlightLock(this.drinkQ, true);
-        this.tell('drink', '火麒麟在熔池边饮熔——打碎它身后外墙上发亮的锁扣，让巨鼎砸它！', '#ffe08a');
+  /**
+   * 沿 yaw（度）吐火：火焰粒子（beam = 焚身吐息：一条碰到石柱 / 倒鼎就截断的火柱）+ 判定节拍到了判一次：
+   * 在扇形里（半角 halfDeg、射程）、口到玩家胸口不被挡 → 伤害。返回本拍的结果（没到节拍为 null）
+   */
+  breatheAlong(yawDeg: number, halfDeg: number, range: number, damage: number, dt: number, ticker: BreathMove | SweepMove, spread: number, beam = false): 'hit' | 'blocked' | 'miss' | null {
+    const mouth = this.mouthPoint(_a);
+    const d = dirOf(yawDeg, _v);
+    const tip = _b.copy(mouth).addScaledVector(d, range);
+    tip.y = this.hallFloor + (beam ? 0.9 : 0.8);
+    _w.subVectors(tip, mouth);
+    let len = _w.length();
+    _w.multiplyScalar(1 / Math.max(1e-4, len));
+    if (beam) {
+      const hit = this.ctx.world.raycast(mouth, _w, len, _hitW);
+      if (hit) {
+        len = hit.distance;
+        tip.copy(hit.point);
+        if (Math.random() < dt * 20) this.ctx.fx.burst(tip, QilinDef.Hot, 6, 6, 0.4, 0.3, 4);
       }
-      return false;
+      this.beam ??= this.hazards.beam(QilinDef.Fire, 0xffe0a0);
+      this.beam.set(mouth, tip, 0.55);
     }
-    // sip：低头饮熔，熔岩从池面吸进嘴里
-    this.stopMoving();
-    this.velocity.set(0, 0, 0);
-    this.fx?.eruption(0.18);
-    if (Math.random() < 0.8) {
-      this.F.pts.mouth.getWorldPosition(_a);
-      furnacePoint(f, f.quadrants[this.drinkQ] + (Math.random() - 0.5) * 0.5, f.pool * (0.4 + Math.random() * 0.5), _v);
-      _v.y = this.floorY() + 0.2;
-      _w.subVectors(_a, _v).multiplyScalar(1.6);
-      this.fx?.emit(_v, _w, 0.6, 0.25, Math.random() < 0.5 ? HOT : FIRE, 0, 0);
-    }
-    this.maneHeat = Math.min(1, this.maneHeat + dt / DRINK_TIME * 0.5);
-    // 锁扣打碎后鼎角还在落：等它砸下来（onCauldronImpact 打断本招）
-    if (t >= 1.0 + DRINK_TIME && !this.cornerHitPending) {
-      this.drinkStage = 'done';
-      this.armor = this.maxArmor;
-      this.damageMult *= 1.08;
-      this.maneHeat = 1;
-      this.getBodyCenter(_v);
-      this.ctx.fx.burst(_v, FIRE, 40, 9, 0.9, 0.4, 4);
-      this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.95, volume: 1 });
-      this.ctx.ui.toast('火麒麟饮完熔岩——鳞甲回满，火鬃更旺了', '#ff9a4a');
-      return true;
-    }
-    return false;
+    this.fx?.breath(mouth, _w, Math.min(26, len * 1.4), spread, beam ? 4 : 3);
+    if (!ticker.tick(dt)) return null;
+    const pl = this.ctx.player;
+    if (!pl.alive) return 'miss';
+    const mx = mouth.x, mz = mouth.z;
+    const ox = pl.position.x - mx, oz = pl.position.z - mz;
+    if (Math.hypot(ox, oz) > range || Math.abs(((Math.atan2(ox, oz) / DEG - yawDeg + 540) % 360) - 180) > halfDeg) return 'miss';
+    _b.set(pl.position.x, pl.position.y + 1.2, pl.position.z);
+    if (this.ctx.world.segmentBlocked(mouth, _b)) return 'blocked';
+    return this.hazards.hurt(damage, 'fire', mouth) > 0 ? 'hit' : 'miss';
   }
 
-  private endDrink(): void {
-    this.fx?.eruption(0);
-    this.highlightLock(this.drinkQ, false);
-    if (this.position.y > this.floorY() + 0.1) {
-      this.position.y = this.floorY();
-      this.flyTargetY = this.floorY();
+  endBeam(): void {
+    this.hazards.releaseBeam(this.beam);
+    this.beam = null;
+  }
+
+  /** 火云：殿顶一圈环形的暗紫褐火云带（Unity Fx.QilinFireClouds 精神对齐：一圈粒子云团） */
+  fireClouds(seconds: number): void {
+    const f = this.furnace;
+    const y = this.hallFloor + 15;
+    this.hazards.repeat(0.2, seconds, () => {
+      for (let i = 0; i < 6; i++) {
+        const a = Math.random() * TAU, r = f.wallRadius * (0.45 + Math.random() * 0.45);
+        _v.set(f.center.x + Math.sin(a) * r, y + Math.random() * 2, f.center.z + Math.cos(a) * r);
+        this.ctx.fx.burst(_v, Math.random() < 0.6 ? 0x4a2a24 : QilinDef.Fire, 4, 1.2, 1.4, 1.1, -0.5);
+      }
+    });
+  }
+
+  // ───────────── 召唤 ─────────────
+
+  override summonPoints(): readonly THREE.Vector3[] {
+    return this.furnace?.mouths ?? [];
+  }
+
+  /** 饮熔：两座炉口共钻出 4 只炭童（场地召唤点 = 炉口；受首领召唤上限约束） */
+  summonTantong(): number {
+    const d = this.qdef;
+    if (!getEnemyDef(d.tantongId)) return 0;
+    return this.summons.spawn(d.tantongId, d.drinkTantong, summonOptions({ warn: 0.6, minRadius: 4, maxRadius: 9, warnColor: QilinDef.Ember }));
+  }
+
+  /** 火云雨：高处排烟口飞出神火飞鸦（先在炉口生成，再放回排烟口的高度；同一个排烟口第二只沿殿墙切向错开 1.8 m） */
+  summonCrows(count: number): number {
+    const id = this.qdef.crowId;
+    if (count <= 0 || !this.alive || !getEnemyDef(id)) return 0;
+    const pts = this.crowPoints();
+    const before = this.summons.totalSpawned;
+    this.summons.spawn(id, count, summonOptions({ warn: 0, usePoints: true }));
+    const made = this.summons.totalSpawned - before;
+    const live = this.summons.liveList;
+    const f = this.furnace;
+    for (let k = 0; k < made && k < live.length; k++) {
+      const e = live[live.length - 1 - k];
+      const at = pts[k % pts.length].clone();
+      const slot = Math.floor(k / pts.length);
+      if (slot > 0) {
+        const rx = at.x - f.center.x, rz = at.z - f.center.z, rl = Math.hypot(rx, rz) || 1;
+        at.x += (-rz / rl) * 1.8 * slot;
+        at.z += (rx / rl) * 1.8 * slot;
+      }
+      e.position.copy(at);
+      (e as { flyTargetY?: number }).flyTargetY = at.y;
+      this.ctx.fx.burst(at, QilinDef.Ember, 18, 6, 0.6, 0.25, 3);
     }
+    this.crowsSummoned += made;
+    if (made > 0) this.tell('crows', '高处排烟口飞出神火飞鸦——在空中打爆它们');
+    return made;
   }
 
-  /** 正在饮熔（低头那 4 秒）：鼎角砸下来能砸中 */
-  private get drinking(): boolean {
-    return this.current?.id === 'drink' && this.drinkStage === 'sip';
+  private crowPoints(): THREE.Vector3[] {
+    const f = this.furnace;
+    const out: THREE.Vector3[] = [];
+    for (const v of f.vents) {
+      const rx = f.center.x - v.x, rz = f.center.z - v.z, rl = Math.hypot(rx, rz) || 1;
+      out.push(new THREE.Vector3(v.x + rx / rl * 2.5, v.y, v.z + rz / rl * 2.5));
+    }
+    if (out.length > 0) return out;
+    const pa = f.yawOf(this.ctx.player.position);
+    for (const side of [-1, 1]) out.push(f.point(pa + 180 + side * 34.4, f.wallRadius - 1).setY(this.hallFloor + 10));
+    return out;
   }
 
-  private highlightLock(i: number, on: boolean): void {
+  // ───────────── 饮熔 / 锁扣 / 吊鼎 ─────────────
+
+  /** 饮熔：选象限（离自己最近、锁扣还在、链还拴着的；都没了取自己所在的象限） */
+  pickDrinkQuadrant(): number {
+    const f = this.furnace;
+    const me = f.yawOf(this.position);
+    let best = -1, bestD = Infinity;
+    for (let i = 0; i < f.quadrantCount; i++) {
+      if (!this.lockAlive(i) || (this.cauldron && !this.cauldron.chainIntact(i))) continue;
+      const d = Math.abs(((f.quadrantYaw(i) - me + 540) % 360) - 180);
+      if (d >= bestD) continue;
+      bestD = d;
+      best = i;
+    }
+    return best >= 0 ? best : f.quadrantOf(this.position);
+  }
+
+  lockAlive(i: number): boolean {
     const l = this.locks[i];
-    if (l?.alive) l.highlight = on;
+    return !!l && l.alive;
   }
 
-  // ── 锁扣 / 吊鼎 ──
+  get cornerPending(): boolean {
+    return this.pendingCorner >= 0;
+  }
+
+  beginSip(quadrant: number): void {
+    this.sipping = true;
+    this.drinkQuadrant = quadrant;
+    this.drinksStarted++;
+    const l = this.locks[quadrant];
+    if (l?.alive) l.highlight = true;
+  }
+
+  endSip(): void {
+    const l = this.drinkQuadrant >= 0 ? this.locks[this.drinkQuadrant] : null;
+    if (l?.alive) l.highlight = false;
+    this.sipping = false;
+    this.drinkQuadrant = -1;
+    this.fx?.eruption(0);
+  }
 
   /** 锁扣碎了（QilinLock.onDeath 回调） */
   onLockBroken(lock: QilinLock): void {
@@ -870,50 +712,74 @@ export class Qilin extends BossBase {
     this.lockBroken[i] = true;
     this.locks[i] = null;
     if (!this.alive || this.phase > 0 || !this.cauldron) return;
-    const impact = this.cauldron.dropCorner(i);
-    if (!impact) return;
-    this.cornerHitPending = this.drinking && this.drinkQ === i;
-    if (!this.cornerHitPending) this.cornerWasted = true;
+    if (!this.cauldron.dropCorner(i)) return;
+    if (this.sipping && this.drinkQuadrant === i) this.pendingCorner = i;
+    else {
+      this.wastedPending = true;
+      this.wastedCorners++;
+    }
   }
-
-  private cornerWasted = false;
 
   private onCauldronImpact(kind: 'corner' | 'fallen', at: THREE.Vector3): void {
     const fx = this.ctx.fx;
-    fx.explosion(_v.copy(at), kind === 'fallen' ? 6 : 3.5, FIRE);
-    fx.burst(_v, EMBER, kind === 'fallen' ? 60 : 30, kind === 'fallen' ? 14 : 9, 1.1, 0.4, 12);
-    fx.shake(kind === 'fallen' ? 0.95 : 0.6, kind === 'fallen' ? 1.0 : 0.5);
-    this.ctx.audio.play('boss_slam', { position: at, pitch: kind === 'fallen' ? 0.5 : 0.75, volume: 1 });
+    const fallen = kind === 'fallen';
+    fx.explosion(_v.copy(at), fallen ? 6 : 3.5, QilinDef.Fire);
+    fx.burst(_v, QilinDef.Ember, fallen ? 60 : 30, fallen ? 14 : 9, 1.1, 0.4, 12);
+    const d = at.distanceTo(this.ctx.player.position);
+    const k = Math.max(0, 1 - d / 70);
+    if (k > 0.01) fx.shake((fallen ? 0.95 : 0.6) * k, fallen ? 1 : 0.5);
+    this.ctx.audio.play('boss_slam', { position: at, pitch: fallen ? 0.5 : 0.75, volume: 1 });
     this.ctx.audio.play('explosion', { position: at, pitch: 0.6, volume: 0.9 });
-    if (kind === 'fallen') {
-      const C = this.furnace.center;
+    if (fallen) {
+      // 巨鼎砸进熔池：熔岩冲天，一圈火浪从池边扫到殿墙（跳过去）
       this.fx?.eruption(1);
-      this.hazards.wave({ x: C.x, y: C.y, z: C.z, speed: 15, maxRadius: this.furnace.wall + 1, damage: 12, color: WARN,
-        startRadius: this.furnace.pool, width: 1.1, height: 0.95, knockback: 7, element: 'fire', dust: EMBER });
+      const f = this.furnace;
+      if (this.alive) {
+        this.hazards.wave({
+          x: f.center.x, y: f.floorY, z: f.center.z, speed: 15, maxRadius: f.wallRadius + 1, damage: this.dmg(12), color: QilinDef.Warn,
+          startRadius: f.poolRadius, width: 1.1, height: 0.95, knockback: 7, element: 'fire', dust: QilinDef.Ember,
+        });
+      }
       return;
     }
-    if (this.cornerHitPending && this.alive && this.phase === 0) {
-      this.cornerHitPending = false;
+    if (this.pendingCorner >= 0 && this.sipping && this.alive && this.phase === 0) {
+      this.pendingCorner = -1;
       this.cornerHit();
-    } else if (this.cornerWasted) {
-      this.cornerWasted = false;
+    } else if (this.wastedPending) {
+      this.wastedPending = false;
+      this.pendingCorner = -1;
       this.ctx.ui.toast('鼎角砸空——白费了一个锁扣。等它饮熔时再打它身后那一个', '#c8a070');
     }
   }
 
-  /** 鼎角砸中饮熔的麒麟：眩晕 4 秒、鳞甲崩裂（全身弱点、受伤 ×2） */
+  /** 鼎角砸中饮熔的麒麟：护甲清零、鳞甲崩裂（全身弱点）、硬直 4 s（受伤 × 2）。饮熔被打断 */
   private cornerHit(): void {
-    this.crackLeft = STUN_TIME;
+    this.cauldronHits++;
     this.armor = 0;
-    this.F.pts.head.getWorldPosition(_v);
-    this.ctx.fx.burst(_v, SCALE_DARK, 40, 10, 1.2, 0.35, 16);
-    this.ctx.fx.burst(_v, HOT, 30, 9, 0.8, 0.3, 6);
-    this.ctx.audio.play('shield_break', { position: this.position, pitch: 0.6, volume: 1 });
-    this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.65, volume: 1 });
+    const h = this.headPoint(_v);
+    this.ctx.fx.burst(h, QilinDef.ScaleDark, 40, 10, 1.2, 0.35, 16);
+    this.ctx.fx.burst(h, QilinDef.Hot, 30, 9, 0.8, 0.3, 6);
+    this.ctx.audio.play('shield_break', { position: h, pitch: 0.6, volume: 1 });
+    this.playSfx('boss_roar', 1, 0.65);
     this.ctx.ui.toast('巨鼎砸中火麒麟！鳞甲崩裂——全身都是弱点、伤害翻倍，4 秒！', '#ffe08a');
-    this.abortMove();
-    this.queueMove('stunned');
-    this.restLeft = 0;
+    this.stagger(QilinDef.StunSeconds, 'stun', QilinDef.CrackTakenMult);
+    this.startCrack(QilinDef.StunSeconds);
+  }
+
+  private startCrack(seconds: number): void {
+    this.crackLeft = Math.max(this.crackLeft, seconds);
+    this.setCrackWeak(true);
+  }
+
+  private endCrack(): void {
+    this.crackLeft = 0;
+    this.setCrackWeak(false);
+  }
+
+  /** 鳞甲崩裂：五个受击球都算弱点；结束后回到只有火珠 */
+  private setCrackWeak(on: boolean): void {
+    if (!this.xuan?.shapes) return;
+    for (const s of this.xuan.shapes) s.weak = on || s.anchor === this.xuan.pts.pearl;
   }
 
   /** 首领自己的锁扣（测试与检视用：已碎的为 null） */
@@ -921,6 +787,7 @@ export class Qilin extends BossBase {
     return this.locks;
   }
 
+  /** 登场结束：四个锁扣上膛（110 × 难度），认领场景里的锁扣正式件 */
   private spawnLocks(): void {
     if (this.locksSpawned) return;
     this.locksSpawned = true;
@@ -929,17 +796,24 @@ export class Qilin extends BossBase {
     for (let i = 0; i < this.lockPts.length; i++) {
       if (this.lockBroken[i]) continue;
       const e = this.ctx.enemies.spawn(QILIN_LOCK_DEF.id, { position: this.lockPts[i].clone(), level: this.level });
-      if (e instanceof QilinLock) {
-        e.owner = this;
-        e.index = i;
-        e.faceAngle = f.quadrants[i] + Math.PI;
-        e.facing = e.faceAngle;
-        this.locks[i] = e;
+      if (!(e instanceof QilinLock)) continue;
+      e.owner = this;
+      e.index = i;
+      e.faceAngle = (f.quadrantYaw(i) + 180) * DEG;
+      e.facing = e.faceAngle;
+      this.locks[i] = e;
+      // 场景里同一个象限的锁扣正式件
+      let art: THREE.Object3D | null = null, best = 4;
+      for (const o of this.lockArt) {
+        o.getWorldPosition(_v);
+        const d = Math.hypot(_v.x - this.lockPts[i].x, _v.z - this.lockPts[i].z);
+        if (d < best) { best = d; art = o; }
       }
+      if (art) e.adoptArt(art);
     }
   }
 
-  /** 剩下的锁扣静默移除（链全断时） */
+  /** 剩下的锁扣静默移除（链全断、倒下时） */
   private purgeLocks(): void {
     const was = attackDirector.purging;
     attackDirector.purging = true;
@@ -947,6 +821,7 @@ export class Qilin extends BossBase {
       for (let i = 0; i < this.locks.length; i++) {
         const l = this.locks[i];
         this.locks[i] = null;
+        this.lockBroken[i] = true;
         if (!l || !l.alive) continue;
         l.owner = null;
         try {
@@ -963,561 +838,396 @@ export class Qilin extends BossBase {
     }
   }
 
-  // ── 召唤 ──
+  // ───────────── 每帧 ─────────────
 
-  private spawnAt(id: string, p: THREE.Vector3): IEnemy | null {
-    if (!getEnemyDef(id)) return null;
-    const e = this.ctx.enemies.spawn(id, { position: p.clone(), level: this.level });
-    if (e) this.minions.push(e);
-    return e;
-  }
-
-  /** 饮熔时两侧炉口各钻出 2 只炭童（炉口在饮熔点两侧的象限外墙边） */
-  private summonTantong(): void {
-    this.pruneMinions();
-    if (this.minions.length >= 6) return;
-    const f = this.furnace;
-    const base = f.quadrants[this.drinkQ];
-    for (const side of [-1, 1]) {
-      const a = base + side * (Math.PI / 2 + 0.35);
-      for (let k = 0; k < 2; k++) {
-        furnacePoint(f, a + (k - 0.5) * 0.12, f.wall - 1.5, _v);
-        if (!this.ctx.nav.nearestWalkable(_v, _w)) _w.copy(_v);
-        _w.y = this.floorY();
-        if (this.spawnAt(TANTONG, _w)) this.ctx.fx.burst(_w.setY(this.floorY() + 0.8), EMBER, 14, 5, 0.6, 0.25, 4);
-      }
-    }
-  }
-
-  /** 火云雨时高处排烟口（玩家对面两侧）刷神火飞鸦 */
-  private summonCrows(): void {
-    this.pruneMinions();
-    const f = this.furnace;
-    const pa = furnaceAngle(f, this.ctx.player.position.x, this.ctx.player.position.z);
-    let n = 0;
-    for (const side of [-1, 1]) {
-      for (let k = 0; k < 2 && this.minions.length < 6; k++) {
-        furnacePoint(f, pa + Math.PI + side * 0.6 + k * 0.08, f.wall - 1, _v);
-        _v.y = this.floorY() + 10;
-        if (this.spawnAt(FIRE_CROW, _v)) n++;
-      }
-    }
-    if (n) this.tell('crows', '高处排烟口飞出神火飞鸦——在空中打爆它们', '#ffb070');
-  }
-
-  // ── 焚身：俯冲踏地 ──
-
-  private beginDive(): void {
-    const pl = this.ctx.player;
-    const f = this.furnace;
-    this.diveAt.set(pl.position.x + pl.velocity.x * 0.5, this.floorY(), pl.position.z + pl.velocity.z * 0.5);
-    // 不出殿墙
-    const dx = this.diveAt.x - f.center.x, dz = this.diveAt.z - f.center.z, d = Math.hypot(dx, dz);
-    if (d > f.wall - 2.5) {
-      this.diveAt.x = f.center.x + (dx / d) * (f.wall - 2.5);
-      this.diveAt.z = f.center.z + (dz / d) * (f.wall - 2.5);
-    }
-    this.diveStage = 'rise';
-    this.stageT = 0;
-    this.alt = 7.5;
-    this.accel = 40;
-    this.setAnim('gallop');
-  }
-
-  private tickDive(dt: number): boolean {
-    this.stageT += dt;
-    const A = this.diveAt;
-    if (this.diveStage === 'rise') {
-      const there = this.moveTo(A, 22, 1.2);
-      this.faceTowards(A, 5, dt);
-      if (there || this.stageT > 1.4) {
-        this.diveStage = 'tele';
-        this.stageT = 0;
-        this.stopMoving();
-        this.velocity.x *= 0.2;
-        this.velocity.z *= 0.2;
-        this.setAnim('tuck', true);
-        this.hazards.groundWarning(A.x, this.floorY(), A.z, 4.2, this.enraged() ? 0.7 : 0.9, WARN);
-        this.ctx.audio.play('telegraph', { position: A, pitch: 1.0 });
-      }
-      return false;
-    }
-    if (this.diveStage === 'tele') {
-      this.stopMoving();
-      this.facePlayer(3, dt);
-      if (this.stageT >= (this.enraged() ? 0.7 : 0.9)) {
-        this.diveStage = 'dive';
-        this.stageT = 0;
-        this.diveFrom.copy(this.position);
-        this.setAnim('stomp', true);
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.4, volume: 0.8 });
-      }
-      return false;
-    }
-    if (this.diveStage === 'dive') {
-      const k = Math.min(1, this.stageT / 0.3);
-      const e = k * k;
-      this.position.x = mix(this.diveFrom.x, A.x, k);
-      this.position.z = mix(this.diveFrom.z, A.z, k);
-      this.position.y = mix(this.diveFrom.y, this.floorY(), e);
-      this.flyTargetY = this.position.y;
-      this.velocity.set(0, 0, 0);
-      if (k >= 1) {
-        this.diveStage = 'recover';
-        this.stageT = 0;
-        this.alt = 0;
-        this.hazards.blast(A.x, this.floorY(), A.z, 4.2, 30, { maxHeight: 3, knockback: 10, knockUp: 6, element: 'fire' });
-        this.hazards.wave({ x: A.x, y: this.floorY(), z: A.z, speed: 13, maxRadius: 15, damage: 16, color: WARN, startRadius: 2,
-          width: 1.0, height: 0.85, knockback: 6, element: 'fire', dust: EMBER });
-        this.ctx.fx.explosion(_v.set(A.x, this.floorY() + 0.6, A.z), 4, FIRE);
-        this.ctx.fx.ring(_w.set(A.x, this.floorY() + 0.1, A.z), 8, WARN, 0.7);
-        this.ctx.fx.shake(0.65, 0.45);
-        this.ctx.audio.play('boss_slam', { position: A, volume: 1 });
-      }
-      return false;
-    }
-    // recover：踏完弹起
-    this.stopMoving();
-    if (this.stageT >= 0.45) {
-      this.divesLeft--;
-      if (this.divesLeft > 0) {
-        this.beginDive();
-        return false;
-      }
-      this.queueMove('pant');
-      return true;
-    }
-    return false;
-  }
-
-  // ── 焚身：喘息 ──
-
-  private beginPant(): void {
-    // 落点：脚下最近的可走地面（导航把熔岩当阻挡，所以不会落进熔岩）
-    if (!this.ctx.nav.nearestWalkable(_v.copy(this.position).setY(this.floorY()), this.pantAt)) this.pantAt.copy(this.position);
-    this.pantAt.y = this.floorY();
-    this.pantStage = 'descend';
-    this.stageT = 0;
-    this.alt = 0;
-    this.setAnim('stomp', true);
-    this.hazards.groundWarning(this.pantAt.x, this.floorY(), this.pantAt.z, 5, 0.8, WARN);
-  }
-
-  private tickPant(dt: number): boolean {
-    this.stageT += dt;
-    const L = this.pantAt;
-    if (this.pantStage === 'descend') {
-      this.moveTo(L, 10, 0.3);
-      this.alt = 0;
-      if (this.stageT >= 0.8) {
-        this.pantStage = 'rest';
-        this.stageT = 0;
-        this.stopMoving();
-        this.position.y = this.floorY();
-        this.setAnim('pant', true);
-        this.hazards.blast(L.x, this.floorY(), L.z, 5, 16, { maxHeight: 3, knockback: 8, knockUp: 4 });
-        this.ctx.fx.shake(0.45, 0.35);
-        this.ctx.audio.play('boss_slam', { position: L, pitch: 1.1 });
-        this.tell('pant', '焚身落地喘息——胸口火心大亮，现在是输出时机！', '#ffe08a');
-      }
-      return false;
-    }
-    this.stopMoving();
-    if (this.pantStage === 'rest') {
-      this.facePlayer(0.6, dt);
-      if (this.stageT >= 3.0 && this.stageT - dt < 3.0) {
-        this.hazards.groundWarning(this.position.x, this.floorY(), this.position.z, 6, 0.5, WARN);
-        this.ctx.audio.play('telegraph', { position: this.position, pitch: 1.1 });
-      }
-      if (this.stageT >= 3.5) {
-        this.pantStage = 'takeoff';
-        this.stageT = 0;
-        this.setAnim('tuck', true);
-        this.hazards.blast(this.position.x, this.floorY(), this.position.z, 6, 12, { maxHeight: 4, knockback: 12, knockUp: 5, element: 'fire' });
-        this.ctx.fx.ring(_v.set(this.position.x, this.floorY() + 0.1, this.position.z), 7, WARN, 0.6);
-        this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.3, volume: 0.8 });
-        this.alt = SKY_ALT;
-      }
-      return false;
-    }
-    return this.stageT >= 0.7;
-  }
-
-  // ── 焚身：麟火扫象限 ──
-
-  private beginSweep(): void {
-    const f = this.furnace;
-    const q = quadrantOf(f, this.ctx.player.position.x, this.ctx.player.position.z);
-    // 站到熔池对岸（落地吐息：石柱、池中的倒鼎才挡得住）
-    furnacePoint(f, f.quadrants[q] + Math.PI, f.pool + 2.2, this.breathSpot);
-    const n = f.channels.length;
-    const aLo = f.channels[q], aHi = f.channels[(q + 1) % n];
-    furnacePoint(f, aLo, f.wall - 1, _a);
-    furnacePoint(f, aHi, f.wall - 1, _b);
-    const s = this.breathSpot;
-    const y0 = Math.atan2(_a.x - s.x, _a.z - s.z), y1 = Math.atan2(_b.x - s.x, _b.z - s.z);
-    // 从离玩家远的一侧扫向另一侧
-    const pYaw = Math.atan2(this.ctx.player.position.x - s.x, this.ctx.player.position.z - s.z);
-    const nearLo = Math.abs(angleDiff(pYaw, y0)) < Math.abs(angleDiff(pYaw, y1));
-    this.breathYaw0 = nearLo ? y1 : y0;
-    this.breathYaw1 = nearLo ? y0 : y1;
-    this.breathRange = Math.max(_a.distanceTo(s), _b.distanceTo(s)) + 2;
-    this.breathStage = 'approach';
-    this.stageT = 0;
-    this.alt = 3;
-    this.breathAcc = 0;
-    this.setAnim('gallop');
-  }
-
-  private tickSweep(dt: number): boolean {
-    this.stageT += dt;
-    const s = this.breathSpot;
-    if (this.breathStage === 'approach') {
-      const there = this.moveTo(s, 20, 1.2);
-      this.faceTowards(s, 4, dt);
-      if (there || this.stageT > 2.2) {
-        this.breathStage = 'tele';
-        this.stageT = 0;
-        this.stopMoving();
-        this.alt = 0;
-        this.setAnim('breath', true);
-        const mid = this.breathYaw0 + angleDiff(this.breathYaw0, this.breathYaw1) / 2;
-        const half = Math.abs(angleDiff(this.breathYaw0, this.breathYaw1)) / 2 + 0.08;
-        this.hazards.sectorWarning(s.x, this.floorY(), s.z, mid, half, this.breathRange, 1.2, WARN);
-        this.ctx.audio.play('enemy_charge', { position: this.position, pitch: 0.5, volume: 1 });
-        this.tell('sweep', '焚身要吐息扫过整个象限——躲到石柱或池中倒鼎的后面！', '#ff9a4a');
-      }
-      return false;
-    }
-    this.stopMoving();
-    if (this.breathStage === 'tele') {
-      this.facing = rotateTowards(this.facing, this.breathYaw0, 4 * dt);
-      if (this.stageT >= 1.2) {
-        this.breathStage = 'sweep';
-        this.stageT = 0;
-        this.ctx.audio.play('skill_fire', { position: this.position, pitch: 0.6, volume: 1 });
-      }
-      return false;
-    }
-    const k = Math.min(1, this.stageT / 2.6);
-    const yaw = this.breathYaw0 + angleDiff(this.breathYaw0, this.breathYaw1) * k;
-    this.facing = yaw;
-    this.breatheAlong(yaw, 0.15, this.breathRange, 9, dt);
-    return k >= 1 && this.stageT >= 2.9;
-  }
-
-  // ── 焚身：熔流轮转 ──
-
-  private startFloodCycle(): void {
-    if (this.flood) return;
-    const f = this.furnace;
-    const q0 = quadrantOf(f, this.ctx.player.position.x, this.ctx.player.position.z);
-    const order = [q0];
-    while (order.length < f.quadrants.length) order.push(clockwiseNext(f, order[order.length - 1]));
-    this.flood = { order, i: 0, stage: 'warn', t: 0, floods: [], polys: [], dmgAcc: 0 };
-    this.warnFlood(order[0]);
-  }
-
-  private warnFlood(q: number): void {
-    const { strips } = floodShapes(this.furnace, q);
-    for (const s of strips) this.hazards.lineWarning(s.x, this.floorY(), s.z, s.yaw, s.length, s.half, FLOOD_WARN, WARN, 0, 'hazard');
-    this.ctx.audio.play('telegraph', { position: this.furnace.center, pitch: 0.6 });
-  }
-
-  private tickFlood(dt: number): void {
-    const c = this.flood;
-    if (!c) return;
-    c.t += dt;
-    const q = c.order[c.i];
-    if (c.stage === 'warn') {
-      if (c.t >= FLOOD_WARN) {
-        c.stage = 'on';
-        c.t = 0;
-        const { polygons } = floodShapes(this.furnace, q);
-        const lava = this.lavaSystem();
-        c.polys = polygons;
-        if (lava) for (const p of polygons) c.floods.push(lava.addLavaArea(p, { rise: 0.5 }));
-        // 熔岩涌进渠：池边冒火
-        furnacePoint(this.furnace, this.furnace.quadrants[q], this.furnace.bridge[1] + 3, _v);
-        this.ctx.fx.burst(_v.setY(this.floorY() + 0.3), EMBER, 30, 7, 0.9, 0.3, 6);
-        this.ctx.audio.play('skill_fire', { position: _v, pitch: 0.5, volume: 0.9 });
-      }
-      return;
-    }
-    if (c.stage === 'on') {
-      // 没有熔岩系统（旧关卡 / 测试）时自己结算：站在涨宽的渠里每 0.5 秒烧一下
-      if (c.floods.length === 0) {
-        c.dmgAcc += dt;
-        const pl = this.ctx.player.position;
-        if (c.dmgAcc >= 0.5) {
-          c.dmgAcc = 0;
-          if (pl.y - this.floorY() < 0.4 && c.polys.some((p) => inPoly(p, pl.x, pl.z))) this.hazards.hurt(10, 'fire', pl);
-        }
-      }
-      if (c.t >= (this.enraged() ? FLOOD_ON_RAGE : FLOOD_ON)) {
-        for (const fl of c.floods) fl.remove();
-        c.floods.length = 0;
-        c.polys = [];
-        c.stage = 'gap';
-        c.t = 0;
-      }
-      return;
-    }
-    if (c.t >= (this.enraged() ? 0.3 : 0.6)) {
-      c.i++;
-      if (c.i >= c.order.length) {
-        this.flood = null;
-        return;
-      }
-      c.stage = 'warn';
-      c.t = 0;
-      this.warnFlood(c.order[c.i]);
-    }
-  }
-
-  private stopFlood(): void {
-    const c = this.flood;
-    if (!c) return;
-    for (const fl of c.floods) fl.remove();
-    this.flood = null;
-  }
-
-  /** 当前涨宽的象限（测试与检视用；没有在涨时为 −1） */
-  get floodingQuadrant(): number {
-    const c = this.flood;
-    return c && c.stage === 'on' ? c.order[c.i] : -1;
-  }
-
-  // ── 焚身：火云雨 ──
-
-  private fireRain(): void {
-    const pl = this.ctx.player;
-    const f = this.furnace;
-    const n = this.enraged() ? 14 : 10;
-    for (let i = 0; i < n; i++) {
-      this.hazards.later(i * 0.16, () => {
-        if (!this.alive) return;
-        const to = new THREE.Vector3();
-        if (i < 3) {
-          const lead = 0.5 + i * 0.25;
-          to.set(pl.position.x + pl.velocity.x * lead, this.floorY(), pl.position.z + pl.velocity.z * lead);
-        } else {
-          const a = this.ctx.rng.range(0, TAU), r = 2.5 + this.ctx.rng.range(0, 8);
-          to.set(pl.position.x + Math.sin(a) * r, this.floorY(), pl.position.z + Math.cos(a) * r);
-        }
-        const dx = to.x - f.center.x, dz = to.z - f.center.z, d = Math.hypot(dx, dz);
-        if (d > f.wall - 1) { to.x = f.center.x + (dx / d) * (f.wall - 1); to.z = f.center.z + (dz / d) * (f.wall - 1); }
-        const from = new THREE.Vector3(to.x + this.ctx.rng.range(-4, 4), this.floorY() + 22, to.z + this.ctx.rng.range(-4, 4));
-        this.hazards.lob({ from, to, time: 1.25, arc: 1, radius: 2.4, damage: 18, color: WARN, kind: 'meteor', element: 'fire', scale: 1.1 });
-      });
-    }
-    this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.1, volume: 0.7 });
-  }
-
-  // ───────────── 阶段 ─────────────
-
-  protected override onPhase(_phase: number): void {
-    this.transPrev = -1;
-    this.swapped = false;
-    this.crackLeft = 0;
-    this.fx?.clearPrints();
-    this.fx?.clearBlades();
-    this.leapFrom.copy(this.position);
-    this.setAnim('rear', true);
-    this.ctx.ui.toast('剩下的铁链全断了——巨鼎坠入熔池！', '#ff9a4a');
-    this.purgeLocks();
-    for (let i = 0; i < this.lockBroken.length; i++) this.lockBroken[i] = true;
-    this.cauldron?.fall();
-  }
-
-  protected override transitionTick(t: number, dt: number): void {
-    const was = this.transPrev;
-    this.transPrev = t;
-    const crossed = (x: number): boolean => was < x && t >= x;
-    const C = this.furnace.center;
-    this.velocity.set(0, 0, 0);
-    if (!this.swapped) {
-      // 0–1.1 秒：跳进熔池中央；1.1–1.9 秒：沉下去
-      const k = easeInOut(span(t, 0.2, 1.1));
-      this.position.x = mix(this.leapFrom.x, C.x, k);
-      this.position.z = mix(this.leapFrom.z, C.z, k);
-      this.position.y = this.floorY() + Math.sin(Math.PI * k) * 7;
-      this.flyTargetY = this.position.y;
-      this.facing = rotateTowards(this.facing, this.yawToPlayer(), 2 * dt);
-      this.sinkY = -9 * easeInOut(span(t, 1.1, 1.9));
-      if (crossed(0.2)) this.setAnim('tuck', true);
-      if (crossed(1.1)) {
-        this.ctx.fx.burst(_v.set(C.x, C.y + 0.5, C.z), FIRE, 50, 12, 1.2, 0.5, 8);
-        this.ctx.audio.play('explosion', { position: C, pitch: 0.5, volume: 1 });
-      }
-    }
-    // 熔岩柱：1.0 → 1.6 冲满，保持到 3.4，4.6 落下
-    const col = t < 1.0 ? 0 : t < 1.6 ? (t - 1.0) / 0.6 : t < 3.4 ? 1 : Math.max(0, 1 - (t - 3.4) / 1.2);
-    this.fx?.eruption(col);
-    if (crossed(1.9)) this.swapToBurn();
-    if (this.swapped) {
-      // 2.2–3.6 秒：从熔岩里冲出来，升到踏云高度
-      const k = easeOutCubic(span(t, 2.2, 3.6));
-      this.sinkY = -9 * (1 - k);
-      this.position.y = this.floorY() + SKY_ALT * k;
-      this.flyTargetY = this.position.y;
-      this.facing = rotateTowards(this.facing, this.yawToPlayer(), 2 * dt);
-      if (crossed(2.4)) {
-        // 鳞片炸飞
-        this.getBodyCenter(_v);
-        this.ctx.fx.burst(_v, SCALE_DARK, 60, 14, 1.4, 0.4, 14);
-        this.ctx.fx.burst(_v, HOT, 40, 10, 1.0, 0.35, 4);
-        this.ctx.fx.shake(0.6, 0.8);
-      }
-      if (crossed(3.8)) this.ctx.audio.play('boss_roar', { position: this.position, pitch: 1.2, volume: 1 });
-    }
-    if (t >= this.transitionDuration - dt * 1.5) {
-      this.sinkY = 0;
-      this.fx?.eruption(0);
-      this.alt = SKY_ALT;
-    }
-  }
-
-  /** 化焚身：在熔岩柱最浓的时候换模型（期间不可选中） */
-  private swapToBurn(): void {
-    this.swapped = true;
-    this.useForm('burn');
-    this.displayName = '火麒麟 · 焚身';
-    // 玄铁鳞甲炸飞
-    this.armor = 0;
-    this.crackLeft = 0;
-    this.ctx.ui.setBoss(this);
-    this.ctx.ui.toast('火麒麟化为焚身——它会在半空踏云奔跑；三次俯冲后落地喘息，胸口火心和角根火珠是弱点', '#ffb070');
-    this.orbit = furnaceAngle(this.furnace, this.ctx.player.position.x, this.ctx.player.position.z) + Math.PI;
-    this.queueMove('flood');
-  }
-
-  protected override restFactor(): number {
-    if (this.phase === 0) return this.phaseFraction() <= 0.7 ? 0.85 : 1;
-    return this.enraged() ? 0.65 : 0.9;
-  }
-
-  // ───────────── 常规行为 ─────────────
-
-  protected override idle(dt: number): void {
-    const f = this.furnace;
-    if (this.form === 'xuan') {
-      // 沿外环跑道小跑，绕到玩家那一侧，转头盯着玩家
-      const pl = this.ctx.player.position;
-      const R = this.trackR();
-      const me = furnaceAngle(f, this.position.x, this.position.z);
-      const want = furnaceAngle(f, pl.x, pl.z) + 0.6 * (angleDiff(furnaceAngle(f, pl.x, pl.z), me) >= 0 ? 1 : -1);
-      const step = clamp(angleDiff(me, want), -0.35, 0.35);
-      furnacePoint(f, me + step, R, _v);
-      if (Math.abs(angleDiff(me, want)) > 0.15 || Math.abs(Math.hypot(this.position.x - f.center.x, this.position.z - f.center.z) - R) > 1.5) {
-        this.moveTo(_v, 6.5, 0.8);
-        this.faceMovement(3, dt);
-      } else {
-        this.stopMoving();
-        this.facePlayer(2, dt);
-      }
-      this.alt = 0;
-      return;
-    }
-    // 焚身：在半空绕殿弧线奔跑，越过熔岩渠；隔一阵掉头
-    this.orbitTimer -= dt;
-    if (this.orbitTimer <= 0 || (this.moveResult.hitWall && this.orbitTimer < 4)) {
-      this.orbitDir = this.orbitDir > 0 ? -1 : 1;
-      this.orbitTimer = this.ctx.rng.range(5, 9);
-    }
-    this.orbit += this.orbitDir * 0.55 * dt;
-    furnacePoint(f, this.orbit, (f.bridge[1] + f.wall) / 2 - 1, _v);
-    this.moveTo(_v, 11, 1.0);
-    this.faceMovement(3, dt);
-    this.alt = SKY_ALT;
-  }
-
-  protected override passive(dt: number): void {
-    const floor = this.floorY();
-    // 高度：招式里直接驱动位置的阶段（跃起、俯冲）自己写 flyTargetY；其余按 alt 加一点起伏
-    const directY = (this.current?.id === 'drink' && this.drinkStage === 'leap') || (this.current?.id === 'dives' && this.diveStage === 'dive');
-    if (!directY) {
-      const bob = this.form === 'burn' && this.alt > 1 ? Math.sin(this.age * 1.6) * 0.9 : 0;
-      this.flyTargetY = floor + this.alt + bob;
-    }
-    // 饮熔血量线
-    if (this.phase === 0 && this.drinksDone < DRINK_AT.length && this.phaseFraction() <= DRINK_AT[this.drinksDone]
-      && this.current?.id !== 'drink' && this.current?.id !== 'stunned') {
-      this.drinksDone++;
-      this.queueMove('drink');
-      if (!this.current) this.restLeft = 0;
-    }
-    // 鳞甲崩裂：全身都算弱点
+  override update(dt: number): void {
+    super.update(dt);
+    if (this.waitingForSpawn) return;
+    this.cauldron?.update(dt);
+    this.fx?.update(dt, this.alive ? this.bladeResolver : null);
+    this.flood?.tick(dt);
+    this.crown?.update(dt);
+    if (!this.alive) return;
     if (this.crackLeft > 0) {
-      this.crackLeft = Math.max(0, this.crackLeft - dt);
-      for (const s of this.xuan.shapes) s.weak = this.crackLeft > 0 || s.anchor === this.xuan.pts.pearl;
+      this.crackLeft -= dt;
+      if (this.crackLeft <= 0) this.endCrack();
+      else if (Math.random() < dt * 14) {
+        // 鳞甲崩裂期间：身上轮流闪金色裂光
+        const pts = ['head', 'chest', 'hips', 'neck', 'body'];
+        this.F.pts[pts[Math.floor(Math.random() * 5)]].getWorldPosition(_v);
+        this.ctx.fx.burst(_v.add(_w.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5)), 0xffe08a, 4, 3, 0.3, 0.18, 0);
+      }
     }
-    // 蹄印烧脚
+    this.maneHeat = Math.max(0, this.maneHeat - dt * 0.02);
+    // 蹄印烧脚（4 s、半径 0.95 m、贴地每 0.4 s 烧 7）
     this.printHurtAcc += dt;
-    if (this.printHurtAcc >= 0.4) {
+    if (this.printHurtAcc >= this.qdef.printInterval) {
       this.printHurtAcc = 0;
       const pl = this.ctx.player;
-      if (pl.alive && pl.position.y - floor < 0.5 && this.fx?.printNear(pl.position.x, pl.position.z, 0.95)) this.hazards.hurt(7, 'fire', pl.position);
-    }
-    this.tickFlood(dt);
-    // 焚身蹄下火云
-    if (this.form === 'burn' && this.alive) {
-      this.cloudAcc += dt;
-      if (this.cloudAcc >= 0.05) {
-        this.cloudAcc = 0;
-        for (const n of ['hoofFL', 'hoofFR', 'hoofHL', 'hoofHR']) {
-          const a = this.F.pts[n];
-          if (!a || Math.random() < 0.4) continue;
-          a.getWorldPosition(_v);
-          _w.set((Math.random() - 0.5) * 1.5, -0.5 + Math.random(), (Math.random() - 0.5) * 1.5);
-          this.fx?.emit(_v, _w, 0.55, 0.35 + Math.random() * 0.3, Math.random() < 0.35 ? HOT : FIRE, 2, 1.2);
-        }
+      if (pl.alive && pl.position.y - this.hallFloor < 0.5 && this.fx?.printNear(pl.position.x, pl.position.z, this.qdef.printRadius)) {
+        this.hazards.hurt(this.dmg(this.qdef.printDamage), 'fire', pl.position);
       }
     }
-    if (this.enraged() && !this.rageTold) {
-      this.rageTold = true;
-      this.ctx.ui.toast('焚身狂怒——熔流轮转更快了', '#ff7a4a');
-    }
-    // 弱点光：平时微光；张鳞、被砸晕、喘息时大亮
-    const bright = this.anim === 'stun' || this.anim === 'rear' || this.crackLeft > 0;
-    this.pearlGlow += ((bright ? 1 : 0.35) - this.pearlGlow) * Math.min(1, dt * 4);
-    this.heartGlow += ((this.anim === 'pant' ? 1 : 0.3) - this.heartGlow) * Math.min(1, dt * 4);
   }
 
-  // ───────────── 登场 / 动画 ─────────────
+  /** 鳞刃：撞到掩体就碎；扫过玩家（贴地 0.2–2.4 米高的竖薄片）就伤人 */
+  private readonly bladeResolver = (b: Blade): 'hit' | 'block' | null => {
+    if (this.ctx.world.segmentBlocked(b.prev, b.pos)) return 'block';
+    const floor = this.hallFloor;
+    _a.copy(b.prev).setY(floor + 0.4);
+    _b.copy(b.pos).setY(floor + 0.4);
+    const pl = this.ctx.player;
+    if (pl.position.y > floor + 2.2) return null;
+    if (this.hazards.segmentHitsPlayer(_a, _b, 0.55)) {
+      this.hazards.hurt(this.dmg(20), 'fire', b.pos);
+      pl.applyImpulse(_imp.copy(b.dir).multiplyScalar(4).setY(2));
+      return 'hit';
+    }
+    return null;
+  };
 
-  protected override entrance(t: number, dt: number): void {
-    // 熔池里冲起熔岩柱，麒麟从池心跃出，落在朝刷新点那一侧的池边
+  /** 框架的 think 之后定高度（EnemyBase 接着按 flyTargetY 积分） */
+  protected override think(dt: number): void {
+    super.think(dt);
+    this.stepHeight();
+  }
+
+  private stepHeight(): void {
+    const floor = this.hallFloor;
+    if (this.placed) {
+      this.placed = false;
+      this.flyTargetY = this.position.y;
+      this.velocity.y = 0;
+      return;
+    }
+    if (!this.isBurn || !this.introDone || this.transitioning) {
+      this.flyTargetY = floor;
+      return;
+    }
+    // 焚身踏云：竖直追目标高度（招式间隙 4.5、俯冲蓄势 / 火云雨 7.5、喘息 / 吐息落地 0），身下有石柱 / 倒鼎时抬过去
+    const alt = Math.max(0, this.skyTarget);
+    const bob = alt > 1 ? Math.sin(this.age * 1.6) * 0.9 : 0;
+    let target = floor + alt + bob;
+    if (alt > 0.5) {
+      const under = Math.max(this.groundUnder(this.position), this.groundUnder(_v.copy(this.position).addScaledVector(this.velocity, 0.4)));
+      target = Math.max(target, under + SKY.Clearance);
+    }
+    this.flyTargetY = target;
+    // 夹在殿墙以内（身体半径 + 0.5 m）
+    const f = this.furnace;
+    const max = Math.max(2, f.wallRadius - this.radius - 0.5);
+    const dx = this.position.x - f.center.x, dz = this.position.z - f.center.z, d = Math.hypot(dx, dz);
+    if (d > max) {
+      this.position.x = f.center.x + dx / d * max;
+      this.position.z = f.center.z + dz / d * max;
+    }
+  }
+
+  // ───────────── 框架钩子 ─────────────
+
+  /** 登场：熔池里冲起熔岩柱，麒麟从池心跃出，落在出生点（熔池北沿）人立长啸 */
+  protected override introTick(t: number, dt: number): void {
+    const f = this.furnace;
     this.fx?.eruption(t < 0.3 ? 0.7 : 0);
     const k = easeInOut(span(t, 0.12, 0.45));
     const lift = Math.sin(Math.PI * k) * 7 - 8 * (1 - span(t, 0, 0.14));
-    _v.subVectors(this.entranceFrom, this.position).multiplyScalar(1 - k);
-    // 世界偏移 → root 局部（root 绕 Y 转 facing）
-    const c = Math.cos(-this.facing), s = Math.sin(-this.facing);
-    this.model.position.set(_v.x * c + _v.z * s, lift, -_v.x * s + _v.z * c);
-    if (t >= 1) {
-      this.model.position.set(0, 0, 0);
-      return;
-    }
-    if (k >= 1 && !this.entranceRoared) {
-      this.entranceRoared = true;
-      this.setAnim('rear', true);
-      this.ctx.audio.play('boss_roar', { position: this.position, pitch: 0.8 });
-      this.ctx.fx.ring(_w.set(this.position.x, this.floorY() + 0.1, this.position.z), 12, WARN, 1.0);
-      this.ctx.fx.shake(0.6, 1.0);
-    } else if (!this.entranceRoared) {
-      this.setAnim('tuck');
-    }
-    this.animate(dt);
+    this.modelOffset.set((f.center.x - this.position.x) * (1 - k), lift, (f.center.z - this.position.z) * (1 - k));
+    if (k >= 1 && !this.introRoared) {
+      this.introRoared = true;
+      this.act('rear', 1.2);
+      this.playSfx('boss_roar', 1, 0.8);
+      const floor = _v.set(this.position.x, this.hallFloor + 0.1, this.position.z);
+      this.ctx.fx.ring(floor, 12, QilinDef.Warn, 1);
+      this.ctx.fx.burst(_w.copy(floor).setY(floor.y + 0.3), QilinDef.Fire, 30, 7, 0.8, 0.35, 8);
+      this.ctx.fx.burst(_w, 0x4a3028, 20, 5, 0.9, 0.4, 4);
+      this.quake(0.6, 1);
+    } else if (!this.introRoared && k > 0) this.act('tuck', 0);
+    // 登场时间里 EnemyBase 不调 animate：这里补上
+    if (dt > 0 && this.age < this.spawnDuration) this.animate(dt);
   }
 
-  protected override onEntranceEnd(): void {
-    this.model.position.set(0, 0, 0);
-    this.setAnim('idle');
-    this.restLeft = 1.2;
+  protected override onIntroEnd(): void {
+    this.modelOffset.set(0, 0, 0);
+    this.fx?.eruption(0);
     this.spawnLocks();
-    // 名称横幅已由关卡导演在刷出时显示，这里只补一条弱点提示
-    this.ctx.ui.toast('火麒麟·玄鳞——角根的火珠是弱点；它饮熔时，打碎它身后外墙上的锁扣，让巨鼎砸它', '#ffb070');
+    this.tell('intro', '火麒麟·玄鳞——角根的火珠是弱点；它饮熔时，打碎它身后外墙上的锁扣，让巨鼎砸它');
+  }
+
+  /** 85% / 70% 饮熔线：正在出招（或硬直）就排队，空着就立刻出 */
+  protected override onMark(id: string): void {
+    if (id !== QilinDef.DrinkMarkA && id !== QilinDef.DrinkMarkB) return;
+    if (this.phase > 0 || !this.isXuan || this.transitioning || this.phaseFraction() <= QilinDef.TransformAt) return;
+    this.drinksQueued++;
+    if (!this.currentMove && !this.staggered && this.stunTime <= 0 && this.introDone) this.forceMove('drink');
+    else this.queueMove('drink');
+  }
+
+  /** 55%：链全断、锁扣移除、巨鼎坠池；记下跳池的起点、池心落点、换形后的上岸点 */
+  protected override onPhase(phase: number): void {
+    if (phase !== 1) return;
+    this.endCrack();
+    if (this.sipping) this.endSip();
+    this.pendingCorner = -1;
+    this.wastedPending = false;
+    this.fx?.clearPrints();
+    this.fx?.clearBlades();
+    this.crown?.release();
+    this.purgeLocks();
+    this.cauldron?.fall();
+    const f = this.furnace;
+    this.leapFrom.copy(this.position);
+    let ax = this.position.x - f.center.x, az = this.position.z - f.center.z;
+    let al = Math.hypot(ax, az);
+    if (al < 1e-2) { ax = 0; az = 1; al = 1; }
+    const inR = Math.min(3, f.poolRadius * 0.45);
+    this.diveAt.set(f.center.x + ax / al * inR, f.floorY, f.center.z + az / al * inR);
+    const pl = this.ctx.player.position;
+    let px = pl.x - f.center.x, pz = pl.z - f.center.z;
+    let plen = Math.hypot(px, pz);
+    if (plen < 1e-2) { px = -ax; pz = -az; plen = al; }
+    const landR = f.poolRadius + 4.5;
+    this.landAt.set(f.center.x + px / plen * landR, f.floorY, f.center.z + pz / plen * landR);
+    // 玩家正好站在上岸点上：往旁边让 40°
+    if (Math.hypot(pl.x - this.landAt.x, pl.z - this.landAt.z) < 4.5) {
+      const a = Math.atan2(px, pz) + 40 * DEG;
+      this.landAt.set(f.center.x + Math.sin(a) * landR, f.floorY, f.center.z + Math.cos(a) * landR);
+    }
+    this.diveWarped = this.landWarped = false;
+    this.transPrev = -1;
+  }
+
+  /**
+   * 化焚身：0.2–1.1 s 跃向池心、1.1–1.9 s 沉下去；熔岩柱 1.0 → 1.6 s 冲满、保持到 3.4 s、4.6 s 落下；2.2–3.6 s 从熔岩里冲出、3.6–4.6 s 跃回岸上。
+   * 模型走偏移；逻辑位置 1.1 s 扎进熔池时瞬移到池里、4.6 s 落地时瞬移到上岸点
+   */
+  protected override transitionTick(t: number, _dt: number): void {
+    const was = this.transPrev;
+    this.transPrev = t;
+    const crossed = (x: number) => was < x && t >= x;
+    const f = this.furnace;
+    const col = t < 1 ? 0 : t < 1.6 ? (t - 1) / 0.6 : t < 3.4 ? 1 : Math.max(0, 1 - (t - 3.4) / 1.2);
+    this.fx?.eruption(col);
+    if (t >= 1.1 && !this.diveWarped) {
+      this.diveWarped = true;
+      this.warpTo(this.diveAt);
+    }
+    if (t < 1.9) {
+      const k = easeInOut(span(t, 0.2, 1.1));
+      _v.lerpVectors(this.leapFrom, this.diveAt, k);
+      _v.y = this.hallFloor + Math.sin(Math.PI * k) * 7 - 9 * easeInOut(span(t, 1.1, 1.9));
+      this.modelOffset.subVectors(_v, this.position);
+      if (crossed(0.2)) this.act('tuck', 0.9);
+      if (crossed(1.1)) {
+        this.ctx.fx.burst(_w.set(f.center.x, f.floorY + 0.5, f.center.z), QilinDef.Fire, 50, 12, 1.2, 0.5, 8);
+        this.ctx.audio.play('explosion', { position: f.center, pitch: 0.5, volume: 1 });
+      }
+      return;
+    }
+    const rise = easeOutCubic(span(t, 2.2, 3.6)), hop = easeInOut(span(t, 3.6, 4.6));
+    if (hop >= 1) this.landWarp();
+    _a.copy(this.diveAt).setY(this.hallFloor - 9 + 13 * rise);
+    _v.lerpVectors(_a, this.landAt, hop);
+    _v.y = mix(_a.y, this.landAt.y, hop) + Math.sin(Math.PI * hop) * 3;
+    this.modelOffset.subVectors(_v, this.position);
+    if (crossed(2.4)) {
+      // 玄铁鳞片炸飞
+      _w.copy(_v).setY(_v.y + 2);
+      this.ctx.fx.burst(_w, QilinDef.ScaleDark, 60, 14, 1.4, 0.4, 14);
+      this.ctx.fx.burst(_w, QilinDef.Hot, 40, 10, 1, 0.35, 4);
+      this.quake(0.6, 0.8);
+    }
+    if (crossed(3.6)) this.act('leap', 1);
+    if (crossed(3.8)) this.playSfx('boss_roar', 1, 1.2);
+  }
+
+  private warpTo(p: THREE.Vector3): void {
+    this.position.set(p.x, this.hallFloor, p.z);
+    this.velocity.set(0, 0, 0);
+    this.flyTargetY = this.hallFloor;
+  }
+
+  private landWarp(): void {
+    if (this.landWarped) return;
+    this.landWarped = true;
+    this.warpTo(this.landAt);
+  }
+
+  protected override onTransitionEnd(phase: BossPhaseDef): void {
+    if (phase.form === QilinDef.BurnForm) this.landWarp();
+    this.modelOffset.set(0, 0, 0);
+    this.fx?.eruption(0);
+    if (!this.isBurn) return;
+    // 落在岸上之后踏云升空（第一招熔流轮转飞向池心上空）
+    this.skyTarget = SKY.Alt;
+    this.orbit = this.furnace.yawOf(this.position);
+    this.orbitTimer = this.ctx.rng.range(5, 9);
+  }
+
+  protected override onFormChanged(_prev: BossFormDef | null, next: BossFormDef): void {
+    if (next.id !== QilinDef.BurnForm) return;
+    this.useForm('burn');
+    this.displayName = '火麒麟 · 焚身';
+    this.ctx.ui.setBoss(this);
+    // 换形发生在转换演出这一帧的 transitionTick 之后：新模型立刻放到熔岩下面（池心），免得在上岸点闪一帧
+    if (this.transitioning) this.modelOffset.set(this.diveAt.x - this.position.x, this.hallFloor - 9 - this.position.y, this.diveAt.z - this.position.z);
+    // 玄铁鳞甲炸飞
+    this.armor = 0;
+    this.endCrack();
+    this.skyTarget = 0;
+    this.flood ??= new QilinFlood(this);
+    this.ctx.ui.toast('火麒麟化为焚身——它会在半空踏云奔跑；三次俯冲后落地喘息，胸口火心和角根火珠是弱点', '#ffb070');
+  }
+
+  /**
+   * 狂怒（15%）：焚身排上狂怒长啸。框架只有一个排队位，俯冲三踏之后排的喘息会把它挤掉——
+   * 这里记一笔，招式间隙里立刻出（排着的喘息留着，长啸之后接着出）
+   */
+  private rageDue = false;
+  protected override onEnrage(_reason: string): void {
+    if (this.isBurn) this.rageDue = true;
+  }
+
+  protected override passiveTick(_dt: number): void {
+    if (this.rageDue && !this.currentMove && this.isBurn && this.forceMove('burn_rage')) this.rageDue = false;
+  }
+
+  /** 招式间隙：玄鳞沿外环跑道小跑、绕到玩家那一侧；焚身在外环跑道上空绕殿弧线奔跑 */
+  protected override idleMove(dt: number): void {
+    const f = this.furnace;
+    if (this.isBurn) {
+      this.skyIdle(dt);
+      return;
+    }
+    const me = f.yawOf(this.position), pa = f.yawOf(this.ctx.player.position);
+    const rel = ((me - pa + 540) % 360) - 180;
+    const want = pa + 34.4 * (rel >= 0 ? 1 : -1);
+    const diff = ((want - me + 540) % 360) - 180;
+    const step = clamp(diff, -20, 20);
+    if (Math.abs(diff) > 8.6 || Math.abs(f.radiusOf(this.position) - f.trackRadius) > 1.5) {
+      this.moveTo(f.point(me + step, f.trackRadius, _v), this.qdef.speed, 0.8);
+      this.faceMovement(180 * DEG, dt);
+    } else {
+      this.stopMoving();
+      this.facePlayer(115 * DEG, dt);
+    }
+  }
+
+  private skyIdle(dt: number): void {
+    const f = this.furnace;
+    if (this.holdGround) {
+      this.skyTarget = 0;
+      this.hover();
+      this.facePlayer(90 * DEG, dt);
+      return;
+    }
+    this.skyTarget = SKY.Alt;
+    this.orbitTimer -= dt;
+    if (this.orbitTimer <= 0) {
+      this.orbitDir = -this.orbitDir;
+      this.orbitTimer = this.ctx.rng.range(5, 9);
+    }
+    this.orbit += this.orbitDir * 31.5 * dt;
+    this.flyTo(f.point(this.orbit, (f.bridgeOuter + f.wallRadius) * 0.5 - 1, _v), SKY.OrbitSpeed, 1);
+    if (this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z > 0.25) {
+      this.turnToward(Math.atan2(this.velocity.x, this.velocity.z), 172 * DEG, dt);
+    } else this.facePlayer(115 * DEG, dt);
+  }
+
+  // ───────────── 倒下 / 释放 ─────────────
+
+  protected override onDefeated(_result: DamageResult): void {
+    this.modelOffset.set(0, 0, 0);
+    this.endCrack();
+    if (this.sipping) this.endSip();
+    this.purgeLocks();
+    this.fx?.clearBlades();
+    this.fx?.eruption(0.5);
+    this.crown?.release();
+    this.endBeam();
+    this.flood?.stop();
+    this.heartBright = false;
+    // 倒下：硬直姿势只到瘫倒的晕眩段，躺着溃散
+    this.act('stun', this.qdef.defeat.seconds / STUN_LIE_UNTIL);
+    this.director?.abort('首领倒下');
+    this.defeatFx();
+  }
+
+  /** 倒下的特效：身上的熔浆一路往下滴，落地溅一圈熔浆，溃散那一下熔池最后喷一股，净火归瑞（淡金光点、暖白祥云从身上升起） */
+  private defeatFx(): void {
+    const ctx = this.ctx;
+    const secs = this.qdef.defeat.seconds;
+    const f = this.furnace;
+    new DefeatTimeline(ctx)
+      .during(secs * 0.9, () => {
+        if (Math.random() < 0.4) ctx.fx.burst(this.getBodyCenter(_v).add(_w.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5)), QilinDef.Fire, 3, 1, 0.8, 0.22, 9);
+      })
+      .at(0.6, () => {
+        _v.set(this.position.x, this.hallFloor + 0.3, this.position.z);
+        ctx.fx.burst(_v, QilinDef.Fire, 30, 7, 0.9, 0.35, 8);
+        ctx.fx.ring(_v, 4.2, QilinDef.Warn, 0.7);
+        this.quake(0.5, 0.4, 50);
+      })
+      .at(secs * 0.88, () => {
+        for (let i = 0; i < 5; i++) ctx.fx.burst(_v.set(f.center.x, f.floorY + 1.6 * i, f.center.z), QilinDef.Fire, 12, 3, 0.9, 0.35, 6);
+        ctx.fx.burst(_v.set(this.position.x, this.hallFloor + 0.3, this.position.z), QilinDef.Hot, 24, 6, 0.8, 0.3, 6);
+      })
+      .at(secs * 0.97, () => {
+        _v.set(this.position.x, this.hallFloor + 2.2, this.position.z);
+        ctx.fx.burst(_v, 0xffe6a8, 40, 3, 2.2, 0.25, -2.5);
+        ctx.fx.burst(_v, 0xfff4e0, 16, 1.5, 2.6, 0.9, -1.2);
+      });
+  }
+
+  protected override animateDeath(t: number): void {
+    // 腿一软瘫下去，余烬散去
+    this.anim = 'stun';
+    const dt = this.ctx.time.dt;
+    this.animateBody(dt);
+    const host = this.F.host;
+    host.rotation.z = -0.5 * easeInOut(span(t, 0.15, 0.6));
+    host.position.y = Math.min(host.position.y, 0);
+    if (t > 0.5) this.fx?.eruption(0);
+    this.setRoleOpacity('pearlHalo', 0.4 * Math.max(0, 1 - t));
+    this.setRoleOpacity('heartHalo', 0.4 * Math.max(0, 1 - t));
+    if (this.heartHalo) (this.heartHalo.material as THREE.MeshBasicMaterial).opacity = 0;
+    if (this.F.native?.glowShell) this.F.native.glowShell.opacity = 0.6 * Math.max(0, 1 - t);
+    if (t >= 0.82) this.model.scale.setScalar(Math.max(0.01, 1 - (t - 0.82) / 0.18));
+  }
+
+  protected override onReleased(): void {
+    this.flood?.dispose();
+    this.flood = null;
+    this.endBeam();
+    this.fx?.dispose();
+    this.fx = null;
+    this.cauldron?.release();
+    this.crown?.dispose();
+    this.crown = null;
+    this.purgeLocks();
+    this.director?.abort('首领释放');
+    for (const f of [this.xuan, this.burn]) {
+      if (!f) continue;
+      f.native?.dispose();
+      f.native = null;
+    }
+    if (devHook?.boss === this) devHook = null;
+  }
+
+  // ───────────── 动画 ─────────────
+
+  /** 招式动作（Unity 片段状态名）→ 程序化姿势 */
+  act(state: string, seconds: number): void {
+    if (!state) return;
+    this.lastAct = state;
+    this.setAnim(state === 'Locomotion' || state === 'Idle' ? 'idle' : state, true);
+    // 片段按时长拉伸，播完回到待机 / 奔跑（Unity PlayAct 之后 Animator 回 Locomotion）；时长 0 = 一直保持到下一个动作
+    this.animLeft = seconds > 0.05 ? seconds : Infinity;
+  }
+
+  private animLeft = Infinity;
+
+  override playAct(state: string, seconds: number): void {
+    this.act(state, seconds);
   }
 
   protected override animate(dt: number): void {
@@ -1525,23 +1235,50 @@ export class Qilin extends BossBase {
     const sp = Math.hypot(this.position.x - this.prevPos.x, this.position.z - this.prevPos.z) / Math.max(dt, 1e-4);
     this.prevPos.copy(this.position);
     this.moveSpeed = mix(this.moveSpeed, Math.min(sp, 40), 1 - Math.exp(-8 * dt));
+    if (this.anim !== 'idle' && this.alive && (this.animLeft -= dt) <= 0) this.setAnim('idle');
     this.animateBody(dt);
-    this.updateGlow();
+    // 登场 / 转换的模型偏移（世界）→ 根节点局部
+    _v.copy(this.modelOffset).add(this.introOffset);
+    const c = Math.cos(-this.facing), s = Math.sin(-this.facing);
+    this.model.position.set(_v.x * c + _v.z * s, _v.y, -_v.x * s + _v.z * c);
+    this.updateGlow(dt);
+    // 焚身在空中时蹄下冒火云
+    if (this.airborne) {
+      this.cloudAcc += dt;
+      if (this.cloudAcc >= 0.11) {
+        this.cloudAcc = 0;
+        for (let k = 0; k < 2; k++) {
+          const a = this.F.pts[HOOVES[(this.printSide++) & 3]];
+          if (!a) continue;
+          a.getWorldPosition(_v);
+          this.fx?.emit(_v, _w.set((Math.random() - 0.5) * 1.5, -0.5 + Math.random(), (Math.random() - 0.5) * 1.5), 0.55, 0.35 + Math.random() * 0.3,
+            Math.random() < 0.35 ? QilinDef.Hot : QilinDef.Fire, 2, 1.2);
+        }
+      }
+    }
   }
 
-  private updateGlow(): void {
+  private updateGlow(dt: number): void {
     const f = this.F;
+    // 火珠：平时微光；人立、被砸晕、鳞甲崩裂、喘息时大亮
+    const bright = this.staggered || this.crackLeft > 0 || this.heartBright || (this.currentMove?.id === 'scales' && this.currentMove.stage === 'windup');
+    this.pearlGlow += ((bright ? 1 : 0.35) - this.pearlGlow) * Math.min(1, dt * 4);
+    this.heartGlow += ((this.heartBright ? 1 : 0.3) - this.heartGlow) * Math.min(1, dt * 4);
     const pulse = 0.5 + 0.5 * Math.sin(this.age * 5);
     if (f.native?.glowShell) f.native.glowShell.opacity = (0.15 + 0.55 * this.pearlGlow) * (0.75 + 0.25 * pulse);
     this.setRoleOpacity('pearlHalo', (0.2 + 0.5 * this.pearlGlow) * (0.7 + 0.3 * pulse));
     this.setRoleOpacity('heartHalo', (0.15 + 0.7 * this.heartGlow) * (0.7 + 0.3 * pulse));
+    if (this.heartHalo) {
+      const g = this.heartGlow * (0.85 + 0.15 * Math.sin(this.age * 7));
+      this.heartHalo.visible = this.isBurn;
+      this.heartHalo.scale.setScalar((1.2 + 2.2 * g) / SCALE);
+      (this.heartHalo.material as THREE.MeshBasicMaterial).opacity = 0.2 + 0.5 * g;
+    }
   }
 
   /**
-   * 骨骼动画（creature_rigs/SK_Boss_Qilin*.json，角度不超过注册表 SK_Boss_Qilin.rom / SK_Boss_QilinBurn.rom）。
-   * 模型空间：X = 生物左侧，Y = 上，Z = 前；绕 +X 正转 = 前倾（腿向后摆、尾巴上翘、头往下）。
-   * 步态：真实马的横向跑步（左后 → 右后 → 左前 → 右前），慢时是对角快步；前腿腕关节在摆动相向后折，后腿跗关节向前折。
-   * 人立（张鳞）整只绕后蹄抬起；饮熔低头、前腿岔开；吐息张嘴、颈部跟着吐息方向；眩晕 / 喘息垂头。
+   * 骨骼动画（creature_rigs/SK_Boss_Qilin*.json，角度不超过注册表 SK_Boss_Qilin.rom / SK_Boss_QilinBurn.rom；网页原有的程序化姿势）。
+   * 模型空间：X = 生物左侧，Y = 上，Z = 前；绕 +X 正转 = 前倾。步态：横向跑步（左后 → 右后 → 左前 → 右前），慢时对角快步。
    */
   private animateBody(dt: number): void {
     const a = this.anim;
@@ -1556,7 +1293,8 @@ export class Qilin extends BossBase {
     else if (a === 'stomp') { stomp = 1; gait = 0; pitch = 0.08; lam = 12; }
     else if (a === 'roar') { rear = 0.35; jaw = 0.25; gait = Math.min(gait, 0.4); }
     else if (a === 'paw') { gait = 0; jaw = 0.1; }
-    if (this.form === 'burn' && this.alt > 1 && a !== 'stomp' && a !== 'tuck' && a !== 'breath') gait = Math.max(gait, 0.75);
+    const fly = this.airborne;
+    if (fly && a !== 'stomp' && a !== 'tuck' && a !== 'breath') gait = Math.max(gait, 0.75);
     const k = 1 - Math.exp(-lam * dt);
     this.pGait = mix(this.pGait, gait, 1 - Math.exp(-5 * dt));
     this.pRear = mix(this.pRear, rear, k);
@@ -1569,9 +1307,7 @@ export class Qilin extends BossBase {
     let dy = this.yawToPlayer() - this.facing;
     dy = Math.atan2(Math.sin(dy), Math.cos(dy));
     this.pLook = mix(this.pLook, clamp(dy, -1, 1), 1 - Math.exp(-4 * dt));
-    // 步频：跑步每步约 7 米（马鹿体型放大后），快步约 4 米
     const stride = this.pGait > 0.6 ? 7 : 4;
-    const fly = this.form === 'burn' && this.alt > 1;
     this.gaitPhase += dt * TAU * (fly ? 1.6 : Math.max(0.8, this.moveSpeed / stride)) * (this.pGait > 0.02 ? 1 : 0);
 
     const f = this.F;
@@ -1579,27 +1315,21 @@ export class Qilin extends BossBase {
     P.reset();
     const g = this.pGait, ph = this.gaitPhase;
     const gallop = g > 0.6 || fly;
-    // 每条腿的相位（跑步：横向跑步；快步：对角）
-    const off = gallop
-      ? { fL: 0.5, fR: 0.62, hL: 0, hR: 0.12 }
-      : { fL: 0, fR: 0.5, hL: 0.5, hR: 0 };
+    const off = gallop ? { fL: 0.5, fR: 0.62, hL: 0, hR: 0.12 } : { fL: 0, fR: 0.5, hL: 0.5, hR: 0 };
     for (const [side, s] of [['L', 1], ['R', -1]] as const) {
       const pf = ph + off[side === 'L' ? 'fL' : 'fR'] * TAU;
       const sf = Math.sin(pf), cf = Math.cos(pf);
-      // 前腿：伸出 −0.55 ↔ 收拢 +0.35；向前摆动时腕关节向后折
       P.rotate(`upperarm_${side}`, AX, g * (-0.1 - 0.45 * sf) - 0.6 * this.pRear - 0.25 * this.pDrink + 0.1 * this.pStun - 0.4 * this.pTuck - 0.5 * this.pStomp);
       P.rotate(`forearm_${side}`, AX, g * 0.4 * Math.max(0, cf) + 0.3 * this.pRear + 0.4 * this.pTuck - 0.2 * this.pStomp);
       P.rotate(`fcannon_${side}`, AX, g * 1.15 * Math.max(0, cf) + 1.35 * this.pRear + 1.4 * this.pTuck);
       P.rotate(`upperarm_${side}`, AZ, s * (0.1 * this.pRear + 0.12 * this.pDrink + 0.15 * this.pStun));
       const ph2 = ph + off[side === 'L' ? 'hL' : 'hR'] * TAU;
       const sh = Math.sin(ph2), chh = Math.cos(ph2);
-      // 后腿：蹬直向后 +0.45 ↔ 前摆 −0.55；向前摆动时跗关节向前折
       P.rotate(`thigh_${side}`, AX, g * (-0.05 + 0.5 * sh) + 0.35 * this.pRear - 0.6 * this.pTuck + 0.55 * this.pStomp);
       P.rotate(`shin_${side}`, AX, -g * 0.25 * Math.max(0, -chh) + 0.3 * this.pStomp);
       P.rotate(`hcannon_${side}`, AX, -g * 0.8 * Math.max(0, -chh) - 1.0 * this.pTuck);
       P.rotate(`thigh_${side}`, AZ, s * 0.12 * this.pStun);
     }
-    // 躯干：跑步时脊柱屈伸，颈部反向点头
     const flex = Math.sin(ph * 2) * 0.05 * g;
     P.rotate('spine', AX, flex);
     P.rotate('chest', AX, -flex * 0.6);
@@ -1613,7 +1343,6 @@ export class Qilin extends BossBase {
     P.rotate('neck_2', AY, 0.25 * look);
     P.rotate('head', AY, 0.1 * look);
     P.rotate('jaw', AX, Math.min(0.25, this.pJaw + (this.pStun > 0.5 ? 0.05 * Math.sin(this.age * 5) : 0)));
-    // 尾：跑步时上翘、平时慢摆
     P.rotate('tail_1', AX, 0.3 * g + 0.35 * this.pRear - 0.2 * this.pStun);
     P.rotate('tail_1', AY, 0.2 * Math.sin(this.age * 1.1));
     P.rotate('tail_2', AY, 0.25 * Math.sin(this.age * 1.1 - 0.6));
@@ -1625,56 +1354,62 @@ export class Qilin extends BossBase {
     const hind = f.table.hoofHL.at[2] * SCALE;
     const phi = -0.55 * this.pRear + this.pPitch;
     const bob = g * 0.22 * Math.abs(Math.sin(ph)) * (gallop ? 1 : 0.5);
-    host.rotation.set(phi, 0, this.form === 'burn' ? Math.sin(this.age * 0.9) * 0.03 * (fly ? 1 : 0) : 0);
-    // 抬头（phi < 0）绕后蹄转：宿主平移 p − Rx(phi)·p，p = 后蹄 (0, 0, hind)；低头的小角度绕原点
+    host.rotation.set(phi, 0, this.formVis === 'burn' ? Math.sin(this.age * 0.9) * 0.03 * (fly ? 1 : 0) : 0);
     const pz = phi < 0 ? hind : 0;
-    host.position.set(0, pz * Math.sin(phi) + bob + this.sinkY, pz * (1 - Math.cos(phi)));
-  }
-
-  // ───────────── 死亡 ─────────────
-
-  protected override onBossDeath(_result: DamageResult): void {
-    this.stopFlood();
-    this.fx?.clearBlades();
-    this.fx?.eruption(0.5);
-    this.purgeLocks();
-    this.ctx.ui.toast(this.form === 'xuan' ? '火麒麟倒下了——炉心的火熄了' : '焚身散成满地余烬——祝融炉心重归平静', '#ffb070');
-  }
-
-  protected override animateDeath(t: number): void {
-    // 腿一软侧倒，余烬散去
-    this.anim = 'stun';
-    const dt = this.ctx.time.dt;
-    this.alt = 0;
-    this.animateBody(dt);
-    const host = this.F.host;
-    host.rotation.z = -1.2 * easeInOut(span(t, 0.15, 0.6));
-    host.position.y = Math.min(host.position.y, 0);
-    if (t > 0.5) this.fx?.eruption(0);
-    this.setRoleOpacity('pearlHalo', 0.4 * Math.max(0, 1 - t));
-    this.setRoleOpacity('heartHalo', 0.4 * Math.max(0, 1 - t));
-    if (this.F.native?.glowShell) this.F.native.glowShell.opacity = 0.6 * Math.max(0, 1 - t);
-    if (t >= 0.82) this.model.scale.setScalar(Math.max(0.01, 1 - (t - 0.82) / 0.18));
-  }
-
-  protected override onBossDispose(): void {
-    this.stopFlood();
-    this.fx?.dispose();
-    this.fx = null;
-    this.cauldron?.dispose();
-    this.cauldron = null;
-    for (const f of [this.xuan, this.burn]) {
-      if (!f) continue;
-      f.native?.dispose();
-      f.native = null;
-    }
+    host.position.set(0, pz * Math.sin(phi) + bob, pz * (1 - Math.cos(phi)));
   }
 }
 
+const _hitW = { distance: 0, point: new THREE.Vector3(), normal: new THREE.Vector3(), box: null as never };
+
 /** 测试与检视用：当前形态、场地、锁扣、吊鼎（只读） */
 export function qilinDebug(b: Qilin): {
-  form: FormId; furnace: Furnace; cauldron: QilinCauldron | null; crackLeft: number; drinksDone: number; fx: QilinFx | null;
+  form: FormId; furnace: QilinFurnace; cauldron: QilinCauldron | null; crackLeft: number; drinksDone: number; fx: QilinFx | null;
 } {
-  const x = b as unknown as { form: FormId; furnace: Furnace; cauldron: QilinCauldron | null; crackLeft: number; drinksDone: number; fx: QilinFx | null };
-  return { form: x.form, furnace: x.furnace, cauldron: x.cauldron, crackLeft: x.crackLeft, drinksDone: x.drinksDone, fx: x.fx };
+  return { form: b.isBurn ? 'burn' : 'xuan', furnace: b.furnace, cauldron: b.cauldron, crackLeft: b.crackLeft, drinksDone: b.drinksQueued, fx: b.fx };
+}
+
+// ───────────────────────────── 开发钩子（?dev，只在开发服务器里） ─────────────────────────────
+
+interface DevHook {
+  boss: Qilin;
+}
+
+let devHook: DevHook | null = null;
+
+function devHookEnabled(): boolean {
+  return !!import.meta.env?.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('dev');
+}
+
+function installDevHook(boss: Qilin): void {
+  devHook = { boss };
+  (window as unknown as Record<string, unknown>).__qilin = {
+    get boss() { return boss; },
+    skipIntro: () => boss.director?.requestSkip(true) ?? false,
+    /** 把生命层打到某个比例（门槛照常起作用：每次只越一道线） */
+    setHealth: (fraction: number) => {
+      boss.armor = 0;
+      boss.hp = Math.max(1, boss.maxHp * fraction);
+    },
+    forceMove: (id: string) => boss.forceMove(id),
+    breakLock: (i: number) => {
+      const l = boss.locks[i];
+      if (l?.alive) l.onKilled({
+        request: { base: 9999, element: 'none', source: 'weapon', canCrit: false, procDepth: 0, tags: [] },
+        dealt: 9999, isCrit: false, killed: true, layer: 'health', shieldBroken: false, armorBroken: false, element: 'none', statusApplied: null,
+      });
+      return !!l;
+    },
+    state: () => ({
+      pos: boss.position.toArray().map(v => +v.toFixed(2)), cam: boss.ctx.camera.position.toArray().map(v => +v.toFixed(2)),
+      phase: boss.phase, form: boss.formId, introDone: boss.introDone, transitioning: boss.transitioning, move: boss.currentMove?.id ?? null,
+      stage: boss.currentMove?.stage ?? null, hp: boss.hp, maxHp: boss.maxHp, armor: boss.armor, maxArmor: boss.maxArmor, crack: +boss.crackLeft.toFixed(2),
+      sipping: boss.sipping, drinkQ: boss.drinkQuadrant, drinks: [boss.drinksQueued, boss.drinksStarted, boss.drinksFinished], hits: boss.cauldronHits,
+      locks: boss.locks.map(l => !!l?.alive), cauldron: boss.cauldron?.state ?? null, cauldronArt: boss.cauldron?.hasArt ?? false,
+      flood: boss.flood ? { q: boss.flood.floodingQuadrant, warn: boss.flood.warningQuadrant, active: boss.flood.active } : null,
+      alt: +boss.altitude.toFixed(2), sky: boss.skyTarget, enraged: boss.enraged, act: boss.lastAct, furnaceFound: boss.furnace.found,
+      director: boss.director ? { stage: boss.director.stage, shot: boss.director.shotName, t: boss.director.t, released: boss.director.released } : null,
+      color: hexColor(boss.qdef.color),
+    }),
+  };
 }
