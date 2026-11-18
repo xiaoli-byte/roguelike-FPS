@@ -80,7 +80,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M2 | 数据桥：导出器改 Newtonsoft 整份序列化（✅ 2026-11-16，`defs.json` schema 2：武器的 `spreadTuned` / `projectile` / `blade` / `innate`、首领 `tiers` / `phases` / `forms` / `hitZones`、敌人 `ai` / `role` / `rank` / `element` 都在，枚举写名字）。Unity 已冻结，不做运行时覆盖：一次性把 TS 定义表对齐 `defs.json`，再加对照测试锁住；持枪手感 / 词条 / 灵宠表随各自的期补导 | 0.1k | ✅ 2026-11-18（92c14dfc）：英雄 3 / 敌人 40 / 武器 18 行逐字段对齐（129 列，映射与约定见 4.3），`node scripts/web/defs-parity.mjs` 出差异报告，`tests/unity-defs-parity.test.mjs` 锁住（例外 4 条，各带原因）。改到 Unity 值的：散布（`spreadTs` × 0.4 / 6 把 `spreadTuned`，运行时读有效值）、霰弹锥角 0.075 → 0.06、赤蛟霰铳每粒 11 → 10、左轮 / 雷蛊音量 1.0 / 0.5、雷蛊 `rollAfter`、四只敌人的弱点半径、蜃景伤害 0、鼯的被动说明；敌人补 Unity 新列；第四章名册改成显式表（穷奇 423 + 名册精英、雷牦注册、尺寸 / 掉落 / 颜色照 Unity）。首领不在这份对照里（M6）；持枪手感 / 词条 / 灵宠表随各自的期补导 |
 | M3 | 局流程：RunPlan / RunRoute / RunRng / RunState / EconomyConfig，图池洗牌 | 0.9k + 0.3k | ✅ 2026-11-16（3679d15f）：`src/progression/` 的 RunRng（具名流）、StagePlan（16 关 + 图池 + ready 判定 + 试玩终点）、RunRoute、Economy、RewardScale；生涯第一局 / 调试局不排路线；Unity 的 RunRoute / RunPlan 对照测试原样迁成 `tests/unity-run-route.test.mjs`。没迁：经济投影（依赖 BalanceModel）、续玩存档 |
 | M4 | 遭遇与导演：EncounterSite v2、LevelLayout、CombatDirector、MonsterEntry、RewardScale | 4.4k | 🔶 导演 / 入场点 / 布局变体 / 奖励倍率的运行时 ✅（89668cb3，`src/world/CombatDirector.ts`、`LevelLayout.ts`，对照测试 `tests/unity-combat-director.test.mjs`）。待办：导出器写 `entries` / `layout` / 各项 `scenePath`（格式见 4.2）；入场方式的专属声光与跃下 / 飞临动作、驻守点伏击、EncounterSite v2 其余部分 |
-| M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ⬜ |
+| M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ✅ 2026-11-18（a1d71b84、b4d5e683、92dcc729），对照清单见 4.4：新增受击四层（`enemies/HitReaction.ts`）、迅捷龙卷（`EliteTornado.ts`）、出场位移（`SpawnEntrance.ts`，导演刷群接上）、词缀接管；照 Unity 改了出生 0.7 s 不可选中、击退推力 / 上抛、前摇 1/√攻速（35 处按最小比例）、名额回收死者、词缀取词过排除表、5 个敌人常量；沙魇照 SandWraithAI 重写（原来跑的是跳鼠刀兵的名册）；第四章经 `PlateauFoeAdapter` 接主框架（伤害倍率、全局名额、精英体型 / 金环 / 词缀、元素眩晕、减速、击退、脱战）。对照测试 `tests/enemy-framework.test.mjs`（常量读 C# 源码比）。待办：坠落回收照 Unity（等导航补高度）、EliteStrike / 金环纹样 / 词缀演出 / 变体着色（M11）、嘲讽（M9）、PerchPoint 导出 |
 | M6 | 首领框架 + 登场镜头 + 旱魃 + 魔将 v2 + 鲲鹏 / 麒麟数值阶段 + 三领主 | ~20k | 🔶 首领框架（`src/enemies/bosses/framework/`：BossDef 定档 / 阶段表、BossBrain、BossMove、破防条、召唤上限、领主梯度、倒下演出、时间缩放仲裁、关卡钩子）、登场演出导演（`bosses/intro/`）、旱魃全套 ✅ 2026-11-17（87cd9188…fed45ef1；对照测试 `tests/hanba-boss.test.mjs`、`tests/boss-intro.test.mjs`；实机脚本 `scripts/hanba/fight-shots.mjs`）。1-4 走进泉床正常触发（c33c5467）。火麒麟 / 鲲鹏 ✅ 2026-11-18（0c0168ff…07ebf638：火麒麟定档 28000 + 2400 护甲、85 / 70 / 55% 刻度、狂怒长啸 / 熔流轮转 / 鳞冠；鲲鹏定档 16000 + 4800 护盾、75 / 50 / 25% 鲲怒 / 化鹏 / 鹏狂怒；对照测试 `tests/qilin-boss.test.mjs`、`tests/kunpeng-boss.test.mjs`；实机脚本 `scripts/kunpeng/fight-shots.mjs`、火麒麟同目录）。魔将 v2 ✅ 2026-11-18（0d97befe…b288e282：九招、高台砸落登场、狂怒换挡、零星陨石，`WarlordPoser.ts` 按 Blender 姿势表在网页现场烘焙 v006 骨架的手 K 片段，释放帧等片段事件；对照测试 `tests/warlord-boss.test.mjs` 42 条；实机脚本 `scripts/warlord/fight-shots.mjs`）。2-4 / 3-3 走关卡正常触发：Unity 首领场（`boss:`）照 `BossEncounter.PlayerInArena` 不看视线；3-3 的矩形首领场半径盖到高台出生点。待办：三领主；邪飞天的和弦护盾 / 赐福；首领特效（旱魃日火贴花 / 水幕沙幕，鲲鹏浪墙 / 扶摇柱 / 水冠，火麒麟火浪，魔将火尾 / 火舌体积、`T_Boss_Warlord_E` 发光遮罩、登场转场风）随 M11b；鲲鹏 / 火麒麟换动画片段与首领顿帧随 M12；魔将熔铜渠涨落随 M7 |
 | M7 | 地图机关：熔岩 v2、流沙 / 地表 / 边界 / 可破坏 / 断桥 / 风场、天气、各图专属脚本 | ~10k | ⬜ |
 | M8 | 玩家与战斗增量：战斗契约（灵宠伤害源、弱点倍率、命中区）、状态（寒意 / 引燃 / 日灼，带电随第四章）、弹体（弱点判定、护罩、落地滚动）、镜头手感 / 卡帧 / 安全落点 / 移动特效、武器（散布手调、冲刺禁射、喷火锥、磁轨光束）、技能（施法姿势、特效换风格） | ~12k | ⬜ |
@@ -133,9 +133,71 @@ Unity 侧是 `defs.json`（Newtonsoft：公有字段 + 计算属性，枚举写�
 
 - **通用**：数值容差 1e-6（Unity 是 float32）；枚举名 → TS 小写字面量（`ReloadStyle.Magazine` → `'mag'`，`Element.None` → `'none'`）；`Color [r, g, b, a]` ↔ `0xRRGGBB`，每通道差 ≤ 1/255（Unity 有些颜色手写成两位小数）；TS 可选字段的缺省 = Unity C# 字段初值（`staggerSeconds` 0.6、`scale` 1、其余 0 / false / `'none'` / `[]`）。
 - **武器**：角度一律半角弧度、射速发 / 秒（点射轮 / 秒、光束跳 / 秒），两边相同不换算。散布：`spreadTs` = TS 原值，有效值 = `spreadTuned ?? spreadTs × spreadScale(0.4)`（恢复速度不缩），`def()` 照 Unity 的 `spreadHip…` 计算属性算好，`WeaponSystem` 只读有效值。`recoil.*` / `kick.*` / `falloff [start, end, mult] | null` ↔ 摊平的 `recoilPitch…` / `kickBack…` / `falloffStart…`（null = 999 / 1000 / 1）。`viewHip` / `viewAim` = `WeaponDef.View(x, y, z)` = TS `viewOffset` / `aimOffset` 的 z 取反。计算属性 `IsHitscan` / `IsExplosive` / `IsBlade` / `HitsPerShot` / `ComboCycleTime` ↔ 同名帮助函数；`RARITY_DAMAGE` / `MAX_LEVEL` / `LEVEL_DAMAGE` 对 `WeaponDefs.cs` 的常量。不对照：`prefab`（原作模型名）、握点 `rightHand…`（M10）、`subElement / subChance`（全表 None / 0，副元素走 `innate`）。
-- **敌人**：尺寸是设计尺寸，两边生成时都 × `scale`（精英再 × 1.25）。`WeakHeight`（计算属性）↔ `headY ?? height × 0.85`，`weakRadius` ↔ `headRadius ?? radius × 0.55`。新列：`rank`（`'elite'` = 名册即精英，`EnemyManager.spawn` 总按精英生成）、`affixExclusions`（`rollAffix` 读，原 `Affixes.EXCLUDE` 表撤掉）、`charger`（`CombatDirector` 读）；`placement` / `groundOnly`（待 M4）、`role` / `weakBone` / `hitboxes` / `poise` / `staggerSeconds` / `hitch`（待 M5）、`element`（待 M11b）只是数据，类型上注明。第四章：名册在 `enemies/plateau/index.ts` 的 `PLATEAU_ENEMY_DEFS`，行为仍由 `FOE_SPECS` 驱动，测试另查两边的韧性 / 速度 / 体型 / 生命同值（穷奇按精英折算：423 × 2.6 ≈ 1100、1 × 1.25）。不对照：`prefab`、`ai`、`GlowColor`。
+- **敌人**：尺寸是设计尺寸，两边生成时都 × `scale`（精英再 × 1.25）。`WeakHeight`（计算属性）↔ `headY ?? height × 0.85`，`weakRadius` ↔ `headRadius ?? radius × 0.55`。新列：`rank`（`'elite'` = 名册即精英，`EnemyManager.spawn` 总按精英生成）、`affixExclusions`（`rollAffix` 读，原 `Affixes.EXCLUDE` 表撤掉）、`charger`（`CombatDirector` 读）；`placement` / `groundOnly`（待 M4）、`role` / `weakBone` / `hitboxes`（命中区结构没迁，见 4.4）、`element`（待 M11b）只是数据，类型上注明；`poise` / `staggerSeconds` / `hitch` 由 `StandardEnemy` 的受击四层读（M5）。第四章：名册在 `enemies/plateau/index.ts` 的 `PLATEAU_ENEMY_DEFS`，行为仍由 `FOE_SPECS` 驱动，测试另查两边的韧性 / 速度 / 体型 / 生命同值（穷奇按精英折算：423 × 2.6 ≈ 1100、1 × 1.25）。不对照：`prefab`、`ai`、`GlowColor`。
 - **英雄**：`maxHp` / `maxShield` / `moveSpeed` ↔ `base` 同名键（没写取 `BASE_STATS`）；`baseStats [(Stat, v)]` ↔ `base` 其余键；`role` / `difficulty` / `tags` / `tip` ↔ `ui/labels.ts` 的 `HERO_META`；被动名 / 说明 ↔ `passive`（模板串代入常量后比较）。不对照：`armR / armL`（M10）、`unlockCost`（D8 全为 0）。
 - **例外**（`EXCEPTIONS`，测试要求每条仍是真差异）：步枪 `viewAim`（Unity 换了 Gunfire 1001 原作模型的提把机瞄，网页仍是自家模型 + 红点）；蚀蛊灯弹体外观 `lantern`（网页还没有这种外观，随 M11b）；祸斗、炮仗傀儡的 `WeakHeight`（Unity 只给占位体用的弱点高，网页 `headY` 是头心 / 视线 / 胶囊上沿，弱点由逐骨命中球给出）。
+
+### 4.4 M5 敌人行为对照（Unity → 网页，2026-11-18）
+
+对照方法：框架逐文件读 C#（`G/Enemies/` 根目录、`Affixes/`、`Combat/EnemyStatus.cs` 与 `Combat/Status/*`、`Encounters/MonsterEntry.cs` 与 `SpawnModes/`）；逐怪先用脚本把 Unity 各 AI 的 `const` 按名字（CamelCase → UPPER_SNAKE）和网页同名常量比，再抽查没配上名字的（网页写成区间数组 / 对象字段，如铸匠的 `POUR` / `FLING`、傩的 `SPIT`）。框架常量、沙魇常量、第四章招式表由 `tests/enemy-framework.test.mjs` **直接读 C# 源码**比，改了一边另一边就红。逐招的状态机分支没有逐行比，等 M13 把 Unity 的 FrostEnemyTests / InfernoEnemyTests 迁成 node 测试时再锁。
+
+记号：✅ 一致 · 🔧 本期照 Unity 改了 · ➕ 本期新增 · ⬜ 还缺（写明归哪期）。
+
+**框架**
+
+| 机制（Unity） | 网页（M5 后） | 结论 |
+|---|---|---|
+| 出手名额 `AttackTokens`：近战 4+章 / 远程 2+章 / 重击 1→2，同类间隔 0.12 / 0.32 / 0.7 s，持有者续期、远程 + 重击合计上限、时钟回退复位 | `enemies/AttackTokens.ts` | ✅ |
+| 同上：持有者死亡 / 销毁后下一次申请顺手回收（`Prune`） | `attackDirector.setLiveness`（EnemyManager 注入） | 🔧 |
+| 精英词缀取词 `EliteAffixes.Resolve`：写死的词缀也要过排除表；全被排除不给词缀 | `EnemyManager.spawn`、`rollAffix` 返回 null | 🔧 |
+| 词缀随机流：本局具名流 `elite-affix` | `ctx.rng` | ⬜ 小差异，接 RunRng 具名流时一起换 |
+| 迅捷：移速 / 攻速 ×1.5 | 同 | ✅ |
+| 迅捷：定期蓄风挥出前行龙卷——首次 4.5–6.5 s、之后 7.5–10.5 s；4–24 m、高差 ≤ 4 m、看得见、拿到重击名额；蓄风 0.85 s（脚下长条预警）；20 m / 8 m/s / 扫掠半径 1.35 / 高 5.8 / 18 × 伤害倍率，只结算一次，打中掀起（前 3.5 / 侧 2.2 / 上 6.2）；撞墙散开；眩晕 / 死亡打断并还名额；收招 0.22 s | `enemies/EliteTornado.ts` + `Affixes.SwiftAffix` | ➕（外观是程序化风环；Unity 的三阶手绘风带、章节主题随 M11b） |
+| 词缀招式接管 `AffixAttackBusy`：基础 AI 停手 | `StandardEnemy.affixAttackBusy`（第四章 `Foe.held`） | ➕ |
+| 坚盾：额外护盾 = 最大生命 60%，脱战 4 s 后每秒回 22% | 同 | ✅；破盾崩甲片、回满六角格合拢 ⬜ M11b |
+| 爆裂：死后 1 s、4.5 m、26 × 倍率（按死亡那一刻）、边缘 50%、清场不炸 | 同 | ✅；引信演出（星纹收缩、白热闪）⬜ M11b |
+| 狂暴：生命 ≤ 40% 一次，伤害 ×1.2 / 攻速 ×1.6 / 移速 ×1.35 | 同 | ✅；心跳脉动、头顶火舌 ⬜ M11b |
+| 精英金环 `EliteAura`（墨底鎏金带 + 词缀纹样，飞行精英投到地面） | 单道金环 | ⬜ M11b |
+| 精英出手分量层 `EliteStrike`（蓄力压扁 / 后仰、释放帧拉长 + 局部顿帧、金光） | 无 | ⬜ M11b / M12（要各 AI 在前摇 / 出手处打点） |
+| 受击四层 `HitReaction` + `Poise`：韧性 2 秒窗口（每秒回落一半）、弱点 ×2、爆炸 / 反应 ×3、持续伤害 0；破了硬直（打断招式，霸体除外）；轻怪每枪顿一下；反制 / 破防的眩晕期间受伤 ×1.25 | `enemies/HitReaction.ts` + `StandardEnemy.hitStagger / hitStun / hitch` | ➕ 前三章韧性都是 0，不进；第四章 Foe 自带同口径，适配层按 HitReaction 给倍率 |
+| 出生 0.7 s 不可选中 | `StandardEnemy.untargetable` | 🔧（原来出生中就能打） |
+| 前摇缩短 `Windup(time, minFraction) = time × max(minFraction, 1/√攻速)` | `windup`（秒下限版）曲线改 1/√攻速；Unity 写最小比例字面量的 35 处换成 `windupFrac` | 🔧（原来 1/(1 + 0.45(攻速 − 1))、下限按秒；镇墓兽踩地 0.4 s → 0.5 比例） |
+| 击退 `Knockback`：水平冲量 × (1 − 抗性) 叠到推力（上限 9 m/s）、按 8/s 衰减推开；> 2 m/s 失控 0.25 × (1 − 抗性) s。上抛 `LaunchUp`：重力 26，带上没推完的推力，< 0.5 m/s 不掀 | `StandardEnemy.knockback / launchUp`；技能冲击波（`skills/common.ts`）、铁牛推挤改成分开调 | 🔧（原来整个冲量加到速度上、竖直也算，推得远）；飞行照旧 = Unity `AirKnockback` |
+| 坠落回收：相对最后站过的导航点 12 m（被掀飞 40 m）、离网 2.5 s 拉回、找不到网格静默处决 | 低于 `arena.floorY − 12` 且脚下没地面 → 拉回场地中心 | ⬜ 网页导航 `isWalkable` 只有 XZ，多层图上判离网不可靠；等 UnityNavMesh 补「最近点 + 高度」再接 |
+| 嘲讽 / 灵体诱饵（灵宠讙） | 无 | ⬜ M9 |
+| 加成 `EnemyBuffs`（多通道：同通道取最强、不同通道相乘） | `SupportBuffs.BuffRegistry`（邪飞天）+ 狐巫 / 傩 / 铸匠各自一张 | ✅ 数值相同（光环 1.35 / 1.35 / 1.2 / 0.75，赐福 1.6 / 1.5 / 1.15 / 0.5、10 s），结构不同 |
+| 状态 `EnemyStatus`：灼烧 4 s × 3 层 / 雷殛 3 s、弹射 8 m × 3、叠 3 层眩晕 0.8 s / 蚀化 5 s、承伤 ×1.2、移速 ×0.8 / 眩晕（精英 ×0.75，首领 ×0.35 且 ≤ 0.35 s、之后免疫 6.1 s）/ 减速 4 条取最强 | `combat/Status.ts` | ✅（Unity 本来就是照它移的）；寒意 / 引燃 / 日灼挂在玩家身上，M8 |
+| 群协调 `PackCoordinator`（群门限、凑人、起哄、攀爬连线） | 各怪内部（冻鲛人群刺门限、雪狌狌 `frost/PackMotion`） | ✅ 行为一致；运行时攀爬连线（NavMeshLink）网页没有，狌狌走自己的攀爬 |
+| 栖点 `PerchPoint`（关卡标记 + 兜底射线 + 认领） | 三青鸟 / 毕方扫碰撞盒顶面 | ⬜ 导出器没导 PerchPoint 标记（4.1 待办） |
+| 命中区 `HitZone`（多段区、朝向门、部位计数） | 各怪自己的 `raycastHit` / `guardFactor` / `armourFactor` | ✅ 数值逐怪相同（M2 的弱点半径），结构不同 |
+| 材质变体 `EnemyVariant`（沙化、日火裂纹、边缘光） | 沙魇只把反照率拉向焦沙色 | ⬜ M11a（StylizedLit 的 Variant 段） |
+| 出生显形 `SpawnMaterialize` | `fx.spawnEffect` + 模型缩放长出 | ⬜ M11b |
+| 入场点刷群：`MonsterEntry` 的 mode / spread / flyersOnly、各方式的预告时长 | `world/CombatDirector.ts`（M4） | ✅ |
+| 入场动作 `SpawnEntrance`：跃下（墙头露头 0.6 s + 抛物线 0.75 s、落地一震）、飞临（12 m/s、1.2–3 s、弧高 0.12 × 距离 ≤ 6 m，终点在落点上方 2 m）、熔岩爬出（1.2 s，上岸前不可选中）；落地后站稳 0.7 s | `enemies/SpawnEntrance.ts` + `StandardEnemy.beginEntrance`，`CombatDirector.enterSpawn` 接上 | ➕；门缝光 / 熔岩鼓泡 / 炭堆的预告声光（`SpawnCues`）⬜ M4 |
+
+**前三章逐怪 + 沙魇**（Unity `const` ↔ 网页同名常量）
+
+| | 结果 |
+|---|---|
+| 第一章 | 跳鼠刀兵 13 项、火浣鼠 17 项（翻滚转速 126°/s = 2.2 rad/s）、邪飞天 9 项一致；🔧 蝎尾弓手沉沙深 1.25 → 1.8、蜃楼蟾腾空速 2.3 → 2.8、镇墓兽冲锋预警半宽 0.75 → 0.9（转速 80°/s = 1.4 rad/s 一致） |
+| 沙魇 | 网页本来就有（`types/SandWraith.ts`），🔧 照 `SandWraithAI` 重写：18 个常量进对照测试；伏击点 = 玩家 0.35 s 后的预判位往回 0.6 m；沙下隐藏模型；出生 0.7 s 从沙里升起；破沙按「水平 ≤ 半径 + 0.35 m、高差 ≤ 2.2 m」判定，打中才掀；被打断钻回地面并重排冷却（0.8–1.4 s、潜沙至少 2–3.5 s）；冷却中按 Unity `KeepRange` 在 2.4–5 m 绕圈；前摇按 `Windup(0.35, 0.24)` / `Windup(0.6, 0.45)`。**原来构造时漏传名册，跑起来用的是跳鼠刀兵的 42 生命 / 7 移速 / 体型 1.3**，改成自己的 55 / 5.6 / 1.4。模型借跳鼠刀兵（同 Unity：`prefab = SK_Enemy_JerboaBlade`，`public/assets` 里没有独立的沙魇 GLB），沙化 + 日火裂纹的着色器皮 ⬜ M11a |
+| 第二章 | 11 种同名常量 3–34 项全部一致 |
+| 第三章 | 🔧 火鼍重规划 0.5 → 0.25 s、上岸前等待 8 → 5 s；其余 9 种一致 |
+
+**第四章（`AI/Plateau/*`）**
+
+Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`PlateauKit` 注释：「照抄 foes.ts 的 defineMoves」）：8 个资产 22 招的前摇 / 出手 / 收招 / 冷却 / 闪光 / 无判定 / 时间点逐项一致（测试锁住）；伤害抽查一致（啸獭 6、电网 4、天狗 9 / 带电 14、獓狠挑角 16 / 踩踏 24 / 砸地 20、举父 18 / 12、蛮蛮 7 / 10、连鼓灵 10 / 8、帝江 22 / 10、穷奇 16 / 10 / 22；踩踏判定半径 2.0 × 体型 + 0.6、预警宽 3.2 × max(0.8, 体型)）。所以行为留在 Foe 类里（Foe 就是规格本身，改写成 `StandardEnemy` 子类只换结构），本期把它们接到和其他章同样的 EnemyBase / Registry / 定义表路径（`enemies/plateau/PlateauFoeAdapter.ts`）：
+
+- 🔧 打玩家 × 伤害倍率（Unity `Strike`：dmg × DamageMult，等级 / 精英 / 狂暴都算），原来不乘；落雷按施法者算
+- 🔧 出手拿群内令牌之外再拿全局名额（Unity `TakeToken`：扑咬 / 挑角 = 近战、远投 / 电弹 / 雷吠 = 远程），原来只看群内
+- 🔧 出招冷却与招式时间轴 × 出手速度（Unity `cooldown −= dt × auraAttackRate`、`Move.speed = max(1, auraAttackRate)`）
+- ➕ 精英体型 ×1.25（穷奇名册即精英，规格已折算）、脚下金环、四种词缀（`AffixHost`：迅捷龙卷接管时 Foe 停手；坚盾的护盾层先吃伤害，只有扣到生命的部分交给 Foe）
+- 🔧 元素眩晕（雷殛叠满）→ Foe 停摆（原来 stunTime 没人递减、也没传给 Foe）；元素眩晕不加 +25%，只有反制 / 破防打出来的加（同 Unity `HitStun`）
+- 🔧 减速按实际倍率（原来一律 ×0.6）；地面单位吃击退推力（原来整个忽略）；韧性按 HitReaction 口径（持续伤害 0、爆炸 / 反应 ×3）
+- 🔧 脱战：玩家离领地 90 m 外且离它 60 m 外（不在出招、穷奇除外）回到未警觉状态——主游戏里原来根本不脱战（`r + 80 m` 的规则只在试玩页 `play/game.ts`）；未警觉时一直每秒回 30% 血（原来只在走回家的路上回）
+- ⬜ 带电噼啪、四种死法、布娃娃、静电护盾泡的表现（M11b / M12）；飞行精英（蛮蛮、连鼓灵）的金环不投到地面；Unity 未警觉时 3–6 s 在 3 m 内踱一步、离家 6 m 才走回（网页 1.5 m 就走回）
+
+**验证**：`tests/enemy-framework.test.mjs`（17 项）；实机冒烟（1-1，`window.__ctx.enemies.spawn`，每批 10–14 s，假无敌只记伤害，零报错）：前三章 27 种 + 沙魇（普通 / 狂暴精英）都会走、多数 10 s 内出手；第四章 12 只全部警觉追击，啸獭 / 獓狠 / 雷牦 / 蛮蛮 / 连鼓灵 / 帝江 / 穷奇出手；迅捷精英的龙卷放出来（跳鼠刀兵 1 道、啸獭 2 道、獓狠 2 道）；跃下露头时不可选中、落地离落点 ≤ 0.15 m；飞临 1.8 s 落到终点；击退 8 m/s 推开 1.07 m（理论 1.07）；上抛 6 m/s 最高 0.64 m（理论 0.69）；啸獭吃元素眩晕停摆、醒来恢复；举父·坚盾挨 50 只扣护盾、Foe 生命不动。
 
 ## 5. Unity 能力 → 网页对照
 
@@ -185,3 +247,4 @@ Unity 侧是 `defs.json`（Newtonsoft：公有字段 + 计算属性，枚举写�
 2. **地形 splat 贴图（已修，2026-11-16）**：libwebp 无损编码默认把 alpha = 0 处的 RGB 清零，而 splat 的 A 通道存第 4 层权重，前 3 层权重在没有第 4 层的地方全丢了（1-1 有 98% 的像素权重和 < 0.5）。`webp_textures.py` 改为 `exact=True`，64 张 splat 解码后与 Unity 导出逐像素一致。
 3. **旧的美术资产测试（23 个失败）**：nature-scene、gunfire-assets、setdressing-assets、native-hero-grip、authored-scene-layout、travel-deck、handling、cargo-hoist、articulation、architecture-scene、whitebox-flow 里按「三级 LOD + Draco」旧契约写的检查（missing LOD1、pose_geometry_audit 读不到网格、熊 / 隼 / 狐的 Tripo 契约）。发布的模型 2026-10-25 起只有一级 LOD，测试要按现行契约改写。
 4. 主线 14 关里没有 4-2、4-4（Unity 里第四章本来就只建了 4-1、4-3）。
+5. `tests/frost-tanks.test.mjs` 的「玄龟旋壳最多反弹两次」偶发失败（约 1/15：1.0 s 时还在缩壳没进旋转，出生 / 路径计时里有 `Math.random()`），M5 之前的基线一样，不是新回归。
