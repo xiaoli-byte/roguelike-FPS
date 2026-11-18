@@ -27,6 +27,7 @@ import { FxSystem } from '../fx/Fx';
 import { AudioSystem } from '../audio/AudioSystem';
 import { UIManager } from '../ui/UI';
 import { PerformanceMeter } from '../dev/PerformanceMeter';
+import { PostStack } from '../render/PostStack';
 
 function placeholderRun(): RunState {
   const stage: StageNode = { chapter: 0, index: 0, type: 'combat', reward: 'none', theme: 'desert' };
@@ -54,6 +55,8 @@ export class Game implements IGame {
   private fpsFrames = 0;
   fps = 0;
   private inspectionView: (() => THREE.Camera | null) | null = null;
+  /** 后处理栈（Unity 场景、画质中 / 高时接管渲染；src/render/PostStack.ts） */
+  private readonly post: PostStack;
 
   /** Separate inspection camera; the real player's camera and controls stay intact. */
   setInspectionView(view: (() => THREE.Camera | null) | null): void { this.inspectionView = view; }
@@ -120,6 +123,8 @@ export class Game implements IGame {
         enemies: this.ctx.enemies.aliveCount(),
       })) : null;
     const c = this.ctx as unknown as Record<string, unknown>;
+    // 先于各系统建：它的 stage:loaded 监听要排在特效 / 弹体的着色器预热之前（先切渲染状态，预热编的才是后处理用的变体）
+    this.post = new PostStack(this.ctx);
 
     c.meta = new MetaProgress(this.ctx);
     c.runPlan = new RunPlanner(this.ctx);
@@ -242,9 +247,11 @@ export class Game implements IGame {
   private render(): void {
     const { renderer, scene, camera, viewScene, viewCamera } = this.ctx;
     const inspectionCamera = this.inspectionView?.() ?? null;
+    const viewmodel = !inspectionCamera && (this._state === 'playing' || this._state === 'paused' || this._state === 'modal' || this._state === 'transition');
+    if (this.post.render(inspectionCamera ?? camera, viewmodel)) return;
     renderer.clear();
     renderer.render(scene, inspectionCamera ?? camera);
-    if (!inspectionCamera && (this._state === 'playing' || this._state === 'paused' || this._state === 'modal' || this._state === 'transition')) {
+    if (viewmodel) {
       renderer.clearDepth();
       renderer.render(viewScene, viewCamera);
     }
