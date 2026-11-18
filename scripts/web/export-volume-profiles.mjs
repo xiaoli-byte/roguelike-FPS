@@ -255,7 +255,8 @@ const doc = { schema: 1, generator: 'scripts/web/export-volume-profiles.mjs', pi
 const text = `${JSON.stringify(doc, null, 1)}\n`;
 for (const w of [...new Set(warnings)]) console.warn(`[volumes] ${w}`);
 if (check) {
-  const current = existsSync(OUT) ? readFileSync(OUT, 'utf8') : '';
+  // 工作区可能被 autocrlf 换成 CRLF：比内容不比换行
+  const current = existsSync(OUT) ? readFileSync(OUT, 'utf8').replace(/\r\n/g, '\n') : '';
   if (current !== text) {
     console.error(`[volumes] ${relative(ROOT, OUT)} 不是由当前 Unity 资产生成的：重跑 node scripts/web/export-volume-profiles.mjs`);
     process.exit(1);
