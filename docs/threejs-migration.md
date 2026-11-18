@@ -77,7 +77,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 |---|---|---|---|
 | M0 | 删除 Unreal | — | ✅ 2026-11-15 |
 | M1 | 场景：14 张主线图的几何、碰撞、导航、环境、遭遇锚点、平台、水、机关进网页；发布瘦身；法线修正 | 导出器 1.1k | 🔶 见 4.1 |
-| M2 | 数据桥：导出器改 Newtonsoft 整份序列化（✅ 2026-11-16，`defs.json` schema 2：武器的 `spreadTuned` / `projectile` / `blade` / `innate`、首领 `tiers` / `phases` / `forms` / `hitZones`、敌人 `ai` / `role` / `rank` / `element` 都在，枚举写名字）。Unity 已冻结，不做运行时覆盖：一次性把 TS 定义表对齐 `defs.json`，再加对照测试锁住；持枪手感 / 词条 / 灵宠表随各自的期补导 | 0.1k | 🔶 |
+| M2 | 数据桥：导出器改 Newtonsoft 整份序列化（✅ 2026-11-16，`defs.json` schema 2：武器的 `spreadTuned` / `projectile` / `blade` / `innate`、首领 `tiers` / `phases` / `forms` / `hitZones`、敌人 `ai` / `role` / `rank` / `element` 都在，枚举写名字）。Unity 已冻结，不做运行时覆盖：一次性把 TS 定义表对齐 `defs.json`，再加对照测试锁住；持枪手感 / 词条 / 灵宠表随各自的期补导 | 0.1k | ✅ 2026-11-18（92c14dfc）：英雄 3 / 敌人 40 / 武器 18 行逐字段对齐（129 列，映射与约定见 4.3），`node scripts/web/defs-parity.mjs` 出差异报告，`tests/unity-defs-parity.test.mjs` 锁住（例外 4 条，各带原因）。改到 Unity 值的：散布（`spreadTs` × 0.4 / 6 把 `spreadTuned`，运行时读有效值）、霰弹锥角 0.075 → 0.06、赤蛟霰铳每粒 11 → 10、左轮 / 雷蛊音量 1.0 / 0.5、雷蛊 `rollAfter`、四只敌人的弱点半径、蜃景伤害 0、鼯的被动说明；敌人补 Unity 新列；第四章名册改成显式表（穷奇 423 + 名册精英、雷牦注册、尺寸 / 掉落 / 颜色照 Unity）。首领不在这份对照里（M6）；持枪手感 / 词条 / 灵宠表随各自的期补导 |
 | M3 | 局流程：RunPlan / RunRoute / RunRng / RunState / EconomyConfig，图池洗牌 | 0.9k + 0.3k | ✅ 2026-11-16（3679d15f）：`src/progression/` 的 RunRng（具名流）、StagePlan（16 关 + 图池 + ready 判定 + 试玩终点）、RunRoute、Economy、RewardScale；生涯第一局 / 调试局不排路线；Unity 的 RunRoute / RunPlan 对照测试原样迁成 `tests/unity-run-route.test.mjs`。没迁：经济投影（依赖 BalanceModel）、续玩存档 |
 | M4 | 遭遇与导演：EncounterSite v2、LevelLayout、CombatDirector、MonsterEntry、RewardScale | 4.4k | 🔶 导演 / 入场点 / 布局变体 / 奖励倍率的运行时 ✅（89668cb3，`src/world/CombatDirector.ts`、`LevelLayout.ts`，对照测试 `tests/unity-combat-director.test.mjs`）。待办：导出器写 `entries` / `layout` / 各项 `scenePath`（格式见 4.2）；入场方式的专属声光与跃下 / 飞临动作、驻守点伏击、EncounterSite v2 其余部分 |
 | M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ⬜ |
@@ -126,6 +126,16 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 - 导出时被任何走法引用、但在保存的场景里停用的物体会临时激活后再导（场景不保存）；`?variant=<id>` 指定走法。
 - 发布时贴图按内容哈希命名（`t_<sha1>.webp`），重导时没变的贴图和网格逐字节不变。
 - 渲染观感（M11a）还要：材质 `_ORMMap`、`_ADDITIVE` / `_EMISSION` 关键字，地形材质参数（现在写死在 `TERRAIN_STYLES`）。
+
+### 4.3 M2 字段映射（`scripts/web/defs-parity.mjs`）
+
+Unity 侧是 `defs.json`（Newtonsoft：公有字段 + 计算属性，枚举写名字，Vector / Color 写数组，+∞ 写 `"Infinity"`）。网页侧：`WeaponDefs.ts` 只 import 类型，整份去类型后直接 import；英雄 / 敌人所在文件 import 了 three 和模型，只求值文件里顶格的 `const` 初始化式（相对 import 递归求值，其余给占位）——**定义表必须写成字面量**，不能在函数里拼。映射写在脚本的 `WEAPON_FIELDS` / `ENEMY_FIELDS` / `HERO_FIELDS`，测试和报告共用。
+
+- **通用**：数值容差 1e-6（Unity 是 float32）；枚举名 → TS 小写字面量（`ReloadStyle.Magazine` → `'mag'`，`Element.None` → `'none'`）；`Color [r, g, b, a]` ↔ `0xRRGGBB`，每通道差 ≤ 1/255（Unity 有些颜色手写成两位小数）；TS 可选字段的缺省 = Unity C# 字段初值（`staggerSeconds` 0.6、`scale` 1、其余 0 / false / `'none'` / `[]`）。
+- **武器**：角度一律半角弧度、射速发 / 秒（点射轮 / 秒、光束跳 / 秒），两边相同不换算。散布：`spreadTs` = TS 原值，有效值 = `spreadTuned ?? spreadTs × spreadScale(0.4)`（恢复速度不缩），`def()` 照 Unity 的 `spreadHip…` 计算属性算好，`WeaponSystem` 只读有效值。`recoil.*` / `kick.*` / `falloff [start, end, mult] | null` ↔ 摊平的 `recoilPitch…` / `kickBack…` / `falloffStart…`（null = 999 / 1000 / 1）。`viewHip` / `viewAim` = `WeaponDef.View(x, y, z)` = TS `viewOffset` / `aimOffset` 的 z 取反。计算属性 `IsHitscan` / `IsExplosive` / `IsBlade` / `HitsPerShot` / `ComboCycleTime` ↔ 同名帮助函数；`RARITY_DAMAGE` / `MAX_LEVEL` / `LEVEL_DAMAGE` 对 `WeaponDefs.cs` 的常量。不对照：`prefab`（原作模型名）、握点 `rightHand…`（M10）、`subElement / subChance`（全表 None / 0，副元素走 `innate`）。
+- **敌人**：尺寸是设计尺寸，两边生成时都 × `scale`（精英再 × 1.25）。`WeakHeight`（计算属性）↔ `headY ?? height × 0.85`，`weakRadius` ↔ `headRadius ?? radius × 0.55`。新列：`rank`（`'elite'` = 名册即精英，`EnemyManager.spawn` 总按精英生成）、`affixExclusions`（`rollAffix` 读，原 `Affixes.EXCLUDE` 表撤掉）、`charger`（`CombatDirector` 读）；`placement` / `groundOnly`（待 M4）、`role` / `weakBone` / `hitboxes` / `poise` / `staggerSeconds` / `hitch`（待 M5）、`element`（待 M11b）只是数据，类型上注明。第四章：名册在 `enemies/plateau/index.ts` 的 `PLATEAU_ENEMY_DEFS`，行为仍由 `FOE_SPECS` 驱动，测试另查两边的韧性 / 速度 / 体型 / 生命同值（穷奇按精英折算：423 × 2.6 ≈ 1100、1 × 1.25）。不对照：`prefab`、`ai`、`GlowColor`。
+- **英雄**：`maxHp` / `maxShield` / `moveSpeed` ↔ `base` 同名键（没写取 `BASE_STATS`）；`baseStats [(Stat, v)]` ↔ `base` 其余键；`role` / `difficulty` / `tags` / `tip` ↔ `ui/labels.ts` 的 `HERO_META`；被动名 / 说明 ↔ `passive`（模板串代入常量后比较）。不对照：`armR / armL`（M10）、`unlockCost`（D8 全为 0）。
+- **例外**（`EXCEPTIONS`，测试要求每条仍是真差异）：步枪 `viewAim`（Unity 换了 Gunfire 1001 原作模型的提把机瞄，网页仍是自家模型 + 红点）；蚀蛊灯弹体外观 `lantern`（网页还没有这种外观，随 M11b）；祸斗、炮仗傀儡的 `WeakHeight`（Unity 只给占位体用的弱点高，网页 `headY` 是头心 / 视线 / 胶囊上沿，弱点由逐骨命中球给出）。
 
 ## 5. Unity 能力 → 网页对照
 
