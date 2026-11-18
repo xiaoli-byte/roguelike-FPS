@@ -17,11 +17,12 @@ mkdirSync(OUT, { recursive: true });
 const W = 1536, H = 864;
 // 机位（README 第 1 节）：yaw / pitch 是度（yaw = −方位角，北 = 0、顺时针），fov 是竖直视角
 const VIEWS = {
-  '4-2': { entry: 'src/dev/gorgeLab.ts', page: 'lab', file: '4-2_gorge', yaw: -40, pitch: -10, fov: 45, pos: [-160, 100] },
+  '4-2': { entry: 'src/dev/gorgeLab.ts', page: 'lab', file: '4-2_gorge', yaw: -40, pitch: -10, fov: 72, pos: [-160, 100] },
+  '4-2b': { entry: 'src/dev/gorgeLab.ts', page: 'lab', file: '4-2_gorge_bridge', yaw: -48, pitch: 4, fov: 72, pos: [-62, 98] },
   '4-4': { entry: 'src/dev/haiziLab.ts', page: 'lab', file: '4-4_haizi', yaw: -15, pitch: 3, fov: 50, pos: null },
   '4-A': { entry: 'docs/art/concepts/ch4-631/tools/fortress_blockout.ts', page: 'bare', file: '4-A_fortress', yaw: -52, pitch: 5, fov: 36, pos: [-150, 130] },
 };
-const wanted = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(VIEWS);
+const wanted = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(VIEWS);   // 4-2b = 西桥头机位（铁索桥）
 
 // rolldown 原生库包缺 package.json 时（node_modules 装坏过）直接指过去
 const bindingDir = join(root, 'node_modules/@rolldown');
@@ -43,11 +44,11 @@ const GORGE = {
     ['guard', 'G', 'G1 吊桥东头', 186, -118], ['guard', 'G', 'G2 伸臂桥西头', -230, -157], ['guard', 'G', 'G3 栈道岩龛', 28.6, -13.3, 31.5], ['guard', 'G', 'G4 回头弯', -60, 138],
     ['entry', 'E', 'E1 岩洞', -236, 52], ['entry', 'E', 'E2 寨后林线', -178, -40], ['entry', 'E', 'E3 伸臂桥北头', -240, -205], ['entry', 'E', 'E4 江嘴北脊', 10, -196],
     ['entry', 'E', 'E5 吊桥东山道', 214, -112], ['entry', 'E', 'E6 古驿道外', 218, 2], ['entry', 'E', 'E7 江嘴尖（飞临）', -4, -30], ['entry', 'E', 'E8 东岸水边', 40, 190],
-    ['poi', '', '西桥头雷桩', -44, 78], ['poi', '', '东桥头雷桩', 40, 54],
+    ['poi', '', '西桥头雷桩', -38, 84], ['poi', '', '东桥头雷桩', 46, 42], ['poi', '', '西桥楼', -45, 76], ['poi', '', '东桥楼', 41, 49],
   ],
   // 路：trail id（地形上的骡道）或显式点（x, z, y）
   routes: [
-    ['main', ['trail:w1', 'trail:w2', [[-40, 74, 19.5], [-2, 61.5, 17.1], [36, 51, 19.5]], 'trail:e2', 'trail:e3']],
+    ['main', ['trail:w1', 'trail:w2', [[-36, 72.8, 20.5], [-2, 61.5, 18.1], [33, 51.9, 20.5]], 'trail:e2', 'trail:e3']],
     ['alt', ['trail:w3']],
     ['alt', ['trail:w4', [[-150, -52, 40], [-116, -76.5, 26], [-82, -101, 17]], 'trail:n1']],
     ['alt', ['trail:n3', [[156, -170, 35], [171, -144, 31.8], [186, -118, 35]], 'trail:e4r']],
@@ -82,6 +83,7 @@ function pageScript(cfg, yaw, pitch, fov, pos) {
     (G.sim ?? G.simulate)(0.3, 1 / 30, false);
     G.walker.yaw = ${yaw}; G.walker.pitch = ${pitch};
     (G.sim ?? G.simulate)(1 / 30, 1 / 30, false);
+    if (G.flight) G.flight.fov = ${fov};   // 4-2 检视页每帧把相机视角重置成 flight.fov（默认 72°），截图前页面会再画一帧
     G.renderer.setPixelRatio(1); G.renderer.setSize(${W}, ${H}, false);
     G.camera.aspect = ${W} / ${H}; G.camera.fov = ${fov}; G.camera.updateProjectionMatrix();
     G.renderer.render(G.scene, G.camera);
@@ -140,7 +142,7 @@ async function shoot(id) {
       let r;
       if (v.page === 'lab') {
         await b.waitFor('(window.gorge ?? window.haizi) !== undefined', 180000);
-        r = await b.eval(pageScript(id === '4-2' ? GORGE : HAIZI, deg(v.yaw), deg(v.pitch), v.fov, v.pos));
+        r = await b.eval(pageScript(v.entry.includes('gorge') ? GORGE : HAIZI, deg(v.yaw), deg(v.pitch), v.fov, v.pos));
       } else {
         await b.waitFor('window.fortress !== undefined', 120000);
         const [px, pz] = v.pos, yaw = v.yaw, pitch = v.pitch, fov = v.fov;

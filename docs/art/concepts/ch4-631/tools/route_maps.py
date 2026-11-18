@@ -143,8 +143,11 @@ ROUTES = [(WHITE, 0, "主路线（推荐走法）"), (GOLD, 14, "支线 / 另一
 
 OVERLAYS = {
     "4-2_gorge": dict(src="4-2_gorge_scene_v5.jpg", view="4-2.json", title="4-2 大渡河 · 铁索桥峡谷",
-                      sub="机位：出生台前沿 (−160, 100)，朝北偏东 40°、俯 10°、竖直视角 45° · 白模 = src/world/gorge 检视页",
-                      legend_at=(0.73, 0.70)),
+                      sub="机位：出生台前沿 (−160, 100)，朝北偏东 40°、俯 10°、竖直视角 72° · 白模 = src/world/gorge 检视页",
+                      legend_at=(0.012, 0.70)),
+    "4-2_gorge_bridge": dict(src="4-2_gorge_bridge_scene_v3.jpg", view="4-2b.json", title="4-2 大渡河 · 西桥头（铁索桥）",
+                             sub="机位：西桥头南侧 (−62, 98)，朝北偏东 48°、仰 4°、竖直视角 72° · 白模 = src/world/gorge 检视页 · 标注以白模为准（重绘把远处东桥楼画高了约 8%）",
+                             legend_at=(0.79, 0.08)),
     "4-4_haizi": dict(src="4-4_haizi_scene_v5.jpg", view="4-4.json", title="4-4 神山海子 · 雷泽雷神",
                       sub="机位 = 出生点 (−18, 67.6)，面朝湖心岛（北偏东 15°）、仰 3°、竖直视角 50° · 白模 = src/world/haizi 检视页",
                       legend_at=(0.74, 0.70),
