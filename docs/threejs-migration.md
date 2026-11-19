@@ -82,7 +82,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M4 | 遭遇与导演：EncounterSite v2、LevelLayout、CombatDirector、MonsterEntry、RewardScale | 4.4k | 🔶 导演 / 入场点 / 布局变体 / 奖励倍率的运行时 ✅（89668cb3，`src/world/CombatDirector.ts`、`LevelLayout.ts`，对照测试 `tests/unity-combat-director.test.mjs`）。待办：导出器写 `entries` / `layout` / 各项 `scenePath`（格式见 4.2）；入场方式的专属声光与跃下 / 飞临动作、驻守点伏击、EncounterSite v2 其余部分 |
 | M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ✅ 2026-11-18（a1d71b84、b4d5e683、92dcc729），对照清单见 4.4：新增受击四层（`enemies/HitReaction.ts`）、迅捷龙卷（`EliteTornado.ts`）、出场位移（`SpawnEntrance.ts`，导演刷群接上）、词缀接管；照 Unity 改了出生 0.7 s 不可选中、击退推力 / 上抛、前摇 1/√攻速（35 处按最小比例）、名额回收死者、词缀取词过排除表、5 个敌人常量；沙魇照 SandWraithAI 重写（原来跑的是跳鼠刀兵的名册）；第四章经 `PlateauFoeAdapter` 接主框架（伤害倍率、全局名额、精英体型 / 金环 / 词缀、元素眩晕、减速、击退、脱战）。对照测试 `tests/enemy-framework.test.mjs`（常量读 C# 源码比）。待办：坠落回收照 Unity（等导航补高度）、EliteStrike / 金环纹样 / 词缀演出 / 变体着色（M11）、嘲讽（M9）、PerchPoint 导出 |
 | M6 | 首领框架 + 登场镜头 + 旱魃 + 魔将 v2 + 鲲鹏 / 麒麟数值阶段 + 三领主 | ~20k | 🔶 首领框架（`src/enemies/bosses/framework/`：BossDef 定档 / 阶段表、BossBrain、BossMove、破防条、召唤上限、领主梯度、倒下演出、时间缩放仲裁、关卡钩子）、登场演出导演（`bosses/intro/`）、旱魃全套 ✅ 2026-11-17（87cd9188…fed45ef1；对照测试 `tests/hanba-boss.test.mjs`、`tests/boss-intro.test.mjs`；实机脚本 `scripts/hanba/fight-shots.mjs`）。1-4 走进泉床正常触发（c33c5467）。火麒麟 / 鲲鹏 ✅ 2026-11-18（0c0168ff…07ebf638：火麒麟定档 28000 + 2400 护甲、85 / 70 / 55% 刻度、狂怒长啸 / 熔流轮转 / 鳞冠；鲲鹏定档 16000 + 4800 护盾、75 / 50 / 25% 鲲怒 / 化鹏 / 鹏狂怒；对照测试 `tests/qilin-boss.test.mjs`、`tests/kunpeng-boss.test.mjs`；实机脚本 `scripts/kunpeng/fight-shots.mjs`、火麒麟同目录）。魔将 v2 ✅ 2026-11-18（0d97befe…b288e282：九招、高台砸落登场、狂怒换挡、零星陨石，`WarlordPoser.ts` 按 Blender 姿势表在网页现场烘焙 v006 骨架的手 K 片段，释放帧等片段事件；对照测试 `tests/warlord-boss.test.mjs` 42 条；实机脚本 `scripts/warlord/fight-shots.mjs`）。2-4 / 3-3 走关卡正常触发：Unity 首领场（`boss:`）照 `BossEncounter.PlayerInArena` 不看视线；3-3 的矩形首领场半径盖到高台出生点。4-1 三领主进首领框架 + 据点模式 ✅ 2026-11-19（113789d6、f85f8715）：`src/enemies/bosses/lords/`——领主底座（LordDef 4-1 难度 3.4 定档、tempo 0.9 / 0.75 × 领主梯度；LordBrain 片段按设计时长拉伸、片段事件出手、顿帧只顿首领、招式驱动位移、弱点开关、死亡演出交给登场导演播；LordMove）；飞廉七招 + 擂台风 + 风雷珠珠碎 + 龙卷风柱（柱身可点火）+ 风涡柱；化蛇六招 + 圣湖游线 / 涨水面 / 泡水 / 漩涡 / 湿身雷殛；夔八招（不依赖雷暴的部分）+ 残鼓（导出位置错 112 m，挪回出生点）+ 召鼓，落雷 / 导体回劈 / 高原雷暴经 `lords/KuiStorm.ts` 的 `bindKuiStorm` 等 M7 接；框架补破防条条件填充（BreakBarDef.fillWhen）。据点模式：`scripts/web/export-level-objectives.mjs` 从场景 YAML 导出 `objectives.json`（灵火坛 / LevelObjective / BossEncounter / ZheduoLevel 门槛圆），`src/world/objectives/`（SpiritAltar、LevelObjectives）——领主战不是终点战，倒下 6.3 s 后结算并点亮本据点灵火，6 座里点亮任意 3 座才清关开出口（4-3 同样 5 选 3）。对照测试 `tests/lord-bosses.test.mjs`（照 LordTests.cs）；实机脚本 `scripts/lords/fight-shots.mjs`。待办：夔的落雷 / 经幡杆带电与回劈 / 高原雷暴 / 召鼓充电（M7 合进来后 bindKuiStorm）；二阶段起带电（Charge.Hold，M8）；化蛇湿身灼烧减半（M8 状态）；飞廉的风接全局 WindField、顺风逆风步速（M7）；镜像片段 sidestepL / wheelR 与夔的 sink 没导出（退回 sidestep / wheel / kneel）；目标栏文字（界面）；邪飞天的和弦护盾 / 赐福；首领特效（旱魃日火贴花 / 水幕沙幕，鲲鹏浪墙 / 扶摇柱 / 水冠，火麒麟火浪，魔将火尾 / 火舌体积、`T_Boss_Warlord_E` 发光遮罩、登场转场风）随 M11b；鲲鹏 / 火麒麟换动画片段与首领顿帧随 M12；魔将熔铜渠涨落随 M7 |
-| M7 | 地图机关：熔岩 v2、流沙 / 地表 / 边界 / 可破坏 / 断桥 / 风场、天气、各图专属脚本 | ~10k | ⬜ |
+| M7 | 地图机关：熔岩 v2、流沙 / 地表 / 边界 / 可破坏 / 断桥 / 风场、天气、各图专属脚本 | ~10k | 🔶 2026-11-19：导出（`scripts/web/export-mechanisms.mjs` 直接解析场景 YAML → `mechanisms.json` + 软边界距离场）、运行时（`src/world/mechanisms/`，UnitySceneView 搭好后建）、对照测试 `tests/unity-mechanisms.test.mjs`、实机脚本 `scripts/web/mechanism-shots.mjs` ✅；清单、差异与待办见 4.5 |
 | M8 | 玩家与战斗增量：战斗契约（灵宠伤害源、弱点倍率、命中区）、状态（寒意 / 引燃 / 日灼，带电随第四章）、弹体（弱点判定、护罩、落地滚动）、镜头手感 / 卡帧 / 安全落点 / 移动特效、武器（散布手调、冲刺禁射、喷火锥、磁轨光束）、技能（施法姿势、特效换风格） | ~12k | ⬜ |
 | M9 | 灵宠（全新） | 4.1k | ⬜ |
 | M10 | 第一人称持枪手感 + 碎刃表现 | 5.8k | ⬜ |
@@ -199,6 +199,39 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 
 **验证**：`tests/enemy-framework.test.mjs`（17 项）；实机冒烟（1-1，`window.__ctx.enemies.spawn`，每批 10–14 s，假无敌只记伤害，零报错）：前三章 27 种 + 沙魇（普通 / 狂暴精英）都会走、多数 10 s 内出手；第四章 12 只全部警觉追击，啸獭 / 獓狠 / 雷牦 / 蛮蛮 / 连鼓灵 / 帝江 / 穷奇出手；迅捷精英的龙卷放出来（跳鼠刀兵 1 道、啸獭 2 道、獓狠 2 道）；跃下露头时不可选中、落地离落点 ≤ 0.15 m；飞临 1.8 s 落到终点；击退 8 m/s 推开 1.07 m（理论 1.07）；上抛 6 m/s 最高 0.64 m（理论 0.69）；啸獭吃元素眩晕停摆、醒来恢复；举父·坚盾挨 50 只扣护盾、Foe 生命不动。
 
+### 4.5 M7 地图机关清单（2026-11-19）
+
+**数据**：`node scripts/web/export-mechanisms.mjs`（`--check` 只核对）不开 Unity，直接读场景 YAML：按 `m_Script` 的 guid 对上 `G/**/*.cs.meta` 认组件，读序列化字段；Transform 链（`m_Father`）乘出世界矩阵，预制体实例（stripped Transform）按 `m_Modifications` + 预制体根节点补齐；`scenePath` 同 `WebSceneExporter.ScenePath`（同名兄弟 `#序号`，根物体按 `SceneRoots`）；停用的物体 / 组件不导（LevelLayout 引用的照导出器临时激活）。坐标：点 x 取反、四元数 (x, −y, −z, w)、yaw = −Unity eulerAngles.y（这样 `LavaBody.ToLocal` 的公式在网页里原样成立）、本地向量镜像（流向 x 取反、转轴 (x, −y, −z)）、XZ 方向（风向、风暴来向）x 取反。软边界距离场（`Boundary_*_SDF.asset`，RFloat，按 `unity/.gitignore` 不入库）找不到时到主检出取，原样写 `public/assets/unity-levels/boundary/<关卡>.f32`（Unity 坐标，网页按 −x 采样）。
+**选源场景**：发布的场景文档（2026-11-16 / 17 导出）是 Unity 编辑器从**主检出磁盘上**的场景导出的，其中 2-1 / 2-2 / 2-3 / 3-3 带着 11-08 没提交的改动（3-3 桥下熔岩比提交版挪了 11 m）。导出脚本把提交版和主检出的场景都读一遍，按「渲染件位置对上发布文档」选源，`mechanisms.json` 里每关记 `source` / `sceneSha1`。
+
+**运行时**：`src/world/mechanisms/MechanismSystem.ts` 由 `UnitySceneView` 在渲染件、碰撞体就绪后按本关数据建（检视页的 ctx 没有玩家时不建；出错只是这张图没有机关）。渲染件按 `userData.scenePath` 找、碰撞盒按场景文档的包围盒对上 `ctx.world.boxes`，一组渲染件绕导出的枢轴动（`Parts.ts`）。调试：`?debug` 时 `window.__mechanisms`（`describe()`、`stormBegin()`、`sandstorm()`、`channels.flood(秒)`、`sluices[i].release(true)`…）。
+
+| Unity 组件 | 场景实例 | 网页 | 说明 / 差异 |
+|---|---|---|---|
+| LavaVolume + LavaBody / LavaField / LavaFieldQuery（熔岩 v2） | 3-1 ×1、3-2 ×4、3-3 ×49、3-4 ×16、3-A ×1 | 照译 `LavaCore.ts` / `Lava.ts` | 判定体几何、涨落（自动 / 脚本 RiseTo）、踩入（着地 / 贴地扫掠 / 掉进熔岩井）→ SafeGround 下沉托回、击退 0.6 s 内烧死 / 自己走进去拉回、点光与火星、只给 XZ 的查询（地面探测 = `world.groundHeight`）。3-2 ① 铸槽的熔岩面场景里是空 MeshFilter（Awake 才建），运行时按 BuildMesh 现建。**没做**：导航 Lava 区代价 / 涨潮挖洞（网页导航网格没有区域代价和动态挖洞，地面敌人靠「拉回」兜底）、推下台沿（要 NavMesh 网格边查询）、掉落物吸向玩家 |
+| SafeGround（玩家，机关用到的部分） | — | 照译 `SafeGround.ts` | 安全点环（0.2 s、8 个、1.5 m）、危险区登记、Sink / Recover。坠落出界仍由 PlayerController 管：Unity 图的出界高度改成 min(−60, 导航最低点 − 40)（原来是出生点 − 25：3-2 / 3-4 的井底比出生点低 30 m 以上，走下去就被拉回出生点） |
+| LavaGeyser 间歇熔泉 | 3-2 ×4、3-4 ×4、3-A ×3 | 照译 `LavaFeatures.ts` | 节奏、预警圈、熔柱缩放、玩家扣血 + 掀起、敌人扣血 + 推、岩壳累计伤害引爆。敌人的 LaunchUp 网页没有：给带竖直分量的击退 + 记击退；壳缝发光件（cracks）这几张图本来就是空的 |
+| LavaSluice 熔流闸 | 3-3 ×2（射断吊钩）、3-4 ×1（拉闸） | 照译 | 折线切段、熔流头推进、每段 RiseTo、烧槽里的地面敌人、退、冷却 / 次数、浇包倾倒、拉杆；预警长条是贴地半透明条带（`Telegraph.ts`） |
+| Quicksand 流沙 | 1-2 ×3 | 照译 `Ground.ts` | 拉力（走 `world.moveBody`）、减速、芯里锁跳（jumpVelocity 归零）、下沉度被吞、敌人拖拽减速；流沙面是贴地圆片 + 自写漩涡着色器（近似 Spiritfire/Water 的漩涡模式） |
+| SurfaceZone 冰面 / 冻地 | 2-1 ×5、2-3 ×20、2-4 ×12 | 照译 | 预设、Box / Disc 判定、取最滑的。网页 PlayerController 没有 MotorFrame 的地面加速 / 刹车倍率：每帧把玩家这一帧的速度变化只保留 accel（加速）/ friction（减速）那一份；敌人同法按 enemyAccel，急转按概率滑倒（眩晕 0.6 s） |
+| SafeZone + SupplyCamp | 1-3、1-4、2-4、3-4 | 照译 | 每 0.1 s 把进圈的非首领挪到圈外导航点、进营提示。导航不挖洞；商店仍由 StageDirector 开 |
+| BoundaryZone 软边界 | 16 张（2-4 没有） | 照译 `Boundary.ts` | 距离场采样 / 梯度、起风推回（4 + 18 × 风力）、白化、兜底环外托回、起风线外不记安全点、敌人拴绳（BoundaryTether 落点） |
+| WeatherDirector + WeatherProfiles | 17 张（区域风暴：1-1 驼队营地沙暴、2-A 冰川白毛风、3-1 / 3-A 火山落灰） | 照译 `Weather.ts` | 7 种预设、区域风暴周期、白化、雾 / 主光 / 每种天气一层后处理（PostStack `postEffects.addLayer`）/ 植被风（`uSflWindDir`）/ 跟相机的粒子 / 远幕 / 沙墙、锁定距离（LockOnRange，敌人 AI 读随 M5）。雾按网页空气透视层的基础值换算（晴天原样）；**风声没做**（src/audio 不在本期） |
+| WindField | 运行时（飞廉） | 照译 `Wind.ts` | 吸引点、覆盖、推玩家、步速倍率；没有调用方（三领主随 M6） |
+| PlateauStorm + LightningStrike + Conductor | 4-1 导体 ×41；雷暴运行时（夔 / 大鹗） | 照译 `Storm.ts` | 票（入场条件 / 渐入渐出 / 回调）、落雷（导体引雷、预警圈 + 雷标、伤玩家衰减到 0.6）、压暗主光 / 环境光（含风格化材质的三色环境）/ 雾、后处理、雨丝。领主还没接：雷暴没有来源，调试 `__mechanisms.stormBegin()`；落点敌人「带电」先挂雷殛（Charge 随 M8） |
+| Destructible 可破坏物 | 3-1 ×5、3-2 ×2、3-3 ×6（含两个熔流闸吊钩） | 照译 `Breakables.ts` | 伤害类型位掩码（accepts / weakTo）：子弹 = 射击、拿碎刃 = 近战、玩家方 `combat.explode` 包一层 = 爆炸 + 元素；碎了撤碰撞盒、藏外观、掉落、火药罐、通知 targets。残骸（rubble）在场景里是停用的、没导出；导航不挖洞 |
+| BreakableSpan 断桥 | 3-2 ×2（北链桥 Signal、南链桥常设） | 照译 | 抖、塌（碰撞盒当帧撤）、翻滚下落（.NET Random 同种子）、整座断的连锁；桥上的敌人给向上击退（没有 LaunchUp） |
+| IcefallIcicle 冰棱 | 2-1 ×5 | 照译 | 打空松脱、重力 26 下落、砸地范围伤害；碎冰堆（fallen）停用没导出：落地后那里没有掩体 |
+| LoreNote | 4-3 ×1 | 照译 | 提示卡、第一次读横幅 + 台词 |
+| FoundryChannels 熔铜渠 | 3-3 ×1（8 段） | 照译 `Levels.ts` | Flood / Recede / 高位停；魔将倒下退回。**魔将招式接入点**：`stageGates.foundryChannels`（`WarlordMoves.ChannelSurgeMove.onActiveBegin` 有它就 `flood(hold)`、没有才走环带兜底——那个文件归首领那边改） |
+| FireGodThrone | 3-3 | 照译 | 熔岩柱跟着渠涨（水平 +45%、uAgitation / uEmission）；美术件 / 程序化回退导出时已选好；两盏灯的强度没做（灯没按路径导出） |
+| FoundryWindGate 风闸 | 3-3 | 照译 | 拉杆交互、风箱鼓、炉口火星、风箱道喷火（地火 = 每 0.5 s 烫一下的圈）、19 段铸渠自动涨落、第二次进殿在拉开前不触发（`StageDirector.fightGate`）；炉门灯光没做 |
+| FoundryLordGate | 3-3、3-4 | 照译 | 关卡目标（必清据点）完成前领主战不开 + 每 6 s 提示、完成时横幅 + 吼；清关宝箱交给 StageDirector 原有结算 |
+| ForgeWellDirector | 3-2 | 照译 | 桥中段震、② 肃清北链桥崩断 + 挂钩放下、④ 第二波铸门亮 → 半开（撤碰撞）、目标完成全开 + 四口熔泉齐喷 |
+| ZheduoLevel | 4-1 | 部分 | 开局 3 s 刷穷奇（名册精英）；巡视线 / 巢穴（QiongqiAI.route / lair）、啸獭洞口、三处领主据点门槛随 M5 / M6 |
+| MovingPlatform / SceneActivator / WaterVolume | — | M1 已做 | SceneActivator 交互项的 getter 读错 this（每帧抛 TypeError），这一期顺手修了 |
+| ForgeWellLift、PlatformCarrier | 场景里没有实例 | 不做 | 只在 Unity 冒烟套件里用 |
+
 ## 5. Unity 能力 → 网页对照
 
 | Unity | 网页 |
@@ -249,3 +282,4 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 4. 主线 14 关里没有 4-2、4-4（Unity 里第四章本来就只建了 4-1、4-3）。
 5. `tests/frost-tanks.test.mjs` 的「玄龟旋壳最多反弹两次」偶发失败（约 1/15：1.0 s 时还在缩壳没进旋转，出生 / 路径计时里有 `Math.random()`），M5 之前的基线一样，不是新回归。
 6. **4-1 残鼓位置（Unity 构建器的错）**：`Level_4_1.BuildLords` 用 `ShowcaseSceneBuilder.Place(KuiDrumId, arena.transform, G(drumXZ), …)` 把世界坐标当成场地下的局部坐标，残鼓落在 (−205, 48.5, 131)，离夔的出生点（设计上残鼓就在这里）112 m；Unity 的 KuiDrum.Ensure 也按名字找到它，登场演出看的是远处那面鼓。网页（`lords/KuiDrum.ts`）离出生点 > 12 m 就把它挪回出生点（贴地高度不变）。
+7. **发布的场景文档带着主检出没提交的场景改动**（M7 导出时发现）：2-1 / 2-2 / 2-3 / 3-3 的 `scenes/*.json` 是从主检出磁盘上 11-08 改过、没提交的 `.unity` 导出的，入库的 `.unity` 是旧的。`export-mechanisms.mjs` 按渲染件位置选源；以后重导场景 / 重新生成关卡前先决定那几份场景改动要不要提交。
