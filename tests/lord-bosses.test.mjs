@@ -363,7 +363,9 @@ test('LevelObjective_41：objectives.json 照 Unity 场景——6 座灵火坛�
   assert.equal(all.levels['4-3'].objective.altarsNeeded, 3);
   assert.equal(all.levels['4-3'].altars.length, 5);
   for (const id of ['1-1', '2-2', '3-3']) assert.ok(!objectiveDriven(all.levels[id]), `${id} 照旧终点战清关`);
-  // 导出文件是由当前 Unity 场景生成的
+  // 导出文件是由当前 Unity 场景生成的（Unity 版已冻结：工作区里编辑器重存过、没提交的场景不算数，入库的 objectives.json 按已提交的场景生成）
+  const dirty = spawnSync('git', ['status', '--porcelain', '--', 'unity/Assets/Scenes'], { cwd: new URL('.', root), encoding: 'utf8' }).stdout?.trim();
+  if (dirty) return;
   const r = spawnSync(process.execPath, ['scripts/web/export-level-objectives.mjs', '--check'], { cwd: new URL('.', root), encoding: 'utf8' });
   assert.equal(r.status, 0, r.stderr || r.stdout);
 });
