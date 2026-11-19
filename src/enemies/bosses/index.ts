@@ -3,12 +3,14 @@
  * V2 关卡「北冥冰台」使用；LD-03 旧关卡仍由 bossIdForChapter 刷旧首领）
  * 第三章新首领火麒麟（boss_qilin，V2 关卡「祝融炉心」使用）与它在外墙上召出的吊鼎锁扣（boss_qilin_lock，非 Boss），
  * 以及妖后召唤的寒霜冰晶（boss_ice_crystal，非 Boss，仅由妖后召唤）。
+ * 第四章 4-1 三领主（boss_kui / boss_feilian / boss_huashe）与飞廉的龙卷风柱见 lords/index.ts。
  */
 import { registerEnemy } from '../Registry';
 import { Colossus, COLOSSUS_DEF } from './Colossus';
 import { Hanba, HANBA_DEF } from './Hanba';
 import { CRYSTAL_DEF, IceCrystal } from './IceCrystal';
 import { KunPeng, KUNPENG_DEF } from './KunPeng';
+import { registerLords } from './lords';
 import { Matriarch, MATRIARCH_DEF } from './Matriarch';
 import { Qilin, QILIN_DEF } from './Qilin';
 import { QILIN_LOCK_DEF, QilinLock } from './QilinLock';
@@ -23,6 +25,7 @@ export function registerBosses(): void {
   registerEnemy(KUNPENG_DEF, (ctx, opts) => new KunPeng(ctx, opts));
   registerEnemy(QILIN_DEF, (ctx, opts) => new Qilin(ctx, opts));
   registerEnemy(QILIN_LOCK_DEF, (ctx, opts) => new QilinLock(ctx, opts));
+  registerLords();
 }
 
 /** 第 chapter 章（0-based）的 Boss 敌人 id */

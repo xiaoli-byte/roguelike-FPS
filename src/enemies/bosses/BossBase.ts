@@ -108,6 +108,8 @@ export abstract class BossBase extends EnemyBase {
   protected animT = 0;
   /** 死亡爆炸 / 特效主色 */
   protected themeColor: number;
+  /** 倒下后每 0.2 s 一团爆炸 + 最后一下大爆炸（Unity BossDefeatSequence）；第四章领主有自己的死亡演出，关掉 */
+  protected deathBursts = true;
   /** 眩晕免疫期截止时间（ctx.time.now）：每次被眩晕后 6 秒内 stunImmune 为 true */
   private stunImmuneUntil = 0;
   /** 上一次 update 结束时剩余的眩晕（用来识别新施加的眩晕） */
@@ -615,6 +617,7 @@ export abstract class BossBase extends EnemyBase {
   }
 
   private updateDeathFx(dt: number): void {
+    if (!this.deathBursts) return;
     this.deathFxAcc += dt;
     const end = this.deathDuration * 0.88;
     if (this.deathFxAcc >= 0.2 && this.deathTime < end) {

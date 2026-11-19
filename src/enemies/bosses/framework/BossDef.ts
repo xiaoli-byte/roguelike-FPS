@@ -123,10 +123,15 @@ export interface BreakBarDef {
   label: string;
   weakFill: number;
   reactionFill: number;
+  /**
+   * 只在出招中的某些段才填（Unity BreakBarDef.fillWhen；null = 任何时候都填）：化蛇只在张嘴时。参数是首领本身（BossBrain），
+   * 返回 false 这一次伤害不往条里填；抛异常按不填算
+   */
+  fillWhen: ((brain: unknown) => boolean) | null;
 }
 
 export function breakBarDef(p: Partial<BreakBarDef> = {}): BreakBarDef {
-  return { max: 900, growth: 0.25, seconds: 4, takenMult: 1.3, pose: 'down', label: '破防', weakFill: 1, reactionFill: 1.5, ...p };
+  return { max: 900, growth: 0.25, seconds: 4, takenMult: 1.3, pose: 'down', label: '破防', weakFill: 1, reactionFill: 1.5, fillWhen: null, ...p };
 }
 
 export interface BossIntroDef {

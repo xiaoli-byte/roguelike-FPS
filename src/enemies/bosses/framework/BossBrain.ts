@@ -657,6 +657,16 @@ export abstract class BossBrain extends BossBase implements MoveHost, SummonHost
   override onDamaged(result: DamageResult): void {
     super.onDamaged(result);
     if (!this.breakBar || !this.alive || !(result.dealt > 0)) return;
+    // Unity OnBossDamaged：fillWhen 不满足（化蛇没张嘴）时不填；抛异常按不填算
+    const when = this.breakBar.def.fillWhen;
+    if (when) {
+      try {
+        if (!when(this)) return;
+      } catch (err) {
+        console.error(`[Boss] ${this.bdef.id} breakBar.fillWhen threw`, err);
+        return;
+      }
+    }
     const tags = result.request.tags ?? [];
     this.breakBar.add(this.breakBar.fillFrom({ reaction: tags.includes('reaction'), weakpoint: !!result.request.headshot }, result.dealt));
   }
