@@ -690,3 +690,28 @@ test('导出脚本 --check：发布的 mechanisms.json 由当前场景生成', {
   const out = execFileSync(process.execPath, [new URL('../scripts/web/export-mechanisms.mjs', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1'), '--check'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   assert.match(out, /一致/);
 });
+
+// ───────────────────────────── 各图脚本的门槛 ─────────────────────────────
+
+test('关卡目标：据点表还没建时不算完成；必清据点全肃清才算（3-3 领主战门槛）', async () => {
+  const Lv = await import(await ts('../src/world/mechanisms/Levels.ts', {
+    './Lava': data('export const LAVA_ORANGE = 0, LAVA_GOLD = 0;'), './Parts': partsUrl,
+  }));
+  const { stageGates } = await import(await ts('../src/world/mechanisms/StageGates.ts'));
+  const encounters = [];
+  const host = { ctx: { stage: { exploration: { encounters } } }, site: t => encounters.find(e => e.id === t)?.phase ?? null };
+  const objective = { title: '肃清铸范大坊', required: ['范场', '神范前庭'], optional: [], altarsNeeded: 0 };
+  assert.equal(Lv.objectiveComplete(host, objective), false, '据点表还没建');
+  encounters.push({ id: '范场', phase: 'cleared' }, { id: '神范前庭', phase: 'active' }, { id: 'boss:boss_warlord:0', phase: 'undiscovered' });
+  assert.equal(Lv.objectiveComplete(host, objective), false);
+  encounters[1].phase = 'cleared';
+  assert.equal(Lv.objectiveComplete(host, objective), true);
+  assert.equal(Lv.objectiveComplete(host, null), true, '没给目标：非首领、非可选的据点全肃清');
+  let locked = true;
+  const off = stageGates.addFightGate(id => id === 'boss:boss_warlord:0' && locked);
+  assert.ok(stageGates.fightBlocked('boss:boss_warlord:0', v3(0, 0, 0)));
+  assert.ok(!stageGates.fightBlocked('范场', v3(0, 0, 0)));
+  locked = false;
+  assert.ok(!stageGates.fightBlocked('boss:boss_warlord:0', v3(0, 0, 0)));
+  off();
+});
