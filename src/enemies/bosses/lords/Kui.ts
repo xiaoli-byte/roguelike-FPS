@@ -181,8 +181,16 @@ export class Kui extends LordBrain {
     this.perchFrom.copy(this.position);
     const c = this.bossCenter;
     const dx = this.spawnAt.x - c.x, dz = this.spawnAt.z - c.z, d = Math.hypot(dx, dz) || 1;
-    this.perchTo.set(c.x + dx / d * 2.6, c.y + 6, c.z + dz / d * 2.6);
-    this.perchTo.y = this.groundAt(this.perchTo);
+    // Unity：Perch_Lartse = G(c + toDrum × 2.6, 2.4)（地形高 + 2.4），跳之前 target.y = GroundAt(target)（从它上方 6 m 往下找）
+    // 落在拉则旁（Unity 落地后导航代理 Warp 回网格）：网页的身体是 2.1 m 半宽的碰撞盒，离拉则（4.5 m 见方、9 m 高的盒子）太近会被碰撞解算顶到拉则顶上——
+    // 从 2.6 m 往外找第一处身体不压着拉则的点
+    const half = this.radius * 0.85;
+    for (let r = 2.6; r <= 12; r += 0.5) {
+      this.perchTo.set(c.x + dx / d * r, c.y + 1, c.z + dz / d * r);
+      this.perchTo.y = this.groundAt(_b.copy(this.perchTo).setY(c.y - 5)) + 2.4;
+      this.perchTo.y = this.groundAt(this.perchTo);
+      if (!this.ctx.world.overlapsBody(this.perchTo.x, this.perchTo.y + 0.6, this.perchTo.z, half, this.height - 0.6)) break;
+    }
     this.beginDash();
   }
 

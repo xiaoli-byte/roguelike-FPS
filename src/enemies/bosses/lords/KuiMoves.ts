@@ -398,8 +398,10 @@ export class KuiClap extends KuiMove {
     this.markRelease();
     const l = this.kui.bonePos('fist_L', _a), r = this.kui.bonePos('fist_R', _b);
     const palms = _c.addVectors(l, r).multiplyScalar(0.5);
-    this.ctx.fx.lightning(palms, _d.copy(palms).addScaledVector(dir(this.yaw, _a), KuiClapPlan.Range), KuiPalette.Thunder);
-    LordFx.blast(this.ctx, _a.copy(this.lord.position).addScaledVector(dir(this.yaw, _b), KuiClapPlan.Range * 0.5), 3, KuiPalette.Thunder, KuiPalette.ThunderCore);
+    // 两掌之间一道竖直雷缝 + 扇面电弧
+    this.ctx.fx.lightning(_d.copy(palms).setY(palms.y + 2), _a.copy(palms).setY(palms.y - 2), KuiPalette.ThunderCore);
+    for (const off of [-20, 0, 20]) this.ctx.fx.lightning(palms, _d.copy(palms).addScaledVector(dir(this.yaw + off, _a), KuiClapPlan.Range).setY(this.lord.position.y + 0.5), KuiPalette.Thunder);
+    this.ctx.fx.burst(palms, KuiPalette.ThunderCore, 14, 4, 0.3, 0.2, 0);
     this.lord.shake(0.3, 0.3, 20);
     this.lord.impactHold(0.06);
     if (!this.lord.playerFeet(_b)) return;

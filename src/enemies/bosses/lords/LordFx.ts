@@ -1,6 +1,6 @@
 /**
  * 三领主的场地件与特效（Unity Fx.Feilian / Fx.Huashe / Fx.Kui 与 FeilianSpiral 的网页近似）：
- *   · Spiral：螺旋带柱（飞廉的风涡柱、龙卷风柱）——几条加法混合的螺旋管，按高度从窄到宽，绕竖轴转；能整体淡出、换火色。
+ *   · Spiral：螺旋带柱（飞廉的风涡柱、龙卷风柱）——照 Unity FeilianSpiral 的三条竖向风带（收紧再外翻、转 3.2π、两层、两端渐隐），绕竖轴转；能整体淡出、换火色。
  *   · FloodSheet：化蛇的涨水面（一张半透明水面圆盘，跟着水位升降；地形高出水面的地方自然盖住它）。
  *   · 其余一次性的声光（聚风、雪冠、珠碎、水花、鼓皮环、雷云……）用 ctx.fx 的粒子 / 冲击环 / 爆炸拼，精神对齐。
  * 与 Unity 的差异（M11b 再做逐粒子一致）：Unity 的手绘风带、风线贴地、水帘、潜游黑影、雷鼓裂光是专门的网格 / 着色器，这里都是 ctx.fx 的粒子。
@@ -10,51 +10,91 @@ import type { GameContext } from '../../../core/types';
 
 const _a = new THREE.Vector3(), _b = new THREE.Vector3();
 
-/** 螺旋带柱（Unity FeilianSpiral）：bottom → top 半径，height 高，turns 圈数（每条），strands 条 */
+/**
+ * 螺旋带柱（Unity FeilianSpiral）：三条竖向宽度的风带，从底半径 r0 往上收紧再外翻到 r1（r = lerp(r0, r1, u²) × (1 + 0.15 sin πu)），
+ * 全高转 3.2π；上层亮带 + 下层暗边（宽 1.45 倍）两层、两端渐隐（顶点色 alpha），普通透明混合；整体按 spinDeg 度 / 秒自转（负 = 反向）。
+ * 能整体淡出、换火色（风 → 火：WindCore / Wind / WindEdge → FireCore / Fire / FireEdge）。
+ */
 export class Spiral {
+  static readonly Ribbons = 3;
+  static readonly Segs = 36;
   readonly group = new THREE.Group();
-  private readonly mats: THREE.MeshBasicMaterial[] = [];
-  private readonly geos: THREE.BufferGeometry[] = [];
+  private readonly top: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>;
+  private readonly under: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>;
   private alpha = 1;
   private fadeLeft = -1;
   private fadeTotal = 0;
-  private spin: number;
-  private baseColor: number;
   private disposed = false;
+  private fire = false;
   /** 反转（风眼：往里吸） */
   reversed = false;
 
-  constructor(color: number, bottom: number, top: number, height: number, turnsDeg: number, strands = 4, spin = 2.2, thickness = 0.12) {
-    this.baseColor = color;
-    this.spin = spin;
-    const turns = turnsDeg / 360;
-    for (let s = 0; s < strands; s++) {
-      const off = (s / strands) * Math.PI * 2;
-      const pts: THREE.Vector3[] = [];
-      const n = 48;
-      for (let i = 0; i <= n; i++) {
-        const k = i / n;
-        const r = bottom + (top - bottom) * k;
-        const a = off + k * turns * Math.PI * 2;
-        pts.push(new THREE.Vector3(Math.sin(a) * r, k * height, Math.cos(a) * r));
+  /**
+   * @param colors [亮芯, 主色, 暗边]（风；火色由 setFire 换）
+   * @param spinDeg 每秒自转（度）
+   */
+  constructor(private readonly colors: readonly [number, number, number], r0: number, r1: number, height: number, private readonly spinDeg: number,
+    ribbonWidth = 1, private readonly fireColors: readonly [number, number, number] = [0xffe08a, 0xff8a3a, 0xa8381a]) {
+    this.under = this.ribbon(r0, r1, height, ribbonWidth * 1.45, -1);
+    this.top = this.ribbon(r0, r1, height, ribbonWidth, 0);
+    this.paint();
+  }
+
+  private ribbon(r0: number, r1: number, height: number, width: number, order: number): THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial> {
+    const pos: number[] = [], uv: number[] = [], idx: number[] = [];
+    for (let b = 0; b < Spiral.Ribbons; b++) {
+      const start = pos.length / 3;
+      const a0 = b * Math.PI * 2 / Spiral.Ribbons;
+      for (let i = 0; i <= Spiral.Segs; i++) {
+        const u = i / Spiral.Segs;
+        const y = u * height;
+        const r = (r0 + (r1 - r0) * u * u) * (1 + 0.15 * Math.sin(u * Math.PI));
+        const a = a0 + u * Math.PI * 3.2;
+        const w = (0.5 + 0.9 * u) * width;
+        const x = Math.sin(a) * r, z = Math.cos(a) * r;
+        pos.push(x, y + w * 0.5, z, x, y - w * 0.5, z);
+        uv.push(u, 1, u, 0);
+        if (i === 0) continue;
+        const k = start + i * 2;
+        idx.push(k - 2, k - 1, k, k, k - 1, k + 1);
       }
-      const curve = new THREE.CatmullRomCurve3(pts);
-      const geo = new THREE.TubeGeometry(curve, 64, thickness * (1 + s % 2), 5, false);
-      const mat = new THREE.MeshBasicMaterial({
-        color, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, side: THREE.DoubleSide,
-      });
-      this.geos.push(geo);
-      this.mats.push(mat);
-      const m = new THREE.Mesh(geo, mat);
-      m.frustumCulled = false;
-      m.renderOrder = 3;
-      this.group.add(m);
     }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(pos.length / 3 * 4), 4));
+    geo.setIndex(idx);
+    const mat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
+    const m = new THREE.Mesh(geo, mat);
+    m.frustumCulled = false;
+    m.renderOrder = 3 + order;
+    this.group.add(m);
+    return m;
+  }
+
+  /** 顶点色：两端渐隐、中段实；亮带的上沿偏亮（芯） */
+  private paint(): void {
+    const [core, body, edge] = this.fire ? this.fireColors : this.colors;
+    const paint = (m: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>, c0: number, c1: number, a: number) => {
+      const uv = m.geometry.getAttribute('uv') as THREE.BufferAttribute;
+      const col = m.geometry.getAttribute('color') as THREE.BufferAttribute;
+      const cb = new THREE.Color(c0), ch = new THREE.Color(c1), c = new THREE.Color();
+      for (let i = 0; i < uv.count; i++) {
+        const u = uv.getX(i), v = uv.getY(i);
+        const fade = Math.min(1, Math.max(0, u / 0.12)) * Math.min(1, Math.max(0, (1 - u) / 0.2));
+        c.copy(cb).lerp(ch, v * 0.6);
+        col.setXYZW(i, c.r, c.g, c.b, a * fade);
+      }
+      col.needsUpdate = true;
+    };
+    paint(this.top, body, core, 0.85);
+    paint(this.under, edge, edge, 0.6);
   }
 
   update(dt: number): void {
     if (this.disposed) return;
-    this.group.rotation.y += (this.reversed ? -1 : 1) * this.spin * dt;
+    const spin = (this.reversed ? -1 : 1) * this.spinDeg * (this.fire ? 1.6 : 1);
+    this.group.rotation.y += spin * Math.PI / 180 * dt;
     if (this.fadeLeft >= 0) {
       this.fadeLeft -= dt;
       this.setAlpha(Math.max(0, this.fadeLeft / Math.max(0.01, this.fadeTotal)));
@@ -64,12 +104,15 @@ export class Spiral {
 
   setAlpha(a: number): void {
     this.alpha = Math.max(0, Math.min(1, a));
-    for (const m of this.mats) m.opacity = 0.55 * this.alpha;
+    this.top.material.opacity = this.alpha;
+    this.under.material.opacity = this.alpha;
     this.group.visible = this.alpha > 0.01;
   }
 
-  setFire(on: boolean, fire = 0xff8a3a): void {
-    for (const m of this.mats) m.color.setHex(on ? fire : this.baseColor);
+  setFire(on: boolean): void {
+    if (this.fire === on) return;
+    this.fire = on;
+    this.paint();
   }
 
   fadeOut(seconds: number): void {
@@ -85,8 +128,10 @@ export class Spiral {
     if (this.disposed) return;
     this.disposed = true;
     this.group.removeFromParent();
-    for (const g of this.geos) g.dispose();
-    for (const m of this.mats) m.dispose();
+    for (const m of [this.top, this.under]) {
+      m.geometry.dispose();
+      m.material.dispose();
+    }
   }
 }
 

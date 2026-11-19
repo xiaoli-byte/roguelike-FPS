@@ -70,7 +70,9 @@ export class FeilianTornado extends EnemyBase {
 
   protected override buildModel(): THREE.Object3D {
     const g = new THREE.Group();
-    this.look = new Spiral(FeilianPalette.Wind, FeilianTornadoBody.Radius * 0.55, FeilianTornadoBody.Radius * 1.9, FeilianTornadoBody.Height, 280, 4, 4.5, 0.1);
+    // Unity FeilianSpiral.Create(at, Radius × 0.55, Radius × 1.9, Height, 280)
+    this.look = new Spiral([FeilianPalette.WindCore, FeilianPalette.Wind, FeilianPalette.WindEdge], FeilianTornadoBody.Radius * 0.55, FeilianTornadoBody.Radius * 1.9, FeilianTornadoBody.Height, 280,
+      1, [FeilianPalette.FireCore, FeilianPalette.Fire, FeilianPalette.FireEdge]);
     g.add(this.look.group);
     return g;
   }
@@ -96,7 +98,7 @@ export class FeilianTornado extends EnemyBase {
     const first = this.fireLeft <= 0;
     this.fireLeft = o.fdef.fireLife;
     this.life = Math.max(this.life, this.fireLeft);
-    this.look?.setFire(true, FeilianPalette.Fire);
+    this.look?.setFire(true);
     if (!first) return;
     this.ctx.fx.explosion(_a.copy(this.position).setY(this.position.y + 3), 2, FeilianPalette.Fire);
     o.tell('feilian_fire', '火龙卷！风把它吸回飞廉那里', FeilianPalette.Fire, 8, 2);

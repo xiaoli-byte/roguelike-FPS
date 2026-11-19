@@ -552,7 +552,8 @@ export class StageDirector implements IStageDirector {
       if (this.encounterWaves.current >= 0) this.waveIndex = this.encounterWaves.current;
       if (this.encounterWaves.done && this.t - this.encounterWaves.lastActivity > .4 && ctx.enemies.aliveCount() === 0) {
         const info = state.encounters?.find(e => e.id === this.activeEncounterId);
-        if (info) { info.phase = 'cleared'; ctx.ui.toast(`${info.label} · 守卫已清除`, '#a9dec7'); }
+        // 据点首领（4-1 三领主）的结算横幅「X · 平息」由关卡目标在倒下 6.3 s 后打：这里不另报「守卫已清除」
+        if (info) { info.phase = 'cleared'; if (!info.id.startsWith('boss:')) ctx.ui.toast(`${info.label} · 守卫已清除`, '#a9dec7'); }
         this.encounterWaves = null; this.activeEncounterId = null; this.activeWhiteboxFight = null;
         this.waveIndex = 0; this.waveCount = 0; this.nextEncounterAt = this.t + 1.5;
       }

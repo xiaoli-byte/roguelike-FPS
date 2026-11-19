@@ -2,7 +2,8 @@
  * 山头的残破雷鼓（Unity Kui/KuiDrum.cs；SM_Prop_KuiBrokenDrum，夔没现身时倒在山头）：登场从鼓里长出来，死时倒回鼓里。
  * 摆位：场景文档里导出的渲染件 SM_Prop_KuiBrokenDrum_LOD0（Unity 场地 BossArena · 夔 下的 KuiDrum/Model）；这里只管显隐、被雷劈中的裂光、震动。
  * 导出的残鼓在 (−205, 48.5, 131)，离夔的出生点（残鼓本该在的地方，(−115, 48.3, 61)）112 m：Unity 构建器 Level_4_1.BuildLords 用
- * ShowcaseSceneBuilder.Place 把世界坐标当成了场地下的局部坐标（多加了一次场地中心 (−90, 70)）。网页照设计意图把它挪回出生点（贴地高度不变）。
+ * ShowcaseSceneBuilder.Place 把世界坐标当成了场地下的局部坐标（多加了一次场地中心 (−90, 70)）；之后贴地那一步量的是出生点的地面，所以高度是对的。
+ * 网页照设计意图只把水平位置挪回出生点。
  * 场景里没摆时（检视页）在首领出生点立一个程序化的放倒的鼓（圆柱 + 鼓皮）。
  */
 import * as THREE from 'three';
@@ -35,10 +36,8 @@ export class KuiDrum {
       found.updateWorldMatrix(true, false);
       const wp = found.getWorldPosition(new THREE.Vector3());
       if (Math.hypot(wp.x - spawn.x, wp.z - spawn.z) > 12) {
-        const g0 = ctx.world.groundHeight(wp.x, wp.z, wp.y + 4, 0);
-        const g1 = ctx.world.groundHeight(spawn.x, spawn.z, spawn.y + 4, 0);
-        const lift = Number.isFinite(g0) ? wp.y - g0 : 0;
-        const target = new THREE.Vector3(spawn.x, (Number.isFinite(g1) ? g1 : spawn.y) + lift, spawn.z);
+        // 构建器贴地时量的就是出生点的地面（G(drumXZ).y − 0.25 − 包围盒底）：高度本来就对，只挪水平位置
+        const target = new THREE.Vector3(spawn.x, wp.y, spawn.z);
         found.parent?.worldToLocal(target);
         found.position.copy(target);
         found.updateMatrixWorld(true);

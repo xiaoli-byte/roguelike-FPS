@@ -99,7 +99,8 @@ export class Feilian extends LordBrain implements TornadoOwner {
     this.recentDamage = 0;
     this.landedIntro = false;
     // 风涡柱：擂台中心（出生点）一根 40 m 的螺旋带
-    this.vortex = new Spiral(FeilianPalette.Wind, 3, 9, 40, 90, 5, 0.6, 0.18);
+    // Unity FeilianSpiral.Create(vortexAt + 6 m, 3, 9, 40, 90)：底半径 3、顶半径 9、高 40 m、每秒转 90°
+    this.vortex = new Spiral([FeilianPalette.WindCore, FeilianPalette.Wind, FeilianPalette.WindEdge], 3, 9, 40, 90);
     this.vortex.group.position.copy(this.vortexAt).setY(this.vortexAt.y + 6);
     this.ctx.stageGroup.add(this.vortex.group);
   }
