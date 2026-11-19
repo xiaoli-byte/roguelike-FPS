@@ -66,12 +66,28 @@ export class QuicksandField {
   private readonly hazardOff: () => void;
   private readonly enemySlow = new Map<IEnemy, { mult: number; until: number }>();
 
+  private readonly surfaces: THREE.Mesh[] = [];
+  private readonly material: THREE.ShaderMaterial | null;
+
   constructor(private readonly host: MechanismHost, readonly all: readonly QuicksandData[]) {
     this.hazardOff = host.safe.registerHazard(feet => QuicksandMath.at(all, feet) !== null);
+    this.material = null;
+    if (all.some(q => q.surface)) {
+      this.material = quicksandMaterial();
+      for (const q of all) if (q.surface) {
+        const mesh = new THREE.Mesh(drapedDisc(host, q), this.material);
+        mesh.name = `${q.scenePath}/Quicksand Surface`;
+        mesh.position.set(q.position[0], q.position[1], q.position[2]);
+        mesh.renderOrder = 1;
+        host.group.add(mesh);
+        this.surfaces.push(mesh);
+      }
+    }
   }
 
   update(dt: number): void {
     if (!(dt > 0)) return;
+    if (this.material) this.material.uniforms.uTime.value += dt;
     this.tickPlayer(dt);
     this.enemyTimer -= dt;
     if (this.enemyTimer <= 0) {
@@ -164,7 +180,98 @@ export class QuicksandField {
   dispose(): void {
     this.hazardOff();
     this.host.ctx.player.stats.removeSource(SOURCE);
+    for (const m of this.surfaces) {
+      m.removeFromParent();
+      m.geometry.dispose();
+    }
+    this.material?.dispose();
   }
+}
+
+/**
+ * 贴地的流沙面（Unity Quicksand.DrapedDisc）：单位圆 8 环 × 40 段，每个顶点往下找地面再抬 4 cm（局部 y = 米），缩放 = 半径；
+ * uv 同 WorldMaterials 的圆片（软边按 uv 圆心距）
+ */
+function drapedDisc(host: MechanismHost, q: QuicksandData): THREE.BufferGeometry {
+  const RINGS = 8, SEGS = 40, r = q.radius, c = q.position;
+  const pos: number[] = [], uv: number[] = [], idx: number[] = [];
+  const y = (x: number, z: number): number => {
+    const g = host.ctx.world.groundHeight(c[0] + x * r, c[2] + z * r, c[1] + 4);
+    return Number.isFinite(g) && g > c[1] - 6 ? g - c[1] + 0.04 : 0.02;
+  };
+  pos.push(0, y(0, 0), 0);
+  uv.push(0.5, 0.5);
+  for (let i = 1; i <= RINGS; i++) {
+    const rr = i / RINGS;
+    for (let k = 0; k < SEGS; k++) {
+      const a = k * Math.PI * 2 / SEGS, x = Math.sin(a) * rr, z = Math.cos(a) * rr;
+      // 网页坐标：Unity 的局部 x 取反（圆对称，只影响绕向）
+      pos.push(-x * r, y(-x, z), z * r);
+      uv.push(x * 0.5 + 0.5, z * 0.5 + 0.5);
+    }
+  }
+  for (let k = 0; k < SEGS; k++) idx.push(0, 1 + (k + 1) % SEGS, 1 + k);
+  for (let i = 1; i < RINGS; i++) {
+    const inner = 1 + (i - 1) * SEGS, outer = 1 + i * SEGS;
+    for (let k = 0; k < SEGS; k++) {
+      const a = inner + k, b = inner + (k + 1) % SEGS, cc = outer + k, d = outer + (k + 1) % SEGS;
+      idx.push(a, b, cc, b, d, cc);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeBoundingSphere();
+  return g;
+}
+
+/** 流沙面（Unity M_World_Quicksand：Spiritfire/Water 的漩涡模式——沙色、不透明、软边 0.2、漩涡 0.5 转速） */
+function quicksandMaterial(): THREE.ShaderMaterial {
+  const srgb = (r: number, g: number, b: number): THREE.Color => new THREE.Color().setRGB(r, g, b, THREE.SRGBColorSpace);
+  return new THREE.ShaderMaterial({
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
+      uTime: { value: 0 }, uShallow: { value: srgb(0.84, 0.69, 0.48) }, uDeep: { value: srgb(0.52, 0.38, 0.25) }, uFoam: { value: srgb(0.93, 0.83, 0.64) },
+    }]),
+    vertexShader: /* glsl */ `
+      #include <fog_pars_vertex>
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+        #include <fog_vertex>
+      }`,
+    fragmentShader: /* glsl */ `
+      #include <common>
+      #include <fog_pars_fragment>
+      uniform float uTime;
+      uniform vec3 uShallow, uDeep, uFoam;
+      varying vec2 vUv;
+      float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float vnoise(vec2 p) {
+        vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(h21(i), h21(i + vec2(1.0, 0.0)), u.x), mix(h21(i + vec2(0.0, 1.0)), h21(i + vec2(1.0, 1.0)), u.x), u.y);
+      }
+      void main() {
+        vec2 d = vUv * 2.0 - 1.0;
+        float r = length(d);
+        if (r > 1.0) discard;
+        // 漩涡：角度随离圆心的距离扭转、随时间转（越往里越快）
+        float a = atan(d.y, d.x) + (1.0 - r) * 5.0 + uTime * 0.5 * (1.4 - r);
+        float swirl = 0.5 + 0.5 * sin(a * 5.0 + vnoise(d * 6.0 + uTime * 0.25) * 2.0);
+        float grain = vnoise(d * 38.0 + vec2(uTime * 0.1, 0.0));
+        vec3 c = mix(uShallow, uDeep, smoothstep(0.9, 0.0, r) * 0.75);
+        c = mix(c, uFoam, swirl * 0.35 * (1.0 - r * 0.6));
+        c *= 0.92 + grain * 0.12;
+        float edge = smoothstep(1.0, 0.8, r);
+        gl_FragColor = vec4(c, edge);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+        #include <fog_fragment>
+      }`,
+    transparent: true, depthWrite: false, fog: true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2,
+  });
 }
 
 // ───────────────────────────── 地表牵引 ─────────────────────────────

@@ -820,6 +820,8 @@ export interface ArenaInfo {
   theme: ThemeDef;
   /** Unity 开放地形（高度场）：没有统一的地面高度，刷怪点不按 floorY 区分「地面 / 高台」 */
   openTerrain?: boolean;
+  /** 低于这个高度算掉出世界（缺省 floorY − 25；Unity 图 = min(−60, 导航网格最低点 − 40)，同 SafeGround.KillLine：3-2 / 3-4 的井底比出生点低 30 m 以上） */
+  killY?: number;
 }
 
 export interface INavGrid {

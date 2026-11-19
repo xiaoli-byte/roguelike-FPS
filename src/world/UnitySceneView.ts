@@ -13,6 +13,7 @@ import { UnityPlatformView } from './UnityPlatforms';
 import { UnityWaterView } from './UnityWater';
 import { UnityActivatorSystem } from './UnityActivators';
 import { renderUnityWaterDepth } from './UnityWaterMaterial';
+import { MechanismSystem } from './mechanisms/MechanismSystem';
 
 export class UnitySceneView {
   readonly group = new THREE.Group();
@@ -27,8 +28,10 @@ export class UnitySceneView {
   private readonly platforms: UnityPlatformView[] = [];
   private water: UnityWaterView | null = null;
   private activators: UnityActivatorSystem | null = null;
+  /** 地图机关（M7：熔岩、熔泉、流沙、软边界、天气……）；检视页的 ctx 没有玩家 / 敌人时不建 */
+  mechanisms: MechanismSystem | null = null;
 
-  constructor(private readonly ctx: GameContext, private readonly document: UnitySceneDocument, features: { environment?: boolean; groundCover?: boolean; colliders?: boolean; reportEnvironment?: (stage: string) => void } = {}) {
+  constructor(private readonly ctx: GameContext, private readonly document: UnitySceneDocument, features: { environment?: boolean; groundCover?: boolean; colliders?: boolean; mechanisms?: boolean; reportEnvironment?: (stage: string) => void } = {}) {
     this.group.name = `unity-scene-${document.id}`;
     this.artBrief = document.title;
     this.environment = features.environment === false ? null
@@ -45,6 +48,7 @@ export class UnitySceneView {
         const terrainIndex = document.renderers.filter(item => item.terrain).indexOf(renderer);
         const root = renderer.terrain ? createUnityTerrainMesh(document.heightfields[terrainIndex], gltf.scene) : gltf.scene.clone(true);
         root.name = renderer.name;
+        if (renderer.scenePath) root.userData.scenePath = renderer.scenePath;
         if (renderer.swing) root.userData.unitySwing = true;
         if (renderer.lamp) root.userData.unityLamp = true;
         if (!renderer.terrain) {
@@ -96,6 +100,16 @@ export class UnitySceneView {
         await Promise.all(document.groundCover.map(layer => this.groundCover.add(document, layer, ctx.settings.quality !== 'low')));
         this.groundCover.update(ctx.camera.position);
       }
+      if (features.mechanisms !== false && ctx.player && ctx.enemies && ctx.combat && ctx.stage) {
+        // 机关是锦上添花：出了错这张图没有机关，不能挡住进关
+        try {
+          const mechanisms = await MechanismSystem.create(ctx, document, this.group);
+          if (this.disposed) mechanisms?.dispose();
+          else this.mechanisms = mechanisms;
+        } catch (err) {
+          console.error('[UnitySceneView] 地图机关没建起来', err);
+        }
+      }
     });
   }
 
@@ -105,12 +119,15 @@ export class UnitySceneView {
     for (const platform of this.platforms) platform.update(dt);
     this.water?.update(dt);
     this.activators?.update(dt);
+    this.mechanisms?.update(dt);
     renderUnityWaterDepth(this.ctx, new Set([...this.animatedMaterials].filter(material => material.userData.unityWater)));
     for (const material of this.animatedMaterials) material.uniforms.uTime.value = t;
   }
 
   dispose(): void {
     this.disposed = true;
+    this.mechanisms?.dispose();
+    this.mechanisms = null;
     this.activators?.dispose();
     this.activators = null;
     this.water?.dispose();

@@ -157,6 +157,8 @@ export class StageDirector implements IStageDirector {
   private lava: LavaSystem | null = null;
   /** The current level's lava runtime (dev tools, tests); null on levels without lava. */
   get lavaSystem(): LavaSystem | null { return this.lava; }
+  /** 地图机关挡着的据点 / 首领场（M7：3-3 风闸没拉开前的第二次进殿、关卡目标完成前的领主战）；机关系统挂上，卸载时撤掉 */
+  fightGate: ((id: string) => boolean) | null = null;
   private waves: WaveRunner | null = null;
   private encounterWaves: WaveRunner | null = null;
   private activeEncounterId: string | null = null;
@@ -255,6 +257,7 @@ export class StageDirector implements IStageDirector {
     const base = v2 ? redesignThemeDef(stage.theme) : themeDef(stage.theme), renamed = v2 ? REDESIGN_CHAPTER_NAMES[stage.theme] : undefined;
     const theme = renamed ? { ...base, name: renamed } : base;
     const arena = toArena(L, theme);
+    if (unityDocument) arena.killY = Math.min(-60, (unityDocument.navigation?.vertices ?? []).reduce((m, v) => Math.min(m, v[1]), Infinity) - 40);
     this.arena = arena;
     this.bossPoint.set(L.bossPoint.x, L.floorY, L.bossPoint.z);
 
@@ -572,6 +575,7 @@ export class StageDirector implements IStageDirector {
       if (state.phase === 'cleared' && fight.final) return false;
       if (state.encounters?.find(e => e.id === fight.id)?.phase !== 'undiscovered') return false;
       if (fight.requires.some(id => state.encounters?.find(e => e.id === id)?.phase !== 'cleared')) return false;
+      if (this.fightGate?.(fight.id)) return false;
       // A prepared boss starts across the main-room threshold, never from the shopping approach.
       if (this.stage?.type === 'boss' && plan?.preparation && !fight.contains(player)) return false;
       // Enter the actual room or its visible approach, never the same-radius room behind a wall.

@@ -229,6 +229,22 @@ const KINDS: WeatherParticles[] = ['sand', 'snow', 'ash'];
 /** 每种天气粒子的存活上限（画质高；中 0.75、低 0.5） */
 export const MAX_WEATHER_PARTICLES = 4000;
 
+let spriteTex: THREE.DataTexture | null = null;
+/** 粒子的圆形软点（16×16 径向渐变；不画成方块） */
+function sprite(): THREE.DataTexture {
+  if (spriteTex) return spriteTex;
+  const n = 16, data = new Uint8Array(n * n * 4);
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const r = Math.hypot(x + 0.5 - n / 2, y + 0.5 - n / 2) / (n / 2), i = (y * n + x) * 4;
+    data[i] = data[i + 1] = data[i + 2] = 255;
+    data[i + 3] = Math.round(Math.max(0, 1 - r) ** 1.4 * 255);
+  }
+  spriteTex = new THREE.DataTexture(data, n, n, THREE.RGBAFormat);
+  spriteTex.magFilter = spriteTex.minFilter = THREE.LinearFilter;
+  spriteTex.needsUpdate = true;
+  return spriteTex;
+}
+
 /** 跟着相机的天气粒子（一种一组 Points：发射盒 46 × 14 × 46 m 放在上风处，粒子顺风穿过视野，寿命 1.2–2.2 s） */
 class ParticleLayer {
   readonly points: THREE.Points;
@@ -249,7 +265,7 @@ class ParticleLayer {
     g.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
     this.material = new THREE.PointsMaterial({
       size: kind === 'sand' ? 0.16 : kind === 'snow' ? 0.11 : 0.09, transparent: true, depthWrite: false, sizeAttenuation: true, fog: true,
-      opacity: 0.6,
+      opacity: 0.6, map: sprite(),
     });
     this.points = new THREE.Points(g, this.material);
     this.points.name = `weather-${kind}`;

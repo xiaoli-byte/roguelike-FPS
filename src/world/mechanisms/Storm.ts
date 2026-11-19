@@ -13,6 +13,7 @@ import * as THREE from 'three';
 import type { GameContext } from '../../core/types';
 import type { ConductorData } from './MechanismData';
 import type { PostLayerFn } from './Weather';
+import { stylizedShared } from '../UnityStylizedLit';
 import { THUNDER } from './Telegraph';
 
 const _v = new THREE.Vector3();
@@ -325,6 +326,7 @@ export class PlateauStorm {
   private readonly rainPos: Float32Array;
   private readonly rainCount = 900;
   private ambientBase: number[] | null = null;
+  private shBase: THREE.Vector3[] | null = null;
 
   constructor(private readonly ctx: GameContext, private readonly strikes: LightningStrikes, private readonly sun: THREE.DirectionalLight | null,
     private readonly ambients: readonly THREE.Light[], private readonly addPostLayer: PostLayerFn | null, private readonly parent: THREE.Object3D) {
@@ -401,6 +403,11 @@ export class PlateauStorm {
     const env = 1 + (STORM.envFloor - 1) * Math.min(1, darken / 0.8) + this.flash * 0.35;
     this.ambientBase ??= this.ambients.map(a => a.intensity);
     this.ambients.forEach((a, i) => { a.intensity = this.ambientBase![i] * env; });
+    // 风格化材质的三色环境光（Unity Trilight → 球谐 uSflAmbient0..2）也跟着压（Unity ApplyEnv 改的就是 RenderSettings 的三色环境）
+    this.shBase ??= [stylizedShared.uSflAmbient0.value.clone(), stylizedShared.uSflAmbient1.value.clone(), stylizedShared.uSflAmbient2.value.clone()];
+    stylizedShared.uSflAmbient0.value.copy(this.shBase[0]).multiplyScalar(env);
+    stylizedShared.uSflAmbient1.value.copy(this.shBase[1]).multiplyScalar(env);
+    stylizedShared.uSflAmbient2.value.copy(this.shBase[2]).multiplyScalar(env);
     if (this.addPostLayer) {
       if (!this.layer) {
         this.layer = { priority: 55, weight: k, overrides: { ColorAdjustments: { postExposure: STORM.postExposure, contrast: STORM.contrast, saturation: STORM.saturation, colorFilter: [...STORM.colorFilter, 1] } } };
@@ -423,6 +430,12 @@ export class PlateauStorm {
     this.lastFog = null;
     if (this.ambientBase) this.ambients.forEach((a, i) => { a.intensity = this.ambientBase![i]; });
     this.ambientBase = null;
+    if (this.shBase) {
+      stylizedShared.uSflAmbient0.value.copy(this.shBase[0]);
+      stylizedShared.uSflAmbient1.value.copy(this.shBase[1]);
+      stylizedShared.uSflAmbient2.value.copy(this.shBase[2]);
+    }
+    this.shBase = null;
     if (this.layer) this.layer.weight = 0;
   }
 

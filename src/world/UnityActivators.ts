@@ -28,10 +28,12 @@ class Activator {
         object.material = Array.isArray(object.material) ? clones : clones[0];
       });
     }
+    // 交互项是另一个对象：getter 里的 this 不是 Activator（之前读 this.def 每帧抛 TypeError）
+    const self = this;
     if (def.byInteract) this.disposeInteract = ctx.interact.add({
       position: unityPoint(def.position).add(new THREE.Vector3(0, def.focusHeight, 0)),
       radius: def.interactRadius,
-      get enabled() { return !this.def.oneShot || this.count === 0; },
+      get enabled() { return !self.def.oneShot || self.count === 0; },
       prompt: () => ({
         title: def.title,
         subtitle: this.locked ? '锁着' : def.toggle ? this.on ? '关上' : '打开' : def.verb,

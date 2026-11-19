@@ -23,6 +23,8 @@ const moveTowards = (c: number, t: number, d: number): number => (Math.abs(t - c
 /** 关卡目标（Unity LevelObjective）：required 据点全部肃清；没给目标时 = 所有非可选、非首领场的据点 */
 export function objectiveComplete(host: MechanismHost, objective: ObjectiveData | null): boolean {
   const list = host.ctx.stage.exploration?.encounters ?? [];
+  // 关卡导演的据点表还没建（场景视图先于遭遇搭好）：当没完成
+  if (list.length === 0) return false;
   if (objective && objective.required.length) return objective.required.every(t => host.site(t) === 'cleared' || !list.some(e => e.id === t));
   const regular = list.filter(e => !e.id.startsWith('boss:') && !e.optional);
   return regular.length > 0 && regular.every(e => e.phase === 'cleared');
@@ -311,8 +313,11 @@ export class FoundryLordGate {
     this.arena = boss ? { center: new THREE.Vector3(...boss.center), radius: boss.radius, floorY: boss.floorY } : null;
     const fightId = boss ? `boss:${boss.id}:${index}` : null;
     this.off = fightId ? gate(id => id === fightId && !this.unlocked) : null;
-    if (!d.objective || objectiveComplete(host, d.objective)) this.unlock(false);
+    if (!d.objective) this.unlock(false);
   }
+
+  /** Unity Start：开局目标已经完成（没有必清据点）就不声不响地解锁；之后完成才横幅 */
+  private primed = false;
 
   /** 启用领主战（目标完成）：横幅 + 首领的吼声 */
   unlock(announce = true): void {
@@ -327,10 +332,12 @@ export class FoundryLordGate {
 
   update(): void {
     if (this.unlocked) return;
-    if (objectiveComplete(this.host, this.d.objective)) {
-      this.unlock(true);
+    const ready = (this.host.ctx.stage.exploration?.encounters?.length ?? 0) > 0;
+    if (ready && objectiveComplete(this.host, this.d.objective)) {
+      this.unlock(this.primed);
       return;
     }
+    if (ready) this.primed = true;
     const ctx = this.host.ctx, p = ctx.player;
     if (!this.arena || !p.alive || ctx.time.now < this.hintAt) return;
     const f = p.position;

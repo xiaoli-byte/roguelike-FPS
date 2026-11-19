@@ -754,7 +754,7 @@ export class PlayerController implements IPlayer {
     if (!Number.isFinite(v.x + v.y + v.z)) v.set(0, 0, 0);
     const arena = this.ctx.stage.arena;
     const floorY = arena?.floorY ?? 0;
-    if (Number.isFinite(p.x + p.y + p.z) && p.y > floorY - 25) return;
+    if (Number.isFinite(p.x + p.y + p.z) && p.y > (arena?.killY ?? floorY - 25)) return;
     if (arena) this.teleport(arena.playerSpawn, arena.playerYaw);
     else this.teleport(_tmp.set(0, floorY + 1, 0));
   }

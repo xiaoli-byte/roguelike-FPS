@@ -34,7 +34,10 @@ const W = await import(await ts('../src/world/mechanisms/Weather.ts', {
   '../UnityStylizedLit': data(`import * as THREE from '${threeUrl}'; export const stylizedShared = { uSflWindDir: { value: new THREE.Vector4() } };`),
 }));
 const { WindField } = await import(await ts('../src/world/mechanisms/Wind.ts'));
-const S = await import(await ts('../src/world/mechanisms/Storm.ts', { './Telegraph': telegraphUrl }));
+const S = await import(await ts('../src/world/mechanisms/Storm.ts', {
+  './Telegraph': telegraphUrl,
+  '../UnityStylizedLit': data(`import * as THREE from '${threeUrl}'; export const stylizedShared = { uSflAmbient0: { value: new THREE.Vector3() }, uSflAmbient1: { value: new THREE.Vector3() }, uSflAmbient2: { value: new THREE.Vector3() } };`),
+}));
 const Br = await import(await ts('../src/world/mechanisms/Breakables.ts', { './Parts': partsUrl }));
 
 const { LavaBody, LavaGeometry, LavaTuning, LavaTides, LavaLevelDriver, LavaContactTracker, LavaEnemyRule, HazardSpecs, buildLavaMesh } = L;
