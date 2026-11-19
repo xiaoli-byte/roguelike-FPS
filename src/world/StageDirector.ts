@@ -24,6 +24,7 @@ import { buildWhiteboxAdventure, buildWhiteboxFights, whiteboxPlansForApproach, 
 import type { WhiteboxMetadata, WhiteboxPlan } from './WhiteboxTypes';
 import { unityFightRewardFactor, unityFights, unityLayout } from './UnitySceneAdapter';
 import { CombatDirector } from './CombatDirector';
+import { LevelObjectives, loadLevelObjectives, objectiveDriven } from './objectives/LevelObjectives';
 import { chooseLevelLayout } from './LevelLayout';
 import { UnitySceneView } from './UnitySceneView';
 import { UnityAtmosphereDressing } from './unityAtmosphereDressing';
@@ -148,6 +149,10 @@ export class StageDirector implements IStageDirector {
   private unityDocument: UnitySceneDocument | null = null;
   /** 战斗导演（游荡怪群；每张 Unity 图一个，正式的局才真正刷） */
   private director: CombatDirector | null = null;
+  /** 关卡目标（灵火坛 N 选 M / 据点首领，objectives.json；4-1 / 4-3）：完成后清关开出口；其余关卡为 null */
+  private objective: LevelObjectives | null = null;
+  /** 关卡目标（调试 / 测试读） */
+  get levelObjective(): LevelObjectives | null { return this.objective; }
   /** Chapter-3 lava floor (WhiteboxLava): hurts and returns the player, burns enemies knocked in. */
   private lava: LavaSystem | null = null;
   /** The current level's lava runtime (dev tools, tests); null on levels without lava. */
@@ -230,10 +235,11 @@ export class StageDirector implements IStageDirector {
     if (layout) unityDocument = layout.document;
     this.unityDocument = unityDocument;
     if (unityDocument) await prepareUnityScene(unityDocument);
-    const L = unityDocument ? unityLayout(unityDocument, stage)
+    const objectives = unityDocument ? await loadLevelObjectives(unityDocument.id) : null;
+    const L = unityDocument ? unityLayout(unityDocument, stage, objectives)
       : usesAuthoredLayout() && !procedural ? generateWhitebox(stage, { redesign: usesRedesignLayout(stage.theme) }) : generateLevel(rng, stage, { adventure: AssetLibrary.enabled });
     if (unityDocument) {
-      this.whiteboxFights = unityFights(unityDocument, { live: CombatDirector.live(ctx.run) });
+      this.whiteboxFights = unityFights(unityDocument, { live: CombatDirector.live(ctx.run), objectives });
       this.director = new CombatDirector(ctx, unityDocument, stage, {
         siteActive: () => this.activeWhiteboxFight !== null, completed: () => this.cleared,
       }, layout?.allEncounters);
@@ -323,6 +329,12 @@ export class StageDirector implements IStageDirector {
         break;
       }
     }
+    if (unityDocument && objectives && objectiveDriven(objectives)) {
+      this.objective = new LevelObjectives(ctx, objectives, this.view?.group ?? ctx.stageGroup, {
+        siteCleared: (title) => this.adventureState?.encounters?.find(e => e.id === title)?.phase === 'cleared',
+        stageCode: unityDocument.id,
+      });
+    }
   }
 
   unload(): void {
@@ -330,6 +342,7 @@ export class StageDirector implements IStageDirector {
     this.waves?.cancel();
     this.encounterWaves?.cancel(); this.encounterWaves = null;
     this.director?.dispose(); this.director = null;
+    this.objective?.dispose(); this.objective = null;
     this.activeEncounterId = null; this.nextEncounterAt = 0;
     this.whiteboxFights = [];
     this.activeWhiteboxFight = null;
@@ -589,7 +602,7 @@ export class StageDirector implements IStageDirector {
     if (candidate.final) { state.phase = 'battle'; this.waves = runner; }
     else this.encounterWaves = runner;
     // Unity 首领场的 label 是首领 id（boss_kunpeng…），首领刷出时另有名字横幅 / 登场演出的名字卡：这里不再压一条
-    if (!(this.unityDocument && candidate.final)) ctx.ui.banner(candidate.label, candidate.final ? '清除终点守卫后开启出口' : '当前房间遭遇 · 清场后可继续选路', 2.5);
+    if (!(this.unityDocument && (candidate.final || candidate.id.startsWith('boss:')))) ctx.ui.banner(candidate.label, candidate.final ? '清除终点守卫后开启出口' : '当前房间遭遇 · 清场后可继续选路', 2.5);
   }
 
   private discoverSites(): void {
@@ -668,6 +681,11 @@ export class StageDirector implements IStageDirector {
     for (const entrance of this.challengeEntrances) entrance.update(dt, t);
     this.updateEncounters();
     this.director?.update(dt);
+    if (this.objective) {
+      this.objective.update(dt);
+      // 关卡目标完成（灵火 N / M）：没有遭遇在打时清关开出口（Unity LevelObjective.Completed → ExitPortal）
+      if (this.objective.complete && !this.cleared && !this.encounterWaves && !this.waves) this.onCleared();
+    }
     this.discoverSites();
     for (const p of this.portals) p.update(dt, t);
 

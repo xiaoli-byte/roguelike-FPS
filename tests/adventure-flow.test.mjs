@@ -38,6 +38,8 @@ const directorUrl = await tsModule('../src/world/StageDirector.ts', {
   './UnitySceneData': dataModule('export const UNITY_SCENE_DATA = {};'),
   './UnitySceneAdapter': dataModule('export function unityLayout(){} export function unityFights(){return [];} export function unityFightRewardFactor(){return 1;}'),
   './CombatDirector': dataModule('export class CombatDirector{static live(){return false;} static applySiteReward(){} update(){} dispose(){}}'),
+  // 关卡目标（灵火坛 / 据点首领，M6 三领主）：这些关卡都没有
+  './objectives/LevelObjectives': dataModule('export class LevelObjectives{} export async function loadLevelObjectives(){return null;} export function objectiveDriven(){return false;}'),
   './LevelLayout': dataModule('export function chooseLevelLayout(d){return {document:d,variant:null,index:-1,allEncounters:d.encounters};}'),
   './UnitySceneView': dataModule(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group(); artInspectionViews=[]; artBrief=''; update(){} dispose(){this.group.removeFromParent();}}`),
   './unityAtmosphereDressing': dataModule(`import * as THREE from '${threeUrl}'; export class UnityAtmosphereDressing {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),

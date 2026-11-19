@@ -26,9 +26,14 @@ const stagePlanUrl = await ts('../src/progression/StagePlan.ts', { '../world/Uni
 const runRouteUrl = await ts('../src/progression/RunRoute.ts', { './RunRng': runRngUrl, './StagePlan': stagePlanUrl });
 const runPlanUrl = await ts('../src/progression/RunPlan.ts', { './RunRng': runRngUrl, './RunRoute': runRouteUrl, './StagePlan': stagePlanUrl });
 const levelLayoutUrl = await ts('../src/world/LevelLayout.ts', { '../progression/RunRng': runRngUrl, '../progression/RunPlan': runPlanUrl });
+// 关卡目标（灵火坛 / 据点首领，M6 三领主）：真模块；objectives.json 在 node 里读不到（fetch 相对路径）→ 关卡照旧终点战清关
+const levelObjectivesUrl = await ts('../src/world/objectives/LevelObjectives.ts', {
+  '../../progression/Economy': economyUrl, './SpiritAltar': await ts('../src/world/objectives/SpiritAltar.ts'),
+});
 const directorUrl = await ts('../src/world/StageDirector.ts', {
   './CombatDirector': combatDirectorUrl,
   './LevelLayout': levelLayoutUrl,
+  './objectives/LevelObjectives': levelObjectivesUrl,
   './ChallengeEntrance': data('export class ChallengeEntrance{constructor(){}update(){}dispose(){}}'),
   '../core/Rng': rngUrl,
   '../assets/AssetLibrary': data('export const AssetLibrary={enabled:true};'),
@@ -48,7 +53,7 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
   './UnitySceneData': data('export const UNITY_SCENE_DATA={};'),
   './UnitySceneAdapter': await ts('../src/world/UnitySceneAdapter.ts', {
     './WhiteboxEncounters': encountersUrl, '../core/math': await ts('../src/core/math.ts'),
-    './CombatDirector': combatDirectorUrl, '../progression/Economy': economyUrl,
+    './CombatDirector': combatDirectorUrl, '../progression/Economy': economyUrl, './objectives/LevelObjectives': levelObjectivesUrl,
   }),
   './UnitySceneView': data(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group();artInspectionViews=[];artBrief='';update(){}dispose(){this.group.removeFromParent();}}`),
   './unityAtmosphereDressing': data(`import * as THREE from '${threeUrl}'; export class UnityAtmosphereDressing {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),

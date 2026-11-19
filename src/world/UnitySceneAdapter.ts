@@ -7,14 +7,17 @@ import type { WhiteboxMetadata, WhiteboxPlan, WhiteboxPoint } from './WhiteboxTy
 import type { UnityEncounter, UnitySceneDocument } from './UnityLevelLibrary';
 import { CombatDirector } from './CombatDirector';
 import { ROADSIDE_REWARD_MULT } from '../progression/Economy';
+import { inStrongholdThreshold, objectiveDriven, type LevelObjectivesDoc } from './objectives/LevelObjectives';
 
 const ROLES = ['assault', 'flank', 'ranged', 'precision', 'artillery', 'support'] as const;
 const BOSS_IDS: Readonly<Record<string, string>> = {
   boss_hanba: 'boss_hanba', boss_kunpeng: 'boss_kunpeng', boss_warlord: 'boss_warlord', boss_qilin: 'boss_qilin',
+  boss_kui: 'boss_kui', boss_feilian: 'boss_feilian', boss_huashe: 'boss_huashe',
 };
 /** 首领战在行旅图 / 遭遇提示里的名字（首领定义里的 name 去掉副标题；这里不 import 首领模块，免得关卡载入拖进首领的全部依赖） */
 const BOSS_LABELS: Readonly<Record<string, string>> = {
   boss_hanba: '旱魃', boss_kunpeng: '鲲鹏', boss_warlord: '熔心魔将', boss_qilin: '火麒麟',
+  boss_kui: '夔', boss_feilian: '飞廉', boss_huashe: '化蛇',
 };
 const bossLabel = (id: string) => BOSS_LABELS[id] ?? id;
 
@@ -87,6 +90,11 @@ export function unityFightRewardFactor(fight: WhiteboxFight | null | undefined):
 export interface UnityFightOptions {
   /** 正式的局（CombatDirector.live）：据点普通单位 × 1.5 加量，奖励按比例摊薄 */
   live?: boolean;
+  /**
+   * 关卡目标（objectives.json，world/objectives/LevelObjectives）：灵火坛 N 选 M / 据点首领的关卡没有终点战（清关交给目标），
+   * 据点首领（stronghold）不是终点战、按导出的门槛圆触发（Unity ZheduoLevel.strongholds）
+   */
+  objectives?: LevelObjectivesDoc | null;
 }
 
 function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}): WhiteboxFight[] {
@@ -117,6 +125,7 @@ function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}
     if (factor < 1) rewardFactors.set(fight, factor);
     return fight;
   });
+  const byObjective = objectiveDriven(options.objectives);
   const bosses = document.bosses.map((boss, index): WhiteboxFight => {
     const position = { x: boss.position[0], z: boss.position[2] };
     const ground = { ...position, y: boss.position[1] };
@@ -125,28 +134,34 @@ function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}
     // 首领出生点（Unity BossArena.BossSpawnPoint，可以在高台上）本身总在场内：刷首领时校验刷怪点不会把它挡在外面
     const atSpawn = (point: { x: number; z: number; y?: number }, halfWidth: number) => Math.hypot(point.x - boss.position[0], point.z - boss.position[2]) <= 3 + halfWidth
       && (point.y === undefined || Math.abs(point.y - boss.position[1]) < 6);
+    // 据点模式（4-1 三领主，Unity BossEncounter.stronghold）：不是终点战；门槛按导出的圆（ZheduoLevel.strongholds：圆心 / 半径 / 脚的高度范围）
+    const stronghold = !!boss.stronghold && byObjective;
+    const threshold = stronghold ? options.objectives?.bosses.find(b => b.bossId === boss.id && b.stronghold)?.threshold : undefined;
     return {
       id: `boss:${boss.id}:${index}`, label: bossLabel(boss.id), room: `boss:${boss.id}:${index}`,
-      final: true, optional: false, position, facing: { x: position.x, z: position.z + 1 },
+      final: !stronghold, optional: false, position, facing: { x: position.x, z: position.z + 1 },
       // 锚点带上 Unity 首领锚点的真实高度：不带的话会被补成关卡 floorY（1-4 是出生台地 16 m），首领要刷在泉床上空
       anchors: [{ ...ground, role: 'assault', lane: 0 }], points: [ground], radius,
       // 同 Unity BossEncounter.PlayerInArena：场地范围内，且脚在首领场自己的地面高度 6 m 以内（1-4 的泉床低于出生台地 16 m）
       contains: (point: { x: number; z: number; y?: number }, halfWidth = 0) => atSpawn(point, halfWidth)
-        || (Math.hypot(point.x - boss.center[0], point.z - boss.center[2]) <= radius + halfWidth && (point.y === undefined || Math.abs(point.y - boss.floorY) < 6)),
+        || (threshold ? inStrongholdThreshold(threshold, point)
+          : Math.hypot(point.x - boss.center[0], point.z - boss.center[2]) <= radius + halfWidth && (point.y === undefined || Math.abs(point.y - boss.floorY) < 6)),
       entryDepth: 2, requires: [],
       plans: [{ entries: [{ enemyId: BOSS_IDS[boss.id] ?? boss.id, count: 1 }], label: boss.id }],
     };
   });
-  if (regular.length > 0) regular[regular.length - 1].final = bosses.length === 0;
+  // 有终点首领就以它清关；目标驱动的关卡（灵火坛 / 据点）没有终点战
+  if (regular.length > 0) regular[regular.length - 1].final = !bosses.some(b => b.final) && !byObjective;
   return [...regular, ...bosses];
 }
 
-export function unityLayout(document: UnitySceneDocument, stage: StageNode): LevelLayout {
+export function unityLayout(document: UnitySceneDocument, stage: StageNode, objectives: LevelObjectivesDoc | null = null): LevelLayout {
   const spawn = { x: document.spawn.position[0], z: document.spawn.position[2] };
   const firstExit = document.exits[0];
   const exit = firstExit ? { x: firstExit.position[0], z: firstExit.position[2] } : spawn;
   const plan = planFor(document, spawn, exit);
-  const fights = fightsFor(document);
+  const fights = fightsFor(document, { objectives });
+  const finalBoss = document.bosses.find(b => !b.stronghold);
   const metadata: WhiteboxMetadata = {
     planId: plan.id, title: document.title, plan,
     floorRects: [{ minX: document.bounds.min[0], minZ: document.bounds.min[2], maxX: document.bounds.max[0], maxZ: document.bounds.max[2] }],
@@ -166,7 +181,8 @@ export function unityLayout(document: UnitySceneDocument, stage: StageNode): Lev
     decos: [], lights: [], runes: [], ramps: [],
     playerSpawn: spawn, playerYaw: yawFromDir(document.spawn.forward[0], document.spawn.forward[2]),
     spawnPoints: document.encounters.flatMap(site => site.anchors.map(anchor => ({ x: anchor.position[0], z: anchor.position[2] }))),
-    rewardPoint: document.bosses[0] ? { x: document.bosses[0].reward[0], z: document.bosses[0].reward[2] } : exit,
+    // 清关宝箱：落在终点首领的宝箱点；据点首领（4-1 三领主）各自结算自己的宝箱，清关宝箱落在出口
+    rewardPoint: finalBoss ? { x: finalBoss.reward[0], z: finalBoss.reward[2] } : exit,
     portalPoints: document.exits.map(exit => ({ x: exit.position[0], z: exit.position[2] })),
     shopPoint: document.camps[0] ? { x: document.camps[0].position[0], z: document.camps[0].position[2] } : spawn,
     bossPoint: document.bosses[0] ? { x: document.bosses[0].position[0], z: document.bosses[0].position[2] } : exit,
