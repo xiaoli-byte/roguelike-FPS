@@ -1022,6 +1022,8 @@ export interface DamageNumberOpts {
   color?: number;
   /** kind = 'reaction' 时使用大号字（归墟） */
   big?: boolean;
+  /** 挨打的目标（敌人）：UI 的伤害数字按目标合并（Unity DamageNumbers 认 Damageable，不按距离猜） */
+  target?: object | null;
 }
 
 /** 所有方法都会按值复制传入的向量，调用方可以传复用的临时向量。 */
@@ -1094,6 +1096,8 @@ export interface IUI extends System {
   setInteractPrompt(p: InteractPrompt | null): void;
   /** 全屏黑幕淡入淡出（0 透明 → 1 全黑） */
   fade(to: number, duration: number): Promise<void>;
+  /** 伤害数字（Unity 的伤害数字是 HUD 部件）：有就由 UI 画，combat/Feedback 不再走 fx.damageNumber */
+  damageNumber?(pos: THREE.Vector3, amount: number, opts?: DamageNumberOpts): void;
 }
 
 // ───────────────────────────── 流程控制 ─────────────────────────────

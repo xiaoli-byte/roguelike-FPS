@@ -8,6 +8,10 @@
  *  hud.css       HUD 四角：生命护盾、武器弹药、技能冲刺、关卡信息、交互提示
  *  combat.css    准星、命中标记、狙击镜、受击反馈、敌人血条、Boss 血条、Tab 面板
  *  overlays.css  暂停、结算、秘卷三选一（挂轴）、设置控件
+ *
+ * Unity 迁回的界面（docs/threejs-migration.md M11c）：
+ *  sf-base.css   UI Toolkit 默认值的网页基准、打包字体（sf-fonts.css，scripts/web/publish_fonts.py 生成）
+ *  unity/*.css   由 scripts/web/convert-uss.mjs 从 Unity 的 USS 转出（不要手改）：HUD、暂停、设置……用 sf-* 类名
  */
 @import './css/base.css';
 @import './css/menu.css';
@@ -15,3 +19,5 @@
 @import './css/hud.css';
 @import './css/combat.css';
 @import './css/overlays.css';
+@import './css/sf-base.css';
+@import './css/unity/index.css';

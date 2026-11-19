@@ -121,7 +121,9 @@ export class HitFeedback {
     this.labelAt.set(enemy, now);
     this.labels++;
     try {
-      this.ctx.fx.damageNumber(pos, 0, { kind: 'reaction', text, color, big });
+      const ui = this.ctx.ui;
+      if (ui.damageNumber) ui.damageNumber(pos, 0, { kind: 'reaction', text, color, big, target: enemy });
+      else this.ctx.fx.damageNumber(pos, 0, { kind: 'reaction', text, color, big });
     } catch (err) {
       console.error('[Combat] reaction label threw', err);
     }
@@ -129,10 +131,13 @@ export class HitFeedback {
 
   flush(): void {
     const fx = this.ctx.fx;
+    // 伤害数字是 UI 的 HUD 部件（按目标合并，同 Unity）；UI 没有时退回 fx 的旧数字
+    const ui = this.ctx.ui;
     for (let i = 0; i < this.count; i++) {
       const p = this.pending[i];
       try {
-        fx.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind, dot: p.dot });
+        if (ui.damageNumber) ui.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind, dot: p.dot, target: p.enemy });
+        else fx.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind, dot: p.dot });
       } catch (err) {
         console.error('[Combat] damageNumber threw', err);
       }

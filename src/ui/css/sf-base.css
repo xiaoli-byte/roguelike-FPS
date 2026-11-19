@@ -100,8 +100,8 @@
   overflow: visible;
 }
 
-/* 竖向滚动区（ScreenKit.Scroll）：细滚动条 */
-.sf-root .sf-scroll {
+/* 竖向滚动区（ScreenKit.Scroll，Unity 的 ScrollView；sf-scroll 是秘卷卡片的类，别撞名）：细滚动条 */
+.sf-root .sf-scrollview {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
