@@ -172,7 +172,18 @@ test('xuangui: shell spin telegraphs, slides at the player, bounces off walls, l
   assert.equal(e2.guarding, false);
 });
 
-test('xuangui: shell spin bounces at most twice and stops on the third wall', () => {
+/**
+ * 敌人基类的视线 / 寻路计时用的是裸 Math.random()（EnemyBase 的 losTimer、repathTimer），不走 ctx.rng。
+ * 对「第几秒进入哪个状态」敏感的用例在这里换成固定的随机源（和上面 ctx.rng.next 一样恒为 0.5），跑完还原。
+ * 实测 losTimer 抽到 ≳ 0.93 时玄龟 1.0 s 还在缩壳、没进旋转——原来约 1/15 的偶发失败就是这个。
+ */
+function withFixedRandom(run, value = 0.5) {
+  const original = Math.random;
+  Math.random = () => value;
+  try { return run(); } finally { Math.random = original; }
+}
+
+test('xuangui: shell spin bounces at most twice and stops on the third wall', () => withFixedRandom(() => {
   // 玩家贴着远墙：旋壳一路撞墙反弹（玩家站在墙角外侧，被弱追踪带着来回撞）
   const { e, ctx } = spawn(XuanGui, new THREE.Vector3(0, 0, 10));
   e.cooldown = 99; e.spinCd = 0;
@@ -183,7 +194,7 @@ test('xuangui: shell spin bounces at most twice and stops on the third wall', ()
   step(e, ctx, 4, () => { if (e.state === 'spin') maxBounces = Math.max(maxBounces, e.bounces); });
   assert.ok(maxBounces <= 3, `bounces ${maxBounces}`);
   assert.notEqual(e.state, 'spin', 'spin ends (third wall or time limit)');
-});
+}));
 
 test('xuangui: opens with its signature spin — a turtle spawned 13 m away spins before it has crawled inside 8 m', () => {
   const { e, ctx } = spawn(XuanGui, new THREE.Vector3(0, 0, 13));
