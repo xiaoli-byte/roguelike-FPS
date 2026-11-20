@@ -98,9 +98,9 @@ function prefabRoot(guid) {
 // ───────────── 场景图 ─────────────
 
 class SceneGraph {
-  constructor(path) {
+  constructor(path, text = null) {
     this.path = path;
-    this.docs = parseUnityYaml(readFileSync(path, 'utf8'));
+    this.docs = parseUnityYaml(text ?? readFileSync(path, 'utf8'));
     /** GameObject fileID → Transform fileID */
     this.transformOf = new Map();
     /** Transform fileID → 节点 { id, name, active, local: {p, r, s}, father, children[] } */
@@ -458,24 +458,33 @@ function matchScore(g, sceneDoc) {
 }
 
 const sha1 = text => createHash('sha1').update(text.replace(/\r\n/g, '\n')).digest('hex');
+/** 已提交的场景：直接读 git 对象（HEAD），不受工作区里编辑器重存 / 没提交的改动影响；不是 git 仓库或没入库时为 null */
+function committedScene(scene) {
+  try {
+    return execFileSync('git', ['show', 'HEAD:unity/' + scene], { cwd: ROOT, encoding: 'utf8', maxBuffer: 512 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch { return null; }
+}
 const manifest = JSON.parse(readFileSync(join(ROOT, 'public/assets/unity-levels/manifest.json'), 'utf8'));
 const scenes = {};
 const sdfFiles = new Map();
 const counts = {};
 for (const stage of manifest.stages) {
-  const candidates = [{ source: unityArg ? 'unity' : 'committed', base: UNITY }];
-  if (!unityArg && mainUnity()) candidates.push({ source: 'main-checkout', base: mainUnity() });
+  // 候选场景：--unity 指定目录时只用它；否则「已提交」（git HEAD 对象）+「主检出磁盘上的」（在主检出里运行时就是本工作区）。
+  // 发布的场景文档有几张是从主检出没提交的场景导出的（见迁移计划第 8 节），按渲染件吻合度挑；同分取前者（已提交）
+  const candidates = unityArg ? [{ source: 'unity', base: UNITY }]
+    : [{ source: 'committed', base: UNITY, text: committedScene(stage.scene) }, { source: 'main-checkout', base: mainUnity() ?? UNITY }];
   const docPath = stage.url ? join(ROOT, 'public', stage.url) : null;
   const sceneDoc = docPath && existsSync(docPath) ? JSON.parse(readFileSync(docPath, 'utf8')) : null;
   let best = null;
   const seenText = new Set();
   for (const c of candidates) {
     const path = join(c.base, stage.scene);
-    if (!existsSync(path)) continue;
-    const hash = sha1(readFileSync(path, 'utf8'));
+    const text = c.text !== undefined ? c.text : existsSync(path) ? readFileSync(path, 'utf8') : null;
+    if (text == null) continue;
+    const hash = sha1(text);
     if (seenText.has(hash)) continue;
     seenText.add(hash);
-    const graph = new SceneGraph(path);
+    const graph = new SceneGraph(path, text);
     const score = matchScore(graph, sceneDoc);
     if (!best || score > best.score) best = { ...c, graph, score, hash };
   }
