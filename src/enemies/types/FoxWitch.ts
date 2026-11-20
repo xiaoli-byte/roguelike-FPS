@@ -26,6 +26,7 @@ import type { DamageResult, GameContext, IEnemy, SpawnOptions } from '../../core
 import { clamp01, raySphere } from '../../core/math';
 import type { StaticBox } from '../../world/Collision';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import { EnemyBase, type ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -888,6 +889,8 @@ export class FoxWitch extends StandardEnemy {
     if (head) this.setHeadAnchor(head, 0, 0.1, 0.05);
     else this.setHeadAnchor(this.classicHead, 0, 0.14, 0);
     this.screamTime = 1.2;
+    // Unity FoxWitchAI.BreakMirror：Play("scream", 0.06)
+    this.playClip('scream', 0.06);
     this.fireCd = Math.max(this.fireCd, 1.5);
     for (const t of this.tails) t.sway.kick(0, 10);
   }
@@ -928,6 +931,19 @@ export class FoxWitch extends StandardEnemy {
       _p.z += (Math.random() - 0.5) * 0.6;
       this.ctx.fx.burst(_p, C.frost, 1, 0.8, 1.2, 0.08, -0.6);
     }
+  }
+
+  /** 片段表（M12）：照 Unity FoxWitchAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      stalk: 'loco',
+      enter: { fade: 0.05, secs: () => ENTER_TIME },
+      blink: { fade: 0.04 },
+      wallWindup: { fade: 0.08, secs: () => this.windTime },
+      armorWindup: { fade: 0.08, secs: () => this.windTime },
+      mirrorCharge: { fade: 0.08, secs: () => this.windTime },
+      foxfireWindup: { fade: 0.08, secs: () => this.windTime },
+    };
   }
 
   protected override pose(dt: number): void {

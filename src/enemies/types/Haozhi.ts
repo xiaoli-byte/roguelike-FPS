@@ -25,6 +25,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp01, damp, rotateTowards } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -445,6 +446,17 @@ export class Haozhi extends StandardEnemy {
     // 炸开：一下膨胀后缩没
     const s = this.sizeScale * (t < 0.3 ? 1 + t * 0.8 : Math.max(0.01, 1.24 * (1 - (t - 0.3) / 0.7)));
     this.model.scale.setScalar(s);
+  }
+
+  /** 片段表（M12）：照 Unity HaozhiAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      chase: 'loco',
+      scrape: { fade: 0.06, secs: () => this.scrapeTime },
+      charge: { fade: 0.06 },
+      bristle: { fade: 0.06, secs: () => this.bristleTime },
+      stagger: { fade: 0.06 },
+    };
   }
 
   protected override pose(dt: number): void {

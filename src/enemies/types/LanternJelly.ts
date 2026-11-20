@@ -20,6 +20,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, IEnemy, SpawnOptions } from '../../core/types';
 import { clamp01, raySphere } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -536,6 +537,15 @@ export class LanternJelly extends StandardEnemy {
       this.getBodyCenter(_p);
       this.ctx.fx.burst(_p, C.shard, 1, 1, 1.2, 0.07, -0.4);
     }
+  }
+
+  /** 片段表（M12）：照 Unity LanternJellyAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      drift: 'loco',
+      shockWindup: { fade: 0.08, secs: () => this.windTime },
+      stagger: { fade: 0.05 },
+    };
   }
 
   protected override pose(dt: number): void {

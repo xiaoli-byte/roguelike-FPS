@@ -19,6 +19,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { angleDiff, clamp, clamp01, damp, raySphere } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { GroundDecal } from '../bosses/Visuals';
@@ -616,6 +617,18 @@ export class Fuzhu extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity FuzhuAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      move: 'loco',
+      crouch: { fade: 0.06 },
+      charge: { fade: 0.08, secs: () => this.chargeTime },
+      recover: { fade: 0.06 },
+      leap: { fade: 0.05 },
+      land: { fade: 0.05 },
+    };
+  }
 
   protected override pose(dt: number): void {
     const charging = this.state === 'charge';

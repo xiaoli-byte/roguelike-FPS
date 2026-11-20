@@ -22,6 +22,7 @@ import type { DamageResult, GameContext, ProjectileSpec, SpawnOptions } from '..
 import type { BlockableProjectileSpec } from '../../combat/Projectiles';
 import { clamp, clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -551,6 +552,20 @@ export class Jiaoren extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity JiaorenAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      advance: 'loco',
+      throw: { fade: 0.04 },
+      jab: { fade: 0.04 },
+      jabWindup: { fade: 0.06, secs: () => this.windTime },
+      aim: { fade: 0.08, secs: () => this.windTime },
+      recover: { fade: 0.1 },
+      lungeWindup: { fade: 0.08, secs: () => this.windTime },
+      lunge: { fade: 0.04 },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

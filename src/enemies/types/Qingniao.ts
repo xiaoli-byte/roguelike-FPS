@@ -21,6 +21,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { angleDiff, clamp01, damp } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { Geo, flat, joint, part } from '../Models';
@@ -634,6 +635,21 @@ export class Qingniao extends StandardEnemy {
   }
 
   // ───────────── 姿态 ─────────────
+
+  /** 片段表（M12）：照 Unity QingniaoAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      hover: 'loco',
+      volley: { fade: 0.08, secs: () => this.volleyTime },
+      recover: { fade: 0.06 },
+      swoopDown: { fade: 0.06 },
+      swoopUp: { fade: 0.08 },
+      takeoff: { fade: 0.08, secs: () => TAKEOFF_TIME },
+      screech: { fade: 0.06, secs: () => SCREECH_TIME },
+      toPerch: { fade: 0.1 },
+      perched: { fade: 0.12 },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

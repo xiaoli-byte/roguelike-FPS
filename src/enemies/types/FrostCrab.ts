@@ -21,6 +21,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp01, rotateTowards } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -572,6 +573,19 @@ export class FrostCrab extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity FrostCrabAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      advance: 'loco',
+      grabRecover: { fade: 0.1, secs: () => GRAB_RECOVER },
+      grabWindup: { fade: 0.08, secs: () => this.windTime },
+      grab: { fade: 0.04 },
+      sweepWindup: { fade: 0.08, secs: () => this.windTime },
+      sweep: { fade: 0.04 },
+      shellBreak: { fade: 0.06, secs: () => BREAK_TIME },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

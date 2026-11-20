@@ -24,6 +24,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp, clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -649,6 +650,23 @@ export class Xingxing extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity XingxingAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      chase: 'loco',
+      swipe: { fade: 0.04 },
+      throwRelease: { fade: 0.04 },
+      swipeWindup: { fade: 0.06, secs: () => this.windTime },
+      slamWindup: { fade: 0.08, secs: () => this.windTime },
+      recover: { fade: 0.1 },
+      slamAir: { fade: 0.04 },
+      throwWindup: { fade: 0.08, secs: () => this.windTime },
+      climbPrep: { fade: 0.08, secs: () => CLIMB_PREP },
+      climb: { fade: 0.06 },
+      rally: { fade: 0.1, secs: () => RALLY_TIME },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

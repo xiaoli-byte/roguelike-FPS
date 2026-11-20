@@ -20,6 +20,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp01, damp, rotateTowards } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -374,6 +375,16 @@ export class IcePuffer extends StandardEnemy {
     const k = this.detonated && this.pInflate > 0.5 ? 1.3 : 1;
     const s = this.sizeScale * k * (t < 0.3 ? 1 + t * 1.5 : Math.max(0.01, 1.45 * (1 - (t - 0.3) / 0.7)));
     this.model.scale.setScalar(s);
+  }
+
+  /** 片段表（M12）：照 Unity IcePufferAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      drift: 'loco',
+      dive: { fade: 0.08 },
+      inflate: { fade: 0.06, secs: () => this.inflateTime },
+      recover: { fade: 0.1 },
+    };
   }
 
   protected override pose(dt: number): void {
