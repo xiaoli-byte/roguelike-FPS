@@ -9,6 +9,7 @@ import { MouseLookFilter } from '../core/MouseLookFilter';
 import { SKY } from '../world/plateau/backdrop';
 import { Atmosphere, atmosphereForChapter } from '../world/Atmosphere';
 import { MistStreams, type MistStream } from '../world/MistStreams';
+import { CloudSky, cloudSkyForChapter } from '../world/CloudSky';
 import { FIRE_STATE } from '../world/plateau/landmarks';
 import { WORLD_UNIFORMS } from '../world/plateau/materials';
 import { CollisionWorld, EYE, Walker } from '../world/plateau/walker';
@@ -97,16 +98,18 @@ const ringKeys = (r: number, from: number, to: number, n: number): MistStream['k
   return { position: [x, terrain.heightAt(x, z) + 3, z] as [number, number, number], halfWidth: 9, size: 28, opacity: i === 0 || i === n - 1 ? 0 : 1 };
 });
 const lakeMist = new MistStreams([{
-  opacity: 0.45, speed: 0.35, flat: true, floorY: LAKE.level, stretch: 2,
+  opacity: 0.6, speed: 0.35, flat: true, floorY: LAKE.level, stretch: 2,
   keys: [
-    { position: [-40, LAKE.level + 0.6, -14], halfWidth: 10, size: 22, halfHeight: 1.2, opacity: 0 },
-    { position: [-18, LAKE.level + 0.6, -24], halfWidth: 12, size: 24, halfHeight: 1.2 },
-    { position: [16, LAKE.level + 0.6, -26], halfWidth: 12, size: 24, halfHeight: 1.2 },
-    { position: [40, LAKE.level + 0.6, -14], halfWidth: 10, size: 22, halfHeight: 1.2, opacity: 0 },
+    { position: [-46, LAKE.level + 0.8, -14], halfWidth: 12, size: 26, halfHeight: 1.5, opacity: 0 },
+    { position: [-22, LAKE.level + 0.8, -30], halfWidth: 14, size: 28, halfHeight: 1.5 },
+    { position: [20, LAKE.level + 0.8, -32], halfWidth: 14, size: 28, halfHeight: 1.5 },
+    { position: [46, LAKE.level + 0.8, -14], halfWidth: 12, size: 26, halfHeight: 1.5, opacity: 0 },
   ],
 }], { renderOrder: 2 });
-const footMist = new MistStreams([{ opacity: 0.42, speed: 0.5, keys: ringKeys(100, -1.95, 1.95, 9) }]);
-scene.add(lakeMist.mesh, footMist.mesh);
+const footMist = new MistStreams([{ opacity: 0.48, speed: 0.5, keys: ringKeys(96, -2.1, 2.1, 11) }, { opacity: 0.3, speed: 0.4, keys: ringKeys(130, -1.6, 1.6, 9) }]);
+// 黎明的天：低云很少（云影已经压低）、中高处几缕被晨光照暖的丝云（概念图）；天空盒自己画了太阳，不再画日晕
+const clouds = new CloudSky({ ...cloudSkyForChapter(4), low: 0.08, mid: 0.22, high: 0.5, sunGlow: 0 });
+scene.add(lakeMist.mesh, footMist.mesh, clouds.mesh);
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────

@@ -12,11 +12,13 @@ import { srgb } from '../plateau/fx';
 import { FlagSystem } from '../plateau/flags';
 import { GeoBuilder } from '../plateau/geo';
 import { buildPlacements, type Animated, type MapIcon, type SmokeEmitter } from '../plateau/landmarks';
-import { WORLD_UNIFORMS, materials } from '../plateau/materials';
+import { WORLD_UNIFORMS, materials, patchMaterial } from '../plateau/materials';
 import { GrassField, buildStaticScatter } from '../plateau/scatter';
 import type { CollisionWorld } from '../plateau/walker';
+import { buildCliffs } from './cliffs';
 import { buildGlacier } from './glacier';
-import { DAWN, FLAG_LINES, ISLAND, LAKE, PEAKS, PILLARS, PLACEMENTS, type PillarSpec } from './spec';
+import { buildSacredPeak } from './peak';
+import { DAWN, FLAG_LINES, ISLAND, LAKE, PEAKS, PILLARS, PLACEMENTS, SACRED_PEAK, type PillarSpec } from './spec';
 import { buildFarTerrain, type HaiziTerrain } from './terrain';
 
 // ───────────────────────────── 湖面 ─────────────────────────────
@@ -60,14 +62,15 @@ void main() {
   w += (vec2(n(p * 1.6 + t * 0.6), n(p * 1.7 - t * 0.5)) - 0.5) * 0.45;
   vec4 uv = vUv;
   uv.xy += w * uRipple * uv.w;
-  vec3 refl = texture2DProj(tDiffuse, uv).rgb * 0.92;
+  vec3 refl = texture2DProj(tDiffuse, uv).rgb * vec3(0.9, 0.97, 0.97);
   vec3 view = normalize(cameraPosition - vWorld);
   float fres = 0.08 + 0.92 * pow(1.0 - clamp(view.y, 0.0, 1.0), 3.0);
   // 牛奶海的乳白青绿：湖心深、近岸和湖心岛周围浅
   vec3 body = mix(uDeep, uShallow, smoothstep(30.0, uShoreR, r));
   body = mix(body, uShallow, 1.0 - smoothstep(uIslandR, uIslandR + 7.0, r));
   body *= 0.92 + 0.16 * n(p * 0.08 + t * 0.02);
-  vec3 col = mix(body, refl, clamp(0.3 + fres, 0.0, 0.95));
+  // 镜面湖（概念图里冰舌和金顶的倒影清清楚楚）：倒影占得多，湖色只透一层
+  vec3 col = mix(body, refl, clamp(0.5 + fres, 0.0, 0.97));
   // 岸线和湖心岛边一圈细碎的白浪
   float foam = smoothstep(1.6, 0.0, abs(r - uShoreR)) + smoothstep(1.2, 0.0, abs(r - uIslandR));
   foam *= smoothstep(0.45, 0.8, n(p * 1.3 + vec2(t * 0.4, -t * 0.3)));
@@ -99,7 +102,7 @@ export class LakeSurface {
         uniforms: {
           color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null },
           uTime: { value: 0 }, uDeep: { value: lin(LAKE.deep) }, uShallow: { value: lin(LAKE.shallow) },
-          uTint: { value: lin('#ff4fd8') }, uTintMix: { value: 0 }, uGlow: { value: 0 }, uRipple: { value: 0.012 },
+          uTint: { value: lin('#ff4fd8') }, uTintMix: { value: 0 }, uGlow: { value: 0 }, uRipple: { value: 0.005 },
           uShoreR: { value: terrain.shorelineR(0) }, uIslandR: { value: 8.3 },
         },
         vertexShader: LAKE_VS,
@@ -135,7 +138,7 @@ export class LakeSurface {
 
   /** 每帧：雷暴时浪大一点 */
   update(): void {
-    this.mat.uniforms.uRipple.value = 0.012 + 0.028 * WORLD_UNIFORMS.uStorm.value;
+    this.mat.uniforms.uRipple.value = 0.005 + 0.035 * WORLD_UNIFORMS.uStorm.value;
   }
 
   /** 反射贴图分辨率（画布尺寸变了时调） */
@@ -179,10 +182,15 @@ function dawnSky(sky: THREE.Mesh): void {
 }
 
 /**
- * 金顶：远山（顶点色）在 from 以上、朝太阳的那一面往金色染。远景件，光直接烘进颜色——
- * 1.4 km 外的山不在阴影贴图范围里，实时光照做不出「湖盆还在阴影里、只有山尖亮」。
+ * 远山（顶点色）照概念图收拾：
+ * - 切面着色（flatShading）：块面清楚的山，不是光滑的奶油锥；
+ * - 金顶：from 以上、朝太阳的那一面往金色染。远景件，光直接烘进颜色——
+ *   1.4 km 外的山不在阴影贴图范围里，实时光照做不出「湖盆还在阴影里、只有山尖亮」。
  */
 function summitGlow(mountains: THREE.Object3D): void {
+  const flat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, flatShading: true }));
+  mountains.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) m.material = flat; });
+  const n = new THREE.Vector3();
   const gold = new THREE.Color(DAWN.summit.color), c = new THREE.Color(), center = new THREE.Vector3();
   const sunXZ = new THREE.Vector2(DAWN_SUN_DIR.x, DAWN_SUN_DIR.z).normalize(), out = new THREE.Vector2();
   const seen = new Set<THREE.BufferGeometry>();
@@ -194,14 +202,23 @@ function summitGlow(mountains: THREE.Object3D): void {
     const pos = g.attributes.position as THREE.BufferAttribute;
     const col = g.attributes.color as THREE.BufferAttribute | undefined;
     if (!col) return;
+    if (!g.attributes.normal) g.computeVertexNormals();
+    const nor = g.attributes.normal as THREE.BufferAttribute | undefined;
     // 朝向按顶点相对山心的水平方向判断（远山网格的法线有的朝下，材质是双面的，看不出来，但不能拿来判朝向）
     g.computeBoundingBox();
     g.boundingBox!.getCenter(center);
     for (let i = 0; i < pos.count; i++) {
       const y = pos.getY(i) + m.position.y;
+      out.set(pos.getX(i) - center.x, pos.getZ(i) - center.z);
+      // 朝阳面亮、背阳面暗，直接烘进颜色（晨光太弱、远山又在雾里，实时光照拉不开棱线两侧的明暗）
+      if (nor) {
+        n.fromBufferAttribute(nor, i); if (n.y < 0) n.negate();
+        const lit = Math.max(0, n.x * DAWN_SUN_DIR.x + n.z * DAWN_SUN_DIR.z) / Math.max(0.2, Math.hypot(n.x, n.z));
+        c.fromBufferAttribute(col, i).multiplyScalar(0.82 + 0.22 * lit);
+        col.setXYZ(i, c.r, c.g, c.b);
+      }
       const k = THREE.MathUtils.smoothstep(y, DAWN.summit.from, DAWN.summit.to);
       if (k <= 0) continue;
-      out.set(pos.getX(i) - center.x, pos.getZ(i) - center.z);
       const face = out.lengthSq() < 1 ? 0.6 : Math.max(0, out.normalize().dot(sunXZ) + 0.25);
       c.fromBufferAttribute(col, i).lerp(gold, Math.min(1, k * face * 1.6) * DAWN.summit.strength);
       col.setXYZ(i, c.r, c.g, c.b);
@@ -243,12 +260,12 @@ function buildPillar(spec: PillarSpec, terrain: HaiziTerrain, world: CollisionWo
     b.cyl('plain', r1, r0, h, k % 2 ? '#8a8c88' : '#979893', 0, y, 0, 8, undefined, Math.PI / 8);
     // 雷纹：石鼓上一圈刻出来的回纹带（暗）和一道紫红的平涂细线（之后着色器可以让它亮）
     b.cyl('plain', r1 + 0.015, r1 + 0.025, 0.2, '#4a4844', 0, y + h * 0.58, 0, 8, undefined, Math.PI / 8);
-    b.cyl('plain', r1 + 0.03, r1 + 0.03, 0.035, '#7a3a6c', 0, y + h * 0.58 + 0.08, 0, 8, undefined, Math.PI / 8);
+    b.cyl('plain', r1 + 0.03, r1 + 0.03, 0.035, '#4c4752', 0, y + h * 0.58 + 0.08, 0, 8, undefined, Math.PI / 8);
     y += h;
-    b.cyl('gold', r1 + 0.06, r1 + 0.06, 0.12, '#6f5530', 0, y, 0, 16);
+    b.cyl('gold', r1 + 0.06, r1 + 0.06, 0.12, '#4a4238', 0, y, 0, 16);
     y += 0.12;
   }
-  b.cyl('gold', 0.55, 0.78, 0.4, '#6f5530', 0, y, 0, 12);
+  b.cyl('gold', 0.55, 0.78, 0.4, '#4a4238', 0, y, 0, 12);
   for (let k = 0; k < 4; k++) {
     const a = (k / 4) * Math.PI * 2 + Math.PI / 4;
     const p0 = b.world(Math.cos(a) * 0.5, y + 0.3, Math.sin(a) * 0.5), p1 = b.world(Math.cos(a) * 0.62, y + 1.2, Math.sin(a) * 0.62);
@@ -260,7 +277,8 @@ function buildPillar(spec: PillarSpec, terrain: HaiziTerrain, world: CollisionWo
   }
   b.clearFrame();
   const center = new THREE.Vector3(spec.x, gy + y + 1.05, spec.z);
-  const crystalMat = new THREE.MeshStandardMaterial({ color: '#c9b4ff', emissive: '#ff4fd8', emissiveIntensity: 0.12, roughness: 0.18, metalness: 0.05, flatShading: true });
+  // 平时是不发光的淡色晶石（概念图），被雷劈中充能才亮紫红
+  const crystalMat = new THREE.MeshStandardMaterial({ color: '#d5dde6', emissive: '#ff4fd8', emissiveIntensity: 0, roughness: 0.35, metalness: 0.05, flatShading: true });
   const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.5, 0), crystalMat);
   crystal.scale.set(1, 1.7, 1);
   crystal.position.copy(center);
@@ -277,8 +295,8 @@ function buildPillar(spec: PillarSpec, terrain: HaiziTerrain, world: CollisionWo
     id: spec.id, name: spec.name, pos: new THREE.Vector3(spec.x, gy + 0.25, spec.z), top: center, crystal, halo, charge: 0,
     setCharge(k: number) {
       this.charge = Math.min(1, Math.max(0, k));
-      crystalMat.emissiveIntensity = 0.12 + 2.6 * this.charge;
-      crystalMat.color.set(this.charge > 0.95 ? '#fff0ff' : '#c9b4ff');
+      crystalMat.emissiveIntensity = 2.7 * this.charge;
+      crystalMat.color.set(this.charge > 0.95 ? '#fff0ff' : this.charge > 0.02 ? '#d9c4ff' : '#d5dde6');
     },
   };
   anim.push({
@@ -327,9 +345,10 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   const sky = buildSky();
   dawnSky(sky);
   const skyLin = linearSky(sky);
-  const mountains = buildMountains(PEAKS);
+  // 神山单独做（peak.ts），远山列表里的那一座不再生成
+  const mountains = buildMountains(PEAKS.filter(p => p.x !== SACRED_PEAK.x || p.z !== SACRED_PEAK.z));
   summitGlow(mountains);
-  scene.add(sky, skyLin, mountains, buildFarTerrain(terrain), buildGlacier());
+  scene.add(sky, skyLin, mountains, buildSacredPeak(), buildFarTerrain(terrain), buildCliffs(), buildGlacier());
 
   const lake = new LakeSurface(terrain, reflectW, reflectH);
   // 反射那一遍换成线性色的天空，渲染完换回来
@@ -354,10 +373,10 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   for (const p of pillars) conductors.push(p.top);
   buildPlacements({ terrain, b, flags, world, extra, anim, smoke, icons, conductors }, PLACEMENTS, FLAG_LINES);
   // 湖心岛：灵火坛四周一圈白石
-  for (let k = 0; k < 10; k++) {
-    const a = (k / 10) * Math.PI * 2 + 0.2, rr = ISLAND.r - 2.2;
+  for (let k = 0; k < 14; k++) {
+    const a = (k / 14) * Math.PI * 2 + 0.2, rr = ISLAND.r - 1.6 + (k % 3) * 0.6;
     const x = ISLAND.x + Math.cos(a) * rr, z = ISLAND.z + Math.sin(a) * rr;
-    b.rock('plain', 0.35 + (k % 3) * 0.12, k % 2 ? '#e9e5dc' : '#bdb6aa', x, terrain.heightAt(x, z) - 0.1, z, 0.6, k + 3);
+    b.rock('plain', 0.6 + (k % 4) * 0.22, k % 2 ? '#86837e' : '#76736f', x, terrain.heightAt(x, z) - 0.3, z, 0.7, k + 3);
   }
   scene.add(b.build('landmarks'), flags.build(), extra);
 

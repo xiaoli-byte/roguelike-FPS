@@ -65,11 +65,12 @@ export const DAWN = {
   sunDir: [0.5, 0.12, 0.86] as V3,
   /** 太阳只留一点：冰斗里还没照到，湖盆靠天光（低角度的太阳在 140 m 的阴影框外照不出冰斗壁的影子，强了会把西壁照成一大片暖色） */
   sun: '#ffc68c', sunIntensity: 0.55,
-  hemiSky: '#b4c4dc', hemiGround: '#70737a', hemiIntensity: 1.9,
+  /** 地面色是雪地反上来的光：满是雪的冰斗里，立面和陡面不该发黑 */
+  hemiSky: '#b4c4dc', hemiGround: '#a3a9b3', hemiIntensity: 1.9,
   fog: '#cdd6e1',
   sky: { top: '#5a7ebf', mid: '#9bb3d7', horizon: '#ead8c2' },
   /** 神山金顶：远山顶点色在 from 以上开始染、to 处最浓，只染朝太阳的那一面 */
-  summit: { color: '#ffa443', from: 220, to: 520, strength: 0.9 },
+  summit: { color: '#ffa443', from: 190, to: 470, strength: 1 },
   /** 云影压低：开阔的碎石岸上斑驳的明暗会给怪打掩护（composition.md 第 6 节第 4 条） */
   cloudShadow: 0.15,
 };
@@ -84,7 +85,7 @@ export const GLACIER = {
   /** 舌尖 / 舌根到湖心的距离 */
   r0: 82, r1: 300,
   /** 舌尖 / 舌根的半宽（m） */
-  halfWidth0: 15, halfWidth1: 46,
+  halfWidth0: 18, halfWidth1: 40,
   /** 冰层厚（m）：中线最厚，两边贴回山坡 */
   thick: 4.5,
 };
@@ -93,7 +94,7 @@ export const GLACIER = {
 export const SPAWN = { x: -18, z: 67.6, face: [0, 0] as V2 };
 
 /** 神山：北偏东远处的雪峰，正好落在「出生点 → 湖心岛」的延长线上 */
-export const SACRED_PEAK = { x: 360, z: -1390, height: 640, radius: 900 };
+export const SACRED_PEAK = { x: 360, z: -1390, height: 640, radius: 700 };
 
 /** 冰斗缺口的方位（从湖心看神山，弧度：0 = 北，顺时针为正） */
 export const PEAK_BEARING = Math.atan2(SACRED_PEAK.x, -SACRED_PEAK.z);
@@ -107,6 +108,11 @@ export const PEAKS: PeakSpec[] = [
   { x: -1000, z: 1000, height: 360, radius: 680, ridges: 4, sharp: 1.25, seed: 26.6, snow: 0.45, green: 0.2 },
   { x: 900, z: 1100, height: 320, radius: 680, ridges: 5, sharp: 1.15, seed: 27.9, snow: 0.5, green: 0.3 },
   { x: 0, z: 1500, height: 260, radius: 720, ridges: 5, sharp: 1.0, seed: 28.3, snow: 0.7, green: 0.5 },
+  // 神山两侧更远、更矮的几座（概念图里从垭口看过去，主峰左右一层层退进雾里）
+  { x: -60, z: -1900, height: 360, radius: 560, ridges: 3, sharp: 1.6, seed: 29.1, snow: 0.3, green: 0 },
+  { x: 820, z: -1720, height: 400, radius: 600, ridges: 4, sharp: 1.5, seed: 30.4, snow: 0.3, green: 0 },
+  { x: 1180, z: -1500, height: 330, radius: 560, ridges: 3, sharp: 1.4, seed: 31.7, snow: 0.32, green: 0 },
+  { x: -420, z: -2050, height: 300, radius: 600, ridges: 4, sharp: 1.4, seed: 32.2, snow: 0.3, green: 0 },
 ];
 
 /**
