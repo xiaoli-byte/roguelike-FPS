@@ -9,6 +9,7 @@
 import * as THREE from 'three';
 import type { GameContext, IEnemy } from '../../core/types';
 import { stageHooks } from '../../enemies/bosses/framework/StageHooks';
+import { bindKuiStorm, kuiStorm, type KuiStormHooks } from '../../enemies/bosses/lords/KuiStorm';
 import { postEffects } from '../../render/PostStack';
 import { pickLayoutVariant, layoutForce, underPath } from '../LevelLayout';
 import type { UnitySceneDocument } from '../UnityLevelLibrary';
@@ -59,6 +60,8 @@ export class MechanismSystem implements MechanismHost {
   readonly conductors: Conductor[] = [];
   readonly strikes: LightningStrikes;
   storm: PlateauStorm | null = null;
+  /** 接给夔的雷暴钩子（卸载时只解绑自己接上的那份：新关的机关可能先于旧关卸载建好） */
+  private kuiHooks: KuiStormHooks | null = null;
   weather: WeatherDirector | null = null;
   boundary: BoundaryZone | null = null;
   quicksand: QuicksandField | null = null;
@@ -142,6 +145,25 @@ export class MechanismSystem implements MechanismHost {
       this.wind.weather = { dir: data.weather.windDir, strength: data.weather.baseWind };
     }
     this.storm = new PlateauStorm(ctx, this.strikes, sun, stageHooks.sun?.ambients ?? [], addPostLayer, this.group);
+    // 夔（src/enemies/bosses/lords/KuiStorm.ts）经这里用落雷 / 经幡杆导体 / 高原雷暴：数值由夔按 Unity 定好传进来
+    const storm = this.storm;
+    this.kuiHooks = {
+      strike: (p, o) => this.strikes.strike(p, { warn: o.warn, radius: o.radius, damage: o.damage, noTelegraph: o.noTelegraph, ignoreConductors: o.ignoreConductors, height: o.height }),
+      nearestCharged: (p, radius) => {
+        const c = Conductor.nearestCharged(p, radius, this.conductors);
+        return c ? { top: c.top, base: c.base, discharge: () => { c.discharge(); } } : null;
+      },
+      // Unity KuiBrain：Arena.Contains(c.Base, margin)——圆形场地按水平距离
+      chargeConductors: (center, radius, amount) => {
+        for (const c of this.conductors) {
+          const b = c.base;
+          if (Math.hypot(b.x - center.x, b.z - center.z) <= radius) c.addCharge(amount);
+        }
+      },
+      beginStorm: (center, spec) => storm.begin({ center, ...spec }),
+      clearStrikes: () => this.strikes.clear(),
+    };
+    bindKuiStorm(this.kuiHooks);
     // 玩家方的范围伤害打可破坏物（网页碰撞盒只有 onHit：爆炸另接一层）
     this.hookExplosions();
     // 软边界：距离场是单独的二进制文件，载入完再接上
@@ -292,6 +314,8 @@ export class MechanismSystem implements MechanismHost {
     this.quicksand?.dispose();
     this.boundary?.dispose();
     this.weather?.dispose();
+    if (this.kuiHooks && kuiStorm.hooks === this.kuiHooks) bindKuiStorm(null);
+    this.kuiHooks = null;
     this.storm?.dispose();
     this.strikes.clear();
     this.lava.dispose();

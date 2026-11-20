@@ -23,6 +23,7 @@ import * as Fx from './WarlordFx';
 import { buildWarlordIntro } from './WarlordIntro';
 import { buildWarlord, WarlordAnimator, type WarlordRig } from './WarlordModel';
 import { createWarlordMove, IaiMove, ThrustMove, WaveRunner } from './WarlordMoves';
+import { stageGates } from '../../world/mechanisms/StageGates';
 
 /** 敌人名册里的条目（首领自己的耐久按 WarlordDef 的定档表另算；这里是难度 1 的参考值 = 定档 ÷ 2.92） */
 export const WARLORD_DEF: EnemyDef = {
@@ -1089,6 +1090,8 @@ export class Warlord extends BossBrain implements DirectedBoss {
     this.setDrop(0);
     this.glow(0, 0);
     this.waves.clear();
+    // 同 Unity WarlordBrain：倒下时熔铜渠退回（3-3 神范台；场上没有渠时为 null）
+    stageGates.foundryChannels?.recede();
     this.act('death', this.wdef.defeat.seconds);
     this.director?.abort('首领倒下');
     this.defeatFx();

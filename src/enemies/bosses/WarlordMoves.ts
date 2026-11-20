@@ -19,6 +19,7 @@ import {
   WarlordRef, WarlordSword, waveSweeps, yawOf, type Beat, type WaveShot,
 } from './WarlordDef';
 import * as Fx from './WarlordFx';
+import { stageGates, type FoundryChannelsHook } from '../../world/mechanisms/StageGates';
 
 const DEG = Math.PI / 180;
 const _a = new THREE.Vector3(), _b = new THREE.Vector3();
@@ -1272,11 +1273,22 @@ export class LeapMove extends WarlordMove {
 export class ChannelSurgeMove extends WarlordMove {
   private ring: { readonly ended: boolean } | null = null;
   private announced = false;
+  /** 引动过几次熔铜渠、退回环带写法几次、这次画了几条渠岸预警、这次高位停几秒（同 Unity，测试 / 调试用） */
+  floods = 0;
   fallbacks = 0;
   lastWarnings = 0;
+  lastHold = 0;
 
+  /** 3-3 神范台的熔铜渠（M7 的 FoundryChannels，经 stageGates 交过来；场上没有渠时为 null） */
+  private get channels(): FoundryChannelsHook | null {
+    const ch = stageGates.foundryChannels;
+    return ch && ch.count > 0 ? ch : null;
+  }
+
+  /** 熔铜渠（或兜底的环带）还在涨 / 生效 */
   get activeSurge(): boolean {
-    return !!this.ring && !this.ring.ended;
+    const ch = this.channels;
+    return ch ? ch.flooding : !!this.ring && !this.ring.ended;
   }
 
   override weightNow(): number {
@@ -1308,10 +1320,35 @@ export class ChannelSurgeMove extends WarlordMove {
     this.ctx.fx.burst(_a.copy(c).setY(c.y + 0.5), EMBERS, 30, 8, 0.9, 0.2, 4);
     this.w.plantStrike(c);
     this.sfx('boss_slam', 1, 0.7);
-    this.ringFallback();
+    const ch = this.channels;
+    if (ch) this.floodChannels(ch);
+    else this.ringFallback();
     if (this.announced) return;
     this.announced = true;
-    this.ctx.ui.toast('熔岩正在涌向外圈——靠近中心或站上高处！', '#ff6a2a');
+    this.ctx.ui.toast(ch ? '熔铜渠要漫上来了——上桥，或往象限中央躲！' : '熔岩正在涌向外圈——靠近中心或站上高处！', '#ff6a2a');
+  }
+
+  /**
+   * 引动熔铜渠（Unity WarlordChannelSurge.FloodChannels）：高位停 = 定义里按阶段的秒数（狂怒 +2 s）；
+   * 每片熔岩的漫溢范围铺一条预警（盒沿长边从一头铺到另一头、熔池铺圆），填满的那一刻熔岩正好漫过渠岸。
+   * 预警走 hazard 组（招式被打断也照常兑现，所以不 track）。渠里冒泡 / 溅熔滴 / 沿渠涌浪的外观（SurgeFx）随 M11b。
+   */
+  private floodChannels(ch: FoundryChannelsHook): void {
+    let hold = this.w.wdef.surgeHoldAt(this.w.phase);
+    if (this.w.enraged) hold += 2;
+    this.lastHold = hold;
+    if (ch.flood(hold)) this.floods++;
+    const fill = ch.warn + ch.riseTime;
+    const y = this.floor + 0.02;
+    for (const v of ch.surges) {
+      if (v.shape === 'disc') this.hz.groundWarning(v.center[0], y, v.center[2], v.size[0], fill, LAVA, 'hazard');
+      else {
+        // 网页 yaw（度）：本地 +Z = (sin, cos)；半宽 = 盒宽的一半
+        const r = v.yaw * DEG, fx = Math.sin(r), fz = Math.cos(r), len = v.size[1];
+        this.hz.lineWarning(v.center[0] - fx * len * 0.5, y, v.center[2] - fz * len * 0.5, r, len, v.size[0] * 0.5, fill, LAVA, 0.3, 'hazard');
+      }
+      this.lastWarnings++;
+    }
   }
 
   /** 兜底（场地里没有熔铜渠）：TS 的外圈环带熔岩 */
