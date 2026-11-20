@@ -5,7 +5,7 @@
  *   近战形态（碎刃「斩」）：十字换成左右两道弧形括号，敌人在范围内时收紧；
  *   换弹环（鎏金，按换弹进度顺时针）、蓄力环（淡紫，满蓄转金并脉动）；
  *   命中标记：普通（白，0.19 s）、暴击（金、略长，0.26 s）、击杀（朱红、加粗、放大回弹，0.42 s）；持续伤害跳伤、衍生伤害不出标记。
- * 狙击镜遮罩是第二期（Unity ScopeOverlay）：这期沿用网页旧的 gf-scope 遮罩（挂在 HUD 层的旧界面壳里），开镜时把十字藏起来（Suppressed）。
+ * 狙击镜遮罩是 ScopeOverlay：开镜时它把十字藏起来（suppressed）。
  */
 import * as THREE from 'three';
 import type { DamageResult } from '../../core/types';
@@ -21,7 +21,6 @@ const BracketSize = 420, TargetRange = 150;
 const HitAngles = [45, 135, 225, 315];
 const ChargeColor: RGBA = [0.886, 0.831, 1, 1];
 /** 狙击镜阈值：fovKick 低于此值视为开镜（网页旧遮罩的判据） */
-const SCOPE_KICK = -30;
 const _dir = new THREE.Vector3();
 const _end = new THREE.Vector3();
 
@@ -53,9 +52,6 @@ export class CrosshairWidget extends HudWidget {
   private chargeMode = '';
   /** 藏起十字 / 括号（狙击镜开镜时）；换弹环、蓄力环、命中标记照常 */
   suppressed = false;
-  /** 旧的狙击镜遮罩（第二期换成 ScopeOverlay） */
-  scope: HTMLElement | null = null;
-  private scoped = false;
 
   protected build(): HTMLElement {
     const root = el('sf-xhair');
@@ -182,14 +178,6 @@ export class CrosshairWidget extends HudWidget {
     this.visible = !!ws && !!p;
     if (!ws || !p) return;
     const now = f.unscaledTime;
-
-    // 旧的狙击镜遮罩（第二期换成 ScopeOverlay）
-    const scoped = f.playing && ctx.cameraFx.fovKick < SCOPE_KICK;
-    if (scoped !== this.scoped) {
-      this.scoped = scoped;
-      this.scope?.classList.toggle('is-on', scoped);
-    }
-    this.suppressed = scoped;
 
     const blade = ws.bladeHud ?? null;
     const isMelee = blade !== null && blade.mode === 'hand';
