@@ -300,6 +300,11 @@ function runtimeFor(ctx: GameContext): PlateauCombatRuntime {
  */
 export class PlateauFoeAdapter extends EnemyBase implements AffixHost {
   readonly foe: Foe;
+
+  /** 高原敌自己的带电（Foe.charged()）：combat/Charge 的 ChargeSystem.isCharged 一并读，火一碰就是焚雷（M8） */
+  foeCharged(): boolean {
+    return this.foe.charged();
+  }
   readonly runtime: PlateauCombatRuntime;
   /** 词缀写入的倍率（AffixHost） */
   speedMult = 1;

@@ -132,8 +132,13 @@ export class SkillController {
 
   private tryUse(s: SkillState, slot: SkillSlot): void {
     const ctx = this.ctx;
-    if (s.charges < 1 || s.def.isActive?.(ctx)) {
-      this.deny();
+    // 拒绝的原因（Unity SkillDeny）：没有充能 / 持续型技能正在生效 / 技能自己拒绝
+    if (s.charges < 1) {
+      this.deny(s, slot, 'cooldown');
+      return;
+    }
+    if (s.def.isActive?.(ctx)) {
+      this.deny(s, slot, 'busy');
       return;
     }
     let ok = false;
@@ -143,7 +148,7 @@ export class SkillController {
       console.error('[Skill] activate threw', s.def.id, err);
     }
     if (!ok) {
-      this.deny();
+      this.deny(s, slot, 'failed');
       return;
     }
     const wasFull = s.charges >= s.maxCharges;
@@ -152,11 +157,13 @@ export class SkillController {
     ctx.events.emit('skill:used', { slot, skillId: s.def.id });
   }
 
-  private deny(): void {
+  /** 拒绝反馈（Unity HeroSkills.Deny）：ui_deny 音 + 'skill:denied' 事件（技能格闪红），0.35 s 内只给一次 */
+  private deny(s: SkillState, slot: SkillSlot, reason: 'cooldown' | 'busy' | 'failed'): void {
     const now = this.ctx.time.now;
     if (now - this.lastDeny < DENY_INTERVAL) return;
     this.lastDeny = now;
     this.ctx.audio.play('ui_deny', { volume: 0.4 });
+    this.ctx.events.emit('skill:denied', { slot, skillId: s.def.id, reason });
   }
 }
 

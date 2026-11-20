@@ -11,7 +11,7 @@
  * 与 Unity 的差异：
  *   · 风场是本首领自己算的（同 Unity WindAttractor：smoothstep 权重、方向朝 / 背着它），没有接 F 路的全局 WindField（随 M7），
  *     顺风 / 逆风 ±25% 步速没有（网页玩家没有这个口子）；贴地风线没有。
- *   · 二阶段起「带电」（Charge.Hold，火一碰焚雷）随 M8 的带电状态。
+ *   · 二阶段起、珠子在的时候「带电」（Charge.Hold，火一碰焚雷；M8 接上，见 update）。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../../../core/types';
@@ -61,6 +61,8 @@ export class Feilian extends LordBrain implements TornadoOwner {
   private landedIntro = false;
   private deathBurst = false;
   private phaseTornadoes = false;
+  /** 常驻带电的撤销函数（Unity FeilianBrain.chargeHold） */
+  private chargeHold: (() => void) | null = null;
   private readonly vortexAt = new THREE.Vector3();
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
@@ -143,7 +145,21 @@ export class Feilian extends LordBrain implements TornadoOwner {
   override update(dt: number): void {
     super.update(dt);
     this.vortex?.update(dt);
-    if (!this.alive) return;
+    if (!this.alive) {
+      this.chargeHold?.();
+      this.chargeHold = null;
+      return;
+    }
+    // 带电（M8 的 combat/Charge，Unity FeilianBrain）：二阶段起、珠子在的时候常驻带电，火一碰就是焚雷；珠碎 / 回到一阶段就撤
+    const charge = (this.ctx.combat as unknown as { charge?: { isCharged(e: unknown): boolean; hold(e: unknown, src: unknown): () => void } }).charge;
+    const charged = this.phase >= 1 && this.orbIntact && this.introDone;
+    if (charge && charged && !this.untargetable && !charge.isCharged(this)) {
+      this.chargeHold?.();
+      this.chargeHold = charge.hold(this, this);
+    } else if (!charged && this.chargeHold) {
+      this.chargeHold();
+      this.chargeHold = null;
+    }
     this.recentDamage = Math.max(0, this.recentDamage - dt * 200 * this.webScale);
     if (this.orbGone > 0) {
       this.orbGone -= dt;

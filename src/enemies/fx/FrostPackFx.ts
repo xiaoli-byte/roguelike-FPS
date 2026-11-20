@@ -385,6 +385,13 @@ let chillTick = -Infinity;
 export function chillPlayer(ctx: GameContext, seconds: number, frac: number): void {
   const p = ctx.player;
   if (!p.alive) return;
+  // M8：玩家身上有减益组件（player/PlayerStatus，Unity PlayerStatus.Chill）时交给它——取最强的一条、上限 70%、不改属性表；
+  // 没有（测试桩）时走下面原来的路径
+  const status = (p as unknown as { status?: { chill?: (slow: number, seconds: number) => boolean } }).status;
+  if (status && typeof status.chill === 'function') {
+    status.chill(frac, seconds);
+    return;
+  }
   const stats = p.stats;
   const now = ctx.time.now;
   if (!stats.hasSource(CHILL_SRC)) stats.add('moveSpeed', -stats.getBase('moveSpeed') * frac, CHILL_SRC);

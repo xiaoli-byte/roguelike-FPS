@@ -139,7 +139,9 @@ export class Hanba extends BossBrain implements DirectedBoss {
       (dmg, from) => {
         if (this.ctx.player.alive) this.ctx.combat.damagePlayer(dmg, 'fire', null, from ? new THREE.Vector3(from.x, from.y, from.z) : null);
       },
-      (color, alpha, seconds) => Fx.screenFlash(this.ctx, color, alpha, seconds));
+      (color, alpha, seconds) => Fx.screenFlash(this.ctx, color, alpha, seconds),
+      // M8：玩家有减益组件时日晒层挂在玩家身上（HUD / 其他系统读 player.status）；测试桩没有时照旧由旱魃持有
+      (this.ctx.player as unknown as { status?: { sunburn?: import('./HanbaSunburn').SunburnInstance } } | undefined)?.status?.sunburn ?? null);
     this.exposure.shaftGain = d.shaftGain;
     this.exposure.ringGain = d.ringGain;
     this.exposure.ringRange = d.ringRange;

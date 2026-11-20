@@ -51,6 +51,12 @@ export interface ViewmodelState {
 
   /** 碎刃：控制器的姿态输入（WeaponSystem 每帧写入；其他武器为 null） */
   blade: BladePoseInput | null;
+  /**
+   * 技能出手的覆盖姿态（Unity FirstPersonViewmodel.OverlayPos / OverlayRot，player/CastPose 按技能播时间线）：
+   * 位置（米）/ 旋转（弧度）直接叠在组合姿态上；没有时为 null
+   */
+  overlayPos?: { x: number; y: number; z: number } | null;
+  overlayRot?: { x: number; y: number; z: number } | null;
 }
 
 /** ViewmodelState 默认值（WeaponSystem 持有一份并逐帧改写） */
@@ -58,7 +64,7 @@ export function createViewmodelState(): ViewmodelState {
   return {
     aimT: 0, lowerT: 0, reloading: false, reloadP: 0, shellMode: false, firstShell: true, firing: false, spin: 0, scoped: false, sinceShot: 99, cock: 1,
     elementHint: null, cycleIndex: -1,
-    blade: null,
+    blade: null, overlayPos: null, overlayRot: null,
   };
 }
 
@@ -649,6 +655,17 @@ export class Viewmodel {
       const j = def.mode === 'charge' ? 0.0008 + 0.0026 * s.spin : 0.003;
       x += (Math.random() - 0.5) * j;
       y += (Math.random() - 0.5) * j;
+    }
+    // 技能出手的覆盖姿态（CastPose）
+    if (s.overlayPos) {
+      x += s.overlayPos.x;
+      y += s.overlayPos.y;
+      z += s.overlayPos.z;
+    }
+    if (s.overlayRot) {
+      rx += s.overlayRot.x;
+      ry += s.overlayRot.y;
+      rz += s.overlayRot.z;
     }
     const bl = e.blade;
     if (bl) bl.pose(dt, s.blade ?? BLADE_IDLE);

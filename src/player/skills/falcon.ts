@@ -426,7 +426,8 @@ export const FALCON: HeroDef = {
     description: `可在空中额外跳跃 1 次；身处空中时造成的伤害提高 ${Math.round(AIR_BONUS * 100)}%；下落时按住跳跃键可张开飞膜滑翔，大幅减缓下落。`,
     apply(ctx) {
       const off = ctx.combat.addOutgoingModifier((_enemy, req) =>
-        !ctx.player.onGround && req.source !== 'status' ? 1 + AIR_BONUS : 1,
+        // 灵宠（只吃灵宠伤害加成）不吃凌空（Unity FalconSkills.AirMultiplier）
+        !ctx.player.onGround && req.source !== 'status' && req.source !== 'pet' && !(req.tags?.includes('pet')) ? 1 + AIR_BONUS : 1,
       );
       ctx.run.flags.glide = 1;
       return () => {

@@ -9,7 +9,7 @@
  *   · 捶胸：鼓心倍率 × 1.4（weakpointDamageMult）；破鼓：单膝跪地（kneel）。
  *   · 死亡「雷息」：鼓面炸开一道光 → 往后倒进残鼓（sink 片段，网页退回 kneel；体型缩到 25%）、身体化成雷云散开 → 雷暴 4 s 内退去。
  * 还差（等 M7）：落雷、导体（经幡杆带电 / 回劈 / 召鼓充电）、高原雷暴——全部经 KuiStorm 的 bindKuiStorm 接；没接时这些调用只记数。
- * 与 Unity 的差异：一直带电（Charge.Hold，火一碰焚雷）随 M8 的带电状态；雷云 / 鼓缝裂光换成 ctx.fx 粒子。
+ * 一直带电（Charge.Hold，火一碰焚雷；M8 接上，见 passiveTick）。与 Unity 的差异：雷云 / 鼓缝裂光换成 ctx.fx 粒子。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../../../core/types';
@@ -153,7 +153,17 @@ export class Kui extends LordBrain {
     if (this.alive) this.weakpointDamageMult = this.drumOpen ? this.kdef.drumOpenMult : 1;
   }
 
+  /** 常驻带电的撤销函数（Unity KuiBrain.chargeHold） */
+  private chargeHold: (() => void) | null = null;
+
   protected override passiveTick(dt: number): void {
+    // 雷兽一直带电（M8 的 combat/Charge；登场时不可选中拿不到电：开打后补上，被清掉了也补）——火一碰就是焚雷。
+    // 经 ctx.combat.charge 鸭子类型拿（不 import，测试桩里没有就不带电）
+    const charge = (this.ctx.combat as unknown as { charge?: { isCharged(e: unknown): boolean; hold(e: unknown, src: unknown): () => void } }).charge;
+    if (charge && this.alive && !this.untargetable && !charge.isCharged(this)) {
+      this.chargeHold?.();
+      this.chargeHold = charge.hold(this, this);
+    }
     if (this.phase >= 2) {
       this.ringT -= dt;
       if (this.ringT <= 0) {

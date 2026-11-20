@@ -292,6 +292,8 @@ export interface GameEvents {
   /** 释放武器技能（碎刃「杀气爆发」/「人刀合一」） */
   'weapon:skillUsed': { weapon: WeaponInstance; skillId: string };
   'skill:used': { slot: 'primary' | 'secondary'; skillId: string };
+  /** 按了技能但放不出来（Unity HeroSkills.Denied：没有充能 / 持续中 / 技能自己拒绝），0.35 s 内最多一次；HUD 技能格闪红 */
+  'skill:denied': { slot: 'primary' | 'secondary'; skillId: string; reason: 'cooldown' | 'busy' | 'failed' };
   'stage:loaded': { stage: StageNode };
   'stage:cleared': { stage: StageNode };
   'wave:started': { index: number; total: number };

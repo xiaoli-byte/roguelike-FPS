@@ -14,6 +14,7 @@ import { SkillController } from './SkillController';
 import { PlayerStatus } from './PlayerStatus';
 import { MovementFx } from './MovementFx';
 import { FallRecovery } from './FallRecovery';
+import { CastPose } from './CastPose';
 
 // ───────────────────────────── 运动常量 ─────────────────────────────
 
@@ -71,7 +72,8 @@ const PITCH_LIMIT = 89 * DEG;
  * 被自动回正的比例、开始回正前的延迟、回正速率（指数趋近，越大越快）。
  * 延迟要短于高射速武器的射击间隔，否则连射期间完全不回正、准星会一路上爬。
  */
-const RECOIL_RECOVER_FRACTION = 0.92;
+/** 后坐完全回正（Unity PlayerMotor.RecoilRecoverFraction = 1；原来 0.92，配合 WeaponSystem 的镜头后坐 × 0.3） */
+const RECOIL_RECOVER_FRACTION = 1;
 const RECOIL_RECOVER_DELAY = 0.03;
 const RECOIL_RECOVER_RATE = 11;
 
@@ -152,11 +154,16 @@ export class PlayerController implements IPlayer {
   /** 坠落回收（Unity SafeGround 的玩家部分） */
   readonly fall: FallRecovery;
   private chillPuff = 0;
+  /** 技能出手的覆盖姿态（Unity CastPose）：WeaponSystem 每帧读它叠到枪模上 */
+  readonly castPose: CastPose;
+  /** 锁冲刺的层数（裂地重击跃起期间：冲刺会托住下落、吞掉砸地；Unity MotorLock.Dash） */
+  private dashLocks = 0;
 
   constructor(readonly ctx: GameContext) {
     this.rig = new CameraRig(ctx);
     this.skillCtl = new SkillController(ctx, this.stats);
     this.moveFx = new MovementFx(ctx);
+    this.castPose = new CastPose(ctx);
     this.fall = new FallRecovery(ctx, this);
     this.status = new PlayerStatus({
       hurt: (amount, element, from) => {
@@ -276,6 +283,8 @@ export class PlayerController implements IPlayer {
     this.pitch = 0;
 
     this.rig.reset();
+    this.dashLocks = 0;
+    this.castPose.stop();
     this.status.clearAll();
     this.fall.resetTo(this.position);
     this.skillCtl.setup(hero);
@@ -297,6 +306,7 @@ export class PlayerController implements IPlayer {
     this.updateStatus(dt);
     // 持续型技能在运动之后推进：跟随玩家的特效与本帧相机同步，落地判定不晚一帧
     this.skillCtl.tick(dt);
+    this.castPose.update();
     this.updateCamera(dt);
   }
 
@@ -413,7 +423,7 @@ export class PlayerController implements IPlayer {
     const lungeStep = hard ? Math.min(dt, this.lungeLeft) : 0;
 
     // 冲刺开始
-    if (!hard && acceptInput && input.pressed('dash') && this._dashCharges >= 1 && !this._isDashing && this.dashLockout <= 0) {
+    if (!hard && acceptInput && input.pressed('dash') && this._dashCharges >= 1 && !this._isDashing && this.dashLockout <= 0 && this.dashLocks <= 0) {
       if (lunging) {
         // 冲刺打断软突进（不施加出口速度，冲刺自己设速度）
         this.lungeLeft = 0;
@@ -753,6 +763,17 @@ export class PlayerController implements IPlayer {
   }
 
   /** 立即结束冲刺（保留冲刺出口速度）。技能位移在冲刺中释放时使用；不在冲刺中则无事发生 */
+  /** 锁住冲刺（技能位移期间）；返回解锁函数，多次调用只解一层 */
+  lockDash(): () => void {
+    this.dashLocks++;
+    let done = false;
+    return () => {
+      if (done) return;
+      done = true;
+      this.dashLocks = Math.max(0, this.dashLocks - 1);
+    };
+  }
+
   cancelDash(): void {
     this.endDash();
   }

@@ -338,6 +338,13 @@ const currentChill = new WeakMap<object, number>();
  * @returns 本次实际扣掉的移速
  */
 export function chillPlayer(ctx: ChillHost, frac: number, duration: number): number {
+  // M8：玩家身上有减益组件（player/PlayerStatus，Unity PlayerStatus.Chill）时交给它；没有（测试桩）时走下面原来的路径
+  const status = (ctx.player as unknown as { status?: { chill?: (slow: number, seconds: number) => boolean; speedMult?: number } }).status;
+  if (status && typeof status.chill === 'function') {
+    const before = status.speedMult ?? 1;
+    status.chill(frac, duration);
+    return ctx.player.stats.get('moveSpeed') * Math.max(0, before - (status.speedMult ?? 1));
+  }
   const stats = ctx.player.stats;
   const now = ctx.time.now;
   const active = (chillUntil.get(ctx) ?? -Infinity) > now;

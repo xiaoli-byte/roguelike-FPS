@@ -101,6 +101,8 @@ export class Ballistics {
   private beamCancel: (() => void) | null = null;
   /** 本发元素（元素轮转）：WeaponSystem 在 shoot() 分派前设置、分派后复位为 null */
   elementOverride: Element | null = null;
+  /** 满蓄一击的虹光（Unity RailgunBeam.Spawn 的虹光那一层；WeaponSystem 接到 weapons/RailgunBeam.ts） */
+  fullChargeFx: ((from: THREE.Vector3, to: THREE.Vector3, width: number) => void) | null = null;
   /** 最近一次 projectile() 的散布后方向与准星落点（shareAim 复用） */
   private readonly volleyDir = new THREE.Vector3(0, 0, -1);
   private readonly volleyTarget = new THREE.Vector3();
@@ -200,7 +202,10 @@ export class Ballistics {
       _end.copy(origin).addScaledVector(dir, endDist);
       ctx.fx.tracer(_muzzle, _end, color, def.tracerWidth * k);
       // 满蓄一击：沿弹道追加一道短暂的虹光
-      if (shot.full) ctx.fx.beam(_muzzle, _end, el === 'none' ? FULL_CHARGE_GLOW : color, def.tracerWidth * 0.7, 0.16);
+      if (shot.full) {
+        ctx.fx.beam(_muzzle, _end, el === 'none' ? FULL_CHARGE_GLOW : color, def.tracerWidth * 0.7, 0.16);
+        this.fullChargeFx?.(_muzzle, _end, def.tracerWidth);
+      }
     }
   }
 
@@ -387,17 +392,23 @@ export class Ballistics {
           next.getBodyCenter(_tmp);
           ctx.fx.lightning(hit.point, _tmp, color);
           const dir = _vel.subVectors(_tmp, hit.point).normalize();
-          ctx.combat.damageEnemy(next, {
+          // 弹射（Unity Ballistics.BeamTick）：和主目标同一份伤害模板——元素几率不打折、照常掷暴击、带击退，
+          // 深度 1 + 'chain' 标签（雷殛照常叠层，但不再向周围弹射）。原来是元素几率减半、不暴击
+          const chain: DamageRequest = {
             base: R.damage * mult * def.chainFraction,
             element: el,
             source: 'weapon',
-            elementChance: R.elementChance * 0.5,
-            canCrit: false,
+            elementChance: R.elementChance,
+            critMult: R.critMult,
             weaponUid: inst.uid,
             point: _tmp.clone(),
             direction: dir.clone(),
+            knockback: def.knockback,
             procDepth: 1,
-          });
+            tags: ['chain'],
+          };
+          if (this.rollCrit(forceCrit, R)) chain.forceCrit = true;
+          ctx.combat.damageEnemy(next, chain);
         }
       }
     } else if (hit.hitWall) {

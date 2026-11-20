@@ -45,6 +45,12 @@ const ignite = { ctx: null as GameContext | null, until: 0, next: 0, tick: 0, ru
 
 /** 点燃玩家 duration 秒，每 0.5 秒一跳 tick 伤害（火属性）。已在燃烧时只刷新时长并取较大的跳伤 */
 export function ignitePlayer(ctx: GameContext, duration: number, tick: number): void {
+  // M8：玩家身上有减益组件（player/PlayerStatus，Unity PlayerStatus.Ignite）时交给它；没有（测试桩）时走下面原来的路径
+  const status = (ctx.player as unknown as { status?: { ignite?: (seconds: number, tickDamage: number) => boolean } } | undefined)?.status;
+  if (status && typeof status.ignite === 'function') {
+    status.ignite(duration, tick);
+    return;
+  }
   const now = ctx.time.now;
   if (ignite.ctx !== ctx || !ignite.running) {
     ignite.ctx = ctx;
@@ -75,6 +81,8 @@ export function ignitePlayer(ctx: GameContext, duration: number, tick: number): 
 
 /** 玩家是否正在燃烧（测试 / UI） */
 export function playerIgnited(ctx: GameContext): boolean {
+  const status = (ctx.player as unknown as { status?: { has?: (id: string) => boolean } } | undefined)?.status;
+  if (status && typeof status.has === 'function' && status.has('ignite')) return true;
   return ignite.ctx === ctx && ignite.running && ctx.time.now <= ignite.until;
 }
 

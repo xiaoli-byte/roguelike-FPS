@@ -4,6 +4,10 @@
  *
  * 其他模块只通过 IWeaponSystem 接口访问。开镜是唯一写 ctx.cameraFx.fovKick 的地方。
  *
+ * M8（照 Unity WeaponController / WeaponStateMachine / FireModes，常数在 weapons/FireControl.ts）：扳机闩（按住只算一次）、
+ * 冲刺禁射（点射暂停、机炮转速保持、蓄力不受影响）、换弹 / 切枪 / 冲刺时不开镜且开镜线性 7/s、跑动 / 滞空散布手调、进镜零散布、
+ * 镜头后坐 × 0.3、开枪的镜头反馈走 CameraRig.fireKick、光束走共用冷却、喷火器改火焰锥（weapons/FlameCone.ts）、满蓄虹光（weapons/RailgunBeam.ts）。
+ *
  * 碎刃（docs/demon-blade-v2.md）不走开火状态机：当前武器是碎刃时整帧交给 DemonBlade 控制器
  * （左键斩、右键千刃出窍、R 碎刃屏障、V 杀气爆发 / 人刀合一），右键不开镜、R 不换弹。切走 / 死亡 / 换关时收刀。
  */
@@ -16,6 +20,11 @@ import { rollAffixes } from './Affixes';
 import { AffixEffects, type WeaponRuntime } from './AffixEffects';
 import { describeWeapon } from './Describe';
 import { Ballistics, makeBeamHit, NO_SHOT, shotColor, type ShotMods } from './Firing';
+import {
+  aimAllowed, aimStep, bloomDelay, canShoot, chargeMult, chargeStrength, fireInterval, spreadAngle, switchPose, TriggerState, WEAPON_FEEL, WEAPON_TIMING,
+} from './FireControl';
+import { FlameCone, flameConeHandles } from './FlameCone';
+import { RailgunBeams } from './RailgunBeam';
 import { createViewmodelState, Viewmodel } from './Viewmodel';
 import { getWeaponDef, hasWeaponDef, MAX_LEVEL, WEAPON_DEFS, WEAPON_IDS, type FireMode, type ProjectileParams, type WeaponDef } from './WeaponDefs';
 import { DemonBlade } from './demonBlade/DemonBlade';
@@ -23,18 +32,14 @@ import { buildWorldModel } from './WeaponModels';
 import { resolveWeapon, type ResolvedWeapon } from './WeaponStats';
 
 /** 切枪总时长（收枪 + 掏枪），期间不能开火 */
-const SWITCH_TIME = 0.35;
-/** 其中收枪所占比例 */
-const HOLSTER_FRAC = 0.4;
-/** 半自动 / 点射的输入缓冲（提前按下也能在冷却结束时打出） */
-const FIRE_BUFFER = 0.14;
+const SWITCH_TIME = WEAPON_TIMING.SwitchTime;
 /** 打空后自动换弹的延迟 */
-const AUTO_RELOAD_DELAY = 0.25;
+const AUTO_RELOAD_DELAY = WEAPON_TIMING.AutoReloadDelay;
 /**
  * 逐发装填结束（装满或被开火打断）后的上膛时间，期间不能开火。
  * 没有它的话「装一发打一发」几乎不花额外时间（装一发 ≈ 射击间隔），霰弹枪等于无限弹匣，持续秒伤从约 85 涨到 140。
  */
-const SHELL_RACK_TIME = 0.3;
+const SHELL_RACK_TIME = WEAPON_TIMING.ShellRack;
 const SLOW_SOURCE = 'weapon:minigun';
 const HELD_SOURCE = 'weapon:held';
 const RANDOM_ELEMENTS: readonly Element[] = ['fire', 'shock', 'corrode'];
@@ -49,7 +54,7 @@ const CHAPTER_RARITY: readonly (readonly number[])[] = [
 ];
 
 /** 持碎刃时 currentSpread 的目标值（准星张开，提示近战） */
-const MELEE_HUD_SPREAD = 0.035;
+const MELEE_HUD_SPREAD = WEAPON_FEEL.MeleeHudSpread;
 
 let nextUid = 1;
 
@@ -84,7 +89,8 @@ export class WeaponSystem implements IWeaponSystem {
   private shellsNeeded = 1;
   // 开火
   private cooldown = 0;
-  private fireBuffer = 0;
+  /** 扳机：开火缓冲 + 「按住只算一次」的闩（Unity TriggerState） */
+  private readonly trigger = new TriggerState();
   private burstLeft = 0;
   private burstTimer = 0;
   private volleyLeft = 0;
@@ -96,7 +102,6 @@ export class WeaponSystem implements IWeaponSystem {
   private minigunFiring = false;
   private slowApplied = false;
   private beamOn = false;
-  private beamAcc = 0;
   private beamSfx = 0;
   // 蓄力（贯虹灵炮）
   private charge = 0;
@@ -121,10 +126,17 @@ export class WeaponSystem implements IWeaponSystem {
   private volleyCount = 0;
   /** 碎刃 v2 控制器（刃群 / 特效常驻，冷却与杀意不论当前武器逐帧推进） */
   private readonly blade: DemonBlade;
+  /** 喷火器的火焰锥（Unity FlameCone） */
+  private readonly flame: FlameCone;
+  /** 满蓄一击的虹光（Unity RailgunBeam） */
+  private readonly rail: RailgunBeams;
 
   constructor(readonly ctx: GameContext) {
     this.vm = new Viewmodel(ctx);
     this.ballistics = new Ballistics(ctx, this.vm, this.rand);
+    this.flame = new FlameCone(ctx, out => this.vm.getMuzzleWorld(out), this.rand);
+    this.rail = new RailgunBeams(() => ctx.scene ?? null);
+    this.ballistics.fullChargeFx = (from, to, width) => this.rail.spawn(from, to, width);
     this.effects = new AffixEffects(ctx, {
       find: (uid) => this.findByUid(uid),
       resolve: (inst) => this.resolve(inst),
@@ -244,6 +256,8 @@ export class WeaponSystem implements IWeaponSystem {
     this.dryTimer = 0;
     this.ctx.cameraFx.fovKick = 0;
     this.effects.clear();
+    this.rail.clear();
+    this.trigger.reset();
     this.vm.clearTransient();
   }
 
@@ -372,8 +386,10 @@ export class WeaponSystem implements IWeaponSystem {
     const def = R.def;
     const infinite = (ctx.run.flags.infiniteAmmo ?? 0) > 0;
     const fireDown = inputOk && ctx.input.down('fire');
-    if (inputOk && ctx.input.pressed('fire')) this.fireBuffer = FIRE_BUFFER;
-    else this.fireBuffer = Math.max(0, this.fireBuffer - dt);
+    const firePressed = inputOk && ctx.input.pressed('fire');
+    this.trigger.update(firePressed, fireDown, dt);
+    // 冲刺中（Unity motor.Dashing）：不开火、不开镜
+    const dashing = player.isDashing === true;
 
     // 狂热层数衰减与实际射速；「疾化」：引发反应后数秒内射速提升（蓄力速度、斩击攻速随之加快）
     const rt = this.runtime(inst);
@@ -384,13 +400,12 @@ export class WeaponSystem implements IWeaponSystem {
     const rateMult = R.fireRateMult * frenzyMult * haste;
 
     if (def.blade) {
-      // 碎刃：右键 = 千刃出窍、R = 碎刃屏障，不开镜、不换弹；开镜与 FOV 按空手的方式衰减到 0
-      this.aimT = damp(this.aimT, 0, 16, dt);
-      const fov = damp(ctx.cameraFx.fovKick, 0, 16, dt);
-      ctx.cameraFx.fovKick = Math.abs(fov) < 0.02 ? 0 : fov;
+      // 碎刃（被接管）：右键 = 千刃出窍、R = 碎刃屏障，不开镜、不换弹；开镜程度照样每秒 7 退回 0
+      this.aimT = aimStep(this.aimT, false, dt);
+      ctx.cameraFx.fovKick = def.aimFov * this.aimT;
       if (this.reloading) this.cancelReload(false);
       this.blade.update(dt, inst, R, {
-        fireDown, firePressed: inputOk && ctx.input.pressed('fire'),
+        fireDown, firePressed,
         aimDown: inputOk && ctx.input.down('aim'), shieldDown: inputOk && ctx.input.down('reload'),
         skillPressed: inputOk && ctx.input.pressed('weaponSkill'),
         ready: this.switchTimer <= 0 && player.alive, speed: rateMult,
@@ -399,15 +414,15 @@ export class WeaponSystem implements IWeaponSystem {
       this.updateSlow(false);
       this.hudSpread = damp(this.hudSpread, MELEE_HUD_SPREAD, 18, dt);
       this.updateViewmodel(dt, inst, rate, infinite);
+      this.rail.update(dt, ctx.camera.position);
       return;
     }
     if (this.blade.active) this.blade.stow();
-    // 开镜（狙击换弹时强制退镜）
-    const wantAim = inputOk && ctx.input.down('aim') && this.switchTimer <= 0 && !(this.reloading && def.kind === 'sniper');
-    this.aimT = damp(this.aimT, wantAim ? 1 : 0, def.aimSpeed, dt);
-    let fov = damp(ctx.cameraFx.fovKick, wantAim ? def.aimFov : 0, def.aimSpeed, dt);
-    if (Math.abs(fov) < 0.02) fov = 0;
-    ctx.cameraFx.fovKick = fov;
+    // 开镜（Unity WeaponController）：换弹 / 切枪 / 冲刺时不开镜；开镜程度线性每秒 7，视角层 = 武器 aimFov × 开镜程度
+    // （原来只有狙击换弹时退镜、按每把枪的 aimSpeed 指数逼近；镜头的 FOV 平滑在 CameraRig）
+    const wantAim = aimAllowed({ aimInput: inputOk && ctx.input.down('aim'), takeover: false, reloading: this.reloading, switchTimer: this.switchTimer, dashing });
+    this.aimT = aimStep(this.aimT, wantAim, dt);
+    ctx.cameraFx.fovKick = def.aimFov * this.aimT;
     const mode: FireMode = def.mode;
 
     // 换弹。无限弹药期间（猎隼 Q 等）弹匣不消耗：进行中的换弹直接中断（不上膛），忽略 R 键与自动换弹，保证马上能开火
@@ -417,38 +432,43 @@ export class WeaponSystem implements IWeaponSystem {
       this.startReload(inst, R);
     }
     if (this.reloading) {
-      if (this.shellMode && this.fireBuffer > 0 && inst.mag > 0) {
+      if (this.shellMode && this.trigger.buffered && inst.mag > 0) {
         this.cancelReload();
         // 上膛后再打出这一枪：输入缓冲至少保留到上膛结束
-        this.fireBuffer = Math.max(this.fireBuffer, this.cooldown + 0.05);
+        this.trigger.buffer = Math.max(this.trigger.buffer, this.cooldown + WEAPON_TIMING.RackBufferPad);
       } else {
         this.updateReload(dt, inst, R);
       }
     }
 
     // 开火
+    // ready = 不在切枪、不在换弹、活着；blocked = 冲刺中（Unity FireInput）：冲刺时不开火，蓄力 / 预热不受影响
     const ready = this.switchTimer <= 0 && !this.reloading && player.alive;
+    const blocked = dashing;
+    const shootOk = canShoot(ready, blocked);
     const hasAmmo = infinite || inst.mag > 0;
+    // 「扣了一下」：开火缓冲里，或按住但这次按压还没打出过（冷却中按住不放，冷却一好就打出这一发）
+    const pulled = this.trigger.pulled(fireDown);
     this.minigunFiring = false;
     switch (mode) {
       case 'semi':
-        if (this.fireBuffer > 0 && ready && hasAmmo && this.cooldown <= 0 && this.volleyLeft === 0) {
-          this.fireBuffer = 0;
+        if (pulled && shootOk && hasAmmo && this.cooldown <= 0 && this.volleyLeft === 0) {
+          this.trigger.consume();
           this.shoot(inst, R, infinite);
-          this.cooldown = 1 / rate;
+          this.cooldown = fireInterval(rate);
         }
         break;
       case 'auto':
-        this.autoFire(fireDown && ready, inst, R, infinite, rate);
+        this.autoFire(fireDown && shootOk, inst, R, infinite, rate);
         break;
       case 'burst':
-        this.updateBurst(dt, ready, hasAmmo, inst, R, infinite, rate, rateMult);
+        this.updateBurst(dt, ready, blocked, pulled, hasAmmo, inst, R, infinite, rate, rateMult);
         break;
       case 'spinup':
-        this.updateMinigun(dt, fireDown && ready, hasAmmo, inst, R, infinite, rate, rateMult);
+        this.updateMinigun(dt, fireDown && ready, blocked, hasAmmo, inst, R, infinite, rate, rateMult);
         break;
       case 'beam':
-        this.updateBeam(dt, fireDown && ready && hasAmmo, inst, R, infinite, rate);
+        this.updateBeam(dt, fireDown && shootOk && hasAmmo, inst, R, infinite, rate);
         break;
       case 'charge':
         this.updateCharge(dt, fireDown, inputOk, ready && hasAmmo && this.cooldown <= 0, inst, R, infinite, rate, rateMult);
@@ -462,14 +482,15 @@ export class WeaponSystem implements IWeaponSystem {
     this.checkStarvation(dt, infinite);
     this.updateSpread(dt, def, R);
     this.updateViewmodel(dt, inst, rate, infinite);
+    this.rail.update(dt, ctx.camera.position);
   }
 
   private idle(dt: number): void {
     const ctx = this.ctx;
     if (this.blade.active) this.blade.stow();
-    this.aimT = damp(this.aimT, 0, 16, dt);
-    const fov = damp(ctx.cameraFx.fovKick, 0, 16, dt);
-    ctx.cameraFx.fovKick = Math.abs(fov) < 0.02 ? 0 : fov;
+    this.aimT = aimStep(this.aimT, false, dt);
+    ctx.cameraFx.fovKick = 0;
+    this.rail.update(dt, ctx.camera.position);
     this.updateSlow(false);
     this.vm.setWeapon(null);
     this.hudSpread = damp(this.hudSpread, 0.02, 10, dt);
@@ -517,7 +538,7 @@ export class WeaponSystem implements IWeaponSystem {
     this.minigunFiring = false;
     this.resetCharge();
     this.updateSlow(false);
-    this.fireBuffer = 0;
+    this.trigger.buffer = 0;
     this.autoReload = 0;
     this.consecutive = 0;
   }
@@ -527,37 +548,48 @@ export class WeaponSystem implements IWeaponSystem {
   /** 全自动：按住时按射速连发（同帧最多 4 发，保留冷却余量以保证高射速准确） */
   private autoFire(active: boolean, inst: WeaponInstance, R: ResolvedWeapon, infinite: boolean, rate: number): void {
     if (!active) return;
+    const gap = fireInterval(rate);
     let n = 0;
-    while (this.cooldown <= 0 && n < 4 && (infinite || inst.mag > 0)) {
+    while (this.cooldown <= 0 && n < WEAPON_TIMING.MaxCatchUp && (infinite || inst.mag > 0)) {
       this.shoot(inst, R, infinite);
-      this.cooldown += 1 / rate;
+      this.cooldown += gap;
       n++;
     }
   }
 
-  private updateBurst(dt: number, ready: boolean, hasAmmo: boolean, inst: WeaponInstance, R: ResolvedWeapon, infinite: boolean, rate: number, rateMult: number): void {
+  /**
+   * 点射（Unity BurstMode）：扣一下打 burstCount 发，轮内间隔 burstInterval ÷ 射速倍率；轮与轮之间冷却 1 / 射速，从这一轮开始时算。
+   * 轮中被切枪 / 换弹 / 打空打断就作废剩下的；冲刺中暂停（冲刺完接着打完这一轮）
+   */
+  private updateBurst(dt: number, ready: boolean, blocked: boolean, pulled: boolean, hasAmmo: boolean, inst: WeaponInstance, R: ResolvedWeapon, infinite: boolean, rate: number, rateMult: number): void {
     const def = R.def;
-    if (this.burstLeft === 0 && this.fireBuffer > 0 && ready && hasAmmo && this.cooldown <= 0) {
-      this.fireBuffer = 0;
-      this.burstLeft = def.burstCount;
+    if (this.burstLeft === 0 && pulled && ready && !blocked && hasAmmo && this.cooldown <= 0) {
+      this.trigger.consume();
+      this.burstLeft = Math.max(1, def.burstCount);
       this.burstTimer = 0;
-      this.cooldown = 1 / rate;
+      this.cooldown = fireInterval(rate);
     }
     if (this.burstLeft <= 0) return;
+    if (!ready) {
+      this.burstLeft = 0;
+      return;
+    }
+    if (blocked) return;
     this.burstTimer -= dt;
+    const step = def.burstInterval / (rateMult > 0 ? rateMult : 1);
     while (this.burstLeft > 0 && this.burstTimer <= 0) {
-      if (!ready || !(infinite || inst.mag > 0)) {
+      if (!(infinite || inst.mag > 0)) {
         this.burstLeft = 0;
         break;
       }
       this.shoot(inst, R, infinite);
       this.burstLeft--;
-      this.burstTimer += def.burstInterval / rateMult;
+      this.burstTimer += step;
     }
   }
 
-  /** 机炮：按住预热，转满后才开火；开火期间减速 */
-  private updateMinigun(dt: number, want: boolean, hasAmmo: boolean, inst: WeaponInstance, R: ResolvedWeapon, infinite: boolean, rate: number, rateMult: number): void {
+  /** 机炮：按住预热，转满后才开火；开火期间减速。冲刺中不开火，但转速保持（不用重新预热，Unity SpinupMode） */
+  private updateMinigun(dt: number, want: boolean, blocked: boolean, hasAmmo: boolean, inst: WeaponInstance, R: ResolvedWeapon, infinite: boolean, rate: number, rateMult: number): void {
     const def = R.def;
     if (want) {
       if (!this.spinning) {
@@ -567,34 +599,28 @@ export class WeaponSystem implements IWeaponSystem {
       this.spin = Math.min(1, this.spin + (dt * rateMult) / Math.max(0.05, def.spinup));
     } else {
       this.spinning = false;
-      this.spin = Math.max(0, this.spin - dt / 0.9);
+      this.spin = Math.max(0, this.spin - dt / WEAPON_TIMING.SpinDown);
     }
-    const firing = want && this.spin >= 1 && hasAmmo;
+    const firing = want && !blocked && this.spin >= 1 && hasAmmo;
     this.autoFire(firing, inst, R, infinite, rate);
     this.minigunFiring = firing;
   }
 
-  /** 光束：按住持续放电，每跳伤害一次并消耗 1 点能量 */
+  /**
+   * 光束：按住持续放电，每跳伤害一次并消耗 1 点能量。节奏走共用冷却（Unity BeamMode：补发 ≤ 4），
+   * 所以连点也快不过射速；刚按下时冷却已到就立即打出第一跳（原来每次重新按下都立刻补一跳）
+   */
   private updateBeam(dt: number, active: boolean, inst: WeaponInstance, R: ResolvedWeapon, infinite: boolean, rate: number): void {
     if (!active) {
       this.endBeam();
       return;
     }
-    const interval = 1 / Math.max(0.1, rate);
     if (!this.beamOn) {
       this.beamOn = true;
-      this.beamAcc = interval;
       this.beamSfx = 0;
     }
     this.ballistics.beamTrace(inst, R, this.beamHit);
-    this.beamAcc += dt;
-    let n = 0;
-    while (this.beamAcc >= interval && n < 4) {
-      this.beamAcc -= interval;
-      n++;
-      if (!infinite && inst.mag <= 0) break;
-      this.shoot(inst, R, infinite);
-    }
+    this.autoFire(true, inst, R, infinite, rate);
     this.beamSfx -= dt;
     if (this.beamSfx <= 0) {
       this.beamSfx = 0.16;
@@ -638,19 +664,19 @@ export class WeaponSystem implements IWeaponSystem {
       if (!fireDown && can && inputOk) {
         const t = this.charge;
         const shot = this.chargeShot;
-        shot.mult = def.chargeMinMult + (1 - def.chargeMinMult) * t * t;
+        shot.mult = chargeMult(def.chargeMinMult, t);
         shot.pierceBonus = t >= 1 ? def.chargeFullPierce : 0;
         shot.full = t >= 1;
-        shot.strength = 0.4 + 0.6 * t;
-        this.fireBuffer = 0;
+        shot.strength = chargeStrength(t);
+        this.trigger.consume();
         this.shoot(inst, R, infinite, shot);
-        this.cooldown = 1 / rate;
+        this.cooldown = fireInterval(rate);
       }
       // 松手发射，或被换弹 / 切枪打断
       this.resetCharge();
     }
     // 线圈转速（第一人称）：蓄力中等于蓄力进度，松手后约 0.6 秒转停
-    this.spin = this.charging ? this.charge : Math.max(0, this.spin - dt / 0.6);
+    this.spin = this.charging ? this.charge : Math.max(0, this.spin - dt / WEAPON_TIMING.CoilDown);
   }
 
   /** 一轮齐射的弹体按间隔依次发射（支持固定角度或随机散布）。 */
@@ -737,9 +763,14 @@ export class WeaponSystem implements IWeaponSystem {
       this.ballistics.elementOverride = el;
     }
 
+    // 任何一发打出后都要松开扳机，半自动 / 点射 / 齐射才会再响应「按住」（Unity WeaponStateMachine.Shoot）
+    this.trigger.held = true;
     const volley = !!p && p.count > 1;
     if (def.mode === 'beam') {
       this.ballistics.beamTick(inst, R, this.beamHit, forceCrit, mult);
+    } else if (flameConeHandles(def)) {
+      // 喷火器：火焰锥一次扫描结算 + 火舌粒子，不发投射物（Unity FlameCone）
+      this.flame.emit({ inst, R, element: el, spread: this.spreadNow, mult, forceCrit });
     } else if (volley) {
       this.volleyCount = volleyN;
       this.volleyLeft = volleyN;
@@ -773,10 +804,15 @@ export class WeaponSystem implements IWeaponSystem {
     const k = R.recoilMult * (1 - 0.5 * this.aimT) * strength;
     const pitch = rc.pitch * climb * k * (0.85 + Math.random() * 0.3);
     const yaw = (rc.bias + (Math.random() * 2 - 1) * rc.yaw) * k;
-    if (pitch !== 0 || yaw !== 0) ctx.player.addRecoil(pitch, yaw);
+    // 镜头的后坐整体 × 0.3（Unity RecoilScale：只轻轻上跳、完全回正）；枪模后坐（vm.onShot）不缩，ViewKickScale 随 M10 的枪模弹簧一起接
+    if (pitch !== 0 || yaw !== 0) ctx.player.addRecoil(pitch * WEAPON_FEEL.RecoilScale, yaw * WEAPON_FEEL.RecoilScale);
     this.vm.onShot(def, shotColor(inst, el), strength);
     if (def.mode !== 'beam') ctx.audio.play(def.sfx, { volume: def.sfxVolume, pitch: 0.94 + Math.random() * 0.12 });
-    if (def.shake > 0) ctx.fx.shake(def.shake * strength, def.shake > 0.15 ? 0.16 : 0.08);
+    // 镜头（Unity CameraFeel.FireKick）：枪的震屏（开镜减半）+ 头沿视线向后一顿（枪模后坐距离 × 0.25）
+    const shakeTime = def.shake > 0.15 ? 0.16 : 0.08;
+    const kick = (ctx.player as unknown as { fireKick?: (shake: number, shakeTime: number, back: number) => void }).fireKick;
+    if (typeof kick === 'function') kick.call(ctx.player, def.shake * strength, shakeTime, def.kick.back * strength);
+    else if (def.shake > 0) ctx.fx.shake(def.shake * strength, shakeTime);
   }
 
   // ───────────── 弹药 / 换弹 ─────────────
@@ -790,23 +826,26 @@ export class WeaponSystem implements IWeaponSystem {
     }
     const def = R.def;
     const canReload = inst.reserve > 0;
-    if (inputOk) {
-      // 蓄力武器空匣按半自动处理（按下才换弹，按住不连续触发）
-      const holdMode = def.mode === 'auto' || def.mode === 'spinup' || def.mode === 'beam';
-      if (this.fireBuffer > 0 || (fireDown && holdMode)) {
-        this.fireBuffer = 0;
-        if (canReload) {
+    const busy = this.burstLeft > 0 || this.volleyLeft > 0;
+    // Unity HandleEmpty：按着扳机（或开火缓冲里）就立即换弹，哪种开火模式都一样；
+    // 没有备弹时空仓音（按下，或持续开火类按住；0.3 s 一次）。点射 / 齐射没打完不换
+    if (inputOk && (this.trigger.buffered || fireDown)) {
+      if (canReload) {
+        if (!busy) {
+          this.trigger.buffer = 0;
           this.startReload(inst, R);
           return;
         }
+      } else if (this.trigger.buffered || def.mode === 'auto' || def.mode === 'spinup' || def.mode === 'beam') {
+        this.trigger.buffer = 0;
         if (this.dryTimer <= 0) {
           this.ctx.audio.play('dry_fire', { volume: 0.8 });
           this.vm.dryKick();
-          this.dryTimer = 0.3;
+          this.dryTimer = WEAPON_TIMING.DryInterval;
         }
       }
     }
-    if (canReload && this.burstLeft === 0 && this.volleyLeft === 0 && this.ctx.player.alive) {
+    if (canReload && !busy && this.ctx.player.alive) {
       this.autoReload += dt;
       if (this.autoReload >= AUTO_RELOAD_DELAY) this.startReload(inst, R);
     }
@@ -836,7 +875,7 @@ export class WeaponSystem implements IWeaponSystem {
       return;
     }
     this.starvedTime += dt;
-    if (this.starvedTime < 2.5) return;
+    if (this.starvedTime < WEAPON_TIMING.StarveTime) return;
     this.starvedTime = 0;
     inst.reserve = Math.min(this.reserveCapacity(inst), inst.reserve + this.magCapacity(inst));
     ctx.audio.play('pickup_ammo');
@@ -945,15 +984,13 @@ export class WeaponSystem implements IWeaponSystem {
   private updateSpread(dt: number, def: WeaponDef, R: ResolvedWeapon): void {
     const p = this.ctx.player;
     // 停火一小段时间（略长于射击间隔）后才开始恢复，保证连射时散布确实累积
-    const delay = clamp(1.25 / Math.max(0.1, R.fireRate * def.burstCount), 0.08, 0.35);
-    if (this.ctx.time.now - this.lastShotTime > delay) this.bloom = Math.max(0, this.bloom - def.spreadRecovery * dt);
+    if (this.ctx.time.now - this.lastShotTime > bloomDelay(R.fireRate, def.burstCount)) this.bloom = Math.max(0, this.bloom - def.spreadRecovery * dt);
     const base = lerp(def.spreadHip, def.spreadAim, this.aimT);
     const hs = Math.hypot(p.velocity.x, p.velocity.z);
-    const moveF = 1 + clamp01(hs / 7.5) * (0.6 - 0.35 * this.aimT);
-    const airF = p.onGround ? 1 : 1.5 - 0.25 * this.aimT;
-    this.spreadNow = (base * moveF * airF + this.bloom * (1 - 0.45 * this.aimT)) * R.spreadMult;
-    const hud = clamp(this.spreadNow + this.pelletCone(def, R), 0, 0.25);
-    this.hudSpread = damp(this.hudSpread, hud, 18, dt);
+    // Unity UpdateSpread：跑动 / 滞空只轻微放大（+20% / ×1.15，原来 +60% / ×1.5）；进了镜（狙击镜）零散布
+    this.spreadNow = spreadAngle(base, hs, p.onGround, this.aimT, this.bloom, R.spreadMult, this.ctx.cameraFx.fovKick);
+    const hud = clamp(this.spreadNow + this.pelletCone(def, R), 0, WEAPON_FEEL.HudSpreadMax);
+    this.hudSpread = damp(this.hudSpread, hud, WEAPON_FEEL.HudLambda, dt);
   }
 
   private updateSlow(on: boolean): void {
@@ -983,15 +1020,10 @@ export class WeaponSystem implements IWeaponSystem {
     const s = this.vmState;
     let shown: WeaponInstance = inst;
     if (this.switchTimer > 0) {
-      const t = 1 - this.switchTimer / SWITCH_TIME;
-      if (this.holster && t < HOLSTER_FRAC) {
-        shown = this.holster;
-        s.lowerT = t / HOLSTER_FRAC;
-      } else if (this.holster) {
-        s.lowerT = 1 - (t - HOLSTER_FRAC) / (1 - HOLSTER_FRAC);
-      } else {
-        s.lowerT = 1 - t;
-      }
+      // 先收后出（Unity WeaponTiming.SwitchPose）：前 40% 旧枪下沉，后 60% 新枪抬起
+      const pose = switchPose(this.switchTimer, !!this.holster);
+      if (pose.holster && this.holster) shown = this.holster;
+      s.lowerT = pose.lower;
     } else {
       s.lowerT = 0;
       if (this.holster) {
@@ -1029,6 +1061,10 @@ export class WeaponSystem implements IWeaponSystem {
     else s.cock = infinite || inst.mag > 0 ? clamp01(1 - this.cooldown * rate) : 0;
     // 碎刃：控制器的姿态输入（切枪收放中显示的是另一把时为 null）
     s.blade = shown === inst && getWeaponDef(shown.defId).blade ? this.blade.pose : null;
+    // 技能出手的覆盖姿态（player/CastPose，挂在玩家身上；没有时不叠）
+    const cast = (this.ctx.player as unknown as { castPose?: { pos: { x: number; y: number; z: number }; rot: { x: number; y: number; z: number } } }).castPose;
+    s.overlayPos = cast ? cast.pos : null;
+    s.overlayRot = cast ? cast.rot : null;
     this.vm.update(dt, s);
   }
 

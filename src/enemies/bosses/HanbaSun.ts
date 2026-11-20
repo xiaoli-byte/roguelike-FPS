@@ -509,9 +509,13 @@ export class SunExposure {
 
   constructor(private readonly owner: ExposureOwner, private readonly ring: SunRing, private readonly driver: () => HanbaSunDriver | null,
     hurt: (damage: number, from: { x: number; y: number; z: number } | null) => void,
-    private readonly flash: (color: string, alpha: number, seconds: number) => void) {
-    this.burn = new SunburnInstance(hurt);
+    private readonly flash: (color: string, alpha: number, seconds: number) => void,
+    /** 玩家身上的日晒层（player/PlayerStatus.sunburn，Unity 的日晒就挂在 PlayerStatus 上）：给了就往它里面叠、由玩家那边推进 */
+    shared: SunburnInstance | null = null) {
+    this.burn = shared ?? new SunburnInstance(hurt);
+    this.ownsBurn = !shared;
   }
+  private readonly ownsBurn: boolean;
 
   get running(): boolean {
     return this.active && this.owner.alive && this.owner.introDone;
@@ -540,7 +544,7 @@ export class SunExposure {
 
   /** 每帧：到点判定一次；灼烧层照常推进（倒下后也推，躲进影子慢慢消退） */
   update(dt: number): void {
-    this.burn.tick(dt);
+    if (this.ownsBurn) this.burn.tick(dt);
     if (!this.running) return;
     this.timer -= dt;
     if (this.timer > 0) return;

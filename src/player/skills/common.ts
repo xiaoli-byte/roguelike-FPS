@@ -63,17 +63,33 @@ export function radiusScale(ctx: GameContext): number {
   return ctx.player.stats.mult('explosionRadiusPct');
 }
 
-/** 第一人称「手部」出手点：眼前略偏右下 */
-export function handOrigin(ctx: GameContext, out: THREE.Vector3, side = 1): THREE.Vector3 {
+/** 手边出手点相对眼睛的偏移（Unity SkillFx.SafeHandOrigin）：右 0.24 × side、下 0.2（视线的上方向）、前 0.45 */
+export const HAND_ORIGIN = { Right: 0.24, Down: 0.2, Forward: 0.45, RadiusMin: 0.02, RadiusMax: 0.3, Skin: 0.02 } as const;
+
+const _handUp = new THREE.Vector3();
+const _handDir = new THREE.Vector3();
+const _handHit = { distance: 0, point: new THREE.Vector3(), normal: new THREE.Vector3(), box: null as never };
+
+/**
+ * 第一人称「手部」出手点（Unity SkillFx.SafeHandOrigin）：眼前略偏右下（side = 1 右手 / −1 左手）。
+ * 从眼睛往那个点扫，半路碰到墙就停在墙前——贴墙出手时半径 radius 的投射物不会生在墙里。
+ * Unity 用球扫（SphereCast）；网页的碰撞没有球扫，用射线多探出一个半径代替（正对着墙时等价，擦边时略保守）
+ */
+export function handOrigin(ctx: GameContext, out: THREE.Vector3, side = 1, radius = 0.2): THREE.Vector3 {
   const p = ctx.player;
   p.getAimDirection(_aim);
   _right.crossVectors(_aim, _up);
   if (_right.lengthSq() < 1e-6) _right.set(Math.cos(p.yaw), 0, -Math.sin(p.yaw));
   _right.normalize();
-  out.copy(p.eye).addScaledVector(_aim, 0.55).addScaledVector(_right, 0.22 * side);
-  out.y -= 0.16;
-  // 贴墙时别把投掷物塞进墙里
-  if (ctx.world.segmentBlocked(p.eye, out)) out.copy(p.eye).addScaledVector(_aim, 0.15);
+  _handUp.crossVectors(_right, _aim).normalize();
+  out.copy(p.eye).addScaledVector(_right, HAND_ORIGIN.Right * side).addScaledVector(_handUp, -HAND_ORIGIN.Down).addScaledVector(_aim, HAND_ORIGIN.Forward);
+  _handDir.subVectors(out, p.eye);
+  const len = _handDir.length();
+  if (len < 1e-4) return out.copy(p.eye);
+  _handDir.multiplyScalar(1 / len);
+  const r = clamp(radius, HAND_ORIGIN.RadiusMin, HAND_ORIGIN.RadiusMax);
+  const hit = ctx.world.raycast(p.eye, _handDir, len + r, _handHit as never);
+  if (hit) out.copy(p.eye).addScaledVector(_handDir, Math.max(0, hit.distance - r - HAND_ORIGIN.Skin));
   return out;
 }
 

@@ -18,12 +18,25 @@ const LEAP_UP = 7;
 const SLAM_DOWN_SPEED = 22;
 /** 下落段额外重力，让砸地更有分量 */
 const SLAM_EXTRA_GRAVITY = 20;
+/** 伤害边缘比例、地面起跳要先离地多久才算落地、兜底时长、空中释放保留的水平速度（Unity BearEarthSplitter） */
+const SLAM_FALLOFF = 0.35;
+const SLAM_MIN_AIR = 0.12;
+const SLAM_MAX_LEAP = 1.8;
+const SLAM_AIR_KEEP = 0.4;
+/** 脚下这么近有地面且几乎没有竖直速度（−2…0.5 m/s），就按地面起跳（贴着敌人站、下台阶的那一帧没踩实地） */
+const SLAM_GROUND_SNAP = 0.35;
 
 const BASTION_DURATION = 8;
 const BASTION_REDUCTION = 0.5;
 const BASTION_DAMAGE_PCT = 0.25;
 const BASTION_WAVE_RADIUS = 7;
 const BASTION_WAVE_DAMAGE = 100;
+const BASTION_WAVE_KNOCKBACK = 13;
+const BASTION_WAVE_LIFT = 5;
+const BASTION_WAVE_FALLOFF = 0.4;
+/** 挡弹罩（Unity 加强）：胸口为心（脚底上方 1 m）、半径 1.6 m 的球罩，从外面飞来的敌方投射物撞上即碎 */
+const BASTION_WARD_RADIUS = 1.6;
+const BASTION_WARD_HEIGHT = 1;
 const BASTION_SOURCE = 'skill:bear_q';
 
 const PASSIVE_SOURCE = 'passive:bear';
@@ -31,6 +44,27 @@ const HIDE_REGEN_DELAY = -1;
 const HIDE_WAVE_RADIUS = 6;
 const HIDE_WAVE_DAMAGE = 60;
 const HIDE_WAVE_ICD = 8;
+const HIDE_WAVE_KNOCKBACK = 16;
+const HIDE_WAVE_LIFT = 6;
+
+/** 数值表（对照测试读） */
+export const BEAR_TUNING = {
+  SLAM_RADIUS, SLAM_DAMAGE, SLAM_STUN, SLAM_KNOCKBACK, SLAM_LIFT, SLAM_FALLOFF, LEAP_FORWARD, LEAP_UP, SLAM_DOWN_SPEED, SLAM_EXTRA_GRAVITY,
+  SLAM_MIN_AIR, SLAM_MAX_LEAP, SLAM_AIR_KEEP, SLAM_GROUND_SNAP,
+  BASTION_DURATION, BASTION_REDUCTION, BASTION_DAMAGE_PCT, BASTION_WAVE_RADIUS, BASTION_WAVE_DAMAGE, BASTION_WAVE_KNOCKBACK, BASTION_WAVE_LIFT,
+  BASTION_WAVE_FALLOFF, BASTION_WARD_RADIUS, BASTION_WARD_HEIGHT,
+  HIDE_REGEN_DELAY, HIDE_WAVE_RADIUS, HIDE_WAVE_DAMAGE, HIDE_WAVE_ICD, HIDE_WAVE_KNOCKBACK, HIDE_WAVE_LIFT,
+} as const;
+
+/**
+ * 裂地重击按地面起跳（Unity BearEarthSplitter.OnGround）：踩着地面，或者脚下 0.35 m 内就是地面、竖直速度在 −2…0.5 m/s
+ * （被敌人胶囊顶起一点、下台阶的那一帧）。真正从空中落下时竖直速度早就低于 −2，照旧立即下砸
+ */
+export function slamFromGround(onGround: boolean, vy: number, groundGap: number): boolean {
+  if (onGround) return true;
+  if (vy > 0.5 || vy < -2) return false;
+  return groundGap >= 0 && groundGap <= SLAM_GROUND_SNAP;
+}
 
 const _f = new THREE.Vector3();
 const _imp = new THREE.Vector3();
@@ -57,7 +91,7 @@ function slam(ctx: GameContext): void {
     knockback: SLAM_KNOCKBACK,
     lift: SLAM_LIFT,
     stun: SLAM_STUN,
-    falloff: 0.35,
+    falloff: SLAM_FALLOFF,
     color: SKILL_COLORS.earth,
     secondaryColor: SKILL_COLORS.gold,
     crack: true,
@@ -90,8 +124,13 @@ const earthSplitter: HeroSkillDef = {
     slamSession.begin(ctx);
     leaping = true;
     leapT = 0;
-    slamFromAir = !p.onGround;
-    if (p.onGround) {
+    // 跃起期间锁冲刺（Unity MotorLock.Dash：冲刺会托住下落、吞掉砸地），结束 / 被打断时解锁
+    const lock = (p as unknown as { lockDash?: () => () => void }).lockDash;
+    if (typeof lock === 'function') slamSession.track(lock.call(p));
+    const gy = ctx.world.groundHeight(p.position.x, p.position.z, p.position.y + 0.1);
+    const grounded = slamFromGround(p.onGround, p.velocity.y, gy > -Infinity ? p.position.y - gy : -1);
+    slamFromAir = !grounded;
+    if (grounded) {
       p.getForward(_f);
       p.velocity.x = _f.x * LEAP_FORWARD;
       p.velocity.z = _f.z * LEAP_FORWARD;
@@ -99,8 +138,8 @@ const earthSplitter: HeroSkillDef = {
       p.applyImpulse(_imp);
       ctx.audio.play('jump', { volume: 0.8, pitch: 0.75 });
     } else {
-      p.velocity.x *= 0.4;
-      p.velocity.z *= 0.4;
+      p.velocity.x *= SLAM_AIR_KEEP;
+      p.velocity.z *= SLAM_AIR_KEEP;
       _imp.set(0, -SLAM_DOWN_SPEED - p.velocity.y, 0);
       p.applyImpulse(_imp);
     }
@@ -116,8 +155,8 @@ const earthSplitter: HeroSkillDef = {
     }
     leapT += dt;
     if (p.velocity.y < 0) p.velocity.y -= SLAM_EXTRA_GRAVITY * dt;
-    const minAir = slamFromAir ? 0 : 0.12;
-    if ((leapT > minAir && p.onGround) || leapT > 1.8) {
+    const minAir = slamFromAir ? 0 : SLAM_MIN_AIR;
+    if ((leapT > minAir && p.onGround) || leapT > SLAM_MAX_LEAP) {
       slam(ctx);
       slamSession.end();
     }
@@ -157,6 +196,10 @@ function getRune(): THREE.Group {
 }
 
 let bastionLeft = 0;
+/** 本次磐石壁垒挡下了几发（调试 / 测试读） */
+export let bastionBlocked = 0;
+const wardCenter = new THREE.Vector3();
+const WARD_UP = new THREE.Vector3(0, 1, 0);
 let bastionT = 0;
 let bastionFx = 0;
 
@@ -172,9 +215,9 @@ function bastionBurst(ctx: GameContext): void {
     radius: BASTION_WAVE_RADIUS * radiusScale(ctx),
     base: BASTION_WAVE_DAMAGE,
     element: 'none',
-    knockback: 13,
-    lift: 5,
-    falloff: 0.4,
+    knockback: BASTION_WAVE_KNOCKBACK,
+    lift: BASTION_WAVE_LIFT,
+    falloff: BASTION_WAVE_FALLOFF,
     color: SKILL_COLORS.gold,
     secondaryColor: SKILL_COLORS.earth,
     crack: true,
@@ -187,7 +230,7 @@ function bastionBurst(ctx: GameContext): void {
 const bastion: HeroSkillDef = {
   id: 'bear_bastion',
   name: '磐石壁垒',
-  description: `立即回满护盾，${BASTION_DURATION} 秒内受到的伤害降低 ${Math.round(BASTION_REDUCTION * 100)}%、武器伤害提高 ${Math.round(BASTION_DAMAGE_PCT * 100)}%；结束时释放冲击波，对 ${BASTION_WAVE_RADIUS} 米内敌人造成 ${BASTION_WAVE_DAMAGE} 点伤害并击退。冷却 22 秒。`,
+  description: `立即回满护盾，${BASTION_DURATION} 秒内受到的伤害降低 ${Math.round(BASTION_REDUCTION * 100)}%、武器伤害提高 ${Math.round(BASTION_DAMAGE_PCT * 100)}%，并挡下飞来的敌方投射物；结束时释放冲击波，对 ${BASTION_WAVE_RADIUS} 米内敌人造成 ${BASTION_WAVE_DAMAGE} 点伤害并击退。冷却 22 秒。`,
   cooldown: 22,
   charges: 1,
   activate(ctx) {
@@ -202,6 +245,21 @@ const bastion: HeroSkillDef = {
     stats.add('damagePct', BASTION_DAMAGE_PCT, BASTION_SOURCE);
     bastionSession.track(() => stats.removeSource(BASTION_SOURCE));
     p.addShield(p.maxShield());
+    // 挡弹罩（Unity 加强：「站桩扛首领大招」落到实处）：胸口为心的球罩随行，从外面飞来的敌方投射物撞上即碎（爆炸弹在罩面引爆）
+    bastionBlocked = 0;
+    wardCenter.set(p.position.x, p.position.y + BASTION_WARD_HEIGHT, p.position.z);
+    const addWard = ctx.projectiles.addWard;
+    if (typeof addWard === 'function') {
+      bastionSession.track(addWard.call(ctx.projectiles, {
+        center: wardCenter, normal: WARD_UP, radius: BASTION_WARD_RADIUS, shape: 'sphere',
+        onBlock: (point) => {
+          bastionBlocked++;
+          _c.copy(point);
+          ctx.fx.burst(_c, SKILL_COLORS.gold, 8, 2.5, 0.3, 0.05, 0);
+          ctx.audio.play('hit_armor', { position: _c, volume: 0.6, pitch: 1.2 });
+        },
+      }));
+    }
 
     const r = getRune();
     r.position.set(p.position.x, p.position.y + 0.05, p.position.z);
@@ -228,6 +286,7 @@ const bastion: HeroSkillDef = {
     }
     bastionLeft -= dt;
     bastionT += dt;
+    wardCenter.set(p.position.x, p.position.y + BASTION_WARD_HEIGHT, p.position.z);
     const r = getRune();
     if (!r.parent) ctx.stageGroup.add(r);
     r.position.set(p.position.x, p.position.y + 0.05, p.position.z);
@@ -290,8 +349,8 @@ export const BEAR: HeroDef = {
             radius: HIDE_WAVE_RADIUS * radiusScale(ctx),
             base: HIDE_WAVE_DAMAGE,
             element: 'none',
-            knockback: 16,
-            lift: 6,
+            knockback: HIDE_WAVE_KNOCKBACK,
+            lift: HIDE_WAVE_LIFT,
             falloff: 0.4,
             color: SKILL_COLORS.earth,
             secondaryColor: SKILL_COLORS.gold,
