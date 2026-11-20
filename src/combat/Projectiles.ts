@@ -38,7 +38,12 @@ const WALL_PAD_MAX = 0.25;
 const INFLATE_MIN_RADIUS = 0.06;
 /** 落地法向速度低于此值时改为滚动 */
 const ROLL_SPEED = 2.2;
-const ROLL_FRICTION = 2.8;
+/** 滚动摩擦（每秒指数衰减）：Unity ProjectileMath.RollFriction = 2.5（TS 原值 2.8，Unity 沿用了调过的现值） */
+const ROLL_FRICTION = 2.5;
+/** 反弹用完后开始滚动（rollAfter）那一下保留的速度（Unity ProjectileMath.RollEntryKeep） */
+const ROLL_ENTRY_KEEP = 0.7;
+/** 弱点规则：身体命中之后再往前看多远（Unity WeakpointRule.Window；同 combat/HitZone.ts，这里不 import 免得测试打桩） */
+const WEAKPOINT_WINDOW = 1.5;
 const BOUNCE_NORMAL_KEEP = 0.55;
 const BOUNCE_TANGENT_KEEP = 0.78;
 /** 玩家追踪弹：发射后多久开始转向（让齐射散开） */
@@ -97,6 +102,10 @@ interface Projectile {
   pierce: number;
   bounces: number;
   canRoll: boolean;
+  /** 反弹用完后贴地滚动到寿命耗尽（青冥雷蛊） */
+  rollAfter: boolean;
+  /** 正在贴地滚动（rollAfter 进入） */
+  rolling: boolean;
   homing: number;
   color: number;
   visual: ProjectileVisual;
@@ -119,7 +128,7 @@ function createProjectile(): Projectile {
     pos: new THREE.Vector3(), vel: new THREE.Vector3(), heading: new THREE.Vector3(0, 0, 1),
     gravity: 0, radius: 0.1, lifetime: 1, age: 0,
     damage: null, enemyDamage: 0, element: 'none', explosionRadius: 0, selfDamage: 0,
-    pierce: 0, bounces: 0, canRoll: false, homing: 0,
+    pierce: 0, bounces: 0, canRoll: false, rollAfter: false, rolling: false, homing: 0,
     color: 0xffffff, visual: 'orb', size: 1, explodeOnExpire: false,
     sourceEnemy: null, onImpact: null, onBlocked: null, hitSet: new Set(),
     homingTarget: null, retargetTimer: 0, smokeTimer: 0,
@@ -130,6 +139,34 @@ function createProjectile(): Projectile {
 /** 有限数值，否则取缺省值（防止上游传入 NaN / Infinity 污染运动积分） */
 function num(v: number | undefined, fallback: number): number {
   return v !== undefined && Number.isFinite(v) ? v : fallback;
+}
+
+/**
+ * 线段 origin + dir × [0, segLen]（dir 为单位向量）被挡弹区挡下的位置（沿线段的距离；−1 = 没挡）。Unity ProjectileMath：
+ *   圆盘（CrossesDisc）：穿过圆盘平面、穿过点在半径内，两面都挡，与圆盘平行的不算；
+ *   球罩（EntersSphere）：从球外进入球，起点已在球内的不算（罩子里打出去的不被自己的罩子吃掉）。
+ */
+export function wardEntry(w: Pick<ProjectileWard, 'center' | 'normal' | 'radius' | 'shape'>, origin: THREE.Vector3, dir: THREE.Vector3, segLen: number): number {
+  if (!(w.radius > 0)) return -1;
+  const c = w.center;
+  if (w.shape === 'sphere') {
+    const mx = origin.x - c.x, my = origin.y - c.y, mz = origin.z - c.z;
+    const cc = mx * mx + my * my + mz * mz - w.radius * w.radius;
+    if (cc <= 0) return -1;
+    const b = mx * dir.x + my * dir.y + mz * dir.z;
+    if (b > 0) return -1;
+    const disc = b * b - cc;
+    if (disc < 0) return -1;
+    const t = -b - Math.sqrt(disc);
+    return t >= 0 && t <= segLen ? t : -1;
+  }
+  const n = w.normal;
+  const dn = dir.x * n.x + dir.y * n.y + dir.z * n.z;
+  if (Math.abs(dn) < 1e-5) return -1;
+  const t = ((c.x - origin.x) * n.x + (c.y - origin.y) * n.y + (c.z - origin.z) * n.z) / dn;
+  if (t < 0 || t > segLen) return -1;
+  const px = origin.x + dir.x * t - c.x, py = origin.y + dir.y * t - c.y, pz = origin.z + dir.z * t - c.z;
+  return px * px + py * py + pz * pz <= w.radius * w.radius ? t : -1;
 }
 
 /**
@@ -188,6 +225,10 @@ export class ProjectileSystem implements IProjectileSystem {
   private live = 0;
   private floorY = 0;
   private ward: ProjectileWard | null = null;
+  /** addWard 加的挡弹区（Unity 可以同时有多个：碎刃屏障 + 各种护盾），和 setWard 的那一个一起判，取最先挡下的 */
+  private readonly extraWards: ProjectileWard[] = [];
+  /** crossesWard 找到的那一个 */
+  private blockingWard: ProjectileWard | null = null;
 
   constructor(readonly ctx: GameContext) {
     this.group.name = 'projectiles';
@@ -195,6 +236,18 @@ export class ProjectileSystem implements IProjectileSystem {
 
   setWard(ward: ProjectileWard | null): void {
     this.ward = ward;
+  }
+
+  addWard(ward: ProjectileWard): () => void {
+    this.extraWards.push(ward);
+    return () => {
+      const i = this.extraWards.indexOf(ward);
+      if (i >= 0) this.extraWards.splice(i, 1);
+    };
+  }
+
+  private get hasWard(): boolean {
+    return this.ward !== null || this.extraWards.length > 0;
   }
 
   get count(): number {
@@ -264,6 +317,8 @@ export class ProjectileSystem implements IProjectileSystem {
     p.pierce = Math.max(0, Math.floor(num(spec.pierce, 0)));
     p.bounces = Math.max(0, Math.floor(num(spec.bounces, 0)));
     p.canRoll = p.bounces > 0;
+    p.rollAfter = spec.rollAfter === true;
+    p.rolling = false;
     p.homing = Math.max(0, num(spec.homing, 0));
     p.color = num(spec.color, 0xffffff);
     p.visual = spec.visual ?? 'orb';
@@ -408,7 +463,7 @@ export class ProjectileSystem implements IProjectileSystem {
             remaining -= adv;
             continue;
           }
-        } else if (this.ward && this.crossesWard(_origin, _dir, segLen)) {
+        } else if (this.hasWard && this.crossesWard(_origin, _dir, segLen)) {
           this.onWardBlock(p);
           return;
         } else if (this.touchesPlayer(p, _origin, _dir, segLen)) {
@@ -433,7 +488,10 @@ export class ProjectileSystem implements IProjectileSystem {
         }
         if (p.owner === 'player') wh?.box.onHit?.(p.damage?.base ?? p.enemyDamage);
         const floorLike = _wallN.y > 0.7;
-        if (p.canRoll && floorLike && p.gravity > 0 && -vn < ROLL_SPEED) {
+        if (p.rolling) {
+          // 滚动中（rollAfter）：贴着表面走，整体摩擦减速（Unity：ProjectOnPlane × e^(−摩擦·dt)）
+          p.vel.addScaledVector(_wallN, -vn).multiplyScalar(Math.exp(-ROLL_FRICTION * dt));
+        } else if (p.canRoll && floorLike && p.gravity > 0 && -vn < ROLL_SPEED) {
           // 贴地滚动：去掉法向速度 + 摩擦
           p.vel.addScaledVector(_wallN, -vn);
           const fr = Math.exp(-ROLL_FRICTION * dt);
@@ -445,6 +503,11 @@ export class ProjectileSystem implements IProjectileSystem {
           _tmp.copy(_wallN).multiplyScalar(vn);
           p.vel.sub(_tmp).multiplyScalar(BOUNCE_TANGENT_KEEP).addScaledVector(_tmp, -BOUNCE_NORMAL_KEEP);
           this.ctx.fx.impact(_wallP, _wallN, p.color, 0.25 * clamp(p.radius / 0.12, 0.6, 1.6));
+        } else if (p.rollAfter) {
+          // 反弹用完（Unity rollAfter）：开始贴地滚动，直到寿命耗尽 / 碰到敌人；这一下保留 70% 的切向速度
+          p.rolling = true;
+          p.vel.addScaledVector(_wallN, -vn).multiplyScalar(ROLL_ENTRY_KEEP);
+          _origin.addScaledVector(_wallN, 0.01);
         } else {
           this.onWallContact(p, _wallP, _wallN);
           return;
@@ -644,15 +707,16 @@ export class ProjectileSystem implements IProjectileSystem {
         const yMax = Math.max(yMin, _head.y - headR * 0.3 - e.radius);
         const tb = rayVerticalCapsule(origin, dir, e.position.x, e.position.z, yMin, yMax, e.radius + r);
         const th = raySphere(origin, dir, _head, headR + r);
+        // 弱点规则（Unity WeakpointRule）：头先中 = 爆头；先进身体、往前 1.5 m 内穿过头部也按爆头算（距离仍是身体的）
         let t = -1;
         let head = false;
-        if (th >= 0 && th <= maxDist) {
+        const bodyOk = tb >= 0 && tb <= maxDist;
+        if (th >= 0 && th <= maxDist && (!bodyOk || th <= tb)) {
           t = th;
           head = true;
-        }
-        if (tb >= 0 && tb <= maxDist && (t < 0 || tb < t - headR * 0.5)) {
+        } else if (bodyOk) {
           t = tb;
-          head = false;
+          head = th >= 0 && th < tb + WEAKPOINT_WINDOW;
         }
         if (t >= 0 && t < bestT) {
           bestT = t;
@@ -693,19 +757,30 @@ export class ProjectileSystem implements IProjectileSystem {
 
   // ───────────── 命中结算 ─────────────
 
-  /** 这一段（origin + dir × [0, segLen]）是否穿过挡弹圆盘；穿过点写入 _hitPoint */
+  /**
+   * 这一段（origin + dir × [0, segLen]）是否被挡弹区挡下（Unity ProjectileWard.TryBlock：多个挡弹区取最先挡下的）；
+   * 挡弹点写入 _hitPoint、挡下它的写入 blockingWard
+   */
   private crossesWard(origin: THREE.Vector3, dir: THREE.Vector3, segLen: number): boolean {
-    const w = this.ward!;
-    const dn = dir.dot(w.normal);
-    if (Math.abs(dn) < 1e-5) return false;
-    const t = _tmp.subVectors(w.center, origin).dot(w.normal) / dn;
-    if (t < 0 || t > segLen) return false;
-    _hitPoint.copy(origin).addScaledVector(dir, t);
-    return _hitPoint.distanceToSquared(w.center) <= w.radius * w.radius;
+    let best = Infinity;
+    this.blockingWard = null;
+    const n = this.extraWards.length;
+    for (let i = -1; i < n; i++) {
+      const w = i < 0 ? this.ward : this.extraWards[i];
+      if (!w) continue;
+      const t = wardEntry(w, origin, dir, segLen);
+      if (t >= 0 && t < best) {
+        best = t;
+        this.blockingWard = w;
+      }
+    }
+    if (!this.blockingWard) return false;
+    _hitPoint.copy(origin).addScaledVector(dir, best);
+    return true;
   }
 
   private onWardBlock(p: Projectile): void {
-    const ward = this.ward!;
+    const ward = this.blockingWard ?? this.ward!;
     _pt.copy(_hitPoint);
     // 敌方爆炸弹在盾面引爆（爆炸伤害仍按到玩家的距离结算）
     if (p.explosionRadius > 0) this.detonate(p, _pt);

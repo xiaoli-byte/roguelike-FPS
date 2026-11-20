@@ -297,6 +297,7 @@ export class Ballistics {
       explosionRadius: R.explosionRadius > 0 ? R.explosionRadius : undefined,
       pierce: R.pierce > 0 ? R.pierce : undefined,
       bounces: p.bounces > 0 ? p.bounces : undefined,
+      rollAfter: p.rollAfter ? true : undefined,
       homing: p.homing > 0 ? p.homing : undefined,
       color,
       visual: p.visual,

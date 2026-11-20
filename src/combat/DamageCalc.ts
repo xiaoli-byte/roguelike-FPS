@@ -55,6 +55,11 @@ export function withTag(tags: readonly string[] | undefined, tag: string): strin
   return [...tags, tag];
 }
 
+/** 灵宠的攻击（Unity DamageCalc.EffectiveTags 的 Pet：来源 'pet' 或带 'pet' 标签） */
+export function isPetHit(req: DamageRequest): boolean {
+  return req.source === 'pet' || hasTag(req, 'pet');
+}
+
 /**
  * 持续伤害（灼烧 / 蚀化跳伤）。雷殛弹射同样是 source 'status'（不暴击、只吃元素加成），
  * 但带 'chain' 标签，按直接命中处理（有命中火花与音效）。
@@ -78,9 +83,13 @@ export function statMultiplier(stats: Stats, enemy: IEnemy, req: DamageRequest):
   if (hasTag(req, REACTION_TAG)) return stats.mult('reactionDamagePct');
   let m = 1;
   if (req.source !== 'status') {
-    if (req.source === 'weapon' || req.source === 'melee' || hasTag(req, 'weapon')) m *= stats.mult('damagePct');
-    if (req.source === 'skill' || hasTag(req, 'skill')) m *= stats.mult('skillDamagePct');
-    if (req.source === 'explosion' || hasTag(req, 'explosion')) m *= stats.mult('explosionDamagePct');
+    // 灵宠（Unity DamageTag.Pet）：只吃「灵宠伤害」，不吃武器 / 技能 / 爆炸伤害
+    if (isPetHit(req)) m *= stats.mult('petDamagePct');
+    else {
+      if (req.source === 'weapon' || req.source === 'melee' || hasTag(req, 'weapon')) m *= stats.mult('damagePct');
+      if (req.source === 'skill' || hasTag(req, 'skill')) m *= stats.mult('skillDamagePct');
+      if (req.source === 'explosion' || hasTag(req, 'explosion')) m *= stats.mult('explosionDamagePct');
+    }
   }
   if (req.element !== 'none') {
     m *= stats.mult('elementDamagePct') * stats.mult(ELEMENT_DAMAGE_STAT[req.element]);

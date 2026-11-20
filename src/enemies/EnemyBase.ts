@@ -10,6 +10,8 @@ import type { MoveResult } from '../world/Collision';
 export type ScaledEnemyDef = EnemyDef & { scale?: number };
 
 const GRAVITY = 26;
+/** 弱点规则：身体命中之后再往前看多远（米，Unity WeakpointRule.Window；同 combat/HitZone.ts 的 WEAKPOINT_WINDOW，这里不 import 免得测试打桩） */
+const WEAKPOINT_WINDOW = 1.5;
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
 const _v3 = new THREE.Vector3();
@@ -381,20 +383,17 @@ export abstract class EnemyBase implements IEnemy {
     const yMin = this.position.y + Math.min(r, this.height * 0.3);
     const yMax = Math.max(yMin, this.position.y + this.headY - this.headRadius * 0.3 - r);
     const tb = rayVerticalCapsule(origin, dir, this.position.x, this.position.z, yMin, yMax, r);
-    let best = -1;
-    let head = false;
-    if (th >= 0 && th <= maxDist) {
-      best = th;
-      head = true;
+    // 弱点规则（Unity WeakpointRule，命中扫描与投射物同一条；combat/HitZone.ts 的 weakHit）：
+    // 头先中 = 爆头；先进身体、沿射线往前 1.5 m 内穿过头部（从下方斜射先打到胸口再穿过头）也按爆头算，距离仍是身体的
+    const bodyOk = tb >= 0 && tb <= maxDist;
+    if (th >= 0 && th <= maxDist && (!bodyOk || th <= tb)) {
+      out.distance = th;
+      out.headshot = true;
+      return true;
     }
-    // 头部优先：只有身体明显更近（例如从下方斜射先打到胸口）才算身体命中
-    if (tb >= 0 && tb <= maxDist && (best < 0 || tb < best - this.headRadius * 0.5)) {
-      best = tb;
-      head = false;
-    }
-    if (best < 0) return false;
-    out.distance = best;
-    out.headshot = head;
+    if (!bodyOk) return false;
+    out.distance = tb;
+    out.headshot = th >= 0 && th < tb + WEAKPOINT_WINDOW;
     return true;
   }
 

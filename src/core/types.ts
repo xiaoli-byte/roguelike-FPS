@@ -58,6 +58,8 @@ export type StatKey =
   | 'fireRatePct' | 'reloadSpeedPct' | 'magSizePct' | 'ammoReservePct' | 'spreadPct' | 'recoilPct'
   | 'projectileSpeedPct' | 'explosionRadiusPct' | 'explosionDamagePct'
   | 'bossDamagePct' | 'eliteDamagePct' | 'shieldDamagePct' | 'armorDamagePct'
+  // 弱点伤害（Unity Stat.WeakpointDamagePct）、灵宠伤害（Unity Stat.PetDamagePct：灵宠的攻击只吃它）
+  | 'weakpointDamagePct' | 'petDamagePct'
   // 元素
   | 'elementChancePct' | 'elementDamagePct' | 'fireDamagePct' | 'shockDamagePct' | 'corrodeDamagePct'
   | 'reactionDamagePct' | 'reactionHaste'
@@ -68,7 +70,8 @@ export type StatKey =
 
 // ───────────────────────────── 伤害 / 状态 ─────────────────────────────
 
-export type DamageSource = 'weapon' | 'skill' | 'status' | 'explosion' | 'scroll' | 'melee';
+/** 'pet'：灵宠的攻击（Unity DamageSource.Pet：只吃 petDamagePct，不随机暴击，见 combat/PetContract.ts） */
+export type DamageSource = 'weapon' | 'skill' | 'status' | 'explosion' | 'scroll' | 'melee' | 'pet';
 export type DamageLayer = 'shield' | 'armor' | 'health';
 export type StatusId = 'burn' | 'shock' | 'corrode' | 'stun' | 'slow';
 
@@ -161,6 +164,8 @@ export interface DamageResult {
   statusApplied: StatusId | null;
   /** 这一击的元素附着引发的反应（Combat 第 4 步写入，早于 'enemy:damaged'） */
   reaction?: ReactionId | null;
+  /** 命中区倍率 < 0.5（正面甲、护体）：记为格挡（Unity DamageResult.blocked） */
+  blocked?: boolean;
 }
 
 export interface StatusInstance {
@@ -762,6 +767,8 @@ export interface ProjectileSpec {
   pierce?: number;
   /** 撞墙反弹次数 */
   bounces?: number;
+  /** 反弹用完后贴地滚动到寿命耗尽（Unity ProjectileSpec.rollAfter，青冥雷蛊）；缺省 false = 下一次触地就炸 */
+  rollAfter?: boolean;
   /** 追踪转向速率（弧度/秒） */
   homing?: number;
   color: number;
@@ -785,6 +792,8 @@ export interface ProjectileWard {
   center: THREE.Vector3;
   normal: THREE.Vector3;
   radius: number;
+  /** 'disc'（缺省，两面都挡）/ 'sphere'（球罩：只挡从外面飞进来的，Unity ProjectileWard.Shape.Sphere） */
+  shape?: 'disc' | 'sphere';
   /** point 为穿过圆盘的位置（复用向量，按值读取），damage 为该投射物对玩家的伤害 */
   onBlock(point: THREE.Vector3, damage: number): void;
 }
@@ -794,6 +803,8 @@ export interface IProjectileSystem extends System {
   readonly count: number;
   /** 设置 / 撤掉挡弹圆盘（同时只有一个） */
   setWard(ward: ProjectileWard | null): void;
+  /** 再加一个挡弹区（Unity 可以同时有多个，取最先挡下的）；返回撤销函数 */
+  addWard?(ward: ProjectileWard): () => void;
 }
 
 // ───────────────────────────── 关卡世界 ─────────────────────────────

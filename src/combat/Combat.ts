@@ -21,10 +21,14 @@ import type {
 import { ELEMENT_COLORS } from '../core/types';
 import { clamp, clamp01 } from '../core/math';
 import {
-  applyLayers, dotStatMultiplier, ELEMENT_STATUS, hasTag, isDot, LAYER_COLORS, layerMultiplier, newLayerOutcome,
-  SHOCK_MARK_BONUS, statMultiplier, topLayer, withTag,
+  applyLayers, dotStatMultiplier, ELEMENT_STATUS, hasTag, isDot, isPetHit, LAYER_COLORS, layerMultiplier, newLayerOutcome,
+  REACTION_TAG, SHOCK_MARK_BONUS, statMultiplier, topLayer, withTag,
   reactionPowerFromStatus,
 } from './DamageCalc';
+import { forcedWeakpoint } from './PetContract';
+import { BLOCK_BELOW, type HitZoneSet } from './HitZone';
+import { ChargeSystem } from './Charge';
+import { HitStop } from './HitStop';
 import { STATUS_DOT_ELEMENT, STATUS_POWER_CAP, StatusSystem } from './Status';
 import { HitFeedback } from './Feedback';
 import { blastPlayer, explosionShake, lineClear } from './Blast';
@@ -79,10 +83,17 @@ export class Combat implements ICombat, ReactionHost {
   /** 最近一次 attach 引发的反应（attach 末尾写入，调用方立即读取） */
   private lastReaction: ReactionId | null = null;
 
+  /** 第四章「带电」（Unity Charge / ChargeState）：账本、死亡传电、噼啪；反应判定经 isCharged 读 */
+  readonly charge: ChargeSystem;
+  /** 顿帧（Unity HitStop）：击杀 / 重暴击 / 直接命中引发的反应压一下时间 */
+  readonly hitStop: HitStop;
+
   constructor(readonly ctx: GameContext) {
     this.status = new StatusSystem(ctx, this);
     this.feedback = new HitFeedback(ctx);
     this.reactions = new ReactionSystem(ctx, this, this.status, this.feedback);
+    this.charge = new ChargeSystem(ctx);
+    this.hitStop = new HitStop(ctx);
   }
 
   // ───────────── 生命周期 ─────────────
@@ -92,16 +103,25 @@ export class Combat implements ICombat, ReactionHost {
     this.reactions.flush();
     this.feedback.flush();
     this.status.update(dt);
+    this.charge.update(dt);
     this.feedback.flush();
+    this.hitStop.update();
   }
 
   /** 换关 / 新开一局：清掉反应队列 / 熔池、状态内部数据与待刷新的反馈。修饰器由安装方自行移除，这里不动。 */
   clear(): void {
     this.reactions.clear();
     this.status.clear();
+    this.charge.clear();
+    this.hitStop.release();
     this.feedback.clear();
     this.explodeDepth = 0;
     for (const b of this.queryBufs) b.length = 0;
+  }
+
+  /** ReactionHost：带电就反应而言等同带雷殛 */
+  isCharged(enemy: IEnemy): boolean {
+    return this.charge.isCharged(enemy);
   }
 
   // ───────────── 伤害：玩家 → 敌人 ─────────────
@@ -125,18 +145,32 @@ export class Combat implements ICombat, ReactionHost {
       return null;
     }
 
-    // 1) 暴击（状态伤害不暴击）
+    // 1) 弱点与暴击（Unity Combat.DamageEnemy）：命中弱点或被改判为弱点（白泽，PetContract）必暴；
+    //    状态 / 反应伤害不暴击；灵宠不随机暴击（灵宠自己决定 forceCrit）
+    const reaction = hasTag(req, REACTION_TAG);
+    const weak = !!req.headshot || forcedWeakpoint(enemy, req, reaction);
     let isCrit = false;
-    if (!statusSource) {
-      isCrit = !!req.forceCrit || !!req.headshot || (req.canCrit !== false && ctx.rng.next() < stats.get('critChance'));
+    if (!statusSource && !reaction) {
+      isCrit = !!req.forceCrit || weak || (req.canCrit !== false && !isPetHit(req) && ctx.rng.next() < stats.get('critChance'));
     }
 
     // 2) 倍率（含封脉首领「脉滞」易伤）
     let mult = statMultiplier(stats, enemy, req) * enemy.damageTakenMult * this.reactions.vulnMult(enemy);
+    // 弱点：敌人自己的弱点区倍率（夔的鼓心、旱魃的日核…，同 Unity 命中盒 multiplier）× 玩家「弱点伤害」
     if (req.headshot) mult *= enemy.weakpointDamageMult ?? 1;
+    if (weak) mult *= stats.mult('weakpointDamagePct');
     if (req.element === 'shock' && enemy.statuses.has('shock')) mult *= SHOCK_MARK_BONUS;
     if (isCrit) mult *= (Number.isFinite(req.critMult) ? Math.max(0, req.critMult!) : 2) * stats.mult('critDamagePct');
     mult *= this.outgoingMultiplier(enemy, req, isCrit);
+    // 命中区（Unity EnemyBody.ZoneIncoming）：按命中点分区、乘这一区的倍率（朝向门外 ×1），< 0.5 记为格挡；持续伤害不算区
+    const zones = statusSource ? null : (enemy as { hitZones?: HitZoneSet | null }).hitZones ?? null;
+    const zone = zones ? zones.zoneAt(req.point, !!req.headshot) : null;
+    let blocked = false;
+    if (zone) {
+      const zm = zone.multiplierFor(req.direction);
+      if (Number.isFinite(zm)) mult *= Math.max(0, zm);
+      blocked = zm < BLOCK_BELOW;
+    }
     let raw = base * mult;
     if (!Number.isFinite(raw) || raw < 0) raw = 0;
 
@@ -159,6 +193,9 @@ export class Combat implements ICombat, ReactionHost {
       statusApplied: null,
       reaction: null,
     };
+    if (blocked) result.blocked = true;
+    // 命中区计数（Unity EnemyBody.OnDamaged：免疫的不算，打出伤害或格挡才记）
+    if (zone && (dealt > 0 || blocked)) zone.record(dealt, blocked);
 
     if (effective <= 0) {
       if (base > 0 && !dot && !execute) this.feedback.immune(enemy, req.point);

@@ -34,6 +34,8 @@ export const BASE_STATS: Record<StatKey, number> = {
   eliteDamagePct: 0,
   shieldDamagePct: 0,
   armorDamagePct: 0,
+  weakpointDamagePct: 0,
+  petDamagePct: 0,
 
   elementChancePct: 0,
   elementDamagePct: 0,
@@ -86,6 +88,8 @@ export const STAT_INFO: Record<StatKey, { name: string; format: StatFormat }> = 
   eliteDamagePct: { name: '精英伤害', format: 'pct' },
   shieldDamagePct: { name: '对护盾伤害', format: 'pct' },
   armorDamagePct: { name: '对护甲伤害', format: 'pct' },
+  weakpointDamagePct: { name: '弱点伤害', format: 'pct' },
+  petDamagePct: { name: '灵宠伤害', format: 'pct' },
   elementChancePct: { name: '元素触发率', format: 'pct' },
   elementDamagePct: { name: '元素伤害', format: 'pct' },
   fireDamagePct: { name: '灼烧伤害', format: 'pct' },

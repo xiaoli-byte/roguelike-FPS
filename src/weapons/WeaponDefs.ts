@@ -51,7 +51,7 @@ export interface ProjectileParams {
   bounces: number;
   /**
    * 反弹用完后贴地滚动到 lifetime 耗尽再炸（青冥雷蛊）；false = 下一次触地就炸。
-   * // Unity 字段，运行时待 M8 接入（Unity ProjectileSpec.rollAfter，「弹体：落地滚动」）
+   * Unity ProjectileSpec.rollAfter（M8 接入：Firing 传给 ProjectileSpec.rollAfter，Projectiles 滚动）
    */
   rollAfter: boolean;
 }

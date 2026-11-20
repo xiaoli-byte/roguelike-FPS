@@ -146,6 +146,8 @@ export interface ReactionHost {
   explode(center: THREE.Vector3, radius: number, req: DamageRequest, opts?: ExplosionOptions): number;
   /** 反应扩散出去的元素附着（会再判定反应）；power 由 Combat 钳到最大生命 × 0.5 */
   attachFromReaction(enemy: IEnemy, sid: 'burn' | 'shock' | 'corrode', power: number, depth: number, weaponUid?: number): void;
+  /** 第四章「带电」（combat/Charge.ts）：就元素反应而言等同身上有雷殛（Unity GameReactionEnv.Has） */
+  isCharged?(enemy: IEnemy): boolean;
 }
 
 /** 引发反应的那次附着的来源信息（只在判定时同步读取，调用方可以复用同一个对象） */
@@ -305,7 +307,8 @@ export class ReactionSystem {
     if (!killed && !isLive(enemy)) return null;
     const st = enemy.statuses;
     const hb = incoming !== 'burn' && st.has('burn');
-    const hs = incoming !== 'shock' && st.has('shock');
+    // 带电（第四章）就反应而言 = 身上有雷殛：火一碰焚雷、蚀一碰封脉（带电本身不挂雷殛，不吃 3 层眩晕与弹射）
+    const hs = incoming !== 'shock' && (st.has('shock') || this.host.isCharged?.(enemy) === true);
     const hc = incoming !== 'corrode' && st.has('corrode');
     const others = (hb ? 1 : 0) + (hs ? 1 : 0) + (hc ? 1 : 0);
     if (others === 0) return null;
@@ -403,7 +406,7 @@ export class ReactionSystem {
     if (!this.ready(enemy, 'detonate', now)) return this.mergeDetonate(enemy, opts);
     const st = enemy.statuses;
     const hb = st.has('burn');
-    const hs = st.has('shock');
+    const hs = st.has('shock') || this.host.isCharged?.(enemy) === true;
     const hc = st.has('corrode');
     const n = (hb ? 1 : 0) + (hs ? 1 : 0) + (hc ? 1 : 0);
     if (n === 0) return null;
