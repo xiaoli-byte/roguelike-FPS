@@ -16,7 +16,7 @@ import { clamp01 } from '../core/math';
 import {
   ParticlePool, particleScaleUniform,
   STYLE_CHUNK, STYLE_DUST, STYLE_EMBER, STYLE_FIREBALL, STYLE_FLAME, STYLE_GLINT, STYLE_GLOW, STYLE_GLYPH, STYLE_LINGER, STYLE_MOTE, STYLE_SKITTER,
-  STYLE_BLAST_SMOKE, STYLE_SMOKE, STYLE_SPARK,
+  STYLE_BLAST_SMOKE, STYLE_SMOKE, STYLE_SPARK, SHAPE_GLOW, SHAPE_SMOKE, FADE_SMOKE, type ParticleStyle,
 } from './Particles';
 import { SealEffects, type SealHandle, type SealOptions } from './Seal';
 import { SparkStreaks } from './Sparks';
@@ -84,6 +84,10 @@ const SHAKE_MAX_TIME = 3;
 const BURST_FLASH_MIN_COUNT = 6;
 /** 参数非法、什么都没生成时返回的取消函数 */
 const NOOP = (): void => {};
+/** 喷火器火舌（Unity FlameCone Flames：Glow 贴图、加法、上浮 3、阻尼 1.2、长到 5.5 倍、烟式淡出） */
+const STYLE_JET: ParticleStyle = { gravity: -3, drag: 1.2, grow: 5.5, alpha: 0.95, shape: SHAPE_GLOW, fade: FADE_SMOKE, bounce: false };
+/** 喷火器的烟（Unity FlameCone Smoke：透明、上浮 2.2、阻尼 1.8、长到 3.2 倍、不透明度 0.32） */
+const STYLE_JET_SMOKE: ParticleStyle = { gravity: -2.2, drag: 1.8, grow: 3.2, alpha: 0.32, shape: SHAPE_SMOKE, fade: FADE_SMOKE, bounce: false };
 
 // 模块级临时量（热路径零分配）
 const _c = new THREE.Color();
@@ -508,6 +512,10 @@ export class FxSystem implements IFx {
 
   shake(intensity: number, duration = 0.2): void {
     const fx = this.ctx.cameraFx;
+    // 镜头手感（player/CameraRig，Unity CameraShake 的 trauma 声部）：原始强度交给它，设置「震屏强度」在出画面时乘
+    const add = (fx as unknown as { addShake?: (strength: number, duration: number) => void }).addShake;
+    if (typeof add === 'function' && intensity > 0 && duration > 0) add(intensity, duration);
+    // 旧通道照写（首领登场演出读 shakeIntensity / shakeTime）
     const scaled = Math.min(SHAKE_MAX, intensity * this.ctx.settings.screenShake);
     // NaN 写进 shakeIntensity 会让相机位置变成 NaN（整个画面消失）
     if (!(scaled > 0) || !(duration > 0)) return;
@@ -1212,6 +1220,34 @@ export class FxSystem implements IFx {
       this.glow.spawn(STYLE_SKITTER, pos.x, pos.y, pos.z, _dir.x * sp, _dir.y * sp + 3, _dir.z * sp, i % 3 === 0 ? _hot : _c, rand(0.08, 0.13), rand(0.9, 1.6));
     }
     this.later(LaterKind.SkillEcho, 0.08, pos.x, pos.y, pos.z, null, color, k);
+  }
+
+  // ───────────── 玩家移动 / 武器（M8：Unity MovementFx、FlameCone） ─────────────
+
+  /** 一道拉长的光痕（冲刺风痕、二段跳火星）：沿速度拉长，不受重力 */
+  streak(pos: THREE.Vector3, vel: THREE.Vector3, color: number, life: number, width = 0.04): void {
+    if (!finite3(pos) || !finite3(vel)) return;
+    hexToColor(color, _c);
+    this.sparks.spawn(pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, _c, life, width, 0);
+  }
+
+  /** 一团扬尘（冲刺 / 落地）：慢慢长大、淡出 */
+  dust(pos: THREE.Vector3, vel: THREE.Vector3, color: number, size: number, life: number): void {
+    if (!finite3(pos) || !finite3(vel)) return;
+    hexToColor(color, _c);
+    this.smoke.spawn(STYLE_DUST, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, _c, size, life);
+  }
+
+  /** 喷火器的一颗火舌（Unity FlameCone 的 Flames 发射器：加法、往上浮、阻尼、长到 5.5 倍）；smoke = 烟（透明、慢慢升） */
+  flameJet(pos: THREE.Vector3, vel: THREE.Vector3, color: number, size: number, life: number, smoke = false): void {
+    if (!finite3(pos) || !finite3(vel)) return;
+    if (smoke) {
+      hexToColor(color, _c);
+      this.smoke.spawn(STYLE_JET_SMOKE, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, _c, size, life);
+      return;
+    }
+    hexToColor(color, _c);
+    this.glow.spawn(STYLE_JET, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, _c, size, life);
   }
 
   // ───────────── 生命周期 ─────────────

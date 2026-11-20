@@ -25,6 +25,12 @@ export interface IFxExtras {
   earthBurst(center: THREE.Vector3, color: number, radius: number): void;
   /** 落雷点 / 雷系出手：电弧贴地爬两拍、光屑迸开、一盏短灯 */
   arcBurst(center: THREE.Vector3, color: number, scale?: number): void;
+  /** 一道拉长的光痕（冲刺风痕、二段跳火星）：沿速度拉长，不受重力 */
+  streak?(pos: THREE.Vector3, vel: THREE.Vector3, color: number, life: number, width?: number): void;
+  /** 一团扬尘（冲刺 / 落地） */
+  dust?(pos: THREE.Vector3, vel: THREE.Vector3, color: number, size: number, life: number): void;
+  /** 喷火器的一颗火舌（smoke = 烟） */
+  flameJet?(pos: THREE.Vector3, vel: THREE.Vector3, color: number, size: number, life: number, smoke?: boolean): void;
 }
 
 export function fxExtras(ctx: GameContext): IFxExtras | null {

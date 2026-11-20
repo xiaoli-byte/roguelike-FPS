@@ -14,6 +14,7 @@ import { UnityWaterView } from './UnityWater';
 import { UnityActivatorSystem } from './UnityActivators';
 import { renderUnityWaterDepth } from './UnityWaterMaterial';
 import { MechanismSystem } from './mechanisms/MechanismSystem';
+import { fallRecoveryHooks } from '../player/FallRecovery';
 
 export class UnitySceneView {
   readonly group = new THREE.Group();
@@ -105,7 +106,11 @@ export class UnitySceneView {
         try {
           const mechanisms = await MechanismSystem.create(ctx, document, this.group);
           if (this.disposed) mechanisms?.dispose();
-          else this.mechanisms = mechanisms;
+          else {
+            this.mechanisms = mechanisms;
+            // 坠落回收用机关的安全落脚点环（带危险区登记，同 Unity 一份 SafeGround）
+            if (mechanisms) fallRecoveryHooks.safe = mechanisms.safe;
+          }
         } catch (err) {
           console.error('[UnitySceneView] 地图机关没建起来', err);
         }
@@ -126,6 +131,7 @@ export class UnitySceneView {
 
   dispose(): void {
     this.disposed = true;
+    if (this.mechanisms && fallRecoveryHooks.safe === this.mechanisms.safe) fallRecoveryHooks.safe = null;
     this.mechanisms?.dispose();
     this.mechanisms = null;
     this.activators?.dispose();

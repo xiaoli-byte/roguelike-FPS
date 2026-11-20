@@ -9,8 +9,11 @@ import type { Element, GameContext, HeroDef, IEnemy, IPlayer, SkillState } from 
 import { Stats } from '../core/Stats';
 import { DEG, TAU, clamp, damp, dirFromYawPitch, lerp } from '../core/math';
 import type { MoveResult } from '../world/Collision';
-import { CameraRig, type RigInput } from './CameraRig';
+import { CameraRig, RIG, type RigInput } from './CameraRig';
 import { SkillController } from './SkillController';
+import { PlayerStatus } from './PlayerStatus';
+import { MovementFx } from './MovementFx';
+import { FallRecovery } from './FallRecovery';
 
 // ───────────────────────────── 运动常量 ─────────────────────────────
 
@@ -141,12 +144,38 @@ export class PlayerController implements IPlayer {
   private diedEmitted = false;
 
   private readonly rig: CameraRig;
-  private readonly rigInput: RigInput = { speedH: 0, maxSpeed: 7.5, onGround: true, strafe: 0, dashing: false, alive: true };
+  private readonly rigInput: RigInput = { speedH: 0, maxSpeed: 7.5, onGround: true, strafeSpeed: 0, dashing: false, alive: true, aimT: 0 };
   private readonly skillCtl: SkillController;
+  /** 玩家身上的减益（寒意 / 点燃 / 日晒，Unity PlayerStatus）：敌人那边按 ctx.player.status 鸭子类型找到这里 */
+  readonly status: PlayerStatus;
+  private readonly moveFx: MovementFx;
+  /** 坠落回收（Unity SafeGround 的玩家部分） */
+  readonly fall: FallRecovery;
+  private chillPuff = 0;
 
   constructor(readonly ctx: GameContext) {
     this.rig = new CameraRig(ctx);
     this.skillCtl = new SkillController(ctx, this.stats);
+    this.moveFx = new MovementFx(ctx);
+    this.fall = new FallRecovery(ctx, this);
+    this.status = new PlayerStatus({
+      hurt: (amount, element, from) => {
+        if (!this._alive) return;
+        // 冲刺无敌帧、减伤、受伤修饰器照常（Combat.damagePlayer）
+        ctx.combat.damagePlayer(amount, element, null, from ? new THREE.Vector3(from.x, from.y, from.z) : this.position);
+      },
+      alive: () => this._alive,
+      onIgniteTick: () => {
+        _tmp.set(this.position.x, this.position.y + 0.6, this.position.z);
+        ctx.fx.burst(_tmp, 0xff9a3c, 6, 1.4, 0.45, 0.09, -2.5);
+        ctx.audio.play('burn_tick', { volume: 0.5, pitch: 1.1 });
+      },
+    });
+    // 换关：清掉减益（Unity：换关 / 复活时清空）、安全点从新的进场位置记起
+    ctx.events?.on('stage:loaded', () => {
+      this.status.clearAll();
+      this.fall.resetTo(this.position);
+    });
   }
 
   // ───────────── IPlayer 只读状态 ─────────────
@@ -247,6 +276,8 @@ export class PlayerController implements IPlayer {
     this.pitch = 0;
 
     this.rig.reset();
+    this.status.clearAll();
+    this.fall.resetTo(this.position);
     this.skillCtl.setup(hero);
   }
 
@@ -263,6 +294,7 @@ export class PlayerController implements IPlayer {
     this.checkOutOfWorld();
     this.updateEye();
     this.updateVitals(dt);
+    this.updateStatus(dt);
     // 持续型技能在运动之后推进：跟随玩家的特效与本帧相机同步，落地判定不晚一帧
     this.skillCtl.tick(dt);
     this.updateCamera(dt);
@@ -322,6 +354,11 @@ export class PlayerController implements IPlayer {
 
   // ───────────── 运动 ─────────────
 
+  /** 走路的最大速度（m/s）：移速属性 × 减益倍率 */
+  private walkSpeed(): number {
+    return Math.max(1, this.stats.get('moveSpeed')) * this.status.speedMult;
+  }
+
   private maxDashCharges(): number {
     return Math.max(1, Math.round(this.stats.get('dashCharges')));
   }
@@ -334,7 +371,8 @@ export class PlayerController implements IPlayer {
     const ctx = this.ctx;
     const input = ctx.input;
     const v = this.velocity;
-    const maxSpeed = Math.max(1, this.stats.get('moveSpeed'));
+    // 走路速度 = 移速属性 × 减益的移速倍率（寒意，Unity 运动修饰器栈；不改属性表、不影响冲刺）
+    const maxSpeed = this.walkSpeed();
 
     // 输入 → 世界方向。forward = (−sin yaw, 0, −cos yaw)，right = (cos yaw, 0, −sin yaw)
     let ix = 0;
@@ -575,10 +613,8 @@ export class PlayerController implements IPlayer {
         v.x = lerp(v.x, wx * sp, AIR_JUMP_REDIRECT);
         v.z = lerp(v.z, wz * sp, AIR_JUMP_REDIRECT);
       }
-      const color = this._hero?.color ?? 0xffffff;
-      _tmp.set(this.position.x, this.position.y + 0.05, this.position.z);
-      ctx.fx.ring(_tmp, 1.3, color, 0.3);
-      ctx.fx.burst(_tmp, color, 10, 3, 0.35, 0.06, 2);
+      // 二段跳：脚下英雄色的扩散环 + 一小撮火星（MovementFx）
+      this.moveFx.airJumped(this.position, this._hero?.color ?? 0xffffff);
     }
     ctx.events.emit('player:jumped', {});
     ctx.audio.play('jump', { volume: air ? 0.8 : 0.7, pitch: air ? 1.2 : 0.95 + Math.random() * 0.1 });
@@ -588,8 +624,9 @@ export class PlayerController implements IPlayer {
     if (fallSpeed < LAND_EVENT_SPEED) return;
     this.ctx.events.emit('player:landed', { fallSpeed });
     this.ctx.audio.play('land', { volume: clamp(0.25 + fallSpeed / 16, 0.25, 1), pitch: clamp(1.15 - fallSpeed / 60, 0.8, 1.15) });
+    // 镜头下沉 + 重落地（> 14 m/s）再震（CameraRig）；≥ 6 m/s 扬尘（MovementFx）
     this.rig.land(fallSpeed);
-    if (fallSpeed > 14) this.ctx.fx.shake(Math.min(0.5, (fallSpeed - 14) * 0.04), 0.18);
+    this.moveFx.landed(this.position, fallSpeed);
   }
 
   private updateDashCharges(dt: number): void {
@@ -623,9 +660,9 @@ export class PlayerController implements IPlayer {
     this.rig.dashKick();
     ctx.events.emit('player:dashed', {});
     ctx.audio.play('dash', { volume: 0.8, pitch: 0.95 + Math.random() * 0.1 });
-    // 身后扬起的气流
-    _tmp.set(this.position.x - this.dashDirX * 0.6, this.position.y + 0.9, this.position.z - this.dashDirZ * 0.6);
-    ctx.fx.burst(_tmp, 0xe8f2ff, 8, 2.5, 0.3, 0.05, 0);
+    // 视线前方迎面掠过的风痕 + 脚下扬尘（MovementFx）
+    this.updateEye();
+    this.moveFx.dashed(_tmp.set(this.dashDirX, 0, this.dashDirZ), this.eye, this.position, this._onGround);
   }
 
   private endDash(): void {
@@ -726,6 +763,8 @@ export class PlayerController implements IPlayer {
     if (yaw !== undefined) {
       this.yaw = wrapAngle(yaw);
       this.pitch = 0;
+      // 带朝向的传送 = 新的进场位置（出生 / 换关）：安全点从这里记起；托回安全点的传送不带朝向
+      this.fall.resetTo(pos);
     }
     if (this._isDashing) {
       this._isDashing = false;
@@ -747,8 +786,12 @@ export class PlayerController implements IPlayer {
     this.rig.snap(this.ctx.camera, this.eye, this.yaw, this.pitch);
   }
 
-  /** 掉出世界或坐标 / 速度变成 NaN 时拉回出生点 */
+  /** 掉出世界（出界线 / 虚空）或坐标 / 速度变成 NaN：托回最近的安全落脚点、扣 10% 生命（FallRecovery，Unity SafeGround）；阵亡后照旧拉回出生点 */
   private checkOutOfWorld(): void {
+    if (this._alive) {
+      this.fall.update();
+      return;
+    }
     const p = this.position;
     const v = this.velocity;
     if (!Number.isFinite(v.x + v.y + v.z)) v.set(0, 0, 0);
@@ -757,6 +800,28 @@ export class PlayerController implements IPlayer {
     if (Number.isFinite(p.x + p.y + p.z) && p.y > (arena?.killY ?? floorY - 25)) return;
     if (arena) this.teleport(arena.playerSpawn, arena.playerYaw);
     else this.teleport(_tmp.set(0, floorY + 1, 0));
+  }
+
+  /** 减益推进（寒意 / 点燃 / 日晒）；寒意期间脚边冒寒雾 */
+  private updateStatus(dt: number): void {
+    this.status.update(dt);
+    if (!this._alive || !this.status.has('chill')) return;
+    this.chillPuff += dt;
+    if (this.chillPuff < 0.18) return;
+    this.chillPuff = 0;
+    _tmp.set(this.position.x + (Math.random() - 0.5) * 0.6, this.position.y + 0.15, this.position.z + (Math.random() - 0.5) * 0.6);
+    this.ctx.fx.burst(_tmp, 0xcfe8ff, 1, 0.4, 0.5, 0.18, -0.5);
+  }
+
+  /** 开枪的镜头反馈（Unity CameraFeel.FireKick，WeaponSystem 调）：枪的震屏（开镜减半）+ 头沿视线向后一顿 */
+  fireKick(shake: number, shakeTime: number, back: number): void {
+    if (!this._alive) return;
+    this.rig.fireKick(shake, shakeTime, back, this.aimT(), this.pitch);
+  }
+
+  private aimT(): number {
+    const a = (this.ctx.weapons as unknown as { aimT?: number } | undefined)?.aimT;
+    return typeof a === 'number' && Number.isFinite(a) ? a : 0;
   }
 
   // ───────────── 生命 / 护盾 ─────────────
@@ -809,9 +874,10 @@ export class PlayerController implements IPlayer {
       this.lastHurtSound = now;
       ctx.audio.play('player_hurt', { volume: clamp(0.45 + dealt / 40, 0.45, 1), pitch: toHp > 0 ? 1 : 1.15 });
     }
-    let side = 0;
-    if (fromPos) side = (fromPos.x - this.position.x) * Math.cos(this.yaw) - (fromPos.z - this.position.z) * Math.sin(this.yaw);
-    this.rig.hurt((dealt / this.maxHp()) * 4, side);
+    // 受击冲击按来向（Unity CameraFeel.OnPlayerHit）；一下 ≥ 8% 生命上限的重击再震一下
+    const frac = dealt / this.maxHp();
+    this.rig.impact(fromPos, frac * 4, this.position, this.yaw);
+    if (frac >= RIG.HeavyHitFraction) this.rig.shake.add(Math.min(0.45, frac * 1.6), 0.18);
 
     if (hadShield && this.shield <= 0) {
       ctx.events.emit('player:shieldBroken', {});
@@ -832,6 +898,7 @@ export class PlayerController implements IPlayer {
     this.lungeLeft = 0;
     this.recoilDebtPitch = 0;
     this.recoilDebtYaw = 0;
+    this.status.clearAll();
     if (!this.diedEmitted) {
       this.diedEmitted = true;
       this.ctx.events.emit('player:died', {});
@@ -913,9 +980,11 @@ export class PlayerController implements IPlayer {
     this.updateEye();
     const ri = this.rigInput;
     ri.speedH = Math.hypot(this.velocity.x, this.velocity.z);
-    ri.maxSpeed = Math.max(1, this.stats.get('moveSpeed'));
+    ri.maxSpeed = this.walkSpeed();
     ri.onGround = this._onGround;
-    ri.strafe = this.strafeInput;
+    // 横向速度 = 速度在视线右方向（cos yaw, 0, −sin yaw）上的分量
+    ri.strafeSpeed = this.velocity.x * Math.cos(this.yaw) - this.velocity.z * Math.sin(this.yaw);
+    ri.aimT = this.aimT();
     // 高速硬突进（武器技能）与冲刺同样的镜头表现；软突进（斩击前冲 / 追击）不算
     ri.dashing = this._isDashing || (this.lungeLeft > 0 && !this.lungeSoft && this.lungeSpeed > LUNGE_FAST);
     ri.alive = this._alive;
