@@ -1,3 +1,5 @@
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD，不减面。蒙皮修正原来对三级 LOD 各查一遍，
+// 现在对实际发布的每一级（只有 LOD0）查，并断言文件里确实只有这一级。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as THREE from 'three';
@@ -7,10 +9,18 @@ import {
   sampleAimedMortarPose, sampleRigPose, skinPositions, vertexWeights, withArticulationWeights,
   weaponMeshOverlaps, weaponSurfaceDepths, wristAngles, wristVertexMask,
 } from '../art/tools/pose_geometry_audit.mjs';
+import { loadPublished, singleLodViolations } from './published-glb.mjs';
 
-test('published body skin corrections preserve every visual buffer and cache all three LODs', () => {
-  for (const kind of ['Mortar', 'Shaman']) for (let lod = 0; lod < 3; lod++) {
-    const source = loadPublishedMesh('SK_Enemy_' + kind, lod);
+test('published body skin corrections preserve every visual buffer and cache every published LOD', async () => {
+  for (const kind of ['Mortar', 'Shaman']) {
+    const published = await loadPublished('SK_Enemy_' + kind);
+    assert.deepEqual(singleLodViolations(published), []);
+    for (const { lod, meshIndex } of published.lods) checkSkinCorrection(kind, lod, loadPublishedMesh('SK_Enemy_' + kind, meshIndex));
+  }
+});
+
+function checkSkinCorrection(kind, lod, source) {
+  {
     const rig = makeHumanoidRig(kind);
     const original = new Float32Array(source.attrs.WEIGHTS_0);
     const fixed = withArticulationWeights(source, rig);
@@ -27,7 +37,7 @@ test('published body skin corrections preserve every visual buffer and cache all
       assert.ok(Number.isFinite(sum) && Math.abs(sum - 1) < 0.003, `${kind}/${lod}: invalid skin weights`);
     }
   }
-});
+}
 
 test('real shoulder junctions retain their original source weights', () => {
   for (const kind of ['Mortar', 'Shaman']) {

@@ -1,7 +1,12 @@
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（<资产ID>_LOD0），不减面，面数只记录、不是闸门。
+// 改动的两条：
+// · 地标 / 叙事件可见性：采样网格原来取 SceneArchitecture 近景用的 LOD1，现在近景画的就是 LOD0。原来每件只取 5×6×3 个格子里
+//   「第一个落进格子的三角形」的中心（约 66 个点），换了网格后 desert-4 的残垣量出 28.8%（阈值 30%）。加密到 10×12×6 格
+//   （约 340 个点）后同一件是 34%，再加密到 15×18×9 是 34.8%——是采样噪声，不是摆位被挡。这里用 10×12×6。
+// · 栈桥板面连续：原来对三级 LOD 各打一遍射线，现在只打实际发布的那一级。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
 import { unlink } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -10,7 +15,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
-import { loadPublishedMesh } from '../art/tools/pose_geometry_audit.mjs';
+import { loadPublished, singleLodViolations, toGeometry } from './published-glb.mjs';
 
 const dataModule = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 async function tsModule(path, imports = {}) {
@@ -48,6 +53,17 @@ const layouts = WHITEBOX_PLANS.map(plan => {
   return { plan, level, art, before };
 });
 const overlaps = (a, b) => a.minX < b.maxX - 1e-7 && a.maxX > b.minX + 1e-7 && a.minZ < b.maxZ - 1e-7 && a.maxZ > b.minZ + 1e-7;
+
+const publishedArt = new Map();
+/** 布景用到的发布资产：只读一次，并且每件都得符合单级 LOD 契约。 */
+async function loadPublishedArt(id) {
+  if (!publishedArt.has(id)) {
+    const asset = await loadPublished(id);
+    assert.deepEqual(singleLodViolations(asset), []);
+    publishedArt.set(id, asset);
+  }
+  return publishedArt.get(id);
+}
 
 test('art assembly preserves every approved floor, collider, enemy station and interaction', () => {
   for (const { plan, level, art, before } of layouts) {
@@ -176,24 +192,15 @@ test('working props identify only the six authored trading, repair and slag-hand
   assert.equal(cartHeadings.size, 3, 'slag carts must face their separate unloading approaches');
 });
 
-test('actual published landmark and story meshes remain visible from their room eye-level views', () => {
+test('actual published landmark and story meshes remain visible from their room eye-level views', async () => {
+  for (const id of new Set(layouts.flatMap(({ art }) => art.placements.map(placement => placement.assetId)))) await loadPublishedArt(id);
   const assets = new Map(), material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
   function asset(id) {
     if (assets.has(id)) return assets.get(id);
-    const bytes = readFileSync(new URL(`../public/${manifest.assets[id].url}`, import.meta.url));
-    const gltf = JSON.parse(bytes.subarray(20, 20 + bytes.readUInt32LE(12)));
-    function nodeMatrix(index) {
-      const node = gltf.nodes[index], matrix = new THREE.Matrix4();
-      if (node.matrix) matrix.fromArray(node.matrix);
-      else matrix.compose(new THREE.Vector3().fromArray(node.translation ?? [0, 0, 0]), new THREE.Quaternion().fromArray(node.rotation ?? [0, 0, 0, 1]), new THREE.Vector3().fromArray(node.scale ?? [1, 1, 1]));
-      const parent = gltf.nodes.findIndex(n => n.children?.includes(index));
-      return parent < 0 ? matrix : nodeMatrix(parent).multiply(matrix);
-    }
-    const geometries = gltf.nodes.map((node, index) => ({ ...node, index })).filter(node => /_LOD\d+$/.test(node.name)).sort((a, b) => a.name.localeCompare(b.name)).map(node => {
-      const decoded = loadPublishedMesh(id, node.mesh), geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.BufferAttribute(decoded.attrs.POSITION, 3));
-      geometry.setIndex(new THREE.BufferAttribute(decoded.idx, 1)); geometry.computeBoundingBox();
-      const mesh = new THREE.Mesh(geometry, material); mesh.matrixAutoUpdate = false; mesh.matrix.copy(nodeMatrix(node.index)); mesh.updateMatrixWorld(true); return mesh;
+    const geometries = publishedArt.get(id).lods.map(({ primitives, matrix }) => {
+      assert.equal(primitives.length, 1, `${id}: one primitive per LOD`);
+      const geometry = toGeometry(primitives[0]);
+      const mesh = new THREE.Mesh(geometry, material); mesh.matrixAutoUpdate = false; mesh.matrix.copy(matrix); mesh.updateMatrixWorld(true); return mesh;
     });
     const source = geometries[Math.min(1, geometries.length - 1)], bounds = architectureAssetBounds(geometries);
     // Stratified *triangle centres*, not AABB corners: the latter often sample
@@ -204,7 +211,7 @@ test('actual published landmark and story meshes remain visible from their room 
     for (let i = 0; i < indices.count; i += 3) {
       a.fromBufferAttribute(position, indices.getX(i)); b.fromBufferAttribute(position, indices.getX(i + 1)); c.fromBufferAttribute(position, indices.getX(i + 2));
       const centre = a.clone().add(b).add(c).multiplyScalar(1 / 3);
-      const key = [Math.floor((centre.x - min.x) / size.x * 5), Math.floor((centre.y - min.y) / size.y * 6), Math.floor((centre.z - min.z) / size.z * 3)].join(':');
+      const key = [Math.floor((centre.x - min.x) / size.x * 10), Math.floor((centre.y - min.y) / size.y * 12), Math.floor((centre.z - min.z) / size.z * 6)].join(':');
       if (!points.has(key)) points.set(key, centre);
     }
     const value = { source, bounds, geometries, points: [...points.values()] }; assets.set(id, value); return value;
@@ -305,13 +312,10 @@ test('deck placements preserve the selected bridges, full passage widths and eve
   }
 });
 
-test('published deck meshes cover each bridge centreline continuously at all three LODs', () => {
-  const geometries = [0, 1, 2].map(lod => {
-    const decoded = loadPublishedMesh('SM_Env_TravelDeck', lod), geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(decoded.attrs.POSITION, 3));
-    geometry.setIndex(new THREE.BufferAttribute(decoded.idx, 1)); geometry.computeBoundingBox();
-    return geometry;
-  });
+test('the published deck mesh covers each bridge centreline continuously', async () => {
+  const deckAsset = await loadPublishedArt('SM_Env_TravelDeck');
+  const geometries = deckAsset.lods.map(({ primitives, matrix }) => toGeometry(primitives[0]).applyMatrix4(matrix));
+  for (const geometry of geometries) geometry.computeBoundingBox();
   const bounds = new THREE.Box3(); for (const geometry of geometries) bounds.union(geometry.boundingBox);
   const centre = bounds.getCenter(new THREE.Vector3()), size = bounds.getSize(new THREE.Vector3());
   const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), ray = new THREE.Raycaster();

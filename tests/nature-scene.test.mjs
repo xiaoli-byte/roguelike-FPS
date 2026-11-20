@@ -1,9 +1,16 @@
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（<资产ID>_LOD0），不减面，面数只记录、不是闸门。
+// 「actual / published」开头的用例读 public/assets 里真正发布的 GLB（tests/published-glb.mjs，照文件声明的压缩解码），
+// 并断言每件只有 LOD0；落地、碰撞包络、视觉上限、贴图 1024² / ORM 打包、900 KiB 文件预算、Hunyuan 来源登记照旧断言。
+// 删掉的断言（只对多级 LOD 有意义）：三级节点齐全、各级面数预算（5000 / 1600 / 500）、面数逐级递减、
+// 切换距离 [0, 18, 42]、远景必须用 LOD2（现在是「最后一级」，也就是 LOD0）。
+// 「fixture」用例仍然喂三级网格：SceneDressing / SceneBackdrop 对任意级数都要成立，那是运行时代码的性质。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
+import { loadPublished, singleLodViolations, toGeometry } from './published-glb.mjs';
 
 // Published-asset checks intentionally require all three manifest entries. Before
 // publication, run only: node --test --test-name-pattern="bounds-only|fixture|fallback" tests/nature-scene.test.mjs
@@ -15,7 +22,6 @@ const bindings = ['desert.rock', 'frost.pine', 'inferno.rock'];
 const landmarkIds = ['SM_Env_DesertRuin', 'SM_Env_FrostWayshrine', 'SM_Env_InfernoFoundry'];
 const environmentIds = [...ids, ...landmarkIds];
 const environmentBindings = [...bindings, 'desert.landmark', 'frost.landmark', 'inferno.landmark'];
-const triangleBudget = [5000, 1600, 500];
 const lodDistances = [0, 18, 42];
 const manifest = JSON.parse(await readFile(new URL('../public/assets/manifest.json', import.meta.url), 'utf8')).assets;
 const json = async url => JSON.parse(await readFile(url, 'utf8'));
@@ -63,15 +69,6 @@ function glbDocument(bytes) {
   return { document, bin: bytes.subarray(28 + length) };
 }
 
-function nodeMatrix(document, index) {
-  const node = document.nodes[index];
-  const local = node.matrix ? new THREE.Matrix4().fromArray(node.matrix) : new THREE.Matrix4().compose(
-    new THREE.Vector3().fromArray(node.translation ?? [0, 0, 0]),
-    new THREE.Quaternion().fromArray(node.rotation ?? [0, 0, 0, 1]),
-    new THREE.Vector3().fromArray(node.scale ?? [1, 1, 1]));
-  const parent = document.nodes.findIndex(n => n.children?.includes(index));
-  return parent < 0 ? local : nodeMatrix(document, parent).multiply(local);
-}
 
 function imageDimensions(document, bin, index) {
   const image = document.images[index], view = document.bufferViews[image.bufferView];
@@ -125,29 +122,21 @@ async function publishedAssets(selected = ids) {
   for (const id of selected) assert.ok(manifest[id], `${id}: publish the generated asset before running this check`);
   const missing = selected.filter(id => !actualAssets.has(id));
   if (!missing.length) return actualAssets;
-  const { loadPublishedMesh } = await import('../art/tools/pose_geometry_audit.mjs');
   for (const id of missing) {
-    const bytes = await readFile(new URL(`../public/${manifest[id].url}`, import.meta.url));
-    const { document, bin } = glbDocument(bytes);
+    const published = await loadPublished(id);
+    assert.deepEqual(singleLodViolations(published), []);
+    const bytes = published.bytes, { document, bin } = glbDocument(bytes);
     const maps = document.images.map((_, i) => new THREE.Texture(imageDimensions(document, bin, i)));
     const materials = document.materials.map(m => new THREE.MeshStandardMaterial({
       map: maps[textureImage(document, m.pbrMetallicRoughness.baseColorTexture.index)],
       normalMap: maps[textureImage(document, m.normalTexture.index)],
       roughnessMap: maps[textureImage(document, m.pbrMetallicRoughness.metallicRoughnessTexture.index)],
     }));
-    const lods = [0, 1, 2].map(lod => {
-      const node = document.nodes.findIndex(n => n.name === `${id}_LOD${lod}`);
-      assert.ok(node >= 0, `${id}: missing LOD${lod} node`);
-      const meshIndex = document.nodes[node].mesh;
-      const decoded = loadPublishedMesh(id, meshIndex);
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.BufferAttribute(decoded.attrs.POSITION, 3));
-      if (decoded.attrs.NORMAL) geometry.setAttribute('normal', new THREE.BufferAttribute(decoded.attrs.NORMAL, 3));
-      if (decoded.attrs.TEXCOORD_0) geometry.setAttribute('uv', new THREE.BufferAttribute(decoded.attrs.TEXCOORD_0, 2));
-      geometry.setIndex(new THREE.BufferAttribute(decoded.idx, 1));
-      const mesh = new THREE.Mesh(geometry, materials[document.meshes[meshIndex].primitives[0].material]);
-      mesh.name = `${id}_LOD${lod}`;
-      mesh.applyMatrix4(nodeMatrix(document, node)); mesh.updateMatrixWorld(true);
+    const lods = published.lods.map(({ name, primitives, matrix }) => {
+      assert.equal(primitives.length, 1, `${name}: one material, one primitive`);
+      const mesh = new THREE.Mesh(toGeometry(primitives[0]), materials[primitives[0].material]);
+      mesh.name = name;
+      mesh.applyMatrix4(matrix); mesh.updateMatrixWorld(true);
       return mesh;
     });
     actualAssets.set(id, { id, entry: manifest[id], lods, bytes, document, bin, maps, materials });
@@ -207,22 +196,21 @@ test('bounds-only references contain dimensions and never create a procedural bl
   }
 });
 
-test('published nature and landmark assets meet three-LOD, 1024 PBR, file budget and local Hunyuan provenance', async () => {
+test('published nature and landmark assets meet single-LOD, 1024 PBR, file budget and local Hunyuan provenance', async () => {
   const assets = await publishedAssets(environmentIds);
   let totalBytes = 0;
   for (const [i, id] of environmentIds.entries()) {
     const asset = assets.get(id), { entry, document, bytes, bin } = asset;
     assert.equal(entry.kind, 'static'); assert.equal(entry.class, 'nature_prop');
     assert.deepEqual(entry.bind, { source: 'scene', id: environmentBindings[i] });
-    assert.deepEqual(entry.lodDistance, lodDistances);
+    assert.deepEqual(entry.lodDistance, [0]);
     assert.equal(bytes.length, entry.bytes);
     assert.equal(createHash('sha256').update(bytes).digest('hex'), entry.sha256);
     assert.ok(bytes.length <= 900 * 1024, `${id}: exceeds 900KiB`); totalBytes += bytes.length;
-    assert.equal(asset.lods.length, 3); assert.equal(document.meshes.length, 3);
+    assert.equal(asset.lods.length, 1); assert.equal(document.meshes.length, 1);
     assert.equal(document.skins?.length ?? 0, 0);
     const triangles = asset.lods.map(m => m.geometry.index.count / 3);
-    for (const [lod, count] of triangles.entries()) assert.ok(count > 0 && count <= triangleBudget[lod], `${id}/LOD${lod}: ${count} triangles`);
-    assert.ok(triangles[0] > triangles[1] && triangles[1] > triangles[2], `${id}: collapsed LOD chain`);
+    for (const [lod, count] of triangles.entries()) assert.ok(count > 0, `${id}/LOD${lod}: ${count} triangles`);
     for (const m of document.materials) {
       assert.equal(m.alphaMode ?? 'OPAQUE', 'OPAQUE', `${id}: foliage must use solid geometry`);
       const pbr = m.pbrMetallicRoughness;
@@ -303,7 +291,7 @@ test('published nature and landmark assets meet three-LOD, 1024 PBR, file budget
   assert.ok(totalBytes <= environmentIds.length * 900 * 1024, 'combined environment assets exceed their file budget');
 });
 
-test('actual published landmark LODs stay grounded inside their solid collision envelopes in every orientation', async () => {
+test('actual published landmarks stay grounded inside their solid collision envelopes in every orientation', async () => {
   const assets = await publishedAssets(landmarkIds);
   const profiles = [[4.8, 4.4, 2.6], [4.2, 5, 3.2], [4.6, 4.8, 3.4]];
   withCanvas(() => withLibrary(assets, () => {
@@ -318,7 +306,8 @@ test('actual published landmark LODs stay grounded inside their solid collision 
         dressing.group.updateMatrixWorld(true);
         const lod = dressing.group.children.find(child => child.isLOD);
         assert.ok(lod && dressing.replaced.has(deco), `${id}: actual landmark was not attached`);
-        assert.deepEqual(lod.levels.map(level => level.distance), quality === 'low' ? [0, 30] : [0, 20, 42]);
+        assert.deepEqual(lod.levels.map(level => level.distance), [0], 'the one published LOD is shown at every distance and quality');
+        assert.equal(lod.levels[0].object.geometry, asset.lods[0].geometry);
         for (const level of lod.levels) {
           const mesh = level.object, positions = mesh.geometry.getAttribute('position'), point = new THREE.Vector3();
           let grounded = Infinity;
@@ -366,7 +355,7 @@ test('rejected thin pine retains failed validation evidence and stays unpublishe
     'natural assets lost their automatic thin-geometry rejection');
 });
 
-test('actual Draco geometry at every LOD respects pine and decorative rock visual caps', async () => {
+test('actual published geometry respects pine and decorative rock visual caps', async () => {
   const assets = await publishedAssets();
   withCanvas(() => withLibrary(assets, () => {
     for (const [i, id] of ids.entries()) {
@@ -381,7 +370,7 @@ test('actual Draco geometry at every LOD respects pine and decorative rock visua
           { sand: 0xffcc88, snow: 0xffffff, cloud: { color: 0xaaaaaa } }, () => .5, []);
         const lod = dressing.group.children.find(child => child.isLOD);
         assert.ok(lod && dressing.replaced.has(deco));
-        assert.equal(lod.levels.length, 3);
+        assert.equal(lod.levels.length, 1);
         assert.ok(lod.scale.x > 0 && lod.scale.x <= requested);
         dressing.group.updateMatrixWorld(true);
         for (const { object: mesh } of lod.levels) {
@@ -408,9 +397,10 @@ function checkBackdrop(assets, theme, rand) {
     const L = layout(theme), backdrop = new SceneBackdrop({}, L, rand);
     const parent = new THREE.Group(); parent.add(backdrop.group);
     assert.equal(backdrop.ready, true); assert.equal(backdrop.group.children.length, 1);
-    const mesh = backdrop.group.children[0], source = asset.lods[2];
+    // 远景永远用资产的最后一级：三级 fixture 是 LOD2，实际发布的资产是 LOD0。
+    const mesh = backdrop.group.children[0], source = asset.lods.at(-1);
     assert.equal(mesh.isInstancedMesh, true); assert.equal(mesh.count, 30);
-    assert.equal(mesh.geometry, source.geometry); assert.match(mesh.name, /\.LOD2$/);
+    assert.equal(mesh.geometry, source.geometry); assert.ok(mesh.name.endsWith(`.LOD${asset.lods.length - 1}`), mesh.name);
     assert.equal(mesh.castShadow, false); assert.equal(mesh.receiveShadow, false);
     const copies = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
     const originals = Array.isArray(source.material) ? source.material : [source.material];
@@ -458,7 +448,7 @@ function checkBackdrop(assets, theme, rand) {
         if (vertex.y >= L.floorY) visible.expandByPoint(vertex);
       }
       assert.ok(!visible.isEmpty(), 'buried formation has no visible rock');
-      // Test actual above-ground LOD2 vertices, including the wide low formations.
+      // Test actual above-ground vertices of the backdrop LOD, including the wide low formations.
       assert.ok(visible.max.x < L.center.x - L.half || visible.min.x > L.center.x + L.half
         || visible.max.z < L.center.z - L.half || visible.min.z > L.center.z + L.half,
       'visible backdrop geometry intrudes into the playable courtyard');
@@ -477,12 +467,12 @@ function checkBackdrop(assets, theme, rand) {
   });
 }
 
-test('all three backdrops use generated LOD2, stay outside the arena and dispose owned resources once', async () => {
+test('all three backdrops use the published rock mesh, stay outside the arena and dispose owned resources once', async () => {
   const assets = await publishedAssets();
   for (const theme of ['desert', 'frost', 'inferno']) checkBackdrop(assets, theme, () => .5);
 });
 
-test('published broad cliffs remain outside the arena at backdrop LOD2 in every chapter', async () => {
+test('published broad cliffs remain outside the arena as backdrops in every chapter', async () => {
   const assets = await publishedAssets(['SM_Env_DesertCliff', 'SM_Env_FrostCliff', 'SM_Env_InfernoCliff']);
   for (const theme of ['desert', 'frost', 'inferno']) checkBackdrop(assets, theme, () => .5);
 });

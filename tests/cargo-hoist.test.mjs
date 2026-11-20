@@ -1,9 +1,11 @@
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（SM_Env_CargoHoist_LOD0），不减面，面数只记录、不是闸门。
+// 原来对 LOD1 / LOD2 的面数预算和跨 LOD 轮廓漂移的断言只对多级 LOD 有意义，已删掉；其余性质在 LOD0 上照样断言。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import * as THREE from 'three';
-import { loadPublishedMesh } from '../art/tools/pose_geometry_audit.mjs';
+import { loadPublished, singleLodViolations, toGeometry } from './published-glb.mjs';
 
 const id = 'SM_Env_CargoHoist', root = new URL('../', import.meta.url);
 const read = file => fs.readFileSync(new URL(file, root));
@@ -47,22 +49,18 @@ test('cargo hoist retains local multi-view provenance, complete concept registra
   }
 });
 
-test('actual Draco hoist LODs preserve a thick grounded base and central reel volume', () => {
+test('the published single-LOD hoist preserves a thick grounded base and central reel volume', async () => {
   const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-  let referenceSize;
-  for (const [lod, budget] of [5000, 1600, 500].entries()) {
-    const decoded = loadPublishedMesh(id, lod);
-    assert.ok(decoded.idx.length / 3 <= budget);
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(decoded.attrs.POSITION, 3));
-    geometry.setIndex(new THREE.BufferAttribute(decoded.idx, 1)); geometry.computeBoundingBox();
+  const asset = await loadPublished(id);
+  assert.deepEqual(singleLodViolations(asset), []);
+  for (const { lod, primitives, matrix } of asset.lods) {
+    assert.equal(primitives.length, 1);
+    const geometry = toGeometry(primitives[0]).applyMatrix4(matrix); geometry.computeBoundingBox();
     const box = geometry.boundingBox, size = box.getSize(new THREE.Vector3());
     assert.ok(size.x > 2.5 && size.x < 4.5, `LOD${lod}: width ${size.x}`);
     assert.ok(size.y > 3 && size.y < 4, `LOD${lod}: height ${size.y}`);
     assert.ok(size.z > 1.8 && size.z < 3.2, `LOD${lod}: volume depth ${size.z}`);
     assert.ok(Math.abs(box.min.y) < .03, `LOD${lod}: grounded base ${box.min.y}`);
-    if (!referenceSize) referenceSize = size.clone();
-    for (const axis of ['x', 'y', 'z']) assert.ok(Math.abs(size[axis] / referenceSize[axis] - 1) < .06, `LOD${lod}: ${axis} silhouette drift`);
     const mesh = new THREE.Mesh(geometry, material); mesh.updateMatrixWorld(true);
     const center = box.getCenter(new THREE.Vector3()), ray = new THREE.Raycaster();
     // Front-to-back centre rays hit the broad reel rather than a paper-thin facade.

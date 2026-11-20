@@ -141,22 +141,16 @@ test('actual collision body traverses both default and 360 seeded gates across a
   }
 });
 
-test('actual published pine roots fit the sparse forest trunk collider across all LODs', async () => {
-  const { loadPublishedMesh } = await import('../art/tools/pose_geometry_audit.mjs');
-  const manifest = JSON.parse(await readFile(new URL('../public/assets/manifest.json', import.meta.url), 'utf8')).assets;
-  const id = 'SM_Env_FrostPine', bytes = await readFile(new URL(`../public/${manifest[id].url}`, import.meta.url));
-  const document = JSON.parse(bytes.subarray(20, 20 + bytes.readUInt32LE(12)));
-  const nodeMatrix = index => {
-    const node = document.nodes[index];
-    const local = node.matrix ? new THREE.Matrix4().fromArray(node.matrix) : new THREE.Matrix4().compose(
-      new THREE.Vector3().fromArray(node.translation ?? [0, 0, 0]),
-      new THREE.Quaternion().fromArray(node.rotation ?? [0, 0, 0, 1]), new THREE.Vector3().fromArray(node.scale ?? [1, 1, 1]));
-    const parent = document.nodes.findIndex(n => n.children?.includes(index));
-    return parent < 0 ? local : nodeMatrix(parent).multiply(local);
-  };
-  for (const lod of [0, 1, 2]) {
-    const node = document.nodes.findIndex(n => n.name === `${id}_LOD${lod}`);
-    const data = loadPublishedMesh(id, document.nodes[node].mesh), matrix = nodeMatrix(node);
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（<资产ID>_LOD0），不减面，面数只记录、不是闸门。
+// 原来对 LOD0 / LOD1 / LOD2 各量一遍树根；现在量实际发布的每一级（只有 LOD0）。下面几条 fixture 用例仍然喂三级网格——
+// 运行时（SceneArchitecture）对任意级数都要成立，那是代码的性质，不是发布资产的。
+test('actual published pine roots fit the sparse forest trunk collider at the published LOD', async () => {
+  const { loadPublished, singleLodViolations } = await import('./published-glb.mjs');
+  const id = 'SM_Env_FrostPine', asset = await loadPublished(id);
+  assert.deepEqual(singleLodViolations(asset), []);
+  for (const { lod, primitives, matrix } of asset.lods) {
+    assert.equal(primitives.length, 1);
+    const data = primitives[0];
     let rootCount = 0, rootRadius = 0;
     for (let i = 0; i < data.attrs.POSITION.length; i += 3) {
       const p = new THREE.Vector3().fromArray(data.attrs.POSITION, i).applyMatrix4(matrix);

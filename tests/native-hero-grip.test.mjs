@@ -1,4 +1,6 @@
 // Tripo hero integration: published runtime assets, native-skeleton grip rig, and fallback choice.
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（<资产ID>_LOD0），不减面，面数只记录、不是闸门。
+// 原来查 LOD0 / LOD1 / LOD2 三个节点、逐级递减的面数（≤ 16000 … ≤ 2400）；现在查只有 LOD0、有面、挂在唯一的骨架上。
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, access, mkdir, writeFile } from 'node:fs/promises';
@@ -55,12 +57,13 @@ for (const id of NATIVE_HERO_IDS) test(`${id}: published Tripo asset matches the
   assert.ok(j.extensionsRequired.includes('KHR_draco_mesh_compression'));
   assert.ok(j.extensionsRequired.includes('EXT_texture_webp'));
   const nodes = j.nodes.filter(n => /_LOD\d$/.test(n.name ?? '')).map(n => n.name).sort();
-  assert.deepEqual(nodes, [0, 1, 2].map(i => `${asset}_LOD${i}`));
+  assert.deepEqual(nodes, [`${asset}_LOD0`]);
+  assert.deepEqual(entry.lodDistance, [0]);
   const tris = nodes.map(n => j.meshes[j.nodes.find(x => x.name === n).mesh].primitives
     .reduce((s, p) => s + j.accessors[p.indices].count / 3, 0));
-  assert.ok(tris[0] <= 16000 && tris[1] < tris[0] && tris[2] < tris[1] && tris[2] <= 2400, `LOD tris ${tris}`);
+  assert.ok(tris[0] > 0, `LOD tris ${tris}`);
   assert.equal(j.skins.length, 1);
-  assert.ok(j.nodes.filter(n => /_LOD\d$/.test(n.name ?? '')).every(n => n.skin === 0), 'all LODs share one skeleton');
+  assert.ok(j.nodes.filter(n => /_LOD\d$/.test(n.name ?? '')).every(n => n.skin === 0), 'the published LOD is bound to the one skeleton');
   // v2 builds drop the "mixamorig:" prefix (nativeTripo.ts strips it either way) and add tail / ear bones
   const joints = new Set(j.skins[0].joints.map(i => j.nodes[i].name.replace(/^mixamorig[:_]?/, '')));
   for (const b of ['Hips', 'Spine1', 'Spine2', 'Neck', 'Head', 'RightArm', 'RightForeArm', 'RightHand', 'LeftHandThumb4', 'RightHandPinky3'])

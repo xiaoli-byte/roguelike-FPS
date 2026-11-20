@@ -1,9 +1,27 @@
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（<资产ID>_LOD0），不减面，面数只记录、不是闸门。
+// art/tools/setdressing_geometry.mjs 的 loadSetdressing 写死读三级 LOD，这里改用 tests/published-glb.mjs 读实际发布的那一级，
+// 量体量的 measureSetdressing 照用。删掉的断言：LOD1 / LOD2 的面数预算（5000 / 1600 / 500）、跨 LOD 的轮廓漂移（< 8%）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
-import { IDS, repository, readJson, current, loadSetdressing, measureSetdressing } from '../art/tools/setdressing_geometry.mjs';
+import * as THREE from 'three';
+import { IDS, repository, readJson, current, measureSetdressing } from '../art/tools/setdressing_geometry.mjs';
+import { loadPublished, singleLodViolations, toGeometry } from './published-glb.mjs';
+
+/** 发布的 GLB → measureSetdressing 要的 { id, meshes }（每级一个已套上节点变换的 Mesh）。 */
+async function publishedSetdressing(id) {
+  const asset = await loadPublished(id);
+  assert.deepEqual(singleLodViolations(asset), []);
+  const meshes = asset.lods.map(({ primitives, matrix }) => {
+    assert.equal(primitives.length, 1, `${id}: one material, one primitive`);
+    const geometry = toGeometry(primitives[0]).applyMatrix4(matrix); geometry.computeBoundingBox();
+    const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+    mesh.updateMatrixWorld(true); return mesh;
+  });
+  return { id, meshes, dispose() { for (const mesh of meshes) { mesh.geometry.dispose(); mesh.material.dispose(); } } };
+}
 
 for(const id of IDS){
   test(`${id} preserves native concept provenance and published local Hunyuan geometry`,()=>{
@@ -34,16 +52,16 @@ for(const id of IDS){
       if(id==='SM_Env_FrozenSkiff')assert.equal(view.native_alpha_preserved,true,'snow needs source alpha rather than a white background key');
     }
   });
-  test(`${id} actual three LODs retain volume and readable structural parts`,()=>{
-    const asset=loadSetdressing(id,true);
+  test(`${id} published single LOD retains volume and readable structural parts`,async()=>{
+    const asset=await publishedSetdressing(id);
     try{
-      const measured=measureSetdressing(asset), first=measured.lods[0];
+      const measured=measureSetdressing(asset);
+      assert.equal(measured.lods.length,1);
       for(const lod of measured.lods){
-        assert.ok(lod.triangles<=[5000,1600,500][lod.lod]);
+        assert.ok(lod.triangles>0);
         assert.ok(Math.abs(lod.min[1])<.035,`LOD${lod.lod}: detached ground support ${lod.min[1]}`);
         assert.ok(lod.absoluteSignedVolume>.05,`LOD${lod.lod}: no meaningful closed volume`);
         assert.ok(lod.largestComponentTriangleFraction>.98,`LOD${lod.lod}: disconnected major structure`);
-        for(let axis=0;axis<3;axis++)assert.ok(Math.abs(lod.size[axis]/first.size[axis]-1)<.08,`LOD${lod.lod}: large silhouette drift`);
         if(id==='SM_Env_MarketStall'){
           assert.ok(lod.size[0]>3 && lod.size[1]>2.6 && lod.size[2]>1.8,'stall cannot collapse to a facade');
           assert.ok(lod.canopySections.every(s=>s.roofThickness>.04),'canopy needs actual thickness');

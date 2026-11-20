@@ -140,11 +140,17 @@ test('staff raising and shield bashing keep wrists within reach', () => {
   }
 });
 
-test('Hunyuan prop exports have textured geometry, two LODs and bounded download cost', async () => {
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（<资产ID>_LOD0），不减面，面数只记录、不是闸门。
+// 原来查「两级 LOD」和各级面数预算（2500 / 900）；现在查只发布了 LOD0，面数只要求非空。
+// prop 档后来多了一件程序化的 SM_Prop_InfernoChainLink（Blender 配方，不是 Hunyuan）：贴图 / 体积 / 落地照查，来源按清单登记的工具分开断言。
+test('scene prop exports have textured geometry, a single LOD and bounded download cost', async () => {
   const manifest = JSON.parse(await readFile(new URL('../public/assets/manifest.json', import.meta.url), 'utf8'));
   const entries = Object.entries(manifest.assets).filter(([, a]) => a.bind.source === 'scene' && a.class === 'prop');
-  assert.equal(entries.length, 6);
+  const hunyuan = ['SM_Prop_DesertReliquary', 'SM_Prop_DesertUrns', 'SM_Prop_FrostShrine', 'SM_Prop_FrostPrayerCairn', 'SM_Prop_InfernoCrucible', 'SM_Prop_InfernoChainObelisk'];
+  assert.deepEqual(entries.filter(([, a]) => !a.generator).map(([id]) => id).sort(), [...hunyuan].sort(), 'the six Hunyuan props');
+  assert.deepEqual(entries.filter(([, a]) => a.generator).map(([id, a]) => [id, a.generator.mode]), [['SM_Prop_InfernoChainLink', 'procedural']]);
   for (const [id, entry] of entries) {
+    assert.deepEqual(entry.lodDistance, [0], id);
     const file = await readFile(new URL(`../public/${entry.url}`, import.meta.url));
     assert.ok(file.byteLength < 600 * 1024, id);
     assert.equal(createHash('sha256').update(file).digest('hex'), entry.sha256, id);
@@ -152,22 +158,22 @@ test('Hunyuan prop exports have textured geometry, two LODs and bounded download
     assert.equal(file.readUInt32LE(4), 2, id);
     assert.equal(file.readUInt32LE(8), file.byteLength, id);
     const gltf = JSON.parse(file.subarray(20, 20 + file.readUInt32LE(12)).toString());
-    assert.equal(gltf.meshes.length, 2, id);
+    assert.equal(gltf.meshes.length, 1, id);
+    assert.deepEqual(gltf.nodes.filter(n => /_LOD\d+$/.test(n.name ?? '')).map(n => n.name), [`${id}_LOD0`], `${id}: only LOD0 is published`);
     const provenance = JSON.parse(await readFile(new URL(`../art/source/props/${id}/asset.json`, import.meta.url), 'utf8'));
     const generated = provenance.stages.highpoly.versions.find(v => v.version === entry.version.highpoly);
-    assert.match(generated.tool, /Hunyuan3D 2.1/, id);
+    assert.match(generated.tool, hunyuan.includes(id) ? /Hunyuan3D 2.1/ : /Blender/, id);
     assert.ok(gltf.materials[0].pbrMetallicRoughness.baseColorTexture, `${id}: missing base color`);
     assert.ok(gltf.materials[0].normalTexture, `${id}: missing baked normal`);
     assert.ok(gltf.materials[0].occlusionTexture, `${id}: missing baked occlusion`);
-    for (let i = 0; i < 2; i++) {
+    for (const i of [0]) {
       const node = gltf.nodes.find(n => n.name === `${id}_LOD${i}`);
       assert.ok(node, id);
       const mesh = gltf.meshes[node.mesh], primitive = mesh.primitives[0];
       const positions = gltf.accessors[primitive.attributes.POSITION];
       assert.ok([...positions.min, ...positions.max].every(Number.isFinite), id);
       assert.ok(primitive.attributes.TEXCOORD_0 !== undefined, `${id}: missing UVs`);
-      const triangles = gltf.accessors[primitive.indices].count / 3;
-      assert.ok(triangles <= (i === 0 ? 2500 : 900), `${id}: triangle budget exceeded`);
+      assert.ok(gltf.accessors[primitive.indices].count / 3 > 0, `${id}: empty mesh`);
       assert.ok(positions.min[1] > -0.02, `${id}: prop sinks below floor`);
     }
   }

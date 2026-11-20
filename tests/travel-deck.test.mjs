@@ -1,9 +1,11 @@
+// 现行发布契约（art/README.md，2026-10-25 起）：每个资产只有一级 LOD（SM_Env_TravelDeck_LOD0），不减面，面数只记录、不是闸门。
+// 原来对 LOD1 / LOD2 的面数预算和跨 LOD 轮廓漂移的断言只对多级 LOD 有意义，已删掉；其余性质在 LOD0 上照样断言。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import * as THREE from 'three';
-import { loadPublishedMesh } from '../art/tools/pose_geometry_audit.mjs';
+import { loadPublished, singleLodViolations, toGeometry } from './published-glb.mjs';
 
 const id = 'SM_Env_TravelDeck';
 const root = new URL('../', import.meta.url);
@@ -47,13 +49,12 @@ test('travel deck is a published local Hunyuan asset with approved native concep
   }
 });
 
-test('actual Draco LODs retain a horizontal solid deck and continuous central walkable surface', () => {
-  for (const [lod, budget] of [5000, 1600, 500].entries()) {
-    const decoded = loadPublishedMesh(id, lod);
-    assert.ok(decoded.idx.length / 3 <= budget);
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(decoded.attrs.POSITION, 3));
-    geometry.setIndex(new THREE.BufferAttribute(decoded.idx, 1));
+test('the published single-LOD deck retains a horizontal solid deck and continuous central walkable surface', async () => {
+  const asset = await loadPublished(id);
+  assert.deepEqual(singleLodViolations(asset), []);
+  for (const { lod, primitives, matrix } of asset.lods) {
+    assert.equal(primitives.length, 1);
+    const geometry = toGeometry(primitives[0]).applyMatrix4(matrix);
     geometry.computeBoundingBox();
     const box = geometry.boundingBox, size = box.getSize(new THREE.Vector3());
     assert.ok(size.x > 5 && size.x < 6.8, `LOD${lod}: width ${size.x}`);
