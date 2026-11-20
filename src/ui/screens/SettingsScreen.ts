@@ -3,18 +3,22 @@
  * 控件按设置表（SETTING_DEFS，= Unity GameSettings.All 里网页有对应的项）自动生成：
  *   分组 → 页签（操作 / 画面 / 声音，按登记顺序），数值 → 滑条（方向键左右直接调）+ 读数，开关 → 拨钮，多选一 → 分段按钮。
  *   页签：点击，或 Q / E 切换。改动即时生效、自动保存（ctx.game.applySettings / saveSettings）。不挡游戏（叠在暂停上时由暂停挡着）。
+ * 「按键」页（改键表，KeyBinds）：每个动作一行，点键位框后按下新键（Esc 取消）；「恢复默认」在本页恢复全部默认键位。
  * 网页差异：Unity 的显示模式 / 分辨率 / 垂直同步 / 帧率上限 / 屏幕特效 / 手柄瞄准辅助在网页没有对应设置，不列；
- * 网页独有「阴影精度」放在画面页；「按键」页（改键表）随第二期的按键说明一起做。
+ * 网页独有「阴影精度」放在画面页；改键页的手柄一列写「—」（没有手柄输入），鼠标键与暂停键写死（core/Input、Game）只显示不改。
  */
 import type { GameContext, Settings } from '../../core/types';
 import { DEFAULT_SETTINGS } from '../../core/settings';
 import { sfx } from '../dom';
+import { BIND_DEFS, type BindId, type KeyBinds, keyName } from '../KeyBinds';
 import { el, text, toggle } from '../toolkit/el';
 import { UIFontRole } from '../toolkit/UIFonts';
 import { type BlockState, UIScreen } from '../toolkit/UIRouter';
 import { btn, card, easeOut, scroll } from './ScreenKit';
 
 export const SETTINGS_ID = 'settings';
+/** 改键页的页签名（open(SETTINGS_ID, KEYS_TAB) 直接打开它） */
+export const KEYS_TAB = '按键';
 
 type Def =
   | { key: keyof Settings; label: string; group: string; type: 'float'; min: number; max: number; step: number; display?: (v: number) => string }
@@ -65,9 +69,18 @@ export class SettingsScreen extends UIScreen {
   private openedAt = 0;
   /** 自动生成的设置控件个数（测试用：= SETTING_DEFS 的条数） */
   generated = 0;
+  private readonly bindButtons: { b: HTMLButtonElement; label: HTMLDivElement; id: BindId }[] = [];
+  /** 正在等按键的动作（null = 没在改键） */
+  private waiting: BindId | null = null;
+  private rebindEndAt = -10;
 
-  constructor(private readonly ctx: GameContext, private readonly now: () => number) {
+  constructor(private readonly ctx: GameContext, private readonly now: () => number, private readonly keys: KeyBinds | null = null) {
     super();
+  }
+
+  /** 正在改键（等玩家按键） */
+  get rebinding(): boolean {
+    return this.waiting !== null;
   }
 
   get CurrentTab(): string | null {
@@ -97,11 +110,18 @@ export class SettingsScreen extends UIScreen {
       }
       if (NOTES[g]) text('sf-settings__note', page, NOTES[g]);
     }
+    if (this.keys) this.buildKeys(this.addTab(tabRow, KEYS_TAB));
 
     const foot = el('sf-panel__foot', this.frame);
     btn(ctx, '恢复默认', 'sf-btn--ghost', foot, () => {
-      for (const d of SETTING_DEFS) (ctx.settings as unknown as Record<string, unknown>)[d.key] = DEFAULT_SETTINGS[d.key];
-      this.apply(true);
+      if (this.tabs[this.current]?.name === KEYS_TAB) {
+        this.cancelRebind();
+        this.keys?.reset();
+        this.syncAll();
+      } else {
+        for (const d of SETTING_DEFS) (ctx.settings as unknown as Record<string, unknown>)[d.key] = DEFAULT_SETTINGS[d.key];
+        this.apply(true);
+      }
       sfx(ctx, 'ui_confirm');
     });
     el('sf-grow', foot);
@@ -128,6 +148,7 @@ export class SettingsScreen extends UIScreen {
       if (k < 0) return false;
       i = k;
     }
+    this.cancelRebind();
     this.current = ((i % this.tabs.length) + this.tabs.length) % this.tabs.length;
     this.tabs.forEach((t, k) => {
       toggle(t.tab, 'sf-tab--on', k === this.current);
@@ -144,14 +165,43 @@ export class SettingsScreen extends UIScreen {
     this.tick();
   }
 
+  override onClose(): void {
+    this.cancelRebind();
+  }
+
+  /** 改键等按键中：Esc 交给改键操作取消；刚改完 / 刚取消的一瞬也吞掉，不连带关掉设置页 */
+  override onBack(): boolean {
+    if (this.waiting) {
+      this.cancelRebind();
+      sfx(this.ctx, 'ui_click');
+      return true;
+    }
+    return this.now() - this.rebindEndAt <= 0.05;
+  }
+
+  /** 改键中方向键也是候选键（路由先把方向键转成导航） */
+  override onNavigate(dx: number, dy: number): boolean {
+    if (!this.waiting) return false;
+    this.finishRebind(dx > 0 ? 'ArrowRight' : dx < 0 ? 'ArrowLeft' : dy > 0 ? 'ArrowUp' : 'ArrowDown');
+    return true;
+  }
+
   override tick(): void {
     const k = easeOut((this.now() - this.openedAt) / 0.25);
     this.frame.style.opacity = String(Math.round(k * 1000) / 1000);
     this.frame.style.translate = `0px ${(12 * (1 - k)).toFixed(2)}px`;
   }
 
+  /** 改键中：下一个键（任何键，回车 / 空格也算）就是新键位。UI.ts 在别的处理之前先问这里 */
+  captureKey(code: string): boolean {
+    if (!this.waiting || code === 'Escape' || code.startsWith('Arrow')) return false;
+    this.finishRebind(code);
+    return true;
+  }
+
   /** 键盘：Q / E 切页签（Unity 读 SkillQ / SkillE 的按键） */
   onKey(code: string): boolean {
+    if (this.waiting) return this.captureKey(code);
     const q = this.ctx.input.bindings.skillPrimary?.[0] ?? 'KeyQ', e = this.ctx.input.bindings.skillSecondary?.[0] ?? 'KeyE';
     if (code === q) return this.select(this.current - 1);
     if (code === e) return this.select(this.current + 1);
@@ -160,6 +210,71 @@ export class SettingsScreen extends UIScreen {
 
   private syncAll(): void {
     for (const s of this.syncs) s();
+    this.syncBindings();
+  }
+
+  // ───────────── 按键页 ─────────────
+
+  private buildKeys(page: HTMLElement): void {
+    const head = el('sf-keys__row sf-keys__row--head', page);
+    text('sf-keys__name', head, '动作');
+    text('sf-keys__col', head, '键鼠');
+    text('sf-keys__col', head, '手柄');
+    const fixedRow = el('sf-keys__row', page);
+    text('sf-keys__name', fixedRow, '移动 / 视角');
+    text('sf-keys__fixed', fixedRow, 'W A S D · 鼠标');
+    text('sf-keys__fixed', fixedRow, '—');
+    for (const d of BIND_DEFS) {
+      const row = el('sf-keys__row', page);
+      text('sf-keys__name', row, d.label);
+      const b = card(this.ctx, 'sf-bind', row, () => this.rebind(d.id));
+      b.dataset.name = `bind-${d.id}`;
+      const label = text('sf-bind__label', b, '', UIFontRole.Number);
+      b.disabled = !!d.fixed;
+      this.bindButtons.push({ b, label, id: d.id });
+      text('sf-keys__fixed', row, '—');
+    }
+    text('sf-settings__note', page, '点击按键框后按下新的键（Esc 取消）。「恢复默认」在本页恢复全部默认键位。射击 / 瞄准的鼠标键与暂停键（Esc / P）不能改；网页版没有手柄。');
+  }
+
+  private syncBindings(): void {
+    const keys = this.keys;
+    if (!keys) return;
+    for (const { b, label, id } of this.bindButtons) {
+      const d = BIND_DEFS.find((x) => x.id === id)!;
+      // 写死的多键动作（暂停 Esc / P）把键都列出来；纯鼠标动作写鼠标键名
+      const s = d.fixed ? (d.mouse ?? keys.codes(id).map(keyName).join(' / ')) : keys.label(id);
+      label.textContent = s || '—';
+      toggle(b, 'sf-bind--waiting', false);
+    }
+  }
+
+  /** 点键位框：开始等按键（刚改完的那一下回车 / 点击不重新开始） */
+  rebind(id: BindId): void {
+    const keys = this.keys;
+    if (!keys || this.waiting || this.now() - this.rebindEndAt <= 0.25) return;
+    const hit = this.bindButtons.find((x) => x.id === id);
+    if (!hit || hit.b.disabled) return;
+    this.waiting = id;
+    toggle(hit.b, 'sf-bind--waiting', true);
+    hit.label.textContent = '按下新按键…';
+  }
+
+  private finishRebind(code: string): void {
+    const id = this.waiting;
+    if (!id) return;
+    this.waiting = null;
+    this.rebindEndAt = this.now();
+    const ok = !!this.keys?.set(id, code);
+    sfx(this.ctx, ok ? 'ui_confirm' : 'ui_click');
+    this.syncBindings();
+  }
+
+  private cancelRebind(): void {
+    if (!this.waiting) return;
+    this.waiting = null;
+    this.rebindEndAt = this.now();
+    this.syncBindings();
   }
 
   private apply(save: boolean): void {
