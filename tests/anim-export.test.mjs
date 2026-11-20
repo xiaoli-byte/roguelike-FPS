@@ -24,13 +24,18 @@ test('清单：每个采样资产要么导出、要么写明跳过原因；合�
     }
     const info = M.assets[id];
     assert.ok(info, `${id} 不在清单里`);
-    assert.equal(info.nativeClips, Object.keys(src.clips).length, `${id} 片段数`);
     const data = animData(id);
-    const names = Object.keys(data.clips).filter((k) => !data.clips[k].derived);
-    assert.deepEqual(names.sort(), Object.keys(src.clips).sort(), `${id} 片段名`);
-    exported += names.length;
+    // Blender 手 K 片段（src = blender，export-keyframed-anims.mjs）按状态名替换采样片段，另外可以多出采样里没有的状态
+    const sampled = Object.keys(data.clips).filter((k) => !data.clips[k].derived && data.clips[k].src !== 'blender');
+    const replaced = Object.keys(src.clips).filter((k) => data.clips[k]?.src === 'blender');
+    assert.equal(info.nativeClips, sampled.length, `${id} 片段数`);
+    assert.deepEqual([...sampled, ...replaced].sort(), Object.keys(src.clips).sort(), `${id} 片段名`);
+    exported += sampled.length;
   }
-  assert.equal(sourceIds.length, Object.keys(M.assets).length + Object.keys(M.skipped).length);
+  // 只有 Blender 片段、没有采样数据的资产（旱魃、商人）不算在这里
+  const blenderOnly = Object.keys(M.assets).filter((id) => !sourceIds.includes(id));
+  assert.ok(blenderOnly.every((id) => Object.values(animData(id).clips).every((c) => c.derived || c.src === 'blender')), `只有 Blender 片段的资产 ${blenderOnly}`);
+  assert.equal(sourceIds.length, Object.keys(M.assets).length - blenderOnly.length + Object.keys(M.skipped).length);
   assert.equal(M.totals.nativeClips, exported);
   // 审计时的数：53 份源数据、487 个片段；魔将（18 个）因为 11-07 换了骨架跳过
   assert.equal(total, 487);
@@ -39,12 +44,13 @@ test('清单：每个采样资产要么导出、要么写明跳过原因；合�
 
 test('事件：采样事件的时刻原样保留（钳到片段长度），叠加表事件按归一化时刻 × 长度并入', { skip: !SRC && '没有采样源数据' }, () => {
   let sampled = 0, overlaid = 0;
-  for (const id of Object.keys(M.assets)) {
+  for (const id of Object.keys(M.assets).filter((x) => sourceIds.includes(x))) {
     const src = loadSource(SRC, id);
     const overlay = loadOverlay(id);
     const data = animData(id);
     for (const [name, c] of Object.entries(src.clips)) {
       const out = data.clips[name];
+      if (out.src === 'blender') continue; // 手 K 片段另由 anim-keyframed.test.mjs 对照 Unity 叠加表
       const length = (c.frames.length - 1) / src.fps;
       assert.equal(out.frames, c.frames.length, `${id}/${name} 帧数`);
       assert.ok(Math.abs(out.duration - length) < 1e-4, `${id}/${name} 时长`);
@@ -64,11 +70,12 @@ test('事件：采样事件的时刻原样保留（钳到片段长度），叠�
       overlaid += extra.length;
     }
   }
-  assert.ok(sampled > 300 && overlaid > 100, `采样事件 ${sampled}、叠加事件 ${overlaid}`);
+  // 换成 Blender 片段的状态（叠加表事件约 40 条）不在这里数
+  assert.ok(sampled > 300 && overlaid > 80, `采样事件 ${sampled}、叠加事件 ${overlaid}`);
 });
 
 test('循环、连段、录制速度：与源数据一致（叠加表覆盖优先）', { skip: !SRC && '没有采样源数据' }, () => {
-  for (const id of Object.keys(M.assets)) {
+  for (const id of Object.keys(M.assets).filter((x) => sourceIds.includes(x))) {
     const src = loadSource(SRC, id);
     const overlay = loadOverlay(id);
     const data = animData(id);
@@ -81,7 +88,7 @@ test('循环、连段、录制速度：与源数据一致（叠加表覆盖优�
     }
     if (src.clips.Hit && src.clips.Idle) {
       assert.equal(data.clips.Flinch?.derived, 'Hit', `${id} 有 Flinch 叠加片段`);
-      assert.equal(data.clips.Flinch.frames, src.clips.Hit.frames.length + 1);
+      assert.equal(data.clips.Flinch.frames, data.clips.Hit.frames + 1);
       assert.equal(data.clips.Flinch.events.length, 0);
     }
   }
