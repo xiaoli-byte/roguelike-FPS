@@ -1,6 +1,6 @@
 """4-4 神山海子的远山绘景：从概念图裁出远山那一块（带画好的天），两侧冰斗壁和谷底抠成透明，上沿渐隐。
     python docs/art/concepts/ch4-631/tools/make_far_matte.py
-输出 public/assets/environment/haizi/far_mountains_matte.webp（带透明通道）。
+输出 public/assets/environment/haizi/far_mountains_matte.webp（带透明通道）和投影绘景用的 scene_projection.webp（整张图抹掉道具、天和神山透明）。
 抠掉的冰斗壁和左右各加宽的 PAD 补画成天（按行取画里的天色）和接着往两边走的淡远山（照画里两侧远峰的样子程序画）：玩家在湖岸上换位置时近处的 3D 冰斗壁和远处背景板错开，边和抠掉的地方也不会露缝。
 裁剪框（概念图像素）和出生点相机一起决定背景板在世界里的位置：src/world/haizi/farMatte.ts 的 MATTE 常量要和这里的 BOX 一致。
 """
@@ -94,7 +94,8 @@ def main() -> None:
     im = Image.open(SRC).convert("RGB").crop(BOX)
     w, h = im.size
     mask = Image.new("L", (w, h), 0)
-    ImageDraw.Draw(mask).polygon(KEEP, fill=255)
+    # 背景板的保留区比 KEEP 往下多留一段（山脚雾带下面那道深色 U 形谷）：3D 缺口地形的天际线上方露出来的是画，不是一条亮白的雾
+    ImageDraw.Draw(mask).polygon([(x, y + 62 if 300 <= x <= 1250 else y) for x, y in KEEP], fill=255)
     rgb = np.asarray(im).astype(np.float32)
     # 保留区往里收 14 px 再羽化：画里冰斗壁那道深色山脊线不渗进来；取色只用往里收 16 px 的像素
     soft = mask.filter(ImageFilter.MinFilter(29)).filter(ImageFilter.GaussianBlur(6))
@@ -106,10 +107,10 @@ def main() -> None:
     k = np.zeros((h, W), np.float32)
     k[:, PAD:PAD + w] = np.asarray(soft).astype(np.float32) / 255
     wide = src * k[..., None] + wide * (1 - k[..., None])
-    # 透明：上沿 0–12% 渐隐进程序天空；山脚雾带（400–450 px）往下透明（冰碛垄和远谷交给场景里的 3D）；最外侧 280 px 渐隐
+    # 透明：上沿 0–12% 渐隐进程序天空；深色谷底（470–510 px）往下透明（冰碛垄和远谷交给场景里的 3D）；最外侧 280 px 渐隐
     y = np.linspace(0, 1, h)[:, None]
     x = np.arange(W)[None, :]
-    a = np.clip(y / 0.12, 0, 1) * (1 - np.clip((y * h - 400) / 50, 0, 1))
+    a = np.clip(y / 0.12, 0, 1) * (1 - np.clip((y * h - 470) / 40, 0, 1))
     a = a * np.clip(x / 280, 0, 1) * np.clip((W - 1 - x) / 280, 0, 1)
     rgba = np.dstack([wide.clip(0, 255).astype(np.uint8), (a * 255).astype(np.uint8)])
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -117,5 +118,44 @@ def main() -> None:
     print(OUT.relative_to(ROOT), f"{OUT.stat().st_size // 1024} KB", (W, h))
 
 
+
+# ───── 投影绘景（src/world/haizi/paintProject.ts）：整张概念图从出生点相机投到冰斗壁、冰舌、缺口和远岸的 3D 地形上
+PROJ_OUT = ROOT / "public/assets/environment/haizi/scene_projection.webp"
+# 画里的道具（柱子、经幡、玛尼堆、湖心岛和祭坛）：抹掉，不然会印到后面的山坡上（概念图 2048×1152 像素）
+PROPS = [(336, 576, 504, 658), (812, 532, 1034, 652), (1018, 586, 1232, 642), (1192, 582, 1258, 654), (1406, 582, 1494, 654),
+         (1822, 526, 1914, 664), (826, 552, 1180, 700)]
+
+
+def mirror_fill(img: np.ndarray, rect: tuple[int, int, int, int]) -> None:
+    """道具框里换成紧挨着它左边（左边不够就右边）那一块的镜像：岩板、积雪、雾的纹理是真的，不是抹出来的一团灰；框边 8 px 渐变"""
+    x0, y0, x1, y1 = rect
+    w = x1 - x0
+    W = img.shape[1]
+    src = img[y0:y1, x0 - w:x0][:, ::-1] if x0 - w >= 0 else img[y0:y1, x1:x1 + w][:, ::-1]
+    h = y1 - y0
+    yy = np.minimum(np.arange(h), np.arange(h)[::-1])[:, None]
+    xx = np.minimum(np.arange(w), np.arange(w)[::-1])[None, :]
+    k = (np.clip(np.minimum(yy, xx) / 8.0, 0, 1))[..., None]
+    img[y0:y1, x0:x1] = img[y0:y1, x0:x1] * (1 - k) + src * k
+
+
+def make_projection() -> None:
+    img = np.asarray(Image.open(SRC).convert("RGB")).astype(np.float32)
+    H, W, _ = img.shape
+    for r in PROPS:
+        mirror_fill(img, r)
+    out = img.clip(0, 255).astype(np.uint8)
+    # 透明：天和神山（保留区，左右两条山脊线延到画框上沿）不投
+    ox = BOX[0]
+    keep = [(207, 0)] + [(x + ox, y) for x, y in KEEP[2:-2]] + [(1834, 0)]
+    mask = Image.new("L", (W, H), 255)
+    ImageDraw.Draw(mask).polygon(keep, fill=0)
+    a = np.asarray(mask.filter(ImageFilter.GaussianBlur(4)))
+    rgba = np.dstack([out, a]).astype(np.uint8)
+    Image.fromarray(rgba, "RGBA").save(PROJ_OUT, "WEBP", quality=90, alpha_quality=80, method=6)
+    print(PROJ_OUT.relative_to(ROOT), f"{PROJ_OUT.stat().st_size // 1024} KB", (W, H))
+
+
 if __name__ == "__main__":
     main()
+    make_projection()

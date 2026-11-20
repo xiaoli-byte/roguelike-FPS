@@ -73,8 +73,8 @@ export function macroAt(x: number, z: number): Macro {
 }
 
 const PAL = {
-  gravel: new THREE.Color('#c4bcb0'),
-  gravelWarm: new THREE.Color('#d2c7b2'),
+  gravel: new THREE.Color('#bdb0b6'),   // 概念图的碎石滩偏冷紫灰
+  gravelWarm: new THREE.Color('#c8bab6'),
   gravelWet: new THREE.Color('#8d877e'),
   bedShallow: new THREE.Color('#6f9d95'),
   bedDeep: new THREE.Color('#2f5a5e'),

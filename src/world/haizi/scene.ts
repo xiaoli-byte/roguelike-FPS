@@ -18,6 +18,7 @@ import type { CollisionWorld } from '../plateau/walker';
 import { buildCliffs } from './cliffs';
 import { buildGlacier } from './glacier';
 import { buildFarMatte } from './farMatte';
+import { buildPaintProjector } from './paintProject';
 import { DAWN, FLAG_LINES, ISLAND, LAKE, PEAKS, PILLARS, PLACEMENTS, SACRED_PEAK, type PillarSpec } from './spec';
 import { buildFarTerrain, type HaiziTerrain } from './terrain';
 
@@ -338,8 +339,13 @@ export interface HaiziScene {
 export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: CollisionWorld, reflectW: number, reflectH: number): HaiziScene {
   const terrainGroup = new THREE.Group();
   terrainGroup.name = 'terrain';
+  // 投影绘景（paintProject.ts）：概念图从出生点相机投到冰斗壁、冰舌、缺口和远岸上。地形用自己的一份材质（共用的那份别的图也在用）
+  const base = `${import.meta.env?.BASE_URL ?? '/'}`;
+  const paint = buildPaintProjector(base);
+  const terrainMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true });
+  paint.apply(terrainMat);
   for (const g of terrain.buildTiles(96)) {
-    const m = new THREE.Mesh(g, materials().terrain);
+    const m = new THREE.Mesh(g, terrainMat);
     m.receiveShadow = true; m.castShadow = true;
     terrainGroup.add(m);
   }
@@ -350,13 +356,16 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   // 神山和它两侧的远峰是一块绘景背景板（farMatte.ts，取自概念图），远山列表里的神山不再生成
   const mountains = buildMountains(PEAKS.filter(p => p.x !== SACRED_PEAK.x || p.z !== SACRED_PEAK.z));
   summitGlow(mountains);
-  const far = buildFarMatte(`${import.meta.env?.BASE_URL ?? '/'}`);
-  scene.add(sky, skyLin, mountains, far.mesh, buildFarTerrain(terrain), buildCliffs(), buildGlacier());
+  const far = buildFarMatte(base);
+  const painted = [buildFarTerrain(terrain), buildCliffs(), buildGlacier()];
+  for (const m of painted) paint.apply(m.material as THREE.Material);
+  scene.add(sky, skyLin, mountains, far.mesh, ...painted);
 
   const lake = new LakeSurface(terrain, reflectW, reflectH);
   // 反射那一遍换成线性色的天空，渲染完换回来
   const reflect = lake.mesh.onBeforeRender;
   lake.mesh.onBeforeRender = function (renderer, sc, camera, geometry, material, group) {
+    if (!paint.baked) paint.bake(renderer, sc as THREE.Scene, [lake.mesh, sky, skyLin]);
     sky.visible = false; skyLin.visible = true;
     skyLin.position.copy(sky.position);
     reflect.call(this, renderer, sc, camera, geometry, material, group);
@@ -389,6 +398,6 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   const grass = new GrassField(terrain, occupied);
   scene.add(grass.group);
   const out: HaiziScene = { sky, lake, pillars, conductors, anim, flags, grass, scatter, icons, farLoaded: false };
-  void far.ready.then(() => { out.farLoaded = true; });
+  void Promise.all([far.ready, paint.ready]).then(() => { out.farLoaded = true; });
   return out;
 }

@@ -46,12 +46,12 @@ async function launchOnce({ width = 1280, height = 720, port = 9300, headless = 
   ];
   if (headless) args.push('--headless=new');
   const proc = spawn(findChrome(), [...args, 'about:blank'], { stdio: 'ignore' });
-  let targets = null;
-  for (let k = 0; k < 200 && !targets; k++) {
+  // 等到有页面标签为止：调试端口一通 /json 可能还是空列表（about:blank 还没建），只等端口会误判「没起来」
+  let page = null;
+  for (let k = 0; k < 200 && !page; k++) {
     await sleep(150);
-    try { targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json(); } catch { /* 还没起来 */ }
+    try { page = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find(t => t.type === 'page') ?? null; } catch { /* 还没起来 */ }
   }
-  const page = targets?.find(t => t.type === 'page');
   if (!page) { proc.kill(); throw new Error('Chromium 没有起来'); }
   const ws = new WebSocket(page.webSocketDebuggerUrl);
   await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });

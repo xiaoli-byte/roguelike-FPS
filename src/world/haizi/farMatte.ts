@@ -32,12 +32,20 @@ export interface FarMatte {
   ready: Promise<void>;
 }
 
-export function buildFarMatte(baseUrl: string): FarMatte {
+/** 画概念图的那台相机（出生点机位）：远山绘景反投影、投影绘景（paintProject.ts）都用它 */
+export function matteCamera(near = 0.1, far = 10000): THREE.PerspectiveCamera {
   const M = MATTE;
-  const cam = new THREE.PerspectiveCamera(M.fovDeg, M.aspect, 0.1, 10000);
+  const cam = new THREE.PerspectiveCamera(M.fovDeg, M.aspect, near, far);
   cam.position.set(...M.eye);
   cam.rotation.set(THREE.MathUtils.degToRad(M.pitchDeg), THREE.MathUtils.degToRad(M.yawDeg), 0, 'YXZ');
   cam.updateMatrixWorld(true);
+  cam.updateProjectionMatrix();
+  return cam;
+}
+
+export function buildFarMatte(baseUrl: string): FarMatte {
+  const M = MATTE;
+  const cam = matteCamera();
   const eye = cam.position.clone();
   const yaw = THREE.MathUtils.degToRad(M.yawDeg);
   const fwd = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));   // 水平朝前

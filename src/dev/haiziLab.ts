@@ -98,7 +98,7 @@ const ringKeys = (r: number, from: number, to: number, n: number): MistStream['k
   return { position: [x, terrain.heightAt(x, z) + 3, z] as [number, number, number], halfWidth: 9, size: 28, opacity: i === 0 || i === n - 1 ? 0 : 1 };
 });
 const lakeMist = new MistStreams([{
-  opacity: 0.6, speed: 0.35, flat: true, floorY: LAKE.level, stretch: 2,
+  opacity: 0.3, speed: 0.35, flat: true, floorY: LAKE.level, stretch: 2,
   keys: [
     { position: [-46, LAKE.level + 0.8, -14], halfWidth: 12, size: 26, halfHeight: 1.5, opacity: 0 },
     { position: [-22, LAKE.level + 0.8, -30], halfWidth: 14, size: 28, halfHeight: 1.5 },
@@ -106,7 +106,8 @@ const lakeMist = new MistStreams([{
     { position: [46, LAKE.level + 0.8, -14], halfWidth: 12, size: 26, halfHeight: 1.5, opacity: 0 },
   ],
 }], { renderOrder: 2 });
-const footMist = new MistStreams([{ opacity: 0.48, speed: 0.5, keys: ringKeys(96, -2.1, 2.1, 11) }, { opacity: 0.3, speed: 0.4, keys: ringKeys(130, -1.6, 1.6, 9) }]);
+// 冰斗壁和缺口上已经是投影上去的画（paintProject.ts），画里山脚有雾；这里只留薄薄一层会动的，不然叠成一堵白墙
+const footMist = new MistStreams([{ opacity: 0.16, speed: 0.5, keys: ringKeys(96, -2.1, 2.1, 11) }]);
 // 黎明的天：低云很少（云影已经压低）、中高处几缕被晨光照暖的丝云（概念图）；天空盒自己画了太阳，不再画日晕
 const clouds = new CloudSky({ ...cloudSkyForChapter(4), low: 0.08, mid: 0.22, high: 0.5, sunGlow: 0 });
 scene.add(lakeMist.mesh, footMist.mesh, clouds.mesh);
