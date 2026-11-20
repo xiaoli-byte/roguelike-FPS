@@ -92,7 +92,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M11d | 核心：存档迁移、续玩、时间仲裁、卡帧、模态栈、画质档、剔除 | 7.6k 中约一半 | ⬜ |
 | M11e | 音频：改播烘好的 ogg + WebAudio 总线 | 1.3k | ✅ 2026-11-18（db6ae16d；素材 ba1adca8：`scripts/web/publish-audio.mjs` 把 Unity 的 246 个音效片段 + 8 条曲目 / 声床 + 清单拷到 `public/assets/audio`，核对 OggS / DLP 密文，`--check` 逐字节）。`src/audio/AudioSystem.ts` 照 GameAudio 播 ogg：48 声道抢占、同 id 节流 + 敌方音色单独节流、密集音、k^1.6 衰减、近处声像收窄、远处 / 背后低通、遮挡（`ctx.world.raycast`）、I6 三层分层、光束循环、配乐交叉淡化；`AudioMixer.ts` 照 Spiritfire.mixer 搭总线与快照；MusicDirector / AmbienceDirector（每章声床、章节混响送、3-3 混响区）/ AudioDuck / UISound 照译；规则与常数在 `AudioRules.ts`，对照测试 `tests/audio-parity.test.mjs`。设置补环境音 / 界面音两档，五档缺省改成 1（同 Unity）。退路：清单 / 片段读不到退回老的实时合成配方。待办：老存档里的音量是旧语义（M11d 存档迁移时换算）；SFX Reverb 是卷积近似；3-3 的混响区照 Unity 挂在世界原点（离主路远，多半听不出，Unity 同样）；WeatherDirector 的风声随天气系统迁 |
 | M12 | 动画：native-anim → AnimationClip、Blender 片段导 GLB、控制器状态机与事件、CreatureRig | 1.8k 运行时 | 🔶 第一期 ✅ 2026-11-16（51e4bf35）：`npm run` 外的 `node scripts/web/export-native-anims.mjs` 把 52 个资产 469 个采样片段导成 `public/assets/anim/*.json`（3.5 MB，带 231 个片段的事件）；`src/anim/` 复刻 Animator（一维混合树、任意状态 / 退出时刻转换、加法受击层、逐帧事件）、CreatureRig（脚步探地 + 两骨 IK、看向、受击弹簧、弹簧骨）、CreatureLocomotion；检视页 `anim-lab.html`。待办：敌人类改用 `CreatureAnimator`（接法见 `src/anim/CreatureAnimator.ts`）；Blender 手 K 片段（15 个资产约 123 个，旱魃 / 商人只有手 K）加 GLB 导出；魔将 11-07 换骨架后采样片段失效；布娃娃 |
-| M13 | Unity EditMode 对照测试 → `node --test` | — | ⬜ |
+| M13 | Unity EditMode 对照测试 → `node --test` | — | 🔶 2026-11-21：伤害乘区 / 战斗管线 / 属性表、元素反应、词条 / 传说、武器解析与掷骰、武器描述、秘卷（定义与公式）、精英词缀与站位、开火计时常量——8 份 `tests/unity-*.test.mjs`；75 份 Unity 测试逐份的去向和对照出来的不一致见 7.1 / 7.2。待办：FireMode / WeaponSpecials / Hero / Motor / Projectile 的行为用例（等 M8）、秘卷逐卷触发、Hazard / BossHazard |
 
 依赖：M2 → M3 → M4；M5 → M6；M8 → M9；M10 依赖 M12 的武器挂点命名；M7 依赖 M1 的体积导出。M11 / M12 可与玩法并行。
 
@@ -272,7 +272,72 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 ## 7. 测试
 
 - 网页现有：`npm test`（含 8 份 `tests/unity-*.test.mjs`：场景同步、碰撞、导航、材质、地形网格、关卡载入、玩法定义、武器同步）。
-- M13：把 Unity EditMode 里的对照测试（DamageCalcParity、ReactionTuning、Affix、Legendary、WeaponStats、FireMode、RunRoute、RunPlan、CombatDirector、Encounter、InfernoSquads、Lava、首领平衡、Scroll*）改写成 `node --test`，断言同样的数。
+- M13：把 Unity EditMode 里的对照测试（`unity/Assets/Game/Tests/`，75 份）改写成 `node --test`，断言同样的数。工具在 `tests/unity-parity-kit.mjs`（`tsGraph` 载入去类型后的 TS 模块图、可按文件打桩；`cs` / `csTest` / `csConsts` 读 C# 源码里的常量和 Unity 测试里手抄的表；`combatRig` 真的 Combat 管线 + 假敌人）。常量尽量从 C# 源码用正则读出来比，改了一边另一边就红。对照出来和 Unity 不一致的地方不改实现，写成 `test.todo`（每条写明 Unity 的值、网页的值、文件）。
+
+### 7.1 Unity 测试 → 网页测试对照表（2026-11-21）
+
+状态：✅ 已迁 · 🔶 迁了一部分 · ➖ 网页原版测试已覆盖（Unity 那份本来就是从网页测试移植过去的）· ⬜ 没迁（写明等哪一期）· ✖ 不迁（纯 Unity）。
+
+| Unity 测试 | 状态 | 网页测试 / 原因 |
+|---|---|---|
+| DamageCalcParityTests、CombatPipelineTests、StatSheetTests | ✅ M13 | `tests/unity-damage-calc.test.mjs` |
+| ReactionTuningTests、ReactionTests | ✅ M13 | `tests/unity-reactions.test.mjs` |
+| AffixTests、AffixTriggerTests、LegendaryTests | ✅ M13 | `tests/unity-affixes.test.mjs`：词条表 / 准入 / 文本逐条读 `Weapons/Affixes/**`、`Weapons/Legendaries/**`，抽取分布，AffixEffects 的触发与传说运行时。没迁：开火钩子那几条（天命每第 N 发、终焉末发 ×3、无尽不耗弹——在 WeaponSystem 的开火状态机里，随 FireMode 等 M8）、词条跨关保留（AffixesSurviveStageChange） |
+| WeaponStatsTests | ✅ M13 | `tests/unity-weapon-stats.test.mjs`：解析器逐项、强化费用、各章稀有度 / 幸运 / 随机元素 / 掉落权重。奖励串 `weapon:<id>:<品质>` 网页没有，见不一致清单 |
+| WeaponDescriberTests | ✅ M13 | `tests/unity-weapon-describe.test.mjs` |
+| ScrollRuntimeTests、ScrollOffenseTests、ScrollElementTests、ScrollUtilityTests、ScrollLegendTests、ScrollReactionTests | 🔶 M13 | `tests/unity-scrolls.test.mjs`：118 张的定义逐张对 `Progression/Scrolls/**`、Unity 测试里的数据表、属性卷（Unity 的 (Stat, 每层值) 装进网页逐张比）、抽取权重与 10 万次抽样、procScale、条件增伤四卷、元素弹三卷、传说卷的属性部分。没迁：其余各卷的触发行为（Unity 侧约 4000 行，靠 ScrollScope / ElementKit / TacticsKit 的假宿主驱动；网页要逐卷用真 Combat 搭场景）、ScrollRuntime 里 Unity 独有的部分（作用域钩子的装卸残留、Describe 的 `{s0}` / `{t0}` 模板、沙盒、读档——读档等 M11d）；经济那几条已在 `unity-combat-director` |
+| ScrollTacticsTests | ➖ | `tests/scroll-tactics.test.mjs`（23 条，Unity 那份从它移植）；定义表另在 `unity-scrolls` 里对过 |
+| EliteAffixTests | ✅ M13 / M5 | `tests/unity-elite-affixes.test.mjs`（登记 / 随机 / 四种词缀的数 / 龙卷表）+ `tests/enemy-framework.test.mjs`（龙卷扫掠）。头顶血条标签、金环、名字前缀属界面（M11c） |
+| EncounterTests | 🔶 M13 | 站位角色的到场延迟、锚点加分、精英体型在 `tests/unity-elite-affixes.test.mjs`。EncounterSpec v2（Of / Wave / E、Promote、FromSquads / ToSquads、BandFor）、SquadAffixes.Resolve 网页没有实现——等 M4 待办「EncounterSite v2 其余部分」。网页旧的波次编排另有 `tests/encounters.test.mjs` |
+| InfernoSquadsTests | ⬜ M4 | 网页没有 InfernoSquads / EncounterSpec（同上） |
+| FireModeTests | 🔶 M13 | `tests/unity-fire-modes.test.mjs` 只锁了计时常量和蓄力曲线（读两边源码）。35 条行为用例没迁：网页的状态机在 WeaponSystem 单体里、M8 正在改，落定后迁 |
+| WeaponSpecialsTests | ⬜ M8 | 定义已在 `unity-defs-parity`；机制（穿透、蛊种、蓄力、轮转、双管逐发）靠状态机驱动，同 FireMode |
+| RunRouteTests、RunPlanTests | ✅ M3 | `tests/unity-run-route.test.mjs` |
+| CombatDirectorTests | ✅ M4 | `tests/unity-combat-director.test.mjs`（含 ScrollRuntime 的经济几条、BalanceModel 的击杀奖励） |
+| EnemyFrameworkTests | ✅ M5 | `tests/enemy-framework.test.mjs` |
+| Ch4FoundationTests | 🔶 M5 / M6 / M7 | 受击四层在 `enemy-framework`，破防条 / BossDef 缺省 / 领主梯度在 `hanba-boss`，导体与落雷在 `unity-mechanisms`；「带电」状态等 M8（状态：带电随第四章） |
+| PlateauFoesTests | 🔶 M5 | 招式表（PlateauMoves ↔ defineMoves）在 `enemy-framework`；其余雷魅契约没迁（`src/enemies/plateau` 归 M12 在改） |
+| HanbaBalanceTests | ✅ M6 | `tests/hanba-boss.test.mjs` |
+| WarlordBalanceTests、WarlordSwordTests、WarlordDashTests、WarlordVfxTests | ✅ M6 | `tests/warlord-boss.test.mjs` |
+| KunPengTests、QilinTests、LordTests、BossIntroTests | ✅ M6 | `tests/kunpeng-boss`、`qilin-boss`、`lord-bosses`、`boss-intro` |
+| BossGaitAnimTests | 🔶 M6 / M12 | 魔将的步态 / 登场落地在 `warlord-boss`；麒麟的手 K 片段等 M12 |
+| BossEncounterTests | ➖ | `tests/boss-supply.test.mjs`（Unity 那份从它移植）+ `lord-bosses` |
+| LavaTests、WorldTests、ScenePiecesTests | ✅ M7 | `tests/unity-mechanisms.test.mjs`（网页旧熔岩另有 `tests/lava.test.mjs`）。LavaTests 的导航区域 / 游泳代理两条是 Unity 工程设置，不迁 |
+| AudioI6Tests | ✅ M11e | `tests/audio-parity.test.mjs` |
+| GraphicsAudioTests | 🔶 M11a / M11e | 混音 / 压低 / 密集音节流在 `audio-parity`，玩法屏效在 `post-stack`；画质档 / 显示设置等 M11d |
+| RegistryTests | ✅ M2 | `tests/unity-defs-parity.test.mjs`（定义表逐字段）；秘卷登记另在 `unity-scrolls` |
+| BalanceModelTests | ⬜ | BalanceModel（关卡表 / 经济投影 / 参考曲线）没迁（M3 备注）；首领击杀用时的参考曲线已在各首领测试里 |
+| HudWidgetTests、EliteReadTests | ⬜ M11c | 界面后续期（路由 / 提示队列已在 `tests/ui-router.test.mjs`） |
+| SaveServiceTests、RunSuspendTests | ⬜ M11d | 存档信封 / 迁移 / 续玩没迁 |
+| HeroTests、SkillFrameworkTests、MotorTests、ProjectileTests、FeelProfileTests | ⬜ M8 / M10 | `src/player`、`src/combat/Projectiles.ts` M8 正在改，落定后迁 |
+| HazardTests、BossHazardTests | ⬜ | 网页有实现（`src/enemies/Hazards.ts`、`bosses/Hazards.ts`）、还没有对照测试；`src/enemies` 归 M12 在改，下一轮迁 |
+| DemonBladeTests | ➖ | `tests/demon-blade.test.mjs`（Unity 那份从它移植） |
+| ShopServiceTests | ➖ | `tests/shop-services.test.mjs` |
+| FrostEnemyTests、FrostEnemyTests2 | ➖ | `tests/frost-pack` / `frost-tanks` / `frost-skirmishers` / `frost-ranged` / `frost-support` |
+| InfernoEnemyTests、InfernoEnemyTests2 | ➖ | `tests/inferno-pack` / `inferno-tanks` / `inferno-ranged` / `inferno-blasters` / `inferno-support` |
+| WeaponHandlingTests | ➖ / ⬜ M10 | `tests/handling.test.mjs`（旧 LOD 契约的失败项见第 8 节第 3 条）；换弹事件 / 两骨 IK 等 M10 |
+| BladeFirstPersonTests、CastPoseTests | ⬜ M10 | 第一人称持枪手感 + 碎刃表现 |
+| EliteStrikeSpringTests、KeyframedCurveTests | ⬜ M12 | 精英出手分量层的弹簧、手 K 片段的非人形骨 |
+| FxTests、FxShotTests、FxStyleTests、GlowCrackTests | ⬜ M11b | 特效预设 / 图集 / 预算是 Unity 的 FxPreset 数据，随特效核心迁；GlowCrack 的资产导入设置不迁 |
+| FirstPersonViewTests、PerfTests、RenderPerfSettingsTests | ✖ | 纯 Unity：相机栈、图层剔除距离、GPU Resident Drawer / 遮挡剔除设置 |
+
+### 7.2 M13 对照出来的不一致（没改实现，各测试文件末尾有 `test.todo`）
+
+| 项 | Unity | 网页 | 文件 |
+|---|---|---|---|
+| 弱点伤害% 与进攻卷「破绽」weak_point | 命中弱点另乘 `Stat.WeakpointDamagePct`（`Combat.cs`）；「破绽」精良、3 层、弱点伤害每层 +15% | StatKey 没有 `weakpointDamagePct`，`Combat.damageEnemy` 只乘 `enemy.weakpointDamageMult`，也没有这张卷 | `src/core/types.ts`、`src/combat/Combat.ts`、`src/progression/scrolls/defsOffense.ts`（M8 战斗契约） |
+| 灵宠伤害源 | `DamageSource.Pet` 只吃 `Stat.PetDamagePct`、不随机暴击 | DamageSource 没有 pet，StatKey 没有 `petDamagePct` | `src/core/types.ts`、`src/combat/DamageCalc.ts`（M8 / M9） |
+| 免疫提示事件 | 打不可选中的敌人返回 `DamageResult.immune = true` 并转发 EnemyDamaged（0.4 s 节流） | `Combat.damageEnemy` 返回 null、不派发 `enemy:damaged`，只让 HitFeedback 弹字 | `src/combat/Combat.ts` |
+| 玩家减益 寒意 / 引燃 / 日灼 | CombatPipelineTests 里有四条 | StatusId 只有 burn / shock / corrode / stun / slow | `src/combat/Status.ts`（M8） |
+| 焚雷扩散灼烧的目标数 | `CombatTuning.Thunderfire.SpreadTargets = 16`（按距离取最近 16 个，Unity 注释写明是有意改的） | `runThunderfire` 点燃半径内全部 | `src/combat/Reactions.ts` |
+| 货币叫法 | 点金手 / 赏金 / 聚宝盆 / 贪婪之心写「灵石」 | 写「金币」 | `defsUtility.ts`、`defsLegend.ts` |
+| 战鼓 | 「每处据点开战时」 | 「每波敌人来袭时」（按波次触发） | `defsUtility.ts` |
+| 回春的描述 | 「恢复速度每层 +8/秒」 | 「护盾恢复速度每层 +8/秒」 | `defsUtility.ts` |
+| 功能卷标签顺序 | 主标签在前：灵盾 / 回春「护盾, 生存」、收割「击杀, 生存」、摄魂「击杀, 护盾」 | 「生存, 护盾」「生存, 击杀」「护盾, 击杀」 | `defsUtility.ts` |
+| 高风险传说卷 | 标签「高风险」，代价另起一行红字（`LegendScroll.Text(收益, 代价)`） | 标签「风险」，描述一句「…，但…」（数值相同） | `defsLegend.ts` |
+| 武器奖励串 | `weapon:<id>:<品质>` / `weapon:min=N` 可指定武器、品质、保底 | `Loot.grant` 只认 `weapon`，保底由关卡类型和章节定 | `src/progression/Loot.ts` |
+| 解析结果的弹速 | `ResolvedWeapon.projectileSpeed` | 只有 `projSpeedMult`，弹速在 Firing 里现乘（数值一致） | `src/weapons/WeaponStats.ts` |
+| 高台站位加分 | 俯射角色上高台 +3、其它 −1.5；Auto 锚点不加不减 | 锚点没有高台 / Auto 这两项 | `src/world/WaveRunner.ts` |
 
 ## 8. 已知问题
 
