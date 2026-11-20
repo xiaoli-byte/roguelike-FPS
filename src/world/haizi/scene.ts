@@ -17,7 +17,7 @@ import { GrassField, buildStaticScatter } from '../plateau/scatter';
 import type { CollisionWorld } from '../plateau/walker';
 import { buildCliffs } from './cliffs';
 import { buildGlacier } from './glacier';
-import { buildFarMatte } from './farMatte';
+import { MATTE, buildFarMatte, matteCamera } from './farMatte';
 import { buildPaintProjector } from './paintProject';
 import { DAWN, FLAG_LINES, ISLAND, LAKE, PEAKS, PILLARS, PLACEMENTS, SACRED_PEAK, type PillarSpec } from './spec';
 import { buildFarTerrain, type HaiziTerrain } from './terrain';
@@ -47,6 +47,13 @@ uniform float uGlow;
 uniform float uRipple;
 uniform float uShoreR;
 uniform float uIslandR;
+uniform sampler2D tFar;
+uniform mat4 uFarVP;
+uniform vec3 uFarEye;
+uniform vec4 uFarUV;
+uniform vec3 uFarK;
+uniform vec4 uFarPlane;
+uniform float uFlash;
 varying vec4 vUv;
 varying vec3 vWorld;
 float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -63,8 +70,33 @@ void main() {
   w += (vec2(n(p * 1.6 + t * 0.6), n(p * 1.7 - t * 0.5)) - 0.5) * 0.45;
   vec4 uv = vUv;
   uv.xy += w * uRipple * uv.w;
-  vec3 refl = texture2DProj(tDiffuse, uv).rgb * vec3(0.9, 0.97, 0.97);
+  vec4 tr = texture2DProj(tDiffuse, uv);
   vec3 view = normalize(cameraPosition - vWorld);
+  // 远山倒影（概念图湖里那道金顶）：按真实几何，神山（仰角 10–21°）的倒影落在离岸 9 m 以内的水面上，出生点根本看不到。
+  // 画里是把远景的倒影往地平线压扁了——这里照做：反射方向的仰角乘 uFarK.x 再去查远山绘景（farMatte.ts 的贴图，按那台相机投影）。
+  // 只盖在天和布景上（反射贴图的透明通道：天 0、冰斗壁 / 地形 0.5、柱子 / 湖心岛 / 雷神这些近处的东西 1，近处的倒影不动）；
+  // 布景只在神山方位附近盖（缺口那片坡的倒影让给金顶，两侧冰斗壁的倒影留着）
+  if (uFarK.x > 0.0) {
+    vec3 rd = vec3(-view.x, view.y, -view.z);
+    rd.xz += w * uRipple * 6.0;
+    float el = atan(rd.y, length(rd.xz)) * uFarK.x;
+    vec3 fd = vec3(normalize(rd.xz) * cos(el), sin(el)).xzy;
+    // 从水面这一点出发打到绘景那张竖直面上（uFarPlane = 相机水平朝前 xz、板的距离）：玩家走开后倒影和山一起有视差，上下对得齐
+    vec2 fw = uFarPlane.xy;
+    float tt = (uFarPlane.z - dot(vWorld.xz - uFarEye.xz, fw)) / max(dot(fd.xz, fw), 0.05);
+    vec4 fc = uFarVP * vec4(vec3(vWorld.x, uFarEye.y, vWorld.z) + fd * tt, 1.0);
+    vec2 cu = vec2(fc.x / fc.w * 0.5 + 0.5, 0.5 - fc.y / fc.w * 0.5);
+    vec2 st = vec2((cu.x - uFarUV.x) / (uFarUV.y - uFarUV.x), (cu.y - uFarUV.z) / (uFarUV.w - uFarUV.z));
+    if (dot(fd.xz, fw) > 0.05 && fc.w > 0.0 && el < 1.2 && st.x > 0.0 && st.x < 1.0 && st.y > 0.0 && st.y < 1.0) {
+      vec4 far = texture2D(tFar, vec2(st.x, 1.0 - st.y));
+      float gray = dot(far.rgb, vec3(0.299, 0.587, 0.114));
+      far.rgb = mix(far.rgb, vec3(gray) * 0.42, uFarK.z * 0.85) + vec3(0.9, 0.85, 1.0) * uFlash * 0.18;
+      float wSky = 1.0 - smoothstep(0.1, 0.4, tr.a);
+      float wScene = (1.0 - smoothstep(0.6, 0.9, tr.a)) * (1.0 - smoothstep(0.1, 0.17, abs(cu.x - uFarK.y)));
+      tr.rgb = mix(tr.rgb, far.rgb, max(wSky, wScene) * far.a);
+    }
+  }
+  vec3 refl = tr.rgb * vec3(0.9, 0.97, 0.97);
   float fres = 0.08 + 0.92 * pow(1.0 - clamp(view.y, 0.0, 1.0), 3.0);
   // 牛奶海的乳白青绿：湖心深、近岸和湖心岛周围浅
   vec3 body = mix(uDeep, uShallow, smoothstep(30.0, uShoreR, r));
@@ -105,6 +137,9 @@ export class LakeSurface {
           uTime: { value: 0 }, uDeep: { value: lin(LAKE.deep) }, uShallow: { value: lin(LAKE.shallow) },
           uTint: { value: lin('#ff4fd8') }, uTintMix: { value: 0 }, uGlow: { value: 0 }, uRipple: { value: 0.005 },
           uShoreR: { value: terrain.shorelineR(0) }, uIslandR: { value: 8.3 },
+          tFar: { value: null }, uFarVP: { value: new THREE.Matrix4() }, uFarEye: { value: new THREE.Vector3() },
+          uFarUV: { value: new THREE.Vector4(0, 1, 0, 1) }, uFarK: { value: new THREE.Vector3(0, 0.5, 0) },
+          uFarPlane: { value: new THREE.Vector4(0, -1, 1500, 0) }, uFlash: { value: 0 },
         },
         vertexShader: LAKE_VS,
         fragmentShader: LAKE_FS,
@@ -115,6 +150,7 @@ export class LakeSurface {
     this.mesh.position.y = LAKE.level;
     this.mat = this.mesh.material as THREE.ShaderMaterial;
     this.mat.uniforms.uTime = WORLD_UNIFORMS.uTime;
+    this.mat.uniforms.uFlash = WORLD_UNIFORMS.uFlash;
   }
 
   /** 水位偏移（米）：地形的 waterLevelAt、湖面网格、岸线白浪一起变 */
@@ -137,8 +173,24 @@ export class LakeSurface {
   /** 通电的电纹亮度 0..1（颜色跟 setTint 的颜色） */
   setGlow(k: number): void { this.mat.uniforms.uGlow.value = k; }
 
+  /**
+   * 远山倒影：tex = 远山绘景的贴图，cam = 画它的相机，uv = 贴图在概念图里的范围 [u0, u1, v0, v1]，
+   * squash = 倒影往地平线压扁几倍（反射仰角乘它），center = 神山在概念图里的横向位置（0..1）
+   */
+  setFarReflection(tex: THREE.Texture, cam: THREE.PerspectiveCamera, uv: [number, number, number, number], squash: number, center: number): void {
+    const u = this.mat.uniforms;
+    u.tFar.value = tex;
+    (u.uFarVP.value as THREE.Matrix4).multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse);
+    (u.uFarEye.value as THREE.Vector3).copy(cam.position);
+    (u.uFarUV.value as THREE.Vector4).set(...uv);
+    (u.uFarK.value as THREE.Vector3).set(squash, center, 0);
+    const yaw = THREE.MathUtils.degToRad(MATTE.yawDeg);
+    (u.uFarPlane.value as THREE.Vector4).set(-Math.sin(yaw), -Math.cos(yaw), MATTE.distance, 0);
+  }
+
   /** 每帧：雷暴时浪大一点 */
   update(): void {
+    (this.mat.uniforms.uFarK.value as THREE.Vector3).z = WORLD_UNIFORMS.uStorm.value;
     this.mat.uniforms.uRipple.value = 0.005 + 0.035 * WORLD_UNIFORMS.uStorm.value;
   }
 
@@ -159,6 +211,8 @@ function linearSky(sky: THREE.Mesh): THREE.Mesh {
     const c = new THREE.Color().setRGB(v.x, v.y, v.z, THREE.SRGBColorSpace);
     m.uniforms[k] = { value: new THREE.Vector3(c.r, c.g, c.b) };
   }
+  // 反射贴图的透明通道是标记（湖面着色器用）：天 = 0
+  m.fragmentShader = m.fragmentShader.replace('gl_FragColor = vec4(col, 1.0);', 'gl_FragColor = vec4(col, 0.0);');
   const mesh = new THREE.Mesh(sky.geometry, m);
   mesh.scale.copy(sky.scale);
   mesh.renderOrder = sky.renderOrder;
@@ -366,11 +420,16 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   const reflect = lake.mesh.onBeforeRender;
   lake.mesh.onBeforeRender = function (renderer, sc, camera, geometry, material, group) {
     if (!paint.baked) paint.bake(renderer, sc as THREE.Scene, [lake.mesh, sky, skyLin]);
-    sky.visible = false; skyLin.visible = true;
+    // 远山绘景不进反射贴图：它的倒影由湖面着色器直接查贴图（压扁了的，见 LAKE_FS）
+    const farOn = far.mesh.visible;
+    sky.visible = false; skyLin.visible = true; far.mesh.visible = false;
     skyLin.position.copy(sky.position);
     reflect.call(this, renderer, sc, camera, geometry, material, group);
-    sky.visible = true; skyLin.visible = false;
+    sky.visible = true; skyLin.visible = false; far.mesh.visible = farOn;
   };
+  void far.ready.then(() => {
+    if (far.mesh.visible) lake.setFarReflection(far.texture, matteCamera(), [MATTE.u0, MATTE.u1, MATTE.v0, MATTE.v1], 2.2, 0.5);
+  });
   scene.add(lake.mesh);
 
   const flags = new FlagSystem();

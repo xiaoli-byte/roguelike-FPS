@@ -28,6 +28,8 @@ export const MATTE = {
 
 export interface FarMatte {
   mesh: THREE.Mesh;
+  /** 绘景贴图（湖面着色器拿它画远山的倒影） */
+  texture: THREE.Texture;
   /** 贴图加载完（截图脚本等它） */
   ready: Promise<void>;
 }
@@ -96,5 +98,5 @@ export function buildFarMatte(baseUrl: string): FarMatte {
       resolve();
     }, undefined, () => resolve());   // 加载失败：只是没有远山，场景照常
   });
-  return { mesh, ready };
+  return { mesh, texture: tex, ready };
 }

@@ -121,6 +121,9 @@ ${flashDecl}`)
     c = mix(c, vec3(gray) * 0.42, uStorm * 0.85) + vec3(0.9, 0.85, 1.0) * uFlash * 0.18;
     gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(c, 1.0)).rgb, w);
   }
+  // 透明通道当标记用（不透明材质，画面上没影响）：湖面反射贴图里 0.5 = 布景（冰斗壁 / 地形），湖面着色器据此决定远山倒影盖不盖
+  // 只有湖岸以外的才算布景；湖心岛、湖床、近岸是近处的东西（1），倒影不动
+  gl_FragColor.a = mix(1.0, 0.5, smoothstep(uPaintRange.x, uPaintRange.y, length(vPpWorld.xz)));
 }
 #include <dithering_fragment>`);
     };

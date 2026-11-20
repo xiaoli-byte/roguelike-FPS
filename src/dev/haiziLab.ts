@@ -110,6 +110,12 @@ const lakeMist = new MistStreams([{
 const footMist = new MistStreams([{ opacity: 0.16, speed: 0.5, keys: ringKeys(96, -2.1, 2.1, 11) }]);
 // 黎明的天：低云很少（云影已经压低）、中高处几缕被晨光照暖的丝云（概念图）；天空盒自己画了太阳，不再画日晕
 const clouds = new CloudSky({ ...cloudSkyForChapter(4), low: 0.08, mid: 0.22, high: 0.5, sunGlow: 0 });
+// 湖面反射贴图的透明通道是标记（scene.ts 的 LAKE_FS：天 0、布景 0.5、近处的东西 1）：云和雾不改它，不然远山的倒影会被云雾挖出洞
+for (const m of [lakeMist.mesh, footMist.mesh, clouds.mesh]) {
+  const mat = m.material as THREE.Material;
+  if (mat.blending === THREE.NormalBlending) { mat.blending = THREE.CustomBlending; mat.blendSrc = THREE.SrcAlphaFactor; mat.blendDst = THREE.OneMinusSrcAlphaFactor; }
+  mat.blendSrcAlpha = THREE.ZeroFactor; mat.blendDstAlpha = THREE.OneFactor;
+}
 scene.add(lakeMist.mesh, footMist.mesh, clouds.mesh);
 const buildMs = performance.now() - t0;
 
