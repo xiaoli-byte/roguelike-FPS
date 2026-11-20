@@ -300,20 +300,21 @@
 ## 5. 落到网页版的顺序（建议）
 
 1. **4-4**：最小。地形、湖、雷神都在 `src/world/haizi/`，只换 9 种摆件 + 接 `Atmosphere`；先出石柱、雷晶、祭坛三件的四视图。
-   - **已做（2026-11-19 / 20）：远中景和光照概念图落进检视页**（`plateau-lab.html?map=4-4`），对照图 `4-4_haizi_concept_vs_web.jpg`（上 = 概念图、下 = 网页场景 `4-4_haizi_web_v2.jpg`，同一机位）。
-     第一遍只对上了布局（用户：「只是布局像，很多细节都不像」），第二遍逐块对着改：
+   - **已做（2026-11-19 / 20）：远中景和光照概念图落进检视页**（`plateau-lab.html?map=4-4`），对照图 `4-4_haizi_concept_vs_web.jpg`（上 = 概念图、下 = 网页场景 `4-4_haizi_web_v3.jpg`，同一机位）。
+     第一遍只对上了布局（用户：「只是布局像，很多细节都不像」），第二遍逐块对着改，第三遍（11-20，用户：「先把远处的雪山还原」）远山改成绘景：
      | 部位 | 概念图 | 做法 |
      |---|---|---|
      | 冰斗壁 | 一片片中灰岩板夹积雪、有层理 | `cliffs.ts`：可玩区外（86 m 往外）盖一层程序切面壳，高度在地形上加层理台阶和岩脊；岩 / 雪按大块噪声 + 顺等高线的层理带分（不按单个三角面的朝向，否则碎成玻璃渣） |
      | 冰舌 | 台阶状冰崩，大小不一的冰体，顶白立面青 | `glacier.ts`：一级级的冰面比山坡缓、到下一级前是冰崖，冰崖上沿按列高低错开；冰加一点冷色自发光（透光） |
-     | 神山 | 主棱正对玩家，左面冷、右上半截金，岩肋 | `peak.ts` 单独做（不用 4-1 共用的远山生成器）：四棱金字塔、主棱朝出生点、面上次级岩肋，朝阳面染金、背阳面偏冷，光烘进顶点色 |
-     | 远山 | 主峰两侧一层层退进雾里 | `spec.ts` PEAKS 补四座更远更矮的 |
+     | 神山和远山 | 主棱正对玩家、金顶、岩肋；主峰两侧的远峰一层层退进雾里；晨光丝云 | **绘景背景板**（`farMatte.ts`，第三遍）：程序拼的山怎么调都不像画，远山又走不到，所以直接用概念图上画好的那一块。`tools/make_far_matte.py` 裁出远山和天 → 抠掉两侧冰斗壁和谷底 → 抠掉的地方和左右各加宽的 384 px 补画（天按行用归一化卷积把画里的颜色横着往外延；远山照画里两侧远峰的样子程序画：尖顶、宽山肩、右坡暖左坡冷、山脚没进雾）→ 上沿渐隐进程序天空、山脚雾带往下透明 → `public/assets/environment/haizi/far_mountains_matte.webp`（50 KB）。运行时按出生点相机（`VIEWS['4-4']`）把每个像素反投影到 1.5 km 外的竖直面上，出生点看和概念图逐像素对齐；不吃雾、不过色调映射，雷暴时压暗去饱和，湖面反射照常画进去。原来的 `peak.ts` 和神山方向的六座程序远山删掉 |
      | 光 | 冰斗里是冷调天光，立面不发黑 | `DAWN`：太阳东南偏南仰角 7°、强度 0.55；半球光地面色换成雪地反光的浅灰 |
      | 湖 | 镜面 | 倒影占比加大、涟漪减半，湖色降一半饱和 |
      | 天 | 几缕晨光丝云 | 接 `CloudSky`（低云 0.08、中 0.22、高 0.5） |
      | 雾 | 远岸和冰斗脚一圈低雾 | `MistStreams`：湖北半边贴水面一层、冰斗脚两圈（都在玩家和雷神之间以外） |
      | 湖岸、柱、岛 | 平整碎石滩；淡色不发光的晶石；深色石堆 | 湖岸和冰斗壁不长草；晶石平时淡灰、充能才亮紫红，柱身紫线和铜箍压暗；岛上一圈灰色大石 |
-     入场点 E2「冰舌脚」随冰舌挪到 (−40, −66)，reach_probe 全部通过。631：低饱和 63%、中间调 68%（首领场有意的窄明度带）、安静 26%。
+     入场点 E2「冰舌脚」随冰舌挪到 (−40, −66)，reach_probe 全部通过。631（第三遍）：低饱和 65%、中间调 64%（首领场有意的窄明度带）、安静 24%；概念图本身 57% / 75% / 13%。
+   - **绘景的换位核对**：`4-4_haizi_shore_views.jpg`（左 = 西岸 (−62, 10)、右 = 东岸 (62, 12)）。湖岸上走动时近处的 3D 冰斗壁和 1.5 km 外的板错开，冰斗壁后面露出来的是补画的远山和天，没有缝、没有空天；
+     出图：`render_blockouts.mjs 4-4 4-4e 4-4w --out <目录>`（核对机位必须带 --out）。改了 `make_far_matte.py` 的 `BOX` / `PAD`，`farMatte.ts` 的 `MATTE.u0 / u1` 要一起改；动了出生点相机，`MATTE.eye / yawDeg / pitchDeg / fovDeg` 要和 `VIEWS['4-4']` 一致。
    - 还和概念图不一样的：湖心岛上还是 4-1 共用的灵火坛（彩色），概念图是三级石台 + 晶石——要换成套件表第 3 件；石柱、玛尼堆、巨石也还是程序白模（套件表第 1–9 件 → 四视图 → Tripo）；
      湖面倒影里的金顶不明显（出生点眼高只有 1.6 m，倒影被湖心岛和远岸挡住大半）；整体色调比概念图冷一点；左壁山脊线没有概念图那么锐。
 2. **4-2**：`src/world/gorge/` 的地形和过河方式都在，换 12 种摆件；把 3.1 的波次、驻守点、入场点写进 `spec.ts`。
@@ -328,9 +329,11 @@ python docs/art/concepts/ch4-631/tools/route_maps.py                          # 
 python docs/art/concepts/ch4-631/tools/route_check_4A.py                      # 4-A 纸面路线检查
 node scripts/plateau/reach_probe.mjs 4-2|4-4                                  # 4-2 / 4-4 真地形可达性
 python scripts/unity/composition_check.py <图或目录> --out <目录>               # 631 自检
+python docs/art/concepts/ch4-631/tools/make_far_matte.py                      # 4-4 远山绘景（概念图 → public/assets/environment/haizi/）
 ```
 
 - 机位在 `render_blockouts.mjs` 的 `VIEWS`；点位和路线在同一个文件里（4-2 / 4-4 抄 spec.ts，4-A 和 `route_check_4A.py` 同一组），改了要两边一起改。
 - 重绘的提示词：`prompts/*_paintover.txt`（白模 + 套件表）、`*_fix.txt`（去掉多画的东西）、`*_grade.txt`（只调颜色和明暗）。都是「图 1 = 要改的画，图 2 = 白模」，形状以白模为准。
-- 出图调 `art/pipeline/lib/openai_image.py` 的 `generate` / `edit`。本机系统环境变量里还有一把没额度的旧 `OPENAI_API_KEY`，会盖掉 `.env` 里的新 key，调用前先把 `.env` 的值写进 `os.environ`。
+- 出图调 `art/pipeline/lib/openai_image.py` 的 `generate` / `edit`。本机系统环境变量里还有一把没额度的旧 `OPENAI_API_KEY`，会盖掉 `.env` 里的新 key，调用前先把 `.env` 的值写进 `os.environ`。2026-11-20 起 `.env` 里那把也没额度了（`credit_balance_exhausted`），4-4 远山绘景改成直接从概念图裁、程序补画；`prompts/B_4-4_far_mountains_matte.txt` 是让模型往两边扩画全景的提示词，有额度了可以换掉程序补的那两段。
+- 4-4 远山绘景是运行时加载的贴图：`render_blockouts.mjs` 把 `public/assets/environment/haizi/` 拷到页面旁边、等 `arena.farLoaded`；`cdp.mjs` 带 `--allow-file-access-from-files`，不然 file:// 页面上 three 的加载器（带 crossOrigin）拿不到图。
 - 无头 Chromium 在机器内存紧时偶尔起不来，`render_blockouts.mjs` 会重试三次；跑完如果留下 ms-playwright 的 chrome.exe，手动结束。

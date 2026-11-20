@@ -41,6 +41,8 @@ async function launchOnce({ width = 1280, height = 720, port = 9300, headless = 
     `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, `--window-size=${width},${height}`,
     '--no-first-run', '--no-default-browser-check', '--no-sandbox', '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
     '--disable-backgrounding-occluded-windows', '--use-angle=d3d11', '--enable-gpu-rasterization', '--ignore-gpu-blocklist',
+    // file:// 页面加载旁边的贴图（three 的加载器带 crossOrigin，WebGL 上传本地图片也要同源）：打包成 iife 的检视页截图要用
+    '--allow-file-access-from-files',
   ];
   if (headless) args.push('--headless=new');
   const proc = spawn(findChrome(), [...args, 'about:blank'], { stdio: 'ignore' });

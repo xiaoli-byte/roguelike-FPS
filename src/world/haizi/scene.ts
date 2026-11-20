@@ -17,7 +17,7 @@ import { GrassField, buildStaticScatter } from '../plateau/scatter';
 import type { CollisionWorld } from '../plateau/walker';
 import { buildCliffs } from './cliffs';
 import { buildGlacier } from './glacier';
-import { buildSacredPeak } from './peak';
+import { buildFarMatte } from './farMatte';
 import { DAWN, FLAG_LINES, ISLAND, LAKE, PEAKS, PILLARS, PLACEMENTS, SACRED_PEAK, type PillarSpec } from './spec';
 import { buildFarTerrain, type HaiziTerrain } from './terrain';
 
@@ -327,6 +327,8 @@ export interface HaiziScene {
   grass: GrassField;
   scatter: ReturnType<typeof buildStaticScatter>;
   icons: MapIcon[];
+  /** 远山绘景加载完（截图脚本等它）；失败也会变 true，只是没有远山 */
+  farLoaded: boolean;
 }
 
 /**
@@ -345,10 +347,11 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   const sky = buildSky();
   dawnSky(sky);
   const skyLin = linearSky(sky);
-  // 神山单独做（peak.ts），远山列表里的那一座不再生成
+  // 神山和它两侧的远峰是一块绘景背景板（farMatte.ts，取自概念图），远山列表里的神山不再生成
   const mountains = buildMountains(PEAKS.filter(p => p.x !== SACRED_PEAK.x || p.z !== SACRED_PEAK.z));
   summitGlow(mountains);
-  scene.add(sky, skyLin, mountains, buildSacredPeak(), buildFarTerrain(terrain), buildCliffs(), buildGlacier());
+  const far = buildFarMatte(`${import.meta.env?.BASE_URL ?? '/'}`);
+  scene.add(sky, skyLin, mountains, far.mesh, buildFarTerrain(terrain), buildCliffs(), buildGlacier());
 
   const lake = new LakeSurface(terrain, reflectW, reflectH);
   // 反射那一遍换成线性色的天空，渲染完换回来
@@ -385,5 +388,7 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   scene.add(scatter.group);
   const grass = new GrassField(terrain, occupied);
   scene.add(grass.group);
-  return { sky, lake, pillars, conductors, anim, flags, grass, scatter, icons };
+  const out: HaiziScene = { sky, lake, pillars, conductors, anim, flags, grass, scatter, icons, farLoaded: false };
+  void far.ready.then(() => { out.farLoaded = true; });
+  return out;
 }

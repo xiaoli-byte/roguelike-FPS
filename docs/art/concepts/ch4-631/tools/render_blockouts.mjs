@@ -1,11 +1,11 @@
 // 第四章三张概念图的白模底图：在真实（或按设计稿搭的）场景里从概念机位渲染一张白模，
 // 并用同一台相机把据点 / 驻守点 / 入场点 / 路线投影成画面坐标（带地形 / 墙块遮挡）→ tools/views/<图>.json。
 // 概念图在这张白模上重绘（图生图），叠标按投影坐标画（route_maps.py），所以画里的东西和标注都在真实位置上。
-//   node docs/art/concepts/ch4-631/tools/render_blockouts.mjs [4-2] [4-4] [4-A] [--out <目录>]
+//   node docs/art/concepts/ch4-631/tools/render_blockouts.mjs [4-2] [4-2b] [4-4] [4-A] [4-4e 4-4w] [--out <目录>]
 // --out：截图和投影写到别的目录（拿改过的场景和概念图对照时用，不覆盖概念图的白模底图）。
 // 4-2 / 4-4 打包检视页 src/dev/gorgeLab.ts、haiziLab.ts；4-A 还没有场景，打包 tools/fortress_blockout.ts（按 maps/4-A.md 搭的最简白模）。
 // 打成 iife 在无头 Chromium（scripts/plateau/cdp.mjs）里跑 file:// 页面，不用开 dev 服务器。
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -22,12 +22,16 @@ const VIEWS = {
   '4-2b': { entry: 'src/dev/gorgeLab.ts', page: 'lab', file: '4-2_gorge_bridge', yaw: -48, pitch: 4, fov: 72, pos: [-62, 98] },
   '4-4': { entry: 'src/dev/haiziLab.ts', page: 'lab', file: '4-4_haizi', yaw: -15, pitch: 3, fov: 50, pos: null },
   '4-A': { entry: 'docs/art/concepts/ch4-631/tools/fortress_blockout.ts', page: 'bare', file: '4-A_fortress', yaw: -52, pitch: 5, fov: 36, pos: [-150, 130] },
+  // 核对机位（check）：不是概念图机位，不进默认列表、必须带 --out。4-4 东岸 / 西岸：看远山绘景换个位置有没有露缝（README 5）
+  '4-4e': { entry: 'src/dev/haiziLab.ts', page: 'lab', file: '4-4_haizi_east', yaw: -12, pitch: 5, fov: 50, pos: [62, 12], check: true },
+  '4-4w': { entry: 'src/dev/haiziLab.ts', page: 'lab', file: '4-4_haizi_west', yaw: -22, pitch: 5, fov: 50, pos: [-62, 10], check: true },
 };
 const argv = process.argv.slice(2);
 const oi = argv.indexOf('--out');
 const outDir = oi >= 0 ? resolve(argv[oi + 1]) : null;
 const ids = argv.filter((_, i) => oi < 0 || (i !== oi && i !== oi + 1));
-const wanted = ids.length ? ids : Object.keys(VIEWS);   // 4-2b = 西桥头机位（铁索桥）
+const wanted = ids.length ? ids : Object.keys(VIEWS).filter(k => !VIEWS[k].check);   // 4-2b = 西桥头机位（铁索桥）
+if (!outDir && wanted.some(k => VIEWS[k]?.check)) throw new Error('核对机位（4-4e / 4-4w）要带 --out <目录>，不写进概念图目录');
 
 // rolldown 原生库包缺 package.json 时（node_modules 装坏过）直接指过去
 const bindingDir = join(root, 'node_modules/@rolldown');
@@ -124,7 +128,7 @@ const ROUTES = [
 async function bundle(id) {
   const v = VIEWS[id];
   await build({
-    configFile: false, root, logLevel: 'warn', publicDir: false,
+    configFile: false, root, logLevel: 'warn', publicDir: false, base: './',   // 运行时贴图按相对路径找（file:// 页面）
     define: { 'import.meta.url': JSON.stringify('file:///' + root.replaceAll(String.fromCharCode(92), '/') + '/src/dev/lab.js') },
     resolve: { alias: [{ find: /^three$/, replacement: `${three}/build/three.module.js` }, { find: /^three\/addons\/(.*)$/, replacement: `${three}/examples/jsm/$1` }, { find: /^three\/(.*)$/, replacement: `${three}/$1` }] },
     build: { outDir: OUT, emptyOutDir: false, copyPublicDir: false, minify: false, target: 'es2022',
@@ -134,6 +138,13 @@ async function bundle(id) {
     ? readFileSync(join(root, 'plateau-lab.html'), 'utf8').replace(/<script type="module"[^>]*><\/script>/, `<script src="${v.file}.js"></script>`)
     : `<!doctype html><meta charset="utf-8"><body><script src="${v.file}.js"></script>`;
   writeFileSync(join(OUT, `${v.file}.html`), html);
+  // 运行时要加载的贴图（4-4 远山绘景）拷到页面旁边
+  const env = join(root, 'public/assets/environment/haizi');
+  if (existsSync(env)) {
+    const dst = join(OUT, 'assets/environment/haizi');
+    mkdirSync(dst, { recursive: true });
+    for (const f of readdirSync(env)) copyFileSync(join(env, f), join(dst, f));   // cpSync 拷目录在这台机器上被拒（EIO），逐个文件拷
+  }
 }
 
 async function shoot(id) {
@@ -147,6 +158,7 @@ async function shoot(id) {
       let r;
       if (v.page === 'lab') {
         await b.waitFor('(window.gorge ?? window.haizi) !== undefined', 180000);
+        await b.waitFor('!window.haizi || window.haizi.arena.farLoaded', 60000);   // 4-4 的远山绘景是异步加载的
         r = await b.eval(pageScript(v.entry.includes('gorge') ? GORGE : HAIZI, deg(v.yaw), deg(v.pitch), v.fov, v.pos));
       } else {
         await b.waitFor('window.fortress !== undefined', 120000);
