@@ -23,6 +23,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { angleDiff, clamp, clamp01, damp } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -490,6 +491,15 @@ export class FireCrow extends StandardEnemy implements ExplosiveKin {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity FireCrowAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      circle: 'loco',
+      ignite: { fade: 0.08, secs: () => this.igniteTime },
+      dive: { fade: 0.05 },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

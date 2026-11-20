@@ -25,6 +25,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp01, raySphere, rayVerticalCapsule, rotateTowards } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -714,6 +715,19 @@ export class IronOx extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity IronOxAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      advance: 'loco',
+      inhale: { fade: 0.12, secs: () => this.inhaleTime },
+      choke: { fade: 0.06 },
+      spitWindup: { fade: 0.08, secs: () => this.windTime },
+      spit: { fade: 0.05 },
+      tossWindup: { fade: 0.08, secs: () => this.windTime },
+      toss: { fade: 0.05 },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

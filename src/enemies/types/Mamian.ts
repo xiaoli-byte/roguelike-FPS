@@ -24,6 +24,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { angleDiff, clamp, clamp01, damp } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { Geo, flat, joint, part } from '../Models';
@@ -856,6 +857,24 @@ export class Mamian extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity MamianAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      move: 'loco',
+      sweep: { fade: 0.04 },
+      punch: { fade: 0.04 },
+      recover: { fade: 0.08 },
+      brawl: { fade: 0.15 },
+      spin: { fade: 0.1, secs: () => this.spinTime },
+      throw: { fade: 0.05 },
+      reel: { fade: 0.06 },
+      drag: { fade: 0.05 },
+      staggered: { fade: 0.05 },
+      sweepWind: { fade: 0.06, secs: () => SWEEP_WIND },
+      punchWind: { fade: 0.05, secs: () => this.windupFrac(PUNCH_WIND, 0.22) },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;
