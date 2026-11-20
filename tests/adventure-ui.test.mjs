@@ -1,3 +1,6 @@
+// M11c 第二期（2026-11-21）改过：旧的行旅图 AdventureHUD（src/ui/AdventureHUD.ts，角落小地图 + 方向箭头）换成了 Unity 的
+// 罗盘条 + M 键全图（src/ui/MapMarkers.ts、hud/CompassStrip.ts、screens/MapScreen.ts）。原来对 AdventureHUD 和 dom 的打桩测试
+// 改成对同一批关卡状态（AdventureInfo）测新的地点表：地点从哪来、目标怎么选、距离与方位。后面两条检视页的测试没动。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
@@ -5,62 +8,88 @@ import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
 
 const dataModule = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
-async function moduleFrom(path, imports = {}) {
-  let source = stripTypeScriptTypes(await readFile(new URL(path, import.meta.url), 'utf8'), { mode: 'transform' });
-  for (const [from, to] of Object.entries(imports)) source = source.replaceAll(`'${from}'`, `'${to}'`);
-  return dataModule(source);
+async function moduleFrom(path) {
+  return dataModule(stripTypeScriptTypes(await readFile(new URL(path, import.meta.url), 'utf8'), { mode: 'transform' }));
 }
-const domUrl = await moduleFrom('../src/ui/dom.ts');
-const designUrl = dataModule('export function getStageDesign(){return {title:"检视关卡",routeHint:"穿过回廊与侧路"};}');
-const { AdventureHUD } = await import(await moduleFrom('../src/ui/AdventureHUD.ts', {
-  './dom': domUrl, '../world/StageDesign': designUrl,
-}));
+const { MapModel, bearing, headingOf, deltaAngle } = await import(await moduleFrom('../src/ui/MapMarkers.ts'));
 
-function fakeElement(tag) {
-  return { tag, children: [], style: {}, dataset: {}, hidden: false, textContent: '',
-    appendChild(child) { this.children.push(child); }, setAttribute() {},
-    getContext() { return new Proxy({}, { get: (target, key) => target[key] ?? (() => {}), set: (target, key, value) => { target[key] = value; return true; } }); },
-  };
+function context(info, type = 'combat', player = new THREE.Vector3()) {
+  return { stage: { stage: { type }, exploration: info, cleared: false }, enemies: { list: [] }, player: { position: player, yaw: 0 } };
 }
-function field(root, className) {
-  if (root.className === className) return root;
-  for (const child of root.children) { const found = field(child, className); if (found) return found; }
-}
+const targetOf = model => model.markers.target && { name: model.markers.target.name, verb: model.markers.targetVerb, meters: Math.round(model.markers.target.distance) };
 
-test('adventure HUD navigates to the active real encounter, then returns to altar and exit', () => {
-  globalThis.document = { createElement: fakeElement };
-  globalThis.window = { devicePixelRatio: 1 };
-  globalThis.Path2D = class {};
+test('travel map targets the nearest required site, the active real encounter, then the altar and the exit', () => {
   const encounter = { id: 'guard', label: '回廊守卫', kind: 'approach', position: new THREE.Vector3(12, 0, 0), radius: 24, phase: 'undiscovered' };
   const info = { title: '回廊', routeHint: '循侧路接近守卫', phase: 'explore', objective: new THREE.Vector3(0, 0, -30),
     sites: [{ id: 'cache', position: new THREE.Vector3(8, 0, 0), label: '补给', visited: false }],
     encounters: [encounter], zones: [], paths: [],
   };
-  const ctx = { stage: { stage: {}, exploration: info, arena: { minX: -42, maxX: 42, minZ: -42, maxZ: 42 }, waveIndex: 0, waveCount: 0 },
-    run: { stage: {} }, player: { position: new THREE.Vector3(), yaw: 0 },
+  const ctx = context(info);
+  const model = new MapModel();
+  model.update(ctx);
+  assert.equal(model.snap.title, '回廊');
+  assert.deepEqual(model.markers.all.map(m => `${m.kind}:${m.name}`), ['site:回廊守卫', 'cache:补给', 'altar:灵火祭坛']);
+  assert.deepEqual(targetOf(model), { name: '回廊守卫', verb: '前往', meters: 12 }, 'the nearest unfinished required site is the target');
+  assert.ok(model.markers.all.every(m => m.discovered || m.kind === 'altar'), 'site within 36 m and cache within 18 m are discovered; the altar 30 m away is on the edge');
+  encounter.phase = 'active';
+  model.update(ctx);
+  assert.deepEqual(targetOf(model), { name: '回廊守卫', verb: '交战中', meters: 12 });
+  assert.equal(Math.round(deltaAngle(headingOf(ctx.player.yaw), bearing(0, 0, 12, 0))), 90, 'a target due east sits 90° clockwise of a north-facing player');
+  encounter.phase = 'cleared';
+  model.update(ctx);
+  assert.deepEqual(targetOf(model), { name: '灵火祭坛', verb: '点亮', meters: 30 }, 'route encounters do not pretend the altar was activated');
+  assert.deepEqual(model.markers.progress('site', true), { done: 1, total: 1 });
+  info.phase = 'cleared';
+  model.update(ctx);
+  assert.equal(model.markers.target, null, 'nothing to point at until the exit opens');
+  info.exit = new THREE.Vector3(0, 0, 10);
+  model.update(ctx);
+  assert.deepEqual(targetOf(model), { name: '出口', verb: '前往出口', meters: 10 });
+  assert.equal(Math.round(Math.abs(bearing(0, 0, 0, 10))), 180, '+Z is south on the web map');
+  ctx.stage.exploration = null;
+  model.update(ctx);
+  assert.equal(model.markers.all.length, 0, 'non-exploration stages have no markers');
+});
+
+test('whitebox stages mark the automatic final encounter as a site and keep it as the target while fighting', () => {
+  const encounter = { id: 'final', label: '窑口守卫', kind: 'approach', position: new THREE.Vector3(20, 0, 0), radius: 14, phase: 'undiscovered' };
+  const info = { title: '灰烬卸货场', phase: 'explore', automaticEncounters: true, objectiveLabel: '窑口守卫',
+    objective: encounter.position, encounters: [encounter], sites: [], paths: [],
+    floorRects: [{ minX: -10, maxX: 30, minZ: -5, maxZ: 5 }],
+    zones: [{ label: '入口坪', position: new THREE.Vector3(), radius: 8 }],
   };
-  const hud = new AdventureHUD(fakeElement('div'), ctx);
-  hud.update(0);
-  assert.equal(field(hud.root, 'gf-adventure__stage').textContent, '回廊');
-  assert.equal(field(hud.root, 'gf-adventure__route').textContent, '循侧路接近守卫');
-  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '30 米');
-  encounter.phase = 'active'; ctx.stage.waveCount = 2;
-  hud.update(100);
-  assert.equal(hud.root.dataset.phase, 'explore', 'route encounters do not pretend the altar was activated');
-  assert.equal(hud.root.dataset.encounter, 'active');
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '回廊守卫');
-  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '12 米');
-  assert.equal(field(hud.root, 'gf-adventure__direction').style.transform, 'rotate(90deg)');
-  encounter.phase = 'cleared'; hud.update(200);
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '灵火祭坛');
-  assert.match(field(hud.root, 'gf-adventure__discovered').textContent, /1\/1 遭遇/);
-  info.phase = 'cleared'; hud.update(300);
-  assert.equal(field(hud.root, 'gf-adventure__instruction').textContent, '清场奖励 · 出口即将开启');
-  info.exit = new THREE.Vector3(0, 0, 10); hud.update(400);
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '前往出口');
-  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '10 米');
-  ctx.stage.exploration = null; hud.update(500);
-  assert.equal(hud.root.hidden, true, 'non-exploration stages hide the travel map');
+  const ctx = context(info);
+  const model = new MapModel();
+  model.update(ctx);
+  assert.deepEqual(model.markers.all.map(m => m.kind), ['site'], 'whitebox stages have no altar marker');
+  assert.deepEqual(targetOf(model), { name: '窑口守卫', verb: '前往', meters: 20 });
+  assert.deepEqual(model.markers.discovery(), { found: 1, total: 1 });
+  info.phase = 'battle'; encounter.phase = 'active';
+  model.update(ctx);
+  assert.deepEqual(targetOf(model), { name: '窑口守卫', verb: '交战中', meters: 20 });
+});
+
+test('boss stages show the supply camp once near it and point at the boss arena', () => {
+  const boss = { id: 'BOSS', label: '首领战', kind: 'approach', position: new THREE.Vector3(80, 0, 0), radius: 20, phase: 'undiscovered' };
+  const info = { title: '首领准备区', phase: 'explore', automaticEncounters: true, objectiveLabel: boss.label,
+    objective: boss.position, encounters: [boss], sites: [], paths: [], zones: [],
+    preparation: { room: 'preparation', label: '战前商人', position: new THREE.Vector3(10, 0, 0) } };
+  const ctx = context(info, 'boss', new THREE.Vector3(4, 0, 0));
+  const model = new MapModel();
+  model.update(ctx);
+  assert.deepEqual(model.markers.all.map(m => `${m.kind}:${m.name}`), ['camp:战前商人', 'boss:首领战'], 'the final encounter of a boss stage is the boss arena, not a site');
+  const camp = model.markers.all[0], arena = model.markers.all[1];
+  assert.equal(camp.discovered, true); assert.equal(Math.round(camp.distance), 6);
+  assert.equal(arena.discovered, false, 'the arena is 76 m away');
+  assert.equal(model.markers.visible(arena), true, 'the target shows without being discovered');
+  assert.deepEqual(targetOf(model), { name: '首领战', verb: '首领', meters: 76 });
+  ctx.player.position.x = 35;
+  model.update(ctx);
+  assert.deepEqual(targetOf(model), { name: '首领战', verb: '首领', meters: 45 });
+  assert.equal(arena.discovered, true, 'within the arena edge + 30 m');
+  ctx.enemies.list.push({ isBoss: true, alive: true });
+  model.update(ctx);
+  assert.deepEqual(targetOf(model), { name: '首领战', verb: '首领战', meters: 45 });
 });
 
 async function isolatedFunction(path, name, nextName, bindings) {
@@ -69,58 +98,6 @@ async function isolatedFunction(path, name, nextName, bindings) {
   assert.ok(start >= 0 && end > start);
   return import(dataModule(`${bindings}\nexport ${stripTypeScriptTypes(source.slice(start, end), { mode: 'transform' })}`));
 }
-
-test('whitebox HUD renders floor rectangles and directs the player to the automatic final encounter', () => {
-  globalThis.document = { createElement: fakeElement };
-  globalThis.window = { devicePixelRatio: 1 };
-  globalThis.Path2D = class {};
-  const encounter = { id: 'final', label: '窑口守卫', position: new THREE.Vector3(20, 0, 0), phase: 'undiscovered' };
-  const info = { title: '灰烬卸货场', phase: 'explore', automaticEncounters: true, objectiveLabel: '窑口守卫',
-    objective: encounter.position, encounters: [encounter], sites: [], paths: [],
-    floorRects: [{ minX: -10, maxX: 30, minZ: -5, maxZ: 5 }],
-    zones: [{ label: '入口坪', position: new THREE.Vector3(), radius: 8 }],
-  };
-  const ctx = { stage: { stage: {}, exploration: info, arena: { minX: -30, maxX: 30, minZ: -30, maxZ: 30 }, waveIndex: 0, waveCount: 0 },
-    run: { stage: {} }, player: { position: new THREE.Vector3(), yaw: 0 },
-  };
-  const hud = new AdventureHUD(fakeElement('div'), ctx);
-  hud.update(0);
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '窑口守卫');
-  assert.equal(field(hud.root, 'gf-adventure__zone').textContent, '入口坪');
-  assert.match(field(hud.root, 'gf-adventure__instruction').textContent, /主路遭遇自动触发.*按 F 调查/);
-  assert.equal(field(hud.root, 'gf-adventure__discovered').textContent, '发现 0 处物资 · 完成 0 场遭遇');
-  info.phase = 'battle'; encounter.phase = 'active'; hud.update(100);
-  assert.equal(hud.root.dataset.encounter, 'active');
-  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '20 米');
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '窑口守卫');
-  info.spawnBlocked = true; hud.update(200);
-  assert.equal(field(hud.root, 'gf-adventure__instruction').textContent, '守卫等待入场 · 退回通道拉开距离');
-  info.spawnBlocked = false; hud.update(300);
-  assert.equal(field(hud.root, 'gf-adventure__instruction').textContent, '窑口守卫 · 击退拦路守卫');
-});
-
-test('boss arrival guides the player to supplies before directing them into the arena', () => {
-  globalThis.document = { createElement: fakeElement };
-  globalThis.window = { devicePixelRatio: 1 };
-  globalThis.Path2D = class {};
-  const boss = { id: 'BOSS', label: '首领战', position: new THREE.Vector3(80, 0, 0), phase: 'undiscovered' };
-  const info = { title: '首领准备区', phase: 'explore', automaticEncounters: true, objectiveLabel: boss.label,
-    objective: boss.position, encounters: [boss], sites: [], paths: [], zones: [],
-    preparation: { room: 'preparation', label: '战前商人', position: new THREE.Vector3(10, 0, 0) } };
-  const ctx = { stage: { stage: {}, exploration: info, arena: { minX: -30, maxX: 100, minZ: -30, maxZ: 30 }, waveIndex: 0, waveCount: 0 },
-    run: { stage: {} }, player: { position: new THREE.Vector3(4, 0, 0), yaw: 0 } };
-  const hud = new AdventureHUD(fakeElement('div'), ctx);
-  hud.update(0);
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '战前商人');
-  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '6 米');
-  assert.match(field(hud.root, 'gf-adventure__instruction').textContent, /弹药、生命、护盾/);
-  ctx.player.position.x = 35; hud.update(100);
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '首领战');
-  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '45 米');
-  info.phase = 'battle'; boss.phase = 'active'; hud.update(200);
-  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '首领战');
-  assert.equal(hud.root.dataset.encounter, 'active');
-});
 
 test('both inspection selectors address all 15 chapter positions and default the last to boss', async () => {
   globalThis.__inspectionControls = { theme: { value: 'desert' }, index: { value: '0' }, type: { value: 'auto' } };

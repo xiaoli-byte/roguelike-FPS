@@ -1,0 +1,198 @@
+/*
+ * 主菜单的背景（网页独有，screens/MenuBackdrop.ts）：Unity 的主菜单叠在 3D 菜单场景上，网页沿用旧主菜单的 CSS 远景——
+ * 朱日、流云、远山、飘散的火星、纸纹。垫在界面层缩放根的下面，不接指针。
+ */
+
+.gf-menu.gf-menu-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.gf-menu {
+  z-index: 30;
+  overflow: hidden;
+  background: var(--ink-0);
+  --mx: 0;
+  --my: 0;
+}
+
+.gf-menu__bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gf-menu__sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 55% at 72% 42%, rgba(201, 55, 42, 0.22), transparent 70%),
+    radial-gradient(90% 60% at 20% 110%, rgba(212, 169, 85, 0.08), transparent 70%),
+    linear-gradient(180deg, #08070c 0%, #120c12 55%, #1c1013 100%);
+}
+
+/* 朱日 */
+.gf-menu__sun {
+  position: absolute;
+  right: 13vw;
+  top: 15vh;
+  width: 46vmin;
+  height: 46vmin;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 42% 38%, #ff8a55 0%, #e24a31 38%, #b3301f 62%, #7c1d14 71%, rgba(124, 29, 20, 0) 72%);
+  box-shadow: 0 0 140px 30px rgba(201, 55, 42, 0.28);
+  transform: translate(calc(var(--mx) * -10px), calc(var(--my) * -6px));
+  animation: gf-sun-breathe 7s ease-in-out infinite alternate;
+  opacity: 0.92;
+}
+
+.gf-menu__sunhalo {
+  position: absolute;
+  inset: -7%;
+  border-radius: 50%;
+  border: 1px dashed rgba(244, 216, 147, 0.22);
+  animation: gf-spin 140s linear infinite;
+}
+
+.gf-menu__sunhalo::after {
+  content: "";
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 216, 147, 0.08);
+}
+
+@keyframes gf-sun-breathe {
+  from { filter: brightness(0.95); }
+  to { filter: brightness(1.08); }
+}
+
+@keyframes gf-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 薄雾带 */
+.gf-menu__mist {
+  position: absolute;
+  left: -25%;
+  width: 150%;
+  height: 16vh;
+  background: radial-gradient(ellipse at center, rgba(239, 228, 204, 0.075), transparent 68%);
+  animation: gf-mist 60s ease-in-out infinite alternate;
+}
+
+.gf-menu__mist--1 { top: 30vh; animation-duration: 54s; }
+.gf-menu__mist--2 { top: 48vh; animation-duration: 72s; animation-delay: -20s; opacity: 0.8; }
+.gf-menu__mist--3 { top: 62vh; animation-duration: 48s; animation-delay: -35s; }
+.gf-menu__mist--4 { top: 14vh; animation-duration: 90s; opacity: 0.5; }
+
+@keyframes gf-mist {
+  from { transform: translateX(-6%); }
+  to { transform: translateX(6%); }
+}
+
+/* 祥云纹 */
+.gf-menu__clouds {
+  position: absolute;
+  inset: 0;
+}
+
+.gf-menu__cloud {
+  position: absolute;
+  color: rgba(212, 169, 85, 0.3);
+  animation: gf-cloud 38s ease-in-out infinite alternate;
+}
+
+.gf-menu__cloud svg {
+  width: 100%;
+  height: auto;
+}
+
+.gf-menu__cloud--1 { width: 15vw; right: 8vw; top: 12vh; }
+.gf-menu__cloud--2 { width: 11vw; right: 38vw; top: 44vh; animation-duration: 46s; animation-delay: -12s; opacity: 0.7; }
+.gf-menu__cloud--3 { width: 9vw; right: 4vw; top: 55vh; animation-duration: 30s; animation-delay: -6s; transform: scaleX(-1); opacity: 0.6; }
+
+@keyframes gf-cloud {
+  from { translate: -2.5vw 0; }
+  to { translate: 2.5vw -1vh; }
+}
+
+/* 远山（三层剪影 + 视差） */
+.gf-menu__range {
+  position: absolute;
+  left: -3%;
+  right: -3%;
+  bottom: 0;
+}
+
+.gf-menu__range--far {
+  height: 50vh;
+  background: linear-gradient(180deg, #2c1d22 0%, #150e13 70%);
+  clip-path: polygon(0 64%, 7% 50%, 13% 57%, 21% 36%, 28% 47%, 36% 30%, 43% 42%, 52% 24%, 58% 37%, 66% 29%, 74% 44%, 81% 33%, 89% 47%, 95% 40%, 100% 49%, 100% 100%, 0 100%);
+  transform: translateX(calc(var(--mx) * -6px));
+  opacity: 0.85;
+}
+
+.gf-menu__range--mid {
+  height: 36vh;
+  background: linear-gradient(180deg, #1b1318 0%, #0d090d 80%);
+  clip-path: polygon(0 50%, 9% 36%, 16% 48%, 25% 28%, 33% 44%, 41% 34%, 49% 52%, 57% 30%, 66% 46%, 74% 26%, 83% 42%, 91% 32%, 100% 44%, 100% 100%, 0 100%);
+  transform: translateX(calc(var(--mx) * -14px));
+}
+
+.gf-menu__range--near {
+  height: 19vh;
+  background: linear-gradient(180deg, #0b080c 0%, #050407 100%);
+  clip-path: polygon(0 40%, 12% 22%, 22% 44%, 34% 18%, 45% 38%, 58% 14%, 70% 36%, 81% 20%, 92% 42%, 100% 28%, 100% 100%, 0 100%);
+  transform: translateX(calc(var(--mx) * -24px));
+}
+
+/* 火星 */
+.gf-menu__embers {
+  position: absolute;
+  inset: 0;
+}
+
+.gf-ember {
+  position: absolute;
+  bottom: -12px;
+  border-radius: 50%;
+  background: #ff7a3c;
+  box-shadow: 0 0 6px 1px rgba(255, 110, 50, 0.85);
+  opacity: 0;
+  animation: gf-ember var(--dur, 10s) linear var(--delay, 0s) infinite;
+}
+
+.gf-ember--gold {
+  background: #ffd98a;
+  box-shadow: 0 0 6px 1px rgba(255, 210, 120, 0.8);
+}
+
+@keyframes gf-ember {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  8% { opacity: 1; }
+  50% { transform: translate(calc(var(--sway, 40px) * 0.6), -50vh) scale(0.85); }
+  85% { opacity: 0.8; }
+  100% { transform: translate(var(--sway, 40px), -104vh) scale(0.4); opacity: 0; }
+}
+
+/* 纸纹与暗角 */
+.gf-menu__grain {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-radial-gradient(circle at 17% 32%, rgba(255, 245, 225, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(112deg, rgba(255, 245, 225, 0.018) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(22deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 6px);
+  mix-blend-mode: overlay;
+  opacity: 0.8;
+}
+
+.gf-menu__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 48%, rgba(0, 0, 0, 0.78) 100%);
+}

@@ -1115,6 +1115,8 @@ export interface IUI extends System {
   setInteractPrompt(p: InteractPrompt | null): void;
   /** 全屏黑幕淡入淡出（0 透明 → 1 全黑） */
   fade(to: number, duration: number): Promise<void>;
+  /** 关间结算卡（Unity StageCardScreen）：Game.advance 换关前问 UI；返回 true = UI 弹了卡片，玩家按「继续」后回调 proceed */
+  stageCard?(next: StageNode, proceed: () => void): boolean;
   /** 伤害数字（Unity 的伤害数字是 HUD 部件）：有就由 UI 画，combat/Feedback 不再走 fx.damageNumber */
   damageNumber?(pos: THREE.Vector3, amount: number, opts?: DamageNumberOpts): void;
 }
