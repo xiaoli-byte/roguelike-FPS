@@ -88,6 +88,10 @@ try {
   const home = await b.eval(`(() => { const p = window.__ctx.player.position; window.__home = p.clone(); return p.toArray().map(v => +v.toFixed(1)); })()`);
   log('玩家出生点', home);
 
+  // 第四章的生物资产由 4-x 关卡自己加载；在别的关卡里刷它们要先读一遍（同一个模块实例）
+  if (ids.some(id => ['marmot', 'tiangou', 'aoyin', 'leiyak', 'jufu', 'manman', 'dijiang', 'qiongqi', 'liangu'].includes(id))) {
+    await b.eval(`import('/src/world/plateau/play/assets.ts').then(m => m.loadPlateauModels()).then(() => true)`);
+  }
   const summary = [];
   let row = 0, sheetNo = 1;
   const flush = async () => {

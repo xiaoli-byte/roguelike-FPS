@@ -10,6 +10,7 @@ import * as THREE from 'three';
 import type { NativeBody } from '../../../assets/NativeRig';
 import type { MonsterKind } from '../spec';
 import { CreatureAnimator, newAnimState, type AnimState, type DeathKind, type Gait } from './anim';
+import { ClipPlayer } from '../../../anim/ClipPlayer';
 import { spawnCreature, type PlateauModel } from './assets';
 import type { Actor, DamageInfo, HitSphere, PlayCtx } from './core';
 import { StatusBag } from './elements';
@@ -105,6 +106,14 @@ export abstract class Foe implements Actor {
   readonly body: NativeBody | null;
   readonly anim: AnimState = newAnimState();
   readonly animator: CreatureAnimator | null;
+  /**
+   * 片段播放器（M12 第二期，Unity PlateauEnemyAI 的 Animator）：资产在 public/assets/anim/ 有片段时建，读好后片段盖掉程序化姿势。
+   * 状态名 = 招式 id（片段按招式总长 ÷ 出手速度拉伸，同 Unity Begin 的 ActTimed）；眩晕循环 stun、硬直 stagger、持续姿势（hop / flee）、其余 Locomotion。
+   * 没有片段的（连鼓灵是静态部件）一直不 ready，照旧程序化；死亡后不再推进片段，倒地用程序化的死法（Unity 是布娃娃）。
+   */
+  readonly clips: ClipPlayer | null;
+  private clipKey = '';
+  private clipRetry = 0;
   readonly pos = new THREE.Vector3();
   readonly home = new THREE.Vector3();
   readonly status = new StatusBag();
@@ -173,6 +182,16 @@ export abstract class Foe implements Actor {
       this.body = c.body;
     }
     this.animator = this.body ? new CreatureAnimator(this.body.pose, spec.gait, spec.model) : null;
+    this.clips = this.body
+      ? new ClipPlayer(this.body.assetId, this.body.model, {
+        root: this.host,
+        ground: hover > 0.5 ? null : (x, y, z, max) => {
+          const h = ctx.terrain.heightAt(x, z);
+          return h > y - max ? h : null;
+        },
+      })
+      : null;
+    if (this.clips) this.clips.lookTarget = ctx.center;
     this.hitList = spec.spheres.map(s => ({ c: new THREE.Vector3(), r: s.r * spec.scale, mult: s.mult, part: s.part }));
     this.shieldMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 12), new THREE.MeshBasicMaterial({
       color: '#c792ff', transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false,
@@ -236,6 +255,10 @@ export abstract class Foe implements Actor {
     this.anim.hurtX = THREE.MathUtils.clamp(-(_v.x * c - _v.z * s), -1, 1);
     this.anim.hurtZ = THREE.MathUtils.clamp(_v.x * s + _v.z * c, -1, 1);
     this.anim.hurt = Math.min(1, this.anim.hurt + (info.kind === 'dot' ? 0.1 : 0.5));
+    // 片段：方向性受击弹簧 + 重击（单发过 12% 最大生命）触发叠加层 Flinch（Unity EnemyBody.OnDamaged；持续伤害不晃）
+    if (this.clips?.ready && info.kind !== 'dot') {
+      this.clips.hit(_w.copy(_v).negate(), Math.min(1, (d / Math.max(1, this.maxHp)) * 4), this.hp > 0 && d >= this.maxHp * 0.12);
+    }
     if (this.spec.hitch && info.kind !== 'dot') this.hitchT = this.spec.hitch;
     if (mult > 1 && info.kind === 'bullet') this.ctx.fx.spray(at, ['#ffe08a', '#ffffff'], 4, 3, 1, 8, 0.25);
     // 韧性
@@ -410,6 +433,7 @@ export abstract class Foe implements Actor {
     this.ctx.scene.remove(this.host, this.shieldMesh, this.pip);
     if (this.glow) this.ctx.scene.remove(this.glow);
     for (const e of this.extras) this.ctx.scene.remove(e);
+    this.clips?.dispose();
   }
 
   // ─────────────── 移动 ───────────────
@@ -623,6 +647,7 @@ export abstract class Foe implements Actor {
       const look = Math.atan2(ctx.feet.x - this.pos.x, ctx.feet.z - this.pos.z) - this.yaw;
       this.anim.look = this.state === 'alert' ? Math.atan2(Math.sin(look), Math.cos(look)) : 0;
       this.animator?.apply(this.anim, ctx.time + this.home.x);
+      this.tickClips(dt);
       if (this.body) {
         const m = this.body.materials[0] as THREE.MeshStandardMaterial;
         const ch = this.alive && this.charged() ? 0.05 + 0.05 * Math.max(0, Math.sin(ctx.time * 20)) : 0;
@@ -661,6 +686,39 @@ export abstract class Foe implements Actor {
   }
 
   protected placeExtras(): void {}
+
+  /**
+   * 片段跟着 AI 走（Unity PlateauEnemyAI：Begin 的 ActTimed、EndMove 的 Loco、眩晕的 ActLoop("stun")、硬直的 PlayTimed("stagger")、
+   * 蛮蛮 / 穷奇的 ActLoop("hop" / "flee")）。出招中 AI 被停摆（挨枪顿一下、词缀招式接管）时片段也停住，不和招式时间轴错开（SyncAnimSpeed）。
+   */
+  private tickClips(dt: number): void {
+    const c = this.clips;
+    if (!c || !this.alive) return;
+    const mv = this.move;
+    const want = this.stunT > 0 ? 'stun' : this.staggerT > 0 ? 'stagger' : mv.busy ? mv.id : this.posture || 'Locomotion';
+    const key = mv.busy && want === mv.id ? `${want}#${mv.count.get(want) ?? 0}` : want;
+    this.clipRetry -= dt;
+    // 持续型片段被受击触发器带走 / 播完了：切回去（ActLoop）
+    const lost = c.ready && (want === 'stun' || want === this.posture) && want !== 'Locomotion' && c.state !== want && this.clipRetry <= 0;
+    if (key !== this.clipKey || lost) {
+      this.clipKey = key;
+      this.clipRetry = 0.4;
+      const has = (s: string): boolean => !c.ready || c.has(s);
+      if (want === 'Locomotion') c.playLocomotion();
+      else if (want === 'stun') { if (has('stun')) c.play('stun', 0.15); else c.play('Hit', 0.05); }
+      else if (want === 'stagger') {
+        if (has('stagger')) c.playTimed('stagger', Math.max(0.3, this.staggerT + 0.3), 0.06);
+        else c.play('Hit', 0.05);
+      } else if (mv.busy && mv.def && want === mv.id) {
+        const d = mv.def;
+        if (has(want)) c.playTimed(want, (d.windup + d.active + d.recover) / Math.max(0.01, mv.speed), 0.1);
+      } else if (has(want)) c.play(want, 0.15);
+      else c.playLocomotion();
+    }
+    c.daze = this.stunT > 0 ? 1 : 0;
+    const paused = mv.busy && this.stunT <= 0 && this.staggerT <= 0 && (this.hitchT > 0 || this.held);
+    c.update(paused ? 0 : dt);
+  }
 
   /** 骨骼的世界位置 */
   protected boneWorld(name: string, out: THREE.Vector3): THREE.Vector3 {

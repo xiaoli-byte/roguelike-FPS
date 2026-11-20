@@ -248,3 +248,52 @@ test('受击：ClipPlayer.hit 推受击弹簧；stagger 触发叠加层 Flinch�
   assert.equal(k.p.state, 'charge', '底层还在蓄力');
   assert.equal(k.p.anim.animator.currentState(1)?.name, 'Flinch');
 });
+
+// ───────────── 第四章：片段与招式时间轴 ─────────────
+
+await import('../src/world/plateau/play/foes.ts');
+const { moveTable, moveEvents, movesOf } = await import('../src/world/plateau/play/moves.ts');
+
+test('第四章七种有片段的敌人：每一招都有同名片段；手 K 片段长 = 招式总长，采样片段差不到 1.5 帧；片段按总长拉伸后每个时间点落在时间轴 ≤ 1 帧', () => {
+  const T = moveTable();
+  const assets = ['SK_Enemy_Aoyin', 'SK_Enemy_Dijiang', 'SK_Enemy_Jufu', 'SK_Enemy_Manman', 'SK_Enemy_Marmot', 'SK_Enemy_Qiongqi', 'SK_Enemy_Tiangou'];
+  let moves = 0, cues = 0, handKeyed = 0;
+  for (const asset of assets) {
+    const data = animData(asset);
+    const states = new Set(data.controller.layers[0].states.map((s) => s.name));
+    for (const need of ['Locomotion', 'Hit', 'stun']) assert.ok(states.has(need), `${asset} 有 ${need} 状态`);
+    for (const m of movesOf(asset)) {
+      const clip = data.clips[m.id];
+      assert.ok(clip && states.has(m.id), `${asset}/${m.id} 有片段`);
+      const total = m.windup + m.active + m.recover;
+      if (clip.src === 'blender') {
+        assert.ok(Math.abs(clip.duration - total) < 1e-3, `${asset}/${m.id} 手 K 片段长 ${clip.duration} = 招式总长 ${total}`);
+        handKeyed++;
+      } else assert.ok(Math.abs(clip.duration - total) <= 1.5 * FRAME, `${asset}/${m.id} 采样片段长 ${clip.duration} ≈ ${total}`);
+      // 片段事件（Unity events.json 由同一张招式表生成）：拉伸到招式总长后与时间轴的差
+      for (const e of moveEvents(m)) {
+        if (e.name === 'warn' || e.name === 'end') continue;
+        const ev = clip.events.filter((x) => x.name === e.name);
+        assert.ok(ev.length > 0, `${asset}/${m.id} 片段里有 ${e.name} 事件`);
+        const best = Math.min(...ev.map((x) => Math.abs((x.t / clip.duration) * total - e.at)));
+        assert.ok(best <= FRAME + 1e-6, `${asset}/${m.id} ${e.name} 差 ${(best * 1000).toFixed(1)} ms（> 1 帧）`);
+        cues++;
+      }
+      moves++;
+    }
+    assert.ok(T[asset], `${asset} 在招式表里`);
+  }
+  assert.equal(moves, 19);
+  assert.equal(handKeyed, 6, '獓狠踩踏 / 砸地、举父远投、蛮蛮横扫、穷奇滑翔、天狗扑咬是手 K');
+  assert.ok(cues >= 20, `对照了 ${cues} 个时间点`);
+});
+
+test('第四章的 Foe 接了片段播放器：Begin 按招式总长拉伸、眩晕 stun、硬直 stagger、持续姿势 hop / flee 都是控制器里的状态', () => {
+  const src = readFileSync(join(ROOT, 'src/world/plateau/play/foe.ts'), 'utf8');
+  assert.match(src, /new ClipPlayer\(this\.body\.assetId, this\.body\.model/);
+  assert.match(src, /c\.playTimed\(want, \(d\.windup \+ d\.active \+ d\.recover\) \/ Math\.max\(0\.01, mv\.speed\), 0\.1\)/);
+  assert.match(src, /c\.playTimed\('stagger', Math\.max\(0\.3, this\.staggerT \+ 0\.3\), 0\.06\)/);
+  const has = (id, s) => animData(id).controller.layers[0].states.some((x) => x.name === s);
+  assert.ok(has('SK_Enemy_Manman', 'hop') && has('SK_Enemy_Qiongqi', 'flee'));
+  for (const id of ['SK_Enemy_Aoyin', 'SK_Enemy_Jufu', 'SK_Enemy_Manman', 'SK_Enemy_Marmot', 'SK_Enemy_Qiongqi', 'SK_Enemy_Tiangou']) assert.ok(has(id, 'stagger'), `${id} stagger`);
+});
