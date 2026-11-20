@@ -12,6 +12,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, EnemyDef, GameContext, IEnemy, SpawnOptions } from '../../core/types';
 import { ballisticVelocity, clamp, clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import { boneHull, type NativeBody, type NativePose } from '../../assets/NativeRig';
 import { Geo, flat, joint, part } from '../Models';
 import { launchMirageFireball } from '../fx/MirageFireball';
@@ -418,6 +419,15 @@ export class MirageToad extends StandardEnemy {
       this.setState('move');
       this.rollCooldown(1.5, 2.5);
     }
+  }
+
+  /** 片段表（M12）：照 Unity MirageToadAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      move: 'loco',
+      mirage: { fade: 0.08 },
+      puff: { fade: 0.08, secs: () => this.windTime },
+    };
   }
 
   protected override pose(dt: number): void {

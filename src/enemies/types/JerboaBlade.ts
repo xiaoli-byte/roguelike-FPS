@@ -13,6 +13,7 @@ import * as THREE from 'three';
 import type { EnemyDef, GameContext, SpawnOptions } from '../../core/types';
 import { clamp, clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import { boneHull, type NativeBody, type NativePose } from '../../assets/NativeRig';
 import { Geo, flat, joint, part } from '../Models';
@@ -590,6 +591,19 @@ export class JerboaBlade extends StandardEnemy {
       this.setState('chase');
       this.rollCooldown(0.6, 1.2);
     }
+  }
+
+  /** 片段表（M12）：照 Unity JerboaBladeAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      chase: 'loco',
+      slashWindup: { fade: 0.05, secs: () => this.windTime },
+      slash: { fade: 0.03 },
+      hopBack: { fade: 0.05 },
+      crouch: { fade: 0.06, secs: () => this.windTime },
+      leap: { fade: 0.04 },
+      spin: { fade: 0.04 },
+    };
   }
 
   protected override pose(dt: number): void {

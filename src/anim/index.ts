@@ -5,3 +5,4 @@ export * from './AnimatorStateMachine';
 export * from './CreatureRig';
 export * from './CreatureLocomotion';
 export * from './CreatureAnimator';
+export * from './ClipPlayer';

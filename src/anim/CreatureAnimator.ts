@@ -23,6 +23,8 @@ export interface CreatureAnimatorOptions {
   ground?: GroundProbe | null;
   /** 不要运行时动画层（检视页逐片段看原始数据时） */
   rig?: boolean;
+  /** 原地播放：减掉烘进骨骼的根节点离地高度（见 BuildClipOptions.inPlace）；玩法自己抬降根节点的敌人开 */
+  inPlace?: boolean;
 }
 
 export class CreatureAnimator {
@@ -46,7 +48,7 @@ export class CreatureAnimator {
     this.model = model;
     this.root = opts.root ?? model.parent ?? model;
     this.sockets = ensureSockets(model, data);
-    this.clips = buildClips(data);
+    this.clips = buildClips(data, { inPlace: opts.inPlace });
     // 骨骼识别要在绑定姿势下做（restLift / legLength）：先于第一次动画求值
     this.rig = opts.rig === false ? null : new CreatureRig(model, { root: this.root, ground: opts.ground ?? null, assetId: data.asset });
     this.animator = new AnimatorStateMachine(model, data.controller ?? buildDefaultController(data), this.clips);

@@ -12,6 +12,10 @@ import type { SkinnedBody } from './SkinnedBody';
 
 export interface NativeBody extends SkinnedBody {
   readonly pose: NativePose;
+  /** 资产 id（SK_*；public/assets/anim/<id>.json 的片段按它找） */
+  readonly assetId: string;
+  /** 挂在宿主下的 GLB 场景克隆（片段播放器的混合器根：曲线按它下面的节点名绑定） */
+  readonly model: THREE.Object3D;
   /**
    * 弱点发光壳（管线导出的 <asset>_GlowShell：弱点区域外推 1 厘米的蒙皮薄壳）。加法混合、用本体贴图，
    * 跟着骨骼一起鼓起；敌人每帧设 opacity。没有时为 null。
@@ -388,6 +392,8 @@ export function attachNativeBody(host: THREE.Object3D, asset: LoadedAsset, lodSc
   return {
     lod,
     pose,
+    assetId: asset.id,
+    model,
     glowShell,
     glowShells,
     materials: [material],

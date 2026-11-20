@@ -20,6 +20,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp01, rotateTowards } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -665,6 +666,24 @@ export class TombBeast extends StandardEnemy {
     ctx.audio.play('shield_break', { position: center, volume: 1, pitch: 0.7 });
     ctx.audio.play('explosion', { position: center, volume: 0.7, pitch: 0.8 });
     this.quake(0.6, 24, 0.4);
+  }
+
+  /** 片段表（M12）：照 Unity TombBeastAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      advance: 'loco',
+      dazed: 'loco',
+      chargeWindup: { fade: 0.1, secs: () => this.windTime },
+      charge: { fade: 0.06 },
+      brake: { fade: 0.06 },
+      stompWindup: { fade: 0.08, secs: () => this.windTime },
+      stomp: { fade: 0.04 },
+    };
+  }
+
+  /** 撞墙撞晕：CreatureRig 的晕眩叠加（Unity TombBeastAI.DazeOverlay） */
+  protected override get dazeOverlay(): boolean {
+    return this.state === 'dazed';
   }
 
   protected override pose(dt: number): void {

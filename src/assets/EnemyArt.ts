@@ -5,6 +5,7 @@
  * 部件骨架会隐藏宿主里所有实体网格，所以要先知道哪些挂点会换上美术挂件、把它们排除在外。
  */
 import type * as THREE from 'three';
+import { ClipPlayer, type ClipPlayerOptions } from '../anim/ClipPlayer';
 import { AssetLibrary } from './AssetLibrary';
 import { applyArtEnvironment } from './ArtEnvironment';
 import { isHumanoidRig } from './HumanoidBind';
@@ -26,12 +27,19 @@ export interface EnemyArtOptions {
   lowQuality: boolean;
   /** 登记实例材质：交给敌人释放、参与受击闪白 */
   own: (m: THREE.MeshStandardMaterial) => void;
+  /**
+   * 原生骨架挂上时顺带建片段播放器（M12：public/assets/anim/<资产>.json，异步读；没有片段的资产一直不 ready，敌人照旧程序化摆姿势）。
+   * 不给就不建（首领各自管自己的片段）
+   */
+  clips?: Omit<ClipPlayerOptions, 'data'>;
 }
 
 export interface EnemyArt {
   body: SkinnedBody | null;
   /** 原生骨架资产（清单 skeleton.mode = 'native'）：敌人按骨骼名直接驱动；其余资产为 null */
   native: NativeBody | null;
+  /** 片段播放器（opts.clips 给了且挂上了原生骨架时） */
+  clips?: ClipPlayer | null;
   parts: AttachedPart[];
 }
 
@@ -65,5 +73,6 @@ export function attachEnemyArt(o: EnemyArtOptions): EnemyArt {
     own(part.materials);
     parts.push(part);
   }
-  return { body, native, parts };
+  const clips = native && o.clips ? new ClipPlayer(native.assetId, native.model, o.clips) : null;
+  return { body, native, clips, parts };
 }

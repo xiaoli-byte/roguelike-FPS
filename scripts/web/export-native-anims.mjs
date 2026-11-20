@@ -415,6 +415,8 @@ function exportAsset(unityDir, id, warn) {
     if (c.derived) clip.derived = 'Hit';
     if (keyframed.includes(name)) clip.unity = 'keyframed';
     if (src.kind === 'blender' && !c.derived) clip.src = 'blender';
+    // 根节点离地高度（已经烘进上面的骨骼位置，同 Unity）：另外单独记一份，玩法自己抬降根节点的敌人原地播放时减回去
+    if (c.rootY?.some((y) => Math.abs(y) > 0.005)) clip.rootY = b64(Float32Array.from(c.rootY));
     clip.events = mergeEvents(id, name, c.events ?? [], overlay, length, warn);
     clip.tracks = tracks;
     clips[name] = clip;

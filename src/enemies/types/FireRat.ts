@@ -17,6 +17,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp01, damp, rotateTowards } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -582,6 +583,16 @@ export class FireRat extends StandardEnemy {
     this.shell = null;
     for (const t of this.tongues) t.m.material.dispose();
     this.tongues.length = 0;
+  }
+
+  /** 片段表（M12）：照 Unity FireRatAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      chase: 'loco',
+      curl: { fade: 0.06, secs: () => this.curlTime },
+      roll: { fade: 0.05 },
+      dizzy: { fade: 0.06 },
+    };
   }
 
   protected override pose(dt: number): void {
