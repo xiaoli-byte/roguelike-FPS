@@ -20,6 +20,10 @@ after(() => graph.dispose());
 const A = await graph.load('enemies/Affixes.ts');
 const { TORNADO } = await graph.load('enemies/EliteTornado.ts');
 const { Rng } = await graph.load('core/Rng.ts');
+// WaveRunner（锚点加分）：敌人登记表打桩，单独一张图
+const runnerGraph = await tsGraph({ 'enemies/Registry.ts': 'export function getEnemyDef() { return undefined; }\n' });
+after(() => runnerGraph.dispose());
+const W = await runnerGraph.load('world/WaveRunner.ts');
 const ts = file => readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
 const affixCs = id => cs(`Enemies/Affixes/EliteAffix_${id[0].toUpperCase()}${id.slice(1)}.cs`);
 const num = s => Number(String(s).replace(/[fF]$/, ''));
@@ -110,16 +114,38 @@ test('站位角色的默认到场延迟同 Unity SpawnStations.DefaultArrival：
   assert.deepEqual(order, [...order].sort((a, b) => a - b), '前排先到、远程稍晚、侧袭与狙击再晚、炮手最后');
 });
 
-test('锚点加分（角色对 +8 / 不对 −3、同 lane +2）与精英体型 ×1.25 同 Unity', () => {
+test('锚点加分（角色对 +8 / 不对 −3、同 lane +2、高台对俯射 +3 / 其它 −1.5、Auto 不加不减）与精英体型 ×1.25 同 Unity', () => {
   const stations = cs('Encounters/SpawnStations.cs'), runner = ts('world/WaveRunner.ts');
-  const bonus = stations.match(/role == q\.role \? (\d+) : (-\d+);\s*if \(lane == q\.lane\) s \+= (\d+);/);
-  const web = runner.match(/\(a\.role === role \? (\d+) : (-\d+)\) \+ \(a\.lane === lane \? (\d+) : 0\)/);
-  assert.deepEqual(web.slice(1).map(Number), bonus.slice(1).map(Number));
+  const bonus = stations.match(/if \(role != StationRole\.Auto\) s \+= role == q\.role \? (\d+) : (-\d+);\s*if \(lane == q\.lane\) s \+= (\d+);\s*if \(elevated\) s \+= RaisedRole\(q\.role\) \? (\d+) : (-[\d.]+)f;/);
+  const web = runner.match(/if \(anchorRole !== 'auto'\) s \+= anchorRole === role \? (\d+) : (-\d+);\s*if \(anchorLane === lane\) s \+= (\d+);\s*if \(elevated\) s \+= raisedRole\(role\) \? (\d+) : (-[\d.]+);/);
+  assert.deepEqual(web.slice(1).map(Number), bonus.slice(1).map(num));
   assert.equal(num(stations.match(/\(elite \? ([\d.]+)f : 1f\)/)[1]), Number(runner.match(/\(enemy\.elite \? ([\d.]+) : 1\)/)[1]));
+  // 俯射角色（RaisedRole）：远程 / 狙击 / 炮手
+  const raised = [...stations.match(/RaisedRole\(StationRole r\) => ([^;]+);/)[1].matchAll(/StationRole\.(\w+)/g)].map(m => m[1].toLowerCase());
+  assert.deepEqual(['assault', 'flank', 'ranged', 'precision', 'artillery', 'support'].filter(W.raisedRole), raised);
+  // EncounterTests.RolesArrivalAndAnchorBonus 的四条
+  assert.equal(W.anchorBonus('ranged', 1, true, 'ranged', 1), 8 + 2 + 3, '角色 + lane + 远程上高台');
+  assert.equal(W.anchorBonus('flank', 0, false, 'ranged', 1), -3, '角色不对');
+  assert.equal(W.anchorBonus('auto', 1, false, 'ranged', 1), 2, 'Auto 站位不加不减');
+  assert.equal(W.anchorBonus('assault', 0, true, 'assault', 1), 8 - 1.5, '正面不爱上高台');
+  // Unity 只站地面的敌人跳过高台锚点
+  assert.match(stations, /if \(elevated && q\.GroundOnly\) continue;/);
+  assert.match(runner, /if \(a\.elevated && groundOnly\) continue;/);
+});
+
+test('场景文档的站位角色按 Unity StationRole 读（0 = Auto，1–6 = 正面 / 侧袭 / 远程 / 狙击 / 炮手 / 辅助），条目的 Auto 按敌人定义的站位', () => {
+  const role = cs('Encounters/EncounterSpec.cs').match(/enum StationRole \{([^}]+)\}/)[1].split(',').map(s => s.trim().toLowerCase());
+  assert.deepEqual(role, ['auto', 'assault', 'flank', 'ranged', 'precision', 'artillery', 'support']);
+  const exporter = readFileSync(new URL('../unity/Assets/Pipeline/Editor/WebSceneExporter.cs', import.meta.url), 'utf8');
+  assert.match(exporter, /\["role"\] = a\.GetComponent<SpawnAnchor>\(\) \? \(int\)a\.GetComponent<SpawnAnchor>\(\)\.role : 0,/, '导出器写的是枚举值，没有组件写 0（= Auto，同 SpawnAnchor.Read）');
+  const adapter = ts('world/UnitySceneAdapter.ts');
+  assert.deepEqual(JSON.parse(adapter.match(/const ROLES = (\[[^\]]+\]) as const;/)[1].replaceAll("'", '"')), role, '网页的角色表按枚举顺序，0 是 auto');
+  assert.match(adapter, /return r === 'auto' \? undefined : r;/, '条目的 Auto 不写死角色');
+  assert.match(cs('Encounters/SpawnStations.cs'), /entryRole != StationRole\.Auto \? entryRole : def != null \? RoleOf\(def\.placementRole\) : StationRole\.Assault;/);
+  assert.match(ts('world/WaveRunner.ts'), /placement: e\.placement \?\? getEnemyDef\(e\.enemyId\)\?\.placement \?\? defaultPlacement\(e\.enemyId\)/);
 });
 
 // ───────────── 不一致清单（不改实现）─────────────
 
-test.todo('高台站位加分：Unity AnchorBonus 对俯射角色（远程 / 狙击 / 炮手）上高台 +3、其它角色 −1.5；网页 WaveRunner.pickPoint 的锚点没有 elevated 这一项（src/world/WaveRunner.ts）');
-test.todo('Auto 站位：Unity 的锚点角色是 Auto 时不加不减；网页的锚点角色不等于请求角色一律 −3（WaveRunner 的锚点没有 auto 角色）');
+test.todo('高台站位的数据：Unity SpawnAnchor.elevated 还没导出——WebSceneExporter.Encounter 的 anchors 只写 position / lane / role，场景文档里没有 elevated（网页 WaveRunner.anchorBonus 与 UnitySceneAdapter 已经接好，导出器补上这一项就生效）');
 test.todo('EncounterSpec v2（Of / Wave / E、Promote 按重型优先与 RunRng、FromSquads / ToSquads、BandFor 距离带）、SquadAffixes.Resolve（条目 → 小队 → 随机）、InfernoSquads：网页没有对应实现（M4 待办「EncounterSite v2 其余部分」），EncounterTests / InfernoSquadsTests 的这些用例没迁');

@@ -78,7 +78,7 @@ function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
     playerSpawn: v(L.playerSpawn),
     playerYaw: L.playerYaw,
     spawnPoints: L.spawnPoints.map(v),
-    spawnAnchors: L.adventure?.spawnAnchors?.map(p => ({ position: v(p), role: p.role, lane: p.lane })),
+    spawnAnchors: L.adventure?.spawnAnchors?.map(p => ({ position: v(p), role: p.role, lane: p.lane, elevated: p.elevated })),
     rewardPoint: v(L.rewardPoint),
     portalPoints: L.portalPoints.map(v),
     shopPoint: v(L.shopPoint),
@@ -536,7 +536,7 @@ export class StageDirector implements IStageDirector {
     const { e, ordinal, info } = candidate;
     const plans = buildEncounterWaves(ctx, stage, e.kind, ordinal);
     if (!plans.length) return;
-    const anchors = e.anchors.map(a => ({ position: new THREE.Vector3(a.x, a.y ?? arena.floorY, a.z), role: a.role, lane: a.lane }));
+    const anchors = e.anchors.map(a => ({ position: new THREE.Vector3(a.x, a.y ?? arena.floorY, a.z), role: a.role, lane: a.lane, elevated: a.elevated }));
     const local = { ...arena, center: info.position.clone(), spawnPoints: anchors.map(a => a.position), spawnAnchors: anchors };
     info.phase = 'active'; this.activeEncounterId = e.id;
     this.waveIndex = 0; this.waveCount = plans.length; this.lastProgress = this.t;
@@ -594,7 +594,7 @@ export class StageDirector implements IStageDirector {
     const info = state.encounters!.find(e => e.id === candidate.id)!;
     // A shared encounter may be approached through a different room (the inn's north warehouse).
     info.position.set(candidate.position.x, arena.floorY, candidate.position.z);
-    const anchors = candidate.anchors.map(p => ({ position: new THREE.Vector3(p.x, p.y ?? arena.floorY, p.z), role: p.role, lane: p.lane }));
+    const anchors = candidate.anchors.map(p => ({ position: new THREE.Vector3(p.x, p.y ?? arena.floorY, p.z), role: p.role, lane: p.lane, elevated: p.elevated }));
     const local: ArenaInfo = { ...arena, center: info.position.clone(), spawnAnchors: anchors,
       spawnPoints: candidate.points.map(p => new THREE.Vector3(p.x, (p as { y?: number }).y ?? arena.floorY, p.z)) };
     info.phase = 'active'; this.activeEncounterId = candidate.id; this.activeWhiteboxFight = candidate; this.lastProgress = this.t;

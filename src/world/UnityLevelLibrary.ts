@@ -60,7 +60,8 @@ export interface UnityEncounter {
   autoTrigger: boolean;
   arenaRadius: number;
   requires: string[];
-  anchors: { position: [number, number, number]; lane: number; role: number }[];
+  /** role = Unity StationRole 枚举值（0 = Auto）；elevated = SpawnAnchor.elevated（导出器还没写，缺省地面） */
+  anchors: { position: [number, number, number]; lane: number; role: number; elevated?: boolean }[];
   optional: boolean;
   roadside: boolean;
   reward: string;

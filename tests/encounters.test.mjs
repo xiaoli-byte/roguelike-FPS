@@ -21,7 +21,8 @@ const bodyDefs = Object.fromEntries(await Promise.all([
 ].map(async ([id, name]) => {
   const source = await readFile(new URL('../src/enemies/types/' + name + '.ts', import.meta.url), 'utf8');
   const scale = Number(source.match(/^\s*scale:\s*([\d.]+)/m)?.[1] ?? 1);
-  return [id, { radius: Number(source.match(/radius:\s*([\d.]+)/)[1]) * scale, height: Number(source.match(/height:\s*([\d.]+)/)[1]) * scale }];
+  return [id, { radius: Number(source.match(/radius:\s*([\d.]+)/)[1]) * scale, height: Number(source.match(/height:\s*([\d.]+)/)[1]) * scale,
+    ...(/groundOnly:\s*true/.test(source) ? { groundOnly: true } : {}) }];
 })));
 const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts', { './UnityTriangles': await tsModule('../src/world/UnityTriangles.ts'), './UnityHeightSampling': await tsModule('../src/world/UnityHeightSampling.ts') }));
 const navUrl = await tsModule('../src/world/NavGrid.ts', { '../core/math': await tsModule('../src/core/math.ts') });
@@ -127,6 +128,24 @@ function fixture(entries, anchors, regional = false) {
   return { ctx, arena, runner, tick, advance, warnings, spawns, enemies };
 }
 const anchor = (role, lane, x, z) => ({ role, lane, position: new THREE.Vector3(x, 0, z) });
+
+test('高台与 Auto 锚点照 Unity SpawnStations.AnchorBonus：俯射角色上高台 +3、正面 −1.5，Auto 不加不减，只站地面的敌人不上高台', () => {
+  const high = (role, lane, x, z) => ({ ...anchor(role, lane, x, z), elevated: true });
+  const pick = (entry, anchors) => { const f = fixture([{ count: 1, ...entry }], anchors, true); f.advance(0, 2); return f.spawns[0].position; };
+  // 远程（lane 0）的理想方向在 −π + 0.45：地面锚点在理想距离 16.5 m，高台远 10 m（距离分 −1.3），+3 后高台胜出
+  const dir = -Math.PI + .45, at = r => [Math.sin(dir) * r, Math.cos(dir) * r];
+  const ground = anchor('auto', 0, ...at(16.5)), deck = high('auto', 0, ...at(26.5));
+  assert.ok(pick({ enemyId: 'archer', placement: 'ranged' }, [ground, deck]).distanceTo(deck.position) < 1e-8, '远程上高台');
+  assert.ok(pick({ enemyId: 'archer', placement: 'ranged' }, [ground, { ...deck, elevated: false }]).distanceTo(ground.position) < 1e-8, '不是高台就按距离');
+  assert.ok(pick({ enemyId: 'jerboa_blade', placement: 'ranged' }, [ground, deck]).distanceTo(ground.position) < 1e-8, '只站地面（groundOnly）的跳过高台');
+  // 正面（理想方向 −π、理想距离 13 m）：高台在理想距离、地面远 7 m（距离分 −0.91）；高台 −1.5 后地面胜出
+  const front = anchor('auto', 0, 0, -20), frontDeck = high('auto', 0, 0, -13);
+  assert.ok(pick({ enemyId: 'grunt', placement: 'assault' }, [front, frontDeck]).distanceTo(front.position) < 1e-8, '正面不爱上高台');
+  assert.ok(pick({ enemyId: 'grunt', placement: 'assault' }, [front, { ...frontDeck, elevated: false }]).distanceTo(frontDeck.position) < 1e-8);
+  // Auto 锚点不加不减：角色不对的锚点 −3 会让给 Auto 锚点
+  const wrong = anchor('flank', 0, 0, -13), auto = anchor('auto', 0, 0, -16);
+  assert.ok(pick({ enemyId: 'grunt', placement: 'assault' }, [wrong, auto]).distanceTo(auto.position) < 1e-8, '角色不对 −3，Auto 0');
+});
 
 test('authored role/lane stations and arrival delays survive queued scheduling', () => {
   const anchors = [anchor('assault', 0, 0, -12), anchor('flank', 1, 14, 0), anchor('ranged', 0, -8, -15),

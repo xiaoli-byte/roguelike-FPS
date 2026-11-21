@@ -1,7 +1,7 @@
 /**
  * 关卡布局的数据类型（LevelGen 产出，ArenaBuilder / StageDirector 消费）。
  */
-import type { EnemyPlacement, RewardType, StageType, ThemeId } from '../core/types';
+import type { AnchorRole, RewardType, StageType, ThemeId } from '../core/types';
 import type { WhiteboxMetadata } from './WhiteboxTypes';
 
 export interface P2 { x: number; z: number }
@@ -13,9 +13,12 @@ export interface AdventurePath { points: P2[]; width: number }
 /** Width/depth are world-axis footprints; yaw is a quarter turn. */
 export interface AdventureRock extends P2 { width: number; depth: number; height: number; yaw: number; ridge?: string }
 export interface AdventureSpawnAnchor extends P2 {
-  role: EnemyPlacement; lane: number;
+  /** 'auto' = Unity StationRole.Auto（不挑角色，选点不加不减） */
+  role: AnchorRole; lane: number;
   /** World height of a raised station (a deck top); omitted for arena-floor stations. */
   y?: number;
+  /** 高台站位（Unity SpawnAnchor.elevated，WaveRunner.anchorBonus）；场景文档还没导出这一项 */
+  elevated?: boolean;
 }
 export interface AdventureEncounter extends P2 {
   id: string;

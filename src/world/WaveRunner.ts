@@ -3,7 +3,7 @@
  * Failed selections wait; they never become a centre/nearest-point spawn.
  */
 import * as THREE from 'three';
-import type { ArenaInfo, EnemyPlacement, GameContext, WavePlan } from '../core/types';
+import type { AnchorRole, ArenaInfo, EnemyPlacement, GameContext, WavePlan } from '../core/types';
 import { getEnemyDef } from '../enemies/Registry';
 
 const WARN_LEAD = .8;
@@ -22,6 +22,21 @@ function defaultPlacement(id: string): EnemyPlacement {
   if (id === 'mortar') return 'artillery';
   if (id === 'shaman') return 'support';
   return id === 'archer' || id === 'wisp' ? 'ranged' : 'assault';
+}
+/** 适合高台站位的俯射角色（Unity SpawnStations.RaisedRole）：远程 / 狙击 / 炮手 */
+export function raisedRole(role: EnemyPlacement): boolean {
+  return role === 'ranged' || role === 'precision' || role === 'artillery';
+}
+/**
+ * 锚点加分（Unity SpawnStations.AnchorBonus）：锚点角色对 +8、不对 −3（Auto 锚点不加不减）；同 lane +2；
+ * 高台锚点对俯射角色 +3、其它角色 −1.5
+ */
+export function anchorBonus(anchorRole: AnchorRole, anchorLane: number, elevated: boolean, role: EnemyPlacement, lane: number): number {
+  let s = 0;
+  if (anchorRole !== 'auto') s += anchorRole === role ? 8 : -3;
+  if (anchorLane === lane) s += 2;
+  if (elevated) s += raisedRole(role) ? 3 : -1.5;
+  return s;
 }
 export function isBossId(id: string): boolean {
   const def = getEnemyDef(id);
@@ -123,7 +138,8 @@ export class WaveRunner {
     for (const e of w.entries) {
       const count = Number.isFinite(e.count) ? Math.max(0, Math.floor(e.count)) : 0;
       for (let k = 0; k < count; k++) mobs.push({
-        id: e.enemyId, elite: !!e.elite, affix: e.affix, placement: e.placement ?? defaultPlacement(e.enemyId),
+        // 条目没写角色（Unity StationRole.Auto）按敌人定义的站位（Unity SpawnStations.Resolve → EnemyDef.placementRole），网页旧敌人按 id 表
+        id: e.enemyId, elite: !!e.elite, affix: e.affix, placement: e.placement ?? getEnemyDef(e.enemyId)?.placement ?? defaultPlacement(e.enemyId),
         arrivalDelay: Number.isFinite(e.arrivalDelay) ? Math.max(0, e.arrivalDelay ?? 0) : 0, boss: isBossId(e.enemyId),
       });
     }
@@ -207,7 +223,12 @@ export class WaveRunner {
   private pickPoint(role: EnemyPlacement, lane: number, t: number, enemy: SpawnBody, selected: readonly Selected[] = []): THREE.Vector3 | null {
     const anchors = this.spawnRegion?.anchors ?? this.arena.spawnAnchors ?? [];
     const candidates: { point: THREE.Vector3; score: number }[] = [];
-    for (const a of anchors) candidates.push({ point: a.position, score: this.stationScore(a.position, role, lane, t, selected) + (a.role === role ? 8 : -3) + (a.lane === lane ? 2 : 0) });
+    const groundOnly = getEnemyDef(enemy.id)?.groundOnly === true;
+    for (const a of anchors) {
+      // 只站地面的敌人不占高台站位（Unity SpawnStations.Pick：elevated && GroundOnly 跳过）
+      if (a.elevated && groundOnly) continue;
+      candidates.push({ point: a.position, score: this.stationScore(a.position, role, lane, t, selected) + anchorBonus(a.role, a.lane, a.elevated === true, role, lane) });
+    }
     for (const point of this.arena.spawnPoints) candidates.push({ point, score: this.stationScore(point, role, lane, t, selected) });
     // Ground stations win first, while legacy rings still have role/direction scores.
     candidates.sort((a, b) => b.score - a.score);

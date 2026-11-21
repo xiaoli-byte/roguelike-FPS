@@ -1,4 +1,4 @@
-import type { StageNode } from '../core/types';
+import type { AnchorRole, EnemyPlacement, StageNode } from '../core/types';
 import { yawFromDir } from '../core/math';
 import type { LevelLayout, P2 } from './LevelTypes';
 import type { WhiteboxFight } from './WhiteboxEncounters';
@@ -9,7 +9,16 @@ import { CombatDirector } from './CombatDirector';
 import { ROADSIDE_REWARD_MULT } from '../progression/Economy';
 import { inStrongholdThreshold, objectiveDriven, type LevelObjectivesDoc } from './objectives/LevelObjectives';
 
-const ROLES = ['assault', 'flank', 'ranged', 'precision', 'artillery', 'support'] as const;
+/**
+ * 场景文档里的站位角色是 Unity StationRole 的枚举值（WebSceneExporter 写 (int)role）：0 = Auto，1–6 = 正面 / 侧袭 / 远程 / 狙击 / 炮手 / 辅助。
+ * 锚点的 Auto 不挑角色（WaveRunner.anchorBonus 不加不减）；编制条目的 Auto 按敌人自己的站位（WaveRunner 的 defaultPlacement）
+ */
+const ROLES = ['auto', 'assault', 'flank', 'ranged', 'precision', 'artillery', 'support'] as const;
+const anchorRole = (role: number): AnchorRole => ROLES[Number.isInteger(role) && role >= 0 && role < ROLES.length ? role : 0];
+const entryPlacement = (role: number): EnemyPlacement | undefined => {
+  const r = anchorRole(role);
+  return r === 'auto' ? undefined : r;
+};
 const BOSS_IDS: Readonly<Record<string, string>> = {
   boss_hanba: 'boss_hanba', boss_kunpeng: 'boss_kunpeng', boss_warlord: 'boss_warlord', boss_qilin: 'boss_qilin',
   boss_kui: 'boss_kui', boss_feilian: 'boss_feilian', boss_huashe: 'boss_huashe',
@@ -116,7 +125,7 @@ function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}
       label: wave.label, hint: wave.hint, triggerRemaining: wave.triggerRemaining, delay: wave.delay,
       entries: wave.entries.map(entry => ({
         enemyId: entry.enemy, count: entry.count, elite: entry.elite,
-        affix: entry.affix || undefined, placement: ROLES[Math.max(0, Math.min(ROLES.length - 1, entry.role))],
+        affix: entry.affix || undefined, placement: entryPlacement(entry.role),
         arrivalDelay: entry.arrivalDelay >= 0 ? entry.arrivalDelay : undefined,
       })),
     }));
@@ -126,7 +135,9 @@ function fightsFor(document: UnitySceneDocument, options: UnityFightOptions = {}
       id: site.title || `E${index}`, label: site.title, room: site.title || `E${index}`,
       final: false, optional: site.optional, position, facing,
       anchors: site.anchors.map(anchor => ({
-        x: anchor.position[0], y: anchor.position[1], z: anchor.position[2], lane: anchor.lane, role: ROLES[Math.max(0, Math.min(ROLES.length - 1, anchor.role))],
+        x: anchor.position[0], y: anchor.position[1], z: anchor.position[2], lane: anchor.lane, role: anchorRole(anchor.role),
+        // 高台站位：导出器（WebSceneExporter.Encounter）还没写 SpawnAnchor.elevated，导出后这里直接生效
+        ...(anchor.elevated ? { elevated: true } : {}),
       })),
       points: [position], radius: site.arenaRadius,
       contains: (point, halfWidth = 0) => Math.hypot(point.x - position.x, point.z - position.z) <= site.arenaRadius + halfWidth,

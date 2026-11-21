@@ -567,9 +567,9 @@ export interface EnemyDef {
   affixExclusions?: readonly string[];
   /** 冲锋型：遭遇里正面位只从场地远端进场、导演按 1.5 倍体量算（Unity charger），CombatDirector 读 */
   charger?: boolean;
-  /** 遭遇编排的站位角色（Unity placementRole）。// Unity 字段，运行时待 M4 接入（现在 WhiteboxEncounters / WaveRunner 各有一张按 id 的表） */
+  /** 遭遇编排的站位角色（Unity placementRole）：WaveRunner 给没写角色的条目（Unity Auto）用它；WhiteboxEncounters / Waves 仍各有一张按 id 的表 */
   placement?: EnemyPlacement;
-  /** 只站地面、不占高台站位（Unity groundOnly）。// Unity 字段，运行时待 M4 接入 */
+  /** 只站地面、不占高台站位（Unity groundOnly）：WaveRunner 选点时跳过高台锚点（elevated） */
   groundOnly?: boolean;
   /** 出手名额类别（Unity AttackTokens.Kind）。// Unity 字段，运行时待 M5 接入（现在各敌人类在代码里写死） */
   role?: 'melee' | 'ranged' | 'heavy';
@@ -672,6 +672,8 @@ export interface IEnemyManager extends System {
 
 /** Authored tactical station used by encounter plans and level spawn anchors. */
 export type EnemyPlacement = 'assault' | 'flank' | 'ranged' | 'precision' | 'artillery' | 'support';
+/** 锚点的站位角色：多一个 'auto'（Unity StationRole.Auto：不挑角色，选点时不加不减） */
+export type AnchorRole = EnemyPlacement | 'auto';
 
 export interface WaveEntry {
   enemyId: string;
@@ -816,7 +818,8 @@ export interface ArenaInfo {
   playerYaw: number;
   /** 敌人刷新点（地面） */
   spawnPoints: THREE.Vector3[];
-  spawnAnchors?: { position: THREE.Vector3; role: EnemyPlacement; lane: number }[];
+  /** elevated = 高台站位（Unity SpawnAnchor.elevated：俯射角色 +3、其它 −1.5，只站地面的敌人不上） */
+  spawnAnchors?: { position: THREE.Vector3; role: AnchorRole; lane: number; elevated?: boolean }[];
   /** 清关奖励宝箱位置 */
   rewardPoint: THREE.Vector3;
   /** 出口传送门位置（最多 3 个） */
