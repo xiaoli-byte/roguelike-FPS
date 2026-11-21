@@ -1280,6 +1280,7 @@ export class Qilin extends BossBrain implements DirectedBoss {
     this.clipSeconds = seconds;
     this.clipFade = fade;
     this.clipLoco = false;
+    this.clipActed = true;
     if (this.xuan) this.xuan.clipAnim = '';
     if (this.burn) this.burn.clipAnim = '';
   }
@@ -1291,7 +1292,7 @@ export class Qilin extends BossBrain implements DirectedBoss {
   }
 
   /**
-   * 片段跟着动作名走：act / setAnim 换了动作就切片段（idle 和没有片段的动作回 Locomotion；已经在 Locomotion 就不重播）。
+   * 片段跟着动作名走：act / setAnim 换了动作就切片段（招式 act('Locomotion', 0, fade) 照 PlayAct 按 fade 交叉淡入；片段播完回待机、没有片段的动作走 PlayLocomotion，已经在 Locomotion 就不重播）。
    * clipLoco：收招 / 转换结束 / 登场结束（Unity BossBrain.FinishMove / EndTransition / IntroDone 的 PlayLocomotion）——这之后没有新动作就回步态
    */
   private syncClip(f: Form, c: ClipPlayer): void {
@@ -1304,7 +1305,12 @@ export class Qilin extends BossBrain implements DirectedBoss {
     }
     if (f.clipAnim === this.anim) return;
     f.clipAnim = this.anim;
-    if (this.anim === 'idle' || !c.has(this.anim)) {
+    const acted = this.clipActed;
+    this.clipActed = false;
+    // 招式显式要的步态 act('Locomotion', 0, fade)：Unity PlayAct → Play("Locomotion", fade) = CrossFadeInFixedTime（奔驰起冲 0.05、缺省 0.1），
+    // 已经在步态里也照样交叉淡入一次；片段播完自己回待机走 PlayLocomotion（0.15）
+    if (acted && this.anim === 'idle') c.play('Locomotion', this.clipFade);
+    else if (this.anim === 'idle' || !c.has(this.anim)) {
       if (c.state !== 'Locomotion') c.playLocomotion();
     } else if (this.clipSeconds > 0.05) c.playTimed(this.anim, this.clipSeconds, this.clipFade);
     else c.play(this.anim, this.clipFade);
@@ -1313,6 +1319,8 @@ export class Qilin extends BossBrain implements DirectedBoss {
   private clipSeconds = 0;
   private clipFade = 0.1;
   private clipLoco = false;
+  /** act() 之后还没切过片段：这次换片段是招式显式要的（淡入秒数用 clipFade），不是片段播完回待机 */
+  private clipActed = false;
 
   protected override onMoveEnded(_m: BossMove): void {
     if (this.alive) this.clipLoco = true;

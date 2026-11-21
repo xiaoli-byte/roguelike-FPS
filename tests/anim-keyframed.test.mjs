@@ -594,6 +594,31 @@ test('火麒麟登场：现身播一次 tuck（拉伸到 3.2 s），跃出段不
   assert.equal(q.anim, 'rear');
 });
 
+test('火麒麟：招式显式要的步态按 Unity PlayAct 的淡入秒数（奔驰起冲 0.05、缺省 0.1，已在步态里也交叉淡入），片段播完 / 收招回步态才是 PlayLocomotion 的 0.15', () => {
+  const { q, calls, sync } = qilinClipRig();
+  q.act('scales', 1, 0.08);
+  sync();
+  q.act('Locomotion', 0);
+  sync();
+  q.act('Locomotion', 0, 0.05);
+  sync();
+  q.onMoveEnded(null);
+  sync();
+  assert.deepEqual(calls, ['timed scales 1 0.08', 'play Locomotion 0.1', 'play Locomotion 0.05'], '收招时已在步态：不重播');
+  calls.length = 0;
+  q.act('paw', 1, 0.08);
+  sync();
+  q.setAnim('idle');
+  sync();
+  assert.deepEqual(calls, ['timed paw 1 0.08', 'loco 0.15'], '片段时长到了回待机：PlayLocomotion');
+  calls.length = 0;
+  q.act('stomp', 0.5, 0.04);
+  sync();
+  q.onMoveEnded(null);
+  sync();
+  assert.deepEqual(calls, ['timed stomp 0.5 0.04', 'loco 0.15'], '收招（FinishMove 的 PlayLocomotion）');
+});
+
 // ───────────── 商人 ─────────────
 
 const { MerchantNpcs } = await import('../src/progression/loot/Merchant.ts');
