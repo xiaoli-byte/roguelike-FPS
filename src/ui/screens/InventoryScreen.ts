@@ -20,8 +20,12 @@ import { card, easeOut, gameModal, num, num1, renderScrollList, renderStatGrid, 
 
 export const INVENTORY_ID = 'inventory';
 export const BAG_TAB = '行囊', PET_TAB = '灵宠';
-/** 行囊属性页的关键属性（Unity StatGrid.KeyStats；其余偏离基础值的自动补上） */
-export const KEY_STATS: StatKey[] = ['maxHp', 'maxShield', 'damagePct', 'critChance', 'critDamagePct', 'fireRatePct', 'reloadSpeedPct', 'moveSpeed', 'skillHaste', 'damageReduction', 'dashCharges', 'luck'];
+/** 行囊属性页的关键属性（Unity StatGrid.KeyStats，14 项同序；其余偏离基础值的自动补上） */
+export const KEY_STATS: StatKey[] = [
+  'maxHp', 'maxShield', 'damageReduction', 'moveSpeed',
+  'damagePct', 'critChance', 'critDamagePct', 'fireRatePct', 'reloadSpeedPct',
+  'elementChancePct', 'elementDamagePct', 'skillDamagePct', 'skillHaste', 'luck',
+];
 
 export class InventoryScreen extends UIScreen {
   readonly id = INVENTORY_ID;
