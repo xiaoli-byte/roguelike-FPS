@@ -168,8 +168,12 @@ test('all 15 whitebox maps load real authored encounters and clear exactly once 
     const seen = new Set();
     for (const fight of fights) {
       if (seen.has(fight.id)) continue; seen.add(fight.id);
-      const initial = f.spawns.length; enter(f, fight); f.advance(5);
+      const initial = f.spawns.length, started = f.events.filter(e => e.name === 'encounter:started').length;
+      enter(f, fight); f.advance(5);
       verifySpawns(f, fight, initial);
+      // 据点开战（Unity EncounterSite.Activate → EncounterStarted，战鼓听它）：一场只报一次；首领战（Unity BossEncounter）不报
+      const boss = f.spawns.slice(initial).some(e => e.isBoss);
+      assert.equal(f.events.filter(e => e.name === 'encounter:started').length - started, boss ? 0 : 1, `${plan.id}/${fight.id}：据点开战报一次，首领战不报`);
       f.ctx.enemies.killAll(); f.advance(fight.final ? 5 : 2);
       assert.equal(f.director.exploration.encounters.find(e => e.id === fight.id).phase, 'cleared');
       if (!fight.final) assert.equal(f.ctx.run.stagesCleared, 0, 'route fights never settle the stage');

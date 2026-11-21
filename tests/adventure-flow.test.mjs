@@ -129,6 +129,7 @@ test('authored route encounters trigger once, serialize combat and never settle 
   assert.equal(first.phase, 'active'); assert.equal(director.exploration.phase, 'explore');
   advanceDirector(director, 3.5);
   assert.equal(spawnRecords.length, 3);
+  assert.deepEqual(events.filter(e => e.name === 'encounter:started').map(e => e.payload), [{ id: first.id, waves: 1 }], '据点开战只报一次（战鼓听它）');
   ctx.player.position.copy(second.position); director.update(3);
   assert.equal(second.phase, 'undiscovered'); assert.equal(spawnRecords.length, 3, 'no concurrent route battle');
   ctx.player.position.copy(director.exploration.objective); items[0].onInteract();

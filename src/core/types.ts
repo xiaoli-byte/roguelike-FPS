@@ -284,6 +284,8 @@ export interface GameEvents {
   'stage:loaded': { stage: StageNode };
   'stage:cleared': { stage: StageNode };
   'wave:started': { index: number; total: number };
+  /** 一处据点开战（Unity GameEvents.EncounterStarted ← EncounterSite.Activate）：一场遭遇只报一次（第一波开始时），首领战不报。id = 遭遇 id，整关一场的旧关卡为 null */
+  'encounter:started': { id: string | null; waves: number };
   'coins:changed': { coins: number; delta: number };
   'scroll:acquired': { id: string; stacks: number };
   'pickup': { kind: 'coin' | 'ammo' | 'health' | 'weapon' | 'essence'; amount: number };
@@ -900,6 +902,12 @@ export interface ScrollDef {
   tags?: string[];
   /** 只在特定英雄出现 */
   heroOnly?: string;
+  /**
+   * 高风险卷的两段描述（Unity LegendScroll.Text(收益, 代价)）：description = 收益 + 换行 + 「代价：…」；
+   * 想把代价另起一行标红（Unity DownsideLine，#ff6a50）的界面读这两段。没有代价的卷不填
+   */
+  upside?: string;
+  downside?: string;
   /**
    * 安装效果（stacks 为当前层数）。返回卸载函数。
    * 层数变化时系统会先调用旧的卸载函数再用新层数重新 apply。

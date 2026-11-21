@@ -200,8 +200,28 @@ export interface ScrollSpec {
   maxStacks: number;
   tags?: string[];
   heroOnly?: string;
+  /** 高风险卷的收益 / 代价两段（用 {@link legendText} 填，description 由它拼好） */
+  upside?: string;
+  downside?: string;
   /** 以层数 n（>=1）安装效果 */
   setup(s: ScrollScope, n: number, ctx: GameContext): void;
+}
+
+/** 传说主标签（Unity LegendScroll.LegendTag） */
+export const LEGEND_TAG = '传说';
+/** 高风险标签（Unity LegendScroll.RiskTag：卡面标签行显示「高风险」） */
+export const RISK_TAG = '高风险';
+/** 代价行的前缀与颜色（Unity LegendScroll.DownsidePrefix / DownsideHex，同 HUD「灵石不足」的红） */
+export const DOWNSIDE_PREFIX = '代价：';
+export const DOWNSIDE_COLOR = '#ff6a50';
+
+/**
+ * 传说卷的描述（Unity LegendScroll.Text）：收益一行；有代价时另起一行「代价：…」。
+ * description 是纯文本（不带 Unity 的 <color> 富文本）；要把代价行标红的界面读 upside / downside
+ */
+export function legendText(upside: string, downside?: string): Pick<ScrollSpec, 'description' | 'upside' | 'downside'> {
+  const cost = downside ? downside : undefined;
+  return { description: cost ? `${upside}\n${DOWNSIDE_PREFIX}${cost}` : upside, upside, downside: cost };
 }
 
 /** 由规格生成 ScrollDef：apply 创建作用域并返回其 dispose */
@@ -214,6 +234,8 @@ export function scroll(spec: ScrollSpec): ScrollDef {
     maxStacks: spec.maxStacks,
     tags: spec.tags,
     heroOnly: spec.heroOnly,
+    ...(spec.upside !== undefined ? { upside: spec.upside } : {}),
+    ...(spec.downside !== undefined ? { downside: spec.downside } : {}),
     apply(ctx: GameContext, stacks: number): () => void {
       const scope = new ScrollScope(ctx, spec.id);
       try {

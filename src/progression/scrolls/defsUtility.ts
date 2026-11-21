@@ -52,7 +52,7 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'spirit_ward', name: '灵盾', rarity: 0, maxStacks: 5, tags: ['生存', '护盾'],
+    id: 'spirit_ward', name: '灵盾', rarity: 0, maxStacks: 5, tags: ['护盾', '生存'],
     description: '护盾上限每层 +10（获得时同时补充 10 护盾）。',
     setup: (s, n, ctx) => {
       s.stat('maxShield', 10 * n);
@@ -60,8 +60,8 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'quick_recovery', name: '回春', rarity: 1, maxStacks: 3, tags: ['生存', '护盾'],
-    description: '护盾恢复延迟每层 −0.4 秒，护盾恢复速度每层 +8/秒。',
+    id: 'quick_recovery', name: '回春', rarity: 1, maxStacks: 3, tags: ['护盾', '生存'],
+    description: '护盾恢复延迟每层 −0.4 秒，恢复速度每层 +8/秒。',
     setup: (s, n) => {
       s.stat('shieldRegenDelay', -0.4 * n);
       s.stat('shieldRegenRate', 8 * n);
@@ -73,12 +73,12 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     setup: (s, n) => s.stat('lifesteal', 0.015 * n),
   }),
   scroll({
-    id: 'harvest', name: '收割', rarity: 1, maxStacks: 4, tags: ['生存', '击杀'],
+    id: 'harvest', name: '收割', rarity: 1, maxStacks: 4, tags: ['击杀', '生存'],
     description: '击杀敌人时每层回复 3 生命。',
     setup: (s, n) => s.stat('killHeal', 3 * n),
   }),
   scroll({
-    id: 'soul_siphon', name: '摄魂', rarity: 1, maxStacks: 4, tags: ['护盾', '击杀'],
+    id: 'soul_siphon', name: '摄魂', rarity: 1, maxStacks: 4, tags: ['击杀', '护盾'],
     description: '击杀敌人时每层回复 4 护盾。',
     setup: (s, n) => s.stat('killShield', 4 * n),
   }),
@@ -230,17 +230,18 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'war_drum', name: '战鼓', rarity: 3, maxStacks: 2, tags: ['射速', '机动'],
-    description: '每波敌人来袭时，8 秒内射速每层 +15%、移动速度每层 +0.5。',
+    description: '每处据点开战时，8 秒内射速每层 +15%、移动速度每层 +0.5。',
     setup: (s, n) => {
       const buff = s.buff([['fireRatePct', 0.15 * n], ['moveSpeed', 0.5 * n]]);
-      s.on('wave:started', () => buff.trigger(8));
+      // 同 Unity WarDrumScroll（OnEncounterStarted）：一处据点开战只响一次，后续波次不再续；首领战不算据点
+      s.on('encounter:started', () => buff.trigger(8));
     },
   }),
 
   // ───────────── 经济 ─────────────
   scroll({
     id: 'golden_touch', name: '点金手', rarity: 0, maxStacks: 3, tags: ['经济'],
-    description: '金币获取每层 +15%。',
+    description: '灵石获取每层 +15%。',
     setup: (s, n) => s.stat('coinGainPct', 0.15 * n),
   }),
   scroll({
@@ -255,7 +256,7 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'bounty', name: '悬赏令', rarity: 1, maxStacks: 3, tags: ['经济', '击杀'],
-    description: '击杀精英时每层额外掉落 12 金币，击杀首领时每层额外掉落 60 金币。',
+    description: '击杀精英时每层额外掉落 12 灵石，击杀首领时每层额外掉落 60 灵石。',
     setup: (s, n, ctx) => {
       s.onKill(({ enemy }) => {
         const amount = enemy.isBoss ? 60 * n : enemy.isElite ? 12 * n : 0;
@@ -265,7 +266,7 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'treasure_bowl', name: '聚宝盆', rarity: 2, maxStacks: 2, tags: ['经济'],
-    description: '每进入新关卡，获得每层 12 金币本金，另获得持有金币每层 5% 的利息（利息每层上限 30）。本金与利息上限随章节提高；每层都增加本金和利率。',
+    description: '每进入新关卡，获得每层 12 灵石本金，另获得持有灵石每层 5% 的利息（利息每层上限 30）。本金与利息上限随章节提高；每层都增加本金和利率。',
     setup: (s, n, ctx) => {
       s.on('stage:loaded', ({ stage }) => {
         if (!ctx.player.alive) return;
@@ -276,7 +277,7 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
         const gain = principal + interest;
         ctx.run.coins += gain;
         ctx.events.emit('coins:changed', { coins: ctx.run.coins, delta: gain });
-        ctx.ui.toast(`聚宝盆：本金 ${principal} + 利息 ${interest} = ${gain} 金币`, '#ffd54a');
+        ctx.ui.toast(`聚宝盆：本金 ${principal} + 利息 ${interest} = ${gain} 灵石`, '#ffd54a');
       });
     },
   }),

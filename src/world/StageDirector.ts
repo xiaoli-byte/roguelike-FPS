@@ -734,9 +734,14 @@ export class StageDirector implements IStageDirector {
     this.waveIndex = index;
     this.lastProgress = this.t;
     ctx.events.emit('wave:started', { index, total });
+    const runner = this.encounterWaves ?? this.waves;
+    // 据点开战（Unity EncounterSite.Activate → EncounterStarted，战鼓等秘卷听它）：一场只报一次；首领战（Unity BossEncounter）不报
+    if (index === 0 && !runner?.waves.some(w => w.entries.some(e => isBossId(e.enemyId)))) {
+      ctx.events.emit('encounter:started', { id: this.activeEncounterId, waves: total });
+    }
     ctx.audio.play('wave_start');
     if (!hasBoss) {
-      const plan = (this.encounterWaves ?? this.waves)?.waves[index];
+      const plan = runner?.waves[index];
       ctx.ui.toast(plan?.label ? `${plan.label} · 第 ${index + 1} / ${total} 波`
         : total > 1 && index === total - 1 ? `第 ${index + 1} / ${total} 波 · 最后一波` : `第 ${index + 1} / ${total} 波`);
     }

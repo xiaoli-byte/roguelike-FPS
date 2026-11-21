@@ -97,12 +97,8 @@ const delta = (before, after) => Object.fromEntries(Object.keys(before).filter(k
 
 // ───────────── 定义表 ─────────────
 
-/** 已知的文案 / 标签差异（数值一致，写法不同）：见文件末尾的 todo。这里只允许这些卷在这些字段上不同 */
-const KNOWN = {
-  golden_touch: ['description'], bounty: ['description'], treasure_bowl: ['description'], war_drum: ['description'], quick_recovery: ['description', 'tags'],
-  spirit_ward: ['tags'], harvest: ['tags'], soul_siphon: ['tags'],
-  glass_cannon: ['tags'], berserk_blood: ['tags'], gambler: ['tags'], midas_heart: ['tags'], blood_pact: ['tags'], overdrive: ['tags'],
-};
+/** 已知的文案 / 标签差异：M13 对出来的货币叫法 / 战鼓 / 回春 / 标签顺序 / 高风险卷都已照 Unity 改齐，现在一张都不许不同 */
+const KNOWN = {};
 
 test('118 张秘卷：id 集合同 Unity（Unity 多一张「破绽」，见 todo）', () => {
   assert.equal(SCROLL_DEFS.length, 118);
@@ -129,7 +125,7 @@ test('每张秘卷的名字 / 稀有度 / 层数上限 / 标签 / 专属英雄 /
     if (bad.length) issues[id] = bad.map(b => b.split('：')[0]).sort();
     for (const b of bad) if (!/^(tags|description)$/.test(b)) assert.fail(`${id} ${b}`);
   }
-  assert.deepEqual(issues, KNOWN, '只有已知的那几张在标签 / 描述的写法上不同（改齐了就把 KNOWN 和文件末尾的 todo 一起删掉）');
+  assert.deepEqual(issues, KNOWN, '标签 / 描述逐字同 Unity');
   assert.ok(descriptions >= 95, `逐字比过描述的有 ${descriptions} 张`);
 });
 
@@ -417,8 +413,82 @@ test('元素来源：燎 / 鼯自带；磐要靠带元素的武器、元素词�
 // ───────────── 不一致清单（不改实现）─────────────
 
 test.todo('Unity 多一张进攻卷「破绽」weak_point（精良，3 层，弱点伤害每层 +15%，Stat.WeakpointDamagePct）：网页的 defsOffense.ts 没有这张，Stats 也没有 weakpointDamagePct 这个属性（unity/…/Offense/OffenseStatScrolls.cs）');
-test.todo('货币叫法：Unity 的点金手 / 赏金 / 聚宝盆 / 贪婪之心写「灵石」，网页写「金币」（src/progression/scrolls/defsUtility.ts、defsLegend.ts）');
-test.todo('战鼓的描述：Unity「每处据点开战时」，网页「每波敌人来袭时」（网页还是按波次触发，Unity 按据点开战；src/progression/scrolls/defsUtility.ts）');
-test.todo('回春的描述：Unity「恢复速度每层 +8/秒」，网页「护盾恢复速度每层 +8/秒」');
-test.todo('功能卷的标签顺序：Unity 把主标签放第一位（灵盾 / 回春「护盾, 生存」、收割「击杀, 生存」、摄魂「击杀, 护盾」），网页是「生存, 护盾」「生存, 击杀」「护盾, 击杀」——Unity 的图鉴 / 卡面按第一个标签分类');
-test.todo('高风险传说卷：Unity 的标签是「高风险」、代价另起一行用红色富文本（LegendScroll.Text(收益, 代价)）；网页的标签是「风险」，描述是一句「…，但…」（数值相同）');
+
+// ───────────── M13 不一致的修正（原来的 todo：货币叫法、战鼓、回春、标签顺序、高风险传说卷）─────────────
+
+test('货币叫法同 Unity（D13）：点金手 / 悬赏令 / 聚宝盆 / 贪婪之心写「灵石」，秘卷定义里不再出现「金币」', async () => {
+  const want = {
+    golden_touch: '灵石获取每层 +15%。',
+    bounty: '击杀精英时每层额外掉落 12 灵石，击杀首领时每层额外掉落 60 灵石。',
+    treasure_bowl: '每进入新关卡，获得每层 12 灵石本金，另获得持有灵石每层 5% 的利息（利息每层上限 30）。本金与利息上限随章节提高；每层都增加本金和利率。',
+  };
+  for (const [id, text] of Object.entries(want)) {
+    assert.equal(unity.get(id).description, text, `${id}：Unity 原文`);
+    assert.equal(tsById.get(id).description, text, id);
+  }
+  assert.equal(tsById.get('midas_heart').upside, unity.get('midas_heart').upside);
+  assert.equal(tsById.get('midas_heart').downside, unity.get('midas_heart').downside);
+  assert.match(tsById.get('midas_heart').description, /灵石获取 \+50%；每持有 100 灵石/);
+  for (const d of SCROLL_DEFS) assert.doesNotMatch(`${d.description}${d.upside ?? ''}${d.downside ?? ''}`, /金币/, `${d.id}：局内货币叫灵石`);
+  // 聚宝盆的提示同 Unity：「聚宝盆：本金 P + 利息 I = G 灵石」
+  assert.match(sources.get('Utility/Economy.cs'), /Toast\(\$"聚宝盆：本金 \{principal\} \+ 利息 \{interest\} = \{gain\} 灵石"/);
+  const r = await rig({ chapter: 1 });
+  r.ctx.run.coins = 200;
+  r.give('treasure_bowl');
+  r.ctx.events.emit('stage:loaded', { stage: { chapter: 1 } });
+  // 本金 round(12 × 1.35) = 16，利息 min(round(30 × 1.35) = 41, floor(200 × 5%) = 10) = 10
+  assert.deepEqual(r.toasts.at(-1)?.[0], '聚宝盆：本金 16 + 利息 10 = 26 灵石');
+  assert.equal(r.ctx.run.coins, 226);
+});
+
+test('战鼓同 Unity WarDrumScroll：「每处据点开战时」，听据点开战（encounter:started），不随每一波续上', async () => {
+  assert.equal(tsById.get('war_drum').description, unity.get('war_drum').description);
+  assert.equal(unity.get('war_drum').description, '每处据点开战时，8 秒内射速每层 +15%、移动速度每层 +0.5。');
+  assert.match(unity.get('war_drum').body, /s\.OnEncounterStarted\(_ => ScrollKit\.ProcBuff\(s, buff, Duration\)\)/);
+  const mobility = sources.get('Utility/Mobility.cs'), c = csConsts(mobility.slice(mobility.indexOf('class WarDrumScroll')));
+  assert.deepEqual([c.Duration, c.FireRatePerStack, c.MoveSpeedPerStack], [8, 0.15, 0.5]);
+  // Unity ScrollUtilityTests.WarDrumBuffsFireRateAndSpeedWhenAnEncounterStarts：2 层 → 射速 +30%、移速 +1，8 s 后撤掉
+  const r = await rig(), s = r.ctx.player.stats;
+  const base = { fire: s.get('fireRatePct'), move: s.get('moveSpeed') };
+  r.give('war_drum', 2);
+  r.ctx.events.emit('wave:started', { index: 1, total: 3 });
+  assert.equal(s.get('fireRatePct'), base.fire, '后续波次开始不触发（Unity 只在据点开战时响）');
+  r.ctx.events.emit('encounter:started', { id: '烽燧前哨', waves: 3 });
+  near(assert, s.get('fireRatePct') - base.fire, 0.3, 1e-9);
+  near(assert, s.get('moveSpeed') - base.move, 1, 1e-9);
+  r.advance(4);
+  r.ctx.events.emit('wave:started', { index: 1, total: 3 });
+  r.advance(4.01);
+  near(assert, s.get('fireRatePct'), base.fire, 1e-9, '8 s 后撤掉，中途来的下一波不续时长');
+  near(assert, s.get('moveSpeed'), base.move, 1e-9);
+});
+
+test('回春的描述与功能卷的标签顺序同 Unity：主标签在前（灵盾 / 回春「护盾, 生存」、收割「击杀, 生存」、摄魂「击杀, 护盾」）', () => {
+  assert.equal(tsById.get('quick_recovery').description, '护盾恢复延迟每层 −0.4 秒，恢复速度每层 +8/秒。');
+  assert.equal(tsById.get('quick_recovery').description, unity.get('quick_recovery').description);
+  const want = { spirit_ward: ['护盾', '生存'], quick_recovery: ['护盾', '生存'], harvest: ['击杀', '生存'], soul_siphon: ['击杀', '护盾'] };
+  for (const [id, tags] of Object.entries(want)) {
+    assert.deepEqual(unity.get(id).tags, tags, `${id}：Unity 原文`);
+    assert.deepEqual(tsById.get(id).tags, tags, id);
+  }
+});
+
+test('高风险传说卷同 Unity LegendScroll：标签「高风险」，描述分收益 / 代价两段，代价另起一行「代价：…」（界面标红读 downside）', () => {
+  assert.equal(Kit.RISK_TAG, TAG_CONST.RiskTag);
+  assert.equal(Kit.LEGEND_TAG, TAG_CONST.LegendTag);
+  assert.equal(Kit.DOWNSIDE_PREFIX, legendBase.match(/DownsidePrefix = "([^"]+)"/)[1]);
+  assert.equal(Kit.DOWNSIDE_COLOR, `#${legendBase.match(/DownsideHex = "([0-9a-f]{6})"/)[1]}`);
+  assert.match(legendBase, /description = this\.downside == null \? upside : upside \+ "\\n" \+ DownsideLine\(this\.downside\);/);
+  const risky = ['glass_cannon', 'berserk_blood', 'gambler', 'midas_heart', 'blood_pact', 'overdrive'];
+  for (const d of groups.legend.filter(x => !x.heroOnly)) {
+    const u = unity.get(d.id);
+    assert.equal(d.upside, u.upside, `${d.id}：收益同 Unity`);
+    assert.equal(d.downside, u.downside, `${d.id}：代价同 Unity`);
+    assert.equal(risky.includes(d.id), d.downside !== undefined, `${d.id}：高风险的六卷有代价，万剑归宗没有`);
+    assert.equal(d.tags.includes('高风险'), risky.includes(d.id), `${d.id}：标签`);
+    assert.ok(!d.tags.includes('风险'), `${d.id}：传说卷不用旧的「风险」标签`);
+    assert.equal(d.description, d.downside ? `${d.upside}\n代价：${d.downside}` : d.upside, `${d.id}：描述 = 收益（+ 换行 + 代价行）`);
+  }
+  assert.deepEqual(Kit.legendText('收益。', '代价。'), { description: '收益。\n代价：代价。', upside: '收益。', downside: '代价。' });
+  assert.deepEqual(Kit.legendText('收益。'), { description: '收益。', upside: '收益。', downside: undefined });
+});

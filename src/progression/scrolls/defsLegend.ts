@@ -1,32 +1,35 @@
 import * as THREE from 'three';
 import type { ScrollDef } from '../../core/types';
-import { bodyCenter, isDirectWeaponHit, playerHpFrac, scroll } from './ScrollKit';
+import { bodyCenter, isDirectWeaponHit, LEGEND_TAG, legendText, playerHpFrac, RISK_TAG, scroll } from './ScrollKit';
 
-/** 秘卷：传说（高风险高回报）与英雄专属 */
+/**
+ * 秘卷：传说（高风险高回报）与英雄专属。
+ * 同 Unity Legendary.cs：高风险的六卷带「高风险」标签，描述分收益 / 代价两段（legendText = LegendScroll.Text）；万剑归宗没有代价。局内货币叫灵石
+ */
 
 const _from = new THREE.Vector3();
 const _to = new THREE.Vector3();
 
 export const LEGEND_SCROLLS: ScrollDef[] = [
   scroll({
-    id: 'glass_cannon', name: '玉碎', rarity: 4, maxStacks: 1, tags: ['传说', '伤害', '风险'],
-    description: '武器伤害 +55%，但受到的伤害 +35%。',
+    id: 'glass_cannon', name: '玉碎', rarity: 4, maxStacks: 1, tags: [LEGEND_TAG, '伤害', RISK_TAG],
+    ...legendText('武器伤害 +55%。', '受到的伤害 +35%。'),
     setup: (s) => {
       s.stat('damagePct', 0.55);
       s.incoming(() => 1.35);
     },
   }),
   scroll({
-    id: 'berserk_blood', name: '狂血', rarity: 4, maxStacks: 1, tags: ['传说', '伤害', '风险'],
-    description: '每损失 1% 生命，伤害 +0.7%（最多 +63%）；但护盾恢复延迟 +2 秒。',
+    id: 'berserk_blood', name: '狂血', rarity: 4, maxStacks: 1, tags: [LEGEND_TAG, '伤害', RISK_TAG],
+    ...legendText('每损失 1% 生命，伤害 +0.7%（最多 +63%）。', '护盾恢复延迟 +2 秒。'),
     setup: (s, _n, ctx) => {
       s.stat('shieldRegenDelay', 2);
       s.outgoing(() => 1 + Math.min(0.63, (1 - playerHpFrac(ctx)) * 0.7));
     },
   }),
   scroll({
-    id: 'gambler', name: '赌徒之心', rarity: 4, maxStacks: 1, tags: ['传说', '暴击', '风险'],
-    description: '暴击率 +25%，暴击伤害 +50%；但武器的非暴击伤害 −30%。',
+    id: 'gambler', name: '赌徒之心', rarity: 4, maxStacks: 1, tags: [LEGEND_TAG, '暴击', RISK_TAG],
+    ...legendText('暴击率 +25%，暴击伤害 +50%。', '武器的非暴击伤害 −30%。'),
     setup: (s) => {
       s.stat('critChance', 0.25);
       s.stat('critDamagePct', 0.5);
@@ -34,8 +37,8 @@ export const LEGEND_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'thousand_blades', name: '万剑归宗', rarity: 4, maxStacks: 1, tags: ['传说', '命中'],
-    description: '武器命中时 15% 概率射出一柄追踪飞剑，造成该次伤害 120% 的伤害。',
+    id: 'thousand_blades', name: '万剑归宗', rarity: 4, maxStacks: 1, tags: [LEGEND_TAG, '命中'],
+    ...legendText('武器命中时 15% 概率射出一柄追踪飞剑，造成该次伤害 120% 的伤害。'),
     setup: (s, _n, ctx) => {
       s.on('enemy:damaged', ({ enemy, result }) => {
         if (!isDirectWeaponHit(result) || result.dealt <= 0 || result.killed) return;
@@ -59,8 +62,8 @@ export const LEGEND_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'midas_heart', name: '贪婪之心', rarity: 4, maxStacks: 1, tags: ['传说', '经济', '风险'],
-    description: '金币获取 +50%；每持有 100 金币，武器伤害 +4%（最多 +40%）；但受到伤害时损失 3 金币（每 0.5 秒最多一次）。',
+    id: 'midas_heart', name: '贪婪之心', rarity: 4, maxStacks: 1, tags: [LEGEND_TAG, '经济', RISK_TAG],
+    ...legendText('灵石获取 +50%；每持有 100 灵石，武器伤害 +4%（最多 +40%）。', '受到伤害时损失 3 灵石（每 0.5 秒最多一次）。'),
     setup: (s, _n, ctx) => {
       s.stat('coinGainPct', 0.5);
       s.outgoing((_e, req) => (req.source === 'weapon' ? 1 + Math.min(0.4, Math.floor(ctx.run.coins / 100) * 0.04) : 1));
@@ -73,8 +76,8 @@ export const LEGEND_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'blood_pact', name: '血契', rarity: 4, maxStacks: 1, tags: ['传说', '生存', '风险'],
-    description: '吸血 +4%，击杀回复 6 生命；但护盾上限 −40。',
+    id: 'blood_pact', name: '血契', rarity: 4, maxStacks: 1, tags: [LEGEND_TAG, '生存', RISK_TAG],
+    ...legendText('吸血 +4%，击杀回复 6 生命。', '护盾上限 −40。'),
     setup: (s) => {
       s.stat('lifesteal', 0.04);
       s.stat('killHeal', 6);
@@ -82,8 +85,8 @@ export const LEGEND_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'overdrive', name: '超载', rarity: 4, maxStacks: 1, tags: ['传说', '射速', '风险'],
-    description: '射速 +35%，弹匣容量 +50%；但换弹速度 −30%。',
+    id: 'overdrive', name: '超载', rarity: 4, maxStacks: 1, tags: [LEGEND_TAG, '射速', RISK_TAG],
+    ...legendText('射速 +35%，弹匣容量 +50%。', '换弹速度 −30%。'),
     setup: (s) => {
       s.stat('fireRatePct', 0.35);
       s.stat('magSizePct', 0.5);
