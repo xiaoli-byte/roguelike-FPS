@@ -208,7 +208,7 @@ const STAGE_TYPE_NAMES: Record<StageType, string> = {
   combat: '战斗', elite: '精英战', treasure: '宝藏', shop: '商店', boss: '首领战',
 };
 const REWARD_NAMES: Record<RewardKey, string> = {
-  scroll: '秘卷', weapon: '武器', coins: '灵石', heal: '治疗', upgrade: '强化', none: '无',
+  scroll: '秘卷', weapon: '武器', coins: '灵石', heal: '治疗', upgrade: '强化', pet: '灵宠', none: '无',
 };
 
 /** 读场景清单（备选图的 pool 标记在里面）；返回 null = 读不到，按 UnityStages.ts 走 */
@@ -316,6 +316,6 @@ export class RunPlanner implements IRunPlan {
 
   rewardLabel(reward: RewardType): string {
     // 带参数的武器奖励（'weapon:min=1'，Unity WeaponReward）按种类叫「武器」（同 rewardRules.rewardKey；这里不 import 它，测试按模块名打桩）
-    return REWARD_NAMES[(reward.startsWith('weapon:') ? 'weapon' : reward) as RewardKey] ?? '无';
+    return REWARD_NAMES[(reward.startsWith('weapon:') ? 'weapon' : reward.startsWith('pet:') ? 'pet' : reward) as RewardKey] ?? '无';
   }
 }

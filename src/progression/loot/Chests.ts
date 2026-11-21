@@ -208,6 +208,9 @@ export class ChestManager {
         return '回复 50% 生命，生命上限 +10';
       case 'upgrade':
         return '当前武器免费强化一级';
+      case 'pet':
+        // Unity Chest.Line："pet" => 灵兽封印：结契一只灵宠
+        return '灵兽封印：结契一只灵宠';
       default:
         return '空空如也';
     }

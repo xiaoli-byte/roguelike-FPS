@@ -21,6 +21,7 @@ import * as Suspend from '../progression/RunSuspend';
 import { ScrollSystem } from '../progression/Scrolls';
 import { LootSystem } from '../progression/Loot';
 import { InteractionSystem } from '../progression/Interaction';
+import { PetSystem } from '../pets/PetSystem';
 import { HEROES } from '../player/Heroes';
 import { PlayerController } from '../player/PlayerController';
 import { WeaponSystem } from '../weapons/WeaponSystem';
@@ -83,6 +84,8 @@ export class Game implements IGame {
   private inspectionView: (() => THREE.Camera | null) | null = null;
   /** 后处理栈（Unity 场景、画质中 / 高时接管渲染；src/render/PostStack.ts） */
   private readonly post: PostStack;
+  /** 灵宠（M9，src/pets）：不在 GameContext 契约里，挂在 ctx.pets 上供调试 */
+  private readonly pets: PetSystem;
 
   /** Separate inspection camera; the real player's camera and controls stay intact. */
   setInspectionView(view: (() => THREE.Camera | null) | null): void { this.inspectionView = view; }
@@ -173,14 +176,15 @@ export class Game implements IGame {
     c.scrolls = new ScrollSystem(this.ctx);
     c.loot = new LootSystem(this.ctx);
     c.interact = new InteractionSystem(this.ctx);
+    c.pets = this.pets = new PetSystem(this.ctx);
 
     registerStandardEnemies();
     registerBosses();
 
     const x = this.ctx;
     // 玩法系统（仅 playing 时更新），顺序即更新顺序
-    this.updateOrder = [x.player, x.weapons, x.enemies, x.projectiles, x.combat, x.loot, x.interact, x.stage, x.scrolls];
-    const all: System[] = [x.meta, x.audio, x.fx, x.ui, x.nav as unknown as System, x.stage, x.combat, x.projectiles, x.enemies, x.weapons, x.player, x.scrolls, x.loot, x.interact];
+    this.updateOrder = [x.player, x.weapons, x.enemies, x.projectiles, x.combat, x.loot, x.interact, this.pets, x.stage, x.scrolls];
+    const all: System[] = [x.meta, x.audio, x.fx, x.ui, x.nav as unknown as System, x.stage, x.combat, x.projectiles, x.enemies, x.weapons, x.player, x.scrolls, x.loot, x.interact, this.pets];
     for (const s of all) s.init?.();
 
     input.onLockChange = (locked) => {
@@ -686,6 +690,7 @@ export class Game implements IGame {
     ctx.projectiles.clear?.();
     ctx.loot.clear?.();
     ctx.interact.clear?.();
+    this.pets.clear();
     ctx.combat.clear?.();
     ctx.fx.clear?.();
     ctx.tasks.clear(full);

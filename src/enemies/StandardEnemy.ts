@@ -762,14 +762,14 @@ export abstract class StandardEnemy extends EnemyBase {
     }
   }
 
-  /** 与玩家的高度差是否在范围内 */
+  /** 与玩家（被嘲讽时：灵宠诱饵）的高度差是否在范围内 */
   protected verticalReach(maxDy: number): boolean {
-    return Math.abs(this.ctx.player.position.y - this.position.y) <= maxDy;
+    return Math.abs(this.targetPos.y - this.position.y) <= maxDy;
   }
 
-  /** 朝向与「指向玩家」方向的夹角余弦（水平） */
+  /** 朝向与「指向玩家」（被嘲讽时：诱饵）方向的夹角余弦（水平） */
   protected facingDot(): number {
-    const p = this.ctx.player.position;
+    const p = this.targetPos;
     const dx = p.x - this.position.x;
     const dz = p.z - this.position.z;
     const d = Math.hypot(dx, dz);
@@ -861,8 +861,9 @@ export abstract class StandardEnemy extends EnemyBase {
    */
   protected approachPlayer(speed: number, arrive: number): boolean {
     const ctx = this.ctx;
-    const pl = ctx.player.position;
-    if (this.flying) return this.navigate(pl, speed, arrive);
+    const pl = this.targetPos;
+    // 被嘲讽：直接走向灵宠诱饵（诱饵就在玩家身边，不按玩家所在层找路）
+    if (this.flying || this.taunted) return this.navigate(pl, speed, arrive);
     const floorY = ctx.stage.arena?.floorY ?? 0;
     const them = playerLevel(ctx, floorY);
     const me = this.spot;
@@ -920,7 +921,7 @@ export abstract class StandardEnemy extends EnemyBase {
    * 远程单位保持距离：太远靠近（导航），太近后撤带横移，区间内横移。
    */
   protected keepRange(minD: number, maxD: number, speed: number, strafeScale = 0.55): void {
-    const p = this.ctx.player.position;
+    const p = this.targetPos;
     const dx = p.x - this.position.x;
     const dz = p.z - this.position.z;
     const d = Math.hypot(dx, dz);
@@ -994,7 +995,7 @@ export abstract class StandardEnemy extends EnemyBase {
         this.vantageTimer = 0;
       }
     } else {
-      this.navigate(this.ctx.player.position, speed, Math.min(minR, 4));
+      this.navigate(this.targetPos, speed, Math.min(minR, 4));
     }
     return true;
   }
