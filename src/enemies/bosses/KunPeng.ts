@@ -803,6 +803,11 @@ export class KunPeng extends BossBrain implements DirectedBoss {
     if (this.alive) this.formClips?.playLocomotion();
   }
 
+  /** Unity BossBrain.EndStagger(resume)：硬直（鹏俯冲撞墙的 crash）结束 → PlayLocomotion */
+  protected override onStaggerEnded(): void {
+    this.formClips?.playLocomotion();
+  }
+
   protected override onAnimEvent(evt: string): void {
     // 化鹏长啸的展翅（鹏 roar 片段第 50 帧的 spread）：转换演出里由片段驱动展翅爆发；没有片段时 3.6 s 兜底（transitionTick）
     if (evt === 'spread' && this.transitioning && this.isPeng) this.spreadBurst();

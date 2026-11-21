@@ -637,6 +637,8 @@ export abstract class BossBrain extends BossBase implements MoveHost, SummonHost
     this.setTaken('stagger', null);
     if (!resume || !this.alive) return;
     this.restLeft = Math.min(this.restLeft, 0.6);
+    // Unity EndStagger 在这里 PlayLocomotion：回步态交给子类（片段播放器在子类的模型层）
+    this.guard('onStaggerEnded', () => this.onStaggerEnded());
   }
 
   private onBreakBarBroke(bar: BreakBar, count: number): void {
@@ -787,6 +789,8 @@ export abstract class BossBrain extends BossBase implements MoveHost, SummonHost
   protected onMark(_id: string): void {}
   protected onEnrage(_reason: string): void {}
   protected onStaggered(_seconds: number): void {}
+  /** 硬直正常结束、接着打（转换 / 倒下打断的不调）：Unity EndStagger 的 PlayLocomotion 时刻 */
+  protected onStaggerEnded(): void {}
   protected onBreak(_count: number): void {}
   protected onMoveStarted(_m: BossMove): void {}
   protected onMoveEnded(_m: BossMove): void {}

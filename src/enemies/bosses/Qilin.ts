@@ -1293,15 +1293,18 @@ export class Qilin extends BossBrain implements DirectedBoss {
 
   /**
    * 片段跟着动作名走：act / setAnim 换了动作就切片段（招式 act('Locomotion', 0, fade) 照 PlayAct 按 fade 交叉淡入；片段播完回待机、没有片段的动作走 PlayLocomotion，已经在 Locomotion 就不重播）。
-   * clipLoco：收招 / 转换结束 / 登场结束（Unity BossBrain.FinishMove / EndTransition / IntroDone 的 PlayLocomotion）——这之后没有新动作就回步态
+   * clipLoco：收招 / 转换结束 / 登场结束 / 硬直结束（Unity BossBrain.FinishMove / EndTransition / IntroDone / EndStagger 的 PlayLocomotion）
    */
   private syncClip(f: Form, c: ClipPlayer): void {
     if (this.clipLoco) {
+      // Unity PlayLocomotion() = Play("Locomotion", 0.15f) → CrossFadeInFixedTime，不看当前在播什么：已经在步态里也自我过渡一次、步态循环从头淡入；
+      // 同一帧里先 act 再收招（m.Finish() 的 OnEnd 在 FinishMove 的 PlayLocomotion 之前）也是步态盖掉招式要的动作
       this.clipLoco = false;
-      if (f.clipAnim === this.anim) {
-        if (c.state !== 'Locomotion') c.playLocomotion();
-        return;
-      }
+      this.clipActed = false;
+      this.clipSeconds = 0;
+      f.clipAnim = this.anim;
+      c.playLocomotion();
+      return;
     }
     if (f.clipAnim === this.anim) return;
     f.clipAnim = this.anim;
@@ -1322,8 +1325,14 @@ export class Qilin extends BossBrain implements DirectedBoss {
   /** act() 之后还没切过片段：这次换片段是招式显式要的（淡入秒数用 clipFade），不是片段播完回待机 */
   private clipActed = false;
 
-  protected override onMoveEnded(_m: BossMove): void {
-    if (this.alive) this.clipLoco = true;
+  /** 收招回步态只在正常收招时（Unity FinishMove 有 PlayLocomotion，AbortMove 没有——打断后紧接着的转换 / 硬直 / 新招式自己播动作） */
+  protected override onMoveEnded(m: BossMove): void {
+    if (this.alive && !m.cancelled) this.clipLoco = true;
+  }
+
+  /** 硬直结束（Unity BossBrain.EndStagger(resume)：PlayLocomotion） */
+  protected override onStaggerEnded(): void {
+    this.clipLoco = true;
   }
 
   protected override animate(dt: number): void {

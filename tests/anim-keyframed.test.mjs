@@ -530,15 +530,46 @@ test('鲲鹏：释放帧顿帧与 Unity 同帧同秒数；顿帧把片段压到 
   assert.equal(proc.holdDt(dt), dt);
 });
 
-test('鲲鹏 / 火麒麟：收招、转换结束回步态（Unity FinishMove / EndTransition 的 PlayLocomotion）；鹏倒下播手 K death，火麒麟倒下片段 97% 冻住', () => {
-  const kp = bossSrc('KunPeng.ts'), ql = bossSrc('Qilin.ts');
+test('鲲鹏 / 火麒麟：收招、转换结束、硬直结束回步态（Unity FinishMove / EndTransition / EndStagger 的 PlayLocomotion）；鹏倒下播手 K death，火麒麟倒下片段 97% 冻住', () => {
+  const kp = bossSrc('KunPeng.ts'), ql = bossSrc('Qilin.ts'), fw = bossSrc('framework/BossBrain.ts');
   assert.match(kp, /onMoveEnded\(_m: BossMove\): void \{\s*if \(this\.alive\) this\.formClips\?\.playLocomotion\(\);/);
   assert.match(kp, /onTransitionEnd\(_phase: BossPhaseDef\): void \{[\s\S]{0,120}this\.formClips\?\.playLocomotion\(\);/);
+  assert.match(kp, /onStaggerEnded\(\): void \{\s*this\.formClips\?\.playLocomotion\(\);/);
+  // 框架：硬直正常结束（resume、还活着）才调 onStaggerEnded；转换 / 倒下打断的 endStagger(false) 不调（同 Unity EndStagger 的 if (!resume || Dead) return）
+  assert.match(fw, /private endStagger\(resume: boolean\): void \{[\s\S]{0,120}if \(!resume \|\| !this\.alive\) return;[\s\S]{0,200}this\.onStaggerEnded\(\)/);
   assert.match(kp, /evt === 'spread' && this\.transitioning && this\.isPeng\) this\.spreadBurst\(\)/);
   assert.match(kp, /this\.deathKeyframed = !this\.deathKun && !!c\?\.ready && c\.has\('death'\);\s*if \(this\.deathKeyframed\) c!\.play\('death', 0\.08\);/);
   for (const ev of ['wingBreak', 'flail', 'land', 'lastCry']) assert.match(kp, new RegExp(`case '${ev}':`));
-  assert.match(ql, /onMoveEnded\(_m: BossMove\): void \{\s*if \(this\.alive\) this\.clipLoco = true;/);
+  assert.match(ql, /onMoveEnded\(m: BossMove\): void \{\s*if \(this\.alive && !m\.cancelled\) this\.clipLoco = true;/);
+  assert.match(ql, /onStaggerEnded\(\): void \{\s*this\.clipLoco = true;/);
+  for (const hook of ['onIntroEnd', 'onTransitionEnd']) assert.match(ql, new RegExp(`${hook}\\([^)]*\\): void \\{\\s*this\\.clipLoco = true;`), `${hook} 回步态`);
   assert.match(ql, /fc\.frozen = t >= 0\.97;/);
+});
+
+test('首领回步态的时刻照 Unity BossBrain：IntroTick 结束 / FinishMove / EndTransition / EndStagger 无条件 PlayLocomotion，AbortMove 不播；PlayLocomotion = Play("Locomotion", 0.15f) 直接 CrossFadeInFixedTime', { skip: !existsSync(QL_UNITY) && '没有 unity/ 目录' }, () => {
+  const brain = readFileSync(join(ROOT, 'unity/Assets/Game/Scripts/Bosses/BossBrain.cs'), 'utf8');
+  const body = (sig) => {
+    const i = brain.indexOf(sig);
+    assert.ok(i >= 0, `BossBrain.cs 里没有 ${sig}`);
+    let depth = 0, j = brain.indexOf('{', i);
+    for (let k = j; k < brain.length; k++) {
+      if (brain[k] === '{') depth++;
+      else if (brain[k] === '}' && --depth === 0) return brain.slice(j, k + 1);
+    }
+    return '';
+  };
+  for (const sig of ['void FinishMove()', 'void EndTransition()', 'void EndStagger(bool resume)']) {
+    const b = body(sig);
+    assert.match(b, /\n\s*PlayLocomotion\(\);/, `${sig} 无条件 PlayLocomotion`);
+    assert.doesNotMatch(b, /if \([^)]*(state|Locomotion)[^)]*\)\s*PlayLocomotion/, `${sig} 不看当前状态`);
+  }
+  const introDone = brain.indexOf('IntroDone = true;');
+  assert.ok(introDone >= 0);
+  assert.match(brain.slice(introDone, brain.indexOf('SetState(RestState);', introDone)), /\n\s*PlayLocomotion\(\);/, '登场结束无条件 PlayLocomotion');
+  assert.doesNotMatch(body('public void AbortMove()'), /PlayLocomotion|PlayAct/, 'AbortMove 不回步态');
+  const ai = readFileSync(join(AI, 'EnemyAI.cs'), 'utf8');
+  assert.match(ai, /protected void PlayLocomotion\(\) => Play\("Locomotion", 0\.15f\);/);
+  assert.match(ai, /protected void Play\(string animState, float fade = 0\.08f\)\s*\{[^}]*anim\.CrossFadeInFixedTime\(animState, fade\);[^}]*\}/);
 });
 
 test('火麒麟：招式的片段与交叉淡入秒数照 Unity Brain.PlayAct（缺省 0.1，鳞刃 0.08 / 0.03、扑踏 0.04 / 0.08、扑掌 0.08、奔驰回步态 0.05）', { skip: !existsSync(QL_UNITY) && '没有 unity/ 目录' }, () => {
@@ -594,7 +625,8 @@ test('火麒麟登场：现身播一次 tuck（拉伸到 3.2 s），跃出段不
   assert.equal(q.anim, 'rear');
 });
 
-test('火麒麟：招式显式要的步态按 Unity PlayAct 的淡入秒数（奔驰起冲 0.05、缺省 0.1，已在步态里也交叉淡入），片段播完 / 收招回步态才是 PlayLocomotion 的 0.15', () => {
+test('火麒麟：招式显式要的步态按 Unity PlayAct 的淡入秒数（奔驰起冲 0.05、缺省 0.1，已在步态里也交叉淡入），收招 / 转换 / 登场 / 硬直结束照 PlayLocomotion 无条件 0.15 自我过渡，打断不回步态', () => {
+  const finished = { cancelled: false }, aborted = { cancelled: true };
   const { q, calls, sync } = qilinClipRig();
   q.act('scales', 1, 0.08);
   sync();
@@ -602,9 +634,11 @@ test('火麒麟：招式显式要的步态按 Unity PlayAct 的淡入秒数（�
   sync();
   q.act('Locomotion', 0, 0.05);
   sync();
-  q.onMoveEnded(null);
+  q.onMoveEnded(finished);
   sync();
-  assert.deepEqual(calls, ['timed scales 1 0.08', 'play Locomotion 0.1', 'play Locomotion 0.05'], '收招时已在步态：不重播');
+  sync();
+  assert.deepEqual(calls, ['timed scales 1 0.08', 'play Locomotion 0.1', 'play Locomotion 0.05', 'loco 0.15'],
+    '收招时已在步态：照 Unity FinishMove 的 PlayLocomotion 照样交叉淡入一次（自我过渡），只一次');
   calls.length = 0;
   q.act('paw', 1, 0.08);
   sync();
@@ -614,9 +648,34 @@ test('火麒麟：招式显式要的步态按 Unity PlayAct 的淡入秒数（�
   calls.length = 0;
   q.act('stomp', 0.5, 0.04);
   sync();
-  q.onMoveEnded(null);
+  q.onMoveEnded(finished);
   sync();
-  assert.deepEqual(calls, ['timed stomp 0.5 0.04', 'loco 0.15'], '收招（FinishMove 的 PlayLocomotion）');
+  q.setAnim('idle');
+  sync();
+  assert.deepEqual(calls, ['timed stomp 0.5 0.04', 'loco 0.15'], '收招（FinishMove 的 PlayLocomotion）；之后片段时长到了回待机不再重播');
+  calls.length = 0;
+  // 同一帧里招式先 act 再收招（Unity FinishMove：m.Finish() 的 OnEnd 在 PlayLocomotion 之前）——步态盖掉
+  q.act('Locomotion', 0, 0.05);
+  q.onMoveEnded(finished);
+  sync();
+  assert.deepEqual(calls, ['loco 0.15'], '同帧 act + 收招：最后的 PlayLocomotion 生效');
+  calls.length = 0;
+  // 打断（Unity AbortMove 不 PlayLocomotion）：接着的硬直 / 转换动作自己播
+  q.act('drink', 2);
+  sync();
+  q.onMoveEnded(aborted);
+  sync();
+  assert.deepEqual(calls, ['timed drink 2 0.1'], '打断不回步态');
+  q.act('stun', 4);
+  sync();
+  q.onStaggerEnded();
+  sync();
+  assert.deepEqual(calls, ['timed drink 2 0.1', 'timed stun 4 0.1', 'loco 0.15'], '硬直结束（EndStagger 的 PlayLocomotion）');
+  calls.length = 0;
+  // 转换 / 登场结束：已经在步态里也自我过渡
+  q.clipLoco = true;
+  sync();
+  assert.deepEqual(calls, ['loco 0.15'], 'EndTransition / IntroDone 的 PlayLocomotion 不看当前状态');
 });
 
 test('BossGaitAnimTests（火麒麟）：跃起的起跳帧 = 饮熔的蹲伏比例、落地接饮熔；倒下停在瘫倒之后、撑起之前；焚身踏云步态 16 m/s 循环、前后蹄踏云相隔半个周期', () => {
