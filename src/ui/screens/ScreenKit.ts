@@ -8,6 +8,7 @@ import type { GameContext, HeroDef, StatKey } from '../../core/types';
 import { RARITY_NAMES } from '../../core/types';
 import { STAT_INFO } from '../../core/Stats';
 import { bindButton, fillStacks } from '../dom';
+import { DOWNSIDE_PREFIX, splitDownside } from '../ScreenData';
 import { heroGlyph, fmtStat } from '../labels';
 import { addClasses, el, formatNum, text } from '../toolkit/el';
 import { UIFontRole } from '../toolkit/UIFonts';
@@ -147,8 +148,14 @@ export function renderScrollList(ctx: GameContext, parent: HTMLElement, detailed
     const name = text('sf-owned__name', head, def.name, detailed ? UIFontRole.Title : UIFontRole.Body);
     name.style.color = css(lerpColor(rc, [1, 1, 1, 1], 0.25));
     text('sf-owned__stacks', head, def.maxStacks > 1 ? `${stacks} / ${def.maxStacks} 层` : RARITY_NAMES[def.rarity] ?? '', UIFontRole.Number);
-    if (detailed) text('sf-owned__desc', row, fillStacks(def.description, stacks));
-    else row.title = fillStacks(def.description, stacks);
+    if (!detailed) {
+      row.title = fillStacks(def.description, stacks);
+      continue;
+    }
+    // 收益照常、代价另起一行红字「代价：…」（Unity ScrollList.Render：SplitDownside → sf-owned__desc + sf-owned__down）
+    const { upside, downside } = splitDownside(def, stacks);
+    text('sf-owned__desc', row, upside, UIFontRole.Body, true);
+    if (downside) text('sf-owned__down', row, DOWNSIDE_PREFIX + downside);
   }
   return owned.length;
 }

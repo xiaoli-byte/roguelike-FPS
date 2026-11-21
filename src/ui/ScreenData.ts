@@ -218,6 +218,9 @@ export interface ScrollLike {
   maxStacks: number;
   tags?: string[];
   heroOnly?: string;
+  /** 高风险卷的收益 / 代价两段（ScrollDef.upside / downside，Unity LegendScroll.upside / downside） */
+  upside?: string;
+  downside?: string;
 }
 
 export interface ScrollCardView {
@@ -229,26 +232,49 @@ export interface ScrollCardView {
   /** 竖排稀有度印（每字一行） */
   rarityVertical: string;
   upside: string;
-  /** 代价行（没有为空串） */
+  /** 代价行（没有为空串；不带「代价：」前缀，卡面前面另放「代价」小签） */
   downside: string;
   /** 层数菱形：owned / next / empty；唯一卷为空表 */
   pips: ('owned' | 'next' | 'empty')[];
   count: string;
 }
 
-const DOWNSIDE = /[（(]?\s*代价[:：]\s*([^）)。\n]+)[）)]?[。.]?/;
+/** 代价行的前缀与颜色（Unity LegendScroll.DownsidePrefix / DownsideHex；同 progression/scrolls/ScrollKit 的 DOWNSIDE_PREFIX / DOWNSIDE_COLOR） */
+export const DOWNSIDE_PREFIX = '代价：';
+export const DOWNSIDE_COLOR = '#ff6a50';
 
-/** 说明按层数填好，再拆成收益和代价（描述里「代价：…」那一句单独成朱字行） */
-export function splitDownside(description: string, stacks: number): { upside: string; downside: string } {
-  const full = description.replace(/\{n\}/g, String(stacks));
-  const m = DOWNSIDE.exec(full);
+type ScrollText = Pick<ScrollLike, 'description' | 'upside' | 'downside'>;
+
+/** 按层数填一段模板（同秘卷描述的 {n} 占位，dom.fillStacks） */
+const fillN = (template: string | undefined, stacks: number): string => (template ?? '').replace(/\{n\}/g, String(stacks));
+
+/** 描述里另起一行的「代价：…」（legendText 拼出来的格式；Unity 描述里是红色富文本 <color=#ff6a50>代价：…</color>） */
+const DOWNSIDE_LINE = /(?:^|\n)[ \t]*代价[:：][ \t]*([^\n]*)/;
+
+/**
+ * 说明拆成收益和代价（Unity ScrollChoiceScreen.SplitDownside）：高风险卷（有 downside）用 upside / downside 两段按层数填；
+ * 别的卷从描述里摘出「代价：…」那一行（去掉前缀），没有就整段是收益
+ */
+export function splitDownside(def: ScrollText, stacks: number): { upside: string; downside: string } {
+  if (def.downside) return { upside: fillN(def.upside, stacks), downside: fillN(def.downside, stacks) };
+  const full = fillN(def.description, stacks);
+  const m = DOWNSIDE_LINE.exec(full);
   if (!m) return { upside: full, downside: '' };
   return { upside: (full.slice(0, m.index) + full.slice(m.index + m[0].length)).trim(), downside: m[1].trim() };
 }
 
+/**
+ * 整段说明的富文本（Unity ScrollDef.Describe(n)：收益 + 换行 + <color=#ff6a50>代价：…</color>），给图鉴这类直接显示整段说明的富文本标签；
+ * 没有代价的卷就是填好层数的描述
+ */
+export function scrollRichText(def: ScrollText, stacks: number): string {
+  const { upside, downside } = splitDownside(def, stacks);
+  return downside ? `${upside}\n<color=${DOWNSIDE_COLOR}>${DOWNSIDE_PREFIX}${downside}</color>` : upside;
+}
+
 export function scrollCardView(def: ScrollLike, owned: number, rarityName: string): ScrollCardView {
   const cur = Math.max(0, owned), max = Math.max(1, def.maxStacks), next = Math.min(max, cur + 1);
-  const { upside, downside } = splitDownside(def.description, next);
+  const { upside, downside } = splitDownside(def, next);
   const pips: ('owned' | 'next' | 'empty')[] = [];
   if (max > 1) for (let k = 0; k < max; k++) pips.push(k < cur ? 'owned' : k < next ? 'next' : 'empty');
   return {

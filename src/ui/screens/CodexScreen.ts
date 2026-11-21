@@ -11,11 +11,11 @@
 import type { EnemyDef, GameContext, ScrollDef, WeaponInstance } from '../../core/types';
 import { ELEMENT_NAMES, RARITY_NAMES } from '../../core/types';
 import type { PetDefView } from '../PetData';
-import { chapterTitle } from '../ScreenData';
+import { chapterTitle, scrollRichText } from '../ScreenData';
 import { type Codex, type CodexCatalog, type CodexEntry, type CodexKind, CODEX_COLUMNS, CODEX_KINDS, CODEX_PER_PAGE, KIND_NAMES, describeEnemy, lockedHint, pageCount, wrapPage } from '../codex/Codex';
 import type { CodexThumbs } from '../codex/CodexThumbs';
-import { fillStacks, sfx } from '../dom';
-import { el, show, text, toggle } from '../toolkit/el';
+import { sfx } from '../dom';
+import { el, setText, show, text, toggle } from '../toolkit/el';
 import { UIFontRole, warmup } from '../toolkit/UIFonts';
 import { type BlockState, UIScreen } from '../toolkit/UIRouter';
 import { CinnabarHi, GoldHi, Paper3, type RGBA, css, elementColor, rarityColor, rgb, withAlpha } from '../toolkit/UITheme';
@@ -329,8 +329,9 @@ export class CodexScreen extends UIScreen {
     }
   }
 
+  /** 说明是富文本标签（同 Unity dDesc）：秘卷的代价行按 <color> 标红 */
   private setDesc(s: string): void {
-    this.dDesc.textContent = s;
+    setText(this.dDesc, s);
   }
 
   private chip(label: string, color: RGBA | null): void {
@@ -376,10 +377,11 @@ export class CodexScreen extends UIScreen {
     this.chip(RARITY_NAMES[s.rarity] ?? '', rarityColor(s.rarity));
     if (s.maxStacks > 1) this.chip(`最多 ${s.maxStacks} 层`, null);
     if (s.heroOnly) this.chip(`${this.ctx.heroes.find((h) => h.id === s.heroOnly)?.name ?? s.heroOnly} 专属`, GoldHi);
-    const one = fillStacks(s.description, 1);
+    // Unity DescribeScroll：dDesc = Describe(1)、叠满一层另列 Describe(maxStacks)；高风险卷的代价行是红色富文本
+    const one = scrollRichText(s, 1);
     this.setDesc(one);
     if (s.maxStacks > 1) {
-      const full = fillStacks(s.description, s.maxStacks);
+      const full = scrollRichText(s, s.maxStacks);
       if (full && full !== one) this.trait(full, `叠满 ${s.maxStacks} 层`);
     }
   }
