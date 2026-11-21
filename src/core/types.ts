@@ -233,6 +233,25 @@ export interface RunState {
   route?: string[];
   /** 调试局（?debugStage= 直接进关）：不排路线、不刷游荡怪（Unity RunState.dev） */
   dev?: boolean;
+  /** 开局时锁定的天赋（id → 等级，只记 > 0 的；Unity RunState.talents）：整局（含暂离后继续征程）按它生效。缺省 = 按档里当前的天赋 */
+  talents?: Record<string, number>;
+  /** 进关快照里的秘卷层数（按获得顺序）、武器、生命 / 护盾（< 0 或缺省 = 满）：只在续玩档 / 进关快照里有（core/RunSuspend.ts），运行中的局以各系统为准 */
+  scrolls?: Record<string, number>;
+  weapons?: WeaponSave[];
+  hp?: number;
+  shield?: number;
+}
+
+/** 一把枪的快照（续玩档；Unity WeaponSave）：定义 id、品质、强化、元素、弹药、是不是手上那把、词条 */
+export interface WeaponSave {
+  id: string;
+  rarity: number;
+  level: number;
+  element: string;
+  mag: number;
+  reserve: number;
+  active?: boolean;
+  affixes?: unknown[];
 }
 
 export interface RunSummary {
@@ -263,8 +282,12 @@ export interface Settings {
   /** 太阳阴影贴图精度：低 1024 / 中 2048 / 高 4096（画质为「低」时不渲染阴影） */
   shadowQuality: 'low' | 'medium' | 'high';
   damageNumbers: boolean;
-  screenShake: number;     // 0..1
+  screenShake: number;     // 0..1.5（Unity GameSettings.ScreenShake）
   invertY: boolean;
+  /** 玩法屏效强度 0..1（低血量 / 受击 / 冲刺 / 慢动作的暗角、色差、去饱和；render/GameplayVolumes）。缺省 1 */
+  screenEffects?: number;
+  /** 帧率上限（core/QualityTiers 的 FRAME_CAPS 下标：30 / 60 / 90 / 120 / 144 / 165 / 240 / 不限）。缺省 7 = 不限 */
+  frameCap?: number;
 }
 
 // ───────────────────────────── 事件 ─────────────────────────────
@@ -1038,7 +1061,7 @@ export interface IRunPlan {
   themeFor(chapter: number): ThemeId;
   stageLabel(node: StageNode): string;
   rewardLabel(reward: RewardType): string;
-  /** 开局后、进第一关前：等场景清单读到（备选图要它），必要时按清单重排这一局的路线 */
+  /** 开局后、进第一关前：等场景清单读到（备选图要它），必要时按清单重排这一局的路线（开局时没排、之后生涯局数变了的按现在的生涯补排） */
   prepare?(run: RunState): Promise<void>;
 }
 
@@ -1156,6 +1179,14 @@ export interface IGame {
   closeModal(): void;
   applySettings(): void;
   saveSettings(): void;
+  /** 续玩（M11d，Unity MenuFlow.Suspended）：主菜单「继续征程」的那一局（没有 / 坏档为 null）；stageCode = 槽位编号「1-2」 */
+  suspendedRun?(): { heroId: string; stageCode: string; stageLabel: string; savedAt: string; time: number; coins: number } | null;
+  /** 读续玩档从那一关开头接着打；没有档 / 坏档提示并返回 false（Unity MenuFlow.ResumeRun） */
+  continueRun?(): boolean;
+  /** 暂停菜单「返回主菜单」（Unity MenuFlow.Suspend）：能暂离（盘上有这一关的续玩档）就不结算，否则按失败结算；然后回主菜单。返回是否暂离 */
+  suspendRun?(): boolean;
+  /** 这一局现在能不能暂离（Unity RunSuspend.CanSuspend） */
+  canSuspend?(): boolean;
 }
 
 // ───────────────────────────── 上下文 ─────────────────────────────

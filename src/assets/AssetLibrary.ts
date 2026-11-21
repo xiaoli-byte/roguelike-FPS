@@ -140,11 +140,19 @@ class Library {
 
 /**
  * 画质设置为「高」（读不到设置时按默认的高画质）。直接读存档，不引入 core/settings：
- * 本模块在测试里会被单独加载（tests/asset-variant.test.mjs），键名与 core/settings.ts 的 SETTINGS_KEY 一致。
+ * 本模块在测试里会被单独加载（tests/asset-variant.test.mjs）。M11d 起设置存在 spiritfire.save/settings.json 的「settings」段
+ * （core/GameSettings.ts：entries 里只有和默认值不一样的项，quality 是下标 0 / 1 / 2，缺省 2 = 高）；
+ * 还没有这个文件时读老键 gunflame.settings.v1（第一次启动时由 GameSettings 导入）。
  */
 function highQuality(): boolean {
   try {
-    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('gunflame.settings.v1') : null;
+    if (typeof localStorage === 'undefined') return true;
+    const file = localStorage.getItem('spiritfire.save/settings.json');
+    if (file) {
+      const entries = (JSON.parse(file) as { sections?: { settings?: { data?: { entries?: { key?: string; value?: number }[] } } } }).sections?.settings?.data?.entries;
+      if (Array.isArray(entries)) return (entries.find(e => e?.key === 'quality')?.value ?? 2) >= 1.5;
+    }
+    const raw = localStorage.getItem('gunflame.settings.v1');
     const quality = raw ? (JSON.parse(raw) as { quality?: string }).quality : undefined;
     return (quality ?? 'high') === 'high';
   } catch {

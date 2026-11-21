@@ -22,6 +22,7 @@ import { UIFontRole, warmup } from '../toolkit/UIFonts';
 import { UIIcon } from '../toolkit/UIIcons';
 import { type BlockState, UIScreen } from '../toolkit/UIRouter';
 import { Bad, Gold, css, elementColor, fadeRight, lerpColor, paint, rgb, withAlpha } from '../toolkit/UITheme';
+import { startNewRun } from './MainMenuScreen';
 import { btn, card, crest, easeOut, icon, num, num1, scroll } from './ScreenKit';
 
 export const HERO_SELECT_SCREEN_ID = 'hero-select';
@@ -251,7 +252,8 @@ export class HeroSelectScreen extends UIScreen {
     } catch {
       /* ignore */
     }
-    this.ctx.game.startRun(h.id);
+    // 有未完成的征程（续玩档）时先确认放弃它（Unity MenuFlow.StartRun 的确认框）
+    startNewRun(this.ctx, this.router, h.id);
   }
 
   override onNavigate(dx: number, dy: number): boolean {

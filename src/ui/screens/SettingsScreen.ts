@@ -4,11 +4,12 @@
  *   分组 → 页签（操作 / 画面 / 声音，按登记顺序），数值 → 滑条（方向键左右直接调）+ 读数，开关 → 拨钮，多选一 → 分段按钮。
  *   页签：点击，或 Q / E 切换。改动即时生效、自动保存（ctx.game.applySettings / saveSettings）。不挡游戏（叠在暂停上时由暂停挡着）。
  * 「按键」页（改键表，KeyBinds）：每个动作一行，点键位框后按下新键（Esc 取消）；「恢复默认」在本页恢复全部默认键位。
- * 网页差异：Unity 的显示模式 / 分辨率 / 垂直同步 / 帧率上限 / 屏幕特效 / 手柄瞄准辅助在网页没有对应设置，不列；
+ * 网页差异：Unity 的显示模式 / 分辨率 / 垂直同步 / 手柄瞄准辅助在网页没有对应设置，不列；
  * 网页独有「阴影精度」放在画面页；改键页的手柄一列写「—」（没有手柄输入），鼠标键与暂停键写死（core/Input、Game）只显示不改。
  */
 import type { GameContext, Settings } from '../../core/types';
 import { DEFAULT_SETTINGS } from '../../core/settings';
+import { GAME_SETTINGS, settingDisplay } from '../../core/GameSettings';
 import { sfx } from '../dom';
 import { BIND_DEFS, type BindId, type KeyBinds, keyName } from '../KeyBinds';
 import { el, text, toggle } from '../toolkit/el';
@@ -23,28 +24,22 @@ export const KEYS_TAB = '按键';
 type Def =
   | { key: keyof Settings; label: string; group: string; type: 'float'; min: number; max: number; step: number; display?: (v: number) => string }
   | { key: keyof Settings; label: string; group: string; type: 'bool' }
-  | { key: keyof Settings; label: string; group: string; type: 'choice'; options: string[]; values: string[] };
+  | { key: keyof Settings; label: string; group: string; type: 'choice'; options: string[]; values: (string | number)[] };
 
-const pct = (v: number) => `${Math.round(v * 100)}%`;
-
-/** 设置表（登记顺序 = 页签顺序与页内顺序，同 Unity GameSettings） */
-export const SETTING_DEFS: Def[] = [
-  { key: 'sensitivity', label: '鼠标灵敏度', group: '操作', type: 'float', min: 0.2, max: 3, step: 0.05, display: (v) => `${v.toFixed(2)}×` },
-  { key: 'invertY', label: '反转 Y 轴', group: '操作', type: 'bool' },
-  { key: 'fov', label: '视野', group: '画面', type: 'float', min: 60, max: 110, step: 1, display: (v) => `${Math.round(v)}°` },
-  { key: 'quality', label: '画质', group: '画面', type: 'choice', options: ['低', '中', '高'], values: ['low', 'medium', 'high'] },
-  { key: 'shadowQuality', label: '阴影精度', group: '画面', type: 'choice', options: ['低', '中', '高'], values: ['low', 'medium', 'high'] },
-  { key: 'screenShake', label: '震屏强度', group: '画面', type: 'float', min: 0, max: 1, step: 0.05, display: pct },
-  { key: 'damageNumbers', label: '伤害数字', group: '画面', type: 'bool' },
-  { key: 'masterVolume', label: '主音量', group: '声音', type: 'float', min: 0, max: 1, step: 0.05, display: pct },
-  { key: 'musicVolume', label: '音乐', group: '声音', type: 'float', min: 0, max: 1, step: 0.05, display: pct },
-  { key: 'sfxVolume', label: '音效', group: '声音', type: 'float', min: 0, max: 1, step: 0.05, display: pct },
-  { key: 'ambienceVolume', label: '环境音', group: '声音', type: 'float', min: 0, max: 1, step: 0.05, display: pct },
-  { key: 'uiVolume', label: '界面音', group: '声音', type: 'float', min: 0, max: 1, step: 0.05, display: pct },
-];
+/**
+ * 设置表（登记顺序 = 页签顺序与页内顺序，同 Unity GameSettings）：数据在 core/GameSettings.ts 的 GAME_SETTINGS
+ * （键 / 范围 / 步长 / 默认值照 Unity；M11d 补了帧率上限、屏幕特效，震屏上限 1.5），这里只转成控件用的形状
+ */
+export const SETTING_DEFS: Def[] = GAME_SETTINGS.map((d): Def => {
+  const { key, label, group } = d;
+  if (d.type === 'float') return { key, label, group, type: 'float', min: d.min, max: d.max, step: d.step, display: (v) => settingDisplay(d, v) };
+  if (d.type === 'bool') return { key, label, group, type: 'bool' };
+  const options = [...(d.options ?? [])];
+  return { key, label, group, type: 'choice', options, values: d.values ? [...d.values] : options.map((_, i) => i) };
+});
 
 const NOTES: Record<string, string> = {
-  画面: '画质：高 = 原生分辨率 + 全部效果；中 / 低降渲染比例、阴影和粒子。画质为「低」时不渲染阴影。',
+  画面: '画质：高 = 原生分辨率 + 全部效果；中 / 低降渲染比例、阴影和粒子。画质为「低」时不渲染阴影。帧率上限在后台标签页不生效（浏览器自己限）。',
   操作: '方向键移动焦点，左右键直接调滑条；Q / E 切换页签。',
 };
 

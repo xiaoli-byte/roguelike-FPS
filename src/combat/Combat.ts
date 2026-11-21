@@ -28,7 +28,6 @@ import {
 import { forcedWeakpoint } from './PetContract';
 import { BLOCK_BELOW, type HitZoneSet } from './HitZone';
 import { ChargeSystem } from './Charge';
-import { HitStop } from './HitStop';
 import { STATUS_DOT_ELEMENT, STATUS_POWER_CAP, StatusSystem } from './Status';
 import { HitFeedback } from './Feedback';
 import { blastPlayer, explosionShake, lineClear } from './Blast';
@@ -89,15 +88,12 @@ export class Combat implements ICombat, ReactionHost {
 
   /** 第四章「带电」（Unity Charge / ChargeState）：账本、死亡传电、噼啪；反应判定经 isCharged 读 */
   readonly charge: ChargeSystem;
-  /** 顿帧（Unity HitStop）：击杀 / 重暴击 / 直接命中引发的反应压一下时间 */
-  readonly hitStop: HitStop;
 
   constructor(readonly ctx: GameContext) {
     this.status = new StatusSystem(ctx, this);
     this.feedback = new HitFeedback(ctx);
     this.reactions = new ReactionSystem(ctx, this, this.status, this.feedback);
     this.charge = new ChargeSystem(ctx);
-    this.hitStop = new HitStop(ctx);
   }
 
   // ───────────── 生命周期 ─────────────
@@ -109,7 +105,6 @@ export class Combat implements ICombat, ReactionHost {
     this.status.update(dt);
     this.charge.update(dt);
     this.feedback.flush();
-    this.hitStop.update();
   }
 
   /** 换关 / 新开一局：清掉反应队列 / 熔池、状态内部数据与待刷新的反馈。修饰器由安装方自行移除，这里不动。 */
@@ -117,7 +112,6 @@ export class Combat implements ICombat, ReactionHost {
     this.reactions.clear();
     this.status.clear();
     this.charge.clear();
-    this.hitStop.release();
     this.feedback.clear();
     this.immuneAt = new WeakMap();
     this.explodeDepth = 0;

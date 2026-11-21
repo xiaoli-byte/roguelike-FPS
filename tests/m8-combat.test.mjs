@@ -1,4 +1,4 @@
-// M8 战斗契约 / 带电 / 顿帧 / 命中区 / 弹体对照（Unity Combat/、Core/HitStop.cs、Enemies/HitZone.cs + EnemyBody.cs → 网页 src/combat/）。
+// M8 战斗契约 / 带电 / 命中区 / 弹体对照（Unity Combat/、Enemies/HitZone.cs + EnemyBody.cs → 网页 src/combat/）。
 // 常量直接从 C# 源码里读出来比，改了一边另一边就红；行为断言照 Unity EditMode（Ch4FoundationTests 的带电、CombatPipelineTests 的灵宠 / 弱点、
 // ProjectileTests 的挡弹区与弱点规则）。
 import assert from 'node:assert/strict';
@@ -34,8 +34,6 @@ const mathUrl = await ts('../src/core/math.ts');
 const PET = await import(await ts('../src/combat/PetContract.ts'));
 const ZONE = await import(await ts('../src/combat/HitZone.ts'));
 const CHARGE = await import(await ts('../src/combat/Charge.ts'));
-const arbiterStub = data(`export const TimePriority = { HitStop: 0 }; export function arbiterFor() { return { request: () => ({ scale: 1, priority: 0, live: false, dispose() {} }) }; }`);
-const STOP = await import(await ts('../src/combat/HitStop.ts', { '../enemies/bosses/framework/TimeScaleArbiter': arbiterStub }));
 const CALC = await import(await ts('../src/combat/DamageCalc.ts', { '../core/types': data('export const ELEMENT_COLORS = {};'), '../core/math': mathUrl }).catch(() => null) ?? data('export {}')).catch(() => ({}));
 
 // ───────────── 灵宠伤害源 / 弱点（契约） ─────────────
@@ -331,62 +329,7 @@ test('charge counts as shock for reactions (Unity GameReactionEnv.Has)', async (
   assert.match(await src('enemies/plateau/PlateauFoeAdapter.ts'), /foeCharged\(\): boolean/);
 });
 
-// ───────────── 顿帧（Core/HitStop.cs） ─────────────
-
-test('hit-stop: constants match Unity HitStop.cs', async () => {
-  const c = csConsts(await cs('Core/HitStop.cs'));
-  for (const k of ['DefaultScale', 'MaxStop', 'MinGap', 'BudgetMax', 'BudgetRate', 'MinUseful', 'KillStop', 'EliteKillStop', 'BossKillStop', 'CritStop', 'ReactionStop', 'HeavyCritFraction']) {
-    near(STOP.HITSTOP[k], c[k], k);
-  }
-  for (const s of ['weapon', 'skill', 'melee', 'explosion', 'scroll']) assert.ok(STOP.byPlayer(s), s);
-  for (const s of ['status', 'pet']) assert.ok(!STOP.byPlayer(s), `${s} 不顿帧`);
-});
-
-test('hit-stop: no stacking, minimum gap, budget bucket and extension cap', () => {
-  let now = 100;
-  const handles = [];
-  const arbiter = { request: (owner, scale) => { const h = { scale, priority: 0, live: true, dispose() { this.live = false; } }; handles.push(h); return h; } };
-  let can = true;
-  const core = new STOP.HitStopCore(arbiter, () => now, () => can);
-  assert.equal(core.request(0.035), true);
-  assert.ok(core.active);
-  near(core.budget, 0.15 - 0.035);
-  // 进行中再来一个：只延长到较晚的结束
-  now += 0.01;
-  assert.equal(core.request(0.07), true);
-  now += 0.06;
-  core.update();
-  assert.ok(core.active, '延长到 0.08 s');
-  now += 0.01;
-  now += 0.01;
-  core.update();
-  assert.ok(!core.active);
-  // 间隔不足 0.12 s 的小顿帧被忽略；明显更重的（≥ 2 倍）可以插队
-  now = 200;
-  core.update();
-  const b0 = core.budget;
-  assert.equal(core.request(0.03), true);
-  now += 0.04;
-  core.update();
-  assert.equal(core.request(0.03), false, '两次开始至少隔 0.12 s');
-  assert.equal(core.request(0.07), true, '长度至少是上一次的两倍可以插队');
-  assert.ok(core.budget < b0);
-  // 预算：打空后不够 12 ms 就不顿；每秒回 0.075
-  now = 300;
-  core.update();
-  core.release();
-  while (core.request(0.2)) { now += 0.5; core.update(); core.release(); if (now > 400) break; }
-  now += 0.01;
-  assert.ok(core.budget <= 0.15);
-  // 不能开始（暂停 / 时间被别人压着 / 玩家阵亡）
-  now = 1000;
-  can = false;
-  assert.equal(core.request(0.05), false);
-  can = true;
-  assert.equal(core.request(1), true);
-  near(0.15 - core.budget, 0.15, '单次封顶 0.2 s、再受预算 0.15 s 限制');
-  assert.equal(core.request(0), false);
-});
+// 顿帧（Core/HitStop.cs）只有一份：M11d 的 src/core/HitStop.ts（Game 接事件），对照在 tests/unity-core-time.test.mjs
 
 // ───────────── 弹体：挡弹区、落地滚动 ─────────────
 

@@ -265,8 +265,11 @@ export class RunPlanner implements IRunPlan {
       if (!run.dev || specOf(run, run.stage)?.map !== debug.map) beginRun(run, debug, null, true);
       return;
     }
-    // 清单在开局之后才读到（备选图、主线可用性可能变了）：还没进过关的正式局按新清单重排
-    if (run.dev || !run.route || run.stagesCleared > 0 || this.routeVersion.get(run) === stageCatalogVersion()) return;
+    // 还没进过关的正式局：清单在开局之后才读到（备选图、主线可用性可能变了）按新清单重排；
+    // 开局时没排路线（生涯第一局）、之后生涯局数变了（开新局时放弃旧征程记了一局败北）按现在的生涯补排——
+    // Unity MenuFlow.StartRun 先 Forfeit 再 Begin，ShuffleRoute 读的是放弃之后的局数
+    if (run.dev || run.stagesCleared > 0) return;
+    if (run.route ? this.routeVersion.get(run) === stageCatalogVersion() : !this.shuffleRoute()) return;
     beginRun(run, null, RunRoute.build(run.seed));
     this.routeVersion.set(run, stageCatalogVersion());
   }
