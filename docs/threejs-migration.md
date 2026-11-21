@@ -300,7 +300,7 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 | HanbaBalanceTests | ✅ M6 | `tests/hanba-boss.test.mjs` |
 | WarlordBalanceTests、WarlordSwordTests、WarlordDashTests、WarlordVfxTests | ✅ M6 | `tests/warlord-boss.test.mjs` |
 | KunPengTests、QilinTests、LordTests、BossIntroTests | ✅ M6 | `tests/kunpeng-boss`、`qilin-boss`、`lord-bosses`、`boss-intro` |
-| BossGaitAnimTests | 🔶 M6 / M12 | 魔将的步态 / 登场落地在 `warlord-boss`；麒麟的手 K 片段等 M12 |
+| BossGaitAnimTests | ✅ M6 / M12 | 魔将的步态 / 登场落地在 `warlord-boss`；火麒麟的跃起 / 倒下 / 焚身踏云步态（手 K 片段）在 `anim-keyframed` |
 | BossEncounterTests | ➖ | `tests/boss-supply.test.mjs`（Unity 那份从它移植）+ `lord-bosses` |
 | LavaTests、WorldTests、ScenePiecesTests | ✅ M7 | `tests/unity-mechanisms.test.mjs`（网页旧熔岩另有 `tests/lava.test.mjs`）。LavaTests 的导航区域 / 游泳代理两条是 Unity 工程设置，不迁 |
 | AudioI6Tests | ✅ M11e | `tests/audio-parity.test.mjs` |

@@ -553,7 +553,7 @@ test('火麒麟：招式的片段与交叉淡入秒数照 Unity Brain.PlayAct（
 });
 
 const { Qilin } = await import('../src/enemies/bosses/Qilin.ts');
-const { QilinDef: QLDef } = await import('../src/enemies/bosses/QilinDef.ts');
+const { QilinDef: QLDef, ScaleDrink: QLDrink, STUN_LIE_UNTIL } = await import('../src/enemies/bosses/QilinDef.ts');
 
 /** 火麒麟原型 + 记录调用的片段播放器桩：act / setAnim / onPresent / introTick 都走真代码，每帧 syncClip 一次 */
 function qilinClipRig() {
@@ -617,6 +617,28 @@ test('火麒麟：招式显式要的步态按 Unity PlayAct 的淡入秒数（�
   q.onMoveEnded(null);
   sync();
   assert.deepEqual(calls, ['timed stomp 0.5 0.04', 'loco 0.15'], '收招（FinishMove 的 PlayLocomotion）');
+});
+
+test('BossGaitAnimTests（火麒麟）：跃起的起跳帧 = 饮熔的蹲伏比例、落地接饮熔；倒下停在瘫倒之后、撑起之前；焚身踏云步态 16 m/s 循环、前后蹄踏云相隔半个周期', () => {
+  const xuan = animData('SK_Boss_Qilin'), burn = animData('SK_Boss_QilinBurn');
+  // QilinLeap_TakesOffWhenTheDrinkArcStarts_AndChainsIntoDrink
+  const leap = xuan.clips.leap;
+  assert.ok(leap && leap.unity === 'keyframed', '玄鳞有手 K 的 leap');
+  assert.equal(leap.next, 'drink', '跃起落地接饮熔（leap → drink 连段）');
+  assert.ok(Math.abs(evAt(xuan, 'leap', 'fx:qLeap') - QLDrink.CrouchFrac) <= FRAME, '起跳帧 = ScaleDrink.CrouchFrac（±1 帧，片段 1.0 s）');
+  assert.ok(evAt(xuan, 'leap', 'hit') > 0.95, '前蹄落地在片段最后（= 饮熔第 0 帧）');
+  assert.ok(xuan.clips.drink, '玄鳞有饮熔片段');
+  // QilinStun_DefeatStopsBeforeGettingUp：倒下只播到 STUN_LIE_UNTIL（瘫倒之后、第 100 / 120 帧撑起身子之前）
+  const down = evAt(xuan, 'stun', 'fx:qStunDown');
+  assert.ok(STUN_LIE_UNTIL > down + 0.1, '倒下时还没瘫下去就冻住了');
+  assert.ok(STUN_LIE_UNTIL < 100 / 120, '倒下时已经开始撑起身子');
+  // BurnGait_LoopsAtMoveSpeed_WithPairedCloudSteps
+  const move = burn.clips.Move;
+  assert.ok(move && move.unity === 'keyframed', '焚身的 Move 槽位是手 K 的踏云步态');
+  assert.ok(move.loop);
+  assert.ok(Math.abs(move.speed - 16) < 1e-3, '录制速度沿用 Move 的 16 m/s');
+  assert.ok(Math.abs(evAt(burn, 'Move', 'fx:qCloudF') - evAt(burn, 'Move', 'fx:qCloudH') - 0.5) <= 0.02, '前后蹄对踏相隔半个周期');
+  assert.ok(xuan.clips.Move.unity !== 'keyframed' && xuan.clips.Move.events.length === 0, '玄鳞在地上跑，Move 仍是采样的地面奔跑');
 });
 
 // ───────────── 商人 ─────────────
