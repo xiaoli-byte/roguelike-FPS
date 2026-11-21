@@ -394,7 +394,6 @@ export class Game implements IGame {
       // 刷出来时模型没到会一直是程序化占位体（同 Unity：进图时资源已就绪）。模块加载时已在后台开始读，这里只等它读完
       await AssetLibrary.preload();
       if (!await this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(false); return; }
-      this.writeEntrySnapshot();
       ctx.ui.showHUD(true);
       ctx.weapons.setViewmodelVisible(true);
       this.setState('playing');
@@ -450,7 +449,11 @@ export class Game implements IGame {
     };
   }
 
-  /** 每进一关：拍进关快照写续玩档（已经结算过的局、不写档的调试局不写） */
+  /**
+   * 每进一关（{@link loadStage} 里、arrive 之后、发 stage:loaded 之前）：拍进关快照写续玩档（已经结算过的局、不写档的调试局不写）。
+   * 照 Unity SceneFlow.Arrive：先 `entry = CloneRun(run)`，之后 Announce 才发 StageLoaded——进关时才生效的东西
+   * （聚宝盆本金 + 利息、每关补 35% 备弹…）不进快照，继续征程时它们只再发一次，不会越「暂离 → 继续」越多
+   */
   private writeEntrySnapshot(): void {
     try {
       const run = this.ctx.run;
@@ -547,11 +550,16 @@ export class Game implements IGame {
         for (const [id, stacks] of Object.entries(saved.scrolls)) for (let i = 0; i < stacks; i++) ctx.scrolls.add(id);
       });
       await AssetLibrary.preload();
-      if (!await this.loadStage(run.stage)) { this.toMenu(false); return; }
-      // 生命 / 护盾（< 0 = 满）：秘卷和天赋装好之后再夹到上限
-      if (saved.hp >= 0) ctx.player.hp = Math.max(1, Math.min(ctx.player.maxHp(), saved.hp));
-      if (saved.shield >= 0) ctx.player.shield = Math.max(0, Math.min(ctx.player.maxShield(), saved.shield));
-      this.writeEntrySnapshot();
+      // 生命 / 护盾（< 0 = 满）：秘卷和天赋装好之后再夹到上限；要在进关快照、stage:loaded 之前装好（Unity RestoreAll 在 entry 之前）
+      const restoreVitals = (): void => {
+        const player = ctx.player;
+        // 秘卷加的上限先让玩家结算掉（PlayerController.syncStatCaps：上限涨了当前值跟着涨）——不然第一帧再结算，
+        // 档里的血量会被补上秘卷加的那一截，「暂离 → 继续」就能回血
+        (player as unknown as { syncStatCaps?(): void }).syncStatCaps?.();
+        if (saved.hp >= 0) player.hp = Math.max(1, Math.min(player.maxHp(), saved.hp));
+        if (saved.shield >= 0) player.shield = Math.max(0, Math.min(player.maxShield(), saved.shield));
+      };
+      if (!await this.loadStage(run.stage, restoreVitals)) { this.toMenu(false); return; }
       ctx.ui.showHUD(true);
       ctx.weapons.setViewmodelVisible(true);
       this.setState('playing');
@@ -562,9 +570,10 @@ export class Game implements IGame {
     return true;
   }
 
-  /** 这一局现在能不能暂离（盘上有它这一关的续玩档）；调试局、已经结算过的局不能 */
+  /** 这一局现在能不能暂离（盘上有它这一关的续玩档）；调试局、已经结算过的局、阵亡了的不能 */
   canSuspend(): boolean {
     const s = this.state;
+    if (this.deathPending || this.ctx.player?.alive === false) return false;
     return (s === 'playing' || s === 'paused' || s === 'modal') && Suspend.canSuspend(this.ctx.run);
   }
 
@@ -602,7 +611,6 @@ export class Game implements IGame {
     ctx.audio.play('portal');
     ctx.ui.fade(1, 0.35).then(async () => {
       if (!await this.loadStage(next)) { this.toMenu(); return; }
-      this.writeEntrySnapshot();
       this.setState('playing');
       ctx.input.enabled = true;
       ctx.input.flushMouse();
@@ -610,8 +618,11 @@ export class Game implements IGame {
     });
   }
 
-  /** False when the stage could not be built; callers return to the menu instead of a black screen. */
-  private async loadStage(node: StageNode): Promise<boolean> {
+  /**
+   * 换到这一关（Unity SceneFlow.Arrive → GameSession.Announce）：搭场景 → arrive（继续征程把档里的生命护盾装回去）→
+   * 拍进关快照写续玩档 → 发 stage:loaded。False when the stage could not be built; callers return to the menu instead of a black screen.
+   */
+  private async loadStage(node: StageNode, arrive?: () => void): Promise<boolean> {
     const ctx = this.ctx;
     const run = ctx.run;
     run.chapter = node.chapter;
@@ -633,6 +644,15 @@ export class Game implements IGame {
       ctx.ui.toast(`关卡载入失败：${err instanceof Error ? err.message : String(err)}`, '#ff8a6a');
       return false;
     }
+    if (arrive) {
+      try {
+        arrive();
+      } catch (err) {
+        console.error('[Game] 读档恢复失败', err);
+      }
+    }
+    // 快照先于 stage:loaded（Unity：Arrive 里 entry = CloneRun(run)，之后 Announce 才发 StageLoaded）
+    this.writeEntrySnapshot();
     ctx.events.emit('stage:loaded', { stage: node });
     ctx.ui.banner(ctx.stage.arena?.theme.name ?? '', ctx.runPlan.stageLabel(node), 2.6);
     ctx.audio.setMusic(node.type === 'boss' ? 'boss' : node.type === 'shop' || node.type === 'treasure' ? 'calm' : 'combat');
@@ -663,11 +683,11 @@ export class Game implements IGame {
     ctx.cameraFx.shakeTime = 0;
   }
 
-  endRun(victory: boolean): void {
-    if (this.state === 'summary' || this.state === 'menu') return;
+  /** 这一局此刻的结算单（结算界面、魂晶入账、生涯记录用） */
+  private runSummary(victory: boolean): RunSummary {
     const ctx = this.ctx;
     const run = ctx.run;
-    const summary: RunSummary = {
+    return {
       victory,
       heroId: run.heroId,
       chapter: run.chapter,
@@ -681,8 +701,15 @@ export class Game implements IGame {
       scrolls: ctx.scrolls.owned().map((o) => ({ id: o.def.id, name: o.def.name, rarity: o.def.rarity, stacks: o.stacks })),
       weapons: ctx.weapons.slots.filter((w): w is NonNullable<typeof w> => !!w).map((w) => ctx.weapons.describe(w).name),
     };
-    // 结算（魂晶入账、记生涯、写盘、删续玩档）：同一局只结一次——已经结算过的（不会走到这里，防万一）只出结算界面
-    this.bankCurrent(victory, summary);
+  }
+
+  /** 一局结束、出结算界面。banked = 阵亡时当场结算的那一份（照它出界面，不再结一次） */
+  endRun(victory: boolean, banked?: RunSummary): void {
+    if (this.state === 'summary' || this.state === 'menu') return;
+    const ctx = this.ctx;
+    const summary = banked ?? this.runSummary(victory);
+    // 结算（魂晶入账、记生涯、写盘、删续玩档）：同一局只结一次——阵亡时已经结算过的只出结算界面
+    if (!banked) this.bankCurrent(victory, summary);
     ctx.events.emit('run:ended', { summary });
     this.disposePassive();
     ctx.cameraFx.fovKick = 0;
@@ -725,9 +752,9 @@ export class Game implements IGame {
     ctx.audio.setMusic('menu');
   }
 
-  /** 暂停：模态栈上压一项（停住时间，暂停优先级） */
+  /** 暂停：模态栈上压一项（停住时间，暂停优先级）。阵亡慢动作里不能暂停（Unity GameSession.Update 玩家死了就不看暂停键） */
   pause(): void {
-    if (this.state !== 'playing') return;
+    if (this.state !== 'playing' || this.deathPending) return;
     this.pausedAt = performance.now();
     this.fsm.push(this.pauseKey, 'paused');
     this.ctx.input.enabled = false;
@@ -777,18 +804,24 @@ export class Game implements IGame {
     saveSettings(this.ctx.settings);
   }
 
-  /** 阵亡：0.3 倍慢动作（经仲裁器，阵亡优先级）半秒游戏时间，然后结算 */
+  /**
+   * 阵亡（Unity GameSession.OnDied）：0.3 倍慢动作（经仲裁器，阵亡优先级），当场结算（魂晶入账、记生涯、写盘、删续玩档），
+   * 半秒游戏时间后照这一份出结算界面。当场结算 = 慢动作这半秒里已经不能「暂离」：结算过的局 canSuspend 为 false、续玩档已删，
+   * 暂停也打不开（{@link pause}）——不然暂停「返回主菜单」再「继续征程」就能带着进关时的血量回到本关开头，等于没死
+   */
   private onPlayerDied(): void {
     if (this.deathPending || this.state !== 'playing') return;
     this.deathPending = true;
     const ctx = this.ctx;
     this.deathSlowMo?.dispose();
     this.deathSlowMo = this.timeArbiter.request(this, 0.3, TimePriority.DeathSlowMo);
+    const summary = this.runSummary(false);
+    this.bankCurrent(false, summary);
     ctx.weapons.setViewmodelVisible(false);
     ctx.tasks.delay(0.5, () => {
       this.deathSlowMo?.dispose();
       this.deathSlowMo = null;
-      this.endRun(false);
+      this.endRun(false, summary);
     }, true);
   }
 
