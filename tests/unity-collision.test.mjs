@@ -159,3 +159,13 @@ test('Unity activator supports interaction, shot hits, cooldown and platform sig
   system.update(0.1);
   system.dispose();
 });
+
+test('Unity 网格碰撞：斜面包围盒里、离斜面很远的身体不算碰上（2026-11-22 修的分离轴提前退出）', () => {
+  const world = new CollisionWorld();
+  // 一块 45° 的大斜面：从 (0,0,-20)…(20,0,-20) 斜到 (0,20,0)，包围盒是 20×20×20
+  world.addMesh(new Float32Array([0, 0, -20, 20, 0, -20, 0, 20, 0, 20, 20, 0]), new Uint32Array([0, 2, 1, 1, 2, 3]), 'wall');
+  // (10, 1, -3) 在包围盒里，但离斜面约 11 m
+  assert.equal(world.overlapsBody(10, 1, -3, 0.35, 1.8), null);
+  // 贴着斜面（离面 < 身体半宽）要碰上
+  assert.ok(world.overlapsBody(10, 9.6, -10, 0.35, 1.8));
+});

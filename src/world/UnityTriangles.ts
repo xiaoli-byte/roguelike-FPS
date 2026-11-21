@@ -10,7 +10,7 @@ export interface UnityTriangleMesh {
 
 const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
 const ab = new THREE.Vector3(), ac = new THREE.Vector3(), bc = new THREE.Vector3();
-const axis = new THREE.Vector3(), best = new THREE.Vector3(), normal = new THREE.Vector3();
+const axis = new THREE.Vector3(), best = new THREE.Vector3(), normal = new THREE.Vector3(), candidate = new THREE.Vector3();
 const edge = new THREE.Vector3(), delta = new THREE.Vector3(), cross = new THREE.Vector3();
 const edges: THREE.Vector3[] = [];
 const bases = [new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1)];
@@ -31,33 +31,43 @@ function separates(a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3, axis: T
   return Math.min(current, Math.max(0, overlap));
 }
 
+/**
+ * 身体包围盒和网格碰撞体的分离轴测试（三角形法线、9 条边×坐标轴、3 条坐标轴）。任何一条轴分开了，这个三角形就不碰；
+ * 全都重叠才算碰上，取所有碰上的三角形里穿透最浅的那条轴作推出方向。
+ * （2026-11-22 修：原来法线轴、边轴的「已分离」会被后面的轴覆盖，实际只比了三角形包围盒——大斜面的整个包围盒都是隐形墙）
+ */
 export function overlapUnityTriangles(box: StaticBox, minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): boolean {
   const mesh = box.triangles!;
   const cx = (minX + maxX) * 0.5, cy = (minY + maxY) * 0.5, cz = (minZ + maxZ) * 0.5;
   const hx = (maxX - minX) * 0.5, hy = (maxY - minY) * 0.5, hz = (maxZ - minZ) * 0.5;
   let depth = Infinity;
   best.set(0, 0, 0);
-  for (let i = 0; i < mesh.indices.length; i += 3) {
+  triangles: for (let i = 0; i < mesh.indices.length; i += 3) {
     point(mesh, i, a); a.x -= cx; a.y -= cy; a.z -= cz;
     point(mesh, i + 1, b); b.x -= cx; b.y -= cy; b.z -= cz;
     point(mesh, i + 2, c); c.x -= cx; c.y -= cy; c.z -= cz;
     ab.subVectors(b, a); ac.subVectors(c, a); bc.subVectors(c, b);
     edges[0] = ab; edges[1] = bc; edges[2] = ac;
+    candidate.set(0, 0, 0);
     normal.crossVectors(ab, ac);
-    let next = separates(a, b, c, normal, hx, hy, hz, best, depth);
+    let next = separates(a, b, c, normal, hx, hy, hz, candidate, Infinity);
+    if (next < 0) continue;
     for (const e of edges) {
       for (const basis of bases) {
         axis.crossVectors(e, basis);
-        next = separates(a, b, c, axis, hx, hy, hz, best, depth);
-        if (next < 0) break;
+        next = separates(a, b, c, axis, hx, hy, hz, candidate, next);
+        if (next < 0) continue triangles;
       }
-      if (next < 0) break;
     }
     for (const basis of bases) {
-      next = separates(a, b, c, basis, hx, hy, hz, best, depth);
-      if (next < 0) break;
+      axis.copy(basis);
+      next = separates(a, b, c, axis, hx, hy, hz, candidate, next);
+      if (next < 0) continue triangles;
     }
-    if (next >= 0) depth = next;
+    if (next < depth) {
+      depth = next;
+      if (candidate.lengthSq() > 0) best.copy(candidate);
+    }
   }
   if (depth === Infinity) return false;
   mesh.depth = depth;
