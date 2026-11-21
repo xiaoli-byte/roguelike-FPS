@@ -7,7 +7,9 @@
  * 网页的数据来源（collectPois）：关卡的 AdventureInfo（ctx.stage.exploration：遭遇 = 场地 / 藏宝守军，物资点 = 藏宝，战前补给 = 补给营，
  * 清场后开的出口；首领关的终点遭遇 = 首领场地；旧式祭坛关的祭坛 = 灵火坛）+ 关卡目标的灵火坛（4-1 / 4-3 的 LevelObjectives）。
  * 与 Unity 的差异：出口在清关前没有位置（网页清场后才定哪个出口开），所以没开的出口不上图；场地没有「前置场地」数据，候选不分先后只看远近。
- * 方位：网页场景里北 = −Z（俯视图的上方），东 = +X；视线朝向 = −yaw。
+ * 方位照 Unity：北 = Unity +Z、东 = Unity +X。导出器把 Unity 坐标换成网页坐标时只翻 X（x_web = −x_unity，z 不变，见
+ * WebSceneExporter.Point），所以网页场景里北 = +Z、东 = −X；俯视图北朝上（底图范围 area = [−xMax, −xMin, zMin, zMax]，网页坐标）。
+ * 网页玩家的 yaw：0 朝 −Z（= 南）、逆时针为正，视线朝向 = 180° − yaw。
  * 本文件只 import 类型（测试按 data: URL 直接加载）。
  */
 import type { GameContext } from '../core/types';
@@ -68,14 +70,14 @@ export function markerColor(kind: PoiKind, state: MarkerState): RGBA4 {
   }
 }
 
-/** 世界水平方位角（度，0 = 北 −Z，顺时针到 90 = 东 +X） */
+/** 世界水平方位角（度，0 = 北 +Z，顺时针到 90 = 东 −X；= Unity MapMarkers.Bearing 换到网页坐标） */
 export function bearing(fromX: number, fromZ: number, toX: number, toZ: number): number {
-  return (Math.atan2(toX - fromX, -(toZ - fromZ)) * 180) / Math.PI;
+  return (Math.atan2(fromX - toX, toZ - fromZ) * 180) / Math.PI;
 }
 
-/** 视线水平朝向（度，0 = 北）：网页玩家的 yaw 逆时针为正、0 朝 −Z */
+/** 视线水平朝向（度，0 = 北，−180..180）：网页视线 = (−sin yaw, −cos yaw)，换成 Unity 坐标 (sin yaw, −cos yaw) 再照 Unity Heading 取 atan2(x, z) */
 export function headingOf(yaw: number): number {
-  return (-yaw * 180) / Math.PI;
+  return deltaAngle(0, 180 - (yaw * 180) / Math.PI);
 }
 
 /** a → b 的最短角差（度，−180..180） */
@@ -306,10 +308,13 @@ export function fallbackArea(markers: readonly { x: number; z: number }[], px: n
   return [cx - w * 0.5, cx + w * 0.5, cz - h * 0.5, cz + h * 0.5];
 }
 
-/** 世界 XZ → 图上的比例位置（0..1；y 向下 = +Z，北在上） */
+/**
+ * 世界 XZ（网页坐标）→ 图上的比例位置（0..1，u 向右 = 东、v 向下 = 南，北在上）。
+ * 照 Unity MapScreen：u = (x_unity − xMin) / 宽、top = 1 − (z − zMin) / 高；x_unity = −x，area[1] = −xMin，所以 u = (area[1] − x) / 宽
+ */
 export function worldToMap(area: readonly [number, number, number, number], x: number, z: number): { u: number; v: number } {
   const c = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
-  return { u: c((x - area[0]) / Math.max(1e-3, area[1] - area[0])), v: c((z - area[2]) / Math.max(1e-3, area[3] - area[2])) };
+  return { u: c((area[1] - x) / Math.max(1e-3, area[1] - area[0])), v: c((area[3] - z) / Math.max(1e-3, area[3] - area[2])) };
 }
 
 /** 图框尺寸（设计像素）：按面板留出标题行和底栏，保持底图长宽比 */

@@ -34,7 +34,8 @@ test('travel map targets the nearest required site, the active real encounter, t
   encounter.phase = 'active';
   model.update(ctx);
   assert.deepEqual(targetOf(model), { name: '回廊守卫', verb: '交战中', meters: 12 });
-  assert.equal(Math.round(deltaAngle(headingOf(ctx.player.yaw), bearing(0, 0, 12, 0))), 90, 'a target due east sits 90° clockwise of a north-facing player');
+  assert.equal(Math.round(headingOf(ctx.player.yaw)), 180, 'yaw 0 looks down −Z, which is Unity south (the exporter only mirrors X)');
+  assert.equal(Math.round(deltaAngle(headingOf(ctx.player.yaw), bearing(0, 0, 12, 0))), 90, 'a target on +X sits 90° clockwise of a player looking down −Z');
   encounter.phase = 'cleared';
   model.update(ctx);
   assert.deepEqual(targetOf(model), { name: '灵火祭坛', verb: '点亮', meters: 30 }, 'route encounters do not pretend the altar was activated');
@@ -45,7 +46,8 @@ test('travel map targets the nearest required site, the active real encounter, t
   info.exit = new THREE.Vector3(0, 0, 10);
   model.update(ctx);
   assert.deepEqual(targetOf(model), { name: '出口', verb: '前往出口', meters: 10 });
-  assert.equal(Math.round(Math.abs(bearing(0, 0, 0, 10))), 180, '+Z is south on the web map');
+  assert.equal(Math.round(bearing(0, 0, 0, 10)), 0, '+Z is north (Unity +Z; the exporter keeps z)');
+  assert.equal(Math.round(bearing(0, 0, -10, 0)), 90, '−X is east (Unity +X; the exporter mirrors x)');
   ctx.stage.exploration = null;
   model.update(ctx);
   assert.equal(model.markers.all.length, 0, 'non-exploration stages have no markers');
