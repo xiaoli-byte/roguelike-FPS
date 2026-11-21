@@ -1,37 +1,34 @@
 import type { Settings } from './types';
+import { LEGACY_SETTINGS_KEY, defaultSettings, settingsSection } from './GameSettings';
 
-export const SETTINGS_KEY = 'gunflame.settings.v1';
+/**
+ * 玩家设置的读写入口。设置表、存档段、老存档导入（含音量换算）在 core/GameSettings.ts（M11d，照 Unity GameSettings）；
+ * 落盘在 SaveService 的共享文件 spiritfire.save/settings.json。
+ */
 
-export const DEFAULT_SETTINGS: Settings = {
-  sensitivity: 1,
-  fov: 80,
-  // 音量缺省同 Unity GameSettings（全 1）：基础电平（主 0.8 / 音效 0.9 / 音乐 0.3）在音频清单的 mix 里，不在玩家推子上
-  masterVolume: 1,
-  sfxVolume: 1,
-  musicVolume: 1,
-  ambienceVolume: 1,
-  uiVolume: 1,
-  quality: 'high',
-  shadowQuality: 'medium',
-  damageNumbers: true,
-  screenShake: 1,
-  invertY: false,
-};
+/** M11d 之前的存档键：只在第一次导入时读，不再写 */
+export const SETTINGS_KEY = LEGACY_SETTINGS_KEY;
 
+/** 默认值（= 设置表各项的 defaultValue；音量全 1：基础电平在音频清单的 mix 里，不在玩家推子上） */
+export const DEFAULT_SETTINGS: Settings = defaultSettings();
+
+/** ctx.settings 用的那个对象：存档里「settings」段的活视图（整个会话同一个对象，直接改它的字段再 saveSettings） */
 export function loadSettings(): Settings {
   try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
-  } catch {
-    /* ignore */
+    return settingsSection().settings;
+  } catch (e) {
+    console.error(e);
+    return { ...DEFAULT_SETTINGS };
   }
-  return { ...DEFAULT_SETTINGS };
 }
 
+/** 稍后写盘（拖滑条时一秒内会调很多次，合并成一次）。s 不是 loadSettings 给的那个对象时先把它的字段抄过去 */
 export function saveSettings(s: Settings): void {
   try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-  } catch {
-    /* ignore */
+    const section = settingsSection();
+    if (s !== section.settings) Object.assign(section.settings, s);
+    section.file?.saveSoon();
+  } catch (e) {
+    console.error(e);
   }
 }
