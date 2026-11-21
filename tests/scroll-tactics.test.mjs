@@ -85,12 +85,12 @@ function fixture() {
   return { ctx, a, b, emit, advance, enemy, hit, add, switchTo, cooldowns, explosions };
 }
 
-test('118 distinct scrolls; all 20 tactics roll with normal rarity, exclusions and stack caps', () => {
+test('119 distinct scrolls (118 + Unity 的「破绽」); all 20 tactics roll with normal rarity, exclusions and stack caps', () => {
   const f = fixture();
-  assert.equal(f.ctx.scrolls.all.length, 118);
+  assert.equal(f.ctx.scrolls.all.length, 119);
   assert.equal(TACTIC_SCROLLS.length, 20);
-  assert.equal(new Set(f.ctx.scrolls.all.map(d => d.id)).size, 118);
-  assert.equal(new Set(f.ctx.scrolls.all.map(d => d.name)).size, 118);
+  assert.equal(new Set(f.ctx.scrolls.all.map(d => d.id)).size, 119);
+  assert.equal(new Set(f.ctx.scrolls.all.map(d => d.name)).size, 119);
   assert.deepEqual(TACTIC_SCROLLS.map(d => d.rarity).reduce((a, r) => (a[r]++, a), [0, 0, 0, 0, 0]), [2, 6, 8, 2, 2]);
   const all = f.ctx.scrolls.roll(200).map(d => d.id);
   for (const d of TACTIC_SCROLLS) assert.ok(all.includes(d.id));

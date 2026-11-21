@@ -120,7 +120,8 @@ function leadScroll(id: string, name: string, need: StatusId, give: StatusId, rx
       s.on('enemy:damaged', ({ enemy, result }) => {
         const req = result.request;
         if (!isWeaponReq(req) || depthOf(req) !== 0 || result.killed || !enemy.alive) return;
-        if (!enemy.statuses.has(need) || result.statusApplied === give) return;
+        // 免疫 / 整发被格挡（没打出伤害）不触发（Unity BasicLeads：total > 0）
+        if (!(result.dealt > 0) || !enemy.statuses.has(need) || result.statusApplied === give) return;
         if (!icd(enemy, ctx.time.now, 0.4) || !ctx.rng.chance(0.08 * n)) return;
         ctx.combat.applyStatus(enemy, give, asStatusPower(ctx, enemy, give, result.dealt), undefined, {
           depth: 0, weaponUid: req.weaponUid,

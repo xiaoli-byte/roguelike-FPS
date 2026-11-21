@@ -40,6 +40,8 @@ import type { AttachSource, ReactionHost } from './Reactions';
 const LIFESTEAL_CAP_RATIO = 0.05;
 /** 爆炸嵌套上限（连锁自爆等） */
 const MAX_EXPLODE_DEPTH = 6;
+/** 同一敌人两次「免疫」提示的最短间隔（Unity Combat.ImmuneFeedbackGap） */
+export const IMMUNE_FEEDBACK_GAP = 0.4;
 /** 爆炸默认颜色（物理） */
 const EXPLOSION_COLOR = 0xffa040;
 /**
@@ -82,6 +84,8 @@ export class Combat implements ICombat, ReactionHost {
   private readonly centerBufs: THREE.Vector3[] = [];
   /** 最近一次 attach 引发的反应（attach 末尾写入，调用方立即读取） */
   private lastReaction: ReactionId | null = null;
+  /** 同一敌人上一次放行「免疫」提示的时间（Unity Combat.immuneAt：0.4 s 节流，只有放行的那一次派发 enemy:damaged） */
+  private immuneAt = new WeakMap<IEnemy, number>();
 
   /** 第四章「带电」（Unity Charge / ChargeState）：账本、死亡传电、噼啪；反应判定经 isCharged 读 */
   readonly charge: ChargeSystem;
@@ -115,6 +119,7 @@ export class Combat implements ICombat, ReactionHost {
     this.charge.clear();
     this.hitStop.release();
     this.feedback.clear();
+    this.immuneAt = new WeakMap();
     this.explodeDepth = 0;
     for (const b of this.queryBufs) b.length = 0;
   }
@@ -138,12 +143,9 @@ export class Combat implements ICombat, ReactionHost {
     const purge = hasTag(req, PURGE_TAG);
     const execute = purge || isExecute(req, base);
 
-    // 0) 不可选中（首领登场 / 转阶段等）：完全不结算。
-    //    直接命中给一个「免疫」提示（同一敌人 0.4 秒最多一次）；DOT 跳伤与处决不提示
-    if (enemy.untargetable) {
-      if (base > 0 && !dot && !execute) this.feedback.immune(enemy, req.point);
-      return null;
-    }
+    // 0) 不可选中（首领登场 / 转阶段、出生 0.7 s 等）：完全不结算，返回 immune 结果（Unity Combat.Immune）。
+    //    直接命中给一个「免疫」提示并派发 enemy:damaged（同一敌人 0.4 秒最多一次）；DOT 跳伤与处决不提示
+    if (enemy.untargetable) return this.immune(enemy, req, base, dot, execute);
 
     // 1) 弱点与暴击（Unity Combat.DamageEnemy）：命中弱点或被改判为弱点（白泽，PetContract）必暴；
     //    状态 / 反应伤害不暴击；灵宠不随机暴击（灵宠自己决定 forceCrit）
@@ -199,6 +201,8 @@ export class Combat implements ICombat, ReactionHost {
 
     if (effective <= 0) {
       if (base > 0 && !dot && !execute) this.feedback.immune(enemy, req.point);
+      // 格挡掉了全部伤害也照样派发（Unity：total > 0 || immune || blocked 才发 EnemyDamaged）
+      if (blocked) ctx.events.emit('enemy:damaged', { enemy, result });
       return result;
     }
 
@@ -211,6 +215,34 @@ export class Combat implements ICombat, ReactionHost {
 
     // 9) 死亡（嵌套的监听者可能已经处理过这个敌人）
     if (killed && enemy.alive) this.kill(enemy, result);
+    return result;
+  }
+
+  /**
+   * 不可选中的敌人挨打（Unity Combat.Immune）：不结算（不掷暴击、不跑修饰器、不附着、不吸血），返回 immune = true 的结果。
+   * 直接命中给「免疫」提示——同一敌人 0.4 s 最多一次，只有放行的这一次才派发 enemy:damaged；持续伤害跳伤、处决、0 伤害不提示。
+   */
+  private immune(enemy: IEnemy, req: DamageRequest, base: number, dot: boolean, execute: boolean): DamageResult {
+    const result: DamageResult = {
+      request: req,
+      dealt: 0,
+      isCrit: false,
+      killed: false,
+      layer: 'health',
+      shieldBroken: false,
+      armorBroken: false,
+      element: req.element,
+      statusApplied: null,
+      reaction: null,
+      immune: true,
+    };
+    if (!(base > 0) || dot || execute) return result;
+    const now = this.ctx.time.now;
+    const last = this.immuneAt.get(enemy);
+    if (last !== undefined && now - last < IMMUNE_FEEDBACK_GAP && now >= last) return result;
+    this.immuneAt.set(enemy, now);
+    this.feedback.immune(enemy, req.point);
+    this.ctx.events.emit('enemy:damaged', { enemy, result });
     return result;
   }
 
@@ -493,7 +525,7 @@ export class Combat implements ICombat, ReactionHost {
             direction: dir,
             knockback: kb0 * k,
           });
-          if (r) hits++;
+          if (r && !r.immune) hits++;
         }
       } finally {
         buf.length = 0;

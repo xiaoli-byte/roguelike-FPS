@@ -363,7 +363,9 @@ export class DemonBlade {
         critMult: R.critMult, weaponUid: inst.uid, point, direction, knockback: seg.knockback, procDepth: 0, tags: SLASH_TAGS,
       };
       if (crit) req.forceCrit = true;
-      if (!ctx.combat.damageEnemy(e, req)) continue;
+      // 不可选中的（immune）不算命中（Unity DemonBladeController：r.immune → continue）
+      const res = ctx.combat.damageEnemy(e, req);
+      if (!res || res.immune) continue;
       hitCount++;
       if (fx++ < MAX_HIT_FX) {
         ctx.fx.enemyHit(point, BLADE_PURPLE, crit);
@@ -503,7 +505,8 @@ export class DemonBlade {
         point, direction, knockback: 0, procDepth: 0, tags: SWARM_TAGS, bypassShield: true,
       };
       if (R.critChance > 0 && Math.random() < R.critChance) req.forceCrit = true;
-      if (!ctx.combat.damageEnemy(e, req)) continue;
+      const res = ctx.combat.damageEnemy(e, req);
+      if (!res || res.immune) continue;
       hits++;
       if (Math.random() < 0.35) ctx.fx.burst(point, 0xd8c2ff, 3, 4, 0.18, 0.05, 2);
     }

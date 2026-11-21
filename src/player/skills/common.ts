@@ -197,7 +197,8 @@ export function shockwave(ctx: GameContext, center: THREE.Vector3, o: ShockwaveO
       req.point = e.getHeadCenter(new THREE.Vector3());
       req.point.y += 0.2;
       req.direction = new THREE.Vector3(dx, 0.35, dz).normalize();
-      if (ctx.combat.damageEnemy(e, req)) hits++;
+      const r = ctx.combat.damageEnemy(e, req);
+      if (r && !r.immune) hits++;
     }
     if (!e.alive) continue;
     const k = 1 - 0.5 * t;

@@ -344,7 +344,8 @@ export class AffixEffects {
   private onDamaged(enemy: IEnemy, result: DamageResult): void {
     const req = result.request;
     const uid = weaponUidOf(req);
-    if (uid === undefined || (req.procDepth ?? 0) > 0) return;
+    // 打在不可选中的敌人上（免疫提示）不触发词条（Unity AffixEffects.OnDamaged）
+    if (result.immune || uid === undefined || (req.procDepth ?? 0) > 0) return;
     // 同帧合并：累加本帧武器对该敌人的直接伤害
     if (result.dealt > 0) this.dealtNow.set(enemy, (this.dealtNow.get(enemy) ?? 0) + result.dealt);
     const inst = this.host.find(uid);

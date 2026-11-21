@@ -7,7 +7,7 @@ import { REACTION_SCROLLS } from './scrolls/defsReaction';
 import { TACTIC_SCROLLS } from './scrolls/defsTactics';
 
 /**
- * 全部秘卷定义（DESIGN.md 第 10 节；反应秘卷 24 个，战术秘卷 20 个，共 118 个）。
+ * 全部秘卷定义（DESIGN.md 第 10 节；反应秘卷 24 个，战术秘卷 20 个，共 119 个——118 张原版 + Unity 新增的进攻卷「破绽」weak_point）。
  * 每个效果都真实生效：属性修饰（source = scroll:<id>）或事件 / 修饰器 / 常驻任务触发。
  */
 export const SCROLL_DEFS: readonly ScrollDef[] = (() => {

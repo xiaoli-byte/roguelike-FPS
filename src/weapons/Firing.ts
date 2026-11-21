@@ -181,8 +181,8 @@ export class Ballistics {
       };
       if (this.rollCrit(forceCrit, R)) req.forceCrit = true;
       const res = ctx.combat.damageEnemy(enemy, req);
-      // 满蓄：引爆目标身上已有的元素状态（只入队，不同步造成伤害；无状态时 Combat 返回 null）
-      if (detonate && res && !res.killed && enemy.alive) {
+      // 满蓄：引爆目标身上已有的元素状态（只入队，不同步造成伤害；无状态时 Combat 返回 null）；打在免疫上不引爆（Unity Ballistics）
+      if (detonate && res && !res.immune && !res.killed && enemy.alive) {
         ctx.combat.detonate(enemy, { power: Math.min(res.dealt, enemy.maxHp * 0.5), depth: 0, weaponUid: inst.uid, point: req.point });
       }
       if (pierceLeft <= 0) {

@@ -166,6 +166,8 @@ export interface DamageResult {
   reaction?: ReactionId | null;
   /** 命中区倍率 < 0.5（正面甲、护体）：记为格挡（Unity DamageResult.blocked） */
   blocked?: boolean;
+  /** 打在不可选中的敌人身上：没有结算，dealt 0（Unity DamageResult.immune；Combat.damageEnemy 第 0 步） */
+  immune?: boolean;
 }
 
 export interface StatusInstance {
@@ -725,7 +727,7 @@ export interface ExplosionOptions {
 }
 
 export interface ICombat extends System {
-  /** 对敌人造成伤害（完整管线：倍率、暴击、分层、元素附着、事件、死亡）。敌人已死返回 null */
+  /** 对敌人造成伤害（完整管线：倍率、暴击、分层、元素附着、事件、死亡）。敌人已死返回 null；不可选中返回 immune 结果（dealt 0） */
   damageEnemy(enemy: IEnemy, req: DamageRequest): DamageResult | null;
   /** 敌人 → 玩家的伤害（计入减伤与 incoming 修饰器），返回实际扣除量 */
   damagePlayer(amount: number, element: Element, source: IEnemy | null, from?: THREE.Vector3 | null): number;

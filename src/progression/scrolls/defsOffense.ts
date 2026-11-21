@@ -230,7 +230,8 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
       let hits = 0;
       let lastFrame = -1;
       s.on('enemy:damaged', ({ enemy, result }) => {
-        if (!isDirectWeaponHit(result)) return;
+        // 免疫 / 格挡（没打出伤害）不计数，同 Unity BlastScrolls 的「total <= 0 不算」
+        if (!isDirectWeaponHit(result) || !(result.dealt > 0)) return;
         // 同一帧的多次命中（霰弹弹丸、穿透）只计一次，避免霰弹枪几发就攒满
         const frame = ctx.time.frame;
         if (frame === lastFrame) return;
@@ -247,5 +248,14 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
         ctx.fx.shake(0.15, 0.15);
       });
     },
+  }),
+
+  // ───────────── Unity 新增 ─────────────
+  // 「破绽」：Unity OffenseStatScrolls 独有的一张（D12）。命中弱点 / 被改判为弱点时另乘「弱点伤害」（Combat.damageEnemy 第 2 步）。
+  // 放在表尾：前 24 张的顺序和 Unity 测试里手抄的 TS 表保持一致
+  scroll({
+    id: 'weak_point', name: '破绽', rarity: 1, maxStacks: 3, tags: ['暴击'],
+    description: '弱点伤害每层 +15%。',
+    setup: (s, n) => s.stat('weakpointDamagePct', 0.15 * n),
   }),
 ];

@@ -83,6 +83,8 @@ const TF_SPREAD_BURN = 0.2;
 const TF_KNOCKBACK = 7;
 const TF_MAX_ARCS = 4;
 const TF_ARC_COLOR = 0x6fd8ff;
+/** 焚雷扩散灼烧最多点燃几个：按距离取最近的这么多个（Unity CombatTuning.Thunderfire.SpreadTargets，C# 注释写明是有意改的） */
+export const TF_SPREAD_TARGETS = 16;
 
 /** 熔金：对护甲中心伤害倍率、熔池半径 / 跳数 / 间隔 / 跳伤 / 附蚀 */
 const MG_ARMOR_MULT = 2;
@@ -622,13 +624,37 @@ export class ReactionSystem {
       _exclude.clear();
     }
 
-    // 扩散：给周围存活敌人附着灼烧（depth + 1，可再引发一级反应）
+    // 扩散：周围的敌人也烧起来（depth + 1：带雷殛的再焚雷、带蚀化的熔金）。
+    // 照 Unity ReactionSystem.Nearest：身体中心离焚雷中心 R 以内、按距离取最近的 TF_SPREAD_TARGETS 个（先选定再附着）
+    const dist = this.nearDist;
+    const picked = this.picked;
+    const r2 = R * R;
+    dist.length = near.length;
     for (let i = 0; i < near.length; i++) {
       const e = near[i];
-      if (e === enemy || !e.alive) continue;
-      this.host.attachFromReaction(e, 'burn', TF_SPREAD_BURN * B, p.depth + 1, p.weaponUid);
+      const d2 = e === enemy || !e.alive || e.untargetable ? Infinity : e.getBodyCenter(_to).distanceToSquared(c);
+      dist[i] = d2 <= r2 ? d2 : Infinity;
+    }
+    picked.length = 0;
+    while (picked.length < TF_SPREAD_TARGETS) {
+      let bi = -1;
+      let bd = Infinity;
+      for (let i = 0; i < near.length; i++) {
+        if (dist[i] < bd) {
+          bd = dist[i];
+          bi = i;
+        }
+      }
+      if (bi < 0) break;
+      dist[bi] = Infinity;
+      picked.push(near[bi]);
     }
     near.length = 0;
+    dist.length = 0;
+    for (let i = 0; i < picked.length; i++) {
+      this.host.attachFromReaction(picked[i], 'burn', TF_SPREAD_BURN * B, p.depth + 1, p.weaponUid);
+    }
+    picked.length = 0;
 
     if (!big) {
       ctx.fx.burst(c, color, 18, 7, 0.45, 0.13, 2);
@@ -708,7 +734,7 @@ export class ReactionSystem {
         base: VS_CONDUCT_DAMAGE * B, element: 'shock', source: 'status', canCrit: false, procDepth: p.depth + 1,
         tags: TAGS.veinseal, weaponUid: p.weaponUid, point: _to.clone(), direction: _dir.clone(),
       });
-      if (r) this.hits++;
+      if (r && !r.immune) this.hits++;
       if (e.alive) this.host.attachFromReaction(e, 'corrode', VS_CONDUCT_CORRODE * B, p.depth + 1, p.weaponUid);
     }
     picked.length = 0;
@@ -900,13 +926,14 @@ export class ReactionSystem {
     return out;
   }
 
-  /** 反应对单个敌人的伤害（source 'status'、不暴击、procDepth + 1、带反应标签） */
+  /** 反应对单个敌人的伤害（source 'status'、不暴击、procDepth + 1、带反应标签）；打在不可选中的敌人上（immune）返回 null */
   private hit(e: IEnemy, base: number, element: Element, tags: string[], p: Pending): DamageResult | null {
     e.getBodyCenter(_p);
-    return this.host.damageEnemy(e, {
+    const r = this.host.damageEnemy(e, {
       base, element, source: 'status', canCrit: false, procDepth: p.depth + 1,
       tags, weaponUid: p.weaponUid, point: _p.clone(),
     });
+    return r && !r.immune ? r : null;
   }
 
   /** 归墟消耗：灼烧结清（返回结清值）、雷殛移除；蚀化保留 */
