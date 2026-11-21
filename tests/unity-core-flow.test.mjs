@@ -292,12 +292,15 @@ test('换关时下一关搭不起来：回主菜单不结算，上一关的续�
   assert.equal(RunPlan.stageCodeOf(ctx.run), '1-1');
 });
 
-test('开新局放弃旧征程要等场景清单：清单没到时不校验（备选图会被当成坏档挪走），到了才按败北结算、魂晶入账', async () => {
+/**
+ * 「刷新页面、场景清单还没读到」：盘上有一份旧征程（熊，魂晶 77），它的路线上有备选图（清单读到时才算建好）。
+ * release(catalog) 放出清单；fail = 清单请求失败（一直读不到）
+ */
+function altRouteSave({ fail = false } = {}) {
   const catalog = [...StagePlan.STAGES.map(s => ({ id: s.code, available: true })), ...StagePlan.POOL.map(s => ({ id: s.code, available: true, pool: true }))];
   let release = null;
-  const { store, game } = fresh({
+  const world = fresh({
     sceneReady: null,
-    // 旧征程：路线上有备选图（清单读到时才算建好）；写完档「刷新页面」，清单还没读到
     before: () => {
       StagePlan.setStageCatalog(catalog);
       let seed = 1;
@@ -310,9 +313,17 @@ test('开新局放弃旧征程要等场景清单：清单没到时不校验（�
       assert.equal(Suspend.write(old, false), true);
       StagePlan.setStageCatalog(null);
     },
-    manifest: () => new Promise(r => { release = r; }),
+    manifest: fail ? async () => { throw new Error('清单请求失败'); } : () => new Promise(r => { release = r; }),
   });
   assert.equal(StagePlan.hasStageCatalog(), false);
+  return { ...world, catalog, release: entries => release(entries) };
+}
+
+/** 假路由：只认确认框，记下打开的页 */
+const confirmRouter = () => ({ opened: null, get: id => (id === 'confirm' ? {} : null), isOpen: () => false, close() {}, open(id, arg) { this.opened = [id, arg]; return true; } });
+
+test('开新局放弃旧征程要等场景清单：清单没到时不校验（备选图会被当成坏档挪走），到了才按败北结算、魂晶入账', async () => {
+  const { store, game, catalog, release } = altRouteSave();
   game.startRun('fox');
   for (let i = 0; i < 20; i++) await new Promise(r => setImmediate(r));
   assert.equal(game.state, 'transition', '等清单');
@@ -326,6 +337,110 @@ test('开新局放弃旧征程要等场景清单：清单没到时不校验（�
   assert.ok(!store.m.has(RUN + '.corrupt'));
   assert.equal(Suspend.takeProblem(), null, '没有「存档已损坏」的提示');
   assert.equal(disk(store).run.heroId, 'fox', '续玩档换成新局的');
+});
+
+test('清单没到时也认得未完成的征程（宽松读、不动盘上的档）：「继续征程」照样显示，开新局先弹确认框；确认之后清单到了才按败北结算（Unity MenuFlow.StartRun：Peek 到档就先确认）', async () => {
+  const flow = cs('UI/Screens/MenuFlow.cs');
+  const start = flow.slice(flow.indexOf('public static bool StartRun(string heroId, bool forfeitSuspended)'), flow.indexOf('static bool ShuffleRoute()'));
+  assert.match(start, /var suspended = RunSuspend\.Peek\(dev\);\s*if \(suspended != null\)\s*\{\s*if \(!forfeitSuspended\)\s*\{[\s\S]*?ConfirmScreen\.Ask\(/, 'Unity：Peek 到档就先弹确认框');
+  assert.match(start, /onConfirm = \(\) => StartRun\(hero, true\),[\s\S]*?return false;\s*\}\s*RunSuspend\.Forfeit\(dev\);/, 'Unity：确认之后才放弃');
+
+  const { store, game, ctx, catalog, release } = altRouteSave();
+  const s = game.suspendedRun();
+  assert.ok(s, '清单没到：主菜单照样认得这份档（「继续征程」显示）');
+  assert.deepEqual([s.heroId, s.stageCode], ['bear', '1-1']);
+  assert.equal(s.coins, 50);
+  assert.ok(disk(store) && !store.m.has(RUN + '.corrupt'), '宽松读不动盘上的档');
+  assert.deepEqual(ctx.ui.toasts, [], '没有「已损坏」的提示');
+
+  const router = confirmRouter();
+  assert.equal(startNewRun(ctx, router, 'fox'), false, '先确认');
+  const [id, req] = router.opened;
+  assert.equal(id, 'confirm');
+  assert.equal(req.message, '开始新征程会放弃当前的征程（第 1-1 关），确定吗？');
+  assert.equal(game.state, 'menu', '确认之前不开局');
+  assert.deepEqual([career().runs, essence()], [0, 0], '确认之前不结算');
+  assert.equal(disk(store).run.heroId, 'bear');
+
+  req.onConfirm();
+  for (let i = 0; i < 20; i++) await new Promise(r => setImmediate(r));
+  assert.equal(game.state, 'transition', '确认了，等清单');
+  assert.equal(disk(store).run.heroId, 'bear', '清单没到：旧征程还在');
+  release(catalog);
+  await until(() => game.state === 'playing', '清单到了出征');
+  assert.deepEqual([essence(), career().runs], [77, 1], '确认过的旧征程按败北结算');
+  assert.ok(!store.m.has(RUN + '.corrupt'));
+  assert.equal(disk(store).run.heroId, 'fox');
+});
+
+test('清单没到、档本身是坏的（不是缺备选图）：宽松读也读不出，不弹确认框；开局时照常挪成 .corrupt、不结算——确认框和放弃看同一个判断', async () => {
+  const { store, game, ctx } = fresh();
+  store.m.set(RUN, '{"version":2,"game":"spiritfire","kind":"run","run":{"heroId":"fox","stageCode":"9-9"}}');
+  assert.equal(game.suspendedRun(), null);
+  assert.ok(store.m.has(RUN), '清单没到：不动盘上的档');
+  const router = confirmRouter();
+  assert.equal(startNewRun(ctx, router, 'bear'), true, '没有能放弃的征程：直接出征');
+  assert.equal(router.opened, null);
+  await until(() => game.state === 'playing', '直接出征');
+  assert.ok(store.m.has(RUN + '.corrupt'), '坏档挪开');
+  assert.deepEqual([career().runs, essence()], [0, 0], '坏档不结算');
+  assert.equal(disk(store).run.heroId, 'bear');
+});
+
+test('场景清单请求失败（一直读不到）：主菜单、继续征程、开新局的放弃都宽松读——路线带备选图的好档不会因为清单没来被当成坏档丢掉', async () => {
+  const warn = console.warn;
+  console.warn = () => {};
+  try {
+    const { store, game, ctx } = altRouteSave({ fail: true });
+    assert.equal(game.suspendedRun()?.heroId, 'bear', '「继续征程」显示');
+    await resume(game);
+    assert.equal(StagePlan.hasStageCatalog(), false, '清单还是没读到');
+    assert.equal(ctx.run.heroId, 'bear', '接着打旧征程');
+    assert.ok(!store.m.has(RUN + '.corrupt'), '没有被当成坏档挪走');
+    assert.equal(Suspend.takeProblem(), null);
+    assert.equal(game.suspendRun(), true, '还能暂离');
+
+    // 开新局放弃它：照样按败北结算、魂晶入账（确认框也是按宽松读弹的）
+    const router = confirmRouter();
+    assert.equal(startNewRun(ctx, router, 'fox'), false, '先确认');
+    router.opened[1].onConfirm();
+    await until(() => game.state === 'playing' && ctx.run.heroId === 'fox', '确认后出征');
+    assert.deepEqual([essence(), career().runs], [77, 1]);
+    assert.ok(!store.m.has(RUN + '.corrupt'));
+  } finally {
+    console.warn = warn;
+  }
+});
+
+test('生涯第一局暂离后确认开新局：先放弃旧征程（记一局败北）再定新局的路线，新局洗牌（Unity MenuFlow.StartRun：Forfeit → Begin(ShuffleRoute() ? RunRoute.Build(seed) : null)）', async () => {
+  const flow = cs('UI/Screens/MenuFlow.cs');
+  const start = flow.slice(flow.indexOf('public static bool StartRun(string heroId, bool forfeitSuspended)'), flow.indexOf('static bool ShuffleRoute()'));
+  const forfeitAt = start.indexOf('RunSuspend.Forfeit(dev);');
+  const beginAt = start.indexOf('RunState.Begin(heroId, seed, null, dev, ShuffleRoute() ? RunRoute.Build(seed) : null);');
+  assert.ok(forfeitAt > 0 && beginAt > forfeitAt, 'Unity：先放弃旧征程，再开局排路线');
+  assert.match(flow, /static bool ShuffleRoute\(\)\s*\{\s*try \{ return CareerStats\.Current\.Runs > 0; \}/, 'Unity：生涯打过一局才洗牌');
+
+  const { store, game, ctx } = fresh();
+  await startRun(game);
+  assert.equal(ctx.run.route, undefined, '生涯第一局：规划表的设计顺序');
+  assert.equal(game.suspendRun(), true);
+  assert.equal(career().runs, 0, '暂离不记局数');
+
+  const router = confirmRouter();
+  assert.equal(startNewRun(ctx, router, 'bear'), false);
+  router.opened[1].onConfirm();
+  await until(() => game.state === 'playing', '确认后出征');
+  assert.equal(career().runs, 1, '旧征程按败北记了一局');
+  assert.equal(ctx.run.heroId, 'bear');
+  assert.deepEqual(ctx.run.route, [...RunRoute.build(ctx.run.seed).maps], '新局按放弃之后的生涯洗牌');
+  assert.equal(ctx.stage.loads.at(-1), ctx.run.stage, '进的是新路线的第一关');
+  assert.equal(ctx.run.stage.map, RunPlan.routeOf(ctx.run).first.map.code);
+  assert.deepEqual(disk(store).run.route, ctx.run.route, '续玩档带着新局的路线');
+
+  // 没有可以放弃的征程时照旧：生涯第一局不洗牌
+  const again = fresh();
+  await startRun(again.game);
+  assert.equal(again.ctx.run.route, undefined);
 });
 
 // ───────────── 主菜单：继续征程 / 开新局的确认框（Unity MainMenuScreen.Refresh、MenuFlow.StartRun）─────────────
@@ -355,7 +470,7 @@ test('开新局有未完成的征程时先弹确认框（MenuFlow.StartRun）：
   await advance(game); // 1-2 的进关快照带着这 12 魂晶
   assert.equal(game.suspendRun(), true);
   assert.equal(game.suspendedRun().stageCode, '1-2');
-  const router = { opened: null, get: id => (id === 'confirm' ? {} : null), isOpen: () => false, close() {}, open(id, arg) { this.opened = [id, arg]; return true; } };
+  const router = confirmRouter();
 
   assert.equal(startNewRun(ctx, router, 'bear'), false, '先确认');
   const [id, req] = router.opened;
