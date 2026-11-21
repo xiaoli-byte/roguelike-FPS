@@ -901,7 +901,7 @@ export class WeaponSystem implements IWeaponSystem {
     } else {
       this.shellMode = false;
       this.reloadElapsed = 0;
-      this.reloadTotal = Math.max(0.2, R.reloadTime);
+      this.reloadTotal = Math.max(WEAPON_TIMING.MinReload, R.reloadTime);
     }
     this.ctx.audio.play('reload_start', { volume: 0.8 });
     this.ctx.events.emit('weapon:reloadStart', { weapon: inst });

@@ -482,4 +482,24 @@ test('LevelScaleIsOnePlusPoint85PerLevel: 反应威力下限随关卡难度', as
 
 test.todo('【结构不同，不迁】ReactionTests.EveryOutcomeHasExactlyOneHandler / FrameBudgetResetsEachFrame：Unity 把五种结果拆成处理器类 + FrameBudget，'
   + '网页是 ReactionSystem 里的 run* 方法与计数器（预算规则已由上面的用例按行为覆盖）');
-test.todo('【不一致】焚雷扩散灼烧的目标数：Unity CombatTuning.Thunderfire.SpreadTargets = 16（按距离取最近 16 个），网页 Reactions.ts runThunderfire 点燃半径内全部（Unity 注释里写明是有意改的）');
+
+// M8 照 Unity 改齐（原来的 todo：网页点燃半径内全部）
+test('焚雷扩散灼烧：身体中心在半径内、按距离取最近 SpreadTargets = 16 个（Unity ReactionSystem.Nearest）', async () => {
+  const tf = tune('Thunderfire');
+  assert.equal(RX.TF_SPREAD_TARGETS, tf.SpreadTargets, 'TF_SPREAD_TARGETS ↔ CombatTuning.Thunderfire.SpreadTargets');
+  assert.equal(tf.SpreadTargets, 16);
+  const f = await fixture();
+  const center = f.enemy(false, false, false, { x: 0, z: 0, maxHp: 1e6 });
+  // 20 只由近到远围一圈（身体中心离焚雷中心 0.5…2.4 m，都在 3 m 内）
+  const ring = [];
+  for (let i = 0; i < 20; i++) {
+    const d = 0.5 + i * 0.1, a = i * 2.4;
+    ring.push(f.enemy(false, false, false, { x: Math.cos(a) * d, z: Math.sin(a) * d, maxHp: 1e6 }));
+  }
+  f.at(0, 1);
+  assert.ok(f.ctx.combat.triggerReaction(center, 'thunderfire', 100));
+  f.rx.flush();
+  const burning = ring.filter(e => e.statuses.has('burn'));
+  assert.equal(burning.length, tf.SpreadTargets, '只点最近的 16 只');
+  assert.deepEqual(burning, ring.slice(0, tf.SpreadTargets), '按距离由近到远');
+});

@@ -1,9 +1,10 @@
 // M13 对照：Unity EditMode 的 DamageCalcParityTests.cs、CombatPipelineTests.cs、StatSheetTests.cs → node --test。
 // 同样的输入、同样的断言；Unity 那份的对照组是「TS 逐行移植」，这里反过来：对照组是 Unity DamageCalc.cs 的逐行移植（unity*），
 // 表和常量直接从 C# 源码里读（Damage.cs 的 DamageTable、Stats.cs、Combat.cs、Status/*.cs），改了一边另一边就红。
-// 只写测试：网页和 Unity 不一致的地方写成 todo（见文件末尾），不改实现。
+// 只写测试：网页和 Unity 不一致的地方写成 todo，不改实现。M8 照 Unity 补上的（弱点伤害%、灵宠伤害源、免疫结果、玩家减益）已改成真断言。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
+import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { combatRig, cs, csConsts, csList, near, tsGraph } from './unity-parity-kit.mjs';
 
@@ -12,18 +13,22 @@ after(() => graph.dispose());
 const DC = await graph.load('combat/DamageCalc.ts');
 const ST = await graph.load('combat/Status.ts');
 const { Stats, BASE_STATS } = await graph.load('core/Stats.ts');
+const { IMMUNE_FEEDBACK_GAP } = await graph.load('combat/Combat.ts');
+const PS = await graph.load('player/PlayerStatus.ts');
+const SUN = await graph.load('enemies/bosses/HanbaSunburn.ts');
+const readSrc = file => readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
 
 const ELEMENTS = ['none', 'fire', 'shock', 'corrode'];
 const LAYERS = ['shield', 'armor', 'health'];
 const RANKS = ['normal', 'elite', 'boss'];
 const EPS = 1e-4;
 
-/** 每项取不同的值，乘错一项就能看出来（同 DamageCalcParityTests.Sheet；灵宠伤害网页没有这个属性，见末尾 todo） */
+/** 每项取不同的值，乘错一项就能看出来（同 DamageCalcParityTests.Sheet） */
 function sheet() {
   const s = new Stats();
   s.setBase('critChance', 0);
   for (const [k, v] of Object.entries({
-    damagePct: 0.3, skillDamagePct: 0.5, explosionDamagePct: 0.7, reactionDamagePct: 0.9, elementDamagePct: 0.11,
+    damagePct: 0.3, skillDamagePct: 0.5, explosionDamagePct: 0.7, reactionDamagePct: 0.9, petDamagePct: 0.31, elementDamagePct: 0.11,
     fireDamagePct: 0.13, shockDamagePct: 0.17, corrodeDamagePct: 0.19, eliteDamagePct: 0.23, bossDamagePct: 0.29,
     shieldDamagePct: 0.25, armorDamagePct: -0.3,
   })) s.add(k, v, 't');
@@ -41,6 +46,7 @@ function unityTags(source, tags) {
   if (source === 'weapon') t.add('weapon');
   if (source === 'skill') t.add('skill');
   if (source === 'explosion') t.add('explosion');
+  if (source === 'pet') t.add('pet');
   if (source === 'melee') { t.add('weapon'); t.add('melee'); }
   return t;
 }
@@ -49,9 +55,12 @@ function unityStatMultiplier(s, source, tags, element, rank) {
   const t = unityTags(source, tags);
   let m = 1;
   if (source !== 'status') {
-    if (t.has('weapon') || t.has('melee')) m *= s.mult('damagePct');
-    if (t.has('skill')) m *= s.mult('skillDamagePct');
-    if (t.has('explosion')) m *= s.mult('explosionDamagePct');
+    if (t.has('pet')) m *= s.mult('petDamagePct');
+    else {
+      if (t.has('weapon') || t.has('melee')) m *= s.mult('damagePct');
+      if (t.has('skill')) m *= s.mult('skillDamagePct');
+      if (t.has('explosion')) m *= s.mult('explosionDamagePct');
+    }
   }
   if (element !== 'none') m *= s.mult('elementDamagePct') * s.mult(ELEMENT_STAT[element]);
   if (rank === 'elite') m *= s.mult('eliteDamagePct');
@@ -104,8 +113,8 @@ function unityApplyLayers(s, shield, armor, hp, raw, element, skipShield) {
 }
 
 // Unity 的 DamageSource ↔ TS 的 source；Environment 对 TS 的 'scroll'（不吃任何来源加成）
-const SOURCES = ['weapon', 'skill', 'explosion', 'status', 'scroll'];
-const TAGS = ['weapon', 'skill', 'explosion', 'reaction', 'dot', 'chain'];
+const SOURCES = ['weapon', 'skill', 'explosion', 'status', 'scroll', 'pet'];
+const TAGS = ['weapon', 'skill', 'explosion', 'reaction', 'dot', 'chain', 'pet'];
 const tagSets = Array.from({ length: 1 << TAGS.length }, (_, mask) => TAGS.filter((_, i) => mask & (1 << i)));
 
 // ───────────── 层倍率 ─────────────
@@ -172,6 +181,9 @@ test('TagDrivenStatMultipliers: 武器 / 爆炸 / 技能 / 持续伤害 / 反应
   near(assert, M('status', ['dot'], 'fire'), fire, EPS, '灼烧跳伤：只吃元素% × 火焰%');
   near(assert, M('weapon', [], 'fire'), dmg * fire, EPS, '火属性武器：伤害% × 元素% × 火焰%');
   near(assert, M('status', ['reaction', 'weapon'], 'fire'), s.mult('reactionDamagePct'), EPS, '反应伤害：只吃反应伤害%（Pin 已含其他加成）');
+  near(assert, M('pet'), s.mult('petDamagePct'), EPS, '灵宠：只吃灵宠伤害%');
+  near(assert, M('pet', ['weapon', 'explosion']), s.mult('petDamagePct'), EPS, '灵宠不吃武器 / 爆炸伤害%');
+  near(assert, M('pet', [], 'fire'), s.mult('petDamagePct') * fire, EPS, '灵宠的元素攻击照吃元素加成');
   near(assert, M('weapon', [], 'none', target('elite')), dmg * s.mult('eliteDamagePct'), EPS, '精英 × 精英伤害%');
   near(assert, M('weapon', [], 'none', target('boss')), dmg * s.mult('bossDamagePct'), EPS, '首领 × 首领伤害%');
   near(assert, M('status', ['reaction'], 'shock', target('boss')), s.mult('reactionDamagePct'), EPS, '反应打首领也不再乘首领伤害%');
@@ -300,6 +312,10 @@ test('WeakpointForcesCritWithCritMultAndCritDamage', async () => {
   const head = rig.hit(e, { headshot: true, canCrit: false, critMult: 2.5 });
   near(assert, head.dealt, 100 * 1.2 * 2.5 * 1.5, 1e-2, '爆头 = 基础 × 伤害% × critMult × (1 + 暴伤%)');
   assert.ok(head.isCrit, '命中弱点必定暴击（canCrit = false 只关随机暴击）');
+  s.add('weakpointDamagePct', 0.15, 'scroll');
+  near(assert, rig.hit(e, { headshot: true, canCrit: false, critMult: 2.5 }).dealt, 100 * 1.2 * 2.5 * 1.5 * 1.15, 1e-2, 'Unity 另乘弱点伤害%（秘卷「破绽」）');
+  near(assert, rig.hit(e, { forceCrit: true }).dealt, 100 * 1.2 * 2 * 1.5, 1e-2, '只有弱点吃弱点伤害%，强制暴击不吃');
+  s.removeSource('scroll');
   const forced = rig.hit(e, { forceCrit: true });
   near(assert, forced.dealt, 100 * 1.2 * 2 * 1.5, 1e-2, '强制暴击、critMult 缺省 2');
   assert.ok(forced.isCrit);
@@ -311,6 +327,7 @@ test('CritRules: 随机暴击 / noCrit / 持续伤害与反应不暴击', async 
   s.add('critChance', 2, 't'); // 必定掷中
   s.add('critDamagePct', 0.5, 't');
   s.add('reactionDamagePct', 0.4, 't');
+  s.add('petDamagePct', 0.1, 't');
   const e = rig.enemy({ maxHp: 1e7 });
   const crit = rig.hit(e, { canCrit: undefined });
   near(assert, crit.dealt, 100 * 2 * 1.5, 1e-2, '随机暴击：critMult 2 × (1 + 50%)');
@@ -324,6 +341,9 @@ test('CritRules: 随机暴击 / noCrit / 持续伤害与反应不暴击', async 
   const rx = rig.hit(e, { source: 'status', tags: ['reaction'], forceCrit: true, canCrit: undefined });
   near(assert, rx.dealt, 100 * 1.4, 1e-2, '反应伤害不暴击，只吃反应伤害%');
   assert.ok(!rx.isCrit);
+  const pet = rig.hit(e, { source: 'pet', canCrit: undefined, weaponUid: undefined });
+  near(assert, pet.dealt, 100 * 1.1, 1e-2, '灵宠不随机暴击（docs/pet-system.md）');
+  assert.ok(!pet.isCrit);
 });
 
 // ───────────── 状态（CombatPipelineTests）：跳数、叠层、眩晕、减速 ─────────────
@@ -471,17 +491,25 @@ test('EssenceByDefAndRank: 精英 ×5、首领没写按 60、分身 0', async ()
   assert.equal(await essence({ essence: 0 }), 0, '分身不给');
 });
 
-test('ImmuneFeedbackIsThrottledAndSkipsDots: 不可选中完全不结算', async () => {
+test('ImmuneFeedbackIsThrottledAndSkipsDots: 不可选中返回 immune、不结算，0.4 s 内同一敌人只提示一次，跳伤不提示', async () => {
+  assert.equal(IMMUNE_FEEDBACK_GAP, csConsts(cs('Combat/Combat.cs')).ImmuneFeedbackGap, 'Combat.ImmuneFeedbackGap');
+  assert.equal(IMMUNE_FEEDBACK_GAP, 0.4);
   const rig = await combatRig(graph, THREE);
   const e = rig.enemy({ maxHp: 1000, untargetable: true });
-  let damaged = 0;
-  rig.events.on('enemy:damaged', () => damaged++);
-  assert.equal(rig.hit(e, { base: 10 }), null, '不可选中：不结算');
-  assert.equal(rig.hit(e, { base: 10, source: 'status', element: 'fire', tags: ['dot'] }), null);
-  assert.equal(e.hp, 1000);
-  assert.equal(damaged, 0);
+  let immune = 0;
+  rig.events.on('enemy:damaged', ({ enemy, result }) => { if (enemy === e && result.immune) immune++; });
+  const r = rig.hit(e, { base: 10 });
+  assert.ok(r.immune);
+  near(assert, r.dealt, 0, EPS);
+  rig.hit(e, { base: 10 });
+  assert.ok(rig.hit(e, { base: 10, source: 'status', element: 'fire', tags: ['dot'] }).immune);
+  assert.equal(immune, 1, '0.4 s 内同一敌人只提示一次，跳伤不提示');
+  assert.equal(e.hp, 1000, '不结算');
   rig.ctx.combat.applyStatus(e, 'burn', 10);
   assert.ok(!e.statuses.has('burn'), '也不挂状态');
+  rig.advance(IMMUNE_FEEDBACK_GAP);
+  rig.hit(e, { base: 10 });
+  assert.equal(immune, 2, '过了 0.4 s 再提示一次');
 });
 
 test('PurgeIsSilentAndUnrewarded: 静默处决不算战果，普通处决照常算击杀', async () => {
@@ -527,21 +555,78 @@ test('StatSheet.Default ↔ BASE_STATS：写了基础值的十项相同，其余
   for (const [name, value] of Object.entries(unity)) assert.equal(BASE_STATS[key(name)], value, `${name} 基础值`);
   const defaults = new Set(Object.keys(unity).map(key));
   for (const [k, v] of Object.entries(BASE_STATS)) if (!defaults.has(k)) assert.equal(v, 0, `${k} 两边都没有基础值`);
-  // 枚举 ↔ StatKey：Unity 有、网页没有的属性登记在下面的 todo
+  // 枚举 ↔ StatKey：两边一项不差（M8 补上了 weakpointDamagePct / petDamagePct）
   const body = src.slice(src.indexOf('public enum Stat'), src.indexOf('public sealed class StatSheet')).replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
   const names = body.slice(body.indexOf('{') + 1, body.indexOf('}')).split(',').map(x => x.trim()).filter(Boolean);
   const missing = names.map(key).filter(k => !(k in BASE_STATS));
-  assert.deepEqual(missing, ['weakpointDamagePct', 'petDamagePct'], 'Unity 的 Stat 枚举里网页没有的项（多了 / 少了都要更新不一致清单）');
+  assert.deepEqual(missing, [], 'Unity 的 Stat 枚举里网页没有的项');
   assert.deepEqual(Object.keys(BASE_STATS).filter(k => !names.map(key).includes(k)), [], '网页的 StatKey 都在 Unity 枚举里');
 });
 
-// ───────────── 不一致清单（不改实现，交给 M8 / M9）─────────────
+// ───────────── 玩家减益（CombatPipelineTests 的 C3：寒意 / 点燃 / 日晒，网页在 player/PlayerStatus.ts）─────────────
 
-test.todo('【不一致】弱点伤害%：Unity Combat.cs 第 173 行命中弱点另乘 Stat.WeakpointDamagePct（秘卷「破绽」weak_point，OffenseStatScrolls.cs）；'
-  + '网页 core/types.ts 的 StatKey 没有 weakpointDamagePct、Combat.damageEnemy 只乘 enemy.weakpointDamageMult，progression/scrolls 也没有「破绽」这一卷（M8 战斗契约）');
-test.todo('【不一致】灵宠伤害源：Unity DamageSource.Pet 只吃 Stat.PetDamagePct、不随机暴击（DamageCalc.StatMultiplier / CritRules「100 × 1.1」）；'
-  + '网页 DamageSource 没有 pet、StatKey 没有 petDamagePct（M8 战斗契约的灵宠伤害源 / M9 灵宠）');
-test.todo('【不一致】免疫提示事件：Unity 打不可选中的敌人返回 DamageResult.immune = true 并转发 EnemyDamaged（0.4 s 节流）；'
-  + '网页 Combat.damageEnemy 直接返回 null、不派发 enemy:damaged，只让 HitFeedback.immune 弹字（节流在 Feedback 里，测不到返回值）');
-test.todo('【没迁】玩家减益 寒意 / 引燃 / 日灼（CombatPipelineTests 的 ChillTakesStrongestCappedAt70Percent、IgniteTicksEveryHalfSecond…、SunburnStacksWhileExposed…、'
-  + 'EveryStatusHasOneDefinition）：网页 StatusId 只有 burn / shock / corrode / stun / slow，玩家状态随 M8');
+test('ChillTakesStrongestCappedAt70Percent', () => {
+  const u = csConsts(cs('Combat/Status/ChillStatus.cs'));
+  assert.deepEqual([PS.CHILL.MaxSlow, PS.CHILL.DefaultSeconds, PS.CHILL.MaxEntries], [u.MaxSlow, u.DefaultSeconds, u.MaxEntries]);
+  near(assert, PS.chillFraction(35), 0.35, 1e-6, '> 1 按百分数');
+  const chill = new PS.ChillInstance();
+  chill.apply(0.35, 1.5);
+  chill.apply(0.9, 0.5);
+  near(assert, chill.slow, 0.7, 1e-6, '取最强的一条，上限 70%');
+  near(assert, chill.speedMult, 0.3, 1e-6);
+  chill.tick(0.6);
+  near(assert, chill.speedMult, 0.65, 1e-6, '强的那条到期后回落到次强的');
+  chill.tick(1);
+  assert.ok(!chill.active);
+  near(assert, chill.speedMult, 1, 1e-6);
+});
+
+test('IgniteTicksEveryHalfSecondAndRefreshesWithoutStacking', () => {
+  const u = csConsts(cs('Combat/Status/IgniteStatus.cs'));
+  assert.deepEqual([PS.IGNITE.DefaultSeconds, PS.IGNITE.TickInterval, PS.IGNITE.EndGrace, PS.IGNITE.LastTickGrace], [u.DefaultSeconds, u.TickInterval, u.EndGrace, u.LastTickGrace]);
+  const ignite = new PS.IgniteInstance(null);
+  ignite.apply(3, 2);
+  near(assert, ignite.remainingDotRaw, 4 * 3, 1e-6, '2 s × 每 0.5 s 一跳 = 4 跳');
+  ignite.apply(5, 1);
+  near(assert, ignite.remainingDotRaw, 4 * 5, 1e-6, '再点燃：时长取更晚的到期，跳伤取较大');
+  // 同 CombatPipelineTests.CountDrops：每帧看剩余跳伤掉了几次
+  let drops = 0, last = ignite.remainingDotRaw;
+  for (let t = 0; t < 2.5; t += 1 / 60) {
+    if (ignite.active) ignite.tick(1 / 60);
+    const now = ignite.active ? ignite.remainingDotRaw : 0;
+    if (now < last - 1e-4) drops++;
+    last = now;
+  }
+  assert.equal(drops, 4);
+  assert.ok(!ignite.active);
+});
+
+test('SunburnStacksWhileExposedAndFadesInShade', () => {
+  const u = csConsts(cs('Combat/Status/SunburnStatus.cs'));
+  assert.deepEqual(
+    [SUN.SUNBURN_STACK_SECONDS, SUN.SUNBURN_TICK_INTERVAL, SUN.SUNBURN_DAMAGE_PER_STACK, SUN.SUNBURN_DECAY_DELAY, SUN.SUNBURN_DECAY_PER_SECOND, SUN.SUNBURN_MAX_STACKS],
+    [u.StackSeconds, u.TickInterval, u.DamagePerStack, u.DecayDelay, u.DecayPerSecond, u.MaxStacks],
+  );
+  const sun = new SUN.SunburnInstance(null);
+  sun.apply(SUN.SUNBURN_STACK_SECONDS);
+  assert.equal(sun.stacks, 1);
+  for (let i = 0; i < 20; i++) sun.apply(SUN.SUNBURN_STACK_SECONDS);
+  assert.equal(sun.stacks, SUN.SUNBURN_MAX_STACKS, '最多 10 层');
+  near(assert, sun.tickDamage, SUN.SUNBURN_MAX_STACKS * SUN.SUNBURN_DAMAGE_PER_STACK, 1e-6);
+  sun.tick(0.2);
+  assert.equal(sun.stacks, SUN.SUNBURN_MAX_STACKS, '刚离开日晒还不消退');
+  sun.tick(0.2);
+  assert.ok(sun.stacks < SUN.SUNBURN_MAX_STACKS, '离开 0.3 s 后开始消退');
+  for (let i = 0; i < 300 && sun.active; i++) sun.tick(1 / 60);
+  assert.ok(!sun.active, '躲进影子几秒内清空');
+});
+
+test('EveryStatusHasOneDefinition: Unity StatusId 的 8 项 = 网页敌人状态 5 项 + 玩家减益 3 项（寒意 / 日晒 / 点燃只挂玩家）', () => {
+  const ids = cs('Combat/Status/StatusEffect.cs').match(/public enum StatusId \{([^}]*)\}/)[1].split(',').map(x => x.trim().toLowerCase()).filter(Boolean);
+  const enemy = [...readSrc('core/types.ts').match(/export type StatusId =([^;]*);/)[1].matchAll(/'(\w+)'/g)].map(m => m[1]);
+  const player = [...readSrc('player/PlayerStatus.ts').match(/export type PlayerStatusId =([^;]*);/)[1].matchAll(/'(\w+)'/g)].map(m => m[1]);
+  assert.deepEqual([...enemy].sort(), ['burn', 'corrode', 'shock', 'slow', 'stun']);
+  assert.deepEqual([...player].sort(), ['chill', 'ignite', 'sunburn']);
+  assert.deepEqual([...enemy, ...player].sort(), [...ids].sort());
+  for (const name of ['Chill', 'Sunburn', 'Ignite']) assert.match(cs(`Combat/Status/${name}Status.cs`), /Hosts => StatusHosts\.Player;/, `${name} 只挂玩家`);
+});

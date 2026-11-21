@@ -1,7 +1,7 @@
 // M13 对照：Unity EditMode 的 Scroll*Tests.cs（Runtime / Offense / Element / Utility / Legend / Reaction / Tactics）→ node --test。
 // 这一份迁的是「定义与公式」：
-//   · 118 张秘卷的 id / 名字 / 稀有度 / 层数上限 / 标签 / 专属英雄 / 描述，逐张和 Unity 的定义源码（Progression/Scrolls/**）比；
-//   · Unity 测试里手抄的 TS 数据表（进攻 24、元素 10、功能 30、反应 24、战术 20）和网页的表顺序一致；
+//   · 119 张秘卷的 id / 名字 / 稀有度 / 层数上限 / 标签 / 专属英雄 / 描述，逐张和 Unity 的定义源码（Progression/Scrolls/**）比；
+//   · Unity 测试里手抄的 TS 数据表（进攻 24、元素 10、功能 30、反应 24、战术 20）和网页的表顺序一致（进攻表尾 M8 补的「破绽」是 Unity 独有、手抄表里没有）；
 //   · 属性卷（StatScroll）：Unity 写的 (Stat, 每层值) 逐张装进网页的 ScrollSystem，属性表的增量一分不差；
 //   · 抽取权重（ScrollRoll.Weight / Pool）与 10 万次抽样、procScale、条件增伤四卷、元素弹三卷、传说卷的属性部分。
 // 逐卷的触发行为（Unity 那边约 4000 行、靠 ScrollScope / TacticsKit 的假宿主驱动）没有迁：战术 20 卷网页原本就有 tests/scroll-tactics.test.mjs
@@ -100,13 +100,13 @@ const delta = (before, after) => Object.fromEntries(Object.keys(before).filter(k
 /** 已知的文案 / 标签差异：M13 对出来的货币叫法 / 战鼓 / 回春 / 标签顺序 / 高风险卷都已照 Unity 改齐，现在一张都不许不同 */
 const KNOWN = {};
 
-test('118 张秘卷：id 集合同 Unity（Unity 多一张「破绽」，见 todo）', () => {
-  assert.equal(SCROLL_DEFS.length, 118);
-  assert.equal(tsById.size, 118, 'id 不重复');
+test('119 张秘卷：id 集合同 Unity（M8 补上了「破绽」）', () => {
+  assert.equal(SCROLL_DEFS.length, 119);
+  assert.equal(tsById.size, 119, 'id 不重复');
   const onlyWeb = [...tsById.keys()].filter(id => !unity.has(id)), onlyUnity = [...unity.keys()].filter(id => !tsById.has(id));
   assert.deepEqual(onlyWeb, [], '网页有、Unity 没有的秘卷');
-  assert.deepEqual(onlyUnity, ['weak_point'], 'Unity 有、网页没有的秘卷');
-  assert.deepEqual(Object.fromEntries(Object.entries(groups).map(([k, v]) => [k, v.length])), { offense: 24, element: 10, utility: 30, legend: 10, reaction: 24, tactics: 20 });
+  assert.deepEqual(onlyUnity, [], 'Unity 有、网页没有的秘卷');
+  assert.deepEqual(Object.fromEntries(Object.entries(groups).map(([k, v]) => [k, v.length])), { offense: 25, element: 10, utility: 30, legend: 10, reaction: 24, tactics: 20 });
 });
 
 test('每张秘卷的名字 / 稀有度 / 层数上限 / 标签 / 专属英雄 / 描述同 Unity 的定义', () => {
@@ -149,7 +149,7 @@ test('描述是内插字符串 / 两段式的卷：数字逐个相同（传说�
   assert.ok(checked >= 7, `比过 ${checked} 张`);
 });
 
-test('Unity 测试里手抄的 TS 数据表：进攻 24 / 元素 10 / 功能 30 / 反应 24 / 战术 20，顺序同网页', () => {
+test('Unity 测试里手抄的 TS 数据表：进攻 24 / 元素 10 / 功能 30 / 反应 24 / 战术 20，顺序同网页（进攻表尾的「破绽」不在手抄表里）', () => {
   const tuples = (file, withTag) => [...csTest(file).matchAll(withTag ? /\("(\w+)", "([^"]+)", (\d), (\d+), "([^"]+)"\)/g : /\("(\w+)", "([^"]+)", (\d), (\d+)\)/g)];
   const check = (rows, list, label) => {
     assert.deepEqual(rows.map(m => m[1]), list.map(d => d.id), `${label}：顺序`);
@@ -159,7 +159,10 @@ test('Unity 测试里手抄的 TS 数据表：进攻 24 / 元素 10 / 功能 30 
       if (m[5]) assert.ok(d.tags.includes(m[5]), `${label} ${m[1]} 带「${m[5]}」标签`);
     }
   };
-  check(tuples('ScrollOffenseTests.cs'), groups.offense, '进攻');
+  // 「破绽」是 Unity 自己加的卷（OffenseStatScrolls.cs），ScrollOffenseTests 手抄的是 M8 之前的 TS 表：网页把它放在进攻表尾，前 24 张顺序不动
+  assert.equal(groups.offense.at(-1).id, 'weak_point', '「破绽」在进攻表尾');
+  assert.ok(!tuples('ScrollOffenseTests.cs').some(m => m[1] === 'weak_point'));
+  check(tuples('ScrollOffenseTests.cs'), groups.offense.slice(0, -1), '进攻');
   check(tuples('ScrollElementTests.cs'), groups.element, '元素');
   check(tuples('ScrollUtilityTests.cs', true), groups.utility, '功能');
   const idList = (file, re) => [...csTest(file).match(re)[1].matchAll(/"(\w+)"/g)].map(m => m[1]);
@@ -410,9 +413,26 @@ test('元素来源：燎 / 鼯自带；磐要靠带元素的武器、元素词�
   assert.ok(r.scrolls.ownedFlows().has('焚雷'), '已投入的流派从持有秘卷的标签里来');
 });
 
-// ───────────── 不一致清单（不改实现）─────────────
+// ───────────── M8 补上的「破绽」（原来的 todo：Unity 多一张进攻卷）─────────────
 
-test.todo('Unity 多一张进攻卷「破绽」weak_point（精良，3 层，弱点伤害每层 +15%，Stat.WeakpointDamagePct）：网页的 defsOffense.ts 没有这张，Stats 也没有 weakpointDamagePct 这个属性（unity/…/Offense/OffenseStatScrolls.cs）');
+test('进攻卷「破绽」weak_point 同 Unity OffenseStatScrolls.cs：精良、3 层、「暴击」标签，弱点伤害每层 +15%', async () => {
+  const u = unity.get('weak_point'), t = tsById.get('weak_point');
+  assert.ok(u && t);
+  assert.deepEqual([t.name, t.rarity, t.maxStacks, t.tags, t.description], [u.name, u.rarity, u.maxStacks, u.tags, u.description]);
+  assert.deepEqual([u.name, u.rarity, u.maxStacks], ['破绽', 1, 3]);
+  assert.deepEqual(u.stats, [['WeakpointDamagePct', 0.15]]);
+  assert.ok('weakpointDamagePct' in BASE_STATS, '网页有弱点伤害%这个属性');
+  const r = await rig(), s = r.ctx.player.stats;
+  r.give('weak_point', 3);
+  near(assert, s.get('weakpointDamagePct'), 0.45, 1e-9, '3 层 +45%');
+  // 只乘弱点：身体不变，爆头 × 1.45
+  s.setBase('critChance', 0);
+  const e = r.enemy({ maxHp: 1e7 });
+  const body = r.hit(e).dealt, head = r.hit(e, { headshot: true }).dealt;
+  r.scrolls.resetForRun();
+  near(assert, r.hit(e).dealt, body, 1e-6, '身体命中不吃');
+  near(assert, head / r.hit(e, { headshot: true }).dealt, 1.45, 1e-6, '弱点 × (1 + 45%)');
+});
 
 // ───────────── M13 不一致的修正（原来的 todo：货币叫法、战鼓、回春、标签顺序、高风险传说卷）─────────────
 
