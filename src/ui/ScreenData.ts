@@ -186,7 +186,18 @@ export function menuHints(s: SuspendedLike | null | undefined): { continueHint: 
   if (!s) return { continueHint: '', startHint: '选择英雄，踏入第一章' };
   return {
     continueHint: `${s.stageLabel} · ${s.heroName} · 用时 ${clockText(s.time)} · 灵石 ${fmtInt(s.coins)}`,
-    startHint: '放弃未完成的征程（按败北结算），重新选择英雄',
+    startHint: '放弃未完成的征程，重新选择英雄',
+  };
+}
+
+/** 有未完成的征程时开新局的确认框（Unity MenuFlow.StartRun；stageCode = 续玩档那一关的槽位编号「1-2」） */
+export function forfeitConfirmText(stageCode: string): { title: string; message: string; detail: string; confirmText: string; cancelText: string } {
+  return {
+    title: '开始新征程',
+    message: `开始新征程会放弃当前的征程（第 ${stageCode} 关），确定吗？`,
+    detail: '放弃的征程按败北结算：已收集的魂晶照常入账，此操作不能撤销。',
+    confirmText: '放弃并出征',
+    cancelText: '取消',
   };
 }
 

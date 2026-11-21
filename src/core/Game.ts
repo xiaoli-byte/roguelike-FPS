@@ -497,12 +497,17 @@ export class Game implements IGame {
     (weapons as unknown as { applyHeldMods?(): void }).applyHeldMods?.();
   }
 
-  /** 主菜单「继续征程」显示的那一局（没有 / 坏档为 null）。场景清单没读到之前不动盘上的档（备选图要清单才知道在不在） */
-  suspendedRun(): { heroId: string; stageLabel: string; savedAt: string; time: number; coins: number } | null {
+  /**
+   * 主菜单「继续征程」显示的那一局（没有 / 坏档为 null）。场景清单没读到之前不动盘上的档（备选图要清单才知道在不在）。
+   * 读档时发现坏档（已挪成 .corrupt）/ 来自更新的版本：提示一次（Unity MainMenuScreen.OnOpen 的 RunSuspend.TakeProblem）
+   */
+  suspendedRun(): { heroId: string; stageCode: string; stageLabel: string; savedAt: string; time: number; coins: number } | null {
     try {
       const dev = Suspend.menuDev();
       const s = hasStageCatalog() ? Suspend.peek(dev) : Suspend.read(dev).result ?? null;
-      return s ? { heroId: s.run.heroId, stageLabel: s.stage.label, savedAt: s.savedAt, time: s.run.time, coins: s.run.coins } : null;
+      const problem = Suspend.takeProblem();
+      if (problem) this.ctx.ui.toast(problem, '#ff8a6a');
+      return s ? { heroId: s.run.heroId, stageCode: s.stage.code, stageLabel: s.stage.label, savedAt: s.savedAt, time: s.run.time, coins: s.run.coins } : null;
     } catch (err) {
       console.error('[Game] 读续玩档失败', err);
       return null;

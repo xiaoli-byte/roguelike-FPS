@@ -100,6 +100,9 @@ const Suspend = await graph.load('progression/RunSuspend.ts');
 const RunPlan = await graph.load('progression/RunPlan.ts');
 const StagePlan = await graph.load('progression/StagePlan.ts');
 const { RunRoute } = await graph.load('progression/RunRoute.ts');
+// 主菜单的数据映射与出征（继续征程 / 开新局的确认框）；先全部载入再跑测试（after 会删临时模块目录）
+const SD = await graph.load('ui/ScreenData.ts');
+const { startNewRun } = await graph.load('ui/screens/MainMenuScreen.ts');
 
 SaveService.quiet = true;
 SaveService.deferWrites = false;
@@ -323,4 +326,66 @@ test('开新局放弃旧征程要等场景清单：清单没到时不校验（�
   assert.ok(!store.m.has(RUN + '.corrupt'));
   assert.equal(Suspend.takeProblem(), null, '没有「存档已损坏」的提示');
   assert.equal(disk(store).run.heroId, 'fox', '续玩档换成新局的');
+});
+
+// ───────────── 主菜单：继续征程 / 开新局的确认框（Unity MainMenuScreen.Refresh、MenuFlow.StartRun）─────────────
+
+test('「继续征程」/「开始游戏」的小字与开新局的确认框文字照 Unity MainMenuScreen.Refresh / MenuFlow.StartRun', () => {
+  const menu = cs('UI/Screens/MainMenuScreen.cs');
+  assert.ok(menu.includes('· {hero?.name ?? r.heroId} · 用时 {ScreenKit.Clock(r.time)} · 灵石 {ScreenKit.Num(r.coins)}"'));
+  for (const lit of ['startHint.text = "放弃未完成的征程，重新选择英雄";', 'else startHint.text = "选择英雄，踏入第一章";', 'continueBtn = NavItem(nav, "继续征程", "", ContinueRun, true);'])
+    assert.ok(menu.includes(lit), lit);
+  assert.deepEqual(SD.menuHints({ stageLabel: '1-2 · 雅丹迷城', heroName: '狐', time: 3725.9, coins: 12345 }),
+    { continueHint: '1-2 · 雅丹迷城 · 狐 · 用时 1:02:05 · 灵石 12,345', startHint: '放弃未完成的征程，重新选择英雄' });
+  assert.equal(SD.menuHints({ stageLabel: '1-1', heroName: '熊', time: 59.9, coins: 0 }).continueHint, '1-1 · 熊 · 用时 0:59 · 灵石 0');
+  assert.deepEqual(SD.menuHints(null), { continueHint: '', startHint: '选择英雄，踏入第一章' });
+
+  const flow = cs('UI/Screens/MenuFlow.cs');
+  const t = SD.forfeitConfirmText('1-3');
+  assert.ok(flow.includes('message = $"开始新征程会放弃当前的征程（第 {suspended.run.stageCode} 关），确定吗？",'));
+  assert.equal(t.message, '开始新征程会放弃当前的征程（第 1-3 关），确定吗？');
+  for (const [k, v] of Object.entries({ title: t.title, detail: t.detail, confirmText: t.confirmText, cancelText: t.cancelText }))
+    assert.ok(flow.includes(`${k} = "${v}",`), `${k} = ${v}`);
+});
+
+test('开新局有未完成的征程时先弹确认框（MenuFlow.StartRun）：确认之前什么都不动，确认后旧局按败北结算再出征；没有就直接开', async () => {
+  const { store, game, ctx } = fresh();
+  await startRun(game);
+  ctx.run.essence = 12;
+  await advance(game); // 1-2 的进关快照带着这 12 魂晶
+  assert.equal(game.suspendRun(), true);
+  assert.equal(game.suspendedRun().stageCode, '1-2');
+  const router = { opened: null, get: id => (id === 'confirm' ? {} : null), isOpen: () => false, close() {}, open(id, arg) { this.opened = [id, arg]; return true; } };
+
+  assert.equal(startNewRun(ctx, router, 'bear'), false, '先确认');
+  const [id, req] = router.opened;
+  assert.equal(id, 'confirm');
+  assert.equal(req.message, '开始新征程会放弃当前的征程（第 1-2 关），确定吗？');
+  assert.equal(req.confirmText, '放弃并出征');
+  assert.equal(game.state, 'menu', '确认之前不开局');
+  assert.equal(disk(store).run.heroId, 'fox', '旧征程还在');
+
+  req.onConfirm();
+  await until(() => game.state === 'playing', '确认后出征');
+  assert.equal(ctx.run.heroId, 'bear');
+  assert.deepEqual([career().runs, essence()], [1, 12], '旧征程按败北结算');
+
+  game.toMenu();
+  router.opened = null;
+  assert.equal(game.suspendedRun(), null, '回主菜单按失败结算的局没有续玩档');
+  assert.equal(startNewRun(ctx, router, 'fox'), true, '没有未完成的征程：直接出征');
+  assert.equal(router.opened, null);
+  await until(() => game.state === 'playing', '直接出征');
+});
+
+test('主菜单读到坏的续玩档：挪成 .corrupt、提示一次（Unity MainMenuScreen.OnOpen 的 TakeProblem），不再显示「继续征程」', () => {
+  const { store, game, ctx } = fresh();
+  store.m.set(RUN, '{"version":2,"game":"spiritfire","kind":"run","run":{"heroId":"fox","stageCode":"9-9"}}');
+  StagePlan.setStageCatalog(StagePlan.STAGES.map(s => ({ id: s.code, available: true })));
+  assert.equal(game.suspendedRun(), null);
+  assert.ok(store.m.has(RUN + '.corrupt') && !store.m.has(RUN));
+  assert.deepEqual(ctx.ui.toasts, ['上次的征程存档已损坏，无法继续，已丢弃']);
+  assert.equal(game.suspendedRun(), null);
+  assert.equal(ctx.ui.toasts.length, 1, '只提示一次');
+  StagePlan.setStageCatalog(null);
 });

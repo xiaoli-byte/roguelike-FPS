@@ -1164,8 +1164,8 @@ export interface IGame {
   closeModal(): void;
   applySettings(): void;
   saveSettings(): void;
-  /** 续玩（M11d，Unity MenuFlow.Suspended）：主菜单「继续征程」的那一局（没有 / 坏档为 null） */
-  suspendedRun?(): { heroId: string; stageLabel: string; savedAt: string; time: number; coins: number } | null;
+  /** 续玩（M11d，Unity MenuFlow.Suspended）：主菜单「继续征程」的那一局（没有 / 坏档为 null）；stageCode = 槽位编号「1-2」 */
+  suspendedRun?(): { heroId: string; stageCode: string; stageLabel: string; savedAt: string; time: number; coins: number } | null;
   /** 读续玩档从那一关开头接着打；没有档 / 坏档提示并返回 false（Unity MenuFlow.ResumeRun） */
   continueRun?(): boolean;
   /** 暂停菜单「返回主菜单」（Unity MenuFlow.Suspend）：能暂离（盘上有这一关的续玩档）就不结算，否则按失败结算；然后回主菜单。返回是否暂离 */

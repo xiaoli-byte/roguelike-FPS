@@ -1,9 +1,9 @@
 /**
  * 主菜单（照译 Unity G/UI/Screens/MainMenuScreen.cs，样式 css/unity/menu.css 的 .sf-menu）：
- *   左：导航（开始游戏 / 天赋 / 图鉴 / 设置 / 操作说明），悬停或键盘焦点时朱砂笔触从左扫开；
+ *   左：导航（[继续征程] / 开始游戏 / 天赋 / 图鉴 / 设置 / 操作说明），悬停或键盘焦点时朱砂笔触从左扫开；
  *   右：书法标题「灵火破晓」逐字落墨 +「烈焰为弹 · 破此轮回」+ 朱印「不熄」盖下；左上魂晶余额，底部生涯统计（出征 / 通关 / 最远 / 最多清关 / 累计斩敌）。
  * 「继续征程」（M11d，Unity I5）：有未完成的征程（续玩档）时排在最前、当主按钮，小字写「关卡 · 英雄 · 用时 · 灵石」；
- *   「开始游戏」退成普通按钮，小字写明会放弃它。
+ *   「开始游戏」退成普通按钮，小字写明会放弃它；出征前弹确认框（{@link startNewRun}，Unity MenuFlow.StartRun）。
  * 其余页（选英雄、天赋、图鉴、设置、操作说明）叠在上面，主菜单本体淡出；回来时淡入、刷新余额、未完成的征程与统计。
  * 不挡游戏、不停时间；返回键在主菜单上什么都不做。
  * 网页差异：Unity 叠在主菜单场景的 3D 远景上（MenuDirector），网页没有菜单场景——背景是 MenuBackdrop 的 CSS 远景（旧主菜单的那套）；
@@ -12,14 +12,15 @@
 import type { GameContext } from '../../core/types';
 import { isDemo, final as finalStage, playable } from '../../progression/RunPlan';
 import { stageCatalogVersion } from '../../progression/StagePlan';
-import { careerItems, firstRunText, menuHints } from '../ScreenData';
+import { careerItems, firstRunText, forfeitConfirmText, menuHints } from '../ScreenData';
 import type { Codex, CodexCatalog } from '../codex/Codex';
 import { el, show, text, toggle } from '../toolkit/el';
 import { UIFontRole, warmup } from '../toolkit/UIFonts';
 import { UIIcon } from '../toolkit/UIIcons';
-import { type BlockState, type IScreen, UIScreen } from '../toolkit/UIRouter';
+import { type BlockState, type IScreen, type ScreenRouter, UIScreen } from '../toolkit/UIRouter';
 import { fadeRight, paint } from '../toolkit/UITheme';
 import { CODEX_ID } from './CodexScreen';
+import { ConfirmScreen } from './ConfirmScreen';
 import { CONTROLS_ID } from './ControlsScreen';
 import { card, easeBack, easeOut, icon, num } from './ScreenKit';
 import { SETTINGS_ID } from './SettingsScreen';
@@ -38,6 +39,20 @@ function suspendedOf(ctx: GameContext): Suspended | null {
     console.error('[UI] 读未完成的征程失败', err);
     return null;
   }
+}
+
+/**
+ * 出征（Unity MenuFlow.StartRun）：有未完成的征程时先弹确认框（不可撤销：旧局按败北结算），确认后才开新局；
+ * 没有确认框界面时直接开（ConfirmScreen.ask 当作确认）。返回这次有没有直接开局
+ */
+export function startNewRun(ctx: GameContext, router: ScreenRouter | null, heroId: string): boolean {
+  const s = suspendedOf(ctx);
+  if (s && router) {
+    ConfirmScreen.ask(router, { ...forfeitConfirmText(s.stageCode), onConfirm: () => ctx.game.startRun(heroId) });
+    return false;
+  }
+  ctx.game.startRun(heroId);
+  return true;
 }
 
 export class MainMenuScreen extends UIScreen {
@@ -128,10 +143,10 @@ export class MainMenuScreen extends UIScreen {
     return { b, hint: h };
   }
 
-  /** 「开始游戏」：选英雄页（没有选英雄页时直接用第一位英雄出征） */
+  /** 「开始游戏」：选英雄页（没有选英雄页时直接用第一位英雄出征；有未完成的征程时先确认） */
   startGame(): void {
     if (this.router?.get(HERO_SELECT_ID)) this.router.open(HERO_SELECT_ID);
-    else this.ctx.game.startRun(this.ctx.heroes[0]?.id ?? '');
+    else startNewRun(this.ctx, this.router, this.ctx.heroes[0]?.id ?? '');
   }
 
   /** 有未完成的征程（「继续征程」显示着，I5） */
