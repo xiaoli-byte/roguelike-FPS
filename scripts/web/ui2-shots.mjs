@@ -172,6 +172,11 @@ try {
   await ev(`window.__router.top.select('scroll')`);
   await settle(500);
   await shot('codex-scroll');
+  // 高风险卷的图鉴说明：代价行是红色富文本（Unity Describe：<color=#ff6a50>代价：…</color>）
+  await ev(`const u = window.__ui; u.codex.unlock('scroll', 'gambler'); window.__router.top.reveal(u.catalog.of('scroll').find(e => e.id === 'gambler'))`);
+  await settle(400);
+  log('codex risk', JSON.stringify(await b.eval(`[window.__router.top.detailName, document.querySelector('.sf-codex__ddesc')?.innerHTML]`)));
+  await shot('codex-scroll-risk');
   await ev(`window.__router.top.select('enemy')`);
   for (let k = 0; k < 60; k++) await step(0.05);
   await settle(600);
@@ -269,12 +274,15 @@ try {
   log('map closed', await b.eval('window.__game.state'), JSON.stringify(await b.eval('window.__router.ids')));
 
   // 行囊（先拿几卷秘卷、第二把枪）
-  await ev(`const c = window.__ctx; const all = c.scrolls.all; for (const i of [0, 3, 3, 8, 15, 22, 31]) if (all[i]) c.scrolls.add(all[i].id);
+  await ev(`const c = window.__ctx; const all = c.scrolls.all; for (const i of [0, 3, 3, 8, 15, 22, 31]) if (all[i]) c.scrolls.add(all[i].id); c.scrolls.add('glass_cannon');
     const ids = c.weapons.allDefIds(); c.weapons.give(c.weapons.roll({ defId: ids[Math.min(4, ids.length - 1)], rarity: 3 }))`);
   await step(0.2);
   await ev(`window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Tab', bubbles: true }))`);
   await settle(700);
   log('inventory', JSON.stringify(await b.eval(`[window.__game.state, window.__router.top.id, window.__router.top.scrollRows, window.__router.top.weaponCards]`)));
+  // 常驻属性（Unity StatGrid.KeyStats 14 项）与高风险卷另起一行的红字代价（sf-owned__down）
+  log('inventory stats', JSON.stringify(await b.eval(`[...document.querySelectorAll('.sf-inv .sf-stat__name')].map(e => e.textContent)`)));
+  log('inventory downside', JSON.stringify(await b.eval(`[...document.querySelectorAll('.sf-owned__down')].map(e => [e.textContent, getComputedStyle(e).color, e.previousElementSibling && e.previousElementSibling.textContent])`)));
   await shot('inventory');
   await ev(`window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyE', bubbles: true }))`);
   await settle(300);
@@ -296,9 +304,19 @@ try {
   await shot('scroll-choice-picked');
   await settle(600);
   log('choice', JSON.stringify(await b.eval(`[window.__picked, window.__game.state, window.__router.ids, !!document.querySelector('.sf-choice')]`)));
+  // 高风险卷的卡面：收益一行、「代价」朱字行另起（Unity ScrollChoiceScreen.SplitDownside）
+  await ev(`const c = window.__ctx; c.ui.showScrollChoice(['overdrive', 'thousand_blades', 'midas_heart'].map(id => c.scrolls.all.find(s => s.id === id)).filter(Boolean), () => {})`);
+  await settle(1900);
+  log('choice downside', JSON.stringify(await b.eval(`[...document.querySelectorAll('.sf-scroll__paper')].map(p => [p.querySelector('.sf-scroll__name')?.textContent, p.querySelector('.sf-scroll__desc')?.textContent, p.querySelector('.sf-scroll__downtext')?.textContent ?? null, p.querySelector('.sf-scroll__downtext') && getComputedStyle(p.querySelector('.sf-scroll__downtext')).color])`)));
+  await shot('scroll-choice-risk');
+  await ev(`window.__router.top.choose(1, true)`);
+  await settle(900);
 
-  // 关卡卡片：走出口换关时弹（Game.advance → UI.stageCard）
-  await ev(`const c = window.__ctx; c.run.kills += 37; c.run.coins += 264; c.run.time += 312; const next = c.runPlan.nextOptions(c.run)[0]; window.__next = next; c.game.advance(next)`);
+  // 关卡卡片：从出口进门时弹（Portal.enter → UI.stageCard，同 Unity GameSession.CompleteStage）。开出口、等门升起，再按交互键进门
+  await ev(`const c = window.__ctx; c.run.kills += 37; c.run.coins += 264; c.run.time += 312; c.stage.openExits(); window.__portal = c.stage.portals[c.stage.portals.length - 1]`);
+  for (let k = 0; k < 30 && !(await b.eval('!!window.__portal && window.__portal.ready')); k++) await step(0.1);
+  log('portal', JSON.stringify(await b.eval(`[!!window.__portal, window.__portal && window.__portal.ready, window.__portal && window.__portal.node.id]`)));
+  await ev(`window.__portal.item.onInteract()`);
   await settle(900);
   log('stage card', JSON.stringify(await b.eval(`[window.__game.state, window.__router.ids, window.__router.top && window.__router.top.tagText]`)));
   await shot('stage-card');
