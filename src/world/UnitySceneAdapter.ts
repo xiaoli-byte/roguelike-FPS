@@ -30,6 +30,17 @@ function room(id: string, label: string, center: WhiteboxPoint, radius: number) 
   };
 }
 
+/**
+ * 藏宝点的奖励串（Unity RewardRegistry：第一段是种类）→ 网页宝箱奖励：带参数的武器奖励（'weapon:min=1' / 'weapon:stormpod:1'）原样交给
+ * LootSystem.grant 解析（rewardRules.parseWeaponReward）；秘卷 / 治疗 / 强化按种类；网页没有的（灵宠 pet…）退成灵石。
+ * 这里不 import rewardRules：测试按模块名打桩
+ */
+function cacheReward(reward: string): NonNullable<WhiteboxPlan['rewards'][number]['reward']> {
+  const key = reward.split(':')[0];
+  if (key === 'weapon') return reward === 'weapon' ? 'weapon' : reward as `weapon:${string}`;
+  return key === 'scroll' || key === 'heal' || key === 'upgrade' ? key : 'coins';
+}
+
 function planFor(document: UnitySceneDocument, spawn: P2, exit: P2): WhiteboxPlan {
   const half: WhiteboxPoint = [document.bounds.max[0] - document.bounds.min[0], document.bounds.max[2] - document.bounds.min[2]];
   const at = (point: P2): WhiteboxPoint => [point.x + half[0] / 2, point.z + half[1] / 2];
@@ -66,7 +77,7 @@ function planFor(document: UnitySceneDocument, spawn: P2, exit: P2): WhiteboxPla
     covers: [], encounters,
     rewards: document.caches.map((cache, index) => ({
       at: at({ x: cache.position[0], z: cache.position[2] }), room: cache.guard ?? encounters.at(-1)?.id ?? exitId,
-      label: cache.title, reward: cache.reward === 'weapon' ? 'weapon' : cache.reward === 'scroll' ? 'scroll' : cache.reward === 'heal' ? 'heal' : 'coins',
+      label: cache.title, reward: cacheReward(cache.reward),
       requires: cache.guard ? [cache.guard] : [],
     })),
     sightlines: [], notes: [],

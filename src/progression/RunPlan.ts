@@ -1,4 +1,4 @@
-import type { GameContext, IRunPlan, RewardType, RunState, StageNode, StageType, ThemeId } from '../core/types';
+import type { GameContext, IRunPlan, RewardKey, RewardType, RunState, StageNode, StageType, ThemeId } from '../core/types';
 import { RunRng } from './RunRng';
 import { RunRoute } from './RunRoute';
 import {
@@ -207,7 +207,7 @@ export function runStream(run: RunState, name: string): RunRng {
 const STAGE_TYPE_NAMES: Record<StageType, string> = {
   combat: '战斗', elite: '精英战', treasure: '宝藏', shop: '商店', boss: '首领战',
 };
-const REWARD_NAMES: Record<RewardType, string> = {
+const REWARD_NAMES: Record<RewardKey, string> = {
   scroll: '秘卷', weapon: '武器', coins: '金币', heal: '治疗', upgrade: '强化', none: '无',
 };
 
@@ -312,6 +312,7 @@ export class RunPlanner implements IRunPlan {
   }
 
   rewardLabel(reward: RewardType): string {
-    return REWARD_NAMES[reward] ?? '无';
+    // 带参数的武器奖励（'weapon:min=1'，Unity WeaponReward）按种类叫「武器」（同 rewardRules.rewardKey；这里不 import 它，测试按模块名打桩）
+    return REWARD_NAMES[(reward.startsWith('weapon:') ? 'weapon' : reward) as RewardKey] ?? '无';
   }
 }

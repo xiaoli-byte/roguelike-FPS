@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { RARITY_COLORS } from '../../core/types';
-import type { Rarity, RewardType } from '../../core/types';
+import type { Rarity, RewardKey } from '../../core/types';
 
 /**
  * 掉落 / 宝箱 / 商店用到的低多边形模型。
@@ -94,8 +94,8 @@ export const PALETTE = {
   rune: 0x4aa3ff,
 };
 
-/** 奖励类型的主题色 */
-export const REWARD_COLORS: Record<RewardType, number> = {
+/** 奖励种类的主题色（带参数的武器奖励按种类取：rewardRules.rewardKey） */
+export const REWARD_COLORS: Record<RewardKey, number> = {
   scroll: 0xb45cff,
   weapon: 0xffa726,
   coins: 0xffd54a,

@@ -4,7 +4,8 @@ import { clamp01 } from '../../core/math';
 import { cssColor, makeBeam, makeChest, REWARD_COLORS } from './assets';
 import type { ChestModel } from './assets';
 import { facingTarget, facingToward, groundAt } from './physics';
-import { weaponRewardHint } from './rewardRules';
+import { rewardKey, weaponRewardHintFor } from './rewardRules';
+import { getWeaponDef, hasWeaponDef } from '../../weapons/WeaponDefs';
 
 /**
  * 奖励宝箱：从空中落下 → 待机（宝石脉动、盖子偶尔轻颤）→ 按 F 开启（开盖动画 + 音效）→ 发放奖励。
@@ -52,7 +53,8 @@ export class ChestManager {
 
   spawn(pos: THREE.Vector3, reward: RewardType): void {
     const ctx = this.ctx;
-    const color = REWARD_COLORS[reward] ?? REWARD_COLORS.none;
+    // 带参数的武器奖励（'weapon:min=1'…）同样是武器橙（Unity WeaponReward.Color）
+    const color = REWARD_COLORS[rewardKey(reward)] ?? REWARD_COLORS.none;
     const model = makeChest(color);
     const g = groundAt(ctx, pos.x, pos.z, pos.y + 2);
     const base = new THREE.Vector3(pos.x, g, pos.z);
@@ -193,11 +195,11 @@ export class ChestManager {
 
   private hint(reward: RewardType): string {
     const type = this.ctx.run.stage.type;
-    switch (reward) {
+    switch (rewardKey(reward)) {
       case 'scroll':
         return type === 'elite' || type === 'boss' ? '从三个精良及以上的秘卷中选择一个' : '从三个秘卷中选择一个';
       case 'weapon':
-        return weaponRewardHint(type, Math.max(0, this.ctx.run.chapter));
+        return weaponRewardHintFor(reward, type, Math.max(0, this.ctx.run.chapter), id => (hasWeaponDef(id) ? getWeaponDef(id).name : undefined));
       case 'coins':
         return '一大堆金币';
       case 'heal':

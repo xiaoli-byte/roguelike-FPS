@@ -63,7 +63,8 @@ export interface WhiteboxPlan {
     /** One encounter reached through another authored room; shares its cleared state. */
     approaches?: { room: string; at: WhiteboxPoint; facing: WhiteboxPoint }[] }[];
   rewards: { at: WhiteboxPoint; room: string; label: string;
-    reward?: 'coins' | 'scroll' | 'weapon' | 'heal' | 'upgrade';
+    /** 'weapon:<id>' / 'weapon:<id>:<品质>' / 'weapon:min=N' 是带参数的武器奖励（Unity 场景文档的奖励串，见 rewardRules.parseWeaponReward） */
+    reward?: 'coins' | 'scroll' | 'weapon' | 'heal' | 'upgrade' | `weapon:${string}`;
     /** Empty means freely available; otherwise each authored encounter must be cleared. */
     requires?: string[] }[];
   sightlines: { from: WhiteboxPoint; to: WhiteboxPoint; label: string }[];

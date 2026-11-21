@@ -5,7 +5,7 @@ import { PickupManager } from './loot/Pickups';
 import { WeaponDropManager } from './loot/WeaponDrops';
 import { ChestManager } from './loot/Chests';
 import { ShopManager } from './loot/Shop';
-import { weaponRewardMinRarity } from './loot/rewardRules';
+import { rewardKey, weaponRewardRoll } from './loot/rewardRules';
 import { isPurgeKill } from './scrolls/ScrollKit';
 import { rewardScaleOf, scaleKillCoins } from './RewardScale';
 
@@ -128,14 +128,14 @@ export class LootSystem implements ILoot {
     // 一次性奖励（宝箱金币、强化转金币）的章节系数
     const chapterMult = 1 + REWARD_CHAPTER_COIN * chapter;
 
-    switch (reward) {
+    switch (rewardKey(reward)) {
       case 'scroll':
         this.offerScrolls(3, isBoss || isElite ? 1 : undefined);
         break;
       case 'weapon': {
-        // 首领：第一章保底史诗、第二章起保底传说；精英保底精良（与宝箱提示共用 weaponRewardMinRarity）
-        const minRarity: Rarity | undefined = weaponRewardMinRarity(stageType, chapter);
-        const inst = ctx.weapons.roll({ chapter, minRarity });
+        // 奖励串（Unity WeaponReward）：'weapon:<id>' / 'weapon:<id>:<品质>' / 'weapon:min=N' 指定武器、品质、保底；
+        // 不带参数的 'weapon' 按关卡档位保底——首领第一章史诗、第二章起传说，精英精良（与宝箱提示共用 rewardRules）
+        const inst = ctx.weapons.roll({ chapter, ...weaponRewardRoll(reward, stageType, chapter) });
         this.tossWeaponToward(pos, inst);
         if (isBoss) {
           // Boss 奖励：同时回满生命与护盾（与 StageDirector 的回满重复也无副作用）

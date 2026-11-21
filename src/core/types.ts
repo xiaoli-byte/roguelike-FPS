@@ -177,7 +177,13 @@ export interface StatusInstance {
 // ───────────────────────────── 关卡 / 流程 ─────────────────────────────
 
 export type StageType = 'combat' | 'elite' | 'treasure' | 'shop' | 'boss';
-export type RewardType = 'scroll' | 'weapon' | 'coins' | 'heal' | 'upgrade' | 'none';
+/** 奖励种类（奖励串的第一段） */
+export type RewardKey = 'scroll' | 'weapon' | 'coins' | 'heal' | 'upgrade' | 'none';
+/**
+ * 宝箱奖励串：种类，或带参数的武器奖励（Unity WeaponReward）——'weapon:<id>'（指定武器、普通品质）/ 'weapon:<id>:<品质>' /
+ * 'weapon:min=N'（保底）/ 'weapon:<id>:min=N'；解析见 progression/loot/rewardRules.parseWeaponReward
+ */
+export type RewardType = RewardKey | `weapon:${string}`;
 export type ThemeId = 'desert' | 'frost' | 'inferno';
 
 export const CHAPTER_COUNT = 4;

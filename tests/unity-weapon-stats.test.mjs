@@ -308,5 +308,75 @@ test('武器奖励的提示文案同 Unity（WeaponReward.Hint）', () => {
 
 // ───────────── 不一致清单（不改实现，交给 M8）─────────────
 
-test.todo('武器奖励串 "weapon:<id>:<品质>" / "weapon:min=N"（WeaponReward.Parse）：网页的 Loot.grant 只认 "weapon"，保底由 weaponRewardMinRarity(关卡类型, 章) 决定，没有按奖励串指定武器 / 品质的写法（src/progression/Loot.ts）');
+test('武器奖励串同 Unity WeaponReward.Parse（WeaponStatsTests.WeaponRewardStringsParse）：weapon / weapon:min=N / weapon:<id> / weapon:<id>:N / weapon:<id>:min=N', () => {
+  const p = rules.parseWeaponReward;
+  assert.deepEqual(p('weapon'), { id: null, rarity: null, minRarity: 0 });
+  assert.deepEqual(p('weapon:min=3'), { id: null, rarity: null, minRarity: 3 });
+  assert.deepEqual(p('weapon:beam'), { id: 'beam', rarity: 0, minRarity: 0 }, '旧写法：指定武器 = 普通品质');
+  assert.deepEqual(p('weapon:stormpod:1'), { id: 'stormpod', rarity: 1, minRarity: 0 });
+  assert.deepEqual(p('weapon:revolver:min=2'), { id: 'revolver', rarity: null, minRarity: 2 });
+  assert.equal(p('weapon:min=9').minRarity, 4, '保底夹到传说');
+  // 参数顺序随意、空段跳过、品质夹到 0–4、第一个非数字段才是 id
+  assert.deepEqual(p('weapon:2:smg'), { id: 'smg', rarity: 2, minRarity: 0 });
+  assert.deepEqual(p('weapon::smg: :min=-1'), { id: 'smg', rarity: null, minRarity: 0 });
+  assert.deepEqual(p('weapon:smg:revolver:7'), { id: 'smg', rarity: 4, minRarity: 0 });
+  // Unity 源码：解析规则就是这几条
+  const src = cs('Loot/Rewards/WeaponReward.cs');
+  assert.match(src, /if \(a\.StartsWith\("min="\) && int\.TryParse\(a\.Substring\(4\), out var m\)\)\s*\{\s*min = Rarity\.Clamp\(m\);/);
+  assert.match(src, /else if \(int\.TryParse\(a, out var r\)\) rarity = Rarity\.Clamp\(r\);\s*else id \?\?= a;/);
+  assert.match(src, /if \(id != null && !rarity\.HasValue && !hasMin\) rarity = Rarity\.Common;/);
+  // 种类：带参数的武器奖励也是 'weapon'
+  for (const r of ['weapon', 'weapon:min=1', 'weapon:beam']) assert.equal(rules.rewardKey(r), 'weapon');
+  for (const r of ['scroll', 'coins', 'heal', 'upgrade', 'none']) assert.equal(rules.rewardKey(r), r);
+});
+
+test('武器奖励串的发放与提示同 Unity（EconomyConfig.ApplyTier + WeaponReward.Grant / Hint）：不带参数按关卡档位保底，写死的原样', () => {
+  const roll = rules.weaponRewardRoll;
+  // ApplyTier：'weapon' 在首领宝箱 → weapon:min=3（第一章）/ min=4（第二章起），精英 → min=1，普通不保底；带参数的不再套档位
+  assert.deepEqual(roll('weapon', 'combat', 0), {});
+  assert.deepEqual(roll('weapon', 'elite', 0), { minRarity: 1 });
+  assert.deepEqual(roll('weapon', 'boss', 0), { minRarity: 3 });
+  assert.deepEqual(roll('weapon', 'boss', 2), { minRarity: 4 });
+  assert.deepEqual(roll('weapon:smg', 'boss', 1), { defId: 'smg', rarity: 0 }, '关卡写死的武器原样（ScrollRuntimeTests：ApplyTier("weapon:smg", Elite) = "weapon:smg"）');
+  assert.deepEqual(roll('weapon:min=1', 'boss', 1), { minRarity: 1 });
+  assert.deepEqual(roll('weapon:stormpod:1', 'combat', 0), { defId: 'stormpod', rarity: 1 });
+  assert.deepEqual(roll('weapon:revolver:min=2', 'combat', 0), { defId: 'revolver', minRarity: 2 });
+  const econ = cs('Core/EconomyConfig.cs');
+  assert.match(econ, /case "weapon":\s*if \(args\.Length > 1\) return reward;\s*int min = WeaponMinRarity\(tier, chapter\);/);
+  // 交给 WeaponSystem.roll：指定的武器 / 品质 / 保底都生效（Unity WeaponRoller.Roll：rarity 写了就用，低于保底抬到保底）
+  for (let seed = 1; seed <= 40; seed++) {
+    const s = system(seed, { chapter: 0 });
+    const a = s.roll({ chapter: 0, ...roll('weapon:stormpod:1', 'combat', 0) });
+    assert.deepEqual([a.defId, a.rarity], ['stormpod', 1]);
+    const b = s.roll({ chapter: 0, ...roll('weapon:revolver:min=2', 'combat', 0) });
+    assert.equal(b.defId, 'revolver'); assert.ok(b.rarity >= 2, `保底稀有，掷出 ${b.rarity}`);
+    assert.ok(s.roll({ chapter: 0, ...roll('weapon:min=3', 'combat', 0) }).rarity >= 3);
+    assert.equal(s.roll({ chapter: 0, ...roll('weapon:beam', 'boss', 1) }).rarity, 0, '旧写法普通品质，首领档也不抬');
+  }
+  // 提示（WeaponStatsTests 里 h.Hint 的三条 + 指定武器显示名字）
+  const hint = (r, type = 'combat', chapter = 0) => rules.weaponRewardHintFor(r, type, chapter, id => (W.hasWeaponDef(id) ? W.getWeaponDef(id).name : undefined));
+  assert.equal(hint('weapon'), '一把随机武器');
+  assert.equal(hint('weapon:min=3'), '一把史诗及以上品质的武器');
+  assert.equal(hint('weapon:min=4'), '一把传说品质的武器');
+  assert.equal(hint('weapon', 'boss', 0), '一把史诗及以上品质的武器', '不带参数按关卡档位（同 weaponRewardHint）');
+  assert.equal(hint('weapon:stormpod:1'), `精良 · ${def('stormpod').name}`);
+  assert.equal(hint('weapon:beam'), def('beam').name, '普通品质只写名字');
+  assert.equal(hint('weapon:revolver:min=2'), `${def('revolver').name}（稀有及以上）`);
+  assert.equal(hint('weapon:no_such_gun:2'), '一把稀有品质的武器', '查不到的武器按没指定说；固定品质不写「及以上」');
+  assert.match(cs('Loot/Rewards/WeaponReward.cs'), /if \(spec\.rarity\.HasValue\) return spec\.rarity\.Value > 0 \? \$"\{Rarity\.Name\(spec\.rarity\.Value\)\} · \{def\.name\}" : def\.name;\s*return spec\.minRarity > 0 \? \$"\{def\.name\}（\{Rarity\.Name\(spec\.minRarity\)\}及以上）" : def\.name;/);
+});
+
+test('场景文档里的武器奖励串（weapon:beam、weapon:stormpod:1、weapon:min=1）都是网页认得的武器', () => {
+  const dir = new URL('../public/assets/unity-levels/scenes/', import.meta.url);
+  const seen = new Set();
+  for (const f of ['1-1', '1-2', '1-3', '1-A', '2-1', '2-2', '2-3', '2-A', '3-1', '3-2', '3-3', '3-4', '3-A', '4-1', '4-3']) {
+    const doc = JSON.parse(readFileSync(new URL(`${f}.json`, dir), 'utf8'));
+    for (const r of [...doc.caches.map(c => c.reward), ...doc.encounters.map(e => e.reward)]) if (r?.startsWith('weapon:')) seen.add(r);
+  }
+  assert.ok(seen.has('weapon:min=1') && seen.has('weapon:beam') && seen.has('weapon:stormpod:1'), [...seen].join(' '));
+  for (const r of seen) {
+    const spec = rules.parseWeaponReward(r);
+    if (spec.id !== null) assert.ok(W.hasWeaponDef(spec.id), `${r}：武器 ${spec.id} 在网页的武器表里`);
+  }
+});
 test.todo('ResolvedWeapon.projectileSpeed：Unity 解析器直接给出弹速（定义 × 玩家弹速 × 词条），网页只给 projSpeedMult，弹速在 Firing 里现乘（数值一致，只是字段不同）');
