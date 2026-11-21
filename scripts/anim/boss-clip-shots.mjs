@@ -2,16 +2,17 @@
 // 看片段播放器有没有接上、招式播的是哪个片段、顿帧（impactHold）、化鹏展翅、倒下（鹏的手 K death / 火麒麟的晕眩冻住）；
 // 商人：1-1 里在玩家面前摆一家商铺（ctx.loot.spawnShop），看强化台旁边的行商 Idle → 走近 Talk。
 // 逐帧推进游戏（Game.frame 固定步长，页面自己的 rAF 关掉，不靠后台标签页），一次只开一个无头浏览器。
-//   node scripts/anim/boss-clip-shots.mjs [端口=5712] [kunpeng|qilin|hanba|merchant] [输出目录=docs/art/review/threejs-migration]
+//   node scripts/anim/boss-clip-shots.mjs [端口=5712] [kunpeng|qilin|qilin-intro|hanba|merchant] [输出目录=docs/art/review/threejs-migration]
+// qilin-intro：火麒麟登场逐帧核对——跃出段 tuck 片段一路往前走（不再每帧从 0 重播、播放实例不堆积），落地交叉淡入 rear；跃出 / 落地各截一张。
 // 输出：<目录>/m12-<首领>-<节拍>.jpg；控制台打印每拍的首领状态（含 clip = 当前片段状态、impactHolds）与页面报错条数。
 import { launch } from '../plateau/cdp.mjs';
 
 const port = process.argv[2] ?? '5712';
 const which = process.argv[3] ?? 'kunpeng';
 const out = process.argv[4] ?? 'docs/art/review/threejs-migration';
-const STAGE = { kunpeng: '2-4', qilin: '3-4', hanba: '1-4', merchant: '1-1' }[which];
+const STAGE = { kunpeng: '2-4', qilin: '3-4', 'qilin-intro': '3-4', hanba: '1-4', merchant: '1-1' }[which];
 if (!STAGE) throw new Error(`不认识 ${which}`);
-const HOOK = { kunpeng: '__kunpeng', qilin: '__qilin', hanba: '__hanba', merchant: null }[which];
+const HOOK = { kunpeng: '__kunpeng', qilin: '__qilin', 'qilin-intro': '__qilin', hanba: '__hanba', merchant: null }[which];
 const log = (...a) => console.log(`[m12 ${which}]`, ...a);
 
 let b = null;
@@ -124,7 +125,7 @@ try {
     log('lord gates', await b.eval(`(() => { const m = window.__mechanisms; if (!m) return 'no mechanisms';
       const g = (m.levels ?? []).filter(l => l && typeof l.unlock === 'function' && 'unlocked' in l); g.forEach(l => l.unlock(false)); return g.length; })()`));
     // 玩家沿出生点 → 首领场中心走进首领场（脚在首领场自己的地面上），让关卡自己触发首领战
-    const R = { kunpeng: [20, 40], qilin: [6, 18], hanba: [8, 30] }[which];
+    const R = { kunpeng: [20, 40], qilin: [6, 18], 'qilin-intro': [6, 18], hanba: [8, 30] }[which];
     const rim = await b.eval(`(() => {
       const c = window.__ctx, V = c.player.position.constructor, boss = c.stage.unityDocument?.bosses?.[0];
       const floor = boss ? boss.floorY : c.stage.arena.floorY;
@@ -301,6 +302,37 @@ try {
       await look();
       log('death', brief(await state()));
       await shot('death');
+    } else if (which === 'qilin-intro') {
+      // 逐帧记：登场进度（age / 登场秒数）、动作、片段状态机第 0 层的播放实例（状态、权重、归一化时刻）
+      const probe = () => b.eval(`(() => {
+        const e = window.__qilin.boss, a = e.F.clips?.anim?.animator;
+        const pbs = a ? a.layerWeights(0) : [];
+        return { t: +(e.age / e.spawnDuration).toFixed(3), present: e.presented, anim: e.anim, roared: e.introRoared,
+          n: pbs.length, pbs: pbs.slice(0, 3).map((p) => p.state + ':' + p.weight.toFixed(2) + '@' + p.normalizedTime.toFixed(3)) };
+      })()`);
+      await until(`window.__qilin.boss.presented`, 12, 1 / 60);
+      const rows = [];
+      let maxN = 0, tuckNorm = -1, shotLeap = false;
+      for (let k = 0; k < 150; k++) {
+        const r = await probe();
+        rows.push(r);
+        maxN = Math.max(maxN, r.n);
+        const tuck = r.pbs.find((x) => x.startsWith('tuck:'));
+        if (tuck && !r.roared) tuckNorm = Math.max(tuckNorm, +tuck.split('@')[1]);
+        if (!shotLeap && r.t >= 0.3) {
+          shotLeap = true;
+          await look();
+          log('leap', JSON.stringify(r));
+          await shot('leap');
+        }
+        if (r.roared && r.t >= 0.5) break;
+        await step(1 / 60);
+      }
+      for (const r of rows.filter((_, i) => i % 6 === 0)) log(JSON.stringify(r));
+      log('max playbacks', maxN, 'tuck reached', tuckNorm.toFixed(3), '（片段 0.9 s 拉伸到 3.2 s，ActScale 钳到 0.4：落地 t = 0.45 时约 0.64，蜷身 qCoil 在 0.593）');
+      await look();
+      log('land', JSON.stringify(await probe()));
+      await shot('land');
     } else if (which === 'hanba') {
       await until(`window.__hanba.state().introDone`, 20, 0.2);
       await step(0.3);
