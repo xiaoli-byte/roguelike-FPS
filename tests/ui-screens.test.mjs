@@ -349,6 +349,28 @@ test('局内货币在界面上叫灵石（Unity D13）：src/ui 不出现「金�
   }
 });
 
+test('掉落 / 宝箱 / 商店给玩家看的灵石提示照 Unity（D13）：强化 / 秘卷满层转灵石、宝箱「一大堆灵石」、商店「灵石不足」', async () => {
+  const loot = await read('../src/progression/Loot.ts');
+  const chests = await read('../src/progression/loot/Chests.ts');
+  const shop = await read('../src/progression/loot/Shop.ts');
+  // 强化奖励没得强化（UpgradeReward.Grant：Toast(w != null ? 满级 : 没有武器)）
+  const up = /Toast\(w != null \? "([^"]+)" : "([^"]+)"\)/.exec(await unity('Loot/Rewards/UpgradeReward.cs'));
+  assert.ok(loot.includes(`ctx.ui.toast(w ? '${up[1]}' : '${up[2]}'`), `${up[1]} / ${up[2]}`);
+  // 秘卷全部满层（LootDirector.OfferScrolls）
+  const full = /GameUI\.Toast\("(秘卷已全部满层[^"]*)"/.exec(await unity('Loot/LootDirector.cs'))[1];
+  assert.ok(loot.includes(`ctx.ui.toast('${full}'`), full);
+  // 宝箱说明行（CoinsReward.Line 的普通档；精英加成后缀网页没有档位串，见迁移计划 M11c 行）
+  const line = /Line\(string\[\] args\) => [^?]+\? "([^"]+)"/.exec(await unity('Loot/Rewards/CoinsReward.cs'))[1];
+  assert.match(chests, new RegExp(`case 'coins':\\s*return '${line}';`), line);
+  // 商店买不起（ShopCounter.NotEnough；HUD 交互卡 PromptWidget 同样写这个）
+  const notEnough = /NotEnough = "([^"]+)"/.exec(await unity('Loot/Shop/ShopCounter.cs'))[1];
+  assert.ok(shop.includes(`this.deny('${notEnough}')`), notEnough);
+  assert.match(await read('../src/ui/hud/PromptWidget.ts'), new RegExp(notEnough));
+  // 三份文件的字串里不再有「金币」（注释里说的是代码概念，不算）
+  const code = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+  for (const [f, src] of [['Loot.ts', loot], ['Chests.ts', chests], ['Shop.ts', shop]]) assert.doesNotMatch(code(src), /金币/, f);
+});
+
 test('精英印章的词缀纹样用词缀本身的颜色（Unity EliteSeal ← aura.Accent ← affix.Color），血条词缀小标签用 AffixLabels 的颜色', async () => {
   const seal = await unity('UI/Widgets/EliteSeal.cs');
   assert.match(seal, /var tint = sig == EliteSigil\.None \? Gold : aura\.Accent\.Value;/);

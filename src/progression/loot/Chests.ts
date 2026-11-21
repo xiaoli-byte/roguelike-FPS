@@ -201,7 +201,7 @@ export class ChestManager {
       case 'weapon':
         return weaponRewardHintFor(reward, type, Math.max(0, this.ctx.run.chapter), id => (hasWeaponDef(id) ? getWeaponDef(id).name : undefined));
       case 'coins':
-        return '一大堆金币';
+        return '一大堆灵石';
       case 'heal':
         return '回复 50% 生命，生命上限 +10';
       case 'upgrade':

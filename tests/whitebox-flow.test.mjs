@@ -265,7 +265,7 @@ test('side entrances use reachable local discovery, hide rewards, and unregister
       assert.ok(item);
       const prompt = item.prompt();
       assert.equal(prompt.title, '隐秘入口');
-      assert.doesNotMatch(JSON.stringify(prompt), /金币|秘卷|武器|治疗|强化|精英/);
+      assert.doesNotMatch(JSON.stringify(prompt), /金币|灵石|秘卷|武器|治疗|强化|精英/);
       f.ctx.player.position.copy(entrance.group.position);
       const blocked = f.ctx.world.segmentBlocked;
       f.ctx.world.segmentBlocked = () => true; entrance.update(.1, 1);
