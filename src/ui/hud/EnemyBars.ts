@@ -8,6 +8,7 @@
  */
 import * as THREE from 'three';
 import type { IEnemy, StatusId } from '../../core/types';
+import { AFFIX_COLORS, isAffixId } from '../../enemies/Affixes';
 import { el, fill, setFill, setOpacity, setScale, show, text, toggle } from '../toolkit/el';
 import { UIFontRole } from '../toolkit/UIFonts';
 import { HpHi, JadeHi, type RGBA, barShade, css, elementColor, glow, paint, rgb } from '../toolkit/UITheme';
@@ -25,6 +26,12 @@ export const AFFIX_LABELS: Record<string, { name: string; color: RGBA; hint: str
   volatile: { name: '爆裂', color: rgb(0xff7a3a), hint: '死亡时爆炸，别贴身击杀' },
   frenzied: { name: '狂暴', color: rgb(0xff4a32), hint: '低血量时狂暴' },
 };
+
+/**
+ * 精英印章的词缀纹样色 = 词缀本身的颜色（Unity EliteSeal.Sync：aura.Accent ← EliteAffixes.Apply 的 aura.SetSigil(affix.Id, affix.Color)），
+ * 不是血条词缀小标签的 AFFIX_LABELS 色（两组值在坚盾 / 爆裂 / 狂暴上不同）
+ */
+export const AFFIX_SEAL_COLORS: Record<string, RGBA> = Object.fromEntries(Object.entries(AFFIX_COLORS).map(([id, hex]) => [id, rgb(hex)]));
 
 /** 状态小标（同 Unity Badges） */
 const BADGES: { id: StatusId; glyph: string; color: RGBA }[] = [
@@ -305,7 +312,7 @@ export class EnemyBars extends HudWidget {
     // 精英词缀：用词缀色单独标出（爆裂等词缀直接影响玩家怎么打）
     const affixId = s.elite ? e.affix ?? '' : '';
     const info = affixId ? AFFIX_LABELS[affixId] : undefined;
-    s.seal.bind(s.elite, affixId || null, info?.color ?? null);
+    s.seal.bind(s.elite, affixId || null, isAffixId(affixId) ? AFFIX_SEAL_COLORS[affixId] : null);
     s.barH = 24;
     if (affixId !== s.affixId) {
       s.affixId = affixId;
