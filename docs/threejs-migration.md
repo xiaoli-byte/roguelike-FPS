@@ -83,7 +83,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M5 | 敌人框架增量 + 沙魇 + 第四章敌人并入主框架 | ~8k（多数是对照） | ✅ 2026-11-18（a1d71b84、b4d5e683、92dcc729），对照清单见 4.4：新增受击四层（`enemies/HitReaction.ts`）、迅捷龙卷（`EliteTornado.ts`）、出场位移（`SpawnEntrance.ts`，导演刷群接上）、词缀接管；照 Unity 改了出生 0.7 s 不可选中、击退推力 / 上抛、前摇 1/√攻速（35 处按最小比例）、名额回收死者、词缀取词过排除表、5 个敌人常量；沙魇照 SandWraithAI 重写（原来跑的是跳鼠刀兵的名册）；第四章经 `PlateauFoeAdapter` 接主框架（伤害倍率、全局名额、精英体型 / 金环 / 词缀、元素眩晕、减速、击退、脱战）。对照测试 `tests/enemy-framework.test.mjs`（常量读 C# 源码比）。待办：坠落回收照 Unity（等导航补高度）、EliteStrike / 金环纹样 / 词缀演出 / 变体着色（M11）、嘲讽（M9）、PerchPoint 导出 |
 | M6 | 首领框架 + 登场镜头 + 旱魃 + 魔将 v2 + 鲲鹏 / 麒麟数值阶段 + 三领主 | ~20k | 🔶 首领框架（`src/enemies/bosses/framework/`：BossDef 定档 / 阶段表、BossBrain、BossMove、破防条、召唤上限、领主梯度、倒下演出、时间缩放仲裁、关卡钩子）、登场演出导演（`bosses/intro/`）、旱魃全套 ✅ 2026-11-17（87cd9188…fed45ef1；对照测试 `tests/hanba-boss.test.mjs`、`tests/boss-intro.test.mjs`；实机脚本 `scripts/hanba/fight-shots.mjs`）。1-4 走进泉床正常触发（c33c5467）。火麒麟 / 鲲鹏 ✅ 2026-11-18（0c0168ff…07ebf638：火麒麟定档 28000 + 2400 护甲、85 / 70 / 55% 刻度、狂怒长啸 / 熔流轮转 / 鳞冠；鲲鹏定档 16000 + 4800 护盾、75 / 50 / 25% 鲲怒 / 化鹏 / 鹏狂怒；对照测试 `tests/qilin-boss.test.mjs`、`tests/kunpeng-boss.test.mjs`；实机脚本 `scripts/kunpeng/fight-shots.mjs`、火麒麟同目录）。魔将 v2 ✅ 2026-11-18（0d97befe…b288e282：九招、高台砸落登场、狂怒换挡、零星陨石，`WarlordPoser.ts` 按 Blender 姿势表在网页现场烘焙 v006 骨架的手 K 片段，释放帧等片段事件；对照测试 `tests/warlord-boss.test.mjs` 42 条；实机脚本 `scripts/warlord/fight-shots.mjs`）。2-4 / 3-3 走关卡正常触发：Unity 首领场（`boss:`）照 `BossEncounter.PlayerInArena` 不看视线；3-3 的矩形首领场半径盖到高台出生点。4-1 三领主进首领框架 + 据点模式 ✅ 2026-11-19（113789d6、f85f8715）：`src/enemies/bosses/lords/`——领主底座（LordDef 4-1 难度 3.4 定档、tempo 0.9 / 0.75 × 领主梯度；LordBrain 片段按设计时长拉伸、片段事件出手、顿帧只顿首领、招式驱动位移、弱点开关、死亡演出交给登场导演播；LordMove）；飞廉七招 + 擂台风 + 风雷珠珠碎 + 龙卷风柱（柱身可点火）+ 风涡柱；化蛇六招 + 圣湖游线 / 涨水面 / 泡水 / 漩涡 / 湿身雷殛；夔八招（不依赖雷暴的部分）+ 残鼓（导出位置错 112 m，挪回出生点）+ 召鼓，落雷 / 导体回劈 / 高原雷暴经 `lords/KuiStorm.ts` 的 `bindKuiStorm` 接 M7（`MechanismSystem` 建好雷暴后绑定，fc87b69b；4-1 实机：登场雷劈经幡杆、二阶段压暗下雨）；框架补破防条条件填充（BreakBarDef.fillWhen）。据点模式：`scripts/web/export-level-objectives.mjs` 从场景 YAML 导出 `objectives.json`（灵火坛 / LevelObjective / BossEncounter / ZheduoLevel 门槛圆），`src/world/objectives/`（SpiritAltar、LevelObjectives）——领主战不是终点战，倒下 6.3 s 后结算并点亮本据点灵火，6 座里点亮任意 3 座才清关开出口（4-3 同样 5 选 3）。对照测试 `tests/lord-bosses.test.mjs`（照 LordTests.cs）；实机脚本 `scripts/lords/fight-shots.mjs`。待办：夔的落雷 / 经幡杆带电与回劈 / 高原雷暴 / 召鼓充电（M7 合进来后 bindKuiStorm）；二阶段起带电（Charge.Hold，M8）；化蛇湿身灼烧减半（M8 状态）；飞廉的风接全局 WindField、顺风逆风步速（M7）；镜像片段 sidestepL / wheelR 与夔的 sink 没导出（退回 sidestep / wheel / kneel）；目标栏文字（界面）；邪飞天的和弦护盾 / 赐福；首领特效（旱魃日火贴花 / 水幕沙幕，鲲鹏浪墙 / 扶摇柱 / 水冠，火麒麟火浪，魔将火尾 / 火舌体积、`T_Boss_Warlord_E` 发光遮罩、登场转场风）随 M11b；鲲鹏 / 火麒麟换动画片段与首领顿帧随 M12；魔将熔铜渠涨落已接 3-3 神范台的熔铜渠（fc87b69b：引渠 + 每段 hazard 预警、倒下退渠；渠里冒泡 / 涌浪外观随 M11b） |
 | M7 | 地图机关：熔岩 v2、流沙 / 地表 / 边界 / 可破坏 / 断桥 / 风场、天气、各图专属脚本 | ~10k | 🔶 2026-11-19：导出（`scripts/web/export-mechanisms.mjs` 直接解析场景 YAML → `mechanisms.json` + 软边界距离场）、运行时（`src/world/mechanisms/`，UnitySceneView 搭好后建）、对照测试 `tests/unity-mechanisms.test.mjs`、实机脚本 `scripts/web/mechanism-shots.mjs` ✅；清单、差异与待办见 4.5 |
-| M8 | 玩家与战斗增量：战斗契约（灵宠伤害源、弱点倍率、命中区）、状态（寒意 / 引燃 / 日灼，带电随第四章）、弹体（弱点判定、护罩、落地滚动）、镜头手感 / 卡帧 / 安全落点 / 移动特效、武器（散布手调、冲刺禁射、喷火锥、磁轨光束）、技能（施法姿势、特效换风格） | ~12k | ⬜ |
+| M8 | 玩家与战斗增量：战斗契约（灵宠伤害源、弱点倍率、命中区）、状态（寒意 / 引燃 / 日灼，带电随第四章）、弹体（弱点判定、护罩、落地滚动）、镜头手感 / 卡帧 / 安全落点 / 移动特效、武器（散布手调、冲刺禁射、喷火锥、磁轨光束）、技能（施法姿势、特效换风格） | ~12k | ✅ 2026-11-21（77c8389a、4cfc4480、edb3eca8、90a3aa72），对照清单见 4.6：战斗契约（灵宠伤害源只做类型与接口、弱点伤害 + 秘卷「破绽」、命中区、不可选中返回 immune 并节流派发受击事件）、带电 + 死亡传电 + 领主常驻带电、顿帧、多挡弹区 + 球罩、落地滚动、镜头手感（trauma² 震屏、受击冲击按来向、开枪一顿、阵亡倒地）、移动特效、坠落托回安全点、玩家减益（寒意 / 点燃 / 日晒，敌人侧入口已转过来）、武器（扳机闩、冲刺禁射、开镜规则、散布手调、镜头后坐 × 0.3 完全回正、光束共用冷却、喷火锥、贯虹虹光）、技能（施法姿势、拒绝事件、出手点、磐的挡弹罩 / 贴地起跳 / 锁冲刺）。焚雷扩散取最近 16 个。M13 对照测试对出、落在 M8 的五条全部照 Unity 改完（4.6「M13 对出的不一致」）。对照测试 `tests/m8-combat.test.mjs` / `m8-player.test.mjs` / `m8-weapons.test.mjs` / `m8-parity.test.mjs`（48 项，常量读 C# 源码比）；实机脚本 `scripts/web/m8-shots.mjs`。待办见 4.6 末尾 |
 | M9 | 灵宠（全新） | 4.1k | ⬜ |
 | M10 | 第一人称持枪手感 + 碎刃表现 | 5.8k | ⬜ |
 | M11a | 渲染观感：StylizedLit / Terrain / Foliage / Fur 着色、材质参数导入、后处理栈、三色环境光 / 雾 / 天空、CSM | 7.6k 着色器 | 🔶 材质 ✅ 2026-11-16（1f213358，`src/world/UnityStylizedLit.ts`：色阶、阴影染色、阶梯高光、边缘光、地形高度混合 / 宏观噪声 / 坡度压暗 / 陡坡三向投影、植被风摆与背光透射，Trilight 投成 SH 环境光）；太阳阴影照 Unity 管线（0564dd10，2048 贴图、90 m、跟相机）；云天 + 逆光光柱接入（52c719c6）；后处理栈 ✅ 2026-11-18（646f7eae，`src/render/PostStack.ts`：HDR 目标 + URP Bloom + 照 URP Color.hlsl 写的 Neutral + 每关 Volume 调色烘 LUT + 暗角 + 色差 + 低血 / 受击 / 冲刺玩法屏效；`scripts/web/export-volume-profiles.mjs` 从 27 份 Profile 导出 `volumes.json`，含 3-3 火神王座局部 Volume 的盒子混合；`?post=0` 或低画质绕开）。待办：AO、3-3 第一人称手被泛光吹白、1-2 比 Unity 偏灰（大气在 ACES 下调的，要按 Neutral 重调）、Fur、导出器补 `_ORMMap` / 关键字 / 地形材质参数、流动雾带与小活物逐图摆位 |
@@ -231,6 +231,103 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 | ZheduoLevel | 4-1 | 部分 | 开局 3 s 刷穷奇（名册精英）；巡视线 / 巢穴（QiongqiAI.route / lair）、啸獭洞口、三处领主据点门槛随 M5 / M6 |
 | MovingPlatform / SceneActivator / WaterVolume | — | M1 已做 | SceneActivator 交互项的 getter 读错 this（每帧抛 TypeError），这一期顺手修了 |
 | ForgeWellLift、PlatformCarrier | 场景里没有实例 | 不做 | 只在 Unity 冒烟套件里用 |
+
+### 4.6 M8 玩家与战斗对照（Unity → 网页，2026-11-21）
+
+对照方法：`G/Combat/`、`G/Player/`、`G/Weapons/`（不含 `GunfireOriginal*`、`DemonBlade/`、`Affixes/`、`Legendaries/`、`Handling/`）、`G/Skills/`、`G/Core/HitStop.cs`、`G/Fx/CameraShake.cs` 逐文件读；Unity 这几块本来就是照 TS 移过去的，所以先找「Unity 改过 / 新增」的地方照改，其余只锁常量。三份测试 **直接读 C# 源码** 比常量（`CombatTuning.cs` 是状态 / 反应数值的单一来源），行为断言照 Unity EditMode（Ch4FoundationTests 的带电、FireModeTests 的扳机与冲刺禁射、CastPoseTests、WeaponSpecialsTests、ProjectileTests）。
+
+记号同 4.4：✅ 一致 · 🔧 本期照 Unity 改了 · ➕ 本期新增 · ⬜ 还缺（写明归哪期）。
+
+**战斗契约与结算（`G/Combat/`）**
+
+| 机制（Unity） | 网页 | 结论 |
+|---|---|---|
+| 伤害来源 `DamageSource.Pet` / `DamageTag.Pet`：只乘「灵宠伤害」，不随机暴击（forceCrit 由灵宠自己给），不吸血、不顿帧 | `combat/PetContract.ts`（`petHit`）、`DamageCalc.isPetHit`、属性 `petDamagePct` | ➕ 只有类型和接口，灵宠本体 M9 |
+| `Combat.ForceWeakpoint`（白泽「万鬼图」：武器 / 技能 / 爆炸直接命中改判为弱点，只影响暴击与弱点加成） | `PetContract.addForceWeakpoint` + `Combat.damageEnemy` | ➕ |
+| 弱点：必暴，再乘 `WeakpointDamagePct`；命中盒 `multiplier`；进攻卷「破绽」`weak_point`（精良、3 层、弱点伤害每层 +15%，Unity 独有 D12） | `weakpointDamagePct`；`enemy.weakpointDamageMult`；`defsOffense.ts` 表尾加「破绽」（前 24 张顺序不动），秘卷共 119 张 | ➕ / ✅ / ➕（M13 对出） |
+| 命中区 `HitZone` + `EnemyBody.ZoneAt / ZoneIncoming`：倍率、弱点开关、启停、朝向门（cos 0.34）、半径缩放、累计到 breakAt 发一次；分区容差 0.08 m、退到 0.5 m 内最近的普通区；倍率 < 0.5 记格挡 | `combat/HitZone.ts`（`HitZoneSet`），`Combat.damageEnemy` 读 `enemy.hitZones` | ➕ 现有敌人仍用各自的 `raycastHit / guardFactor`（数值相同，4.4），新移植的敌人挂 `hitZones` 即可 |
+| 弱点规则 `WeakpointRule`：先进身体、往前 1.5 m 内穿过同一单位的弱点按弱点算（命中扫描、投射物同一条） | `EnemyBase.raycastHit`、`Projectiles` 的敌人命中、`HitZone.weakHit` | 🔧（原来是「身体明显更近才算身体」） |
+| 贴脸：射线起点在敌人胶囊里直接算命中 | `rayVerticalCapsule` 起点在圆柱内返回 0 | ✅ |
+| 暴击 / 属性乘区 / 雷殛标记 ×1.15 / 输出修饰器 / 分层 / 吸血上限 5%（≥ 2）/ 爆炸嵌套上限 6 / 爆炸波及玩家 | `Combat.ts`、`DamageCalc.ts`、`Blast.ts` | ✅ |
+| 免疫 `Combat.Immune`：打不可选中的敌人返回 `DamageResult.immune = true`（不结算），直接命中 0.4 s 节流地派发 `EnemyDamaged`；持续伤害跳伤 / 处决 / 0 伤害不提示；格挡掉全部伤害（total 0、blocked）也派发 | `Combat.damageEnemy` 第 0 步返回 `immune` 结果（原来返回 null、不派发）；`DamageResult.immune`；命中计数 / 引爆 / 词条 / 斩击 / 技能冲击波 / 反应的调用方跳过 immune；天雷引、引子三卷照 Unity 加「total > 0」 | 🔧（M13 对出） |
+| 焚雷扩散灼烧 `CombatTuning.Thunderfire.SpreadTargets = 16`：身体中心在 R 内、按距离取最近 16 个（C# 注释写明是有意改的） | `Reactions.runThunderfire`、`TF_SPREAD_TARGETS` | 🔧（原来半径内全部；M13 对出） |
+| 击杀结算 `KillResolver`：精英魂晶 ×5、首领 60、精英死亡震屏（半径 2、×0.8）、静默处决没有战果 | `Combat.ts` | ✅ |
+| 状态 `Burn / Shock / Corrode / Stun / Slow` 与四种反应、引爆 / 崩解、预算（`CombatTuning.cs`） | `Status.ts`、`Reactions.ts` | ✅ 数值逐项读 C# 比 |
+| `StatusId` 一个枚举 8 项 + `StatusRegistry` 按宿主登记（寒意 / 日晒 / 点燃只挂玩家） | 敌人 `StatusId`（5 项）+ 玩家 `PlayerStatusId`（3 项，`player/PlayerStatus.ts`） | 结构不同、集合相同（`tests/m8-parity.test.mjs` 锁住） |
+| 带电 `Charge` / `ChargeState`：计时取较大者、常驻持有、就反应而言 = 有雷殛、死亡向 8 m 内最近 2 个同伴传电（带电 6 s、6 点雷伤、深度 1），连锁 ≤ 4 跳，首领不接不放 | `combat/Charge.ts`（`ChargeBook` / `ChargeSystem`），`Reactions` 经 `host.isCharged` 读 | ➕ |
+| 同上：夔一直带电；飞廉二阶段起、风雷珠在时带电；高原敌自己的带电 | `lords/Kui.ts`、`lords/Feilian.ts`（鸭子类型拿 `ctx.combat.charge`）、`PlateauFoeAdapter.foeCharged` | ➕ |
+| 同上：落雷把落点敌人充上电（`LightningStrike` → `Charge.Apply`） | `world/mechanisms/Storm.ts` 仍挂雷殛 | ⬜ 那个目录本期不能改：把第 204 行换成 `chargeSystem(ctx)?.apply(e, o.chargeFoes)` 即可 |
+| 同上：边缘光换紫红雷光 + 贴身短电弧 | 贴身紫红小电火花（全场每秒 14 下） | ⬜ 边缘光随 M11b |
+| 顿帧 `HitStop`：×0.05，击杀 0.035 / 精英 0.07 / 首领 0.18、重暴击（≥ 目标总量 18%）0.025、直接命中引发的反应 0.045；不叠加只延长、间隔 0.12 s（两倍长可插队）、预算 0.15 s 每秒回 0.075、单次 ≤ 0.2 s | `combat/HitStop.ts`，经时间缩放仲裁器 | ➕ |
+| 投射物：反弹 0.55 / 0.78、低于 2.2 m/s 改滚动、摩擦 2.5、`rollAfter`（青冥雷蛊反弹用完后滚到寿命耗尽，进入时保留 70%） | `Projectiles.ts` | 🔧 摩擦 2.8 → 2.5；➕ rollAfter |
+| 挡弹区 `ProjectileWard`：可以同时有多个、取最先挡下的；球罩只挡从外面飞进来的 | `ProjectileSystem.addWard`、`wardEntry` | ➕ |
+| 投射物瞄准最远 60 m + 按飞行时间精确解抛物线 | 160 m + 补偿封顶 2.4 s | 保留网页：C# 注释写明 TS 的做法是目标（「WC4 连同补偿封顶一起做」） |
+| 投射物外观（`ProjectileView / Visuals / Meshes / Pools`）、蚀蛊灯 `lantern` 外观 | `ProjectileVisuals.ts` | ⬜ M11b |
+
+**玩家（`G/Player/`）**
+
+| 机制（Unity） | 网页 | 结论 |
+|---|---|---|
+| 镜头手感 `CameraFeel`：行走晃动、侧移倾斜、K 140 / C 17 弹簧（落地下沉、受击冲击按来向、Punch、开枪向后一顿）、阵亡倒地 0.8 s / 复活 0.35 s、FOV 分层（开镜 + 冲刺 6° / 高速，合计 ≤ 8°，开镜压掉） | `player/CameraRig.ts` | 🔧 整份照译（原来是指数衰减震屏 + 侧向受击抖动） |
+| 震屏 `CameraShake` + `FeelProfile`：trauma²、8 个声部、最强 + 其余 × 0.35、0.06 s 内合并；重落地（> 14 m/s）、重击（≥ 8% 生命上限）、元素反应按距离、首领倒下 | `player/CameraShake.ts`；`fx.shake` 经 `cameraFx.addShake` 进来 | 🔧；旧通道 `cameraFx.shakeIntensity` 照写（首领登场演出读） |
+| 后坐回正 `PlayerMotor.RecoilRecoverFraction = 1` | `PlayerController` | 🔧 0.92 → 1 |
+| 移动特效 `MovementFx`：冲刺风痕（视线前方迎面掠过）+ 脚下扬尘、二段跳扩散环 + 火星、落地扬尘（≥ 6 m/s）+ 重落地加环 | `player/MovementFx.ts` | 🔧（原来冲刺只有身后一撮气流） |
+| 安全落脚点 `SafeGround`（玩家部分）：0.2 s 记一个、留 8 个、间隔 1.5 m、四周 0.5 m 都有地面；出界线 = min(killY, 最低安全点 − 40 m)、高速下坠掉进虚空；托回扣 10%、1 s 无敌 | `player/FallRecovery.ts`，有机关时交给 M7 的 `SafeGround` | 🔧（原来拉回出生点、不扣血） |
+| 减益 `PlayerStatus`：寒意（取最强一条、上限 70%、最多 4 条、只乘走路速度）、点燃（0.5 s 一跳、只刷新时长并取较大跳伤）、日晒（旱魃） | `player/PlayerStatus.ts`；敌人侧 `chillPlayer`（两处）/ `ignitePlayer` 有 `player.status` 时转过来；旱魃的日晒层挂到玩家身上 | 🔧（原来两份寒意各改属性表、点燃是模块级任务） |
+| 生命护盾 `PlayerVitals`：减伤上限 80%、受伤修饰器、PlayerHit 先于死亡判定、破盾震屏 0.25 / 0.2、回盾、低血心跳 | `PlayerController` | ✅ |
+| 英雄基础属性 `HeroStats`、交互 `Interactor` | `Heroes.ts`、`world/Interaction` | ✅ |
+| 手柄瞄准辅助 `AimAssist`（只在右摇杆转视角时介入） | 无 | ⬜ 网页没有手柄视角输入，随手柄支持（M11d 设置 / 输入）一起迁 |
+| `FirstPersonView / FirstPersonExposure / ViewmodelCameraTrim` | — | ⬜ M10 / M11a |
+
+**武器（`G/Weapons/`）**
+
+| 机制（Unity） | 网页 | 结论 |
+|---|---|---|
+| 时序 `WeaponTiming`（切枪 0.35 / 收枪 40%、缓冲 0.14、自动换弹 0.25、上膛 0.3、补发 ≤ 4、空仓 0.3、应急补给 2.5、转停 0.9 / 0.6…） | `weapons/FireControl.ts` 的 `WEAPON_TIMING` | ✅（常量集中到一处） |
+| 扳机闩 `TriggerState`：缓冲里，或按住但这次按压还没打出过，都算「扣了一下」；打出后必须松开 | `TriggerState` | 🔧（原来只有 0.14 s 缓冲：冷却中按住超过 0.14 s 不会打出） |
+| 冲刺禁射 `FireInput.blocked`：半自动 / 全自动 / 光束 / 齐射不开火，点射暂停，机炮转速保持，蓄力不受影响 | `WeaponSystem.update` | 🔧（原来冲刺中照打） |
+| 开镜：换弹 / 切枪 / 冲刺 / 被接管时不开；开镜程度线性每秒 7；视角层 = aimFov × 开镜程度 | 同上 | 🔧（原来只有狙击换弹退镜、按每把枪 `aimSpeed` 指数逼近；`aimSpeed` 字段 Unity 运行时也不读） |
+| 散布：跑动 +20%（开镜 +10%）、滞空 ×1.15（开镜 ×1.05）、进镜（视角层 < −30°）零散布；六把枪的 `spreadTuned`（M2 已对） | `spreadAngle` | 🔧（原来 +60% / ×1.5，镜里仍有散布） |
+| 后坐 `RecoilScale 0.3`：镜头抬枪量 × 0.3 | `WeaponSystem.feedback` | 🔧 |
+| 开枪的镜头反馈 `CameraFeel.FireKick`：枪的震屏（开镜减半）+ 头向后一顿 | `PlayerController.fireKick` | 🔧（原来只震屏） |
+| 打空：按着扳机就立即换弹（哪种模式都一样），没有备弹时空仓音 | `handleEmpty` | 🔧（原来蓄力 / 半自动按住不换） |
+| 光束 `BeamMode`：走共用冷却；弹射用主目标同一份模板（元素几率不打折、照常掷暴击）、深度 1 + chain | `updateBeam`、`Firing.beamTick` | 🔧（原来每次重新按下立刻补一跳；弹射几率减半、不暴击） |
+| 齐射 `VolleyMode`、点射、预热、蓄力（0.2 + 0.8·t²、满蓄穿透 + 引爆）、整匣 / 逐发换弹、换关清理 | `WeaponSystem` | ✅ |
+| 喷火锥 `FlameCone`：不发投射物，沿准星扫半角 0.06 的锥（长 = 弹速 × 寿命 ≤ 射程、撞墙截短），按沿轴距离前 1 + 穿透 名各吃一次、被挡的不占名额、不按弱点算 | `weapons/FlameCone.ts`（敌人按竖直胶囊算最近点）+ `fx.flameJet` | 🔧（原来每跳一枚 flame 投射物） |
+| 贯虹 `RailgunBeam`：满蓄主光束 + 三股彩虹丝缠绕 0.38 s | `weapons/RailgunBeam.ts`（朝向镜头的带子） | ➕ 虹光是 Unity 新增的那层 |
+| `RailgunCharge`（线圈 × 42、颤动、灵纹脉动）、`BreakAction`（折开 0.48）、`TrinityCycle`（锁膛、灵纹显示下一发） | `Viewmodel.ts` 原有 | ✅；⬜ 三才转轮换元素时的亮闪（FlashGain 0.9）、枪模后坐缩放 `ViewKickScale 0.55 × 0.76`、弹匣入位的加弹事件 `CommitLoad` 随 M10 |
+| 命中扫描穿透 ×0.85 / 最多 8 个、距离衰减、贴脸从眼前发射 1.3 m | `Firing.ts` | ✅ |
+| 曳光按元素换形状、弹孔贴花、枪口火焰预设 | `fx.tracer` | ⬜ M11b |
+| 词条 / 传说 / 数值解析 / 掉落 | — | 不在本期（M2 已对数值） |
+| 解析结果直接给弹速 `ResolvedWeapon.projectileSpeed` | 只有 `projSpeedMult`，弹速在 `Firing` / `FlameCone` 里现乘 | 保留网页：数值一致、只是字段不同（M13 对出，不改） |
+
+**技能（`G/Skills/`）**
+
+| 机制（Unity） | 网页 | 结论 |
+|---|---|---|
+| 施法姿势 `CastPose`：投掷 / 召唤 / 砸地 / 举手 / 点名五条时间线叠在枪模上，0.4–0.6 s 放完 | `player/CastPose.ts` + `ViewmodelState.overlayPos / overlayRot` | ➕ |
+| 拒绝反馈 `HeroSkills.Deny`：没有充能 / 持续中 / 技能拒绝，0.35 s 一次 | `SkillController` 发 `'skill:denied'` | ➕ 事件；HUD 技能格闪红还按「按键时没充能」判，改订阅这个事件归界面（M11c） |
+| 出手点 `SafeHandOrigin`：右 0.24 / 下 0.2 / 前 0.45，球扫停在墙前 | `skills/common.handOrigin`（射线多探一个半径） | 🔧（原来 0.22 / 0.16 / 0.55，贴墙退到眼前） |
+| 冲击波 `Shockwave`（技能来源、不算爆炸、边缘 0.45、击退 + 上抛 + 眩晕）、投掷继承 35% 水平速度 | `skills/common.ts` | ✅（上抛 M5 已对） |
+| 燎：燃爆雷 / 尾焰火灵 / 余烬 | `skills/fox.ts` | ✅ 数值 |
+| 磐：裂地重击「脚下 0.35 m 内有地面、竖直速度 −2…0.5 也按地面起跳」、跃起期间锁冲刺 | `skills/bear.ts`、`PlayerController.lockDash` | 🔧 |
+| 磐：磐石壁垒的球形挡弹罩（胸口为心、半径 1.6 m，Unity 加强） | `bear.ts` 经 `projectiles.addWard` | ➕ |
+| 鼯：雷鼓信标 / 雷目·裁决 / 凌空（灵宠不吃）/ 滑翔 | `skills/falcon.ts`、`PlayerController` | ✅；🔧 凌空排除灵宠 |
+| 技能特效「换风格」（HC3：卡通火苗、纸灰地火、去掉叠在爆炸上的闪光） | 网页自己的分层特效（fx-style 第五节：法印、火舌、炭火） | 保留网页：同一份准则下各做的一版，换粒子引擎时一起对（M11b） |
+| 身体被锁（下沉、硬直）时不能放技能 | 无 | ⬜ 网页的下沉在 M7 的 SafeGround 里，没有统一的身体锁；随 M11d 的输入门 |
+
+**M13 对出的不一致（本期改法，master 上 `tests/unity-*.test.mjs` 的 todo 合并后可转断言）**：
+
+1. 弱点伤害%：`StatKey` 加 `weakpointDamagePct`，`Combat.damageEnemy` 弱点（含白泽改判）另乘它（77c8389a）；`defsOffense.ts` 表尾加「破绽」`weak_point`（精良、3 层、`['暴击']`、「弱点伤害每层 +15%。」），秘卷 118 → 119 张，进攻 24 → 25 张（前 24 张顺序不动）。`unity-scrolls` 的「Unity 多一张」断言、`unity-damage-calc` 的「网页缺 weakpointDamagePct / petDamagePct」断言要随之改成「两边相同」。
+2. 灵宠伤害源：`DamageSource` 加 `'pet'`、`StatKey` 加 `petDamagePct`；`isPetHit` 时属性只乘 `petDamagePct`、不掷随机暴击（`forceCrit` 照常），见 `combat/PetContract.ts`（77c8389a）。
+3. 免疫提示：`Combat.damageEnemy` 打不可选中的敌人返回 `{ immune: true, dealt: 0, isCrit: false, killed: false, layer: 'health' }`（原来返回 null），直接命中按 `IMMUNE_FEEDBACK_GAP = 0.4` s / 敌人节流，放行的那一次弹「免疫」并派发 `enemy:damaged`；持续伤害跳伤 / 处决 / 0 伤害不提示；整发被命中区格挡（effective 0、blocked）也派发（Unity `total > 0 || immune || blocked`）。`DamageResult` 加 `immune?`。用返回值算命中的调用方（爆炸、技能冲击波、碎刃斩击 / 刃群、满蓄引爆、反应 `hit()`、封脉导流）跳过 immune；武器词条 `AffixEffects.onDamaged` 照 Unity 跳过 immune；天雷引、引子三卷照 Unity 加「total > 0」。已死的敌人仍返回 null（Unity `default`）。
+4. 玩家减益：寒意 / 点燃 / 日晒在 `player/PlayerStatus.ts`（4cfc4480）。Unity 是一个 `StatusId`（8 项）+ 按宿主登记，网页是敌人 `StatusId`（5 项）+ 玩家 `PlayerStatusId`（3 项），集合相同；`ChillTakesStrongest…` / `IgniteTicks…` 在 `m8-player.test.mjs`，`SunburnStacks…` 在 `hanba-boss.test.mjs`，`EveryStatusHasOneDefinition` 的对应断言在 `m8-parity.test.mjs`。
+5. 焚雷扩散灼烧：`Reactions.runThunderfire` 照 `ReactionSystem.Nearest` 取身体中心在 R 内、按距离最近的 `TF_SPREAD_TARGETS = 16` 个（原来半径内全部，且按 queryRadius 的「R + 敌人半径」算）。
+6. 解析结果的弹速：不改，见武器表最后一行。
+
+**验证**：`npm run typecheck`；`npm test` 全套（失败的只有第 8 节第 3 条那 23 个旧 LOD 测试，外加 `frost-tanks` 的「xuangui: shell spin bounces at most twice」偶发失败——分支起点上跑 15 次也挂 2 次，和本期无关）；实机（1-1，`?debug&dev&debugStage=1-1`，无头浏览器，`node scripts/web/m8-shots.mjs 5711`）逐把武器（21 把）按住开火、冲刺禁射、开镜、喷火锥、贯虹、后坐回正、玩家减益、带电 / 焚雷、免疫、「破绽」、三个英雄的 Q / E 与拒绝事件、磐的挡弹罩，39 项全过、零报错（喷火锥那项原来平视开火、细锥从跳鼠头顶擦过，改成准星压到胸口、头几跳就读，`M8_ONLY=flamer` 单独重跑通过），截图 `docs/art/review/threejs-migration/m8-*.jpg`。
+
+**待办**：`Storm.ts` 落雷充电换成 Charge（上表）；`DESIGN.md` 第 10 节「当前共 118 个」秘卷数随「破绽」变 119；喷火锥枪口到锥中段的火舌在亮沙地上几乎看不见（只有锥末堆起的白热团），正式火焰外观随 M11b；HUD 订阅 `skill:denied`、状态图标读 `player.status`（M11c）；带电 / 喷火 / 虹光的正式外观（M11b）；枪模后坐缩放与转轮亮闪（M10）；手柄瞄准辅助。
 
 ## 5. Unity 能力 → 网页对照
 
