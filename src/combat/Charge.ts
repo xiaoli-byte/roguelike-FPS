@@ -163,9 +163,49 @@ export function arcTargets<E extends Alive & { isBoss?: boolean }>(fromHop: numb
   return { hop, targets };
 }
 
-const _c = new THREE.Vector3();
-const _to = new THREE.Vector3();
 const _p = new THREE.Vector3();
+const _cand = new THREE.Vector3();
+
+/**
+ * 传电的候选名单，照 Unity Charge.Arc 里的 `ReactionSystem.Nearest(c, radius, ArcTargets + 2, from, false, near)`：
+ * 活着、可选中、不是 from，身体中心离 center 不超过 radius（不加敌人半径），按距离由近到远只取前 ArcTargets + 2 个。
+ * 首领照样占名额（Unity 在这 4 个里再跳过首领），交给 arcTargets 过滤。out 会被清空后填充
+ */
+export function arcCandidates<E extends Alive & { getBodyCenter(out: THREE.Vector3): THREE.Vector3 }>(
+  center: THREE.Vector3,
+  radius: number,
+  pool: readonly E[],
+  from: unknown,
+  out: E[] = [],
+): E[] {
+  out.length = 0;
+  if (!(radius > 0)) return out;
+  const count = CHARGE.ArcTargets + 2;
+  const r2 = radius * radius;
+  const dist: number[] = [];
+  const cand: E[] = [];
+  for (const e of pool) {
+    if (e === from || !valid(e)) continue;
+    const d2 = e.getBodyCenter(_cand).distanceToSquared(center);
+    if (d2 > r2) continue;
+    cand.push(e);
+    dist.push(d2);
+  }
+  while (out.length < count) {
+    let bi = -1;
+    let bd = Infinity;
+    for (let i = 0; i < dist.length; i++) {
+      if (dist[i] < bd) {
+        bd = dist[i];
+        bi = i;
+      }
+    }
+    if (bi < 0) break;
+    dist[bi] = Infinity;
+    out.push(cand[bi]);
+  }
+  return out;
+}
 
 /** 本局的带电系统（Combat 持有）；ctx.combat 是测试桩时为 null */
 export function chargeSystem(ctx: Pick<GameContext, 'combat'>): ChargeSystem | null {
@@ -178,6 +218,7 @@ export class ChargeSystem {
   readonly book = new ChargeBook<IEnemy>();
   private tokens = 0;
   private readonly near: IEnemy[] = [];
+  private readonly picked: IEnemy[] = [];
 
   constructor(private readonly ctx: GameContext) {
     ctx.events?.on('enemy:killed', ({ enemy }) => this.onKilled(enemy));
@@ -228,30 +269,30 @@ export class ChargeSystem {
   /** 传电：from 可以已死。返回传到了几个 */
   arc(from: IEnemy, fromHop: number, radius: number = CHARGE.ArcRadius): number {
     const ctx = this.ctx;
-    from.getBodyCenter(_c);
+    // 起点自己留一份：下面的 damageEnemy 可能打死另一只带电的，同步重入 arc() 会改写共用的临时向量
+    const c = from.getBodyCenter(new THREE.Vector3());
     const near = this.near;
     near.length = 0;
-    const found = ctx.enemies.queryRadius(_c, radius, near);
-    const list = (found === near ? near : [...found]).filter(e => e !== from);
-    const dist = new Map<IEnemy, number>();
-    for (const e of list) dist.set(e, e.getBodyCenter(_to).distanceToSquared(_c));
-    list.sort((a, b) => dist.get(a)! - dist.get(b)!);
+    // queryRadius 的范围是「radius + 敌人半径」，比 Unity 宽；只当粗筛，再照 Unity Nearest 按身体中心 ≤ radius 取最近 ArcTargets + 2 个
+    const found = ctx.enemies.queryRadius(c, radius, near);
+    const list = arcCandidates(c, radius, found, from, this.picked);
     const { hop, targets } = arcTargets(fromHop, list);
     near.length = 0;
+    list.length = 0;
     let n = 0;
     for (const t of targets) {
       n++;
       const to = t.getBodyCenter(new THREE.Vector3());
-      ctx.fx.lightning(_c, to, CHARGE_COLOR);
+      ctx.fx.lightning(c, to, CHARGE_COLOR);
       this.book.apply(t, CHARGE.DefaultSeconds, from, hop);
-      const dir = to.clone().sub(_c);
+      const dir = to.clone().sub(c);
       if (dir.lengthSq() > 1e-6) dir.normalize();
       else dir.set(0, 1, 0);
       ctx.combat.damageEnemy(t, {
         base: CHARGE.ArcDamage, element: 'shock', source: 'status', canCrit: false, procDepth: 1, tags: ['chain'],
         point: to, direction: dir,
       });
-      if (n === 1) ctx.audio.play('shock_zap', { position: _c, volume: 0.65, pitch: 0.9 + Math.random() * 0.25 });
+      if (n === 1) ctx.audio.play('shock_zap', { position: c, volume: 0.65, pitch: 0.9 + Math.random() * 0.25 });
     }
     return n;
   }

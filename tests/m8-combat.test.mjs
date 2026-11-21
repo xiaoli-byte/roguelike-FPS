@@ -201,6 +201,49 @@ test('charge: a charged kill arcs to the 2 nearest non-boss allies and the chain
   assert.deepEqual(book.died(e), { was: false, hop: 0 });
 });
 
+test('charge: the death arc picks like Unity Nearest — body centre within 8 m (no radius padding), only the nearest ArcTargets + 2 are candidates', async () => {
+  // Unity Charge.Arc：ReactionSystem.Nearest(c, radius, ArcTargets + 2, from, false, near)，Nearest 按 Distance(from, CenterOf(d)) > range 剔除
+  assert.match(await cs('Combat/Charge.cs'), /ReactionSystem\.Nearest\(c, radius, ArcTargets \+ 2, from, false, near\);/);
+  assert.match(await cs('Combat/ReactionSystem.cs'), /float dd = Vector3\.Distance\(from, CenterOf\(d\)\);\s*if \(dd > range\) continue;/);
+  const at = (x, extra = {}) => ({ alive: true, untargetable: false, isBoss: false, radius: 1.2, height: 2, getBodyCenter: o => o.set(x, 1, 0), ...extra });
+  const c = new THREE.Vector3(0, 1, 0);
+  const near = at(7.5), far = at(8.6);
+  assert.deepEqual(CHARGE.arcCandidates(c, 8, [far, near], null), [near], '身体中心 8.6 m：不在 8 m 内（不加敌人半径）');
+  const b1 = at(1, { isBoss: true }), b2 = at(2, { isBoss: true }), b3 = at(3, { isBoss: true }), n4 = at(4), n5 = at(5);
+  const list = CHARGE.arcCandidates(c, 8, [n5, b3, n4, b1, b2], null);
+  assert.deepEqual(list, [b1, b2, b3, n4], '只取最近 ArcTargets + 2 = 4 个，首领照样占名额');
+  assert.deepEqual(CHARGE.arcTargets(0, list).targets, [n4], '再跳过首领：只传到 1 个');
+  const self = at(0.5);
+  assert.deepEqual(CHARGE.arcCandidates(c, 8, [self, at(1, { alive: false }), at(1.5, { untargetable: true }), n4], self), [n4], 'from 自己、死的、不可选中的不算');
+  assert.deepEqual(CHARGE.arcCandidates(c, 0, [n4], null), []);
+
+  // 运行时：ChargeSystem.arc 走 EnemyManager.queryRadius（「半径 + 敌人半径」粗筛）后照上面的名单传电
+  const run = pool => {
+    const struck = [];
+    const ctx = {
+      events: { on() {} },
+      enemies: {
+        queryRadius(center, r, out = []) {
+          out.length = 0;
+          const v = new THREE.Vector3();
+          for (const e of pool) if (e.alive && !e.untargetable && e.getBodyCenter(v).distanceTo(center) <= r + e.radius) out.push(e);
+          return out;
+        },
+      },
+      fx: { lightning() {}, burst() {} },
+      audio: { play() {} },
+      combat: { damageEnemy: t => { struck.push(t); return null; } },
+    };
+    const sys = new CHARGE.ChargeSystem(ctx);
+    const n = sys.arc(at(0), 0);
+    assert.equal(n, struck.length);
+    return struck;
+  };
+  assert.deepEqual(run([far, near]), [near], '8 m 外（8.6 m，粗筛能查到）的不传');
+  assert.deepEqual(run([n5, b3, n4, b1, b2]), [n4], '最近 4 个里 3 个是首领：只传 1 个，不往第 5 个找');
+  assert.deepEqual(run([at(2), at(3), at(4)]).length, 2, '正常情况传最近 2 个');
+});
+
 test('charge counts as shock for reactions (Unity GameReactionEnv.Has)', async () => {
   const rx = await src('combat/Reactions.ts');
   assert.equal((rx.match(/st\.has\('shock'\) \|\| this\.host\.isCharged\?\.\(enemy\) === true/g) ?? []).length, 2, '反应判定与引爆两处都读带电');
