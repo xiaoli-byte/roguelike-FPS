@@ -92,7 +92,7 @@ const TAG_NAMES: Record<string, string> = {
   skill: '技能', skills: '技能', cooldown: '冷却',
   survival: '生存', defense: '防御', shield: '护盾', health: '生命', hp: '生命', heal: '治疗', lifesteal: '吸血', armor: '护甲',
   mobility: '机动', move: '机动', speed: '移速', dash: '冲刺', jump: '跳跃',
-  economy: '经济', coins: '金币', gold: '金币', luck: '幸运',
+  economy: '经济', coins: '灵石', gold: '灵石', luck: '幸运',
   explosion: '爆炸', explosive: '爆炸', projectile: '投射物',
   onHit: '命中时', onhit: '命中时', onKill: '击杀时', onkill: '击杀时', onReload: '换弹时', onreload: '换弹时',
   onHurt: '受伤时', onhurt: '受伤时', onShieldBreak: '破盾时', onshieldbreak: '破盾时', trigger: '触发',
