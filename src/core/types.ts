@@ -1046,7 +1046,7 @@ export interface IRunPlan {
   themeFor(chapter: number): ThemeId;
   stageLabel(node: StageNode): string;
   rewardLabel(reward: RewardType): string;
-  /** 开局后、进第一关前：等场景清单读到（备选图要它），必要时按清单重排这一局的路线 */
+  /** 开局后、进第一关前：等场景清单读到（备选图要它），必要时按清单重排这一局的路线（开局时没排、之后生涯局数变了的按现在的生涯补排） */
   prepare?(run: RunState): Promise<void>;
 }
 

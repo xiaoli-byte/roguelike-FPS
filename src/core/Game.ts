@@ -382,8 +382,10 @@ export class Game implements IGame {
     ctx.ui.fade(1, 0.01).then(async () => {
       // 每局路线要等场景清单（备选图）：清单晚到时按它重排这一局的路线
       await ctx.runPlan.prepare?.(ctx.run);
-      // 放弃未完成的征程也要等清单：续玩档路线上的备选图在不在要清单才知道，没读到就校验会把好档当坏档挪走、魂晶不入账
-      this.forfeitSuspended();
+      // 放弃未完成的征程也要等清单：续玩档路线上的备选图在不在要清单才知道，没读到就校验会把好档当坏档挪走、魂晶不入账。
+      // 放弃了（记了一局败北）就按放弃之后的生涯再定一次这一局的路线：Unity 先 Forfeit 再 Begin(ShuffleRoute() ? Build : null)，
+      // 生涯第一局暂离后开新局，新局也洗牌
+      if (this.forfeitSuspended()) await ctx.runPlan.prepare?.(ctx.run);
       // 美术资源（角色 / 首领 / 道具 GLB）要在第一关刷怪前到齐：开局就站在场上的驻守怪、调试局直进的首领场，
       // 刷出来时模型没到会一直是程序化占位体（同 Unity：进图时资源已就绪）。模块加载时已在后台开始读，这里只等它读完
       await AssetLibrary.preload();
