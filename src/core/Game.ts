@@ -807,6 +807,15 @@ export class Game implements IGame {
     (window as unknown as Record<string, unknown>).__game = this;
     (window as unknown as Record<string, unknown>).__ctx = ctx;
     let god = false;
+    // __balance()：平衡模型的整份推演（经济投影、逐关估算、首领用时；Unity BalanceModel.Report），敌人 / 首领数值现读 defs.json
+    (window as unknown as Record<string, unknown>).__balance = async () => {
+      const [model, bosses, defs] = await Promise.all([import('../progression/BalanceModel'), import('../progression/BalanceBosses'),
+        fetch(`${import.meta.env.BASE_URL}assets/unity-gameplay/defs.json`).then(r => r.json())]);
+      model.setBalanceData(defs);
+      const report = bosses.fullBalanceReport();
+      console.info(report);
+      return report;
+    };
     ctx.events.on('game:stateChanged', ({ to }) => console.info('[debug] state →', to));
     // ?debug&spawn=mirage_toad[,id2…]：每进一关在玩家前方约 15 米处生成这些敌人（试玩新怪用，不进正式波次）
     const spawnIds = (new URLSearchParams(location.search).get('spawn') ?? '').split(',').filter(Boolean);
