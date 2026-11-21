@@ -3,7 +3,9 @@
 //   · 各敌人类的片段表（clipCues：AI 状态 → 片段）引用的片段都在该资产的控制器里，Unity 对应 AI 播的状态一个不漏；
 //   · 片段播放器（src/anim/ClipPlayer）：Play / PlayTimed / PlayLocomotion、受击、冻住、原地播放减掉烘进骨骼的根节点高度；
 //   · 第四章手 K 片段与招式时间轴（前摇 / 出手 / 收招）对得上：片段长 = 招式总长、hit / release 事件落在释放帧 ≤ 1 帧；
-//   · 鲲 / 鹏 / 火麒麟 / 旱魃 / 商人的手 K 片段齐全，首领招式等的事件都在片段里。
+//   · 鲲 / 鹏 / 火麒麟 / 旱魃 / 商人的手 K 片段齐全，首领招式等的事件都在片段里；
+//   · 鲲鹏：照 Unity KunPengTests.KeyframedClips_EventsLandOnTheMoveTimeline_WithinOneFrame（潜袭 / 吐冰 / 羽刃雨 / 落台 / 起飞 / 倒下），
+//     片段触发照 KunPeng/Moves 的 Act、释放帧顿帧照 ImpactHold（同秒数、×0.05 → ×1.6 追回）；火麒麟的 PlayAct 交叉淡入秒数逐个相同。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -297,3 +299,255 @@ test('第四章的 Foe 接了片段播放器：Begin 按招式总长拉伸、眩
   assert.ok(has('SK_Enemy_Manman', 'hop') && has('SK_Enemy_Qiongqi', 'flee'));
   for (const id of ['SK_Enemy_Aoyin', 'SK_Enemy_Jufu', 'SK_Enemy_Manman', 'SK_Enemy_Marmot', 'SK_Enemy_Qiongqi', 'SK_Enemy_Tiangou']) assert.ok(has(id, 'stagger'), `${id} stagger`);
 });
+
+// ───────────── 首领：旱魃 / 鲲鹏 / 火麒麟 ─────────────
+
+const { HANBA_CLIPS, clipSeconds, actAtSeconds, ANIM_LEAD } = await import('../src/enemies/bosses/HanbaPlans.ts');
+const { HanbaAnimator } = await import('../src/enemies/bosses/HanbaModel.ts');
+
+test('旱魃：播放器的片段表（帧数 / 事件）与导出的手 K 片段逐条一致；出手事件按 ActAt 拉伸后落在前摇结束前 1 帧以内', () => {
+  const data = animData('SK_Boss_Hanba');
+  let events = 0;
+  for (const [name, c] of Object.entries(HANBA_CLIPS)) {
+    const clip = data.clips[name];
+    assert.ok(clip, `旱魃 ${name} 有片段`);
+    assert.equal(clip.src ?? (name === 'Flinch' ? 'derived' : null), 'blender', `${name} 是手 K`);
+    assert.ok(Math.abs(clip.duration - clipSeconds(name)) < 1e-3, `${name} 时长 ${clip.duration} = ${clipSeconds(name)}`);
+    assert.equal(!!clip.loop, !!c.loop, `${name} 循环`);
+    assert.equal(clip.events.length, c.events.length, `${name} 事件条数`);
+    for (const [at, ev] of c.events) {
+      assert.ok(clip.events.some((e) => e.name === ev && Math.abs(e.t - at * clip.duration) <= 2e-3), `${name} ${ev}@${at}`);
+      events++;
+    }
+  }
+  assert.equal(events, 40);
+  // 出手事件：整段拉伸到「事件落在 hitAt − ANIM_LEAD」；与按时间兜底的出手差 ≤ 1 帧（30 fps）
+  for (const [state, evt, hitAt] of [['sunSweep', 'beamStart', 1.2], ['droughtGale', 'hit', 1.0], ['summonWraiths', 'summon', 1.6], ['crackPalm', 'hit', 1.2], ['apsaraCall', 'summon', 1.8]]) {
+    const frac = HANBA_CLIPS[state].events.find(([, n]) => n === evt)[0];
+    const seconds = actAtSeconds(frac, hitAt);
+    const fired = frac * seconds;
+    assert.ok(hitAt - fired >= 0 && hitAt - fired <= FRAME + 1e-6, `${state}.${evt} 提前 ${((hitAt - fired) * 1000).toFixed(1)} ms`);
+    assert.ok(Math.abs(hitAt - fired - ANIM_LEAD) < 1e-6);
+  }
+});
+
+test('旱魃：HanbaAnimator.bindClips 之后骨骼由手 K 片段驱动——取样时刻 = 播放器的归一化时刻，顿帧倍率照旧，另抬模型的 lift 归零', () => {
+  const data = animData('SK_Boss_Hanba');
+  const model = buildSkeleton('SK_Boss_Hanba');
+  const stub = () => ({ rotation: { x: 0, set() {} } });
+  const fired = [];
+  const a = new HanbaAnimator({ armR: stub(), armL: stub(), torso: stub() }, (e) => fired.push(e));
+  assert.equal(a.clipDriven, false);
+  a.bindClips(model, data);
+  assert.ok(a.clipDriven);
+  const arm = model.getObjectByName('arm_R');
+  const rest = arm.quaternion.clone();
+  a.play('crackPalm', clipSeconds('crackPalm'));
+  for (let i = 0; i < 74; i++) a.update(1 / 60);
+  // 刚过 1.2 s（第 36 帧）：出手（hit@0.24 × 5 s）
+  assert.ok(fired.includes('hit'), `事件 ${fired}`);
+  assert.ok(Math.abs(a.u - 74 / 60 / 5) < 1e-6);
+  assert.ok(arm.quaternion.angleTo(rest) > 0.2, '右臂离开了绑定姿势');
+  assert.equal(a.lift, 0);
+  // 与直接在 1.2 s 取样的片段姿势相同（交叉淡入 0.2 s 已经走完）
+  const want = buildSkeleton('SK_Boss_Hanba');
+  const clip = anim.buildClip(data, 'crackPalm');
+  const mixer = new THREE.AnimationMixer(want);
+  const act = mixer.clipAction(clip);
+  act.play();
+  act.time = a.u * 5;
+  act.timeScale = 0;
+  mixer.update(0);
+  assert.ok(arm.quaternion.angleTo(want.getObjectByName('arm_R').quaternion) < 1e-3);
+  // 顿帧：speed 0.05 时片段几乎不走
+  const u0 = a.u;
+  a.speed = 0.05;
+  for (let i = 0; i < 6; i++) a.update(1 / 60);
+  assert.ok(a.u - u0 < 0.001 + 1e-9);
+  a.dispose();
+  assert.equal(a.clipDriven, false);
+});
+
+test('鲲 / 鹏 / 火麒麟：招式播的动作名都有片段，招式等的出手事件（cue）都在对应片段里；鲲的片段把身体抬到水线（根骨骼 +10）', () => {
+  const read = (f) => readFileSync(join(ROOT, 'src/enemies/bosses', f), 'utf8');
+  const acts = (src) => new Set([...src.matchAll(/\bact\('(\w+)'/g)].map((m) => m[1]).filter((s) => s !== 'idle' && s !== 'Idle' && s !== 'Locomotion'));
+  const kp = read('KunPengMoves.ts');
+  const kun = animData('SK_Boss_Kun'), peng = animData('SK_Boss_Peng');
+  for (const s of acts(kp)) assert.ok(kun.clips[s] || peng.clips[s], `鲲鹏招式播 ${s}`);
+  const ev = (d, clip) => d.clips[clip].events.map((e) => e.name);
+  assert.ok(ev(kun, 'slam').includes('wave2') && ev(kun, 'sink').includes('plunge') && ev(kun, 'sink').includes('breach'));
+  assert.ok(ev(peng, 'spread').includes('flap') && ev(peng, 'perch').includes('flap') && ev(peng, 'perch').includes('hit'));
+  // spread 的猛扇：片段 0.9 s、事件 0.43 s = 招式按时间兜底的 0.43 s
+  assert.ok(Math.abs(peng.clips.spread.events.find((e) => e.name === 'flap').t - 0.43) <= FRAME);
+  for (const id of ['SK_Boss_Qilin', 'SK_Boss_QilinBurn']) {
+    const q = animData(id);
+    for (const s of acts(read('QilinMoves.ts'))) assert.ok(q.clips[s] || (id === 'SK_Boss_QilinBurn' && s === 'drink'), `${id} 招式播 ${s}`);
+    // 前摇等 hit 的两招（鳞刃、狂怒长啸）：人立片段的 hit 在片段末尾（拉伸到前摇时长后提前不到 1 帧 / 秒）
+    const rear = q.clips.rear.events.find((e) => e.name === 'hit');
+    assert.ok(rear && q.clips.rear.duration - rear.t <= FRAME + 1e-6);
+  }
+  // 鲲：片段以完全沉下去为参照，根骨骼抬 10 个模型单位（× 形态缩放 = KunBaseY − KunSunkY）
+  const model = buildSkeleton('SK_Boss_Kun');
+  const clip = anim.buildClip(kun, 'Idle');
+  const track = clip.tracks.find((t) => t.name === 'root.position');
+  assert.ok(Math.abs(track.values[1] - 10) < 0.01);
+  assert.ok(model.getObjectByName('root'));
+  // 模型层接了片段播放器
+  for (const f of ['KunPeng.ts', 'Qilin.ts']) {
+    const src = read(f);
+    assert.match(src, /new ClipPlayer\(art\.native\.assetId, art\.native\.model, \{ root: this\.root, rig: false, inPlace: false \}\)/);
+    assert.match(src, /!\/\^\(sfx\|fx\):\/\.test\(e\.name\)\) this\.emitAnimEvent\(e\.name\)/);
+  }
+});
+
+// ───────────── 鲲鹏：片段时间轴 / 片段触发 / 顿帧（照 Unity KunPengTests 与 KunPeng/Moves） ─────────────
+
+const KPP = await import('../src/enemies/bosses/KunPengPlans.ts');
+const { KunPengDef: KPDef } = await import('../src/enemies/bosses/KunPengDef.ts');
+const { KunPeng } = await import('../src/enemies/bosses/KunPeng.ts');
+const KP_UNITY = join(ROOT, 'unity/Assets/Game/Scripts/Bosses/KunPeng');
+const QL_UNITY = join(ROOT, 'unity/Assets/Game/Scripts/Bosses/Qilin');
+const bossSrc = (f) => readFileSync(join(ROOT, 'src/enemies/bosses', f), 'utf8');
+/** 片段里事件的归一化时刻（Unity events.json 的 at） */
+const evAt = (d, clip, name) => {
+  const c = d.clips[clip];
+  const e = c?.events.find((x) => x.name === name);
+  assert.ok(e, `${clip} 里没有 ${name} 事件`);
+  return e.t / c.duration;
+};
+
+test('鲲鹏：手 K 片段的事件落在招式时间轴上 ≤ 1 帧（照 Unity KunPengTests.KeyframedClips_EventsLandOnTheMoveTimeline_WithinOneFrame）', () => {
+  const kun = animData('SK_Boss_Kun'), peng = animData('SK_Boss_Peng');
+  const near = (actual, want, what) => assert.ok(Math.abs(actual - want) <= FRAME + 1e-3, `${what}：${actual.toFixed(4)} ≠ ${want}`);
+  // 潜袭：sink = 整段前摇，erupt 接在后面（出手 + 收招），第 1 帧咬合
+  const dive = KPP.KunDive.spec;
+  assert.equal(kun.clips.sink.next, 'erupt', 'sink 接 erupt');
+  near(evAt(kun, 'sink', 'plunge') * dive.windup, KPP.KunDive.PlungeAt, '下潜水花');
+  near(evAt(kun, 'sink', 'breach') * dive.windup, KPP.KunDive.BreachAt, '破水');
+  near(dive.windup + evAt(kun, 'erupt', 'hit') * (dive.active + dive.recover), dive.windup, '扑咬 = 前摇结束');
+  // 吐冰：一段 1.3 s，projectile = 前摇结束
+  const spit = KPP.KunSpit.spec;
+  near(evAt(kun, 'spit', 'projectile') * (spit.windup + spit.active + spit.recover), spit.windup, '吐冰出手');
+  // 羽刃雨：spread（前摇）→ spreadShed 循环，每 4 枚一圈，狂怒 14 枚累计不差 1 帧
+  assert.equal(peng.clips.spread.next, 'spreadShed');
+  const shed = peng.clips.spreadShed;
+  assert.ok(shed.loop, '振翅洒羽是循环态');
+  const shots = shed.events.filter((e) => e.name === 'projectile').map((e) => e.t / shed.duration);
+  assert.equal(shots.length, 4, '一圈 4 枚');
+  shots.forEach((at, i) => assert.ok(Math.abs(at - i * 0.25) <= 1e-3, `第 ${i} 枚 ${at}`));
+  const shedLoop = 13 / 30;
+  assert.ok(Math.abs(KPP.PengFeatherRain.RageFeathers * KPP.PengFeatherRain.Interval - KPP.PengFeatherRain.RageFeathers / 4 * shedLoop) <= FRAME,
+    '循环一圈 = 4 × 0.11 s，狂怒最后一枚的累计偏差 < 1 帧');
+  // 落台：perch 从下降开始播，触地 = 下降结束；之后循环栖落；起飞片段在起飞预警时播，离台 = 收招段开始
+  assert.equal(peng.clips.perch.next, 'perchRest');
+  near(evAt(peng, 'perch', 'hit') * KPP.PengPerch.PerchClip, KPP.PengPerch.DescendSeconds, '落台触地');
+  assert.ok(peng.clips.perchRest.loop, '栖落是循环态');
+  near(evAt(peng, 'takeoff', 'liftoff') * KPP.PengPerch.TakeoffClip, KPP.PengPerch.RestSeconds - KPP.PengPerch.TakeoffWarnAt, '起飞离台');
+  // 倒下：翼折 / 触地 / 最后一声和 KunPengDeath 的时间轴一致，之后循环趴着
+  const D = KPP.KunPengDeath;
+  assert.equal(peng.clips.death.next, 'deathRest');
+  assert.ok(Math.abs(peng.clips.death.duration - D.ClipSeconds) < 1e-3, 'death 片段 120 帧');
+  near(evAt(peng, 'death', 'wingBreak') * D.ClipSeconds, D.BreakTime, '翼折');
+  near(evAt(peng, 'death', 'land') * D.ClipSeconds, D.LandTime, '触地');
+  near(evAt(peng, 'death', 'lastCry') * D.ClipSeconds, D.CryTime, '最后一声');
+  assert.ok(D.LandTime < new KPDef().defeat.seconds * 0.88, '溃散隐去之前已经落地');
+  assert.ok(peng.clips.deathRest.loop, '倒下之后循环趴着');
+  // 化鹏长啸：鹏 roar 片段第 50 帧的 spread（展翅爆发）——片段从换形 1.55 s 起按剩余时长拉伸，落在 3.67 s，比转换演出 3.6 s 的兜底晚 2 帧，
+  // 所以展翅其实总是兜底先到（Unity 同样：KunPengBrain.TransitionTick 的 Crossed(3.6f)），事件只在兜底没走到时起作用
+  const tr = new KPDef().phases[0];
+  const left = Math.max(0.5, tr.seconds - KPDef.TransitionSwap);
+  const spreadAt = KPDef.TransitionSwap + evAt(peng, 'roar', 'spread') * left;
+  assert.ok(spreadAt > 3.6 && spreadAt - 3.6 <= 3 * FRAME, `展翅 ${spreadAt.toFixed(3)} s`);
+});
+
+/** 招式文件里 act(...) / Act(...) / PlayAct(...) 的调用：状态名 + 其余实参（按顶层逗号拆） */
+function actCalls(src, re) {
+  const out = [];
+  for (const m of src.matchAll(re)) {
+    const args = [];
+    let depth = 0, cur = '';
+    for (const ch of m[2]) {
+      if (ch === '(') depth++;
+      if (ch === ')') depth--;
+      if (ch === ',' && depth === 0) {
+        if (cur.trim()) args.push(cur.trim());
+        cur = '';
+      } else cur += ch;
+    }
+    if (cur.trim()) args.push(cur.trim());
+    out.push({ state: m[1], args });
+  }
+  return out;
+}
+
+test('鲲鹏：招式播哪些片段照 Unity KunPengMove.Act（控制器自己连段的扑咬 / 猛砸 / 破水和中途回待机只换程序化姿势）', { skip: !existsSync(KP_UNITY) && '没有 unity/ 目录' }, () => {
+  const unity = readdirSync(join(KP_UNITY, 'Moves')).filter((f) => f.endsWith('.cs') && f !== 'KunPengMove.cs')
+    .flatMap((f) => actCalls(readFileSync(join(KP_UNITY, 'Moves', f), 'utf8'), /\bAct\("(\w+)"([^;]*)\);/g).map((c) => c.state));
+  const web = bossSrc('KunPengMoves.ts');
+  const acts = actCalls(web, /this\.act\('(\w+)'([^;]*)\);/g);
+  const clipStates = [...acts.filter((c) => c.args[1] !== 'false').map((c) => c.state), ...actCalls(web, /this\.clipAct\('(\w+)'([^;]*)\);/g).map((c) => c.state)];
+  assert.deepEqual([...clipStates].sort(), [...unity].sort(), '片段触发（每处一次）');
+  assert.deepEqual(acts.filter((c) => c.args[1] === 'false').map((c) => c.state).sort(), ['bite', 'erupt', 'idle', 'idle', 'idle', 'perch', 'slam']);
+  // 连段：被跳过的那几个状态确实由控制器自己接上
+  const kun = animData('SK_Boss_Kun'), peng = animData('SK_Boss_Peng');
+  assert.equal(kun.clips.inhale.next, 'bite');
+  assert.equal(kun.clips.slamWind.next, 'slam');
+  assert.equal(kun.clips.sink.next, 'erupt');
+  for (const s of clipStates) assert.ok(kun.clips[s] || peng.clips[s], `${s} 有片段`);
+});
+
+test('鲲鹏：释放帧顿帧与 Unity 同帧同秒数；顿帧把片段压到 ×0.05（≤ 0.12 s）、之后 ×1.6 追回，欠下的时间还清；没有片段时不顿', { skip: !existsSync(KP_UNITY) && '没有 unity/ 目录' }, () => {
+  const holds = (src, re) => [...src.matchAll(re)].map((m) => Number(m[1]));
+  const unity = [...readdirSync(join(KP_UNITY, 'Moves')).filter((f) => f.endsWith('.cs')).map((f) => join(KP_UNITY, 'Moves', f)), join(KP_UNITY, 'KunPengBrain.cs')]
+    .flatMap((p) => holds(readFileSync(p, 'utf8'), /ImpactHold\((\d*\.\d+)f\)/g)).sort();
+  const web = [...holds(bossSrc('KunPengMoves.ts'), /impactHold\((\d*\.\d+)\)/g), ...holds(bossSrc('KunPeng.ts'), /this\.impactHold\((\d*\.\d+)\)/g)].sort();
+  assert.deepEqual(web, unity);
+  assert.equal(web.length, 8);
+  // 时间倍率：拿 KunPeng 原型上的 impactHold / holdDt 跑（片段 ready、活着）
+  const kp = Object.create(KunPeng.prototype);
+  Object.defineProperty(kp, 'formClips', { get: () => ({ ready: true }) });
+  Object.assign(kp, { alive: true, holdLeft: 0, holdDebt: 0, impactHolds: 0 });
+  const dt = 1 / 60;
+  kp.impactHold(0.08);
+  kp.impactHold(0.5);
+  assert.equal(kp.impactHolds, 2);
+  let animT = 0, real = 0, slow = 0;
+  for (let i = 0; i < 120; i++) {
+    const a = kp.holdDt(dt);
+    if (a < dt * 0.5) slow++;
+    animT += a;
+    real += dt;
+  }
+  assert.equal(slow, Math.ceil(0.12 / dt - 1e-9), '上限 0.12 s');
+  assert.ok(Math.abs(animT - real) < dt, `追回后片段时间 = 真实时间（差 ${(real - animT).toFixed(4)} s）`);
+  // 程序化摆姿势（没有片段）时不顿
+  const proc = Object.create(KunPeng.prototype);
+  Object.defineProperty(proc, 'formClips', { get: () => null });
+  Object.assign(proc, { alive: true, holdLeft: 0, holdDebt: 0, impactHolds: 0 });
+  proc.impactHold(0.08);
+  assert.equal(proc.impactHolds, 0);
+  assert.equal(proc.holdDt(dt), dt);
+});
+
+test('鲲鹏 / 火麒麟：收招、转换结束回步态（Unity FinishMove / EndTransition 的 PlayLocomotion）；鹏倒下播手 K death，火麒麟倒下片段 97% 冻住', () => {
+  const kp = bossSrc('KunPeng.ts'), ql = bossSrc('Qilin.ts');
+  assert.match(kp, /onMoveEnded\(_m: BossMove\): void \{\s*if \(this\.alive\) this\.formClips\?\.playLocomotion\(\);/);
+  assert.match(kp, /onTransitionEnd\(_phase: BossPhaseDef\): void \{[\s\S]{0,120}this\.formClips\?\.playLocomotion\(\);/);
+  assert.match(kp, /evt === 'spread' && this\.transitioning && this\.isPeng\) this\.spreadBurst\(\)/);
+  assert.match(kp, /this\.deathKeyframed = !this\.deathKun && !!c\?\.ready && c\.has\('death'\);\s*if \(this\.deathKeyframed\) c!\.play\('death', 0\.08\);/);
+  for (const ev of ['wingBreak', 'flail', 'land', 'lastCry']) assert.match(kp, new RegExp(`case '${ev}':`));
+  assert.match(ql, /onMoveEnded\(_m: BossMove\): void \{\s*if \(this\.alive\) this\.clipLoco = true;/);
+  assert.match(ql, /fc\.frozen = t >= 0\.97;/);
+});
+
+test('火麒麟：招式的片段与交叉淡入秒数照 Unity Brain.PlayAct（缺省 0.1，鳞刃 0.08 / 0.03、扑踏 0.04 / 0.08、扑掌 0.08、奔驰回步态 0.05）', { skip: !existsSync(QL_UNITY) && '没有 unity/ 目录' }, () => {
+  const fadeOf = (args) => (args.length >= 2 ? Number(args[1].replace(/f$/, '')) : 0.1);
+  const unity = readdirSync(join(QL_UNITY, 'Moves')).filter((f) => f.endsWith('.cs'))
+    .flatMap((f) => actCalls(readFileSync(join(QL_UNITY, 'Moves', f), 'utf8'), /Brain\.PlayAct\("(\w+)"([^;]*)\);/g))
+    .map((c) => `${c.state}@${fadeOf(c.args)}`).sort();
+  const web = actCalls(bossSrc('QilinMoves.ts'), /this\.act\('(\w+)'([^;]*)\);/g).map((c) => `${c.state}@${fadeOf(c.args)}`).sort();
+  assert.deepEqual(web, unity);
+  const xuan = animData('SK_Boss_Qilin'), burn = animData('SK_Boss_QilinBurn');
+  for (const s of new Set(web.map((x) => x.split('@')[0]))) assert.ok(s === 'Locomotion' || xuan.clips[s] || burn.clips[s], `${s} 有片段`);
+});
+

@@ -56,9 +56,12 @@ export class CreatureAnimator {
     this.locomotion = new CreatureLocomotion(this.root, this.animator, this.rig, data.moveSpeed);
   }
 
-  update(dt: number) {
+  /**
+   * animDt：状态机走的时间（Unity Animator.speed 的效果：首领顿帧 ×0.05、之后 ×1.6 追回）；步态推导和运行时动画层仍按真实 dt
+   */
+  update(dt: number, animDt = dt) {
     this.locomotion.tick(dt);
-    this.animator.update(dt);
+    this.animator.update(animDt);
     this.rig?.tick(dt);
   }
 

@@ -170,9 +170,10 @@ export class ClipPlayer {
     if (this.anim?.rig) this.anim.rig.daze = v;
   }
 
-  update(dt: number): void {
+  /** animDt：片段走的时间（首领顿帧时 ≠ dt，见 CreatureAnimator.update） */
+  update(dt: number, animDt = dt): void {
     if (!this.anim || this.frozen || !(dt > 0)) return;
-    this.anim.update(dt);
+    this.anim.update(dt, animDt);
   }
 
   dispose(): void {

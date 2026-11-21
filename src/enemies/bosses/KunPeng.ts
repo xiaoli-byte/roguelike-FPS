@@ -7,11 +7,14 @@
  *   · 不走导航：鲲的逻辑位置钉在冰窟里（方位 theta、离圆心 半径 − 4.6，y = 环台地面）；鹏在空中（EnemyBase 的飞行积分：水平按 accel 追期望速度，
  *     竖直追 地面 + hoverAlt，飞越冰窟时不低于 11.5 m，盘旋时上下起伏 0.5 m）。
  *   · 运行时姿态：鲲的沉浮 sunk（0 = 露出水面，1 = 完全沉下去 13 m）+ 按动作的俯仰 / 抬身，平切口始终压在水面下 0.3 m（KunPengMath.cutCeiling）；
- *     鹏转换时从雾里升起（riseOffset）。骨骼是程序化摆姿势（同 Unity 的代理 / 占位体那条路；采样片段换 AnimationClip 随 M12）。
+ *     鹏转换时从雾里升起（riseOffset）。正式美术 + 动画数据读好后骨骼由片段驱动（M12：SK_Boss_Kun / SK_Boss_Peng 的采样 + Blender 手 K，
+ *     src/anim/ClipPlayer；招式的 playAct 照 Unity KunPengBrain.Act 立刻切片段、按秒数拉伸，片段事件进招式的 cue，释放帧顿帧 impactHold 只顿片段）；
+ *     读好之前和程序化兜底体沿用程序化摆姿势（同 Unity 的代理 / 占位体那条路）。
  *   · 鲛珠：两个形态的弱点都是额头的 pearl，平时微光，猛砸趴台 / 落台歇翼 / 撞柱硬直时大亮。
  *   · 生命刻度：75% 鲲怒（鲲的招式喘息 × 0.8、猛砸连掀两道冰浪、吐冰多一块）；25% 鹏狂怒（框架的狂怒：喘息 × 0.78、俯冲连掠、羽刃 14 枚）。
  *   · 特效（KunPengFx）：水面翻涌、吞吸气流、狂风风痕、冰雾爆闪、羽刃。
- *   · 演出：登场演出（KunPengIntro，代码驱动机位），化鹏（漩涡 → 水击三千里 → 扶摇 → 展翅），倒下（鲲沉回冰窟 / 鹏坠落砸冰面，之后冻雾）。
+ *   · 演出：登场演出（KunPengIntro，代码驱动机位），化鹏（漩涡 → 水击三千里 → 扶摇 → 展翅，展翅跟鹏 roar 片段的 spread 事件），
+ *     倒下（鲲沉回冰窟 / 鹏播手 K death 片段：翼折 → 栽落 → 触地 → 最后一声，没有片段时程序化收翼坠落砸冰面，之后冻雾）。
  * 网址带 ?dev 时（只在开发服务器里）挂 window.__kunpeng 调试钩子（跳演出、跳阶段、强制出招），生产构建里整段不存在。
  */
 import * as THREE from 'three';
@@ -29,6 +32,7 @@ import { holeFromWater, IceHoleInfo, locateIceHole } from './KunPengArena';
 import { KunPengDef, KunPengMath } from './KunPengDef';
 import { KunPengFx } from './KunPengFx';
 import { kunPengIntro, setIntroHole } from './KunPengIntro';
+import { ClipPlayer } from '../../anim/ClipPlayer';
 import { anchorOn, buildKunProc, buildPengProc, KUN_POINTS, PENG_POINTS, ProcPose, type KPPose, type ProcBody } from './KunPengModel';
 import { createKunPengMove } from './KunPengMoves';
 import { KunPengDeath, PENG } from './KunPengPlans';
@@ -79,6 +83,8 @@ interface Form {
   proc: ProcBody;
   pose: KPPose;
   native: NativeBody | null;
+  /** 片段播放器（M12：SK_Boss_Kun / SK_Boss_Peng 的采样 + Blender 手 K 片段）；读好之前 / 没有美术身体时程序化摆姿势 */
+  clips: ClipPlayer | null;
   /** 关键点锚点（挂在骨骼上） */
   pts: Record<string, THREE.Object3D>;
   shapes: HitShape[];
@@ -141,6 +147,10 @@ export class KunPeng extends BossBrain implements DirectedBoss {
   private transPrev = -1;
   private spreadDone = false;
   private introRoared = false;
+  /** 本场顿帧次数（测试 / 调试；Unity KunPengBrain.ImpactHolds） */
+  impactHolds = 0;
+  private holdLeft = 0;
+  private holdDebt = 0;
   // 动画参数（平滑）
   private pRear = 0;
   private pWind = 0;
@@ -160,6 +170,16 @@ export class KunPeng extends BossBrain implements DirectedBoss {
   private deathDrop = 0;
   private deathLanded = false;
   private deathLingered = false;
+  /** 鹏播手 K death 片段（正式美术 + 片段读好、有 death 状态）；否则程序化收翼坠落 */
+  private deathKeyframed = false;
+  private deathIntoWater = false;
+  /** 触地的地面 / 水面高度（世界） */
+  private deathGround = 0;
+  private deathBroke = false;
+  private deathCried = false;
+  /** 触地 / 没顶的时刻（倒下后几秒）与来源（片段事件 / 按时间兜底；调试） */
+  deathLandedAt = -1;
+  deathLandSource = '—';
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
     const def = new KunPengDef();
@@ -237,8 +257,8 @@ export class KunPeng extends BossBrain implements DirectedBoss {
     root.add(pengHost);
     const kp = buildKunProc(kunHost);
     const pp = buildPengProc(pengHost);
-    this.kun = { host: kunHost, proc: kp, pose: new ProcPose(kp.joints), native: null, pts: {}, shapes: [] };
-    this.peng = { host: pengHost, proc: pp, pose: new ProcPose(pp.joints), native: null, pts: {}, shapes: [] };
+    this.kun = { host: kunHost, proc: kp, pose: new ProcPose(kp.joints), native: null, clips: null, pts: {}, shapes: [] };
+    this.peng = { host: pengHost, proc: pp, pose: new ProcPose(pp.joints), native: null, clips: null, pts: {}, shapes: [] };
     return root;
   }
 
@@ -265,6 +285,16 @@ export class KunPeng extends BossBrain implements DirectedBoss {
         f.pose = art.native.pose;
         f.proc.group.visible = false;
         art.native.glowShell?.color.setHex(PEARL);
+        // 片段（Unity Animator）：宿主的俯仰 / 抬身已经烘在根骨骼里，不开原地播放、不要运行时动画层（看向会和烘好的转头打架）
+        const clips = new ClipPlayer(art.native.assetId, art.native.model, { root: this.root, rig: false, inPlace: false });
+        const kun = f === this.kun;
+        // 片段事件交给招式的 cue（hit / wave2 / plunge / breach / flap…）；sfx: / fx: 不转——网页的招式自己播音效和震屏（Unity 是 ClipsDriveSfx 时招式不播），免得响两遍
+        clips.onEvent = (e) => {
+          if (this.alive && kun === this.isKun && !/^(sfx|fx):/.test(e.name)) this.emitAnimEvent(e.name);
+          // death 片段的事件（倒下后框架不再转发，这里自己接；Unity KunPengDeath.OnAnimEvent）
+          else if (!this.alive && !kun && this.deathKeyframed) this.deathEvent(e.name);
+        };
+        f.clips = clips;
       }
     }
     this.buildAnchors(this.kun, KUN_POINTS);
@@ -560,11 +590,65 @@ export class KunPeng extends BossBrain implements DirectedBoss {
     this.ctx.ui.toast(text, color);
   }
 
-  /** 播一个动作（程序化姿势按名字切换） */
-  override playAct(state: string, _seconds: number): void {
+  /**
+   * 播一个动作：程序化姿势按名字切换；片段照 Unity KunPengBrain.Act 立刻切过去、拉伸到 seconds 播完（ActScale = 片段长 / seconds），
+   * 'idle' / 'Locomotion' 回步态。clip = false：只换程序化姿势——Unity 的招式不播、由控制器自己连段的（吞吸 → 扑咬、蓄力 → 猛砸、
+   * 下潜 → 破水）和招式中途回待机的那几处，片段照原样播完（见 KunPengMoves）。
+   */
+  override playAct(state: string, seconds: number, clip = true): void {
     if (!state) return;
     this.lastAct = state;
     this.setAnim(state, true);
+    if (clip) this.playClip(state, seconds);
+  }
+
+  /** 当前形态的片段播放器（没有美术身体为 null；数据还没读好时请求会记下、读好后补播） */
+  private get formClips(): ClipPlayer | null {
+    return (this.isKun ? this.kun : this.peng).clips;
+  }
+
+  /** 只播片段（招式里片段时刻和程序化姿势切换点不同的地方，见 KunPengMoves） */
+  clipAct(state: string, seconds: number): void {
+    if (state) this.playClip(state, seconds);
+  }
+
+  private playClip(state: string, seconds: number, fade = 0.12): void {
+    const c = this.formClips;
+    if (!c) return;
+    // 控制器的 act_<状态> 触发器走任意状态 0.12 s 过渡；没有这个状态（Hit 之类）Unity 只报警告、什么也不做（ClipPlayer 同样）
+    if (state === 'idle' || state === 'Locomotion') c.playLocomotion();
+    else c.playTimed(state, seconds, fade);
+  }
+
+  /**
+   * 释放帧的顿帧（Unity KunPengBrain.ImpactHold）：只把首领自己的片段压到 ×0.05 停 seconds 秒（≤ 0.12），之后 ×1.6 追回欠下的时间——
+   * 后面的片段事件照样落在原来的时刻附近，不拖慢招式；全局时间不动。没有片段（程序化摆姿势）时什么也不做。震屏由调用方同一帧给
+   */
+  impactHold(seconds: number): void {
+    if (!this.formClips?.ready || !this.alive || !(seconds > 0)) return;
+    this.holdLeft = Math.max(this.holdLeft, Math.min(0.12, seconds));
+    this.impactHolds++;
+  }
+
+  /** 片段这一帧走的时间（Unity TickHold 的 anim.speed × dt） */
+  private holdDt(dt: number): number {
+    if (!this.alive) {
+      this.holdLeft = this.holdDebt = 0;
+      return dt;
+    }
+    if (this.holdLeft > 0) {
+      this.holdLeft -= dt;
+      this.holdDebt += dt * 0.95;
+      return dt * 0.05;
+    }
+    if (this.holdDebt > 0) {
+      const catchUp = 1.6;
+      this.holdDebt -= dt * (catchUp - 1);
+      const rate = this.holdDebt > 0 ? catchUp : 1;
+      if (this.holdDebt <= 0) this.holdDebt = 0;
+      return dt * rate;
+    }
+    return dt;
   }
 
   // ───────────── 框架钩子 ─────────────
@@ -710,10 +794,23 @@ export class KunPeng extends BossBrain implements DirectedBoss {
     this.ctx.fx.burst(c, 0xffffff, 24, 14, 0.6, 0.3, 0);
     this.ctx.fx.ring(c, 14, KunPengDef.Gust, 0.8);
     this.ctx.fx.ring(_w.set(c.x, this.hole.waterY + 0.1, c.z), 18, KunPengDef.Gust, 1);
+    this.impactHold(0.08);
     this.quake(0.5, 0.5);
   }
 
+  /** Unity BossBrain.FinishMove：收招 → PlayLocomotion（片段；打断时紧接着的硬直 / 转换 / 倒下动作会盖掉它） */
+  protected override onMoveEnded(_m: BossMove): void {
+    if (this.alive) this.formClips?.playLocomotion();
+  }
+
+  protected override onAnimEvent(evt: string): void {
+    // 化鹏长啸的展翅（鹏 roar 片段第 50 帧的 spread）：转换演出里由片段驱动展翅爆发；没有片段时 3.6 s 兜底（transitionTick）
+    if (evt === 'spread' && this.transitioning && this.isPeng) this.spreadBurst();
+  }
+
   protected override onTransitionEnd(_phase: BossPhaseDef): void {
+    // Unity BossBrain.EndTransition：PlayLocomotion
+    this.formClips?.playLocomotion();
     this.riseOffset = 0;
     this.fx?.flash(0);
     if (this.isPeng) this.hoverAlt = this.kdef.pengHover;
@@ -760,20 +857,95 @@ export class KunPeng extends BossBrain implements DirectedBoss {
     }
     this.ctx.ui.toast(this.isKun ? '北冥之鲲沉入了冰海' : '鹏坠入北冥——冰海重归平静', '#bfe9ff');
     this.director?.abort('首领倒下');
-    // 倒下演出（KunPengDeath 的程序化那条路）：鲲沉回冰窟；鹏收翼坠落、55% 砸到冰面（死在冰窟上空就坠进北冥）
+    // 倒下演出（KunPengDeath）：鲲沉回冰窟；鹏有手 K death 片段就播片段（翼折 → 栽落 → 触地 → 最后一声），没有就收翼坠落、55% 砸到冰面
+    //（死在冰窟上空就坠进北冥）
     this.deathKun = this.isKun;
     this.deathLanded = this.deathLingered = false;
+    this.deathBroke = this.deathCried = false;
+    this.deathLandedAt = -1;
+    this.deathLandSource = '—';
     const host = this.deathKun ? this.kun.host : this.peng.host;
     this.deathStartY = host.position.y;
     let ground = this.hole.floorY;
+    this.deathIntoWater = false;
     if (!this.deathKun) {
-      if (this.hole.found && this.hole.distance(this.position) < this.hole.radius - 0.5) ground = this.hole.waterY;
-      else {
+      if (this.hole.found && this.hole.distance(this.position) < this.hole.radius - 0.5) {
+        ground = this.hole.waterY;
+        this.deathIntoWater = true;
+      } else {
         const g = this.ctx.world.groundHeight(this.position.x, this.position.z, this.position.y + 0.5, 0);
         if (Number.isFinite(g)) ground = Math.max(this.hole.floorY, g);
       }
     }
+    this.deathGround = ground;
     this.deathDrop = Math.max(0, this.position.y + this.deathStartY - ground);
+    // Unity KunPengDeath.Begin：顿帧 / ActScale 复位；鹏有 death 状态就从这一刻播 death（PlayDeath），否则交叉淡入 roar
+    const c = (this.deathKun ? this.kun : this.peng).clips;
+    this.deathKeyframed = !this.deathKun && !!c?.ready && c.has('death');
+    if (this.deathKeyframed) c!.play('death', 0.08);
+    else if (c?.ready && c.has('roar')) c.play('roar', 0.15);
+  }
+
+  /** death 片段的事件（Unity KunPengDeath.OnAnimEvent）：翼折、乱扑掉羽、触地、最后一声 */
+  private deathEvent(evt: string): void {
+    switch (evt) {
+      case 'wingBreak': this.wingBreak(); break;
+      case 'flail': this.featherShed(this.boneWorld('wing_R_2', _v), 10); break;
+      case 'land': this.pengLand('事件 land'); break;
+      case 'lastCry': this.lastCry(); break;
+    }
+  }
+
+  /** 鹏的骨骼世界位置（找不到骨骼时用胸口锚点） */
+  private boneWorld(name: string, out: THREE.Vector3): THREE.Vector3 {
+    const b = this.peng.pose.bone(name);
+    return b ? b.getWorldPosition(out) : this.peng.pts.chest.getWorldPosition(out);
+  }
+
+  /** 雪羽：从某点洒一小撮白羽 + 冰屑（特效正式件随 M11b） */
+  private featherShed(p: THREE.Vector3, n: number): void {
+    this.ctx.fx.burst(p, 0xf4fbff, n, 4, 1.2, 0.3, -2);
+    this.ctx.fx.burst(p, ICE, Math.max(2, n >> 1), 3, 0.7, 0.25, 4);
+  }
+
+  /** 翼折（death 片段第 12 帧）：左翼中段一声脆响、炸开一团雪羽 */
+  private wingBreak(): void {
+    if (this.deathBroke) return;
+    this.deathBroke = true;
+    const w = this.boneWorld('wing_L_2', _w);
+    this.featherShed(w, 24);
+    this.ctx.fx.ring(w, 2.2, 0xf4fbff, 0.4);
+    this.ctx.audio.play('shield_break', { position: w, volume: 0.9, pitch: 0.75 });
+  }
+
+  /** 最后一声（触地之后抬头朝北冥）：鲛珠一亮、长啸 */
+  private lastCry(): void {
+    if (this.deathCried || !this.deathLanded) return;
+    this.deathCried = true;
+    const head = this.boneWorld('pearl', _w);
+    this.ctx.fx.burst(head, 0xfff4c8, 14, 3, 0.8, 0.3, 0);
+    this.ctx.fx.ring(head, 3, KunPengDef.Gust, 0.6);
+    this.ctx.audio.play('boss_roar', { position: head, volume: 0.45, pitch: 1.45 });
+  }
+
+  /** 鹏触地：碎冰、冰环、震屏、闷响（坠进北冥是水花、水环、闷响） */
+  private pengLand(source: string): void {
+    if (this.deathLanded) return;
+    this.deathLanded = true;
+    this.deathLandedAt = this.deathTime;
+    this.deathLandSource = source;
+    const g = this.deathKeyframed ? this.boneWorld('chest', _v) : this.peng.pts.chest.getWorldPosition(_v);
+    g.y = this.deathGround;
+    if (this.deathIntoWater) {
+      const fx = this.ctx.fx;
+      fx.burst(_w.copy(g).setY(g.y + 0.4), 0xeefcff, 40, 9, 1.1, 0.4, 10);
+      for (let i = 0; i < 4; i++) fx.burst(_w.set(g.x, g.y + 1.2 * i, g.z), 0xeefcff, 10, 3, 0.8, 0.32, 7);
+      fx.ring(_w.copy(g).setY(g.y + 0.05), 7, 0xeefcff, 1.2);
+      const d = g.distanceTo(this.ctx.player.position);
+      const k = 0.6 * Math.max(0, 1 - d / 70);
+      if (k > 0.01) fx.shake(k, 0.5);
+      this.ctx.audio.play('boss_slam', { position: g, volume: 1, pitch: 0.7 });
+    } else this.impact(g, 1);
   }
 
   /** 倒下的模型动画（t 0 → 1；第 88% 时框架炸开、模型隐去） */
@@ -786,10 +958,29 @@ export class KunPeng extends BossBrain implements DirectedBoss {
       this.animateKun(dt);
       if (!this.deathLanded && t >= KunPengDeath.SunkAt) {
         this.deathLanded = true;
+        this.deathLandedAt = this.deathTime;
+        this.deathLandSource = '按时间';
         const w = _v.set(this.hole.center.x, this.hole.waterY, this.hole.center.z);
         this.impact(w, 1.6);
         this.ctx.fx.ring(w, Math.max(8, this.hole.radius * 0.8), 0xeefcff, 1.6);
       }
+    } else if (this.deathKeyframed) {
+      // 手 K death 片段（Unity KunPengDeath 的 Keyframed 分支）：失衡那一下还在原地，0.2 s 起加速往下掉，2.4 s 正好落到地面（= 片段的 land）；
+      // 坠进北冥的之后再沉下去。逻辑位置钉住，只动宿主
+      const s = this.deathTime;
+      const u = span(s, KunPengDeath.FallFrom, KunPengDeath.LandTime);
+      let y = this.deathStartY - this.deathDrop * u * u;
+      if (this.deathIntoWater) y -= KunPengDeath.SinkDepth * easeInOut(span(s, KunPengDeath.LandTime + 0.4, this.deathDuration * 0.88));
+      const host = this.peng.host;
+      host.position.y = y;
+      host.rotation.set(0, 0, 0);
+      this.peng.clips?.update(dt);
+      // 片段事件没来（掉帧跳过）时按时间兜底
+      if (!this.deathBroke && s >= KunPengDeath.BreakTime + 0.1) this.wingBreak();
+      if (!this.deathLanded && s >= KunPengDeath.LandTime + 0.05) this.pengLand('按时间兜底');
+      if (!this.deathCried && s >= KunPengDeath.CryTime + 0.1) this.lastCry();
+      // 翼折之后一路掉雪羽
+      if (this.deathBroke && !this.deathLanded && Math.random() < dt / 0.06) this.featherShed(this.boneWorld('wing_L_2', _v), 3);
     } else {
       // 鹏收翼坠落（模型动画：逻辑位置钉住），55% 砸到冰面，之后趴着头一抬一落地抽两下
       const f = span(t, 0, KunPengDeath.LandAt);
@@ -805,12 +996,7 @@ export class KunPeng extends BossBrain implements DirectedBoss {
         P.rotate(`wing_${side}_low`, AZ, s * 0.2 * f);
       }
       P.rotate('head', AX, 0.25 * f);
-      if (!this.deathLanded && t >= KunPengDeath.LandAt) {
-        this.deathLanded = true;
-        const g = this.peng.pts.chest.getWorldPosition(_v);
-        g.y = this.position.y + this.deathStartY - this.deathDrop;
-        this.impact(g, 1);
-      }
+      if (!this.deathLanded && t >= KunPengDeath.LandAt) this.pengLand('按时间');
     }
     const f = this.isKun ? this.kun : this.peng;
     if (f.native?.glowShell) f.native.glowShell.opacity = 0.6 * Math.max(0, 1 - t);
@@ -847,6 +1033,8 @@ export class KunPeng extends BossBrain implements DirectedBoss {
       if (!f) continue;
       f.native?.dispose();
       f.native = null;
+      f.clips?.dispose();
+      f.clips = null;
     }
     this.director?.abort('首领释放');
     if (devHook?.boss === this) devHook = null;
@@ -874,6 +1062,23 @@ export class KunPeng extends BossBrain implements DirectedBoss {
    * 俯仰 / 抬身照 Unity KunPengBrain.ProcKunPose 的状态表：猛砸的出手段前倾 0.42、吞吸的收招段（扑咬）前倾 0.35。
    */
   private animateKun(dt: number): void {
+    const kc = this.kun.clips;
+    if (kc?.ready) {
+      // 片段驱动（Unity LateUpdate 的 baked 分支）：片段以完全沉下去的位置为参照，根骨骼把身体抬到 KunBaseY（± 俯仰抬身），宿主只叠加沉浮
+      const host = this.kun.host;
+      host.rotation.set(0, 0, 0);
+      const waterRel = this.hole.waterY - this.position.y;
+      const drop = (KUN_SUNK_Y - KUN_BASE_Y) * this.sunk;
+      host.position.y = KUN_SUNK_Y + drop + (waterRel - KunPengDef.TsWaterLevel);
+      kc.update(dt, this.holdDt(dt));
+      // 平切口中心离水面多高（程序化那条路量的是一圈最高点；片段的俯仰烘在骨骼里，这里只量中心）
+      const rb = this.kun.pose.bone('root');
+      if (rb) {
+        host.updateWorldMatrix(true, true);
+        this.cutTop = rb.getWorldPosition(_w).y - this.hole.waterY;
+      }
+      return;
+    }
     const a = this.anim;
     const t = this.animT;
     const m = this.currentMove;
@@ -938,6 +1143,14 @@ export class KunPeng extends BossBrain implements DirectedBoss {
    * 飞行时整只鸟绕双爪前倾、双爪收向身后；俯冲收翼伸爪；歇翼时直立。
    */
   private animatePeng(dt: number): void {
+    const pc = this.peng.clips;
+    if (pc?.ready) {
+      // 片段驱动：俯仰烘在根骨骼的旋转里（Unity：正式美术 mr.localRotation = identity），宿主只管从雾里升起
+      this.peng.host.position.y = this.riseOffset;
+      this.peng.host.rotation.set(0, 0, 0);
+      pc.update(dt, this.holdDt(dt));
+      return;
+    }
     const a = this.anim;
     let dive = 0, perch = 0, tuck = 1, flap = 1, rate = 1.25, pitch = 0.3, lam = 5;
     if (a === 'dive') { dive = 1; tuck = 0; flap = 0.15; rate = 2.2; pitch = 0.85; lam = 10; }
@@ -997,6 +1210,12 @@ export class KunPeng extends BossBrain implements DirectedBoss {
   }
 }
 
+/** 调试：当前形态的片段状态（没有片段 / 还没读好为 null） */
+function kunPengClipState(b: KunPeng): { state: string | null; ready: boolean } | null {
+  const c = (b as unknown as { formClips: ClipPlayer | null }).formClips;
+  return c ? { state: c.state, ready: c.ready } : null;
+}
+
 /** 测试与检视用：当前形态与场地（只读） */
 export function kunPengDebug(b: KunPeng): { form: FormId; hole: IceHoleInfo; submerged: boolean } {
   return { form: b.isKun ? 'kun' : 'peng', hole: b.hole, submerged: b.submerged };
@@ -1034,6 +1253,7 @@ function installDevHook(boss: KunPeng): void {
       hole: { source: boss.holeSource, c: boss.hole.center.toArray().map(v => +v.toFixed(2)), r: +boss.hole.radius.toFixed(2), outer: +boss.hole.outer.toFixed(2), waterY: +boss.hole.waterY.toFixed(2) },
       director: boss.director ? { stage: boss.director.stage, shot: boss.director.shotName, t: boss.director.t, released: boss.director.released } : null,
       act: boss.lastAct, movesStarted: boss.movesStarted, telegraphs: boss.telegraphs, color: hexColor(boss.kdef.color),
+      clip: kunPengClipState(boss), impactHolds: boss.impactHolds, deathLanded: boss.deathLandedAt, deathLandSource: boss.deathLandSource,
     }),
   };
 }
