@@ -49,6 +49,32 @@ export const TALENTS: readonly TalentDef[] = [
 
 const talentDef = (id: string): TalentDef | undefined => TALENTS.find(t => t.id === id);
 
+/** 一组天赋等级（快照）下的属性修正（按注册顺序；等级夹在 0..满级，0 级和不认识的 id 不出修正；Unity MetaSave.TalentMods） */
+export function talentMods(levels: Readonly<Record<string, number>> | null | undefined): { key: StatKey; value: number }[] {
+  const mods: { key: StatKey; value: number }[] = [];
+  if (!levels) return mods;
+  for (const t of TALENTS) {
+    const raw = levels[t.id];
+    if (typeof raw !== 'number' || !Number.isFinite(raw)) continue;
+    const lv = Math.max(0, Math.min(t.maxLevel, Math.floor(raw)));
+    if (lv > 0) mods.push({ key: t.stat, value: t.perLevel * lv });
+  }
+  return mods;
+}
+
+/**
+ * 把一组天赋修正写进属性表（来源 talent，先整体撤掉旧的再加）。和属性表里现有的完全一样时什么都不做，返回 false
+ * （Unity MetaSave.ApplyMods：重复套用不让属性表的版本号变，生命 / 护盾上限不会被撤掉再加回）
+ */
+export function applyTalentMods(stats: Stats, want: readonly { key: StatKey; value: number }[]): boolean {
+  const have = stats.modsFrom(TALENT_SOURCE);
+  const same = have.length === want.length && have.every((m, i) => m.key === want[i].key && Math.abs(m.value - want[i].value) <= 1e-6);
+  if (same) return false;
+  stats.removeSource(TALENT_SOURCE);
+  for (const m of want) stats.add(m.key, m.value, TALENT_SOURCE);
+  return true;
+}
+
 /** 天赋全部升满的总价（10 项 × 1130 = 11300；Unity BalanceModel.TalentTotal） */
 export function talentTotalCost(): number {
   let sum = 0;
@@ -390,14 +416,11 @@ export class MetaProgress implements IMeta {
   /**
    * 把天赋写进属性表（来源 talent，先整体撤掉旧的再加）。这一局有开局快照（run.talents）时按快照，
    * 没有（测试拼的局、老续玩档）按档里当前的天赋；等级夹在 0..满级，不认识的 id 不算。
+   * 和属性表里现有的完全一样时什么都不做、返回 false（Unity MetaSave.ApplyMods：重复套用不动属性表）。
    */
-  applyTalents(stats: Stats): void {
-    stats.removeSource(TALENT_SOURCE);
+  applyTalents(stats: Stats): boolean {
     const snapshot = this.ctx?.run?.talents;
-    for (const t of this.talents) {
-      const lv = snapshot ? Math.max(0, Math.min(t.maxLevel, Math.floor(snapshot[t.id] ?? 0))) : this.talentLevel(t.id);
-      if (lv > 0) stats.add(t.stat, t.perLevel * lv, TALENT_SOURCE);
-    }
+    return applyTalentMods(stats, talentMods(snapshot ?? this.meta.talentSnapshot()));
   }
 
   /**

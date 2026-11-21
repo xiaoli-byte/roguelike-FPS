@@ -678,3 +678,132 @@ test('续玩档里的关这个版本没有（场景没导出 / 试玩终点之�
   assert.equal(Suspend.read(false).status, 'ok');
   StagePlan.setSceneReady(null);
 });
+
+// ───────────── 本会话补的对照（读 C# 源码 / SaveServiceTests、RunSuspendTests 剩下的几条）─────────────
+
+const { readFileSync } = await import('node:fs');
+const { RunRng } = await importTs('../src/progression/RunRng.ts');
+
+/** 读 Unity 源码；被本机 DLP 透明加密时返回 null（先跑 node scripts/unity/dlp-unity-fix.mjs） */
+function unitySource(rel) {
+  const text = readFileSync(new URL(`../unity/Assets/Game/Scripts/${rel}`, import.meta.url), 'utf8');
+  return text.startsWith('%TSD-Header') ? null : text;
+}
+
+test('设置表逐项读 GameSettings.cs 比：两边都有的项键 / 分组 / 类型 / 默认值 / 范围 / 步长 / 选项一致，Unity 独有的就是 UNITY_ONLY_SETTINGS', (t) => {
+  const cs = unitySource('Core/GameSettings.cs');
+  if (!cs) return t.skip('GameSettings.cs 被透明加密');
+  const groups = { GroupControls: '操作', GroupVideo: '画面', GroupAudio: '声音' };
+  const num = (s) => {
+    s = s.trim();
+    if (s === '(float)ArtQualityLevel.High') return 2;
+    const n = Number(s.replace(/f$/, ''));
+    assert.ok(Number.isFinite(n), `认不出 C# 的数 ${s}`);
+    return n;
+  };
+  const rows = [...cs.matchAll(/Add\(new SettingDef\("(\w+)", "([^"]+)", (\w+), SettingType\.(\w+), ([^,]+), ([^,]+), ([^,]+), ([^,)]+)([\s\S]*?)\)\);/g)];
+  assert.ok(rows.length >= 15, `C# 里认出 ${rows.length} 项`);
+  const unityKeys = [];
+  for (const [, key, label, group, type, def, min, max, step, rest] of rows) {
+    unityKeys.push(key);
+    const d = GS.findSetting(key);
+    if (!d) continue;
+    assert.equal(d.label, label, `${key} 显示名`);
+    assert.equal(d.group, groups[group], `${key} 分组`);
+    assert.equal(d.type, type.toLowerCase(), `${key} 类型`);
+    assert.deepEqual([d.defaultValue, d.min, d.max, d.step], [num(def), num(min), num(max), num(step)], `${key} 默认 / 范围 / 步长`);
+    const options = /new\[\]\s*\{([^}]*)\}/.exec(rest)?.[1];
+    if (options && options.includes('"')) assert.deepEqual([...d.options], [...options.matchAll(/"([^"]*)"/g)].map(m => m[1]), `${key} 选项`);
+  }
+  // 画质的选项名在 C# 里是 ArtQuality.Label(...)：低 / 中 / 高
+  assert.deepEqual([...GS.findSetting('quality').options], ['低', '中', '高']);
+  const webKeys = GS.GAME_SETTINGS.filter(d => !d.webOnly).map(d => d.key);
+  assert.deepEqual(webKeys, unityKeys.filter(k => webKeys.includes(k)), '登记顺序同 GameSettings.All');
+  assert.deepEqual(unityKeys.filter(k => !webKeys.includes(k)), [...GS.UNITY_ONLY_SETTINGS], 'Unity 有、网页没有的项');
+  // 帧率上限的档位 = GraphicsQuality.FrameCaps
+  const caps = /FrameCaps = \{([^}]*)\}/.exec(unitySource('Core/GraphicsQuality.cs') ?? '')?.[1];
+  if (caps) assert.deepEqual([...GS.FRAME_CAPS], caps.split(',').map(Number));
+});
+
+test('TalentsApplyToStatSheetUnderTalentSource：十项天赋按等级写进属性表（来源 talent）；重复套用不动属性表；改等级整体撤掉再加', () => {
+  fresh();
+  const ctx = { run: null };
+  const meta = new MetaProgress(ctx);
+  const m = meta.meta;
+  Object.assign(m.talents, { vitality: 2, barrier: 5, mastery: 3, lethal: 1, swift: 4, reload: 2, affinity: 5, haste: 1, wealth: 3, fortune: 99 });
+  assert.equal(meta.talentLevel('fortune'), 5, '等级夹到满级');
+  const s = new Stats(); // 生命 100、护盾 50、移速 7.5、暴击 5%
+  assert.equal(meta.applyTalents(s), true);
+  const near = (a, b, what) => assert.ok(Math.abs(a - b) <= 1e-4, `${what}：期望 ${b}，实际 ${a}`);
+  near(s.get('maxHp'), 116, '生命');
+  near(s.get('maxShield'), 80, '护盾');
+  near(s.get('damagePct'), 0.12, '武器伤害');
+  near(s.get('critChance'), 0.07, '暴击率');
+  near(s.get('moveSpeed'), 8.1, '移速');
+  near(s.get('reloadSpeedPct'), 0.10, '换弹');
+  near(s.get('elementChancePct'), 0.15, '元素触发');
+  near(s.get('skillHaste'), 0.05, '技能急速');
+  near(s.get('coinGainPct'), 0.24, '灵石获取');
+  near(s.get('luck'), 5, '幸运');
+  assert.equal(s.modsFrom(Meta.TALENT_SOURCE).length, 10);
+  // 重复套用：属性表的版本号不变（生命上限不会被撤掉再加回）
+  const version = s.version;
+  assert.equal(meta.applyTalents(s), false);
+  assert.equal(s.version, version);
+  // 等级变了：旧的整体撤掉再加
+  m.talents.vitality = 0;
+  assert.equal(meta.applyTalents(s), true);
+  near(s.get('maxHp'), 100, '生命');
+  assert.equal(s.modsFrom(Meta.TALENT_SOURCE).length, 9);
+  // 全部清零：来源撤掉，其他来源不受影响
+  s.add('maxHp', 30, 'scroll');
+  for (const t of TALENTS) m.talents[t.id] = 0;
+  assert.equal(meta.applyTalents(s), true);
+  assert.equal(s.hasSource(Meta.TALENT_SOURCE), false);
+  near(s.get('maxHp'), 130, '生命');
+  assert.equal(meta.applyTalents(s), false);
+  SaveService.currentRun = null;
+});
+
+test('SnapshotSkipsUnknownTalentsAndClampsLevels：不认识的天赋、0 级不出修正，等级夹到满级；新版本的天赋原样存回', () => {
+  fresh();
+  const levels = { vitality: 99, future_talent: 3, mastery: 0 };
+  const mods = Meta.talentMods(levels);
+  assert.equal(mods.length, 1, '不认识的天赋、0 级都不出修正');
+  assert.equal(mods[0].key, 'maxHp');
+  assert.ok(Math.abs(mods[0].value - 40) < 1e-6, '等级夹到满级（5 × 8）');
+  assert.equal(Meta.talentMods(null).length, 0);
+
+  const run = snapshot({ talents: levels });
+  assert.equal(Suspend.write(run, false), true);
+  const r = Suspend.read(false);
+  assert.equal(r.status, 'ok', r.error);
+  assert.equal(r.result.run.talents.future_talent, 3, '新版本的天赋原样保留');
+  const ctx = { run: r.result.run };
+  const s = new Stats();
+  new MetaProgress(ctx).applyTalents(s);
+  assert.ok(Math.abs(s.get('maxHp') - 140) < 1e-6);
+  SaveService.currentRun = null;
+
+  const meta = SaveService.main.section(MetaSection);
+  meta.talents = { reload: 2 };
+  assert.deepEqual(meta.talentSnapshot(), { reload: 2 }, '快照只记 > 0 的');
+});
+
+test('RandomStreamsResumeFromTheStageOrigin：读回来的局同一个流名给出同一串数（随机流只由种子 + 关卡 + 流名决定）', () => {
+  fresh();
+  const run = snapshot();
+  const expect = Array.from({ length: 6 }, () => RunPlan.runStream(run, 'loot').nextUInt());
+  // 进关快照是另一份对象（Unity SceneFlow.CloneRun）：它的流还在这一关的起点
+  const clone = JSON.parse(JSON.stringify(run));
+  assert.equal(Suspend.write(clone, false), true);
+  const r = Suspend.read(false);
+  assert.equal(r.status, 'ok', r.error);
+  const got = Array.from({ length: 6 }, () => RunPlan.runStream(r.result.run, 'loot').nextUInt());
+  assert.deepEqual(got, expect);
+  // 流名 = 关卡编号 / 流名
+  const direct = RunRng.stream(run.seed, '1-2/loot');
+  assert.deepEqual(Array.from({ length: 6 }, () => direct.nextUInt()), expect);
+  // 不同流互不相干
+  assert.notEqual(RunPlan.runStream(r.result.run, 'enc').nextUInt(), RunRng.stream(run.seed, '1-2/loot').nextUInt());
+});
