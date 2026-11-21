@@ -365,14 +365,6 @@ export class Game implements IGame {
     this.bankCurrent(false);
     ctx.rng.reseed(seed);
     ctx.run = ctx.runPlan.createRun(hero.id, seed);
-    // 有未完成的征程（续玩档）：开新局 = 放弃它，按败北结算（魂晶照常入账）再删档。
-    // Unity 这里先弹确认框（MenuFlow.StartRun）；网页的确认框随 M11c 第二期，主菜单的「开始游戏」提示里写明了
-    try {
-      const dev = Suspend.devFor(ctx.run);
-      if (Suspend.exists(dev)) Suspend.forfeit(dev);
-    } catch (err) {
-      console.error('[Game] 放弃未完成的征程失败', err);
-    }
     // 开局锁定天赋（Unity TalentHooks.Lock）：整局（含暂离后继续征程）按这份快照生效
     ctx.run.talents = this.metaProgress.talentSnapshot();
     this.resetTime();
@@ -390,6 +382,8 @@ export class Game implements IGame {
     ctx.ui.fade(1, 0.01).then(async () => {
       // 每局路线要等场景清单（备选图）：清单晚到时按它重排这一局的路线
       await ctx.runPlan.prepare?.(ctx.run);
+      // 放弃未完成的征程也要等清单：续玩档路线上的备选图在不在要清单才知道，没读到就校验会把好档当坏档挪走、魂晶不入账
+      this.forfeitSuspended();
       // 美术资源（角色 / 首领 / 道具 GLB）要在第一关刷怪前到齐：开局就站在场上的驻守怪、调试局直进的首领场，
       // 刷出来时模型没到会一直是程序化占位体（同 Unity：进图时资源已就绪）。模块加载时已在后台开始读，这里只等它读完
       await AssetLibrary.preload();
@@ -415,6 +409,19 @@ export class Game implements IGame {
     this.hitStop.release();
     this.clearSlowMo.release();
     this.timeArbiter.clear();
+  }
+
+  /**
+   * 有未完成的征程（续玩档）：开新局 = 放弃它，按败北结算（魂晶照常入账）再删档（Unity MenuFlow.StartRun 确认之后的 RunSuspend.Forfeit；
+   * 确认框由界面在调 startRun 之前弹）。要在场景清单读到之后调（{@link startRun} 里 prepare 之后）
+   */
+  private forfeitSuspended(): void {
+    try {
+      const dev = Suspend.devFor(this.ctx.run);
+      if (Suspend.exists(dev)) Suspend.forfeit(dev);
+    } catch (err) {
+      console.error('[Game] 放弃未完成的征程失败', err);
+    }
   }
 
   /** 当前局没结算过就结算（魂晶入账、记生涯、写盘、删续玩档）；占位局、结算过的局返回 null */
@@ -610,7 +617,8 @@ export class Game implements IGame {
     ctx.input.enabled = false;
     ctx.audio.play('portal');
     ctx.ui.fade(1, 0.35).then(async () => {
-      if (!await this.loadStage(next)) { this.toMenu(); return; }
+      // 下一关搭不起来：同开局 / 继续征程，回主菜单不结算——上一关的续玩档留着，还能从上一关接着打
+      if (!await this.loadStage(next)) { this.toMenu(false); return; }
       this.setState('playing');
       ctx.input.enabled = true;
       ctx.input.flushMouse();
