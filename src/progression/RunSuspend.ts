@@ -253,8 +253,17 @@ function deserializeRun(o: Record<string, unknown>): RunState & { stageCode: str
   return run;
 }
 
+/**
+ * 读档选项。scenes: false = 场景清单还没读到时用：不查「这个版本有没有这几张图」（备选图要清单才知道在不在，这时查会把好档当坏档），
+ * 其余照常校验。宽松读通过的档严格读不一定通过，反过来一定通过——主菜单的「继续征程」/ 开新局的确认框和开新局时的放弃都按同一个
+ * 宽松 / 严格判断（清单在不在），确认框不会漏弹
+ */
+export interface ReadOptions {
+  scenes?: boolean;
+}
+
 /** 读回来的局能不能用：英雄、关卡都还在；关卡在这个版本的路线里；还没结算过；数值不离谱。不对就抛异常（按坏档处理）。返回这一关 */
-function validate(run: RunState & { stageCode: string; map: string }): StageSpec {
+function validate(run: RunState & { stageCode: string; map: string }, scenes: boolean): StageSpec {
   if (!run.heroId || !heroExists(run.heroId)) throw new Error(`英雄 ${run.heroId || '（空）'} 不存在`);
   const route = routeOf(run);
   if (run.route && run.route.length > 0 && !route) throw new Error(`关卡路线 ${run.route.join(',')} 里有不认识的关`);
@@ -262,9 +271,9 @@ function validate(run: RunState & { stageCode: string; map: string }): StageSpec
   const stage = route?.get(run.stageCode) ?? canonical(run.map) ?? canonical(run.stageCode);
   if (!stage) throw new Error(`关卡 ${run.stageCode || '（空）'} 不在规划表里`);
   if (!stage.alt && !inPlay(stage)) throw new Error(`关卡 ${stage.code} 不在这个版本的路线里`);
-  if (stage.alt && !ready(stage)) throw new Error(`关卡 ${stage.code} 这个版本没有`);
+  if (scenes && stage.alt && !ready(stage)) throw new Error(`关卡 ${stage.code} 这个版本没有`);
   // 路线里每张图的场景都要在这个版本里（换了版本删了图 = 这条路线走不完）
-  if (route) for (const s of route.playable) if (!ready(s.map)) throw new Error(`路线上的 ${s.code} ${s.title} 这个版本没有`);
+  if (scenes && route) for (const s of route.playable) if (!ready(s.map)) throw new Error(`路线上的 ${s.code} ${s.title} 这个版本没有`);
   if ((run.flags[BANKED_FLAG] ?? 0) !== 0) throw new Error('这一局已经结算过');
   if (run.coins < 0 || run.essence < 0 || run.kills < 0 || run.stagesCleared < 0) throw new Error('数值是负的');
   if (![run.time, run.damageDealt, run.hp, run.shield, run.coins, run.essence, run.kills, run.stagesCleared].every(v => Number.isFinite(v)) || run.time < 0)
@@ -282,8 +291,8 @@ function validate(run: RunState & { stageCode: string; map: string }): StageSpec
   return stage;
 }
 
-/** 读续玩档（不改盘上的东西）：ok 时 result 是读回来的局（每次都是新对象）；corrupt / newer 时 error 写原因 */
-export function read(dev: boolean): { status: SuspendStatus; result?: SuspendedRun; error?: string } {
+/** 读续玩档（不改盘上的东西）：ok 时 result 是读回来的局（每次都是新对象）；corrupt / newer 时 error 写原因。opts 见 {@link ReadOptions} */
+export function read(dev: boolean, opts: ReadOptions = {}): { status: SuspendStatus; result?: SuspendedRun; error?: string } {
   const text = getItem(pathFor(dev));
   // 空串 = 没有 removeItem 的存储后端「删掉」的档
   if (text === null || text === '') return { status: 'none' };
@@ -297,7 +306,7 @@ export function read(dev: boolean): { status: SuspendStatus; result?: SuspendedR
     if (o.game !== 'spiritfire' || o.kind !== 'run') throw new Error('不是灵火破晓的续玩档');
     if (!isObject(o.run)) throw new Error('缺少 run');
     const run = deserializeRun(o.run);
-    const stage = validate(run);
+    const stage = validate(run, opts.scenes !== false);
     run.dev = run.dev || dev || undefined;
     // v1 的档没有开局天赋快照：按现在档里的天赋补上（从继续征程起锁定）
     if (version < TALENT_SNAPSHOT_VERSION && !run.talents) run.talents = SaveService.profileFor(run).section(MetaSection).talentSnapshot();
@@ -323,8 +332,8 @@ function moveAside(dev: boolean): void {
 }
 
 /** 主菜单用：读续玩档；坏档挪成 .corrupt、记下原因（{@link takeProblem} 提示一次）并返回 null；没有档 / 版本更新也返回 null */
-export function peek(dev: boolean): SuspendedRun | null {
-  const r = read(dev);
+export function peek(dev: boolean, opts: ReadOptions = {}): SuspendedRun | null {
+  const r = read(dev, opts);
   switch (r.status) {
     case 'ok':
       return r.result ?? null;
@@ -356,10 +365,11 @@ export function adopt(s: SuspendedRun): void {
 // ───────────── 放弃 ─────────────
 
 /**
- * 放弃续玩档里的那一局（开新局时）：按失败结算（魂晶照常入账、记一局败北）再删档。没有档 / 坏档只删档。返回结算（没有为 null）
+ * 放弃续玩档里的那一局（开新局时）：按失败结算（魂晶照常入账、记一局败北）再删档。没有档 / 坏档只删档。返回结算（没有为 null）。
+ * opts 要和弹确认框时读档用的一致（{@link ReadOptions}：场景清单没读到就都宽松读）
  */
-export function forfeit(dev: boolean): RunSummary | null {
-  const s = peek(dev);
+export function forfeit(dev: boolean, opts: ReadOptions = {}): RunSummary | null {
+  const s = peek(dev, opts);
   let summary: RunSummary | null = null;
   if (s) {
     try {

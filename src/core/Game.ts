@@ -413,14 +413,16 @@ export class Game implements IGame {
 
   /**
    * 有未完成的征程（续玩档）：开新局 = 放弃它，按败北结算（魂晶照常入账）再删档（Unity MenuFlow.StartRun 确认之后的 RunSuspend.Forfeit；
-   * 确认框由界面在调 startRun 之前弹）。要在场景清单读到之后调（{@link startRun} 里 prepare 之后）
+   * 确认框由界面在调 startRun 之前弹）。要在场景清单读到之后调（{@link startRun} 里 prepare 之后）；清单读不到时和 {@link suspendedRun}
+   * 一样宽松读（不查备选图在不在），确认框弹没弹和放弃不放弃看的是同一个判断。返回有没有按败北结算一局
    */
-  private forfeitSuspended(): void {
+  private forfeitSuspended(): boolean {
     try {
       const dev = Suspend.devFor(this.ctx.run);
-      if (Suspend.exists(dev)) Suspend.forfeit(dev);
+      return Suspend.exists(dev) && !!Suspend.forfeit(dev, { scenes: hasStageCatalog() });
     } catch (err) {
       console.error('[Game] 放弃未完成的征程失败', err);
+      return false;
     }
   }
 
@@ -498,13 +500,14 @@ export class Game implements IGame {
   }
 
   /**
-   * 主菜单「继续征程」显示的那一局（没有 / 坏档为 null）。场景清单没读到之前不动盘上的档（备选图要清单才知道在不在）。
+   * 主菜单「继续征程」显示的那一局（没有 / 坏档为 null）。场景清单没读到之前不动盘上的档、宽松读（不查备选图在不在，
+   * 要清单才知道；不然路线带备选图的好档这时读成 null，「继续征程」不显示、开新局不弹确认框，清单一到旧征程却被放弃结算）。
    * 读档时发现坏档（已挪成 .corrupt）/ 来自更新的版本：提示一次（Unity MainMenuScreen.OnOpen 的 RunSuspend.TakeProblem）
    */
   suspendedRun(): { heroId: string; stageCode: string; stageLabel: string; savedAt: string; time: number; coins: number } | null {
     try {
       const dev = Suspend.menuDev();
-      const s = hasStageCatalog() ? Suspend.peek(dev) : Suspend.read(dev).result ?? null;
+      const s = hasStageCatalog() ? Suspend.peek(dev) : Suspend.read(dev, { scenes: false }).result ?? null;
       const problem = Suspend.takeProblem();
       if (problem) this.ctx.ui.toast(problem, '#ff8a6a');
       return s ? { heroId: s.run.heroId, stageCode: s.stage.code, stageLabel: s.stage.label, savedAt: s.savedAt, time: s.run.time, coins: s.run.coins } : null;
@@ -530,9 +533,10 @@ export class Game implements IGame {
     this.deathPending = false;
     this.setState('transition');
     ctx.ui.fade(1, 0.01).then(async () => {
-      // 备选图在不在要等场景清单：读到之后再正式读档（坏档这时才挪成 .corrupt）
+      // 备选图在不在要等场景清单：读到之后再正式读档（坏档这时才挪成 .corrupt）；清单读不到（请求失败）时和主菜单一样宽松读，
+      // 不因为清单没来就把好档当坏档丢掉（场景真载不进来走下面的载入失败：回主菜单、档留着）
       await ctx.runPlan.prepare?.({ ...placeholderRun(), stagesCleared: 1 });
-      const s = Suspend.peek(dev);
+      const s = Suspend.peek(dev, { scenes: hasStageCatalog() });
       const hero = s ? ctx.heroes.find((h) => h.id === s.run.heroId) : undefined;
       if (!s || !hero) {
         this.toMenu(false);
