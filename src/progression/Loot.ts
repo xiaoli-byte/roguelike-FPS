@@ -6,6 +6,7 @@ import { WeaponDropManager } from './loot/WeaponDrops';
 import { ChestManager } from './loot/Chests';
 import { ShopManager } from './loot/Shop';
 import { rewardKey, weaponRewardRoll } from './loot/rewardRules';
+import { MerchantNpcs } from './loot/Merchant';
 import { isPurgeKill } from './scrolls/ScrollKit';
 import { rewardScaleOf, scaleKillCoins } from './RewardScale';
 
@@ -49,6 +50,8 @@ export class LootSystem implements ILoot {
   private readonly weaponDrops: WeaponDropManager;
   private readonly chests: ChestManager;
   private readonly shop: ShopManager;
+  /** 商铺强化台旁边的狸猫行商（摆设，M12 的 Idle / Talk 片段） */
+  private readonly merchants: MerchantNpcs;
   private offers: ScrollOffer[] = [];
   /** 下一次可以打开秘卷选择的游戏时间 */
   private offerReadyAt = 0;
@@ -59,6 +62,7 @@ export class LootSystem implements ILoot {
     this.weaponDrops = new WeaponDropManager(ctx, this.group);
     this.chests = new ChestManager(ctx, this.group, (reward, pos) => this.grant(reward, pos));
     this.shop = new ShopManager(ctx, this.group, (pos, inst) => this.dropWeapon(pos, inst));
+    this.merchants = new MerchantNpcs(ctx, this.group);
   }
 
   init(): void {
@@ -82,6 +86,7 @@ export class LootSystem implements ILoot {
     this.weaponDrops.update(dt);
     this.chests.update(dt);
     this.shop.update(dt);
+    this.merchants.update(dt);
     this.flushOffers();
   }
 
@@ -90,6 +95,7 @@ export class LootSystem implements ILoot {
     this.weaponDrops.clear();
     this.chests.clear();
     this.shop.clear();
+    this.merchants.clear();
   }
 
   // ───────────── ILoot ─────────────
@@ -116,7 +122,13 @@ export class LootSystem implements ILoot {
   }
 
   spawnShop(center: THREE.Vector3, facingYaw?: number): () => void {
-    return this.shop.spawn(center, facingYaw);
+    const dispose = this.shop.spawn(center, facingYaw);
+    const bench = this.shop.lastBench;
+    const merchant = bench ? this.merchants.spawn(bench.position, bench.center) : null;
+    return () => {
+      dispose();
+      merchant?.();
+    };
   }
 
   grant(reward: RewardType, pos: THREE.Vector3): void {

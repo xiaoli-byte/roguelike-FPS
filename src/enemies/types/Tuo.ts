@@ -26,6 +26,7 @@ import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../
 import type { WhiteboxLava } from '../../world/WhiteboxTypes';
 import { clamp01, raySphere, rotateTowards } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -1024,6 +1025,23 @@ export class Tuo extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity TuoAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      swim: { fade: 0.2 },
+      regrow: { fade: 0.2 },
+      toLava: { fade: 0.15 },
+      surge: { fade: 0.1, secs: () => this.windTime },
+      lunge: { fade: 0.05 },
+      bite: { fade: 0.05 },
+      biteWindup: { fade: 0.08, secs: () => this.windTime },
+      sweepWindup: { fade: 0.08, secs: () => this.windTime },
+      sweep: { fade: 0.05 },
+      roar: { fade: 0.1 },
+      land: 'loco',
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

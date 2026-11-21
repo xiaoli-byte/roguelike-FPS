@@ -11,13 +11,15 @@
  *     沿外环跑道上空绕殿弧线奔跑，5–9 s 掉一次头。网页的首领是飞行体（EnemyBase 的 flyTargetY），每帧在 think 之后定高度。
  *   · 熔流轮转（QilinFlood）由这里推进；15% 狂怒排上狂怒长啸（BurnRage）。胸口火心喘息时大亮。
  *   · 倒下：身上冒熔浆、落地溅一圈熔浆、熔池最后喷一股、净火归瑞的淡金光点（DefeatTimeline，ctx.fx 精神对齐）。
- * 动作：网页没有火麒麟的动作片段（M12 待办），沿用程序化骨骼姿势（QilinModel 的原生骨架 / 程序化兜底），招式的 playAct 状态名映射到姿势参数；出手按时间兜底。
+ * 动作：美术身体挂上、动画数据读好后播片段（M12 第二期：SK_Boss_Qilin / SK_Boss_QilinBurn 的采样 + Blender 手 K，src/anim/ClipPlayer），招式的 playAct 按秒数拉伸、
+ *   片段事件进招式的 cue（先到者算，时间兜底照旧）；读好之前和程序化兜底体沿用程序化骨骼姿势（playAct 状态名映射到姿势参数）。
  * 网址带 ?dev 时（只在开发服务器里）挂 window.__qilin 调试钩子（跳演出、跳阶段、强制出招）。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../../core/types';
 import { clamp, TAU } from '../../core/math';
 import { attachEnemyArt } from '../../assets/EnemyArt';
+import { ClipPlayer } from '../../anim/ClipPlayer';
 import type { NativeBody } from '../../assets/NativeRig';
 import type { LavaSystem } from '../../world/Lava';
 import { attackDirector } from '../AttackTokens';
@@ -70,6 +72,10 @@ interface Form {
   host: THREE.Group;
   pose: KPPose;
   native: NativeBody | null;
+  /** 片段播放器（M12：SK_Boss_Qilin / SK_Boss_QilinBurn 的采样 + Blender 手 K 片段）；读好之前 / 没有美术身体时程序化摆姿势 */
+  clips: ClipPlayer | null;
+  /** 片段现在跟的是哪个动作名（this.anim） */
+  clipAnim: string;
   procGroup: THREE.Group;
   pts: Record<string, THREE.Object3D>;
   shapes: HitShape[];
@@ -248,7 +254,7 @@ export class Qilin extends BossBrain implements DirectedBoss {
       host.scale.setScalar(SCALE);
       root.add(host);
       const proc = buildQilinProc(host, burn);
-      return { host, pose: new ProcPose(proc.joints), native: null, procGroup: proc.group, pts: {}, shapes: [], table };
+      return { host, pose: new ProcPose(proc.joints), native: null, clips: null, clipAnim: '', procGroup: proc.group, pts: {}, shapes: [], table };
     };
     this.xuan = mk('qilin_xuan_host', false, XUAN_POINTS);
     this.burn = mk('qilin_burn_host', true, BURN_POINTS);
@@ -279,6 +285,13 @@ export class Qilin extends BossBrain implements DirectedBoss {
         f.pose = art.native.pose;
         f.procGroup.visible = false;
         art.native.glowShell?.color.setHex(0xffa64a);
+        // 片段（Unity Animator + CreatureLocomotion）：人立 / 俯身烘在 hips 里，不开原地播放；步态按根节点的移动速度混合 Idle / Walk / Move
+        const clips = new ClipPlayer(art.native.assetId, art.native.model, { root: this.root, rig: false, inPlace: false });
+        // 片段事件交给招式的 cue；sfx: / fx: 不转——网页的招式自己播音效和震屏，免得响两遍
+        clips.onEvent = (e) => {
+          if (this.alive && f === this.F && !/^(sfx|fx):/.test(e.name)) this.emitAnimEvent(e.name);
+        };
+        f.clips = clips;
       }
       for (const [name, p] of Object.entries(f.table)) {
         const bone = f.pose.bone(p.bone) ?? f.host;
@@ -969,12 +982,15 @@ export class Qilin extends BossBrain implements DirectedBoss {
       this.ctx.fx.burst(_w.copy(floor).setY(floor.y + 0.3), QilinDef.Fire, 30, 7, 0.8, 0.35, 8);
       this.ctx.fx.burst(_w, 0x4a3028, 20, 5, 0.9, 0.4, 4);
       this.quake(0.6, 1);
-    } else if (!this.introRoared && k > 0) this.act('tuck', 0);
+    }
+    // 跃出段不再逐帧 act：现身时 onPresent 已经照 Unity（BossBrain.Spawn 的 PlayAct(intro.anim, intro.seconds)）播了 tuck、拉伸到 3.2 s，
+    // 程序化姿势也一直停在 tuck 到落地人立；Unity QilinBrain.IntroTick 只在落地时 PlayAct("rear", 1.2f) 一次
     // 登场时间里 EnemyBase 不调 animate：这里补上
     if (dt > 0 && this.age < this.spawnDuration) this.animate(dt);
   }
 
   protected override onIntroEnd(): void {
+    this.clipLoco = true;
     this.modelOffset.set(0, 0, 0);
     this.fx?.eruption(0);
     this.spawnLocks();
@@ -1081,6 +1097,7 @@ export class Qilin extends BossBrain implements DirectedBoss {
   }
 
   protected override onTransitionEnd(phase: BossPhaseDef): void {
+    this.clipLoco = true;
     if (phase.form === QilinDef.BurnForm) this.landWarp();
     this.modelOffset.set(0, 0, 0);
     this.fx?.eruption(0);
@@ -1210,10 +1227,17 @@ export class Qilin extends BossBrain implements DirectedBoss {
     // 腿一软瘫下去，余烬散去
     this.anim = 'stun';
     const dt = this.ctx.time.dt;
-    this.animateBody(dt);
-    const host = this.F.host;
-    host.rotation.z = -0.5 * easeInOut(span(t, 0.15, 0.6));
-    host.position.y = Math.min(host.position.y, 0);
+    const fc = this.F.clips;
+    if (fc?.ready) {
+      // 片段：硬直片段只播到瘫倒的晕眩段（拉伸后第 72% 落在倒下演出结尾），97% 时冻住（Unity DefeatFx 的 animator.speed = 0）——躺着溃散，不站起来
+      fc.frozen = t >= 0.97;
+      this.animateBody(dt);
+    } else {
+      this.animateBody(dt);
+      const host = this.F.host;
+      host.rotation.z = -0.5 * easeInOut(span(t, 0.15, 0.6));
+      host.position.y = Math.min(host.position.y, 0);
+    }
     if (t > 0.5) this.fx?.eruption(0);
     this.setRoleOpacity('pearlHalo', 0.4 * Math.max(0, 1 - t));
     this.setRoleOpacity('heartHalo', 0.4 * Math.max(0, 1 - t));
@@ -1237,25 +1261,78 @@ export class Qilin extends BossBrain implements DirectedBoss {
       if (!f) continue;
       f.native?.dispose();
       f.native = null;
+      f.clips?.dispose();
+      f.clips = null;
     }
     if (devHook?.boss === this) devHook = null;
   }
 
   // ───────────── 动画 ─────────────
 
-  /** 招式动作（Unity 片段状态名）→ 程序化姿势 */
-  act(state: string, seconds: number): void {
+  /** 招式动作（Unity Brain.PlayAct：片段状态名、拉伸秒数、交叉淡入秒数）→ 程序化姿势 + 片段 */
+  act(state: string, seconds: number, fade = 0.1): void {
     if (!state) return;
     this.lastAct = state;
     this.setAnim(state === 'Locomotion' || state === 'Idle' ? 'idle' : state, true);
     // 片段按时长拉伸，播完回到待机 / 奔跑（Unity PlayAct 之后 Animator 回 Locomotion）；时长 0 = 一直保持到下一个动作
     this.animLeft = seconds > 0.05 ? seconds : Infinity;
+    // 片段：拉伸到 seconds 播完（Unity Act 的 ActScale），下一次 animate 时切进去
+    this.clipSeconds = seconds;
+    this.clipFade = fade;
+    this.clipLoco = false;
+    this.clipActed = true;
+    if (this.xuan) this.xuan.clipAnim = '';
+    if (this.burn) this.burn.clipAnim = '';
   }
 
   private animLeft = Infinity;
 
   override playAct(state: string, seconds: number): void {
     this.act(state, seconds);
+  }
+
+  /**
+   * 片段跟着动作名走：act / setAnim 换了动作就切片段（招式 act('Locomotion', 0, fade) 照 PlayAct 按 fade 交叉淡入；片段播完回待机、没有片段的动作走 PlayLocomotion，已经在 Locomotion 就不重播）。
+   * clipLoco：收招 / 转换结束 / 登场结束 / 硬直结束（Unity BossBrain.FinishMove / EndTransition / IntroDone / EndStagger 的 PlayLocomotion）
+   */
+  private syncClip(f: Form, c: ClipPlayer): void {
+    if (this.clipLoco) {
+      // Unity PlayLocomotion() = Play("Locomotion", 0.15f) → CrossFadeInFixedTime，不看当前在播什么：已经在步态里也自我过渡一次、步态循环从头淡入；
+      // 同一帧里先 act 再收招（m.Finish() 的 OnEnd 在 FinishMove 的 PlayLocomotion 之前）也是步态盖掉招式要的动作
+      this.clipLoco = false;
+      this.clipActed = false;
+      this.clipSeconds = 0;
+      f.clipAnim = this.anim;
+      c.playLocomotion();
+      return;
+    }
+    if (f.clipAnim === this.anim) return;
+    f.clipAnim = this.anim;
+    const acted = this.clipActed;
+    this.clipActed = false;
+    // 招式显式要的步态 act('Locomotion', 0, fade)：Unity PlayAct → Play("Locomotion", fade) = CrossFadeInFixedTime（奔驰起冲 0.05、缺省 0.1），
+    // 已经在步态里也照样交叉淡入一次；片段播完自己回待机走 PlayLocomotion（0.15）
+    if (acted && this.anim === 'idle') c.play('Locomotion', this.clipFade);
+    else if (this.anim === 'idle' || !c.has(this.anim)) {
+      if (c.state !== 'Locomotion') c.playLocomotion();
+    } else if (this.clipSeconds > 0.05) c.playTimed(this.anim, this.clipSeconds, this.clipFade);
+    else c.play(this.anim, this.clipFade);
+    this.clipSeconds = 0;
+  }
+  private clipSeconds = 0;
+  private clipFade = 0.1;
+  private clipLoco = false;
+  /** act() 之后还没切过片段：这次换片段是招式显式要的（淡入秒数用 clipFade），不是片段播完回待机 */
+  private clipActed = false;
+
+  /** 收招回步态只在正常收招时（Unity FinishMove 有 PlayLocomotion，AbortMove 没有——打断后紧接着的转换 / 硬直 / 新招式自己播动作） */
+  protected override onMoveEnded(m: BossMove): void {
+    if (this.alive && !m.cancelled) this.clipLoco = true;
+  }
+
+  /** 硬直结束（Unity BossBrain.EndStagger(resume)：PlayLocomotion） */
+  protected override onStaggerEnded(): void {
+    this.clipLoco = true;
   }
 
   protected override animate(dt: number): void {
@@ -1310,6 +1387,15 @@ export class Qilin extends BossBrain implements DirectedBoss {
    * 模型空间：X = 生物左侧，Y = 上，Z = 前；绕 +X 正转 = 前倾。步态：横向跑步（左后 → 右后 → 左前 → 右前），慢时对角快步。
    */
   private animateBody(dt: number): void {
+    const fc = this.F.clips;
+    if (fc?.ready) {
+      // 片段驱动：宿主的人立 / 前倾 / 起伏都在片段里（Unity 的模型根节点不动），这里只把宿主放正
+      this.syncClip(this.F, fc);
+      this.F.host.rotation.set(0, 0, 0);
+      this.F.host.position.set(0, 0, 0);
+      fc.update(dt);
+      return;
+    }
     const a = this.anim;
     const moving = this.moveSpeed > 1.5;
     let gait = moving ? clamp(this.moveSpeed / 16, 0.35, 1) : 0;
@@ -1432,6 +1518,12 @@ function devHookEnabled(): boolean {
   return !!import.meta.env?.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('dev');
 }
 
+/** 调试：当前形态的片段状态（没有片段为 null） */
+function qilinClipState(boss: Qilin): { state: string | null; ready: boolean; frozen: boolean } | null {
+  const c = (boss as unknown as { F: Form }).F.clips;
+  return c ? { state: c.state, ready: c.ready, frozen: c.frozen } : null;
+}
+
 function installDevHook(boss: Qilin): void {
   devHook = { boss };
   (window as unknown as Record<string, unknown>).__qilin = {
@@ -1460,7 +1552,7 @@ function installDevHook(boss: Qilin): void {
       flood: boss.flood ? { q: boss.flood.floodingQuadrant, warn: boss.flood.warningQuadrant, active: boss.flood.active } : null,
       alt: +boss.altitude.toFixed(2), sky: boss.skyTarget, enraged: boss.enraged, act: boss.lastAct, furnaceFound: boss.furnace.found,
       director: boss.director ? { stage: boss.director.stage, shot: boss.director.shotName, t: boss.director.t, released: boss.director.released } : null,
-      color: hexColor(boss.qdef.color),
+      color: hexColor(boss.qdef.color), clip: qilinClipState(boss),
     }),
   };
 }

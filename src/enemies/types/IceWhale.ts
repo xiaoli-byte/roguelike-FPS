@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { angleDiff, clamp, clamp01, damp, raySphere } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { Geo, flat, joint, part } from '../Models';
@@ -606,6 +607,18 @@ export class IceWhale extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity IceWhaleAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      move: 'loco',
+      swell: { fade: 0.1, secs: () => this.swellTime },
+      spout: { fade: 0.05 },
+      recover: { fade: 0.1 },
+      slam: { fade: 0.04 },
+      rear: { fade: 0.08, secs: () => this.rearTime },
+    };
+  }
 
   protected override pose(dt: number): void {
     // 爬行相位：想移动（或原地转身）时循环；停下时把这一耸做完

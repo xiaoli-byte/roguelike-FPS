@@ -3,7 +3,10 @@
  * 常量与调度参数在 KunPengPlans.ts；时间轴 = 前摇 / 出手 / 收招（framework/BossMove），段内时刻用 stageAt。角度一律世界 yaw（度，0 = +Z），设朝向时换成弧度。
  * 伤害：Unity 的 Dmg(TS 原值) = 招式伤害（含狂怒倍率）；难度倍率由危险物 hurt 再乘（HazardSet），与 Three.js 原值同口径。
  * 与 Unity 的差异（特效精神对齐，M11b 再做逐粒子一致）：水冠 / 浪墙 / 咬合月牙 / 扶摇柱这些 Fx.Kun* / Fx.Peng* 体积特效换成 ctx.fx 的粒子、冲击环、爆炸；
- * 吐冰的落点预警不跟着瞄准点滑动（前摇里先画一遍，出手时按当时的瞄准重新落点、冰弹自带落点预警）；首领自己的顿帧（ImpactHold）没有——网页鲲鹏是程序化摆姿势。
+ * 吐冰的落点预警不跟着瞄准点滑动（前摇里先画一遍，出手时按当时的瞄准重新落点、冰弹自带落点预警）。
+ * 动作（M12）：act(state, seconds) 同时切程序化姿势和片段（Unity KunPengMove.Act）；Unity 招式不叫、由控制器连段的（吞吸 → 扑咬、蓄力 → 猛砸、
+ * 下潜 → 破水）与招式中途回待机的地方用 act(…, false) 只换程序化姿势，片段照原样播完；落台 / 起飞 / 收羽三处片段的时刻照 Unity（clipAct）。
+ * 释放帧的顿帧 kp.impactHold 与 Unity 同帧同秒数（只顿首领自己的片段，程序化摆姿势时不起作用）。
  */
 import * as THREE from 'three';
 import { BossMove } from './framework/BossMove';
@@ -52,8 +55,14 @@ export abstract class KunPengMove extends BossMove {
     return this.damage(tsBase / Math.max(1, this.kp.bdef.damage));
   }
 
-  protected act(state: string, seconds: number): void {
-    this.kp.playAct(state, seconds);
+  /** 换动作：程序化姿势 + 片段；clip = false 只换程序化姿势（见文件头） */
+  protected act(state: string, seconds: number, clip = true): void {
+    this.kp.playAct(state, seconds, clip);
+  }
+
+  /** 只播片段、不换程序化姿势（Unity 招式播片段的时刻和网页程序化姿势的切换点不同的地方） */
+  protected clipAct(state: string, seconds: number): void {
+    this.kp.clipAct(state, seconds);
   }
 
   protected sfx(id: string, volume = 1, pitch = 1): void {
@@ -179,13 +188,15 @@ export class KunInhaleMove extends KunPengMove {
 
   protected override onRecoverBegin(): void {
     this.kp.fx?.suction(false);
-    this.act('bite', this.recover);
+    // 片段：inhale 自己连到 bite（控制器连段），这里只换程序化姿势
+    this.act('bite', this.recover, false);
     const b = this.kp.biteSpot(_a);
     this.biteHit = this.hz.blast(b.x, b.y + 0.3, b.z, KunInhale.BiteRadius, this.dmg(32), { maxHeight: 4, knockback: 13, knockUp: 6 });
     // 一口咬合（释放帧）：冰屑、水花往外炸
     this.ctx.fx.burst(_b.set(b.x, b.y + 1, b.z), ICE, 26, 9, 0.8, 0.35, 10);
     this.ctx.fx.burst(_b.set(b.x, b.y + 0.4, b.z), 0xeefcff, 18, 6, 0.7, 0.3, 9);
     this.ctx.fx.ring(_b.set(b.x, b.y + 0.1, b.z), KunInhale.BiteRadius, WARN, 0.5);
+    this.kp.impactHold(0.07);
     this.kp.quake(0.45, 0.35);
     this.sfx('enemy_melee', 1, 0.5);
     this.sfx('boss_slam', 0.6, 1.2);
@@ -259,7 +270,8 @@ export class KunSlamMove extends KunPengMove {
   protected override onActiveBegin(): void {
     const I = this.impact;
     this.kp.pearlBright = true;
-    this.act('slam', this.active);
+    // 片段：slamWind 自己连到 slam（控制器连段），这里只换程序化姿势
+    this.act('slam', this.active, false);
     this.blastHit = this.hz.blast(I.x, I.y, I.z, KunSlam.BlastRadius, this.dmg(30), { maxHeight: 3, knockback: 9, knockUp: 7 });
     this.wave(this.yaw, KunSlam.WaveHalf, 15, KunSlam.WaveRange, this.dmg(20), 1.2, 9);
     if (this.fury) for (const s of [-1, 1]) this.wave(this.yaw + KunSlam.SideYaw * s, KunSlam.SideHalf, 13, KunSlam.SideRange, this.dmg(16), 1.1, 8);
@@ -269,6 +281,7 @@ export class KunSlamMove extends KunPengMove {
     fx.burst(_a, ICE, 40, 11, 1.0, 0.45, 16);
     fx.burst(_a.set(I.x, I.y + 0.3, I.z), 0xeefcff, 24, 7, 0.9, 0.35, 12);
     fx.ring(_b.set(I.x, I.y + 0.1, I.z), 9, WARN, 0.7);
+    this.kp.impactHold(0.08);
     this.kp.quake(0.7, 0.5);
     this.sfx('boss_slam');
     this.sfx('explosion', 0.8, 0.7);
@@ -293,7 +306,8 @@ export class KunSlamMove extends KunPengMove {
 
   protected override onRecoverBegin(): void {
     this.kp.pearlBright = false;
-    this.act('idle', this.recover);
+    // 片段：slam 播完自己回 Locomotion（Unity 收招不叫待机）
+    this.act('idle', this.recover, false);
   }
 
   protected override onRecover(): void {
@@ -358,7 +372,8 @@ export class KunDiveMove extends KunPengMove {
     this.breached = true;
     this.kp.submerged = false;
     this.relocate();
-    this.act('erupt', 1);
+    // 片段：sink 自己连到 erupt（控制器连段，破水在 sink 的第 48 帧），这里只换程序化姿势
+    this.act('erupt', 1, false);
     const w = this.waterAt(this.nextTheta, _a);
     const fx = this.ctx.fx;
     for (let i = 0; i < 5; i++) fx.burst(_b.copy(w).setY(w.y + 1.2 * i), 0xeefcff, 10, 3, 0.8, 0.32, 7);
@@ -420,6 +435,7 @@ export class KunDiveMove extends KunPengMove {
     fx.explosion(_a.set(I.x, I.y + 0.8, I.z), 4, ICE);
     fx.burst(_a, ICE, 36, 12, 1.0, 0.45, 14);
     fx.ring(_b.set(I.x, I.y + 0.1, I.z), 3.5, WARN, 0.5);
+    kp.impactHold(0.07);
     kp.quake(0.55, 0.45);
     this.sfx('boss_roar', 1, 0.9);
   }
@@ -588,6 +604,7 @@ export class PengGustMove extends KunPengMove {
     this.kp.fx?.gust(true, this.hole.center, this.hole.radius, this.hole.outer);
     this.ctx.fx.burst(this.kp.getBodyCenter(_a), 0xeaf8ff, 30, 9, 1, 0.45, 1);
     this.flap(true);
+    this.kp.impactHold(0.06);
     this.kp.quake(0.3, 0.35);
   }
 
@@ -800,6 +817,7 @@ export class PengSwoopMove extends KunPengMove {
       this.hits++;
       this.hz.hurt(this.dmg(30), 'none', kp.position);
       this.ctx.player.applyImpulse(_imp.set(d.x * 12, 6, d.z * 12));
+      kp.impactHold(0.05);
       kp.quake(0.5, 0.35);
       this.sfx('enemy_melee', 1, 0.7);
     }
@@ -826,6 +844,7 @@ export class PengSwoopMove extends KunPengMove {
       this.ctx.fx.explosion(_c.copy(talons), 2.6, ICE);
       this.ctx.fx.ring(_c.set(talons.x, this.floor + 0.1, talons.z), 3.5, WARN, 0.5);
       this.sfx('boss_slam', 1, 1.1);
+      kp.impactHold(0.09);
       kp.quake(0.55, 0.4);
       // 撞晕：脚本化硬直（打断招式，crash 动作，鲛珠大亮）
       kp.stagger(PengSwoop.CrashStagger, 'crash');
@@ -951,7 +970,9 @@ export class PengFeatherRainMove extends KunPengMove {
   }
 
   protected override onRecoverBegin(): void {
-    this.act('idle', this.recover);
+    // 片段：收羽 spreadEnd（Unity PengFeatherRain.OnRecoverBegin），程序化姿势回待机
+    this.act('idle', this.recover, false);
+    this.clipAct('spreadEnd', this.recover);
   }
 
   protected override onRecover(): void {
@@ -1026,7 +1047,8 @@ export class PengPerchMove extends KunPengMove {
     this.spotFlat = this.pickSpot().flat;
     this.kp.hoverAlt = Math.max(PengPerch.ApproachAlt, this.kp.overHoleAlt(PengPerch.ApproachAlt));
     this.kp.accel = 30;
-    this.act('idle', 1);
+    // 片段：飞过去时保持步态（Unity 这里不播动作）
+    this.act('idle', 1, false);
   }
 
   protected override onWindup(dt: number): void {
@@ -1052,6 +1074,8 @@ export class PengPerchMove extends KunPengMove {
       this.warnCircle(s, PengPerch.LandRadius, PengPerch.DescendSeconds);
       this.sfx('telegraph', 1, 0.9);
       this.descendT0 = this.t;
+      // 落台片段从下降开始播：0.9 s 的刹风、伸爪，第 27 帧触地（hit），之后循环栖落（perchRest）
+      this.clipAct('perch', PengPerch.PerchClip);
       return;
     }
     kp.faceDeg(this.ctx.player.position, 115, dt);
@@ -1072,12 +1096,14 @@ export class PengPerchMove extends KunPengMove {
     kp.pearlBright = true;
     kp.hoverAlt = S.y - this.floor;
     kp.movesSincePerch = 0;
-    this.act('perch', this.active);
+    // 片段已经在下降时播起（触地 = 片段的 hit），这里只换程序化姿势
+    this.act('perch', this.active, false);
     this.hz.blast(S.x, S.y, S.z, PengPerch.LandRadius, this.dmg(18), { maxHeight: 3, knockback: 9, knockUp: 4 });
     this.hz.wave({ x: S.x, y: S.y, z: S.z, speed: 12, maxRadius: 11, damage: this.dmg(10), color: WARN, startRadius: 3, width: 0.9, height: 0.8, knockback: 6, dust: ICE });
     kp.quake(0.55, 0.4);
     this.ctx.fx.burst(_a.set(S.x, S.y + 0.5, S.z), ICE, 30, 9, 0.9, 0.4, 12);
     this.ctx.fx.ring(_a.set(S.x, S.y + 0.1, S.z), PengPerch.LandRadius, KunPengDef.Gust, 0.6);
+    kp.impactHold(0.06);
     this.sfx('boss_slam', 1, 0.9);
     kp.tellOnce('perch', '鹏落台歇翼——趁现在打它额头的鲛珠！', '#ffe08a');
   }
@@ -1094,11 +1120,14 @@ export class PengPerchMove extends KunPengMove {
     this.warnCircle(this.spot, PengPerch.TakeoffRadius, Math.max(0.2, PengPerch.RestSeconds - PengPerch.TakeoffWarnAt));
     this.sfx('telegraph', 1, 1.1);
     this.takeoffArmed = true;
+    // 起飞片段：0.8 s 的蹲身蓄力，第 24 帧 liftoff 离台 = 收招段开始
+    this.clipAct('takeoff', PengPerch.TakeoffClip);
   }
 
   protected override onRecoverBegin(): void {
     const S = this.spot;
-    this.act('takeoff', this.recover);
+    // 片段在起飞预警亮起时已经播起（蹲身蓄力），这一帧是它的 liftoff；没走到预警（被提前结束）时补播
+    this.act('takeoff', this.recover, !this.takeoffArmed);
     this.hz.blast(S.x, S.y, S.z, PengPerch.TakeoffRadius, this.dmg(14), { maxHeight: 4, knockback: 13, knockUp: 5 });
     this.ctx.fx.ring(_a.set(S.x, S.y + 0.1, S.z), 8, KunPengDef.Gust, 0.6);
     this.ctx.fx.burst(_a.set(S.x, S.y + 1, S.z), ICE, 26, 10, 0.8, 0.4, 4);

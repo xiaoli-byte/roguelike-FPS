@@ -180,34 +180,80 @@ function stateName(raw) {
 const _m = new THREE.Matrix4(), _inv = new THREE.Matrix4(), _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _s = new THREE.Vector3();
 const _q2 = new THREE.Quaternion();
 
+/** Blender 手 K 片段的中间件（scripts/web/blender-keyframed-dump.py 写；art/source 下的 _tmp 目录不入库，可重新生成） */
+const keyframedDumpPath = (id) => join(ROOT, 'art/source/characters', id, 'anim/_tmp', `${id}.keyframed-anim.json`);
+
+/** 资产清单（public/assets/manifest.json）里绑定的 id：只有手 K 片段、没有采样数据的资产（旱魃、商人）拿它当 defId */
+function boundDefId(id) {
+  try {
+    const m = JSON.parse(readFileSync(join(ROOT, 'public/assets/manifest.json'), 'utf8'));
+    return m.assets?.[id]?.bind?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function exportAsset(unityDir, id, warn) {
   const animDir = join(unityDir, 'Assets/Art/Characters', id, 'Anim');
-  const srcText = readFileSync(join(animDir, `${id}.native-anim.json`), 'utf8');
-  const data = JSON.parse(srcText);
-  const sha1 = createHash('sha1').update(srcText).digest('hex');
+  const nativePath = join(animDir, `${id}.native-anim.json`);
+  const dumpPath = keyframedDumpPath(id);
+  const srcText = existsSync(nativePath) ? readFileSync(nativePath, 'utf8') : null;
+  const kdText = existsSync(dumpPath) ? readFileSync(dumpPath, 'utf8') : null;
+  const native = srcText ? JSON.parse(srcText) : null;
+  const kd = kdText ? JSON.parse(kdText) : null;
+  // 发布文件里已经有 Blender 片段、这台机器上却没有中间件：别拿采样片段把它们盖回去
+  const outFile = join(OUT_DIR, `${id}.json`);
+  if (!kd && existsSync(outFile)) {
+    try {
+      const pub = JSON.parse(readFileSync(outFile, 'utf8'));
+      if (Object.values(pub.clips ?? {}).some((c) => c.src === 'blender')) {
+        return { keep: `发布文件含 Blender 手 K 片段，本机没有 ${dumpPath.slice(ROOT.length + 1)}（先跑 node scripts/web/export-keyframed-anims.mjs ${id}）：保留原文件` };
+      }
+    } catch { /* 读不了就照常重导 */ }
+  }
+  if (!native && !kd) return { skipped: '没有采样数据也没有 Blender 中间件' };
+  const sha1 = srcText ? createHash('sha1').update(srcText).digest('hex') : null;
   const glbRel = `assets/characters/${id}.glb`;
   const glbPath = join(ROOT, 'public', glbRel);
   if (!existsSync(glbPath)) return { skipped: `没有 ${glbRel}` };
   const doc = readGlbJson(glbPath);
   const H = glbHierarchy(doc);
-  const fps = data.fps;
-  const boneNames = data.bones;
-  const socketNames = data.sockets ?? [];
-  const missing = boneNames.filter((b) => !H.byName.has(b));
-  if (missing.length) {
-    return { skipped: `GLB 里没有采样骨架的 ${missing.length}/${boneNames.length} 根骨骼（${missing.slice(0, 3).join(', ')}…）：采样之后模型换过骨架，Unity 也接不上这些曲线` };
+  const fps = native?.fps ?? kd.fps;
+  if (native && kd && kd.fps !== native.fps) warn(`${id}: Blender 片段 ${kd.fps} fps，采样片段 ${native.fps} fps`);
+  if (native) {
+    const missing = native.bones.filter((b) => !H.byName.has(b));
+    if (missing.length) {
+      return { skipped: `GLB 里没有采样骨架的 ${missing.length}/${native.bones.length} 根骨骼（${missing.slice(0, 3).join(', ')}…）：采样之后模型换过骨架，Unity 也接不上这些曲线` };
+    }
   }
-  const restQ = (k) => new THREE.Quaternion(data.rest[k * 7], data.rest[k * 7 + 1], data.rest[k * 7 + 2], data.rest[k * 7 + 3]);
-  const restP = (k) => new THREE.Vector3(data.rest[k * 7 + 4], data.rest[k * 7 + 5], data.rest[k * 7 + 6]);
+  if (kd) {
+    const missing = kd.bones.filter((b) => !H.byName.has(b));
+    if (missing.length) warn(`${id}: Blender 骨架有 ${missing.length} 根骨骼 GLB 里没有（${missing.slice(0, 3).join(', ')}…），这些曲线不要`);
+  }
+  // 数据源：采样（native-anim）在前；Blender 手 K 同名状态替换采样片段（Unity NativeClipBuilder.CopyKeyframed 同样按状态名覆盖）
+  const sources = [];
+  if (native) sources.push({ kind: 'native', data: native });
+  if (kd) sources.push({ kind: 'blender', data: kd });
+  const rows = (src, k) => ({
+    q: new THREE.Quaternion(src.data.rest[k * 7], src.data.rest[k * 7 + 1], src.data.rest[k * 7 + 2], src.data.rest[k * 7 + 3]),
+    p: new THREE.Vector3(src.data.rest[k * 7 + 4], src.data.rest[k * 7 + 5], src.data.rest[k * 7 + 6]),
+  });
+  for (const s of sources) s.index = new Map(s.data.bones.map((b, i) => [b, i]));
+  const socketNames = native?.sockets ?? [];
+  const boneNames = [...new Set(sources.flatMap((s) => s.data.bones))].filter((b) => H.byName.has(b));
 
-  // 驱动对象：骨骼按 GLB 先序（父在前），挂点在后
-  const maps = boneNames.map((name, index) => {
+  // 驱动对象：骨骼按 GLB 先序（父在前），挂点在后；每个数据源各有自己的序号与静止朝向（Blender 骨骼带自己的轴约定，增量抵消）
+  const maps = boneNames.map((name) => {
     const node = H.byName.get(name);
     H.world[node].decompose(_p, _q, _s);
+    const src = new Map();
+    for (const s of sources) {
+      const i = s.index.get(name);
+      if (i !== undefined) src.set(s, { index: i, restInv: rows(s, i).q.invert() });
+    }
     return {
-      name, index, node, order: H.order.get(node),
+      name, node, order: H.order.get(node), src,
       bindRot: _q.clone(), worldScale: _s.clone(),
-      srcRestInv: restQ(index).invert(),
       restLocal: (() => { const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(); H.local[node].decompose(p, q, s); return { p, q, s }; })(),
     };
   }).sort((a, b) => a.order - b.order);
@@ -223,40 +269,55 @@ function exportAsset(unityDir, id, warn) {
     for (let k = chain.length - 1; k >= 0; k--) between.multiply(H.local[chain[k]]);
     m.between = between;
   }
+  const nativeSrc = sources.find((s) => s.kind === 'native');
   const sockets = socketNames.map((name, k) => {
-    const index = boneNames.length + k;
+    const index = native.bones.length + k;
+    const r = rows(nativeSrc, index);
     return {
-      name: `socket_${name}`, index, node: -1, socket: true,
-      bindRot: restQ(index), worldScale: new THREE.Vector3(1, 1, 1),
-      srcRestInv: restQ(index).invert(), parentMap: null, between: new THREE.Matrix4(),
-      restLocal: { p: restP(index), q: restQ(index), s: new THREE.Vector3(1, 1, 1) },
-      scale: data.socketScale?.[name] ?? 1,
+      name: `socket_${name}`, node: -1, socket: true, src: new Map([[nativeSrc, { index, restInv: r.q.clone().invert() }]]),
+      bindRot: r.q.clone(), worldScale: new THREE.Vector3(1, 1, 1),
+      parentMap: null, between: new THREE.Matrix4(),
+      restLocal: { p: r.p, q: r.q, s: new THREE.Vector3(1, 1, 1) },
+      scale: native.socketScale?.[name] ?? 1,
     };
   });
   const all = [...maps, ...sockets];
-  for (const m of all) m.parentIdx = m.parentMap ? all.indexOf(m.parentMap) : -1;
+  for (const m of all) {
+    m.parentIdx = m.parentMap ? all.indexOf(m.parentMap) : -1;
+    m.restMatrix = new THREE.Matrix4().compose(m.restLocal.p, m.restLocal.q, m.restLocal.s);
+  }
   const IDENTITY = new THREE.Matrix4();
 
-  // 静止姿势偏差（报告用）：采样的静止姿势 vs GLB 绑定姿势
-  let restPosErr = 0, restRotErr = 0;
+  // 静止姿势偏差（报告用）：采样的静止姿势 vs GLB 绑定姿势；Blender 的只比位置（朝向带骨骼轴约定，不可比）
+  let restPosErr = 0, restRotErr = 0, kdRestPosErr = 0;
   for (const m of maps) {
     H.world[m.node].decompose(_p, _q, _s);
-    restPosErr = Math.max(restPosErr, _p.distanceTo(restP(m.index)));
-    restRotErr = Math.max(restRotErr, THREE.MathUtils.radToDeg(_q.angleTo(restQ(m.index))));
+    for (const [s, e] of m.src) {
+      const r = rows(s, e.index);
+      if (s.kind === 'native') {
+        restPosErr = Math.max(restPosErr, _p.distanceTo(r.p));
+        restRotErr = Math.max(restRotErr, THREE.MathUtils.radToDeg(_q.angleTo(r.q)));
+      } else kdRestPosErr = Math.max(kdRestPosErr, _p.distanceTo(r.p));
+    }
   }
+  if (kd && kdRestPosErr > 0.002) warn(`${id}: Blender 骨架静止位置和 GLB 差 ${kdRestPosErr.toFixed(4)} m`);
 
-  // 片段表：采样片段 + Flinch（Idle 第 0 帧 + Hit）
-  const clipEntries = Object.entries(data.clips);
-  if (data.clips.Hit && data.clips.Idle) {
-    const hit = data.clips.Hit;
+  // 片段表：采样片段（被 Blender 同名片段替换的除外）+ Blender 片段 + Flinch（Idle 第 0 帧 + Hit，同一数据源）
+  const clipEntries = [];
+  const kdClips = kd ? kd.clips : {};
+  if (native) for (const [name, c] of Object.entries(native.clips)) clipEntries.push([name, kdClips[name] ? { ...kdClips[name], loop: c.loop, next: c.next, speed: c.speed, events: [] } : c, kdClips[name] ? sources.at(-1) : nativeSrc]);
+  if (kd) for (const [name, c] of Object.entries(kdClips)) if (!native?.clips[name]) clipEntries.push([name, { ...c, events: [] }, sources.at(-1)]);
+  const idle = clipEntries.find(([n]) => n === 'Idle'), hitClip = clipEntries.find(([n]) => n === 'Hit');
+  if (idle && hitClip && idle[2] === hitClip[2]) {
+    const hit = hitClip[1];
     clipEntries.push(['Flinch', {
       loop: false,
-      frames: [data.clips.Idle.frames[0], ...hit.frames],
-      rootY: [data.clips.Idle.rootY?.[0] ?? 0, ...(hit.rootY ?? hit.frames.map(() => 0))],
+      frames: [idle[1].frames[0], ...hit.frames],
+      rootY: [idle[1].rootY?.[0] ?? 0, ...(hit.rootY ?? hit.frames.map(() => 0))],
       events: [],
       derived: true,
-    }]);
-  }
+    }, idle[2]]);
+  } else if (idle && hitClip) warn(`${id}: Idle / Hit 来自不同数据源，不派生 Flinch`);
 
   // 事件叠加表、手 K 替换表
   let overlay = {};
@@ -268,6 +329,7 @@ function exportAsset(unityDir, id, warn) {
   const keyframed = existsSync(keyDir)
     ? [...new Set(readdirSync(keyDir).filter((n) => /\.fbx(\.meta)?$/i.test(n)).map((n) => stateName(n.replace(/\.fbx(\.meta)?$/i, ''))))].sort()
     : [];
+  if (kd) for (const k of keyframed) if (!kdClips[k]) warn(`${id}: Unity 有手 K 片段 ${k}，Blender 中间件里没有`);
 
   // 逐片段、逐帧：模型空间 → 局部
   const n = all.length;
@@ -275,7 +337,7 @@ function exportAsset(unityDir, id, warn) {
   const rotMoves = new Array(n).fill(false), posMoves = new Array(n).fill(false);
   const W = all.map(() => new THREE.Matrix4());
   const tmpP = new THREE.Vector3(), tmpS = new THREE.Vector3();
-  for (const [name, c] of clipEntries) {
+  for (const [name, c, src] of clipEntries) {
     const frames = c.frames;
     const nf = frames.length;
     const rot = all.map(() => new Float64Array(nf * 4));
@@ -285,13 +347,21 @@ function exportAsset(unityDir, id, warn) {
       const dy = c.rootY?.[f] ?? 0;
       for (let k = 0; k < n; k++) {
         const m = all[k];
-        const i = m.index * 7;
-        _q.set(fr[i], fr[i + 1], fr[i + 2], fr[i + 3]).multiply(m.srcRestInv).multiply(m.bindRot);
-        tmpP.set(fr[i + 4], fr[i + 5] + dy, fr[i + 6]);
-        W[k].compose(tmpP, _q, m.worldScale);
         // 父节点世界矩阵：驱动父骨骼本帧的 / 场景根（单位）；再乘上中间夹着的静止节点
         const parentWorld = _m.copy(m.parentIdx >= 0 ? W[m.parentIdx] : IDENTITY).multiply(m.between);
-        _inv.copy(parentWorld).invert().multiply(W[k]).decompose(_p, _q2, tmpS);
+        const e = m.src.get(src);
+        if (e) {
+          const i = e.index * 7;
+          _q.set(fr[i], fr[i + 1], fr[i + 2], fr[i + 3]).multiply(e.restInv).multiply(m.bindRot);
+          tmpP.set(fr[i + 4], fr[i + 5] + dy, fr[i + 6]);
+          W[k].compose(tmpP, _q, m.worldScale);
+          _inv.copy(parentWorld).invert().multiply(W[k]).decompose(_p, _q2, tmpS);
+        } else {
+          // 这个数据源不驱动它：保持 GLB 静止局部（跟着父骨骼走）
+          W[k].multiplyMatrices(parentWorld, m.restMatrix);
+          _p.copy(m.restLocal.p);
+          _q2.copy(m.restLocal.q);
+        }
         const r = rot[k], o = f * 4;
         // 四元数连续性：与上一帧点积为负就取反
         if (f > 0 && r[o - 4] * _q2.x + r[o - 3] * _q2.y + r[o - 2] * _q2.z + r[o - 1] * _q2.w < 0) _q2.set(-_q2.x, -_q2.y, -_q2.z, -_q2.w);
@@ -301,7 +371,7 @@ function exportAsset(unityDir, id, warn) {
         if (!posMoves[k] && _p.distanceToSquared(m.restLocal.p) > POS_MOVES_SQ) posMoves[k] = true;
       }
     }
-    perClip.push({ name, c, nf, rot, pos });
+    perClip.push({ name, c, nf, rot, pos, src });
   }
 
   // 被驱动的节点（任何片段动过）：每个片段都写
@@ -309,7 +379,7 @@ function exportAsset(unityDir, id, warn) {
   const nodes = driven.map(({ m }) => m.name);
   const clips = {};
   let keyCount = 0, frameCount = 0;
-  for (const { name, c, nf, rot, pos } of perClip) {
+  for (const { name, c, nf, rot, pos, src } of perClip) {
     const length = Math.max(0, (nf - 1) / fps);
     const tracks = [];
     driven.forEach(({ k }, ni) => {
@@ -344,6 +414,9 @@ function exportAsset(unityDir, id, warn) {
     if (speed !== undefined) clip.speed = speed;
     if (c.derived) clip.derived = 'Hit';
     if (keyframed.includes(name)) clip.unity = 'keyframed';
+    if (src.kind === 'blender' && !c.derived) clip.src = 'blender';
+    // 根节点离地高度（已经烘进上面的骨骼位置，同 Unity）：另外单独记一份，玩法自己抬降根节点的敌人原地播放时减回去
+    if (c.rootY?.some((y) => Math.abs(y) > 0.005)) clip.rootY = b64(Float32Array.from(c.rootY));
     clip.events = mergeEvents(id, name, c.events ?? [], overlay, length, warn);
     clip.tracks = tracks;
     clips[name] = clip;
@@ -376,11 +449,11 @@ function exportAsset(unityDir, id, warn) {
   const out = {
     schema: 1,
     asset: id,
-    defId: data.defId ?? null,
+    defId: native ? (native.defId ?? null) : boundDefId(id),
     fps,
     glb: glbRel,
-    source: { sha1, baked: data.baked ?? null },
-    moveSpeed: overlayEntry(overlay, 'Move').meta.speed ?? data.clips.Move?.speed ?? 0,
+    source: kd ? { sha1, baked: native?.baked ?? null, keyframed: createHash('sha1').update(kdText).digest('hex'), script: kd.script ?? null } : { sha1, baked: native.baked ?? null },
+    moveSpeed: overlayEntry(overlay, 'Move').meta.speed ?? native?.clips.Move?.speed ?? 0,
     nodes,
     sockets: sockets.map((s) => ({ name: s.name, rest: [...s.restLocal.q.toArray(), ...s.restLocal.p.toArray()].map((x) => round(x)), scale: s.scale })),
     clips,
@@ -391,12 +464,13 @@ function exportAsset(unityDir, id, warn) {
     info: {
       defId: out.defId,
       clips: Object.keys(clips).length,
-      nativeClips: Object.values(clips).filter((c) => !c.derived).length,
+      nativeClips: Object.values(clips).filter((c) => !c.derived && c.src !== 'blender').length,
+      ...(kd ? { blenderClips: Object.values(clips).filter((c) => c.src === 'blender').length } : {}),
       eventClips: Object.values(clips).filter((c) => !c.derived && c.events.length).length,
       events: Object.values(clips).reduce((a, c) => a + c.events.length, 0),
       keyframed: Object.keys(clips).filter((k) => clips[k].unity === 'keyframed'),
       pending,
-      restDeviation: { pos: round(restPosErr, 1e4), rotDeg: round(restRotErr, 1e2) },
+      restDeviation: { pos: round(restPosErr, 1e4), rotDeg: round(restRotErr, 1e2), ...(kd ? { blenderPos: round(kdRestPosErr, 1e4) } : {}) },
       keys: keyCount,
       frames: frameCount,
     },
@@ -406,14 +480,18 @@ function exportAsset(unityDir, id, warn) {
 // ───────────── 主流程 ─────────────
 const unityDir = pickUnityDir();
 const charsDir = join(unityDir, 'Assets/Art/Characters');
-const ids = readdirSync(charsDir).filter((id) => existsSync(join(charsDir, id, 'Anim', `${id}.native-anim.json`))).sort();
+// 有采样数据（native-anim）或有 Blender 手 K 中间件（旱魃、商人只有后者）的资产；发布过 Blender 片段的资产即使本机没有中间件也列进来（保留原文件）
+const publishedBlender = (id) => {
+  try { return Object.values(JSON.parse(readFileSync(join(OUT_DIR, `${id}.json`), 'utf8')).clips ?? {}).some((c) => c.src === 'blender'); } catch { return false; }
+};
+const ids = readdirSync(charsDir).filter((id) => existsSync(join(charsDir, id, 'Anim', `${id}.native-anim.json`)) || existsSync(keyframedDumpPath(id)) || (existsSync(join(charsDir, id, 'Anim')) && publishedBlender(id))).sort();
 const targets = want.length ? ids.filter((id) => want.includes(id)) : ids;
 const warnings = [];
 const warn = (m) => warnings.push(m);
 
 const manifestPath = join(OUT_DIR, 'manifest.json');
 const prevManifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : null;
-const manifest = { schema: 1, fps: 30, about: 'scripts/web/export-native-anims.mjs 生成；采样片段（native-anim）+ Unity 状态机。pending = Unity 里只有 Blender 手 K 来源、网页还没有片段的状态', assets: {}, skipped: {}, keyframedOnly: {} };
+const manifest = { schema: 1, fps: 30, about: 'scripts/web/export-native-anims.mjs 生成；采样片段（native-anim）+ Blender 手 K 片段（export-keyframed-anims.mjs 的中间件，src = blender）+ Unity 状态机。pending = Unity 里只有 Blender 手 K 来源、网页还没有片段的状态', assets: {}, skipped: {}, keyframedOnly: {} };
 if (want.length && prevManifest) Object.assign(manifest.assets, prevManifest.assets), Object.assign(manifest.skipped, prevManifest.skipped);
 
 let stale = 0;
@@ -422,6 +500,12 @@ const readLf = (path) => readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 mkdirSync(OUT_DIR, { recursive: true });
 for (const id of targets) {
   const r = exportAsset(unityDir, id, warn);
+  if (r.keep) {
+    if (prevManifest?.assets?.[id]) manifest.assets[id] = prevManifest.assets[id];
+    warn(`${id}: ${r.keep}`);
+    console.log(`${id}: 未核对 — ${r.keep}`);
+    continue;
+  }
   if (r.skipped) {
     manifest.skipped[id] = r.skipped;
     delete manifest.assets[id];
@@ -438,9 +522,9 @@ for (const id of targets) {
     if (!check) writeFileSync(file, text);
   }
   const i = r.info;
-  console.log(`${id}: ${i.nativeClips} 片段（${i.eventClips} 带事件）${i.keyframed.length ? `  手K替换 ${i.keyframed.join(',')}` : ''}${i.pending.length ? `  待导 ${i.pending.join(',')}` : ''}  ${(Buffer.byteLength(text) / 1024).toFixed(0)} KB  键 ${i.keys}${old === text ? '' : check ? '  ✘ 过期' : '  已写'}`);
+  console.log(`${id}: ${i.nativeClips} 片段${i.blenderClips ? ` + Blender ${i.blenderClips}` : ''}（${i.eventClips} 带事件）${i.keyframed.length ? `  手K替换 ${i.keyframed.join(',')}` : ''}${i.pending.length ? `  待导 ${i.pending.join(',')}` : ''}  ${(Buffer.byteLength(text) / 1024).toFixed(0)} KB  键 ${i.keys}${old === text ? '' : check ? '  ✘ 过期' : '  已写'}`);
 }
-// 只有手 K 片段、没有采样数据的资产（旱魃、商人）：网页等 Blender → GLB 导出
+// 只有手 K 片段、没有采样数据、也还没导过 Blender 中间件的资产
 for (const id of readdirSync(charsDir).sort()) {
   if (ids.includes(id)) continue;
   const kd = join(charsDir, id, 'Anim', 'Keyframed');
@@ -455,6 +539,7 @@ manifest.totals = {
   assets: vals.length,
   nativeClips: vals.reduce((a, x) => a + x.nativeClips, 0),
   eventClips: vals.reduce((a, x) => a + x.eventClips, 0),
+  ...(vals.some((x) => x.blenderClips) ? { blenderClips: vals.reduce((a, x) => a + (x.blenderClips ?? 0), 0) } : {}),
   bytes: vals.reduce((a, x) => a + x.bytes, 0),
 };
 const mtext = JSON.stringify(manifest, null, 1) + '\n';

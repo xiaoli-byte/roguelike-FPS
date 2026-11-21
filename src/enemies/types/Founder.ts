@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, IEnemy, SpawnOptions } from '../../core/types';
 import { clamp01, raySphere } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -728,6 +729,19 @@ export class Founder extends StandardEnemy {
       this.getBodyCenter(_p);
       this.ctx.fx.burst(_p, 0x6a625a, 1, 0.8, 1.2, 0.1, -0.8);
     }
+  }
+
+  /** 片段表（M12）：照 Unity FounderAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      stalk: 'loco',
+      enter: { fade: 0.05 },
+      pourWindup: { fade: 0.08, secs: () => this.windTime },
+      pouring: { fade: 0.06 },
+      flingWindup: { fade: 0.08, secs: () => this.windTime },
+      retreat: { fade: 0.1 },
+      crackStagger: { fade: 0.06 },
+    };
   }
 
   protected override pose(dt: number): void {

@@ -23,6 +23,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, IEnemy, SpawnOptions } from '../../core/types';
 import { clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -1170,6 +1171,17 @@ export class Apsara extends StandardEnemy {
     }
   }
 
+
+  /** 片段表（M12）：照 Unity ApsaraAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      hover: 'loco',
+      reform: { clip: 'chordWindup', fade: 0.1, secs: () => REFORM_TIME },
+      chordWindup: { fade: 0.1, secs: () => this.windTime },
+      bloomWindup: { fade: 0.1, secs: () => this.windTime },
+      blessWindup: { fade: 0.1, secs: () => this.windTime },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

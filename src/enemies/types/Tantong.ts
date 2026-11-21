@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp, clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -639,6 +640,21 @@ export class Tantong extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity TantongAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      chase: 'loco',
+      flail: { fade: 0.05 },
+      throwRelease: { fade: 0.05 },
+      recover: { fade: 0.08 },
+      blowGo: { fade: 0.12 },
+      blow: { fade: 0.1 },
+      pounce: { fade: 0.05 },
+      pounceWindup: { fade: 0.08, secs: () => this.windTime },
+      throwWindup: { fade: 0.08, secs: () => this.windTime },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

@@ -27,8 +27,15 @@ export interface ClipDef {
   speed?: number;
   /** 派生片段（Flinch = Idle 第 0 帧 + Hit）：不算采样片段 */
   derived?: string;
-  /** Unity 里这个状态换成了 Blender 手 K 片段（网页暂用采样片段） */
+  /** Unity 里这个状态换成了 Blender 手 K 片段（src 不是 blender 时网页还在用采样片段） */
   unity?: string;
+  /** 片段来源：blender = Blender 手 K（scripts/web/export-keyframed-anims.mjs）；缺省 = 采样片段 */
+  src?: 'blender';
+  /**
+   * 采样时根节点（玩法位置）的离地高度变化（米，每帧一个，Float32 base64）：Unity 把它烘进了每根骨骼的位置（tracks 里已含），
+   * 而玩法同时也在抬降根节点（跳、俯冲、飞扑）——原地播放（buildClip 的 inPlace）时减回去，免得叠两次
+   */
+  rootY?: string;
   events: AnimEventDef[];
   tracks: TrackDef[];
 }
@@ -107,7 +114,10 @@ export interface ClipMeta {
   events: ClipEvent[];
   derived: string | null;
   unity: string | null;
+  src: 'blender' | null;
   frames: number;
+  /** 烘进骨骼的根节点离地高度（每帧，米）；没有为 null */
+  rootY: Float32Array | null;
 }
 
 export const clipMeta = (clip: THREE.AnimationClip): ClipMeta => clip.userData as unknown as ClipMeta;
@@ -128,8 +138,16 @@ function typed<T extends Int16Array | Uint16Array | Float32Array>(s: string, Cto
 /** 曲线绑定名：与 GLTFLoader 给节点起名的规则一致 */
 export const trackNodeName = (name: string) => THREE.PropertyBinding.sanitizeNodeName(name);
 
+export interface BuildClipOptions {
+  /**
+   * 原地播放：片段带 rootY（采样时根节点的离地高度变化，已烘进骨骼位置）时，加一条模型根 position.y = −rootY 的曲线抵掉，
+   * 骨骼回到相对根节点的姿势——玩法自己抬降根节点（跳跃、俯冲）的敌人用。检视页 / 对照测试看原始数据时不开
+   */
+  inPlace?: boolean;
+}
+
 /** 一个片段 → THREE.AnimationClip（userData = ClipMeta）。 */
-export function buildClip(data: CreatureAnimData, name: string): THREE.AnimationClip {
+export function buildClip(data: CreatureAnimData, name: string, opts: BuildClipOptions = {}): THREE.AnimationClip {
   const def = data.clips[name];
   if (!def) throw new Error(`${data.asset}: 没有片段 ${name}`);
   const dt = 1 / data.fps;
@@ -153,6 +171,14 @@ export function buildClip(data: CreatureAnimData, name: string): THREE.Animation
       tracks.push(new THREE.VectorKeyframeTrack(target, times, typed(valuesB64, Float32Array)));
     }
   }
+  const rootY = def.rootY ? typed(def.rootY, Float32Array) : null;
+  if (opts.inPlace && rootY && rootY.length > 0) {
+    // 曲线绑在混合器的根（节点名留空 = 根）上：只写 position.y
+    const times = new Float32Array(rootY.length);
+    const v = new Float32Array(rootY.length);
+    for (let i = 0; i < rootY.length; i++) { times[i] = i * dt; v[i] = -rootY[i]; }
+    tracks.push(new THREE.NumberKeyframeTrack('.position[y]', times, v));
+  }
   const clip = new THREE.AnimationClip(`${data.asset}_${name}`, def.duration, tracks);
   const meta: ClipMeta = {
     loop: def.loop,
@@ -161,16 +187,18 @@ export function buildClip(data: CreatureAnimData, name: string): THREE.Animation
     events: def.events.map((e) => ({ time: e.t, name: e.name, float: e.f ?? 0 })),
     derived: def.derived ?? null,
     unity: def.unity ?? null,
+    src: def.src ?? null,
     frames: def.frames,
+    rootY,
   };
   clip.userData = meta as unknown as Record<string, unknown>;
   return clip;
 }
 
 /** 全部片段（键 = 状态里引用的片段名：Idle / Move / charge / Flinch…） */
-export function buildClips(data: CreatureAnimData): Map<string, THREE.AnimationClip> {
+export function buildClips(data: CreatureAnimData, opts: BuildClipOptions = {}): Map<string, THREE.AnimationClip> {
   const out = new Map<string, THREE.AnimationClip>();
-  for (const name of Object.keys(data.clips)) out.set(name, buildClip(data, name));
+  for (const name of Object.keys(data.clips)) out.set(name, buildClip(data, name, opts));
   return out;
 }
 

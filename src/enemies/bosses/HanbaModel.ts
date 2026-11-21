@@ -2,13 +2,16 @@
  * 旱魃的模型层：程序化兜底体（正式美术 SK_Boss_Hanba.glb 经 BossBase 的 attachEnemyArt 挂上来时程序化实体件自动隐去）+ 动作片段播放器。
  *   · 挂点照正式美术的骨骼位置摆：心口泉珠 socket_core（3.25 m、身前 0.56 m）、日轮支点 sunring（头顶 4 m、身后 1.8 m——Unity SunRing 的跟随距离，
  *     正式美术的 SM_BossPart_HanbaSunRing 按 bind.attachment = "sunring" 挂在它上面）。
- *   · 动作：手 K 片段（art/source/characters/SK_Boss_Hanba/anim/hanba_anims.py）要等 M12 的动画管线导出成 AnimationClip；
- *     这里先用每个片段的关键帧时刻摆几个程序化姿势（举臂、前推、俯身、上浮），出手事件按 events.json 的归一化时刻派发（{@link HanbaAnimator}），
+ *   · 动作：手 K 片段（art/source/characters/SK_Boss_Hanba/anim/hanba_anims.py）已由 M12 第二期导成 public/assets/anim/SK_Boss_Hanba.json：
+ *     正式美术挂上、数据读好后骨骼由片段驱动（HanbaAnimator.bindClips：按播放器自己的状态 / 归一化时刻取样，顿帧倍率、拉伸、事件时刻都不变）；
+ *     读好之前和程序化兜底体仍用每个片段的关键帧时刻摆几个程序化姿势（举臂、前推、俯身、上浮），出手事件按 events.json 的归一化时刻派发（{@link HanbaAnimator}），
  *     招式的判定跟事件走——和 Unity 的 act_<状态> + ActScale 一样：整段按「出手事件落在前摇结束」拉伸。
  *   · 正式美术在时，姿势写在它的原生骨骼上（NativePose：arm_L / arm_R / spine，模型空间的轴）；没有时写在程序化手臂上。
  */
 import * as THREE from 'three';
 import { NativePose } from '../../assets/NativeRig';
+import { buildClips, type CreatureAnimData } from '../../anim/AnimData';
+import { clipData } from '../../anim/ClipPlayer';
 import { actScale, clipSeconds, HANBA_CLIPS } from './HanbaPlans';
 import { anchor, geo, glow, glowMesh, mesh, pivot, std } from './parts';
 
@@ -143,6 +146,11 @@ export class HanbaAnimator {
   private readonly prevPose = P();
   private blendT = 1;
   private native: NativePose | null = null;
+  /** 片段取样器（M12）：每个状态一个动作，时刻由 u 直接给，权重做 0.2 s 的交叉淡入 */
+  private mixer: THREE.AnimationMixer | null = null;
+  private readonly actions = new Map<string, THREE.AnimationAction>();
+  private prevState = 'Idle';
+  private prevU = 0;
 
   constructor(private readonly rig: HanbaRig, private readonly emit: (evt: string) => void) {}
 
@@ -164,6 +172,42 @@ export class HanbaAnimator {
       console.warn('[Hanba] 原生骨骼姿势层建不起来，退回程序化手臂', err);
       this.native = null;
     }
+    const m = model;
+    void clipData('SK_Boss_Hanba').then((d) => this.bindClips(m, d));
+  }
+
+  /** 手 K 片段接到正式美术的骨骼上（数据读不到 / 片段不全时保持程序化姿势） */
+  bindClips(model: THREE.Object3D, data: CreatureAnimData | null): void {
+    if (!data || this.mixer) return;
+    try {
+      const clips = buildClips(data);
+      const mixer = new THREE.AnimationMixer(model);
+      for (const name of Object.keys(HANBA_CLIPS)) {
+        const clip = clips.get(name);
+        if (!clip) throw new Error(`没有片段 ${name}`);
+        const a = mixer.clipAction(clip);
+        a.timeScale = 0;
+        a.setEffectiveWeight(0);
+        a.play();
+        this.actions.set(name, a);
+      }
+      this.mixer = mixer;
+    } catch (err) {
+      console.warn('[Hanba] 片段没接上，保持程序化姿势', err);
+      this.actions.clear();
+      this.mixer = null;
+    }
+  }
+
+  /** 骨骼由片段驱动（正式美术 + 动画数据都在） */
+  get clipDriven(): boolean {
+    return this.mixer !== null;
+  }
+
+  dispose(): void {
+    this.mixer?.stopAllAction();
+    this.mixer = null;
+    this.actions.clear();
   }
 
   get hasNative(): boolean {
@@ -173,6 +217,8 @@ export class HanbaAnimator {
   play(state: string, seconds: number): void {
     if (!HANBA_CLIPS[state]) return;
     Object.assign(this.prevPose, this.pose);
+    this.prevState = this.state;
+    this.prevU = Math.min(1, this.u);
     this.blendT = 0;
     this.state = state;
     this.u = 0;
@@ -199,6 +245,8 @@ export class HanbaAnimator {
         this.fire(prev, Math.min(1, this.u));
         if (this.u >= 1 && this.state !== 'death') {
           Object.assign(this.prevPose, this.pose);
+          this.prevState = this.state;
+          this.prevU = 1;
           this.blendT = 0;
           this.state = 'Idle';
           this.u = 0;
@@ -216,7 +264,8 @@ export class HanbaAnimator {
 
   /** 姿势里的上浮（米，加在悬浮高度上） */
   get lift(): number {
-    return this.pose.lift;
+    // 片段里骨盆自己起伏（hips 的位置曲线），不再另外抬模型
+    return this.mixer ? 0 : this.pose.lift;
   }
 
   private fire(prev: number, now: number): void {
@@ -235,6 +284,22 @@ export class HanbaAnimator {
     r.armR.rotation.set(-p.rFwd, 0, -p.rUp);
     r.armL.rotation.set(-p.lFwd, 0, p.lUp);
     r.torso.rotation.x = p.lean * 0.6;
+    if (this.mixer) {
+      // 片段驱动：当前状态按 u 取样，和上一个状态（停在切走那一刻）交叉淡入
+      for (const a of this.actions.values()) a.setEffectiveWeight(0);
+      const set = (state: string, u: number, w: number): void => {
+        const a = this.actions.get(state);
+        if (!a || w <= 0) return;
+        const d = a.getClip().duration;
+        a.time = Math.min(Math.max(0, u) * d, d - 1e-4);
+        a.setEffectiveWeight(a.getEffectiveWeight() + w);
+      };
+      const k = this.prevState === this.state ? 1 : this.blendT;
+      set(this.state, Math.min(1, this.u), k);
+      if (k < 1) set(this.prevState, this.prevU, 1 - k);
+      this.mixer.update(0);
+      return;
+    }
     const n = this.native;
     if (!n) return;
     n.reset();

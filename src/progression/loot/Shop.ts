@@ -68,6 +68,8 @@ export class ShopManager {
   private transacting = false;
   private lastTransactionFrame: number | null = null;
   private upgradePreview: { key: string; lines: string[] } | null = null;
+  /** 最近一次 spawn 的强化台（台子中心的地面点）与商铺中心：行商站在台子旁边（Merchant.ts，Loot 摆） */
+  lastBench: { position: THREE.Vector3; center: THREE.Vector3 } | null = null;
 
   constructor(
     private readonly ctx: GameContext,
@@ -102,6 +104,7 @@ export class ShopManager {
 
     const stations = buildShopLayout(center, yaw, specs.length, mid);
     let signPos: THREE.Vector3 | null = null;
+    this.lastBench = null;
     for (let i = 0; i < specs.length; i++) {
       // 局部坐标：+Z 指向玩家一侧，摊位围在中心后方的弧上
       const station = stations[i];
@@ -110,7 +113,10 @@ export class ShopManager {
       const gy = groundAt(ctx, _p.x, _p.z, center.y + 2.5);
       const facing = Math.atan2(center.x - _p.x, center.z - _p.z);
       this.buildStall(specs[i], _p.x, gy, _p.z, facing);
-      if (specs[i].kind === 'upgrade') signPos = new THREE.Vector3(_p.x, gy + 3.35, _p.z);
+      if (specs[i].kind === 'upgrade') {
+        signPos = new THREE.Vector3(_p.x, gy + 3.35, _p.z);
+        this.lastBench = { position: new THREE.Vector3(_p.x, gy, _p.z), center: center.clone() };
+      }
     }
 
     if (signPos) {

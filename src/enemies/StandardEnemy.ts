@@ -11,6 +11,11 @@
  * 受击四层（Unity EnemyAI.HitStagger / HitStun / Hitch + Poise，见 HitReaction.ts）：def.poise / hitch 不为 0 的敌人
  * 按韧性累计硬直、每挨一枪顿一下；外部的反制 / 剧本可以直接调 hitStagger / hitStun。前三章的敌人韧性都是 0，不进这两条。
  * 词缀招式（迅捷的前行龙卷）接管期间 affixAttackBusy = true：基础 AI 停手（Unity EnemyAI.AffixAttackBusy）。
+ *
+ * 片段（M12 第二期）：资产在 public/assets/anim/ 有片段时，美术挂载顺带建 ClipPlayer（Unity Animator + CreatureRig + CreatureLocomotion），
+ * 读好后片段覆盖骨骼（程序化 pose 仍然跑：发光、挂件、阴影抬升这些副作用照旧，骨骼姿势被片段盖掉）。招式片段按子类的 clipCues 表
+ * 在 setState 时播（Unity 各 AI 在同一处 Play / PlayTimed / PlayLocomotion）；眩晕 / 硬直播 Hit，醒来回 Locomotion；受击走 Rig.Hit +
+ * 伤害过 12% 最大生命触发叠加层 Flinch（Unity EnemyBody.staggerFraction）；死亡冻住（Unity 没有布娃娃时关 Animator）。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../core/types';
@@ -26,6 +31,17 @@ import { attachEnemyArt } from '../assets/EnemyArt';
 import type { NativeBody } from '../assets/NativeRig';
 import type { MoveResult } from '../world/Collision';
 import type { SkinnedBody } from '../assets/SkinnedBody';
+import type { ClipPlayer } from '../anim/ClipPlayer';
+
+/**
+ * 一个 AI 状态进入时怎么播片段（Unity EnemyAI 在 SetState 旁边的 Play / PlayTimed / PlayLocomotion）：
+ *   clip  片段状态名（缺省 = AI 状态名）；fade 过渡秒数（缺省 0.08）；secs 有值时 PlayTimed（把片段拉伸到这么多秒，进状态那一帧末尾取值）
+ *   'loco' = PlayLocomotion
+ * 表里没有的状态不播（Unity 不调 Play：片段连段 / 留在当前状态）
+ */
+export type ClipCue = { clip?: string | (() => string); fade?: number; secs?: () => number } | 'loco';
+/** EnemyBody.staggerFraction：单发伤害超过最大生命的这个比例触发叠加层 Flinch */
+const CLIP_STAGGER_FRACTION = 0.12;
 
 const _a = new THREE.Vector3();
 const _b = new THREE.Vector3();
@@ -115,6 +131,10 @@ export abstract class StandardEnemy extends EnemyBase {
   private artBody: SkinnedBody | null = null;
   /** 原生骨架美术（按骨骼名驱动的动画用）；没有时为 null */
   protected nativeBody: NativeBody | null = null;
+  /** 片段播放器（M12）：资产有片段时建，读好后 ready；没有片段 / 读不到为 null 或一直不 ready（程序化摆姿势是退路） */
+  protected clips: ClipPlayer | null = null;
+  private clipCueTable: Readonly<Record<string, ClipCue>> | null = null;
+  private pendingCue: { state: string; cue: ClipCue } | null = null;
 
   // 视线站位
   protected readonly vantage = new THREE.Vector3();
@@ -159,6 +179,33 @@ export abstract class StandardEnemy extends EnemyBase {
   protected afterInit(): void {}
   /** 攻击被打断（眩晕 / 死亡 / 清理 / 玩家死亡）：收起预警物、恢复移动参数、回到默认状态 */
   protected cancelAttack(): void {}
+  /**
+   * 片段表（M12）：AI 状态 → 怎么播（照 Unity 对应 AI 的 Play / PlayTimed / PlayLocomotion）。没有片段的敌人不用写
+   */
+  protected clipCues(): Readonly<Record<string, ClipCue>> | null {
+    return null;
+  }
+  /** 子类自己的晕眩表现（镇墓兽撞墙撞晕）：打开 CreatureRig 的晕眩叠加（Unity EnemyAI.DazeOverlay） */
+  protected get dazeOverlay(): boolean {
+    return false;
+  }
+  /** 片段在驱动骨骼（数据读好了）：子类可据此跳过只为骨骼服务的程序化计算 */
+  protected get clipDriven(): boolean {
+    return this.clips?.ready ?? false;
+  }
+  /** 立刻播一个片段状态（不经状态表；同一帧之前 setState 排下的片段作废：后调用的算数，同 Unity 先后两次 CrossFade） */
+  protected playClip(state: string, fade = 0.08, seconds = 0): void {
+    if (!this.clips) return;
+    this.pendingCue = null;
+    if (seconds > 0.05) this.clips.playTimed(state, seconds, fade);
+    else this.clips.play(state, fade);
+  }
+  /** Unity EnemyAI.PlayLocomotion */
+  protected playLocomotion(): void {
+    if (!this.clips) return;
+    this.pendingCue = null;
+    this.clips.playLocomotion();
+  }
   /** 绑定美术资产用的 id（清单 bind.id）；共用身体的变体（如蜃景分身）改成本体的 id */
   protected artId(): string {
     return this.def.id;
@@ -218,6 +265,7 @@ export abstract class StandardEnemy extends EnemyBase {
         this.cancelAttack();
         this.releaseAttack();
         this.setState('idle');
+        this.playLocomotion();
       }
       this.stopMoving();
       this.glowTarget[0] = 0;
@@ -249,9 +297,13 @@ export abstract class StandardEnemy extends EnemyBase {
     if (stunned && !this.wasStunned) {
       this.cancelAttack();
       this.releaseAttack();
+      this.playClip('Hit', 0.05);
     }
-    // 醒了：hitStun 的受伤加成撤掉（Unity EnemyAI：醒来时 stunTaken.Dispose）
-    if (!stunned && this.wasStunned) this.hitStunTaken = false;
+    // 醒了：hitStun 的受伤加成撤掉（Unity EnemyAI：醒来时 stunTaken.Dispose）；片段回 Locomotion
+    if (!stunned && this.wasStunned) {
+      this.hitStunTaken = false;
+      this.playLocomotion();
+    }
     this.wasStunned = stunned;
     this.poiseMeter?.tick(dt);
     if (stunned) this.glowTarget[0] = 0;
@@ -269,6 +321,12 @@ export abstract class StandardEnemy extends EnemyBase {
     this.hurtKick = Math.min(1.1, this.hurtKick + k * (0.5 + Math.min(1, r.dealt / Math.max(1, this.maxHp * 0.25))));
     this.affixCtl?.onHurt(r);
     this.poiseHit(r);
+    // 片段：方向性受击弹簧 + 重击触发叠加层 Flinch（Unity EnemyBody.OnDamaged；持续伤害不晃）
+    const c = this.clips;
+    if (c?.ready && r.dealt > 0 && !isDotHit(r.request)) {
+      const strength = clamp01((r.dealt / Math.max(1, this.maxHp)) * 4);
+      c.hit(r.request.direction ?? _a.set(0, 0, 0), strength, !r.killed && r.dealt >= this.maxHp * CLIP_STAGGER_FRACTION);
+    }
   }
 
   // ───────────── 受击四层（Unity EnemyAI.HitStagger / HitStun / Hitch、Poise.OnDamaged） ─────────────
@@ -338,13 +396,18 @@ export abstract class StandardEnemy extends EnemyBase {
     this.glowTarget[0] = 0;
     this.hitStaggerLeft = Math.max(this.hitStaggerLeft, seconds);
     this.hurtKick = Math.min(1.1, this.hurtKick + 0.8);
+    this.playClip('Hit', 0.05);
     return true;
   }
 
-  /** 硬直结束（缺省什么也不做：cancelAttack 已经把子类送回默认状态） */
-  protected onHitStaggerEnd(): void {}
+  /** 硬直结束（cancelAttack 已经把子类送回默认状态；片段回 Locomotion，同 Unity OnHitStaggerEnd） */
+  protected onHitStaggerEnd(): void {
+    this.playLocomotion();
+  }
 
   protected override onDeath(r: DamageResult): void {
+    // 片段冻在最后一帧（Unity 没有布娃娃时 Animator.enabled = false）；倒地照旧是 EnemyBase 的程序化前倒
+    if (this.clips) this.clips.frozen = true;
     this.hitStaggerLeft = this.hitchLeft = 0;
     this.hitStunTaken = false;
     this.releaseAttack();
@@ -362,6 +425,8 @@ export abstract class StandardEnemy extends EnemyBase {
     this.artBody?.dispose();
     this.artBody = null;
     this.nativeBody = null;
+    this.clips?.dispose();
+    this.clips = null;
   }
 
   // ───────────── 出生 / 出场（Unity EnemyAI.Spawn 的不可选中、SpawnEntrance） ─────────────
@@ -408,11 +473,13 @@ export abstract class StandardEnemy extends EnemyBase {
     if (!en) {
       super.update(dt);
       this.stepPush(dt);
+      this.tickClips(dt);
       return;
     }
     if (!this.alive) {
       this.entrance = null;
       super.update(dt);
+      this.tickClips(dt);
       return;
     }
     this.age += dt;
@@ -446,6 +513,27 @@ export abstract class StandardEnemy extends EnemyBase {
     }
     this.root.rotation.y = this.facing;
     this.animate(dt);
+    this.tickClips(dt);
+  }
+
+  /** 片段：先补播本帧 setState 排下的片段（片段表的 secs 在这时取值），再推进状态机（覆盖程序化摆的骨骼）、CreatureRig */
+  private tickClips(dt: number): void {
+    const c = this.clips;
+    if (!c) return;
+    const p = this.pendingCue;
+    this.pendingCue = null;
+    if (p) {
+      const cue = p.cue;
+      if (cue === 'loco') c.playLocomotion();
+      else {
+        const secs = cue.secs?.() ?? 0;
+        const name = typeof cue.clip === 'function' ? cue.clip() : cue.clip ?? p.state;
+        if (secs > 0.05) c.playTimed(name, secs, cue.fade ?? 0.08);
+        else c.play(name, cue.fade ?? 0.08);
+      }
+    }
+    c.daze = this.alive && (this.stunTime > 0 || this.dazeOverlay) ? 1 : 0;
+    c.update(dt);
   }
 
   /**
@@ -517,9 +605,25 @@ export abstract class StandardEnemy extends EnemyBase {
         this.ownMaterial(m);
         this.flashMats.push({ mat: m, baseEmissive: m.emissive.clone(), baseIntensity: m.emissiveIntensity });
       },
+      clips: {
+        root: this.root,
+        ground: (x, y, z, max) => {
+          const h = this.ctx.world.groundHeight(x, z, y);
+          return h > y - max ? h : null;
+        },
+      },
     });
     this.artBody = art.body;
     this.nativeBody = art.native;
+    this.clips = art.clips ?? null;
+    if (this.clips) {
+      // Unity EnemyAI：body.Rig.lookTarget = 玩家视点
+      this.clips.lookTarget = this.ctx.player.eye;
+      this.clipCueTable = this.clipCues();
+      // 构造时就进了的状态（enter 这类出生状态）补排一次
+      const first = this.clipCueTable?.[this.state];
+      if (first) this.pendingCue = { state: this.state, cue: first };
+    }
     // 武器上的发光件按白模的方块摆放，平时显示底色会和美术模型错位（比如弧形刀刃旁的一根直条）；
     // 美术贴图里已经画了发光元素，所以改成加法混合、底色为黑：平时不可见，前摇时叠加发光，提示功能不变
     const weaponGlows = new Set(art.parts.flatMap((p) => p.glows));
@@ -623,6 +727,8 @@ export abstract class StandardEnemy extends EnemyBase {
   protected setState(s: string): void {
     this.state = s;
     this.stateTime = 0;
+    const cue = this.clipCueTable?.[s];
+    if (cue) this.pendingCue = { state: s, cue };
   }
 
   /**

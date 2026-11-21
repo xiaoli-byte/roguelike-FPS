@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { clamp01, damp } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -500,6 +501,8 @@ export class Huodou extends StandardEnemy {
       if (this.barkTimer <= 0 && this.sees && d < 14) {
         this.barkTimer = ctx.rng.range(BARK_GAP[0], BARK_GAP[1]);
         this.pBark = 1;
+        // 吠叫片段是站着录的：只在站住时播（Unity HuodouAI：agent.velocity² < 1 时 Act("bark", 0.06)）
+        if (this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z < 1) this.playClip('bark', 0.06);
         ctx.audio.play('enemy_alert', { position: this.position, volume: 0.6, pitch: 0.95 });
       }
       if (this.cooldown <= 0 && d < FRONT_R + 1) this.approachPlayer(this.speed, 1.5);
@@ -689,6 +692,19 @@ export class Huodou extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity HuodouAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      run: 'loco',
+      spit: { fade: 0.05 },
+      recover: { fade: 0.08 },
+      bite: { fade: 0.05 },
+      biteWindup: { fade: 0.08, secs: () => this.windTime },
+      eat: { fade: 0.08, secs: () => EAT_TIME },
+      spitWindup: { fade: 0.08, secs: () => this.windTime },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

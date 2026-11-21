@@ -23,6 +23,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, SpawnOptions } from '../../core/types';
 import { angleDiff, clamp, clamp01, damp } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { Geo, flat, joint, part } from '../Models';
@@ -706,6 +707,21 @@ export class Bifang extends StandardEnemy {
   }
 
   // ───────────── 动画 ─────────────
+
+  /** 片段表（M12）：照 Unity BifangAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      perch: 'loco',
+      recover: { fade: 0.08 },
+      glide: { fade: 0.1 },
+      land: { fade: 0.08 },
+      downed: { fade: 0.08 },
+      fall: { fade: 0.06 },
+      takeoff: { fade: 0.08, secs: () => TAKEOFF_TIME },
+      cryBi: { fade: 0.08, secs: () => this.cryTime },
+      cryFang: { fade: 0.04 },
+    };
+  }
 
   protected override pose(dt: number): void {
     const st = this.state;

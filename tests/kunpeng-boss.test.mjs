@@ -1,6 +1,6 @@
 // 鲲鹏（boss_kunpeng）对照测试：照 Unity EditMode 的 KunPengTests.cs 逐条改写（同样的输入、同样的断言数）。
 // 没迁的两条：EnemyBodyRebind（Unity 组件，网页换形是 kun_host / peng_host 显隐，见 frost-boss.test.mjs）、
-// KeyframedClips_EventsLandOnTheMoveTimeline（手 K 片段的 events.json 还没导成网页片段，M12 待办；网页鲲鹏是程序化摆姿势，出手按时间）。
+// KeyframedClips_EventsLandOnTheMoveTimeline（M12 第二期导出手 K 片段后改在 tests/anim-keyframed.test.mjs 里对照）。
 // 另加：从 Unity 场景的水体反推冰窟（2-4 的北冥海 → 15 / 44 / 0.06）。
 import assert from 'node:assert/strict';
 import test from 'node:test';

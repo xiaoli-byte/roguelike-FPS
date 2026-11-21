@@ -24,6 +24,7 @@ import * as THREE from 'three';
 import type { DamageResult, GameContext, IEnemy, SpawnOptions } from '../../core/types';
 import { clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
+import type { ClipCue } from '../StandardEnemy';
 import type { ScaledEnemyDef } from '../EnemyBase';
 import type { NativeBody, NativePose } from '../../assets/NativeRig';
 import { attackDirector } from '../AttackTokens';
@@ -745,6 +746,18 @@ export class Nuo extends StandardEnemy {
       _p.z += (Math.random() - 0.5) * 0.6;
       this.ctx.fx.burst(_p, C.ember, 1, 0.8, 1, 0.08, -1.2);
     }
+  }
+
+  /** 片段表（M12）：照 Unity NuoAI 各状态的 Play / PlayTimed / PlayLocomotion */
+  protected override clipCues(): Readonly<Record<string, ClipCue>> {
+    return {
+      dance: 'loco',
+      enter: { fade: 0.05 },
+      wipe: { fade: 0.08, secs: () => 0.5 },
+      spit: { fade: 0.05 },
+      cover: { fade: 0.06 },
+      spitWindup: { fade: 0.08, secs: () => this.windTime },
+    };
   }
 
   protected override pose(dt: number): void {

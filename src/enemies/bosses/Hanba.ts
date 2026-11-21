@@ -521,6 +521,7 @@ export class Hanba extends BossBrain implements DirectedBoss {
   }
 
   protected override onReleased(): void {
+    this.animator.dispose();
     this.closeEclipse();
     this.ward.dispose();
     this.scorch.end();
@@ -573,7 +574,7 @@ function installDevHook(boss: Hanba): void {
       director: boss.director ? { stage: boss.director.stage, shot: boss.director.shotName, t: boss.director.t, released: boss.director.released } : null,
       sunElevation: HanbaSunDriver.find(boss.ctx)?.elevation ?? null, springLevel: stageHooks.water?.springLevel() ?? null,
       vents: boss.scorch.vents.length, ward: boss.ward.up, playerHits: boss.playerHits, act: boss.lastAct, eclipseWeakHits,
-      color: hexColor(boss.hdef.color),
+      color: hexColor(boss.hdef.color), clip: { driven: boss.animator.clipDriven, state: boss.animator.state, u: +boss.animator.u.toFixed(3) },
     }),
   };
 }

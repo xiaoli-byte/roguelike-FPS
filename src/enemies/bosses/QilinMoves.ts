@@ -4,7 +4,9 @@
  * 常量与调度参数在 QilinDef.ts（一处改数）；角度一律世界 yaw（度，0 = +Z），设朝向时换成弧度。
  * 伤害：Unity Dmg(TS 原值) = 难度 1 的绝对伤害 × 狂怒倍率；网页危险物（HazardSet.hurt）再乘难度倍率（同 Unity MoveDamage）。
  * 与 Unity 的差异（特效精神对齐，M11b 再做逐粒子一致）：Surge / FlameTongues / FxDecals / Fx.Qilin* 的专属特效换成 ctx.fx 的粒子、冲击环与爆炸；
- * 鳞刃是 QilinFx 的实例化薄片（挡板判定照旧），不是 EnemyProjectile；没有动画事件，出手一律按时间兜底（cue 的 fallback）。
+ * 鳞刃是 QilinFx 的实例化薄片（挡板判定照旧），不是 EnemyProjectile。
+ * 动作（M12）：act(state, seconds, fade) = Unity Brain.PlayAct（片段按 seconds 拉伸、交叉淡入 fade 秒，缺省 0.1）；正式美术的片段事件（hit 等）进 cue，
+ * 先到者算，没有片段（程序化兜底体）时按时间兜底（cue 的 fallback）。
  */
 import * as THREE from 'three';
 import { BossMove } from './framework/BossMove';
@@ -115,8 +117,9 @@ export abstract class QilinMove extends BossMove {
     this.q.playSfx(id, volume, pitch);
   }
 
-  protected act(state: string, seconds: number): void {
-    this.q.playAct(state, seconds);
+  /** Unity Brain.PlayAct(state, seconds, fade)：片段按 seconds 拉伸（0 = 原速），交叉淡入 fade 秒 */
+  protected act(state: string, seconds: number, fade = 0.1): void {
+    this.q.act(state, seconds, fade);
   }
 
   /** 给玩家一下冲量（击退 / 掀飞） */
@@ -221,7 +224,7 @@ export class GallopMove extends QilinMove {
           this.lastPos.copy(p);
           this.charges++;
           q.accel = 90;
-          this.act('Locomotion', 0);
+          this.act('Locomotion', 0, 0.05);
           this.sfx('boss_roar', 0.9, 1.3);
           // 后蹄一蹬：尘环 + 火星
           this.ctx.fx.ring(_a.set(p.x, this.floor + 0.1, p.z), 4, 0x6a5040, 0.5);
@@ -343,7 +346,7 @@ export class GallopMove extends QilinMove {
     q.halt();
     q.velocity.x = q.velocity.z = 0;
     this.warnLine(_b.set(p.x, this.floor, p.z), this.chargeYaw, this.chargeLength, 4, 1);
-    this.act('paw', 1);
+    this.act('paw', 1, 0.08);
     this.sfx('telegraph');
     q.tell('charge', '地上亮线——火麒麟要横穿象限冲撞，侧移躲开！');
   }
@@ -439,7 +442,7 @@ export class ScalesMove extends QilinMove {
 
   protected override onTelegraph(): void {
     this.warnCircle(this.q.position, 6.5, this.windupTime);
-    this.act('rear', this.windupTime);
+    this.act('rear', this.windupTime, 0.08);
     this.sfx('telegraph', 1, 0.75);
     this.sfx('boss_roar', 0.8, 0.9);
     this.q.crown?.begin(this.q.position, this.facingDeg, ScaleBlades.Count, ScaleBlades.StartRadius, this.floor + ScaleBlades.Height, this.windupTime);
@@ -471,7 +474,7 @@ export class ScalesMove extends QilinMove {
 
   private fireRing(offsetFrac: number): void {
     this.q.crown?.release();
-    this.act('scalesFire', 0.6);
+    this.act('scalesFire', 0.6, 0.03);
     const p = this.q.position;
     const origin = _a.set(p.x, this.floor, p.z);
     const n = this.q.fx?.fireRing(origin, ScaleBlades.Count, this.q.facing + (offsetFrac * Math.PI * 2) / ScaleBlades.Count, ScaleBlades.Speed,
@@ -804,7 +807,7 @@ export class DivesMove extends QilinMove {
         this.legT = 0;
         q.brake();
         this.warnCircle(this.target, BurnDives.Radius, this.teleTime);
-        this.act('tuck', this.teleTime);
+        this.act('tuck', this.teleTime, 0.08);
         this.sfx('telegraph', 1, 1);
         break;
       }
@@ -822,7 +825,7 @@ export class DivesMove extends QilinMove {
         this.leg = 'dive';
         this.legT = 0;
         this.diveFrom.copy(q.position);
-        this.act('stomp', BurnDives.DiveTime / BurnDives.StompHitAt);
+        this.act('stomp', BurnDives.DiveTime / BurnDives.StompHitAt, 0.04);
         this.sfx('boss_roar', 0.8, 1.4);
         break;
       case 'dive': {
@@ -906,7 +909,7 @@ export class PantMove extends QilinMove {
 
   protected override onTelegraph(): void {
     this.warnCircle(this.spot, BurnPant.LandRadius, this.windupTime);
-    this.act('stomp', this.windupTime / BurnDives.StompHitAt);
+    this.act('stomp', this.windupTime / BurnDives.StompHitAt, 0.08);
   }
 
   protected override onWindup(dt: number): void {
@@ -1199,7 +1202,7 @@ export class RageMove extends QilinMove {
     const f = this.f;
     // 火浪的起点：池边一圈亮起来（网页没有环形贴花：池沿外 1.6 m 的圆形预警盖住起点那一圈）
     this.warnCircle(f.center, f.poolRadius + 1.6, this.windupTime);
-    this.act('rear', this.windupTime);
+    this.act('rear', this.windupTime, 0.08);
     this.sfx('boss_roar', 1, 0.75);
     this.q.quake(0.5, this.windupTime);
     this.q.tell('rage', '焚身狂怒——火浪要从熔池扫过整座殿，跳起来躲！熔流轮转也更快了', '#ff7a4a');
