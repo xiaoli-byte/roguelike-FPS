@@ -283,12 +283,12 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 | DamageCalcParityTests、CombatPipelineTests、StatSheetTests | ✅ M13 | `tests/unity-damage-calc.test.mjs` |
 | ReactionTuningTests、ReactionTests | ✅ M13 | `tests/unity-reactions.test.mjs` |
 | AffixTests、AffixTriggerTests、LegendaryTests | ✅ M13 | `tests/unity-affixes.test.mjs`：词条表 / 准入 / 文本逐条读 `Weapons/Affixes/**`、`Weapons/Legendaries/**`，抽取分布，AffixEffects 的触发与传说运行时。没迁：开火钩子那几条（天命每第 N 发、终焉末发 ×3、无尽不耗弹——在 WeaponSystem 的开火状态机里，随 FireMode 等 M8）、词条跨关保留（AffixesSurviveStageChange） |
-| WeaponStatsTests | ✅ M13 | `tests/unity-weapon-stats.test.mjs`：解析器逐项、强化费用、各章稀有度 / 幸运 / 随机元素 / 掉落权重。奖励串 `weapon:<id>:<品质>` 网页没有，见不一致清单 |
+| WeaponStatsTests | ✅ M13 | `tests/unity-weapon-stats.test.mjs`：解析器逐项、强化费用、各章稀有度 / 幸运 / 随机元素 / 掉落权重、奖励串 `weapon:<id>:<品质>` / `weapon:min=N`（解析 / 档位保底 / 提示，2026-11-21 补上） |
 | WeaponDescriberTests | ✅ M13 | `tests/unity-weapon-describe.test.mjs` |
 | ScrollRuntimeTests、ScrollOffenseTests、ScrollElementTests、ScrollUtilityTests、ScrollLegendTests、ScrollReactionTests | 🔶 M13 | `tests/unity-scrolls.test.mjs`：118 张的定义逐张对 `Progression/Scrolls/**`、Unity 测试里的数据表、属性卷（Unity 的 (Stat, 每层值) 装进网页逐张比）、抽取权重与 10 万次抽样、procScale、条件增伤四卷、元素弹三卷、传说卷的属性部分。没迁：其余各卷的触发行为（Unity 侧约 4000 行，靠 ScrollScope / ElementKit / TacticsKit 的假宿主驱动；网页要逐卷用真 Combat 搭场景）、ScrollRuntime 里 Unity 独有的部分（作用域钩子的装卸残留、Describe 的 `{s0}` / `{t0}` 模板、沙盒、读档——读档等 M11d）；经济那几条已在 `unity-combat-director` |
 | ScrollTacticsTests | ➖ | `tests/scroll-tactics.test.mjs`（23 条，Unity 那份从它移植）；定义表另在 `unity-scrolls` 里对过 |
 | EliteAffixTests | ✅ M13 / M5 | `tests/unity-elite-affixes.test.mjs`（登记 / 随机 / 四种词缀的数 / 龙卷表）+ `tests/enemy-framework.test.mjs`（龙卷扫掠）。头顶血条标签、金环、名字前缀属界面（M11c） |
-| EncounterTests | 🔶 M13 | 站位角色的到场延迟、锚点加分、精英体型在 `tests/unity-elite-affixes.test.mjs`。EncounterSpec v2（Of / Wave / E、Promote、FromSquads / ToSquads、BandFor）、SquadAffixes.Resolve 网页没有实现——等 M4 待办「EncounterSite v2 其余部分」。网页旧的波次编排另有 `tests/encounters.test.mjs` |
+| EncounterTests | 🔶 M13 | 站位角色的到场延迟、锚点加分（含高台 / Auto，2026-11-21 补上；选点行为在 `encounters`）、精英体型在 `tests/unity-elite-affixes.test.mjs`。EncounterSpec v2（Of / Wave / E、Promote、FromSquads / ToSquads、BandFor）、SquadAffixes.Resolve 网页没有实现——等 M4 待办「EncounterSite v2 其余部分」。网页旧的波次编排另有 `tests/encounters.test.mjs` |
 | InfernoSquadsTests | ⬜ M4 | 网页没有 InfernoSquads / EncounterSpec（同上） |
 | FireModeTests | 🔶 M13 | `tests/unity-fire-modes.test.mjs` 只锁了计时常量和蓄力曲线（读两边源码）。35 条行为用例没迁：网页的状态机在 WeaponSystem 单体里、M8 正在改，落定后迁 |
 | WeaponSpecialsTests | ⬜ M8 | 定义已在 `unity-defs-parity`；机制（穿透、蛊种、蓄力、轮转、双管逐发）靠状态机驱动，同 FireMode |
@@ -321,7 +321,7 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 | FxTests、FxShotTests、FxStyleTests、GlowCrackTests | ⬜ M11b | 特效预设 / 图集 / 预算是 Unity 的 FxPreset 数据，随特效核心迁；GlowCrack 的资产导入设置不迁 |
 | FirstPersonViewTests、PerfTests、RenderPerfSettingsTests | ✖ | 纯 Unity：相机栈、图层剔除距离、GPU Resident Drawer / 遮挡剔除设置 |
 
-### 7.2 M13 对照出来的不一致（没改实现，各测试文件末尾有 `test.todo`）
+### 7.2 M13 对照出来的不一致（各测试文件末尾有 `test.todo`；标 ✅ 的已照 Unity 改好、todo 换成了真断言）
 
 | 项 | Unity | 网页 | 文件 |
 |---|---|---|---|
@@ -330,14 +330,14 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 | 免疫提示事件 | 打不可选中的敌人返回 `DamageResult.immune = true` 并转发 EnemyDamaged（0.4 s 节流） | `Combat.damageEnemy` 返回 null、不派发 `enemy:damaged`，只让 HitFeedback 弹字 | `src/combat/Combat.ts` |
 | 玩家减益 寒意 / 引燃 / 日灼 | CombatPipelineTests 里有四条 | StatusId 只有 burn / shock / corrode / stun / slow | `src/combat/Status.ts`（M8） |
 | 焚雷扩散灼烧的目标数 | `CombatTuning.Thunderfire.SpreadTargets = 16`（按距离取最近 16 个，Unity 注释写明是有意改的） | `runThunderfire` 点燃半径内全部 | `src/combat/Reactions.ts` |
-| 货币叫法 | 点金手 / 赏金 / 聚宝盆 / 贪婪之心写「灵石」 | 写「金币」 | `defsUtility.ts`、`defsLegend.ts` |
-| 战鼓 | 「每处据点开战时」 | 「每波敌人来袭时」（按波次触发） | `defsUtility.ts` |
-| 回春的描述 | 「恢复速度每层 +8/秒」 | 「护盾恢复速度每层 +8/秒」 | `defsUtility.ts` |
-| 功能卷标签顺序 | 主标签在前：灵盾 / 回春「护盾, 生存」、收割「击杀, 生存」、摄魂「击杀, 护盾」 | 「生存, 护盾」「生存, 击杀」「护盾, 击杀」 | `defsUtility.ts` |
-| 高风险传说卷 | 标签「高风险」，代价另起一行红字（`LegendScroll.Text(收益, 代价)`） | 标签「风险」，描述一句「…，但…」（数值相同） | `defsLegend.ts` |
-| 武器奖励串 | `weapon:<id>:<品质>` / `weapon:min=N` 可指定武器、品质、保底 | `Loot.grant` 只认 `weapon`，保底由关卡类型和章节定 | `src/progression/Loot.ts` |
+| ✅ 货币叫法 | 点金手 / 赏金 / 聚宝盆 / 贪婪之心写「灵石」 | 2026-11-21 秘卷定义（含聚宝盆提示）改成灵石。秘卷以外还写「金币」的：`src/ui`（`labels.ts` coins / gold、`SummaryScreen.ts`、`css/hud.css`「金币不足」）、`core/Stats.ts` 属性名「金币获取」、`progression/Meta.ts` 财富天赋、`Loot.ts` / `loot/Chests.ts` / `loot/Shop.ts` / `RunPlan.ts` 的提示与奖励名，没动 | `defsUtility.ts`、`defsLegend.ts` |
+| ✅ 战鼓 | 「每处据点开战时」 | 2026-11-21 改：听新事件 `encounter:started`（StageDirector 在一场遭遇第一波开始时报一次，首领战不报，= EncounterSite.Activate → EncounterStarted） | `defsUtility.ts`、`StageDirector.ts`、`core/types.ts` |
+| ✅ 回春的描述 | 「恢复速度每层 +8/秒」 | 2026-11-21 改 | `defsUtility.ts` |
+| ✅ 功能卷标签顺序 | 主标签在前：灵盾 / 回春「护盾, 生存」、收割「击杀, 生存」、摄魂「击杀, 护盾」 | 2026-11-21 改 | `defsUtility.ts` |
+| ✅ 高风险传说卷 | 标签「高风险」，代价另起一行红字（`LegendScroll.Text(收益, 代价)`） | 2026-11-21 改：标签「高风险」，ScrollDef 加 `upside` / `downside`（`legendText`），description = 收益 + 换行 +「代价：…」。**代价行标红要界面配合**：三选一卡面 / 背包 / 暂停页读 `downside` 另起一行用 `DOWNSIDE_COLOR`（#ff6a50），现在界面照旧显示 description（换行处显示成空格） | `defsLegend.ts`、`ScrollKit.ts`、`core/types.ts` |
+| ✅ 武器奖励串 | `weapon:<id>:<品质>` / `weapon:min=N` 可指定武器、品质、保底 | 2026-11-21 改：`RewardType` 加 `weapon:${string}`，`rewardRules.parseWeaponReward / weaponRewardRoll / weaponRewardHintFor`；不带参数的 `weapon` 照旧按关卡档位保底（= ApplyTier）。顺带：Unity 藏宝点的 `weapon:min=1` 以前被适配器退成金币、`upgrade` 也退成金币，现在照奖励串发。据点清场奖励（`site.reward` / `chestOffset`）网页还没接 | `src/progression/Loot.ts`、`loot/rewardRules.ts`、`UnitySceneAdapter.ts` |
 | 解析结果的弹速 | `ResolvedWeapon.projectileSpeed` | 只有 `projSpeedMult`，弹速在 Firing 里现乘（数值一致） | `src/weapons/WeaponStats.ts` |
-| 高台站位加分 | 俯射角色上高台 +3、其它 −1.5；Auto 锚点不加不减 | 锚点没有高台 / Auto 这两项 | `src/world/WaveRunner.ts` |
+| ✅ 高台站位加分 | 俯射角色上高台 +3、其它 −1.5；Auto 锚点不加不减；只站地面的不上高台 | 2026-11-21 改：`WaveRunner.anchorBonus`，锚点角色加 `auto`、带 `elevated`。**场景文档没有 elevated**：`WebSceneExporter.Encounter` 的 anchors 只写 position / lane / role，要导出器补 `SpawnAnchor.elevated`（适配器已接好）。顺带修了适配器把 StationRole 枚举值错一位读（0 = Auto 当成正面，锚点和条目的角色整体错一位）；条目的 Auto 改按敌人定义的 placement | `src/world/WaveRunner.ts`、`UnitySceneAdapter.ts` |
 
 ## 8. 已知问题
 
