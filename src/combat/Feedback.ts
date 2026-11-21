@@ -11,7 +11,8 @@ import * as THREE from 'three';
 import type { DamageLayer, Element, GameContext, IEnemy, SfxId } from '../core/types';
 import { LABEL_BUDGET } from './Reactions';
 
-type NumberKind = DamageLayer | 'immune';
+/** 'immune' 弹「免疫」，'blocked' 弹「格挡」（Unity DamageNumbers.Kind.Immune / Kind.Blocked） */
+type NumberKind = DamageLayer | 'immune' | 'blocked';
 
 interface PendingNumber {
   enemy: IEnemy | null;
@@ -31,6 +32,10 @@ const SAME_SOUND_GAP = 0.03;
 const MAX_SHOWN = 999999;
 /** 同一敌人两条反应浮字的最短间隔 */
 const LABEL_GAP = 0.3;
+/** 「格挡」字的颜色（Unity DamageNumbers.BlockedColor = 0xc9d0e0） */
+export const BLOCKED_COLOR = 0xc9d0e0;
+/** 「格挡」字的文本（Unity DamageNumbers.Format：Kind.Blocked → 「格挡」） */
+export const BLOCKED_TEXT = '格挡';
 
 const _pos = new THREE.Vector3();
 
@@ -68,12 +73,15 @@ export class HitFeedback {
     if (!Number.isFinite(amount) || amount < 0) return;
     if (!Number.isFinite(pos.x + pos.y + pos.z)) return;
     amount = Math.min(amount, MAX_SHOWN);
-    for (let i = 0; i < this.count; i++) {
-      const p = this.pending[i];
-      if (p.enemy === enemy && p.kind === kind && p.element === element && p.dot === dot) {
-        p.amount = Math.min(MAX_SHOWN, p.amount + amount);
-        p.crit = p.crit || crit;
-        return;
+    // 免疫 / 格挡不合并（Unity DamageNumbers.Queue：kind != Immune && kind != Blocked 才合成一笔）
+    if (kind !== 'immune' && kind !== 'blocked') {
+      for (let i = 0; i < this.count; i++) {
+        const p = this.pending[i];
+        if (p.enemy === enemy && p.kind === kind && p.element === element && p.dot === dot) {
+          p.amount = Math.min(MAX_SHOWN, p.amount + amount);
+          p.crit = p.crit || crit;
+          return;
+        }
       }
     }
     if (this.count >= MAX_PENDING) this.flush();
@@ -107,6 +115,19 @@ export class HitFeedback {
   }
 
   /**
+   * 「格挡」字（Unity DamageNumbers.OnDamaged：result.blocked 且 total < 1 时弹 Kind.Blocked）：
+   * 不节流、不合并（同 Unity），受「伤害数字」开关控制；处决由 Combat 挡在外面
+   */
+  blocked(enemy: IEnemy, point: THREE.Vector3 | undefined): void {
+    if (point) _pos.copy(point);
+    else {
+      enemy.getHeadCenter(_pos);
+      _pos.y += 0.35;
+    }
+    this.number(enemy, _pos, 0, false, 'none', 'blocked');
+  }
+
+  /**
    * 元素反应浮字（docs/arsenal-expansion.md 2.9）。每帧最多 4 条；同一敌人 0.3 秒一条，
    * big（归墟）不受逐敌节流，免得紧跟在两两反应后面的「归墟」被吞掉。
    */
@@ -136,7 +157,12 @@ export class HitFeedback {
     for (let i = 0; i < this.count; i++) {
       const p = this.pending[i];
       try {
-        if (ui.damageNumber) ui.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind, dot: p.dot, target: p.enemy });
+        if (p.kind === 'blocked') {
+          // DamageNumberOpts 还没有「格挡」这一种：按世界浮字出（UI 的 floatText / 旧 fx 数字都认 kind = 'reaction' + text）
+          const opts = { kind: 'reaction' as const, text: BLOCKED_TEXT, color: BLOCKED_COLOR, target: p.enemy };
+          if (ui.damageNumber) ui.damageNumber(p.pos, 0, opts);
+          else fx.damageNumber(p.pos, 0, opts);
+        } else if (ui.damageNumber) ui.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind, dot: p.dot, target: p.enemy });
         else fx.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind, dot: p.dot });
       } catch (err) {
         console.error('[Combat] damageNumber threw', err);

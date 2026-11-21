@@ -200,9 +200,13 @@ export class Combat implements ICombat, ReactionHost {
     if (zone && (dealt > 0 || blocked)) zone.record(dealt, blocked);
 
     if (effective <= 0) {
-      if (base > 0 && !dot && !execute) this.feedback.immune(enemy, req.point);
-      // 格挡掉了全部伤害也照样派发（Unity：total > 0 || immune || blocked 才发 EnemyDamaged）
-      if (blocked) ctx.events.emit('enemy:damaged', { enemy, result });
+      // 整发被命中区格挡掉：弹「格挡」（Unity DamageNumbers：blocked && total < 1 → Kind.Blocked，处决不弹）并照样派发
+      // （Unity Combat：total > 0 || immune || blocked 才发 EnemyDamaged）。没被格挡的 0 伤害 Unity 不发事件、不弹字，这里也一样；
+      // 「免疫」只留给不可选中（上面第 0 步）
+      if (blocked) {
+        if (!execute) this.feedback.blocked(enemy, req.point);
+        ctx.events.emit('enemy:damaged', { enemy, result });
+      }
       return result;
     }
 
@@ -308,8 +312,10 @@ export class Combat implements ICombat, ReactionHost {
         _num.y += 0.35;
         numPos = _num;
       }
-      // DOT 跳伤（灼烧 / 蚀化）标记为 dot：小一号、暗一些、不弹跳；雷殛弹射按直接命中显示
-      this.feedback.number(enemy, numPos, effective, result.isCrit, req.element, mainLayer, dot);
+      // DOT 跳伤（灼烧 / 蚀化）标记为 dot：小一号、暗一些、不弹跳；雷殛弹射按直接命中显示。
+      // 被格挡且总伤害不足 1：弹「格挡」不弹数字（Unity DamageNumbers：r.blocked && r.total < 1）
+      if (result.blocked && result.dealt < 1) this.feedback.blocked(enemy, numPos);
+      else this.feedback.number(enemy, numPos, effective, result.isCrit, req.element, mainLayer, dot);
       if (!dot) {
         const color = req.element !== 'none'
           ? ELEMENT_COLORS[req.element]
