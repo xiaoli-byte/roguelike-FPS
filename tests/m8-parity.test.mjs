@@ -4,6 +4,8 @@
 //   3. 免疫提示：打不可选中的敌人返回 immune 结果，0.4 s 节流地派发 enemy:damaged（Unity Combat.Immune）
 //   4. 玩家减益：Unity StatusId 的 8 项 = 网页敌人状态 5 项 + 玩家减益 3 项（寒意 / 点燃 / 日晒只挂玩家）
 //   5. 焚雷扩散灼烧：按距离取最近 16 个（Unity CombatTuning.Thunderfire.SpreadTargets）
+//   6. 格挡提示：整发被命中区挡掉弹「格挡」、派发事件；没被格挡的 0 伤害不发事件不弹字（Unity Combat / DamageNumbers）
+//   7. 货币叫法：局内货币叫灵石（Unity D13），属性名、天赋、宝箱提示、奖励名、商店与掉落提示都对 Unity 的原文
 // 常量、定义直接读 C# 源码比；行为用真的 Combat / Reactions / ScrollSystem（临时目录转译整张模块图，同 scroll-tactics.test.mjs）。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
@@ -13,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
+import { tsGraph } from './unity-parity-kit.mjs';
 
 const root = fileURLToPath(new URL('../src/', import.meta.url));
 const dir = await mkdtemp(path.join(tmpdir(), 'spiritfire-m8-parity-'));
@@ -59,6 +62,19 @@ const { TaskRunner } = await import(await ts('core/Tasks.ts'));
 const { Rng } = await import(await ts('core/Rng.ts'));
 const { Combat, IMMUNE_FEEDBACK_GAP } = await import(await ts('combat/Combat.ts'));
 const { TF_SPREAD_TARGETS } = await import(await ts('combat/Reactions.ts'));
+const { BLOCKED_COLOR, BLOCKED_TEXT } = await import(await ts('combat/Feedback.ts'));
+const { shockwave } = await import(await ts('player/skills/common.ts'));
+const { Ballistics } = await import(await ts('weapons/Firing.ts'));
+const { AffixEffects } = await import(await ts('weapons/AffixEffects.ts'));
+// 碎刃：模型 / 特效 / 刃群 / 视图打桩（只跑刃群的伤害结算 swarmTick，不建场景）
+const bladeGraph = await tsGraph({
+  'weapons/demonBlade/BladeModel.ts': 'export const BLADE_PURPLE = 0x9a6bff;',
+  'weapons/demonBlade/BladeEffects.ts': 'export class BladeEffects {}',
+  'weapons/demonBlade/BladeSwarm.ts': 'export class BladeSwarm {}',
+  'weapons/demonBlade/BladeView.ts': 'export function createBladePoseInput() { return {}; }',
+});
+after(() => bladeGraph.dispose());
+const { DemonBlade } = await bladeGraph.load('weapons/demonBlade/DemonBlade.ts');
 
 const close = (actual, expected, msg = '') => assert.ok(Math.abs(actual - expected) < 1e-6, `${msg} ${actual} ≠ ${expected}`);
 
@@ -84,7 +100,7 @@ function fixture() {
       },
       nearest: () => null,
     },
-    world: { segmentBlocked: () => false, raycast: () => null },
+    world: { segmentBlocked: () => false, raycast: () => null, groundHeight: () => 0 },
     audio: { play() {} }, ui: { toast() {} }, meta: { addEssence() {} },
     fx: new Proxy({}, { get: () => () => {} }),
   };
@@ -204,15 +220,135 @@ test('immune: untargetable hits return immune, settle nothing and raise enemy:da
   assert.equal(f.hit(dead), null);
 });
 
-test('immune results do not count as hits: explosions, skill shockwaves, blade, detonate, affixes, thunder judgment', async () => {
+/**
+ * 不可选中在「调用方预筛之后、Combat 结算之前」才生效（同一帧里前一击触发了转阶段 / 遁地）：
+ * untargetable 的前 n 次读数是 false（调用方自己的预筛），之后是 true（Combat 第 0 步）
+ */
+function turnsUntargetableAfter(e, n) {
+  let reads = 0;
+  Object.defineProperty(e, 'untargetable', { configurable: true, get: () => reads++ >= n, set() {} });
+  return e;
+}
+const weaponReq = (o = {}) => ({ base: 50, element: 'none', source: 'explosion', procDepth: 0, canCrit: false, ...o });
+
+test('immune results do not count as hits: explode / shockwave pre-filter, then Combat says immune', () => {
+  // 爆炸：explodeAt 预筛读一次（false），damageEnemy 第 0 步读到 true
+  {
+    const f = fixture();
+    const a = f.enemy(0, 1);
+    const b = turnsUntargetableAfter(f.enemy(0, -1), 1);
+    f.ctx.enemies.queryRadius = (c, r, out = []) => { out.length = 0; out.push(a, b); return out; };
+    const hits = f.ctx.combat.explode(new THREE.Vector3(0, 1, 0), 3, weaponReq());
+    assert.equal(hits, 1, '免疫的那只不算命中');
+    assert.equal(b.hp, 10000);
+    assert.ok(f.damaged.some(d => d.e === b && d.result.immune), 'Combat 给的是 immune 结果');
+  }
+  // 技能冲击波（skills/common.ts）：同样预筛后才变成不可选中
+  {
+    const f = fixture();
+    const a = f.enemy(0, 1);
+    const b = turnsUntargetableAfter(f.enemy(0, -1), 1);
+    f.ctx.enemies.queryRadius = (c, r, out = []) => { out.length = 0; out.push(a, b); return out; };
+    const hits = shockwave(f.ctx, new THREE.Vector3(0, 0, 0), { radius: 4, base: 40, knockback: 0, lift: 0, color: 0xffffff });
+    assert.equal(hits, 1, '冲击波命中数不算免疫的');
+    assert.equal(b.hp, 10000);
+  }
+});
+
+test('immune results do not count as hits: veinseal conduct and reaction center hits (enemy:reaction hits)', () => {
+  // 封脉导流：先选定 3 个目标再逐个结算；打第一个时它的受击回调让第二个转入不可选中（转阶段）→ 第二个是 immune，不算命中
+  {
+    const f = fixture();
+    const reactions = [];
+    f.ctx.events.on('enemy:reaction', ev => reactions.push(ev));
+    const center = f.enemy(0, 0);
+    const a = f.enemy(1, 0);
+    const b = f.enemy(2, 0);
+    a.onDamaged = () => { b.untargetable = true; };
+    assert.ok(f.ctx.combat.triggerReaction(center, 'veinseal', 100));
+    f.advance(0.05);
+    assert.equal(reactions.length, 1);
+    assert.equal(a.hp < 10000, true, '导流打到了第一个');
+    assert.equal(b.hp, 10000, '第二个已不可选中');
+    assert.equal(reactions[0].hits, 2, '中心 + 第一个导流；免疫的不算');
+  }
+  // 反应打中心（Reactions.hit）：焚雷排进队列后中心转入不可选中——中心那一击是 immune，hit() 返回 null，不算命中
+  {
+    const f = fixture();
+    const reactions = [];
+    f.ctx.events.on('enemy:reaction', ev => reactions.push(ev));
+    const center = f.enemy(0, 0);
+    assert.ok(f.ctx.combat.triggerReaction(center, 'thunderfire', 100));
+    center.untargetable = true;
+    f.advance(0.05);
+    assert.equal(reactions.length, 1);
+    assert.equal(center.hp, 10000);
+    assert.equal(reactions[0].hits, 0, '只有一只、它又免疫：0 命中');
+  }
+});
+
+test('immune results do not trigger: full-charge detonate (Ballistics), weapon affixes (AffixEffects), blade swarm (DemonBlade)', () => {
+  // 满蓄引爆：射线层交来的目标在结算时是 immune → 不引爆（Unity Ballistics）；对照组：可选中的照常引爆
+  {
+    const f = fixture();
+    const detonated = [];
+    f.ctx.combat.detonate = (e, o) => { detonated.push({ e, o }); return null; };
+    const imm = f.enemy(0, -5, { untargetable: true });
+    const ok = f.enemy(0, -5);
+    let target = imm;
+    f.ctx.enemies.raycast = (origin, dir, maxDist, exclude) => (exclude.has(target) ? null
+      : { enemy: target, distance: 5, headshot: false, point: new THREE.Vector3(0, 1, -5) });
+    const b = new Ballistics(f.ctx, { getMuzzleWorld: o => o.set(0, 1.5, 0) }, () => 0.5);
+    const R = { def: { range: 60, chargeDetonate: true, knockback: 0, impactSize: 1, tracerWidth: 0.02 }, damage: 100, pierce: 0, elementChance: 0, critMult: 2, critChance: 0 };
+    const inst = { uid: 1, element: 'none', affixes: [] };
+    const shot = { mult: 1, pierceBonus: 0, full: true, strength: 1 };
+    const fire = () => b.trace(inst, R, new THREE.Vector3(0, 1.7, 0), new THREE.Vector3(0, 0, -1), false, 1, 0xffffff, 'none', shot);
+    fire();
+    assert.equal(detonated.length, 0, '打在免疫上不引爆');
+    assert.equal(imm.hp, 10000);
+    target = ok;
+    fire();
+    assert.equal(detonated.length, 1, '对照：可选中的满蓄照常引爆');
+    assert.equal(detonated[0].e, ok);
+  }
+  // 武器词条：immune 结果会派发 enemy:damaged（提示用），但词条不触发（Unity AffixEffects.OnDamaged）——用狂热叠层看
+  {
+    const f = fixture();
+    const inst = { uid: 1, element: 'none', affixes: [] };
+    const rt = { shots: 0, frenzy: 0, frenzyTime: -1, lastHeadBlast: -1, readyAt: 0, cycleIndex: 0, rxnHasteUntil: 0 };
+    const R = { legendary: 'lg_frenzy', legendaryValue: 0, hitShield: 0, headBlast: 0, ricochet: 0, meleeHitScale: 1, def: { pellets: 1 },
+      subFire: 0, subShock: 0, subCorrode: 0, detonate: 0, seed: 0, killRefill: 0 };
+    const fx = new AffixEffects(f.ctx, { find: uid => (uid === 1 ? inst : null), resolve: () => R, runtime: () => rt, refill() {} });
+    f.ctx.events.on('enemy:damaged', ({ enemy, result }) => fx.onDamaged(enemy, result));
+    const imm = f.enemy(3, 0, { untargetable: true });
+    const r = f.hit(imm, { weaponUid: 1 });
+    assert.ok(r.immune);
+    assert.ok(f.damaged.some(d => d.result === r), 'immune 结果派发了 enemy:damaged');
+    assert.equal(rt.frenzy, 0, '免疫不叠狂热');
+    f.hit(f.enemy(4, 0), { weaponUid: 1 });
+    assert.equal(rt.frenzy, 1, '对照：真打中叠一层');
+  }
+  // 碎刃刃群：按距离逐个结算；打第一只时它的受击回调让第二只转入不可选中 → 第二只 immune，不算命中、不涨刀意
+  {
+    const f = fixture();
+    const a = f.enemy(1, 0);
+    const b = f.enemy(2, 0);
+    a.onDamaged = () => { b.untargetable = true; };
+    const gained = [];
+    const P = { swarm: { maxTargets: 6, damage: 10, elementScale: 1 }, intent: { swarmHit: 1 } };
+    const blade = { ctx: f.ctx, swarm: { center: new THREE.Vector3(0, 0, 0) }, hits: [], P, gainIntent: v => gained.push(v) };
+    DemonBlade.prototype.swarmTick.call(blade, { uid: 1, element: 'none' }, { damageMult: 1, elementChance: 0, critMult: 2, critChance: 0 }, P, 5);
+    assert.ok(a.hp < 10000);
+    assert.equal(b.hp, 10000);
+    assert.deepEqual(gained, [1], '刀意只按真打中的 1 只涨');
+  }
+});
+
+test('immune results do not count as hits: thunder judgment only counts hits that dealt damage', async () => {
   const f = fixture();
   const a = f.enemy(0, 1, { untargetable: true });
   const b = f.enemy(0, -1);
-  // queryRadius 按契约跳过不可选中的；这里绕开它直接把两只都交给爆炸，免疫的那只不算命中
-  f.ctx.enemies.queryRadius = (c, r, out = []) => { out.length = 0; out.push(a, b); return out; };
-  const hits = f.ctx.combat.explode(new THREE.Vector3(0, 1, 0), 3, { base: 50, element: 'none', source: 'explosion', procDepth: 0, canCrit: false });
-  assert.equal(hits, 1);
-  // 调用方：都跳过 immune（Unity：DemonBladeController / Ballistics / SkillFx / AffixEffects 查 r.immune 或 total > 0）
+  // 调用方：都跳过 immune（Unity：DemonBladeController / Ballistics / SkillFx / AffixEffects 查 r.immune 或 total > 0）。上面三条测试用真调用驱动，这里只把写法钉住
   assert.match(await src('player/skills/common.ts'), /if \(r && !r\.immune\) hits\+\+;/);
   assert.equal((await src('weapons/demonBlade/DemonBlade.ts')).match(/if \(!res \|\| res\.immune\) continue;/g)?.length, 2);
   assert.match(await src('weapons/Firing.ts'), /detonate && res && !res\.immune && !res\.killed/);
@@ -227,6 +363,87 @@ test('immune results do not count as hits: explosions, skill shockwaves, blade, 
   assert.equal(booms.length, 0, '只打在免疫上攒不满');
   for (let i = 0; i < 16; i++) { f.advance(0.1); f.hit(b); }
   assert.equal(booms.length, 1, '真打出伤害的 16 次召唤一次');
+});
+
+// ───────────── 3b. 格挡提示 ─────────────
+
+test('blocked: a hit zone that eats the whole shot pops 格挡 (not 免疫) and still raises enemy:damaged; unblocked zero damage stays silent', async () => {
+  const dn = await cs('UI/Widgets/DamageNumbers.cs');
+  assert.match(dn, /Kind\.Blocked => "格挡"/);
+  assert.match(dn, /if \(r\.blocked && r\.total < 1\)\s*\{\s*Queue\(t, pos, 0, false, Element\.None, Kind\.Blocked, false\);/);
+  assert.equal(BLOCKED_TEXT, '格挡');
+  assert.equal(BLOCKED_COLOR, Number.parseInt(dn.match(/BlockedColor = Hex\.Rgb\(0x([0-9a-f]+)\)/i)[1], 16));
+  assert.match(await cs('Combat/Combat.cs'), /if \(r\.total > 0 \|\| r\.immune \|\| r\.blocked\)/);
+
+  const f = fixture();
+  const shown = [];
+  f.ctx.settings.damageNumbers = true;
+  f.ctx.ui.damageNumber = (pos, amount, opts) => shown.push({ amount, ...opts });
+  const zone = mult => ({ zoneAt: () => ({ multiplierFor: () => mult, record() {} }) });
+  // 整发挡掉（区倍率 0）
+  const wall = f.enemy(3, 0, { hitZones: zone(0) });
+  const r = f.hit(wall, { point: new THREE.Vector3(3, 1, 0), direction: new THREE.Vector3(1, 0, 0) });
+  assert.equal(r.blocked, true);
+  assert.equal(r.dealt, 0);
+  assert.equal(f.damaged.at(-1).result, r, '格挡也派发 enemy:damaged');
+  f.advance(0.016);
+  assert.deepEqual(shown.map(s => [s.kind, s.text]), [['reaction', '格挡']], '弹「格挡」，不弹「免疫」');
+  assert.equal(shown[0].color, BLOCKED_COLOR);
+  // 挡掉大半、剩下不到 1 点：Unity 也弹「格挡」不弹数字
+  shown.length = 0;
+  const chip = f.enemy(4, 0, { hitZones: zone(0.004) });
+  const r2 = f.hit(chip, { point: new THREE.Vector3(4, 1, 0), direction: new THREE.Vector3(1, 0, 0) });
+  assert.ok(r2.blocked && r2.dealt > 0 && r2.dealt < 1);
+  f.advance(0.016);
+  assert.deepEqual(shown.map(s => s.text ?? s.amount), ['格挡']);
+  // 同一帧几颗弹丸都被挡：照 Unity 不合并（每颗一个「格挡」）
+  shown.length = 0;
+  for (let i = 0; i < 3; i++) f.hit(wall, { point: new THREE.Vector3(3, 1, 0), direction: new THREE.Vector3(1, 0, 0) });
+  f.advance(0.016);
+  assert.equal(shown.filter(s => s.text === '格挡').length, 3);
+  // 没被格挡的 0 伤害：Unity 不发事件、不弹字（以前网页弹「免疫」）
+  shown.length = 0;
+  const n = f.damaged.length;
+  const numb = f.enemy(5, 0, { damageTakenMult: 0 });
+  const r3 = f.hit(numb);
+  assert.ok(r3 && !r3.blocked && !r3.immune && r3.dealt === 0);
+  f.advance(0.016);
+  assert.equal(f.damaged.length, n, '不派发');
+  assert.deepEqual(shown, [], '不弹字');
+  // 处决被挡也不弹字（Unity DamageNumbers 先判 IsExecute）
+  f.hit(wall, { base: 2e6, point: new THREE.Vector3(3, 1, 0), direction: new THREE.Vector3(1, 0, 0) });
+  f.advance(0.016);
+  assert.deepEqual(shown, []);
+});
+
+// ───────────── 7. 货币叫法 ─────────────
+
+test('currency is 灵石 (Unity D13): stat name, wealth talent, chest hint, reward name, shop / loot toasts match the Unity strings', async () => {
+  const unityText = {
+    stat: (await cs('Core/StatInfo.cs')).match(/Stat\.CoinGainPct => new\(s, "([^"]+)"/)[1],
+    talent: (await cs('Progression/Meta/Talents/Talent_Wealth.cs')).match(/"财富", Stat\.CoinGainPct, 0\.08f, "([^"]+)"/)[1],
+    chest: [...(await cs('Loot/Rewards/CoinsReward.cs')).matchAll(/"(一大堆灵石[^"]*)"/g)].map(m => m[1]),
+    rewardName: (await cs('Loot/Rewards/CoinsReward.cs')).match(/Hint\(string\[\] args\) => "([^"]+)"/)[1],
+    notEnough: (await cs('Loot/Shop/ShopCounter.cs')).match(/NotEnough = "([^"]+)"/)[1],
+    upgrade: [...(await cs('Loot/Rewards/UpgradeReward.cs')).matchAll(/"([^"]*改为灵石)"/g)].map(m => m[1]),
+    scrollsFull: (await cs('Loot/LootDirector.cs')).match(/"(秘卷已全部满层，改为灵石)"/)[1],
+  };
+  const { STAT_INFO } = await import(await ts('core/Stats.ts'));
+  assert.equal(STAT_INFO.coinGainPct.name, unityText.stat);
+  assert.equal(unityText.stat, '灵石获取');
+  const meta = await src('progression/Meta.ts');
+  assert.ok(meta.includes(`talent('wealth', '财富', 'coinGainPct', 0.08, '${unityText.talent}')`), '财富天赋描述');
+  const chests = await src('progression/loot/Chests.ts');
+  for (const line of unityText.chest) assert.ok(chests.includes(`'${line}'`), `宝箱提示「${line}」`);
+  assert.ok((await src('progression/RunPlan.ts')).includes(`coins: '${unityText.rewardName}'`), '奖励名');
+  assert.ok((await src('progression/loot/Shop.ts')).includes(`this.deny('${unityText.notEnough}')`), '商店「灵石不足」');
+  const loot = await src('progression/Loot.ts');
+  for (const t of [...unityText.upgrade, unityText.scrollsFull]) assert.ok(loot.includes(`'${t}'`), `提示「${t}」`);
+  // 这几处文件的字符串字面量里不再出现「金币」（注释里讲机制的不算）
+  for (const file of ['core/Stats.ts', 'progression/Meta.ts', 'progression/Loot.ts', 'progression/RunPlan.ts', 'progression/loot/Chests.ts', 'progression/loot/Shop.ts', 'progression/loot/Pickups.ts']) {
+    const text = (await src(file)).replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+    assert.doesNotMatch(text, /['"`][^'"`\n]*金币[^'"`\n]*['"`]/, `${file}：字符串里还写着金币`);
+  }
 });
 
 // ───────────── 4. 玩家减益 ─────────────
