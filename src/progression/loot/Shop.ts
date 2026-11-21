@@ -310,7 +310,7 @@ export class ShopManager {
       default:
         break;
     }
-    if (ctx.run.coins < price) return this.deny('金币不足');
+    if (ctx.run.coins < price) return this.deny('灵石不足');
 
     // Lock before emitting events: event callbacks may re-enter interaction in this frame.
     s.buying = true;

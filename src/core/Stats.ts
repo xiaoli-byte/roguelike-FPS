@@ -101,7 +101,7 @@ export const STAT_INFO: Record<StatKey, { name: string; format: StatFormat }> = 
   skillHaste: { name: '技能急速', format: 'pct' },
   secondaryCharges: { name: '副技能充能', format: 'int' },
   pickupRadius: { name: '拾取范围', format: 'flat' },
-  coinGainPct: { name: '金币获取', format: 'pct' },
+  coinGainPct: { name: '灵石获取', format: 'pct' },
   luck: { name: '幸运', format: 'flat' },
 };
 

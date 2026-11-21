@@ -172,7 +172,7 @@ export class LootSystem implements ILoot {
           _pos.y += 1;
           ctx.fx.burst(_pos, 0x4aa3ff, 24, 3.5, 0.6, 0.09, -2);
         } else {
-          ctx.ui.toast(w ? '当前武器已满级，改为金币' : '没有可强化的武器，改为金币', '#ffd54a');
+          ctx.ui.toast(w ? '当前武器已满级，改为灵石' : '没有可强化的武器，改为灵石', '#ffd54a');
           this.pickups.dropCoins(pos, Math.round(80 * chapterMult * ctx.player.stats.mult('coinGainPct')), 1.5);
         }
         break;
@@ -203,7 +203,7 @@ export class LootSystem implements ILoot {
     if (options.length === 0 && offer.minRarity !== undefined) options = ctx.scrolls.roll(offer.count);
     if (options.length === 0) {
       const amount = Math.round(40 * offer.count * (1 + REWARD_CHAPTER_COIN * Math.max(0, ctx.run.chapter)));
-      ctx.ui.toast('秘卷已全部满层，改为金币', '#ffd54a');
+      ctx.ui.toast('秘卷已全部满层，改为灵石', '#ffd54a');
       _pos.copy(ctx.player.position);
       _pos.y += 1.2;
       this.pickups.dropCoins(_pos, amount, 1.2);

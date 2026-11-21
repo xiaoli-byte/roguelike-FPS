@@ -35,7 +35,7 @@ export const TALENTS: readonly TalentDef[] = [
   talent('reload', '装填', 'reloadSpeedPct', 0.05, '每级换弹速度 +5%'),
   talent('affinity', '元素亲和', 'elementChancePct', 0.03, '每级元素触发率 +3%'),
   talent('haste', '技能急速', 'skillHaste', 0.05, '每级技能急速 +5%'),
-  talent('wealth', '财富', 'coinGainPct', 0.08, '每级金币获取 +8%'),
+  talent('wealth', '财富', 'coinGainPct', 0.08, '每级灵石获取 +8%'),
   talent('fortune', '幸运', 'luck', 1, '每级幸运 +1（更容易出现高稀有度的武器与秘卷）'),
 ];
 

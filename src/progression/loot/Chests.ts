@@ -201,7 +201,9 @@ export class ChestManager {
       case 'weapon':
         return weaponRewardHintFor(reward, type, Math.max(0, this.ctx.run.chapter), id => (hasWeaponDef(id) ? getWeaponDef(id).name : undefined));
       case 'coins':
-        return '一大堆金币';
+        // 同 Unity CoinsReward.Line（局内货币叫灵石，D13）：精英关的宝箱灵石 ×1.4（Loot.grant / EconomyConfig.ChestCoins）时标出精英加成。
+        // Unity 首领档（tier=boss）也写「精英加成」，但 ChestCoins 只给精英档 ×1.4；这里按实际发放，只在精英关标
+        return type === 'elite' ? '一大堆灵石（精英加成）' : '一大堆灵石';
       case 'heal':
         return '回复 50% 生命，生命上限 +10';
       case 'upgrade':
