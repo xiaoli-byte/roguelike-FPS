@@ -6,7 +6,7 @@ import { launch } from '../plateau/cdp.mjs';
 const port = process.argv[2] ?? '5741';
 const out = process.argv[3] ?? 'docs/art/review/threejs-migration';
 const heroes = (process.argv[4] ?? 'fox,bear,falcon').split(',');
-/** 只跑某几段（逗号分隔，如 M8_ONLY=flamer,immune）：weapons dash aim flamer railgun recoil status charge immune weakpoint skills；不设 = 全跑 */
+/** 只跑某几段（逗号分隔，如 M8_ONLY=flamer,immune）：weapons dash aim flamer railgun recoil status charge arc blocked coins immune weakpoint skills；不设 = 全跑 */
 const only = process.env.M8_ONLY ? new Set(process.env.M8_ONLY.split(',')) : null;
 const want = k => !only || only.has(k);
 const log = (...a) => console.log('[m8]', ...a);
@@ -273,6 +273,80 @@ for (const hero of heroes) {
         return { charged: es.slice(1).filter(e => e.alive && ch.isCharged(e)).length, alive: es.filter(e => e.alive).length, rx };
       })()`);
       check('带电：死亡传电 + 火碰带电 = 焚雷', arc.rx.includes('thunderfire') && (arc.charged >= 1 || arc.alive <= 1), JSON.stringify(arc));
+    }
+
+    if (want('arc')) {
+      // ── 死亡传电选目标（Unity Charge.Arc → ReactionSystem.Nearest）：身体中心 ≤ 8 m 才传，不加敌人半径 ──
+      // 三只同种怪刷好、过了出生无敌后，结算前把两只同伴摆到源的正侧方：一只 7.4 m，一只 8 m + 0.6 × 半径（EnemyManager.queryRadius 的粗筛查得到）
+      await level();
+      await clearFoes();
+      await foes('jerboa_blade', 3, 6);
+      await step(1.2);
+      const pick = await b.eval(`(() => {
+        const c = window.__ctx, p = c.player, V = p.position.constructor;
+        const es = c.enemies.list.filter(e => e.alive && !e.untargetable);
+        if (es.length < 3) return null;
+        const [src, inside, edge] = es;
+        const f = p.getForward(new V()), r = new V(f.z, 0, -f.x);
+        const radius = src.radius;
+        inside.position.copy(src.position).addScaledVector(r, 7.4);
+        edge.position.copy(src.position).addScaledVector(r, -(8 + radius * 0.6));
+        const cs = src.getBodyCenter(new V());
+        const d = e => +e.getBodyCenter(new V()).distanceTo(cs).toFixed(3);
+        const dist = { dInside: d(inside), dEdge: d(edge) };
+        const ch = c.combat.charge;
+        ch.apply(src, 6);
+        c.combat.damageEnemy(src, { base: 1e5, element: 'none', source: 'weapon', procDepth: 0 });
+        return { radius, ...dist, insideCharged: ch.isCharged(inside), edgeCharged: ch.isCharged(edge), srcAlive: src.alive };
+      })()`);
+      check('死亡传电：8 m 内的传、8 m 外（粗筛的半径余量里）的不传', !!pick && !pick.srcAlive && pick.dInside <= 8 && pick.dEdge > 8 && pick.dEdge <= 8 + pick.radius
+        && pick.insideCharged && !pick.edgeCharged, JSON.stringify(pick));
+      await step(0.3);
+    }
+
+    if (want('blocked')) {
+      // ── 格挡（Unity DamageNumbers.Kind.Blocked）：命中区整发挡掉 → 浮字「格挡」+ 派发 enemy:damaged，不弹「免疫」 ──
+      await level();
+      await clearFoes();
+      await foes('jerboa_blade', 1, 5);
+      await step(1.2);
+      const blk = await b.eval(`(() => {
+        const c = window.__ctx, V = c.player.position.constructor;
+        const e = c.enemies.list.find(x => x.alive && !x.untargetable);
+        if (!e) return null;
+        c.settings.damageNumbers = true;
+        e.hitZones = { zoneAt: () => ({ multiplierFor: () => 0, record() {} }) };
+        const seen = [], shown = [];
+        const off = c.events.on('enemy:damaged', ev => { if (ev.enemy === e) seen.push({ blocked: !!ev.result.blocked, immune: !!ev.result.immune, dealt: ev.result.dealt }); });
+        const ui = c.ui, orig = ui.damageNumber;
+        ui.damageNumber = function (pos, amount, opts) { shown.push({ amount, kind: opts?.kind, text: opts?.text }); return orig.call(this, pos, amount, opts); };
+        const count = t => [...document.querySelectorAll('.sf-dn')].filter(n => n.textContent === t).length;
+        const before = { blocked: count('格挡'), immune: count('免疫') };
+        const hp0 = e.hp;
+        c.combat.damageEnemy(e, { base: 40, element: 'none', source: 'weapon', procDepth: 0, canCrit: false, point: e.getBodyCenter(new V()), direction: new V(0, 0, 1) });
+        window.__step(0.12);
+        ui.damageNumber = orig;
+        off();
+        e.hitZones = null;
+        return { seen, shown, kept: e.hp === hp0, dom: { blocked: count('格挡') - before.blocked, immune: count('免疫') - before.immune } };
+      })()`);
+      await b.shot(`${out}/m8-blocked.jpg`);
+      check('格挡：浮字「格挡」、派发 enemy:damaged、不弹「免疫」', !!blk && blk.kept && blk.seen.length === 1 && blk.seen[0].blocked && !blk.seen[0].immune
+        && blk.shown.length === 1 && blk.shown[0].text === '格挡' && blk.dom.blocked >= 1 && blk.dom.immune === 0, JSON.stringify(blk));
+    }
+
+    if (want('coins')) {
+      // ── 货币叫法（Unity D13）：宝箱提示、奖励名、属性名都写灵石 ──
+      const coins = await b.eval(`(() => {
+        const c = window.__ctx, p = c.player, V = p.position.constructor;
+        const f = p.getForward(new V());
+        c.loot.spawnChest(new V(p.position.x + f.x * 4, p.position.y, p.position.z + f.z * 4), 'coins');
+        window.__step(0.2);
+        const chest = c.loot.chests.list.at(-1);
+        const prompt = chest?.interactable?.prompt?.();
+        return { prompt, label: c.runPlan.rewardLabel('coins') };
+      })()`);
+      check('货币叫灵石：宝箱提示 / 奖励名', !!coins.prompt && JSON.stringify(coins.prompt).includes('一大堆灵石') && !JSON.stringify(coins).includes('金币') && coins.label === '灵石', JSON.stringify(coins));
     }
 
     if (want('immune')) {
