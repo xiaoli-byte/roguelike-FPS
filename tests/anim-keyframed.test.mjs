@@ -5,7 +5,8 @@
 //   · 第四章手 K 片段与招式时间轴（前摇 / 出手 / 收招）对得上：片段长 = 招式总长、hit / release 事件落在释放帧 ≤ 1 帧；
 //   · 鲲 / 鹏 / 火麒麟 / 旱魃 / 商人的手 K 片段齐全，首领招式等的事件都在片段里；
 //   · 鲲鹏：照 Unity KunPengTests.KeyframedClips_EventsLandOnTheMoveTimeline_WithinOneFrame（潜袭 / 吐冰 / 羽刃雨 / 落台 / 起飞 / 倒下），
-//     片段触发照 KunPeng/Moves 的 Act、释放帧顿帧照 ImpactHold（同秒数、×0.05 → ×1.6 追回）；火麒麟的 PlayAct 交叉淡入秒数逐个相同。
+//     片段触发照 KunPeng/Moves 的 Act、释放帧顿帧照 ImpactHold（同秒数、×0.05 → ×1.6 追回）；火麒麟的 PlayAct 交叉淡入秒数逐个相同；
+//   · 商人：强化台旁边的行商 Idle / Talk。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -551,3 +552,99 @@ test('火麒麟：招式的片段与交叉淡入秒数照 Unity Brain.PlayAct（
   for (const s of new Set(web.map((x) => x.split('@')[0]))) assert.ok(s === 'Locomotion' || xuan.clips[s] || burn.clips[s], `${s} 有片段`);
 });
 
+// ───────────── 商人 ─────────────
+
+const { MerchantNpcs } = await import('../src/progression/loot/Merchant.ts');
+// Node 里 src/assets/AssetLibrary 换成 scripts/unity/stubs 的桩（ts-hooks）：测试改桩的 get / findBound，当作行商资产已加载
+const { AssetLibrary } = await import('../scripts/unity/stubs/AssetLibrary.mjs');
+
+/** 无网格骨架 + 一块三角形的蒙皮网格（attachNativeBody 要 _LOD0 网格），当作已加载的行商资产 */
+function fakeMerchantAsset() {
+  const scene = buildSkeleton('SK_Npc_Merchant');
+  const bones = [];
+  scene.traverse((o) => { if (o.isBone) bones.push(o); });
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 1, 0, 1, 0, 0], 3));
+  geo.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(new Array(12).fill(0), 4));
+  geo.setAttribute('skinWeight', new THREE.Float32BufferAttribute([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], 4));
+  const mesh = new THREE.SkinnedMesh(geo, new THREE.MeshStandardMaterial());
+  mesh.name = 'SK_Npc_Merchant_LOD0';
+  scene.add(mesh);
+  mesh.bind(new THREE.Skeleton(bones));
+  return {
+    id: 'SK_Npc_Merchant', gltf: { scene }, lods: [mesh],
+    entry: { skeleton: { mode: 'native' }, bind: { source: 'npc', id: 'merchant' }, lodDistance: [0], bounds: { min: [-0.5, 0, -0.4], max: [0.5, 1.5, 0.4] } },
+  };
+}
+
+test('商人：强化台旁边摆狸猫行商（Idle / Talk 两段手 K 循环）——玩家走近或刚成交就 Talk，走开、成交过去 3 s 后交叉淡回 Idle；站位是墙就不摆', async () => {
+  const data = animData('SK_Npc_Merchant');
+  assert.ok(data.clips.Idle.loop && data.clips.Talk.loop, 'Idle / Talk 都是循环');
+  assert.deepEqual(data.controller.layers[0].states.map((s) => s.name).sort(), ['Locomotion', 'Talk']);
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const p = join(ROOT, 'public', String(url).replace(/^\/+/, ''));
+    return existsSync(p) ? { ok: true, status: 200, json: async () => JSON.parse(readFileSync(p, 'utf8')) } : { ok: false, status: 404, json: async () => null };
+  };
+  const { get, findBound } = AssetLibrary;
+  let asset = fakeMerchantAsset();
+  AssetLibrary.get = (id) => (id === 'SK_Npc_Merchant' ? asset : null);
+  AssetLibrary.findBound = () => null;
+  try {
+    const handlers = {};
+    let wall = null;
+    const ctx = {
+      world: { raycast: () => wall, groundHeight: () => 0 }, stage: { arena: { floorY: 0 } },
+      events: { on: (name, h) => { handlers[name] = h; } },
+      player: { alive: true, position: new THREE.Vector3(0, 0, 0), eye: new THREE.Vector3(0, 1.6, 0) }, time: { now: 0 },
+    };
+    const group = new THREE.Group();
+    const m = new MerchantNpcs(ctx, group);
+    const dispose = m.spawn(new THREE.Vector3(0, 0, -6.4), new THREE.Vector3(0, 0, 0));
+    assert.equal(group.children.length, 1, '摆上了');
+    const host = group.children[0];
+    // 摊位弧（6.4 m）往外 0.8 m、从强化台往一侧挪 12.5°（半个摊位间隔），面朝商铺中心
+    const side = 12.5 * Math.PI / 180;
+    assert.ok(host.position.distanceTo(new THREE.Vector3(-Math.sin(side) * 7.2, 0, -Math.cos(side) * 7.2)) < 1e-6, `站位 ${host.position.toArray()}`);
+    assert.ok(Math.abs(host.rotation.y - side) < 1e-6, '面朝商铺中心');
+    const k = m.keepers[0];
+    for (let i = 0; i < 100 && !k.clips.ready; i++) await new Promise((r) => setTimeout(r, 10));
+    assert.ok(k.clips.ready, '片段读好了');
+    const step = (s) => { for (let t = 0; t < s; t += 0.05) { ctx.time.now += 0.05; m.update(0.05); } };
+    step(0.5);
+    assert.equal(k.clips.state, 'Locomotion', '玩家在 7.2 m 外：待机');
+    ctx.player.position.set(0, 0, -3);
+    step(0.5);
+    assert.equal(k.clips.state, 'Talk', '走近：开口');
+    ctx.player.position.set(0, 0, 12);
+    step(0.5);
+    assert.equal(k.clips.state, 'Locomotion', '走开：回待机');
+    // 在最右边的摊位前买东西（离行商 8.2 m，不算走近）
+    ctx.player.position.set(4.6, 0, -1.2);
+    step(0.2);
+    assert.equal(k.clips.state, 'Locomotion');
+    handlers['coins:changed']({ coins: 10, delta: -40 });
+    step(0.2);
+    assert.equal(k.clips.state, 'Talk', '刚成交：开口');
+    step(3);
+    assert.equal(k.clips.state, 'Locomotion', '成交 3 s 后回待机');
+    handlers['coins:changed']({ coins: 50, delta: 40 });
+    step(0.2);
+    assert.equal(k.clips.state, 'Locomotion', '进账不算成交');
+    dispose();
+    assert.equal(group.children.length, 0, '撤掉了');
+    assert.equal(m.keepers.length, 0);
+    // 台子后面是墙：不摆
+    wall = { distance: 0.6, point: new THREE.Vector3(), normal: new THREE.Vector3(0, 0, 1) };
+    m.spawn(new THREE.Vector3(0, 0, -6.4), new THREE.Vector3(0, 0, 0));
+    assert.equal(group.children.length, 0);
+    // 资产没加载：不摆、不出替身
+    wall = null;
+    asset = null;
+    m.spawn(new THREE.Vector3(0, 0, -6.4), new THREE.Vector3(0, 0, 0));
+    assert.equal(group.children.length, 0);
+  } finally {
+    globalThis.fetch = realFetch;
+    Object.assign(AssetLibrary, { get, findBound });
+  }
+});
