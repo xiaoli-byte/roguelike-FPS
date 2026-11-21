@@ -5,9 +5,11 @@
 //   · 图鉴（src/ui/codex/Codex.ts）：敌人名册与顺序（[Defs] 序）、首领名 / 称号、Lore、隐藏 / 别名、分页、收录存档。
 //   · 全图（src/ui/MapMarkers.ts）：方位、视线朝向、俯视图投影照 Unity MapMarkers / MapScreen（导出器只翻 X），图框尺寸常数。
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import test, { after } from 'node:test';
 import { readFile, readdir } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
+import * as THREE from 'three';
+import { tsGraph } from './unity-parity-kit.mjs';
 
 const dataModule = (source) => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 const read = async (path) => (await readFile(new URL(path, import.meta.url), 'utf8')).replace(/^﻿/, '');
@@ -17,6 +19,18 @@ const SD = await load('../src/ui/ScreenData.ts');
 const CX = await load('../src/ui/codex/Codex.ts');
 const KB = await load('../src/ui/KeyBinds.ts');
 const MM = await load('../src/ui/MapMarkers.ts');
+
+// 要连带 import 的模块走 tsGraph（去类型后写进临时目录，three 用真的）；图鉴缩略图棚的 AssetLibrary 读 import.meta.env，打桩
+const graph = await tsGraph({ 'assets/AssetLibrary.ts': 'export const AssetLibrary = {};' });
+after(() => graph.dispose());
+const LEGEND = (await graph.load('progression/scrolls/defsLegend.ts')).LEGEND_SCROLLS;
+const SCROLL_KIT = await graph.load('progression/scrolls/ScrollKit.ts');
+const AFFIXES = await graph.load('enemies/Affixes.ts');
+const BARS = await graph.load('ui/hud/EnemyBars.ts');
+const INV = await graph.load('ui/screens/InventoryScreen.ts');
+const KIT = await graph.load('ui/screens/ScreenKit.ts');
+const THUMBS = await graph.load('ui/codex/CodexThumbs.ts');
+const PORTAL = await graph.load('world/Portal.ts');
 
 const U = '../unity/Assets/Game/Scripts/';
 const unity = (path) => read(U + path);
@@ -241,9 +255,9 @@ test('天赋行、秘卷卡面、选英雄技能行照 Unity TalentScreen / Scro
 
   const sc = await unity('UI/Screens/ScrollChoiceScreen.cs');
   for (const lit of ['"升层" : "新得"', '（已满）', '层数 {cur} → {next} / {max}', '"唯一 · 已持有" : "唯一"', '"代价"']) assert.ok(sc.includes(lit), lit);
-  const glass = { id: 'glass_cannon', name: '玉碎', description: '武器伤害 +55%（代价：受到的伤害 +35%）。', rarity: 4, maxStacks: 1 };
+  const glass = LEGEND.find((d) => d.id === 'glass_cannon');
   const v = SD.scrollCardView(glass, 0, '传说');
-  assert.deepEqual([v.state, v.rarityVertical, v.upside, v.downside, v.pips, v.count], ['新得', '传\n说', '武器伤害 +55%', '受到的伤害 +35%', [], '唯一']);
+  assert.deepEqual([v.state, v.rarityVertical, v.upside, v.downside, v.pips, v.count], ['新得', '传\n说', '武器伤害 +55%。', '受到的伤害 +35%。', [], '唯一']);
   const stack = SD.scrollCardView({ id: 'blade', name: '利刃', description: '武器伤害每层 +{n}×6%。', rarity: 0, maxStacks: 3 }, 2, '普通');
   assert.deepEqual([stack.state, stack.cur, stack.next, stack.upside, stack.pips, stack.count], ['升层', 2, 3, '武器伤害每层 +3×6%。', ['owned', 'owned', 'next'], '层数 2 → 3 / 3']);
   assert.equal(SD.scrollCardView({ ...glass, maxStacks: 3 }, 3, '传说').count, '层数 3 / 3（已满）');
@@ -253,6 +267,160 @@ test('天赋行、秘卷卡面、选英雄技能行照 Unity TalentScreen / Scro
   assert.deepEqual(SD.skillRow({ name: '尾焰火灵', description: '唤出九团火灵。冷却 20 秒。', cooldown: 20, charges: 1 }, false), { name: '尾焰火灵', meta: '冷却 20 秒', desc: '唤出九团火灵。' });
   assert.deepEqual(SD.skillRow(null, false), { name: '—', meta: '', desc: '' });
   assert.deepEqual([SD.barRatio(90, [100, 90, 140]), SD.barRatio(5, [0]), SD.barRatio(200, [100])], [90 / 140, 0, 1]);
+});
+
+test('高风险传说卷的代价行照 Unity：卡面收益 / 「代价」朱字行分开（SplitDownside），行囊另起一行「代价：…」，图鉴整段说明代价行标红（Describe 富文本）', async () => {
+  const base = await unity('Progression/Scrolls/Legend/LegendScroll.cs');
+  assert.equal(SD.DOWNSIDE_PREFIX, /DownsidePrefix = "([^"]+)"/.exec(base)[1]);
+  assert.equal(SD.DOWNSIDE_COLOR, `#${/DownsideHex = "([0-9a-f]{6})"/.exec(base)[1]}`);
+  assert.deepEqual([SD.DOWNSIDE_PREFIX, SD.DOWNSIDE_COLOR], [SCROLL_KIT.DOWNSIDE_PREFIX, SCROLL_KIT.DOWNSIDE_COLOR], 'ScreenData 与 ScrollKit 同值');
+  // Unity 卡面：传说卷（HighRisk）用 upside / downside 两段；别的卷从描述里摘红色代价行
+  const sc = await unity('UI/Screens/ScrollChoiceScreen.cs');
+  assert.match(sc, /if \(def is LegendScroll \{ HighRisk: true \} ls\)\s*\{\s*upside = Fill\(def, ls\.upside, stacks\);\s*downside = Fill\(def, ls\.downside, stacks\);/);
+  assert.match(sc, /ScreenKit\.Text\("sf-scroll__downlabel", down, "代价"\);\s*ScreenKit\.Text\("sf-scroll__downtext", down, downside\);/);
+  // 网页的七张传说卷逐张对 Unity Legendary.cs 的 Text(收益, 代价)
+  const legendary = await unity('Progression/Scrolls/Legend/Legendary.cs');
+  const pairs = [...legendary.matchAll(/Text\("([^"]+)"(?:, "([^"]+)")?\);/g)].map((m) => [m[1], m[2] ?? '']);
+  const mine = LEGEND.filter((d) => !d.heroOnly);
+  assert.equal(mine.length, pairs.length);
+  for (const d of mine) {
+    const pair = pairs.find(([up]) => up === d.upside);
+    assert.ok(pair, `${d.id}：Unity 有同样的收益文字`);
+    const v = SD.scrollCardView(d, 0, '传说');
+    assert.deepEqual([v.upside, v.downside], pair, `${d.id}：卡面收益 / 代价`);
+    // 图鉴：Describe(1) = 收益 + 换行 + <color=#ff6a50>代价：…</color>（LegendScroll.Text）
+    assert.equal(SD.scrollRichText(d, 1), pair[1] ? `${pair[0]}\n<color=#ff6a50>代价：${pair[1]}</color>` : pair[0], `${d.id}：整段说明`);
+    // 拆开以后不能再带着描述里拼好的「代价：」行
+    assert.doesNotMatch(v.upside, /代价/, d.id);
+  }
+  // 只有描述、没有 upside / downside 字段的卷：从描述里摘「代价：…」那一行（Unity 摘 <color=#ff6a50> 那一段）
+  assert.deepEqual(SD.splitDownside({ description: '射速每层 +{n}×5%。\n代价：受到的伤害每层 +{n}×3%。' }, 2), { upside: '射速每层 +2×5%。', downside: '受到的伤害每层 +2×3%。' });
+  assert.deepEqual(SD.splitDownside({ description: '武器伤害 +8%。' }, 1), { upside: '武器伤害 +8%。', downside: '' });
+  // 行囊（Unity ScrollList.Render，detailed）：收益富文本一行 + sf-owned__down「代价：」+ 代价；暂停页的小签不带说明
+  const list = await unity('UI/Screens/ScrollList.cs');
+  assert.match(list, /ScrollChoiceScreen\.SplitDownside\(def, stacks, out var up, out var down\);\s*ScreenKit\.Text\("sf-owned__desc", row, up, rich: true\);\s*if \(!string\.IsNullOrEmpty\(down\)\) ScreenKit\.Text\("sf-owned__down", row, "代价：" \+ down\);/);
+  const kit = await read('../src/ui/screens/ScreenKit.ts');
+  assert.match(kit, /const \{ upside, downside \} = splitDownside\(def, stacks\);\s*text\('sf-owned__desc', row, upside, UIFontRole\.Body, true\);\s*if \(downside\) text\('sf-owned__down', row, DOWNSIDE_PREFIX \+ downside\);/);
+  // 图鉴（Unity CodexScreen.DescribeScroll：dDesc.text = s.Describe(1)，dDesc 是富文本标签）
+  const codex = await read('../src/ui/screens/CodexScreen.ts');
+  assert.match(codex, /const one = scrollRichText\(s, 1\);\s*this\.setDesc\(one\);/);
+  assert.match(codex, /private setDesc\(s: string\): void \{\s*setText\(this\.dDesc, s\);/);
+});
+
+// ───────────── 行囊属性表、精英印章色、图鉴武器缩略图、关卡卡片的触发 ─────────────
+
+/** Unity `Stat.MaxHp, Stat.CritChance…` → 网页 StatKey（首字母小写） */
+const statKeys = (block) => [...block.matchAll(/Stat\.(\w+)/g)].map((m) => m[1][0].toLowerCase() + m[1].slice(1));
+
+test('Tab 行囊常驻属性照 Unity StatGrid.KeyStats（14 项同序），暂停页精简表照 StatGrid.PauseStats', async () => {
+  const cs = await unity('UI/Screens/StatGrid.cs');
+  const keys = statKeys(/Stat\[\] KeyStats =\s*\{([\s\S]*?)\};/.exec(cs)[1]);
+  const pause = statKeys(/Stat\[\] PauseStats =\s*\{([\s\S]*?)\};/.exec(cs)[1]);
+  assert.equal(keys.length, 14);
+  assert.deepEqual(INV.KEY_STATS, keys);
+  assert.deepEqual(KIT.PAUSE_STATS, pause);
+  // 行囊用的就是这张表（Unity InventoryPanel：StatGrid.Render(statsGrid, …, StatGrid.KeyStats, true)）
+  assert.match(await unity('UI/Screens/InventoryPanel.cs'), /StatGrid\.KeyStats, true\)/);
+  assert.match(await read('../src/ui/screens/InventoryScreen.ts'), /renderStatGrid\(ctx, this\.statsGrid, KEY_STATS, true\)/);
+  // 属性名照 Unity StatInfo（局内货币叫灵石，D13）
+  const { STAT_INFO } = await graph.load('core/Stats.ts');
+  assert.equal(STAT_INFO.coinGainPct.name, /Stat\.CoinGainPct => new\(s, "([^"]+)"/.exec(await unity('Core/StatInfo.cs'))[1]);
+});
+
+test('局内货币在界面上叫灵石（Unity D13）：src/ui 不出现「金币」；属性名、天赋说明、清关奖励名照 Unity', async () => {
+  const files = (await readdir(new URL('../src/ui/', import.meta.url), { recursive: true })).filter((f) => /\.(ts|css)$/.test(f));
+  for (const f of files) assert.doesNotMatch(await read(`../src/ui/${f.replace(/\\/g, '/')}`), /金币/, f);
+  // 天赋（Talent_*.cs 的 base(id, 名字, 属性, 每级, 说明)），天赋页逐行显示说明
+  const meta = await read('../src/progression/Meta.ts');
+  const web = Object.fromEntries([...meta.matchAll(/talent\('(\w+)', '([^']+)', '(\w+)', ([\d.]+), '([^']+)'\)/g)].map((m) => [m[1], [m[2], m[3], Number(m[4]), m[5]]]));
+  const dir = new URL(U + 'Progression/Meta/Talents/', import.meta.url);
+  const talents = (await readdir(dir)).filter((f) => /^Talent_\w+\.cs$/.test(f));
+  assert.equal(talents.length, 10);
+  for (const f of talents) {
+    const m = /base\("(\w+)", "([^"]+)", Stat\.(\w+), ([\d.]+)f, "([^"]+)"\)/.exec(await unity(`Progression/Meta/Talents/${f}`));
+    assert.deepEqual(web[m[1]], [m[2], m[3][0].toLowerCase() + m[3].slice(1), Number(m[4]), m[5]], f);
+  }
+  // 关卡卡片「清关奖励 · …」（Unity StageCardScreen → Chest.Label）
+  const chest = await unity('Loot/Chest.cs');
+  const run = await read('../src/progression/RunPlan.ts');
+  for (const key of ['weapon', 'scroll', 'coins', 'upgrade']) {
+    const label = new RegExp(`case "${key}": return "([^"]+)";`).exec(chest)[1];
+    assert.match(run, new RegExp(`\\b${key}: '${label}'`), `${key} → ${label}`);
+  }
+});
+
+test('精英印章的词缀纹样用词缀本身的颜色（Unity EliteSeal ← aura.Accent ← affix.Color），血条词缀小标签用 AffixLabels 的颜色', async () => {
+  const seal = await unity('UI/Widgets/EliteSeal.cs');
+  assert.match(seal, /var tint = sig == EliteSigil\.None \? Gold : aura\.Accent\.Value;/);
+  assert.match(await unity('Enemies/Affixes/EliteAffixes.cs'), /aura\.SetSigil\(affix\.Id, affix\.Color\)/);
+  const hex = (c) => c.slice(0, 3).map((v) => Math.round(v * 255)).reduce((a, v) => a * 256 + v, 0);
+  for (const id of AFFIXES.AFFIX_IDS) {
+    const name = id[0].toUpperCase() + id.slice(1);
+    const src = await unity(`Enemies/Affixes/EliteAffix_${name}.cs`);
+    const want = Number(/Color => Hex\.Rgb\((0x[0-9a-f]+)\)/.exec(src)[1]);
+    assert.equal(hex(BARS.AFFIX_SEAL_COLORS[id]), want, `${id} 印章色 = EliteAffix_${name}.Color`);
+  }
+  const bars = await unity('UI/Widgets/EnemyBars.cs');
+  for (const m of bars.matchAll(/\["(\w+)"\] = \("([^"]+)", Hex\.Rgb\((0x[0-9a-f]+)\), "([^"]+)"\)/g)) {
+    const l = BARS.AFFIX_LABELS[m[1]];
+    assert.deepEqual([l.name, hex(l.color), l.hint], [m[2], Number(m[3]), m[4]], `${m[1]} 小标签`);
+  }
+  assert.match(await read('../src/ui/hud/EnemyBars.ts'), /s\.seal\.bind\(s\.elite, affixId \|\| null, isAffixId\(affixId\) \? AFFIX_SEAL_COLORS\[affixId\] : null\);/);
+});
+
+test('图鉴武器缩略图只拍枪身：去掉掉落模型的稀有度光晕精灵再取景（Unity CodexThumbs 实例化裸枪 prefab）', async () => {
+  const cs = await unity('UI/Screens/CodexThumbs.cs');
+  assert.match(cs, /Object\.Instantiate\(prefab/);
+  assert.doesNotMatch(cs, /Halo|halo|光晕/);
+  // 掉落模型里确实挂着光晕精灵
+  assert.match(await read('../src/weapons/WeaponModels.ts'), /const halo = new THREE\.Sprite\(haloMat\(rarity\)\);[\s\S]*?holder\.add\(halo\);/);
+  assert.match(await read('../src/ui/codex/CodexThumbs.ts'), /return bareGun\(this\.ctx\.weapons\.createWorldModel\(inst\)\);/);
+  const holder = new THREE.Group();
+  const gun = new THREE.Mesh(new THREE.BoxGeometry(1, 0.2, 0.1), new THREE.MeshBasicMaterial());
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial());
+  halo.scale.set(3, 1, 1);
+  holder.add(gun, halo);
+  const out = THUMBS.bareGun(holder);
+  assert.equal(out, holder);
+  let sprites = 0;
+  out.traverse((o) => { if (o.isSprite) sprites++; });
+  assert.equal(sprites, 0, '光晕摘掉了');
+  assert.equal(gun.parent, holder, '枪身还在');
+  const size = new THREE.Box3().setFromObject(out).getSize(new THREE.Vector3());
+  assert.deepEqual([size.x, size.y, size.z].map((v) => Math.round(v * 1000) / 1000), [1, 0.2, 0.1], '取景包围盒只算枪身');
+});
+
+test('关卡卡片只在玩家从出口进门时弹（Unity GameSession.CompleteStage），检视页直接 game.advance 不弹', async () => {
+  const session = await unity('Core/GameSession.cs');
+  assert.match(session, /if \(Managed && !final && UIRouter\.Get\(StageCardScreen\.ScreenId\) != null\)/);
+  assert.equal([...session.matchAll(/UIRouter\.Open\(StageCardScreen\.ScreenId/g)].length, 1, 'Unity 只有过关这一处弹卡');
+  // Game.advance 本身不问 UI：检视页（adventureLab / whiteboxLab）的跳关、重置、换关直接调它
+  const game = await read('../src/core/Game.ts');
+  const advance = /\n  advance\(next: StageNode\): void \{([\s\S]*?)\n  \}/.exec(game)[1];
+  assert.doesNotMatch(advance, /stageCard/);
+  for (const lab of ['adventureLab', 'whiteboxLab']) assert.match(await read(`../src/dev/${lab}.ts`), /game\.advance\(node\);/, lab);
+  // 出口进门：先问 UI；弹了卡就等「继续」，没弹（不在游玩中 / 没有路线数据）就直接换关
+  const calls = [];
+  let proceed = null, showCard = true;
+  const ctx = {
+    time: { now: 10 },
+    ui: { stageCard: (node, cb) => { calls.push(['card', node.id]); proceed = cb; return showCard; } },
+    game: { advance: (node) => calls.push(['advance', node.id]) },
+  };
+  const portal = Object.assign(Object.create(PORTAL.Portal.prototype), { ctx, node: { id: '1-2' }, ready: true, disposed: false, lastUse: -10 });
+  portal.enter();
+  assert.deepEqual(calls, [['card', '1-2']], '弹卡时先不换关');
+  proceed();
+  assert.deepEqual(calls, [['card', '1-2'], ['advance', '1-2']], '按「继续」才换关');
+  calls.length = 0;
+  showCard = false;
+  ctx.time.now = 20;
+  portal.enter();
+  assert.deepEqual(calls, [['card', '1-2'], ['advance', '1-2']], 'UI 没弹卡就直接换关');
+  calls.length = 0;
+  ctx.time.now = 20.5;
+  portal.enter();
+  assert.deepEqual(calls, [], '1 秒内重复进门不算');
 });
 
 // ───────────── 图鉴 ─────────────
