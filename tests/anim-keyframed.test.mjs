@@ -532,7 +532,8 @@ test('鲲鹏：释放帧顿帧与 Unity 同帧同秒数；顿帧把片段压到 
 
 test('鲲鹏 / 火麒麟：收招、转换结束、硬直结束回步态（Unity FinishMove / EndTransition / EndStagger 的 PlayLocomotion）；鹏倒下播手 K death，火麒麟倒下片段 97% 冻住', () => {
   const kp = bossSrc('KunPeng.ts'), ql = bossSrc('Qilin.ts'), fw = bossSrc('framework/BossBrain.ts');
-  assert.match(kp, /onMoveEnded\(_m: BossMove\): void \{\s*if \(this\.alive\) this\.formClips\?\.playLocomotion\(\);/);
+  // 收招回步态、打断不回（Unity FinishMove 有 PlayLocomotion，AbortMove 没有）——鲲鹏和火麒麟同一套
+  assert.match(kp, /onMoveEnded\(m: BossMove\): void \{\s*if \(this\.alive && !m\.cancelled\) this\.formClips\?\.playLocomotion\(\);/);
   assert.match(kp, /onTransitionEnd\(_phase: BossPhaseDef\): void \{[\s\S]{0,120}this\.formClips\?\.playLocomotion\(\);/);
   assert.match(kp, /onStaggerEnded\(\): void \{\s*this\.formClips\?\.playLocomotion\(\);/);
   // 框架：硬直正常结束（resume、还活着）才调 onStaggerEnded；转换 / 倒下打断的 endStagger(false) 不调（同 Unity EndStagger 的 if (!resume || Dead) return）

@@ -798,9 +798,9 @@ export class KunPeng extends BossBrain implements DirectedBoss {
     this.quake(0.5, 0.5);
   }
 
-  /** Unity BossBrain.FinishMove：收招 → PlayLocomotion（片段；打断时紧接着的硬直 / 转换 / 倒下动作会盖掉它） */
-  protected override onMoveEnded(_m: BossMove): void {
-    if (this.alive) this.formClips?.playLocomotion();
+  /** Unity BossBrain.FinishMove：收招 → PlayLocomotion（片段）；打断不播（AbortMove 没有 PlayLocomotion，紧接着的硬直 / 转换 / 倒下自己播动作） */
+  protected override onMoveEnded(m: BossMove): void {
+    if (this.alive && !m.cancelled) this.formClips?.playLocomotion();
   }
 
   /** Unity BossBrain.EndStagger(resume)：硬直（鹏俯冲撞墙的 crash）结束 → PlayLocomotion */
