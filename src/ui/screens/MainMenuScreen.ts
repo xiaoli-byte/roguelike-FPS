@@ -2,16 +2,19 @@
  * 主菜单（照译 Unity G/UI/Screens/MainMenuScreen.cs，样式 css/unity/menu.css 的 .sf-menu）：
  *   左：导航（开始游戏 / 天赋 / 图鉴 / 设置 / 操作说明），悬停或键盘焦点时朱砂笔触从左扫开；
  *   右：书法标题「灵火破晓」逐字落墨 +「烈焰为弹 · 破此轮回」+ 朱印「不熄」盖下；左上魂晶余额，底部生涯统计（出征 / 通关 / 最远 / 最多清关 / 累计斩敌）。
- * 其余页（选英雄、天赋、图鉴、设置、操作说明）叠在上面，主菜单本体淡出；回来时淡入、刷新余额与统计。
+ * 「继续征程」（M11d，Unity I5）：有未完成的征程（续玩档）时排在最前、当主按钮，小字写「关卡 · 英雄 · 用时 · 灵石」；
+ *   「开始游戏」退成普通按钮，小字写明会放弃它。
+ * 其余页（选英雄、天赋、图鉴、设置、操作说明）叠在上面，主菜单本体淡出；回来时淡入、刷新余额、未完成的征程与统计。
  * 不挡游戏、不停时间；返回键在主菜单上什么都不做。
  * 网页差异：Unity 叠在主菜单场景的 3D 远景上（MenuDirector），网页没有菜单场景——背景是 MenuBackdrop 的 CSS 远景（旧主菜单的那套）；
- *   没有续玩档（M11d），「继续征程」不出现；浏览器不能退出，「退出游戏」不列。
+ *   场景清单（备选图在不在）可能比主菜单晚到：清单一到就重看一次有没有可以继续的征程；浏览器不能退出，「退出游戏」不列。
  */
 import type { GameContext } from '../../core/types';
 import { isDemo, final as finalStage, playable } from '../../progression/RunPlan';
-import { careerItems, firstRunText } from '../ScreenData';
+import { stageCatalogVersion } from '../../progression/StagePlan';
+import { careerItems, firstRunText, menuHints } from '../ScreenData';
 import type { Codex, CodexCatalog } from '../codex/Codex';
-import { el, text, toggle } from '../toolkit/el';
+import { el, show, text, toggle } from '../toolkit/el';
 import { UIFontRole, warmup } from '../toolkit/UIFonts';
 import { UIIcon } from '../toolkit/UIIcons';
 import { type BlockState, type IScreen, UIScreen } from '../toolkit/UIRouter';
@@ -25,6 +28,18 @@ export const MAIN_MENU_ID = 'main-menu';
 export const HERO_SELECT_ID = 'hero-select';
 export const TALENTS_ID = 'talents';
 
+type Suspended = NonNullable<ReturnType<NonNullable<GameContext['game']['suspendedRun']>>>;
+
+/** 主菜单当前档里未完成的征程（续玩档；没有 / 坏档 / 读出错为 null） */
+function suspendedOf(ctx: GameContext): Suspended | null {
+  try {
+    return ctx.game.suspendedRun?.() ?? null;
+  } catch (err) {
+    console.error('[UI] 读未完成的征程失败', err);
+    return null;
+  }
+}
+
 export class MainMenuScreen extends UIScreen {
   readonly id = MAIN_MENU_ID;
   override get blockState(): BlockState | null {
@@ -34,7 +49,7 @@ export class MainMenuScreen extends UIScreen {
     return false;
   }
   override get defaultFocus(): HTMLElement | null {
-    return this.startBtn;
+    return this.suspendedV ? this.continueBtn : this.startBtn;
   }
 
   private readonly chars: HTMLDivElement[] = [];
@@ -46,6 +61,12 @@ export class MainMenuScreen extends UIScreen {
   private essence!: HTMLDivElement;
   private codexHint!: HTMLDivElement;
   private startBtn: HTMLButtonElement | null = null;
+  private startHint!: HTMLDivElement;
+  private continueBtn: HTMLButtonElement | null = null;
+  private continueHint!: HTMLDivElement;
+  private suspendedV: Suspended | null = null;
+  /** 上次看续玩档时的场景清单版本（清单晚到时重看一次） */
+  private catalogSeen = -1;
   private openedAt = 0;
   private offs: (() => void)[] = [];
   /** 被别的页盖住（选英雄、天赋…） */
@@ -72,7 +93,13 @@ export class MainMenuScreen extends UIScreen {
 
     const nav = el('sf-menu__nav', this.home);
     const open = (id: string) => () => this.router?.open(id);
-    this.startBtn = this.navItem(nav, '开始游戏', '选择英雄，踏入第一章', () => this.startGame(), true).b;
+    const cont = this.navItem(nav, '继续征程', '', () => this.continueRun(), true);
+    this.continueBtn = cont.b;
+    this.continueHint = cont.hint;
+    show(cont.b, false);
+    const start = this.navItem(nav, '开始游戏', '选择英雄，踏入第一章', () => this.startGame(), true);
+    this.startBtn = start.b;
+    this.startHint = start.hint;
     this.navItem(nav, '天赋', '用魂晶强化之后的每一局', open(TALENTS_ID));
     this.codexHint = this.navItem(nav, '图鉴', '武器、秘卷、敌人与灵宠', open(CODEX_ID)).hint;
     this.navItem(nav, '设置', '画面、声音与按键', open(SETTINGS_ID));
@@ -107,6 +134,22 @@ export class MainMenuScreen extends UIScreen {
     else this.ctx.game.startRun(this.ctx.heroes[0]?.id ?? '');
   }
 
+  /** 有未完成的征程（「继续征程」显示着，I5） */
+  get suspended(): Suspended | null {
+    return this.suspendedV;
+  }
+
+  /** 「继续征程」（Unity MainMenuScreen.ContinueRun）：读续玩档，从那一关开头接着打；读不了（坏档已丢弃、提示由 Game 给）就刷新入口 */
+  continueRun(): void {
+    let ok = false;
+    try {
+      ok = this.ctx.game.continueRun?.() ?? false;
+    } catch (err) {
+      console.error('[UI] 继续征程失败', err);
+    }
+    if (!ok) this.refresh();
+  }
+
   override onOpen(): void {
     this.openedAt = this.now();
     this.setCovered(false);
@@ -121,7 +164,7 @@ export class MainMenuScreen extends UIScreen {
           if (s !== this && r.top === this) this.setCovered(false);
         }),
       );
-    void warmup('灵火破晓不熄烈焰为弹破此轮回开始游戏天赋图鉴设置操作说明', UIFontRole.Title);
+    void warmup('灵火破晓不熄烈焰为弹破此轮回继续征程开始游戏天赋图鉴设置操作说明', UIFontRole.Title);
     this.tick();
   }
 
@@ -141,7 +184,7 @@ export class MainMenuScreen extends UIScreen {
     if (!on) this.refresh();
   }
 
-  /** 刷新魂晶余额、图鉴收录数与生涯统计 */
+  /** 刷新魂晶余额、未完成的征程、图鉴收录数与生涯统计 */
   refresh(): void {
     const meta = this.ctx.meta;
     let essence = 0;
@@ -151,6 +194,7 @@ export class MainMenuScreen extends UIScreen {
       essence = 0;
     }
     this.essence.textContent = num(essence);
+    this.refreshSuspended();
     if (this.book && this.catalog) this.codexHint.textContent = `武器、秘卷、敌人与灵宠 · 已收录 ${this.book.totalCount} / ${this.catalog().total}`;
     this.stats.replaceChildren();
     let items: ReturnType<typeof careerItems> = null;
@@ -177,7 +221,24 @@ export class MainMenuScreen extends UIScreen {
     });
   }
 
+  /** 「继续征程」显不显示、两个按钮的小字、谁是主按钮（Unity MainMenuScreen.Refresh 的续玩部分） */
+  private refreshSuspended(): void {
+    this.catalogSeen = stageCatalogVersion();
+    const s = (this.suspendedV = suspendedOf(this.ctx));
+    const cont = this.continueBtn, start = this.startBtn;
+    if (!cont || !start) return;
+    show(cont, !!s);
+    cont.style.pointerEvents = this.covered || !s ? 'none' : 'auto';
+    toggle(start, 'sf-nav--primary', !s);
+    const hero = s ? this.ctx.heroes.find((h) => h.id === s.heroId) : undefined;
+    const hints = menuHints(s ? { stageLabel: s.stageLabel, heroName: hero?.name ?? s.heroId, time: s.time, coins: s.coins } : null);
+    this.continueHint.textContent = hints.continueHint;
+    this.startHint.textContent = hints.startHint;
+  }
+
   override tick(): void {
+    // 场景清单晚到（备选图在不在要看它）：到了就重看一次有没有可以继续的征程
+    if (!this.covered && this.catalogSeen !== stageCatalogVersion()) this.refreshSuspended();
     const t = this.now() - this.openedAt;
     // 标题逐字落墨（放大 + 淡入）
     this.chars.forEach((ch, i) => {

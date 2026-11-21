@@ -163,6 +163,33 @@ export function firstRunText(playable: number, demo: boolean, finalLabel: string
   return demo ? `尚无出征记录。试玩版共 ${playable} 关，到 ${finalLabel} 为止。` : `尚无出征记录。共 ${playable} 关，击败沿途全部首领即可通关。`;
 }
 
+/** 用时 m:ss（≥ 1 小时 h:mm:ss；同 Unity ScreenKit.Clock） */
+function clockText(seconds: number): string {
+  const s = Math.max(0, Math.floor(Number.isFinite(seconds) ? seconds : 0));
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return s >= 3600 ? `${Math.floor(s / 3600)}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}` : `${Math.floor(s / 60)}:${pad(s % 60)}`;
+}
+
+/** 主菜单上那一局未完成的征程（续玩档，M11d） */
+export interface SuspendedLike {
+  stageLabel: string;
+  heroName: string;
+  time: number;
+  coins: number;
+}
+
+/**
+ * 主菜单「继续征程」/「开始游戏」的小字（Unity MainMenuScreen.Refresh）：有未完成的征程时写「关卡 · 英雄 · 用时 · 灵石」，
+ * 「开始游戏」写明会放弃它；没有时「继续征程」不显示
+ */
+export function menuHints(s: SuspendedLike | null | undefined): { continueHint: string; startHint: string } {
+  if (!s) return { continueHint: '', startHint: '选择英雄，踏入第一章' };
+  return {
+    continueHint: `${s.stageLabel} · ${s.heroName} · 用时 ${clockText(s.time)} · 灵石 ${fmtInt(s.coins)}`,
+    startHint: '放弃未完成的征程（按败北结算），重新选择英雄',
+  };
+}
+
 // ───────────── 天赋 ─────────────
 
 export interface TalentLike {

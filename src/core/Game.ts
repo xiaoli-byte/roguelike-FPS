@@ -1,14 +1,23 @@
 import * as THREE from 'three';
-import type { GameContext, GameState, HeroDef, IGame, RunState, RunSummary, StageNode, System } from './types';
+import type { GameContext, GameState, HeroDef, IGame, RunState, RunSummary, StageNode, System, WeaponInstance, WeaponSave } from './types';
 import { EventBus } from './EventBus';
 import { Input } from './Input';
 import { Rng } from './Rng';
 import { TaskRunner } from './Tasks';
 import { CollisionWorld } from '../world/Collision';
 import { loadSettings, saveSettings } from './settings';
+import { FrameLimiter, targetFrameRate } from './GameSettings';
+import { TimePriority, arbiterFor, type TimeScaleArbiter, type TimeScaleHandle } from './TimeScaleArbiter';
+import { GameStateMachine } from './GameStateMachine';
+import { HitStop } from './HitStop';
+import { ClearSlowMo, EncounterClearWatcher } from './ClearSlowMo';
+import { qualityProfile, renderPixelRatio } from './QualityTiers';
+import { DistanceCuller, cullDistances, type MeshLike } from './CullLayers';
 
 import { MetaProgress } from '../progression/Meta';
-import { RunPlanner } from '../progression/RunPlan';
+import { RunPlanner, setCurrentRun } from '../progression/RunPlan';
+import { hasStageCatalog } from '../progression/StagePlan';
+import * as Suspend from '../progression/RunSuspend';
 import { ScrollSystem } from '../progression/Scrolls';
 import { LootSystem } from '../progression/Loot';
 import { InteractionSystem } from '../progression/Interaction';
@@ -39,13 +48,30 @@ function placeholderRun(): RunState {
 
 /**
  * 顶层游戏对象：创建渲染器与全部系统、驱动主循环、管理状态机（菜单 / 游戏 / 暂停 / 模态 / 结算）。
+ *
+ * M11d（docs/threejs-migration.md 4.7，照 Unity G/Core）：
+ *   · 状态走 {@link GameStateMachine}（底层状态 + 模态栈：暂停、模态各是栈上的一项）；
+ *   · 时间只由 {@link TimeScaleArbiter} 写：暂停 / 模态停住时间、阵亡慢动作 0.3、顿帧（{@link HitStop}）、清场慢动作（{@link ClearSlowMo}）；
+ *   · 一局结束走 MetaProgress.bankRun（同一局只结一次）；每进一关写续玩档（progression/RunSuspend），主菜单「继续征程」、暂停菜单暂离；
+ *   · 画质档（core/QualityTiers）的渲染比例、按距离剔除小件（core/CullLayers）、帧率上限。
  */
 export class Game implements IGame {
   readonly ctx: GameContext;
   readonly debug: boolean;
   /** Created only with ?perf=1. The normal game has no profiling allocation or UI. */
   readonly performanceMeter: PerformanceMeter | null;
-  private _state: GameState = 'boot';
+  /** 时间缩放仲裁（一个 ctx.time 一份，首领框架、后处理用的是同一个） */
+  readonly timeArbiter: TimeScaleArbiter;
+  readonly fsm: GameStateMachine;
+  readonly hitStop: HitStop;
+  readonly clearSlowMo: ClearSlowMo;
+  /** 小件 / 散布件的距离剔除（只管 Unity 场景文档里的静态网格） */
+  readonly culler = new DistanceCuller();
+  private readonly clearWatcher = new EncounterClearWatcher();
+  private readonly frameLimiter = new FrameLimiter();
+  private readonly pauseKey = { name: 'pause' };
+  private readonly modalKey = { name: 'modal' };
+  private deathSlowMo: TimeScaleHandle | null = null;
   private lastFrame = 0;
   private updateOrder: System[] = [];
   private passiveDispose: (() => void) | null = null;
@@ -114,6 +140,12 @@ export class Game implements IGame {
       heroes: HEROES as readonly HeroDef[],
     } as unknown as Record<string, unknown>;
     this.ctx = ctx as unknown as GameContext;
+    this.timeArbiter = arbiterFor(this.ctx.time);
+    this.fsm = new GameStateMachine(this.timeArbiter, (from, to) => this.ctx.events.emit('game:stateChanged', { from, to }));
+    const realClock = () => performance.now() / 1000;
+    const host = { clock: realClock, isPlaying: () => this.fsm.isPlaying, playerDead: () => !this.ctx.player?.alive };
+    this.hitStop = new HitStop(this.timeArbiter, host);
+    this.clearSlowMo = new ClearSlowMo(this.timeArbiter, host);
     this.performanceMeter = new URLSearchParams(location.search).get('perf') === '1'
       ? new PerformanceMeter(renderer, () => ({
         quality: this.ctx.settings.quality, theme: this.ctx.run.stage.theme, gameState: this.state,
@@ -152,35 +184,50 @@ export class Game implements IGame {
     for (const s of all) s.init?.();
 
     input.onLockChange = (locked) => {
-      if (!locked && this._state === 'playing' && !this.debug) this.pause();
+      if (!locked && this.state === 'playing' && !this.debug) this.pause();
     };
     canvas.addEventListener('click', () => {
       this.ctx.audio.unlock();
-      if (this._state === 'playing' && !input.pointerLocked) input.requestLock();
+      if (this.state === 'playing' && !input.pointerLocked) input.requestLock();
     });
     window.addEventListener('pointerdown', () => this.ctx.audio.unlock(), { once: true });
     window.addEventListener('keydown', () => this.ctx.audio.unlock(), { once: true });
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden && this._state === 'playing' && !this.debug) this.pause();
+      if (document.hidden && this.state === 'playing' && !this.debug) this.pause();
     });
     window.addEventListener('resize', () => this.resize());
 
     x.events.on('player:died', () => this.onPlayerDied());
+
+    // 顿帧的内置来源（Unity HitStop.OnKilled / OnDamaged / OnReacted）与清场慢动作的击杀计数
+    x.events.on('enemy:killed', ({ enemy, result }) => {
+      this.clearWatcher.noteKill();
+      this.hitStop.onKilled(enemy.isBoss ? 'boss' : enemy.isElite ? 'elite' : 'normal', result.request?.source);
+    });
+    x.events.on('enemy:damaged', ({ enemy, result }) => {
+      this.hitStop.onDamaged(result.isCrit, result.killed, result.request?.source, result.dealt,
+        (enemy.maxHp || 0) + (enemy.maxArmor || 0) + (enemy.maxShield || 0));
+    });
+    x.events.on('enemy:reaction', ({ depth, hits }) => this.hitStop.onReacted(depth, hits));
+    // 换关：给 Unity 场景的小件 / 散布件分层（UnitySceneView 的根节点 unity-scene-<id>）
+    x.events.on('stage:loaded', () => this.attachCulling());
+
+    Suspend.RunSuspend.setHeroLookup(id => this.ctx.heroes.some(h => h.id === id));
+    Suspend.RunSuspend.ensureInstalled();
 
     this.applySettings();
     this.resize();
     if (this.debug) this.installDebug();
   }
 
+  /** 当前状态：模态栈顶（暂停 / 模态），栈空时是底层状态 */
   get state(): GameState {
-    return this._state;
+    return this.fsm.current;
   }
 
+  /** 切底层状态（菜单 / 游戏 / 过渡 / 结算），同时清空模态栈、撤掉它们停住的时间 */
   private setState(s: GameState): void {
-    if (s === this._state) return;
-    const from = this._state;
-    this._state = s;
-    this.ctx.events.emit('game:stateChanged', { from, to: s });
+    this.fsm.clearModals(s);
   }
 
   // ───────────── 启动 & 主循环 ─────────────
@@ -196,10 +243,16 @@ export class Game implements IGame {
   }
 
   private frame(t: number): void {
+    // 帧率上限（设置「帧率上限」；不限 = 每个 rAF 都跑）
+    if (!this.frameLimiter.shouldRun(t, targetFrameRate(this.ctx.settings.frameCap))) return;
     this.performanceMeter?.beginFrame(t);
     const rawDt = Math.min(0.05, Math.max(0, (t - this.lastFrame) / 1000));
     this.lastFrame = t;
     const ctx = this.ctx;
+    // 时间：到期的申请先撤（按真实时间），顿帧 / 清场慢动作到点收回，再算这一帧的 dt
+    this.hitStop.update();
+    this.clearSlowMo.update();
+    this.timeArbiter.tick();
     const dt = rawDt * ctx.time.timeScale;
     ctx.time.dt = dt;
     ctx.time.frame++;
@@ -214,7 +267,7 @@ export class Game implements IGame {
 
     this.handleGlobalKeys();
 
-    if (this._state === 'playing') {
+    if (this.state === 'playing') {
       ctx.time.now += dt;
       ctx.run.time += dt;
       for (const s of this.updateOrder) {
@@ -225,10 +278,12 @@ export class Game implements IGame {
         }
       }
       ctx.tasks.update(dt);
+      // 清场慢动作：一处场地从开打变成清掉的那一帧（打过的只数够才放）
+      for (const total of this.clearWatcher.observe(ctx.stage.exploration?.encounters)) this.clearSlowMo.onCleared(total);
     }
 
     // 表现层始终更新（菜单/暂停时用真实 dt）
-    const presDt = this._state === 'playing' ? dt : rawDt;
+    const presDt = this.state === 'playing' ? dt : rawDt;
     for (const s of [ctx.fx, ctx.audio, ctx.ui] as System[]) {
       try {
         s.update?.(presDt);
@@ -247,7 +302,12 @@ export class Game implements IGame {
   private render(): void {
     const { renderer, scene, camera, viewScene, viewCamera } = this.ctx;
     const inspectionCamera = this.inspectionView?.() ?? null;
-    const viewmodel = !inspectionCamera && (this._state === 'playing' || this._state === 'paused' || this._state === 'modal' || this._state === 'transition');
+    const state = this.state;
+    const viewmodel = !inspectionCamera && (state === 'playing' || state === 'paused' || state === 'modal' || state === 'transition');
+    if (this.culler.count > 0) {
+      const fog = scene.fog as { isFog?: boolean; far?: number } | null;
+      this.culler.update((inspectionCamera ?? camera).position, cullDistances(qualityProfile(this.ctx.settings.quality), fog?.isFog ? fog.far ?? 0 : 0));
+    }
     if (this.post.render(inspectionCamera ?? camera, viewmodel)) return;
     renderer.clear();
     renderer.render(scene, inspectionCamera ?? camera);
@@ -261,17 +321,30 @@ export class Game implements IGame {
     const input = this.ctx.input;
     const escLike = input.keyPressed('Escape') || input.keyPressed('KeyP');
     if (!escLike) return;
-    if (this._state === 'playing') this.pause();
-    else if (this._state === 'paused' && performance.now() - this.pausedAt > 300) this.resume();
+    if (this.state === 'playing') this.pause();
+    else if (this.state === 'paused' && performance.now() - this.pausedAt > 300) this.resume();
+  }
+
+  /** 给刚搭好的 Unity 场景分层（小件 / 散布件按距离剔除；别的场景视图不动） */
+  private attachCulling(): void {
+    this.culler.clear();
+    if (new URLSearchParams(location.search).get('cull') === '0') return;
+    try {
+      for (const child of this.ctx.stageGroup.children) {
+        if (child.name.startsWith('unity-scene-')) this.culler.addScene(child as unknown as MeshLike);
+      }
+    } catch (err) {
+      console.error('[Game] 距离剔除分层失败', err);
+      this.culler.clear();
+    }
   }
 
   private resize(): void {
     const { renderer, camera, viewCamera, settings } = this.ctx;
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const dpr = window.devicePixelRatio || 1;
-    const pr = settings.quality === 'low' ? Math.min(dpr, 1) * 0.75 : settings.quality === 'medium' ? Math.min(dpr, 1.25) : Math.min(dpr, 2);
-    renderer.setPixelRatio(pr);
+    // 渲染比例照画质档（core/QualityTiers：低 0.7 / 中 0.85 / 高 1，乘在设备像素比上——各档有上限）
+    renderer.setPixelRatio(renderPixelRatio(qualityProfile(settings.quality), window.devicePixelRatio || 1));
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -285,9 +358,21 @@ export class Game implements IGame {
     const ctx = this.ctx;
     const hero = ctx.heroes.find((h) => h.id === heroId) ?? ctx.heroes[0];
     const seed = (Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0;
+    // 上一局没结算就开新局（阵亡慢动作里点了再来一局之类）：先按失败结算（Unity SceneFlow.NewRun）
+    this.bankCurrent(false);
     ctx.rng.reseed(seed);
     ctx.run = ctx.runPlan.createRun(hero.id, seed);
-    ctx.time.timeScale = 1;
+    // 有未完成的征程（续玩档）：开新局 = 放弃它，按败北结算（魂晶照常入账）再删档。
+    // Unity 这里先弹确认框（MenuFlow.StartRun）；网页的确认框随 M11c 第二期，主菜单的「开始游戏」提示里写明了
+    try {
+      const dev = Suspend.devFor(ctx.run);
+      if (Suspend.exists(dev)) Suspend.forfeit(dev);
+    } catch (err) {
+      console.error('[Game] 放弃未完成的征程失败', err);
+    }
+    // 开局锁定天赋（Unity TalentHooks.Lock）：整局（含暂离后继续征程）按这份快照生效
+    ctx.run.talents = this.metaProgress.talentSnapshot();
+    this.resetTime();
     this.deathPending = false;
 
     this.disposePassive();
@@ -305,7 +390,8 @@ export class Game implements IGame {
       // 美术资源（角色 / 首领 / 道具 GLB）要在第一关刷怪前到齐：开局就站在场上的驻守怪、调试局直进的首领场，
       // 刷出来时模型没到会一直是程序化占位体（同 Unity：进图时资源已就绪）。模块加载时已在后台开始读，这里只等它读完
       await AssetLibrary.preload();
-      if (!await this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(); return; }
+      if (!await this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(false); return; }
+      this.writeEntrySnapshot();
       ctx.ui.showHUD(true);
       ctx.weapons.setViewmodelVisible(true);
       this.setState('playing');
@@ -315,14 +401,205 @@ export class Game implements IGame {
     });
   }
 
+  // ───────────── 续玩（Unity MenuFlow / RunSuspend）─────────────
+
+  private get metaProgress(): MetaProgress {
+    return this.ctx.meta as unknown as MetaProgress;
+  }
+
+  /** 时间回到 1：撤掉全部时间申请（开局 / 重开 / 回主菜单；Unity TimeScaleArbiter.Clear） */
+  private resetTime(): void {
+    this.deathSlowMo = null;
+    this.hitStop.release();
+    this.clearSlowMo.release();
+    this.timeArbiter.clear();
+  }
+
+  /** 当前局没结算过就结算（魂晶入账、记生涯、写盘、删续玩档）；占位局、结算过的局返回 null */
+  private bankCurrent(victory: boolean, summary?: RunSummary): RunSummary | null {
+    const run = this.ctx.run;
+    if (!run || !run.heroId) return null;
+    try {
+      return this.metaProgress.bankRun(run, victory, summary);
+    } catch (err) {
+      // 结算出错不影响阵亡 / 通关流程
+      console.error('[Game] 结算失败', err);
+      return null;
+    }
+  }
+
+  /** 进关快照：这一局此刻的状态 + 秘卷层数（按获得顺序）、武器、生命护盾（Unity SceneFlow.EntrySnapshot） */
+  private snapshotRun(): RunState {
+    const ctx = this.ctx, run = ctx.run;
+    const scrolls: Record<string, number> = {};
+    for (const o of ctx.scrolls.owned()) if (o.stacks > 0) scrolls[o.def.id] = o.stacks;
+    const weapons: WeaponSave[] = [];
+    ctx.weapons.slots.forEach((w, slot) => {
+      if (!w) return;
+      weapons.push({
+        id: w.defId, rarity: w.rarity, level: w.level, element: w.element, mag: w.mag, reserve: w.reserve,
+        active: slot === ctx.weapons.activeSlot, affixes: w.affixes.map(a => ({ ...a })),
+      });
+    });
+    return {
+      ...run, stage: { ...run.stage }, flags: { ...run.flags }, route: run.route ? [...run.route] : undefined,
+      talents: run.talents ? { ...run.talents } : undefined, scrolls, weapons, hp: ctx.player.hp, shield: ctx.player.shield,
+    };
+  }
+
+  /** 每进一关：拍进关快照写续玩档（已经结算过的局、不写档的调试局不写） */
+  private writeEntrySnapshot(): void {
+    try {
+      const run = this.ctx.run;
+      if (!Suspend.shouldWrite(run)) return;
+      Suspend.write(this.snapshotRun(), Suspend.devFor(run));
+    } catch (err) {
+      console.error('[Game] 写续玩档失败', err);
+    }
+  }
+
+  /** 把续玩档里的武器装回去：手上那把放第一槽。词条 / 品质 / 强化 / 元素 / 弹药照档里的 */
+  private restoreWeapons(saves: readonly WeaponSave[], fallback: string): void {
+    const weapons = this.ctx.weapons;
+    const ordered = [...saves].sort((a, b) => Number(!!b.active) - Number(!!a.active)).slice(0, 2);
+    weapons.resetForRun(ordered[0]?.id ?? fallback);
+    const patch = (inst: WeaponInstance | null, s: WeaponSave): void => {
+      if (!inst || inst.defId !== s.id) return;
+      inst.rarity = Math.max(0, Math.min(4, Math.round(s.rarity))) as WeaponInstance['rarity'];
+      inst.level = s.level;
+      inst.element = s.element as WeaponInstance['element'];
+      inst.affixes = (Array.isArray(s.affixes) ? s.affixes : []).filter((a): a is WeaponInstance['affixes'][number] =>
+        !!a && typeof (a as { id?: unknown }).id === 'string' && typeof (a as { value?: unknown }).value === 'number').map(a => ({ ...a }));
+      inst.mag = Math.min(s.mag, weapons.magCapacity(inst));
+      inst.reserve = Math.min(s.reserve, weapons.reserveCapacity(inst));
+    };
+    if (ordered[0]) patch(weapons.slots[0], ordered[0]);
+    if (ordered[1]) {
+      const second = weapons.roll({ defId: ordered[1].id, rarity: 0 });
+      patch(second, ordered[1]);
+      // 直接放进第二槽：give() 会切枪、弹「获得武器」
+      (weapons.slots as (WeaponInstance | null)[])[1] = second;
+    }
+    // 手上那把的词条换过了：让武器系统重算持有加成（M8 给武器系统加正式的读档入口之前先这样）
+    (weapons as unknown as { applyHeldMods?(): void }).applyHeldMods?.();
+  }
+
+  /** 主菜单「继续征程」显示的那一局（没有 / 坏档为 null）。场景清单没读到之前不动盘上的档（备选图要清单才知道在不在） */
+  suspendedRun(): { heroId: string; stageLabel: string; savedAt: string; time: number; coins: number } | null {
+    try {
+      const dev = Suspend.menuDev();
+      const s = hasStageCatalog() ? Suspend.peek(dev) : Suspend.read(dev).result ?? null;
+      return s ? { heroId: s.run.heroId, stageLabel: s.stage.label, savedAt: s.savedAt, time: s.run.time, coins: s.run.coins } : null;
+    } catch (err) {
+      console.error('[Game] 读续玩档失败', err);
+      return null;
+    }
+  }
+
+  /**
+   * 继续征程（Unity MenuFlow.ResumeRun）：读续玩档设成当前局，从那一关开头接着打。没有档 / 坏档时提示并返回 false。
+   * 与 Unity 的差异：照样发 run:started（网页的掉落、技能、HUD 靠它复位，不是「新开一局」的意思）
+   */
+  continueRun(): boolean {
+    if (this.state !== 'menu') return false;
+    const ctx = this.ctx;
+    const dev = Suspend.menuDev();
+    if (Suspend.read(dev).status === 'none') {
+      ctx.ui.toast(Suspend.takeProblem() ?? '没有可以继续的征程', '#ff8a6a');
+      return false;
+    }
+    this.resetTime();
+    this.deathPending = false;
+    this.setState('transition');
+    ctx.ui.fade(1, 0.01).then(async () => {
+      // 备选图在不在要等场景清单：读到之后再正式读档（坏档这时才挪成 .corrupt）
+      await ctx.runPlan.prepare?.({ ...placeholderRun(), stagesCleared: 1 });
+      const s = Suspend.peek(dev);
+      const hero = s ? ctx.heroes.find((h) => h.id === s.run.heroId) : undefined;
+      if (!s || !hero) {
+        this.toMenu(false);
+        ctx.ui.toast(Suspend.takeProblem() ?? '没有可以继续的征程', '#ff8a6a');
+        return;
+      }
+      const run = s.run;
+      const saved = { scrolls: run.scrolls ?? {}, weapons: run.weapons ?? [], hp: run.hp ?? -1, shield: run.shield ?? -1 };
+      delete run.scrolls;
+      delete run.weapons;
+      delete run.hp;
+      delete run.shield;
+      ctx.rng.reseed(run.seed);
+      ctx.run = run;
+      setCurrentRun(run);
+      Suspend.adopt(s);
+
+      this.disposePassive();
+      this.clearStage(true);
+      ctx.scrolls.resetForRun();
+      ctx.player.resetForRun(hero);
+      this.restoreWeapons(saved.weapons, hero.startingWeapon);
+      this.passiveDispose = hero.passive.apply(ctx);
+      ctx.events.emit('run:started', { run });
+      // 秘卷按获得顺序一层一层装回去；不弹「获得秘卷」、不响
+      this.quietly(() => {
+        for (const [id, stacks] of Object.entries(saved.scrolls)) for (let i = 0; i < stacks; i++) ctx.scrolls.add(id);
+      });
+      await AssetLibrary.preload();
+      if (!await this.loadStage(run.stage)) { this.toMenu(false); return; }
+      // 生命 / 护盾（< 0 = 满）：秘卷和天赋装好之后再夹到上限
+      if (saved.hp >= 0) ctx.player.hp = Math.max(1, Math.min(ctx.player.maxHp(), saved.hp));
+      if (saved.shield >= 0) ctx.player.shield = Math.max(0, Math.min(ctx.player.maxShield(), saved.shield));
+      this.writeEntrySnapshot();
+      ctx.ui.showHUD(true);
+      ctx.weapons.setViewmodelVisible(true);
+      this.setState('playing');
+      ctx.input.enabled = true;
+      ctx.input.requestLock();
+      ctx.ui.fade(0, 0.6);
+    });
+    return true;
+  }
+
+  /** 这一局现在能不能暂离（盘上有它这一关的续玩档）；调试局、已经结算过的局不能 */
+  canSuspend(): boolean {
+    const s = this.state;
+    return (s === 'playing' || s === 'paused' || s === 'modal') && Suspend.canSuspend(this.ctx.run);
+  }
+
+  /**
+   * 暂停菜单「返回主菜单」（Unity MenuFlow.Suspend）：能暂离就不结算、续玩档留着，下次主菜单「继续征程」从本关开头接着打
+   * （本关里的进度不保留）；不能暂离（调试局、没写成档）就按失败结算再回主菜单。返回是否暂离
+   */
+  suspendRun(): boolean {
+    const can = this.canSuspend();
+    this.toMenu(!can);
+    return can;
+  }
+
+  /** 做一段不该出提示 / 声音的事（读档时把秘卷装回去） */
+  private quietly(fn: () => void): void {
+    const ui = this.ctx.ui as unknown as { toast: unknown }, audio = this.ctx.audio as unknown as { play: unknown };
+    const toast = ui.toast, play = audio.play;
+    ui.toast = () => undefined;
+    audio.play = () => undefined;
+    try {
+      fn();
+    } catch (err) {
+      console.error('[Game] 读档恢复失败', err);
+    } finally {
+      ui.toast = toast;
+      audio.play = play;
+    }
+  }
+
   advance(next: StageNode): void {
-    if (this._state !== 'playing') return;
+    if (this.state !== 'playing') return;
     const ctx = this.ctx;
     this.setState('transition');
     ctx.input.enabled = false;
     ctx.audio.play('portal');
     ctx.ui.fade(1, 0.35).then(async () => {
       if (!await this.loadStage(next)) { this.toMenu(); return; }
+      this.writeEntrySnapshot();
       this.setState('playing');
       ctx.input.enabled = true;
       ctx.input.flushMouse();
@@ -370,6 +647,10 @@ export class Game implements IGame {
     ctx.combat.clear?.();
     ctx.fx.clear?.();
     ctx.tasks.clear(full);
+    // 剔除名单跟着场景走；进行中的顿帧 / 清场慢动作不带进下一关
+    this.culler.clear();
+    this.hitStop.release();
+    this.clearSlowMo.release();
     ctx.stageGroup.clear();
     ctx.run.flags.infiniteAmmo = 0;
     ctx.ui.setBoss(null);
@@ -380,10 +661,9 @@ export class Game implements IGame {
   }
 
   endRun(victory: boolean): void {
-    if (this._state === 'summary' || this._state === 'menu') return;
+    if (this.state === 'summary' || this.state === 'menu') return;
     const ctx = this.ctx;
     const run = ctx.run;
-    ctx.time.timeScale = 1;
     const summary: RunSummary = {
       victory,
       heroId: run.heroId,
@@ -398,13 +678,13 @@ export class Game implements IGame {
       scrolls: ctx.scrolls.owned().map((o) => ({ id: o.def.id, name: o.def.name, rarity: o.def.rarity, stacks: o.stacks })),
       weapons: ctx.weapons.slots.filter((w): w is NonNullable<typeof w> => !!w).map((w) => ctx.weapons.describe(w).name),
     };
-    ctx.meta.addEssence(summary.essenceEarned);
-    ctx.meta.recordRun(summary);
-    ctx.meta.persist();
+    // 结算（魂晶入账、记生涯、写盘、删续玩档）：同一局只结一次——已经结算过的（不会走到这里，防万一）只出结算界面
+    this.bankCurrent(victory, summary);
     ctx.events.emit('run:ended', { summary });
     this.disposePassive();
     ctx.cameraFx.fovKick = 0;
     this.setState('summary');
+    this.resetTime();
     ctx.input.enabled = false;
     ctx.input.exitLock();
     ctx.weapons.setViewmodelVisible(false);
@@ -415,9 +695,14 @@ export class Game implements IGame {
     ctx.ui.showSummary(summary);
   }
 
-  toMenu(): void {
+  /**
+   * 回主菜单（Unity MenuFlow.ToMenu）。bank = 没结算过的局先按失败结算（Three.js 原来的「返回主菜单不结算」会白丢本局魂晶，照 Unity 不跟）；
+   * 暂离（{@link suspendRun}）、关卡载入失败、读档失败传 false：不结算，续玩档（如果有）留着
+   */
+  toMenu(bank = true): void {
     const ctx = this.ctx;
-    ctx.time.timeScale = 1;
+    const s = this.state;
+    if (bank && s !== 'menu' && s !== 'boot' && s !== 'summary') this.bankCurrent(false);
     this.deathPending = false;
     this.disposePassive();
     this.clearStage(true);
@@ -427,40 +712,48 @@ export class Game implements IGame {
     ctx.weapons.setViewmodelVisible(false);
     ctx.ui.showHUD(false);
     ctx.ui.showPause(false);
+    // 主菜单里没有局（Unity RunState.Current = null）：存档看的是菜单的档，不是上一局的
+    ctx.run = placeholderRun();
+    setCurrentRun(null);
     this.setState('menu');
+    this.resetTime();
     ctx.ui.fade(0, 0.3);
     ctx.ui.showMainMenu();
     ctx.audio.setMusic('menu');
   }
 
+  /** 暂停：模态栈上压一项（停住时间，暂停优先级） */
   pause(): void {
-    if (this._state !== 'playing') return;
+    if (this.state !== 'playing') return;
     this.pausedAt = performance.now();
-    this.setState('paused');
+    this.fsm.push(this.pauseKey, 'paused');
     this.ctx.input.enabled = false;
     this.ctx.input.exitLock();
     this.ctx.ui.showPause(true);
   }
 
   resume(): void {
-    if (this._state !== 'paused') return;
+    if (this.state !== 'paused') return;
     this.ctx.ui.showPause(false);
-    this.setState('playing');
+    this.fsm.pop(this.pauseKey);
+    if (!this.fsm.isPlaying) return;
     this.ctx.input.enabled = true;
     this.ctx.input.flushMouse();
     this.ctx.input.requestLock();
   }
 
+  /** 模态界面（秘卷三选一…）：模态栈上压一项（停住时间，模态优先级）、放开鼠标、屏蔽玩家输入 */
   openModal(): void {
-    if (this._state !== 'playing') return;
-    this.setState('modal');
+    if (this.state !== 'playing') return;
+    this.fsm.push(this.modalKey, 'modal');
     this.ctx.input.enabled = false;
     this.ctx.input.exitLock();
   }
 
   closeModal(): void {
-    if (this._state !== 'modal') return;
-    this.setState('playing');
+    if (this.state !== 'modal') return;
+    this.fsm.pop(this.modalKey);
+    if (!this.fsm.isPlaying) return;
     this.ctx.input.enabled = true;
     this.ctx.input.flushMouse();
     this.ctx.input.requestLock();
@@ -472,6 +765,8 @@ export class Game implements IGame {
     camera.updateProjectionMatrix();
     renderer.shadowMap.enabled = settings.quality !== 'low';
     this.ctx.audio.applyVolumes(settings.masterVolume, settings.sfxVolume, settings.musicVolume);
+    // 玩法屏效强度（低血量 / 受击 / 冲刺 / 慢动作）
+    this.post.gameplay.amount = settings.screenEffects ?? 1;
     this.resize();
   }
 
@@ -479,14 +774,17 @@ export class Game implements IGame {
     saveSettings(this.ctx.settings);
   }
 
+  /** 阵亡：0.3 倍慢动作（经仲裁器，阵亡优先级）半秒游戏时间，然后结算 */
   private onPlayerDied(): void {
-    if (this.deathPending || this._state !== 'playing') return;
+    if (this.deathPending || this.state !== 'playing') return;
     this.deathPending = true;
     const ctx = this.ctx;
-    ctx.time.timeScale = 0.3;
+    this.deathSlowMo?.dispose();
+    this.deathSlowMo = this.timeArbiter.request(this, 0.3, TimePriority.DeathSlowMo);
     ctx.weapons.setViewmodelVisible(false);
     ctx.tasks.delay(0.5, () => {
-      ctx.time.timeScale = 1;
+      this.deathSlowMo?.dispose();
+      this.deathSlowMo = null;
       this.endRun(false);
     }, true);
   }
@@ -526,7 +824,7 @@ export class Game implements IGame {
       });
     }
     window.addEventListener('keydown', (e) => {
-      if (this._state !== 'playing') return;
+      if (this.state !== 'playing') return;
       switch (e.code) {
         case 'F1':
           god = !god;

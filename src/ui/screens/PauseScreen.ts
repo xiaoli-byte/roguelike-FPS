@@ -5,7 +5,8 @@
  *   打开时 0.3 s 淡入上移；打开时收起横幅与提示。
  * 关闭 = 继续游戏：Esc（路由的返回）、「继续」按钮都回调 ctx.game.resume()；P 键由 Game 自己处理。
  * 「设置」把设置页叠在上面（路由），返回回到这里。挡游戏：paused（网页的暂停状态由 Game 管：Game.pause → UI.showPause → 打开本界面）。
- * 网页差异：还没有续玩档（M11d），「返回主菜单」总是二次确认，且网页的返回主菜单不结算魂晶——提示文字照网页的实际行为写。
+ * 「返回主菜单」（M11d，照 Unity I5）：这一局有续玩档时是暂离（ctx.game.suspendRun：不结算，下次从本关开头「继续征程」），一按就走；
+ *   没有续玩档（调试局）时会结算，同样二次确认。
  */
 import type { GameContext } from '../../core/types';
 import { sfx } from '../dom';
@@ -136,7 +137,9 @@ export class PauseScreen extends UIScreen {
   refresh(): void {
     const ctx = this.ctx;
     const run = ctx.run;
-    this.hintLabel.textContent = '放弃本局：结算已获得的魂晶并显示结算。\n返回主菜单：本局作废，不结算魂晶。';
+    this.hintLabel.textContent = this.canSuspend
+      ? '放弃本局：结算已获得的魂晶并显示结算。\n返回主菜单：本局保留，下次从本关开头「继续征程」（本关内的进度不保留）。'
+      : '放弃本局：结算已获得的魂晶并显示结算。\n返回主菜单：同样结算，直接回到主菜单。';
     const hero = ctx.player?.hero ?? ctx.heroes.find((x) => x.id === run?.heroId) ?? null;
     setCrest(this.crestEl, hero);
     this.heroName.textContent = hero ? `${hero.name} · ${hero.title}` : '无名侠客';
@@ -189,11 +192,30 @@ export class PauseScreen extends UIScreen {
     this.menuBtn.classList.remove('sf-btn--armed');
   }
 
-  /** 按一次「放弃本局」/「返回主菜单」：都要二次确认 */
+  /** 这一局有续玩档：「返回主菜单」= 暂离，不结算（I5） */
+  get canSuspend(): boolean {
+    try {
+      return this.ctx.game.canSuspend?.() ?? false;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 按一次「放弃本局」/「返回主菜单」：放弃要二次确认；返回主菜单在能暂离时一按就走（不结算、不丢东西），
+   * 否则（会结算）同样二次确认
+   */
   press(key: ArmKey): void {
+    const game = this.ctx.game;
+    if (key === 'menu' && this.canSuspend) {
+      this.disarm();
+      game.suspendRun?.();
+      return;
+    }
     if (!this.arm(key)) return;
-    if (key === 'abandon') this.ctx.game.endRun(false);
-    else this.ctx.game.toMenu();
+    if (key === 'abandon') game.endRun(false);
+    else if (game.suspendRun) game.suspendRun();
+    else game.toMenu();
   }
 }
 
