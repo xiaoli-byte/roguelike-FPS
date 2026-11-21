@@ -330,8 +330,11 @@ export class Game implements IGame {
     this.culler.clear();
     if (new URLSearchParams(location.search).get('cull') === '0') return;
     try {
-      for (const child of this.ctx.stageGroup.children) {
-        if (child.name.startsWith('unity-scene-')) this.culler.addScene(child as unknown as MeshLike);
+      // StageDirector 把 UnitySceneView 的根节点直接挂在 ctx.scene 上（不在 stageGroup 里）；两处都看
+      for (const parent of [this.ctx.scene, this.ctx.stageGroup]) {
+        for (const child of parent.children) {
+          if (child.name.startsWith('unity-scene-')) this.culler.addScene(child as unknown as MeshLike);
+        }
       }
     } catch (err) {
       console.error('[Game] 距离剔除分层失败', err);
