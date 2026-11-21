@@ -219,6 +219,8 @@ export class ChargeSystem {
   private tokens = 0;
   private readonly near: IEnemy[] = [];
   private readonly picked: IEnemy[] = [];
+  /** 走到「选目标」那一步的 arc() 次数：外层传电据此看出途中有没有重入（见 arc） */
+  private arcs = 0;
 
   constructor(private readonly ctx: GameContext) {
     ctx.events?.on('enemy:killed', ({ enemy }) => this.onKilled(enemy));
@@ -266,10 +268,19 @@ export class ChargeSystem {
     this.arc(enemy, hop);
   }
 
-  /** 传电：from 可以已死。返回传到了几个 */
+  /**
+   * 传电：from 可以已死。返回传到了几个。
+   * 重入照 Unity Charge.Arc：Unity 的候选名单 `near` 是全场共用的静态表，半径无效或跳数到顶时直接 return、不碰它；
+   * 否则一进来就 near.Clear()、走完再 near.Clear()。所以这一跳打死了某只带电的（传电的 6 点雷伤打死目标本身，或击杀连带打死别的），
+   * Died 同步重入的那次 Arc 会把 near 清空，外层 `i < near.Count` 随即为假，剩下的目标不再传（由重入的那次放电接着传）。
+   * 网页的名单是各自的数组，靠 `arcs` 计数看出重入，照样在这一跳之后停下
+   */
   arc(from: IEnemy, fromHop: number, radius: number = CHARGE.ArcRadius): number {
+    // Unity：`!(radius > 0)` 与 `hop > maxHops` 都在 near.Clear() 之前 return 0
+    if (!(radius > 0) || fromHop + 1 > CHARGE.MaxHops) return 0;
+    const pass = ++this.arcs;
     const ctx = this.ctx;
-    // 起点自己留一份：下面的 damageEnemy 可能打死另一只带电的，同步重入 arc() 会改写共用的临时向量
+    // 起点自己留一份：下面的 damageEnemy 可能打死另一只带电的，同步重入 arc() 会改写共用的临时向量（之后的音效还要用 c）
     const c = from.getBodyCenter(new THREE.Vector3());
     const near = this.near;
     near.length = 0;
@@ -293,6 +304,8 @@ export class ChargeSystem {
         point: to, direction: dir,
       });
       if (n === 1) ctx.audio.play('shock_zap', { position: c, volume: 0.65, pitch: 0.9 + Math.random() * 0.25 });
+      // 途中重入过 arc()（Unity 的 near 已被清空）：这一跳到此为止
+      if (this.arcs !== pass) break;
     }
     return n;
   }

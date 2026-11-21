@@ -302,6 +302,39 @@ for (const hero of heroes) {
       check('死亡传电：8 m 内的传、8 m 外（粗筛的半径余量里）的不传', !!pick && !pick.srcAlive && pick.dInside <= 8 && pick.dEdge > 8 && pick.dEdge <= 8 + pick.radius
         && pick.insideCharged && !pick.edgeCharged, JSON.stringify(pick));
       await step(0.3);
+
+      // ── 死亡传电的同步重入（Unity Charge.Arc 的 near 是共用静态表）：第一跳打死了 a，a 的放电清空 near，外层不再传 b ──
+      // 源、a、b、c 排成一条线（a 1.5 m、b 3 m、c 4.5 m）；a 只剩 1 血。Unity：a 挨 1 下死 → a 放电给 b、c 各 1 下；b 不挨外层第二下
+      await clearFoes();
+      await foes('jerboa_blade', 4, 6);
+      await step(1.2);
+      const re = await b.eval(`(() => {
+        const c = window.__ctx, p = c.player, V = p.position.constructor;
+        const es = c.enemies.list.filter(e => e.alive && !e.untargetable);
+        if (es.length < 4) return null;
+        const [src, a, bb, cc] = es;
+        const f = p.getForward(new V()), r = new V(f.z, 0, -f.x);
+        a.position.copy(src.position).addScaledVector(r, 1.5);
+        bb.position.copy(src.position).addScaledVector(r, 3);
+        cc.position.copy(src.position).addScaledVector(r, 4.5);
+        a.hp = 1;
+        a.shield = 0;
+        a.armor = 0;
+        const name = new Map([[a, 'a'], [bb, 'b'], [cc, 'c']]);
+        const hits = { a: 0, b: 0, c: 0 };
+        const off = c.events.on('enemy:damaged', ev => {
+          const k = name.get(ev.enemy);
+          if (k && ev.result.request?.tags?.includes('chain')) hits[k]++;
+        });
+        const ch = c.combat.charge;
+        ch.apply(src, 6);
+        c.combat.damageEnemy(src, { base: 1e5, element: 'none', source: 'weapon', procDepth: 0 });
+        off();
+        return { hits, aAlive: a.alive, hopB: ch.book.state(bb)?.hop ?? null, hopC: ch.book.state(cc)?.hop ?? null };
+      })()`);
+      check('死亡传电重入：第一跳打死 a 就停，b、c 各挨 a 放的 1 下（跳数 2）', !!re && !re.aAlive && re.hits.a === 1 && re.hits.b === 1 && re.hits.c === 1
+        && re.hopB === 2 && re.hopC === 2, JSON.stringify(re));
+      await step(0.3);
     }
 
     if (want('blocked')) {

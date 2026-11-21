@@ -244,6 +244,82 @@ test('charge: the death arc picks like Unity Nearest — body centre within 8 m 
   assert.deepEqual(run([at(2), at(3), at(4)]).length, 2, '正常情况传最近 2 个');
 });
 
+test('charge: a death arc that kills its first target stops there, like Unity (the nested Arc clears the shared near list)', async () => {
+  // Unity Charge.Arc：near 是静态共用表；hop / 半径不合格在 near.Clear() 之前 return，否则进来清一次、走完再清一次。
+  // 传电的 6 点雷伤打死目标 → Damageable.Died 同步 → ChargeState.OnDied → Charge.Arc 重入，把 near 清空，外层 `i < near.Count` 为假就停
+  const unity = await cs('Combat/Charge.cs');
+  assert.match(unity, /static readonly List<Damageable> near = new\(\);/);
+  assert.match(unity, /if \(hop > maxHops\) return 0;\s*var c = ReactionSystem\.CenterOf\(from\);\s*near\.Clear\(\);/);
+  assert.match(unity, /for \(int i = 0; i < near\.Count && n < ArcTargets; i\+\+\)/);
+  assert.match(unity, /near\.Clear\(\);\s*return n;/);
+  assert.match(unity, /if \(was && Hp && !Hp\.IsBoss\) Charge\.Arc\(Hp\);/);
+  assert.match(await cs('Combat/Damageable.cs'), /if \(r\.killed\)\s*try\s*\{\s*Died\?\.Invoke\(info\);/);
+
+  const at = (x, hp = 100) => ({ alive: true, untargetable: false, isBoss: false, hp, radius: 0.5, height: 2, getBodyCenter: o => o.set(x, 1, 0) });
+  // 和 Combat 一样：打死就同步派发 enemy:killed（ChargeSystem 在构造时订阅）
+  const world = pool => {
+    const dealt = new Map();
+    let onKilled = null;
+    const ctx = {
+      events: { on(name, fn) { if (name === 'enemy:killed') onKilled = fn; } },
+      enemies: {
+        queryRadius(center, r, out = []) {
+          out.length = 0;
+          const v = new THREE.Vector3();
+          for (const e of pool) if (e.alive && !e.untargetable && e.getBodyCenter(v).distanceTo(center) <= r + e.radius) out.push(e);
+          return out;
+        },
+      },
+      fx: { lightning() {}, burst() {} },
+      audio: { play() {} },
+      combat: {
+        damageEnemy(t, req) {
+          dealt.set(t, (dealt.get(t) ?? 0) + req.base);
+          t.hp -= req.base;
+          if (t.hp <= 0 && t.alive) {
+            t.alive = false;
+            onKilled({ enemy: t });
+          }
+          return null;
+        },
+      },
+    };
+    return { sys: new CHARGE.ChargeSystem(ctx), dealt };
+  };
+
+  // 源头 x=0（已死，和真的死亡放电一样）；a（x=1，6 血）挨第一跳就死；b、c 满血
+  {
+    const src = at(0), a = at(1, 6), b = at(2), c = at(3);
+    src.alive = false;
+    const { sys, dealt } = world([src, a, b, c]);
+    assert.equal(sys.arc(src, 0), 1, '外层只传到 a：a 死后重入的放电清空了 near');
+    assert.equal(a.alive, false);
+    assert.equal(dealt.get(b), CHARGE.CHARGE.ArcDamage, 'b 只挨 a 放的那一下（不是 12）');
+    assert.equal(dealt.get(c), CHARGE.CHARGE.ArcDamage, 'c 由 a 的放电传到');
+    assert.equal(sys.book.state(b).hop, 2, 'b 的电是 a 传来的第 2 跳，不被外层压回第 1 跳');
+    assert.equal(sys.book.state(c).hop, 2);
+  }
+  // 跳数到顶：a 的电是第 4 跳，它死了也不放（Unity 在 near.Clear() 之前 return），外层照常传完 2 个
+  {
+    const src = at(0), a = at(1, 6), b = at(2), c = at(3);
+    src.alive = false;
+    const { sys, dealt } = world([src, a, b, c]);
+    assert.equal(sys.arc(src, 3), 2);
+    assert.equal(a.alive, false);
+    assert.equal(dealt.get(b), CHARGE.CHARGE.ArcDamage);
+    assert.equal(dealt.has(c), false, 'a 没放电，c 不挨');
+    assert.equal(sys.arc(src, CHARGE.CHARGE.MaxHops), 0, '第 5 跳不传');
+  }
+  // 没打死：照常传 2 个
+  {
+    const src = at(0), a = at(1), b = at(2), c = at(3);
+    src.alive = false;
+    const { sys, dealt } = world([src, a, b, c]);
+    assert.equal(sys.arc(src, 0), 2);
+    assert.deepEqual([dealt.get(a), dealt.get(b), dealt.has(c)], [CHARGE.CHARGE.ArcDamage, CHARGE.CHARGE.ArcDamage, false]);
+  }
+});
+
 test('charge counts as shock for reactions (Unity GameReactionEnv.Has)', async () => {
   const rx = await src('combat/Reactions.ts');
   assert.equal((rx.match(/st\.has\('shock'\) \|\| this\.host\.isCharged\?\.\(enemy\) === true/g) ?? []).length, 2, '反应判定与引爆两处都读带电');
