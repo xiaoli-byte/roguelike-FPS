@@ -452,7 +452,11 @@ export class Portal {
     const now = this.ctx.time.now;
     if (now - this.lastUse < 1) return;
     this.lastUse = now;
-    this.ctx.game.advance(this.node);
+    // 关间结算卡（Unity GameSession.CompleteStage：只在玩家真正过关、不是最后一关时弹 StageCardScreen）：
+    // 只有出口进门这条路问 UI，UI 弹了卡就等玩家按「继续」再换关；检视页的跳关 / 重置直接调 game.advance，不弹卡
+    const ctx = this.ctx, node = this.node;
+    if (ctx.ui.stageCard?.(node, () => ctx.game.advance(node))) return;
+    ctx.game.advance(node);
   }
 
   update(dt: number, t: number): void {

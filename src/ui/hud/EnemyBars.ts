@@ -4,13 +4,15 @@
  *   内容：精英名（标题字体、鎏金；带词缀时前面一枚词缀色标签）、状态小标（灼 / 雷 / 蚀 / 晕，带层数）、护盾 / 护甲细条、生命条（延迟掉血拖尾，精英加粗描金）。
  *   元素反应提示：身上两种元素状态 = 可反应（小标 1.2 s 呼吸发光），三种 = 归墟就绪（紫光、0.6 s 急促）。
  *   位置：投影头顶（身体顶上 + 0.3 m），按距离缩放（13 / 距离，夹在 0.62–1.12，精英 ×1.12）；被墙挡住时半透明（每条约 0.13 s 测一次），40–45 m 渐隐。
- * 精英头顶印章（Unity EliteSeal，「精英灵契」）是第二期。
+ * 精英头顶印章（EliteSeal，「精英灵契」）挂在精英血条顶上：鎏金印章 + 词缀纹样，6 m 内不画、远处不跟着缩没、瞄着它时让准星。
  */
 import * as THREE from 'three';
 import type { IEnemy, StatusId } from '../../core/types';
+import { AFFIX_COLORS, isAffixId } from '../../enemies/Affixes';
 import { el, fill, setFill, setOpacity, setScale, show, text, toggle } from '../toolkit/el';
 import { UIFontRole } from '../toolkit/UIFonts';
 import { HpHi, JadeHi, type RGBA, barShade, css, elementColor, glow, paint, rgb } from '../toolkit/UITheme';
+import { EliteSeal } from './EliteSeal';
 import { HudColors, type HudFrame, HudWidget } from './HudWidget';
 
 export const MAX_BARS = 28;
@@ -24,6 +26,12 @@ export const AFFIX_LABELS: Record<string, { name: string; color: RGBA; hint: str
   volatile: { name: '爆裂', color: rgb(0xff7a3a), hint: '死亡时爆炸，别贴身击杀' },
   frenzied: { name: '狂暴', color: rgb(0xff4a32), hint: '低血量时狂暴' },
 };
+
+/**
+ * 精英印章的词缀纹样色 = 词缀本身的颜色（Unity EliteSeal.Sync：aura.Accent ← EliteAffixes.Apply 的 aura.SetSigil(affix.Id, affix.Color)），
+ * 不是血条词缀小标签的 AFFIX_LABELS 色（两组值在坚盾 / 爆裂 / 狂暴上不同）
+ */
+export const AFFIX_SEAL_COLORS: Record<string, RGBA> = Object.fromEntries(Object.entries(AFFIX_COLORS).map(([id, hex]) => [id, rgb(hex)]));
 
 /** 状态小标（同 Unity Badges） */
 const BADGES: { id: StatusId; glyph: string; color: RGBA }[] = [
@@ -72,6 +80,8 @@ interface Slot {
   name: string;
   affixId: string;
   seed: number;
+  seal: EliteSeal;
+  barH: number;
 }
 
 const _head = new THREE.Vector3();
@@ -102,6 +112,11 @@ export class EnemyBars extends HudWidget {
   /** 正在显示的血条数（测试用） */
   get count(): number {
     return this.active.length;
+  }
+
+  /** 某只敌人的头顶印章（没有血条为 null；测试 / 截图用） */
+  sealOf(e: IEnemy): EliteSeal | null {
+    return this.byEnemy.get(e)?.seal ?? null;
   }
 
   has(e: IEnemy): boolean {
@@ -164,9 +179,12 @@ export class EnemyBars extends HudWidget {
         setScale(slot.bar, scale);
       }
 
+      if (slot.elite) slot.seal.tick(dist, scale, _p.x, _p.y, size.x, size.y, slot.barH);
+
       // 被墙挡住时半透明（每条约 0.13 s 测一次，错开）
       if (now >= slot.occlNext) {
         slot.occlNext = now + 0.13 + (slot.seed & 7) * 0.012;
+        if (slot.elite) slot.barH = slot.bar.offsetHeight || 24;
         // 测到身体中心，跳过敌人自己的碰撞体（同 Unity）：网页的持盾怪把盾牌登记成世界碰撞体，终点往相机方向收回 半径 + 0.5 m
         e.getBodyCenter(_body);
         const back = _rel.copy(camPos).sub(_body);
@@ -294,6 +312,8 @@ export class EnemyBars extends HudWidget {
     // 精英词缀：用词缀色单独标出（爆裂等词缀直接影响玩家怎么打）
     const affixId = s.elite ? e.affix ?? '' : '';
     const info = affixId ? AFFIX_LABELS[affixId] : undefined;
+    s.seal.bind(s.elite, affixId || null, isAffixId(affixId) ? AFFIX_SEAL_COLORS[affixId] : null);
+    s.barH = 24;
     if (affixId !== s.affixId) {
       s.affixId = affixId;
       show(s.affix, !!info);
@@ -316,6 +336,7 @@ export class EnemyBars extends HudWidget {
 
   private release(s: Slot): void {
     s.enemy = null;
+    s.seal.unbind();
     s.anchor.style.display = 'none';
     this.poolList.push(s);
   }
@@ -358,7 +379,7 @@ export class EnemyBars extends HudWidget {
     return {
       anchor, bar, nameRow, status, shieldRow, shieldFill, armorRow, armorFill, hpRow, hpFill, hpTrail, nameText, affix, badges, glows, stacks,
       stackV: [-1, -1, -1, -1], enemy: null, stamp: 0, statusMask: -1, react: -1, x: NaN, y: 0, scale: -1, opacity: -1, shield: -1, armor: -1, hp: -1,
-      trail: 1, trailHold: 0, occlNext: 0, hasShield: true, hasArmor: true, occluded: false, elite: false, name: '\0', affixId: '\0', seed: this.seedN++ * 7919,
+      trail: 1, trailHold: 0, occlNext: 0, hasShield: true, hasArmor: true, occluded: false, elite: false, name: '\0', affixId: '\0', seed: this.seedN++ * 7919, seal: new EliteSeal(bar), barH: 24,
     };
   }
 }

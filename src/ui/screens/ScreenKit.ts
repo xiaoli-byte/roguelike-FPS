@@ -8,6 +8,7 @@ import type { GameContext, HeroDef, StatKey } from '../../core/types';
 import { RARITY_NAMES } from '../../core/types';
 import { STAT_INFO } from '../../core/Stats';
 import { bindButton, fillStacks } from '../dom';
+import { DOWNSIDE_PREFIX, splitDownside } from '../ScreenData';
 import { heroGlyph, fmtStat } from '../labels';
 import { addClasses, el, formatNum, text } from '../toolkit/el';
 import { UIFontRole } from '../toolkit/UIFonts';
@@ -147,8 +148,69 @@ export function renderScrollList(ctx: GameContext, parent: HTMLElement, detailed
     const name = text('sf-owned__name', head, def.name, detailed ? UIFontRole.Title : UIFontRole.Body);
     name.style.color = css(lerpColor(rc, [1, 1, 1, 1], 0.25));
     text('sf-owned__stacks', head, def.maxStacks > 1 ? `${stacks} / ${def.maxStacks} 层` : RARITY_NAMES[def.rarity] ?? '', UIFontRole.Number);
-    if (detailed) text('sf-owned__desc', row, fillStacks(def.description, stacks));
-    else row.title = fillStacks(def.description, stacks);
+    if (!detailed) {
+      row.title = fillStacks(def.description, stacks);
+      continue;
+    }
+    // 收益照常、代价另起一行红字「代价：…」（Unity ScrollList.Render：SplitDownside → sf-owned__desc + sf-owned__down）
+    const { upside, downside } = splitDownside(def, stacks);
+    text('sf-owned__desc', row, upside, UIFontRole.Body, true);
+    if (downside) text('sf-owned__down', row, DOWNSIDE_PREFIX + downside);
   }
   return owned.length;
+}
+
+// ───────────── 第二期界面共用 ─────────────
+
+/** 一位小数、去掉尾零（7.5、12） */
+export function num1(v: number): string {
+  return String(Math.round((Number.isFinite(v) ? v : 0) * 10) / 10);
+}
+
+/** 中文数字（1–99）：「一」「十二」「二十」 */
+export function cn(n: number): string {
+  const d = '零一二三四五六七八九';
+  if (!(n >= 0 && n <= 99) || !Number.isInteger(n)) return String(n);
+  if (n < 10) return d[n];
+  const t = Math.floor(n / 10), o = n % 10;
+  return (t === 1 ? '' : d[t]) + '十' + (o === 0 ? '' : d[o]);
+}
+
+/** 回弹缓出（印章盖下） */
+export function easeBack(k: number, overshoot = 1.7): number {
+  const u = Math.min(1, Math.max(0, k)) - 1;
+  return 1 + u * u * ((overshoot + 1) * u + overshoot);
+}
+
+/** 点阵底纹（装裱绫绢、没有俯视图的地图）：tile = 点距（设计像素） */
+export function paintDots(e: HTMLElement, tint: readonly [number, number, number, number], tile = 12): void {
+  e.style.background = `radial-gradient(circle at 50% 50%, ${css(tint)} 0, ${css(tint)} 1px, transparent 1.6px) 0 0 / ${tile}px ${tile}px repeat`;
+}
+
+/** 四边边框同色 */
+export function border(e: HTMLElement, color: readonly [number, number, number, number]): void {
+  e.style.borderColor = css(color);
+}
+
+/**
+ * 局内模态界面（全图、行囊、关卡卡片）挡游戏：网页的模态状态由 Game 管——打开时在 playing 就 openModal（冻结玩法、放开鼠标），
+ * 关上时还在 modal 就 closeModal（在按键 / 点击处理里同步调，才能重新锁定鼠标）。别的原因关掉的（回主菜单、结算）不动状态。
+ */
+export function gameModal(ctx: () => GameContext): { open(): void; close(): void; readonly owned: boolean } {
+  let owned = false;
+  return {
+    open() {
+      const g = ctx().game;
+      owned = g.state === 'playing';
+      if (owned) g.openModal();
+    },
+    close() {
+      const g = ctx().game;
+      if (owned && g.state === 'modal') g.closeModal();
+      owned = false;
+    },
+    get owned() {
+      return owned;
+    },
+  };
 }

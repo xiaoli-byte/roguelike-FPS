@@ -3,28 +3,28 @@
  *   · 起来时按登记表给每个部件建一个实例，挂进 UIRoot 对应层里本 HUD 的容器（.sf-hud.sf-hud--<层>），每帧统一刷新（单个部件出错只报一次）；
  *     新开一局 / 换关时让部件清瞬态（resetState）。
  *   · 有模态界面 / 暂停（游戏不在 playing）或 HUD 被藏起（showHUD(false)：首领登场演出、菜单）时 HUD 层整体淡出（0.15 s），回来 0.45 s 淡入。
- *   · 部件：生命 / 护盾、武器槽、Q/E 技能与冲刺、武器技能 V、信息角、准星、受击方向 / 闪屏 / 低血量、交互提示卡、中央大字、
- *     伤害数字与世界浮字、敌人头顶血条、首领血条、反应首遇教学。
- *   · 第二期之前沿用的网页旧件（挂在 HUD 层不缩放的壳里，自己管缩放）：行旅图（AdventureHUD）、Tab 行囊（InventoryPanel）、狙击镜遮罩。
+ *   · 部件：生命 / 护盾、武器槽、Q/E 技能与冲刺、武器技能 V、信息角、准星、狙击镜遮罩、受击方向 / 闪屏 / 低血量、交互提示卡、中央大字、
+ *     伤害数字与世界浮字、敌人头顶血条（含精英印章）、首领血条、反应首遇教学、罗盘条、秘卷触发弹字、灵宠面板。
  * Unity 的 [HudWidget] 反射登记在网页是 WIDGETS 这张表：加一个部件 = 加一行。
  */
 import type { GameContext } from '../../core/types';
-import { AdventureHUD } from '../AdventureHUD';
-import { InventoryPanel } from '../InventoryPanel';
-import { h } from '../dom';
 import { el } from '../toolkit/el';
 import { UILayer, layerName } from '../toolkit/UILayers';
 import type { UIRoot } from '../toolkit/UIRoot';
 import { BossBar } from './BossBar';
 import { CenterTextWidget } from './CenterTextWidget';
+import { CompassStrip } from './CompassStrip';
 import { CrosshairWidget } from './CrosshairWidget';
 import { DamageNumbers } from './DamageNumbers';
 import { EnemyBars } from './EnemyBars';
 import { type HudFrame, HudContext, type HudWidget } from './HudWidget';
 import { HurtWidget } from './HurtWidget';
 import { InfoWidget } from './InfoWidget';
+import { PetPanelWidget } from './PetPanelWidget';
 import { PromptWidget } from './PromptWidget';
 import { ReactionTipsWidget } from './ReactionTipsWidget';
+import { ScopeOverlay } from './ScopeOverlay';
+import { ScrollProcPop } from './ScrollProcPop';
 import { BladeSkillWidget, SkillWidget } from './SkillWidget';
 import { VitalsWidget } from './VitalsWidget';
 import { WeaponWidget } from './WeaponWidget';
@@ -34,11 +34,15 @@ export const WIDGETS: (() => HudWidget)[] = [
   () => new EnemyBars(),
   () => new DamageNumbers(),
   () => new HurtWidget(),
+  () => new ScopeOverlay(),
   () => new CrosshairWidget(),
+  () => new CompassStrip(),
+  () => new ScrollProcPop(),
   () => new VitalsWidget(),
   () => new WeaponWidget(),
   () => new SkillWidget(),
   () => new BladeSkillWidget(),
+  () => new PetPanelWidget(),
   () => new InfoWidget(),
   () => new BossBar(),
   () => new ReactionTipsWidget(),
@@ -51,31 +55,11 @@ export class Hud {
   readonly context: HudContext;
   private readonly containers = new Map<UILayer, HTMLElement>();
   private readonly failed = new Set<string>();
-  /** 旧件的壳（HUD 层，不缩放） */
-  readonly legacy: HTMLDivElement;
-  private readonly adventure: AdventureHUD;
-  private readonly tab: InventoryPanel;
   private hudAlpha = -1;
   private hudVisible = false;
-  private shownLegacy = false;
 
   constructor(private readonly ui: UIRoot, private readonly ctx: GameContext) {
     this.context = new HudContext(ctx, this.containers, this.widgets, ui.panel);
-    // 旧件：行旅图、Tab 行囊、狙击镜遮罩（第二期换成 Unity 的地图 / 罗盘条、行囊界面、ScopeOverlay）
-    this.legacy = h('div', 'gf-hud', ui.host(UILayer.Hud));
-    this.legacy.hidden = true;
-    const scope = h('div', 'gf-scope', this.legacy);
-    const lens = h('div', 'gf-scope__lens', scope);
-    h('i', 'gf-scope__h', lens);
-    h('i', 'gf-scope__v', lens);
-    h('i', 'gf-scope__dot', lens);
-    for (let i = 1; i <= 4; i++) {
-      h('i', `gf-scope__mil gf-scope__mil--x gf-scope__mil--${i}`, lens);
-      h('i', `gf-scope__mil gf-scope__mil--y gf-scope__mil--${i}`, lens);
-    }
-    this.adventure = new AdventureHUD(this.legacy, ctx);
-    this.tab = new InventoryPanel(this.legacy, ctx);
-
     const list = WIDGETS.map((make) => make());
     list.sort((a, b) => a.layer - b.layer || a.order - b.order || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
     for (const w of list) {
@@ -94,8 +78,6 @@ export class Hud {
     }
     const hud = this.containers.get(UILayer.Hud);
     if (hud) hud.style.opacity = '0';
-    const xh = this.widget(CrosshairWidget);
-    if (xh) xh.scope = scope;
   }
 
   /** 取一个部件（没有为 null） */
@@ -112,10 +94,7 @@ export class Hud {
     if (v === this.hudVisible) return;
     this.hudVisible = v;
     if (v) this.reset();
-    else {
-      this.tab.setOpen(false, performance.now());
-      this.widget(PromptWidget)?.set(null);
-    }
+    else this.widget(PromptWidget)?.set(null);
   }
 
   /** 新开一局 / 换关：清掉瞬态（血条池、指示器、首领条、缓存） */
@@ -126,11 +105,6 @@ export class Hud {
       } catch (err) {
         this.fail(w.id, err);
       }
-    }
-    try {
-      this.adventure.reset();
-    } catch (err) {
-      this.fail('adventure', err);
     }
   }
 
@@ -145,17 +119,8 @@ export class Hud {
       this.hudAlpha = this.hudAlpha < 0 ? 0 : target > this.hudAlpha ? Math.min(target, this.hudAlpha + rate) : Math.max(target, this.hudAlpha - rate);
       const q = String(Math.round(this.hudAlpha * 100) / 100);
       if (hud.style.opacity !== q) hud.style.opacity = q;
-      // 旧件（行旅图等）同 HUD 层一起淡出
-      if (this.legacy.style.opacity !== q) this.legacy.style.opacity = q;
       hud.style.display = this.hudVisible || this.hudAlpha > 0 ? '' : 'none';
     }
-    const legacyOn = this.hudVisible && !hidden;
-    if (legacyOn !== this.shownLegacy) {
-      this.shownLegacy = legacyOn;
-      this.legacy.hidden = !legacyOn;
-      this.legacy.classList.toggle('is-open', legacyOn);
-    }
-    this.legacy.classList.toggle('is-idle', !playing);
     if (!this.hudVisible && this.hudAlpha <= 0) return;
     for (const w of this.widgets) {
       try {
@@ -163,19 +128,6 @@ export class Hud {
       } catch (err) {
         this.fail(w.id, err);
       }
-    }
-    if (!legacyOn) return;
-    const ms = now * 1000;
-    try {
-      this.adventure.update(ms);
-    } catch (err) {
-      this.fail('adventure', err);
-    }
-    try {
-      this.tab.setOpen(playing && this.ctx.input.down('inventory'), ms);
-      this.tab.update(ms);
-    } catch (err) {
-      this.fail('tab', err);
     }
   }
 

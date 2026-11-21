@@ -1,11 +1,10 @@
 /**
- * 特效系统（IFx 实现）：把粒子、火花拖尾、线状特效、贴地特效、闪光与伤害数字组合成玩法需要的各种反馈。
+ * 特效系统（IFx 实现）：把粒子、火花拖尾、线状特效、贴地特效、闪光组合成玩法需要的各种反馈（伤害数字转交 UI 的 HUD 部件）。
  *
  * 结构：
  *  - glow（加法粒子，4000）/ smoke（普通混合粒子：烟、尘、碎屑，1500）
  *  - sparks（拉丝火花）+ trails（tracer / beam / lightning）→ 共用一个 RibbonBatch
  *  - ground（冲击波环、预警圈、法阵、光柱、弹孔）、flashes（闪光球 + ≤3 点光源）
- *  - numbers（DOM 伤害数字）
  * 所有特效物体挂在常驻的 fx 根节点（直接在 ctx.scene 下，不在 stageGroup），换关由 clear() 统一清掉。
  * 暂停 / 模态框期间特效冻结（与玩法时间同步，预警圈不会「偷跑」）。
  * 所有入口都丢弃非有限的向量 / 参数（NaN 写进点光源会让整个场景的受光材质出错）。
@@ -24,7 +23,6 @@ import { RibbonBatch } from './Ribbons';
 import { TrailEffects } from './Trails';
 import { GroundEffects } from './Ground';
 import { FlashEffects } from './Flash';
-import { DamageNumbers } from './DamageNumbers';
 import {
   ORDER_GLOW, ORDER_SMOKE, WARM_WHITE, WHITE, finite3, hexToColor, isDustColor, jitter, mixColor, posOr, rand, randomDir,
 } from './shared';
@@ -98,7 +96,6 @@ const _dir = new THREE.Vector3();
 const _p = new THREE.Vector3();
 const _n = new THREE.Vector3();
 const _camPos = new THREE.Vector3();
-const _camFwd = new THREE.Vector3();
 const _buf = new THREE.Vector2();
 const _t1 = new THREE.Vector3();
 const _t2 = new THREE.Vector3();
@@ -124,7 +121,6 @@ export class FxSystem implements IFx {
   private readonly trails: TrailEffects;
   private readonly ground = new GroundEffects();
   private readonly flashes = new FlashEffects();
-  private readonly numbers = new DamageNumbers();
   private readonly emitters: Emitter[] = [];
   private emitterStamp = 0;
   private time = 0;
@@ -178,7 +174,6 @@ export class FxSystem implements IFx {
     const ctx = this.ctx;
     ctx.scene.add(this.root);
     this.flashes.attachLights(ctx.scene);
-    this.numbers.init(ctx.dom.world);
     // 换关时（黑幕中）预编译全部特效着色器，避免第一次爆炸卡顿
     ctx.events.on('stage:loaded', () => this.warmUp());
   }
@@ -412,9 +407,10 @@ export class FxSystem implements IFx {
     if (k > 0.05) this.shake(Math.min(0.85, (0.15 + 0.1 * r) * k * k), 0.22 + 0.2 * k + Math.min(0.15, r * 0.03));
   }
 
+  /** 伤害数字是界面的 HUD 部件（ui/hud/DamageNumbers，M11c）：这里只转交给 UI（旧的 DOM 数字 fx/DamageNumbers 不再挂） */
   damageNumber(pos: THREE.Vector3, amount: number, opts?: DamageNumberOpts): void {
     if (!this.ctx.settings.damageNumbers) return;
-    this.numbers.spawn(pos, amount, opts, this.ctx.camera.position, this.ctx.time.frame);
+    this.ctx.ui?.damageNumber?.(pos, amount, opts);
   }
 
   burst(pos: THREE.Vector3, color: number, count = 12, speed = 4, life = 0.5, size = 0.12, gravity = 0): void {
@@ -1263,7 +1259,6 @@ export class FxSystem implements IFx {
     const cam = ctx.camera;
     cam.updateMatrixWorld();
     _camPos.setFromMatrixPosition(cam.matrixWorld);
-    cam.getWorldDirection(_camFwd);
     ctx.renderer.getDrawingBufferSize(_buf);
     particleScaleUniform.value = _buf.y / (2 * Math.tan((cam.fov * Math.PI) / 360));
 
@@ -1287,7 +1282,6 @@ export class FxSystem implements IFx {
     this.ground.update(d);
     this.flashes.update(d);
     this.seals.update(d);
-    this.numbers.update(d, cam, _camPos, _camFwd, ctx.settings.damageNumbers);
   }
 
   clear(): void {
@@ -1299,7 +1293,6 @@ export class FxSystem implements IFx {
     this.ribbons.end();
     this.ground.clear();
     this.flashes.clear();
-    this.numbers.clear();
     this.seals.clear();
     for (const e of this.emitters) e.active = false;
     for (const l of this.laters) l.t = -1;

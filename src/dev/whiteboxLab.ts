@@ -212,7 +212,7 @@ $('wb-test-supply').onclick = () => {
   ctx.player.hp = Math.max(1, ctx.player.maxHp() * .5); ctx.player.shield = 0;
   for (const weapon of ctx.weapons.slots) if (weapon) weapon.reserve = Math.floor(ctx.weapons.reserveCapacity(weapon) * .1);
   ctx.events.emit('coins:changed', { coins: 500, delta: 500 - previous });
-  ctx.ui.toast('检视试购：500 金币、半生命与少量备弹', '#ffda82');
+  ctx.ui.toast('检视试购：500 灵石、半生命与少量备弹', '#ffda82');
 };
 $('wb-audit').onclick = runAudit;
 $('wb-walk').onclick = () => {
