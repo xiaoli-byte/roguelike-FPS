@@ -1,10 +1,8 @@
 /**
- * UI 使用的中文文案映射（写死，避免依赖其他模块的具体实现）。
+ * UI 使用的中文文案映射（写死，避免依赖其他模块的具体实现）。旧 gf-* 界面才用的（词缀标签、状态小标、旧操作说明表等）随 M11c 第二期删掉了。
  */
-import type { Element, HeroDef, StatKey, StatusId } from '../core/types';
-import { ELEMENT_COLORS } from '../core/types';
+import type { Element, HeroDef, StatKey } from '../core/types';
 import { STAT_INFO } from '../core/Stats';
-import { cssHex } from './dom';
 
 /**
  * 属性增量的显示（与 core/Stats.formatStat 相同，但 flat 类保留两位小数：
@@ -24,14 +22,6 @@ export function fmtStat(key: StatKey, value: number): string {
       return `${sign}${Math.round(v * 100) / 100}`;
   }
 }
-
-/** 精英词缀（与 enemies/Affixes.ts 的 id 一致；UI 不 import 敌人模块的实现） */
-export const AFFIX_LABELS: Record<string, { name: string; color: string; hint: string }> = {
-  swift: { name: '迅捷', color: '#49d8ff', hint: '移速与攻速提高' },
-  shielded: { name: '坚盾', color: '#6f9dff', hint: '额外护盾，脱战回盾' },
-  volatile: { name: '爆裂', color: '#ff7a3a', hint: '死亡时爆炸，别贴身击杀' },
-  frenzied: { name: '狂暴', color: '#ff4a32', hint: '低血量时狂暴' },
-};
 
 /** 武器 id → 中文名 / 类别（DESIGN.md 第 7 节） */
 export const WEAPON_NAMES: Record<string, { name: string; category: string }> = {
@@ -67,10 +57,6 @@ export function heroGlyph(hero: HeroDef | null | undefined): string {
   return HERO_GLYPHS[hero.id] ?? (hero.name.charAt(0) || '侠');
 }
 
-export function heroColor(hero: HeroDef | null | undefined): string {
-  return hero ? cssHex(hero.color) : '#d6ae5c';
-}
-
 /** 英雄选择界面的定位 / 上手难度 / 玩法标签 / 心得 */
 export interface HeroMeta {
   role: string;
@@ -98,18 +84,6 @@ export const DIFFICULTY_NAMES: readonly string[] = ['', '简单', '中等', '进
 /** 元素单字标记 */
 export const ELEMENT_GLYPH: Record<Element, string> = { none: '', fire: '火', shock: '雷', corrode: '蚀' };
 
-export function elementCss(el: Element): string {
-  return cssHex(ELEMENT_COLORS[el]);
-}
-
-/** 敌人状态小标 */
-export const STATUS_BADGES: { id: StatusId; glyph: string; color: string; name: string }[] = [
-  { id: 'burn', glyph: '灼', color: cssHex(ELEMENT_COLORS.fire), name: '灼烧' },
-  { id: 'shock', glyph: '雷', color: cssHex(ELEMENT_COLORS.shock), name: '雷殛' },
-  { id: 'corrode', glyph: '蚀', color: cssHex(ELEMENT_COLORS.corrode), name: '蚀化' },
-  { id: 'stun', glyph: '晕', color: '#f3e9a6', name: '眩晕' },
-];
-
 /** 秘卷标签（英文 id → 中文）；已经是中文的原样显示 */
 const TAG_NAMES: Record<string, string> = {
   damage: '伤害', dmg: '伤害', crit: '暴击', headshot: '爆头', precision: '精准',
@@ -129,28 +103,3 @@ export function tagName(tag: string): string {
   if (/[^\x00-\x7f]/.test(tag)) return tag;
   return TAG_NAMES[tag] ?? TAG_NAMES[tag.toLowerCase()] ?? tag;
 }
-
-/** 中文数字（章节用） */
-const CN_DIGITS = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-
-export function cnNum(n: number): string {
-  if (n >= 0 && n <= 10) return CN_DIGITS[n];
-  return String(n);
-}
-
-/** 操作说明（DESIGN.md 第 2 节） */
-export const CONTROLS: { keys: string[]; action: string; together?: boolean }[] = [
-  { keys: ['W', 'A', 'S', 'D'], action: '移动', together: true },
-  { keys: ['空格'], action: '跳跃（部分英雄可二段跳）' },
-  { keys: ['Shift'], action: '冲刺（有充能与冷却）' },
-  { keys: ['左键'], action: '射击' },
-  { keys: ['右键'], action: '瞄准（缩放视野、降低散布）；持碎刃时按住千刃出窍' },
-  { keys: ['R'], action: '换弹；持碎刃时按住碎刃屏障' },
-  { keys: ['1', '2', '滚轮', 'X'], action: '切换武器' },
-  { keys: ['Q'], action: '主技能（长冷却）' },
-  { keys: ['E'], action: '副技能（多充能投掷类）' },
-  { keys: ['V', '中键'], action: '武器技能（碎刃：杀气爆发，杀意满时人刀合一）' },
-  { keys: ['F'], action: '交互：拾取武器、开宝箱、购买、进入传送门' },
-  { keys: ['Tab'], action: '按住查看已获得秘卷与属性' },
-  { keys: ['Esc', 'P'], action: '暂停' },
-];

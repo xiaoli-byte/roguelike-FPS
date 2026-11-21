@@ -12,9 +12,16 @@
 .gf-menu {
   z-index: 30;
   overflow: hidden;
-  background: var(--ink-0);
+  /* 墨黑（= theme 的 --ink-0；远景不在 .sf-root 里，拿不到 Unity 主题的变量） */
+  background: #07060a;
   --mx: 0;
   --my: 0;
+}
+
+.gf-menu *,
+.gf-menu *::before,
+.gf-menu *::after {
+  box-sizing: border-box;
 }
 
 .gf-menu__bg {

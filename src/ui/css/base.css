@@ -1,107 +1,15 @@
-/* ───────────────────────── 设计令牌 ─────────────────────────
- * 墨黑为底，朱砂与鎏金点缀，细描边；标题用楷体（系统字体），正文雅黑，数字用等宽感的 DIN 类字体。
+/*
+ * 界面容器 ctx.dom.ui（UI.ts 给它加 .gf-ui）的文字基准。
+ * 只管不在 .sf-root 里的 DOM：首领登场的字幕 / 黑边（bosses/intro/CinematicOverlay）、主菜单的 CSS 远景（menu-backdrop.css）。
+ * Unity 界面（.sf-root 下面）的基准在 sf-base.css 与 unity/theme.css，这里的值继承不进去（.sf-root 自己设了字体、字号、行高、颜色）。
+ * M11c 第二期删掉了旧 gf-* 界面的设计令牌、全局 button / 标题 / 段落重置（`.gf-ui button { font: inherit }` 会盖住 USS 按钮的字号与颜色）、
+ * 内联图标与滚动条样式——新界面都不用了。
  */
 .gf-ui {
-  --ink-0: #07060a;
-  --ink-1: #0f0d12;
-  --ink-2: #18151c;
-  --ink-3: #251f29;
-  --paper: #efe4cc;
-  --paper-2: #c8b999;
-  --paper-3: #8a7f6d;
-  --cinnabar: #c9372a;
-  --cinnabar-hi: #ff5a3c;
-  --cinnabar-lo: #6b1b13;
-  --gold: #d4a955;
-  --gold-hi: #f4d893;
-  --gold-lo: #6f5626;
-  --jade: #52b6ec;
-  --jade-hi: #b8eaff;
-  --hp: #d33a2c;
-  --hp-hi: #ff7a5a;
-  --armor: #e0b23c;
-  --good: #86dc8f;
-  --bad: #ff6a4d;
-  --line: rgba(212, 169, 85, 0.42);
-  --line-soft: rgba(212, 169, 85, 0.16);
-  --shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
-
-  --font-display: "SF Title", "SF Body", "SF Body Ext", "STKaiti", "KaiTi", "Kaiti SC", "楷体", "BiauKai", "STSong", serif;
-  --font-body: "SF Body", "SF Body Ext", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
-  --font-num: "SF Number", "Bahnschrift", "DIN Alternate", "DIN Condensed", "Segoe UI", "SF Body", "Microsoft YaHei", sans-serif;
-
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-spring: cubic-bezier(0.34, 1.4, 0.5, 1);
-
-  font-family: var(--font-body);
-  color: var(--paper);
+  font-family: var(--sf-font-body);
+  color: #efe4cc;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-}
-
-.gf-ui *,
-.gf-ui *::before,
-.gf-ui *::after {
-  box-sizing: border-box;
-}
-
-.gf-ui [hidden] {
-  display: none !important;
-}
-
-.gf-ui h1,
-.gf-ui h2,
-.gf-ui h3,
-.gf-ui p {
-  margin: 0;
-  font-weight: inherit;
-}
-
-.gf-ui button {
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-
-/* ───────────────────────── 图标 ───────────────────────── */
-
-.gf-icon {
-  display: inline-flex;
-  width: 1.1em;
-  height: 1.1em;
-  flex: none;
-  vertical-align: -0.16em;
-}
-
-.gf-icon svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.gf-icon--coin {
-  color: #e8b64a;
-  filter: drop-shadow(0 0 3px rgba(232, 182, 74, 0.35));
-}
-
-.gf-icon--essence {
-  color: #9fd6ff;
-  filter: drop-shadow(0 0 4px rgba(120, 190, 255, 0.55));
-}
-
-/* 滚动条 */
-.gf-ui ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.gf-ui ::-webkit-scrollbar-thumb {
-  background: rgba(212, 169, 85, 0.28);
-  border-radius: 4px;
-}
-
-.gf-ui ::-webkit-scrollbar-track {
-  background: transparent;
 }

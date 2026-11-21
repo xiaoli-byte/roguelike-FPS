@@ -2,12 +2,13 @@
  * 灵火破晓 · 界面样式入口（main.ts 已 import 本文件）。
  * 东方奇幻：墨黑底、朱砂与鎏金点缀、细描边。界面照 Unity 迁回（docs/threejs-migration.md M11c）：
  *
- *  base.css           设计令牌（旧变量名，菜单背景在用）、界面根的基准、内联图标、滚动条
+ *  base.css           界面容器 .gf-ui 的文字基准（只给不在 .sf-root 里的首领登场字幕、主菜单远景）
  *  menu-backdrop.css  主菜单的 CSS 远景（网页没有菜单场景）
  *  sf-base.css        UI Toolkit 默认值的网页基准、打包字体（sf-fonts.css，scripts/web/publish_fonts.py 生成）
  *  unity/*.css        由 scripts/web/convert-uss.mjs 从 Unity 的 USS 转出（不要手改）：HUD、菜单、各界面……用 sf-* 类名
  *
- * 旧的 gf-* 界面样式（menu / panels / hud / combat / overlays）随 M11c 第二期删掉了。
+ * 旧的 gf-* 界面样式（menu / panels / hud / combat / overlays，以及 base.css 里的旧设计令牌、全局按钮 / 标题重置、图标、滚动条）
+ * 随 M11c 第二期删掉了；scripts/web/ui2-shots.mjs 每张截图核对剩下的 gf- 规则对 sf 元素零影响。
  */
 @import './css/base.css';
 @import './css/menu-backdrop.css';
