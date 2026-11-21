@@ -3,7 +3,8 @@
  * 武器 / 秘卷 / 敌人（含首领）/ 灵宠，首次获得（敌人：首次交手）时收录；新收录的条目带「新」标记，图鉴里看过之后清掉。
  * 存档：{ "weapon": [...], "scroll": [...], "enemy": [...], "pet": [...], "fresh": ["enemy:apsara", …] }——认不出的 id 原样保留，只是不计进收录数。
  * 网页存 localStorage（CODEX_KEY；Unity 是存档文件里的 codex 段，M11d 存档迁移时并进去）。
- * 条目清单由 buildCatalog 按来源表建：武器按定义表顺序，秘卷按稀有度再按注册顺序，敌人按章（章末是首领；附属单位不单列），灵宠按名录顺序。
+ * 条目清单由 CodexCatalog 按来源表建：武器按定义表顺序，秘卷按稀有度再按注册顺序，敌人只列 Unity 图鉴有的（ENEMY_ORDER / BOSS_CARDS），
+ * 按章、章内照 Unity 的 [Defs] 序（章末是首领；附属单位不单列），灵宠按名录顺序。
  * 本文件不 import 运行时模块（测试按 data: URL 直接加载）。
  */
 
@@ -189,6 +190,34 @@ const hex = (n: number): RGBA4 => [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 2
 export const HIDDEN_ENEMIES = new Set(['mirage_toad_decoy', 'tantong_ember', 'boss_proxy', 'boss_hazard_lab']);
 export const ENEMY_ALIAS: Record<string, string> = { tantong_reborn: 'tantong' };
 
+/**
+ * 图鉴列哪些敌人、按什么顺序（照 Unity：EnemyRoster.All / Registry<BossDef>.All 按各定义类的 [Defs(order)] 排，同章内照它排，首领排在本章敌人之后）。
+ * id → Unity 的 [Defs] 序。网页注册表里还有 Unity 图鉴没有的：旧三英雄时代的名册（grunt / archer / brute / bomber / wisp / shaman / mortar /
+ * marksman、boss_colossus / boss_matriarch，只剩旧白盒关的兜底在用）和首领的附属件（狐巫冰壁、寒霜冰晶、吊鼎锁扣、龙卷风柱）——不在表里的不列
+ * （收录记录照样留着，只是不计数，同 Unity 认不出的 id）。
+ */
+export const ENEMY_ORDER: Readonly<Record<string, number>> = {
+  // 第一章 100 起
+  jerboa_blade: 100, scorpion_archer: 110, mirage_toad: 120, tomb_beast: 130, apsara: 140, fire_rat: 150, sand_wraith: 160,
+  // 第二章 200 起
+  jiaoren: 200, xingxing: 210, xuangui: 220, frost_crab: 230, qingniao: 240, ice_puffer: 250, haozhi: 260, fox_witch: 270, lantern_jelly: 280, fuzhu: 290, ice_whale: 295,
+  // 第三章 300 起
+  tantong: 300, huodou: 302, iron_ox: 310, tuo: 311, bifang: 320, mamian: 321, firecracker: 370, fire_crow: 375, founder: 380, nuo: 385,
+  // 川藏高原 400 起（Lore 里没有，章 = 0，排在最后）
+  marmot: 400, tiangou: 410, aoyin: 420, leiyak: 421, jufu: 430, manman: 440, liangu: 450, dijiang: 460, qiongqi: 470,
+};
+
+/** 首领：id → [Defs 序, 名字, 称号]（Unity BossDef 的 name / title；网页注册表的名字有的把称号拼在后面，图鉴照 Unity 分开写） */
+export const BOSS_CARDS: Readonly<Record<string, readonly [number, string, string]>> = {
+  boss_hanba: [10, '旱魃', '赤地之源'],
+  boss_warlord: [13, '熔心魔将', '熔火深渊的统帅'],
+  boss_kunpeng: [20, '鲲鹏', '北冥之鱼 · 化而为鸟'],
+  boss_qilin: [30, '火麒麟', '祝融炉心 · 守炉神兽'],
+  boss_kui: [40, '夔', '一足之雷'],
+  boss_feilian: [41, '飞廉', '风伯'],
+  boss_huashe: [42, '化蛇', '人面豺身 · 鸟翼蛇行'],
+};
+
 /** 名册 id → 图鉴 id（别名换成本体，附属单位返回 null） */
 export function codexEnemyId(rosterId: string | null | undefined): string | null {
   if (!rosterId || HIDDEN_ENEMIES.has(rosterId)) return null;
@@ -215,14 +244,16 @@ export class CodexCatalog {
       .map(({ s }) => ({ kind: 'scroll', id: s.id, name: s.name, subtitle: `${src.rarityName(s.rarity)}秘卷`, color: src.rarityColor(s.rarity), chapter: 0, boss: false, def: s }));
     const seqOf = new Map<CodexEntry, number>();
     const enemy: CodexEntry[] = [];
-    src.enemies.forEach((e, i) => {
+    src.enemies.forEach((e) => {
       if (codexEnemyId(e.id) !== e.id) return;
-      const boss = !!e.isBoss || e.rank === 'boss';
-      const entry: CodexEntry = boss
-        ? { kind: 'enemy', id: e.id, name: e.name, subtitle: '首领', chapter: loreChapter(e.id), boss: true, color: CINNABAR_HI, def: e }
+      const card = BOSS_CARDS[e.id];
+      const order = card ? card[0] : ENEMY_ORDER[e.id];
+      if (order === undefined) return;
+      const entry: CodexEntry = card
+        ? { kind: 'enemy', id: e.id, name: card[1], subtitle: card[2] ? `首领 · ${card[2]}` : '首领', chapter: loreChapter(e.id), boss: true, color: CINNABAR_HI, def: e }
         : { kind: 'enemy', id: e.id, name: e.name, subtitle: roleName(e), chapter: loreChapter(e.id), boss: false, color: elemental(e.element, PAPER2), def: e };
       // 首领排在本章敌人之后
-      seqOf.set(entry, (boss ? 100000 : 0) + i);
+      seqOf.set(entry, (card ? 100000 : 0) + order);
       enemy.push(entry);
     });
     enemy.sort((a, b) => (a.chapter > 0 ? a.chapter : 99) - (b.chapter > 0 ? b.chapter : 99) || seqOf.get(a)! - seqOf.get(b)!);

@@ -17,6 +17,12 @@ import type { CodexEntry } from './Codex';
 export const THUMB_SIZE = 256;
 const SUPER = 2;
 
+/**
+ * 借别人模型拍的条目（Unity 拍的是 EnemyDef.prefab / 首领第一形态 forms[0] 的模型）：
+ * 沙魇 prefab = SK_Enemy_JerboaBlade、雷牦 prefab = SK_Enemy_Aoyin；鲲鹏第一形态是鲲、火麒麟第一形态是玄鳞（网页的美术清单按形态分开绑定）
+ */
+const MODEL_OF: Record<string, string> = { sand_wraith: 'jerboa_blade', leiyak: 'aoyin', boss_kunpeng: 'boss_kunpeng_kun', boss_qilin: 'boss_qilin_xuan' };
+
 export class CodexThumbs {
   private readonly cache = new Map<string, string>();
   private readonly missing = new Set<string>();
@@ -91,10 +97,11 @@ export class CodexThumbs {
       return this.ctx.weapons.createWorldModel(inst);
     }
     if (e.kind === 'enemy') {
-      const asset = AssetLibrary.findBound('enemy', e.id) ?? AssetLibrary.findBound('boss', e.id);
-      if (!asset) return AssetLibrary.enabled && !AssetLibrary.unavailable(e.id) && tries(this, e) < 120 ? 'later' : null;
+      const id = MODEL_OF[e.id] ?? e.id;
+      const asset = AssetLibrary.findBound('enemy', id) ?? AssetLibrary.findBound('boss', id);
+      if (!asset) return AssetLibrary.enabled && !AssetLibrary.unavailable(id) && tries(this, e) < 120 ? 'later' : null;
       const root = cloneSkinned(asset.gltf.scene);
-      for (const a of AssetLibrary.findAttachments('enemy', e.id)) root.add(a.gltf.scene.clone(true));
+      for (const a of AssetLibrary.findAttachments('enemy', id)) root.add(a.gltf.scene.clone(true));
       return root;
     }
     return null;
