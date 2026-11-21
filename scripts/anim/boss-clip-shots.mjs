@@ -333,6 +333,17 @@ try {
       await look();
       log('land', JSON.stringify(await probe()));
       await shot('land');
+      // 登场结束、第一招收招：照 Unity IntroDone / FinishMove 的 PlayLocomotion 无条件交叉淡入步态（0.15 s；已在步态里也自我过渡，会看到两个 Locomotion 实例）
+      const edge = async (what, cond, seconds) => {
+        if (!(await until(cond, seconds, 1 / 60))) { log(what, '没等到'); return; }
+        const rows = [];
+        for (let k = 0; k < 4; k++) { await step(1 / 60); rows.push(await probe()); }
+        log(what, rows.map((r) => `${r.anim} [${r.pbs.join(' ')}]`).join(' | '));
+      };
+      await edge('intro end', `window.__qilin.state().introDone`, 15);
+      await until(`!!window.__qilin.state().move`, 12, 1 / 30);
+      log('first move', brief(await state()));
+      await edge('move end', `!window.__qilin.state().move`, 15);
     } else if (which === 'hanba') {
       await until(`window.__hanba.state().introDone`, 20, 0.2);
       await step(0.3);
