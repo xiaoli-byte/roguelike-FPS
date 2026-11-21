@@ -487,6 +487,31 @@ test('part animator: mag offsets / cylinder / pump follow the profile (Unity Wea
   near(m2.position.y, -0.04 + H.WEAPON_HANDLING.smg.magOffset[1] * vm.debug().magOut, '弹匣下抽 0.14（Unity 收过）', 1e-6);
 });
 
+test('break action: magmashot opens 0.48 rad and slides a shell into alternating barrels (Unity BreakAction)', async () => {
+  const text = await cs('Weapons/BreakAction.cs');
+  near(VM.BREAK.OpenAngle, num(text.match(/OpenAngle = ([\d.]+f)/)[1]));
+  for (const k of ['BoreX', 'BoreY', 'ChamberZ', 'ShellLength']) near(VM.BREAK[k], num(text.match(new RegExp(`${k} = (-?[\\d.]+f)`))[1]), k);
+  assert.match(text, /Smooth\(\(shellProgress - 0\.55f\) \/ 0\.37f\)/);
+  assert.match(text, /shellReload && shellProgress > 0\.22f && shellProgress < 0\.98f/);
+  const held = VM.breakShellPose(0.3, 0, new THREE.Vector3());
+  const seated = VM.breakShellPose(0.95, 0, new THREE.Vector3());
+  near(held.y, 0.075); near(held.z, -0.02);
+  near(seated.y, 0.04); near(seated.z, -0.065 - 0.026);
+  assert.ok(VM.breakShellPose(0.95, 1, new THREE.Vector3()).x === -seated.x, '两管交替');
+  // 赤蛟霰铳手里不拿弹（弹壳画在膛口），泵动霰弹枪手里拿一发
+  const { vm } = vmHarness();
+  const s = VM.createViewmodelState();
+  vm.setWeapon(inst('magmashot'));
+  assert.equal(vm.root.getObjectByName('reload.rounds'), undefined);
+  s.reloading = true; s.shellMode = true; s.reloadP = 0.5; s.shellsInserted = 1;
+  vm.update(1 / 60, s);
+  const shell = vm.root.getObjectByName('reload.shell');
+  assert.equal(shell.visible, true);
+  near(shell.position.x, VM.BREAK.BoreX, '第二发进另一根枪管');
+  vm.setWeapon(inst('shotgun'));
+  assert.ok(vm.root.getObjectByName('reload.rounds'));
+});
+
 // ───────────── 加弹的动画事件（WeaponSystem.commitLoad，Unity WeaponStateMachine.CommitLoad） ─────────────
 
 async function weaponSystem() {

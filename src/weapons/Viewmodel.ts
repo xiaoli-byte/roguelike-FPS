@@ -103,6 +103,8 @@ interface VmEntry {
   /** 逐发装填时手里实际可见的弹壳 / 双管弹药。 */
   rounds: THREE.Group | null;
   breech: THREE.Group | null;
+  /** 赤蛟霰铳：膛口上方递进枪管的那一发（Unity BreakAction 的 reload.shell，枪模空间） */
+  chamberShell: THREE.Mesh | null;
   ownedGeometry: THREE.BufferGeometry[];
   baseColor: THREE.Color;
   rarity: number;
@@ -176,6 +178,20 @@ export const VM_FEEL = {
 export const TRINITY_FLASH = { gain: 0.9, decay: 14 } as const;
 /** 灵炮满蓄色（物理元素时的蓄能色；同 Firing.FULL_CHARGE_GLOW / Unity Ballistics.FullChargeColor） */
 const FULL_CHARGE_GLOW = 0xc9a8ff;
+
+/**
+ * 赤蛟霰铳的折开换弹（Unity BreakAction）：完全折开的角度（阻尼 10，同 shellT）；两根枪管的横向位置、膛口 z、弹壳长度（枪模坐标，Unity 的 x 取反）
+ */
+export const BREAK = { OpenAngle: 0.48, BoreX: 0.019, BoreY: 0.04, ChamberZ: -0.065, ShellLength: 0.052 } as const;
+
+/** 弹壳位置（Unity BreakAction.ShellPose）：先停在膛口后上方（手把它递过来），这一发进度 55%–92% 滑进第 bore 根枪管（两管交替） */
+export function breakShellPose(p: number, bore: number, out: THREE.Vector3): THREE.Vector3 {
+  const x = (bore % 2 === 0 ? -1 : 1) * BREAK.BoreX;
+  const t = smooth((p - 0.55) / 0.37);
+  const heldY = BREAK.BoreY + 0.035, heldZ = BREAK.ChamberZ + 0.045;
+  const inY = BREAK.BoreY, inZ = BREAK.ChamberZ - BREAK.ShellLength * 0.5;
+  return out.set(x, heldY + (inY - heldY) * t, heldZ + (inZ - heldZ) * t);
+}
 
 /** 袖子底色：深色布料，只混入少量英雄主题色 */
 const SLEEVE_BASE = 0x2b2a2f;
@@ -567,18 +583,24 @@ export class Viewmodel {
     let rounds: THREE.Group | null = null;
     let breech: THREE.Group | null = null;
     const ownedGeometry: THREE.BufferGeometry[] = [];
-    if (leftArm && def.reloadStyle === 'shell') {
+    let chamberShell: THREE.Mesh | null = null;
+    // 逐发装填手里的那一发（Unity WeaponHandRig：只有泵动霰弹枪；赤蛟霰铳的弹壳由 BreakAction 画在膛口）
+    if (leftArm && profile?.action === 'shell') {
       rounds = new THREE.Group();
       rounds.name = 'reload.rounds';
-      for (let i = 0; i < (def.id === 'magmashot' ? 2 : 1); i++) {
-        const shell = new THREE.Mesh(boxGeo(0.013, 0.013, 0.052), solidMat(0xb86b32, 0.4, 0.5));
-        shell.position.set(i * 0.018, 0.014, -0.025);
-        rounds.add(shell);
-      }
+      const shell = new THREE.Mesh(boxGeo(0.013, 0.013, BREAK.ShellLength), solidMat(0xb86b32, 0.4, 0.5));
+      shell.position.set(0, 0.014, -0.025);
+      rounds.add(shell);
       rounds.visible = false;
       leftArm.add(rounds);
     }
-    if (def.id === 'magmashot') breech = addReloadBreech(gun.root, ownedGeometry);
+    if (def.id === 'magmashot') {
+      breech = addReloadBreech(gun.root, ownedGeometry);
+      chamberShell = new THREE.Mesh(boxGeo(0.013, 0.013, BREAK.ShellLength), solidMat(0xb86b32, 0.4, 0.5));
+      chamberShell.name = 'reload.shell';
+      chamberShell.visible = false;
+      gun.root.add(chamberShell);
+    }
     gun.root.scale.setScalar(original ? 1 : VM_SCALE);
     gun.root.traverse((o) => {
       const mesh = o as THREE.Mesh;
@@ -597,7 +619,7 @@ export class Viewmodel {
       weight: profile?.weight ?? 1, swayScale: profile?.swayScale ?? 1, bobScale: profile?.bobScale ?? 1,
       energyMat,
       armMats: arms.mats,
-      leftArm, support, loadOffset, rounds, breech, ownedGeometry,
+      leftArm, support, loadOffset, rounds, breech, chamberShell, ownedGeometry,
       baseColor: base,
       rarity: inst.rarity,
       element: inst.element,
@@ -631,7 +653,7 @@ export class Viewmodel {
       uid: inst.uid, def, gun, profile: null,
       weight: BLADE_SWAY.weight, swayScale: BLADE_SWAY.swayScale, bobScale: BLADE_SWAY.bobScale,
       energyMat: new THREE.MeshBasicMaterial({ toneMapped: false }),
-      armMats, leftArm: null, support: new THREE.Vector3(), loadOffset: new THREE.Vector3(), rounds: null, breech: null,
+      armMats, leftArm: null, support: new THREE.Vector3(), loadOffset: new THREE.Vector3(), rounds: null, breech: null, chamberShell: null,
       ownedGeometry: [], baseColor: new THREE.Color(ELEMENT_COLORS[inst.element]), rarity: inst.rarity, element: inst.element,
       magBase: new THREE.Vector3(), magRotX: 0, pumpBase: 0,
       original: null, recoil: null,
@@ -877,7 +899,7 @@ export class Viewmodel {
       _v.copy(g.leftHand).applyMatrix4(g.leftParent.matrix);
     }
     _supportPoint[0] = _v.x; _supportPoint[1] = _v.y; _supportPoint[2] = _v.z;
-    if (e.breech) e.breech.rotation.x = -0.48 * this.shellT;
+    if (e.breech) e.breech.rotation.x = -BREAK.OpenAngle * this.shellT;
     if (s.reloading) {
       _v2.fromArray(profile.load);
       if (g.mag && !s.shellMode) {
@@ -905,6 +927,11 @@ export class Viewmodel {
     }
     this.poseForearm(e, left, _v);
     if (e.rounds) e.rounds.visible = s.shellMode && s.reloadP > 0.22 && s.reloadP < 0.98;
+    if (e.chamberShell) {
+      const show = s.reloading && s.shellMode && s.reloadP > 0.22 && s.reloadP < 0.98;
+      e.chamberShell.visible = show;
+      if (show) breakShellPose(s.reloadP, s.shellsInserted ?? 0, e.chamberShell.position);
+    }
   }
 
   /**
