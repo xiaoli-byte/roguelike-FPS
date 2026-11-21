@@ -373,13 +373,19 @@ export class DemonBlade {
       }
     }
     list.length = 0;
+    // 判定帧（打没打中都调）：第一人称记下这一刀（Unity view.OnStrike）
+    this.host.view()?.onStrike(idx, this.unionLeft > 0);
     if (hitCount > 0) {
       this.qi = Math.min(P.qi.max, this.qi + P.qi.perSlashHit * hitCount);
       this.gainIntent(P.intent.slashHit * hitCount, P);
       this.host.view()?.onHit(heavy);
       ctx.audio.play('blade_hit', { volume: heavy ? 1 : 0.7, pitch: heavy ? 0.85 : 1 });
       ctx.fx.shake(seg.shake, 0.13);
-      player.cameraPunch(idx === 1 ? 0.45 : -0.45, heavy ? -0.6 : 0.15);
+      // 镜头冲击（Unity feel.Punch(heavy ? 1.6 : 0.5, 一段 / 三段 −1.4°、二段 +1.4° 横滚)）与命中顿帧 40 ms（第三段 70 ms）
+      const punch = (player as unknown as { punchDegrees?: (p: number, r: number, y?: number) => void }).punchDegrees;
+      if (typeof punch === 'function') punch.call(player, heavy ? 1.6 : 0.5, idx === 1 ? 1.4 : -1.4);
+      else player.cameraPunch(idx === 1 ? 0.45 : -0.45, heavy ? -0.6 : 0.15);
+      (ctx.game as unknown as { hitStop?: { request(seconds: number): boolean } }).hitStop?.request(heavy ? 0.07 : 0.04);
     }
     // 人刀合一：每段放出一道碎刃斩波
     if (this.unionLeft > 0) this.launchWave(seg.damage * R.damageMult * P.union.waveFrac, idx, P);
@@ -744,10 +750,13 @@ export class DemonBlade {
       s.swing = this.swingIdx;
       s.swingP = clamp01(this.swingT / Math.max(0.01, seg.duration));
       s.hitP = clamp01(seg.windup / Math.max(0.01, seg.duration));
+      s.slash = seg;
     } else {
       s.swing = -1;
       s.swingP = 0;
+      s.slash = null;
     }
+    s.unionStretch = P.union.stretch;
     s.gesture = this.mode === 'swarm' ? 'point'
       : this.mode === 'shield' ? 'shield'
       : this.burstPhase === 'gather' ? 'raise'
