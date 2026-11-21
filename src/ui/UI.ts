@@ -314,8 +314,8 @@ export class UIManager implements IUI {
   }
 
   /**
-   * 关间结算卡（Game.advance 进下一关之前问这里）：弹出卡片并返回 true，玩家按「继续」后回调 proceed；
-   * 没有规划表数据 / 界面打不开时返回 false（Game 直接换关）
+   * 关间结算卡（出口进门 Portal.enter 换关之前问这里，同 Unity GameSession.CompleteStage；检视页跳关不问）：弹出卡片并返回 true，玩家按「继续」后回调 proceed；
+   * 没有规划表数据 / 界面打不开时返回 false（出口直接换关）
    */
   stageCard(next: StageNode, proceed: () => void): boolean {
     const ctx = this.ctx;

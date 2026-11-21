@@ -315,11 +315,9 @@ export class Game implements IGame {
     });
   }
 
-  advance(next: StageNode, confirmed = false): void {
+  advance(next: StageNode): void {
     if (this._state !== 'playing') return;
     const ctx = this.ctx;
-    // 关间结算卡：UI 弹了卡片就等玩家按「继续」（回调里带 confirmed 再进来）
-    if (!confirmed && ctx.ui.stageCard?.(next, () => this.advance(next, true))) return;
     this.setState('transition');
     ctx.input.enabled = false;
     ctx.audio.play('portal');
