@@ -3,7 +3,7 @@
  *   · 摄影棚：独立的场景 + 正交相机 + 三盏平行光（主光、补光、轮廓光）+ 中性灰环境光，用游戏的渲染器画到渲染目标上（2 倍超采样再缩小），
  *     画完立刻还原渲染器状态（同一帧里，游戏画面不受影响）。
  *   · 机位：武器从右侧看枪身（枪口朝右，略带俯视）；敌人、首领、灵宠从前方偏右上 3/4 角看。正交相机按包围盒取景。
- *   · 模型：武器 = 武器系统的世界模型（ctx.weapons.createWorldModel）；敌人 / 首领 = 美术资源库里绑定到它的模型（AssetLibrary，静止姿势）。
+ *   · 模型：武器 = 武器系统的世界模型（ctx.weapons.createWorldModel）去掉掉落用的稀有度光晕（Unity 只实例化裸枪 prefab）；敌人 / 首领 = 美术资源库里绑定到它的模型（AssetLibrary，静止姿势）。
  *     秘卷没有模型；灵宠本体是 M9，没有模型来源时不拍（界面显示单字签）。
  * 未收录的条目在界面上把同一张图压成黑色剪影（CSS filter）。
  * 网页差异：Unity 用差分抠像（URP 中间缓冲不保留 alpha），网页的渲染目标本来就带 alpha；敌人拍的是绑定姿势（Unity 先求动画第 0 帧）。
@@ -94,7 +94,7 @@ export class CodexThumbs {
     if (e.kind === 'weapon') {
       const def = e.def as { id: string; element?: string };
       const inst = { uid: -1, defId: def.id, rarity: 0, element: def.element ?? 'none', level: 0, mag: 0, reserve: 0, affixes: [] } as unknown as WeaponInstance;
-      return this.ctx.weapons.createWorldModel(inst);
+      return bareGun(this.ctx.weapons.createWorldModel(inst));
     }
     if (e.kind === 'enemy') {
       const id = MODEL_OF[e.id] ?? e.id;
@@ -203,6 +203,19 @@ export class CodexThumbs {
       scene.remove(holder);
     }
   }
+}
+
+/**
+ * 掉落模型去掉稀有度光晕精灵，只留枪身（Unity CodexThumbs.Build：Instantiate(LootCatalog.WeaponModel(prefab)) + WeaponTint，没有光晕）。
+ * 光晕不摘的话会一起画进缩略图，Box3.setFromObject 取景时也把它算进包围盒，枪在格子里被缩小。材质是 WeaponModels 共用的，只摘不释放
+ */
+export function bareGun(model: THREE.Object3D): THREE.Object3D {
+  const halos: THREE.Object3D[] = [];
+  model.traverse((o) => {
+    if ((o as THREE.Sprite).isSprite) halos.push(o);
+  });
+  for (const h of halos) h.removeFromParent();
+  return model;
 }
 
 const tryCount = new WeakMap<CodexThumbs, Map<string, number>>();
