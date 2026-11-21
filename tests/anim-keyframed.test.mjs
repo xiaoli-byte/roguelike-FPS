@@ -552,6 +552,48 @@ test('火麒麟：招式的片段与交叉淡入秒数照 Unity Brain.PlayAct（
   for (const s of new Set(web.map((x) => x.split('@')[0]))) assert.ok(s === 'Locomotion' || xuan.clips[s] || burn.clips[s], `${s} 有片段`);
 });
 
+const { Qilin } = await import('../src/enemies/bosses/Qilin.ts');
+const { QilinDef: QLDef } = await import('../src/enemies/bosses/QilinDef.ts');
+
+/** 火麒麟原型 + 记录调用的片段播放器桩：act / setAnim / onPresent / introTick 都走真代码，每帧 syncClip 一次 */
+function qilinClipRig() {
+  const calls = [];
+  const c = {
+    state: 'Locomotion', ready: true, has: () => true,
+    play(s, fade) { calls.push(`play ${s} ${fade}`); this.state = s; },
+    playTimed(s, sec, fade) { calls.push(`timed ${s} ${+sec.toFixed(3)} ${fade}`); this.state = s; },
+    playLocomotion() { calls.push('loco 0.15'); this.state = 'Locomotion'; },
+  };
+  const form = { clipAnim: '' };
+  const q = Object.create(Qilin.prototype);
+  Object.assign(q, {
+    anim: 'idle', animT: 0, animLeft: Infinity, clipSeconds: 0, clipFade: 0.1, clipLoco: false, clipActed: false, lastAct: null,
+    alive: true, xuan: form, burn: null, bdef: new QLDef(), introRoared: false, fx: null,
+    furnace: { center: new THREE.Vector3(0, 0, 0), floorY: 0 }, position: new THREE.Vector3(0, 0, -9), modelOffset: new THREE.Vector3(),
+    ctx: { fx: { ring() {}, burst() {} } }, playSfx() {}, quake() {},
+  });
+  return { q, calls, sync: () => q.syncClip(form, c) };
+}
+
+test('火麒麟登场：现身播一次 tuck（拉伸到 3.2 s），跃出段不再逐帧重播，落地只播一次 rear（照 Unity BossBrain.Spawn 的 PlayAct(intro) 与 QilinBrain.IntroTick）', { skip: !existsSync(QL_UNITY) && '没有 unity/ 目录' }, () => {
+  const brain = readFileSync(join(QL_UNITY, 'QilinBrain.cs'), 'utf8');
+  const body = brain.slice(brain.indexOf('protected override void IntroTick'), brain.indexOf('protected override void OnIntroEnd'));
+  const unityIntro = actCalls(body, /PlayAct\("(\w+)"([^;]*)\);/g).map((c) => `${c.state}@${Number(c.args[0].replace(/f$/, ''))}`);
+  assert.deepEqual(unityIntro, ['rear@1.2'], 'Unity 登场里只有落地那一下');
+  const { q, calls, sync } = qilinClipRig();
+  const def = q.bdef;
+  assert.equal(def.intro.anim, 'tuck');
+  q.onPresent();
+  sync();
+  const dt = 1 / 60;
+  for (let age = 0; age <= def.intro.seconds; age += dt) {
+    q.introTick(Math.min(1, age / def.intro.seconds), 0);
+    sync();
+  }
+  assert.deepEqual(calls, [`timed tuck ${def.intro.seconds} 0.1`, 'timed rear 1.2 0.1'], `片段调用：${calls.slice(0, 6).join(' / ')}${calls.length > 6 ? ` …共 ${calls.length} 次` : ''}`);
+  assert.equal(q.anim, 'rear');
+});
+
 // ───────────── 商人 ─────────────
 
 const { MerchantNpcs } = await import('../src/progression/loot/Merchant.ts');

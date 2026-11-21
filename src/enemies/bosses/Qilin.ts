@@ -982,7 +982,9 @@ export class Qilin extends BossBrain implements DirectedBoss {
       this.ctx.fx.burst(_w.copy(floor).setY(floor.y + 0.3), QilinDef.Fire, 30, 7, 0.8, 0.35, 8);
       this.ctx.fx.burst(_w, 0x4a3028, 20, 5, 0.9, 0.4, 4);
       this.quake(0.6, 1);
-    } else if (!this.introRoared && k > 0) this.act('tuck', 0);
+    }
+    // 跃出段不再逐帧 act：现身时 onPresent 已经照 Unity（BossBrain.Spawn 的 PlayAct(intro.anim, intro.seconds)）播了 tuck、拉伸到 3.2 s，
+    // 程序化姿势也一直停在 tuck 到落地人立；Unity QilinBrain.IntroTick 只在落地时 PlayAct("rear", 1.2f) 一次
     // 登场时间里 EnemyBase 不调 animate：这里补上
     if (dt > 0 && this.age < this.spawnDuration) this.animate(dt);
   }
