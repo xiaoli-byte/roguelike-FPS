@@ -273,5 +273,33 @@
   ],
   "ref": "raw/1-1_v2.png",
   "chars": 6448
+ },
+ "1-3_v2": {
+  "endpoint": "images/edits",
+  "model": "gpt-image-2.6-sunburst",
+  "size": "1536x1024",
+  "quality": "high",
+  "request_id": "req_08ea2d36f48e42f8943cc17d670b6f02",
+  "seconds": 49.7,
+  "usage": {
+   "input_tokens": 2933,
+   "input_tokens_details": {
+    "image_tokens": 1536,
+    "text_tokens": 1397
+   },
+   "output_tokens": 1372,
+   "output_tokens_details": {
+    "image_tokens": 1372,
+    "text_tokens": 0
+   },
+   "total_tokens": 4305
+  },
+  "prompt_files": [
+   "prompts/_style.txt",
+   "prompts/1-3.txt",
+   "prompts/1-3_v2_changes.txt"
+  ],
+  "ref": "raw/1-3_v1.png",
+  "chars": 5980
  }
 }
