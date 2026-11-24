@@ -3,6 +3,7 @@
  * 地形、过河设施、地标、水、大鹗、动态环境都在 src/world/gorge/（和 4-1 共用的在 src/world/plateau/），
  * 这里只负责组装、输入（含溜索、急流）、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md 第 3 节。
  */
+import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { buildMountains, buildSky, SKY } from '../world/plateau/backdrop';
@@ -283,7 +284,7 @@ let jumpPressed = false, dashPressed = false, releasePressed = false, bigMap = f
 /** 游玩模式（大鹗领主战，chuanzang-combat-v1.md 4.4）；null = 检视模式 */
 let play: GorgePlay | null = null;
 let firing = false, skillQ = false, skillE = false, anyKey = false, pick = 0;
-addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas && play) firing = true; });
+addEventListener('mousedown', e => { if (e.button === 0 && (document.pointerLockElement === canvas || (drag.active && e.target === canvas)) && play) firing = true; });
 addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
@@ -323,15 +324,9 @@ function look(dx: number, dy: number): void {
   walker.yaw -= dx * LOOK_SENS;
   walker.pitch = Math.max(-1.52, Math.min(1.52, walker.pitch - dy * LOOK_SENS));
 }
-async function lockPointer(): Promise<void> {
-  try {
-    await canvas.requestPointerLock({ unadjustedMovement: true });
-  } catch (error) {
-    if (error instanceof Error && error.name === 'NotSupportedError') {
-      try { await canvas.requestPointerLock(); } catch { /* 忽略 */ }
-    }
-  }
-}
+// 锁不上鼠标（Claude 应用自带的浏览器面板就是）时改成按住拖动转视角（dragLook.ts）
+const drag = new DragLook(canvas, look, () => showHint('这个浏览器不让网页锁定鼠标：在画面上按住左键（或右键）拖动来转视角'));
+function lockPointer(): Promise<void> { return lockPointerOrDrag(canvas, drag); }
 canvas.addEventListener('click', () => { if (document.pointerLockElement !== canvas) void lockPointer(); });
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === canvas;

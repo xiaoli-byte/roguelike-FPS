@@ -4,6 +4,7 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { SKY } from '../world/plateau/backdrop';
@@ -155,7 +156,7 @@ let play: HaiziPlay | null = null;
 const keys = new Set<string>();
 let jumpPressed = false, dashPressed = false, reloadPressed = false, firing = false, bigMap = false;
 let skillQ = false, skillE = false, anyKey = false, pick = 0;
-addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas) firing = true; });
+addEventListener('mousedown', e => { if (e.button === 0 && (document.pointerLockElement === canvas || (drag.active && e.target === canvas))) firing = true; });
 addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
@@ -187,15 +188,9 @@ function look(dx: number, dy: number): void {
   walker.yaw -= dx * LOOK_SENS;
   walker.pitch = Math.max(-1.52, Math.min(1.52, walker.pitch - dy * LOOK_SENS));
 }
-async function lockPointer(): Promise<void> {
-  try {
-    await canvas.requestPointerLock({ unadjustedMovement: true });
-  } catch (error) {
-    if (error instanceof Error && error.name === 'NotSupportedError') {
-      try { await canvas.requestPointerLock(); } catch { /* 忽略 */ }
-    }
-  }
-}
+// 锁不上鼠标（Claude 应用自带的浏览器面板就是）时改成按住拖动转视角（dragLook.ts）
+const drag = new DragLook(canvas, look, () => showHint('这个浏览器不让网页锁定鼠标：在画面上按住左键（或右键）拖动来转视角'));
+function lockPointer(): Promise<void> { return lockPointerOrDrag(canvas, drag); }
 canvas.addEventListener('click', () => { if (document.pointerLockElement !== canvas) void lockPointer(); });
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === canvas;
