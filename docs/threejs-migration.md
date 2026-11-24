@@ -85,7 +85,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 | M7 | 地图机关：熔岩 v2、流沙 / 地表 / 边界 / 可破坏 / 断桥 / 风场、天气、各图专属脚本 | ~10k | 🔶 2026-11-19：导出（`scripts/web/export-mechanisms.mjs` 直接解析场景 YAML → `mechanisms.json` + 软边界距离场）、运行时（`src/world/mechanisms/`，UnitySceneView 搭好后建）、对照测试 `tests/unity-mechanisms.test.mjs`、实机脚本 `scripts/web/mechanism-shots.mjs` ✅；清单、差异与待办见 4.5 |
 | M8 | 玩家与战斗增量：战斗契约（灵宠伤害源、弱点倍率、命中区）、状态（寒意 / 引燃 / 日灼，带电随第四章）、弹体（弱点判定、护罩、落地滚动）、镜头手感 / 卡帧 / 安全落点 / 移动特效、武器（散布手调、冲刺禁射、喷火锥、磁轨光束）、技能（施法姿势、特效换风格） | ~12k | ✅ 2026-11-21（fa5ebf28、ef7a6719、08e1215d、80d45480），对照清单见 4.6：战斗契约（灵宠伤害源只做类型与接口、弱点伤害 + 秘卷「破绽」、命中区、不可选中返回 immune 并节流派发受击事件）、带电 + 死亡传电 + 领主常驻带电、顿帧、多挡弹区 + 球罩、落地滚动、镜头手感（trauma² 震屏、受击冲击按来向、开枪一顿、阵亡倒地）、移动特效、坠落托回安全点、玩家减益（寒意 / 点燃 / 日晒，敌人侧入口已转过来）、武器（扳机闩、冲刺禁射、开镜规则、散布手调、镜头后坐 × 0.3 完全回正、光束共用冷却、喷火锥、贯虹虹光）、技能（施法姿势、拒绝事件、出手点、磐的挡弹罩 / 贴地起跳 / 锁冲刺）。焚雷扩散取最近 16 个。M13 对照测试对出、落在 M8 的五条全部照 Unity 改完（4.6「M13 对出的不一致」）。复审后（2b51eaee…）：死亡传电照 Unity `Nearest` 选目标、同步重入时外层只传到这一跳、命中区整发格挡弹「格挡」、局内货币统一叫灵石（`src/ui` 除外）；rebase 到 master 后 `tests/unity-*.test.mjs` 七处随改、能转的 todo 转成断言。对照测试 `tests/m8-combat.test.mjs` / `m8-player.test.mjs` / `m8-weapons.test.mjs` / `m8-parity.test.mjs`（常量读 C# 源码比）；实机脚本 `scripts/web/m8-shots.mjs`。待办见 4.6 末尾 |
 | M9 | 灵宠（全新） | 4.1k | ⬜ |
-| M10 | 第一人称持枪手感 + 碎刃表现 | 5.8k | ⬜ |
+| M10 | 第一人称持枪手感 + 碎刃表现 | 5.8k | ✅ 2026-11-24，对照清单见 4.8（分支合并时哈希会变，提交按标题查：「M10 碎刃第一人称照 Unity」「M10 第一人称持枪手感照 Unity」「M10 赤蛟霰铳折开换弹照 Unity BreakAction」「M10 补齐 WeaponHandlingTests / BladeFirstPersonTests 剩下的三条对照」「M10 握点与第一人称手臂对 Unity 武器表 / 英雄表」「M10 实机核对脚本与截图」「M10 对照清单与计划表」）：持握表（HandlingProfile 预设 × 17 把的改项）、`FirstPersonViewmodel` 的弹簧手感（鼠标滞后 / 侧倾 / 前后 / 竖直 / 落地，按枪重放慢）、后坐每发叠加上限 2.4 倍 + 显示弹簧、枪模后坐 × `ViewKickScale` 0.55（向后再 × 0.76）、整匣换弹按包络叠换弹姿态、弹匣入位一顿并发加弹事件（`WeaponSystem.commitLoad` = Unity `CommitLoad`）、左手按时间线去送弹口 + 前臂两骨 IK（`weapons/TwoBoneIK.ts`）、零件（弹匣偏移 / 俯仰 / 管式隐藏、转轮甩出自转、泵动行程、赤蛟霰铳折开与膛口弹壳）、三才转轮换元素亮闪、灵炮蓄力灵纹、武器染色；碎刃第一人称（第三段新关键帧、伸刃、出刀 / 判定帧 / 收势事件、命中视觉顿帧 40 / 70 ms、刀光月牙、剑指补两根手指、光点、命中镜头冲击与顿帧申请）。对照测试 `tests/m10-handling.test.mjs`（26 条）/ `tests/m10-blade.test.mjs`（18 条），常数与关键帧读 C# 源码比；实机脚本 `scripts/web/m10-shots.mjs`。待办：刀光 / 判定帧火星换特效预设、第三段的世界大弧（M11b）；第一人称曝光补偿（M11a） |
 | M11a | 渲染观感：StylizedLit / Terrain / Foliage / Fur 着色、材质参数导入、后处理栈、三色环境光 / 雾 / 天空、CSM | 7.6k 着色器 | 🔶 材质 ✅ 2026-11-16（1f213358，`src/world/UnityStylizedLit.ts`：色阶、阴影染色、阶梯高光、边缘光、地形高度混合 / 宏观噪声 / 坡度压暗 / 陡坡三向投影、植被风摆与背光透射，Trilight 投成 SH 环境光）；太阳阴影照 Unity 管线（0564dd10，2048 贴图、90 m、跟相机）；云天 + 逆光光柱接入（52c719c6）；后处理栈 ✅ 2026-11-18（646f7eae，`src/render/PostStack.ts`：HDR 目标 + URP Bloom + 照 URP Color.hlsl 写的 Neutral + 每关 Volume 调色烘 LUT + 暗角 + 色差 + 低血 / 受击 / 冲刺玩法屏效；`scripts/web/export-volume-profiles.mjs` 从 27 份 Profile 导出 `volumes.json`，含 3-3 火神王座局部 Volume 的盒子混合；`?post=0` 或低画质绕开）。待办：AO、3-3 第一人称手被泛光吹白、1-2 比 Unity 偏灰（大气在 ACES 下调的，要按 Neutral 重调）、Fur、导出器补 `_ORMMap` / 关键字 / 地形材质参数、流动雾带与小活物逐图摆位 |
 | M11b | 特效核心：预设 JSON + 粒子引擎、线条、灯光池、贴花、预警圈、溶解、状态皮肤（首领专属特效随 M6） | 5k + 6.4k | ⬜ 注意：网页版已有一批「特效分层」（703950b2 / dd6db46d / 49b82303：`Fx.ts` 的余韵、`Seal.ts` 国风法印、三种新粒子形状、狐 / 熊 / 隼技能，准则 docs/art/fx-style.md 第五节），换粒子引擎时要一起迁过去，不能丢 |
 | M11c | 界面：USS → CSS、四层路由、字体、约 10 个新界面、HUD 部件重做 | 13.5k | ✅ 2026-11-21。第一期（基础 + HUD）✅ 2026-11-19（3f892251…ed68a128）：`scripts/web/convert-uss.mjs` 把 9 份 USS（763 条规则）转成 `src/ui/css/unity/*.css`（`--check`；`-unity-*` 映射表 MAPPED / 转不了的 UNSUPPORTED，现在只有 theme 的段间距一处），UI Toolkit 默认值的网页基准在 `src/ui/css/sf-base.css`（零优先级：纵向 flex、border-box、最小尺寸 0、`\n` 总换行）；`scripts/web/publish_fonts.py` 把三种字体（正文子集 + 余量、霞鹜文楷子集、Barlow Condensed）转 WOFF2 发布到 `public/assets/fonts`，@font-face 带按字表生成的 unicode-range（余量 4 MB 用到才下），旧 gf-* 界面的字体变量也换成它们；`src/ui/toolkit/`：四层（Hud / Overlay / Modal / Toast，1920×1080 Expand 缩放）、路由（栈、返回、焦点还原、方向键空间导航与连发、滑条左右调值）、提示队列、横幅、黑幕、闪光、图标、FitLabel；`src/ui/hud/`：生命护盾、武器槽、Q / E 技能盘 + 冲刺格、武器技能 V 盘、信息角、准星、六向受击弧 + 闪屏 + 低血暗角、伤害数字（池 80、按目标合并：Feedback 把敌人放进 `DamageNumberOpts.target` 交给 UI）、头顶血条、首领条（BossDef 刻度、无敌、破防条）、交互提示卡、中央大字、反应首遇教学卡；`src/ui/screens/`：暂停、设置（按设置表生成三页）。对照测试 `tests/uss-convert.test.mjs`、`tests/ui-router.test.mjs`；实机截图 `node scripts/web/ui-shots.mjs <端口>` → `docs/art/review/threejs-migration/ui-*.jpg`。与 Unity 的差异：目标文字没有遭遇 / 出口的 SetObjective 钩子，按同样格式从关卡状态拼；技能「放不出来」闪红靠按键时没有充能判断（技能系统没有拒绝事件）；网页武器没有预热转速、元素轮转「下一发」的读数（转速条 / 转速环不出现，三才转轮显示金圈「三」）；设置页没有显示模式 / 分辨率 / 垂直同步 / 帧率上限 / 屏幕特效 / 瞄准辅助（网页无对应设置），多一项阴影精度；暂停「返回主菜单」照网页现状不结算、总要二次确认（续玩随 M11d）；UICapture 不需要（浏览器截图本来就带界面）。**第二期** ✅ 2026-11-21（分支合并前 rebase 过，这里写提交标题不写哈希，`git log -F --grep '<标题>'` 可查：「确认框、按键说明、设置「按键」改键页与键位表」「HUD 新部件」「新界面与旧界面重做」「界面全部走新路由」「罗盘条与全图的方位照 Unity」「图鉴敌人页照 Unity 名册」「清掉旧 gf-* 界面的残留」「M11c 第二期路由规则与数据映射对照测试」「M11c 第二期 1920×1080 实机截图 26 张」；审查后的修正「Tab 行囊常驻属性照 Unity StatGrid.KeyStats」「精英印章的词缀纹样改用词缀本身的颜色」「图鉴武器缩略图摘掉掉落模型的稀有度光晕再取景」「关卡卡片只在出口进门时弹」「局内货币在界面上叫灵石」「秘卷代价行照 Unity」「ui-screens 补对照——行囊属性表」「M11c 第二期截图按审查修正重拍」「掉落 / 宝箱 / 商店提示里的局内货币改叫灵石」）：新界面——确认框、按键说明、设置「按键」改键页（`src/ui/KeyBinds.ts` 键位表：改键只换第一个键盘键、存 localStorage 只存改过的、套到 `ctx.input.bindings`）、图鉴（`src/ui/codex/`：收录存档、条目清单、离屏缩略图棚 `CodexThumbs`、局内收录 `CodexTracker`；敌人页照 Unity 名册只列 44 条、章内按 [Defs] 序、首领「首领 · 称号」，网页注册表里旧三英雄名册与首领附属件不列）、M 键全图 + 罗盘条（`MapMarkers.ts` 地点表；方位照 Unity：北 = +Z、东 = −X，导出器只翻 X）、关卡卡片（出口进门 `Portal.enter` 换关前问 `IUI.stageCard`，同 Unity `GameSession.CompleteStage` 只在真正过关时弹；检视页跳关 / 重置直接 `game.advance` 不弹）、HUD 部件精英印章 / 秘卷触发弹字 / 狙击镜遮罩 / 灵宠面板（数据走 `PetSource`，M9 接之前是空态壳）；旧界面迁到新路由与 USS 样式——主菜单（CSS 远景 `MenuBackdrop` 垫底）、选英雄（嵌旧 3D 预览台）、天赋、整局结算、秘卷三选一、Tab 行囊（含灵宠页）；文字映射集中在 `ScreenData.ts`；层位登记在 `UI.ts` 的 SCREEN_SLOTS（全部 done）。旧 gf-* 界面与样式删掉：`base.css` 只留容器文字基准（原来的 `.gf-ui button { font: inherit }` 一直盖着 USS 按钮字号），`dom.ts` / `labels.ts` / `icons.ts` 只剩新界面在用的；`src/fx/Fx.ts` 不再挂 `src/fx/DamageNumbers.ts`（文件没动，现无引用），`fx.damageNumber` 转交 UI 的 HUD 数字。对照测试 `tests/ui-screens.test.mjs`（路由规则 / 热键 / 键位 / 按键说明对 Unity C#，各界面文字映射对 Unity 字面量，图鉴名册 / Lore / 分页 / 存档，全图投影用 1-1 真数据），`tests/adventure-ui.test.mjs` 改测新地点表。实机 `node scripts/web/ui2-shots.mjs <端口>` → `docs/art/review/threejs-migration/ui2-*.jpg`（28 张，1920×1080；审查第一轮后重拍，多了高风险卷的三选一卡面与图鉴说明两张，关卡卡片改走出口进门）：每张在页面里核对 USS 写死的长度 / 颜色 / 排版值（27648 项零不一致；宽高只有图鉴详情大图框被 flex 压 5 px，Yoga 同样会压）、摘掉全部 gf- 规则前后 sf 元素计算样式不变、页面报错 0（worktree 里跑要给 vite 放行主检出的 node_modules，见脚本头注释）。与 Unity 的差异：灵宠本体没迁（M9），HUD 灵宠面板不显示、行囊灵宠页 / 图鉴灵宠页签是空态；秘卷系统没有「触发」事件，秘卷触发弹字只有入口 `UI.scrollProc(id)` 没有调用方；精英印章的词缀纹样是 canvas 简化版（Unity 纹样随金环属 M11b）；关卡卡片没有「重来本关」（没有进关快照，M11d）；秘卷卡面没有「当前 → 下一层」属性预览（网页秘卷定义没有 PreviewStats）；行囊武器卡数值格用武器系统的描述，条数随武器而定（Unity 固定六格）；全图上没开的出口不上图（网页清场后才定出口）、场地没有「前置场地」只按远近挑目标；主菜单 / 选英雄没有 3D 菜单场景（CSS 远景 + 旧预览台）；没有手柄（按键说明与改键页手柄一列写「—」、设置主菜单副标题去掉「手柄」）；胜利题记按网页 `CHAPTER_COUNT`（4）写「四章尽破」，Unity 写死「三章尽破」；图鉴缩略图拍绑定姿势（Unity 先求动画第 0 帧）、连鼓灵没有网页模型（单字签） |
@@ -277,7 +277,7 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 | 生命护盾 `PlayerVitals`：减伤上限 80%、受伤修饰器、PlayerHit 先于死亡判定、破盾震屏 0.25 / 0.2、回盾、低血心跳 | `PlayerController` | ✅ |
 | 英雄基础属性 `HeroStats`、交互 `Interactor` | `Heroes.ts`、`world/Interaction` | ✅ |
 | 手柄瞄准辅助 `AimAssist`（只在右摇杆转视角时介入） | 无 | ⬜ 网页没有手柄视角输入，随手柄支持（M11d 设置 / 输入）一起迁 |
-| `FirstPersonView / FirstPersonExposure / ViewmodelCameraTrim` | — | ⬜ M10 / M11a |
+| `FirstPersonView / FirstPersonExposure / ViewmodelCameraTrim` | 枪模 `viewScene` 清深度后画进同一张 HDR、走同一遍后处理（`render/PostStack.ts`）；持枪手感 `weapons/Viewmodel.ts` | ✅ 渲染方式 M11a、持枪手感 M10（见 4.8）；⬜ 第一人称曝光补偿 M11a；✖ ViewmodelCameraTrim（Unity 叠加相机的性能裁剪） |
 
 **武器（`G/Weapons/`）**
 
@@ -295,7 +295,7 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 | 齐射 `VolleyMode`、点射、预热、蓄力（0.2 + 0.8·t²、满蓄穿透 + 引爆）、整匣 / 逐发换弹、换关清理 | `WeaponSystem` | ✅ |
 | 喷火锥 `FlameCone`：不发投射物，沿准星扫半角 0.06 的锥（长 = 弹速 × 寿命 ≤ 射程、撞墙截短），按沿轴距离前 1 + 穿透 名各吃一次、被挡的不占名额、不按弱点算 | `weapons/FlameCone.ts`（敌人按竖直胶囊算最近点）+ `fx.flameJet` | 🔧（原来每跳一枚 flame 投射物） |
 | 贯虹 `RailgunBeam`：满蓄主光束 + 三股彩虹丝缠绕 0.38 s | `weapons/RailgunBeam.ts`（朝向镜头的带子） | ➕ 虹光是 Unity 新增的那层 |
-| `RailgunCharge`（线圈 × 42、颤动、灵纹脉动）、`BreakAction`（折开 0.48）、`TrinityCycle`（锁膛、灵纹显示下一发） | `Viewmodel.ts` 原有 | ✅；⬜ 三才转轮换元素时的亮闪（FlashGain 0.9）、枪模后坐缩放 `ViewKickScale 0.55 × 0.76`、弹匣入位的加弹事件 `CommitLoad` 随 M10 |
+| `RailgunCharge`（线圈 × 42、颤动、灵纹脉动）、`BreakAction`（折开 0.48）、`TrinityCycle`（锁膛、灵纹显示下一发） | `Viewmodel.ts` 原有 | ✅；三才转轮换元素时的亮闪（FlashGain 0.9）、枪模后坐缩放 `ViewKickScale 0.55 × 0.76`、弹匣入位的加弹事件 `CommitLoad` ✅ M10（见 4.8） |
 | 命中扫描穿透 ×0.85 / 最多 8 个、距离衰减、贴脸从眼前发射 1.3 m | `Firing.ts` | ✅ |
 | 曳光按元素换形状、弹孔贴花、枪口火焰预设 | `fx.tracer` | ⬜ M11b |
 | 词条 / 传说 / 数值解析 / 掉落 | — | 不在本期（M2 已对数值） |
@@ -329,7 +329,7 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 
 **验证**：rebase 到 master（23b57e73）后 `npm run typecheck` 通过；`npm test` 全套 1130 项、0 失败、6 条 todo（master 是 12 条，转掉的 6 条见第 7 条；第二轮复审加了死亡传电重入那一项）。实机（1-1，`?debug&dev&debugStage=1-1`，无头浏览器，`node scripts/web/m8-shots.mjs 5711`）：逐把武器（21 把）按住开火、冲刺禁射、开镜、喷火锥、贯虹、后坐回正、玩家减益、带电 / 焚雷、死亡传电选目标（7.4 m 的传、8.27 m 的不传）、死亡传电重入（第一跳打死 a 就停：b、c 各挨 1 下、跳数 2；旧代码 b 挨 2 下、跳数 1）、格挡浮字、货币叫法、免疫、「破绽」、三个英雄的 Q / E 与拒绝事件、磐的挡弹罩——第二轮复审后整轮重跑 43 / 43、零报错（第一轮复审后是 42 / 42；复审前整轮是 38 / 39：喷火锥那项平视开火、细锥从跳鼠头顶擦过，改成准星压到胸口、头几跳就读之后只单独重跑过；这一轮是改过的脚本整轮跑），截图 `docs/art/review/threejs-migration/m8-*.jpg`（`m8-blocked.jpg` 是格挡浮字）。
 
-**待办**：`Storm.ts` 落雷充电换成 Charge（上表）；喷火锥枪口到锥中段的火舌在亮沙地上几乎看不见（只有锥末堆起的白热团），正式火焰外观随 M11b；HUD 订阅 `skill:denied`、状态图标读 `player.status`（M11c）；`DamageNumberOpts` 加「格挡」这一种、按 Unity 的数字样式（`Kind.Blocked`）画，现在按世界浮字（带框）出（M11c）；`src/ui` 里的「金币」（界面）；带电 / 喷火 / 虹光的正式外观（M11b）；枪模后坐缩放与转轮亮闪（M10）；手柄瞄准辅助；FireModeTests 其余 29 条行为用例要给 WeaponSystem 做假输入 / 假弹道夹具。
+**待办**：`Storm.ts` 落雷充电换成 Charge（上表）；喷火锥枪口到锥中段的火舌在亮沙地上几乎看不见（只有锥末堆起的白热团），正式火焰外观随 M11b；HUD 订阅 `skill:denied`、状态图标读 `player.status`（M11c）；`DamageNumberOpts` 加「格挡」这一种、按 Unity 的数字样式（`Kind.Blocked`）画，现在按世界浮字（带框）出（M11c）；`src/ui` 里的「金币」（界面）；带电 / 喷火 / 虹光的正式外观（M11b）；枪模后坐缩放与转轮亮闪（✅ M10）；手柄瞄准辅助；FireModeTests 其余 29 条行为用例要给 WeaponSystem 做假输入 / 假弹道夹具。
 
 ### 4.7 M11d 核心对照清单（2026-11-21）
 
@@ -356,6 +356,64 @@ Unity 的九种雷魅是照网页 `world/plateau/play/foes.ts` 译的（`Plateau
 Unity 测试的去向：SaveServiceTests、RunSuspendTests（除图鉴四条）、FeelProfileTests（除瞄准辅助）、BalanceModelTests（除 `Weapons_SustainedTheoryNearThreeJsBand`、`Stage11_WeaponRewardsCannotRollRandomElement`——武器，随 M8 / M13）、GraphicsAudioTests 的 QualityTiersAreMonotonic / HighTierMatchesProjectAssets / DisplayAndVolumeSettingsPersist（网页有的项）/ FrameCapRules、PerfTests 的分层 / 剔除距离 / 预算 → 上面四份，局流程（OnDied / Arrive / StartRun / Suspend / ResumeRun 的先后）另有 `tests/unity-core-flow.test.mjs`；GraphicsAudioTests 的 ProfileWritesPipelineAsset、PerfTests 的固定机位、RenderPerfSettingsTests 纯 Unity，FxBudgetFollowsQualityTier 随 M11b。
 界面第二期合进来之后：旧主菜单 `ui/MainMenu.ts` 和手写设置面板 `ui/SettingsPanel.ts` 已删，「继续征程」与确认框接在新主菜单 / 选英雄上，主菜单和暂停里的「设置」都是由 `GAME_SETTINGS` 生成的那一页。
 **还没做**：画质表其余列随各系统那一期接；顿帧的直接来源随 M8。
+
+### 4.8 M10 第一人称持枪手感 + 碎刃表现对照清单（2026-11-24）
+
+对照方法：Unity `G/Weapons/HandlingProfile.cs` + `Handling/**`（25 个）、`TwoBoneIK` / `WeaponHandRig` / `WeaponPartAnimator` / `WeaponRigFactory` / `WeaponRigPart` / `WeaponTint(System)` / `BreakAction` / `CrossbowString` / `RailgunCharge` / `TrinityCycle`、`Pipeline/Runtime/FirstPersonViewmodel.cs`、`G/Player/` 的 `FirstPersonView` 一组、`G/Weapons/DemonBlade/**`（17 个）逐文件读，数值和时序以 C# 为准。两份对照测试 `tests/m10-handling.test.mjs`、`tests/m10-blade.test.mjs` 直接读 C# 源码 / `defs.json` / 清单比常数、关键帧、握点，行为断言照 Unity EditMode 的 WeaponHandlingTests、BladeFirstPersonTests（去向见 7.1）。任何 `GunfireOriginal*` 不迁。记号：✅ 一致 · 🔶 部分 · ⬜ 还缺（归哪期）· ✖ 不迁。
+
+**持枪手感**
+
+| Unity | 网页 | 结论 |
+|---|---|---|
+| `HandlingProfile.cs`（`Make`：按装填动作 × 换弹风格的预设——时间线 reach / magOut / magIn / loadAt / finish、换弹姿态 tiltRot / tiltPos、弹匣偏移 / 俯仰 / 管式隐藏、转轮、泵动、伸手手型）+ `Handling/Profiles/HandlingProfile_<Id>.cs` 17 份（枪重 / 晃动 / 摆动 / 转轮格数 / 泵动行程） | `weapons/WeaponHandling.ts` 的 `makeHandling` + `WEAPON_HANDLING` | ✅ 预设与 17 份改项读 C# 逐项比；表小，没写导出器，测试锁住 |
+| 武器表握点 `rightHand / rightPitch / leftHand / leftRoll`、英雄 `armR / armL`（M2 留给本期） | `WEAPON_HANDLING` 的 right / rightPitch / leftRoll / support + 枪模 `buildXxx` 的 `leftHand`（挂在泵上的加泵的位置）；手臂按清单 bind = fp / 英雄 / arm_r\|arm_l | ✅ 对 `defs.json` 逐把比（Unity 的 `Grip()` x 取反）。例外：裂风步枪（Unity 换成原作模型 SK_Weapon_Gunfire1001，握点是按那支枪量的；网页仍是自己的步枪模型）；焚城榴弹 / 雷弧发射器 / 青冥雷蛊的右手偏移、右手俯仰与左手横滚（Unity 武器表从来没写过、全 0，是移植遗漏；网页这几项早于移植、对的是同一份美术枪模）——保留网页，例外本身也断言住 |
+| `FirstPersonViewmodel.cs`：呼吸 / 行走摆动（开镜收到 15%，× 摆动倍率 / √枪重）、鼠标滞后弹簧 ω 14 ζ 0.62、侧倾 / 前后 / 竖直 / 落地弹簧（ω 按 √枪重放慢，子步 1/240 s）、起跳一抬、冲刺 / 滞空姿态、切枪收放、腰射 ↔ 开镜混合、持续开火颤动（蓄力 0.0008 + 0.0026 × 蓄力，其余 0.003）、空仓抖动、技能覆盖姿态 | `weapons/Viewmodel.ts` 的 `update` | ✅ 常数逐个读 C# 比；旋转 X·Y·Z 和 Unity 的 `AngleAxis(−rx)·AngleAxis(−ry)·AngleAxis(rz)` 镜像后是同一个 |
+| 后坐 `Kick`：每发叠加、上限单发 2.4 倍、随机横滚，按枪重^−0.3 指数回位，再过欠阻尼弹簧显示（42 / 40 / 36）；`WeaponController` 的 `ViewKickScale` 0.55、向后再 × 0.76；有原作后坐运动的枪不叠 | `Viewmodel.kick` / `onShot` | ✅ |
+| 换弹姿态：整匣按包络（进 0–15%、出 82–100%）叠 tilt，逐发装填的整体姿态 shellTilt、每压一发往下一磕；弹匣入位一顿 `Seat` | `Viewmodel.update` | ✅ |
+| `WeaponStateMachine.CommitLoad`（`WeaponHandRig` 整匣换弹过 loadAt 时调）：弹匣入位就加满、换弹总时长不变、之后切枪保留并算一次换弹；逐发装填不吃；没有第一人称时到时才加；收尾一声轻的 | `WeaponSystem.commitLoad`（`Viewmodel.onCommitLoad`） | ✅ 四条用例在真 WeaponSystem 上跑 |
+| `WeaponHandRig`：平时刚性跟着握点、偏差按 20/s 衰减；换弹按 `SampleHand` 去送弹口（跟着弹匣走）/ 收尾点，伸手手型；泵动霰弹枪手里那发弹 | `Viewmodel.animateHands`、`WeaponHandling.sampleLoadingHand` | ✅ |
+| `TwoBoneIK` + `WeaponHandRig.Apply`：相机空间里「手在当前位置」「手在握点」各解一次肘，前臂按两个肘方向之间的转动摆 × 0.7、最多 35° | `weapons/TwoBoneIK.ts`、`Viewmodel.poseForearm` | ✅ 肩 / 极点的相机空间 z 取反 |
+| `WeaponPartAnimator`：弹匣离位（偏移 / 俯仰，管式到 85% 隐藏）、转轮每发一格 + 换弹甩出自转、泵动（开火后 0.12–0.44 s、上膛 0.3 s，行程按枪）；转轮兼弹匣时不按弹匣动 | `Viewmodel.animateParts` | ✅ |
+| `WeaponRigFactory`（右手在握把、左手在握点 / 横滚、整体缩放 0.76、腰射锚点右下 HipShift、逐发装填的姿态写进 shellTilt、原作枪模不套换弹姿态 / 零件 / 左手）、`WeaponRigPart`（零件基类） | `Viewmodel.build` / `addArms` | ✅；零件基类是 Unity 的组件结构，网页内联在 Viewmodel 里 |
+| 原作枪模的 6 把（贯虹灵炮 / 赤铜左轮 / 裂风步枪 / 碎岩霰弹 / 蜂鸣冲锋枪 / 鹰隼狙击，Prefab `SK_Weapon_Gunfire*`） | 有原作模型的 3 把（左轮 / 冲锋枪 / 灵炮）走 `OriginalWeaponView`；步枪 / 霰弹 / 狙击只有原作后坐运动，模型是网页自己的 | 🔶 GunfireOriginal 不迁：后三把在网页照持握表做整套换弹（姿态、左手、零件），Unity 播原作换弹 |
+| `TrinityCycle`：锁膛（只向前转到最近的等价膛）、换弹甩出 0.045 / 自转 14 / 锁膛阻尼 25、灵纹显示下一发（换弹中显示第一发）、换元素亮闪 `FlashGain` 0.9 / `FlashDecay` 14 | `Viewmodel.animateParts` / `animateGlow`、`trinityPulse` | ✅ |
+| `RailgunCharge`：蓄力灵纹脉动（满蓄快闪）、蓄能色（物理 = 满蓄虹紫）、枪口光球 | `chargePulse`、`updateFlash` | ✅ |
+| `BreakAction`：折开 0.48 rad、弹壳画在膛口、这一发 55%–92% 滑进枪管、两管交替 | `Viewmodel` 的 breech / chamberShell、`breakShellPose`、`ReloadBreech.ts` | ✅ |
+| `CrossbowString`：弦两半、弦扣按上弦程度拉、≥ 0.98 箭才落槽；上弦程度 = 换弹 (进度 − 0.6) / 0.3、空匣 0、否则 1 − 冷却 / 间隔 | `WeaponModels.setCrossbowString`、`WeaponSystem` 写 `cock` | ✅ 原有（Unity 照 TS 移的） |
+| `BarrelSpinner` / `WeaponSpinner`（转管 × 预热量 × 满转速） | `animateParts`：`spin × 42 × dt` | ✅ 原有 |
+| `WeaponSight` / `SightPart` / `Handling_Burst / Rifle / Sniper / Minigun`（红点 / 筒式瞄具占位网格、进镜——视角层 < −30°——隐藏枪模） | `WeaponModels` 的程序零件 `sight`（Unity 的占位网格就是照它补的）、`ViewmodelState.scoped`；镜内遮罩 M11c | ✅ |
+| `WeaponTint` / `WeaponTintSystem`：纹路发光 = 元素色 × 稀有度亮度（0.5 / 0.8 / 1.1 / 1.5 / 2.0）× 1.6，无元素保留美术白纹；切枪 / 拾枪按实例重新着色 | `WeaponModels.weaponGlowColor` / `ART_GLOW`（网页每个实例各建一份枪模） | ✅ |
+| `CastPose`（技能出手的覆盖姿态） | `player/CastPose.ts` | ✅ M8，测试核对过 |
+| `FirstPersonView`（枪模层清深度后画进主相机、和世界同一遍后处理，60° / 0.01 / 20） | `core/Game.ts` 的 `viewScene` / `viewCamera` + `render/PostStack.ts` | ✅ M11a 已是这种画法 |
+| `FirstPersonExposure`（关卡 Volume 上第一人称层的曝光 / 伽马 / 特效补偿） | 无 | ⬜ M11a（渲染） |
+| `ViewmodelCameraTrim`（渲染叠加枪模相机时临时关 SSAO / 贴花） | — | ✖ 网页没有叠加相机 |
+
+实机看到的一处（数据和 Unity 相同，没开 Unity 对比——编辑器别的会话在用）：整匣换弹中段左手跟着弹匣 / 弹箱下到画面下沿，三叠点射枪手腕在下沿（NDC y ≈ −1.0）、旋风机炮在下沿以下（≈ −1.7，弹箱下抽 0.24）。
+
+**碎刃第一人称**
+
+| Unity | 网页 | 结论 |
+|---|---|---|
+| `BladeSwing`：待机 / 剑指 / 立掌 / 举手与三段斩关键帧（第三段是 Unity 改过的：刃口下压、刀面朝镜头侧倾）、时间线（蓄势到判定帧 × 0.55、t² 加速、缓出）、伸刃（第三段 2.2，刀根 0.09 内不动，0.72 后缩回） | `demonBlade/BladeView.ts` 的 `IDLE` / `SWINGS` / `sampleSwing` / `slashStretch` | ✅ 关键帧读 C# 比 |
+| `BladeView`：层级（Sway 枪重 0.85 → 刀姿 → × 0.72）、三个事件按视觉进度派发（出刀 / 判定帧 / 收势）、命中视觉顿帧 40 / 70 ms（真实时间）、刀身闪亮、人刀合一常态伸长 1.3、手势过渡 0.14 s、右手拳心、碎片归位放大、homeWorld 交接 | `BladeView.ts` + `Viewmodel`（Sway） | ✅ Unity 把时间线烘成剪辑，网页直接求解析式（测试核对三个关键姿态落在事件上） |
+| `BladeTrail` + `Fx/Presets/BladeTrail`：采样寿命 0.16 s、亮度跟刀尖速度、最新 0.04 s 白热、墨笔起收锋、侧看补宽、带身普通混合 + 加色光边、每段另起一条 | `demonBlade/BladeTrail.ts`（自带网格） | 🔶 外观参数照预设，网格自己画；随 M11b 换特效预设 |
+| 判定帧：刃口白热一闪、甩出碎刃火星、镜头朝挥动方向一带 | `BladeView` 的 `onBladeStrike` / `spawnSparks`（火星先用 `ctx.fx.burst`） | 🔶 火星随 M11b 换预设 |
+| 第三段斩在世界里的大弧（`Fx.Slash`） | 无 | ⬜ M11b |
+| `BladeGlints`：剑指指尖灵光、判定帧刃口闪、归位闪（加色、面向镜头的方片、有上限） | `demonBlade/BladeGlints.ts` | ✅ |
+| `BladeSwordSign`：三只英雄手臂各自的指根 / 方向 / 手套与皮肤 UV，拳头前沿补两根伸直并拢的手指；整只手按手指指向 + 前臂朝左下摆、0.76 缩放 | `demonBlade/BladeSwordSign.ts` | ✅（x 取反、v 翻回 glTF） |
+| `DemonBladeController` 的第一人称部分：判定帧调 `OnBladeStrike`、命中镜头冲击 Punch(1.6 / 0.5°, ±1.4°)、申请 70 / 40 ms 顿帧 | `DemonBlade.ts`、`PlayerController.punchDegrees` | ✅（玩法本体原有，`tests/demon-blade.test.mjs`） |
+| `BladeShards`（旋涡 / 圆盾 / 刃球 / 炸散，出窍 / 归刀常数）、`BladeSwarmRenderer`（碎片本体、柔光 + 拉丝拖尾 6–90 像素、旋涡雾光 / 判定光盘、盾面光膜 / 挡弹闪光、刃球光核） | `demonBlade/BladeSwarm.ts` | ✅ 原有（Unity 照 TS 移的），阵形常数读 C# 比 |
+| `BladeEffects`（人刀合一斩波、噬灵鬼眼魂力光点） | `demonBlade/BladeEffects.ts` | ✅ 原有 |
+| `BladeModel` / `BladeMeshes` / `BladeShape`（128 片 Voronoi 碎片、刀根鬼面、刀柄贴图集、睁眼贴图） | `demonBlade/BladeModel.ts` / `BladeShape.ts` | ✅ 原有；Unity 烘成蒙皮网格（一片一根骨骼）是它那边的画法 |
+| `BladeWard`（屏障的圆盘挡弹面） | `DemonBlade.ts` 的 ward（`projectiles.setWard`） | ✅ 原有 |
+| `BladeSkillWidget`（V 盘：爆 / 合） | `ui/hud/SkillWidget.ts` | ✅ M11c |
+| `DemonBladeDef`、`IBladeView` | `WeaponDefs` 的 `blade`；接口 | ✅（定义表 M2 已对）/ 结构不同 |
+| `BladePlaceholderView`（WC6 占位视图） | — | ✖ Unity 过渡用，已被 BladeView 取代 |
+
+**验证**：`npm run typecheck` 通过；`npm test` 全套 1301 项、0 失败、6 条 todo、3 条跳过（native-hero-grip 的三条英雄绑定检查，本机没有源导出，和 master 一样）。实机（1-1，`?debug&dev&debugStage=1-1`，无头浏览器逐帧推进，`node scripts/web/m10-shots.mjs <端口>`，`M10_ONLY=guns|blade` 可分开跑）：17 把枪逐把装备 / 按住开火 / 开镜 / 留 1 发按 R——整匣换弹全部在进度 0.78–0.79（loadAt）加满、换弹姿态到 1、左手离握点 11–45 cm（枪模坐标）、前臂摆 5–34°、弹匣离位到 1，三才转轮换元素亮闪 0.77，节点矩阵没有非有限值，88 项全过；碎刃三位英雄：三段斩各自触发判定帧事件、屏障 / 杀气爆发 / 千刃出窍剑指（左手 1.0），16 项全过；页面报错 0。截图 `docs/art/review/threejs-migration/m10-fire.jpg` / `m10-aim.jpg` / `m10-reload.jpg`（联系表）、`m10-blade.jpg`、`m10-blade-slash3.jpg`、`m10-blade-point.jpg`。之前一版联系表后半全白：别的会话同时占着显卡，上下文丢了又被浏览器恢复（`isContextLost()` 是 false），脚本改成按 `webglcontextlost` 事件 + 截图近白比例判定、作废重来。
+旧 `tests/handling.test.mjs`（第 8 节第 3 条）：已按单级 LOD 契约改写，9 条全绿，不用再动。
+
+**待办**：刀光换特效预设、判定帧火星换预设、第三段斩的世界大弧（M11b）；第一人称曝光补偿（M11a）；Unity 武器表补上焚城榴弹 / 雷弧发射器 / 青冥雷蛊的握持后可以删掉握点测试里的例外（Unity 已冻结，大概不会）。
 
 ## 5. Unity 能力 → 网页对照
 
@@ -440,8 +498,8 @@ Unity 测试的去向：SaveServiceTests、RunSuspendTests（除图鉴四条）�
 | ShopServiceTests | ➖ | `tests/shop-services.test.mjs` |
 | FrostEnemyTests、FrostEnemyTests2 | ➖ | `tests/frost-pack` / `frost-tanks` / `frost-skirmishers` / `frost-ranged` / `frost-support` |
 | InfernoEnemyTests、InfernoEnemyTests2 | ➖ | `tests/inferno-pack` / `inferno-tanks` / `inferno-ranged` / `inferno-blasters` / `inferno-support` |
-| WeaponHandlingTests | ➖ / ⬜ M10 | `tests/handling.test.mjs`（旧 LOD 契约的失败项见第 8 节第 3 条）；换弹事件 / 两骨 IK 等 M10 |
-| BladeFirstPersonTests、CastPoseTests | ⬜ M10 | 第一人称持枪手感 + 碎刃表现 |
+| WeaponHandlingTests | ✅ M10 | `tests/m10-handling.test.mjs`：13 条里迁了 12 条（持握表与换弹风格、弹匣曲线与包络、整匣 / 逐发的手位时间线、两骨 IK、前臂摆动、CommitLoad 四条在真 WeaponSystem 上跑、左手静止在握点、三才转轮归转轮），另加持握预设 / 弹簧常数 / 握点与手臂对 Unity 表的数值对照；SocketsResolveThroughComponentAndByName ✖（Unity 的 WeaponSockets 挂点组件，网页枪模没有挂点，握点数值已对）。旧 `tests/handling.test.mjs` 9 条全绿（第 8 节第 3 条的 LOD 契约已按单级 LOD 改写） |
+| BladeFirstPersonTests、CastPoseTests | ✅ M10 / M8 | `tests/m10-blade.test.mjs`：9 条全迁（两条剪辑用例改成对解析时间线——网页不烘剪辑，直接求同一条时间线），另加关键帧 / 常数 / 顿帧 / 控制器冲击的对照；CastPoseTests 两条 M8 已迁在 `tests/m8-weapons.test.mjs`，核对过 |
 | EliteStrikeSpringTests、KeyframedCurveTests | ⬜ M12 | 精英出手分量层的弹簧、手 K 片段的非人形骨 |
 | FxTests、FxShotTests、FxStyleTests、GlowCrackTests | ⬜ M11b | 特效预设 / 图集 / 预算是 Unity 的 FxPreset 数据，随特效核心迁；GlowCrack 的资产导入设置不迁 |
 | FirstPersonViewTests、PerfTests、RenderPerfSettingsTests | ✖ | 纯 Unity：相机栈、图层剔除距离、GPU Resident Drawer / 遮挡剔除设置 |
