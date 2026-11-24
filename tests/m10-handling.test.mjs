@@ -71,6 +71,68 @@ test('handling: every gun has the Unity HandlingProfile (action, reload style ti
   assert.equal(H.WEAPON_HANDLING.demon_blade.action, 'recall');
 });
 
+/**
+ * 握点（M2 留给 M10 的 rightHand / rightPitch / leftHand / leftRoll，defs.json 是 Unity Weapon_<Id>.cs 导出的；Unity 的 Grip() 把 x 取反）。
+ * 例外各带原因：
+ * - rifle：Unity 的裂风步枪换成了原作模型 SK_Weapon_Gunfire1001（GunfireOriginal，不迁），握点是按那支枪量的；网页仍是自己的步枪模型，握点跟它走。
+ * - launcher / beam / stormpod 的右手偏移、右手俯仰、左手横滚：Unity 移植时武器表里没写（全是 0，从来没有过别的值），
+ *   而网页这几项在 Unity 移植之前（2026-10-04）就调好、对的是同一份美术枪模，保留网页。左手握点照样一致。
+ */
+const GRIP_EXCEPTIONS = { rifle: ['right', 'left'], launcher: ['right', 'pitch', 'roll'], beam: ['right', 'pitch', 'roll'], stormpod: ['right', 'pitch', 'roll'] };
+test('grips: right hand / pitch, left grip / roll equal the Unity weapon table (defs.json; documented exceptions)', async () => {
+  const defs = JSON.parse(await readFile(new URL('../public/assets/unity-gameplay/defs.json', import.meta.url), 'utf8'));
+  const weapons = Array.isArray(defs.weapons) ? defs.weapons : Object.values(defs.weapons);
+  const models = await readFile(new URL('../src/weapons/WeaponModels.ts', import.meta.url), 'utf8');
+  const builders = Object.fromEntries([...models.matchAll(/^  (\w+): build(\w+),$/gm)].map(m => [m[1], m[2]]));
+  /** 枪模的左手握点（buildXxx 里的 m.leftHand；挂在泵上的再加泵的位置） */
+  const modelLeft = id => {
+    const body = models.split(`function build${builders[id]}(`)[1]?.split(/\nfunction /)[0] ?? '';
+    const m = body.match(/m\.leftHand = new THREE\.Vector3\(([^)]+)\)/);
+    if (!m) return null;
+    const v = vec(m[1]);
+    if (/m\.leftParent = pump/.test(body)) {
+      const p = vec(body.match(/const pump = b\.group\(r, ([^)]+)\)/)[1]);
+      return v.map((x, i) => x + p[i]);
+    }
+    return v;
+  };
+  let checked = 0;
+  for (const w of weapons) {
+    const h = H.WEAPON_HANDLING[w.id];
+    assert.ok(h, `网页缺 ${w.id} 的持握`);
+    const skip = GRIP_EXCEPTIONS[w.id] ?? [];
+    const flip = v => [-v[0], v[1], v[2]];
+    if (!skip.includes('right')) assert.deepEqual(flip(h.right).map(v => v + 0), w.rightHand, `${w.id} 右手`);
+    if (!skip.includes('pitch')) near(h.rightPitch, w.rightPitch, `${w.id} 右手俯仰`);
+    if (!skip.includes('roll')) near(h.leftRoll, w.leftRoll, `${w.id} 左手横滚`);
+    if (!skip.includes('left') && w.id !== 'demon_blade') {
+      const left = h.support ?? modelLeft(w.id);
+      assert.ok(left, `${w.id} 左手握点`);
+      left.forEach((v, i) => near(flip(left)[i], w.leftHand[i], `${w.id} 左手握点 ${'xyz'[i]}`, 1e-6));
+    }
+    checked++;
+  }
+  assert.equal(checked, 18);
+  // 例外确实还是例外（Unity 改了就把例外删掉）
+  const unity = Object.fromEntries(weapons.map(w => [w.id, w]));
+  for (const id of ['launcher', 'beam', 'stormpod']) {
+    assert.deepEqual([unity[id].rightHand, unity[id].rightPitch, unity[id].leftRoll], [[0, 0, 0], 0, 0], `${id}：Unity 武器表没写握持`);
+  }
+  assert.match(await cs('Weapons/Defs/Weapon_Rifle.cs'), /prefab = "SK_Weapon_Gunfire1001"/);
+  // 英雄的第一人称手臂（M2 留给 M10 的 HeroDef.armR / armL）：网页按清单 bind = fp / 英雄 / arm_r|arm_l 挂同一份资产
+  const manifest = JSON.parse(await readFile(new URL('../public/assets/manifest.json', import.meta.url), 'utf8'));
+  const entries = Array.isArray(manifest.assets) ? manifest.assets : Object.entries(manifest.assets ?? manifest).map(([key, v]) => ({ key, ...v }));
+  const heroes = Array.isArray(defs.heroes) ? defs.heroes : Object.values(defs.heroes);
+  assert.equal(heroes.length, 3);
+  for (const h of heroes) {
+    for (const [side, key] of [['arm_r', h.armR], ['arm_l', h.armL]]) {
+      const a = entries.find(e => e.key === key);
+      assert.ok(a, `清单里没有 ${key}`);
+      assert.deepEqual(a.bind, { source: 'fp', id: h.id, attachment: side }, `${h.id} ${side}`);
+    }
+  }
+});
+
 test('handling: Make presets and the default timeline match HandlingProfile.cs', async () => {
   const text = await cs('Weapons/HandlingProfile.cs');
   const fields = {};
