@@ -138,6 +138,21 @@ test('slash timeline puts the strike event on the judgement frame (Unity BladeSl
   }
 });
 
+test('slashes hit the key poses on their events (Unity BladeSlashClipsHitTheKeyPosesOnTheirEvents; the web samples the timeline directly, no baked clip)', () => {
+  const idle = new BV.Pose().set(BV.IDLE);
+  const out = new BV.Pose(), key = new BV.Pose();
+  for (let i = 0; i < 3; i++) {
+    const hitP = combo[i].windup / combo[i].duration;
+    const at = [BV.windupP(hitP), BV.strikeP(hitP), 1];
+    for (let k = 0; k < 3; k++) {
+      BV.sampleSwing(i, at[k], hitP, idle, out);
+      key.set(BV.SWINGS[i][k]);
+      assert.ok(out.p.distanceTo(key.p) < 1e-3, `第 ${i + 1} 段第 ${k + 1} 个关键姿态位置`);
+      assert.ok(out.q.angleTo(key.q) < 0.5 * Math.PI / 180, `第 ${i + 1} 段第 ${k + 1} 个关键姿态朝向`);
+    }
+  }
+});
+
 test('swings keep the grip on screen and the tip forward; the strike passes through mid-screen (Unity BladeSwingsKeepTheGripOnScreenAndTheTipForward)', () => {
   const idle = new BV.Pose().set(BV.IDLE);
   const out = new BV.Pose();

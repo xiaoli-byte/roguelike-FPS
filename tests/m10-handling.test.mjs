@@ -487,6 +487,39 @@ test('part animator: mag offsets / cylinder / pump follow the profile (Unity Wea
   near(m2.position.y, -0.04 + H.WEAPON_HANDLING.smg.magOffset[1] * vm.debug().magOut, '弹匣下抽 0.14（Unity 收过）', 1e-6);
 });
 
+test('hand rests on the grip and the trinity cylinder is left to the cycle (Unity HandRigRestsOnTheGripSocket / PartAnimatorBindsMagButLeavesTrinityCylinderAlone)', async () => {
+  const { vm } = vmHarness();
+  const s = VM.createViewmodelState();
+  vm.setWeapon(inst('smg'));
+  for (let i = 0; i < 10; i++) vm.update(1 / 60, s);
+  const arm = vm.root.getObjectByName('arm_l');
+  const grip = new THREE.Vector3(0, 0.02, -0.235);
+  assert.ok(arm.position.distanceTo(grip) < 1e-5, '左手在握点');
+  const rest = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, H.WEAPON_HANDLING.smg.leftRoll));
+  assert.ok(arm.quaternion.angleTo(rest) < 0.05 * Math.PI / 180, '静止时 IK 不改摆好的握持姿势');
+
+  // 三才：转轮兼弹匣，不按弹匣的偏移 / 俯仰动（归 TrinityCycle：甩出 SwingOut、自转 ReloadSpin、锁膛）
+  const text = await cs('Weapons/TrinityCycle.cs');
+  const [, swing, spin, lockDamp] = text.match(/SwingOut = ([\d.]+)f, ReloadSpin = ([\d.]+)f, LockDamp = ([\d.]+)f/).map(Number);
+  near(-H.WEAPON_HANDLING.trinity.cylinderSwing, swing, 'SwingOut');
+  near(H.WEAPON_HANDLING.trinity.cylinderSpin, spin, 'ReloadSpin');
+  assert.match(await readFile(new URL('../src/weapons/Viewmodel.ts', import.meta.url), 'utf8'), new RegExp(`this\\.cylAngle = damp\\(this\\.cylAngle, this\\.cylTarget, ${lockDamp}, dt\\)`));
+  vm.setWeapon(inst('trinity'));
+  const cyl = vm.root.getObjectByName('mag');
+  const base = cyl.position.clone();
+  const rotX = cyl.rotation.x;
+  s.elementHint = 'fire';
+  s.cycleIndex = 0;
+  s.reloading = true;
+  s.reloadP = 0.45;
+  for (let i = 0; i < 60; i++) vm.update(1 / 60, s);
+  assert.ok(vm.debug().magOut > 0.95);
+  near(cyl.position.y, base.y, '不按弹匣下抽');
+  near(cyl.rotation.x, rotX, '不按弹匣俯仰');
+  near(cyl.position.x, base.x - swing * vm.debug().magOut, '转轮甩出');
+  assert.equal(cyl.visible, true);
+});
+
 test('break action: magmashot opens 0.48 rad and slides a shell into alternating barrels (Unity BreakAction)', async () => {
   const text = await cs('Weapons/BreakAction.cs');
   near(VM.BREAK.OpenAngle, num(text.match(/OpenAngle = ([\d.]+f)/)[1]));
