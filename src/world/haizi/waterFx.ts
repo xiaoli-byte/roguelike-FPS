@@ -7,14 +7,18 @@
  *   冲刺是往两边甩的扇面。水越深（没到小腿 / 膝盖）水花越大。
  * - 飞行模式贴着水面掠过也会拖出尾迹和水雾。
  *
+ * 声音交给 waterSound.ts（sound 字段）；子弹打水由 CombatFx.onWater 转到 bulletHit。
+ *
  * 透明材质不改透明通道（湖面反射贴图拿透明通道当标记，见 scene.ts 的 LAKE_FS）。
  */
 import * as THREE from 'three';
 import type { Walker } from '../plateau/walker';
 import type { LakeSurface } from './scene';
 import type { HaiziTerrain } from './terrain';
+import type { WaterSound } from './waterSound';
 
 const MAX = 700;
+const _at = new THREE.Vector3();
 const GRAVITY = 9.8;
 
 const VS = /* glsl */ `
@@ -95,6 +99,9 @@ export class WaterFx {
   private wakeT = 0;
   private idleT = 0;
   private dashT = 0;
+  private prevSpeed = 0;
+  /** 水声（waterSound.ts）；不接就没声 */
+  sound: WaterSound | null = null;
 
   constructor(scene: THREE.Scene, private readonly lake: LakeSurface, private readonly terrain: HaiziTerrain) {
     const g = new THREE.BufferGeometry();
@@ -127,8 +134,32 @@ export class WaterFx {
   update(dt: number, walker: Walker, camera: THREE.PerspectiveCamera, pixelWidth: number, pixelHeight: number): void {
     this.mat.uniforms.uScale.value = pixelHeight / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2));
     (this.mat.uniforms.uViewport.value as THREE.Vector2).set(pixelWidth, pixelHeight);
+    this.sound?.listen(camera);
     if (dt > 0) this.drive(dt, walker);
     this.simulate(dt);
+  }
+
+  /**
+   * 子弹打在水面上（CombatFx.onWater）：一圈涟漪、往上蹿的一小柱水、四周溅开的水珠、一小团水雾、弹着水声。
+   * strength：1 = 打进水里，0.6 = 穿过水面打中水下的东西
+   */
+  bulletHit(at: THREE.Vector3, strength = 1): void {
+    const lv = this.terrain.waterLevelAt(at.x, at.z);
+    const y = Number.isFinite(lv) ? lv : at.y;
+    this.lake.addRipple(at.x, at.z, 0.18 + 0.3 * strength);
+    // 远处也要看得见：水柱的水珠比走路踢起的大一圈
+    for (let i = 0; i < Math.round(5 + 6 * strength); i++) {
+      this.emit(at.x + (Math.random() - 0.5) * 0.12, y + 0.03, at.z + (Math.random() - 0.5) * 0.12,
+        (Math.random() - 0.5) * 1.1, 2.6 + Math.random() * 3 * strength, (Math.random() - 0.5) * 1.1,
+        0.07 + Math.random() * 0.07, 0.9, 0.5 + Math.random() * 0.35, 0.15);
+    }
+    for (let i = 0; i < Math.round(6 + 6 * strength); i++) {
+      const a = Math.random() * Math.PI * 2, out = 0.8 + Math.random() * 1.2;
+      this.emit(at.x, y + 0.03, at.z, Math.cos(a) * out, 1 + Math.random() * 1.6, Math.sin(a) * out,
+        0.05 + Math.random() * 0.05, 0.8, 0.4 + Math.random() * 0.3, 0.2);
+    }
+    this.emit(at.x, y + 0.15, at.z, 0, 0.5, 0, 0.35 + 0.25 * strength, 0.14, 0.7, 2.2);
+    this.sound?.play('bullet', _at.set(at.x, y, at.z), strength);
   }
 
   // ───────────────────────────── 人和水 ─────────────────────────────
@@ -180,6 +211,7 @@ export class WaterFx {
         }
         // 冲刺：往两边甩的扇面
         if (speed > 12) {
+          if (this.prevSpeed <= 12) this.sound?.play('dash', f, deep);
           this.dashT -= dt;
           if (this.dashT <= 0) { this.dashT = 0.03; this.dashSpray(f.x, f.z, level, dirX, dirZ, speed, deep); }
         }
@@ -201,12 +233,18 @@ export class WaterFx {
           0.03 + Math.random() * 0.04, 0.7, 0.6 + Math.random() * 0.4, 0.4);
       }
     }
+    if (this.sound) {
+      const shore = Math.abs(Math.hypot(f.x, f.z) - this.terrain.shorelineR());
+      this.sound.shore(dt, Math.max(inWater ? 1 : 0, THREE.MathUtils.smoothstep(18 - shore, 0, 17)) * (walker.fly && !skim ? 0.4 : 1));
+    }
+    this.prevSpeed = teleport ? 0 : speed;
     this.wasIn = inWater;
     this.prev.copy(f);
   }
 
   /** 走一步：脚往前踢起几颗水珠，水越深越多 */
   private step(x: number, z: number, level: number, dirX: number, dirZ: number, speed: number, deep: number): void {
+    this.sound?.play('step', _at.set(x, level, z), deep);
     const n = Math.round(3 + speed * 0.5 + deep * 8);
     for (let i = 0; i < n; i++) {
       const fwd = 0.6 + Math.random() * 1.2 + speed * 0.08;
@@ -218,6 +256,7 @@ export class WaterFx {
 
   /** 落水：一圈皇冠形水花（外翻）、中间往上蹿的一柱、贴水面散开的一团水雾，涟漪 + 白沫 */
   private land(x: number, z: number, level: number, impact: number, depth: number): void {
+    this.sound?.play('land', _at.set(x, level, z), impact);
     const deep = THREE.MathUtils.clamp(depth / 0.9, 0, 1);
     const k = 0.35 + 0.65 * impact;
     this.lake.addRipple(x, z, 0.6 + 0.9 * k);
@@ -246,6 +285,7 @@ export class WaterFx {
 
   /** 从水里跳起来：腿上带起来的水珠往下掉 */
   private jumpOut(x: number, z: number, level: number, depth: number): void {
+    this.sound?.play('out', _at.set(x, level, z), depth);
     this.lake.addRipple(x, z, 0.35 + 0.3 * THREE.MathUtils.clamp(depth / 0.9, 0, 1));
     for (let i = 0; i < 12; i++) {
       const a = Math.random() * Math.PI * 2;

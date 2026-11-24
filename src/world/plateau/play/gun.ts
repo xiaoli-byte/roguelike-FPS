@@ -97,10 +97,14 @@ export class Gun {
     const spread = 0.004 + this.bloom;
     _d.x += (Math.random() - 0.5) * 2 * spread; _d.y += (Math.random() - 0.5) * 2 * spread; _d.z += (Math.random() - 0.5) * 2 * spread;
     _d.normalize();
-    // 先找挡住的地形 / 建筑
-    let tMax = GUN.range;
+    // 先找挡住的地形 / 建筑；顺带记下射线穿过水面的地方（水面是平的，按水位算准交点）
+    let tMax = GUN.range, tWater = Infinity;
     for (let t = 0.5; t < GUN.range; t += 1) {
       _p.copy(_o).addScaledVector(_d, t);
+      if (tWater === Infinity) {
+        const wl = ctx.terrain.waterLevelAt(_p.x, _p.z);
+        if (_p.y < wl && _o.y > wl) tWater = _d.y < -1e-4 ? Math.min(t, Math.max(t - 1, (wl - _o.y) / _d.y)) : t;
+      }
       if (_p.y < ctx.terrain.heightAt(_p.x, _p.z) || ctx.world.solidAt(_p.x, _p.y, _p.z)) { tMax = Math.max(0.5, t - 0.5); break; }
     }
     let best: Target | null = null, bestT = tMax, bestKey = tMax, bestMult = 1;
@@ -120,7 +124,10 @@ export class Gun {
         if (t > 0 && t < tMax && key < bestKey) { best = T; bestT = t; bestKey = key; bestMult = s.mult; bestS = s; }
       }
     }
-    const point = _o.clone().addScaledVector(_d, bestT);
+    // 射线先碰到水面：打进水里（水下的东西照样打得到，伤害不变），弹着点特效在水面上
+    const wet = tWater < bestT;
+    const waterAt = wet ? _o.clone().addScaledVector(_d, tWater) : null;
+    const point = wet && !best ? waterAt! : _o.clone().addScaledVector(_d, bestT);
     this.muzzle.getWorldPosition(_p);
     this.view.getWorldQuaternion(_q);
     ctx.fx.tracer(_p.clone(), point);
@@ -132,10 +139,11 @@ export class Gun {
       killed = wasAlive && !best.alive;
       if (dealt > 0) ctx.kit.afterBullet(best, point, dealt);
       ctx.fx.spray(point, bestMult > 1 ? ['#ffe08a', '#ffffff'] : ['#ffd2a0'], bestMult > 1 ? 5 : 2, 2.5, 1, 8, 0.2);
-    } else if (bestT < GUN.range) {
+    } else if (bestT < GUN.range && !wet) {
       ctx.fx.burst(point, 0.35, '#ffe6b0');
       ctx.fx.spray(point, ['#c8b89a', '#8a7a60'], 3, 2, 2, 12, 0.35);
     }
+    if (waterAt) ctx.fx.water(waterAt, best ? 0.6 : 1);
     return { target: best, mult: bestMult, dealt, point, killed };
   }
 }

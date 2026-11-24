@@ -297,6 +297,18 @@ export class CombatFx {
     }
   }
 
+  /**
+   * 子弹打在水面上（射线穿过水面的那一点）。strength：1 = 打在水里，0.6 = 穿过水面打中了水下的东西。
+   * 有 onWater 就交给它（4-4 的湖：涟漪 + 水柱 + 弹着水声，见 haizi/waterFx.ts），没有就溅一撮白水花
+   */
+  water(at: THREE.Vector3, strength = 1): void {
+    if (this.onWater) { this.onWater(at, strength); return; }
+    this.spray(at, ['#eef6f8', '#ffffff', '#cfe2e8'], Math.round(3 + 4 * strength), 1.2, 4.5, 14, 0.45);
+  }
+
+  /** 图自己的水面命中效果（见 water） */
+  onWater: ((at: THREE.Vector3, strength: number) => void) | null = null;
+
   /** 抛物线投射物：flight 秒后落到 to；落点提前出预警圈 */
   lob(from: THREE.Vector3, to: THREE.Vector3, flight: number, mesh: THREE.Object3D, splash: number, onLand: (at: THREE.Vector3) => void, color: THREE.ColorRepresentation = '#ff8a3a', warn = true): void {
     const g = 26;

@@ -5,6 +5,7 @@
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
 import { WaterFx } from '../world/haizi/waterFx';
+import { WaterSound } from '../world/haizi/waterSound';
 import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
@@ -89,6 +90,8 @@ const arena = buildHaizi(scene, terrain, world, ...reflectSize());
 const { sky, lake, pillars, conductors, anim, grass, scatter } = arena;
 // 人在浅水里走、跳、冲刺时的涟漪和水花
 const waterFx = new WaterFx(scene, lake, terrain);
+// 水声（涉水、落水、冲刺、弹着水、拍岸）：第一次点画面 / 按键后才出声
+waterFx.sound = new WaterSound();
 const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
@@ -405,6 +408,8 @@ async function startPlay(): Promise<void> {
   if (play) return;
   walker.fly = false;
   const mode = new LeizePlay(scene, camera, terrain, world, walker, weather, arena, boundAt);
+  // 子弹打在湖面上：涟漪 + 水柱 + 弹着水声（waterFx.ts）
+  mode.fx.onWater = (at, k) => waterFx.bulletHit(at, k);
   play = mode;
   await mode.start();
   showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · 空格跳 · Shift 冲刺（无敌）');
