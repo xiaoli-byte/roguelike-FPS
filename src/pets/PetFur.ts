@@ -145,19 +145,16 @@ uniform float uFurLen;
 uniform float uFurComb;
 uniform float uFurDroop;
 uniform float uFurK;
+// 只加两个插值槽（毛向 + 遮罩打包成 vec4）：场景里阴影 / 雾 / 灯多时，标准材质本身的插值已经不少，再多会链接失败
 varying vec3 vFurBind;
-varying vec3 vFurFlowBind;
-varying float vFurMask;
-varying vec3 vFurN;
-varying vec3 vFurV;
+varying vec4 vFurFlowMask;
 `;
 
 const VERT_BODY = /* glsl */ `
 #include <skinning_vertex>
 {
   vFurBind = position * uFurK;
-  vFurFlowBind = furFlow;
-  vFurMask = furMask;
+  vFurFlowMask = vec4(furFlow, furMask);
   float furLen = uFurLen * furMask;
   vec3 furN = normalize(objectNormal);
   #ifdef USE_SKINNING
@@ -168,9 +165,6 @@ const VERT_BODY = /* glsl */ `
   // 世界的「下」换到物体空间（模型矩阵只有均匀缩放：转置 = 逆的方向部分）
   vec3 furGrav = normalize((vec4(0.0, -1.0, 0.0, 0.0) * modelMatrix).xyz);
   transformed += (furN * uFurH + (furComb * uFurComb + furGrav * uFurDroop) * (uFurH * uFurH)) * furLen;
-  vec4 furW = modelMatrix * vec4(transformed, 1.0);
-  vFurN = normalize(mat3(modelMatrix) * furN);
-  vFurV = cameraPosition - furW.xyz;
 }
 `;
 
@@ -183,10 +177,7 @@ uniform float uFurFacing;
 uniform float uFurRoot;
 uniform float uFurTip;
 varying vec3 vFurBind;
-varying vec3 vFurFlowBind;
-varying float vFurMask;
-varying vec3 vFurN;
-varying vec3 vFurV;
+varying vec4 vFurFlowMask;
 vec3 furHash33(vec3 p3) {
   p3 = fract(p3 * vec3(0.1031, 0.1030, 0.0973));
   p3 += dot(p3, p3.yxz + 33.33);
@@ -226,12 +217,11 @@ float furShellAlpha(vec3 bindPos, vec3 flowBind, float density, float h, float t
 const FRAG_BODY = /* glsl */ `
 #include <map_fragment>
 {
-  vec3 fN = normalize(vFurN);
-  vec3 fV = normalize(vFurV);
-  float facing = clamp(dot(fN, fV), 0.0, 1.0);
+  // 正对镜头的面只留最长的发丝：视空间的法线（标准材质的 vNormal）对视线（vViewPosition 指向相机）
+  float facing = clamp(dot(normalize(vNormal), normalize(vViewPosition)), 0.0, 1.0);
   float hEff = clamp(uFurH + uFurFacing * facing * facing * (1.0 - uFurH), 0.0, 1.0);
-  float fa = furShellAlpha(vFurBind, normalize(vFurFlowBind), uFurDensity, hEff, uFurThickness, uFurStretch)
-           * clamp((vFurMask - 0.05) * 10.0, 0.0, 1.0);
+  float fa = furShellAlpha(vFurBind, normalize(vFurFlowMask.xyz), uFurDensity, hEff, uFurThickness, uFurStretch)
+           * clamp((vFurFlowMask.w - 0.05) * 10.0, 0.0, 1.0);
   if (fa < 0.5) discard;
   diffuseColor.rgb *= mix(uFurRoot, 1.0 + uFurTip, uFurH);
 }

@@ -8,6 +8,7 @@ import { BEHAVIOURS, type PetZoneHandle } from './PetBehaviours';
 import { PetFxSystem, disposeObject, glowSprite, textLabel } from './PetFx';
 import { PetSeal, type SealHost } from './PetSeal';
 import { instantiatePart } from './PetVisuals';
+import { clipData } from '../anim/ClipPlayer';
 
 /**
  * 灵宠系统（照译 Unity G/Pets/PetOwner.cs + PetBootstrap.cs + PetHud.cs，以及 LootDirector 的精英掉封印、PetReward 奖励串）：
@@ -135,6 +136,8 @@ export class PetSystem implements System, PetHost, SealHost {
   init(): void {
     const ctx = this.ctx, ev = ctx.events;
     this.fx.attach();
+    // 八只的动画数据（每只 30–80 KB）开局就读：结契的那一刻就有骨骼动画，不先露一帧绑定姿势（Unity 预制体自带控制器）
+    for (const d of PET_LIBRARY) void clipData(d.assetId);
     this.ui.setPetSource?.(this.uiSource);
     this.listeners.push(
       ev.on('enemy:killed', ({ enemy, result }) => {
