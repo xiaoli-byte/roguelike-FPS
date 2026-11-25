@@ -112,14 +112,14 @@ export const WB_1_4: WhiteboxSpec = {
     // 观景台 + 之字木栈道（三跑，每跑 12 m 降 5.33 m = 24°，拐角各留 2.5 m 平台）—— 程序化木梯件；栈道下面先垫一道跟着它折的沙埂（跑与跑之间是陡坎，不留能横穿的缓坡）
     { op: 'ramp', pts: STAIR, hs: STAIR_H, half: 3.2, edge: 3, mode: 'max', mat: 'dune' },
     { op: 'disc', at: [93, 77], r: 8.5, h: 16, edge: 0, mode: 'set', mat: 'timber' },
-    { op: 'ramp', pts: STAIR, hs: STAIR_H, half: 2.5, mat: 'timber' },
+    { op: 'ramp', pts: STAIR, hs: STAIR_H, half: 2.5, mat: 'timber', piece: '之字木栈道' },
     // 月牙泉：芦苇岸 → 泉床挖到 −1.4 m（岸坡 5 m，蹚得下去）。水线约在挖槽外 2 m：尖到尖约 67 m、最宽约 13 m
     { op: 'paint', mat: 'plant', closed: true, pts: crescent(SPRING[0], SPRING[1], 149.6, 36.4, 17.6) },
     { op: 'poly', pts: crescent(SPRING[0], SPRING[1], 146.6, 31.6, 8.8), h: -1.4, edge: 5, mode: 'min', mat: 'mud' },
     // 月泉阁 · 长廊 · 门楼 · 庭院：一整片平铺地（敞厅地面和铺地齐平，环线直接穿过去）
     { op: 'poly', pts: [[150, 149.5], [204, 149.5], [204, 191], [150, 191]], h: 0, edge: 2, mode: 'set', mat: 'stone' },
     // 上二层台的木梯：长廊北侧，自东向西 11.5 m 上 5.9 m（27°，宽 3 m），西头 1.5 m 平台接上二层台东北角（月泉阁件的一部分）
-    { op: 'ramp', pts: [[182, 154], [170.5, 154], [169, 154]], hs: [0, 5.9, 5.9], half: 1.5, mat: 'timber' },
+    { op: 'ramp', pts: [[182, 154], [170.5, 154], [169, 154]], hs: [0, 5.9, 5.9], half: 1.5, mat: 'timber', piece: '月泉阁' },
     // 环线的硬沙路、栈道落地到 ① 的木板路（阁、长廊、门楼底下是铺地）
     { op: 'paint', mat: 'road', half: 3, pts: [ENTRY, ...LOOP.slice(0, 8)] },
     { op: 'paint', mat: 'road', half: 3, pts: [...LOOP.slice(12), ENTRY] },

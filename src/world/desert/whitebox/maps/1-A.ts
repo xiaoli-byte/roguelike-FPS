@@ -180,7 +180,7 @@ export const WB_1_A: WhiteboxSpec = {
     { op: 'mound', at: [110, 8], r: [70, 13], h: 8, base: 18, shape: 'mesa', mat: 'rock' },
     { op: 'mound', at: [330, 6], r: [80, 12], h: 10, base: 18, shape: 'mesa', mat: 'rock' },
     // ① 木栈梯：每跑宽 8 m，下跑 17°、上跑 22°，西头一个 4 m 高的平台
-    { op: 'ramp', pts: STAIR, hs: STAIR_H, half: 4, edge: 0, mode: 'max', mat: 'timber' },
+    { op: 'ramp', pts: STAIR, hs: STAIR_H, half: 4, edge: 0, mode: 'max', mat: 'timber', piece: '贴崖木栈梯' },
     // ② 崩塌碎石坡：在崖体上豁开一道口子，8 → 12.2 → 18 m（17–19°），两侧是塌下来的碎石斜面
     { op: 'ramp', pts: RUBBLE, hs: RUBBLE_H, half: 4, edge: 4, mode: 'set', mat: 'stone' },
     // ④ 之字石阶：0 → 4 → 8（窟檐层东头）→ 13 → 18 m，下两折 19–22°、上两折 27°
