@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Unity 场景网页导出的发布步骤：读 Unity 原样导出（public/assets/unity-levels.next，Git 忽略），
+// Unity 场景网页导出的发布步骤：读 Unity 原样导出（exports/unity-levels-raw，Git 忽略；不能放在 public/ 下，
+// vite build 会把 public/ 整个拷进 dist/），
 // 写网页实际加载的发布目录（public/assets/unity-levels，入库）。
 //
 //   node scripts/unity/optimize-web-levels.mjs            全量重建发布目录
@@ -21,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { MeshoptEncoder } from 'meshoptimizer';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const SOURCE = join(ROOT, 'public', 'assets', 'unity-levels.next');
+const SOURCE = join(ROOT, 'exports', 'unity-levels-raw');
 const TARGET = join(ROOT, 'public', 'assets', 'unity-levels');
 const CHECK = process.argv.includes('--check');
 

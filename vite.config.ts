@@ -6,10 +6,11 @@ import { defineConfig } from 'vite';
 // while `npm run dev` ran, Unity's package manager could not move a freshly extracted package into
 // unity/Library/PackageCache (EPERM), which made every -batchmode run exit 1.
 // Also out: the gunfire-reborn-replica symlink (a whole Unity project on another drive; chokidar follows symlinks),
-// Library/ and logfile/ (binary dumps), and the ~2 GB raw Unity scene export (public/assets/unity-levels.next/,
+// Library/ and logfile/ (binary dumps), and the ~2.5 GB raw Unity scene export (exports/unity-levels-raw/,
 // rewritten wholesale by every `bridge.sh webexport`). With those watched the server stopped answering any request.
+// The raw export must stay outside public/: `vite build` copies public/ into dist/ verbatim, .gitignore does not stop it.
 const repoRoot = fileURLToPath(new URL('.', import.meta.url)).replace(/\\/g, '/').toLowerCase();
-const unwatchedDirs = ['unity/', '.claude/', 'gunfire-reborn-replica/', 'library/', 'logfile/', 'public/assets/unity-levels.next/', 'tests/.cache/']
+const unwatchedDirs = ['unity/', '.claude/', 'gunfire-reborn-replica/', 'library/', 'logfile/', 'exports/', 'tests/.cache/']
   .map((dir) => repoRoot + dir);
 const isUnwatched = (path: string) => {
   const dir = path.replace(/\\/g, '/').toLowerCase() + '/';
