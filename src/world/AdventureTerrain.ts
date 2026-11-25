@@ -37,7 +37,7 @@ export class AdventureTerrain {
     // Retain the old published formation while the proper broad cliff loads,
     // then replace it once. No substitute artistic mesh is constructed here.
     if (!AssetLibrary.get(this.cliffId()) || !AssetLibrary.get(this.rubbleId()))
-      void AssetLibrary.preload().then(() => { if (!this.disposed) this.build(); });
+      void AssetLibrary.preload('scene').then(() => { if (!this.disposed) this.build(); });
   }
 
   private cliffId(): string {

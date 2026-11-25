@@ -163,7 +163,7 @@ export class AuthoredSceneView {
     };
     const backdrop = makeBackdrop();
     this.group.add(backdrop.group); this.owned.push(backdrop);
-    if (!backdrop.ready) void AssetLibrary.preload().then(() => {
+    if (!backdrop.ready) void AssetLibrary.preload('scene').then(() => {
       if (this.disposed || backdrop.ready) return;
       backdrop.dispose();
       const loaded = makeBackdrop(); this.group.add(loaded.group); this.owned.push(loaded);

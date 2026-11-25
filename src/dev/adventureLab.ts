@@ -6,7 +6,7 @@ import type { StageNode, StageType, ThemeId } from '../core/types';
 import { AssetLibrary } from '../assets/AssetLibrary';
 import { getStageDesign } from '../world/StageDesign';
 
-await AssetLibrary.preload();
+await AssetLibrary.preload('all');
 const game = new Game(), ctx = game.ctx;
 const theme = document.getElementById('tour-theme') as HTMLSelectElement;
 const stageIndex = document.getElementById('tour-stage') as HTMLSelectElement;

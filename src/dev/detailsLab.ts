@@ -35,7 +35,7 @@ toggleControls.onclick = () => {
   toggleControls.textContent = collapsed ? '展开面板' : '收起面板';
 };
 // Paused inspections must not freeze before the authored ground maps arrive.
-await Promise.all([AssetLibrary.preload(), preloadSceneSurface()]);
+await Promise.all([AssetLibrary.preload('all'), preloadSceneSurface()]);
 const game = new Game(), ctx = game.ctx;
 ctx.player.resetForRun(HEROES[0]);
 const vm = new Viewmodel(ctx); vm.init();

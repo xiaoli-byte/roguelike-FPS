@@ -45,18 +45,36 @@ export interface LoadedAsset {
 const BASE = import.meta.env.BASE_URL;
 const disabled = typeof location !== 'undefined' && new URLSearchParams(location.search).has('classic');
 
+/**
+ * 预加载范围。core = 角色、首领、挂件、武器、手臂、灵宠、商人（主游戏开局要等到齐的那一份）；
+ * scene = 场景件（bind.source = 'scene'：232 条、约 120 MB、上千张 1024–2048 贴图），只有旧场景视图（ArenaView 路径）
+ * 和检视页用——Unity 关卡读自己的发布目录 public/assets/unity-levels，不经清单。2026-11-25 前开局把两份一起读完才进第一关。
+ * all = 两份都要（检视页）。
+ */
+export type PreloadScope = 'core' | 'scene' | 'all';
+
+const isSceneEntry = (e: AssetEntry): boolean => e.bind?.source === 'scene';
+
 class Library {
   private entries: Record<string, AssetEntry> = {};
   private loaded = new Map<string, LoadedAsset>();
   private failed = new Set<string>();
-  private loader: GLTFLoader | null = null;
-  private ready: Promise<void> | null = null;
+  private manifestReady: Promise<boolean> | null = null;
+  private readonly scopes = new Map<PreloadScope, Promise<void>>();
+  private readonly pending = new Map<string, Promise<void>>();
 
-  /** 启动时调用一次：读清单并在后台加载全部资产（不阻塞启动） */
-  preload(): Promise<void> {
-    if (this.ready) return this.ready;
-    this.ready = disabled ? Promise.resolve() : this.loadAll();
-    return this.ready;
+  /**
+   * 读清单并加载一个范围的资产（同一范围只读一次，重复调用拿同一个 Promise）。
+   * 模块导入时就在后台开始读 core；用场景件的地方调 preload('scene')，资产到了再重建。
+   */
+  preload(scope: PreloadScope = 'core'): Promise<void> {
+    if (disabled) return Promise.resolve();
+    let ready = this.scopes.get(scope);
+    if (!ready) {
+      ready = scope === 'all' ? Promise.all([this.preload('core'), this.preload('scene')]).then(() => undefined) : this.loadScope(scope);
+      this.scopes.set(scope, ready);
+    }
+    return ready;
   }
 
   /** 已加载的资产；未加载完 / 失败 / 被禁用时为 null */
@@ -99,29 +117,46 @@ class Library {
     return !disabled;
   }
 
-  private async loadAll(): Promise<void> {
-    let manifest: { assets?: Record<string, AssetEntry> };
-    try {
-      const r = await fetch(`${BASE}assets/manifest.json`, { cache: 'no-cache' });
-      if (!r.ok) return;
-      manifest = await r.json();
-    } catch {
-      return;
-    }
-    this.entries = manifest.assets ?? {};
-    // three r186 的 DRACOLoader 默认用 import.meta.url 定位解码器，Vite 会把它打进产物，不需要另外拷贝
-    const draco = new DRACOLoader();
-    this.loader = new GLTFLoader().setDRACOLoader(draco);
-    const ids = Object.keys(this.entries);
-    for (let i = 0; i < ids.length; i += 6) await Promise.all(ids.slice(i, i + 6).map((id) => this.load(id)));
-    draco.dispose();
-    console.info(`[assets] 已加载 ${this.loaded.size}/${Object.keys(this.entries).length} 个美术资产`);
+  private readManifest(): Promise<boolean> {
+    this.manifestReady ??= (async () => {
+      try {
+        const r = await fetch(`${BASE}assets/manifest.json`, { cache: 'no-cache' });
+        if (!r.ok) return false;
+        this.entries = ((await r.json()) as { assets?: Record<string, AssetEntry> }).assets ?? {};
+        return true;
+      } catch {
+        return false;
+      }
+    })();
+    return this.manifestReady;
   }
 
-  private async load(id: string): Promise<void> {
+  private async loadScope(scope: 'core' | 'scene'): Promise<void> {
+    if (!await this.readManifest()) return;
+    const ids = Object.keys(this.entries).filter((id) => isSceneEntry(this.entries[id]) === (scope === 'scene'));
+    // 每个范围一套加载器，读完就释放 Draco 解码线程（DRACOLoader.dispose 之后不能再用，所以不跨范围共用）。
+    // three r186 的 DRACOLoader 默认用 import.meta.url 定位解码器，Vite 会把它打进产物，不需要另外拷贝
+    const draco = new DRACOLoader();
+    const loader = new GLTFLoader().setDRACOLoader(draco);
+    for (let i = 0; i < ids.length; i += 6) await Promise.all(ids.slice(i, i + 6).map((id) => this.load(id, loader)));
+    draco.dispose();
+    const done = ids.filter((id) => this.loaded.has(id)).length;
+    console.info(`[assets] ${scope === 'core' ? '角色 / 武器' : '场景件'}：已加载 ${done}/${ids.length} 个美术资产`);
+  }
+
+  private load(id: string, loader: GLTFLoader): Promise<void> {
+    let pending = this.pending.get(id);
+    if (!pending) {
+      pending = this.loadOne(id, loader);
+      this.pending.set(id, pending);
+    }
+    return pending;
+  }
+
+  private async loadOne(id: string, loader: GLTFLoader): Promise<void> {
     const entry = this.entries[id];
     try {
-      const gltf = await this.loader!.loadAsync(`${BASE}${entry.hiUrl && highQuality() ? entry.hiUrl : entry.url}`);
+      const gltf = await loader.loadAsync(`${BASE}${entry.hiUrl && highQuality() ? entry.hiUrl : entry.url}`);
       const lods: THREE.Mesh[] = [];
       gltf.scene.traverse((o) => {
         const m = o as THREE.Mesh;

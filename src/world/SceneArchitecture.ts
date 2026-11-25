@@ -42,7 +42,7 @@ export class SceneArchitecture {
     if (!layout.architecture?.length) return;
     this.build();
     if (layout.architecture.some(a => !this.built.has(a.assetId)))
-      void AssetLibrary.preload().then(() => { if (!this.disposed) this.build(); });
+      void AssetLibrary.preload('scene').then(() => { if (!this.disposed) this.build(); });
   }
 
   private copyMaterial(original: THREE.Material, assetId: string): THREE.Material {

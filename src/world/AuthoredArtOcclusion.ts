@@ -110,7 +110,7 @@ export class AuthoredArtOcclusion {
       state.unregister = world.addRayWindow(state); this.states.push(state);
     }
     this.build();
-    if (this.states.some(state => !state.ready)) void AssetLibrary.preload().then(() => { if (!this.disposed) this.build(); });
+    if (this.states.some(state => !state.ready)) void AssetLibrary.preload('scene').then(() => { if (!this.disposed) this.build(); });
   }
 
   private build(): void {

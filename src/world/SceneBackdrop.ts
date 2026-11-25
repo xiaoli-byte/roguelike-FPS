@@ -29,7 +29,7 @@ export class SceneBackdrop {
     // When both art families are absent, ArenaBuilder owns its original fallback
     // ring. Only upgrade a backdrop we actually own, avoiding two overlapping rings.
     if (this.ready && !AssetLibrary.get(this.cliffId()))
-      void AssetLibrary.preload().then(() => { if (!this.disposed) this.build(); });
+      void AssetLibrary.preload('scene').then(() => { if (!this.disposed) this.build(); });
   }
 
   get ready(): boolean { return this.group.children.length > 0; }

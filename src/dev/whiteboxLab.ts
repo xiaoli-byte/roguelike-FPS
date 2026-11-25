@@ -47,7 +47,7 @@ function refreshChoices(index = stageChoice.value || initial.get('stage') || '0'
   typeChoice.disabled = stageChoice.value === '4';
 }
 refreshChoices();
-await AssetLibrary.preload();
+await AssetLibrary.preload('all');
 const game = new Game(), ctx = game.ctx, director = ctx.stage as StageDirector;
 const walker = new WhiteboxWalker(ctx);
 const overview = new THREE.OrthographicCamera(-80, 80, 60, -60, .1, 600);
