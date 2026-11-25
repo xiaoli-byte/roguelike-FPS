@@ -3,6 +3,7 @@
  * 抛物线投石、直线弹。只管画面和「打没打中玩家」，伤害数值由出手的怪决定（回调里扣血）。
  * 预警都返回句柄：怪被硬直 / 眩晕打断时 cancel() 撤回还没填满的预警（不再出手）。
  */
+import type { SfxId } from '../../../core/types';
 import * as THREE from 'three';
 import type { HeightGrid } from '../grid';
 import type { CollisionWorld } from '../walker';
@@ -68,6 +69,12 @@ export class CombatFx {
 
   ground(x: number, z: number): number {
     return Math.max(this.terrain.heightAt(x, z), this.terrain.waterLevelAt(x, z));
+  }
+
+  /** (x, z) 是水面（水面高过地面），y 给了就还要求它贴着水面 */
+  wet(x: number, z: number, y?: number): boolean {
+    const wl = this.terrain.waterLevelAt(x, z);
+    return Number.isFinite(wl) && wl > this.terrain.heightAt(x, z) + 0.05 && (y === undefined || Math.abs(y - wl) < 0.6);
   }
 
   private add(obj: THREE.Object3D, life: number, tick: Timed['tick'], done?: () => void): Timed {
@@ -209,6 +216,10 @@ export class CombatFx {
     this.add(g, 0.26, (k) => { g.visible = k < 0.35 || (k > 0.5 && k < 0.75); }, () => { core.dispose(); glow.dispose(); });
     this.burst(new THREE.Vector3(x, gy + 0.5, z), 2.4, color);
     this.spray(new THREE.Vector3(x, gy + 0.3, z), [color, '#ffffff'], 26, 7, 8, 12, 0.6);
+    // 雷：近处噼啪的电声 + 一声炸雷
+    this.sfx?.('shock_zap', end, 1.2);
+    this.sfx?.('explosion', end, 0.55);
+    if (this.wet(x, z, gy)) this.water(new THREE.Vector3(x, gy, z), 2.2);
   }
 
   /** 雷弧：a 到 b 的一道折线电光（电网、焚雷跳弧、电会传、回劈） */
@@ -252,6 +263,7 @@ export class CombatFx {
   /** 冲击波：贴地扩散的环，onTick(当前半径) 每帧回调（拿来判定玩家被扫到没有）；height 是环的高度（化蛇的浪） */
   shockwave(x: number, z: number, maxR: number, dur: number, onTick?: (r: number) => void, color: THREE.ColorRepresentation = '#ffb5f0', height = 1): void {
     const y = this.ground(x, z) + 0.25;
+    if (this.wet(x, z)) this.water(new THREE.Vector3(x, y - 0.25, z), 1.6);
     const ring = new THREE.Mesh(new THREE.TorusGeometry(1, 0.06, 6, 64).rotateX(Math.PI / 2), this.additive(color, 0.9));
     ring.position.set(x, y, z);
     this.add(ring, dur, (k) => {
@@ -298,7 +310,8 @@ export class CombatFx {
   }
 
   /**
-   * 子弹打在水面上（射线穿过水面的那一点）。strength：1 = 打在水里，0.6 = 穿过水面打中了水下的东西。
+   * 打在 / 砸在水面上。strength：0.6 = 子弹穿过水面打中水下的东西，1 = 子弹打在水里，
+   * 1.3 = 投射物落水，1.6 = 冲击波从水里起，2.2 = 落雷劈在水上（大于 1 的是大冲击：水柱 + 皇冠水花 + 轰响）。
    * 有 onWater 就交给它（4-4 的湖：涟漪 + 水柱 + 弹着水声，见 haizi/waterFx.ts），没有就溅一撮白水花
    */
   water(at: THREE.Vector3, strength = 1): void {
@@ -308,6 +321,8 @@ export class CombatFx {
 
   /** 图自己的水面命中效果（见 water） */
   onWater: ((at: THREE.Vector3, strength: number) => void) | null = null;
+  /** 音效出口（PlaySession 接上 SynthPlayer；落雷自己出雷声） */
+  sfx: ((id: SfxId, at?: THREE.Vector3, volume?: number) => void) | null = null;
 
   /** 抛物线投射物：flight 秒后落到 to；落点提前出预警圈 */
   lob(from: THREE.Vector3, to: THREE.Vector3, flight: number, mesh: THREE.Object3D, splash: number, onLand: (at: THREE.Vector3) => void, color: THREE.ColorRepresentation = '#ff8a3a', warn = true): void {
@@ -365,7 +380,11 @@ export class CombatFx {
       landed.push([S, S.pos.clone(), hit]);
       return false;
     });
-    for (const [S, at, hit] of landed) S.onHit(at, hit);
+    for (const [S, at, hit] of landed) {
+      // 砸进水里：水花 + 涟漪 + 水声（4-4 的湖）
+      if (!hit && this.wet(at.x, at.z, at.y)) this.water(at, 1.3);
+      S.onHit(at, hit);
+    }
     // 粒子
     for (let i = 0; i < MAX_PARTICLES; i++) {
       if (this.pLife[i] <= 0) continue;

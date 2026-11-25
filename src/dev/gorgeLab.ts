@@ -3,6 +3,8 @@
  * 地形、过河设施、地标、水、大鹗、动态环境都在 src/world/gorge/（和 4-1 共用的在 src/world/plateau/），
  * 这里只负责组装、输入（含溜索、急流）、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md 第 3 节。
  */
+import { SynthPlayer } from '../audio/SynthPlayer';
+import { WalkerSounds } from '../world/plateau/walkerSounds';
 import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
@@ -166,6 +168,9 @@ const boundAt = (x: number, z: number): number => {
   return terrain.basin[Math.round(z - terrain.minZ) * terrain.nx + Math.round(x - terrain.minX)];
 };
 const walker = new Walker(world, boundAt, MAP.softBoundary);
+// 声音：枪声、命中、脚步、起跳落地（正式游戏的合成配方）；第一次点画面 / 按键后才出声
+const audio = new SynthPlayer();
+const walkSfx = new WalkerSounds(audio, terrain);
 
 // 彩蛋 · 灵宠飞渡（3.8）：会飞的灵宠跟在身边；到风马旗台按 F
 // 镜头避让：点在任何碰撞体里（房子、桥楼、旗杆、碉楼……，多留 0.6 m）就算挡住
@@ -847,6 +852,8 @@ function tick(dt: number, render: boolean): void {
   for (const p of props.thunderPosts) p.charge = Math.min(1, p.charge + (weather.level > 0.6 ? dt / 25 : 0));
   if (flight.thirdPerson) { camera.position.copy(flight.cam); camera.lookAt(flight.look); }
   else { walker.eye(camera.position); camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ'); }
+  audio.listen(camera);
+  walkSfx.update(dt, walker);
   // 灵宠平时跟着飞：放在镜头摆好之后，用这一帧的眼睛和视线（不落后一帧，走路时不抖）
   flight.companion(time, dt, camera.position, camera.getWorldDirection(lookTmp), Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.aspect));
   // 滑翔越快视野越宽（飞渡结束后慢慢回到 72°）
@@ -900,6 +907,7 @@ async function startPlay(): Promise<void> {
   walker.fly = false;
   const mode = new GorgePlay(scene, camera, terrain, world, walker, weather, crossings, props,
     [...conductors, ...crossings.ironConductors, ...crossings.conductors, ...props.thunderPosts.map(p => p.pos)], boundAt);
+  mode.audio = audio;
   play = mode;
   await mode.start();
   showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · F 挂溜索 · 空格跳 · Shift 冲刺（无敌）');

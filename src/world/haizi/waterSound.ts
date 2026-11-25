@@ -1,104 +1,57 @@
 /**
- * 4-4 神山海子的水声：涉水的一步、落水、跳出水、冲刺甩水、子弹打水，加上走到湖边听得见的轻轻拍岸声。
+ * 4-4 神山海子的水声：涉水的一步、落水、跳出水、冲刺甩水、子弹打水、大冲击砸进湖里（落雷、龙爪、雷神身段出入水），
+ * 加上走到湖边听得见的轻轻拍岸声。
  *
- * 检视页 / 首领战没有接正式游戏的 AudioSystem（它挂在 GameContext 上），这里直接用同一套 WebAudio 合成构件
- * （src/audio/Synth.ts 的 SynthKit / tone / noise）现场合成，不用音频文件。
- * 浏览器要用户先点一下或按一下键才让出声：第一次 pointerdown / keydown 时才建 AudioContext。
- * 远处的弹着水声按距离衰减、按左右声像（StereoPanner）摆位；脚下的声音不摆位。
+ * 配方用 src/audio/Synth.ts 的合成构件现场合成，经 src/audio/SynthPlayer.ts 播放（和检视页的枪声、脚步同一条总线）。
+ * 脚下的声音不摆位；子弹打水、大冲击按距离衰减、按左右声像摆位。
  */
 import * as THREE from 'three';
-import { SynthKit, noise, rnd, tone, type Voice } from '../../audio/Synth';
+import type { SynthPlayer } from '../../audio/SynthPlayer';
+import { noise, rnd, tone, type Voice } from '../../audio/Synth';
 
-export type WaterSoundKind = 'step' | 'land' | 'out' | 'dash' | 'bullet';
-
-const _to = new THREE.Vector3();
-const _right = new THREE.Vector3();
+export type WaterSoundKind = 'step' | 'land' | 'out' | 'dash' | 'bullet' | 'boom';
 
 export class WaterSound {
-  /** 总音量（0 = 静音） */
-  volume = 0.7;
-  private ac: AudioContext | null = null;
-  private kit: SynthKit | null = null;
-  private master: GainNode | null = null;
   private lapGain: GainNode | null = null;
-  private readonly ear = new THREE.Vector3();
-  private readonly earRight = new THREE.Vector3(1, 0, 0);
   private lapTime = 0;
   private lastBullet = 0;
   private bulletBurst = 0;
 
-  constructor() {
-    const start = (): void => this.start();
-    addEventListener('pointerdown', start);
-    addEventListener('keydown', start);
+  constructor(private readonly player: SynthPlayer) {
+    player.onReady(p => this.startLapping(p));
   }
 
-  private start(): void {
-    if (this.ac) {
-      if (this.ac.state === 'suspended') void this.ac.resume();
-      return;
-    }
-    try {
-      const ac = new AudioContext();
-      this.ac = ac;
-      this.kit = new SynthKit(ac);
-      const comp = ac.createDynamicsCompressor();
-      comp.threshold.value = -14; comp.ratio.value = 4;
-      this.master = ac.createGain();
-      this.master.gain.value = this.volume;
-      this.master.connect(comp);
-      comp.connect(ac.destination);
-      this.startLapping(ac, this.kit);
-    } catch { /* 没有 WebAudio：不出声 */ }
-  }
-
-  /** 每帧：耳朵跟着镜头 */
-  listen(camera: THREE.Camera): void {
-    camera.getWorldPosition(this.ear);
-    this.earRight.set(1, 0, 0).applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion()));
-    if (this.master) this.master.gain.setTargetAtTime(this.volume, this.ac!.currentTime, 0.05);
-  }
-
-  /** 发一声。at：发声位置；k：力度 0..1（水深、落水速度、远近之外的强弱） */
+  /** 发一声。at：发声位置；k：力度 0..1（水深、落水速度；boom 是冲击大小） */
   play(kind: WaterSoundKind, at: THREE.Vector3, k = 1): void {
-    const ac = this.ac, kit = this.kit, master = this.master;
-    if (!ac || !kit || !master || ac.state !== 'running' || this.volume <= 0) return;
-    const now = ac.currentTime;
-    let gain = 1, pan = 0;
+    const ac = this.player.ac;
+    if (!ac) return;
     if (kind === 'bullet') {
       // 自动步枪一秒 9 发：同一小段时间里的弹着水声压一压，不然糊成一片
+      const now = ac.currentTime;
       this.bulletBurst = now - this.lastBullet < 0.25 ? this.bulletBurst + 1 : 0;
       this.lastBullet = now;
       if (this.bulletBurst > 2 && Math.random() < 0.4) return;
-      const d = _to.subVectors(at, this.ear).length();
-      gain = 1 / (1 + d / 10);
-      if (gain < 0.04) return;
-      _right.copy(this.earRight); _right.y = 0;
-      pan = d > 0.5 ? THREE.MathUtils.clamp(_to.normalize().dot(_right.normalize()), -1, 1) * 0.75 : 0;
     }
-    const out = ac.createGain();
-    out.gain.value = gain;
-    const panner = ac.createStereoPanner();
-    panner.pan.value = pan;
-    out.connect(panner);
-    panner.connect(master);
-    const v: Voice = { kit, ac, out, t: now + 0.003, p: 1 + rnd(-0.08, 0.08), end: now };
-    RECIPES[kind](v, THREE.MathUtils.clamp(k, 0, 1));
-    const life = Math.max(0.1, v.end - now) * 1000 + 200;
-    setTimeout(() => { out.disconnect(); panner.disconnect(); }, life);
+    const far = kind === 'bullet' || kind === 'boom';
+    const kk = THREE.MathUtils.clamp(k, 0, 1);
+    this.player.playRecipe(v => RECIPES[kind](v, kk), {
+      position: far ? at : undefined, ref: kind === 'boom' ? 28 : 10, jitter: 0.08, send: kind === 'boom' ? 0.35 : 0.08,
+    });
   }
 
   /** 拍岸声：near = 0（离水远）..1（站在水边 / 水里），每帧调 */
   shore(dt: number, near: number): void {
-    if (!this.ac || !this.lapGain) return;
+    const ac = this.player.ac;
+    if (!ac || !this.lapGain) return;
     this.lapTime += dt;
     const t = this.lapTime;
     // 两个慢周期叠起来：一下一下不规则地拍
     const wave = Math.max(0, Math.sin(t * 2.3) * 0.6 + Math.sin(t * 1.37 + 1.3) * 0.5 + 0.15);
-    this.lapGain.gain.setTargetAtTime(near * (0.05 + 0.16 * wave), this.ac.currentTime, 0.12);
+    this.lapGain.gain.setTargetAtTime(near * (0.05 + 0.16 * wave), ac.currentTime, 0.12);
   }
 
-  private startLapping(ac: AudioContext, kit: SynthKit): void {
+  private startLapping(p: SynthPlayer): void {
+    const ac = p.ac!, kit = p.kit!, out = p.out!;
     const src = ac.createBufferSource();
     src.buffer = kit.buffer('pink');
     src.loop = true;
@@ -108,7 +61,7 @@ export class WaterSound {
     lp.type = 'lowpass'; lp.frequency.value = 1400;
     this.lapGain = ac.createGain();
     this.lapGain.gain.value = 0;
-    src.connect(bp); bp.connect(lp); lp.connect(this.lapGain); this.lapGain.connect(this.master!);
+    src.connect(bp); bp.connect(lp); lp.connect(this.lapGain); this.lapGain.connect(out);
     src.start();
   }
 }
@@ -146,6 +99,13 @@ const RECIPES: Record<WaterSoundKind, (v: Voice, k: number) => void> = {
     noise(v, { color: 'pink', filter: 'bandpass', f: 450, f2: 2200, sweep: 0.22, q: 0.9, dur: 0.34, gain: 0.38 + 0.2 * deep, attack: 0.02 });
     noise(v, { color: 'white', hp: 3400, dur: 0.4, gain: 0.13, attack: 0.04, at: 0.04 });
     drips(v, 4, 0.2, 0.55, 0.035);
+  },
+  // 大冲击砸进湖里（落雷、龙爪、雷神身段出入水）：很低的闷响 + 一大片水墙塌下来的轰响 + 水雾嘶声 + 一阵密集的水珠落回
+  boom(v, k) {
+    tone(v, { f: 75, f2: 32, sweep: 0.35, dur: 0.5, gain: 0.5 + 0.3 * k });
+    noise(v, { color: 'brown', filter: 'lowpass', f: 1600, f2: 260, sweep: 0.9, q: 0.5, dur: 1.2, gain: 0.7 + 0.2 * k, attack: 0.01 });
+    noise(v, { color: 'pink', filter: 'bandpass', f: 2400, f2: 900, sweep: 0.6, q: 0.5, dur: 0.8, gain: 0.25 + 0.15 * k, attack: 0.02, at: 0.05 });
+    drips(v, 16 + Math.round(14 * k), 0.4, 1.6, 0.05);
   },
   // 子弹打水：「嗤」的一下脆响 + 一声往下掉的「噗」+ 小水花
   bullet(v, k) {

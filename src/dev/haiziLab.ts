@@ -4,6 +4,8 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { SynthPlayer } from '../audio/SynthPlayer';
+import { WalkerSounds } from '../world/plateau/walkerSounds';
 import { WaterFx } from '../world/haizi/waterFx';
 import { WaterSound } from '../world/haizi/waterSound';
 import { DragLook, lockPointerOrDrag } from './dragLook';
@@ -91,7 +93,10 @@ const { sky, lake, pillars, conductors, anim, grass, scatter } = arena;
 // 人在浅水里走、跳、冲刺时的涟漪和水花
 const waterFx = new WaterFx(scene, lake, terrain);
 // 水声（涉水、落水、冲刺、弹着水、拍岸）：第一次点画面 / 按键后才出声
-waterFx.sound = new WaterSound();
+// 声音：枪声、命中、脚步、起跳落地（正式游戏的合成配方）+ 水声；第一次点画面 / 按键后才出声
+const audio = new SynthPlayer();
+waterFx.sound = new WaterSound(audio);
+const walkSfx = new WalkerSounds(audio, terrain);
 const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
@@ -377,6 +382,8 @@ function tick(dt: number, render: boolean): void {
   walker.eye(camera.position);
   camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ');
   waterFx.update(dt, walker, camera, renderer.domElement.width, renderer.domElement.height);
+  audio.listen(camera);
+  walkSfx.update(dt, walker);
   // 首领战（可以接管镜头）
   play?.update(dt, { firing: firing && !locked, interact: keys.has('KeyF') && !locked, reload: reloadPressed && !locked, keys, skillQ, skillE, pick, anyKey });
   reloadPressed = skillQ = skillE = anyKey = false;
@@ -409,7 +416,8 @@ async function startPlay(): Promise<void> {
   walker.fly = false;
   const mode = new LeizePlay(scene, camera, terrain, world, walker, weather, arena, boundAt);
   // 子弹打在湖面上：涟漪 + 水柱 + 弹着水声（waterFx.ts）
-  mode.fx.onWater = (at, k) => waterFx.bulletHit(at, k);
+  mode.fx.onWater = (at, k) => (k > 1 ? waterFx.splash(at, k) : waterFx.bulletHit(at, k));
+  mode.audio = audio;
   play = mode;
   await mode.start();
   showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · 空格跳 · Shift 冲刺（无敌）');
@@ -424,7 +432,7 @@ function simulate(seconds: number, step = 1 / 30, render = false): void {
 // 调试入口（检视、首领战接入用）
 Object.assign(window, {
   haizi: {
-    scene, camera, renderer, terrain, world, walker, weather, lake, pillars, conductors, arena, goTo, VIEWPOINTS, simulate, waterFx,
+    scene, camera, renderer, terrain, world, walker, weather, lake, pillars, conductors, arena, goTo, VIEWPOINTS, simulate, waterFx, audio,
     SPAWN, PILLARS, COIL, keys,
     get play() { return play; },
     setPlay: (p: HaiziPlay | null) => { play = p; },

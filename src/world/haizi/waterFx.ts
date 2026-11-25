@@ -134,7 +134,6 @@ export class WaterFx {
   update(dt: number, walker: Walker, camera: THREE.PerspectiveCamera, pixelWidth: number, pixelHeight: number): void {
     this.mat.uniforms.uScale.value = pixelHeight / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2));
     (this.mat.uniforms.uViewport.value as THREE.Vector2).set(pixelWidth, pixelHeight);
-    this.sound?.listen(camera);
     if (dt > 0) this.drive(dt, walker);
     this.simulate(dt);
   }
@@ -255,8 +254,8 @@ export class WaterFx {
   }
 
   /** 落水：一圈皇冠形水花（外翻）、中间往上蹿的一柱、贴水面散开的一团水雾，涟漪 + 白沫 */
-  private land(x: number, z: number, level: number, impact: number, depth: number): void {
-    this.sound?.play('land', _at.set(x, level, z), impact);
+  private land(x: number, z: number, level: number, impact: number, depth: number, silent = false): void {
+    if (!silent) this.sound?.play('land', _at.set(x, level, z), impact);
     const deep = THREE.MathUtils.clamp(depth / 0.9, 0, 1);
     const k = 0.35 + 0.65 * impact;
     this.lake.addRipple(x, z, 0.6 + 0.9 * k);
@@ -346,6 +345,31 @@ export class WaterFx {
     (g.attributes.aSize as THREE.BufferAttribute).needsUpdate = true;
     (g.attributes.aAlpha as THREE.BufferAttribute).needsUpdate = true;
     (g.attributes.aVel as THREE.BufferAttribute).needsUpdate = true;
+  }
+
+  /**
+   * 大冲击砸进湖里（CombatFx.water 的 strength > 1：落雷 2.2、龙爪 2、冲击波 1.6、雷神身段出入水 1.4、投射物 1.3）：
+   * 一圈大涟漪、皇冠水花、往上冲的水柱、一团水雾、轰响
+   */
+  splash(at: THREE.Vector3, strength: number): void {
+    const lv = this.terrain.waterLevelAt(at.x, at.z);
+    if (!Number.isFinite(lv)) return;
+    const s = THREE.MathUtils.clamp((strength - 1) / 1.3, 0, 1);
+    this.lake.addRipple(at.x, at.z, 1 + 0.5 * s);
+    this.land(at.x, at.z, lv, 0.6 + 0.4 * s, 1, true);
+    // 水柱：比人落水高得多
+    for (let i = 0; i < Math.round(10 + 22 * s); i++) {
+      const a = Math.random() * Math.PI * 2, r = Math.random() * (0.6 + 1.2 * s);
+      this.emit(at.x + Math.cos(a) * r, lv + 0.1, at.z + Math.sin(a) * r,
+        Math.cos(a) * (0.5 + Math.random()), 5 + Math.random() * (4 + 6 * s), Math.sin(a) * (0.5 + Math.random()),
+        0.08 + Math.random() * 0.1, 0.9, 0.9 + Math.random() * 0.6, 0.1);
+    }
+    for (let i = 0; i < Math.round(4 + 6 * s); i++) {
+      const a = Math.random() * Math.PI * 2, out = 0.5 + Math.random() * 1.5;
+      this.emit(at.x, lv + 0.5 + Math.random() * 1.5 * s, at.z, Math.cos(a) * out, 0.8 + Math.random(), Math.sin(a) * out,
+        1 + Math.random() * (0.8 + 1.2 * s), 0.13, 1.4 + Math.random() * 0.8, 1.6);
+    }
+    this.sound?.play('boom', _at.set(at.x, lv, at.z), s);
   }
 
   /** 调试 / 截图：在 (x, z) 模拟一次落水 */

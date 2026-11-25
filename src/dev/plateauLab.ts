@@ -3,6 +3,8 @@
  * 不依赖游戏主循环：地形、地标、经幡、散布、水、烟、远景都在 src/world/plateau/ 里，
  * 这里只负责组装、输入、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md。
  */
+import { SynthPlayer } from '../audio/SynthPlayer';
+import { WalkerSounds } from '../world/plateau/walkerSounds';
 import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
@@ -103,6 +105,9 @@ const buildMs = performance.now() - t0;
 // ───────────────────────────── 行走与机位 ─────────────────────────────
 
 const walker = new Walker(world);
+// 声音：枪声、命中、脚步、起跳落地（正式游戏的合成配方）；第一次点画面 / 按键后才出声
+const audio = new SynthPlayer();
+const walkSfx = new WalkerSounds(audio, terrain);
 const optDouble = $<HTMLInputElement>('opt-double');
 optDouble.onchange = () => { walker.doubleJump = optDouble.checked; };
 
@@ -593,6 +598,7 @@ async function startPlay(): Promise<void> {
   weather.stormy = false;
   walker.fly = false;
   const mode = new PlayMode(scene, camera, terrain, world, walker, weather, conductors);
+  mode.audio = audio;
   play = mode;
   await mode.start();
   showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · R 换弹 · F 点亮灵火 · 空格跳 · Shift 冲刺（无敌） · M 地图');
@@ -637,6 +643,8 @@ function frame(now: number, manual = false, render = true): void {
   jumpPressed = dashPressed = false;
   walker.eye(camera.position);
   camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ');
+  audio.listen(camera);
+  walkSfx.update(dt, walker);
   sky.position.copy(camera.position);
   // 阴影中心取镜头前方 60 m，按 8 m 吸附，避免阴影边缘闪烁
   ahead.set(-Math.sin(walker.yaw), 0, -Math.cos(walker.yaw)).multiplyScalar(60).add(camera.position);
