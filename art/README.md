@@ -213,6 +213,8 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 
 **自动 QA（`validate`，✘ 阻塞 / ⚠ 记录）**
 
+- **发布后的清单门禁**（`npm test`，管线外手工发布的资产也查）：`tests/asset-manifest-loadable.test.mjs`——每个清单 GLB 都要有挂单图元 mesh 的 `<资产ID>_LOD0` 节点，
+  否则 `AssetLibrary` 认不出、运行时悄悄退回程序化模型（多材质的 mesh 会被 GLTFLoader 拆成 Group）；已知两条（骨龙铳、枪火 1301）列在测试里待修。许可见第 11 节。
 - 包级：文件大小 ≤ 上限；必需扩展三端可用（Draco、WebP）；只有一级 LOD（`_LOD0`，面数只记录不设闸门）；LOD 切换距离写在节点 extras；
   身高与白模差 ≤ 6%；脚底 |y| ≤ 1 cm；水平居中；一个材质；材质与贴图命名；贴图边长 = 规格且为 2 的幂；BC / N / ORM 齐全。
 - 骨骼：一个 skin；骨骼集合与游戏关节完全一致；每顶点 ≤ 4 影响；无零权重顶点；bone heat 失败顶点 ≤ 20；骨骼适配幅度 ≤ 0.25 rad 且左右对称；
