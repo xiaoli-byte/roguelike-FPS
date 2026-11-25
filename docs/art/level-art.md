@@ -1,7 +1,7 @@
 # 场景搭建 / 地编准则
 
 2026-11-21 用户确认：场景搭建、地编按这份准则做；**氛围、打光、光影、构图、特效和几何同等重要**，验收时逐项看，不能只看模型摆得对不对。
-相关：构图细则 [composition.md](composition.md)、特效风格 [fx-style.md](fx-style.md)。
+相关：构图细则 [composition.md](composition.md)、特效风格 [fx-style.md](fx-style.md)、参考拆解《听雨园》[reference-tingyuyuan.md](reference-tingyuyuan.md)（出图、柔光、材质、地表、雨、流程的具体手段和落地清单）。
 
 ## 一、原则
 
