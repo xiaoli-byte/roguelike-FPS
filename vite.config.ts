@@ -23,6 +23,6 @@ export default defineConfig(({ mode }) => ({
   server: { port: 5173, strictPort: false, open: false, watch: { ignored: [isUnwatched] } },
   build: {
     target: 'es2022', chunkSizeWarningLimit: 2000,
-    rollupOptions: { input: mode === 'labs' ? { game: 'index.html', whitebox: 'whitebox-lab.html', plateau: 'plateau-lab.html', originalWeapon: 'original-weapon.html', unityMap: 'unity-map.html', animLab: 'anim-lab.html', desertLab: 'desert-lab.html' } : { game: 'index.html' } },
+    rollupOptions: { input: mode === 'labs' ? { game: 'index.html', whitebox: 'whitebox-lab.html', plateau: 'plateau-lab.html', originalWeapon: 'original-weapon.html', unityMap: 'unity-map.html', animLab: 'anim-lab.html', desertLab: 'desert-lab.html', desertPieces: 'desert-pieces.html' } : { game: 'index.html' } },
   },
 }));

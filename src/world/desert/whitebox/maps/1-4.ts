@@ -3,15 +3,16 @@ import type { V2, WbBlock, WhiteboxSpec } from '../types';
 /**
  * 1-4 鸣沙山月牙泉 · 旱魃（首领场）· 白盒（版面见 docs/art/concepts/ch1-routes/1-4_route_concept.jpg）。
  * 露天沙洼：一圈刀刃脊大沙山（南面最高）围住约 125 × 125 m 的盆底，盆底一弯月牙泉（凸面朝北），
- * 南岸月牙怀里是月泉阁、一排回廊、庭院和白杨林；北岸两座新月丘、一段残祠、枯木。出生在西北垭口的观景台（+16 m），之字木栈道下到北岸进场。
+ * 南岸月牙怀里是月泉阁、长廊、门楼、庭院和白杨林；北岸两座新月丘、一段残祠、枯木。出生在西北垭口的观景台（+16 m），之字木栈道下到北岸进场。
  * 母题是「日晒与荫蔽」：太阳在西北偏北（左上来光），影子朝东南偏南倒——遮荫物的位置和高度是玩法度量。
  * 风和日光同向：北、西两面沙山的落沙面朝里（陡），东、南两面是迎风面朝里（坡脚陡、往上放缓）；新月丘的落沙面朝泉。
  *
- * 体块照已有资产的实际尺寸摆（assets.ts；asset = 换正式件时用哪件，sink = 埋进地里几米，needs = 现有资产里没有的件）：
- *   月泉阁 = SM_Tripo_DesertCrescentPavilion × 1.2（10.24 × 13.2 × 9.16 m，正面朝北临水）。实测它的碰撞网格：台基高 1.1 m、正面石阶、
- *     一层 10 根柱（开间净宽只有 1.8–2.8 m）、二层台 5.9 m（前半露天、后半有顶）、自带的外楼梯在东沿，约 50° —— 人走不上去。
- *   回廊 = SM_Tripo_DesertCloister × 1.2（一跨 7.4 × 9 × 3.42 m，后墙实心、正面敞开）四跨连排，后墙朝北挡太阳，檐影落在南面的环线上。
- * 地形做的件：观景台木平台 + 之字木栈道 + 阁东的贴墙木梯沿用旧场景的程序化木梯件（踏板 + 立柱，不是 Tripo 件）；泉床贴 SM_Decal_DesertCrackedBed（龟裂泉床，泉干了才露）；
+ * 体块照已有资产的实际尺寸摆（assets.ts；asset = 换正式件时用哪件，sink = 埋进地里几米，needs = 现有资产里没有的件）。
+ * 月泉阁是新做的程序化木构件（src/world/desert/pieces/）：用户 2026-11-25「和概念图不一样的两处你也要补齐」——照概念图，
+ *   环线从阁的底层敞厅（只有柱子，开间净宽 5.2–5.8 m）穿过，再沿东侧一条两面敞开的长廊（柱距 7 m）走到东头门楼出去。
+ *   现成的月牙阁件（开间 1.8–2.8 m、台基 1.1 m）和回廊件（进深 3.4 m、后墙实心）都过不了主线，这里不再用。
+ *   二层台 5.9 m（前半露天是俯射位、后半有顶）；长廊北侧一道 27° 木梯上二层台。
+ * 地形做的件：观景台木平台 + 之字木栈道沿用旧场景的程序化木梯件；泉床贴 SM_Decal_DesertCrackedBed（龟裂泉床，泉干了才露）；
  *   芦苇是散布件（旧场景用程序灌丛占位，这里只涂了一圈岸色）。
  */
 const WIND: V2 = [0.616, 0.788];      // 吹向东南偏南（也是日光在地面上的走向：太阳方位 322°）
@@ -49,23 +50,20 @@ function barchan(at: V2, r: number, h: number, bite: number, slip: number): Whit
   ];
 }
 
-const PAVILION = 'SM_Tripo_DesertCrescentPavilion', CLOISTER = 'SM_Tripo_DesertCloister', SANDSTONE = 'SM_Env_DesertSandstone';
+const SANDSTONE = 'SM_Env_DesertSandstone';
 const NEED_POPLAR = '白杨：通直灰白树干 + 柱状树冠（树冠要有碰撞、能挡日晒射线），高 11–13 m；旧场景是程序占位（树干 + 五团叶团），原计划件名 SM_Tripo_DesertPoplar';
 const NEED_DEADWOOD = '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m';
+const NEED_HALL = '月泉阁：两层木构楼阁（底层只有柱子的大开间敞厅，环线从柱间穿过；二层台 5.9 m）+ 东侧两面敞开的长廊 + 东头门楼 + 上二层的木梯（程序化木构件）';
 
-/** 月泉阁一层的柱（站在 1.1 m 的台基上，顶到二层台底） */
-const hallCol = (x: number, z: number): WbBlock => ({ name: '月泉阁', kind: 'cyl', at: [x, z], size: [0.35, 0.35], top: 5.4, mat: 'timber', asset: PAVILION });
-/** 回廊一跨（x0 = 西端）：后墙（实心，朝北）+ 二层廊板 + 单坡顶（后高前低）+ 正面三根柱 */
-const cloisterBay = (k: number): WbBlock[] => {
-  const x0 = 165.5 + 7.4 * k, cx = r1(x0 + 3.7), part = { name: `回廊 ${k + 1}`, asset: CLOISTER };
-  return [
-    { ...part, kind: 'box', at: [cx, 159.65], size: [7.4, 0.9], top: 9, mat: 'earth' },
-    { ...part, kind: 'box', at: [cx, 161.35], size: [7.4, 2.5], top: 3.4, clear: 3, canopy: true, mat: 'timber' },
-    { ...part, kind: 'box', at: [cx, 160.3], size: [7.4, 2.2], top: 9, clear: 8.2, canopy: true, mat: 'roof' },
-    { ...part, kind: 'box', at: [cx, 161.9], size: [7.4, 1.6], top: 7.9, clear: 7.2, canopy: true, mat: 'roof' },
-    ...[1.2, 3.7, 6.2].map((dx): WbBlock => ({ ...part, kind: 'cyl', at: [Math.round((x0 + dx) * 2) / 2, 161.5], size: [0.3, 0.3], top: 3, mat: 'timber' })),
-  ];
-};
+/**
+ * 月泉阁（新做的程序化木构件，坐标和 pieces/ 里的件一一对应）：
+ *   敞厅 x 151–169、z 150.5–164.2，柱 r 0.3 在 x {151.5, 157.3, 162.7, 168.5} × z {151, 156.7, 163.7}，二层台面 5.9（底 5.5），上层歇山顶 9–13.2 m；
+ *   长廊 x 169–196，两排柱 z 156.7 / 163.7（r 0.25，柱距 4.5 m），两坡顶 3.6–6 m；东门楼 x 196–203，四墩 + 南北两面墙，门洞净宽 7.6 m。
+ * 环线沿 z ≈ 160.2 穿过敞厅中跨（两排柱之间净宽 6.4 m）和长廊（6.5 m）、门楼（7.6 m）。
+ */
+const HALL_XS = [151.5, 157.3, 162.7, 168.5], HALL_ZS = [151, 156.7, 163.7];
+const GALLERY_XS = [173.5, 178, 182.5, 187, 191.5];
+const hallPart = (b: Omit<WbBlock, 'name' | 'needs'>): WbBlock => ({ ...b, name: '月泉阁', needs: NEED_HALL });
 /** 白杨：细高的干（挡路）+ 悬空的柱状树冠（只投影，不挡路） */
 const poplar = (x: number, z: number, tall = 12): WbBlock[] => [
   { kind: 'cyl', at: [x, z], size: [0.45, 0.45], top: tall - 1, mat: 'plant', needs: NEED_POPLAR },
@@ -88,8 +86,8 @@ const ENTRY: V2 = [122, 112];         // 进场点 ①
 const STAIR: V2[] = [[95, 80], [105.5, 80], [117.5, 80], [120, 80], [120, 87.5], [117.5, 87.5], [105.5, 87.5], [103, 87.5], [103, 95], [105.5, 95], [117.5, 95], [120, 95]];
 const STAIR_H = [16, 16, 10.67, 10.67, 10.67, 10.67, 5.33, 5.33, 5.33, 5.33, 0, 0];
 /** 绕泉风筝环线（顺时针，从 ① 出发回到 ①）：北岸 → 东岸 → 回廊檐下 → 阁背檐下 → 白杨夹道 → 西岸 */
-const LOOP: V2[] = [[138, 119], [160, 119.5], [182, 119], [199.5, 123], [209.5, 134.5], [210.5, 148], [206, 159.5], [198, 166],
-  [184, 166], [160, 166], [150, 166], [137, 165.5], [125.5, 162], [116.5, 153], [112.5, 140], [113.5, 126]];
+const LOOP: V2[] = [[138, 119], [160, 119.5], [182, 119], [199.5, 123], [209.5, 134.5], [210.5, 148], [207, 155], [204.5, 160.2],
+  [196, 160.2], [184, 160.2], [170, 160.2], [160, 160.2], [150, 160.5], [138, 161], [126, 158.5], [116.5, 151.5], [112.5, 140], [113.5, 126]];
 
 export const WB_1_4: WhiteboxSpec = {
   id: '1-4',
@@ -118,15 +116,13 @@ export const WB_1_4: WhiteboxSpec = {
     // 月牙泉：芦苇岸 → 泉床挖到 −1.4 m（岸坡 5 m，蹚得下去）。水线约在挖槽外 2 m：尖到尖约 67 m、最宽约 13 m
     { op: 'paint', mat: 'plant', closed: true, pts: crescent(SPRING[0], SPRING[1], 149.6, 36.4, 17.6) },
     { op: 'poly', pts: crescent(SPRING[0], SPRING[1], 146.6, 31.6, 8.8), h: -1.4, edge: 5, mode: 'min', mat: 'mud' },
-    // 月泉阁 · 回廊 · 庭院：一整片铺地；阁的台基 1.1 m + 正面（北）石阶（都是月泉阁那件资产自带的）
-    { op: 'poly', pts: [[153.5, 152], [196.5, 152], [196.5, 163], [198, 163], [198, 191], [152, 191], [152, 163], [153.5, 163]], h: 0, edge: 2, mode: 'set', mat: 'stone' },
-    { op: 'poly', pts: [[154.9, 155], [165.1, 155], [165.1, 162.4], [154.9, 162.4]], h: 1.1, edge: 0, mode: 'set', mat: 'stone' },
-    { op: 'ramp', pts: [[160, 153], [160, 155], [160, 155.8]], hs: [0, 1.1, 1.1], half: 2.25, mat: 'stone' },
-    // 上二层台的木梯：贴着回廊后墙，自东向西 11.8 m 上 5.9 m（27°，宽 3 m），接在阁自带楼梯的梯口 —— 程序化木梯件（阁自带的那道 50° 上不去）
-    { op: 'ramp', pts: [[176.5, 157.5], [164.7, 157.5], [164, 157.5]], hs: [0, 5.9, 5.9], half: 1.5, mat: 'timber' },
-    // 环线的硬沙路、栈道落地到 ① 的木板路
+    // 月泉阁 · 长廊 · 门楼 · 庭院：一整片平铺地（敞厅地面和铺地齐平，环线直接穿过去）
+    { op: 'poly', pts: [[150, 149.5], [204, 149.5], [204, 191], [150, 191]], h: 0, edge: 2, mode: 'set', mat: 'stone' },
+    // 上二层台的木梯：长廊北侧，自东向西 11.5 m 上 5.9 m（27°，宽 3 m），西头 1.5 m 平台接上二层台东北角（月泉阁件的一部分）
+    { op: 'ramp', pts: [[182, 154], [170.5, 154], [169, 154]], hs: [0, 5.9, 5.9], half: 1.5, mat: 'timber' },
+    // 环线的硬沙路、栈道落地到 ① 的木板路（阁、长廊、门楼底下是铺地）
     { op: 'paint', mat: 'road', half: 3, pts: [ENTRY, ...LOOP.slice(0, 8)] },
-    { op: 'paint', mat: 'road', half: 3, pts: [...LOOP.slice(10), ENTRY] },
+    { op: 'paint', mat: 'road', half: 3, pts: [...LOOP.slice(12), ENTRY] },
     { op: 'paint', mat: 'timber', half: 2, pts: [[120, 95], ENTRY] },
   ],
   blocks: [
@@ -136,16 +132,21 @@ export const WB_1_4: WhiteboxSpec = {
     { kind: 'box', at: [88, 81.5], size: [1.68, 2.14], h: 3.8, rot: -40, mat: 'stone', asset: 'SM_Prop_DesertStele' },
     brazier(100.3, 76.3), brazier(94, 85.3),
 
-    // 月泉阁（一件资产的几个部分）：一层柱、二层台板、后半（南）屋顶、二层台东北角的站位（白盒只有一层行走面：用实心块代替「台面能站」）
-    ...([[156, 156], [158.5, 156], [161.5, 156], [156, 158.5], [163.5, 159.5], [156, 161], [158.5, 161], [161.5, 161], [163.5, 161]] as V2[]).map(p => hallCol(p[0], p[1])),
-    { name: '月泉阁', kind: 'box', at: [159.95, 158.4], size: [9.3, 6.4], top: 5.9, clear: 5.4, canopy: true, mat: 'timber', asset: PAVILION },
-    { name: '月泉阁', kind: 'box', at: [160, 160.3], size: [10.2, 4.6], top: 13.2, clear: 9, canopy: true, mat: 'roof', asset: PAVILION, sink: 1.1, landmark: '月泉阁' },
-    { name: '月泉阁', kind: 'box', at: [163.2, 157.3], size: [2.8, 3.4], top: 5.9, mat: 'timber', asset: PAVILION },
-    ...([[156, 158.5], [160, 158.5], [163.5, 158.5], [156, 161], [160, 161], [163.5, 161]] as V2[]).map((p): WbBlock => ({ name: '月泉阁', kind: 'cyl', at: p, size: [0.3, 0.3], top: 9.2, clear: 5.9, canopy: true, mat: 'timber', asset: PAVILION })),
-    brazier(155.5, 152.5), brazier(164.5, 152.5),
-
-    // 回廊：四跨连排，接在阁的东侧；后墙朝北（挡太阳、也挡旱魃的日轮），正面朝南对着庭院
-    ...[0, 1, 2, 3].flatMap(cloisterBay),
+    // 月泉阁（新做的一件，几个部分同名）：敞厅 12 根柱、二层台板（悬空）、上层歇山顶（悬空，地标）。
+    // 二层台东北角那块实心块是白盒的替身：白盒只有一层行走面，用它代替「木梯上来能站在二层台上」（正式件里是楼板，底下照样能走）
+    ...HALL_XS.flatMap(x => HALL_ZS.map((z): WbBlock => hallPart({ kind: 'cyl', at: [x, z], size: [0.3, 0.3], top: 5.5, mat: 'timber' }))),
+    hallPart({ kind: 'box', at: [160, 157.35], size: [18, 13.7], top: 5.9, clear: 5.5, canopy: true, mat: 'timber' }),
+    hallPart({ kind: 'box', at: [160, 157.35], size: [22, 17.7], top: 13.2, clear: 9, canopy: true, mat: 'roof', landmark: '月泉阁' }),
+    hallPart({ kind: 'box', at: [166, 153.25], size: [6, 5.5], top: 5.9, mat: 'timber' }),
+    // 长廊：两排柱 + 两坡顶（悬空，廊下是深影）；东门楼：四墩 + 南北两面墙（实心）+ 歇山顶（悬空）
+    ...GALLERY_XS.flatMap(x => [156.7, 163.7].map((z): WbBlock => hallPart({ kind: 'cyl', at: [x, z], size: [0.25, 0.25], top: 3.6, mat: 'timber' }))),
+    hallPart({ kind: 'box', at: [182.5, 160.2], size: [27, 8.6], top: 6, clear: 3.6, canopy: true, mat: 'roof' }),
+    ...([[196.6, 156.1], [202.4, 156.1], [196.6, 164.3], [202.4, 164.3]] as V2[]).map(p => hallPart({ kind: 'box', at: p, size: [1.2, 1.2], top: 5.2, mat: 'earth' })),
+    hallPart({ kind: 'box', at: [199.5, 156.1], size: [4.6, 0.6], top: 5.2, mat: 'earth' }),
+    hallPart({ kind: 'box', at: [199.5, 164.3], size: [4.6, 0.6], top: 5.2, mat: 'earth' }),
+    hallPart({ kind: 'box', at: [199.5, 160.2], size: [9, 11.4], top: 9, clear: 5.2, canopy: true, mat: 'roof' }),
+    // 阁前临水的一对火盆
+    brazier(156, 148), brazier(164, 148),
 
     // 庭院：出口祭坛（胜利后升起）、龟趺碑一对、香炉一对、南沿两段半身矮墙
     { kind: 'box', at: [160, 186.6], size: [7.7, 2.6], h: 8.8, mat: 'stone', asset: 'SM_Tripo_DesertPortalShrine', landmark: '出口祭坛' },
@@ -155,12 +156,12 @@ export const WB_1_4: WhiteboxSpec = {
     { kind: 'box', at: [164, 172], size: [1.33, 1.16], h: 2.6, mat: 'stone', asset: 'SM_Prop_DesertIncenseBurner' },
     lowWall(171.5, 189.6), lowWall(176.4, 189.6), lowWall(183.5, 189.6), lowWall(188.4, 189.6),
 
-    // 白杨林（要新做的件）：阁西的夹道（两排之间净宽约 9 m，环线走中间）+ 西南一片 + 回廊东头三棵
-    ...poplar(149, 161), ...poplar(144.5, 160.5, 13), ...poplar(139.5, 161), ...poplar(134.5, 159.5, 13), ...poplar(130, 157.5, 11),
-    ...poplar(146.5, 155.5, 11), ...poplar(141.5, 155), ...poplar(136, 154, 11),
-    ...poplar(149.5, 171), ...poplar(144.5, 171.5, 13), ...poplar(139.5, 171), ...poplar(134, 170.5, 13), ...poplar(128.5, 169.5, 11),
-    ...poplar(147, 176.5, 13), ...poplar(141.5, 177.5), ...poplar(135.5, 176.5, 11), ...poplar(130, 175),
-    ...poplar(144, 183), ...poplar(138, 183.5, 13), ...poplar(132, 181.5, 11),
+    // 白杨林（要新做的件）：阁西的夹道（两排之间净宽约 11 m，环线出了敞厅走中间）+ 西南一片 + 门楼南边三棵
+    ...poplar(147.5, 155), ...poplar(142.5, 154.5, 11), ...poplar(137.5, 155), ...poplar(132.5, 154, 13), ...poplar(128, 152.5, 11),
+    ...poplar(149.5, 167), ...poplar(144.5, 167.5, 13), ...poplar(139.5, 167), ...poplar(134, 166.5, 13), ...poplar(128.5, 165.5, 11),
+    ...poplar(149.5, 172.5), ...poplar(144, 173.5, 13), ...poplar(138.5, 173), ...poplar(133, 172, 11),
+    ...poplar(147, 178.5, 13), ...poplar(141.5, 179), ...poplar(135.5, 178, 11), ...poplar(130, 176.5),
+    ...poplar(144, 184.5), ...poplar(138, 185, 13), ...poplar(132, 183, 11),
     ...poplar(202, 170.5, 13), ...poplar(205.5, 177), ...poplar(201, 183.5, 11),
 
     // 北岸残祠：西北角的残屋和院墙还立着（3.2–4.3 m，浅影），东半只剩半身矮墙；山门一座
@@ -209,26 +210,26 @@ export const WB_1_4: WhiteboxSpec = {
     { id: 'M4', kind: 'summon', name: '沙魇召唤 · 东南岸', at: [190, 152] },
     { id: 'P1', kind: 'perch', name: '西新月丘顶（7 m）', at: lee(BARCHAN_W, -3) },
     { id: 'P2', kind: 'perch', name: '东新月丘顶（5.5 m）', at: lee(BARCHAN_E, -2.6) },
-    { id: 'P3', kind: 'perch', name: '月泉阁二层台（+5.9 m，前半露天）', at: [163.2, 157.3] },
-    { id: 'H1', kind: 'shade', name: '阁内敞厅（深影）', at: [159.5, 158.5] },
-    { id: 'H2', kind: 'shade', name: '回廊檐下（深影）', at: [182, 163.2] },
+    { id: 'P3', kind: 'perch', name: '月泉阁二层台（+5.9 m，前半露天）', at: [166, 153.25] },
+    { id: 'H1', kind: 'shade', name: '阁内敞厅前跨（深影）', at: [156, 154] },
+    { id: 'H2', kind: 'shade', name: '长廊廊下（深影）', at: [184, 160.2] },
     { id: 'H3', kind: 'shade', name: '西新月丘背阴脚（浅影）', at: lee(BARCHAN_W, 2.5) },
     { id: 'H4', kind: 'shade', name: '东新月丘背阴脚（浅影）', at: lee(BARCHAN_E, 2.1) },
     { id: 'H5', kind: 'shade', name: '白杨夹道（树影）', at: [141.5, 165.5] },
     { id: 'H6', kind: 'shade', name: '北岸残祠墙角（浅影）', at: [157.8, 82.3] },
   ],
   routes: [
-    { id: 'loop', name: '绕泉风筝环线', kind: 'main', via: ['1', ...LOOP, '1'], note: '南段贴着回廊和阁背的檐影走，再穿白杨夹道' },
+    { id: 'loop', name: '绕泉风筝环线', kind: 'main', via: ['1', ...LOOP, '1'], note: '南段穿东门楼、走长廊廊下、从敞厅柱间穿过，再穿白杨夹道' },
     { id: 'in', name: '进场：观景台 → 之字栈道 → ① → 泉北岸', kind: 'alt', via: ['S', [120, 80], [120, 87.5], [103, 87.5], [103, 95], [120, 95], '1', [158, 122]] },
     { id: 'a', name: '① → 西新月丘顶（迎风背上去）', kind: 'alt', via: ['1', 'P1'] },
     { id: 'b', name: '北岸 → 西新月丘背阴脚', kind: 'alt', via: [[146, 119], 'H3'] },
     { id: 'c', name: '北岸 → 山门 → 残祠墙角', kind: 'alt', via: [[160, 119.5], 'M1', [163, 91], 'H6'] },
     { id: 'd', name: '北岸 → 东新月丘背阴脚', kind: 'alt', via: [[190, 119], 'H4'] },
     { id: 'e', name: '北岸 → 东新月丘顶（从西角的缓背上去）', kind: 'alt', via: [[172, 119], 'P2'] },
-    { id: 'f', name: '东岸 → 回廊背后的木梯 → 阁二层台', kind: 'alt', via: [[206, 159.5], [196.5, 154.5], [179, 157.5], 'P3'] },
-    { id: 'g', name: '环线 → 庭院出口 → 回廊檐下', kind: 'alt', via: [[160, 166], 'E', 'H2'] },
+    { id: 'f', name: '东岸 → 长廊北侧的木梯 → 阁二层台', kind: 'alt', via: [[207, 152], [186, 154], 'P3'] },
+    { id: 'g', name: '环线 → 庭院出口 → 长廊廊下', kind: 'alt', via: [[160, 167], 'E', 'H2'] },
     { id: 'h', name: '西岸 → 白杨夹道树影', kind: 'alt', via: [[116.5, 153], 'H5'] },
-    { id: 'i', name: '白杨夹道 → 阁正面石阶 → 敞厅', kind: 'alt', via: [[150, 166], [152, 153.5], [160, 152], 'H1'] },
+    { id: 'i', name: '白杨夹道 → 阁前临水 → 敞厅前跨', kind: 'alt', via: [[146, 161], [149.5, 150], 'H1'] },
     { id: 'w', name: '① → 蹚水到泉心', kind: 'alt', via: ['1', 'B'] },
   ],
   sights: [

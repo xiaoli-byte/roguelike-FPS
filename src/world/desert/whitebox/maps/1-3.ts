@@ -131,6 +131,23 @@ const tamarisk = (at: V2): WbBlock => ({ kind: 'cyl', at, size: [1.3, 1.3], h: 3
 /** 龟趺碑 Stele（1.68 × 3.8 × 2.14）：全身 */
 const stele = (at: V2, rot = 0): WbBlock => ({ kind: 'box', at, size: [1.68, 2.14], h: 3.8, rot, mat: 'stone', asset: 'SM_Prop_DesertStele' });
 
+/**
+ * 坐像殿（新做的程序化木构件，坐标和 pieces/ 里的件一一对应）。用户 2026-11-25「和概念图不一样的两处你也要补齐」——照概念图给坐像罩一座殿：
+ * x 201.5–218、z 159–176，后墙、两山墙实心到檐口 15.5 m，正面（南）敞开、四根檐柱 r 0.45；歇山顶出檐 2 m，脊高约 21 m。
+ * 东山墙收在 x 218：② 越过中坊望寺塔的视线在 z 159 处走 x ≈ 219.4，不能挡。
+ */
+const NEED_COLOSSUS_HALL = '坐像殿：罩住坐像的木构大殿，正面敞开（四根檐柱、幡、匾），后墙和两山实心，檐口 15.5 m、脊约 21 m（程序化木构件）';
+const colossusHall = (): WbBlock[] => {
+  const part = (b: Omit<WbBlock, 'name' | 'needs'>): WbBlock => ({ ...b, name: '坐像殿', needs: NEED_COLOSSUS_HALL });
+  return [
+    part({ kind: 'box', at: [209.75, 159.4], size: [16.5, 0.8], top: 15.5, mat: 'earth' }),
+    part({ kind: 'box', at: [201.9, 167.5], size: [0.8, 17], top: 15.5, mat: 'earth' }),
+    part({ kind: 'box', at: [217.6, 167.5], size: [0.8, 17], top: 15.5, mat: 'earth' }),
+    ...[202, 206.2, 213.3, 217.6].map((x): WbBlock => part({ kind: 'cyl', at: [x, 175.5], size: [0.45, 0.45], top: 15.5, mat: 'timber' })),
+    part({ kind: 'box', at: [209.75, 167.5], size: [20.5, 21], top: 21, clear: 15.5, canopy: true, mat: 'roof', landmark: '坐像殿' }),
+  ];
+};
+
 const PAGODA = 'SM_Tripo_DesertTemplePagoda', WELL = 'SM_Tripo_DesertWell', SHRINE = 'SM_Tripo_DesertPortalShrine';
 /** 寺塔的层檐（悬空，只画不挡路） */
 const eave = (size: number, top: number): WbBlock => ({ name: '寺塔', asset: PAGODA, kind: 'box', at: [230, 246], size: [size, size], top, clear: top - 0.5, canopy: true, mat: 'roof' });
@@ -193,8 +210,8 @@ export const WB_1_3: WhiteboxSpec = {
     { op: 'ramp', pts: [[277, 137], [283.5, 143.5]], hs: [0, -2], half: 4.5, mat: 'stone' },
     { op: 'ramp', pts: [[282, 169.3], [285.8, 162.8]], hs: [0, -2], half: 4.5, mat: 'stone' },
     { op: 'ramp', pts: [[311, 148.4], [303.6, 149.6]], hs: [0, -2], half: 4.5, mat: 'stone' },
-    // ④ 坐像的台基（1.7 m）：台基块 PlatformBlock（4.48 × 2.86 × 3.97）缩到 0.6 倍，5 × 5 拼成 13.4 × 11.9 m
-    { op: 'poly', pts: [[205.3, 163], [218.7, 163], [218.7, 175], [205.3, 175]], h: 1.72, edge: 0.3, mode: 'max', mat: 'stone', asset: 'SM_Tripo_DesertPlatformBlock' },
+    // ④ 坐像的台基（1.7 m）：台基块 PlatformBlock（4.48 × 2.86 × 3.97）缩到 0.6 倍，5 × 5 拼成 13.4 × 11.9 m（连坐像往西挪了 2 m：坐像殿的东墙要让开 ② 望寺塔的视线）
+    { op: 'poly', pts: [[203.3, 163], [216.7, 163], [216.7, 175], [203.3, 175]], h: 1.72, edge: 0.3, mode: 'max', mat: 'stone', asset: 'SM_Tripo_DesertPlatformBlock' },
     // 东墙豁口：塌下来的土石堆（走得过去）
     { op: 'mound', at: [338, 206], r: [9, 11], h: 2.4, mat: 'rock' },
     // 塔后塌坑（−10 m）+ 贴壁坡道
@@ -319,8 +336,9 @@ export const WB_1_3: WhiteboxSpec = {
     gable([318, 201], 80),
     gable([322, 250], 80),
 
-    // ── ④ 寺院前庭：坐像（北，露天坐在台基上）、两侧二层回廊（后墙实心，廊下能走）、门楼（东）、围墙 ──
-    { name: '坐像', asset: 'SM_Tripo_DesertSeatedColossus', kind: 'box', at: [212, 169], size: [7.18, 5.86], top: 13.72, mat: 'stone', landmark: '坐像' },
+    // ── ④ 寺院前庭：坐像殿（北，正面敞开，殿里坐像坐在台基上）、两侧二层回廊（后墙实心，廊下能走）、门楼（东）、围墙 ──
+    { name: '坐像', asset: 'SM_Tripo_DesertSeatedColossus', kind: 'box', at: [210, 169], size: [7.18, 5.86], top: 13.72, mat: 'stone', landmark: '坐像' },
+    ...colossusHall(),
     ...[184.1, 191.5, 198.9, 206.3].flatMap(z => cloister([180.3, z], 90)),
     ...[183.9, 191.3, 198.7].flatMap(z => cloister([244.3, z], -90)),
     // 回廊北头各折两跨朝南，和坐像一起围住前庭北面（坐像两侧各留一条 12 m 的巷口）
