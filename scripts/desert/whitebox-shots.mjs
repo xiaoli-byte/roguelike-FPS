@@ -1,6 +1,6 @@
 // 第一章白盒截图：无头 Chromium 打开检视页 desert-lab.html，逐个机位出图（页面在后台没有 rAF，用 window.lab.setView 手动出帧）。
 //   node scripts/desert/whitebox-shots.mjs [端口=5199] [输出目录=docs/art/concepts/ch1-routes/whitebox] [图,逗号分隔=全部] [机位,逗号分隔=全部]
-// 每个机位出两张：带标注（点位 + 探针实测的路线）和不带标注（<图>_<机位>_plain.jpg，只在 concept / top 出）。
+// 每个机位出两张：带标注（点位 + 探针实测的路线）和不带标注（<图>_<机位>_plain.jpg：给 ChatGPT 重绘构图概念图当底图）。
 import { launch } from '../plateau/cdp.mjs';
 
 const port = process.argv[2] ?? '5199';
@@ -23,10 +23,8 @@ try {
     for (const v of views) {
       await b.eval(`(window.lab.overlay(true), window.lab.setView(${JSON.stringify(v)}))`);
       await b.shot(`${out}/${map}_${v}.jpg`);
-      if (v === 'concept' || v === 'top') {
-        await b.eval(`(window.lab.overlay(false), window.lab.setView(${JSON.stringify(v)}))`);
-        await b.shot(`${out}/${map}_${v}_plain.jpg`);
-      }
+      await b.eval(`(window.lab.overlay(false), window.lab.setView(${JSON.stringify(v)}))`);
+      await b.shot(`${out}/${map}_${v}_plain.jpg`);
     }
   }
 } finally {
