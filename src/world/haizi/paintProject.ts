@@ -103,7 +103,8 @@ ${flashDecl}`)
   float w = uPaintOn * step(0.001, pc.w);
   vec3 nd = pc.xyz / max(pc.w, 1e-4);
   vec2 st = nd.xy * 0.5 + 0.5;
-  w *= step(0.0, st.x) * step(st.x, 1.0) * step(0.0, st.y) * step(st.y, 1.0);
+  // 画框边上 6% 渐出：换个方向看时，投影范围的边不会在冰斗壁上切出一条竖直的硬边
+  w *= smoothstep(0.0, 0.06, st.x) * smoothstep(1.0, 0.94, st.x) * smoothstep(0.0, 0.04, st.y) * smoothstep(1.0, 0.96, st.y);
   if (w > 0.0) {
     // 遮挡：深度图里存的是投影机位看到的最近表面，比它远（超过一点余量）就是被挡住的
     float d = texture2D(uPaintDepth, st).r * 2.0 - 1.0;

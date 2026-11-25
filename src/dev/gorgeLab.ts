@@ -3,6 +3,8 @@
  * 地形、过河设施、地标、水、大鹗、动态环境都在 src/world/gorge/（和 4-1 共用的在 src/world/plateau/），
  * 这里只负责组装、输入（含溜索、急流）、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md 第 3 节。
  */
+import { SkyAmbient } from '../world/plateau/skyAmbient';
+import { FilmPost } from '../render/FilmPost';
 import { SynthPlayer } from '../audio/SynthPlayer';
 import { WalkerSounds } from '../world/plateau/walkerSounds';
 import { DragLook, lockPointerOrDrag } from './dragLook';
@@ -85,6 +87,8 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.setSize(innerWidth, innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
+// 出图后期（src/render/FilmPost.ts）：印片调色、泛光、部分自动曝光、暗角、颗粒、边角色差
+const film = new FilmPost(renderer);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
@@ -143,6 +147,12 @@ const ironSet = new Set(crossings.ironConductors);
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
 }, terrain, [...conductors, ...crossings.ironConductors, ...crossings.conductors, ...props.thunderPosts.map(p => p.pos)]);
+// 柔光（docs/art/reference-tingyuyuan.md 第四节第 3 项）：太阳的影子只压一部分、环境光从程序天空生成（网址 soft=0 关；O 键开关）
+const SHADOW_SOFT = 0.62;
+const softOn = new URLSearchParams(location.search).get('soft') !== '0';
+sun.shadow.intensity = softOn ? SHADOW_SOFT : 1;
+const skyAmbient = new SkyAmbient(renderer, scene, sky, hemi);
+skyAmbient.setEnabled(softOn);
 // 铁索桥是全图最大的导体：落点离桥 30 m 以内，七成被铁链引走
 weather.attract = (x, z, r) => {
   let best: THREE.Vector3 | null = null, bd = 30;
@@ -315,6 +325,14 @@ addEventListener('keydown', e => {
     showHint(walker.fly ? '飞行模式' : '行走模式');
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
+  if (e.code === 'KeyO' && !e.repeat) {
+    const on = sun.shadow.intensity === 1;
+    sun.shadow.intensity = on ? SHADOW_SOFT : 1;
+    skyAmbient.setEnabled(on);
+    showHint(on ? '柔光：开（半透明影子 + 天空环境光）' : '柔光：关（原来的死影子 + 半球光）');
+  }
+  // P：出图后期开 / 关（对照用；网址 post=0 默认关，bloom=0 lut=0 ae=0 grain=0 ca=0 vig=0 关单项）
+  if (e.code === 'KeyP' && !e.repeat) { film.enabled = !film.enabled; showHint(film.enabled ? '出图后期：开' : '出图后期：关（原样直出）'); }
   const digit = /^Digit([1-9])$/.exec(e.code);
   if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
 });
@@ -404,6 +422,7 @@ let ratioCap: number = QUALITY.high.cap, ratio = ratioCap;
 function setRatio(r: number): void { ratio = r; renderer.setPixelRatio(r); renderer.setSize(innerWidth, innerHeight, false); }
 $<HTMLSelectElement>('opt-quality').onchange = e => {
   const Q = QUALITY[(e.target as HTMLSelectElement).value as keyof typeof QUALITY];
+  film.setQuality((e.target as HTMLSelectElement).value);
   ratioCap = Q.cap; setRatio(Q.cap);
   sun.shadow.mapSize.set(Q.shadow, Q.shadow);
   sun.shadow.map?.dispose();
@@ -872,12 +891,13 @@ function tick(dt: number, render: boolean): void {
   for (const b of props.beacons) if (b.lit) beaconSmoke.push(b.pos.clone().add(new THREE.Vector3(6, 20, 0)));
   if (dae.group.visible && !play) dae.update(time, dt, { bridgeCharge: crossings.charge, smoke: beaconSmoke });
   weather.update(dt, camera.position);
+  skyAmbient.update();
   if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: keys.has('KeyR'), skillQ, skillE, pick, anyKey });
   skillQ = skillE = anyKey = false;
   pick = 0;
   if (!render) return;
   adaptResolution(dt);
-  renderer.render(scene, camera);
+  film.render(scene, camera, dt);
   drawMap();
   updateHud(dt);
 }
@@ -927,11 +947,11 @@ function simulate(seconds: number, hold: string[] = [], dt = 1 / 60): void {
 // 调试入口（检视用）
 Object.assign(window, { gorge: {
   scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, crossings, hazards, weather, dae, props, monsters, macroAt, PATHS, runChecks, buildMs, ride, tryZip, dropZip, simulate, swept, flight, tryFlight,
-  jump: () => { jumpPressed = true; }, render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); },
+  jump: () => { jumpPressed = true; }, render: () => { film.render(scene, camera); drawMap(); updateHud(0.3); }, film,
   get play() { return play; }, startPlay,
   setFiring: (v: boolean) => { firing = v; },
   press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
   hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
   /** 脚本化试玩：按固定步长推进（render = 最后渲染一帧），和 plateau.simulate 同一个签名 */
-  sim: (seconds: number, step = 1 / 30, render = false) => { for (let t = 0; t < seconds - 1e-6; t += step) tick(step, false); if (render) { renderer.render(scene, camera); } },
+  sim: (seconds: number, step = 1 / 30, render = false) => { for (let t = 0; t < seconds - 1e-6; t += step) tick(step, false); if (render) { film.render(scene, camera); } },
 } });

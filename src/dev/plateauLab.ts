@@ -3,6 +3,8 @@
  * 不依赖游戏主循环：地形、地标、经幡、散布、水、烟、远景都在 src/world/plateau/ 里，
  * 这里只负责组装、输入、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md。
  */
+import { SkyAmbient } from '../world/plateau/skyAmbient';
+import { FilmPost } from '../render/FilmPost';
 import { SynthPlayer } from '../audio/SynthPlayer';
 import { WalkerSounds } from '../world/plateau/walkerSounds';
 import { DragLook, lockPointerOrDrag } from './dragLook';
@@ -36,6 +38,8 @@ renderer.setSize(innerWidth, innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
 renderer.toneMappingExposure = 1.0;
+// 出图后期（src/render/FilmPost.ts）：印片调色、泛光、部分自动曝光、暗角、颗粒、边角色差
+const film = new FilmPost(renderer);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
@@ -99,6 +103,12 @@ const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
 }, terrain, conductors);
+// 柔光（docs/art/reference-tingyuyuan.md 第四节第 3 项）：太阳的影子只压一部分、环境光从程序天空生成（网址 soft=0 关；O 键开关）
+const SHADOW_SOFT = 0.62;
+const softOn = new URLSearchParams(location.search).get('soft') !== '0';
+sun.shadow.intensity = softOn ? SHADOW_SOFT : 1;
+const skyAmbient = new SkyAmbient(renderer, scene, sky, hemi);
+skyAmbient.setEnabled(softOn);
 
 const buildMs = performance.now() - t0;
 
@@ -152,6 +162,14 @@ addEventListener('keydown', e => {
     showHint(walker.fly ? '飞行模式' : '行走模式');
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
+  if (e.code === 'KeyO' && !e.repeat) {
+    const on = sun.shadow.intensity === 1;
+    sun.shadow.intensity = on ? SHADOW_SOFT : 1;
+    skyAmbient.setEnabled(on);
+    showHint(on ? '柔光：开（半透明影子 + 天空环境光）' : '柔光：关（原来的死影子 + 半球光）');
+  }
+  // P：出图后期开 / 关（对照用；网址 post=0 默认关，bloom=0 lut=0 ae=0 grain=0 ca=0 vig=0 关单项）
+  if (e.code === 'KeyP' && !e.repeat) { film.enabled = !film.enabled; showHint(film.enabled ? '出图后期：开' : '出图后期：关（原样直出）'); }
   const digit = /^Digit([1-9])$/.exec(e.code);
   if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
   if (digit && play && +digit[1] <= 3) pick = +digit[1];
@@ -228,7 +246,7 @@ function applyQuality(q: keyof typeof QUALITY): void {
   (sun.shadow as { map: THREE.WebGLRenderTarget | null }).map = null;
   grass.radius = Q.grass;
 }
-$<HTMLSelectElement>('opt-quality').onchange = e => applyQuality((e.target as HTMLSelectElement).value as keyof typeof QUALITY);
+$<HTMLSelectElement>('opt-quality').onchange = e => { const v = (e.target as HTMLSelectElement).value as keyof typeof QUALITY; applyQuality(v); film.setQuality(v); };
 let adaptT = 0, adaptFrames = 0;
 function adaptResolution(dt: number): void {
   if (document.hidden) return;
@@ -656,6 +674,7 @@ function frame(now: number, manual = false, render = true): void {
   for (const a of anim) a.update(time, dt);
   monsters.update(time, dt);
   weather.update(dt, camera.position);
+  skyAmbient.update();
   if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: reloadPressed, skillQ, skillE, pick, anyKey });
   else lords.update(time, dt, weather.level);
   reloadPressed = skillQ = skillE = anyKey = false;
@@ -665,7 +684,7 @@ function frame(now: number, manual = false, render = true): void {
   adaptResolution(dt);
   smoke.update(dt);
   if (render) {
-    renderer.render(scene, camera);
+    film.render(scene, camera, dt);
     drawMap();
     updateHud(dt);
   }
@@ -686,5 +705,5 @@ Object.assign(window, { plateau: {
   press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
   hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
   /** 渲染一帧（截图前） */
-  render: () => { renderer.render(scene, camera); },
+  render: () => { film.render(scene, camera); }, film,
 } });

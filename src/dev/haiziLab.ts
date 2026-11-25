@@ -4,6 +4,8 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { SkyAmbient } from '../world/plateau/skyAmbient';
+import { FilmPost } from '../render/FilmPost';
 import { SynthPlayer } from '../audio/SynthPlayer';
 import { WalkerSounds } from '../world/plateau/walkerSounds';
 import { WaterFx } from '../world/haizi/waterFx';
@@ -63,6 +65,8 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.setSize(innerWidth, innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
+// 出图后期（src/render/FilmPost.ts）：印片调色、泛光、部分自动曝光、暗角、颗粒、边角色差
+const film = new FilmPost(renderer);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
@@ -101,6 +105,12 @@ const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
 }, terrain, conductors);
+// 柔光（docs/art/reference-tingyuyuan.md 第四节第 3 项）：太阳的影子只压一部分、环境光从程序天空生成（网址 soft=0 关；O 键开关）
+const SHADOW_SOFT = 0.72;
+const softOn = new URLSearchParams(location.search).get('soft') !== '0';
+sun.shadow.intensity = softOn ? SHADOW_SOFT : 1;
+const skyAmbient = new SkyAmbient(renderer, scene, sky, hemi);
+skyAmbient.setEnabled(softOn);
 
 // 空气透视 + 雾带（composition.md 8.5）：章节默认值，云影压低（开阔碎石岸上斑驳的明暗会给怪打掩护）
 Atmosphere.bind(scene, { ...atmosphereForChapter(4), cloudShadow: DAWN.cloudShadow }, { baseY: LAKE.level });
@@ -185,6 +195,14 @@ addEventListener('keydown', e => {
     showHint(walker.fly ? '飞行模式' : '行走模式');
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
+  if (e.code === 'KeyO' && !e.repeat) {
+    const on = sun.shadow.intensity === 1;
+    sun.shadow.intensity = on ? SHADOW_SOFT : 1;
+    skyAmbient.setEnabled(on);
+    showHint(on ? '柔光：开（半透明影子 + 天空环境光）' : '柔光：关（原来的死影子 + 半球光）');
+  }
+  // P：出图后期开 / 关（对照用；网址 post=0 默认关，bloom=0 lut=0 ae=0 grain=0 ca=0 vig=0 关单项）
+  if (e.code === 'KeyP' && !e.repeat) { film.enabled = !film.enabled; showHint(film.enabled ? '出图后期：开' : '出图后期：关（原样直出）'); }
   const digit = /^Digit([1-9])$/.exec(e.code);
   if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
 });
@@ -261,6 +279,7 @@ function setRatio(r: number): void {
 }
 $<HTMLSelectElement>('opt-quality').onchange = e => {
   const Q = QUALITY[(e.target as HTMLSelectElement).value as keyof typeof QUALITY];
+  film.setQuality((e.target as HTMLSelectElement).value);
   ratioCap = Math.min(devicePixelRatio, Q.cap); setRatio(ratioCap);
   sun.shadow.mapSize.set(Q.shadow, Q.shadow);
   sun.shadow.map?.dispose();
@@ -400,11 +419,12 @@ function tick(dt: number, render: boolean): void {
   grass.update(camera.position);
   for (const a of anim) a.update(time, dt);
   weather.update(dt, camera.position);
+  skyAmbient.update();
   Atmosphere.update(time);
   lake.update();
   if (!render) return;
   adaptResolution(dt);
-  renderer.render(scene, camera);
+  film.render(scene, camera, dt);
   drawMap();
   updateHud(dt);
 }
@@ -442,6 +462,6 @@ Object.assign(window, {
     hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
     jump: () => { jumpPressed = true; },
     dash: () => { dashPressed = true; },
-    render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); },
+    render: () => { film.render(scene, camera); drawMap(); updateHud(0.3); }, film,
   },
 });

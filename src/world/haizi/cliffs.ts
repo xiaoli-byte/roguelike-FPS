@@ -67,14 +67,35 @@ export function buildCliffs(): THREE.Mesh {
       vx.push(x); vz.push(z); vy.push(edge && i === 0 ? macroAt(x, z).h - 0.05 : cliffHeight(x, z));
     }
   }
-  const pos: number[] = [], col: number[] = [];
+  // 天空可见度（AO，只压环境光）：在壳自己的极坐标网格上朝 8 个方向找地平线仰角，cos²θ 平均（同 HeightGrid.skyVisibility）
+  const vis = new Float32Array((NR + 1) * NA);
+  const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+  for (let i = 0; i <= NR; i++) for (let j = 0; j < NA; j++) {
+    const k = i * NA + j;
+    let sum = 0;
+    for (const [di, dj] of dirs) {
+      let maxT = 0;
+      for (const st of [1, 2, 3, 5, 8, 13]) {
+        const i2 = i + di * st;
+        if (i2 < 0 || i2 > NR) break;
+        const k2 = i2 * NA + (((j + dj * st) % NA) + NA) % NA;
+        const d = Math.hypot(vx[k2] - vx[k], vz[k2] - vz[k]);
+        if (d < 0.5) continue;
+        maxT = Math.max(maxT, (vy[k2] - vy[k]) / d);
+      }
+      sum += 1 / (1 + maxT * maxT);
+    }
+    vis[k] = sum / dirs.length;
+  }
+  const pos: number[] = [], col: number[] = [], sky: number[] = [];
   const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3(), e1 = new THREE.Vector3(), e2 = new THREE.Vector3(), n = new THREE.Vector3();
   const sunXZ = new THREE.Vector2(DAWN.sunDir[0], DAWN.sunDir[2]).normalize();
   const c = new THREE.Color();
   const face = (ia: number, ib: number, ic: number): void => {
     A.set(vx[ia], vy[ia], vz[ia]); B.set(vx[ib], vy[ib], vz[ib]); C.set(vx[ic], vy[ic], vz[ic]);
     e1.subVectors(B, A); e2.subVectors(C, A); n.crossVectors(e1, e2).normalize();
-    if (n.y < 0) { n.negate(); const t = B.clone(); B.copy(C); C.copy(t); }
+    let sb = vis[ib], sc = vis[ic];
+    if (n.y < 0) { n.negate(); const t = B.clone(); B.copy(C); C.copy(t); [sb, sc] = [sc, sb]; }
     const cx = (A.x + B.x + C.x) / 3, cz = (A.z + B.z + C.z) / 3, cy = (A.y + B.y + C.y) / 3;
     const m = macroAt(cx, cz);
     const k = hash(Math.round(cx * 0.7), Math.round(cz * 0.7));
@@ -97,6 +118,7 @@ export function buildCliffs(): THREE.Mesh {
     // 朝神山的冰碛垭口：低矮的碎石垄，雪少
     if (m.window > 0.5 && m.wall < 25) c.lerp(MORAINE, (m.window - 0.5) * 1.2 * (snowy ? 0.5 : 0.8));
     for (const v of [A, B, C]) { pos.push(v.x, v.y, v.z); col.push(c.r, c.g, c.b); }
+    sky.push(vis[ia], sb, sc);
   };
   for (let i = 0; i < NR; i++) for (let j = 0; j < NA; j++) {
     const j1 = (j + 1) % NA;
@@ -106,8 +128,9 @@ export function buildCliffs(): THREE.Mesh {
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setAttribute('aSky', new THREE.Float32BufferAttribute(sky, 1));
   g.computeVertexNormals();
-  const mesh = new THREE.Mesh(g, patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true })));
+  const mesh = new THREE.Mesh(g, patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true }), { sky: true }));
   mesh.name = 'cirque-cliffs';
   mesh.receiveShadow = true;
   return mesh;

@@ -13,6 +13,8 @@ export const WORLD_UNIFORMS = {
   /** 雷暴强度 0..1（天气切换时渐变）与落雷闪光 0..1 */
   uStorm: { value: 0 },
   uFlash: { value: 0 },
+  /** 地形 / 岩壳天空可见度（AO）的强度：1 = 开，0 = 关（网址 ao=0，对照用） */
+  uSkyAo: { value: typeof location !== 'undefined' && new URLSearchParams(location.search).get('ao') === '0' ? 0 : 1 },
   /** 风场：飞廉巢穴 (x, z, 影响半径) 与基础风向（spec.WIND，见 wind.ts） */
   uWindLair: { value: new THREE.Vector3(WIND.lair[0], WIND.lair[1], WIND.radius) },
   uWindBase: { value: new THREE.Vector2(WIND.base[0], WIND.base[1]).normalize() },
@@ -51,10 +53,15 @@ export interface PatchOptions {
   flutter?: boolean;
   /** 地表四材质细节贴图（草 / 岩 / 雪 / 土）：需要 aMat 属性（材质权重） */
   splat?: boolean;
+  /**
+   * 天空可见度（烘好的 AO，docs/art/reference-tingyuyuan.md 第四节第 4 项）：需要 aSky 属性（0..1）。
+   * 只压环境光（天光、半球光、探针），不压太阳；按固有色做多次反弹补偿（亮的表面少掉一点）
+   */
+  sky?: boolean;
 }
 
 export function patchMaterial<T extends THREE.Material>(mat: T, opts: PatchOptions = {}): T {
-  const key = `pf:${opts.detail ? 1 : 0}:${opts.rim ?? 0}:${opts.sway ?? 0}:${opts.flutter ? 1 : 0}:${opts.splat ? 1 : 0}`;
+  const key = `pf:${opts.detail ? 1 : 0}:${opts.rim ?? 0}:${opts.sway ?? 0}:${opts.flutter ? 1 : 0}:${opts.splat ? 1 : 0}:${opts.sky ? 1 : 0}`;
   mat.customProgramCacheKey = () => key;
   mat.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, WORLD_UNIFORMS);
@@ -64,7 +71,8 @@ uniform float uTime;
 varying vec3 vPfWorld;
 ${opts.flutter ? 'attribute float aFlap; attribute float aPhase; attribute vec3 aWind; attribute float aGust; uniform float uGust;' : ''}
 ${opts.sway ? 'uniform vec3 uWindLair; uniform vec2 uWindBase;' : ''}
-${opts.splat ? 'attribute vec4 aMat; varying vec4 vMat; varying vec3 vPfN;' : ''}`);
+${opts.splat ? 'attribute vec4 aMat; varying vec4 vMat; varying vec3 vPfN;' : ''}
+${opts.sky ? 'attribute float aSky; varying float vPfSky;' : ''}`);
     let begin = '#include <begin_vertex>';
     if (opts.flutter) begin += `
 {
@@ -105,6 +113,7 @@ ${opts.splat ? 'attribute vec4 aMat; varying vec4 vMat; varying vec3 vPfN;' : ''
   #endif
   vPfWorld = (modelMatrix * pw).xyz;
   ${opts.splat ? 'vMat = aMat; vPfN = normalize(mat3(modelMatrix) * objectNormal);' : ''}
+  ${opts.sky ? 'vPfSky = aSky;' : ''}
 }`);
     fs = fs.replace('#include <common>', `#include <common>
 uniform float uTime;
@@ -113,6 +122,7 @@ uniform float uStorm;
 uniform vec2 uWind;
 varying vec3 vPfWorld;
 ${opts.splat ? 'varying vec4 vMat; varying vec3 vPfN; uniform sampler2D tDGrass; uniform sampler2D tDRock; uniform sampler2D tDSnow; uniform sampler2D tDDirt;' : ''}
+${opts.sky ? 'varying float vPfSky; uniform float uSkyAo;' : ''}
 ${NOISE_GLSL}`);
     if (opts.splat) {
       const t = detailTextures();
@@ -138,7 +148,14 @@ ${NOISE_GLSL}`);
   float d3 = pfNoise(vPfWorld.xz * 11.0 - 5.0);
   diffuseColor.rgb *= 0.8 + 0.22 * d1 + 0.12 * d2 + 0.1 * d3;
 }`);
-    let lights = `#include <lights_fragment_end>
+    let lights = (opts.sky ? `{
+  // 天空可见度只压环境光（Jimenez 的多次反弹近似：亮表面少掉一点）
+  float ao = mix(1.0, clamp(vPfSky, 0.0, 1.0), uSkyAo);
+  vec3 al = diffuseColor.rgb;
+  vec3 mb = max(vec3(ao), ((ao * (2.0404 * al - 0.3324) + (-4.7951 * al + 0.6417)) * ao + (2.7552 * al + 0.6903)) * ao);
+  irradiance *= mb;
+}
+` : '') + `#include <lights_fragment_end>
 {
   float cs = pfCloudShadow(vPfWorld.xz);
   reflectedLight.directDiffuse *= cs;
@@ -414,7 +431,7 @@ function buildMaterials() {
     ice: lam({ vertexColors: true, emissive: new THREE.Color('#2c5a72'), emissiveIntensity: 0.3 }, { rim: 0.5 }),
     /** 第四章雷魅的邪火：紫红雷光、白芯（弱点、电纹、眼睛） */
     glow: lam({ vertexColors: true, emissive: new THREE.Color('#e03ac8'), emissiveIntensity: 1.25 }, { rim: 0 }),
-    terrain: patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true }),
+    terrain: patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true, sky: true }),
   };
 }
 
