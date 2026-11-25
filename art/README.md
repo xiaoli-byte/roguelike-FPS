@@ -266,6 +266,11 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 
 - **Hunyuan3D 2.1 / 2mv**（Tencent Hunyuan 3D 2.1 / 2.0 Community License；2mv 权重来自 `tencent/Hunyuan3D-2mv` 的 `hunyuan3d-dit-v2-mv/model.fp16.safetensors`）：产出**不得在欧盟、英国、韩国境内使用或分发**；商业发行前请完整阅读许可证全文。
   清单里每条资产都带许可说明；面向这些地区发行前须替换为其他方式制作的资产。
+- **发布门禁**（`tests/asset-licenses.test.mjs`，在 `npm test` 里）：清单每条都要有 `license`，且落在已登记的类别里（Tripo / 项目原创 / Hunyuan / 第三方游戏）；
+  Hunyuan 的许可文本必须写明地区限制；不可再分发的资产只能是测试里白名单登记过的。2026-11-25 统计：Tripo 209、Hunyuan 123（受地区限制）、项目原创 12、第三方 6。
+  新的发布脚本写清单时一并写 `license`（2026-11-25 前 Tripo 生物、第一人称手臂、骨龙铳的 65 条漏写，已按生成方式补齐）。
+- **枪火提取武器**（`SK_Weapon_Gunfire*` 6 条与 `public/assets/gunfire-original/`）：从本机安装的游戏里提取，**不可再分发**。
+  2026-11-25 用户决定暂时保留（原型期主游戏的冲锋枪 / 左轮 / 灵炮等用它们的原生双手与动画），对外发布前必须换成自产资产。
 - **OpenAI 图像接口**：密钥只放 `art/pipeline/.env`（已忽略）或环境变量，不写进任何记录；每次调用的用量和请求号记录在 `asset.json`。
 - 美术风格描述不引用其他商业游戏的名字或角色，保证原创性。
 

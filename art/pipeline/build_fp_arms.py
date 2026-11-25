@@ -97,6 +97,8 @@ def main() -> None:
                 "keepGlow": "none", "lodDistance": cls["lod_distance"], "bounds": {"min": lo, "max": hi},
                 "version": {"build": version}, "sha256": sha256(dst), "bytes": dst.stat().st_size, "published": now(),
                 "generator": {"tool": "cut from the published hero SK_Hero_" + name, "mode": "derived"},
+                # 从英雄模型切出来的，许可跟英雄走（tests/asset-licenses.test.mjs 检查每条都有）
+                "license": manifest["assets"]["SK_Hero_" + name]["license"],
             }
             manifest["updated"] = now()
             manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
