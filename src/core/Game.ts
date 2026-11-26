@@ -132,7 +132,7 @@ export class Game implements IGame {
       world: new CollisionWorld(),
       rng: new Rng(Date.now() >>> 0),
       tasks: new TaskRunner(),
-      time: { now: 0, dt: 0, timeScale: 1, frame: 0 },
+      time: { now: 0, dt: 0, timeScale: 1, frame: 0, rawDt: 0 },
       cameraFx: { shakeIntensity: 0, shakeTime: 0, fovKick: 0 },
       settings: loadSettings(),
       run: placeholderRun(),
@@ -255,6 +255,7 @@ export class Game implements IGame {
     this.timeArbiter.tick();
     const dt = rawDt * ctx.time.timeScale;
     ctx.time.dt = dt;
+    ctx.time.rawDt = rawDt;
     ctx.time.frame++;
 
     this.fpsAcc += rawDt;

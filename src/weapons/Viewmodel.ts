@@ -89,6 +89,11 @@ interface VmEntry {
   gun: GunModel;
   /** 持握与换弹（碎刃 / 原版枪没有） */
   profile: HandlingProfile | null;
+  /**
+   * 弹匣入位那一顿的换弹进度（Unity WeaponRigFactory.Configure：vm.seatAt = profile.loadAt）。原版枪的 profile 置空了，但 Unity 的 Configure
+   * 在原作分支清零换弹姿态之前就写了 seatAt，所以原版枪也按持握表的 loadAt（0.78）一顿；没有持握表的按 FirstPersonViewmodel 默认 0.8
+   */
+  seatAt: number;
   /** 枪重 / 晃动 / 摆动倍率（profile 或碎刃的 Sway） */
   weight: number;
   swayScale: number;
@@ -157,6 +162,8 @@ export const VM_SCALE = 0.76;
 /** 腰射锚点的额外右下偏移（相机空间，米；Unity WeaponRigFactory.HipShift） */
 const HIP_SHIFT_X = 0.024;
 const HIP_SHIFT_Y = -0.02;
+/** 没有持握表时弹匣入位那一顿的进度（Unity FirstPersonViewmodel.seatAt 默认 0.8） */
+export const SEAT_AT_DEFAULT = 0.8;
 /**
  * 枪模后坐的整体缩放（Unity WeaponController.ViewKickScale）：镜头只轻轻上跳（RecoilScale 0.3，WeaponSystem），
  * 枪模保留明显的上抬（0.55）当作打击感；向后的距离再乘 VM_SCALE（枪模缩了）
@@ -616,6 +623,7 @@ export class Viewmodel {
       def,
       gun,
       profile: handling,
+      seatAt: profile?.loadAt ?? SEAT_AT_DEFAULT,
       weight: profile?.weight ?? 1, swayScale: profile?.swayScale ?? 1, bobScale: profile?.bobScale ?? 1,
       energyMat,
       armMats: arms.mats,
@@ -650,7 +658,7 @@ export class Viewmodel {
       stringHalves: null, stringTip: null, energy: [], leftHand: null, leftParent: null, artGlow: null, blade: null,
     };
     return {
-      uid: inst.uid, def, gun, profile: null,
+      uid: inst.uid, def, gun, profile: null, seatAt: SEAT_AT_DEFAULT,
       weight: BLADE_SWAY.weight, swayScale: BLADE_SWAY.swayScale, bobScale: BLADE_SWAY.bobScale,
       energyMat: new THREE.MeshBasicMaterial({ toneMapped: false }),
       armMats, leftArm: null, support: new THREE.Vector3(), loadOffset: new THREE.Vector3(), rounds: null, breech: null, chamberShell: null,
@@ -796,7 +804,7 @@ export class Viewmodel {
     const rp = fullReload ? s.reloadP : 0;
     this.reloadT = damp(this.reloadT, fullReload ? reloadEnvelope(rp) : 0, 18, dt);
     this.shellT = damp(this.shellT, s.reloading && s.shellMode ? 1 : 0, 10, dt);
-    const seatAt = prof?.loadAt ?? 0.8;
+    const seatAt = e.seatAt;
     if (fullReload && this.prevReloadP < seatAt && rp >= seatAt) this.seat();
     if (!s.reloading) this.committed = false;
     this.prevReloadP = rp;
@@ -877,8 +885,14 @@ export class Viewmodel {
     this.updateLights(dt, s);
   }
 
-  /** 真实帧时长（顿帧里 dt 被时间缩放压小；Unity 碎刃视觉顿帧按 unscaledDeltaTime 走） */
+  /**
+   * 真实帧时长（顿帧里 dt 被时间缩放压小；Unity 碎刃视觉顿帧按 unscaledDeltaTime 走）。用 Game.frame 记下的 ctx.time.rawDt：
+   * 不能拿 dt / 当前 timeScale 反推——dt 是帧开头按当时的缩放算的，碎刃命中在同一帧里先申请全局顿帧（仲裁器立刻把 timeScale 写成 0.05），
+   * 反推出来的「真实时长」会是 1/60 ÷ 0.05 ≈ 0.33 s，视觉顿帧在命中那一帧就被扣光。没有 rawDt（检视页 / 测试的桩）时才退回反推
+   */
   private realDt(dt: number): number {
+    const raw = this.ctx.time.rawDt;
+    if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
     const ts = this.ctx.time.timeScale;
     return ts > 1e-4 ? dt / ts : dt;
   }

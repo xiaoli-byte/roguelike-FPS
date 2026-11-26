@@ -87,8 +87,14 @@ export class WeaponSystem implements IWeaponSystem {
   private shellTimer = 0;
   private shellsInserted = 0;
   private shellsNeeded = 1;
-  /** 这次整匣换弹的弹匣已经入位（第一人称动画事件加过弹；Unity WeaponStateMachine.loadCommitted） */
+  /** 这次整匣换弹的弹匣已经入位（第一人称动画事件加过弹，或到时加上；Unity WeaponStateMachine.loadCommitted） */
   private loadCommitted = false;
+  /**
+   * 这一匣是第一人称动画事件（commitLoad）加的：弹匣入位时已经咔哒过，收尾只给一声轻的。
+   * 到时才加的（原作枪模 smg / revolver / railgun、没有左手的枪）收尾照旧放 reload_end——Unity 原作枪由 GunfireOriginalAnimation 播原作换弹音，
+   * 网页不迁那一层（GunfireOriginal* 不迁），不分开记的话这三把换完弹只剩一声很轻的 weapon_switch
+   */
+  private loadedByEvent = false;
   // 开火
   private cooldown = 0;
   /** 扳机：开火缓冲 + 「按住只算一次」的闩（Unity TriggerState） */
@@ -896,6 +902,7 @@ export class WeaponSystem implements IWeaponSystem {
     this.autoReload = 0;
     this.reloading = true;
     this.loadCommitted = false;
+    this.loadedByEvent = false;
     if (R.def.shellTime > 0) {
       this.shellMode = true;
       // 准备动作 + 第一发
@@ -953,13 +960,19 @@ export class WeaponSystem implements IWeaponSystem {
     const inst = this.active;
     if (!this.reloading || this.shellMode || this.loadCommitted || !inst) return false;
     this.load(inst, this.resolve(inst));
+    this.loadedByEvent = true;
     this.ctx.audio.play('reload_end', { volume: 0.85 });
     return true;
   }
 
-  /** 这次（或刚结束的那次）整匣换弹是不是由动画事件加的弹 */
+  /** 这次（或刚结束的那次）整匣换弹的弹匣已经入位（动画事件加的或到时加的；Unity LoadCommitted） */
   get isLoadCommitted(): boolean {
     return this.loadCommitted;
+  }
+
+  /** 这次（或刚结束的那次）整匣换弹是不是由第一人称动画事件加的弹（决定收尾放轻声还是 reload_end） */
+  get isLoadedByEvent(): boolean {
+    return this.loadedByEvent;
   }
 
   private finishReload(inst: WeaponInstance, rack: boolean): void {
@@ -968,8 +981,9 @@ export class WeaponSystem implements IWeaponSystem {
     // 元素轮转：每次换弹从第一种元素重新开始
     this.runtime(inst).cycleIndex = 0;
     if (rack) this.rackAfterShells();
-    // 弹匣入位时已经响过：收尾（拉机柄 / 拍枪管）只给一声轻的（Unity WeaponController.Notify(Reloaded)）
-    if (this.loadCommitted && !(getWeaponDef(inst.defId).shellTime > 0)) this.ctx.audio.play('weapon_switch', { volume: 0.45, pitch: 1.25 });
+    // 弹匣入位时已经响过：收尾（拉机柄 / 拍枪管）只给一声轻的（Unity WeaponController.Notify(Reloaded)）。
+    // 只认动画事件加的那一匣：到时才加的（原作枪模，Unity 那边原作动画自己放换弹音）收尾照旧咔哒一声
+    if (this.loadedByEvent) this.ctx.audio.play('weapon_switch', { volume: 0.45, pitch: 1.25 });
     else this.ctx.audio.play('reload_end', { volume: 0.85 });
     this.ctx.events.emit('weapon:reloaded', { weapon: inst });
   }

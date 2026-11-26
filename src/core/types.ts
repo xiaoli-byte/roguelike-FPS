@@ -444,6 +444,8 @@ export interface IPlayer extends System {
   cancelLunge(): void;
   /** 镜头冲击（不改瞄准）：roll / pitch 为镜头弹簧的角速度冲量（弧度/秒，与受击抖动同一弹簧），正 pitch = 上仰 */
   cameraPunch(roll: number, pitch: number): void;
+  /** 镜头冲击（度，Unity CameraFeel.Punch(pitch, roll, yaw)）：碎刃命中 / 判定帧的一带 */
+  punchDegrees(pitchDeg: number, rollDeg: number, yawDeg?: number): void;
   teleport(pos: THREE.Vector3, yaw?: number): void;
   /** 新开一局：设置英雄、重置属性（含天赋）、满血 */
   resetForRun(hero: HeroDef): void;
@@ -1179,6 +1181,8 @@ export interface IGame {
   closeModal(): void;
   applySettings(): void;
   saveSettings(): void;
+  /** 命中顿帧（M11d HitStop）：玩法主动申请 seconds 秒（真实时间）的全局顿帧，scale 缺省 0.05；返回是否生效（碎刃命中 40 / 70 ms，Unity HitStop.Request） */
+  readonly hitStop: { request(seconds: number, scale?: number): boolean };
   /** 续玩（M11d，Unity MenuFlow.Suspended）：主菜单「继续征程」的那一局（没有 / 坏档为 null）；stageCode = 槽位编号「1-2」 */
   suspendedRun?(): { heroId: string; stageCode: string; stageLabel: string; savedAt: string; time: number; coins: number } | null;
   /** 读续玩档从那一关开头接着打；没有档 / 坏档提示并返回 false（Unity MenuFlow.ResumeRun） */
@@ -1210,7 +1214,11 @@ export interface GameContext {
   /** 本局随机数（开局按种子重置） */
   rng: Rng;
   readonly tasks: TaskRunner;
-  readonly time: { now: number; dt: number; timeScale: number; frame: number };
+  /**
+   * 时间。rawDt：这一帧的真实秒数（没乘 timeScale、钳在 ≤ 0.05；Unity Time.unscaledDeltaTime），Game.frame 帧开头写入；
+   * 同一帧里有人申请顿帧时 timeScale 会立刻变，dt / timeScale 反推不回真实时长，按真实时间走的表现（碎刃视觉顿帧）读它。检视页 / 测试的桩可以没有
+   */
+  readonly time: { now: number; dt: number; timeScale: number; frame: number; rawDt?: number };
   /** 相机效果：fx.shake 写入，玩家控制器读取 */
   /**
    * 相机效果。shakeIntensity 为 0..1 的相对强度（1 = 很强），shakeTime 为秒；由 fx 写入、玩家控制器读取并衰减。

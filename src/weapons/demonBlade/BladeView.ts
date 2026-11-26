@@ -614,8 +614,7 @@ export class BladeView implements ShardHomeProvider {
     // 镜头：一 = 右上 → 左下、二 = 左 → 右、三 = 大横扫；幅度不到命中冲击的一半，只让空挥也有「出刀」的感觉
     const yaw = seg === 1 ? 0.32 : seg === 2 ? -0.5 : -0.28;
     const pitch = seg === 0 ? 0.22 : 0.06;
-    const punch = (this.ctx.player as unknown as { punchDegrees?: (p: number, r: number, y: number) => void }).punchDegrees;
-    punch?.call(this.ctx.player, pitch, seg === 1 ? -0.25 : 0.25, yaw);
+    this.ctx.player.punchDegrees(pitch, seg === 1 ? -0.25 : 0.25, yaw);
     this.spawnSparks(seg);
   }
 

@@ -40,7 +40,7 @@ export function buildDemonBlade() {
     setAwake() {}, setCoreTop() {}, setAura() {}, dispose() {},
   };
 }`);
-const BV = await import(await ts('../src/weapons/demonBlade/BladeView.ts', {
+const bvUrl = await ts('../src/weapons/demonBlade/BladeView.ts', {
   '../../core/math': mathUrl,
   './BladeShape': shapeUrl,
   './BladeModel': modelStub,
@@ -50,7 +50,8 @@ const BV = await import(await ts('../src/weapons/demonBlade/BladeView.ts', {
   './BladeSwordSign': await ts('../src/weapons/demonBlade/BladeSwordSign.ts'),
   '../../assets/ArtEnvironment': data('export function applyArtEnvironment() {}'),
   '../../assets/StaticAttachment': data('export function attachStaticPart() { return null; }'),
-}));
+});
+const BV = await import(bvUrl);
 
 const VM_FOV = 60;
 const ASPECTS = [16 / 9, 4 / 3];
@@ -411,6 +412,73 @@ test('view: hit stop freezes the visual progress for 40 / 70 ms of real time eve
   assert.deepEqual(kicks[1], [0.024, 0.05]);
 });
 
+// 第一人称经 Viewmodel 驱动真的 BladeView：视觉顿帧按 Game.frame 记下的真实帧时长（ctx.time.rawDt）扣，同 Unity Time.unscaledDeltaTime
+const VM = await import(await ts('../src/weapons/Viewmodel.ts', {
+  '../core/types': await ts('../src/core/types.ts'),
+  '../core/math': mathUrl,
+  './WeaponDefs': defsUrl,
+  './WeaponModels': data(`import * as THREE from '${threeUrl}';
+export const ART_GLOW = { 0: 0.5, 1: 0.8, 2: 1.1, 3: 1.5, 4: 2.0 };
+export const ART_GLOW_BASE = 1.6;
+export const boxGeo = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+export const solidMat = c => new THREE.MeshStandardMaterial({ color: c });
+export const getFlashTexture = () => new THREE.Texture();
+export function setCrossbowString() {}
+export function buildGunModel() { throw new Error('只测碎刃'); }`),
+  './demonBlade/BladeView': bvUrl,
+  '../assets/AssetLibrary': data('export const AssetLibrary = { findAttachments: () => [] };'),
+  '../assets/ArtEnvironment': data('export function applyArtEnvironment() {}'),
+  '../assets/StaticAttachment': data('export function attachStaticPart() { return null; }'),
+  './WeaponHandling': await ts('../src/weapons/WeaponHandling.ts'),
+  './TwoBoneIK': await ts('../src/weapons/TwoBoneIK.ts'),
+  './FireControl': await ts('../src/weapons/FireControl.ts'),
+  './ReloadBreech': data('export function addReloadBreech() { return null; }'),
+  '../assets/OriginalWeaponLibrary': data('export const OriginalWeaponLibrary = { get: () => null, loaded: () => null };'),
+  './OriginalWeaponView': data('export class OriginalRecoil {} export class OriginalWeaponView {}'),
+}));
+
+test('viewmodel → blade view: a hit stop granted in the same frame (time scale drops to 0.05 after dt was computed) still freezes the visual progress for 40 ms of real time', async () => {
+  // Unity：BladeView.Animate 按 Time.unscaledDeltaTime 扣视觉顿帧
+  assert.match(await cs('Weapons/DemonBlade/BladeView.cs'), /if \(hitStopLeft > 0\) hitStopLeft = Mathf\.Max\(0, hitStopLeft - Time\.unscaledDeltaTime\);/);
+  const viewCamera = new THREE.PerspectiveCamera(60, 16 / 9, 0.01, 20);
+  const ctx = {
+    viewCamera, camera: new THREE.PerspectiveCamera(80, 16 / 9, 0.1, 1000), renderer: {},
+    events: { on() {}, emit() {} },
+    player: { velocity: new THREE.Vector3(), onGround: true, yaw: 0, isDashing: false, hero: { color: 0x886644, id: 'fox' }, punchDegrees() {} },
+    input: { enabled: true, mouseDX: 0, mouseDY: 0 }, settings: { invertY: false }, fx: { burst() {} },
+    time: { now: 0, dt: 1 / 60, timeScale: 1, frame: 0, rawDt: 1 / 60 },
+  };
+  const vm = new VM.Viewmodel(ctx);
+  vm.init();
+  vm.setVisible(true);
+  vm.setWeapon({ uid: 1, defId: 'demon_blade', rarity: 0, element: 'none', level: 0, mag: 0, reserve: 0, affixes: [] });
+  const view = vm.bladeView();
+  assert.ok(view, '碎刃的第一人称');
+  const s = VM.createViewmodelState();
+  const pose = BV.createBladePoseInput();
+  const seg = combo[0];
+  pose.swing = 0; pose.slash = seg; pose.hitP = seg.windup / seg.duration; pose.swingP = 0.4;
+  s.blade = pose;
+  // Game.frame：帧开头 dt = rawDt × timeScale，之后整帧都用这个 dt
+  const frame = () => {
+    const dt = ctx.time.rawDt * ctx.time.timeScale;
+    return () => vm.update(dt, s);
+  };
+  frame()();
+  // 命中那一帧：dt 已经按 timeScale 1 算好；控制器 resolveSlash 先 view.onHit，再 hitStop.request（仲裁器立刻把 timeScale 写成 0.05），之后才轮到第一人称
+  const hitFrame = frame();
+  view.onHit(false);
+  ctx.time.timeScale = 0.05;
+  const p0 = view.visualProgress;
+  pose.swingP = 0.6;
+  hitFrame();
+  near(view.visualProgress, p0, '命中那一帧视觉进度就停住（不是 1/60 ÷ 0.05 ≈ 0.33 s 一下扣光）');
+  frame()();
+  near(view.visualProgress, p0, '真实时间 33 ms 还停着');
+  frame()();
+  assert.ok(view.visualProgress > p0, '真实时间过了 40 ms 放开');
+});
+
 test('view: shards glow with hit / strike / union / stretch and bump when they arrive', () => {
   const { v, ctx } = view();
   const pose = BV.createBladePoseInput();
@@ -448,16 +516,62 @@ test('world swarm constants equal BladeShards.cs (formation scales, launch / ret
   assert.match(src, /STREAK_TIME = 0\.05;[\s\S]*STREAK_MAX = 1\.1;/);
 });
 
+const DB = await import(await ts('../src/weapons/demonBlade/DemonBlade.ts', {
+  '../../core/math': mathUrl,
+  './BladeModel': data('export const BLADE_PURPLE = 0x9a5cff;'),
+  './BladeEffects': data('export class BladeEffects { init() {} update() {} }'),
+  './BladeSwarm': data('export class BladeSwarm { init() {} update() {} }'),
+  './BladeView': data('export function createBladePoseInput() { return {}; }'),
+}));
+
+/** 真的 DemonBlade 控制器：一个敌人站在正前方 dist 米，ctx.game.hitStop / player.punchDegrees / 第一人称记下调用 */
+function bladeController(dist = 1.5) {
+  const calls = { punch: [], stop: [], strike: [], hit: [], damage: 0 };
+  const enemy = {
+    alive: true, untargetable: false, radius: 0.4, height: 1.8, position: new THREE.Vector3(0, 0, -dist),
+    getBodyCenter(o) { return o.set(this.position.x, 1, this.position.z); },
+    getHeadCenter(o) { return o.set(this.position.x, 1.7, this.position.z); },
+  };
+  const ctx = {
+    player: {
+      alive: true, position: new THREE.Vector3(), eye: new THREE.Vector3(0, 1.7, 0), height: 1.8,
+      getForward: o => o.set(0, 0, -1), punchDegrees: (...a) => calls.punch.push(a),
+    },
+    enemies: { list: [enemy] }, world: { segmentBlocked: () => false },
+    combat: { damageEnemy: () => { calls.damage++; return { immune: false }; } },
+    fx: { enemyHit() {}, burst() {}, shake() {} }, audio: { play() {} }, events: { on() {}, emit() {} },
+    game: { hitStop: { request: seconds => { calls.stop.push(seconds); return true; } } },
+  };
+  const view = { onStrike: (i, union) => calls.strike.push([i, union]), onHit: heavy => calls.hit.push(heavy) };
+  const R = { legendary: null, legendaryValue: 0, critChance: 0, critMult: 2, damageMult: 1, elementChance: 0 };
+  const blade = new DB.DemonBlade(ctx, { resolve: () => R, countShot: () => 1, view: () => view });
+  const P = getWeaponDef('demon_blade').blade;
+  const slash = idx => blade.resolveSlash({ uid: 7, defId: 'demon_blade', element: 'none' }, R, P, P.combo[idx], idx);
+  return { calls, slash };
+}
+
 test('controller: judgement frame calls onStrike, hits punch the camera 1.6° / 0.5° and request a 70 / 40 ms hit stop (Unity DemonBladeController)', async () => {
   const text = await cs('Weapons/DemonBlade/DemonBladeController.cs');
   assert.match(text, /view\?\.OnStrike\(idx, seg, union\);/);
   assert.match(text, /feel\.Punch\(heavy \? 1\.6f : 0\.5f, idx == 1 \? 1\.4f : -1\.4f\)/);
   assert.match(text, /HitStop\.Request\(heavy \? 0\.07f : 0\.04f\)/);
   assert.match(text, /pose\.slash = seg;/);
+  // 真跑控制器的判定帧：三段各中一次（第三段重击）
+  const hit = bladeController();
+  for (let idx = 0; idx < 3; idx++) hit.slash(idx);
+  assert.equal(hit.calls.damage, 3, '三段各砍中一次');
+  assert.deepEqual(hit.calls.strike, [[0, false], [1, false], [2, false]], '判定帧事件（Unity view.OnStrike）');
+  assert.deepEqual(hit.calls.hit, [false, false, true], '第一人称命中一磕');
+  assert.deepEqual(hit.calls.punch, [[0.5, -1.4], [0.5, 1.4], [1.6, -1.4]], '镜头冲击（Unity feel.Punch）');
+  assert.deepEqual(hit.calls.stop, [0.04, 0.04, 0.07], '全局顿帧申请走 ctx.game.hitStop（Unity HitStop.Request）');
+  // 空挥：判定帧事件照发，不冲击、不顿帧
+  const miss = bladeController(40);
+  miss.slash(2);
+  assert.equal(miss.calls.damage, 0);
+  assert.deepEqual(miss.calls.strike, [[2, false]]);
+  assert.deepEqual([miss.calls.punch.length, miss.calls.stop.length, miss.calls.hit.length], [0, 0, 0]);
   const src = await readFile(new URL('../src/weapons/demonBlade/DemonBlade.ts', import.meta.url), 'utf8');
-  assert.match(src, /this\.host\.view\(\)\?\.onStrike\(idx, this\.unionLeft > 0\);/);
-  assert.match(src, /punch\.call\(player, heavy \? 1\.6 : 0\.5, idx === 1 \? 1\.4 : -1\.4\)/);
-  assert.match(src, /hitStop\?\.request\(heavy \? 0\.07 : 0\.04\)/);
+  assert.doesNotMatch(src, /as unknown as \{ (hitStop|punchDegrees)\?/, 'hitStop / punchDegrees 走 IGame / IPlayer 接口，类型检查管得到');
   assert.match(src, /s\.slash = seg;/);
   assert.match(src, /s\.unionStretch = P\.union\.stretch;/);
   near(getWeaponDef('demon_blade').blade.union.stretch, 1.3);

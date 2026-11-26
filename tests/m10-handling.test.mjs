@@ -310,7 +310,7 @@ export function buildGunModel(defId) {
     bolt: null, stringHalves: null, stringTip: null, energy: [], leftHand: new THREE.Vector3(0, 0.02, -0.235), leftParent: null, artGlow: art, blade: null,
   };
 }`);
-const VM = await import(await ts('../src/weapons/Viewmodel.ts', {
+const vmImports = {
   '../core/types': typesUrl,
   '../core/math': mathUrl,
   './WeaponDefs': defsUrl,
@@ -325,10 +325,24 @@ const VM = await import(await ts('../src/weapons/Viewmodel.ts', {
   './ReloadBreech': data(`import * as THREE from '${threeUrl}'; export function addReloadBreech(root) { const g = new THREE.Group(); root.add(g); return g; }`),
   '../assets/OriginalWeaponLibrary': data('export const OriginalWeaponLibrary = { get: () => null, loaded: () => null };'),
   './OriginalWeaponView': data('export class OriginalRecoil {} export class OriginalWeaponView {}'),
+};
+const VM = await import(await ts('../src/weapons/Viewmodel.ts', vmImports));
+/** 原作枪模（GunfireOriginal，不迁）预载好了的 Viewmodel：smg / revolver / railgun 走 OriginalWeaponView（桩），同 NATIVE_VIEWMODEL_WEAPONS */
+const VMO = await import(await ts('../src/weapons/Viewmodel.ts', {
+  ...vmImports,
+  '../assets/OriginalWeaponLibrary': data(`export const OriginalWeaponLibrary = { get: () => null,
+    loaded: id => (['smg', 'revolver', 'railgun'].includes(id) ? { gltf: {}, motion: {} } : null) };`),
+  './OriginalWeaponView': data(`import * as THREE from '${threeUrl}';
+export class OriginalRecoil { constructor() { this.position = new THREE.Vector3(); this.rotation = new THREE.Euler(); } update() {} fire() {} reset() {} }
+export class OriginalWeaponView {
+  constructor() { this.root = new THREE.Group(); this.muzzle = new THREE.Object3D(); this.root.add(this.muzzle);
+    this.hip = new THREE.Vector3(0.2, -0.13, -0.6); this.aim = new THREE.Vector3(0, -0.08, -0.65); }
+  update() {} fire() {} dispose() {}
+}`),
 }));
 void flashTex;
 
-function vmHarness() {
+function vmHarness(mod = VM) {
   const handlers = {};
   const viewCamera = new THREE.PerspectiveCamera(60, 16 / 9, 0.01, 20);
   const ctx = {
@@ -338,7 +352,7 @@ function vmHarness() {
     input: { enabled: true, mouseDX: 0, mouseDY: 0 }, settings: { invertY: false },
     time: { now: 0, dt: 1 / 60, timeScale: 1, frame: 0 },
   };
-  const vm = new VM.Viewmodel(ctx);
+  const vm = new mod.Viewmodel(ctx);
   vm.init();
   vm.setVisible(true);
   return { vm, ctx };
@@ -472,6 +486,38 @@ test('viewmodel: shell reload ignores the commit event and uses the shell tilt',
   assert.equal(commits, 0, '逐发装填按每一发的时间压弹');
   assert.ok(vm.debug().shellTilt > 0.9);
   near(vm.debug().reloadTilt, 0, '整匣姿态不叠');
+});
+
+test('viewmodel: original-model guns (smg / revolver / railgun) seat at the handling loadAt, not the 0.8 default (Unity WeaponRigFactory.Configure writes seatAt before the original branch)', async () => {
+  // Unity：Build 先 Configure(vm, profile)（里面 vm.seatAt = profile.loadAt），原作分支之后只清换弹 / 逐发姿态，没动 seatAt；也不挂 WeaponHandRig
+  const factory = await cs('Weapons/WeaponRigFactory.cs');
+  const configure = factory.indexOf('Configure(vm, profile);');
+  assert.ok(configure > 0 && configure < factory.indexOf('if (original) vm.reloadTiltRot = vm.reloadTiltPos = vm.shellTiltRot = vm.shellTiltPos = Vector3.zero;'));
+  assert.match(factory, /vm\.seatAt = profile\.loadAt;/);
+  assert.match(factory, /if \(!original\)/);
+  const steps = 200;
+  for (const id of ['smg', 'revolver', 'railgun']) {
+    const { vm } = vmHarness(VMO);
+    vm.setWeapon(inst(id));
+    assert.ok(vm.cur?.original, `${id} 走原作枪模`);
+    assert.equal(vm.cur.profile, null, `${id} 不套换弹姿态 / 左手（原作分支）`);
+    const s = VMO.createViewmodelState();
+    const seats = [];
+    let commits = 0;
+    vm.onCommitLoad = () => commits++;
+    vm.seat = () => seats.push(s.reloadP);
+    s.reloading = true;
+    for (let i = 0; i <= steps; i++) {
+      s.reloadP = i / steps;
+      vm.update(1 / 60, s);
+    }
+    const loadAt = H.WEAPON_HANDLING[id].loadAt;
+    assert.equal(seats.length, 1, `${id} 一次整匣换弹一顿`);
+    near(seats[0], Math.ceil(loadAt * steps - 1e-9) / steps, `${id} 在持握表 loadAt ${loadAt} 那一步一顿（不是默认 0.8）`, 1e-9);
+    assert.equal(commits, 0, `${id} 没有左手：不发加弹事件，弹药到时才加`);
+  }
+  const fpv = await unity('Pipeline/Runtime/FirstPersonViewmodel.cs');
+  near(VMO.SEAT_AT_DEFAULT, num(fpv.match(/public float seatAt = ([\d.]+f)/)[1]), '没有持握表时按 FirstPersonViewmodel.seatAt 默认');
 });
 
 test('viewmodel: trinity glow flashes when the next element changes and shows the first element while reloading (Unity TrinityCycle)', async () => {
@@ -690,6 +736,38 @@ test('reload without a first-person rig still loads at the end (Unity ReloadWith
   h.idle(def.reloadTime * 0.2 + 0.1);
   assert.equal(w.mag, def.mag);
   assert.equal(h.ws.isLoadCommitted, true);
+});
+
+test('a magazine loaded at the end (original-model smg / revolver / railgun: no hand event) still ends with the reload_end click, not only the soft weapon_switch', async () => {
+  // Unity 原作枪不挂 WeaponHandRig，到时 Load → LoadCommitted 也是真，收尾只放轻声；那边原作动画（GunfireOriginalAnimation）自己播原作换弹音。
+  // 网页不迁原作动画，所以按「这一匣是不是动画事件加的」选：到时才加的照旧咔哒一声（M10 之前三把枪都是 reload_end 0.85）
+  for (const id of ['smg', 'revolver', 'railgun']) {
+    const h = await weaponSystem();
+    const def = getWeaponDef(id);
+    const w = h.mk(id, 0);
+    h.ws.slots = [w, null];
+    h.frame(true);
+    assert.equal(h.ws.isReloading, true, `${id} 开始换弹`);
+    h.audio.length = 0;
+    h.idle(def.reloadTime + 0.1);
+    assert.equal(h.ws.isReloading, false);
+    assert.equal(w.mag, def.mag, `${id} 到时加满`);
+    const clicks = h.audio.filter(([k]) => k === 'reload_end' || k === 'weapon_switch');
+    assert.deepEqual(clicks, [['reload_end', { volume: 0.85 }]], `${id} 换完弹咔哒一声`);
+    assert.equal(h.ws.isLoadCommitted, true, '到时加的也算入位（Unity LoadCommitted）');
+    assert.equal(h.ws.isLoadedByEvent, false);
+  }
+  // 动画事件加的那一匣：入位时咔哒，收尾只给轻声（Unity Loaded / Reloaded）
+  const h = await weaponSystem();
+  const w = h.mk('rifle', 0);
+  h.ws.slots = [w, null];
+  h.frame(true);
+  h.audio.length = 0;
+  h.ws.commitLoad();
+  h.idle(getWeaponDef('rifle').reloadTime + 0.1);
+  assert.equal(h.ws.isLoadedByEvent, true);
+  assert.deepEqual(h.audio.filter(([k]) => k === 'reload_end' || k === 'weapon_switch'),
+    [['reload_end', { volume: 0.85 }], ['weapon_switch', { volume: 0.45, pitch: 1.25 }]]);
 });
 
 test('switching after the mag seats keeps the ammo and counts as a reload (Unity SwitchingAfterTheMagSeatsKeepsTheAmmo)', async () => {
