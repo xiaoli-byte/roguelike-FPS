@@ -1,14 +1,12 @@
-// M9 灵宠（docs/threejs-migration.md 4.8）：网页 src/pets 对 Unity G/Pets/*.cs 的数，常量逐个从 C# 源码里读出来比（改了一边另一边就红）；
-// 以及 Unity EditMode 测试里和灵宠相关的几条：RunSuspendTests（续玩档里的灵宠往返、坏档、图鉴灵宠条目数）、
-// HudWidgetTests.HitMarkerOnlyForDirectPlayerHits（灵宠的命中不出命中标记）。Unity 没有专门的 PetTests：行为的数（伤害、范围、间隔、冷却、
-// 灵契经验）在这里按 C# 常量逐只比，嘲讽在真的 EnemyBase 上跑一遍。
+// M9 灵宠（docs/threejs-migration.md 4.8）：网页 src/pets 对 Unity G/Pets/*.cs 的数。期望值照 C# 抄成本文件里的常量，旁边注明出自哪个 C# 文件哪一行
+// （不读 unity/ 下的任何文件：unity/ 以后会整个删掉）；以及 Unity EditMode 测试里和灵宠相关的几条：RunSuspendTests（续玩档里的灵宠往返、坏档、
+// 图鉴灵宠条目数）、HudWidgetTests.HitMarkerOnlyForDirectPlayerHits（灵宠的命中不出命中标记）。Unity 没有专门的 PetTests：行为的数（伤害、范围、
+// 间隔、冷却、灵契经验）在这里逐只比，嘲讽在真的 EnemyBase 上跑一遍。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
-import { cs, csConsts, csTest, tsGraph } from './unity-parity-kit.mjs';
+import { tsGraph } from './unity-parity-kit.mjs';
 import { importTs } from './hanba-load.mjs';
 
 const graph = await tsGraph({
@@ -30,29 +28,51 @@ const FUR = await graph.load('pets/PetFur.ts');
 const { CrosshairWidget } = await graph.load('ui/hud/CrosshairWidget.ts');
 const CX = await graph.load('ui/codex/Codex.ts');
 const RULES = await graph.load('progression/loot/rewardRules.ts');
+const { petHit } = await graph.load('combat/PetContract.ts');
+const { PET_FUR_DATA: FUR_DATA, PET_DEF_DATA } = await graph.load('pets/PetDefsData.ts');
 
+/** 网页源码（只读 src/，核对接线写法） */
 const src = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-const FUR_DATA = (await graph.load('pets/PetDefsData.ts')).PET_FUR_DATA;
-const defsCs = cs('Pets/PetDefs.cs');
-const petCs = cs('Pets/Pet.cs');
-const ownerCs = cs('Pets/PetOwner.cs');
-const behCs = cs('Pets/PetBehaviours.cs');
 
-// ───────────── 定义（PetDefs.cs → PetDefsData.ts，导出器）─────────────
+// ───────────── 定义（Unity PetDefs.cs → src/pets/PetDefsData.ts，2026-11 一次性转换入库）─────────────
 
-test('PetDefsData.ts 由当前 C# 导出（scripts/web/export-pet-defs.mjs --check）', () => {
-  const out = execFileSync(process.execPath, [fileURLToPath(new URL('../scripts/web/export-pet-defs.mjs', import.meta.url)), '--check'], { encoding: 'utf8' });
-  assert.match(out, /一致：8 只灵宠、5 只有毛发/);
+/**
+ * 八只的移动 / 形态数（Unity Pets/PetDefs.cs，PetLibrary.All 的对象初始化器，第 84–162 行；没写的取 PetDef 字段初值：
+ * 第 47–50 行 height 0.7、moveSpeed 9、followBack 3、followSide 1.2、flyHeight 2，hover 0）。
+ * [id, 资产, 身高, 移速, 跟随后距, 跟随侧距, 飞行高度, 悬浮, 元素, 飞行, 灵技冷却]
+ */
+const DEF_TABLE = [
+  ['dangkang', 'SK_Pet_Dangkang', 0.7, 9, 2.6, 1.1, 2, 0, 'none', false, 18], // PetDefs.cs:84 / 冷却 :88
+  ['huan', 'SK_Pet_Huan', 0.6, 10, 3, -1.2, 2, 0, 'none', false, 20], // :95 / :99
+  ['jingwei', 'SK_Pet_Jingwei', 0.35, 13, 3, 0.9, 2.1, 0, 'fire', true, 16], // :106 / :110
+  ['chongming', 'SK_Pet_Chongming', 0.6, 13, 3, -1, 2.2, 0, 'shock', true, 20], // :118 / :122
+  ['suanni', 'SK_Pet_Suanni', 0.8, 9, 2.6, 1.3, 2, 0, 'corrode', false, 22], // :129 / :133
+  ['zheng', 'SK_Pet_Zheng', 0.85, 11, 3.2, -1.3, 2, 0, 'none', false, 18], // :140 / :144
+  ['baize', 'SK_Pet_Baize', 1.3, 10, 3.4, 1.5, 2, 0.25, 'none', false, 25], // :151 / :155
+  ['yinglong', 'SK_Pet_Yinglong', 1, 14, 2.4, -1.4, 3.2, 0, 'shock', true, 25], // :162 / :166
+];
+
+test('八只灵宠的移动 / 形态数据照 PetDefs.cs（转换入库的 PetDefsData.ts）', () => {
+  assert.deepEqual(PET_DEF_DATA.map(d => [d.id, d.assetId, d.height, d.moveSpeed, d.followBack, d.followSide, d.flyHeight, d.hover, d.element, d.flying, d.skillCooldown]), DEF_TABLE);
+  // 配色（PetDefs.cs:85 当康 body / accent、:76 CommonFx / MythicFx、:163 应龙 body；fx = DamageTable.ElementColor 的取 Damage.cs:167–169）
+  const dk = PET_DEF_DATA[0], yl = PET_DEF_DATA[7];
+  assert.deepEqual([dk.body, dk.accent, dk.fx], [[0.92, 0.76, 0.42], [0.62, 0.32, 0.18], [1, 0.92, 0.7]]);
+  assert.deepEqual([yl.body, yl.fx, yl.partGlow], [[0.25, 0.62, 0.45], [1, 0.62, 0.32], [0.6, 0.8, 1]]);
+  assert.deepEqual(PET_DEF_DATA[3].fx, [0.55, 0.75, 1], '重明鸟 fx = 雷元素色');
+  assert.deepEqual(PET_DEF_DATA[4].fx, [0.6, 0.9, 0.3], '狻猊 fx = 蚀元素色');
+  // 品阶色 / 神兽金（PetDefs.cs:13、:16）
+  assert.deepEqual(DEFS.PET_RARITY_COLORS, [[0.85, 0.85, 0.85], [0.4, 0.65, 1], [1, 0.32, 0.3]]);
+  assert.deepEqual(DEFS.PET_GOLD, [1, 0.8, 0.35]);
 });
 
 test('八只灵宠：顺序、id、资产、品阶、飞行、灵技冷却照 PetLibrary.All', () => {
-  const ids = [...defsCs.matchAll(/id = "(\w+)", assetId = "(\w+)"/g)].map(m => [m[1], m[2]]);
-  assert.deepEqual(DEFS.PET_LIBRARY.map(d => [d.id, d.assetId]), ids);
+  // PetLibrary.All 的 id / assetId（PetDefs.cs:82、93、104、116、127、138、149、160）
+  assert.deepEqual(DEFS.PET_LIBRARY.map(d => [d.id, d.assetId]), DEF_TABLE.map(r => [r[0], r[1]]));
   assert.deepEqual(DEFS.PET_LIBRARY.map(d => d.rarity), [0, 0, 0, 1, 1, 1, 2, 2]);
   assert.deepEqual(DEFS.PET_LIBRARY.filter(d => d.flying).map(d => d.id), ['jingwei', 'chongming', 'yinglong']);
   assert.deepEqual(DEFS.PET_LIBRARY.map(d => d.skillCooldown), [18, 20, 16, 20, 22, 18, 25, 25]);
   assert.deepEqual(DEFS.PET_LIBRARY.map(d => d.label), ['凡灵 · 当康', '凡灵 · 讙', '凡灵 · 精卫', '灵兽 · 重明鸟', '灵兽 · 狻猊', '灵兽 · 狰', '神兽 · 白泽', '神兽 · 应龙']);
-  // 发光件：精卫的火石挂 pebble、应龙的宝珠挂 pearl
+  // 发光件：精卫的火石挂 pebble、应龙的宝珠挂 pearl（PetDefs.cs:112、:168）
   assert.deepEqual(DEFS.PET_LIBRARY.filter(d => d.partId).map(d => [d.id, d.partId, d.partSocket]),
     [['jingwei', 'SM_PetPart_JingweiPebble', 'pebble'], ['yinglong', 'SM_PetPart_YinglongPearl', 'pearl']]);
   // 按 id / 资产 id 都能找到（PetLibrary.Get）
@@ -62,8 +82,8 @@ test('八只灵宠：顺序、id、资产、品阶、飞行、灵技冷却照 Pe
 });
 
 test('品阶：凡灵 72% / 灵兽 25% / 神兽 3%（PetRarities.Roll），抽灵宠先抽品阶再在品阶里平均抽（PetLibrary.Roll）', () => {
-  const w = defsCs.match(/Weights = \{ ([^}]+) \}/)[1].split(',').map(Number);
-  assert.deepEqual(DEFS.PET_RARITY_WEIGHTS, w);
+  // PetDefs.cs:14 `static readonly float[] Weights = { 72, 25, 3 };`、:12 Names
+  assert.deepEqual(DEFS.PET_RARITY_WEIGHTS, [72, 25, 3]);
   assert.deepEqual(DEFS.PET_RARITY_NAMES, ['凡灵', '灵兽', '神兽']);
   // 阈值：x = rand × 100，x < 72 凡灵，再 < 25 灵兽
   assert.equal(DEFS.rollRarity(() => 0.7199), 0);
@@ -85,38 +105,29 @@ test('品阶：凡灵 72% / 灵兽 25% / 神兽 3%（PetRarities.Roll），抽�
 test('奖励串（PetReward）："pet" / "pet:<id>" / "pet:rarity=<0–2>"；种类 / 标题名 / 宝箱说明照 Unity Chest.Label / Line', () => {
   assert.equal(DEFS.petForReward('pet:zheng', () => 0).id, 'zheng');
   assert.equal(DEFS.petForReward('pet:rarity=2', () => 0).id, 'baize');
-  assert.equal(DEFS.petForReward('pet:rarity=9', () => 0.99).rarity, 2, '超出夹住（Mathf.Clamp(tier, 0, 2)）');
+  assert.equal(DEFS.petForReward('pet:rarity=9', () => 0.99).rarity, 2, '超出夹住（PetReward.cs:17 Mathf.Clamp(tier, 0, 2)）');
   assert.equal(DEFS.petForReward('pet:rarity=x', () => 0).rarity, 0, '不是整数 = 按权重抽');
   assert.equal(DEFS.petForReward('pet', () => 0.98).rarity, 2);
   assert.equal(RULES.rewardKey('pet'), 'pet');
   assert.equal(RULES.rewardKey('pet:rarity=2'), 'pet');
-  const chest = cs('Loot/Chest.cs');
-  assert.match(chest, /case "pet": return "灵宠";/);
-  assert.match(chest, /"pet" => "灵兽封印：结契一只灵宠"/);
-  const plan = (await_read('../src/progression/RunPlan.ts'));
-  assert.match(plan, /pet: '灵宠'/);
-  assert.match(await_read('../src/progression/loot/Chests.ts'), /case 'pet':\s*\/\/[^\n]*\n\s*return '灵兽封印：结契一只灵宠';/);
+  // Loot/Chest.cs:66 `case "pet": return "灵宠";`、:80 `"pet" => "灵兽封印：结契一只灵宠"`
+  assert.match(src('../src/progression/RunPlan.ts'), /pet: '灵宠'/);
+  assert.match(src('../src/progression/loot/Chests.ts'), /case 'pet':\s*\/\/[^\n]*\n\s*return '灵兽封印：结契一只灵宠';/);
 });
 
-function await_read(path) {
-  return execFileSync(process.execPath, ['-e', `process.stdout.write(require('fs').readFileSync(${JSON.stringify(new URL(path, import.meta.url).pathname.replace(/^\/(\w:)/, '$1'))}, 'utf8'))`], { encoding: 'utf8' });
-}
-
 test('精英掉封印 6%（EconomyConfig.ElitePetChance）、击杀给灵契经验 普通 1 / 精英 4（PetOwner）', () => {
-  assert.equal(SYS.ELITE_PET_CHANCE, csConsts(cs('Core/EconomyConfig.cs')).ElitePetChance);
-  const c = csConsts(ownerCs);
-  assert.deepEqual([SYS.NORMAL_XP, SYS.ELITE_XP], [c.NormalXp, c.EliteXp]);
+  assert.equal(SYS.ELITE_PET_CHANCE, 0.06); // Core/EconomyConfig.cs:44 ElitePetChance = 0.06f
+  assert.deepEqual([SYS.NORMAL_XP, SYS.ELITE_XP], [1, 4]); // Pets/PetOwner.cs:19 NormalXp = 1, EliteXp = 4
 });
 
 // ───────────── 本体（Pet.cs）─────────────
 
 test('Pet 常量：交战 18 m、拴绳 22 m、卡住 3 s、记仇 3 s；灵契 1–5 级、3 级觉醒、经验 6 / 10 / 16 / 24', () => {
-  const c = csConsts(petCs);
-  assert.deepEqual([ENGAGE_RANGE, LEASH_RANGE, STUCK_TIME, TARGET_MEMORY], [c.EngageRange, c.LeashRange, c.StuckTime, c.TargetMemory]);
-  assert.deepEqual([MAX_LEVEL, AWAKEN_LEVEL], [c.MaxLevel, c.AwakenLevel]);
-  assert.deepEqual([...XP_NEED], petCs.match(/XpNeed = \{ ([^}]+) \}/)[1].split(',').map(Number));
-  assert.match(petCs, /DamageMult => 1 \+ 0\.15f \* \(Level - 1\)/);
-  assert.match(petCs, /CooldownMult => 1 - 0\.06f \* \(Level - 1\)/);
+  // Pets/Pet.cs:26 EngageRange = 18f, LeashRange = 22f, StuckTime = 3f, TargetMemory = 3f；:27 MaxLevel = 5, AwakenLevel = 3；:28 XpNeed = { 6, 10, 16, 24 }
+  assert.deepEqual([ENGAGE_RANGE, LEASH_RANGE, STUCK_TIME, TARGET_MEMORY], [18, 22, 3, 3]);
+  assert.deepEqual([MAX_LEVEL, AWAKEN_LEVEL], [5, 3]);
+  assert.deepEqual([...XP_NEED], [6, 10, 16, 24]);
+  // Pet.cs:41 DamageMult => 1 + 0.15f * (Level - 1)；:42 CooldownMult => 1 - 0.06f * (Level - 1)（数值在下一条用例里断言）
 });
 
 /** 一只不进场景的灵宠（构造函数只建字段；外部服务记下调用） */
@@ -172,52 +183,62 @@ test('灵技：冷却好了才放、正在普攻就排队（1.6 s 内动作结�
   assert.equal(p.tryCast(), false, '解除结契后不放');
 });
 
+test('灵宠的伤害请求就是 PetContract.petHit（来源 pet、不随机暴击、带 pet 标签）再乘灵契倍率', () => {
+  const { p } = bare('zheng', 3);
+  const req = p.info(10, 'fire', 0.4);
+  const want = petHit(10 * p.damageMult, 'fire', 0.4);
+  assert.deepEqual(req, want);
+  assert.equal(req.base, 10 * 1.3);
+  assert.equal(p.info(5, 'none', 0, 1).procDepth, 1, '衍生伤害（闪电跳跃）带深度');
+});
+
 // ───────────── 八只的行为常量（PetBehaviours.cs）─────────────
 
-/** C# 里 sealed class <Name>Behaviour 的类体 */
-function classBody(name) {
-  const i = behCs.indexOf(`public sealed class ${name}Behaviour`);
-  assert.ok(i >= 0, name);
-  const j = behCs.indexOf('public sealed class', i + 10);
-  return behCs.slice(i, j < 0 ? undefined : j);
-}
+/**
+ * 各只的常量（Unity Pets/PetBehaviours.cs 各 sealed class 的 const 段，行号是类声明处）与普攻间隔 / 攻击距离
+ * （override AttackInterval / AttackRange；没写的取基类 PetBehaviour 的 1 / 2，PetBehaviours.cs:28–29）。
+ */
+const BEHAVIOUR_TABLE = {
+  // PetBehaviours.cs:84 DangkangBehaviour；AttackInterval => 2.4f、AttackRange => ChargeRange
+  Dangkang: { consts: { ChargeRange: 12, ChargeDamage: 22, ChargeStun: 0.5, AwakenStun: 0.3, ChargeSpeed: 16, RushLength: 18, RushDamage: 90, RushStun: 1.2, RushSpeed: 26, RushWidth: 1.6 }, interval: 2.4, range: 12 },
+  // :219 HuanBehaviour；AttackInterval => 1f、AttackRange => 1.9f
+  Huan: { consts: { ClawDamage: 4, MimicEvery: 10, MimicRadius: 10, MimicTime: 3, SkillRadius: 16, SkillTime: 5, SkillTaken: 1.25, AwakenSlow: 0.3, Claws: 3 }, interval: 1, range: 1.9 },
+  // :320 JingweiBehaviour；AttackInterval => 1.3f，AttackRange 没覆写（取基类 2；另覆写了 CanAttack：飞到目标上空、看得见就投石）
+  Jingwei: { consts: { StoneDamage: 16, StoneBurn: 0.5, RainDamage: 24, RainRadius: 5, Gravity: 22, PebbleRegrow: 0.6, PebbleSize: 0.16, RainCount: 10 }, interval: 1.3, range: 2 },
+  // :442 ChongmingBehaviour；AttackInterval => 0.7f、AttackRange => Range
+  Chongming: { consts: { BoltDamage: 9, BoltShock: 0.4, Range: 20, Bounce: 8, ChainDamage: 60, ChainRange: 12, Bolts: 2, ChainHops: 8 }, interval: 0.7, range: 20 },
+  // :561 SuanniBehaviour；AttackInterval => 0.25f、AttackRange => ConeRange
+  Suanni: { consts: { ConeRange: 6, ConeHalfAngle: 32, TickDamage: 4, CorrodeChance: 0.25, ShieldBonus: 20, RoarShield: 30, RoarRadius: 5, RoarStun: 1, RoarCooldown: 15, SkillRadius: 10, SkillStun: 1.5, SkillReduction: 0.4, SkillBuff: 5, MistEvery: 1, MistRadius: 2.2, MistTime: 3 }, interval: 0.25, range: 6 },
+  // :730 ZhengBehaviour；AttackInterval => 1.4f、AttackRange => PounceRange
+  Zheng: { consts: { TailDamage: 7, PounceRange: 8, StoneRange: 6, StoneRate: 0.08, StoneTime: 5, RendDamage: 100, RendRange: 18, RendSpeed: 34, StoneMax: 3, RendTargets: 5 }, interval: 1.4, range: 8 },
+  // :875 BaizeBehaviour；AttackInterval => 1f、AttackRange => ShotRange
+  Baize: { consts: { CritBonus: 0.5, AwakenCritBonus: 0.8, InsightRange: 25, InsightBonus: 1.2, ShotDamage: 30, ShotRange: 25, ScrollRadius: 30, ScrollStun: 1.5, ScrollTaken: 1.6, ScrollTime: 8, VacuumRange: 25, Shots: 3 }, interval: 1, range: 25 },
+  // :1001 YinglongBehaviour；AttackInterval => 0.2f、AttackRange => BreathRange
+  Yinglong: { consts: { RainRange: 28, RainDamage: 50, BreathDamage: 20, BreathRange: 22, BreathShock: 0.15, StormTime: 6, StormRate: 12, StormDamage: 70, StormRange: 30, PearlRise: 0.4, PearlHeight: 1.5, PearlReturn: 0.35, PearlSpin: 90 }, interval: 0.2, range: 22 },
+};
 
 test('八只的行为常量与 C# 同名同值（伤害 / 范围 / 间隔 / 冷却 / 层数），普攻间隔与攻击距离照 AttackInterval / AttackRange', () => {
   const table = { Dangkang: BEH.DANGKANG, Huan: BEH.HUAN, Jingwei: BEH.JINGWEI, Chongming: BEH.CHONGMING, Suanni: BEH.SUANNI, Zheng: BEH.ZHENG, Baize: BEH.BAIZE, Yinglong: BEH.YINGLONG };
-  const base = behCs.slice(behCs.indexOf('public abstract class PetBehaviour'), behCs.indexOf('public sealed class'));
-  const baseOf = prop => Number(base.match(new RegExp(`virtual float ${prop} => ([\\d.]+)f;`))[1]);
   for (const [name, ts] of Object.entries(table)) {
-    const body = classBody(name);
-    const c = csConsts(body);
-    for (const [k, v] of Object.entries(c)) assert.equal(ts[k], v, `${name}.${k}`);
+    const want = BEHAVIOUR_TABLE[name];
+    for (const [k, v] of Object.entries(want.consts)) assert.equal(ts[k], v, `${name}.${k}`);
     // TS 里多出来的键只能是 AttackInterval / AttackRange
-    for (const k of Object.keys(ts)) assert.ok(k in c || k === 'AttackInterval' || k === 'AttackRange', `${name}.${k} 在 C# 里没有`);
-    // 普攻间隔 / 攻击距离：C# 写的字面量或常量名；没写的用基类的 1 / 2
+    for (const k of Object.keys(ts)) assert.ok(k in want.consts || k === 'AttackInterval' || k === 'AttackRange', `${name}.${k} 在 C# 里没有`);
     const inst = BEH.BEHAVIOURS[name.toLowerCase()]();
-    for (const [prop, key] of [['AttackInterval', 'attackInterval'], ['AttackRange', 'attackRange']]) {
-      const m = body.match(new RegExp(`override float ${prop} => (\\w[\\w.]*?)f?;`));
-      const want = !m ? baseOf(prop) : /^[\d.]+$/.test(m[1]) ? Number(m[1]) : c[m[1]];
-      assert.equal(inst[key], want, `${name}.${prop}`);
-    }
+    assert.equal(inst.attackInterval, want.interval, `${name}.AttackInterval`);
+    assert.equal(inst.attackRange, want.range, `${name}.AttackRange`);
   }
-  // 讙的学舌台词、白泽 / 应龙的颜色常量
-  const phrases = classBody('Huan').match(/Phrases = \{ ([^}]+) \}/)[1].match(/"([^"]+)"/g).map(s => JSON.parse(s));
-  assert.deepEqual([...BEH.HUAN_PHRASES], phrases);
-  // 元素色（DamageTable.ElementColor）
-  const dmg = cs('Combat/Damage.cs');
-  for (const [el, name] of [['fire', 'Fire'], ['shock', 'Shock'], ['corrode', 'Corrode']]) {
-    const m = dmg.match(new RegExp(`Element\\.${name} => new Color\\(([^)]+)\\)`))[1].split(',').map(s => Number(s.trim().replace(/f$/, '')));
-    assert.deepEqual([...BEH.ELEMENT_RGB[el]], m, el);
-  }
+  // 讙的学舌台词（PetBehaviours.cs:223 Phrases）
+  assert.deepEqual([...BEH.HUAN_PHRASES], ['这边！', '来打我呀～', '喵！', '看这儿看这儿！', '（学你说话）', '嘿，打不着！']);
+  // 元素色（Combat/Damage.cs:167–169 DamageTable.ElementColor）
+  assert.deepEqual([...BEH.ELEMENT_RGB.fire], [1, 0.55, 0.2]);
+  assert.deepEqual([...BEH.ELEMENT_RGB.shock], [0.55, 0.75, 1]);
+  assert.deepEqual([...BEH.ELEMENT_RGB.corrode], [0.6, 0.9, 0.3]);
 });
 
 test('各只用到的玩家属性 / 状态 / 战斗钩子照 C#：狻猊护盾上限 +20、伤害减免 +40%；狰射速 +8%；白泽暴击伤害 +50% / +80%、改判弱点', () => {
-  assert.match(classBody('Suanni'), /Stats\?\.Add\(Source, Stat\.MaxShield, ShieldBonus\)/);
-  assert.match(classBody('Suanni'), /Stat\.DamageReduction, SkillReduction/);
-  assert.match(classBody('Zheng'), /Stat\.FireRatePct, StoneRate \* stacks\.Count/);
-  assert.match(classBody('Baize'), /Stat\.CritDamagePct, pet\.Awakened \? AwakenCritBonus : CritBonus/);
-  assert.match(classBody('Baize'), /Combat\.ForceWeakpoint\.Add/);
-  // 网页对应
+  // C#：PetBehaviours.cs:582 `Stats?.Add(Source, Stat.MaxShield, ShieldBonus)`、:685 `Stat.DamageReduction, SkillReduction`、
+  // :812 `Stat.FireRatePct, StoneRate * stacks.Count`、:911 `Stat.CritDamagePct, pet.Awakened ? AwakenCritBonus : CritBonus`、:892 `Combat.ForceWeakpoint.Add`
   const web = src('../src/pets/PetBehaviours.ts');
   assert.match(web, /stats\.add\('maxShield', SUANNI\.ShieldBonus, this\.source\)/);
   assert.match(web, /stats\.add\('damageReduction', C\.SkillReduction, this\.buffSource\)/);
@@ -239,6 +260,12 @@ test('当康丰年冲的路径判定：点到线段的水平距离（SegmentDist
 // ───────────── 毛发（FurBake 的规则）─────────────
 
 test('毛发遮罩：每骨倍数按通配符、后写的覆盖先写的（FurSettings.BoneMultiplier）；骨架坐标 → 模型空间', () => {
+  assert.deepEqual(Object.keys(FUR_DATA), ['huan', 'suanni', 'zheng', 'baize', 'yinglong'], '五只有毛发壳层（SK_Pet_*.art.json 的 fur 段）');
+  // 发丝格子密度缺省 = 1 / (0.35 × 毛长)（Pipeline/Editor/FurBake.cs:55）、壳层数缺省 16（:48，毛 / 羽 16 / 10）
+  for (const [id, f] of Object.entries(FUR_DATA)) {
+    assert.ok(Math.abs(f.density - 1 / (0.35 * f.length)) < 1e-3, `${id} 密度`);
+    assert.equal(f.shells, 16, `${id} 壳层`);
+  }
   const fur = FUR_DATA.yinglong;
   assert.equal(FUR.boneMultiplier(fur, 'head'), 0, '应龙只有鬃毛长毛');
   assert.equal(FUR.boneMultiplier(fur, 'mane_3'), 1);
@@ -249,10 +276,9 @@ test('毛发遮罩：每骨倍数按通配符、后写的覆盖先写的（FurSe
   assert.equal(FUR.boneMultiplier(huan, 'bell'), 0);
   // Blender 骨架（前 −Y、左 +X、上 +Z）→ glTF 模型（前 +Z、左 +X、上 +Y）
   assert.deepEqual(FUR.rigToModel([0.1, -0.3, 0.4]).toArray(), [0.1, 0.4, 0.3]);
-  // 壳层材质的根部压暗 / 发梢提亮照 M_Pet_*_FurShell.mat
-  const mat = src('../unity/Assets/Art/Characters/SK_Pet_Huan/M_Pet_Huan_FurShell.mat');
-  assert.equal(FUR.FUR_ROOT_SHADE, Number(mat.match(/_FurRootShade: ([\d.]+)/)[1]));
-  assert.equal(FUR.FUR_TIP_LIGHT, Number(mat.match(/_FurTipLight: ([\d.]+)/)[1]));
+  // 壳层材质的根部压暗 / 发梢提亮（Art/Characters/SK_Pet_*/M_Pet_*_FurShell.mat 第 43 行 _FurRootShade: 0.8、第 46 行 _FurTipLight: 0.06，五只相同）
+  assert.equal(FUR.FUR_ROOT_SHADE, 0.8);
+  assert.equal(FUR.FUR_TIP_LIGHT, 0.06);
 });
 
 // ───────────── RunSuspendTests（灵宠那几条）─────────────
@@ -290,10 +316,8 @@ function sampleRun(over = {}) {
 }
 
 test('RoundTripKeepsEveryField 的灵宠：续玩档写盘再读回，id / 灵契等级 / 经验 / 灵技冷却剩余原样（RunSuspendTests）', () => {
-  const unity = csTest('RunSuspendTests.cs');
-  const m = unity.match(/run\.pet = new PetSave \{ id = PetLibrary\.All\[0\]\.id, level = (\d+), xp = ([\d.]+)f, cooldownLeft = ([\d.]+)f \}/);
-  assert.ok(m, 'Unity 测试里的样本');
-  const [level, xp, cd] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  // Unity Tests/RunSuspendTests.cs:79 `run.pet = new PetSave { id = PetLibrary.All[0].id, level = 3, xp = 7.5f, cooldownLeft = 4.25f };`（:125–128 逐项断言）
+  const [level, xp, cd] = [3, 7.5, 4.25];
   const store = fresh();
   const run = sampleRun({ pet: { id: DEFS.PET_LIBRARY[0].id, level, xp, cooldownLeft: cd } });
   assert.equal(Suspend.write(run, false), true);
@@ -309,7 +333,7 @@ test('RoundTripKeepsEveryField 的灵宠：续玩档写盘再读回，id / 灵�
 });
 
 test('坏档：灵宠等级为负 / 经验、冷却不是数 = 灵宠数值不合法（RunSuspend.Validate）', () => {
-  assert.match(cs('Core/RunSuspend.cs'), /run\.pet\.level < 0 \|\| !float\.IsFinite\(run\.pet\.xp\) \|\| !float\.IsFinite\(run\.pet\.cooldownLeft\)/);
+  // Unity Core/RunSuspend.cs:335 `run.pet.level < 0 || !float.IsFinite(run.pet.xp) || !float.IsFinite(run.pet.cooldownLeft)`
   const store = fresh();
   Suspend.write(sampleRun({ pet: { id: 'huan', level: 2, xp: 1, cooldownLeft: 0 } }), false);
   const text = JSON.parse(store.m.get('spiritfire.save/run.json'));
@@ -324,8 +348,8 @@ test('坏档：灵宠等级为负 / 经验、冷却不是数 = 灵宠数值不�
 });
 
 test('图鉴：灵宠条目 = 灵宠名录（PetLibrary 的顺序），副标题「品阶 · 称号」（RunSuspendTests / CodexCatalog）', () => {
-  assert.match(csTest('RunSuspendTests.cs'), /Assert\.AreEqual\(PetLibrary\.All\.Length, CodexCatalog\.Of\(CodexKind\.Pet\)\.Count\)/);
-  assert.match(cs('Progression/Codex.cs'), /subtitle = \$"\{PetRarities\.Name\(p\.rarity\)\} · \{p\.title\}"/);
+  // Unity Tests/RunSuspendTests.cs:532 `Assert.AreEqual(PetLibrary.All.Length, CodexCatalog.Of(CodexKind.Pet).Count)`；
+  // Progression/Codex.cs:298 `subtitle = $"{PetRarities.Name(p.rarity)} · {p.title}"`
   const pets = DEFS.PET_LIBRARY.map(DEFS.defView);
   const cat = new CX.CodexCatalog({ weapons: [], scrolls: [], enemies: [], pets, rarityName: () => '', rarityColor: () => [1, 1, 1, 1], elementColor: () => [1, 1, 1, 1] });
   assert.equal(cat.of('pet').length, DEFS.PET_LIBRARY.length);
@@ -337,8 +361,7 @@ test('图鉴：灵宠条目 = 灵宠名录（PetLibrary 的顺序），副标题
 // ───────────── HudWidgetTests ─────────────
 
 test('HitMarkerOnlyForDirectPlayerHits：灵宠的命中 / 击杀不出命中标记（还有跳伤、衍生、反应、静默处决）', () => {
-  const unity = csTest('HudWidgetTests.cs');
-  assert.match(unity, /CountsAsPlayerHit\(new DamageInfo \{ source = DamageSource\.Pet \}\), Is\.False, "灵宠"/);
+  // Unity Tests/HudWidgetTests.cs:79 `CountsAsPlayerHit(new DamageInfo { source = DamageSource.Pet }), Is.False, "灵宠"`
   const hit = (request) => CrosshairWidget.countsAsPlayerHit({ request, dealt: 5 });
   assert.equal(hit({ source: 'weapon' }), true);
   assert.equal(hit({ source: 'skill' }), true);
@@ -347,8 +370,7 @@ test('HitMarkerOnlyForDirectPlayerHits：灵宠的命中 / 击杀不出命中标
   assert.equal(hit({ source: 'weapon', procDepth: 1 }), false, '弹射 / 衍生');
   assert.equal(hit({ source: 'explosion', tags: ['explosion', 'reaction'] }), false, '反应伤害');
   assert.equal(hit({ source: 'weapon', tags: ['purge'] }), false, '静默处决');
-  // HUD 部件注册表里有灵宠面板（id 'pet'，order 50 = Unity [HudWidget("pet", Order = 50)]）
-  assert.match(cs('UI/Widgets/PetPanelWidget.cs'), /\[HudWidget\("pet", Order = 50\)\]/);
+  // HUD 部件注册表里有灵宠面板（id 'pet'，order 50 = Unity UI/Widgets/PetPanelWidget.cs:13 [HudWidget("pet", Order = 50)]）
   const panel = src('../src/ui/hud/PetPanelWidget.ts');
   assert.match(panel, /readonly id = 'pet';/);
   assert.match(panel, /override readonly order = 50;/);
@@ -357,9 +379,8 @@ test('HitMarkerOnlyForDirectPlayerHits：灵宠的命中 / 击杀不出命中标
 // ───────────── 嘲讽（EnemyAI.Taunt / HitTarget / Decoys）─────────────
 
 test('嘲讽：被嘲讽的敌人走位 / 瞄准 / 近战都对着诱饵，近战打在诱饵上无效（冒「格挡」），到时或诱饵没了就还给玩家', async () => {
-  const unity = cs('Enemies/EnemyAI.cs');
-  assert.match(unity, /tauntUntil = taunt == decoy \? Mathf\.Max\(tauntUntil, Time\.time \+ seconds\) : Time\.time \+ seconds;/);
-  assert.match(unity, /blockTextAt = Time\.time \+ 0\.45f;/);
+  // Unity Enemies/EnemyAI.cs:857 `tauntUntil = taunt == decoy ? Mathf.Max(tauntUntil, Time.time + seconds) : Time.time + seconds;`、
+  // :884 `blockTextAt = Time.time + 0.45f;`
   const g2 = await tsGraph({});
   try {
     const { EnemyBase } = await g2.load('enemies/EnemyBase.ts');

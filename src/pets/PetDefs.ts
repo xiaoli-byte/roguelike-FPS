@@ -1,6 +1,6 @@
 /**
  * 灵宠定义（照译 Unity G/Pets/PetDefs.cs：PetRarities、PetDef、PetLibrary）。
- * 八只灵宠的数据由 scripts/web/export-pet-defs.mjs 从 C# 导出到 PetDefsData.ts（不手抄）；这里只加查表、抽取与颜色换算。
+ * 八只灵宠的数据在 PetDefsData.ts（从 C# 一次性转换入库，之后以它为准）；这里只加查表、抽取与颜色换算。
  * 具体数值（伤害、范围、间隔）写在各自的行为里（PetBehaviours.ts，常量与 C# 同名，对照测试逐个比）。
  * 本文件不 import 运行时模块（测试按 data: URL 直接加载）。
  */

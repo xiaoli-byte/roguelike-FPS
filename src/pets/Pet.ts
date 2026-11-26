@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type { DamageRequest, Element, GameContext, IEnemy } from '../core/types';
-import { PET_TAG } from '../combat/PetContract';
+import { petHit } from '../combat/PetContract';
 import { type PetDef, type RGB, PET_GOLD, rgbHex } from './PetDefs';
 import { type PetModel, buildPetModel, disposePetModel, modelRigged, socketOf } from './PetVisuals';
 import { glowSprite, type PetFxSystem } from './PetFx';
@@ -968,12 +968,11 @@ export class Pet {
     return !this.ctx.world.segmentBlocked(this.mouth(_v1), e.getBodyCenter(_v2));
   }
 
-  /** 灵宠伤害请求：数值 × 灵契倍率，来源 pet（PetContract.petHit 的字段） */
+  /** 灵宠伤害请求：PetContract.petHit（来源 pet、不随机暴击、带 pet 标签），数值 × 灵契倍率；depth = 衍生深度（闪电跳跃） */
   info(amount: number, element: Element, statusChance: number, depth = 0): DamageRequest {
-    return {
-      base: amount * this.damageMult, element, source: 'pet', elementChance: statusChance, canCrit: false,
-      tags: [PET_TAG], procDepth: depth,
-    };
+    const req = petHit(amount * this.damageMult, element, statusChance);
+    req.procDepth = depth;
+    return req;
   }
 
   hit(target: IEnemy | null, amount: number, opts: { element?: Element; statusChance?: number; knockback?: number; forceCrit?: boolean; from?: THREE.Vector3; depth?: number } = {}) {

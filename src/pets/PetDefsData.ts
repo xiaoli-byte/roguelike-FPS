@@ -1,5 +1,5 @@
-// 自动生成：node scripts/web/export-pet-defs.mjs（读 unity/Assets/Game/Scripts/Pets/PetDefs.cs、Combat/Damage.cs 的元素色、
-// Art/Characters/SK_Pet_*/*.art.json 的 fur 段与 Pipeline/Editor/FurBake.cs 的缺省值）。不要手改；改了 C# 重新导出，--check 核对。
+// 灵宠定义数据（M9）：2026-11 从 Unity 的 PetDefs.cs（PetRarities、PetLibrary.All）、Damage.cs 的元素色、SK_Pet_*.art.json 的 fur 段与
+// FurBake.cs 的缺省值一次性转换入库；之后以这份为准，直接改这里（网页不读 unity/，unity/ 以后会整个删掉）。
 // 颜色是 Unity 的 0–1 线性分量 [r, g, b]；rarity 0 凡灵 / 1 灵兽 / 2 神兽；behaviour = 行为类名（去掉 Behaviour、小写）。
 
 /** 品阶（PetRarities）：名字、颜色、抽取权重、神兽金 */

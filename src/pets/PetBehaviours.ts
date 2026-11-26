@@ -10,7 +10,7 @@ import type { RoutineGen } from './Routine';
  * 一只灵宠的能力（照译 Unity G/Pets/PetBehaviours.cs；docs/pet-system.md 第 4 节）：普攻（attack，按 attackInterval 由 Pet 调度）、
  * 被动（onBind 登记、tick 每帧）、灵技 G（skill，冷却由 Pet 管）、3 级觉醒（onAwaken）。
  * 玩家身上的加成一律登记在来源「pet:<id>」下；事件监听、Combat 的输出修饰器 / 改判弱点在 unbind 里撤掉（漏撤会一直生效）。
- * 数值为灵契 1 级，伤害再乘 Pet.damageMult。常量对象的键名与 C# 常量同名（tests/unity-pets.test.mjs 逐个读 C# 比）。
+ * 数值为灵契 1 级，伤害再乘 Pet.damageMult。常量对象的键名与 C# 常量同名（tests/unity-pets.test.mjs 里照 C# 抄了一份期望值逐个比）。
  * 动作：出手时 playAct（状态名见 docs/pet-system.md 7.3），玩法时机仍由这里的代码决定；程序前冲 / 甩尾照常叠上。
  * 特效：Unity ShotFx / Telegraph / Lightning → ctx.fx 的 impact / ring / groundWarning / beam / lightning；光晕、光柱、标记走 PetFx。
  */
