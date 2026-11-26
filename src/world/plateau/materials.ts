@@ -21,6 +21,13 @@ export const WORLD_UNIFORMS = {
   uContactTex: { value: (() => { const t = new THREE.DataTexture(new Uint8Array([255]), 1, 1, THREE.RedFormat); t.needsUpdate = true; return t as THREE.Texture; })() },
   uContactXf: { value: new THREE.Vector4(0, 0, 1, 1) },
   uContactOn: { value: typeof location !== 'undefined' && new URLSearchParams(location.search).get('contact') === '0' ? 0 : 1 },
+  /** 遮挡图（coverMap.ts）和它在世界里的位置（minX, minZ, 1/宽, 1/深）；没拍之前什么都不遮 */
+  uCoverTex: { value: (() => { const t = new THREE.DataTexture(new Float32Array([-1e4]), 1, 1, THREE.RedFormat, THREE.FloatType); t.needsUpdate = true; return t as THREE.Texture; })() },
+  uCoverXf: { value: new THREE.Vector4(0, 0, 1, 1) },
+  /** 湿度 0..1（rain.ts：下雨时渐湿、雨停慢慢干）、积水映的天色、开关（网址 wet=0） */
+  uWet: { value: 0 },
+  uRainSky: { value: new THREE.Vector3(0.6, 0.65, 0.72) },
+  uWetOn: { value: typeof location !== 'undefined' && new URLSearchParams(location.search).get('wet') === '0' ? 0 : 1 },
   /** 地形 / 岩壳天空可见度（AO）的强度：1 = 开，0 = 关（网址 ao=0，对照用） */
   uSkyAo: { value: typeof location !== 'undefined' && new URLSearchParams(location.search).get('ao') === '0' ? 0 : 1 },
   /** 风场：飞廉巢穴 (x, z, 影响半径) 与基础风向（spec.WIND，见 wind.ts） */
@@ -44,6 +51,43 @@ const CONTACT_GLSL = /* glsl */ `
   float grit = (1.0 - smoothstep(0.2, 1.6, cd)) * step(0.72, pfHash(floor(vPfWorld.xz * 7.0))) * uContactOn;
   diffuseColor.rgb = mix(diffuseColor.rgb, uLayerCol[1] * 1.15, grit * 0.4);
 }`;
+
+/** 遮挡图（coverMap.ts）：某处头顶最高的表面的世界高度（要声明 uCoverTex、uCoverXf） */
+export const COVER_GLSL = /* glsl */ `
+float coverAt(vec2 xz) {
+  vec2 uv = vec2((xz.x - uCoverXf.x) * uCoverXf.z, 1.0 - (xz.y - uCoverXf.y) * uCoverXf.w);
+  if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) return -1e4;
+  return texture2D(uCoverTex, uv).r;
+}`;
+
+/**
+ * 淋湿（rain.ts 调 uWet）：头顶没遮挡的地方变暗、略加饱和，檐下、桥下是干的。
+ * 地形（splat）另外在平坦的低洼处积水：积水压暗、映出天色（uRainSky），水里一格格雨点涟漪；雪上、草上不积。
+ */
+function wetGlsl(splat: boolean): string {
+  return `
+{
+  if (uWet > 0.001) {
+    float exposed = 1.0 - smoothstep(0.3, 1.2, coverAt(vPfWorld.xz) - vPfWorld.y);
+    float k = uWet * exposed * uWetOn;
+    float lw = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));
+    diffuseColor.rgb = mix(diffuseColor.rgb, mix(vec3(lw), diffuseColor.rgb, 1.15) * 0.7, k * 0.9);
+${splat ? `    vec4 pw = vMat / max(1e-3, vMat.x + vMat.y + vMat.z + vMat.w);
+    float flatG = smoothstep(0.965, 0.992, normalize(vPfN).y);
+    float pn = pfNoise(vPfWorld.xz * 0.16) * 0.7 + pfNoise(vPfWorld.xz * 0.61 + 7.0) * 0.3;
+    float puddle = smoothstep(0.6, 0.66, pn) * flatG * (1.0 - pw.z) * (1.0 - 0.7 * pw.x) * k * smoothstep(0.35, 0.8, uWet);
+    if (puddle > 0.001) {
+      vec2 cell = floor(vPfWorld.xz / 0.45);
+      vec2 f = fract(vPfWorld.xz / 0.45) - 0.5 - (vec2(pfHash(cell + 1.3), pfHash(cell + 2.7)) - 0.5) * 0.4;
+      float ph = fract(uTime * 1.5 + pfHash(cell) * 7.0);
+      float ringv = exp(-pow((length(f) - ph * 0.4) / 0.035, 2.0)) * (1.0 - ph);
+      float fres = 0.05 + 0.95 * pow(1.0 - clamp(normalize(cameraPosition - vPfWorld).y, 0.0, 1.0), 4.0);
+      vec3 refl = uRainSky * (0.45 + 0.55 * fres) + vec3(ringv * 0.22);
+      diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 0.45 + refl * 0.7, puddle * 0.85);
+    }
+` : ''}  }
+}`;
+}
 
 const NOISE_GLSL = /* glsl */ `
 float pfHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -149,7 +193,12 @@ varying vec3 vPfWorld;
 ${opts.splat ? 'varying vec4 vMat; varying vec3 vPfN; uniform sampler2D tDGrass; uniform sampler2D tDRock; uniform sampler2D tDSnow; uniform sampler2D tDDirt; uniform vec3 uLayerCol[4]; uniform float uGroundOn;' : ''}
 ${opts.contact ? 'uniform sampler2D uContactTex; uniform vec4 uContactXf; uniform float uContactOn;' : ''}
 ${opts.sky ? 'varying float vPfSky; uniform float uSkyAo;' : ''}
-${NOISE_GLSL}`);
+uniform sampler2D uCoverTex; uniform vec4 uCoverXf; uniform float uWet; uniform vec3 uRainSky; uniform float uWetOn;
+${NOISE_GLSL}
+${COVER_GLSL}`);
+    // 淋湿：先登记（后登记的插在前面），所以它在 splat / 交界 / 细节之后执行
+    fs = fs.replace('#include <color_fragment>', `#include <color_fragment>
+${wetGlsl(!!opts.splat)}`);
     if (opts.splat) {
       const t = detailTextures();
       Object.assign(shader.uniforms, { tDGrass: { value: t.grass }, tDRock: { value: t.rock }, tDSnow: { value: t.snow }, tDDirt: { value: t.dirt } });

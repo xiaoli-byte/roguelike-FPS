@@ -3,6 +3,8 @@
  * 不依赖游戏主循环：地形、地标、经幡、散布、水、烟、远景都在 src/world/plateau/ 里，
  * 这里只负责组装、输入、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md。
  */
+import { bakeCoverMap } from '../world/plateau/coverMap';
+import { Rain } from '../world/plateau/rain';
 import { buildContactField } from '../world/plateau/contact';
 import { SkyAmbient } from '../world/plateau/skyAmbient';
 import { FilmPost } from '../render/FilmPost';
@@ -113,6 +115,10 @@ skyAmbient.setEnabled(softOn);
 
 // 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
 buildContactField(scene, world, terrain);
+// 俯视遮挡图（plateau/coverMap.ts）+ GPU 雨（plateau/rain.ts）：檐下、树下、桥下没雨、是干的；网址 wet=0 关淋湿
+bakeCoverMap(renderer, scene, terrain, [grass.group, monsters.group, lords.group]);
+const rain = new Rain(scene);
+weather.builtinRain = false;
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────
@@ -677,6 +683,7 @@ function frame(now: number, manual = false, render = true): void {
   for (const a of anim) a.update(time, dt);
   monsters.update(time, dt);
   weather.update(dt, camera.position);
+  rain.update(camera, weather.level, WORLD_UNIFORMS.uWind.value, scene.fog ? (scene.fog as THREE.Fog).color : new THREE.Color('#888'), renderer.domElement.width, renderer.domElement.height, dt);
   skyAmbient.update();
   if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: reloadPressed, skillQ, skillE, pick, anyKey });
   else lords.update(time, dt, weather.level);

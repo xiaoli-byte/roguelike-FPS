@@ -101,6 +101,24 @@ void main() {
   uv.xy += w * uRipple * uv.w;
   float rCrest, rFoam;
   vec2 rg = rippleField(p, t, rCrest, rFoam);
+  // 下雨：两层错开的格子里一个个雨点涟漪，雷暴越大越密（uFarK.z = 雷暴程度）
+  if (uFarK.z > 0.01) {
+    for (int L = 0; L < 2; L++) {
+      float sz = L == 0 ? 0.9 : 1.37;
+      vec2 q = p / sz + float(L) * 0.37;
+      vec2 cell = floor(q);
+      float rnd = h(cell + float(L) * 17.0);
+      if (rnd > uFarK.z * 0.85) continue;
+      // 雨点圈：半径扩到约 0.24 格（20–35 cm）就散，散得快（平方淡出），只轻轻掀一点白
+      vec2 dv = fract(q) - 0.5 - (vec2(h(cell + 3.1), h(cell + 5.7)) - 0.5) * 0.6;
+      float d = length(dv);
+      float ph = fract(t * (0.9 + rnd) + rnd * 7.0);
+      float x = d - ph * 0.24;
+      float a = exp(-x * x / 0.0008) * (1.0 - ph) * (1.0 - ph);
+      rg += (dv / max(d, 1e-3)) * a * cos(x * 80.0) * 0.4;
+      rCrest += a * 0.35;
+    }
+  }
   uv.xy += rg * 0.13 * uv.w;
   vec4 tr = texture2DProj(tDiffuse, uv);
   vec3 view = normalize(cameraPosition - vWorld);

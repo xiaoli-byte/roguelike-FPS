@@ -20,6 +20,8 @@ const RAIN = 2600;
 export class Weather {
   /** 目标天气：true = 雷暴 */
   stormy = false;
+  /** 老的线段雨（GPU 雨 rain.ts 接上后关掉） */
+  builtinRain = true;
   private storm = 0;
   private flash = 0;
   private nextStrike = 3;
@@ -83,7 +85,7 @@ export class Weather {
     fog.near = clearFog.near + (60 - clearFog.near) * s;
     fog.far = clearFog.far + (1300 - clearFog.far) * s;
     // 雨：往下（略斜）落，落到盒子底部就回到顶上
-    this.rain.visible = s > 0.02;
+    this.rain.visible = this.builtinRain && s > 0.02;
     this.rainMat.opacity = 0.32 * s;
     if (this.rain.visible) {
       this.rain.position.copy(camera);

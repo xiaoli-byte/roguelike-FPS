@@ -4,6 +4,8 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { bakeCoverMap } from '../world/plateau/coverMap';
+import { Rain } from '../world/plateau/rain';
 import { buildContactField } from '../world/plateau/contact';
 import { SkyAmbient } from '../world/plateau/skyAmbient';
 import { FilmPost } from '../render/FilmPost';
@@ -142,6 +144,10 @@ for (const m of [lakeMist.mesh, footMist.mesh, clouds.mesh]) {
 scene.add(lakeMist.mesh, footMist.mesh, clouds.mesh);
 // 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
 buildContactField(scene, world, terrain);
+// 俯视遮挡图（plateau/coverMap.ts）+ GPU 雨（plateau/rain.ts）：檐下、树下、桥下没雨、是干的；网址 wet=0 关淋湿
+bakeCoverMap(renderer, scene, terrain, [grass.group]);
+const rain = new Rain(scene);
+weather.builtinRain = false;
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────
@@ -422,6 +428,7 @@ function tick(dt: number, render: boolean): void {
   grass.update(camera.position);
   for (const a of anim) a.update(time, dt);
   weather.update(dt, camera.position);
+  rain.update(camera, weather.level, WORLD_UNIFORMS.uWind.value, scene.fog ? (scene.fog as THREE.Fog).color : new THREE.Color('#888'), renderer.domElement.width, renderer.domElement.height, dt);
   skyAmbient.update();
   Atmosphere.update(time);
   lake.update();
