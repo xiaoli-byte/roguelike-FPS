@@ -41,12 +41,14 @@ function room(id: string, label: string, center: WhiteboxPoint, radius: number) 
 
 /**
  * 藏宝点的奖励串（Unity RewardRegistry：第一段是种类）→ 网页宝箱奖励：带参数的武器奖励（'weapon:min=1' / 'weapon:stormpod:1'）原样交给
- * LootSystem.grant 解析（rewardRules.parseWeaponReward）；秘卷 / 治疗 / 强化按种类；网页没有的（灵宠 pet…）退成灵石。
+ * LootSystem.grant 解析（rewardRules.parseWeaponReward）；灵兽封印（'pet' / 'pet:<id>' / 'pet:rarity=N'，M9 灵宠）原样；秘卷 / 治疗 / 强化按种类；
+ * 网页没有的退成灵石。
  * 这里不 import rewardRules：测试按模块名打桩
  */
 function cacheReward(reward: string): NonNullable<WhiteboxPlan['rewards'][number]['reward']> {
   const key = reward.split(':')[0];
   if (key === 'weapon') return reward === 'weapon' ? 'weapon' : reward as `weapon:${string}`;
+  if (key === 'pet') return reward === 'pet' ? 'pet' : reward as `pet:${string}`;
   return key === 'scroll' || key === 'heal' || key === 'upgrade' ? key : 'coins';
 }
 

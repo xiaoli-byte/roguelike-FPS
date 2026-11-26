@@ -1,5 +1,5 @@
 /**
- * M 键全图（照译 Unity G/UI/Screens/MapScreen.cs，样式 css/unity/map.css 的 .sf-map；旧行旅图 AdventureHUD 放大成全屏界面）：
+ * M 键全图（照译 Unity G/UI/Screens/MapScreen.cs，样式 css/screens/map.css 的 .sf-map；旧行旅图 AdventureHUD 放大成全屏界面）：
  *   · 底图 = 关卡的俯视图（AdventureInfo.mapImage，北朝上），按它盖住的世界范围把世界 XZ 映射到图上；
  *     没有俯视图的关卡铺墨底点阵，范围取地点与玩家的包围盒；
  *   · 叠层：发现过的地点（徽记 + 名字，颜色同罗盘条；已完成的压暗）、当前目标（金圈呼吸）、玩家（青色箭头 + 视野扇，朝向 = 视线）；

@@ -5,6 +5,8 @@ import {
 import { VICTORY_ESSENCE_BONUS, talentTotalCost } from './Meta';
 import { playable } from './RunPlan';
 import { STAGES, canonical, type StageSpec } from './StagePlan';
+import type { EnemyDef } from '../core/types';
+import { allEnemyIds, getEnemyDef } from '../enemies/Registry';
 
 /**
  * I3 平衡模型（Unity G/Core/BalanceModel.cs 照译 + EconomyConfig.Project 的经济投影；docs/balance.md；docs/threejs-migration.md 4.7）：
@@ -15,9 +17,9 @@ import { STAGES, canonical, type StageSpec } from './StagePlan';
  *   · 补给营：{@link CAMPS} 的预算 = 上一家店之后挣到的灵石，要够买计划里的强化和一瓶药，又买不下整店的货。
  * 只算期望值：不含商店消费以外的花销、灵宠、灵石获取天赋（投影里另给）、炭童复燃和蜃楼蟾分身这类不掉落的单位。
  *
- * 敌人 / 首领的数值不在这个模块里：{@link setBalanceData} 把 defs.json（public/assets/unity-gameplay/defs.json，Unity 导出的定义表）
- * 或者任何同形状的数据喂进来——测试直接读 defs.json，游戏里 ?debug 的 __balance() 现读一遍。首领击杀用时（依赖四个首领的定档模型）
- * 在 BalanceBosses.ts。
+ * 敌人 / 首领的数值不在这个模块里：{@link setBalanceData} 把定义表喂进来——游戏里 ?debug 的 __balance() 取网页的敌人注册表
+ * （{@link registryBalanceData}），测试读 Unity 冻结的定义表（tests/fixtures/gameplay-defs.json，同形状；两边的值由 tests/unity-defs-parity 对照）。
+ * 首领击杀用时（依赖四个首领的定档模型）在 BalanceBosses.ts。
  */
 
 // ───────────── 定义表（注入）─────────────
@@ -43,10 +45,25 @@ export interface BalanceBoss {
 let enemies = new Map<string, BalanceEnemy>();
 let bosses = new Map<string, BalanceBoss>();
 
-/** 换上定义表（defs.json 的 enemies / bosses，或同形状的数据）；null = 清空 */
+/** 换上定义表（{@link balanceDataFromDefs} 的结果、冻结定义表的 enemies / bosses，或同形状的数据）；null = 清空 */
 export function setBalanceData(data: { enemies?: readonly BalanceEnemy[]; bosses?: readonly BalanceBoss[] } | null): void {
   enemies = new Map((data?.enemies ?? []).map(e => [e.id, e]));
   bosses = new Map((data?.bosses ?? []).map(b => [b.id, b]));
+}
+
+/** 网页的敌人定义 → 定义表：首领（isBoss）只要奖励（灵石 / 魂晶），其余要生命、护甲、护盾、灵石、魂晶、冲锋 */
+export function balanceDataFromDefs(defs: Iterable<EnemyDef>): { enemies: BalanceEnemy[]; bosses: BalanceBoss[] } {
+  const out: { enemies: BalanceEnemy[]; bosses: BalanceBoss[] } = { enemies: [], bosses: [] };
+  for (const d of defs) {
+    if (d.isBoss) out.bosses.push({ id: d.id, rewards: { coins: d.coins, essence: d.essence } });
+    else out.enemies.push({ id: d.id, hp: d.hp, armor: d.armor ?? 0, shield: d.shield ?? 0, coins: d.coins, essence: d.essence, charger: d.charger });
+  }
+  return out;
+}
+
+/** 敌人注册表里现有的全部定义（游戏启动时已登记）→ 定义表 */
+export function registryBalanceData(): { enemies: BalanceEnemy[]; bosses: BalanceBoss[] } {
+  return balanceDataFromDefs(allEnemyIds().map(id => getEnemyDef(id)).filter((d): d is EnemyDef => !!d));
 }
 
 export function balanceEnemy(id: string): BalanceEnemy | null {

@@ -107,10 +107,11 @@ export class CrosshairWidget extends HudWidget {
 
   // ───────────── 命中标记 ─────────────
 
-  /** 这一下算不算玩家的命中（标记）：持续伤害跳伤、衍生伤害（弹射、反应）不算 */
+  /** 这一下算不算玩家的命中（标记）：灵宠（M9）、持续伤害跳伤、衍生伤害（弹射、反应）、静默处决不算（Unity CrosshairWidget.CountsAsPlayerHit） */
   static countsAsPlayerHit(r: DamageResult): boolean {
     const req = r.request;
-    return req.source !== 'status' && (req.procDepth ?? 0) === 0 && !(req.tags?.includes('reaction') ?? false);
+    return req.source !== 'status' && req.source !== 'pet' && (req.procDepth ?? 0) === 0 && !(req.tags?.includes('reaction') ?? false)
+      && !(req.tags?.includes('purge') ?? false);
   }
 
   private onDamaged(r: DamageResult): void {
@@ -126,8 +127,8 @@ export class CrosshairWidget extends HudWidget {
   }
 
   private onKilled(r: DamageResult): void {
-    // 静默处决（清场）不出标记
-    if (r.request.tags?.includes('purge')) return;
+    // 静默处决（清场）、灵宠的击杀不出标记
+    if (r.request.tags?.includes('purge') || r.request.source === 'pet') return;
     this.hitKind = HitKind.Kill;
     this.hitAt = performance.now() / 1000;
     this.hitActive = true;

@@ -191,8 +191,6 @@ export class PostStack {
     ctx.events.on('stage:loaded', () => this.attachStage());
     postScene.onChange(() => this.prime());
     current = this;
-    // 先在后台读 volumes.json（57 KB），第一次进关时已经在缓存里
-    if (this.supported && !this.disabled) void postScene.fetchDocument();
 
     if (search.has('debug') && typeof window !== 'undefined') {
       (window as unknown as Record<string, unknown>).__post = {
@@ -295,7 +293,7 @@ export class PostStack {
       postScene.clear();
       return;
     }
-    void postScene.load(root.name.slice(prefix.length), root);
+    postScene.load(root.name.slice(prefix.length), root);
   }
 
   /**

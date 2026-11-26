@@ -26,9 +26,10 @@ const stagePlanUrl = await ts('../src/progression/StagePlan.ts', { '../world/Uni
 const runRouteUrl = await ts('../src/progression/RunRoute.ts', { './RunRng': runRngUrl, './StagePlan': stagePlanUrl });
 const runPlanUrl = await ts('../src/progression/RunPlan.ts', { './RunRng': runRngUrl, './RunRoute': runRouteUrl, './StagePlan': stagePlanUrl });
 const levelLayoutUrl = await ts('../src/world/LevelLayout.ts', { '../progression/RunRng': runRngUrl, '../progression/RunPlan': runPlanUrl });
-// 关卡目标（灵火坛 / 据点首领，M6 三领主）：真模块；objectives.json 在 node 里读不到（fetch 相对路径）→ 关卡照旧终点战清关
+// 关卡目标（灵火坛 / 据点首领，M6 三领主）：真模块 + 真表（src/world/objectives/data.ts）→ 4-1 / 4-3 走灵火坛目标，其余关照旧终点战清关
 const levelObjectivesUrl = await ts('../src/world/objectives/LevelObjectives.ts', {
   '../../progression/Economy': economyUrl, './SpiritAltar': await ts('../src/world/objectives/SpiritAltar.ts'),
+  './data': await ts('../src/world/objectives/data.ts'),
 });
 const directorUrl = await ts('../src/world/StageDirector.ts', {
   './CombatDirector': combatDirectorUrl,
@@ -91,9 +92,27 @@ for (const stage of manifest.stages.filter(stage => stage.available)) test(`${st
   await director.load({ chapter: stage.chapter - 1, index: stage.index, type: stage.kind, reward: stage.reward, theme: 'desert', map: stage.id });
   assert.ok(director.arena);
   assert.ok(director.whitebox);
-  // 藏宝点的奖励串（Unity RewardRegistry）：带参数的武器奖励原样交给 LootSystem.grant（weapon:min=1 不再退成金币），强化照旧是强化，网页没有的灵宠退成灵石
+  // 藏宝点的奖励串（Unity RewardRegistry）：带参数的武器奖励原样交给 LootSystem.grant（weapon:min=1 不再退成金币），强化照旧是强化，
+  // 灵兽封印（M9 灵宠）原样，网页没有的退成灵石
   const doc = JSON.parse(await readFile(new URL(`../public/assets/unity-levels/scenes/${stage.id}.json`, import.meta.url), 'utf8'));
-  const want = doc.caches.map(c => (c.reward.startsWith('weapon') ? c.reward : ['scroll', 'heal', 'upgrade'].includes(c.reward.split(':')[0]) ? c.reward.split(':')[0] : 'coins'));
+  const want = doc.caches.map(c => (c.reward.startsWith('weapon') || c.reward.split(':')[0] === 'pet' ? c.reward : ['scroll', 'heal', 'upgrade'].includes(c.reward.split(':')[0]) ? c.reward.split(':')[0] : 'coins'));
   assert.deepEqual(director.whitebox.plan.rewards.map(r => r.reward), want, `${stage.id}：藏宝点奖励`);
+  // 关卡目标（src/world/objectives/data.ts）：4-1 / 4-3 走灵火坛 N 选 M、没有终点战（清关交给目标），4-1 的三领主是据点战；其余关照旧终点战清关
+  const objective = director.levelObjective;
+  const finals = director.whiteboxFights.filter(f => f.final).map(f => f.id);
+  if (stage.id === '4-1' || stage.id === '4-3') {
+    assert.ok(objective, `${stage.id}：走关卡目标`);
+    assert.equal(objective.needed, 3, `${stage.id}：点亮 3 座`);
+    assert.equal(objective.altars.length, stage.id === '4-1' ? 6 : 5, `${stage.id}：灵火坛座数`);
+    assert.equal(objective.describe(), `点亮灵火 0/3（共 ${objective.altars.length} 处，任选）`);
+    assert.deepEqual(finals, [], `${stage.id}：没有终点战`);
+  } else {
+    assert.equal(objective, null, `${stage.id}：不走关卡目标`);
+    assert.ok(finals.length > 0, `${stage.id}：终点战清关`);
+  }
+  if (stage.id === '4-1') {
+    const lords = director.whiteboxFights.filter(f => f.id.startsWith('boss:')).map(f => f.label);
+    assert.equal(lords.length, 3, '4-1：三个据点领主');
+  }
   director.unload();
 });

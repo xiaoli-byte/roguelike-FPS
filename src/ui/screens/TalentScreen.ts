@@ -1,5 +1,5 @@
 /**
- * 局外天赋（照译 Unity G/UI/Screens/TalentScreen.cs，样式 css/unity/menu.css 的 .sf-talents）：花魂晶升级，对之后的每一局永久生效。
+ * 局外天赋（照译 Unity G/UI/Screens/TalentScreen.cs，样式 css/screens/menu.css 的 .sf-talents）：花魂晶升级，对之后的每一局永久生效。
  * 两列天赋行：名字 + 等级、说明、等级菱形 +「当前 / 下一级」效果、购买按钮（魂晶图标 + 价格；不够时变暗、按了抖一下出拒绝音；满级禁用）。
  * 右上魂晶余额，页脚「已点亮 n / 总级数」。数据都来自 ctx.meta（存档与天赋表）。主菜单里打开，不挡游戏；返回回主菜单。
  */

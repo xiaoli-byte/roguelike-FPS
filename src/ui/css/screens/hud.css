@@ -1,0 +1,1330 @@
+/*
+ * 界面样式 · HUD（局内常驻）。手写，直接改这里（类名都带 sf- 前缀；.sf-root 是界面层根，src/ui/toolkit/UIRoot.ts）。
+ * 像素值按 1920×1080 设计分辨率写，整层由 UILayers 缩放。
+ */
+
+.sf-hud,
+.sf-fullscreen,
+.sf-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-vitals {
+    position: absolute;
+    left: 28px;
+    bottom: 26px;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.sf-vitals__crest {
+    width: 62px;
+    height: 62px;
+    margin-right: 14px;
+    border-radius: 31px;
+    border-width: 2px;
+    border-color: #d4a955;
+    background-color: #0a080c;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.sf-vitals__crestglow {
+    position: absolute;
+    left: -14px;
+    top: -18px;
+    width: 72px;
+    height: 72px;
+}
+
+.sf-vitals__glyph {
+    font-size: 32px;
+    color: #fff2dc;
+    text-align: center;
+    justify-content: center;
+    text-shadow: 0 0 10px rgba(212, 169, 85, 0.7);
+}
+
+.sf-vitals__bars {
+    width: 320px;
+    padding-bottom: 4px;
+    flex-direction: column;
+}
+
+.sf-bar {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-bar--hp {
+    margin-top: 6px;
+}
+
+.sf-bar__track {
+    flex-grow: 1;
+    height: 14px;
+    overflow: hidden;
+    background-color: rgba(7, 6, 10, 0.75);
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.38);
+}
+
+.sf-bar--shield .sf-bar__track {
+    height: 9px;
+    border-color: rgba(120, 200, 255, 0.35);
+}
+
+.sf-bar__tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.sf-bar__shatter {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-bar__burst {
+    position: absolute;
+    left: -6px;
+    top: -6px;
+    bottom: -6px;
+    right: 76px;
+    border-width: 1px;
+    border-color: #b8eaff;
+    background-color: rgba(82, 182, 236, 0.14);
+}
+
+.sf-bar__val {
+    min-width: 72px;
+    margin-left: 10px;
+    font-size: 14px;
+    color: #efe4cc;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.sf-bar__val--shield {
+    color: #b8eaff;
+}
+
+.sf-bar__valrow {
+    flex-direction: row;
+    align-items: flex-end;
+    min-width: 72px;
+    margin-left: 10px;
+}
+
+.sf-bar__valrow .sf-bar__val {
+    min-width: 0;
+    margin-left: 0;
+}
+
+.sf-bar__val--hp {
+    font-size: 23px;
+}
+
+.sf-bar__max {
+    font-size: 13px;
+    padding-bottom: 2px;
+    color: #8a7f6d;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.sf-bar--hp.is-low .sf-bar__val--hp {
+    color: #ff7a5a;
+}
+
+.sf-bar.is-none {
+    opacity: 0.3;
+}
+
+.sf-weapon {
+    position: absolute;
+    right: 30px;
+    bottom: 22px;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.sf-weapon__sec {
+    flex-direction: row;
+    align-items: center;
+    padding-right: 18px;
+    margin-bottom: 6px;
+    opacity: 0.8;
+}
+
+.sf-weapon__seckey {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    margin-right: 8px;
+    font-size: 11px;
+    color: #f4d893;
+    text-align: center;
+    justify-content: center;
+    border-width: 1px;
+    border-bottom-width: 2px;
+    border-color: #6f5626;
+    border-radius: 3px;
+    background-color: rgba(7, 6, 10, 0.7);
+}
+
+.sf-weapon__secname {
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #c8b999;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.sf-weapon__elem {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+}
+
+.sf-weapon__elem--sm {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+}
+
+.sf-weapon__elem.is-tri {
+    border-width: 2px;
+    border-color: #f4d893;
+}
+
+.sf-weapon__elemglyph {
+    font-size: 12px;
+    color: #0b090d;
+    text-align: center;
+    justify-content: center;
+}
+
+.sf-weapon__elem--sm .sf-weapon__elemglyph {
+    font-size: 10px;
+}
+
+.sf-weapon__main {
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 10px 16px 10px 48px;
+    border-right-width: 2px;
+    border-color: #efe4cc;
+}
+
+.sf-weapon__main.is-empty {
+    opacity: 0.5;
+}
+
+.sf-weapon__title {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-weapon__name {
+    font-size: 23px;
+    letter-spacing: 3px;
+    color: #efe4cc;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.sf-weapon__name,
+.sf-weapon__secname {
+    flex-shrink: 0;
+    text-wrap-mode: nowrap;
+}
+
+.sf-weapon__lvl {
+    margin-left: 8px;
+    padding: 1px 5px;
+    font-size: 12px;
+    color: #f4d893;
+    border-width: 1px;
+    border-color: #6f5626;
+    background-color: rgba(212, 169, 85, 0.1);
+}
+
+.sf-weapon__ammo {
+    flex-direction: row;
+    align-items: flex-end;
+    margin-top: 2px;
+}
+
+.sf-weapon__mag {
+    min-width: 40px;
+    font-size: 54px;
+    color: #efe4cc;
+    text-align: right;
+    justify-content: flex-end;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
+}
+
+.sf-weapon__mag.is-low {
+    color: #ff6a4d;
+    text-shadow: 0 0 14px rgba(255, 80, 50, 0.45);
+}
+
+.sf-weapon__sep {
+    margin: 0 6px 7px 6px;
+    font-size: 24px;
+    color: #8a7f6d;
+}
+
+.sf-weapon__reserve {
+    margin-bottom: 7px;
+    font-size: 22px;
+    color: #c8b999;
+}
+
+.sf-weapon__main.is-infinite .sf-weapon__mag,
+.sf-weapon__main.is-infinite .sf-weapon__reserve {
+    color: #f4d893;
+    text-shadow: 0 0 14px rgba(244, 216, 147, 0.6);
+}
+
+.sf-weapon__gauge,
+.sf-weapon__reload {
+    flex-direction: row;
+    align-items: center;
+    height: 16px;
+    margin-top: 5px;
+}
+
+.sf-weapon__track {
+    width: 120px;
+    height: 3px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.sf-weapon__trackfill {
+    background-color: #f4d893;
+}
+
+.sf-weapon__gaugelabel {
+    margin-right: 8px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #c8b999;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.sf-weapon__hint {
+    margin-left: 8px;
+    font-size: 12.5px;
+    letter-spacing: 3px;
+    color: #c8b999;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.sf-weapon__reload.is-alert .sf-weapon__hint {
+    color: #ff6a4d;
+}
+
+.sf-skillbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sf-skills {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.sf-skill {
+    flex-direction: column;
+    align-items: center;
+    width: 76px;
+    margin: 0 10px;
+}
+
+.sf-skill__disc {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.25);
+    background-color: #0b090d;
+}
+
+.sf-skill__shade {
+    position: absolute;
+    left: 0;
+    top: -8%;
+    right: 0;
+    bottom: 8%;
+}
+
+.sf-skill__ring,
+.sf-skill__flash,
+.sf-skill__glyph,
+.sf-skill__cd {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-skill__glyph {
+    text-align: center;
+    justify-content: center;
+    color: #efe4cc;
+    text-shadow: 0 0 10px rgba(244, 216, 147, 0.35);
+}
+
+.sf-skill.is-cooling .sf-skill__glyph {
+    opacity: 0.25;
+}
+
+.sf-skill__cd {
+    text-align: center;
+    justify-content: center;
+    color: #efe4cc;
+    text-shadow: 0 1px 4px #000000;
+}
+
+.sf-skill__flash {
+    background-color: rgb(255, 240, 210);
+}
+
+.sf-skill__charges {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    min-width: 21px;
+    height: 21px;
+    padding: 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    font-style: normal;
+    text-align: center;
+    justify-content: center;
+    color: #fff6ea;
+    background-color: #c9372a;
+    border-width: 1px;
+    border-color: #f4d893;
+    border-radius: 11px;
+}
+
+.sf-skill__key {
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    translate: -50% 0;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: normal;
+    text-align: center;
+    justify-content: center;
+    color: #f4d893;
+    background-color: #0f0d12;
+    border-width: 1px;
+    border-color: #6f5626;
+    border-radius: 3px;
+}
+
+.sf-skill__name {
+    margin-top: 6px;
+    padding: 1px 7px;
+    font-size: 12.5px;
+    letter-spacing: 1px;
+    text-wrap-mode: nowrap;
+    color: #efe4cc;
+    background-color: rgba(7, 6, 10, 0.55);
+    border-radius: 2px;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-dash {
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.sf-dash__pip {
+    width: 11px;
+    height: 11px;
+    margin: 0 5px;
+    overflow: hidden;
+    border-width: 1px;
+    border-color: rgba(184, 234, 255, 0.45);
+    background-color: rgba(7, 6, 10, 0.65);
+    rotate: 45deg;
+}
+
+.sf-dash__pip.is-full {
+    border-color: #b8eaff;
+    background-color: rgba(120, 200, 255, 0.35);
+}
+
+.sf-dash__fill {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    background-color: #b8eaff;
+}
+
+.sf-info {
+    position: absolute;
+    right: 28px;
+    top: 22px;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 8px 0 8px 40px;
+}
+
+.sf-info__stage {
+    margin-bottom: 6px;
+    padding-right: 14px;
+    border-right-width: 2px;
+    border-color: #c9372a;
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: #efe4cc;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-info__stage.is-boss {
+    color: #ffb4a0;
+}
+
+.sf-info__stage,
+.sf-info__objective {
+    flex-shrink: 0;
+    text-wrap-mode: nowrap;
+}
+
+.sf-info__row {
+    flex-direction: row;
+    align-items: center;
+    padding-right: 16px;
+    margin-bottom: 6px;
+}
+
+.sf-info__row .sf-icon {
+    width: 16px;
+    height: 16px;
+    --sf-tint: #f0b8a8;
+}
+
+.sf-info__icon {
+    margin-right: 5px;
+}
+
+.sf-info__objective {
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #f0b8a8;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-info__purse {
+    flex-direction: row;
+    align-items: center;
+    padding-right: 16px;
+    margin-top: 2px;
+}
+
+.sf-info__coins,
+.sf-info__ess {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-info__ess {
+    margin-left: 18px;
+}
+
+.sf-info__coinnum {
+    font-size: 19px;
+    color: #f4d58a;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-info__essnum {
+    font-size: 16px;
+    color: #cfeaff;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-info__float {
+    position: absolute;
+    right: 0;
+    top: -18px;
+    font-size: 13px;
+    color: #86dc8f;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-info__float.is-neg {
+    color: #ff6a4d;
+}
+
+.sf-xhair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+}
+
+.sf-xhair__reticle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.sf-xhair__line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(255, 249, 238, 0.95);
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.55);
+    border-radius: 1px;
+}
+
+.sf-xhair__line--v {
+    width: 4px;
+    height: 12px;
+}
+
+.sf-xhair__line--h {
+    width: 12px;
+    height: 4px;
+}
+
+.sf-xhair__dot {
+    position: absolute;
+    left: -2.5px;
+    top: -2.5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 2.5px;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.55);
+    background-color: rgba(255, 249, 238, 0.95);
+}
+
+.sf-xhair__bracket {
+    position: absolute;
+}
+
+.sf-xhair__reload {
+    position: absolute;
+    left: -30px;
+    top: -30px;
+    width: 60px;
+    height: 60px;
+}
+
+.sf-xhair__charge {
+    position: absolute;
+    left: -23px;
+    top: -23px;
+    width: 46px;
+    height: 46px;
+}
+
+.sf-hitmark {
+    position: absolute;
+    left: -17px;
+    top: -17px;
+    width: 34px;
+    height: 34px;
+}
+
+.sf-hitmark__l {
+    position: absolute;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.55);
+}
+
+.sf-hurt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-dmgdir__arc {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
+
+.sf-prompt-wrap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 168px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.sf-prompt-wrap.is-detail {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: 0;
+    padding-left: 72px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.sf-prompt {
+    flex-direction: row;
+    align-items: flex-start;
+    min-width: 260px;
+    max-width: 460px;
+    padding: 12px 20px 12px 12px;
+    background-color: rgba(7, 6, 10, 0.88);
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.16);
+    border-left-width: 3px;
+    border-left-color: #f4d893;
+}
+
+.sf-prompt__key {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    margin-right: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    font-style: normal;
+    text-align: center;
+    justify-content: center;
+    color: #fff5e6;
+    background-color: #c9372a;
+    border-width: 1px;
+    border-color: rgba(248, 233, 210, 0.8);
+    border-radius: 3px;
+}
+
+.sf-prompt__body {
+    flex-direction: column;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.sf-prompt__title {
+    font-size: 21px;
+    letter-spacing: 2px;
+    text-wrap-mode: wrap;
+    color: #f4d893;
+}
+
+.sf-prompt__sub {
+    font-size: 12.5px;
+    letter-spacing: 1px;
+    text-wrap-mode: wrap;
+    color: #8a7f6d;
+}
+
+.sf-prompt__lines {
+    flex-direction: column;
+    margin-top: 6px;
+}
+
+.sf-prompt__line {
+    margin-bottom: 2px;
+    font-size: 12.5px;
+    text-wrap-mode: wrap;
+    color: #c8b999;
+}
+
+.sf-prompt-wrap.is-detail .sf-prompt__line {
+    margin-bottom: 1px;
+}
+
+.sf-prompt__line.is-up {
+    color: #86dc8f;
+}
+
+.sf-prompt__line.is-down {
+    color: #ff6a4d;
+}
+
+.sf-prompt__cost {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.sf-prompt__coin {
+    margin-right: 6px;
+}
+
+.sf-prompt__costnum {
+    font-size: 17px;
+    color: #f4d58a;
+}
+
+.sf-prompt__short {
+    margin-left: 6px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: #ff6a4d;
+    flex-shrink: 0;
+    text-wrap-mode: nowrap;
+}
+
+.sf-prompt__cost.is-short .sf-prompt__costnum {
+    color: #ff6a4d;
+}
+
+.sf-pet {
+    position: absolute;
+    left: 28px;
+    bottom: 112px;
+    width: 330px;
+    height: 76px;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px 6px 0;
+}
+
+.sf-pet__stripe {
+    width: 4px;
+    align-self: stretch;
+    margin-right: 12px;
+}
+
+.sf-pet__info {
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.sf-pet__head {
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.sf-pet__name {
+    font-size: 22px;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.sf-pet__sub {
+    margin-left: 8px;
+    margin-bottom: 3px;
+    font-size: 12.5px;
+    color: #c8c0b0;
+}
+
+.sf-pet__level {
+    margin-top: 2px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.sf-pet__xp {
+    height: 4px;
+    margin-top: 5px;
+    margin-right: 10px;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.sf-pet__skill {
+    width: 62px;
+    margin: 0;
+}
+
+.sf-pet__skill .sf-skill__name {
+    display: none;
+}
+
+.sf-center {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 36%;
+    align-items: center;
+}
+
+.sf-center__backdrop {
+    position: absolute;
+    left: 50%;
+    top: -50px;
+    width: 1100px;
+    height: 280px;
+    translate: -550px 0;
+}
+
+.sf-center__text {
+    font-size: 72px;
+    text-wrap-mode: wrap;
+    text-align: center;
+    justify-content: center;
+    color: #ff5940;
+    -webkit-text-stroke-width: 2px;
+    paint-order: stroke fill;
+    -webkit-text-stroke-color: rgba(40, 6, 4, 0.8);
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8);
+}
+
+.sf-dn-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.sf-dn-anchor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.sf-dn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    translate: -50% -50%;
+    text-wrap-mode: nowrap;
+    text-align: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #ffffff;
+    -webkit-text-stroke-width: 2.4px;
+    paint-order: stroke fill;
+    -webkit-text-stroke-color: #000000;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.55);
+}
+
+.sf-dn--dot {
+    font-size: 17px;
+    -webkit-text-stroke-width: 2px;
+    paint-order: stroke fill;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.sf-dn--crit {
+    font-size: 34px;
+    -webkit-text-stroke-width: 3.2px;
+    paint-order: stroke fill;
+    -webkit-text-stroke-color: #6b3300;
+    text-shadow: 0 0 10px rgba(255, 170, 30, 0.9);
+}
+
+.sf-dn--immune {
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+
+.sf-dn--text {
+    font-size: 21px;
+    letter-spacing: 3px;
+    padding: 3px 6px 3px 9px;
+    border-width: 1px;
+    border-radius: 3px;
+    background-color: rgba(10, 6, 12, 0.72);
+    -webkit-text-stroke-width: 3px;
+    paint-order: stroke fill;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.sf-dn--say {
+    font-size: 19px;
+    letter-spacing: 1px;
+}
+
+.sf-dn--big {
+    font-size: 27px;
+    padding: 4px 8px 4px 11px;
+}
+
+.sf-dn--small {
+    font-size: 15px;
+}
+
+.sf-ebars {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.sf-ebar-anchor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.sf-ebar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 74px;
+    translate: -50% 0;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.sf-ebar.is-elite {
+    width: 96px;
+}
+
+.sf-ebar__name {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1px;
+}
+
+.sf-ebar__nametext {
+    flex-shrink: 0;
+    text-wrap-mode: nowrap;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #f4d893;
+    -webkit-text-stroke-width: 1.2px;
+    paint-order: stroke fill;
+    -webkit-text-stroke-color: rgba(0, 0, 0, 0.85);
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-ebar__affix {
+    flex-shrink: 0;
+    margin-right: 4px;
+    padding: 1px 4px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #0b090d;
+    border-radius: 2px;
+}
+
+.sf-ebar__status {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 2px;
+}
+
+.sf-ebar__badge {
+    width: 15px;
+    height: 15px;
+    margin: 0 1.5px;
+    border-radius: 2px;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-ebar__glow {
+    position: absolute;
+    left: -8px;
+    top: -8px;
+    right: -8px;
+    bottom: -8px;
+}
+
+.sf-ebar__glyph {
+    font-size: 10px;
+    color: #0b090d;
+    text-align: center;
+    justify-content: center;
+}
+
+.sf-ebar__stacks {
+    position: absolute;
+    right: -6px;
+    bottom: -5px;
+    font-size: 9px;
+    color: #ffffff;
+    -webkit-text-stroke-width: 2px;
+    paint-order: stroke fill;
+    -webkit-text-stroke-color: #000000;
+}
+
+.sf-ebar__row {
+    height: 6px;
+    margin-top: 1px;
+    overflow: hidden;
+    background-color: rgba(7, 6, 10, 0.82);
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.8);
+}
+
+.sf-ebar__row--hp {
+    height: 8px;
+}
+
+.sf-ebar.is-elite .sf-ebar__row--hp {
+    height: 9px;
+    border-color: rgba(244, 216, 147, 0.7);
+}
+
+.sf-boss {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 18px;
+    align-items: center;
+}
+
+.sf-boss__panel {
+    flex-direction: column;
+    align-items: center;
+    width: 720px;
+}
+
+.sf-boss__head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-boss__name,
+.sf-boss__sub,
+.sf-boss__layer,
+.sf-boss__num {
+    flex-shrink: 0;
+    text-wrap-mode: nowrap;
+}
+
+.sf-boss__name {
+    margin: 0 14px;
+    padding-left: 11px;
+    font-size: 27px;
+    letter-spacing: 11px;
+    color: #ffe6c8;
+    -webkit-text-stroke-width: 1.6px;
+    paint-order: stroke fill;
+    -webkit-text-stroke-color: rgba(30, 6, 4, 0.8);
+    text-shadow: 0 2px 10px rgba(201, 55, 42, 0.75);
+}
+
+.sf-boss.is-dead .sf-boss__name {
+    color: #f4d893;
+}
+
+.sf-boss .sf-boss__cloud {
+    width: 58px;
+    height: 23px;
+    opacity: 0.9;
+    --sf-tint: #c9372a;
+}
+
+.sf-boss .sf-boss__cloud--r {
+    scale: -1 1;
+}
+
+.sf-boss__sub {
+    margin-top: 2px;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #c8b999;
+    text-shadow: 0 1px 3px #000000;
+}
+
+.sf-boss__bars {
+    align-self: stretch;
+    flex-direction: column;
+    margin-top: 6px;
+    padding: 4px;
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.42);
+    background-color: rgba(7, 6, 10, 0.72);
+}
+
+.sf-boss.is-invuln .sf-boss__bars {
+    border-color: rgba(200, 185, 153, 0.28);
+}
+
+.sf-boss__row {
+    height: 6px;
+    margin-bottom: 3px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.sf-boss__row--hp {
+    height: 16px;
+    margin-bottom: 0;
+}
+
+.sf-boss__row--break {
+    height: 4px;
+    margin-top: 3px;
+    margin-bottom: 0;
+    background-color: rgba(244, 216, 147, 0.1);
+}
+
+.sf-boss__row--break.is-broken {
+    background-color: rgba(255, 226, 150, 0.45);
+}
+
+.sf-boss__tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background-color: rgba(244, 216, 147, 0.9);
+}
+
+.sf-boss__tick.is-passed {
+    background-color: rgba(255, 255, 255, 0.22);
+}
+
+.sf-boss__veil,
+.sf-boss__flash {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-boss__veil {
+    background-color: rgba(58, 54, 62, 0.62);
+}
+
+.sf-boss__flash {
+    background-color: rgb(255, 236, 200);
+}
+
+.sf-boss__foot {
+    align-self: stretch;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding: 0 2px;
+}
+
+.sf-boss__state {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-boss .sf-boss__lock {
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+    --sf-tint: #c8b999;
+}
+
+.sf-boss__layer {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: #ff7a5a;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-boss__num {
+    font-size: 13px;
+    color: #c8b999;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-rtips {
+    position: absolute;
+    right: 28px;
+    top: 168px;
+    align-items: flex-end;
+}
+
+.sf-rtip {
+    width: 330px;
+    flex-direction: column;
+    padding: 10px 16px 12px 14px;
+    border-left-width: 3px;
+    border-left-color: #ffd84a;
+}
+
+.sf-rtip__head {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-rtip__tag {
+    margin-right: 8px;
+    padding: 1px 5px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    border-width: 1px;
+    border-radius: 2px;
+}
+
+.sf-rtip__name {
+    font-size: 24px;
+    letter-spacing: 6px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.sf-rtip__recipe {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.sf-rtip__badge {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-rtip__glyph {
+    font-size: 11px;
+    color: #0b090d;
+    text-align: center;
+    justify-content: center;
+}
+
+.sf-rtip__op {
+    margin: 0 6px;
+    font-size: 14px;
+    color: #8a7f6d;
+}
+
+.sf-rtip__effect {
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+.sf-rtip__desc {
+    margin-top: 5px;
+    font-size: 12.5px;
+    text-wrap-mode: wrap;
+    color: #c8b999;
+}

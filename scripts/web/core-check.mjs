@@ -48,7 +48,8 @@ const profile = () => ev(`(() => { const t = localStorage.getItem('spiritfire.sa
 
 try {
   // ───────────── 老存档 ─────────────
-  await b.goto(`${base}/assets/unity-gameplay/defs.json`);
+  // 先停在一个同源的静态文件上（不跑游戏、不会抢着写存档）写老存档，再开游戏
+  await b.goto(`${base}/assets/manifest.json`);
   await ev(`localStorage.clear(), localStorage.setItem('gunflame.meta.v1', ${JSON.stringify(JSON.stringify(OLD_META))}),
     localStorage.setItem('gunflame.settings.v1', ${JSON.stringify(JSON.stringify(OLD_SETTINGS))}), true`);
   await b.goto(`${base}/?debug`);

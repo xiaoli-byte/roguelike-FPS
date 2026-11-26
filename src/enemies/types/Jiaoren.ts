@@ -405,7 +405,8 @@ export class Jiaoren extends StandardEnemy {
     this.glowTarget[1] = 0;
     const reach = this.verticalReach(1.4);
     // 群刺：6.5 米内凑够 3 只可以出手的鲛人
-    if (this.sees && reach && d <= PACK_RANGE && this.lungeCooldown <= 0) {
+    // 被嘲讽时不发起群刺（Unity JiaorenAI.Advance：!Taunted）
+    if (this.sees && reach && d <= PACK_RANGE && this.lungeCooldown <= 0 && !this.taunted) {
       const now = ctx.time.now;
       if (Jiaoren.packGate > now + PACK_GAP) Jiaoren.packGate = -Infinity; // 时钟回退（新开一局）
       if (now - Jiaoren.packGate >= PACK_GAP) {
@@ -502,10 +503,12 @@ export class Jiaoren extends StandardEnemy {
     // 出手点：矛尖（姿势已在前摇里摆好）
     this.spear.updateWorldMatrix(true, false);
     const from = this.spear.localToWorld(_v.set(0, 0, SPEAR_TIP)).clone();
+    // 被嘲讽：投向灵体诱饵、不预判，投出的是不伤玩家的灵体矛（Unity JiaorenAI.ThrowSpear：spirit = Taunted）
+    const spirit = this.taunted;
     const target = this.playerChest(_w);
     const dist = from.distanceTo(target);
     const t = dist / SPEAR_SPEED;
-    target.addScaledVector(ctx.player.velocity, t * SPEAR_LEAD);
+    if (!spirit) target.addScaledVector(ctx.player.velocity, t * SPEAR_LEAD);
     const vel = new THREE.Vector3().subVectors(target, from).normalize().multiplyScalar(SPEAR_SPEED);
     vel.y += 0.5 * SPEAR_GRAVITY * t;
     const life = t * 1.6 + 0.6;
@@ -514,7 +517,7 @@ export class Jiaoren extends StandardEnemy {
     // 被碎刃屏障挡下：伤害由投射物系统取消，飞矛外观也当场碎在盾面上（onBlocked 是投射物系统的可选扩展）
     const spec: ProjectileSpec & BlockableProjectileSpec = {
       owner: 'enemy', position: from.clone(), velocity: vel.clone(), gravity: SPEAR_GRAVITY, radius: 0.14,
-      lifetime: life, enemyDamage: this.def.damage * this.damageMult, element: 'none', color: FROST.ice,
+      lifetime: life, enemyDamage: spirit ? 0 : this.def.damage * this.damageMult, element: 'none', color: FROST.ice,
       visual: 'shard', scale: 0.7, sourceEnemy: this,
       onImpact: (point) => visual.impact(point),
       onBlocked: (point) => visual.block(point),

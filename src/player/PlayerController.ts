@@ -741,6 +741,12 @@ export class PlayerController implements IPlayer {
     this.rig.punch(roll, pitch);
   }
 
+  /** 镜头冲击（Unity CameraFeel.Punch，度：约 0.09 s 后到峰）：碎刃判定帧 / 命中用（M10）。pitch + = 往下点头，roll + = 向左歪，yaw + = 右转 */
+  punchDegrees(pitchDeg: number, rollDeg: number, yawDeg = 0): void {
+    if (!this._alive) return;
+    this.rig.punchDegrees(pitchDeg, rollDeg, yawDeg);
+  }
+
   /**
    * 叠加速度冲量（击退 / 抛起 / 技能位移）。冲刺中冲刺会每帧覆盖速度，所以冲刺期间的冲量基本被「闪开」；
    * 需要在冲刺中生效的自身位移（例如裂地重击起跳）请先调用 cancelDash()。

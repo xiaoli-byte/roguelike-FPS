@@ -177,8 +177,12 @@ export const WB_1_A: WhiteboxSpec = {
     // 上崖壁（窟檐层以上 10 m）搭景时还是那件崖壁段放大 1.16 倍贴面——这里不标 asset：复用清单按图章的绝对高度 18 m 算缩放，会误报
     { op: 'poly', pts: [...FACE, [430, -10], [-10, -10]], h: 18, edge: 1.2, mode: 'max', mat: 'rock' },
     { op: 'paint', mat: 'gravel', closed: true, pts: [...FACE.map((p): V2 => [p[0], p[1] - 4.5]), [430, -10], [-10, -10]] },
-    { op: 'mound', at: [110, 8], r: [70, 13], h: 8, base: 18, shape: 'mesa', mat: 'rock' },
-    { op: 'mound', at: [330, 6], r: [80, 12], h: 10, base: 18, shape: 'mesa', mat: 'rock' },
+    // 后崖（构成复核 2026-11-26：只有 18 m 一层崖时，河滩上看是一条矮带）：崖顶台地北边再起一层近乎直立的岩崖，东西各一段到 56–58 m，
+    // 中间（塔院正后方）留低到 27 m——寺塔塔尖（42.6 m）衬着天，两段后崖在左右夹住它。崖 18 m → 后崖 56 m，雾里一层比一层淡。
+    // 必须整个放在图内（z ≥ 0）：编译时图外的高度场是沿图边续出去的，图外的图章不算（第一次放在 z < 0 的两道沙脊就被丢掉了）
+    { op: 'mound', at: [98, 7], r: [88, 13], h: 38, base: 18, shape: 'mesa', flat: 0.72, mat: 'rock' },
+    { op: 'mound', at: [338, 6], r: [86, 13], h: 40, base: 18, shape: 'mesa', flat: 0.72, mat: 'rock' },
+    { op: 'mound', at: [214, -6], r: [40, 11], h: 9, base: 18, shape: 'mesa', mat: 'rock' },
     // ① 木栈梯：每跑宽 8 m，下跑 17°、上跑 22°，西头一个 4 m 高的平台
     { op: 'ramp', pts: STAIR, hs: STAIR_H, half: 4, edge: 0, mode: 'max', mat: 'timber', piece: '贴崖木栈梯' },
     // ② 崩塌碎石坡：在崖体上豁开一道口子，8 → 12.2 → 18 m（17–19°），两侧是塌下来的碎石斜面

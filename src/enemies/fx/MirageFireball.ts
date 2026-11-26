@@ -28,6 +28,8 @@ export interface MirageFireballSpec {
   source: IEnemy | null;
   /** 幻影火珠：不伤人、没有预警、飞到一半消散 */
   illusion?: boolean;
+  /** 灵体火珠（Unity EnemyProjectileSpec.spirit：出手时被灵宠讙嘲讽）：吐向诱饵，不伤玩家、不留余火，落地冒「格挡」 */
+  spirit?: boolean;
   /** 视觉缩放（精英 1.25） */
   scale?: number;
 }
@@ -274,7 +276,7 @@ export function launchMirageFireball(ctx: GameContext, spec: MirageFireballSpec)
     const pl = ctx.player;
     _chest.set(pl.position.x, pl.position.y + Math.min(1.1, pl.height * 0.6), pl.position.z);
     let hit: THREE.Vector3 | null = null;
-    if (pl.alive && pos.distanceTo(_chest) < pl.radius + ORB_RADIUS * s) hit = pos;
+    if (!spec.spirit && pl.alive && pos.distanceTo(_chest) < pl.radius + ORB_RADIUS * s) hit = pos;
     else if (ctx.world.segmentBlocked(_prev, pos)) hit = _prev;
     else {
       const gy = ctx.world.groundHeight(pos.x, pos.z, pos.y + 1);
@@ -316,6 +318,11 @@ function explode(ctx: GameContext, center: THREE.Vector3, spec: MirageFireballSp
   ctx.fx.burst(_p, COLOR.smoke, 3, 0.8, 1.0, 0.35 * s, -1.6);
   ctx.fx.burst(ground, COLOR.sand, 8, 4, 0.6, 0.1 * s, 15);
   ctx.fx.burst(center, COLOR.ember, 22, 5.5, 1.3, 0.06 * s, 4);
+  // 灵体火珠：打在诱饵上，不伤玩家、不留伤人的余火（Unity MirageToadAI.FireballLanded：if (!spirit) FireZone.Spawn）
+  if (spec.spirit) {
+    spec.source?.decoyBlocked?.();
+    return;
+  }
   blastPlayer(ctx, center, r, spec.damage, 'fire', spec.source, 0.5, 0.7);
 
   // 炽沙余火：流动的熔沙贴花，冒火星，每 0.5 秒结算一次小火伤，2.6 秒后熄灭

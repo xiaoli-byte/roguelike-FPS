@@ -185,12 +185,13 @@ export interface StatusInstance {
 
 export type StageType = 'combat' | 'elite' | 'treasure' | 'shop' | 'boss';
 /** 奖励种类（奖励串的第一段） */
-export type RewardKey = 'scroll' | 'weapon' | 'coins' | 'heal' | 'upgrade' | 'none';
+/** 'pet'：灵兽封印（Unity PetReward；M9 灵宠） */
+export type RewardKey = 'scroll' | 'weapon' | 'coins' | 'heal' | 'upgrade' | 'pet' | 'none';
 /**
  * 宝箱奖励串：种类，或带参数的武器奖励（Unity WeaponReward）——'weapon:<id>'（指定武器、普通品质）/ 'weapon:<id>:<品质>' /
  * 'weapon:min=N'（保底）/ 'weapon:<id>:min=N'；解析见 progression/loot/rewardRules.parseWeaponReward
  */
-export type RewardType = RewardKey | `weapon:${string}`;
+export type RewardType = RewardKey | `weapon:${string}` | `pet:${string}`;
 export type ThemeId = 'desert' | 'frost' | 'inferno';
 
 export const CHAPTER_COUNT = 4;
@@ -240,6 +241,16 @@ export interface RunState {
   weapons?: WeaponSave[];
   hp?: number;
   shield?: number;
+  /** 灵宠快照（Unity RunState.pet）：灵宠系统每帧写当前结契的那只（没有为 null），进关快照 / 续玩档跟着存，进关时按它重新结契（src/pets） */
+  pet?: PetSave | null;
+}
+
+/** 灵宠快照（Unity PetSave）：定义 id、灵契等级 / 经验、灵技冷却剩余（秒） */
+export interface PetSave {
+  id: string;
+  level: number;
+  xp: number;
+  cooldownLeft: number;
 }
 
 /** 一把枪的快照（续玩档；Unity WeaponSave）：定义 id、品质、强化、元素、弹药、是不是手上那把、词条 */
@@ -444,6 +455,8 @@ export interface IPlayer extends System {
   cancelLunge(): void;
   /** 镜头冲击（不改瞄准）：roll / pitch 为镜头弹簧的角速度冲量（弧度/秒，与受击抖动同一弹簧），正 pitch = 上仰 */
   cameraPunch(roll: number, pitch: number): void;
+  /** 镜头冲击（度，Unity CameraFeel.Punch(pitch, roll, yaw)）：碎刃命中 / 判定帧的一带 */
+  punchDegrees(pitchDeg: number, rollDeg: number, yawDeg?: number): void;
   teleport(pos: THREE.Vector3, yaw?: number): void;
   /** 新开一局：设置英雄、重置属性（含天赋）、满血 */
   resetForRun(hero: HeroDef): void;
@@ -592,7 +605,7 @@ export interface EnemyDef {
   /** 敌人主题色，用于特效 */
   color?: number;
 
-  // ── Unity EnemyDef 的字段（M2：对齐 public/assets/unity-gameplay/defs.json；缺省同 Unity 的字段初值）──
+  // ── Unity EnemyDef 的字段（M2：对齐 Unity 冻结的定义表 tests/fixtures/gameplay-defs.json；缺省同 Unity 的字段初值）──
   /** 天生级别（Unity Rank）：'elite' = 名册即精英，EnemyManager 生成时总按精英（穷奇：生命按 ×2.6 折算过）；缺省 normal */
   rank?: 'normal' | 'elite' | 'boss';
   /** 不随机给它的精英词缀（与自身机制重复的；Unity affixExclusions），rollAffix 读 */
@@ -676,6 +689,10 @@ export interface IEnemy {
   readonly untargetable?: boolean;
   /** 此刻免疫眩晕（Boss 出招中等）：Combat 施加 stun 时直接忽略（不播特效、不派发事件）。缺省 false */
   readonly stunImmune?: boolean;
+  /** 被灵宠讙嘲讽中（Unity EnemyAI.Taunted；M9）：直接命中打在灵体诱饵上无效，由各招式自己判断。缺省 false */
+  readonly taunted?: boolean;
+  /** 诱饵挡下一击，冒「格挡」（Unity EnemyAI.DecoyBlocked，全场节流）；缺省不冒 */
+  decoyBlocked?(): void;
   getHeadCenter(out: THREE.Vector3): THREE.Vector3;
   getBodyCenter(out: THREE.Vector3): THREE.Vector3;
   /** 射线命中测试（头部球 + 身体胶囊） */
@@ -1179,6 +1196,8 @@ export interface IGame {
   closeModal(): void;
   applySettings(): void;
   saveSettings(): void;
+  /** 命中顿帧（M11d HitStop）：玩法主动申请 seconds 秒（真实时间）的全局顿帧，scale 缺省 0.05；返回是否生效（碎刃命中 40 / 70 ms，Unity HitStop.Request） */
+  readonly hitStop: { request(seconds: number, scale?: number): boolean };
   /** 续玩（M11d，Unity MenuFlow.Suspended）：主菜单「继续征程」的那一局（没有 / 坏档为 null）；stageCode = 槽位编号「1-2」 */
   suspendedRun?(): { heroId: string; stageCode: string; stageLabel: string; savedAt: string; time: number; coins: number } | null;
   /** 读续玩档从那一关开头接着打；没有档 / 坏档提示并返回 false（Unity MenuFlow.ResumeRun） */
@@ -1210,7 +1229,11 @@ export interface GameContext {
   /** 本局随机数（开局按种子重置） */
   rng: Rng;
   readonly tasks: TaskRunner;
-  readonly time: { now: number; dt: number; timeScale: number; frame: number };
+  /**
+   * 时间。rawDt：这一帧的真实秒数（没乘 timeScale、钳在 ≤ 0.05；Unity Time.unscaledDeltaTime），Game.frame 帧开头写入；
+   * 同一帧里有人申请顿帧时 timeScale 会立刻变，dt / timeScale 反推不回真实时长，按真实时间走的表现（碎刃视觉顿帧）读它。检视页 / 测试的桩可以没有
+   */
+  readonly time: { now: number; dt: number; timeScale: number; frame: number; rawDt?: number };
   /** 相机效果：fx.shake 写入，玩家控制器读取 */
   /**
    * 相机效果。shakeIntensity 为 0..1 的相对强度（1 = 很强），shakeTime 为秒；由 fx 写入、玩家控制器读取并衰减。

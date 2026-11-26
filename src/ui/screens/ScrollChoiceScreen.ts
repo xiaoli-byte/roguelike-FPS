@@ -1,5 +1,5 @@
 /**
- * 秘卷三选一（照译 Unity G/UI/Screens/ScrollChoiceScreen.cs，样式 css/unity/scrolls.css 的「挂轴」）：
+ * 秘卷三选一（照译 Unity G/UI/Screens/ScrollChoiceScreen.cs，样式 css/screens/scrolls.css 的「挂轴」）：
  *   三张挂轴依次落下、展开（0.12 s 错开）；装裱绫绢的颜色 = 稀有度，上面铺点阵纹；宣纸上：竖排稀有度印、「新得 / 升层」戳、名字、
  *   按下一层的数值写的说明、红色代价行、层数菱形（已有实心、下一层呼吸）、标签（英雄专属朱字）。
  *   传说卷鎏金边框 + 外发光 + 流光，史诗卷淡紫外发光。

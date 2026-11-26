@@ -831,6 +831,9 @@ rig = "parts"
 rig_rigid = true
 presentation = true
 highpoly_mode = "multiview"
+# 2026-11-27 起高模走 Tripo（Hunyuan 产出不得在欧盟 / 英国 / 韩国使用；用户：「改用tripo的地方就用tripo」）：
+# 构建保留 Tripo 的贴图（texture_source = highpoly），其余照刚体部件流程
+source_provider = "tripo"
 blockout = { source = "weapon", id = "shotgun" }
 material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
 keep_glow = "all"

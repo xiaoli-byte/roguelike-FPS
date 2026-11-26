@@ -45,6 +45,8 @@ const STUBS = {
   'enemies.ts': 'export function registerStandardEnemies() {}',
   'enemies/bosses.ts': 'export function registerBosses() {}',
   'progression/Interaction.ts': 'export class InteractionSystem { clear() {} }',
+  // 灵宠（M9）：Game 只建它、换关调 clear；这里不测灵宠（tests/unity-pets.test.mjs 另测）
+  'pets/PetSystem.ts': 'export class PetSystem { init() {} clear() {} update() {} }',
   'progression/BalanceModel.ts': 'export {};',
   'progression/BalanceBosses.ts': 'export {};',
   'player/Heroes.ts': `const hero = (id, name) => ({ id, name, title: '', startingWeapon: 'smg', passive: { apply: () => () => {} } });

@@ -834,14 +834,19 @@ export class Tuo extends StandardEnemy {
     this.ctx.audio.play('enemy_melee', { position: _p, volume: 1, pitch: 0.5 });
     const d = this.distToPlayerXZ();
     const reach = ambush ? AMBUSH_REACH : BITE_REACH;
-    if (pl.alive && d <= reach + pl.radius && this.facingDot() > 0.4 && this.verticalReach(2)) {
-      this.struck = true;
-      this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * (ambush ? AMBUSH_MULT : 1), 'none', this, _p);
-      _v.set(Math.sin(this.facing), 0, Math.cos(this.facing)).multiplyScalar(ambush ? 7 : 5);
-      _v.y = 3;
-      pl.applyImpulse(_v);
-      this.ctx.fx.shake(ambush ? 0.6 : 0.4, 0.25);
-      moltenSplash(this.ctx, _b.copy(pl.position).setY(pl.position.y + 1), 0.8, 8);
+    // 被嘲讽时咬的是灵体诱饵：HitPlayer 无效、不推（Unity TuoAI.Bite）
+    const taunted = this.taunted;
+    if (pl.alive && d <= reach + (taunted ? 0.35 : pl.radius) && this.facingDot() > 0.4 && this.verticalReach(2)) {
+      if (taunted) this.decoyBlocked();
+      else {
+        this.struck = true;
+        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * (ambush ? AMBUSH_MULT : 1), 'none', this, _p);
+        _v.set(Math.sin(this.facing), 0, Math.cos(this.facing)).multiplyScalar(ambush ? 7 : 5);
+        _v.y = 3;
+        pl.applyImpulse(_v);
+        this.ctx.fx.shake(ambush ? 0.6 : 0.4, 0.25);
+        moltenSplash(this.ctx, _b.copy(pl.position).setY(pl.position.y + 1), 0.8, 8);
+      }
     }
     this.biteCd = this.ctx.rng.range(BITE_COOLDOWN[0], BITE_COOLDOWN[1]);
     if (!ambush) this.releaseAttack();
@@ -914,14 +919,19 @@ export class Tuo extends StandardEnemy {
     this.ctx.audio.play('enemy_melee', { position: _p, volume: 1, pitch: 0.35 });
     this.quake(0.3, 18, 0.2);
     const d = this.distToPlayerXZ();
-    const dy = pl.position.y - this.position.y;
+    // 对当前目标判定（Unity TuoAI.Sweep：PlayerPos + HitPlayer）；被嘲讽时扫在灵体诱饵上，无效、不推
+    const taunted = this.taunted;
+    const dy = this.targetPos.y - this.position.y;
     // 身后半圈（朝向余弦 < 0.2），起跳（离地 0.9 米以上）躲得过
-    if (pl.alive && d <= SWEEP_REACH + pl.radius && this.facingDot() < 0.2 && dy > -1 && dy < 0.9) {
-      this.struck = true;
-      this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * SWEEP_MULT, 'none', this, _p);
-      this.sweepKnock(_v);
-      pl.applyImpulse(_v);
-      this.ctx.fx.shake(0.5, 0.25);
+    if (pl.alive && d <= SWEEP_REACH + (taunted ? 0.35 : pl.radius) && this.facingDot() < 0.2 && dy > -1 && dy < 0.9) {
+      if (taunted) this.decoyBlocked();
+      else {
+        this.struck = true;
+        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * SWEEP_MULT, 'none', this, _p);
+        this.sweepKnock(_v);
+        pl.applyImpulse(_v);
+        this.ctx.fx.shake(0.5, 0.25);
+      }
     }
     this.sweepCd = this.ctx.rng.range(SWEEP_COOLDOWN[0], SWEEP_COOLDOWN[1]);
   }
@@ -980,9 +990,10 @@ export class Tuo extends StandardEnemy {
     const prev = this.roarR;
     this.roarR = Math.min(ROAR_RADIUS, this.roarR + ROAR_SPEED * dt);
     const pl = this.ctx.player;
-    const d = this.distToPlayerXZ();
+    // 震波按玩家本人判定（Unity GroundWave：玩家脚底）；出手者被嘲讽期间波面不伤玩家、不记命中（GroundWave.Check：owner.Taunted）
+    const d = Math.hypot(pl.position.x - this.position.x, pl.position.z - this.position.z);
     // 贴地震波：波前扫过玩家时玩家在地上（离地 0.5 米内）就中
-    if (!this.roarHit && pl.alive && d >= prev - 0.6 && d <= this.roarR + 0.6 && pl.position.y - this.position.y < 0.5 && pl.position.y - this.position.y > -1) {
+    if (!this.roarHit && pl.alive && !this.taunted && d >= prev - 0.6 && d <= this.roarR + 0.6 && pl.position.y - this.position.y < 0.5 && pl.position.y - this.position.y > -1) {
       this.roarHit = true;
       this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * ROAR_MULT, 'fire', this, this.position);
       _v.set(pl.position.x - this.position.x, 0, pl.position.z - this.position.z).normalize().multiplyScalar(5);

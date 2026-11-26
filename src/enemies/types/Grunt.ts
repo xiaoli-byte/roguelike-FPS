@@ -233,6 +233,11 @@ export class Grunt extends StandardEnemy {
     const dz = pl.position.z - this.position.z;
     if (Math.hypot(dx, dz) > this.radius + pl.radius + 0.55 || !this.verticalReach(1.4)) return;
     this.lungeHit = true;
+    // 被灵宠嘲讽：扑在灵体诱饵上，无效（照 Unity EnemyAI.HitTarget 的规矩；这种怪 Unity 没有对应）
+    if (this.taunted) {
+      this.decoyBlocked();
+      return;
+    }
     this.ctx.combat.damagePlayer(this.def.damage * LUNGE_DAMAGE_MULT * this.damageMult, 'none', this, this.position);
     _imp.copy(this.lungeDir).multiplyScalar(6);
     _imp.y = 2.5;

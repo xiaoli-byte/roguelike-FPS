@@ -101,6 +101,8 @@ export const REWARD_COLORS: Record<RewardKey, number> = {
   coins: 0xffd54a,
   heal: 0x4cff7a,
   upgrade: 0x4aa3ff,
+  // 灵兽封印（Unity PetReward.Color = (1, 0.55, 0.85)）
+  pet: 0xff8cd9,
   none: 0x9aa0a8,
 };
 

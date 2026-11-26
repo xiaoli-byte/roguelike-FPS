@@ -87,6 +87,14 @@ export class WeaponSystem implements IWeaponSystem {
   private shellTimer = 0;
   private shellsInserted = 0;
   private shellsNeeded = 1;
+  /** 这次整匣换弹的弹匣已经入位（第一人称动画事件加过弹，或到时加上；Unity WeaponStateMachine.loadCommitted） */
+  private loadCommitted = false;
+  /**
+   * 这一匣是第一人称动画事件（commitLoad）加的：弹匣入位时已经咔哒过，收尾只给一声轻的。
+   * 到时才加的（原作枪模 smg / revolver / railgun、没有左手的枪）收尾照旧放 reload_end——Unity 原作枪由 GunfireOriginalAnimation 播原作换弹音，
+   * 网页不迁那一层（GunfireOriginal* 不迁），不分开记的话这三把换完弹只剩一声很轻的 weapon_switch
+   */
+  private loadedByEvent = false;
   // 开火
   private cooldown = 0;
   /** 扳机：开火缓冲 + 「按住只算一次」的闩（Unity TriggerState） */
@@ -133,6 +141,7 @@ export class WeaponSystem implements IWeaponSystem {
 
   constructor(readonly ctx: GameContext) {
     this.vm = new Viewmodel(ctx);
+    this.vm.onCommitLoad = () => this.commitLoad();
     this.ballistics = new Ballistics(ctx, this.vm, this.rand);
     this.flame = new FlameCone(ctx, out => this.vm.getMuzzleWorld(out), this.rand);
     this.rail = new RailgunBeams(() => ctx.scene ?? null);
@@ -804,7 +813,7 @@ export class WeaponSystem implements IWeaponSystem {
     const k = R.recoilMult * (1 - 0.5 * this.aimT) * strength;
     const pitch = rc.pitch * climb * k * (0.85 + Math.random() * 0.3);
     const yaw = (rc.bias + (Math.random() * 2 - 1) * rc.yaw) * k;
-    // 镜头的后坐整体 × 0.3（Unity RecoilScale：只轻轻上跳、完全回正）；枪模后坐（vm.onShot）不缩，ViewKickScale 随 M10 的枪模弹簧一起接
+    // 镜头的后坐整体 × 0.3（Unity RecoilScale：只轻轻上跳、完全回正）；枪模后坐在 vm.onShot 里 × ViewKickScale 0.55（× VM_SCALE 0.76 向后）
     if (pitch !== 0 || yaw !== 0) ctx.player.addRecoil(pitch * WEAPON_FEEL.RecoilScale, yaw * WEAPON_FEEL.RecoilScale);
     this.vm.onShot(def, shotColor(inst, el), strength);
     if (def.mode !== 'beam') ctx.audio.play(def.sfx, { volume: def.sfxVolume, pitch: 0.94 + Math.random() * 0.12 });
@@ -892,6 +901,8 @@ export class WeaponSystem implements IWeaponSystem {
     this.endBeam();
     this.autoReload = 0;
     this.reloading = true;
+    this.loadCommitted = false;
+    this.loadedByEvent = false;
     if (R.def.shellTime > 0) {
       this.shellMode = true;
       // 准备动作 + 第一发
@@ -927,12 +938,41 @@ export class WeaponSystem implements IWeaponSystem {
     }
     this.reloadElapsed += dt;
     if (this.reloadElapsed >= this.reloadTotal) {
-      const need = Math.max(0, R.magCap - inst.mag);
-      const take = Math.min(need, inst.reserve);
-      inst.mag += take;
-      inst.reserve -= take;
+      // 没有第一人称动画事件（原版枪、没有左手）时到时才加，结果一样
+      if (!this.loadCommitted) this.load(inst, R);
       this.finishReload(inst, false);
     }
+  }
+
+  private load(inst: WeaponInstance, R: ResolvedWeapon): void {
+    const take = Math.min(Math.max(0, R.magCap - inst.mag), Math.max(0, inst.reserve));
+    inst.mag += take;
+    inst.reserve -= take;
+    this.loadCommitted = true;
+  }
+
+  /**
+   * 加弹的动画事件（Unity WeaponStateMachine.CommitLoad，M10）：整匣换弹中弹匣入位时由第一人称左手（Viewmodel.onCommitLoad）调，
+   * 弹药此刻加上（HUD 跟着跳）、咔哒一声；换弹动作照常收尾到换弹时间结束（总时长不变，秒伤不变）；之后被切枪打断也保留这一匣。
+   * 逐发装填、没在换弹、已经加过时什么都不做；返回这次是否加了
+   */
+  commitLoad(): boolean {
+    const inst = this.active;
+    if (!this.reloading || this.shellMode || this.loadCommitted || !inst) return false;
+    this.load(inst, this.resolve(inst));
+    this.loadedByEvent = true;
+    this.ctx.audio.play('reload_end', { volume: 0.85 });
+    return true;
+  }
+
+  /** 这次（或刚结束的那次）整匣换弹的弹匣已经入位（动画事件加的或到时加的；Unity LoadCommitted） */
+  get isLoadCommitted(): boolean {
+    return this.loadCommitted;
+  }
+
+  /** 这次（或刚结束的那次）整匣换弹是不是由第一人称动画事件加的弹（决定收尾放轻声还是 reload_end） */
+  get isLoadedByEvent(): boolean {
+    return this.loadedByEvent;
   }
 
   private finishReload(inst: WeaponInstance, rack: boolean): void {
@@ -941,7 +981,10 @@ export class WeaponSystem implements IWeaponSystem {
     // 元素轮转：每次换弹从第一种元素重新开始
     this.runtime(inst).cycleIndex = 0;
     if (rack) this.rackAfterShells();
-    this.ctx.audio.play('reload_end', { volume: 0.85 });
+    // 弹匣入位时已经响过：收尾（拉机柄 / 拍枪管）只给一声轻的（Unity WeaponController.Notify(Reloaded)）。
+    // 只认动画事件加的那一匣：到时才加的（原作枪模，Unity 那边原作动画自己放换弹音）收尾照旧咔哒一声
+    if (this.loadedByEvent) this.ctx.audio.play('weapon_switch', { volume: 0.45, pitch: 1.25 });
+    else this.ctx.audio.play('reload_end', { volume: 0.85 });
     this.ctx.events.emit('weapon:reloaded', { weapon: inst });
   }
 
@@ -952,11 +995,13 @@ export class WeaponSystem implements IWeaponSystem {
   private cancelReload(rack = true): void {
     if (!this.reloading) return;
     const inst = this.active;
-    const partial = this.shellMode && this.shellsInserted > 0;
+    // 逐发装填压进过弹，或整匣换弹的弹匣已经入位：都算一次（部分）换弹（Unity CancelReload）
+    const committed = !this.shellMode && this.loadCommitted;
+    const partial = (this.shellMode && this.shellsInserted > 0) || committed;
     this.reloading = false;
     this.shellMode = false;
     if (partial && inst) {
-      if (rack) this.rackAfterShells();
+      if (rack && !committed) this.rackAfterShells();
       this.ctx.events.emit('weapon:reloaded', { weapon: inst });
     }
   }
@@ -1041,7 +1086,9 @@ export class WeaponSystem implements IWeaponSystem {
     } else s.reloadP = s.reloading ? clamp01(this.reloadElapsed / this.reloadTotal) : 0;
     s.shellMode = s.reloading && this.shellMode;
     s.firstShell = this.shellsInserted === 0;
+    s.shellsInserted = this.shellsInserted;
     s.firing = this.beamOn || this.minigunFiring || this.charging;
+    s.chargeFull = this.charging && this.chargeFull;
     // 机炮转管 / 蓄力武器线圈（updateCharge 中 spin 跟随蓄力进度，松手后转停）
     s.spin = this.spin;
     // 元素轮转：灵纹显示下一发元素（按当前显示的那把枪）
@@ -1049,7 +1096,9 @@ export class WeaponSystem implements IWeaponSystem {
     if (cyc && cyc.length > 0) {
       const idx = this.runtime(shown).cycleIndex;
       s.cycleIndex = idx;
-      s.elementHint = cyc[idx % cyc.length];
+      // 下一发（Unity TrinityCycle.Next）：换弹中显示换完的第一发，与弹巢归零一致
+      const next = shown === inst && this.reloading ? 0 : idx;
+      s.elementHint = cyc[((next % cyc.length) + cyc.length) % cyc.length];
     } else {
       s.cycleIndex = -1;
       s.elementHint = null;

@@ -247,6 +247,8 @@ export interface IceChunkSpec {
   radius: number;
   damage: number;
   source: IEnemy | null;
+  /** 灵体冰块（Unity EnemyProjectileSpec.spirit：出手者被灵宠嘲讽）：穿过玩家、碎裂不伤玩家，落地冒「格挡」 */
+  spirit?: boolean;
 }
 
 /** 抛出冰块：抛物线飞向落点（预警圈同步填满），落地或撞墙时碎裂、小范围伤害 */
@@ -269,7 +271,8 @@ export function launchIceChunk(ctx: GameContext, spec: IceChunkSpec): void {
     done = true;
     if (!landed) cancelWarning();
     release(slot);
-    blastPlayer(ctx, at, spec.radius, spec.damage, 'none', spec.source, 0.4, 0.35, 3.5);
+    if (spec.spirit) spec.source?.decoyBlocked?.();
+    else blastPlayer(ctx, at, spec.radius, spec.damage, 'none', spec.source, 0.4, 0.35, 3.5);
     ctx.fx.burst(at, FROST.ice, 16, 4.5, 0.55, 0.09, 9);
     ctx.fx.burst(at, FROST.snow, 10, 2.2, 0.7, 0.26, 0.5);
     _q.copy(at);
@@ -295,7 +298,7 @@ export function launchIceChunk(ctx: GameContext, spec: IceChunkSpec): void {
     // 半路砸到玩家 / 撞墙：当场碎
     const p = ctx.player;
     _chest.set(p.position.x, p.position.y + p.height * 0.5, p.position.z);
-    if (p.alive && pos.distanceTo(_chest) < spec.size + p.radius + 0.25) {
+    if (!spec.spirit && p.alive && pos.distanceTo(_chest) < spec.size + p.radius + 0.25) {
       burst(pos.clone(), false);
       return true;
     }

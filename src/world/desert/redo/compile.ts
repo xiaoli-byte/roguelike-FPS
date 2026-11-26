@@ -6,6 +6,8 @@ import { WhiteboxProbe, probeWhitebox, type ProbeReport } from '../whitebox/prob
 import { WB_METRICS, type TerrainOp, type V2, type WbBlock, type WbMat, type WbSite, type WhiteboxSpec } from '../whitebox/types';
 import { REDO_MAPS, type RedoMapConfig } from './maps';
 import { PLAY, type MapPlay, type PlayEncounter } from './play';
+import { applyDesertLight } from '../document';
+import type { DesertLight } from '../spec';
 
 /**
  * 第一章重做：白盒 → 游戏的场景文档（UnitySceneDocument）。纯数据，node 里也能跑（测试 / 离线检查用）。
@@ -45,8 +47,8 @@ export interface CompiledMap {
   terrain: WbTerrain;
   probe: WhiteboxProbe;
   report: ProbeReport;
-  /** 高度场（世界高度，n × n，行 = z） */
-  field: { origin: Vec3; scale: Vec3; n: number; heights: Float32Array };
+  /** 高度场（世界高度，n × n，行 = z）；baseY = 远景地面的高度（图外地形最外一圈收回到它） */
+  field: { origin: Vec3; scale: Vec3; n: number; heights: Float32Array; baseY: number };
   /** 地形四层贴图权重（RGBA，n × n，行 = z；和高度场同一网格） */
   control: Uint8Array;
   /** 软边界距离场（Unity 坐标：网页点按 (−x, z) 采样；区内为负） */
@@ -112,6 +114,11 @@ function buildField(spec: WhiteboxSpec, ground: WbTerrain, config: RedoMapConfig
     return sum / k;
   };
   const far = config.far ?? [];
+  // 远景地面的基准高度 = 图边一圈高度的中位数：图外地形在最外 40 m 收回到它，接上运行时铺的远景地面（不留断边）
+  const border: number[] = [];
+  for (let t = 0; t <= 1; t += 0.01) border.push(edgeHeight(t * W, 0), edgeHeight(t * W, D), edgeHeight(0, t * D), edgeHeight(W, t * D));
+  border.sort((a, b) => a - b);
+  const baseY = config.farBase ?? border[Math.floor(border.length / 2)];
   for (let j = 0; j < n; j++) {
     const z = -MARGIN + j * sz;
     for (let i = 0; i < n; i++) {
@@ -130,12 +137,13 @@ function buildField(spec: WhiteboxSpec, ground: WbTerrain, config: RedoMapConfig
           const r = Math.hypot(x - f.at[0], z - f.at[1]) / f.mound.r;
           if (r < 1) h = Math.max(h, edgeHeight(x, z) + config.margin.rise * d / 100 + f.mound.h * 0.5 * (1 + Math.cos(Math.PI * r)));
         }
-        world[k] = h;
+        const e = Math.min(x + MARGIN, W + MARGIN - x, z + MARGIN, D + MARGIN - z), f = Math.min(1, Math.max(0, e / 40));
+        world[k] = baseY + (h - baseY) * f * f * (3 - 2 * f);
         mats[k] = 1;   // dune
       }
     }
   }
-  return { origin: [-MARGIN, 0, -MARGIN], scale: [sx, 1, sz], n, heights: world, mats };
+  return { origin: [-MARGIN, 0, -MARGIN], scale: [sx, 1, sz], n, heights: world, mats, baseY };
 }
 
 /** 材质下标 → 四层权重，再糊开 ~1.5 m（交界做过渡带），行序同高度场（行 = z） */
@@ -623,6 +631,9 @@ export function compileWhitebox(spec: WhiteboxSpec, play: MapPlay | null = PLAY[
     const toSun: Vec3 = [Math.sin(az) * Math.cos(el), Math.sin(el), -Math.cos(az) * Math.cos(el)];
     const sun = environment.sun ?? { forward: [0, -1, 0], color: [1, 0.92, 0.8, 1], intensity: 1.4, shadows: 2, shadowStrength: 0.9 };
     environment.sun = { ...sun, forward: [r3(-toSun[0]), r3(-toSun[1]), r3(-toSun[2])] };
+    // 这张图的光影雾（maps.ts 的 look）：主光颜色 / 强度、三色环境光、雾、渐变天空
+    const light = redoLight(spec, config);
+    if (light) applyDesertLight(environment, light);
   }
 
   const area = spec.play ?? [[0, 0], [spec.size[0], 0], [spec.size[0], spec.size[1]], [0, spec.size[1]]];
@@ -673,6 +684,16 @@ function buildWater(spec: WhiteboxSpec, ground: WbTerrain, play: MapPlay | null)
     }
   }
   return out;
+}
+
+/**
+ * maps.ts 的 look.light 补上太阳方位：白盒的 azimuth 是俯视从北顺时针（北 = −z），DesertLight 的是网页 XZ 里从 +Z 起（90 = +X）。
+ * 朝太阳的向量 白盒 = (sin a, ·, −cos a)，DesertLight = (sin b, ·, cos b) → b = 180 − a。
+ */
+export function redoLight(spec: WhiteboxSpec, config: RedoMapConfig): DesertLight | undefined {
+  const l = config.look?.light;
+  if (!l) return undefined;
+  return { ...l, sun: { ...l.sun, azimuth: 180 - spec.sun.azimuth, elevation: spec.sun.elevation } };
 }
 
 /** 运行时生成的软边界距离场的地址（MechanismData.provideBoundaryField 按它登记） */

@@ -550,7 +550,8 @@ export class IronOx extends StandardEnemy {
   /** 风往嘴里灌：前方、看得见（掩体挡风）的玩家被一阵阵拉向炉门 */
   private pullPlayer(): void {
     const pl = this.ctx.player;
-    if (!pl.alive) return;
+    // 被嘲讽期间不拉玩家（Unity IronOxAI.PullPlayer：Taunted → 返回）
+    if (!pl.alive || this.taunted) return;
     const dx = this.position.x - pl.position.x, dz = this.position.z - pl.position.z;
     const d = Math.hypot(dx, dz);
     if (d < this.radius + 1.6 || d > PULL_RANGE) return;
@@ -624,16 +625,23 @@ export class IronOx extends StandardEnemy {
       }
     }
     // 扇面伤害：12 米、60°，掩体挡得住
+    // 扇面对当前目标判定（Unity IronOxAI：InFan(PlayerPos) + HitPlayer）；被嘲讽时喷在灵体诱饵上，无效
     const pl = this.ctx.player;
-    const dx = pl.position.x - this.position.x, dz = pl.position.z - this.position.z;
+    const taunted = this.taunted;
+    const tp = this.targetPos;
+    const dx = tp.x - this.position.x, dz = tp.z - this.position.z;
     const d = Math.hypot(dx, dz);
-    if (pl.alive && d <= SPIT_RANGE + pl.radius && this.verticalReach(3.5)) {
+    if (pl.alive && d <= SPIT_RANGE + (taunted ? 0.35 : pl.radius) && this.verticalReach(3.5)) {
       const off = Math.abs(Math.atan2(Math.sin(Math.atan2(dx, dz) - this.spitYaw), Math.cos(Math.atan2(dx, dz) - this.spitYaw)));
-      _b.set(pl.position.x, pl.position.y + 1.1, pl.position.z);
+      if (taunted) this.playerChest(_b);
+      else _b.set(pl.position.x, pl.position.y + 1.1, pl.position.z);
       if ((off <= SPIT_HALF || d < this.radius + 1) && !this.ctx.world.segmentBlocked(_a, _b)) {
-        this.struck = true;
-        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * SPIT_MULT, 'fire', this, _a);
-        moltenSplash(this.ctx, _b, 1, 12);
+        if (taunted) this.decoyBlocked();
+        else {
+          this.struck = true;
+          this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * SPIT_MULT, 'fire', this, _a);
+          moltenSplash(this.ctx, _b, 1, 12);
+        }
       }
     }
   }
@@ -691,12 +699,17 @@ export class IronOx extends StandardEnemy {
     this.ctx.audio.play('boss_slam', { position: _p, volume: 0.9, pitch: 0.8 });
     this.quake(0.45, STEP_SHAKE_RANGE, 0.3);
     const d = this.distToPlayerXZ();
-    if (pl.alive && d <= TOSS_REACH + pl.radius && this.facingDot() > 0.45 && this.verticalReach(2.2)) {
-      this.struck = true;
-      this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * TOSS_MULT, 'none', this, _p);
-      _v.set(Math.sin(this.facing) * TOSS_PUSH, TOSS_UP, Math.cos(this.facing) * TOSS_PUSH);
-      pl.applyImpulse(_v);
-      this.ctx.fx.shake(0.6, 0.3);
+    // 被嘲讽时顶的是灵体诱饵：HitPlayer 无效、不推（Unity IronOxAI.Toss）
+    const taunted = this.taunted;
+    if (pl.alive && d <= TOSS_REACH + (taunted ? 0.35 : pl.radius) && this.facingDot() > 0.45 && this.verticalReach(2.2)) {
+      if (taunted) this.decoyBlocked();
+      else {
+        this.struck = true;
+        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * TOSS_MULT, 'none', this, _p);
+        _v.set(Math.sin(this.facing) * TOSS_PUSH, TOSS_UP, Math.cos(this.facing) * TOSS_PUSH);
+        pl.applyImpulse(_v);
+        this.ctx.fx.shake(0.6, 0.3);
+      }
     }
     this.rollCooldown(TOSS_COOLDOWN[0], TOSS_COOLDOWN[1]);
   }

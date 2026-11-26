@@ -461,16 +461,21 @@ export class FrostCrab extends StandardEnemy {
     iceShards(this.ctx, _p, this.sizeScale * 0.8, 10, 5);
     this.quake(0.4, STEP_SHAKE_RANGE, 0.25);
     const d = this.distToPlayerXZ();
-    if (pl.alive && d <= GRAB_REACH + pl.radius && this.facingDot() > GRAB_COS && this.verticalReach(2.2)) {
-      this.struck = true;
-      this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * GRAB_MULT, 'none', this, _p);
-      // 夹住甩出：甩向巨钳那一侧（生物右侧 -X），带一点上抛
-      _v.set(-Math.cos(this.facing), 0, Math.sin(this.facing)).multiplyScalar(GRAB_FLING);
-      _v.addScaledVector(_f.set(Math.sin(this.facing), 0, Math.cos(this.facing)), 3);
-      _v.y = 6;
-      pl.applyImpulse(_v);
-      pl.cameraPunch(0.6, -0.3);
-      this.ctx.fx.shake(0.9, 0.35);
+    // 被嘲讽时夹的是灵体诱饵：HitTarget 无效，不甩（Unity FrostCrabAI.Grab）
+    const taunted = this.taunted;
+    if (pl.alive && d <= GRAB_REACH + (taunted ? 0.35 : pl.radius) && this.facingDot() > GRAB_COS && this.verticalReach(2.2)) {
+      if (taunted) this.decoyBlocked();
+      else {
+        this.struck = true;
+        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * GRAB_MULT, 'none', this, _p);
+        // 夹住甩出：甩向巨钳那一侧（生物右侧 -X），带一点上抛
+        _v.set(-Math.cos(this.facing), 0, Math.sin(this.facing)).multiplyScalar(GRAB_FLING);
+        _v.addScaledVector(_f.set(Math.sin(this.facing), 0, Math.cos(this.facing)), 3);
+        _v.y = 6;
+        pl.applyImpulse(_v);
+        pl.cameraPunch(0.6, -0.3);
+        this.ctx.fx.shake(0.9, 0.35);
+      }
     }
     this.grabCd = this.ctx.rng.range(GRAB_COOLDOWN[0], GRAB_COOLDOWN[1]);
     this.chainSweep = this.isElite;
@@ -516,7 +521,8 @@ export class FrostCrab extends StandardEnemy {
         const dx = pl.position.x - center.x, dz = pl.position.z - center.z;
         const dist = Math.hypot(dx, dz);
         const rise = pl.position.y - center.y;
-        if (dist >= prev - 0.4 && dist <= r + 0.4 && rise > -0.6 && rise < SWEEP_JUMP_CLEAR) {
+        // 出手者被嘲讽期间波面不伤玩家（Unity GroundWave.Check：owner.Taunted → 跳过，不记命中）
+        if (dist >= prev - 0.4 && dist <= r + 0.4 && rise > -0.6 && rise < SWEEP_JUMP_CLEAR && !source.taunted) {
           hit = true;
           ctx.combat.damagePlayer(dmg, 'none', source, center);
           _v.set(dx, 0, dz).normalize().multiplyScalar(SWEEP_KNOCK);

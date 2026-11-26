@@ -26,7 +26,8 @@ globalThis.__gltf = async (url) => {
   const map = new THREE.Texture();
   map.image = { width: 4, height: 4, close: () => closed.add(id) };
   const scene = new THREE.Group();
-  scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map })), { name: `${id}_LOD0` }));
+  // 名字带 Broken 的模拟枪火 1301：网格不按 _LOD0 命名，资产库读不出来
+  scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map })), { name: id.includes('Broken') ? `${id}_part` : `${id}_LOD0` }));
   return { scene };
 };
 
@@ -71,6 +72,8 @@ test('releaseUnused frees on-demand assets outside keep, closes their decoded im
   reset(MANIFEST);
   await AssetLibrary.preload('core');
   await AssetLibrary.ensureBound('enemy', ['grunt', 'boss_kunpeng_kun']);
+  await AssetLibrary.ensureBound('enemy', ['grunt'], 'frost');
+  assert.ok(AssetLibrary.get('SK_Enemy_Grunt_Frost'), '带主题读：该主题的变体优先');
   await AssetLibrary.ensureBound('weapon', ['smg']);
   const kun = AssetLibrary.get('SK_Boss_Kun');
   let geometryDisposed = false;
@@ -91,6 +94,28 @@ test('releaseUnused frees on-demand assets outside keep, closes their decoded im
   assert.deepEqual(fetched, ['SK_Boss_Kun'], '释放后要用时再读');
 });
 
+test('two bodies bound to one weapon: only the higher priority one is read, a broken one falls back, the pick is stable', async () => {
+  const weapons = [
+    entry('SK_Weapon_Smg', { source: 'weapon', id: 'smg' }),
+    [...entry('SK_Weapon_Gunfire1002', { source: 'weapon', id: 'smg' })].map((v, i) => (i === 1 ? { ...v, priority: 1 } : v)),
+    entry('SK_Weapon_Shotgun', { source: 'weapon', id: 'shotgun' }),
+    [...entry('SK_Weapon_BrokenShotgun', { source: 'weapon', id: 'shotgun' })].map((v, i) => (i === 1 ? { ...v, priority: 1 } : v)),
+  ];
+  reset(weapons);
+  await AssetLibrary.ensureBound('weapon', ['smg', 'shotgun']);
+  assert.deepEqual(fetched.sort(), ['SK_Weapon_BrokenShotgun', 'SK_Weapon_Gunfire1002', 'SK_Weapon_Shotgun'], '优先的读一份；读不出来才读下一份');
+  assert.equal(AssetLibrary.findBound('weapon', 'smg').id, 'SK_Weapon_Gunfire1002');
+  assert.equal(AssetLibrary.findBound('weapon', 'shotgun').id, 'SK_Weapon_Shotgun');
+  // 检视页整批读：两份都在时也按 priority 取，不看哪份先读完
+  reset(weapons);
+  await AssetLibrary.ensureBound('weapon', ['smg']);
+  AssetLibrary.loaded.delete('SK_Weapon_Gunfire1002');
+  AssetLibrary.pending.delete('SK_Weapon_Gunfire1002');
+  await AssetLibrary.loadIds(['SK_Weapon_Smg']);
+  await AssetLibrary.loadIds(['SK_Weapon_Gunfire1002']);
+  assert.equal(AssetLibrary.findBound('weapon', 'smg').id, 'SK_Weapon_Gunfire1002');
+});
+
 test('request starts a read for a known binding and says whether art will come', async () => {
   reset(MANIFEST);
   assert.equal(AssetLibrary.request('enemy', 'grunt'), true);
@@ -100,57 +125,58 @@ test('request starts a read for a known binding and says whether art will come',
 });
 
 // ── StageArt：本关集合 ──
+// 名册是生成的 TS 表（src/assets/stageRosters.ts）：去掉类型照原样读进来；StageArt 不碰关卡库、不读 unity-levels
+const rostersSource = stripTypeScriptTypes(await readFile(new URL('../src/assets/stageRosters.ts', import.meta.url), 'utf8'), { mode: 'transform' });
+const { STAGE_ROSTERS: rosters } = await import(dataModule(rostersSource.replaceAll("'./StageArt'", `'${dataModule('export {};')}'`)));
 const stubs = {
   '../core/types': 'export {};',
   '../enemies/plateau': "export const PLATEAU_ENEMY_IDS = ['marmot', 'aoyin', 'liangu'];",
-  '../world/desert/redo/active': 'export const redoStage = () => false;',
-  '../world/UnityLevelLibrary': 'export const UnityLevelLibrary = {};',
   './AssetLibrary': 'export const AssetLibrary = {};',
+  './stageRosters': 'export const STAGE_ROSTERS = { maps: {}, chapters: {} };',
 };
-let stageSource = stripTypeScriptTypes(await readFile(new URL('../src/assets/StageArt.ts', import.meta.url), 'utf8'), { mode: 'transform' });
+const stageText = await readFile(new URL('../src/assets/StageArt.ts', import.meta.url), 'utf8');
+assert.ok(!/unity|UnityLevelLibrary/i.test(stageText.replace(/\/\*\*[\s\S]*?\*\//g, '')), 'StageArt 的代码里不能依赖 Unity（2026-11-26 用户要求）');
+let stageSource = stripTypeScriptTypes(stageText, { mode: 'transform' });
 for (const [spec, code] of Object.entries(stubs)) stageSource = stageSource.replaceAll(`'${spec}'`, `'${dataModule(code)}'`);
-stageSource = stageSource.replaceAll('import.meta.env.BASE_URL', "'/'");
-const { stageEnemyIds, documentRoster } = await import(dataModule(stageSource));
+const { stageEnemyIds } = await import(dataModule(stageSource));
 
-const rosters = JSON.parse(await readFile(new URL('../public/assets/unity-levels/rosters.json', import.meta.url), 'utf8'));
 const manifest = JSON.parse(await readFile(new URL('../public/assets/manifest.json', import.meta.url), 'utf8')).assets;
 const known = new Set(Object.values(manifest).filter((e) => e.bind?.source === 'enemy').map((e) => e.bind.id));
 const plateau = new Set(['marmot', 'tiangou', 'aoyin', 'leiyak', 'jufu', 'manman', 'liangu', 'dijiang', 'qiongqi']);
 
 test('a chapter-3 boss stage reads its chapter roster plus both Qilin forms, not other chapters', () => {
-  const ids = stageEnemyIds({ mapId: '3-4', chapter: 3, rosters, document: null, known, skip: plateau });
+  const ids = stageEnemyIds({ mapId: '3-4', chapter: 3, rosters, known, skip: plateau });
   assert.ok(ids.includes('boss_qilin_xuan') && ids.includes('boss_qilin_burn'), '首领按前缀展开到各形态');
   assert.ok(ids.includes('tantong') && ids.includes('fire_crow'), '火麒麟召的炭童、火鸦在本章名册里');
   assert.ok(!ids.includes('jerboa_blade') && !ids.includes('boss_hanba') && !ids.includes('boss_warlord'));
 });
 
-test('the Hanba stage has no waves in its document but still reads what Hanba summons', () => {
-  const ids = stageEnemyIds({ mapId: '1-4', chapter: 1, rosters, document: { enemies: [], bosses: ['boss_hanba'] }, known, skip: plateau });
+test('the Hanba stage has no waves but still reads what Hanba summons', () => {
+  assert.deepEqual(rosters.maps['1-4'].enemies, [], '首领关没有波次');
+  const ids = stageEnemyIds({ mapId: '1-4', chapter: 1, rosters, known, skip: plateau });
   for (const id of ['boss_hanba', 'apsara', 'scorpion_archer']) assert.ok(ids.includes(id), id);
 });
 
 test('chapter 4 reads the lords through AssetLibrary but leaves plateau foes to their own loader', () => {
-  const ids = stageEnemyIds({ mapId: '4-1', chapter: 4, rosters, document: null, known, skip: plateau });
+  const ids = stageEnemyIds({ mapId: '4-1', chapter: 4, rosters, known, skip: plateau });
   assert.deepEqual(ids, ['boss_feilian', 'boss_huashe', 'boss_kui']);
 });
 
-test('the document roster adds layout-variant site specs and unknown ids are dropped', () => {
-  const doc = {
-    encounters: [{ waves: [{ entries: [{ enemy: 'grunt' }, { enemy: 'no_such_enemy' }] }] }],
-    bosses: [{ id: 'boss_kunpeng' }],
-    layout: { variants: [{ sites: [{ spec: { waves: [{ entries: [{ enemy: 'archer' }] }] } }] }] },
+test('a map missing from the table reads its chapter roster and every boss of the chapter; unknown ids are dropped', () => {
+  const table = {
+    maps: { '9-1': { chapter: 9, enemies: ['grunt', 'no_such_enemy'], bosses: [] }, '9-4': { chapter: 9, enemies: [], bosses: ['boss_kunpeng'] } },
+    chapters: { 9: ['archer', 'grunt', 'no_such_enemy'] },
   };
-  const roster = documentRoster(doc);
-  assert.deepEqual(roster.enemies.sort(), ['archer', 'grunt', 'no_such_enemy']);
-  const ids = stageEnemyIds({ mapId: 'x', chapter: 9, rosters: null, document: roster, known, skip: plateau });
-  assert.deepEqual(ids, ['archer', 'boss_kunpeng_kun', 'boss_kunpeng_peng', 'grunt']);
+  assert.deepEqual(stageEnemyIds({ mapId: '9-1', chapter: 9, rosters: table, known, skip: plateau }), ['archer', 'grunt']);
+  assert.deepEqual(stageEnemyIds({ mapId: '9-B', chapter: 9, rosters: table, known, skip: plateau }), ['archer', 'boss_kunpeng_kun', 'boss_kunpeng_peng', 'grunt'],
+    '新图还没进名册：首领按本章全部读，免得唯一的首领用程序化模型');
 });
 
 test('every enemy that appears in a chapter roster and has art is reachable from some stage', () => {
   for (const [chapter, list] of Object.entries(rosters.chapters)) {
     if (chapter === '4') continue;
     const mapIds = Object.keys(rosters.maps).filter((m) => rosters.maps[m].chapter === Number(chapter));
-    const reached = new Set(mapIds.flatMap((mapId) => stageEnemyIds({ mapId, chapter: Number(chapter), rosters, document: null, known, skip: plateau })));
+    const reached = new Set(mapIds.flatMap((mapId) => stageEnemyIds({ mapId, chapter: Number(chapter), rosters, known, skip: plateau })));
     for (const id of list) if (known.has(id)) assert.ok(reached.has(id), `${chapter} 章 ${id}`);
   }
 });

@@ -655,13 +655,20 @@ export class Nuo extends StandardEnemy {
     if (this.spitTick > 0) return;
     this.spitTick += SPIT.tick;
     if (!pl.alive) return;
-    const dx = pl.position.x - this.position.x, dz = pl.position.z - this.position.z;
+    // 对当前目标判定（Unity NuoAI：JetCovers(PlayerPos)）；被嘲讽时喷在灵体诱饵上，无效
+    const taunted = this.taunted;
+    const tp = this.targetPos, pr = taunted ? 0.35 : pl.radius;
+    const dx = tp.x - this.position.x, dz = tp.z - this.position.z;
     const d = Math.hypot(dx, dz);
-    if (d > reach + pl.radius + 0.3 || Math.abs(pl.position.y - this.position.y) > 2.5) return;
+    if (d > reach + pr + 0.3 || Math.abs(tp.y - this.position.y) > 2.5) return;
     const off = Math.abs(wrapAngle(Math.atan2(dx, dz) - yaw));
-    if (off > SPIT.width + Math.atan2(pl.radius, Math.max(0.5, d))) return;
+    if (off > SPIT.width + Math.atan2(pr, Math.max(0.5, d))) return;
     this.playerChest(_t);
     if (ctx.world.segmentBlocked(_p, _t)) return;
+    if (taunted) {
+      this.decoyBlocked();
+      return;
+    }
     ctx.combat.damagePlayer(this.def.damage * SPIT.dps * SPIT.tick * this.damageMult, 'fire', this, _p);
   }
 

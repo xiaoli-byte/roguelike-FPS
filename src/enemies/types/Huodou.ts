@@ -624,19 +624,26 @@ export class Huodou extends StandardEnemy {
     const ctx = this.ctx;
     const p = ctx.player;
     if (!p.alive) return false;
-    const dx = p.position.x - this.position.x, dz = p.position.z - this.position.z;
+    // 扇形对当前目标判定（Unity HuodouAI.BreathDamage：InCone(PlayerPos) + HitPlayer）；被嘲讽时喷在灵体诱饵上，无效
+    const taunted = this.taunted;
+    const tp = this.targetPos, pr = taunted ? 0.35 : p.radius;
+    const dx = tp.x - this.position.x, dz = tp.z - this.position.z;
     const d = Math.hypot(dx, dz);
-    if (d > this.spitRange + p.radius) return false;
-    if (Math.abs(p.position.y - this.position.y) > 1.8) return false;
+    if (d > this.spitRange + pr) return false;
+    if (Math.abs(tp.y - this.position.y) > 1.8) return false;
     if (d > 0.4) {
       const a = Math.atan2(dx, dz) - this.spitYaw;
       const da = Math.atan2(Math.sin(a), Math.cos(a));
       // 扇形边缘留一点玩家身宽
-      if (Math.abs(da) > SPIT_HALF + Math.atan2(p.radius, d)) return false;
+      if (Math.abs(da) > SPIT_HALF + Math.atan2(pr, d)) return false;
     }
     this.mouth(_v);
     this.playerChest(_w);
     if (ctx.world.segmentBlocked(_v, _w)) return false;
+    if (taunted) {
+      this.decoyBlocked();
+      return false;
+    }
     ctx.combat.damagePlayer(this.def.damage * SPIT_TICK_MULT * this.damageMult, 'fire', this, this.position);
     return true;
   }

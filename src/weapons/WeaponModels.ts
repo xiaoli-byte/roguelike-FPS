@@ -1042,8 +1042,19 @@ export function setCrossbowString(m: GunModel, t: number): void {
   sl.scale.set(len, 1, 1);
 }
 
-/** 美术枪模雕刻纹路的自发光强度（按稀有度） */
-const ART_GLOW: Record<Rarity, number> = { 0: 0.5, 1: 0.8, 2: 1.1, 3: 1.5, 4: 2.0 };
+/** 美术枪模雕刻纹路的自发光强度（按稀有度；Unity WeaponTint.Glow） */
+export const ART_GLOW: Record<Rarity, number> = { 0: 0.5, 1: 0.8, 2: 1.1, 3: 1.5, 4: 2.0 };
+/** 美术材质的自发光基准（Unity M_Weapon_* 的 _EmissionColor = 1.6 白；WeaponTint.MaterialBase） */
+export const ART_GLOW_BASE = 1.6;
+
+/**
+ * 纹路发光色（Unity WeaponTint）：有元素 = 元素色 × 稀有度亮度 × 1.6；无元素 = 保留美术原样的白色纹路（1.6 白，不随稀有度）。
+ * 网页原来无元素时用稀有度色——Unity 改成保留美术白纹，「不改普通枪的观感」。
+ */
+export function weaponGlowColor(element: Element, rarity: Rarity, out = new THREE.Color()): THREE.Color {
+  if (element === 'none') return out.setRGB(ART_GLOW_BASE, ART_GLOW_BASE, ART_GLOW_BASE);
+  return out.setHex(ELEMENT_COLORS[element]).multiplyScalar(ART_GLOW[rarity] * ART_GLOW_BASE);
+}
 
 /** 构建一把枪（第一人称与掉落共用） */
 export function buildGunModel(defId: string, rarity: Rarity, element: Element, opts: { art?: boolean } = {}): GunModel {
@@ -1058,8 +1069,8 @@ export function buildGunModel(defId: string, rarity: Rarity, element: Element, o
   const asset = opts.art === false ? null : AssetLibrary.findBound('weapon', def.id);
   const art = asset ? attachRigidParts(b.root, asset, PROCEDURAL_PARTS) : null;
   if (art?.emissive) {
-    // 雕刻纹路发光：元素色；无元素时用稀有度色。亮度随稀有度提高
-    const base = new THREE.Color(element !== 'none' ? ELEMENT_COLORS[element] : RARITY_COLORS[rarity]).multiplyScalar(ART_GLOW[rarity]);
+    // 雕刻纹路发光（Unity WeaponTint）：元素色 × 稀有度亮度 × 1.6；无元素时保留美术的白色纹路
+    const base = weaponGlowColor(element, rarity);
     art.material.emissive.copy(base);
     art.material.userData.glowBase = base;
     m.artGlow = art.material;
