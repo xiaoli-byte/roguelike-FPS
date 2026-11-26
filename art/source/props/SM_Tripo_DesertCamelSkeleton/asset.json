@@ -1,0 +1,459 @@
+{
+  "id": "SM_Tripo_DesertCamelSkeleton",
+  "display": "半埋驼骨（近景叙事件：驼队残骸 / 倒毙驼队旁，侧卧半埋的骆驼骨架）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:16",
+          "files": {
+            "BO_SM_Tripo_DesertCamelSkeleton_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCamelSkeleton_v001.json",
+              "sha256": "14a81273f2934f30def4b8ed6bbea611a2dbbfa02235645166db5d03de9fcc46"
+            },
+            "BO_SM_Tripo_DesertCamelSkeleton_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCamelSkeleton_v001_views.json",
+              "sha256": "09ac4ee6dbff860243d69fdd7560b90b4468aed14b452cb49a98e746d1c6024a"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.camelSkeleton"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.6,
+              0.0,
+              -0.8
+            ],
+            "max": [
+              1.6,
+              1.0,
+              0.8
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:16",
+          "files": {
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_source.png",
+              "sha256": "2cc11b672f44a94f2a06f26f4622c018e05d8b5e6a8754d4b21fd878b445c154"
+            },
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_front.png",
+              "sha256": "fa3c0e13d9c33666e66d018afe4011009ed7e3f9e28e62282201ad9f9e16b737"
+            },
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_left.png",
+              "sha256": "67b0151e6d9acef1ec0b7f85c6466c56643f2d5a9311f55aab0fb9ab591b6977"
+            },
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_back.png",
+              "sha256": "98654804ef65ea570a23d73841e3b34b620f4db9ab0d5acbb95e46c72ca68ed4"
+            },
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_right.png",
+              "sha256": "5009e136b3ad5d81c34004f849c616496bd10e41250edc4b5929603ee964321a"
+            },
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_sheet.png",
+              "sha256": "0f7b64125b541c66c0674a2625abf17a177e50b5e050f314aec73dbe5fbc5128"
+            },
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_prompt.txt",
+              "sha256": "5f5d394e5bb9654233ce0048d376bfe2f2516ef7d9f34d0d1330a91ac71fd6fd"
+            },
+            "CN_SM_Tripo_DesertCamelSkeleton_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelSkeleton_v001_registration.json",
+              "sha256": "826e42193b6b3ac3e881bd7f3b5b29e806fd589f439bf925e44d2769e54fdfc5"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.6-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.6-sunburst",
+            "size": [
+              2048,
+              1152
+            ],
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 522,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 522
+              },
+              "output_tokens": 1413,
+              "output_tokens_details": {
+                "image_tokens": 1413,
+                "text_tokens": 0
+              },
+              "total_tokens": 1935
+            },
+            "request_id": "req_04a2e7b39f664c45924cb7564a8570cb",
+            "seconds": 25.4,
+            "variants": 1,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "",
+            "source_image": "SM_Tripo_DesertCamelSkeleton_r1.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Pure flat white background. No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects.\n\nSTYLE: stylized hand-painted 3D game environment asset painted under even neutral white light with true base colours only: no baked lighting, no cast shadows, no ambient-occlusion darkening, no rim light. Thick chunky simplified silhouette, broad clean faceted planes, two or three dominant colour blocks (aged warm ivory-grey bone (never white), sand-yellow drift sand), soft painted gradients, sparse medium-size wear. No photorealism, no micro-grain, no fine cracks, no realistic erosion detail, no tiny carvings. Physically plausible.\n\nOBJECT, half-buried camel skeleton (3.2m wide x 1m tall x 1.6m deep): The skeleton of a dead camel lying on its side, half buried in a low smooth drift of sand. The backbone lies along the sand at the back as one chunky ridge of blocky vertebrae; from it a row of seven thick curved ribs arches up and over toward the front like big curved bars, each rib as thick as a forearm with wide gaps of sand between them. The long neck of thick vertebrae curves down and forward from the ribcage onto the sand, ending in one large chunky camel skull lying on its side with an empty eye socket and a long jaw. At the rear end a broad pelvis bone and one thick leg bone half sunk in the sand. The sand mound base is low, smooth and sand-yellow, spreading a little beyond the bones. FRONT view: the long side, skull at the image-LEFT end, pelvis at the image-RIGHT, about 3.2 times as wide as tall. BACK view: the other side, skull on the image-RIGHT. LEFT side view: from the pelvis end, the rib arches overlapping. RIGHT side view: from the skull end, the skull in front of the ribcage. No thin or tiny bones, no scattered loose bones.",
+          "source_sha256": "2cc11b672f44a94f2a06f26f4622c018e05d8b5e6a8754d4b21fd878b445c154",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.673854447439353,
+              "offset": [
+                49,
+                440
+              ],
+              "size": [
+                414,
+                143
+              ],
+              "physical_height_m": 1,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6293266205160477,
+              "offset": [
+                151,
+                440
+              ],
+              "size": [
+                210,
+                143
+              ],
+              "physical_height_m": 1,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.673854447439353,
+              "offset": [
+                43,
+                440
+              ],
+              "size": [
+                426,
+                143
+              ],
+              "physical_height_m": 1,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.632111251580278,
+              "offset": [
+                147,
+                440
+              ],
+              "size": [
+                217,
+                143
+              ],
+              "physical_height_m": 1,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-22 第一章重建件：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-22 02:11:16"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:29:54",
+          "files": {
+            "HP_SM_Tripo_DesertCamelSkeleton_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelSkeleton_v001_source.glb",
+              "sha256": "98bbd91fece7bcaad9890b089f8f09852180fcaa996e182183d4cab0d8893a77"
+            },
+            "HP_SM_Tripo_DesertCamelSkeleton_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelSkeleton_v001.glb",
+              "sha256": "969797993f44871336ec01180c3da229ed87acef0fa3f9a83e6cf691172dc31a"
+            },
+            "HP_SM_Tripo_DesertCamelSkeleton_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelSkeleton_v001_graph.json",
+              "sha256": "284b792d4a93d25488e82eace7bbcbdd39e99b10a9eb8e874ac8f585dfee2b97"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/1189f48a-509a-45b0-9c3a-8f988e48a8f6",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8786,
+          "source_sha256": "98bbd91fece7bcaad9890b089f8f09852180fcaa996e182183d4cab0d8893a77"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:40:58",
+          "files": {
+            "HP_SM_Tripo_DesertCamelSkeleton_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelSkeleton_v002_source.glb",
+              "sha256": "2132a2609e286750a3fa65d4f80862eec7dafa9716e2d3089f9b11f17a5f1918"
+            },
+            "HP_SM_Tripo_DesertCamelSkeleton_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelSkeleton_v002.glb",
+              "sha256": "b27bd867cd17af91bf5b30ad6bdd433b446b6567131bfa76427aececc147050b"
+            },
+            "HP_SM_Tripo_DesertCamelSkeleton_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelSkeleton_v002_graph.json",
+              "sha256": "ef42a0d469dbf76221d95819d08788d6a7997562f86d09ee8b8ea35505ab3a8b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:tone_match",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8786,
+          "source_sha256": "2132a2609e286750a3fa65d4f80862eec7dafa9716e2d3089f9b11f17a5f1918"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:30:11",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertCamelSkeleton_v001.blend",
+              "sha256": "1466f60c3ca4ab16cf35634c713f021f581911cdd8a4d9f282830d474a2f534e"
+            },
+            "SM_Tripo_DesertCamelSkeleton_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertCamelSkeleton_v001.glb",
+              "sha256": "21e69bef18eefd275f18f3b6ef8ed689dcfe870a8bd21a80a6ab63cf0f3aa9b5"
+            },
+            "SM_Tripo_DesertCamelSkeleton_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCamelSkeleton_v001_metrics.json",
+              "sha256": "7d5bdc3779e0566219da21ffbd55b033f78ea2d6f4c64c5079d803d8f294130d"
+            },
+            "T_Tripo_DesertCamelSkeleton_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCamelSkeleton_BC.png",
+              "sha256": "9e712ee68c46b9aada8c993934000810c6938e0a4296559bc16ceafcebb3103d"
+            },
+            "T_Tripo_DesertCamelSkeleton_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCamelSkeleton_N.png",
+              "sha256": "5491855d0e91fd773cfe5234c988870c985522e8711b195525f5cd2d67733342"
+            },
+            "T_Tripo_DesertCamelSkeleton_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCamelSkeleton_ORM.png",
+              "sha256": "4fc49d32ff90f319bed1d928c70eb2b3678d4f8a652c73528b2d210fd6ce776c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.865,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8786,
+              "verts": 4502
+            }
+          ],
+          "export_kb": 269.8,
+          "seconds": 16.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:41:19",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertCamelSkeleton_v002.blend",
+              "sha256": "d373f240cc7ffbcb26bdf6ce30efc9508733f7a7edf163c48c6b862cc73c7486"
+            },
+            "SM_Tripo_DesertCamelSkeleton_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertCamelSkeleton_v002.glb",
+              "sha256": "d4674174a207341aac50ebfd50f7eb6f6891171ef75ea21268555937b9d3286c"
+            },
+            "SM_Tripo_DesertCamelSkeleton_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCamelSkeleton_v002_metrics.json",
+              "sha256": "6955682428316be783a7e5cecc05bbb8086e4f057f272e4b6277927726ad4126"
+            },
+            "T_Tripo_DesertCamelSkeleton_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelSkeleton_BC.png",
+              "sha256": "abc4ed95f2fef5de1b2cbcc83107cf7adc415beeb157b7171790fe62b8590c93"
+            },
+            "T_Tripo_DesertCamelSkeleton_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelSkeleton_N.png",
+              "sha256": "c3f4c3ef05c615d316cf6a9f83dbc02d23013d2dd6a9065159a2d3fd125d3137"
+            },
+            "T_Tripo_DesertCamelSkeleton_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelSkeleton_ORM.png",
+              "sha256": "4fc49d32ff90f319bed1d928c70eb2b3678d4f8a652c73528b2d210fd6ce776c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.865,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8786,
+              "verts": 4502
+            }
+          ],
+          "export_kb": 265.5,
+          "seconds": 19.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:30:12",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertCamelSkeleton_v001_validation_v001.json",
+              "sha256": "9241769d431e631e6ea5aeb34d5390a87449546ad126bcde75d1d02845574f8a"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:41:20",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertCamelSkeleton_v002_validation_v002.json",
+              "sha256": "6bfbdfb9fe29672f01befe48123d3ddaf01b82aa5bf7f28696c382e582bf0d32"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:30:54",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertCamelSkeleton_v001_review_v001.png",
+              "sha256": "c5c55747ea53286e95553b2d53c07a1386783e135013c2be2df9861ebedfa6a6"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：P2.0 多视图 8786 面、纹理去光 4K；侧卧半埋骨架、七根肋拱、颈椎接驼头、骨盆腿骨半埋，剪影 IoU 0.865；底色不紫（紫偏 0）不糊，沙丘饱和土黄与第一章配色一致；用户授权免审",
+            "time": "2026-11-27 00:31:51"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:41:34",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertCamelSkeleton_v002_review_v002.png",
+              "sha256": "c41f3888eca7d60dd2d92a5f34cfc9ddd9275dfabc4d6c2c1b6642201f1938c2"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：v002：底色 Lab 彩度 ×0.7（Tripo 去光后沙丘比四视图艳 1.5 倍，只调色、不平滑）；形不变：侧卧半埋骨架、七根肋拱、颈椎接驼头，剪影 IoU 0.865；不紫不糊；用户授权免审",
+            "time": "2026-11-27 00:43:38"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:31:51",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertCamelSkeleton.glb",
+              "sha256": "21e69bef18eefd275f18f3b6ef8ed689dcfe870a8bd21a80a6ab63cf0f3aa9b5"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertCamelSkeleton.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:43:38",
+          "files": {
+            "SM_Tripo_DesertCamelSkeleton.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertCamelSkeleton.glb",
+              "sha256": "d4674174a207341aac50ebfd50f7eb6f6891171ef75ea21268555937b9d3286c"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertCamelSkeleton.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,460 @@
+{
+  "id": "SM_Tripo_DesertDeadPoplar",
+  "display": "胡杨枯木（1-1 干河床两岸：河干了，胡杨死了也不倒）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:17",
+          "files": {
+            "BO_SM_Tripo_DesertDeadPoplar_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertDeadPoplar_v001.json",
+              "sha256": "70fbcb41b8eec391dcf2fe4daf1d8e509dcd9807938a0c28b22c193710d3466a"
+            },
+            "BO_SM_Tripo_DesertDeadPoplar_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertDeadPoplar_v001_views.json",
+              "sha256": "3294afc2de15a9835b53675bb35c05bec073337b01a3b88204754f117c4c381f"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.deadPoplar"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.25,
+              0.0,
+              -2.0
+            ],
+            "max": [
+              2.25,
+              5.5,
+              2.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:18",
+          "files": {
+            "CN_SM_Tripo_DesertDeadPoplar_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_source.png",
+              "sha256": "6ce4d990d9f1fb73b69e6e53c19602765c2c15349671bb778ba78459d19dfc08"
+            },
+            "CN_SM_Tripo_DesertDeadPoplar_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_front.png",
+              "sha256": "a24b29351a9a27caf53b2349c2960be0b15a04a80a57028f4b48006be7583b6f"
+            },
+            "CN_SM_Tripo_DesertDeadPoplar_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_left.png",
+              "sha256": "6d64a6e0087102bf0893b2817fa3fc9983b054c0387b3357ba5c38e5f1303c68"
+            },
+            "CN_SM_Tripo_DesertDeadPoplar_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_back.png",
+              "sha256": "36e12edc5e90700219e1f6a4ff3347da11d960adfdfdb7ac4ce3ab073fab95a5"
+            },
+            "CN_SM_Tripo_DesertDeadPoplar_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_right.png",
+              "sha256": "f29e20086aaf37dcc928247efd155f0c762a70714d966b655352fdcc9aa013ee"
+            },
+            "CN_SM_Tripo_DesertDeadPoplar_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_sheet.png",
+              "sha256": "552eb0b7ca2a4a1399c6563118c4c6cbbe4c5db4e016850d96ad7975389d8f0a"
+            },
+            "CN_SM_Tripo_DesertDeadPoplar_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_prompt.txt",
+              "sha256": "1196f57c766c3b3f8fee274211764d1e6fa108abefc0df318e7026bd700c2010"
+            },
+            "CN_SM_Tripo_DesertDeadPoplar_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertDeadPoplar_v001_registration.json",
+              "sha256": "0b3c83e6b5fb363b760a6c26585ccdd62e63a237fc79e4bb8b0d54949df6f91b"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.6-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.6-sunburst",
+            "size": [
+              2048,
+              1152
+            ],
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 464,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 464
+              },
+              "output_tokens": 1413,
+              "output_tokens_details": {
+                "image_tokens": 1413,
+                "text_tokens": 0
+              },
+              "total_tokens": 1877
+            },
+            "request_id": "req_a3ecf8c519404632bf682a6a8d28af23",
+            "seconds": 27.5,
+            "variants": 1,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row",
+              "back view = mirrored front (drawn back was not a consistent mirror)"
+            ],
+            "note": "",
+            "source_image": "SM_Tripo_DesertDeadPoplar_r1.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Pure flat white background. No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects.\n\nSTYLE: stylized hand-painted 3D game environment asset painted under even neutral white light with true base colours only: no baked lighting, no cast shadows, no ambient-occlusion darkening, no rim light. Thick chunky simplified silhouette, broad clean faceted planes, two or three dominant colour blocks (weathered silver-grey and warm grey-brown dead wood, sand-yellow dune sand), soft painted gradients, sparse medium-size wear. No photorealism, no micro-grain, no fine cracks, no realistic erosion detail, no tiny carvings. Physically plausible.\n\nOBJECT, dead desert poplar tree (4.5m wide x 5.5m tall x 4m deep): A dead desert poplar tree (Populus euphratica) that died standing when the river dried up: a massive short trunk about 1m thick, twisted in a slow spiral, with a few deep chunky vertical cracks and one large split, the bark gone so the wood shows weathered silver-grey with warm grey-brown streaks. At about 2.5m the trunk forks into four thick crooked limbs that reach out in different directions, each ending in a blunt broken-off stump. NO leaves, NO small branches, NO twigs: only the trunk and four thick limbs. The thick roots grip a small rounded sand dune about 1m high at the base, two or three fat roots exposed on the dune surface. FRONT view: limbs spreading to both sides, about 0.8 times as wide as tall; the four views are clearly different and every limb keeps its direction in all four views. Bold chunky shapes.",
+          "source_sha256": "6ce4d990d9f1fb73b69e6e53c19602765c2c15349671bb778ba78459d19dfc08",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8798900137482814,
+              "offset": [
+                52,
+                232
+              ],
+              "size": [
+                407,
+                559
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8826700769828731,
+              "offset": [
+                67,
+                232
+              ],
+              "size": [
+                377,
+                559
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8798900137482814,
+              "offset": [
+                52,
+                232
+              ],
+              "size": [
+                407,
+                559
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8798900137482814,
+              "offset": [
+                62,
+                232
+              ],
+              "size": [
+                387,
+                559
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-22 第一章重建件：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-22 02:11:18"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:34:48",
+          "files": {
+            "HP_SM_Tripo_DesertDeadPoplar_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertDeadPoplar_v001_source.glb",
+              "sha256": "5ce3ce94c19511f7921dca96d994fa0e0002f0cc4dfe053a0b3b6e2e7a3ded1c"
+            },
+            "HP_SM_Tripo_DesertDeadPoplar_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertDeadPoplar_v001.glb",
+              "sha256": "421574a38fbc1067b0ea598af0df49e39974541dae66331664ceb92edc9c62f0"
+            },
+            "HP_SM_Tripo_DesertDeadPoplar_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertDeadPoplar_v001_graph.json",
+              "sha256": "f1782a2ac83d8b925b8fcabcdb5dfbfae91bef0637d026f7547e1115314ade36"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/946940e6-4e5d-413e-9e66-fd408f113a22",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12153,
+          "source_sha256": "5ce3ce94c19511f7921dca96d994fa0e0002f0cc4dfe053a0b3b6e2e7a3ded1c"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:41:43",
+          "files": {
+            "HP_SM_Tripo_DesertDeadPoplar_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertDeadPoplar_v002_source.glb",
+              "sha256": "970515ae1f5669eec61ee004008e12e641cda3cda84d466c4c2951179aa231ed"
+            },
+            "HP_SM_Tripo_DesertDeadPoplar_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertDeadPoplar_v002.glb",
+              "sha256": "43a3e8abcdb4341986d867dd35e14f241409b2e37d65e04f8e3676000f063a12"
+            },
+            "HP_SM_Tripo_DesertDeadPoplar_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertDeadPoplar_v002_graph.json",
+              "sha256": "12f34488f3a2aef48c5b68eec8433c4d2656d3a61fc28cacf18a2f47936e3b0a"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:tone_match",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12153,
+          "source_sha256": "970515ae1f5669eec61ee004008e12e641cda3cda84d466c4c2951179aa231ed"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:35:02",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertDeadPoplar_v001.blend",
+              "sha256": "7c4d70c110d1e38677ff7085cba56dce8f5b467d7b0133fcf26677d1a194171d"
+            },
+            "SM_Tripo_DesertDeadPoplar_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertDeadPoplar_v001.glb",
+              "sha256": "011d8a5347f221985c7fd95e56293dc42fc918136184d8e02eb49f06d35db722"
+            },
+            "SM_Tripo_DesertDeadPoplar_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertDeadPoplar_v001_metrics.json",
+              "sha256": "8963d6cd996b3f382e62727620d716014eb9e2bd26acc77b62593c1513974983"
+            },
+            "T_Tripo_DesertDeadPoplar_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertDeadPoplar_BC.png",
+              "sha256": "fdf57d0d9157dc51a7c8bd94a8df438b6ccea311869d4c0aec4d2c11f21c86f1"
+            },
+            "T_Tripo_DesertDeadPoplar_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertDeadPoplar_N.png",
+              "sha256": "aad6adca59553677f6cdab8bd814c9e6ef7434b56d22e37f99fe526cce7f41f0"
+            },
+            "T_Tripo_DesertDeadPoplar_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertDeadPoplar_ORM.png",
+              "sha256": "4851aca19d09222baf2136be948478bdb30f24ee1bb660397730e0ba2cdc4410"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12153,
+              "verts": 6757
+            }
+          ],
+          "export_kb": 326.8,
+          "seconds": 12.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:41:58",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertDeadPoplar_v002.blend",
+              "sha256": "a827035d5621a4297c9f2483c50bf89ecb6ceab0c617b6025a28c0383784dc13"
+            },
+            "SM_Tripo_DesertDeadPoplar_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertDeadPoplar_v002.glb",
+              "sha256": "d0f8ae2c7dcf76e91f06ee4f0844b0c957f2edd8fc2e8c019b5336eb40b98f37"
+            },
+            "SM_Tripo_DesertDeadPoplar_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertDeadPoplar_v002_metrics.json",
+              "sha256": "2559f045725d5cfb139716299b895a4e68774d710c324b3c9e8318c59a880305"
+            },
+            "T_Tripo_DesertDeadPoplar_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertDeadPoplar_BC.png",
+              "sha256": "83c0a2a785e212683abb4823b7478c3f991ce7850a6dd112c83c6d542e44d54b"
+            },
+            "T_Tripo_DesertDeadPoplar_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertDeadPoplar_N.png",
+              "sha256": "bb1461588e9aabfa1cbcb840a82aa8cca6ba4b86fd02c4bc52a6c5cb8247446d"
+            },
+            "T_Tripo_DesertDeadPoplar_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertDeadPoplar_ORM.png",
+              "sha256": "4851aca19d09222baf2136be948478bdb30f24ee1bb660397730e0ba2cdc4410"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12153,
+              "verts": 6757
+            }
+          ],
+          "export_kb": 324.1,
+          "seconds": 13.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:35:02",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertDeadPoplar_v001_validation_v001.json",
+              "sha256": "8f0fa3e0cd596eeff969979243bb926c2047ba4f72b672efb0978756166f3823"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:41:59",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertDeadPoplar_v002_validation_v002.json",
+              "sha256": "1070b0fcc898ace8b6f5fc47ff88ccbedf96e4d1038aa156eacfb16410204141"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:35:08",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertDeadPoplar_v001_review_v001.png",
+              "sha256": "d7ad7dedbf3566fa61b8751560b70f6aeccba89781424d73c1c25f2cf3e589d2"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：P2.0 多视图 12153 面、纹理去光 4K；扭转主干分四根断头粗枝、根抓沙丘，剪影 IoU 0.858；底色暖灰褐木色不紫（紫偏 0）不糊；用户授权免审",
+            "time": "2026-11-27 00:35:32"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:42:58",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertDeadPoplar_v002_review_v002.png",
+              "sha256": "812c28eb773d2f3cd7c9982770a145a168e5b2e4901dc19a358ba931a8fa2708"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：v002：底色 Lab 彩度 ×0.7（Tripo 去光后木色 / 沙丘比四视图艳 1.7 倍，只调色、不平滑）；形不变：扭转主干四根断头粗枝，剪影 IoU 0.858；不紫不糊；用户授权免审",
+            "time": "2026-11-27 00:43:39"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:35:33",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertDeadPoplar.glb",
+              "sha256": "011d8a5347f221985c7fd95e56293dc42fc918136184d8e02eb49f06d35db722"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertDeadPoplar.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:43:39",
+          "files": {
+            "SM_Tripo_DesertDeadPoplar.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertDeadPoplar.glb",
+              "sha256": "d0f8ae2c7dcf76e91f06ee4f0844b0c957f2edd8fc2e8c019b5336eb40b98f37"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertDeadPoplar.glb"
+        }
+      ]
+    }
+  }
+}

@@ -4,6 +4,7 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { buildLookSwitches, findFireflies, mountLookPanel, profileSwitches, snapshot, warmLook } from '../world/plateau/lookdev';
 import { AmbienceBed } from '../audio/AmbienceBed';
 import { AmbienceSense } from '../world/plateau/ambienceSense';
 import { bakeCoverMap } from '../world/plateau/coverMap';
@@ -385,6 +386,24 @@ layoutMap();
 const params = new URLSearchParams(location.search);
 goTo(VIEWPOINTS.find(v => v.id === params.get('view')) ?? VIEWPOINTS[0]);
 if (params.get('panel') === '0') { $('panel').classList.add('collapsed'); $('toggle').textContent = '展开'; }
+// 流程工具（plateau/lookdev.ts）：着色器预热（网址 warm=0 关）、逐项开关、分项计时、闪点检测
+$('loading').textContent = '正在预热着色器…';
+// 草的区块是按需生成的（每次 update 最多建 4 块）：先全部建好，它们的着色器变体才编得到
+for (let i = 0, n = -1; i < 120 && grass.count !== n; i++) { n = grass.count; grass.update(camera.position); }
+await arena.ready;   // 两张绘景大图到齐再预热（它们也在预热里传上 GPU）
+const warmMs = await warmLook(renderer, scene, camera, () => film.render(scene, camera), () => film.compileScene(scene, camera));
+const lookSwitches = buildLookSwitches({
+  renderer, scene, film, rain,
+  extra: [{ id: 'soft', label: '柔光（天空环境光 + 半透明影子）', get: () => sun.shadow.intensity !== 1, set: on => { sun.shadow.intensity = on ? SHADOW_SOFT : 1; skyAmbient.setEnabled(on); } }],
+});
+const lookRender = (): void => { film.render(scene, camera); };
+mountLookPanel(document.querySelector<HTMLElement>('#panel .body') ?? $('panel'), lookSwitches, { render: lookRender, camera, renderer, film });
+const lookdev = {
+  switches: lookSwitches, warmMs,
+  profile: () => profileSwitches(renderer, lookRender, lookSwitches),
+  fireflies: (frames?: number) => findFireflies(lookRender, camera, renderer.domElement, { frames, film }),
+  snapshot: (time?: number) => snapshot(lookRender, renderer.domElement, { time }),
+};
 $('loading').remove();
 showHint('点击画面开始 · WASD 移动 · G 飞行 · 1–9 机位');
 
@@ -471,7 +490,7 @@ function simulate(seconds: number, step = 1 / 30, render = false): void {
 Object.assign(window, {
   haizi: {
     scene, camera, renderer, terrain, world, walker, weather, lake, pillars, conductors, arena, goTo, VIEWPOINTS, simulate, waterFx, audio,
-    SPAWN, PILLARS, COIL, keys, ambience: { bed, ears, cover },
+    SPAWN, PILLARS, COIL, keys, ambience: { bed, ears, cover }, lookdev,
     get play() { return play; },
     setPlay: (p: HaiziPlay | null) => { play = p; },
     setFiring: (v: boolean) => { firing = v; },

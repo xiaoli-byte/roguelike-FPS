@@ -1,5 +1,6 @@
 import { AirLife, type LeafCrown, type MoteBox } from '../../AirLife';
 import { Banners, type Banner } from '../banners';
+import { StormWall, type StormWallOptions } from '../stormWall';
 import {
   beaconSmoke, dustDevils, groundDrift, ridgeSand, sandFalls,
   type DriftPatch, type DustDevil, type GroundDriftOptions, type RidgeLine, type RidgeSandOptions, type SandFall, type SandFallOptions,
@@ -47,6 +48,8 @@ export interface RedoFx {
   leaves?: number;
   /** 光里的尘（门洞、殿内） */
   motes?: MoteBox[];
+  /** 天边的沙暴墙（圆心 = 图中心，墙脚 = 远景地面高度，受光朝白盒的太阳） */
+  storm?: Omit<StormWallOptions, 'center' | 'baseY' | 'sunAzimuth'>;
 }
 
 const clamp = (v: number, a: number, b: number): number => Math.min(b, Math.max(a, v));
@@ -102,9 +105,15 @@ function poplarCrowns(spec: WhiteboxSpec, b: DesertBuild, color: number): LeafCr
   return crowns.length > 36 ? crowns.filter((_, k) => k % 2 === 0) : crowns;
 }
 
-export function redoFx(b: DesertBuild, spec: WhiteboxSpec, fx: RedoFx | undefined): DesertPart[] {
+export function redoFx(b: DesertBuild, spec: WhiteboxSpec, fx: RedoFx | undefined, baseY = 0): DesertPart[] {
   if (!fx) return [];
   const parts: DesertPart[] = [];
+  if (fx.storm) {
+    // 白盒太阳方位（从北顺时针）→ farLayer 方位（0 = +Z、90 = +X）
+    const storm = new StormWall({ ...fx.storm, center: [spec.size[0] / 2, spec.size[1] / 2], baseY, sunAzimuth: 180 - spec.sun.azimuth });
+    b.group.add(storm.mesh);
+    parts.push(storm);
+  }
   const ridges: RidgeLine[] = [];
   if (fx.ridges !== false) ridges.push(...whiteboxRidges(spec, b, fx.ridges ?? {}));
   for (const r of fx.extraRidges ?? []) {

@@ -29,8 +29,14 @@ const YARDANG_S = 'SM_Tripo_DesertYardangSmall';
 
 // ── 现成的件（尺寸 = 资产包围盒 × 倍数；sink = 换件时埋进地里几米）──
 /** 砂岩巨砾 3.38 × 2.88 × 2.54：整块 = 全身掩体；半埋 1.83 m = 半身掩体 */
-const boulder = (at: V2, rot: number, half = false): WbBlock =>
-  ({ kind: 'box', at, size: [3.38, 2.54], h: half ? 1.05 : 2.88, rot, mat: 'rock', asset: 'SM_Env_DesertSandstone', ...(half ? { sink: 1.83 } : {}) });
+/** 半身掩体：风蚀卧石（Tripo 2026-11-27）长 / 块交替——卧石 A 3.6 × 1.0 × 1.6（低长流线形）、卧石 B 2.2 × 1.2 × 1.8（蘑菇形，埋 0.1 m 露 1.1 m）；原来是砂岩巨砾埋掉 1.8 m 只露个顶 */
+let lowRockSeq = 0;
+const lowRock = (at: V2, rot = 0): WbBlock => (lowRockSeq++ % 2 === 0
+  ? { kind: 'box', at, size: [3.65, 1.9], h: 1.0, rot, mat: 'rock', asset: 'SM_Tripo_DesertLowRockA' }
+  : { kind: 'box', at, size: [1.8, 1.6], h: 1.1, rot, mat: 'rock', asset: 'SM_Tripo_DesertLowRockB', sink: 0.1 });
+const boulder = (at: V2, rot: number, half = false): WbBlock => half
+  ? lowRock(at, rot)
+  : { kind: 'box', at, size: [3.38, 2.54], h: 2.88, rot, mat: 'rock', asset: 'SM_Env_DesertSandstone' };
 /** 半埋屋顶 · 平顶土坯房 ×1.8（6.41 × 6.48 × 6.97）：只露屋顶 */
 const flatRoof = (at: V2, top: number, sink: number): WbBlock =>
   ({ kind: 'box', at, size: [6.41, 6.97], top, rot: ROOF_ROT, mat: 'earth', asset: 'SM_Tripo_DesertBuriedRoofFlat', sink });
@@ -200,9 +206,11 @@ export const WB_1_2: WhiteboxSpec = {
     finial([213, 96]),
     finial([152, 93]),
     // ③ 半埋佛塔 ×1.8（17 × 19.8 × 16，坐在 10 m 的塔座上，塔尖 29.8 m）：自带的两级小台 + 覆钵 + 相轮塔刹
-    { name: '佛塔', kind: 'cyl', at: STUPA, size: [8.3, 8.3], top: 14.5, mat: 'stone', asset: 'SM_Tripo_DesertStupaBuried' },
-    { name: '佛塔', kind: 'cyl', at: STUPA, size: [5, 5], top: 21.5, mat: 'stone', asset: 'SM_Tripo_DesertStupaBuried' },
-    { name: '佛塔', kind: 'cyl', at: STUPA, size: [1.1, 1.1], top: 29.8, mat: 'earth', asset: 'SM_Tripo_DesertStupaBuried', landmark: '佛塔' },
+    // 白色覆钵塔（Tripo 件 SM_Tripo_DesertWhiteStupa，2026-11-27 换掉暗色的半埋层塔，照概念图）：12.2 × 19.8 m 立在 10 m 塔座上；
+    // 三段圆柱只是碰撞（方台 + 鼓座、覆钵、相轮），件按高度等比缩放
+    { name: '佛塔', kind: 'cyl', at: STUPA, size: [6, 6], top: 13.6, mat: 'stone', asset: 'SM_Tripo_DesertWhiteStupa' },
+    { name: '佛塔', kind: 'cyl', at: STUPA, size: [4.8, 4.8], top: 21.5, mat: 'stone', asset: 'SM_Tripo_DesertWhiteStupa' },
+    { name: '佛塔', kind: 'cyl', at: STUPA, size: [1.2, 1.2], top: 29.8, mat: 'earth', asset: 'SM_Tripo_DesertWhiteStupa', landmark: '佛塔' },
     // ③ 北庭（据点场地）：残墙、倒柱、经函、陶罐、香炉
     coverWall([232, 152], 25),
     coverWall([262, 150], -10),

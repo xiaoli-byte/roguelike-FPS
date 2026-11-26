@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 12153,
+    "verts": 6757
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.5,
+    "iou": 0.858,
+    "iou_per_view": {
+      "front": 0.914,
+      "left": 0.783,
+      "back": 0.914,
+      "right": 0.794
+    },
+    "size_m": [
+      4.114,
+      4.124,
+      5.5
+    ],
+    "reference_m": [
+      4.5,
+      4.0,
+      5.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.763,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertDeadPoplar_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertDeadPoplar_LOD0",
+      "tris": 12153,
+      "verts": 6757,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.99853515625
+      ],
+      "uv_utilization": 0.558,
+      "bbox_min": [
+        -2.0568,
+        -2.0622,
+        0.0
+      ],
+      "bbox_max": [
+        2.0568,
+        2.0622,
+        5.5
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertDeadPoplar/04_export/SM_Tripo_DesertDeadPoplar_v002.glb",
+    "bytes": 331828
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 11.2,
+  "_seconds": 13.1
+}

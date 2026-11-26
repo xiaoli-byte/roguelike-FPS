@@ -1,7 +1,7 @@
 """Register a Tripo Studio (GPT Image 2.5) concept image as the asset's concept (tripo_assets.register), then approve it.
 
   python register_sheet.py <ID> <image.png> --prompt <prompt.txt> [--layout row|grid] [--variant N]
-         [--swap-sides] [--flip back,left,right] [--same-front] [--note "..."] [--no-approve]
+         [--swap-sides] [--flip back,left,right] [--same-front] [--note "..."] [--no-approve] [--openai <call record .json>]
 
 The four figures are keyed with figs.key (border flood + enclosed background holes), re-laid as one clean row on the
 sheet grey and registered; --swap-sides / --flip fix the image model's side-view mistakes, --same-front uses the front
@@ -33,6 +33,7 @@ ap.add_argument("--same-front", action="store_true")
 ap.add_argument("--note", default="")
 ap.add_argument("--no-approve", action="store_true")
 ap.add_argument("--batch", default="", help="approval note prefix, e.g. 2026-11-06 祝融套件 3-1")
+ap.add_argument("--openai", default="", help="the image came from the OpenAI API: its call record (sheets_raw/<ID>_r<N>.json) is the provenance")
 a = ap.parse_args()
 
 spec = ta.tripo_spec(a.id)
@@ -69,6 +70,9 @@ prompt = Path(a.prompt).read_text(encoding="utf-8")
 info = {"provider": "tripo_studio", "model": "GPT Image 2.5", "size": list(Image.open(a.image).size), "variants": 4,
         "selected_variant": a.variant, "references": [], "fixes": fixes, "note": a.note,
         "source_image": Path(a.image).name}
+if a.openai:
+    info = {**json.loads(Path(a.openai).read_text(encoding="utf-8")), "variants": 1, "selected_variant": 0, "references": [],
+            "fixes": fixes, "note": a.note, "source_image": Path(a.image).name}
 ta.register(spec, state, bo, views, buf.getvalue(), prompt, info)
 if not a.no_approve:
     v = state.set_review("concept", "approved", "Claude AI visual review",

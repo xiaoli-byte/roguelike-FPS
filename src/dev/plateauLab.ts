@@ -3,6 +3,7 @@
  * 不依赖游戏主循环：地形、地标、经幡、散布、水、烟、远景都在 src/world/plateau/ 里，
  * 这里只负责组装、输入、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md。
  */
+import { buildLookSwitches, findFireflies, mountLookPanel, profileSwitches, snapshot, warmLook } from '../world/plateau/lookdev';
 import { AmbienceBed } from '../audio/AmbienceBed';
 import { AmbienceSense } from '../world/plateau/ambienceSense';
 import { bakeCoverMap } from '../world/plateau/coverMap';
@@ -616,6 +617,23 @@ function updateHud(dt: number): void {
 
 layoutMap();
 goTo(VIEWPOINTS[0]);
+// 流程工具（plateau/lookdev.ts）：着色器预热（网址 warm=0 关）、逐项开关、分项计时、闪点检测
+$('loading').textContent = '正在预热着色器…';
+// 草的区块是按需生成的（每次 update 最多建 4 块）：先全部建好，它们的着色器变体才编得到
+for (let i = 0, n = -1; i < 120 && grass.count !== n; i++) { n = grass.count; grass.update(camera.position); }
+const warmMs = await warmLook(renderer, scene, camera, () => film.render(scene, camera), () => film.compileScene(scene, camera));
+const lookSwitches = buildLookSwitches({
+  renderer, scene, film, rain,
+  extra: [{ id: 'soft', label: '柔光（天空环境光 + 半透明影子）', get: () => sun.shadow.intensity !== 1, set: on => { sun.shadow.intensity = on ? SHADOW_SOFT : 1; skyAmbient.setEnabled(on); } }],
+});
+const lookRender = (): void => { film.render(scene, camera); };
+mountLookPanel(document.querySelector<HTMLElement>('#panel .body') ?? $('panel'), lookSwitches, { render: lookRender, camera, renderer, film });
+const lookdev = {
+  switches: lookSwitches, warmMs,
+  profile: () => profileSwitches(renderer, lookRender, lookSwitches),
+  fireflies: (frames?: number) => findFireflies(lookRender, camera, renderer.domElement, { frames, film }),
+  snapshot: (time?: number) => snapshot(lookRender, renderer.domElement, { time }),
+};
 $('loading').remove();
 showHint('点击画面开始 · WASD 移动 · G 飞行 · 1–9 机位');
 
@@ -723,5 +741,5 @@ Object.assign(window, { plateau: {
   press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
   hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
   /** 渲染一帧（截图前） */
-  render: () => { film.render(scene, camera); }, film, ambience: { bed, ears, cover },
+  render: () => { film.render(scene, camera); }, film, ambience: { bed, ears, cover }, lookdev,
 } });

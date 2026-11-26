@@ -121,9 +121,14 @@ const wreck = (at: V2, rot = 0, full = false): WbBlock => full
   ? { kind: 'box', at, size: [4.93, 5.24], h: 2.37, rot, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck' }
   : { kind: 'box', at, size: [3.79, 4.03], h: 1.07, rot, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck', sink: 0.75 };
 /** 砂岩巨砾 Sandstone（3.38 × 2.88 × 2.54）：整块全身；埋 1.78 m 是半身 */
+/** 半身掩体：风蚀卧石（Tripo 2026-11-27）长 / 块交替——卧石 A 3.6 × 1.0 × 1.6（低长流线形）、卧石 B 2.2 × 1.2 × 1.8（蘑菇形，埋 0.1 m 露 1.1 m）；原来是砂岩巨砾埋掉 1.8 m 只露个顶 */
+let lowRockSeq = 0;
+const lowRock = (at: V2, rot = 0): WbBlock => (lowRockSeq++ % 2 === 0
+  ? { kind: 'box', at, size: [3.65, 1.9], h: 1.0, rot, mat: 'rock', asset: 'SM_Tripo_DesertLowRockA' }
+  : { kind: 'box', at, size: [1.8, 1.6], h: 1.1, rot, mat: 'rock', asset: 'SM_Tripo_DesertLowRockB', sink: 0.1 });
 const boulder = (at: V2, rot = 0, full = false): WbBlock => full
   ? { kind: 'box', at, size: [3.38, 2.54], h: 2.88, rot, mat: 'rock', asset: 'SM_Env_DesertSandstone' }
-  : { kind: 'box', at, size: [3.38, 2.54], h: 1.1, rot, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.78 };
+  : lowRock(at, rot);
 /** 香炉 IncenseBurner（1.33 × 2.6 × 1.16）、火盆 Brazier（1.32 × 2.4 × 1.2）、红柳 Tamarisk（1.72 × 2.27 × 2.02，放大 1.5 倍） */
 const burner = (at: V2): WbBlock => ({ kind: 'cyl', at, size: [0.65, 0.65], h: 2.6, mat: 'stone', asset: 'SM_Prop_DesertIncenseBurner' });
 const brazier = (at: V2): WbBlock => ({ kind: 'cyl', at, size: [0.65, 0.65], h: 2.4, mat: 'rock', asset: 'SM_Tripo_DesertBrazier' });

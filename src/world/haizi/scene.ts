@@ -453,6 +453,8 @@ export interface HaiziScene {
   icons: MapIcon[];
   /** 远山绘景加载完（截图脚本等它）；失败也会变 true，只是没有远山 */
   farLoaded: boolean;
+  /** 远山绘景和投影绘景两张大图都到了（检视页的着色器预热等它，好在加载遮罩里把它们传上 GPU） */
+  ready: Promise<void>;
 }
 
 /**
@@ -525,7 +527,7 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   scene.add(scatter.group);
   const grass = new GrassField(terrain, occupied);
   scene.add(grass.group);
-  const out: HaiziScene = { sky, lake, pillars, conductors, anim, flags, grass, scatter, icons, farLoaded: false };
-  void Promise.all([far.ready, paint.ready]).then(() => { out.farLoaded = true; });
+  const ready = Promise.all([far.ready, paint.ready]).then(() => { out.farLoaded = true; });
+  const out: HaiziScene = { sky, lake, pillars, conductors, anim, flags, grass, scatter, icons, farLoaded: false, ready };
   return out;
 }
