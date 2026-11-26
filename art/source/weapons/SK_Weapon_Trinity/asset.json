@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
             "time": "2026-10-06 17:39:56"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:52:50",
+          "files": {
+            "CN_SK_Weapon_Trinity_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v002_sheet.png",
+              "sha256": "b58f82785b905e563c85b42ea5e9580c584807d28978c257d08e5d55740b63d4"
+            },
+            "CN_SK_Weapon_Trinity_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v002_front.png",
+              "sha256": "da372c5d3531b49536635a954e1e654f2ac678d743a624dac7472e151bf6de77"
+            },
+            "CN_SK_Weapon_Trinity_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v002_left.png",
+              "sha256": "7ab4c822ae2cd9d4192735abedbff7108327907787a87661002e69796b9ffa75"
+            },
+            "CN_SK_Weapon_Trinity_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v002_back.png",
+              "sha256": "e8788f79c76dc3fd8f49562f8dabfb42ce304ae4f48453e3c3be0bcd19aaffc2"
+            },
+            "CN_SK_Weapon_Trinity_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v002_right.png",
+              "sha256": "ddfff009929349a86e639e006e86ec5e2bfb07a725983221f0d5fa40d07de56d"
+            },
+            "CN_SK_Weapon_Trinity_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v002_compare.png",
+              "sha256": "0a3ed0367a5081dadf1cd2cd5af24b5186d966ff889891e2f7e89f371cbbcd30"
+            },
+            "CN_SK_Weapon_Trinity_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v002_prompt.txt",
+              "sha256": "bf5771d4c526416903657a66150fdd31969acd83d89f77ea575df628d280d84b"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.6-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2119,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 661
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3299
+          },
+          "request_id": "req_0fd6fab05c814ebc968ecc35fceee127",
+          "seconds": 33.3,
+          "registration": {
+            "front": {
+              "scale": 0.996,
+              "offset": [
+                29,
+                141
+              ],
+              "iou": 0.885,
+              "iou_unregistered_scale": 0.996
+            },
+            "left": {
+              "scale": 0.996,
+              "offset": [
+                191,
+                141
+              ],
+              "iou": 0.943,
+              "iou_unregistered_scale": 0.996
+            },
+            "back": {
+              "scale": 0.9946,
+              "offset": [
+                28,
+                141
+              ],
+              "iou": 0.892,
+              "iou_unregistered_scale": 0.9946
+            },
+            "right": {
+              "scale": 0.996,
+              "offset": [
+                190,
+                141
+              ],
+              "iou": 0.957,
+              "iou_unregistered_scale": 0.996
+            }
+          },
+          "note": "Background MUST be one flat plain light grey (#D6D6D6) everywhere, exactly like the input sheet: no dark background, no glow, no halo, no vignette, no drop shadow, no light bloom around the weapon.",
+          "silhouette_iou": {
+            "front": 0.888,
+            "left": 0.944,
+            "back": 0.893,
+            "right": 0.956
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 多视图输入：四视图一致、剪影贴合白模",
+            "time": "2026-11-27 01:06:04"
           }
         }
       ]
@@ -284,7 +391,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -340,11 +447,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 4.8
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:20:40",
+          "files": {
+            "HP_SK_Weapon_Trinity_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v002_source.glb",
+              "sha256": "984cf90da1fc6f295245d7a8d416073732b0a78ed3d233a2c939bf4ca05aa5f0"
+            },
+            "HP_SK_Weapon_Trinity_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v002.glb",
+              "sha256": "f3ac9d6450596548863fcde93204786db80b79b5054d6232d9fd600e35ae98fb"
+            },
+            "HP_SK_Weapon_Trinity_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v002_graph.json",
+              "sha256": "efc91ce61ce3a52a1e780567ec58a15073712596cfbecc5d5d0def8b0a1c45ee"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/a65610bf-a68e-4941-8f71-60a525ca2a80",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 11578,
+          "source_sha256": "984cf90da1fc6f295245d7a8d416073732b0a78ed3d233a2c939bf4ca05aa5f0"
         }
       ]
     },
     "build": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -461,11 +594,59 @@
           "export_kb": 499.3,
           "seconds": 29.4,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:21:00",
+          "files": {
+            "SK_Weapon_Trinity_v003.blend": {
+              "path": "03_work/SK_Weapon_Trinity_v003.blend",
+              "sha256": "49c074dc76662269a61180800368fc231173386f7b2d4d0d03aa11fc3a831fc3"
+            },
+            "SK_Weapon_Trinity_v003.glb": {
+              "path": "04_export/SK_Weapon_Trinity_v003.glb",
+              "sha256": "ee435ebb8f5e762c5453c91353bafbb652814e47c1c11232d8b52c3729f9c6fd"
+            },
+            "SK_Weapon_Trinity_v003_metrics.json": {
+              "path": "03_work/SK_Weapon_Trinity_v003_metrics.json",
+              "sha256": "9149b5fbfc51e1b950981514053c88a48fdacf2e68585cb529b6439be9cf959f"
+            },
+            "T_Weapon_Trinity_BC.png": {
+              "path": "03_work/textures_v003/T_Weapon_Trinity_BC.png",
+              "sha256": "d8890b0e0dcf69b2eab745cd0fd5ce058a9c058b935cb8630ed851f3dbfe72d6"
+            },
+            "T_Weapon_Trinity_N.png": {
+              "path": "03_work/textures_v003/T_Weapon_Trinity_N.png",
+              "sha256": "bc8b7b4aef9a7a1d04904b8cf9ec97c0a6d5cb04210ca048b8f16d2c21cac685"
+            },
+            "T_Weapon_Trinity_ORM.png": {
+              "path": "03_work/textures_v003/T_Weapon_Trinity_ORM.png",
+              "sha256": "809d2d6518ce77520657a7b159397614adf10e692c142d9eb6469974416d2217"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.909,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11995,
+              "verts": 6086
+            }
+          ],
+          "export_kb": 520.9,
+          "seconds": 19.4,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -496,11 +677,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:21:00",
+          "files": {
+            "SK_Weapon_Trinity_v003_validation.json": {
+              "path": "05_review/SK_Weapon_Trinity_v003_validation.json",
+              "sha256": "50ea640d33d77ce4b4d7021801db8539195152ed16f286338b79a29dec3abc2b"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -569,11 +765,49 @@
             "note": "改为发光分区：卦象肋与云纹随下一发元素色发光；程序化灵纹条在美术枪旁浮空，已隐藏",
             "time": "2026-10-06 20:04:45"
           }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:21:06",
+          "files": {
+            "SK_Weapon_Trinity_v003_review.png": {
+              "path": "05_review/SK_Weapon_Trinity_v003_review.png",
+              "sha256": "4545c50c3170c7c770894c5305436cb8038567a3d9bf537f8dad7d39d90219ba"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0012,
+              "stretch_ratio": 0.0012,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {
+                "j_8 ↔ j_r": 23
+              }
+            },
+            "b": {
+              "bad_edge_ratio": 0.0011,
+              "stretch_ratio": 0.0011,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {
+                "j_8 ↔ j_r": 21
+              }
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：金色转轮、长管、云纹绿握把齐全，IoU 0.909",
+            "time": "2026-11-27 01:21:32"
+          }
         }
       ]
     },
     "publish": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -597,6 +831,18 @@
             }
           },
           "from_build": 2,
+          "url": "assets/weapons/SK_Weapon_Trinity.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:21:33",
+          "files": {
+            "SK_Weapon_Trinity.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Trinity.glb",
+              "sha256": "ee435ebb8f5e762c5453c91353bafbb652814e47c1c11232d8b52c3729f9c6fd"
+            }
+          },
+          "from_build": 3,
           "url": "assets/weapons/SK_Weapon_Trinity.glb"
         }
       ]

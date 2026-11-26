@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
             "time": "2026-10-06 17:39:56"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:51:34",
+          "files": {
+            "CN_SK_Weapon_Stormpod_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v002_sheet.png",
+              "sha256": "dec79e3ede08e04386b907eb56515a30c453341e315ce61736dc10ea05069965"
+            },
+            "CN_SK_Weapon_Stormpod_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v002_front.png",
+              "sha256": "565b5911252d93dc6fcd489df5eec60e8c4a7069c56c1a9dd0cae781ed504d64"
+            },
+            "CN_SK_Weapon_Stormpod_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v002_left.png",
+              "sha256": "36dcbeb2b6aff4bd92bf0a46f33ace859de2a1157ff82221b3773953593d00ab"
+            },
+            "CN_SK_Weapon_Stormpod_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v002_back.png",
+              "sha256": "fb6952d3365c9b1cffb118cb9c3d6914c82237698e90061002d9e85aae0fefab"
+            },
+            "CN_SK_Weapon_Stormpod_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v002_right.png",
+              "sha256": "a51ad3bc8cd09a0d13a45e8120e5315b46ed785ef09f000d49b96c086ede65ab"
+            },
+            "CN_SK_Weapon_Stormpod_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v002_compare.png",
+              "sha256": "dc55de665107f7ae6cdde8358adc2f50f2b26116c6ce6ed2a87bdbca28d5688a"
+            },
+            "CN_SK_Weapon_Stormpod_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v002_prompt.txt",
+              "sha256": "7ef42438530f95241ab79d41a6cf7145d9d2a016c1465d04b5002785db6fb178"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.6-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2128,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 670
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3308
+          },
+          "request_id": "req_72bd58a304a14f06a620f6f8b1066ddc",
+          "seconds": 35.4,
+          "registration": {
+            "front": {
+              "scale": 0.9924,
+              "offset": [
+                41,
+                55
+              ],
+              "iou": 0.921,
+              "iou_unregistered_scale": 0.9924
+            },
+            "left": {
+              "scale": 0.9913,
+              "offset": [
+                134,
+                55
+              ],
+              "iou": 0.899,
+              "iou_unregistered_scale": 0.9913
+            },
+            "back": {
+              "scale": 0.9935,
+              "offset": [
+                41,
+                55
+              ],
+              "iou": 0.924,
+              "iou_unregistered_scale": 0.9935
+            },
+            "right": {
+              "scale": 0.9924,
+              "offset": [
+                134,
+                55
+              ],
+              "iou": 0.913,
+              "iou_unregistered_scale": 0.9924
+            }
+          },
+          "note": "Background MUST be one flat plain light grey (#D6D6D6) everywhere, exactly like the input sheet: no dark background, no glow, no halo, no vignette, no drop shadow, no light bloom around the weapon.",
+          "silhouette_iou": {
+            "front": 0.921,
+            "left": 0.9,
+            "back": 0.926,
+            "right": 0.915
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 多视图输入：四视图一致、剪影贴合白模",
+            "time": "2026-11-27 01:06:04"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -445,11 +552,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 5.9
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:18:31",
+          "files": {
+            "HP_SK_Weapon_Stormpod_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v002_source.glb",
+              "sha256": "10ef5f5a638e0a3393f385d29e61c15dcba20c7110345718ba3203d5f2e00c15"
+            },
+            "HP_SK_Weapon_Stormpod_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v002.glb",
+              "sha256": "33e006a5068a861aac44983444dc862b2cb93826b7bb1f55d073a50607f466c6"
+            },
+            "HP_SK_Weapon_Stormpod_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v002_graph.json",
+              "sha256": "d145ca8b67a2b82879fdea2b48b193a0de31b0191cea091d7a629b35b8113b9f"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/4b625f52-87d6-428c-ab24-9b4deecd437d",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12069,
+          "source_sha256": "10ef5f5a638e0a3393f385d29e61c15dcba20c7110345718ba3203d5f2e00c15"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -510,11 +643,59 @@
           "export_kb": 610.5,
           "seconds": 41.3,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:18:53",
+          "files": {
+            "SK_Weapon_Stormpod_v002.blend": {
+              "path": "03_work/SK_Weapon_Stormpod_v002.blend",
+              "sha256": "8533fb4ee42743212bccd5d8f62aff6f9f31a0a10bd07f97224d1899d0ba5147"
+            },
+            "SK_Weapon_Stormpod_v002.glb": {
+              "path": "04_export/SK_Weapon_Stormpod_v002.glb",
+              "sha256": "49f6351d697c3319ae66fca7fbbab59c88bf9aebd6510b3008518792a528eeb8"
+            },
+            "SK_Weapon_Stormpod_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Stormpod_v002_metrics.json",
+              "sha256": "520e92616c07c1d21c03d4a26cb5daad714ffdef5749f7e8341ee8f9e6d7558c"
+            },
+            "T_Weapon_Stormpod_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Stormpod_BC.png",
+              "sha256": "27386750cc06048afc4759532a1a86ea8574c9204cf89e8b636de3fc25d899bf"
+            },
+            "T_Weapon_Stormpod_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Stormpod_N.png",
+              "sha256": "5b94a00e4d47532f8af4fb38d1ed96a43c8d62ec789a96027849b38aa3240890"
+            },
+            "T_Weapon_Stormpod_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Stormpod_ORM.png",
+              "sha256": "74a8650e9785990ce497dacf7cd8d37c1cef2d542355c996d7b27f3a570d6e7e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.921,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12000,
+              "verts": 6507
+            }
+          ],
+          "export_kb": 565.7,
+          "seconds": 21.4,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -530,11 +711,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:18:54",
+          "files": {
+            "SK_Weapon_Stormpod_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Stormpod_v002_validation.json",
+              "sha256": "0f2b0d5a64167aa3c44a843bad31e89e6db41102c152da0f158842762e3f5b0f"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -569,11 +765,49 @@
             "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
             "time": "2026-10-06 18:04:59"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:19:00",
+          "files": {
+            "SK_Weapon_Stormpod_v002_review.png": {
+              "path": "05_review/SK_Weapon_Stormpod_v002_review.png",
+              "sha256": "bf8c0626d7dfc6c4f9c919b48caf58219579b524f5494c2007ba9b03bb2d9bbb"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0005,
+              "stretch_ratio": 0.0005,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {
+                "j_7 ↔ j_r": 10
+              }
+            },
+            "b": {
+              "bad_edge_ratio": 0.0005,
+              "stretch_ratio": 0.0005,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {
+                "j_7 ↔ j_r": 10
+              }
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：青漆雷罐、符纸、弹鼓、木握把齐全；深度比白模厚 3.5 cm（瞄具板），可接受",
+            "time": "2026-11-27 01:19:38"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -585,6 +819,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Stormpod.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:19:38",
+          "files": {
+            "SK_Weapon_Stormpod.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Stormpod.glb",
+              "sha256": "49f6351d697c3319ae66fca7fbbab59c88bf9aebd6510b3008518792a528eeb8"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Stormpod.glb"
         }
       ]

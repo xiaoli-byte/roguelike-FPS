@@ -73,7 +73,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -180,6 +180,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
             "time": "2026-10-03 21:15:09"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:48:37",
+          "files": {
+            "CN_SK_Weapon_Crossbow_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Crossbow_v002_sheet.png",
+              "sha256": "9e2edf9269ea37d90727e1f6a81feae3c1bfcc9200ad4ac1bdbe00a15de41ca3"
+            },
+            "CN_SK_Weapon_Crossbow_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Crossbow_v002_front.png",
+              "sha256": "2afd800d061f82a3a6fbbc8868315128a80fb54677bb5b7960bba37bd991256f"
+            },
+            "CN_SK_Weapon_Crossbow_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Crossbow_v002_left.png",
+              "sha256": "0be4b20d90e3a2c8822d2cecdd82d611d1f033701f9b8c534140cb55bffbd177"
+            },
+            "CN_SK_Weapon_Crossbow_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Crossbow_v002_back.png",
+              "sha256": "2d0d907c3e5525c998ca6faadc61c09922c0021b9702516f0bda618c7af45d6e"
+            },
+            "CN_SK_Weapon_Crossbow_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Crossbow_v002_right.png",
+              "sha256": "cf0c72b0e99bbcabd0d5e6a5a915e14ed0b0c751fba343fd10a04e71a479e3cc"
+            },
+            "CN_SK_Weapon_Crossbow_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Crossbow_v002_compare.png",
+              "sha256": "09078a1b27d481f3afcbd087730ea947f1ae02ff3c2a2373271158b3d1acdf05"
+            },
+            "CN_SK_Weapon_Crossbow_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Crossbow_v002_prompt.txt",
+              "sha256": "5d21406230a0f2796e9bd312653c3f89925e1e4a99f0caa6293e0e7b48dbf610"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.6-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2090,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 632
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3270
+          },
+          "request_id": "req_decacfc84cac4753a69f8508eab2c49b",
+          "seconds": 27.1,
+          "registration": {
+            "front": {
+              "scale": 0.9615,
+              "offset": [
+                36,
+                115
+              ],
+              "iou": 0.812,
+              "iou_unregistered_scale": 0.9913
+            },
+            "left": {
+              "scale": 0.9764,
+              "offset": [
+                99,
+                127
+              ],
+              "iou": 0.864,
+              "iou_unregistered_scale": 0.9913
+            },
+            "back": {
+              "scale": 0.9615,
+              "offset": [
+                36,
+                115
+              ],
+              "iou": 0.809,
+              "iou_unregistered_scale": 0.9913
+            },
+            "right": {
+              "scale": 0.9913,
+              "offset": [
+                97,
+                115
+              ],
+              "iou": 0.874,
+              "iou_unregistered_scale": 0.9913
+            }
+          },
+          "note": "Background MUST be one flat plain light grey (#D6D6D6) everywhere, exactly like the input sheet: no dark background, no glow, no halo, no vignette, no drop shadow, no light bloom around the weapon.",
+          "silhouette_iou": {
+            "front": 0.821,
+            "left": 0.863,
+            "back": 0.816,
+            "right": 0.878
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "",
+            "time": "2026-11-27 00:51:24"
           }
         }
       ]
@@ -395,7 +502,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -447,11 +554,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 4.1
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:01:56",
+          "files": {
+            "HP_SK_Weapon_Crossbow_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Crossbow_v002_source.glb",
+              "sha256": "75fbcc2858fb8876c607281667b04083d90a9c2c91bbe9edd642bbd4727df52c"
+            },
+            "HP_SK_Weapon_Crossbow_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Crossbow_v002.glb",
+              "sha256": "2d34fccb6ae87e43547b02e3418394b29d709733b07aff6589f26ef214e86cf9"
+            },
+            "HP_SK_Weapon_Crossbow_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Crossbow_v002_graph.json",
+              "sha256": "a32eb844c058774454392701a8091b0a015ed39e1b39530d1201776cffbbca26"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/1eaab785-f148-4fa4-9920-2f54ca611fca",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 11874,
+          "source_sha256": "75fbcc2858fb8876c607281667b04083d90a9c2c91bbe9edd642bbd4727df52c"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -512,11 +645,59 @@
           "export_kb": 529.9,
           "seconds": 30.5,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:02:22",
+          "files": {
+            "SK_Weapon_Crossbow_v002.blend": {
+              "path": "03_work/SK_Weapon_Crossbow_v002.blend",
+              "sha256": "ebfc387530dd4117d884434e5991994ad33c1b8d4812fbf8bab1ffddfd7eaa1d"
+            },
+            "SK_Weapon_Crossbow_v002.glb": {
+              "path": "04_export/SK_Weapon_Crossbow_v002.glb",
+              "sha256": "504a435f1d7543c010986b318bffc27876e2a0619e5051cd09d226d7349ab63f"
+            },
+            "SK_Weapon_Crossbow_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Crossbow_v002_metrics.json",
+              "sha256": "80520a5a2db1d910ff45aeac9167544e870aadaa784cb0e8fff2255a3bf9ad9c"
+            },
+            "T_Weapon_Crossbow_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Crossbow_BC.png",
+              "sha256": "5a63732703b1293e8c1dfc781efeeeea57d960503435c21515f67243ad313907"
+            },
+            "T_Weapon_Crossbow_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Crossbow_N.png",
+              "sha256": "26f2c6ef88e5c9f5ccb5755c129cf52da260326d84af6e48b321b43e8db0b027"
+            },
+            "T_Weapon_Crossbow_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Crossbow_ORM.png",
+              "sha256": "f6d90504f2500f82893684f064036c4a7ff210350a3fac0dd1b10ccaef539139"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.827,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11874,
+              "verts": 6326
+            }
+          ],
+          "export_kb": 526.7,
+          "seconds": 25.1,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -532,11 +713,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:02:22",
+          "files": {
+            "SK_Weapon_Crossbow_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Crossbow_v002_validation.json",
+              "sha256": "a93e23ae62b59b059d7b00822deb20d1f81076e9112119d4060062662e8ff208"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -571,11 +767,45 @@
             "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
             "time": "2026-10-03 21:58:35"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:02:30",
+          "files": {
+            "SK_Weapon_Crossbow_v002_review.png": {
+              "path": "05_review/SK_Weapon_Crossbow_v002_review.png",
+              "sha256": "3c9aa53a6a68ea569e4a2e6f52dd6d9f385a15242e5de53788e6a1216caef1f3"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：弩臂云纹、铜饰木身、缠绳握把齐全；UV 利用率 49% 可接受",
+            "time": "2026-11-27 01:04:40"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -587,6 +817,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Crossbow.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:04:41",
+          "files": {
+            "SK_Weapon_Crossbow.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Crossbow.glb",
+              "sha256": "504a435f1d7543c010986b318bffc27876e2a0619e5051cd09d226d7349ab63f"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Crossbow.glb"
         }
       ]
