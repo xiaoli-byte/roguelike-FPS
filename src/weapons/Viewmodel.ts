@@ -510,6 +510,8 @@ export class Viewmodel {
     this.disposeEntry(entry);
     const upgraded = this.build(inst);
     this.entries.set(inst.uid, upgraded);
+    // 原生枪模那条先重建时美术枪模可能还没读到：新条目也要等美术（开局的霰弹枪就是这样一直停在程序化枪模上）
+    this.upgradeWhenArt(upgraded, inst);
     if (current) {
       this.cur = upgraded;
       this.pivot.add(upgraded.gun.root);
