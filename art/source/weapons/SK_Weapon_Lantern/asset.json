@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,220 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
             "time": "2026-10-06 17:39:57"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:53:24",
+          "files": {
+            "CN_SK_Weapon_Lantern_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v002_sheet.png",
+              "sha256": "0c51a19e8607fd1340f72ac6cb978dd52ba6bdff5a6238ec8a893ea7bdcda51e"
+            },
+            "CN_SK_Weapon_Lantern_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v002_front.png",
+              "sha256": "95de02ce2e968ce61cb99bfa22961f743e3c972236a475e6a5d735ca25057c9d"
+            },
+            "CN_SK_Weapon_Lantern_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v002_left.png",
+              "sha256": "cc4b5081e60a222ac03180eba5d739a4fb5d1a67e7a50865505b894ef3990376"
+            },
+            "CN_SK_Weapon_Lantern_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v002_back.png",
+              "sha256": "7de88b94223e462a86d9dd7888c1fc6114bd2adab5b90790aef695962040397b"
+            },
+            "CN_SK_Weapon_Lantern_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v002_right.png",
+              "sha256": "14f5c9e10bf3924fe6b06737da7be624d2df5ac7de813aebf82429e31535db5f"
+            },
+            "CN_SK_Weapon_Lantern_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v002_compare.png",
+              "sha256": "a7018b7e8354f6483265414e3696ba27a749d29bf94c283b1b9dac5d8650d971"
+            },
+            "CN_SK_Weapon_Lantern_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v002_prompt.txt",
+              "sha256": "4822077ee620e3828d407c3b6ba791c090914688ed6af939730455f75f63dde9"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.6-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2135,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 677
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3315
+          },
+          "request_id": "req_e01dd552d2e54ad28e60aa5694938ec2",
+          "seconds": 29.6,
+          "registration": {
+            "front": {
+              "scale": 0.994,
+              "offset": [
+                28,
+                97
+              ],
+              "iou": 0.788,
+              "iou_unregistered_scale": 0.994
+            },
+            "left": {
+              "scale": 0.9562,
+              "offset": [
+                146,
+                73
+              ],
+              "iou": 0.884,
+              "iou_unregistered_scale": 0.9562
+            },
+            "back": {
+              "scale": 0.994,
+              "offset": [
+                28,
+                97
+              ],
+              "iou": 0.793,
+              "iou_unregistered_scale": 0.994
+            },
+            "right": {
+              "scale": 0.9562,
+              "offset": [
+                146,
+                73
+              ],
+              "iou": 0.882,
+              "iou_unregistered_scale": 0.9562
+            }
+          },
+          "note": "Background MUST be one flat plain light grey (#D6D6D6) everywhere, exactly like the input sheet: no dark background, no glow, no halo, no vignette, no drop shadow, no light bloom around the weapon.",
+          "silhouette_iou": {
+            "front": 0.792,
+            "left": 0.888,
+            "back": 0.798,
+            "right": 0.885
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 多视图输入：四视图一致、剪影贴合白模",
+            "time": "2026-11-27 01:06:05"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:25:53",
+          "files": {
+            "CN_SK_Weapon_Lantern_v003_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v003_sheet.png",
+              "sha256": "5af40e85d5cef1b2afbdc9cef2a9e454608faf0663e1a5f5efa614d5959e5259"
+            },
+            "CN_SK_Weapon_Lantern_v003_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v003_front.png",
+              "sha256": "9373832398c322dc8d220bf4853355b3a610e3261b69fb439fb065f4ae3de5e5"
+            },
+            "CN_SK_Weapon_Lantern_v003_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v003_left.png",
+              "sha256": "51d1162c740fcf172f1652427a40148709025313b9e298395eb29ee19d87a4ed"
+            },
+            "CN_SK_Weapon_Lantern_v003_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v003_back.png",
+              "sha256": "367aaf1d5c133f11b80614a3eebc4f5e23c9f656932b42b861584c9f0ca952c8"
+            },
+            "CN_SK_Weapon_Lantern_v003_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v003_right.png",
+              "sha256": "5ed30c3f3566c2092fd674babc1de5f0ee81f1e665093f3360c21e0c512f166d"
+            },
+            "CN_SK_Weapon_Lantern_v003_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v003_compare.png",
+              "sha256": "c0fa3bca6c8bd250852aa053daee1b324cdb095988b460f27fed192c2c63ec0a"
+            },
+            "CN_SK_Weapon_Lantern_v003_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v003_prompt.txt",
+              "sha256": "5c24f016e18618ae85886282d89070fcca96e659712b01b5075d1c6e43f0c3d6"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2165,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 707
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3345
+          },
+          "request_id": "req_db01e9d9ecaf4f41a7dcf360e629b77e",
+          "seconds": 30.8,
+          "registration": {
+            "front": {
+              "scale": 0.8885,
+              "offset": [
+                45,
+                134
+              ],
+              "iou": 0.533,
+              "iou_unregistered_scale": 0.9304
+            },
+            "left": {
+              "scale": 0.9043,
+              "offset": [
+                135,
+                85
+              ],
+              "iou": 0.89,
+              "iou_unregistered_scale": 0.9181
+            },
+            "back": {
+              "scale": 0.8876,
+              "offset": [
+                21,
+                134
+              ],
+              "iou": 0.532,
+              "iou_unregistered_scale": 0.9294
+            },
+            "right": {
+              "scale": 0.9191,
+              "offset": [
+                133,
+                86
+              ],
+              "iou": 0.889,
+              "iou_unregistered_scale": 0.9191
+            }
+          },
+          "note": "The hexagonal lantern lies horizontally along the shooting axis on top of the hanging arm. Its opaque pale-green silk gauze panels completely fill the space between the six bronze ribs, so in the left and right side views the lantern reads as a solid, gauze-covered lantern body with painted talismans between the ribs, NOT an empty wire frame. All four views must show the same lantern.",
+          "silhouette_iou": {
+            "front": 0.535,
+            "left": 0.897,
+            "back": 0.534,
+            "right": 0.893
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "v003：补充要求后侧视纱灯实心、四视图一致；灯身比白模框架短（正背 IoU 0.54），造型可接受",
+            "time": "2026-11-27 01:26:32"
           }
         }
       ]
@@ -389,7 +603,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -445,11 +659,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 5.9
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:32:16",
+          "files": {
+            "HP_SK_Weapon_Lantern_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v002_source.glb",
+              "sha256": "a13c57c44f69cfaa4b0e5a815e6b95d6c4eff07fc41db6f7ae3f1c595457e334"
+            },
+            "HP_SK_Weapon_Lantern_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v002.glb",
+              "sha256": "dc1cf7e464aff88175f1611d61dcdcc1f4d5c849dcece4f9532f134166d142a8"
+            },
+            "HP_SK_Weapon_Lantern_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v002_graph.json",
+              "sha256": "b040754939ce769cb39fa71bb434fd03f5a41ba23e444fce39d19ad783625929"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/a8dda98e-cb13-433c-a5c8-1dbd9a6f41c2",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 10927,
+          "source_sha256": "a13c57c44f69cfaa4b0e5a815e6b95d6c4eff07fc41db6f7ae3f1c595457e334"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -510,11 +750,59 @@
           "export_kb": 518.7,
           "seconds": 36.2,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:32:38",
+          "files": {
+            "SK_Weapon_Lantern_v002.blend": {
+              "path": "03_work/SK_Weapon_Lantern_v002.blend",
+              "sha256": "6791c1c107e1c9c7a8830bf6a1924dcb3dc9e152e4086d9aec60773bc2b50da1"
+            },
+            "SK_Weapon_Lantern_v002.glb": {
+              "path": "04_export/SK_Weapon_Lantern_v002.glb",
+              "sha256": "46b66005eb4c3b191e081d84751cb81717e2a0561073db4c5d94bd255e75c081"
+            },
+            "SK_Weapon_Lantern_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Lantern_v002_metrics.json",
+              "sha256": "0018a8f6feeafe9cd0503309d4198251dd1ce1811f1ecb1272ba0dd3387b54c5"
+            },
+            "T_Weapon_Lantern_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Lantern_BC.png",
+              "sha256": "72073f1b1e1fac8d9c149fd42ab81eeb703e9416fa4ef39e1ba575cce9b3af45"
+            },
+            "T_Weapon_Lantern_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Lantern_N.png",
+              "sha256": "8ae8725815ce0ca30300e239bfb00d06bfe687f02cb1b2946017216f1e1a01ce"
+            },
+            "T_Weapon_Lantern_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Lantern_ORM.png",
+              "sha256": "588491efde639f4f8e8e9890fff64a6b7792e8a38e91e9913e47eb68431f8abc"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.867,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 10927,
+              "verts": 5948
+            }
+          ],
+          "export_kb": 459.5,
+          "seconds": 21.2,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -530,11 +818,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:32:38",
+          "files": {
+            "SK_Weapon_Lantern_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Lantern_v002_validation.json",
+              "sha256": "a1367855d04c0bb01966cd0fb032fbf30a0b185ed3282f939957d4ff9ffc1611"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -569,11 +872,45 @@
             "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
             "time": "2026-10-06 18:05:03"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:32:44",
+          "files": {
+            "SK_Weapon_Lantern_v002_review.png": {
+              "path": "05_review/SK_Weapon_Lantern_v002_review.png",
+              "sha256": "745a4424c17ec83b3de6cd636c60583adfd7e31c00e980dd8b7ce058691b6772"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做（概念 v003）：横置纱灯鼓身、铜框、流苏、木杆握把齐全，IoU 0.867",
+            "time": "2026-11-27 01:33:50"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -585,6 +922,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Lantern.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:33:51",
+          "files": {
+            "SK_Weapon_Lantern.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Lantern.glb",
+              "sha256": "46b66005eb4c3b191e081d84751cb81717e2a0561073db4c5d94bd255e75c081"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Lantern.glb"
         }
       ]

@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
             "time": "2026-10-06 17:39:57"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:24:05",
+          "files": {
+            "CN_SK_Weapon_Railgun_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v002_sheet.png",
+              "sha256": "13f44222193bb3639b993d8e931ecafa471ed2ecc1f2d0106f2bc32625c4b719"
+            },
+            "CN_SK_Weapon_Railgun_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v002_front.png",
+              "sha256": "023ac07dd18b7e4db354365b13494b956a24335842e6dc18634631850cd50ee9"
+            },
+            "CN_SK_Weapon_Railgun_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v002_left.png",
+              "sha256": "4fa0019b4e15c2065cda9a07c638e37753cceeb0ded28a47403dd5553e0fb935"
+            },
+            "CN_SK_Weapon_Railgun_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v002_back.png",
+              "sha256": "3a9a2717e17e5654db3aadfbcb86b54f20400fefd82e55355eaf244fadfd2e91"
+            },
+            "CN_SK_Weapon_Railgun_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v002_right.png",
+              "sha256": "fc5654fe4bcd7b64573bc35e89941149b22b2fc235e98ddfe2e0b1dd60bccfad"
+            },
+            "CN_SK_Weapon_Railgun_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v002_compare.png",
+              "sha256": "e5a015224653ea82f9cb3da9ba3712619453744e5896b4e07df013fbfe074a7c"
+            },
+            "CN_SK_Weapon_Railgun_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v002_prompt.txt",
+              "sha256": "383a53ade49eae89870989b045a205640ee68ba616fa0ca4cf45d54f986e6e56"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2061,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 603
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3241
+          },
+          "request_id": "req_ff14a1c1892d4e09a934f78157a9f200",
+          "seconds": 31.1,
+          "registration": {
+            "front": {
+              "scale": 0.9595,
+              "offset": [
+                122,
+                82
+              ],
+              "iou": 0.747,
+              "iou_unregistered_scale": 0.9892
+            },
+            "left": {
+              "scale": 0.9298,
+              "offset": [
+                212,
+                110
+              ],
+              "iou": 0.623,
+              "iou_unregistered_scale": 0.9892
+            },
+            "back": {
+              "scale": 0.9298,
+              "offset": [
+                127,
+                96
+              ],
+              "iou": 0.741,
+              "iou_unregistered_scale": 0.9892
+            },
+            "right": {
+              "scale": 0.9298,
+              "offset": [
+                212,
+                110
+              ],
+              "iou": 0.62,
+              "iou_unregistered_scale": 0.9892
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.75,
+            "left": 0.626,
+            "back": 0.745,
+            "right": 0.625
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "灵炮 v002：双灵纹导轨、三道铜环、顶部电容舱齐全；枪口叉与环比例偏差致正背 IoU 0.62",
+            "time": "2026-11-27 01:26:32"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -445,11 +552,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 3.3
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:32:32",
+          "files": {
+            "HP_SK_Weapon_Railgun_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v002_source.glb",
+              "sha256": "7ff4a38dadd66f42f8276af859d029bd85f865f54a57dc6ff320c1dd7b39428d"
+            },
+            "HP_SK_Weapon_Railgun_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v002.glb",
+              "sha256": "9d65194c9450f0452b572dfcbef1ed9b103f0464758d276c08e33c43b0d3898c"
+            },
+            "HP_SK_Weapon_Railgun_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v002_graph.json",
+              "sha256": "ea3c7961bf7f80754bb6401d465166e00142bc4a4a19f38c8fe70028f14ba702"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/93d58812-8c89-4423-966a-621d2d493c4b",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12360,
+          "source_sha256": "7ff4a38dadd66f42f8276af859d029bd85f865f54a57dc6ff320c1dd7b39428d"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -510,11 +643,59 @@
           "export_kb": 551.3,
           "seconds": 46.0,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:32:55",
+          "files": {
+            "SK_Weapon_Railgun_v002.blend": {
+              "path": "03_work/SK_Weapon_Railgun_v002.blend",
+              "sha256": "ba19ade269c0d22ba02a206abf7ce2b48f4578645ecb5c421365148d944e2ce7"
+            },
+            "SK_Weapon_Railgun_v002.glb": {
+              "path": "04_export/SK_Weapon_Railgun_v002.glb",
+              "sha256": "754c7ca3d901f38abcb593ada3cd6c6b058455fcb0256ecedf20a79fd18e23f1"
+            },
+            "SK_Weapon_Railgun_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Railgun_v002_metrics.json",
+              "sha256": "a164ddcc229c85750c9ce5537fd3939d3e81d7a1d07d19b81a9051db54d0c4c1"
+            },
+            "T_Weapon_Railgun_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Railgun_BC.png",
+              "sha256": "119e267e998e6f76e94bbb36bbf101b81fe364f90061bde81d592d7eadfeab66"
+            },
+            "T_Weapon_Railgun_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Railgun_N.png",
+              "sha256": "189b1631bfc34df62cb434f1807e9e8d1f76b32f7bf7ef58d651c076be0655ed"
+            },
+            "T_Weapon_Railgun_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Railgun_ORM.png",
+              "sha256": "5dced4c417fb8ea7fd2e97f41c35dff842ebfb2c47314d23e6635918b90d40eb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.847,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 6148
+            }
+          ],
+          "export_kb": 557.8,
+          "seconds": 21.4,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -530,11 +711,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:32:55",
+          "files": {
+            "SK_Weapon_Railgun_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Railgun_v002_validation.json",
+              "sha256": "4cf74b5f29bf20bd302932a0591a06cfe9fcfe1a656a7574bd82ee427384a1c5"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -569,11 +765,45 @@
             "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
             "time": "2026-10-06 18:05:02"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:33:01",
+          "files": {
+            "SK_Weapon_Railgun_v002_review.png": {
+              "path": "05_review/SK_Weapon_Railgun_v002_review.png",
+              "sha256": "9ac616381472506a85249bdd6f9da72cdb1b91ea457999eb576afd83c7e882dc"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：双灵纹导轨、三道铜环、电容舱齐全，IoU 0.847",
+            "time": "2026-11-27 01:33:50"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -585,6 +815,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Railgun.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:33:51",
+          "files": {
+            "SK_Weapon_Railgun.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Railgun.glb",
+              "sha256": "754c7ca3d901f38abcb593ada3cd6c6b058455fcb0256ecedf20a79fd18e23f1"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Railgun.glb"
         }
       ]
