@@ -4,6 +4,7 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { buildContactField } from '../world/plateau/contact';
 import { SkyAmbient } from '../world/plateau/skyAmbient';
 import { FilmPost } from '../render/FilmPost';
 import { SynthPlayer } from '../audio/SynthPlayer';
@@ -139,6 +140,8 @@ for (const m of [lakeMist.mesh, footMist.mesh, clouds.mesh]) {
   mat.blendSrcAlpha = THREE.ZeroFactor; mat.blendDstAlpha = THREE.OneFactor;
 }
 scene.add(lakeMist.mesh, footMist.mesh, clouds.mesh);
+// 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
+buildContactField(scene, world, terrain);
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────

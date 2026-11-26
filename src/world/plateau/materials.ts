@@ -13,6 +13,14 @@ export const WORLD_UNIFORMS = {
   /** 雷暴强度 0..1（天气切换时渐变）与落雷闪光 0..1 */
   uStorm: { value: 0 },
   uFlash: { value: 0 },
+  /** 地表按高度混层 + 第二次采样 + 大尺度起伏：1 = 开，0 = 关（网址 ground=0） */
+  uGroundOn: { value: typeof location !== 'undefined' && new URLSearchParams(location.search).get('ground') === '0' ? 0 : 1 },
+  /** 地表四层（草 / 岩 / 雪 / 土）的代表色（线性），HeightGrid.buildTiles 按这张图的顶点色算出来 */
+  uLayerCol: { value: [new THREE.Vector3(0.2, 0.3, 0.1), new THREE.Vector3(0.3, 0.3, 0.3), new THREE.Vector3(0.9, 0.92, 0.95), new THREE.Vector3(0.35, 0.28, 0.2)] },
+  /** 物件和地面的交界（contact.ts）：占地距离场、它在世界里的位置（minX, minZ, 1/宽, 1/深）、开关（网址 contact=0） */
+  uContactTex: { value: (() => { const t = new THREE.DataTexture(new Uint8Array([255]), 1, 1, THREE.RedFormat); t.needsUpdate = true; return t as THREE.Texture; })() },
+  uContactXf: { value: new THREE.Vector4(0, 0, 1, 1) },
+  uContactOn: { value: typeof location !== 'undefined' && new URLSearchParams(location.search).get('contact') === '0' ? 0 : 1 },
   /** 地形 / 岩壳天空可见度（AO）的强度：1 = 开，0 = 关（网址 ao=0，对照用） */
   uSkyAo: { value: typeof location !== 'undefined' && new URLSearchParams(location.search).get('ao') === '0' ? 0 : 1 },
   /** 风场：飞廉巢穴 (x, z, 影响半径) 与基础风向（spec.WIND，见 wind.ts） */
@@ -21,6 +29,21 @@ export const WORLD_UNIFORMS = {
   /** 全图阵风 0..1（4-2 的峡谷风）：经幡抖得更快更猛；4-1 不用，一直是 0 */
   uGust: { value: 0 },
 };
+
+/** 交界（contact.ts）：脚下一圈湿暗带（宽 0.9–2 m，噪声打散）、外圈苔藓（只在草 / 土上，不在雪上）、贴脚的一圈砂砾 */
+const CONTACT_GLSL = /* glsl */ `
+{
+  float cd = texture2D(uContactTex, (vPfWorld.xz - uContactXf.xy) * uContactXf.zw).r * 4.0;
+  float nb = pfNoise(vPfWorld.xz * 1.1 + 5.0), nb2 = pfNoise(vPfWorld.xz * 2.7 - 3.0);
+  vec4 cw = vMat / max(1e-3, vMat.x + vMat.y + vMat.z + vMat.w);
+  float band = (1.0 - smoothstep(0.0, 0.9 + 1.1 * nb, cd)) * uContactOn;
+  diffuseColor.rgb *= 1.0 - 0.3 * band;
+  float ring = smoothstep(0.15, 0.7, cd) * (1.0 - smoothstep(1.2, 2.8, cd + nb * 0.8));
+  float mossW = ring * clamp(cw.x + cw.w * 0.6, 0.0, 1.0) * (1.0 - cw.z) * smoothstep(0.35, 0.65, nb2) * uContactOn;
+  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.16, 0.2, 0.09) * (0.75 + 0.5 * nb2), mossW * 0.55);
+  float grit = (1.0 - smoothstep(0.2, 1.6, cd)) * step(0.72, pfHash(floor(vPfWorld.xz * 7.0))) * uContactOn;
+  diffuseColor.rgb = mix(diffuseColor.rgb, uLayerCol[1] * 1.15, grit * 0.4);
+}`;
 
 const NOISE_GLSL = /* glsl */ `
 float pfHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -58,10 +81,12 @@ export interface PatchOptions {
    * 只压环境光（天光、半球光、探针），不压太阳；按固有色做多次反弹补偿（亮的表面少掉一点）
    */
   sky?: boolean;
+  /** 物件和地面的交界（contact.ts 的占地距离场）：脚下湿暗带、外圈苔藓、砂砾。要和 splat 一起用 */
+  contact?: boolean;
 }
 
 export function patchMaterial<T extends THREE.Material>(mat: T, opts: PatchOptions = {}): T {
-  const key = `pf:${opts.detail ? 1 : 0}:${opts.rim ?? 0}:${opts.sway ?? 0}:${opts.flutter ? 1 : 0}:${opts.splat ? 1 : 0}:${opts.sky ? 1 : 0}`;
+  const key = `pf:${opts.detail ? 1 : 0}:${opts.rim ?? 0}:${opts.sway ?? 0}:${opts.flutter ? 1 : 0}:${opts.splat ? 1 : 0}:${opts.sky ? 1 : 0}:${opts.contact ? 1 : 0}`;
   mat.customProgramCacheKey = () => key;
   mat.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, WORLD_UNIFORMS);
@@ -121,25 +146,43 @@ uniform float uCloudOn;
 uniform float uStorm;
 uniform vec2 uWind;
 varying vec3 vPfWorld;
-${opts.splat ? 'varying vec4 vMat; varying vec3 vPfN; uniform sampler2D tDGrass; uniform sampler2D tDRock; uniform sampler2D tDSnow; uniform sampler2D tDDirt;' : ''}
+${opts.splat ? 'varying vec4 vMat; varying vec3 vPfN; uniform sampler2D tDGrass; uniform sampler2D tDRock; uniform sampler2D tDSnow; uniform sampler2D tDDirt; uniform vec3 uLayerCol[4]; uniform float uGroundOn;' : ''}
+${opts.contact ? 'uniform sampler2D uContactTex; uniform vec4 uContactXf; uniform float uContactOn;' : ''}
 ${opts.sky ? 'varying float vPfSky; uniform float uSkyAo;' : ''}
 ${NOISE_GLSL}`);
     if (opts.splat) {
       const t = detailTextures();
       Object.assign(shader.uniforms, { tDGrass: { value: t.grass }, tDRock: { value: t.rock }, tDSnow: { value: t.snow }, tDDirt: { value: t.dirt } });
       // 四张世界坐标细节贴图按材质权重混合；岩石用三向投影（陡坡不拉伸）；随距离淡出，远处不闪
+      // 地表（docs/art/reference-tingyuyuan.md 第四节第 5 项）：细节贴图采两次（第二次放大 1.37 倍、转 37°，按大尺度噪声混，看不出平铺）；
+      // 按高度混层（分 = 权重 + 细节高度 × 0.5，份额 = 分 −（最高分 − 0.16））——雪先积进岩缝、草从石缝边长出来，不是糊在一起的渐变；
+      // 顶点色是各层颜色线性混好的，按「高度混出来的层色 / 线性混的层色」改一下，交界变利落、顶点色的其他变化照留；
+      // 再加约 12 m / 40 m 的明暗和冷暖起伏。uGroundOn = 0（网址 ground=0）回到原来的线性混。
       fs = fs.replace('#include <color_fragment>', `#include <color_fragment>
 {
   vec3 an = abs(normalize(vPfN)); an /= (an.x + an.y + an.z);
-  float gr = texture2D(tDGrass, vPfWorld.xz / 1.7).r;
-  float di = texture2D(tDDirt, vPfWorld.xz / 1.3).r;
-  float sn = texture2D(tDSnow, vPfWorld.xz / 5.0).r;
+  vec2 q2 = mat2(0.7986, 0.6018, -0.6018, 0.7986) * vPfWorld.xz * 1.37;
+  float mx2 = smoothstep(0.25, 0.75, pfNoise(vPfWorld.xz * 0.045 + 3.7)) * uGroundOn;
+  float gr = mix(texture2D(tDGrass, vPfWorld.xz / 1.7).r, texture2D(tDGrass, q2 / 1.7).r, mx2);
+  float di = mix(texture2D(tDDirt, vPfWorld.xz / 1.3).r, texture2D(tDDirt, q2 / 1.3).r, mx2);
+  float sn = mix(texture2D(tDSnow, vPfWorld.xz / 5.0).r, texture2D(tDSnow, q2 / 5.0).r, mx2);
   float rk = texture2D(tDRock, vPfWorld.xz / 3.2).r * an.y + texture2D(tDRock, vPfWorld.zy / 3.2).r * an.x + texture2D(tDRock, vPfWorld.xy / 3.2).r * an.z;
   vec4 w = vMat / max(1e-3, vMat.x + vMat.y + vMat.z + vMat.w);
-  float det = gr * w.x + rk * w.y + sn * w.z + di * w.w;
   float fade = 1.0 - smoothstep(45.0, 160.0, length(vViewPosition));
+  vec4 hgt = vec4(gr, rk, sn, di);
+  vec4 sc = w + hgt * 0.5;
+  float top = max(max(sc.x, sc.y), max(sc.z, sc.w));
+  vec4 hw = max(sc - (top - 0.16), 0.0);
+  hw /= max(hw.x + hw.y + hw.z + hw.w, 1e-4);
+  hw = mix(w, hw, fade * uGroundOn);
+  vec3 linC = uLayerCol[0] * w.x + uLayerCol[1] * w.y + uLayerCol[2] * w.z + uLayerCol[3] * w.w;
+  vec3 hbC = uLayerCol[0] * hw.x + uLayerCol[1] * hw.y + uLayerCol[2] * hw.z + uLayerCol[3] * hw.w;
+  diffuseColor.rgb *= clamp(hbC / max(linC, vec3(0.03)), vec3(0.55), vec3(1.8));
+  float det = dot(hgt, hw);
   diffuseColor.rgb *= mix(1.0, 0.42 + 1.16 * det, fade * 0.85);
-}`);
+  float m1 = pfNoise(vPfWorld.xz * 0.085) - 0.5, m2 = pfNoise(vPfWorld.xz * 0.025 + 17.0) - 0.5;
+  diffuseColor.rgb *= mix(vec3(1.0), (1.0 + 0.12 * m1) * vec3(1.0 + 0.06 * m2, 1.0, 1.0 - 0.06 * m2), uGroundOn);
+}${opts.contact ? CONTACT_GLSL : ''}`);
     }
     if (opts.detail) fs = fs.replace('#include <color_fragment>', `#include <color_fragment>
 {
@@ -431,7 +474,7 @@ function buildMaterials() {
     ice: lam({ vertexColors: true, emissive: new THREE.Color('#2c5a72'), emissiveIntensity: 0.3 }, { rim: 0.5 }),
     /** 第四章雷魅的邪火：紫红雷光、白芯（弱点、电纹、眼睛） */
     glow: lam({ vertexColors: true, emissive: new THREE.Color('#e03ac8'), emissiveIntensity: 1.25 }, { rim: 0 }),
-    terrain: patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true, sky: true }),
+    terrain: patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true, sky: true, contact: true }),
   };
 }
 

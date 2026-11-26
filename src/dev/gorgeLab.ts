@@ -3,6 +3,7 @@
  * 地形、过河设施、地标、水、大鹗、动态环境都在 src/world/gorge/（和 4-1 共用的在 src/world/plateau/），
  * 这里只负责组装、输入（含溜索、急流）、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md 第 3 节。
  */
+import { buildContactField } from '../world/plateau/contact';
 import { SkyAmbient } from '../world/plateau/skyAmbient';
 import { FilmPost } from '../render/FilmPost';
 import { SynthPlayer } from '../audio/SynthPlayer';
@@ -169,6 +170,8 @@ hazards.onRockLand = (zone, at) => {
   }
   if (!walker.fly && Math.hypot(walker.feet.x - at.x, walker.feet.z - at.z) < 3 && Math.abs(walker.feet.y - at.y) < 4) showHint('被落石砸中！');
 };
+// 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
+buildContactField(scene, world, terrain);
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走、溜索、急流 ─────────────────────────────

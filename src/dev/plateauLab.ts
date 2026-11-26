@@ -3,6 +3,7 @@
  * 不依赖游戏主循环：地形、地标、经幡、散布、水、烟、远景都在 src/world/plateau/ 里，
  * 这里只负责组装、输入、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md。
  */
+import { buildContactField } from '../world/plateau/contact';
 import { SkyAmbient } from '../world/plateau/skyAmbient';
 import { FilmPost } from '../render/FilmPost';
 import { SynthPlayer } from '../audio/SynthPlayer';
@@ -110,6 +111,8 @@ sun.shadow.intensity = softOn ? SHADOW_SOFT : 1;
 const skyAmbient = new SkyAmbient(renderer, scene, sky, hemi);
 skyAmbient.setEnabled(softOn);
 
+// 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
+buildContactField(scene, world, terrain);
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────

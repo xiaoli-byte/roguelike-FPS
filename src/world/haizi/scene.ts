@@ -447,7 +447,7 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   // 投影绘景（paintProject.ts）：概念图从出生点相机投到冰斗壁、冰舌、缺口和远岸上。地形用自己的一份材质（共用的那份别的图也在用）
   const base = `${import.meta.env?.BASE_URL ?? '/'}`;
   const paint = buildPaintProjector(base);
-  const terrainMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true, sky: true });
+  const terrainMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true, sky: true, contact: true });
   paint.apply(terrainMat);
   for (const g of terrain.buildTiles(96)) {
     const m = new THREE.Mesh(g, terrainMat);
