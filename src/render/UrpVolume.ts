@@ -1,8 +1,8 @@
 /**
  * URP Volume 的网页版（纯数据 + 混合，不依赖 three，node --test 直接测）。
  *
- * 数据：scripts/web/export-volume-profiles.mjs 把 Unity 的 Volume Profile（*.asset）和每个场景里的 Volume 物体导成
- * public/assets/unity-levels/volumes.json。组件名、参数名、数值单位全部照 Unity（Inspector 里看到的数），不换算。
+ * 数据：levelVolumes.ts 的 LEVEL_VOLUMES（各关的 Volume Profile 和场景里摆的 Volume；2026-11-26 从 Unity 关卡导出的
+ * volumes.json 一次性转来）。组件名、参数名、数值单位全部照 URP（Inspector 里看到的数），不换算。
  *
  * 混合照 core/Runtime/Volume/VolumeManager.cs：
  *   1. 栈先回到默认值（URP 各组件的构造默认值；工程的 DefaultVolumeProfile 全是默认值）；
@@ -101,7 +101,7 @@ export function blendVolume(state: VolumeParams, overrides: VolumeOverrides, t: 
   }
 }
 
-// ───────────── 场景数据（volumes.json） ─────────────
+// ───────────── 场景数据（levelVolumes.ts） ─────────────
 
 /** 局部 Volume 的盒形碰撞体（网页坐标：x 已取反；rotation 是网页四元数 xyzw） */
 export interface VolumeBox {
@@ -112,7 +112,7 @@ export interface VolumeBox {
 
 export interface SceneVolume {
   name: string;
-  /** Profile 的资产路径（volumes.json 的 profiles 键） */
+  /** Profile 的短名（VolumesDocument.profiles 的键） */
   profile: string;
   global: boolean;
   priority: number;
@@ -121,22 +121,16 @@ export interface SceneVolume {
   boxes?: VolumeBox[];
 }
 
-export interface VolumeProfileData {
-  guid: string;
-  components: VolumeOverrides;
-}
-
+/** 一张图摆的 Volume（全局 / 局部，按优先级和登记顺序混） */
 export interface SceneVolumeData {
-  scene: string;
   volumes: SceneVolume[];
-  /** 只有全局 Volume 时的栈（导出时混好的；局部 Volume、玩法 Volume 运行时再叠） */
-  resolved: VolumeParams;
 }
 
 export interface VolumesDocument {
-  schema: number;
   pipeline: { colorGradingMode: 'LowDynamicRange' | 'HighDynamicRange'; lutSize: number; hdr: boolean; msaa: number };
-  profiles: Record<string, VolumeProfileData>;
+  /** Volume Profile：短名 → 勾了 override 的组件参数 */
+  profiles: Record<string, VolumeOverrides>;
+  /** 关卡 id → 这张图的 Volume */
   scenes: Record<string, SceneVolumeData>;
 }
 
@@ -189,8 +183,8 @@ export function evaluateVolumes(
     entries.push({
       priority: v.priority, order: order++,
       apply: () => {
-        if (v.global) blendVolume(state, profile.components, Math.min(1, Math.max(0, v.weight)));
-        else if (camera) blendVolume(state, profile.components, localVolumeFactor(v, camera[0], camera[1], camera[2]));
+        if (v.global) blendVolume(state, profile, Math.min(1, Math.max(0, v.weight)));
+        else if (camera) blendVolume(state, profile, localVolumeFactor(v, camera[0], camera[1], camera[2]));
       },
     });
   }

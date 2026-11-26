@@ -1,14 +1,13 @@
-// 后处理栈（M11a）：Volume Profile 导出、URP Neutral 曲线、LDR 调色 LUT、Volume 混合、玩法屏效。
-// Profile 导出的数和 Unity 资产（文本 YAML）逐个对：这里用一个和导出器无关的正则读法，免得两边错到一起。
-// Neutral / LUT 对照 URP 17.5 的着色器公式（unity/Library/PackageCache 里的源码，见 src/render/UrpColor.ts 开头）。
+// 后处理栈（M11a）：关卡 Volume 表、URP Neutral 曲线、LDR 调色 LUT、Volume 混合、玩法屏效。
+// Volume 表（src/render/levelVolumes.ts）2026-11-26 从 Unity 关卡导出的 volumes.json 一次性转来；转换时已和 Unity 的 Profile 资产逐个参数核对过（560 个）。
+// 这里抽查的数是当时 Inspector 里的值（期望值照抄，不再读 Unity 文件）。
+// Neutral / LUT 对照 URP 17.5 的着色器公式（来源见 src/render/UrpColor.ts 开头）。
 // 玩法屏效照搬 Unity EditMode 的 GraphicsAudioTests.GameplayVolumes_Curves。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
 import { stripTypeScriptTypes } from 'node:module';
 
-const root = new URL('../', import.meta.url);
 const data = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 async function ts(path) {
   const source = readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -16,58 +15,41 @@ async function ts(path) {
 }
 const color = await ts('../src/render/UrpColor.ts');
 const volume = await ts('../src/render/UrpVolume.ts');
-// GameplayVolumes 只 import 了类型：去掉类型后没有别的依赖
+// GameplayVolumes / levelVolumes 只 import 了类型：去掉类型后没有别的依赖
 const gameplay = await ts('../src/render/GameplayVolumes.ts');
-const doc = JSON.parse(readFileSync(new URL('public/assets/unity-levels/volumes.json', root), 'utf8'));
+const { LEVEL_VOLUMES: doc, levelVolumeScene, CHAPTER_BASE_SCENE } = await ts('../src/render/levelVolumes.ts');
+/** 只算全局 Volume 时混好的整栈 */
+const resolved = id => volume.evaluateVolumes(doc, doc.scenes[id], [], null);
 
 const close = (a, b, eps, msg) => assert.ok(Math.abs(a - b) <= eps, `${msg ?? ''} ${a} ≠ ${b}（±${eps}）`);
 
-// ───────────── Profile 导出 ─────────────
+// ───────────── 关卡 Volume 表 ─────────────
 
-/** 独立的读法：按 `m_Name: 组件` 切块，取 `参数:\n  m_OverrideState: 1\n  m_Value: …` */
-function readAsset(path) {
-  const text = readFileSync(new URL(`unity/${path}`, root), 'utf8').replace(/\r\n/g, '\n');
-  const out = {};
-  for (const block of text.split(/^--- !u!114 &-?\d+\n/m).slice(1)) {
-    const name = /^ {2}m_Name: (\S+)$/m.exec(block)?.[1];
-    if (!name) continue;
-    const params = {};
-    const re = /^ {2}(\w+):\n {4}m_OverrideState: 1\n {4}m_Value: (.+)$/gm;
-    for (let m = re.exec(block); m; m = re.exec(block)) {
-      const raw = m[2].trim();
-      params[m[1]] = raw.startsWith('{') ? [...raw.matchAll(/(\w+): (-?[\d.e+-]+)/g)].map(x => Number(x[2])) : Number(raw);
-    }
-    out[name] = { active: /^ {2}active: 1$/m.test(block), params };
-  }
-  return out;
-}
-
-test('volumes.json 的每个参数都等于 Unity 资产里的值', () => {
-  let checked = 0;
-  for (const [path, profile] of Object.entries(doc.profiles)) {
-    const asset = readAsset(path);
-    for (const [name, comp] of Object.entries(profile.components)) {
-      assert.ok(asset[name], `${path} 没有 ${name}`);
-      assert.equal(comp.active, asset[name].active, `${path} ${name}.active`);
-      for (const [param, value] of Object.entries(comp)) {
-        if (param === 'active') continue;
-        const expected = asset[name].params[param];
-        assert.notEqual(expected, undefined, `${path} ${name}.${param} 在资产里没勾 override`);
-        if (Array.isArray(value)) assert.deepEqual(value, expected, `${path} ${name}.${param}`);
-        else if (typeof value === 'boolean') assert.equal(value, expected !== 0, `${path} ${name}.${param}`);
-        else assert.equal(value, expected, `${path} ${name}.${param}`);
-        checked++;
-      }
+test('Volume 表：每张图都有条目，用到的 Profile 都在，组件和参数都是网页认得的', () => {
+  assert.deepEqual(Object.keys(doc.scenes).sort(), ['1-1', '1-2', '1-3', '1-4', '1-A', '2-1', '2-2', '2-3', '2-4', '2-A', '3-1', '3-2', '3-3', '3-4', '3-A', '4-1', '4-3']);
+  const used = new Set();
+  for (const [id, s] of Object.entries(doc.scenes)) {
+    assert.ok(s.volumes.some(v => v.global), `${id} 至少一个全局 Volume`);
+    for (const v of s.volumes) {
+      assert.ok(doc.profiles[v.profile], `${id} 的 ${v.name} 用的 ${v.profile} 不在 profiles 里`);
+      assert.equal(!!v.boxes?.length, !v.global, `${id} ${v.name}：局部 Volume 才有盒子`);
+      used.add(v.profile);
     }
   }
-  assert.ok(checked > 300, `只核对了 ${checked} 个参数`);
+  assert.deepEqual([...used].sort(), Object.keys(doc.profiles).sort(), '没有没人用的 Profile');
+  for (const [name, profile] of Object.entries(doc.profiles)) {
+    for (const [comp, params] of Object.entries(profile)) {
+      const schema = volume.VOLUME_SCHEMA[comp];
+      assert.ok(schema, `${name}：不认得的组件 ${comp}`);
+      for (const param of Object.keys(params)) assert.ok(param === 'active' || schema[param], `${name}：${comp}.${param} 不认得`);
+    }
+  }
 });
 
-test('1-1 VP_Desert：抽查关键数（Inspector 里的值）', () => {
+test('1-1 desert：抽查关键数（Inspector 里的值）', () => {
   const s = doc.scenes['1-1'];
-  assert.equal(s.scene, 'Assets/Scenes/L1_1_GobiRoad.unity');
-  assert.deepEqual(s.volumes.map(v => [v.profile, v.global, v.priority, v.weight]), [['Assets/Levels/L1_1_GobiRoad/VP_Desert.asset', true, 0, 1]]);
-  const r = s.resolved;
+  assert.deepEqual(s.volumes.map(v => [v.profile, v.global, v.priority, v.weight]), [['desert', true, 0, 1]]);
+  const r = resolved('1-1');
   assert.equal(r.Tonemapping.mode, volume.TONEMAP_NEUTRAL);
   assert.equal(r.ColorAdjustments.postExposure, -0.919);
   assert.equal(r.ColorAdjustments.contrast, 24.4);
@@ -81,27 +63,39 @@ test('1-1 VP_Desert：抽查关键数（Inspector 里的值）', () => {
   assert.equal(r.ChromaticAberration.intensity, 0, '关卡不开色差（玩法 Volume 才开）');
   assert.equal(doc.pipeline.colorGradingMode, 'LowDynamicRange');
   assert.equal(doc.pipeline.lutSize, 32);
+  // 各章的基准 Profile：抽查几个数
+  assert.deepEqual([resolved('2-1').WhiteBalance.temperature, resolved('2-1').ColorAdjustments.postExposure], [-21.8, -0.827]);
+  assert.deepEqual([resolved('3-1').ColorAdjustments.contrast, resolved('3-1').Bloom.threshold], [30, 1.05]);
+  assert.deepEqual([resolved('4-1').WhiteBalance.temperature, resolved('4-1').FirstPersonExposure.multiplier], [-14, 1]);
+  assert.deepEqual([resolved('4-3').ColorAdjustments.saturation, resolved('4-3').Vignette.intensity], [8, 0.16]);
 });
 
 test('3-3 局部 Volume（火神王座）：盒子、优先级、混合距离；2-A 的第二个全局 Volume', () => {
   const local = doc.scenes['3-3'].volumes.find(v => !v.global);
-  assert.equal(local.profile, 'Assets/Levels/L3_3_Foundry/VP_FireGodThrone.asset');
+  assert.equal(local.profile, 'fire-god-throne');
   assert.deepEqual([local.priority, local.blendDistance, local.weight], [20, 48, 1]);
   // Unity (152, 28, 164)、BoxCollider 136 × 100 × 136 → 网页 x 取反
   assert.deepEqual(local.boxes, [{ center: [-152, 28, 164], halfSize: [68, 50, 68], rotation: [0, 0, 0, 1] }]);
   const look = doc.scenes['2-A'].volumes.find(v => v.priority === 5);
-  assert.equal(look.profile, 'Assets/Levels/L2_A_Crevasse/LV_L2A_Look.asset');
-  assert.deepEqual(doc.scenes['2-A'].resolved.ShadowsMidtonesHighlights.shadows, [1, 1.02, 1.06, 0.06]);
-  assert.equal(doc.scenes['2-A'].resolved.ColorAdjustments.postExposure, -0.62, '优先级 5 的盖过 0 的');
+  assert.equal(look.profile, 'crevasse-look');
+  assert.deepEqual(resolved('2-A').ShadowsMidtonesHighlights.shadows, [1, 1.02, 1.06, 0.06]);
+  assert.equal(resolved('2-A').ColorAdjustments.postExposure, -0.62, '优先级 5 的盖过 0 的');
 });
 
-// Unity 版已冻结：工作区里编辑器重存过、没提交的 Volume 资产不算数（入库的 volumes.json 按已提交的资产生成）
-const volumeSources = ['unity/Assets/Levels', 'unity/Assets/Scenes', 'unity/Assets/Settings'];
-const dirtyUnity = spawnSync('git', ['status', '--porcelain', '--', ...volumeSources], { cwd: root, encoding: 'utf8' }).stdout?.trim();
-
-test('导出器 --check：入库的 volumes.json 和当前 Unity 资产一致', { skip: dirtyUnity ? 'Unity 场景 / Volume 资产有未提交的改动' : false }, () => {
-  const r = spawnSync(process.execPath, ['scripts/web/export-volume-profiles.mjs', '--check'], { cwd: root, encoding: 'utf8' });
-  assert.equal(r.status, 0, r.stderr + r.stdout);
+test('按章缺省：没有条目的图用本章基准图的全局 Volume；认不出章节的 = null', () => {
+  assert.deepEqual(CHAPTER_BASE_SCENE, { 1: '1-1', 2: '2-1', 3: '3-1', 4: '4-1' });
+  for (const id of Object.keys(doc.scenes)) {
+    const own = levelVolumeScene(id);
+    assert.equal(own.source, id);
+    assert.equal(own.scene, doc.scenes[id], `${id} 用自己的条目`);
+  }
+  for (const [id, base] of [['1-5', '1-1'], ['2-B', '2-1'], ['3-9', '3-1'], ['4-2', '4-1'], ['4-4', '4-1']]) {
+    const f = levelVolumeScene(id);
+    assert.equal(f.source, base, id);
+    assert.ok(f.scene.volumes.every(v => v.global), `${id}：只带全局 Volume`);
+    assert.deepEqual(volume.evaluateVolumes(doc, f.scene, [], [-152, 28, 164]), resolved(base), `${id} = ${base} 的全局栈`);
+  }
+  for (const id of ['qingxi', 'whitebox', '9-1', '']) assert.equal(levelVolumeScene(id), null, `「${id}」`);
 });
 
 // ───────────── Neutral ─────────────
@@ -192,7 +186,7 @@ test('LDR LUT：默认参数 = 恒等（只在 127/128 处封顶），双线性�
 });
 
 test('LDR LUT：1-1 的调色——灰不偏色（除了白平衡）、单调、范围对、比原来更对比更冷', () => {
-  const u = color.lutUniforms(gradingOf(doc.scenes['1-1'].resolved));
+  const u = color.lutUniforms(gradingOf(resolved('1-1')));
   const out = [0, 0, 0];
   let prev = -1;
   for (let i = 0; i <= 31; i++) {
@@ -223,7 +217,8 @@ test('LDR LUT：低血量（饱和度 −38）把颜色压灰，权重 0 时原�
   assert.equal(hurt.ColorAdjustments.saturation, -38, '低血量盖过关卡的 −11（覆盖，不是叠加）');
   assert.equal(hurt.ColorAdjustments.contrast, 6);
   const calm = volume.evaluateVolumes(doc, base, [], null);
-  assert.deepEqual(calm, base.resolved);
+  assert.deepEqual(calm, resolved('1-1'));
+  assert.deepEqual([calm.ColorAdjustments.saturation, calm.ColorAdjustments.contrast], [-11, 24.4], '没有玩法层 = 关卡原样');
 });
 
 // ───────────── Volume 混合 ─────────────
