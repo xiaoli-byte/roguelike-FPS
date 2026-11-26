@@ -197,7 +197,7 @@ export function unityLayout(document: UnitySceneDocument, stage: StageNode, obje
     boxes: document.colliders.map((collider, index) => ({ collider, index })).filter(item => item.collider.platform === undefined).map(({ collider, index }) => ({
       minX: collider.min[0], minY: collider.min[1], minZ: collider.min[2],
       maxX: collider.max[0], maxY: collider.max[1], maxZ: collider.max[2],
-      look: 'collider', tag: collider.activator ? `unity-activator-${collider.activator}` : collider.url ? `unity-proxy-${index}` : collider.kind === 'box' ? 'wall' : 'cover', group: 0, noRaycast: false, v: 0,
+      look: 'collider', tag: collider.activator ? `unity-activator-${collider.activator}` : collider.mesh ? `unity-proxy-${index}` : collider.kind === 'box' ? 'wall' : 'cover', group: 0, noRaycast: false, v: 0,
       obb: collider.center && collider.size && collider.rotation ? { center: collider.center, size: collider.size, rotation: collider.rotation } : undefined,
     })),
     decos: [], lights: [], runes: [], ramps: [],

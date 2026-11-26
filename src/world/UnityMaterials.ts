@@ -1,27 +1,27 @@
 import * as THREE from 'three';
 import { Atmosphere } from './Atmosphere';
 import { createUnityWaterMaterial } from './UnityWaterMaterial';
-import { createStylizedFoliage, createStylizedLit } from './UnityStylizedLit';
+import { createStylizedFoliage, createStylizedLit, materialMarks, type UnityMaterialProperties } from './UnityStylizedLit';
 import type { UnityEnvironment } from './UnityLevelLibrary';
 
-type Properties = { unityShader?: string; unityFloats?: Record<string, number>; unityColors?: Record<string, [number, number, number, number]> };
+type Properties = UnityMaterialProperties;
 
 function color(properties: Properties, name: string, fallback: [number, number, number, number]): THREE.Color {
-  const rgba = properties.unityColors?.[name] ?? fallback;
+  const rgba = materialMarks(properties).colors[name] ?? fallback;
   return new THREE.Color().setRGB(rgba[0], rgba[1], rgba[2], THREE.SRGBColorSpace);
 }
 
 const VERTEX = /* glsl */ `
-attribute vec4 _unity_info;
-attribute vec4 _unity_flow;
+attribute vec4 _lava_info;
+attribute vec4 _lava_flow;
 varying vec2 vLocal;
 varying vec4 vInfo;
 varying vec4 vFlow;
 #include <fog_pars_vertex>
 void main() {
   vLocal = vec2(uv.x, 1.0 - uv.y);
-  vInfo = _unity_info;
-  vFlow = _unity_flow;
+  vInfo = _lava_info;
+  vFlow = _lava_flow;
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
   gl_Position = projectionMatrix * mvPosition;
   #include <fog_vertex>
@@ -154,19 +154,19 @@ void main() {
 export function applyUnityMaterial(source: THREE.MeshStandardMaterial, environment?: UnityEnvironment): THREE.Material {
   const properties = source.userData as Properties;
   // 风格化光照（SF_StylizedLit / SF_Foliage → UnityStylizedLit.ts）：场景件、草皮、树冠
-  if (properties.unityShader === 'Spiritfire/StylizedLit') return createStylizedLit(source, environment);
-  if (properties.unityShader === 'Spiritfire/Foliage') return createStylizedFoliage(source, environment);
-  if (properties.unityShader === 'Spiritfire/Water' && environment) return createUnityWaterMaterial(source, environment);
-  if (properties.unityShader === 'Spiritfire/Backdrop') {
+  if (materialMarks(properties).shader === 'Spiritfire/StylizedLit') return createStylizedLit(source, environment);
+  if (materialMarks(properties).shader === 'Spiritfire/Foliage') return createStylizedFoliage(source, environment);
+  if (materialMarks(properties).shader === 'Spiritfire/Water' && environment) return createUnityWaterMaterial(source, environment);
+  if (materialMarks(properties).shader === 'Spiritfire/Backdrop') {
     return new THREE.MeshBasicMaterial({
       color: color(properties, '_Tint', [1, 1, 1, 1]),
-      vertexColors: (properties.unityFloats?._UseVertexColor ?? 1) > 0.5 && source.vertexColors,
+      vertexColors: (materialMarks(properties).floats._UseVertexColor ?? 1) > 0.5 && source.vertexColors,
       side: source.side,
       fog: false,
     });
   }
-  if (properties.unityShader !== 'Spiritfire/Lava') return source;
-  const floats = properties.unityFloats ?? {};
+  if (materialMarks(properties).shader !== 'Spiritfire/Lava') return source;
+  const floats = materialMarks(properties).floats;
   const material = new THREE.ShaderMaterial({
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
       uTime: { value: 0 },

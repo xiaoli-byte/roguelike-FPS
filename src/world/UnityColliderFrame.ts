@@ -1,4 +1,7 @@
 /**
+ * @deprecated 2026-11-26 起不再用：关卡数据转到 public/assets/levels 时，镜像已按这里的规则离线烘进每关的 collision.glb，
+ * 运行时（UnityColliders.ts）不再判断。只因第一章会话的 scripts/desert/reach.mjs 还 import 它而暂留，删 unity/ 那一步（P1）一起删。
+ *
  * Unity 导出的网格碰撞体（public/assets/unity-levels/meshes 里 *_Collision 的 GLB）是按世界坐标烘死的，但用的是 **Unity 坐标**
  * （x 没取反），而场景文档里的 min / max、渲染件、导航都已换成网页坐标（x 取反）。原样加进碰撞世界，每个网格碰撞都落在
  * 按 x = 0 镜像的位置上：1-2 的兜底环变成横在河道口的空气墙、佛塔 / 屋顶 / 残车在视觉位置上没有碰撞（2026-11-22 查出）。

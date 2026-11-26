@@ -22,11 +22,32 @@ import type { UnityEnvironment } from './UnityLevelLibrary';
 
 export type Rgba = [number, number, number, number];
 
+/**
+ * 关卡材质标记（GLB 材质 extras → userData）。public/assets/levels 的网格写中性键名 shader / floats / colors / vectors；
+ * 旧键 unityShader / unityFloats / unityColors / unityVectors 暂时还认（第一章新件代码还在写，P5 统一后删回退）。读一律走 {@link materialMarks}。
+ */
 export interface UnityMaterialProperties {
+  shader?: string;
+  floats?: Record<string, number>;
+  colors?: Record<string, Rgba>;
+  vectors?: Record<string, Rgba>;
   unityShader?: string;
   unityFloats?: Record<string, number>;
   unityColors?: Record<string, Rgba>;
   unityVectors?: Record<string, Rgba>;
+}
+
+export interface MaterialMarks {
+  shader: string | undefined;
+  floats: Record<string, number>;
+  colors: Record<string, Rgba>;
+  vectors: Record<string, Rgba>;
+}
+
+/** 材质标记：新键优先，旧键回退，都没有时给空表 */
+export function materialMarks(data: UnityMaterialProperties | null | undefined): MaterialMarks {
+  const d = data ?? {};
+  return { shader: d.shader ?? d.unityShader, floats: d.floats ?? d.unityFloats ?? {}, colors: d.colors ?? d.unityColors ?? {}, vectors: d.vectors ?? d.unityVectors ?? {} };
 }
 
 /** Unity GammaToLinearSpaceExact（UnityCG.cginc；Mathf.GammaToLinearSpace 同式）：HDR 分量 ≥ 1 时按 pow 2.2 */
@@ -110,7 +131,7 @@ export interface StylizedStyle {
 }
 
 function readStyle(properties: UnityMaterialProperties, defaults: { [K in keyof StylizedStyle]: StylizedStyle[K] extends THREE.Color ? Rgba : number }): StylizedStyle {
-  const f = properties.unityFloats ?? {}, c = properties.unityColors ?? {};
+  const f = materialMarks(properties).floats, c = materialMarks(properties).colors;
   return {
     shadowTint: unityColor(c._ShadowTint, defaults.shadowTint),
     rampThreshold: f._RampThreshold ?? defaults.rampThreshold,
@@ -548,7 +569,7 @@ const warned = new Set<string>();
  * 返回参数不是默认值的段名，好在出现时提醒（M11b 特效 / M6 首领移植时补）。
  */
 export function unsupportedStylizedBlocks(properties: UnityMaterialProperties): string[] {
-  const f = properties.unityFloats ?? {}, c = properties.unityColors ?? {}, v = properties.unityVectors ?? {};
+  const f = materialMarks(properties).floats, c = materialMarks(properties).colors, v = materialMarks(properties).vectors;
   const out: string[] = [];
   const variant = v._VariantParams;
   if (variant && variant[0] + variant[1] > 0.001) out.push('variant');
@@ -569,7 +590,7 @@ interface LitSurface {
 
 /** _ORMMAP 没导出：带法线贴图的件（Unity 里都绑了 ORM）用平均 ORM 替代，没法线贴图的件按材质的 _Metallic / _Roughness */
 function litSurface(properties: UnityMaterialProperties, hasNormalMap: boolean): LitSurface {
-  const f = properties.unityFloats ?? {};
+  const f = materialMarks(properties).floats;
   const metallic = f._Metallic ?? 1, roughness = f._Roughness ?? 1, occlusion = f._OcclusionStrength ?? 1;
   if (!hasNormalMap) return { metallic, roughness, ao: 1 };
   return {
@@ -581,7 +602,7 @@ function litSurface(properties: UnityMaterialProperties, hasNormalMap: boolean):
 
 /** 按材质参数开的 define（customProgramCacheKey 跟着变，同一组合共享一个程序） */
 export function stylizedLitDefines(properties: UnityMaterialProperties, hasNormalMap = false): Record<string, string> {
-  const f = properties.unityFloats ?? {};
+  const f = materialMarks(properties).floats;
   const surface = litSurface(properties, hasNormalMap);
   const defines: Record<string, string> = {};
   if ((f._Desaturate ?? 0) > 0) defines.SFL_DESATURATE = '';
@@ -606,7 +627,7 @@ export function createStylizedLit(source: THREE.MeshStandardMaterial, environmen
   const cached = litCache.get(source);
   if (cached) return cached;
   const properties = source.userData as UnityMaterialProperties;
-  const f = properties.unityFloats ?? {}, c = properties.unityColors ?? {};
+  const f = materialMarks(properties).floats, c = materialMarks(properties).colors;
   for (const block of unsupportedStylizedBlocks(properties)) {
     if (warned.has(block)) continue;
     warned.add(block);
@@ -667,7 +688,7 @@ export function createStylizedFoliage(source: THREE.MeshStandardMaterial, enviro
   const cached = foliageCache.get(source);
   if (cached) return cached;
   const properties = source.userData as UnityMaterialProperties;
-  const f = properties.unityFloats ?? {}, c = properties.unityColors ?? {};
+  const f = materialMarks(properties).floats, c = materialMarks(properties).colors;
   const material = source.clone();
   material.name = source.name;
   material.vertexColors = true;
