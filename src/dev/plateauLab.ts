@@ -3,6 +3,8 @@
  * 不依赖游戏主循环：地形、地标、经幡、散布、水、烟、远景都在 src/world/plateau/ 里，
  * 这里只负责组装、输入、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md。
  */
+import { AmbienceBed } from '../audio/AmbienceBed';
+import { AmbienceSense } from '../world/plateau/ambienceSense';
 import { bakeCoverMap } from '../world/plateau/coverMap';
 import { Rain } from '../world/plateau/rain';
 import { buildContactField } from '../world/plateau/contact';
@@ -116,9 +118,12 @@ skyAmbient.setEnabled(softOn);
 // 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
 buildContactField(scene, world, terrain);
 // 俯视遮挡图（plateau/coverMap.ts）+ GPU 雨（plateau/rain.ts）：檐下、树下、桥下没雨、是干的；网址 wet=0 关淋湿
-bakeCoverMap(renderer, scene, terrain, [grass.group, monsters.group, lords.group]);
+const cover = bakeCoverMap(renderer, scene, terrain, [grass.group, monsters.group, lords.group]);
 const rain = new Rain(scene);
 weather.builtinRain = false;
+// 环境声床（audio/AmbienceBed.ts + plateau/ambienceSense.ts）：风、颗粒雨声、江 / 溪 / 拍岸、雷，按站的地方实时调
+const ears = new AmbienceSense(terrain, cover, { windAt, baseWind: 0.34 });
+weather.strikeListeners.push(at => bed.strike(at, camera));
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────
@@ -127,6 +132,7 @@ const walker = new Walker(world);
 // 声音：枪声、命中、脚步、起跳落地（正式游戏的合成配方）；第一次点画面 / 按键后才出声
 const audio = new SynthPlayer();
 const walkSfx = new WalkerSounds(audio, terrain);
+const bed = new AmbienceBed(audio);
 const optDouble = $<HTMLInputElement>('opt-double');
 optDouble.onchange = () => { walker.doubleJump = optDouble.checked; };
 
@@ -684,6 +690,8 @@ function frame(now: number, manual = false, render = true): void {
   monsters.update(time, dt);
   weather.update(dt, camera.position);
   rain.update(camera, weather.level, WORLD_UNIFORMS.uWind.value, scene.fog ? (scene.fog as THREE.Fog).color : new THREE.Color('#888'), renderer.domElement.width, renderer.domElement.height, dt);
+  ears.update(dt, camera, weather.level, bed.params);
+  bed.update(dt);
   skyAmbient.update();
   if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: reloadPressed, skillQ, skillE, pick, anyKey });
   else lords.update(time, dt, weather.level);
@@ -715,5 +723,5 @@ Object.assign(window, { plateau: {
   press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
   hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
   /** 渲染一帧（截图前） */
-  render: () => { film.render(scene, camera); }, film,
+  render: () => { film.render(scene, camera); }, film, ambience: { bed, ears, cover },
 } });

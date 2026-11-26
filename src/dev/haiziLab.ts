@@ -4,6 +4,8 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { AmbienceBed } from '../audio/AmbienceBed';
+import { AmbienceSense } from '../world/plateau/ambienceSense';
 import { bakeCoverMap } from '../world/plateau/coverMap';
 import { Rain } from '../world/plateau/rain';
 import { buildContactField } from '../world/plateau/contact';
@@ -104,6 +106,7 @@ const waterFx = new WaterFx(scene, lake, terrain);
 const audio = new SynthPlayer();
 waterFx.sound = new WaterSound(audio);
 const walkSfx = new WalkerSounds(audio, terrain);
+const bed = new AmbienceBed(audio);
 const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
@@ -145,9 +148,12 @@ scene.add(lakeMist.mesh, footMist.mesh, clouds.mesh);
 // 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
 buildContactField(scene, world, terrain);
 // 俯视遮挡图（plateau/coverMap.ts）+ GPU 雨（plateau/rain.ts）：檐下、树下、桥下没雨、是干的；网址 wet=0 关淋湿
-bakeCoverMap(renderer, scene, terrain, [grass.group]);
+const cover = bakeCoverMap(renderer, scene, terrain, [grass.group]);
 const rain = new Rain(scene);
 weather.builtinRain = false;
+// 环境声床（audio/AmbienceBed.ts + plateau/ambienceSense.ts）：风、颗粒雨声、江 / 溪 / 拍岸、雷，按站的地方实时调
+const ears = new AmbienceSense(terrain, cover, { baseWind: 0.3, lap: 0 });
+weather.strikeListeners.push(at => bed.strike(at, camera));
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────
@@ -429,6 +435,8 @@ function tick(dt: number, render: boolean): void {
   for (const a of anim) a.update(time, dt);
   weather.update(dt, camera.position);
   rain.update(camera, weather.level, WORLD_UNIFORMS.uWind.value, scene.fog ? (scene.fog as THREE.Fog).color : new THREE.Color('#888'), renderer.domElement.width, renderer.domElement.height, dt);
+  ears.update(dt, camera, weather.level, bed.params);
+  bed.update(dt);
   skyAmbient.update();
   Atmosphere.update(time);
   lake.update();
@@ -463,7 +471,7 @@ function simulate(seconds: number, step = 1 / 30, render = false): void {
 Object.assign(window, {
   haizi: {
     scene, camera, renderer, terrain, world, walker, weather, lake, pillars, conductors, arena, goTo, VIEWPOINTS, simulate, waterFx, audio,
-    SPAWN, PILLARS, COIL, keys,
+    SPAWN, PILLARS, COIL, keys, ambience: { bed, ears, cover },
     get play() { return play; },
     setPlay: (p: HaiziPlay | null) => { play = p; },
     setFiring: (v: boolean) => { firing = v; },

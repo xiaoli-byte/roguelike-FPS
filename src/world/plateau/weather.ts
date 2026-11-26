@@ -38,6 +38,8 @@ export class Weather {
 
   /** 落雷劈下来的那一刻（at = 落点；导体被劈中时 conductor 是那个导体） */
   onStrike: ((at: THREE.Vector3, conductor: THREE.Vector3 | null) => void) | null = null;
+  /** 另外听落雷的（环境声床的雷声）；onStrike 归游玩模式管，这里不抢 */
+  readonly strikeListeners: ((at: THREE.Vector3) => void)[] = [];
   /** 大导体（4-2 的铁索桥）：给一个落点，返回要把雷引过去的导体点（不引就返回 null）；4-1 不用 */
   attract: ((x: number, z: number, r: number) => THREE.Vector3 | null) | null = null;
 
@@ -147,6 +149,7 @@ export class Weather {
       this.rig.scene.add(k.bolt);
       this.flash = 1;
       this.onStrike?.(k.at, k.conductor);
+      for (const f of this.strikeListeners) f(k.at);
     }
     if (k.bolt) {
       const age = k.t - 1.2;
