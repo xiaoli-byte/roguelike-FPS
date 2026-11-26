@@ -1,6 +1,9 @@
-{
-  "schema": 1,
-  "source": "public/assets/unity-levels/scenes（scripts/web/export-stage-rosters.mjs）",
+// 生成文件：node scripts/web/export-stage-rosters.mjs（数据源 public/assets/levels/<图>/level.json），不要手改。
+// 当前内容是 2026-11-26 从 Unity 导出的场景一次性汇总来的；levels/<图>/level.json 落地后重跑生成器覆盖。
+// 每张图的波次敌人与首领、每章的敌人并集；src/assets/StageArt.ts 进关前按它读敌人美术。
+import type { StageRosters } from './StageArt';
+
+export const STAGE_ROSTERS: StageRosters = {
   "maps": {
     "1-1": {
       "chapter": 1,
@@ -283,4 +286,4 @@
       "tiangou"
     ]
   }
-}
+};

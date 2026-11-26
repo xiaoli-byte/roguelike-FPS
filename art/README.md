@@ -234,9 +234,11 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 - `AssetLibrary` 模块被导入即读清单，后台只读英雄 / 第一人称手臂 / 灵宠 / 商人（`core`；不阻塞启动，敌人模块启动时就导入它，`main.ts` 是冻结文件，不改它）。
   **按需加载（2026-11-26）**：敌人 / 首领（`bind.source = enemy`）与枪模（`weapon`）不整批读。`Game.loadStage` 在上一关清掉之后、
   这一关刷怪之前调 `assets/StageArt.ts` 的 `prepareStageArt`：读「本张图的波次敌人 ∪ 本章名册 ∪ 本关首领（按前缀含各形态）」
-  与手上 / 各英雄初始的枪模，释放其余按需资产（`releaseUnused`，几何 / 材质 / 贴图交还 GPU、ImageBitmap 立刻关掉），
-  并释放上一张图不再用的关卡网格 / 贴图 / 场景文档（`UnityLevelLibrary.releaseExcept`）。本章名册来自
-  `public/assets/unity-levels/rosters.json`（`scripts/web/export-stage-rosters.mjs`，场景重发布后重跑，`tests/stage-rosters.test.mjs` 查同步）。
+  与手上 / 各英雄初始的枪模，释放其余按需资产（`releaseUnused`，几何 / 材质 / 贴图交还 GPU、ImageBitmap 立刻关掉）。
+  上一张图不再用的关卡网格 / 贴图 / 场景文档由关卡库在读新图时释放（`preload(document)` 开头的 `releaseExcept`）。
+  本章名册是生成的 TS 表 `src/assets/stageRosters.ts`（`scripts/web/export-stage-rosters.mjs` 读网页自己的关卡数据
+  `public/assets/levels/<图>/level.json`，关卡数据改了重跑，`tests/stage-rosters.test.mjs` 查同步）——按需加载这套不依赖 Unity 导出
+  （2026-11-26 用户：「不能有任何依赖unity的代码」）。
   漏预取的敌人第一只用程序化模型并补读；掉落 / 商店 / 第一人称的枪模先用程序化的、读到后原地换上；图鉴缩略图读到再拍。
   第四章普通敌人走 `world/plateau/play/assets`（自己读模型），这里不重复读。检视页要全量的调 `preload('all')`（或 `'weapons'`）。
   实测脚本：`node scripts/web/asset-memory-check.mjs <端口>`。

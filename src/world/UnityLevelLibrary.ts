@@ -347,9 +347,10 @@ class Library {
 
   /**
    * 换关：释放不属于 document 的网格、贴图与场景文档（GPU 资源交还、解码后的图关掉）。网格 / 贴图按 URL 缓存、各图共用的件留着。
-   * 只能在上一张图的场景已经卸掉、这一张还没搭之前调（assets/StageArt.ts 的 prepareStageArt）——此刻缓存里不在 keep 里的都没人在用；
-   * 新图要用的话照常现读。document = null（第一章重做版，文档由白盒现编）时全部释放。
-   * 2026-11-25 前从不淘汰：一局打下来每张图的网格 / 贴图都留在内存和显存里（单张图贴图解码后 0.2–1.1 GB）。返回释放了几项
+   * preload(document) 开头自己调：搭新图时上一张图的场景已经卸掉（StageDirector.loadWith 先 unload），缓存里不在 keep 里的都没人在用；
+   * 第一章重做版现编的文档也照它自己的渲染件留。document = null 时全部释放。
+   * 2026-11-25 前从不淘汰：一局打下来每张图的网格 / 贴图都留在内存和显存里（单张图贴图解码后 0.2–1.1 GB）。返回释放了几项。
+   * 关卡库迁到网页自己的关卡数据（public/assets/levels）时这一段要跟着搬。
    */
   releaseExcept(document: UnitySceneDocument | null): number {
     const keep = document ? documentUrls(document) : new Set<string>();
@@ -371,6 +372,9 @@ class Library {
   }
 
   async preload(document: UnitySceneDocument, onProgress?: (loaded: number, total: number) => void): Promise<void> {
+    // 上一张图不再用的网格 / 贴图 / 场景文档先放掉（各图共用的留着）
+    const released = this.releaseExcept(document);
+    if (released > 0) console.info(`[assets] ${document.id}：释放上一张图的关卡网格 / 贴图 ${released} 项`);
     const urls = [...new Set([
       ...document.renderers.map(renderer => renderer.url),
       ...(document.vegetation?.prototypes.map(prototype => prototype.url) ?? []),
