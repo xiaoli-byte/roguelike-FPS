@@ -6,6 +6,8 @@ import { loadPublishedMesh } from '../art/tools/pose_geometry_audit.mjs';
 
 const root = new URL('../', import.meta.url);
 const manifest = JSON.parse(await readFile(new URL('public/assets/manifest.json', root), 'utf8')).assets;
+// Unity 删除前冻结的原作武器规格（.art.json 的武器绑定与 LOD0 三角形数、Weapon_*.cs 的 prefab、Motion 文档的 sha256）
+const GUNFIRE = JSON.parse(await readFile(new URL('tests/fixtures/spec/gunfire.json', root), 'utf8'));
 const cases = [
   { id: 'SK_Weapon_Gunfire1002', target: 'smg', tris: 2394, moving: 'mag', movingTris: 290 },
   { id: 'SK_Weapon_Gunfire1202', target: 'revolver', tris: 3068, moving: 'cylinder', movingTris: 300 },
@@ -42,10 +44,7 @@ for (const c of cases) test(`${c.id}: runtime mesh, weights, materials and socke
     }
   }
   assert.equal(moving, c.movingTris, `${c.moving} rigid-part triangles`);
-  const sidecar = JSON.parse(await readFile(new URL(`unity/Assets/Art/Weapons/${c.id}/${c.id}.art.json`, root), 'utf8'));
-  assert.equal(sidecar.weapon.id, c.target);
-  assert.equal(sidecar.weapon.parts[c.moving], c.moving);
-  assert.deepEqual(Object.keys(sidecar.weapon.sockets).sort(), ['eject', 'finish', 'leftGrip', 'load', 'muzzle', 'sight']);
-  const definition = await readFile(new URL(`unity/Assets/Game/Scripts/Weapons/Defs/Weapon_${c.target[0].toUpperCase()}${c.target.slice(1)}.cs`, root), 'utf8');
-  assert.match(definition, new RegExp(`prefab = "${c.id}"`));
+  // Unity 那边的绑定（冻结规格）：这件模型绑在哪把武器上、那把武器的 prefab 就是它。Unity 编辑器里的挂点 / 部件表只给 Unity 用，网页不读，不再核对
+  assert.equal(GUNFIRE.sidecars[c.id]?.weapon, c.target);
+  assert.equal(GUNFIRE.prefabs[c.target]?.prefab, c.id);
 });

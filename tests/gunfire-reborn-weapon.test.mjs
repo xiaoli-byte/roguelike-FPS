@@ -7,6 +7,8 @@ import { loadPublishedMesh } from '../art/tools/pose_geometry_audit.mjs';
 const id = 'SK_Weapon_Gunfire1001';
 const root = new URL('../', import.meta.url);
 const manifest = JSON.parse(await readFile(new URL('public/assets/manifest.json', root), 'utf8'));
+// Unity 删除前冻结的原作武器规格（.art.json 的武器绑定与 LOD0 三角形数、Weapon_*.cs 的 prefab、Motion 文档的 sha256）
+const GUNFIRE = JSON.parse(await readFile(new URL('tests/fixtures/spec/gunfire.json', root), 'utf8'));
 const entry = manifest.assets[id];
 const bytes = await readFile(new URL(`public/${entry.url}`, root));
 const jsonLength = bytes.readUInt32LE(12);
@@ -75,14 +77,9 @@ test('decoded mesh keeps independent magazine weights and original proportions',
   assert.equal(counts.j_r, 4824, 'Main, Mantel and Trigger stay on the body');
 });
 
-test('Unity sidecar binds all weapon sockets without an extra red dot', async () => {
-  const sidecar = JSON.parse(await readFile(new URL(`unity/Assets/Art/Weapons/${id}/${id}.art.json`, root), 'utf8'));
-  assert.equal(sidecar.weapon.id, 'rifle');
-  assert.deepEqual(Object.keys(sidecar.weapon.sockets).sort(), ['eject', 'finish', 'leftGrip', 'load', 'muzzle', 'sight']);
-  assert.deepEqual(sidecar.weapon.parts, { muzzle: 'muzzle', mag: 'mag' });
-  assert.equal(sidecar.meshes[0].tris, 4996);
-  const handling = await readFile(new URL('unity/Assets/Game/Scripts/Weapons/Handling/Handling_Rifle.cs', root), 'utf8');
-  assert.match(handling, /kind = SightKind.None/);
-  const definition = await readFile(new URL('unity/Assets/Game/Scripts/Weapons/Defs/Weapon_Rifle.cs', root), 'utf8');
-  assert.match(definition, /prefab = "SK_Weapon_Gunfire1001"/);
+test('Unity binding (frozen spec): the rifle uses this model and its LOD0 triangle count', () => {
+  // Unity 编辑器里的挂点 / 部件表、Handling_Rifle 的瞄具类型只给 Unity 用，网页不读，Unity 删除后不再核对
+  assert.equal(GUNFIRE.sidecars[id].weapon, 'rifle');
+  assert.equal(GUNFIRE.sidecars[id].tris, 4996);
+  assert.equal(GUNFIRE.prefabs.rifle.prefab, 'SK_Weapon_Gunfire1001');
 });

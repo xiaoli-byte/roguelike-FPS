@@ -5,6 +5,8 @@ import { createHash } from 'node:crypto';
 
 const root = new URL('../', import.meta.url);
 const manifest = JSON.parse(await readFile(new URL('public/assets/gunfire-original/manifest.json', root), 'utf8'));
+// Unity 删除前冻结的原作武器规格（.art.json 的武器绑定与 LOD0 三角形数、Weapon_*.cs 的 prefab、Motion 文档的 sha256）
+const GUNFIRE = JSON.parse(await readFile(new URL('tests/fixtures/spec/gunfire.json', root), 'utf8'));
 const expected = { '1002': 'smg', '1202': 'revolver', '1008': 'railgun' };
 
 function document(bytes) {
@@ -61,11 +63,12 @@ for (const [weapon, target] of Object.entries(expected)) test(`Unity ${weapon} s
   assert.match(library, /loadedAssets\.set\(defId, loaded\)/);
 });
 
-test('all 16 Unity motion documents are mirrored byte for byte', async () => {
+test('all 16 Unity motion documents are mirrored (sha256 of the parsed JSON matches the frozen spec)', async () => {
+  const { createHash } = await import('node:crypto');
   const weapons = ['1001', '1002', '1003', '1004', '1005', '1006', '1008', '1009', '1010', '1013', '1014', '1101', '1102', '1106', '1202', '1301'];
+  assert.deepEqual(Object.keys(GUNFIRE.motion).sort(), [...weapons].sort());
   for (const weapon of weapons) {
-    const unity = await readFile(new URL(`unity/Assets/Resources/Gunfire/Motion/${weapon}.json`, root));
-    const web = await readFile(new URL(`public/assets/gunfire-original/motion/${weapon}.json`, root));
-    assert.deepEqual(JSON.parse(web), JSON.parse(unity), weapon);
+    const web = await readFile(new URL(`public/assets/gunfire-original/motion/${weapon}.json`, root), 'utf8');
+    assert.equal(createHash('sha256').update(JSON.stringify(JSON.parse(web))).digest('hex'), GUNFIRE.motion[weapon], weapon);
   }
 });

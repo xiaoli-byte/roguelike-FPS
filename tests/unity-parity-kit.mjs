@@ -1,6 +1,7 @@
 // M13 对照测试共用的工具（Unity EditMode 测试 → node --test）：
 //   · tsGraph()：把 src/ 的一棵模块图去类型后写进临时目录再 import（循环依赖照跑：Combat ↔ Reactions ↔ Feedback），可按文件打桩；
-//   · cs() / csTest()：读 Unity 的 C# 源码（规格），csConsts() / csNumber() 用正则把常量读出来比——改了一边另一边就红；
+//   · spec()：读 Unity 删除前冻结的 C# 规格（tests/fixtures/spec/*.json），对照测试的期望值一律从这里来，不再打开 unity/；
+//     csConsts() / csNumber() / csList() 只是解析 C# 写法的纯函数（冻结时用过），不读文件；
 //   · combatRig()：真的 Combat + Stats + EventBus + TaskRunner，敌人 / 玩家是最小的假对象（同 tests/scroll-tactics.test.mjs 的夹具）。
 import { readFile, writeFile, mkdtemp, mkdir, rm } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
@@ -10,19 +11,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { stripTypeScriptTypes } from 'node:module';
 
 const srcRoot = fileURLToPath(new URL('../src/', import.meta.url));
-const scriptsRoot = new URL('../unity/Assets/Game/Scripts/', import.meta.url);
-const testsRoot = new URL('../unity/Assets/Game/Tests/', import.meta.url);
 
 /**
  * 冻结的规格快照：tests/fixtures/spec/<name>.json（Unity 版删除前一次性从 C# / Unity 导出物导出，出处写在每份文件的 _comment、*At、_lines 里）。
  * 常量总表 cs-consts.json 的键是相对 Unity 工程 Assets/Game/Scripts 的 C# 文件名（#名字 = 文件里的一段）。
  */
 export const spec = name => JSON.parse(readFileSync(new URL(`./fixtures/spec/${name}.json`, import.meta.url), 'utf8'));
-
-/** Unity 运行时源码（相对 unity/Assets/Game/Scripts/） */
-export const cs = file => readFileSync(new URL(file, scriptsRoot), 'utf8');
-/** Unity EditMode 测试源码（相对 unity/Assets/Game/Tests/） */
-export const csTest = file => readFileSync(new URL(file, testsRoot), 'utf8');
 
 const num = text => Number(String(text).replace(/_/g, '').replace(/[fFdDmM]$/, ''));
 
