@@ -365,7 +365,7 @@ const vmImports = {
   './WeaponDefs': defsUrl,
   './WeaponModels': gunModelsStub,
   './demonBlade/BladeView': data('export class BladeView {} export function createBladePoseInput() { return { swing: -1, swingP: 0, hitP: 0.3, slash: null, unionStretch: 1.3, gesture: "none", union: 0, eye: 0, qi: 1 }; }'),
-  '../assets/AssetLibrary': data('export const AssetLibrary = { findAttachments: () => [] };'),
+  '../assets/AssetLibrary': data('export const AssetLibrary = { findAttachments: () => [], findBound: () => null, request: () => false };'),
   '../assets/ArtEnvironment': data('export function applyArtEnvironment() {}'),
   '../assets/StaticAttachment': data('export function attachStaticPart() { return null; }'),
   './WeaponHandling': await ts('../src/weapons/WeaponHandling.ts'),

@@ -513,7 +513,7 @@ export const getFlashTexture = () => new THREE.Texture();
 export function setCrossbowString() {}
 export function buildGunModel() { throw new Error('只测碎刃'); }`),
   './demonBlade/BladeView': bvUrl,
-  '../assets/AssetLibrary': data('export const AssetLibrary = { findAttachments: () => [] };'),
+  '../assets/AssetLibrary': data('export const AssetLibrary = { findAttachments: () => [], findBound: () => null, request: () => false };'),
   '../assets/ArtEnvironment': data('export function applyArtEnvironment() {}'),
   '../assets/StaticAttachment': data('export function attachStaticPart() { return null; }'),
   './WeaponHandling': await ts('../src/weapons/WeaponHandling.ts'),
