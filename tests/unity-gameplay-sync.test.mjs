@@ -3,7 +3,8 @@ import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 
 const root = new URL('../', import.meta.url);
-const defs = JSON.parse(await readFile(new URL('public/assets/unity-gameplay/defs.json', root), 'utf8'));
+// Unity 冻结的定义表（schema 2，原 public/assets 下的导出物；2026-11-26 挪到 tests/fixtures 作基线，运行时不再读）
+const defs = JSON.parse(await readFile(new URL('tests/fixtures/gameplay-defs.json', root), 'utf8'));
 
 test('Unity exports complete gameplay registries', () => {
   assert.equal(defs.heroes.length, 3);

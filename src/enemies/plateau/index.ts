@@ -5,7 +5,7 @@ import { MONSTER_NAMES } from '../../world/plateau/spec';
 import { PlateauFoeAdapter } from './PlateauFoeAdapter';
 
 /**
- * 第四章九种雷魅的名册（M2：照 Unity 冻结的 EnemyRoster，public/assets/unity-gameplay/defs.json；tests/unity-defs-parity.test.mjs 对照）。
+ * 第四章九种雷魅的名册（M2：照 Unity 冻结的 EnemyRoster，tests/fixtures/gameplay-defs.json；tests/unity-defs-parity.test.mjs 对照）。
  * 行为、模型、命中球仍由 world/plateau/play/foes.ts 的 FOE_SPECS 与各 Foe 类驱动（PlateauFoeAdapter 包一层），
  * 这里的 hp 经 EnemyBase 按难度 / 精英缩放后写回 foe；poise / staggerSeconds / hitch 与 FOE_SPECS 同值（对照测试一并检查）。
  * 尺寸是设计尺寸（放大前），生成时乘 scale；穷奇名册即精英（rank elite：生命按 ×2.6 折算 1100 / 2.6，体型按 ×1.25 折算），EnemyManager 总按精英生成。

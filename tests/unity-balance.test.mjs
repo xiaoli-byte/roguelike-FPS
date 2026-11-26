@@ -1,5 +1,6 @@
 // M11d 核心 · 平衡模型与经济投影（docs/threejs-migration.md 4.7）：照 Unity EditMode 的 BalanceModelTests 逐条改写。
-// 敌人 / 首领数值读 Unity 导出的定义表 public/assets/unity-gameplay/defs.json；编制表直接和 BalanceModel.cs 的源码逐行对。
+// 敌人 / 首领数值读 Unity 冻结的定义表（tests/fixtures/gameplay-defs.json，原 public/assets 下的导出物，2026-11-26 挪来作基线）；
+// 编制表和 Unity BalanceModel.cs 的 Stages 逐行对（C# 的行抄成下面的 CS_STAGES）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -12,7 +13,7 @@ const StagePlan = await importTs('../src/progression/StagePlan.ts');
 const { QilinDef } = await importTs('../src/enemies/bosses/QilinDef.ts');
 const { TALENT_COSTS } = await importTs('../src/progression/Meta.ts');
 
-const defs = JSON.parse(readFileSync(new URL('../public/assets/unity-gameplay/defs.json', import.meta.url), 'utf8'));
+const defs = JSON.parse(readFileSync(new URL('./fixtures/gameplay-defs.json', import.meta.url), 'utf8'));
 B.setBalanceData(defs);
 // 魂晶按「这一局会走的关」算：前三章 12 关（第四章的图在网页里是另一套场景，照 Unity 的写法：建好一关算一关）
 StagePlan.setSceneReady(s => !s.alt && s.chapter <= 3);
@@ -23,19 +24,32 @@ const chapterReady = ch => B.STAGE_LOADS.filter(l => StagePlan.canonical(l.code)
 
 // ───────────── 编制表 ─────────────
 
-test('编制表和 BalanceModel.cs 的 Stages 逐行一致（敌人、只数、精英、升格、窖藏、强化、驻守点）', (t) => {
-  const cs = readFileSync(new URL('../unity/Assets/Game/Scripts/Core/BalanceModel.cs', import.meta.url), 'utf8');
-  if (cs.startsWith('%TSD-Header')) return t.skip('BalanceModel.cs 被透明加密（先跑 node scripts/unity/dlp-unity-fix.mjs）');
-  const squads = text => [...text.matchAll(/S\("(\w+)", (\d+)(?:, (\d+))?\)/g)].map(m => ({ enemy: m[1], count: +m[2], elites: +(m[3] ?? 0) }));
-  const rows = [...cs.matchAll(/new\("(\d-\d)", (\d+), (\d+), (\d+), (.*?)\)( \{ roadside = new\[\] \{ (.*?) \} \})?,\r?\n/g)];
-  assert.equal(rows.length, 12, 'C# 里 12 张开放大图');
-  assert.equal(B.STAGE_LOADS.length, rows.length);
-  rows.forEach((m, i) => {
+// Unity 工程 Assets/Game/Scripts/Core/BalanceModel.cs 第 119–130 行的 Stages（12 张开放大图），2026-11-26 照抄冻结：
+// [关, 升格, 窖藏, 强化, 场地编制, 驻守点编制]；编制每项 [敌人, 只数, 精英只数]（C# 的 S(enemy, count, elites = 0)）
+const CS_STAGES = [
+  ['1-1', 0, 1, 1, [['jerboa_blade', 17, 0], ['scorpion_archer', 5, 1], ['tomb_beast', 2, 1], ['apsara', 1, 0], ['mirage_toad', 3, 0], ['sand_wraith', 1, 0], ['fire_rat', 6, 0]], [['fire_rat', 2, 0], ['jerboa_blade', 10, 0], ['scorpion_archer', 3, 0], ['sand_wraith', 1, 0], ['mirage_toad', 1, 0]]],
+  ['1-2', 1, 1, 1, [['scorpion_archer', 8, 1], ['jerboa_blade', 16, 0], ['fire_rat', 9, 0], ['mirage_toad', 2, 0], ['tomb_beast', 2, 1], ['apsara', 3, 0], ['sand_wraith', 2, 0]], [['jerboa_blade', 9, 0], ['sand_wraith', 1, 0], ['scorpion_archer', 3, 0], ['fire_rat', 2, 0], ['mirage_toad', 1, 0]]],
+  ['1-3', 1, 0, 1, [['jerboa_blade', 17, 0], ['sand_wraith', 3, 0], ['scorpion_archer', 8, 1], ['fire_rat', 8, 0], ['tomb_beast', 3, 1], ['apsara', 2, 0], ['mirage_toad', 3, 0]], [['scorpion_archer', 3, 0], ['jerboa_blade', 10, 0], ['sand_wraith', 1, 0], ['fire_rat', 2, 0], ['mirage_toad', 1, 0]]],
+  ['2-1', 1, 1, 1, [['ice_whale', 1, 0], ['jiaoren', 16, 0], ['qingniao', 4, 0], ['frost_crab', 2, 1], ['fuzhu', 5, 1], ['xingxing', 10, 0], ['lantern_jelly', 3, 0], ['fox_witch', 2, 0], ['haozhi', 5, 0], ['ice_puffer', 3, 0], ['xuangui', 1, 0]], [['haozhi', 2, 0], ['xingxing', 5, 0], ['fuzhu', 4, 0], ['jiaoren', 5, 0]]],
+  ['2-2', 1, 0, 1, [['xuangui', 2, 1], ['fuzhu', 4, 1], ['xingxing', 21, 0], ['fox_witch', 2, 0], ['haozhi', 8, 0], ['qingniao', 7, 0]], [['xingxing', 10, 0], ['haozhi', 4, 0], ['fuzhu', 2, 0]]],
+  ['2-3', 1, 1, 1, [['jiaoren', 14, 0], ['ice_puffer', 6, 0], ['fuzhu', 6, 1], ['frost_crab', 1, 0], ['lantern_jelly', 3, 0], ['qingniao', 3, 0], ['xingxing', 5, 0], ['haozhi', 6, 0], ['fox_witch', 2, 0], ['xuangui', 1, 1]], [['jiaoren', 6, 0], ['fuzhu', 2, 0], ['xingxing', 5, 0], ['haozhi', 3, 0]]],
+  ['3-1', 0, 0, 1, [['huodou', 15, 1], ['tantong', 24, 0], ['tuo', 2, 0], ['mamian', 6, 2], ['bifang', 5, 0]], [['tantong', 12, 0], ['bifang', 3, 0]]],
+  ['3-2', 0, 1, 1, [['mamian', 5, 2], ['tantong', 19, 0], ['huodou', 4, 0], ['bifang', 2, 0], ['fire_crow', 9, 0], ['iron_ox', 2, 1], ['firecracker', 6, 0]], [['tantong', 5, 0], ['bifang', 1, 0]]],
+  ['3-3', 0, 0, 1, [['founder', 2, 1], ['firecracker', 6, 0], ['tantong', 23, 0], ['nuo', 2, 0], ['huodou', 11, 1], ['mamian', 4, 1], ['fire_crow', 7, 0], ['iron_ox', 2, 1]], [['tantong', 5, 0], ['bifang', 1, 0]]],
+  ['4-1', 0, 0, 1, [['aoyin', 2, 0], ['leiyak', 3, 0], ['jufu', 5, 0], ['marmot', 10, 0], ['manman', 3, 0], ['liangu', 3, 0], ['tiangou', 10, 0], ['dijiang', 7, 0]], []],
+  ['4-2', 1, 1, 1, [['jufu', 4, 0], ['tiangou', 10, 0], ['liangu', 3, 0], ['manman', 4, 0], ['dijiang', 6, 0], ['aoyin', 1, 0], ['leiyak', 2, 0], ['marmot', 6, 0]], []],
+  ['4-3', 0, 0, 1, [['tiangou', 8, 0], ['jufu', 5, 0], ['liangu', 2, 0], ['marmot', 9, 0], ['dijiang', 5, 0], ['manman', 2, 0], ['aoyin', 2, 0], ['leiyak', 3, 0]], []],
+];
+
+test('编制表和 BalanceModel.cs 的 Stages 逐行一致（敌人、只数、精英、升格、窖藏、强化、驻守点）', () => {
+  const squads = list => list.map(([enemy, count, elites]) => ({ enemy, count, elites }));
+  assert.equal(B.STAGE_LOADS.length, CS_STAGES.length, 'C# 里 12 张开放大图');
+  CS_STAGES.forEach(([code, promote, coinCaches, upgrades, field, roadside], i) => {
     const load = B.STAGE_LOADS[i];
-    assert.equal(load.code, m[1]);
-    assert.deepEqual([load.promote, load.coinCaches, load.upgrades], [+m[2], +m[3], +m[4]], load.code);
-    assert.deepEqual(load.squads, squads(m[5]), `${load.code} 场地`);
-    assert.deepEqual(load.roadside, squads(m[7] ?? ''), `${load.code} 驻守点`);
+    assert.equal(load.code, code);
+    assert.deepEqual([load.promote, load.coinCaches, load.upgrades], [promote, coinCaches, upgrades], load.code);
+    assert.deepEqual(load.squads, squads(field), `${load.code} 场地`);
+    assert.deepEqual(load.roadside, squads(roadside), `${load.code} 驻守点`);
   });
   const fields = StagePlan.STAGES.filter(s => !s.isBoss);
   assert.deepEqual(fields.map(s => s.code), B.STAGE_LOADS.map(l => l.code), '每张开放大图一行');

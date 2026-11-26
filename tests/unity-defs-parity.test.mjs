@@ -3,13 +3,14 @@ import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import {
-  EXCEPTIONS, ENEMY_FIELDS, HERO_FIELDS, WEAPON_FIELDS, compare, loadUnity, loadWeb, staleExceptions,
+  EXCEPTIONS, ENEMY_FIELDS, HERO_FIELDS, WEAPON_FIELDS, compare, loadBaseline, loadWeb, staleExceptions,
 } from '../scripts/web/defs-parity.mjs';
+import { importTs } from './hanba-load.mjs';
 
-// M2：Unity 冻结的定义表（public/assets/unity-gameplay/defs.json）↔ 网页 TS 定义表逐字段对照。
+// M2：Unity 冻结的定义表（tests/fixtures/gameplay-defs.json，2026-11-26 起作基线）↔ 网页 TS 定义表逐字段对照。
 // 字段映射、单位与缺省约定在 scripts/web/defs-parity.mjs（WEAPON_FIELDS / ENEMY_FIELDS / HERO_FIELDS），
 // 有意保留的差异登记在它的 EXCEPTIONS（每条带原因）。`node scripts/web/defs-parity.mjs` 打印同一份报告。
-const unity = await loadUnity();
+const unity = await loadBaseline();
 const web = await loadWeb();
 const result = compare(unity, web);
 const show = (rows) => rows.map((d) => `${d.table}/${d.id}.${d.key ?? '*'}：Unity ${JSON.stringify(d.unity)} ≠ 网页 ${JSON.stringify(d.web)}`).join('\n');
@@ -28,6 +29,21 @@ for (const [table, fields] of [['weapons', WEAPON_FIELDS], ['enemies', ENEMY_FIE
     assert.equal(open.length, 0, `未登记的差异：\n${show(open)}`);
   });
 }
+
+test('__balance() 改用网页定义（registryBalanceData）后，平衡报告和用基线算的逐字相同', async () => {
+  const B = await importTs('../src/progression/BalanceModel.ts');
+  const Bosses = await importTs('../src/progression/BalanceBosses.ts');
+  B.setBalanceData(unity);
+  const want = Bosses.fullBalanceReport();
+  // 网页侧：types/*.ts 与第四章表里的 *_DEF（游戏启动时登记进 Registry 的同一批对象）；首领没载入 = 奖励按缺省（基线里九个首领都是缺省值）
+  const fromWeb = B.balanceDataFromDefs(Object.values(web.enemies));
+  const ids = new Set(fromWeb.enemies.map((e) => e.id));
+  assert.deepEqual(unity.enemies.filter((e) => !ids.has(e.id)).map((e) => e.id), [], '基线名册的敌人网页都有（网页多出来的旧怪编制里不用）');
+  assert.ok(unity.bosses.every((b) => b.rewards.coins.join() === '60,100' && b.rewards.essence === 60), '基线首领奖励都是缺省值');
+  B.setBalanceData(fromWeb);
+  assert.equal(Bosses.fullBalanceReport(), want);
+  B.setBalanceData(null);
+});
 
 test('exception list is minimal: every entry is still a real difference and has a reason', () => {
   for (const e of EXCEPTIONS) assert.ok(typeof e.reason === 'string' && e.reason.length >= 10, `${e.table}/${e.id}.${e.key} 缺原因`);
@@ -52,12 +68,12 @@ test('effective spread follows Unity: spreadTuned verbatim, otherwise TS × 0.4 
   assert.equal(byId.stormpod.projectile.rollAfter, true);
 });
 
-test('weapon library constants match Unity WeaponLibrary', async () => {
-  const cs = await readFile(new URL('../unity/Assets/Game/Scripts/Weapons/WeaponDefs.cs', import.meta.url), 'utf8');
-  const rarity = cs.match(/RarityDamage = \{([^}]*)\}/)[1].split(',').map((s) => parseFloat(s));
-  assert.deepEqual([...web.weapons.RARITY_DAMAGE], rarity);
-  assert.equal(web.weapons.MAX_LEVEL, Number(cs.match(/MaxUpgrade = (\d+)/)[1]));
-  assert.equal(web.weapons.LEVEL_DAMAGE, parseFloat(cs.match(/UpgradeStep = ([\d.]+)f/)[1]));
+test('weapon library constants match Unity WeaponLibrary', () => {
+  // Unity 工程 Assets/Game/Scripts/Weapons/WeaponDefs.cs 第 224、227、228 行（2026-11-26 照抄冻结）：
+  // RarityDamage = { 1f, 1.15f, 1.35f, 1.6f, 1.9f }、MaxUpgrade = 5、UpgradeStep = 0.12f
+  assert.deepEqual([...web.weapons.RARITY_DAMAGE], [1, 1.15, 1.35, 1.6, 1.9]);
+  assert.equal(web.weapons.MAX_LEVEL, 5);
+  assert.equal(web.weapons.LEVEL_DAMAGE, 0.12);
   assert.equal(web.weapons.SPREAD_SCALE, 0.4);
 });
 

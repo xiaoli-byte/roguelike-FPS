@@ -7,7 +7,7 @@
 //   圣湖的游线在湖里、AngleOf 是 SwimPoint 的反函数、水位 = 基础 + 常驻 + 吼叫；
 //   据点模式：Unity BossEncounter.stronghold 默认关（只有 4-1 三领主开），结算延迟 6.3 s 大于死亡演出。
 // 网页另加：关卡目标表（src/world/objectives/data.ts，从 Unity 场景导出的 objectives.json 一次性转来）对得上 4-1 场景（6 座灵火坛、要点亮 3 座、据点门槛圆）；
-// 首领定义与 Unity defs.json 一致；
+// 首领定义与 Unity 冻结的定义表（tests/fixtures/gameplay-defs.json）一致；
 // 镜像片段（sidestepL / wheelR）和夔的 sink 网页没导出，退回 sidestep / wheel / kneel。
 // 没有旧的 plateau 领主测试要改（src/world/plateau/play/bosses.ts 只给 plateau 试玩页用，没有测试）。
 import assert from 'node:assert/strict';
@@ -71,8 +71,8 @@ test('Defs_Validate_TicksLordLevelAndBreakBar：自检、刻度 66 / 33、领主
   assert.match(index, /registerLords\(\)/);
 });
 
-test('Defs_MatchUnityDefsJson：生命定档、伤害、速度、半径 / 高、阶段、破防条、死亡演出与 Unity defs.json 一致', async () => {
-  const unity = Object.fromEntries((await json('public/assets/unity-gameplay/defs.json')).bosses.map(b => [b.id, b]));
+test('Defs_MatchUnityDefsJson：生命定档、伤害、速度、半径 / 高、阶段、破防条、死亡演出与 Unity 冻结的定义表一致', async () => {
+  const unity = Object.fromEntries((await json('tests/fixtures/gameplay-defs.json')).bosses.map(b => [b.id, b]));
   for (const d of defs()) {
     const u = unity[d.id];
     assert.ok(u, d.id);
