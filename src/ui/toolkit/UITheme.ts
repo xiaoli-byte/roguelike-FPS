@@ -1,5 +1,5 @@
 /**
- * 界面主题在代码这一侧的部分（照译 Unity G/UI/Toolkit/UITheme.cs；样式本体在 src/ui/css/unity/theme.css，由 theme.uss 转出）：
+ * 界面主题在代码这一侧的部分（照译 Unity G/UI/Toolkit/UITheme.cs；样式本体在 src/ui/css/screens/theme.css）：
  *   调色板（与 theme.uss 的 --变量 同值，代码里拼颜色时用）、常用类名、USS 做不了的程序贴图。
  * Unity 用程序贴图 + tint 画渐变（横向渐隐、径向暗角、条形明暗）；网页直接写成同曲线的 CSS 渐变（paint* 函数，色标按 C# 的公式取样）。
  */

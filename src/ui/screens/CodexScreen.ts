@@ -1,5 +1,5 @@
 /**
- * 图鉴（照译 Unity G/UI/Screens/CodexScreen.cs，样式 css/unity/codex.css）：主菜单里打开，不挡游戏；返回回主菜单。
+ * 图鉴（照译 Unity G/UI/Screens/CodexScreen.cs，样式 css/screens/codex.css）：主菜单里打开，不挡游戏；返回回主菜单。
  *   上：标题 + 总收录数；四个页签（武器 / 秘卷 / 敌人 / 灵宠，各带「已收录 / 总数」与新条目红点）；
  *   左：一页 12 格（4 × 3）——缩略图（CodexThumbs 现拍的模型图；秘卷是单字签）+ 名字；未收录的模型图染黑成剪影、名字写「？？？」；
  *       新收录的角上有朱印「新」，选中看过就清掉；

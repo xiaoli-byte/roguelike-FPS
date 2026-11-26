@@ -1,5 +1,5 @@
 /*
- * 灵火破晓 · Unity 界面的网页基准（手写；样式本体在 ./unity/*.css，由 scripts/web/convert-uss.mjs 从 USS 转出）。
+ * 灵火破晓 · 界面的基准样式（手写；各界面的样式本体在 ./screens/*.css）。
  *
  * UI Toolkit 和浏览器的默认值不一样，这里把 .sf-root（四层面板的根，src/ui/toolkit/UIRoot.ts）下面的元素拉回 UI Toolkit 的默认：
  *   每个元素都是纵向 flex 容器、border-box、最小尺寸 0（Yoga 的默认，能被压到比内容还窄）、没有外边距、实线边框（宽度 0）；
@@ -120,17 +120,17 @@
 }
 
 /* 滑条（SettingsScreen 的 Slider）：Unity 默认主题里 Slider 的几何（轨道居中、拖块按值定位），样式在 screens.css 的 .sf-slider 规则 */
-:where(.sf-root .unity-base-slider) {
+:where(.sf-root .sf-slider) {
   height: 24px;
   cursor: pointer;
 }
 
-:where(.sf-root .unity-base-slider__drag-container) {
+:where(.sf-root .sf-slider__drag-container) {
   flex-grow: 1;
   height: 100%;
 }
 
-:where(.sf-root .unity-base-slider__tracker) {
+:where(.sf-root .sf-slider__tracker) {
   position: absolute;
   left: 0;
   right: 0;
@@ -138,7 +138,7 @@
   border-width: 1px;
 }
 
-:where(.sf-root .unity-base-slider__dragger) {
+:where(.sf-root .sf-slider__dragger) {
   position: absolute;
   top: 50%;
   border-width: 1px;

@@ -1,5 +1,5 @@
 /**
- * 选英雄（照译 Unity G/UI/Screens/HeroSelectScreen.cs，样式 css/unity/menu.css 的 .sf-heroes）。主角是英雄本人，界面只在两侧：
+ * 选英雄（照译 Unity G/UI/Screens/HeroSelectScreen.cs，样式 css/screens/menu.css 的 .sf-heroes）。主角是英雄本人，界面只在两侧：
  *   左：英雄名录（徽记、名字、称号、定位、序号；未解锁带锁）；
  *   中：英雄预览台（拖动旋转英雄）+ 底部名牌「英雄名 · 称号」；
  *   右：信息栏——大号名字（英雄色）/ 称号 / 定位与玩法标签 / 上手难度；描述与要诀；基础属性对比条（生命 / 护盾 / 移速，按全体英雄的最大值归一）

@@ -1,6 +1,6 @@
 /*
- * 由 scripts/web/convert-uss.mjs 从 unity/Assets/Game/Resources/UI/theme.uss 生成，不要手改（改 USS 后重跑脚本）。
- * :root → .sf-root（层根）；-unity-* 属性按脚本里的 MAPPED 表换成等价 CSS，UNSUPPORTED 表里的留注释。
+ * 界面样式 · 主题（调色板变量、文字基准，挂在层根 .sf-root）。手写，直接改这里（类名都带 sf- 前缀；.sf-root 是界面层根，src/ui/toolkit/UIRoot.ts）。
+ * 像素值按 1920×1080 设计分辨率写，整层由 UILayers 缩放。
  */
 
 .sf-root {
@@ -36,7 +36,7 @@
     --el-corrode: #99e64d;
     color: var(--paper);
     font-size: 15px;
-    /* USS -unity-paragraph-spacing: 4px（转不了：浏览器没有段间距属性；只在 theme 的层根上设过 4px，界面里的多段文字都是单段（\n 换行），看不出差别） */
+    /* 段间距 4px 没有对应的 CSS 属性（界面里的多段文字都是单段、\n 换行，看不出差别） */
     text-wrap-mode: nowrap;
 }
 

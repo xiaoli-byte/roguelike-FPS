@@ -9,9 +9,9 @@
     安静 / 中等 / 密集          → 细节密度三档，目标约 60 / 30 / 10；最密 / 最疏之比太小 = 没有疏密节奏
 
 用法：
-    python scripts/unity/composition_check.py docs/art/review/ch3-v2/3-2/after                 # 整个目录
-    python scripts/unity/composition_check.py a.png b.jpg --out H:/tmp/check --md H:/tmp/check/summary.md
-    python scripts/unity/composition_check.py <目录> --no-sheet                                 # 只打印统计
+    python scripts/art/composition_check.py docs/art/review/ch3-v2/3-2/after                 # 整个目录
+    python scripts/art/composition_check.py a.png b.jpg --out H:/tmp/check --md H:/tmp/check/summary.md
+    python scripts/art/composition_check.py <目录> --no-sheet                                 # 只打印统计
 
 默认把自检图写到每张图旁边的 check/ 子目录（<名字>_check.jpg）；--out 指定别的目录。
 阈值是经验值（见 composition.md 4.2），只做提示，最终还是看图判断。

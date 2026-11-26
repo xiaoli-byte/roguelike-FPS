@@ -1,5 +1,5 @@
 /**
- * 通用确认框（照译 Unity G/UI/Screens/ConfirmScreen.cs，样式 css/unity/dialog.css）：标题、正文、补充说明、确认 / 取消两个按钮。
+ * 通用确认框（照译 Unity G/UI/Screens/ConfirmScreen.cs，样式 css/screens/dialog.css）：标题、正文、补充说明、确认 / 取消两个按钮。
  *   返回键 = 取消；危险操作（danger，缺省）确认按钮朱砂色、默认聚焦在「取消」上，连按确认键不会误点。
  *   不挡游戏、不停时间（主菜单场景要动），叠在当前界面上。0.22 s 淡入 + 0.96 → 1 放大。
  *   按钮和测试都走 confirm() / cancel()：先关自己再回调（回调里可以再开别的界面）。

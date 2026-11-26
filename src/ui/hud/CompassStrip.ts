@@ -1,5 +1,5 @@
 /**
- * 顶部罗盘条（照译 Unity G/UI/Widgets/CompassStrip.cs，样式 css/unity/map.css 的 .sf-compass；取代旧的行旅图 AdventureHUD，不做常驻小地图）：
+ * 顶部罗盘条（照译 Unity G/UI/Widgets/CompassStrip.cs，样式 css/screens/map.css 的 .sf-compass；取代旧的行旅图 AdventureHUD，不做常驻小地图）：
  *   · 一条 560 设计像素宽的方位带，覆盖视线左右各 75°：每 15° 一道刻度，45° 长刻度，北 / 东 / 南 / 西大字、东北等小字，两端渐隐；正中一枚鎏金小三角；
  *   · 地点徽记（MapMarkers：场地「战」、藏宝「宝」、补给营「营」、出口「门」、首领「首」、灵火坛「火」）按方位落在带上，只显示发现过的；颜色跟状态走；
  *   · 目标：金色菱框 + 下方距离「128 米」；转到视线外时贴在带子内侧并加 ← / →；准心对着它（±25°）时带子下面写「前往 · 雅丹石阵」。

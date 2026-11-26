@@ -4,8 +4,8 @@
  *
  *  base.css           界面容器 .gf-ui 的文字基准（只给不在 .sf-root 里的首领登场字幕、主菜单远景）
  *  menu-backdrop.css  主菜单的 CSS 远景（网页没有菜单场景）
- *  sf-base.css        UI Toolkit 默认值的网页基准、打包字体（sf-fonts.css，scripts/web/publish_fonts.py 生成）
- *  unity/*.css        由 scripts/web/convert-uss.mjs 从 Unity 的 USS 转出（不要手改）：HUD、菜单、各界面……用 sf-* 类名
+ *  sf-base.css        UI Toolkit 默认值的网页基准、打包字体（sf-fonts.css，scripts/web/fonts.py 生成）
+ *  screens/*.css      各界面的样式（手写）：HUD、菜单、各界面……用 sf-* 类名
  *
  * 旧的 gf-* 界面样式（menu / panels / hud / combat / overlays，以及 base.css 里的旧设计令牌、全局按钮 / 标题重置、图标、滚动条）
  * 随 M11c 第二期删掉了；scripts/web/ui2-shots.mjs 每张截图核对剩下的 gf- 规则对 sf 元素零影响。
@@ -13,4 +13,4 @@
 @import './css/base.css';
 @import './css/menu-backdrop.css';
 @import './css/sf-base.css';
-@import './css/unity/index.css';
+@import './css/screens/index.css';

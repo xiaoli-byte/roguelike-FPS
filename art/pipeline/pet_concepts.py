@@ -6,7 +6,7 @@
 
 Fast track for the first pet batch (docs/pet-system.md): the pets are not in registry.toml yet, so this writes straight to
 art/source/pets/<ID>/concept/ (sheet + front/left/back/right PNGs with keyed background). The Tripo GLB goes to
-art/source/_tripo_inbox/, and art/pipeline/blender/bl_pet_export.py turns it into the Unity FBX + texture.
+art/source/_tripo_inbox/ and goes through the normal import / build / publish route (registry.toml).
 """
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ no loose particles, no separate floating pieces, no flames, smoke, sparkles or g
 Plain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no
 perspective."""
 
-# id → (display, height note, brief). Rarity and gameplay live in unity/Assets/Game/Scripts/Pets/PetDefs.cs.
+# id → (display, height note, brief). Rarity and gameplay: docs/pet-system.md.
 PETS: dict[str, tuple[str, str, str]] = {
     "SK_Pet_Dangkang": ("当康", "about 0.7 m tall", """A small chubby mythical piglet-boar spirit (Dangkang of the Shan Hai Jing, omen of
 good harvests) standing on all fours: round barrel body on four short sturdy legs with small dark hooves, a short upturned

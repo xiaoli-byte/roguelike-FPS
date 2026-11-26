@@ -2,20 +2,16 @@
 
 目录约定（每张图一个，3-1…3-4）：
     docs/art/review/ch3-v2/<图>/before/   改前（已留存：N_名字.jpg、map.jpg、map.json、report.txt）
-    docs/art/review/ch3-v2/<图>/after/    改后（用 collect 从本次构建的 _Review 截图拷过来）
+    docs/art/review/ch3-v2/<图>/after/    改后（同机位的新截图，N_名字.jpg）
     docs/art/review/ch3-v2/<图>/pairs.txt 可选：指定配对与标题（见下）
     docs/art/review/ch3-v2/<图>/compare/  输出：每组一张左右对照 NN-名字.jpg
     docs/art/review/ch3-v2/<图>/<图>-compare.jpg  输出：总览（全部组的缩略对照）
     docs/art/review/ch3-v2/<图>/<图>-compare-gray.jpg  输出：总览的灰度版（去掉颜色看明暗：焦点 / 剪影读不读得出）
 
 用法：
-    python scripts/unity/ch3_compare.py collect 3-4     # 拷改后图：unity/Assets/Art/_Review/level_3-4_* → after/（PNG 转 JPG、宽 ≤ 1600）
-    python scripts/unity/ch3_compare.py 3-4 --list      # 只列配对结果，不出图
-    python scripts/unity/ch3_compare.py 3-4             # 出对照图 + 总览
-    python scripts/unity/ch3_compare.py all             # 四张图都出（缺 after/ 的跳过）
-
-collect 只拷和 level_<图>_report.txt 同一次构建的截图（修改时间在报告前后 20 分钟内），旧构建留下的同前缀截图不拷；
---all 关掉这个过滤。拷之前会清空 after/ 里的 .jpg（只清这一个目录）。
+    python scripts/art/ch3_compare.py 3-4 --list      # 只列配对结果，不出图
+    python scripts/art/ch3_compare.py 3-4             # 出对照图 + 总览
+    python scripts/art/ch3_compare.py all             # 四张图都出（缺 after/ 的跳过）
 
 配对规则：
   1. pairs.txt 里的每一行按顺序在前：`改前名 | 改后名 | 标题`（名字不带扩展名、编号前缀可省，# 开头是注释）。
@@ -28,12 +24,10 @@ collect 只拷和 level_<图>_report.txt 同一次构建的截图（修改时间
 import argparse
 import os
 import re
-import shutil
 import sys
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-REVIEW = os.path.join(ROOT, "unity", "Assets", "Art", "_Review")
 BASE = os.path.join(ROOT, "docs", "art", "review", "ch3-v2")
 MAPS = ("3-1", "3-2", "3-3", "3-4")
 MAX_W = 1600
@@ -180,7 +174,7 @@ def pair_sheet(title, b_path, a_path, width, title_f, cap_f, show_names=True):
 def compare(map_id: str, list_only=False) -> int:
     folder = os.path.join(BASE, map_id)
     if not os.path.isdir(os.path.join(folder, "after")):
-        print(f"[{map_id}] 没有 after/，跳过（先 collect {map_id}）")
+        print(f"[{map_id}] 没有 after/，跳过（先把改后截图放进 after/）")
         return 0
     pairs, lone_b, lone_a = plan(map_id)
     print(f"[{map_id}] {len(pairs)} 组：")
@@ -232,55 +226,13 @@ def compare(map_id: str, list_only=False) -> int:
     return len(pairs)
 
 
-def collect(map_id: str, keep_all=False) -> int:
-    prefix = f"level_{map_id}_"
-    report = os.path.join(REVIEW, f"{prefix}report.txt")
-    if not os.path.exists(report):
-        print(f"没有 {report}：先跑 bash scripts/unity/bridge.sh level {map_id}")
-        return 0
-    ref = os.path.getmtime(report)
-    out = os.path.join(BASE, map_id, "after")
-    os.makedirs(out, exist_ok=True)
-    for f in os.listdir(out):
-        if f.lower().endswith((".jpg", ".json", ".txt")):
-            os.remove(os.path.join(out, f))
-    n, stale = 0, []
-    for f in sorted(os.listdir(REVIEW)):
-        if not f.startswith(prefix) or f.endswith(".meta"):
-            continue
-        src = os.path.join(REVIEW, f)
-        rest = f[len(prefix):]
-        stem, ext = os.path.splitext(rest)
-        if not keep_all and abs(os.path.getmtime(src) - ref) > 20 * 60:
-            stale.append(rest)
-            continue
-        if ext.lower() == ".png":
-            im = Image.open(src).convert("RGB")
-            if im.width > MAX_W:
-                im = im.resize((MAX_W, round(im.height * MAX_W / im.width)), Image.LANCZOS)
-            im.save(os.path.join(out, stem + ".jpg"), quality=88)
-            n += 1
-        elif rest in ("map.json", "report.txt"):
-            shutil.copyfile(src, os.path.join(out, rest))
-    if stale:
-        print(f"  跳过旧构建留下的：{', '.join(stale)}（--all 照拷）")
-    print(f"[{map_id}] 拷了 {n} 张图 → {out}")
-    return n
-
-
 def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", help="collect / 图号（3-1…3-4）/ all")
-    ap.add_argument("map", nargs="?", help="collect 的图号")
+    ap.add_argument("cmd", help="图号（3-1…3-4）/ all")
     ap.add_argument("--list", action="store_true", help="只列配对结果")
-    ap.add_argument("--all", action="store_true", help="collect 时不按构建时间过滤")
     a = ap.parse_args()
-    if a.cmd == "collect":
-        if a.map not in MAPS:
-            ap.error(f"collect 要给图号：{' / '.join(MAPS)}")
-        return 0 if collect(a.map, a.all) else 1
     targets = MAPS if a.cmd == "all" else (a.cmd,)
     if any(t not in MAPS for t in targets):
         ap.error(f"图号只认 {' / '.join(MAPS)} 或 all")
