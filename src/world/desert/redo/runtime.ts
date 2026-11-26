@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { UnityLevelLibrary, type UnitySceneDocument } from '../../UnityLevelLibrary';
 import { createUnityTerrainMesh } from '../../UnityTerrainMesh';
 import { createUnityWaterMaterial } from '../../UnityWaterMaterial';
+import { createStylizedLit } from '../../UnityStylizedLit';
+import { createFarLayer } from '../farLayer';
 import { setStylizedEnvironment, stylizeTerrain, terrainStyle } from '../../UnityStylizedLit';
 import { provideBoundaryField } from '../../mechanisms/MechanismData';
 import { WHITEBOXES } from '../whitebox';
@@ -9,7 +11,9 @@ import { buildDeadPoplars, buildPoplars } from '../pieces/flora';
 import { buildCamelBones } from '../pieces/bones';
 import type { BuiltPiece, PieceBox, PieceContext } from '../pieces/types';
 import type { DesertMapArt, DesertPart } from '../spec';
-import { boundaryUrl, compileWhitebox, type CompiledMap, type PieceRequest } from './compile';
+import { MARGIN, boundaryUrl, compileWhitebox, redoLight, type CompiledMap, type PieceRequest } from './compile';
+import { REDO_MAPS } from './maps';
+import type { VolumeOverrides } from '../../../render/UrpVolume';
 import { patchDesertDocument } from '../document';
 
 /**
@@ -152,13 +156,30 @@ export function redoArt(id: string): DesertMapArt | null {
       if (!c) throw new Error(`[desert/redo] ${id} 没有先 prepare`);
       return structuredClone(c.mechanisms);
     },
+    // 光影雾（maps.ts 的 look）：空气透视 / 云天 / 光柱给 UnityEnvironmentView，逆光轮廓给风格化材质，调色叠在旧场景调色上，雾带摆位给氛围层
+    light: redoLight(spec, REDO_MAPS[id] ?? { margin: { rise: 0, dunes: 0 } }),
+    atmosphere: REDO_MAPS[id]?.look?.atmosphere,
+    clouds: REDO_MAPS[id]?.look?.clouds,
+    shafts: REDO_MAPS[id]?.look?.shafts,
+    rimBack: REDO_MAPS[id]?.look?.rimBack,
+    layout: REDO_MAPS[id]?.look?.layout,
     get grade() {
-      return compiled.get(id)?.grade ?? undefined;
+      return mergeGrade(compiled.get(id)?.grade ?? undefined, REDO_MAPS[id]?.look?.grade);
     },
     async build(b): Promise<DesertPart[]> {
       const c = compiled.get(id);
       if (!c) return [];
-      const parts: DesertPart[] = [await terrainPart(b.document, c, b.group), ...waterParts(b.document, c, b.group)];
+      const parts: DesertPart[] = [await terrainPart(b.document, c, b.group), ...waterParts(b.document, c, b.group), await farGroundPart(b.document, c, b.group)];
+      // 远景剪影环：一排排沙丘 / 台地 / 雅丹退进雾里（farLayer.ts）
+      const far = REDO_MAPS[id]?.look?.far;
+      if (far) {
+        const layer = createFarLayer({
+          center: [spec.size[0] / 2, spec.size[1] / 2], baseY: c.field.baseY, wind: spec.wind,
+          rows: far.rows, veils: far.veils, look: far.look,
+        });
+        b.group.add(layer.group);
+        parts.push(layer);
+      }
       const built = pending.get(id);
       pending.delete(id);
       for (const p of built?.pieces ?? []) {
@@ -183,7 +204,8 @@ async function terrainPart(doc: UnitySceneDocument, c: CompiledMap, group: THREE
   for (const layer of layers) { layer.anisotropy = 8; layer.needsUpdate = true; }
   // 着色器按 vMapUv 采样分层图：材质要挂一张 map 才有这个 varying
   const material = new THREE.MeshStandardMaterial({ map: control });
-  stylizeTerrain(material, { control, layers, tiles: LAYERS.map(l => l.tile) }, terrainStyle(doc.id), doc.environment);
+  const style = terrainStyle(doc.id), shadow = REDO_MAPS[doc.id]?.look?.terrainShadow;
+  stylizeTerrain(material, { control, layers, tiles: LAYERS.map(l => l.tile) }, shadow ? { ...style, shadowTint: shadow } : style, doc.environment);
   setStylizedEnvironment(doc.environment);
   const source = new THREE.Group();
   source.add(new THREE.Mesh(new THREE.BufferGeometry(), material));
@@ -228,4 +250,50 @@ function waterParts(doc: UnitySceneDocument, c: CompiledMap, group: THREE.Group)
       dispose(): void { mesh.removeFromParent(); geometry.dispose(); material.dispose(); },
     };
   });
+}
+
+/** 调色：play.ts 里旧场景 Volume 的结果打底，这张图 look.grade 里给了的组件参数逐项盖上去 */
+function mergeGrade(base: VolumeOverrides | undefined, over: VolumeOverrides | undefined): VolumeOverrides | undefined {
+  if (!over) return base;
+  const out: Record<string, Record<string, unknown>> = structuredClone((base ?? {}) as Record<string, Record<string, unknown>>);
+  for (const [k, v] of Object.entries(over)) out[k] = { ...(out[k] ?? {}), ...(v as Record<string, unknown>) };
+  return out as VolumeOverrides;
+}
+
+/**
+ * 远景地面：图外地形最外一圈收回到 baseY，接一大片同高的沙地一直铺到相机远裁面之外（远景剪影的脚下雾融进它在远处的雾色）。
+ * 沙层贴图按 9 m 一张平铺；只受光、不投影。
+ */
+async function farGroundPart(doc: UnitySceneDocument, c: CompiledMap, group: THREE.Group): Promise<DesertPart> {
+  const size = 7000;
+  const sand = (await UnityLevelLibrary.loadTexture(LAYERS[0].url, true)).clone();
+  sand.wrapS = sand.wrapT = THREE.RepeatWrapping;
+  sand.repeat.set(size / LAYERS[0].tile, size / LAYERS[0].tile);
+  sand.needsUpdate = true;
+  const material = createStylizedLit(new THREE.MeshStandardMaterial({ map: sand, roughness: 1, metalness: 0 }), doc.environment);
+  // 只铺在高度场外面：中间挖掉高度场那一块（往里缩 1 m，钻到高度场最外一圈底下，不留缝）。
+  // 不挖的话这张平面会从低处穿出来（1-4 的泉、1-A 的河床都比远景地面低），把泉水和盆底盖住
+  const [W, D] = c.spec.size, M = MARGIN - 1, half = size / 2, cx = W / 2, cz = D / 2;
+  const shape = new THREE.Shape([new THREE.Vector2(-half, -half), new THREE.Vector2(half, -half), new THREE.Vector2(half, half), new THREE.Vector2(-half, half)]);
+  // ShapeGeometry 在 XY 平面、绕 x 转 −90° 放平：平面上的 (x, y) → 世界 (x, 0, −y)
+  shape.holes.push(new THREE.Path([
+    new THREE.Vector2(-M - cx, -(-M - cz)), new THREE.Vector2(-M - cx, -(D + M - cz)), new THREE.Vector2(W + M - cx, -(D + M - cz)), new THREE.Vector2(W + M - cx, -(-M - cz)),
+  ]));
+  const geometry = new THREE.ShapeGeometry(shape).rotateX(-Math.PI / 2);
+  // ShapeGeometry 的 uv = 顶点坐标（米）：换成 0..1，沙层贴图按 repeat 平铺
+  const uv = geometry.getAttribute('uv') as THREE.BufferAttribute;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) + half) / size, (uv.getY(i) + half) / size);
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.name = 'Far Ground';
+  mesh.position.set(cx, c.field.baseY - 0.05, cz);
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return {
+    dispose(): void {
+      mesh.removeFromParent();
+      geometry.dispose();
+      material.dispose();
+      sand.dispose();
+    },
+  };
 }

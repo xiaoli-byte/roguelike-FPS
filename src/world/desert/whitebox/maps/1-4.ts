@@ -95,7 +95,7 @@ export const WB_1_4: WhiteboxSpec = {
   motif: '首领场 · 开阔 + 日晒与荫蔽',
   mood: '烈日下的露天沙洼：四面刀刃脊的沙山一面亮一面暗，月牙泉是全画面唯一的冷色，影子就是掩体。',
   size: [320, 300],
-  sun: { azimuth: 322, elevation: 46 },
+  sun: { azimuth: 322, elevation: 34 },
   wind: WIND,
   terrain: [
     { op: 'base', h: 0, mat: 'sand' },

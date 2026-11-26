@@ -1,6 +1,6 @@
-// 自动生成（一次性搬运）：node scripts/desert/redo-extract-play.mjs，2026-11-26 从 Unity 导出的旧场景搬来第一章的玩法数据。
-// 用户：「现在是要从unity迁移到threeJS，以后unity是要删除的」——重做版运行时只读这份，不再读 public/assets/unity-levels；
-// 以后要改波次 / 奖励 / 调色就直接改这里（脚本只在 Unity 导出还在时重跑对照用）。
+// 第一章的玩法数据（波次、奖励、先后关系、藏宝、首领、环境光、沙暴模板、软边界参数、水体参数、调色）。
+// 2026-11-26 从 Unity 导出的旧场景一次性搬来（搬运脚本已删）；用户：「以后unity是要删除的」「不能有任何依赖unity的代码」——
+// 重做版只读这份，以后要改波次 / 奖励 / 调色就直接改这里。
 import type { UnityEnvironment, UnityWave } from '../../UnityLevelLibrary';
 import type { QuicksandData, SoftBoundaryTuning, WeatherRegionData } from '../../mechanisms/MechanismData';
 import type { VolumeOverrides } from '../../../render/UrpVolume';

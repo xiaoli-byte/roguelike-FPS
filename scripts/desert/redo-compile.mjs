@@ -1,5 +1,5 @@
 // 第一章重做：把白盒编成游戏的场景文档，在 node 里跑一遍看结果（不开浏览器）。
-//   node scripts/desert/redo-compile.mjs [图...]          缺省全部：件数、碰撞、导航三角形、遭遇、提醒，外加用游戏的导航网格类测寻路耗时
+//   node scripts/desert/redo-compile.mjs [图...]          缺省全部：件数、碰撞、导航三角形、遭遇、机关、提醒，外加用游戏的导航网格类测寻路耗时
 //   node scripts/desert/redo-compile.mjs 1-1 --json out.json   另存编好的文档（看数据用）
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { registerHooks, stripTypeScriptTypes } from 'node:module';
@@ -35,9 +35,6 @@ const flag = name => { const i = args.indexOf(name); return i >= 0 ? args.splice
 const jsonOut = flag('--json');
 const ids = args.length ? args : Object.keys(WHITEBOXES);
 for (const id of ids) {
-  // 只为对照寻路耗时：Unity 导出的旧场景还在就读，删了就跳过（编译本身不读它）
-  const oldFile = `public/assets/unity-levels/scenes/${id}.json`;
-  const old = existsSync(oldFile) ? JSON.parse(readFileSync(oldFile, 'utf8')) : null;
   const t0 = performance.now();
   const c = compileWhitebox(WHITEBOXES[id]);
   const ms = performance.now() - t0;
@@ -67,17 +64,5 @@ for (const id of ids) {
     if (!ok) fails++;
   }
   console.log(`导航：建网 ${build.toFixed(0)} ms，出生点到 ${targets.length} 个目标寻路最慢 ${worst.toFixed(1)} ms${fails ? `，${fails} 个找不到路` : ''}`);
-  if (old) {
-    // 对照：旧场景（Unity 烘的导航网格）同样从出生点到各遭遇
-    const oldNav = new UnityNavMesh(ctx, old);
-    let oldWorst = 0;
-    for (const e of old.encounters) oldNav.findPath(new THREE.Vector3(...old.spawn.position), new THREE.Vector3(...e.position), out);
-    for (const e of old.encounters) {
-      const t2 = performance.now();
-      oldNav.findPath(new THREE.Vector3(...old.spawn.position), new THREE.Vector3(...e.position), out);
-      oldWorst = Math.max(oldWorst, performance.now() - t2);
-    }
-    console.log(`  对照旧场景：导航三角形 ${old.navigation.indices.length / 3}，寻路最慢 ${oldWorst.toFixed(1)} ms`);
-  }
   if (jsonOut) writeFileSync(jsonOut.replace('{id}', id), JSON.stringify(d));
 }
