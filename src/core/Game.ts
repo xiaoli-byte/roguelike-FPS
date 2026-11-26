@@ -880,11 +880,10 @@ export class Game implements IGame {
     // 美术资产库（按需读 / 换关释放的检视：loadedIds()；scripts/web/asset-memory-check.mjs 用）
     (window as unknown as Record<string, unknown>).__assets = AssetLibrary;
     let god = false;
-    // __balance()：平衡模型的整份推演（经济投影、逐关估算、首领用时；Unity BalanceModel.Report），敌人 / 首领数值现读 defs.json
+    // __balance()：平衡模型的整份推演（经济投影、逐关估算、首领用时；Unity BalanceModel.Report），敌人 / 首领数值取网页的敌人注册表
     (window as unknown as Record<string, unknown>).__balance = async () => {
-      const [model, bosses, defs] = await Promise.all([import('../progression/BalanceModel'), import('../progression/BalanceBosses'),
-        fetch(`${import.meta.env.BASE_URL}assets/unity-gameplay/defs.json`).then(r => r.json())]);
-      model.setBalanceData(defs);
+      const [model, bosses] = await Promise.all([import('../progression/BalanceModel'), import('../progression/BalanceBosses')]);
+      model.setBalanceData(model.registryBalanceData());
       const report = bosses.fullBalanceReport();
       console.info(report);
       return report;

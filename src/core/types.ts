@@ -605,7 +605,7 @@ export interface EnemyDef {
   /** 敌人主题色，用于特效 */
   color?: number;
 
-  // ── Unity EnemyDef 的字段（M2：对齐 public/assets/unity-gameplay/defs.json；缺省同 Unity 的字段初值）──
+  // ── Unity EnemyDef 的字段（M2：对齐 Unity 冻结的定义表 tests/fixtures/gameplay-defs.json；缺省同 Unity 的字段初值）──
   /** 天生级别（Unity Rank）：'elite' = 名册即精英，EnemyManager 生成时总按精英（穷奇：生命按 ×2.6 折算过）；缺省 normal */
   rank?: 'normal' | 'elite' | 'boss';
   /** 不随机给它的精英词缀（与自身机制重复的；Unity affixExclusions），rollAffix 读 */
