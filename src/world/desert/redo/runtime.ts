@@ -236,8 +236,8 @@ function waterParts(doc: UnitySceneDocument, c: CompiledMap, group: THREE.Group)
     source.userData = {
       unityShader: 'Spiritfire/Water',
       // 泉水：浅处青绿、深处蓝，全画面唯一的冷色
-      unityColors: { _ShallowColor: [0.28, 0.7, 0.72, 0.55], _DeepColor: [0.06, 0.3, 0.42, 0.9] },
-      unityFloats: { _Alpha: 0.75, _WaveScale: 3, _WaveSpeed: 0.5, _WaveHeight: 0.02, _Sparkle: 1.2 },
+      unityColors: { _ShallowColor: [0.18, 0.78, 0.78, 0.6], _DeepColor: [0.04, 0.38, 0.5, 0.92] },
+      unityFloats: { _Alpha: 0.85, _WaveScale: 3, _WaveSpeed: 0.5, _WaveHeight: 0.02, _Sparkle: 1.2 },
     };
     const material = createUnityWaterMaterial(source, doc.environment);
     const mesh = new THREE.Mesh(geometry, material);
