@@ -58,3 +58,29 @@ for (const [id, spec] of Object.entries(WHITEBOXES)) {
     for (const r of d.renderers) assert.ok(r.url.startsWith('assets/props/'), r.url);
   });
 }
+
+// 特效（redo/fxMaps.ts）：都摆在图里；立杆的幡不立在据点场地中间（交战区留干净，level-art.md「特效」）
+const { REDO_FX } = await import('../src/world/desert/redo/fxMaps.ts');
+test('特效都摆在图里、幡杆不进据点场地中心', () => {
+  for (const [id, fx] of Object.entries(REDO_FX)) {
+    const spec = WHITEBOXES[id];
+    assert.ok(spec, `${id} 没有白盒`);
+    const [W, D] = spec.size;
+    const inside = (x, z, what) => assert.ok(x >= -20 && x <= W + 20 && z >= -20 && z <= D + 20, `${id} ${what} (${x}, ${z}) 在图外`);
+    for (const s of fx.smoke ?? []) inside(s.origin[0], s.origin[2], '烟');
+    for (const f of fx.falls ?? []) inside(f.top[0], f.top[2], '落沙');
+    for (const p of fx.drift ?? []) inside(p.center[0], p.center[1], '流沙');
+    for (const d of fx.devils ?? []) for (const p of d.path) inside(p[0], p[1], '尘卷风');
+    for (const m of fx.motes ?? []) inside(m.center[0], m.center[2], '浮尘');
+    for (const r of fx.extraRidges ?? []) for (const p of r.points) inside(p[0], p[1], '脊线');
+    for (const b of fx.banners ?? []) {
+      const [x, z] = b.at.length === 2 ? b.at : [b.at[0], b.at[2]];
+      inside(x, z, '幡');
+      if (b.kind !== 'pole') continue;
+      for (const s of spec.strongholds) {
+        const d = Math.hypot(x - s.at[0], z - s.at[1]);
+        assert.ok(d > (s.r ?? 24) * 0.4, `${id} 幡杆 (${x}, ${z}) 在据点「${s.name}」场地中心 ${d.toFixed(1)} m`);
+      }
+    }
+  }
+});

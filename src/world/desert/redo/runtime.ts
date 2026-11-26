@@ -9,6 +9,8 @@ import { provideBoundaryField } from '../../mechanisms/MechanismData';
 import { WHITEBOXES } from '../whitebox';
 import { buildDeadPoplars, buildPoplars } from '../pieces/flora';
 import { buildCamelBones } from '../pieces/bones';
+import { redoFx } from './fx';
+import { REDO_FX } from './fxMaps';
 import type { BuiltPiece, PieceBox, PieceContext } from '../pieces/types';
 import type { DesertMapArt, DesertPart } from '../spec';
 import { MARGIN, boundaryUrl, compileWhitebox, redoLight, type CompiledMap, type PieceRequest } from './compile';
@@ -187,6 +189,8 @@ export function redoArt(id: string): DesertMapArt | null {
         b.group.add(p.object);
         parts.push({ update: p.update?.bind(p), dispose: () => { p.object.removeFromParent(); p.dispose(); } });
       }
+      // 特效（fx.ts）：沙脊吹沙、狼烟、尘卷风、落沙、贴地流沙、旗幡、落叶
+      parts.push(...redoFx(b, spec, REDO_FX[id]));
       return parts;
     },
   };
