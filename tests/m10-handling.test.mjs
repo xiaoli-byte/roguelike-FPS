@@ -1,10 +1,11 @@
 // M10 第一人称持枪手感对照（Unity Weapons/HandlingProfile.cs + Handling/Profiles/HandlingProfile_<Id>.cs、TwoBoneIK.cs、WeaponHandRig.cs、
 // WeaponPartAnimator.cs、WeaponRigFactory.cs、TrinityCycle.cs、RailgunCharge.cs、WeaponTint.cs、Pipeline/Runtime/FirstPersonViewmodel.cs、
 // FireModes/WeaponStateMachine.cs 的 CommitLoad → 网页 src/weapons/WeaponHandling.ts、TwoBoneIK.ts、Viewmodel.ts、WeaponSystem.ts、WeaponModels.ts）。
-// 数值从 C# 源码读出来比；行为断言照 Unity EditMode 的 WeaponHandlingTests（持握表、换弹手位时间线、两骨 IK、加弹的动画事件）。
+// 期望值照 C# 抄成下面的常量，旁边注明出自哪个文件哪一行（路径相对 unity/Assets/Game/Scripts/，另注的除外）；测试不读 unity/ 下的任何文件
+// （unity/ 和 public/assets/unity-* 以后整个删掉）。行为断言照 Unity EditMode 的 WeaponHandlingTests（持握表、换弹手位时间线、两骨 IK、加弹的动画事件）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
 
@@ -15,8 +16,6 @@ async function ts(path, imports = {}) {
   for (const [key, value] of Object.entries({ three: threeUrl, ...imports })) source = source.replaceAll(`'${key}'`, `'${value}'`);
   return data(stripTypeScriptTypes(source, { mode: 'transform' }));
 }
-const unity = path => readFile(new URL(`../unity/Assets/${path}`, import.meta.url), 'utf8');
-const cs = path => unity(`Game/Scripts/${path}`);
 const near = (a, b, msg, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${msg ?? ''} ${a} ≠ ${b}`);
 const num = s => Number(String(s).trim().replace(/f$/, ''));
 const vec = s => s.split(',').map(num);
@@ -32,26 +31,32 @@ const FC = await import(fcUrl);
 
 // ───────────── 持握表（HandlingProfile） ─────────────
 
-const ACTION = { Magazine: 'magazine', Speedloader: 'speedloader', Drum: 'drum', Shell: 'shell', Breech: 'breech', Tube: 'tube', CellTop: 'cellTop', CellBottom: 'cellBottom', Wick: 'wick', AmmoBox: 'ammoBox', BoltClip: 'boltClip' };
-const STYLE = { Magazine: 'mag', Cylinder: 'cylinder', Tube: 'tube', Cell: 'cell', Box: 'box', Shell: 'shell' };
+/**
+ * Unity 各把 Weapons/Handling/Profiles/HandlingProfile_<Id>.cs：第 14 行 Make(id, LoadingAction.X, ReloadStyle.Y)，第 15 行起 p.xxx = … 改的几项。
+ * 装填动作 / 换弹风格写成网页的名字（LoadingAction.CellTop → 'cellTop'，ReloadStyle.Magazine → 'mag'）
+ */
+const UNITY_PROFILES = {
+  beam: { action: 'cellTop', style: 'cell', tweaks: { weight: 1.1 } }, // HandlingProfile_Beam.cs:14
+  burst: { action: 'magazine', style: 'mag', tweaks: { weight: 1.05 } }, // HandlingProfile_Burst.cs:14
+  crossbow: { action: 'boltClip', style: 'mag', tweaks: { weight: 1.05 } }, // HandlingProfile_Crossbow.cs:14
+  flamer: { action: 'cellBottom', style: 'cell', tweaks: { weight: 1.3 } }, // HandlingProfile_Flamer.cs:14
+  lantern: { action: 'wick', style: 'cell', tweaks: { weight: 0.9, swayScale: 1.2 } }, // HandlingProfile_Lantern.cs:14
+  launcher: { action: 'tube', style: 'tube', tweaks: { cylinderSteps: 4, weight: 1.3 } }, // HandlingProfile_Launcher.cs:14
+  magmashot: { action: 'breech', style: 'shell', tweaks: { weight: 1.1 } }, // HandlingProfile_Magmashot.cs:14
+  minigun: { action: 'ammoBox', style: 'box', tweaks: { weight: 1.6, swayScale: 0.8, bobScale: 1.15 } }, // HandlingProfile_Minigun.cs:14
+  railgun: { action: 'cellTop', style: 'cell', tweaks: { weight: 1.3, swayScale: 0.9 } }, // HandlingProfile_Railgun.cs:14
+  revolver: { action: 'speedloader', style: 'cylinder', tweaks: { cylinderSteps: 8, weight: 0.7 } }, // HandlingProfile_Revolver.cs:14
+  rifle: { action: 'magazine', style: 'mag', tweaks: { weight: 1 } }, // HandlingProfile_Rifle.cs:14
+  shotgun: { action: 'shell', style: 'shell', tweaks: { pumpStroke: 0.075, weight: 1.15 } }, // HandlingProfile_Shotgun.cs:14
+  smg: { action: 'magazine', style: 'mag', tweaks: { weight: 0.85, swayScale: 1.1 } }, // HandlingProfile_Smg.cs:14
+  sniper: { action: 'magazine', style: 'mag', tweaks: { weight: 1.25, swayScale: 0.85, bobScale: 0.85 } }, // HandlingProfile_Sniper.cs:14
+  stormpod: { action: 'drum', style: 'cylinder', tweaks: { cylinderSteps: 5, weight: 1.2 } }, // HandlingProfile_Stormpod.cs:14
+  swarm: { action: 'tube', style: 'tube', tweaks: { weight: 1.35 } }, // HandlingProfile_Swarm.cs:14
+  trinity: { action: 'speedloader', style: 'cylinder', tweaks: { weight: 0.7 } }, // HandlingProfile_Trinity.cs:14
+};
 
-/** Unity 各把 HandlingProfile_<Id>.cs：Make(id, 装填动作, 换弹风格) + 改的几项 */
-async function unityProfiles() {
-  const dir = new URL('../unity/Assets/Game/Scripts/Weapons/Handling/Profiles/', import.meta.url);
-  const out = {};
-  for (const f of (await readdir(dir)).filter(n => n.endsWith('.cs'))) {
-    const text = await readFile(new URL(f, dir), 'utf8');
-    const m = text.match(/HandlingProfile\.Make\("(\w+)", LoadingAction\.(\w+), ReloadStyle\.(\w+)\)/);
-    assert.ok(m, f);
-    const tweaks = {};
-    for (const t of text.matchAll(/p\.(\w+) = (-?[\d.]+)f?;/g)) tweaks[t[1]] = Number(t[2]);
-    out[m[1]] = { action: ACTION[m[2]], style: STYLE[m[3]], tweaks };
-  }
-  return out;
-}
-
-test('handling: every gun has the Unity HandlingProfile (action, reload style tilt, per-gun weight / sway / bob / cylinder / pump)', async () => {
-  const U = await unityProfiles();
+test('handling: every gun has the Unity HandlingProfile (action, reload style tilt, per-gun weight / sway / bob / cylinder / pump)', () => {
+  const U = UNITY_PROFILES;
   assert.equal(Object.keys(U).length, 17, 'Unity 17 把枪各一份');
   for (const [id, u] of Object.entries(U)) {
     const p = H.WEAPON_HANDLING[id];
@@ -72,16 +77,45 @@ test('handling: every gun has the Unity HandlingProfile (action, reload style ti
 });
 
 /**
- * 握点（M2 留给 M10 的 rightHand / rightPitch / leftHand / leftRoll，defs.json 是 Unity Weapon_<Id>.cs 导出的；Unity 的 Grip() 把 x 取反）。
+ * 握点（M2 留给 M10 的 rightHand / rightPitch / leftHand / leftRoll）：Unity 武器表 Weapons/Defs/Weapon_<Id>.cs 写握持的那几行
+ * （行号见各行末），是 Unity 坐标——Grip() 已经把 TS 的 x 取反。碎刃不写握持（全 0）。
+ */
+const UNITY_GRIPS = [
+  { id: 'revolver', rightHand: [0, -0.003, 0], rightPitch: -0.02, leftHand: [0.034, -0.04, 0.035], leftRoll: 0.65 }, // Weapon_Revolver.cs:24
+  { id: 'smg', rightHand: [0, 0, 0], rightPitch: 0, leftHand: [0, 0.02, -0.235], leftRoll: 0.04 }, // Weapon_Smg.cs:29
+  { id: 'rifle', rightHand: [0, -0.055, 0.015], rightPitch: -0.05, leftHand: [0, 0.025, -0.105], leftRoll: -0.08 }, // Weapon_Rifle.cs:26
+  { id: 'burst', rightHand: [0, 0, 0], rightPitch: 0, leftHand: [0, -0.005, -0.24], leftRoll: 0.1 }, // Weapon_Burst.cs:8
+  { id: 'shotgun', rightHand: [0, 0.006, 0.02], rightPitch: -0.12, leftHand: [0, -0.002, -0.3], leftRoll: 0 }, // Weapon_Shotgun.cs:25
+  { id: 'sniper', rightHand: [0, -0.001, 0.01], rightPitch: -0.06, leftHand: [0, 0.004, -0.3], leftRoll: -0.06 }, // Weapon_Sniper.cs:10
+  { id: 'launcher', rightHand: [0, 0, 0], rightPitch: 0, leftHand: [0, -0.01, -0.27], leftRoll: 0 }, // Weapon_Launcher.cs:30
+  { id: 'crossbow', rightHand: [0, -0.004, 0.008], rightPitch: 0.02, leftHand: [0, 0.01, -0.25], leftRoll: -0.1 }, // Weapon_Crossbow.cs:32
+  { id: 'beam', rightHand: [0, 0, 0], rightPitch: 0, leftHand: [0, 0, -0.17], leftRoll: 0 }, // Weapon_Beam.cs:24
+  { id: 'minigun', rightHand: [0, -0.012, -0.005], rightPitch: 0.12, leftHand: [0.085, 0.03, -0.2], leftRoll: 0.6 }, // Weapon_Minigun.cs:9
+  { id: 'swarm', rightHand: [0, -0.006, 0.008], rightPitch: 0.06, leftHand: [0, 0, -0.2], leftRoll: 0.3 }, // Weapon_Swarm.cs:9
+  { id: 'flamer', rightHand: [0, -0.003, 0.014], rightPitch: -0.04, leftHand: [0, -0.03, -0.26], leftRoll: 0.45 }, // Weapon_Flamer.cs:10
+  { id: 'stormpod', rightHand: [0, 0, 0], rightPitch: 0, leftHand: [0, -0.02, -0.2], leftRoll: 0 }, // Weapon_Stormpod.cs:34
+  { id: 'magmashot', rightHand: [0, 0.006, 0.02], rightPitch: -0.1, leftHand: [0, -0.02, -0.16], leftRoll: -0.12 }, // Weapon_Magmashot.cs:34
+  { id: 'trinity', rightHand: [0, -0.003, 0], rightPitch: -0.02, leftHand: [0.034, -0.04, 0.03], leftRoll: 0.58 }, // Weapon_Trinity.cs:29
+  { id: 'railgun', rightHand: [0, -0.001, 0.01], rightPitch: 0, leftHand: [0, -0.02, -0.32], leftRoll: -0.18 }, // Weapon_Railgun.cs:31
+  { id: 'lantern', rightHand: [0, 0.008, 0.004], rightPitch: 0.12, leftHand: [0, -0.02, -0.12], leftRoll: 0.2 }, // Weapon_Lantern.cs:37
+  { id: 'demon_blade', rightHand: [0, 0, 0], rightPitch: 0, leftHand: [0, 0, 0], leftRoll: 0 }, // Weapon_DemonBlade.cs（没写握持）
+];
+/** 三位英雄的第一人称手臂（M2 留给 M10 的 armR / armL） */
+const UNITY_HERO_ARMS = [
+  { id: 'fox', armR: 'SM_Arms_RedPandaR', armL: 'SM_Arms_RedPandaL' }, // Skills/Heroes/Hero_Liao.cs:21–22
+  { id: 'falcon', armR: 'SM_Arms_FlyingSquirrelR', armL: 'SM_Arms_FlyingSquirrelL' }, // Skills/Heroes/Hero_Falcon.cs:22–23
+  { id: 'bear', armR: 'SM_Arms_PangolinR', armL: 'SM_Arms_PangolinL' }, // Skills/Heroes/Hero_Bear.cs:22–23
+];
+/**
  * 例外各带原因：
- * - rifle：Unity 的裂风步枪换成了原作模型 SK_Weapon_Gunfire1001（GunfireOriginal，不迁），握点是按那支枪量的；网页仍是自己的步枪模型，握点跟它走。
- * - launcher / beam / stormpod 的右手偏移、右手俯仰、左手横滚：Unity 移植时武器表里没写（全是 0，从来没有过别的值），
+ * - rifle：Unity 的裂风步枪换成了原作模型 SK_Weapon_Gunfire1001（Weapon_Rifle.cs:17 prefab，GunfireOriginal，不迁），握点是按那支枪量的；
+ *   网页仍是自己的步枪模型，握点跟它走。
+ * - launcher / beam / stormpod 的右手偏移、右手俯仰、左手横滚：Unity 移植时武器表里没写（上表全是 0，从来没有过别的值），
  *   而网页这几项在 Unity 移植之前（2026-10-04）就调好、对的是同一份美术枪模，保留网页。左手握点照样一致。
  */
 const GRIP_EXCEPTIONS = { rifle: ['right', 'left'], launcher: ['right', 'pitch', 'roll'], beam: ['right', 'pitch', 'roll'], stormpod: ['right', 'pitch', 'roll'] };
-test('grips: right hand / pitch, left grip / roll equal the Unity weapon table (defs.json; documented exceptions)', async () => {
-  const defs = JSON.parse(await readFile(new URL('../public/assets/unity-gameplay/defs.json', import.meta.url), 'utf8'));
-  const weapons = Array.isArray(defs.weapons) ? defs.weapons : Object.values(defs.weapons);
+test('grips: right hand / pitch, left grip / roll equal the Unity weapon table (Weapon_<Id>.cs; documented exceptions)', async () => {
+  const weapons = UNITY_GRIPS;
   const models = await readFile(new URL('../src/weapons/WeaponModels.ts', import.meta.url), 'utf8');
   const builders = Object.fromEntries([...models.matchAll(/^  (\w+): build(\w+),$/gm)].map(m => [m[1], m[2]]));
   /** 枪模的左手握点（buildXxx 里的 m.leftHand；挂在泵上的再加泵的位置） */
@@ -113,16 +147,15 @@ test('grips: right hand / pitch, left grip / roll equal the Unity weapon table (
     checked++;
   }
   assert.equal(checked, 18);
-  // 例外确实还是例外（Unity 改了就把例外删掉）
-  const unity = Object.fromEntries(weapons.map(w => [w.id, w]));
+  // 例外只是右手 / 俯仰 / 横滚三项（Unity 表这三项全 0），左手握点照样逐把比过了
+  const table = Object.fromEntries(weapons.map(w => [w.id, w]));
   for (const id of ['launcher', 'beam', 'stormpod']) {
-    assert.deepEqual([unity[id].rightHand, unity[id].rightPitch, unity[id].leftRoll], [[0, 0, 0], 0, 0], `${id}：Unity 武器表没写握持`);
+    assert.deepEqual([table[id].rightHand, table[id].rightPitch, table[id].leftRoll], [[0, 0, 0], 0, 0], `${id}：Unity 武器表没写握持`);
   }
-  assert.match(await cs('Weapons/Defs/Weapon_Rifle.cs'), /prefab = "SK_Weapon_Gunfire1001"/);
   // 英雄的第一人称手臂（M2 留给 M10 的 HeroDef.armR / armL）：网页按清单 bind = fp / 英雄 / arm_r|arm_l 挂同一份资产
   const manifest = JSON.parse(await readFile(new URL('../public/assets/manifest.json', import.meta.url), 'utf8'));
   const entries = Array.isArray(manifest.assets) ? manifest.assets : Object.entries(manifest.assets ?? manifest).map(([key, v]) => ({ key, ...v }));
-  const heroes = Array.isArray(defs.heroes) ? defs.heroes : Object.values(defs.heroes);
+  const heroes = UNITY_HERO_ARMS;
   assert.equal(heroes.length, 3);
   for (const h of heroes) {
     for (const [side, key] of [['arm_r', h.armR], ['arm_l', h.armL]]) {
@@ -133,53 +166,68 @@ test('grips: right hand / pitch, left grip / roll equal the Unity weapon table (
   }
 });
 
-test('handling: Make presets and the default timeline match HandlingProfile.cs', async () => {
-  const text = await cs('Weapons/HandlingProfile.cs');
-  const fields = {};
-  for (const m of text.matchAll(/public float ([^;]+);/g)) {
-    for (const part of m[1].split(',')) {
-      const kv = part.match(/^\s*(\w+)\s*=\s*(-?[\d.]+)f?\s*$/);
-      if (kv) fields[kv[1]] = Number(kv[2]);
-    }
-  }
+/** Unity Weapons/HandlingProfile.cs 的字段默认值（第 29–49 行 public float …） */
+const HP_DEFAULTS = {
+  reachEnd: 0.14, // :29
+  magOutStart: 0.12, magOutEnd: 0.38, magInStart: 0.55, magInEnd: 0.78, // :30
+  loadAt: 0.78, // :31
+  finishStart: 0.78, finishEnd: 0.88, // :32
+  magHideAt: 1, // :38
+  cylinderSwing: -0.045, // :42
+  cylinderSpin: 14, // :44
+  weight: 1, swayScale: 1, bobScale: 1, // :47
+};
+/** HandlingProfile.Make 里 switch (style) 的 case ReloadStyle.X: p.tiltRot = …; p.tiltPos = …;（第 67–72 行） */
+const HP_STYLES = {
+  mag: { rot: [0.12, 0, 0.45], pos: [-0.045, 0.05, 0.02] }, // :67 Magazine
+  cylinder: { rot: [0.1, 0, 0.75], pos: [-0.04, 0, 0] }, // :68
+  tube: { rot: [0.5, 0, 0.15], pos: [0, -0.04, 0.04] }, // :69
+  cell: { rot: [0.12, 0, 0.3], pos: [-0.02, 0, 0] }, // :70
+  box: { rot: [0, 0, 0.28], pos: [-0.02, -0.05, 0] }, // :71
+  shell: { rot: [0.1, 0, -0.38], pos: [-0.015, 0.015, 0] }, // :72
+};
+/** HandlingProfile.Make 里 switch (action) 各 case 改的项（第 77–87 行；Speedloader 与 Drum 同一段、Shell 与 Breech 同一段） */
+const HP_ACTIONS = {
+  magazine: { magOffset: [0, -0.14, 0.03], magPitch: 0.3 }, // :77
+  boltClip: { magOffset: [0, 0.13, 0.03], magPitch: -0.25, reachRoll: -0.9 }, // :78
+  cellTop: { magOffset: [0.03, 0.12, 0], reachRoll: -0.9 }, // :79
+  wick: { magOffset: [0.03, 0.12, 0], reachRoll: -0.9 }, // :80
+  cellBottom: { magOffset: [0.03, -0.16, 0] }, // :81
+  tube: { magOffset: [0, -0.02, 0.12], reachRoll: 0.65, magHideAt: 0.85 }, // :82
+  ammoBox: { magOffset: [-0.02, -0.24, 0] }, // :83
+  drum: { reachRoll: -1.25 }, // :85
+  speedloader: { reachRoll: -1.25 }, // :84–85
+  breech: { reachPitch: -0.3 }, // :87
+  shell: { reachPitch: -0.3 }, // :86–87
+};
+/** 弹药袋 Pouch = WeaponDef.Grip(-0.11, -0.21, 0.08)（HandlingProfile.cs:114，括号里是 TS 原值；Unity 里 Grip 把 x 取反） */
+const HP_POUCH = [-0.11, -0.21, 0.08];
+
+test('handling: Make presets and the default timeline match HandlingProfile.cs', () => {
   const def = H.makeHandling({ right: [0, 0, 0], rightPitch: 0, leftRoll: 0, load: [0, 0, 0], finish: [0, 0, 0] }, 'magazine', 'mag');
-  for (const k of ['reachEnd', 'magOutStart', 'magOutEnd', 'magInStart', 'magInEnd', 'loadAt', 'finishStart', 'finishEnd', 'magHideAt', 'cylinderSwing', 'cylinderSpin', 'weight', 'swayScale', 'bobScale']) {
-    assert.ok(k in fields, `C# 缺 ${k}`);
-    near(def[k], fields[k], k);
-  }
+  for (const [k, v] of Object.entries(HP_DEFAULTS)) near(def[k], v, k);
+  // 伸手手型的默认值（:49）：没改过的装填动作保留
+  near(H.makeHandling(def, 'cellBottom', 'box').reachRoll, 0.35, 'reachRoll 默认');
+  near(H.makeHandling(def, 'magazine', 'box').reachPitch, 0.12, 'reachPitch 默认');
   // 换弹风格 → 姿态
-  const styles = [...text.matchAll(/case ReloadStyle\.(\w+): p\.tiltRot = new Vector3\(([^)]+)\); p\.tiltPos = new Vector3\(([^)]+)\);/g)];
-  assert.equal(styles.length, 6);
-  for (const [, s, rot, pos] of styles) {
-    const p = H.makeHandling(def, 'recall', STYLE[s]);
-    assert.deepEqual([...p.tiltRot], vec(rot), `${s} tiltRot`);
-    assert.deepEqual([...p.tiltPos], vec(pos), `${s} tiltPos`);
+  assert.equal(Object.keys(HP_STYLES).length, 6);
+  for (const [s, { rot, pos }] of Object.entries(HP_STYLES)) {
+    const p = H.makeHandling(def, 'recall', s);
+    assert.deepEqual([...p.tiltRot], rot, `${s} tiltRot`);
+    assert.deepEqual([...p.tiltPos], pos, `${s} tiltPos`);
   }
   // 装填动作 → 弹匣离位 / 俯仰 / 隐藏 / 伸手手型
-  const block = text.slice(text.indexOf('switch (action)'), text.indexOf('return p;'));
-  const cases = block.split(/(?=case LoadingAction\.)/).filter(c => c.startsWith('case'));
   let checked = 0;
-  for (let i = 0; i < cases.length; i++) {
-    const body = cases[i];
-    const name = body.match(/case LoadingAction\.(\w+):/)[1];
-    if (!/p\./.test(body)) continue; // fall-through 到下一条
-    const names = [name];
-    for (let j = i - 1; j >= 0 && !/p\./.test(cases[j]); j--) names.push(cases[j].match(/case LoadingAction\.(\w+):/)[1]);
-    for (const n of names) {
-      const p = H.makeHandling(def, ACTION[n], 'box');
-      const off = body.match(/p\.magOffset = new Vector3\(([^)]+)\)/);
-      if (off) assert.deepEqual([...p.magOffset], vec(off[1]), `${n} magOffset`);
-      for (const k of ['magPitch', 'reachRoll', 'reachPitch', 'magHideAt']) {
-        const m = body.match(new RegExp(`p\\.${k} = (-?[\\d.]+)f?;`));
-        if (m) near(p[k], Number(m[1]), `${n}.${k}`);
-      }
-      checked++;
+  for (const [action, expect] of Object.entries(HP_ACTIONS)) {
+    const p = H.makeHandling(def, action, 'box');
+    for (const [k, v] of Object.entries(expect)) {
+      if (Array.isArray(v)) assert.deepEqual([...p[k]], v, `${action} ${k}`);
+      else near(p[k], v, `${action}.${k}`);
     }
+    checked++;
   }
   assert.equal(checked, 11, '11 种装填动作');
-  // 弹药袋（TS 原值；Unity 里 x 取反）
-  const pouch = text.match(/Pouch = WeaponDef\.Grip\(([^)]+)\)/)[1];
-  assert.deepEqual([...H.POUCH], vec(pouch));
+  assert.deepEqual([...H.POUCH], HP_POUCH);
 });
 
 test('handling: every gun has a profile matching its reload style (Unity EveryGunHasAHandlingProfileMatchingItsReloadStyle)', () => {
@@ -273,19 +321,20 @@ test('forearm rotation is identity at rest and swings with the elbow (Unity Fore
   assert.ok(axis.clone().applyQuaternion(r).angleTo(new THREE.Vector3(0, -1, 0)) < 0.01 * Math.PI / 180, '前臂指向肘');
 });
 
-test('hand rig IK constants match WeaponHandRig.cs (camera space z flipped)', async () => {
-  const text = await cs('Weapons/WeaponHandRig.cs');
-  const sh = vec(text.match(/shoulder = new\(([^)]+)\)/)[1]);
-  const po = vec(text.match(/pole = new\(([^)]+)\)/)[1]);
+/**
+ * Unity Weapons/WeaponHandRig.cs：shoulder / pole（:23，Unity 相机空间 z 朝前）、upperArmLength / forearmLength（:25）、ikWeight / maxSwing（:27）。
+ * 平时刚性跟着握点走、偏差按 Exp(-20·dt) 衰减（:134）；整匣换弹过了 loadAt 调 sm.CommitLoad()（:128）——这两条在下面 viewmodel 的用例里按行为断言
+ */
+const HAND_RIG = { shoulder: [-0.19, -0.26, -0.05], pole: [-0.55, -0.6, 0.3], upperArm: 0.42, forearm: 0.40, weight: 0.7, maxSwing: 35 };
+
+test('hand rig IK constants match WeaponHandRig.cs (camera space z flipped)', () => {
+  const { shoulder: sh, pole: po } = HAND_RIG;
   assert.deepEqual([...IK.HAND_IK.shoulder], [sh[0], sh[1], -sh[2]]);
   assert.deepEqual([...IK.HAND_IK.pole], [po[0], po[1], -po[2]]);
-  near(IK.HAND_IK.upperArm, num(text.match(/upperArmLength = ([\d.]+f)/)[1]));
-  near(IK.HAND_IK.forearm, num(text.match(/forearmLength = ([\d.]+f)/)[1]));
-  near(IK.HAND_IK.weight, num(text.match(/ikWeight = ([\d.]+f)/)[1]));
-  near(IK.HAND_IK.maxSwingDeg, num(text.match(/maxSwing = ([\d.]+f)/)[1]));
-  // 平时刚性跟着握点走，只让偏差按 20/s 衰减；整匣换弹过了 loadAt 发加弹事件
-  assert.match(text, /Mathf\.Exp\(-20f \* dt\)/);
-  assert.match(text, /if \(!shell && p >= profile\.loadAt\) sm\.CommitLoad\(\);/);
+  near(IK.HAND_IK.upperArm, HAND_RIG.upperArm);
+  near(IK.HAND_IK.forearm, HAND_RIG.forearm);
+  near(IK.HAND_IK.weight, HAND_RIG.weight);
+  near(IK.HAND_IK.maxSwingDeg, HAND_RIG.maxSwing);
 });
 
 // ───────────── 枪模姿态（FirstPersonViewmodel）与零件 ─────────────
@@ -360,41 +409,49 @@ function vmHarness(mod = VM) {
 let uid = 1;
 const inst = (defId, element = 'none', rarity = 0) => ({ uid: uid++, defId, rarity, element, level: 0, mag: 10, reserve: 100, affixes: [] });
 
+/** Unity Pipeline/Runtime/FirstPersonViewmodel.cs（路径相对 unity/Assets/）第 63–67 行的 const float 全部 */
+const FPV_CONSTS = {
+  BobAmp: 0.011, BobRoll: 0.018, Breath: 0.0032, SwayClampX: 0.05, SwayClampY: 0.04, // :63
+  RollPerSpeed: 0.009, RollClamp: 0.07, FwdPerSpeed: 0.0022, FwdClamp: 0.02, VyPerSpeed: 0.0022, VyClamp: 0.03, // :64
+  LandPerSpeed: 0.0035, LandMax: 0.05, JumpLift: 0.012, // :65
+  KickCap: 2.4, // :66
+  SubStep: 1 / 240, // :67
+};
+/** FirstPersonViewmodel.cs 的弹簧 [ω, ζ]：鼠标滞后 / 侧倾 / 前后 / 竖直 / 落地（:213、:217–220，ω 再按 √枪重放慢）与后坐显示（:229–231） */
+const FPV_SPRINGS = {
+  Sway: [14, 0.62], Roll: [9, 0.8], Fwd: [8, 0.75], Vy: [8, 0.75], Land: [11, 0.42],
+  ShownZ: [42, 0.55], ShownRot: [40, 0.55], ShownRoll: [36, 0.6],
+};
+/** swayAmount（FirstPersonViewmodel.cs:32）；后坐回位 kickZ *= Exp(-15·rec·dt)（:226）、kickRot *= Exp(-12·rec·dt)（:227） */
+const FPV_SWAY_AMOUNT = 0.00042;
+const FPV_KICK_DECAY = { z: 15, rot: 12 };
+/**
+ * 枪模后坐缩放 ViewKickScale 0.55（Weapons/WeaponController.cs:110），向后那一路再 × 0.76（:555 view?.Kick(def.kickBack * 0.76f * ViewKickScale * strength, …)）；
+ * 枪模整体缩放 ViewmodelScale 0.76（Core/PlayerFactory.cs:50）；碎刃的 Sway 枪重 / 晃动 / 摆动（Weapons/DemonBlade/BladeView.cs:172–174）
+ */
+const VIEW_KICK_SCALE = 0.55;
+const VIEWMODEL_SCALE = 0.76;
+const BLADE_SWAY = { weight: 0.85, swayScale: 1.1, bobScale: 0.9 };
+
 test('viewmodel feel constants match FirstPersonViewmodel.cs + WeaponController ViewKickScale', async () => {
-  const text = await unity('Pipeline/Runtime/FirstPersonViewmodel.cs');
   const F = VM.VM_FEEL;
-  for (const m of text.matchAll(/const float ([^;]+);/g)) {
-    for (const part of m[1].split(',')) {
-      const kv = part.match(/^\s*(\w+)\s*=\s*([-\d.]+)f(?:\s*\/\s*([\d.]+)f)?\s*$/);
-      if (!kv) continue;
-      const v = kv[3] ? Number(kv[2]) / Number(kv[3]) : Number(kv[2]);
-      assert.ok(kv[1] in F, `网页缺 ${kv[1]}`);
-      near(F[kv[1]], v, kv[1]);
-    }
+  for (const [k, v] of Object.entries(FPV_CONSTS)) {
+    assert.ok(k in F, `网页缺 ${k}`);
+    near(F[k], v, k);
   }
-  near(F.SwayAmount, num(text.match(/swayAmount = ([\d.]+f)/)[1]));
-  const springs = { 'sway.x': 'Sway', roll: 'Roll', fwd: 'Fwd', vy: 'Vy', land: 'Land' };
-  for (const [ref, key] of Object.entries(springs)) {
-    const m = text.match(new RegExp(`Spring\\(ref ${ref.replace('.', '\\.')}, [^;]*Omega\\(([\\d.]+)f\\), ([\\d.]+)f, dt\\)`));
-    assert.ok(m, ref);
-    assert.deepEqual([...F[key]], [Number(m[1]), Number(m[2])], ref);
-  }
-  for (const [ref, key] of Object.entries({ shownZ: 'ShownZ', shownRot: 'ShownRot', shownRoll: 'ShownRoll' })) {
-    const m = text.match(new RegExp(`Spring\\(ref ${ref}, ref \\w+, \\w+, ([\\d.]+)f, ([\\d.]+)f, dt\\)`));
-    assert.deepEqual([...F[key]], [Number(m[1]), Number(m[2])], ref);
-  }
-  assert.match(text, /kickZ \*= Mathf\.Exp\(-15f \* rec \* dt\)/);
-  assert.match(text, /kickRot \*= Mathf\.Exp\(-12f \* rec \* dt\)/);
-  near(F.RecZ, 15); near(F.RecRot, 12); near(F.RecRoll, 12);
-  const wc = await cs('Weapons/WeaponController.cs');
-  assert.match(wc, /view\?\.Kick\(def\.kickBack \* 0\.76f \* ViewKickScale \* strength, def\.kickRot \* ViewKickScale \* strength\)/);
-  near(VM.VIEW_KICK_SCALE, FC.WEAPON_FEEL.ViewKickScale);
-  near(VM.VM_SCALE, num((await cs('Core/PlayerFactory.cs')).match(/ViewmodelScale = ([\d.]+f)/)[1]));
+  near(F.SwayAmount, FPV_SWAY_AMOUNT);
+  for (const [key, spring] of Object.entries(FPV_SPRINGS)) assert.deepEqual([...F[key]], spring, key);
+  near(F.RecZ, FPV_KICK_DECAY.z); near(F.RecRot, FPV_KICK_DECAY.rot); near(F.RecRoll, FPV_KICK_DECAY.rot);
+  near(VM.VIEW_KICK_SCALE, VIEW_KICK_SCALE);
+  near(VM.VIEW_KICK_SCALE, FC.WEAPON_FEEL.ViewKickScale, 'Viewmodel 用的就是 FireControl 那份');
+  // 向后那一路再乘 VM_SCALE（0.76）
+  const vm = await readFile(new URL('../src/weapons/Viewmodel.ts', import.meta.url), 'utf8');
+  assert.match(vm, /VM_SCALE \* VIEW_KICK_SCALE/);
+  near(VM.VM_SCALE, VIEWMODEL_SCALE);
   // 碎刃的 Sway（BladeView.Build）
-  const bv = await cs('Weapons/DemonBlade/BladeView.cs');
-  near(H.BLADE_SWAY.weight, num(bv.match(/sway\.weight = ([\d.]+f)/)[1]));
-  near(H.BLADE_SWAY.swayScale, num(bv.match(/sway\.swayScale = ([\d.]+f)/)[1]));
-  near(H.BLADE_SWAY.bobScale, num(bv.match(/sway\.bobScale = ([\d.]+f)/)[1]));
+  near(H.BLADE_SWAY.weight, BLADE_SWAY.weight);
+  near(H.BLADE_SWAY.swayScale, BLADE_SWAY.swayScale);
+  near(H.BLADE_SWAY.bobScale, BLADE_SWAY.bobScale);
 });
 
 test('viewmodel: kick stacks to 2.4× and decays slower on heavier guns; the shown kick goes through the spring', () => {
@@ -488,13 +545,12 @@ test('viewmodel: shell reload ignores the commit event and uses the shell tilt',
   near(vm.debug().reloadTilt, 0, '整匣姿态不叠');
 });
 
-test('viewmodel: original-model guns (smg / revolver / railgun) seat at the handling loadAt, not the 0.8 default (Unity WeaponRigFactory.Configure writes seatAt before the original branch)', async () => {
-  // Unity：Build 先 Configure(vm, profile)（里面 vm.seatAt = profile.loadAt），原作分支之后只清换弹 / 逐发姿态，没动 seatAt；也不挂 WeaponHandRig
-  const factory = await cs('Weapons/WeaponRigFactory.cs');
-  const configure = factory.indexOf('Configure(vm, profile);');
-  assert.ok(configure > 0 && configure < factory.indexOf('if (original) vm.reloadTiltRot = vm.reloadTiltPos = vm.shellTiltRot = vm.shellTiltPos = Vector3.zero;'));
-  assert.match(factory, /vm\.seatAt = profile\.loadAt;/);
-  assert.match(factory, /if \(!original\)/);
+/** 没有持握表时弹匣入位那一顿的进度：FirstPersonViewmodel.seatAt 默认 0.8（Pipeline/Runtime/FirstPersonViewmodel.cs:40） */
+const FPV_SEAT_AT = 0.8;
+
+test('viewmodel: original-model guns (smg / revolver / railgun) seat at the handling loadAt, not the 0.8 default (Unity WeaponRigFactory.Configure writes seatAt before the original branch)', () => {
+  // Unity Weapons/WeaponRigFactory.cs：Build 先 Configure(vm, profile)（:51；里面 vm.seatAt = profile.loadAt，:109），
+  // 原作分支 if (original) vm.reloadTiltRot = … = Vector3.zero（:52）之后只清换弹 / 逐发姿态，没动 seatAt；也不挂 WeaponHandRig（if (!original)，:65）
   const steps = 200;
   for (const id of ['smg', 'revolver', 'railgun']) {
     const { vm } = vmHarness(VMO);
@@ -516,17 +572,21 @@ test('viewmodel: original-model guns (smg / revolver / railgun) seat at the hand
     near(seats[0], Math.ceil(loadAt * steps - 1e-9) / steps, `${id} 在持握表 loadAt ${loadAt} 那一步一顿（不是默认 0.8）`, 1e-9);
     assert.equal(commits, 0, `${id} 没有左手：不发加弹事件，弹药到时才加`);
   }
-  const fpv = await unity('Pipeline/Runtime/FirstPersonViewmodel.cs');
-  near(VMO.SEAT_AT_DEFAULT, num(fpv.match(/public float seatAt = ([\d.]+f)/)[1]), '没有持握表时按 FirstPersonViewmodel.seatAt 默认');
+  near(VMO.SEAT_AT_DEFAULT, FPV_SEAT_AT, '没有持握表时按 FirstPersonViewmodel.seatAt 默认');
 });
 
+/**
+ * Unity Weapons/TrinityCycle.cs：FlashGain 0.9 / FlashDecay 14（:20）；甩出 SwingOut 0.045、自转 ReloadSpin 14、锁膛阻尼 LockDamp 25（:18）；
+ * 灵纹亮度 0.82 + 0.14·sin(3t) + FlashGain·clamp01(flash)（:80）；换弹中显示第一种元素 int i = reloading ? 0 : w.cycleIndex（:52）
+ */
+const TRINITY = { flashGain: 0.9, flashDecay: 14, swingOut: 0.045, reloadSpin: 14, lockDamp: 25 };
+const trinityGlow = (time, flash) => 0.82 + 0.14 * Math.sin(time * 3) + TRINITY.flashGain * Math.min(1, Math.max(0, flash));
+
 test('viewmodel: trinity glow flashes when the next element changes and shows the first element while reloading (Unity TrinityCycle)', async () => {
-  const text = await cs('Weapons/TrinityCycle.cs');
-  near(VM.TRINITY_FLASH.gain, num(text.match(/FlashGain = ([\d.]+f)/)[1]));
-  near(VM.TRINITY_FLASH.decay, num(text.match(/FlashDecay = ([\d.]+f)/)[1]));
-  assert.match(text, /0\.82f \+ 0\.14f \* Mathf\.Sin\(time \* 3f\) \+ FlashGain \* Mathf\.Clamp01\(flash\)/);
+  near(VM.TRINITY_FLASH.gain, TRINITY.flashGain);
+  near(VM.TRINITY_FLASH.decay, TRINITY.flashDecay);
+  for (const [t, f] of [[0, 1], [0.4, 0.5], [1.7, 0], [2.2, 1.6]]) near(VM.trinityPulse(t, f), trinityGlow(t, f), `灵纹亮度 t=${t} flash=${f}`, 1e-9);
   near(VM.trinityPulse(0, 1), 0.82 + 0.9);
-  assert.match(text, /int i = reloading \? 0 : w\.cycleIndex;/);
   const { vm } = vmHarness();
   const s = VM.createViewmodelState();
   vm.setWeapon(inst('trinity'));
@@ -545,38 +605,49 @@ test('viewmodel: trinity glow flashes when the next element changes and shows th
   assert.match(ws, /const next = shown === inst && this\.reloading \? 0 : idx;/);
 });
 
+/** Unity Weapons/RailgunCharge.cs:48 灵纹亮度 0.8 + 0.7·clamp01(charge) + (full ? 0.22·sin(34t) : 0.06·sin(18t))；满蓄色 FullChargeColor（Weapons/Ballistics.cs:46，sRGB） */
+const railGlow = (charge, full, t) => 0.8 + 0.7 * Math.min(1, Math.max(0, charge)) + (full ? Math.sin(t * 34) * 0.22 : Math.sin(t * 18) * 0.06);
+const FULL_CHARGE_COLOR = [0.79, 0.66, 1];
+
 test('railgun charge glow pulse and the energy colour (Unity RailgunCharge)', async () => {
-  const text = await cs('Weapons/RailgunCharge.cs');
-  assert.match(text, /0\.8f \+ 0\.7f \* Mathf\.Clamp01\(charge\) \+ \(full \? Mathf\.Sin\(time \* 34f\) \* 0\.22f : Mathf\.Sin\(time \* 18f\) \* 0\.06f\)/);
+  for (const [c, full, t] of [[1, false, 0], [0.5, true, Math.PI / 68], [0.2, false, 0.31], [1.4, true, 1.05]]) near(VM.chargePulse(c, full, t), railGlow(c, full, t), `蓄力 ${c}`, 1e-9);
   near(VM.chargePulse(1, false, 0), 1.5);
   near(VM.chargePulse(0.5, true, Math.PI / 68), 0.8 + 0.35 + 0.22, '', 1e-9);
-  const fc = (await cs('Weapons/Ballistics.cs')).match(/FullChargeColor = new\(([^)]+)\)/)[1].split(',').map(num);
   const web = new THREE.Color(0xc9a8ff);
   const srgb = web.getRGB(new THREE.Color(), THREE.SRGBColorSpace);
+  const fc = FULL_CHARGE_COLOR;
   near(srgb.r, fc[0], 'r', 0.01); near(srgb.g, fc[1], 'g', 0.01); near(srgb.b, fc[2], 'b', 0.01);
   assert.match(await readFile(new URL('../src/weapons/Firing.ts', import.meta.url), 'utf8'), /FULL_CHARGE_GLOW = 0xc9a8ff/);
 });
 
+/**
+ * Unity Weapons/WeaponTint.cs：稀有度亮度 Glow = { 0.5, 0.8, 1.1, 1.5, 2.0 }（:26）、MaterialBase 1.6（:27）；
+ * 美术材质的发光基准 Art/Weapons/SK_Weapon_Burst/M_Weapon_Burst.mat:85 的 _EmissionColor 是 (1.6, 1.6, 1.6)，和 MaterialBase 一致
+ */
+const TINT = { glow: [0.5, 0.8, 1.1, 1.5, 2.0], materialBase: 1.6 };
+
 test('weapon tint: element × rarity glow × 1.6, no element keeps the art white grooves (Unity WeaponTint)', async () => {
-  const text = await cs('Weapons/WeaponTint.cs');
-  const glow = text.match(/Glow = \{ ([^}]+) \}/)[1].split(',').map(num);
-  const base = num(text.match(/MaterialBase = ([\d.]+f)/)[1]);
-  const mat = await unity('Art/Weapons/SK_Weapon_Burst/M_Weapon_Burst.mat');
-  near(base, Number(mat.match(/_EmissionColor: \{r: ([\d.]+)/)[1]), '美术材质的发光基准');
   const src = await readFile(new URL('../src/weapons/WeaponModels.ts', import.meta.url), 'utf8');
-  assert.match(src, /ART_GLOW: Record<Rarity, number> = \{ 0: 0\.5, 1: 0\.8, 2: 1\.1, 3: 1\.5, 4: 2\.0 \}/);
-  assert.deepEqual(glow, [0.5, 0.8, 1.1, 1.5, 2.0]);
-  assert.match(src, /ART_GLOW_BASE = 1\.6;/);
+  const art = src.match(/ART_GLOW: Record<Rarity, number> = \{ 0: ([\d.]+), 1: ([\d.]+), 2: ([\d.]+), 3: ([\d.]+), 4: ([\d.]+) \}/);
+  assert.ok(art, 'ART_GLOW 表');
+  assert.deepEqual(art.slice(1).map(Number), TINT.glow);
+  near(Number(src.match(/ART_GLOW_BASE = ([\d.]+);/)[1]), TINT.materialBase);
   assert.match(src, /if \(element === 'none'\) return out\.setRGB\(ART_GLOW_BASE, ART_GLOW_BASE, ART_GLOW_BASE\);/);
   assert.match(src, /const base = weaponGlowColor\(element, rarity\);/);
 });
 
+/**
+ * Unity Weapons/WeaponPartAnimator.cs：弹匣离位 magOut 按 1 − Exp(−20·dt) 追（:127）、转轮按 1 − Exp(−25·dt)（:135）、
+ * 泵动开火后 t1 = (sinceShot − 0.12) / 0.32（:171）、上膛 t2 = rackT / 0.3（:173）
+ */
+const PART_ANIM = { magRate: 20, cylRate: 25, pumpDelay: 0.12, pumpTime: 0.32, rackTime: 0.3 };
+
 test('part animator: mag offsets / cylinder / pump follow the profile (Unity WeaponPartAnimator)', async () => {
-  const text = await cs('Weapons/WeaponPartAnimator.cs');
-  assert.match(text, /magOut = Mathf\.Lerp\(magOut, target, 1 - Mathf\.Exp\(-20f \* dt\)\)/);
-  assert.match(text, /cylAngle = Mathf\.Lerp\(cylAngle, cylTarget, 1 - Mathf\.Exp\(-25f \* dt\)\)/);
-  assert.match(text, /float t1 = \(sinceShot - 0\.12f\) \/ 0\.32f;/);
-  assert.match(text, /float t2 = rackT \/ 0\.3f;/);
+  const vmSrc = await readFile(new URL('../src/weapons/Viewmodel.ts', import.meta.url), 'utf8');
+  assert.match(vmSrc, new RegExp(`const t1 = \\(s\\.sinceShot - ${PART_ANIM.pumpDelay}\\) / ${PART_ANIM.pumpTime};`), '泵动时间');
+  assert.match(vmSrc, new RegExp(`const t2 = this\\.rackT / ${PART_ANIM.rackTime};`), '上膛时间');
+  assert.match(vmSrc, new RegExp(`this\\.magOut = damp\\(this\\.magOut, [^;]+, ${PART_ANIM.magRate}, dt\\);`), '弹匣离位的追随速度');
+  assert.match(vmSrc, new RegExp(`this\\.cylAngle = damp\\(this\\.cylAngle, this\\.cylTarget, ${PART_ANIM.cylRate}, dt\\)`), '转轮的追随速度');
   const { vm } = vmHarness();
   const s = VM.createViewmodelState();
   const w = inst('swarm');
@@ -606,9 +677,8 @@ test('hand rests on the grip and the trinity cylinder is left to the cycle (Unit
   const rest = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, H.WEAPON_HANDLING.smg.leftRoll));
   assert.ok(arm.quaternion.angleTo(rest) < 0.05 * Math.PI / 180, '静止时 IK 不改摆好的握持姿势');
 
-  // 三才：转轮兼弹匣，不按弹匣的偏移 / 俯仰动（归 TrinityCycle：甩出 SwingOut、自转 ReloadSpin、锁膛）
-  const text = await cs('Weapons/TrinityCycle.cs');
-  const [, swing, spin, lockDamp] = text.match(/SwingOut = ([\d.]+)f, ReloadSpin = ([\d.]+)f, LockDamp = ([\d.]+)f/).map(Number);
+  // 三才：转轮兼弹匣，不按弹匣的偏移 / 俯仰动（归 TrinityCycle：甩出 SwingOut、自转 ReloadSpin、锁膛，TrinityCycle.cs:18）
+  const { swingOut: swing, reloadSpin: spin, lockDamp } = TRINITY;
   near(-H.WEAPON_HANDLING.trinity.cylinderSwing, swing, 'SwingOut');
   near(H.WEAPON_HANDLING.trinity.cylinderSpin, spin, 'ReloadSpin');
   assert.match(await readFile(new URL('../src/weapons/Viewmodel.ts', import.meta.url), 'utf8'), new RegExp(`this\\.cylAngle = damp\\(this\\.cylAngle, this\\.cylTarget, ${lockDamp}, dt\\)`));
@@ -628,12 +698,17 @@ test('hand rests on the grip and the trinity cylinder is left to the cycle (Unit
   assert.equal(cyl.visible, true);
 });
 
+/**
+ * Unity Weapons/BreakAction.cs：OpenAngle 0.48（:15）、BoreX / BoreY / ChamberZ / ShellLength（:18）；
+ * 这一发 Smooth((shellProgress − 0.55) / 0.37) 滑进枪管（:51），弹壳只在 0.22 < shellProgress < 0.98 时画（:43）
+ */
+const BREAK_ACTION = { OpenAngle: 0.48, BoreX: 0.019, BoreY: 0.04, ChamberZ: -0.065, ShellLength: 0.052 };
+
 test('break action: magmashot opens 0.48 rad and slides a shell into alternating barrels (Unity BreakAction)', async () => {
-  const text = await cs('Weapons/BreakAction.cs');
-  near(VM.BREAK.OpenAngle, num(text.match(/OpenAngle = ([\d.]+f)/)[1]));
-  for (const k of ['BoreX', 'BoreY', 'ChamberZ', 'ShellLength']) near(VM.BREAK[k], num(text.match(new RegExp(`${k} = (-?[\\d.]+f)`))[1]), k);
-  assert.match(text, /Smooth\(\(shellProgress - 0\.55f\) \/ 0\.37f\)/);
-  assert.match(text, /shellReload && shellProgress > 0\.22f && shellProgress < 0\.98f/);
+  for (const [k, v] of Object.entries(BREAK_ACTION)) near(VM.BREAK[k], v, k);
+  // 55% 以前停在膛口后上方，92% 以后全进去
+  near(VM.breakShellPose(0.55, 0, new THREE.Vector3()).y, BREAK_ACTION.BoreY + 0.035, '55% 还没动');
+  near(VM.breakShellPose(0.92, 0, new THREE.Vector3()).y, BREAK_ACTION.BoreY, '92% 到底');
   const held = VM.breakShellPose(0.3, 0, new THREE.Vector3());
   const seated = VM.breakShellPose(0.95, 0, new THREE.Vector3());
   near(held.y, 0.075); near(held.z, -0.02);
@@ -654,6 +729,10 @@ test('break action: magmashot opens 0.48 rad and slides a shell into alternating
 });
 
 // ───────────── 加弹的动画事件（WeaponSystem.commitLoad，Unity WeaponStateMachine.CommitLoad） ─────────────
+// Unity Weapons/FireModes/WeaponStateMachine.cs：CommitLoad 的闸门 if (!Reloading || ShellReload || loadCommitted || w == null) return false（:398）；
+// 结束换弹时 bool committed = !ShellReload && loadCommitted（:433）、if (rack && !committed) Rack(w)（:439）；到时 if (!loadCommitted) Load(w, R)（:378）。
+// 收尾音 Weapons/WeaponController.cs:623：LoadCommitted 且不是逐发装填时只放 weapon_switch 0.45 / 1.25——网页只认「动画事件加的那一匣」（见下面原作枪模那条）。
+// 下面几条按这些行为在真 WeaponSystem 上断言。
 
 async function weaponSystem() {
   let vmInstance = null;
@@ -792,14 +871,4 @@ test('shell reload ignores commit load (Unity ShellReloadIgnoresCommitLoad)', as
   assert.equal(h.ws.isReloading, true);
   assert.equal(h.ws.commitLoad(), false, '逐发装填按每一发的时间压弹');
   assert.equal(w.mag, 0);
-});
-
-test('C# state machine CommitLoad / CancelReload still read like the port', async () => {
-  const text = await cs('Weapons/FireModes/WeaponStateMachine.cs');
-  assert.match(text, /if \(!Reloading \|\| ShellReload \|\| loadCommitted \|\| w == null\) return false;/);
-  assert.match(text, /bool committed = !ShellReload && loadCommitted;/);
-  assert.match(text, /if \(rack && !committed\) Rack\(w\);/);
-  assert.match(text, /if \(!loadCommitted\) Load\(w, R\);/);
-  const wc = await cs('Weapons/WeaponController.cs');
-  assert.match(wc, /if \(Machine\.LoadCommitted && !Machine\.ShellReload && !WeaponStateMachine\.IsShell\(w\?\.def\)\) GameAudio\.Play\("weapon_switch", 0\.45f, 1\.25f\);/);
 });

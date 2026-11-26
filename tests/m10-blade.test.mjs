@@ -1,6 +1,7 @@
 // M10 碎刃第一人称对照（Unity Weapons/DemonBlade/BladeSwing.cs、BladeView.cs、BladeTrail.cs、BladeGlints.cs、BladeSwordSign.cs、BladeShards.cs、
 // DemonBladeController.cs、Fx/FxTrail.cs、Fx/Presets/BladeTrail.cs → 网页 src/weapons/demonBlade/BladeView.ts、BladeTrail.ts、BladeGlints.ts、
-// BladeSwordSign.ts、BladeSwarm.ts、DemonBlade.ts）。关键帧 / 常数从 C# 源码读出来比（Unity 相机空间 z 朝前，读入时取反）；
+// BladeSwordSign.ts、BladeSwarm.ts、DemonBlade.ts）。关键帧 / 常数照 C# 抄成下面的常量，旁边注明出自哪个文件哪一行（路径相对
+// unity/Assets/Game/Scripts/；Unity 相机空间 z 朝前，比的时候取反）；测试不读 unity/ 下的任何文件（unity/ 以后整个删掉）。
 // 行为断言照 Unity EditMode 的 BladeFirstPersonTests（判定帧事件、构图约束、伸刃时间线、刀光、剑指、碎片交接）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -15,9 +16,7 @@ async function ts(path, imports = {}) {
   for (const [key, value] of Object.entries({ three: threeUrl, ...imports })) source = source.replaceAll(`'${key}'`, `'${value}'`);
   return data(stripTypeScriptTypes(source, { mode: 'transform' }));
 }
-const cs = path => readFile(new URL(`../unity/Assets/Game/Scripts/${path}`, import.meta.url), 'utf8');
 const near = (a, b, msg, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${msg ?? ''} ${a} ≠ ${b}`);
-const num = s => Number(String(s).trim().replace(/f$/, ''));
 
 const mathUrl = await ts('../src/core/math.ts');
 const shapeUrl = await ts('../src/weapons/demonBlade/BladeShape.ts');
@@ -64,64 +63,89 @@ const combo = getWeaponDef('demon_blade').blade.combo;
 
 // ───────────── 关键帧与常数 ─────────────
 
-/** Unity BladeSwing.K(px, py, pz, dx, dy, dz, ex, ey, ez)：TS 原值，读入时 z 取反——所以括号里就是 Three.js 相机空间的数 */
-function kArgs(src) {
-  return src.split(',').map(num);
-}
+/**
+ * Unity Weapons/DemonBlade/BladeSwing.cs 的关键帧 K(px, py, pz, dx, dy, dz, ex, ey, ez)：括号里是 TS 原值，Unity 读入时 z 取反——
+ * 所以这里抄的就是 Three.js 相机空间的数（握刀点 p、刀身方向 d、刃口方向 e）
+ */
+const BLADE_KEYS = {
+  Idle: [0.25, -0.22, -0.5, -0.28, 0.82, -0.5, -0.92, -0.1, 0.38], // :76
+  Point: [0.26, -0.22, -0.46, -0.18, 0.5, -0.85, -0.76, -0.53, -0.17], // :78
+  Shield: [0.12, -0.2, -0.4, -0.9, 0.25, -0.3, 0, 0, -1], // :80
+  Raise: [0.22, -0.12, -0.42, -0.2, 0.95, -0.2, -0.6, 0, -0.8], // :82
+};
+/** 三段斩各三个关键帧（BladeSwing.cs Swings：第一段 :96–98、第二段 :102–104、第三段 :108–110——Unity 改过的刃口下压、刀面朝镜头侧倾） */
+const BLADE_SWINGS = [
+  [
+    [0.24, 0, -0.48, 0.3, 0.85, -0.15, -0.75, 0.2, -0.6],
+    [0.1, -0.12, -0.5, -0.62, -0.35, -0.7, -0.3, -0.9, 0.3],
+    [-0.1, -0.19, -0.47, -0.75, -0.25, -0.6, -0.3, -0.85, 0.3],
+  ],
+  [
+    [-0.14, -0.15, -0.46, -0.85, 0.3, -0.1, 0.3, 0.2, -0.9],
+    [0.06, -0.14, -0.5, -0.5, 0.4, -0.77, 0.82, 0.1, -0.56],
+    [0.28, -0.17, -0.44, 0.55, 0.35, -0.75, 0.75, -0.1, 0.6],
+  ],
+  [
+    [0.3, -0.12, -0.44, 0.85, 0.08, -0.4, -0.4, -0.3, -0.92],
+    [0.05, -0.15, -0.5, -0.72, -0.1, -0.68, -0.66, -0.45, 0.62],
+    [-0.16, -0.2, -0.46, -0.85, -0.08, -0.45, -0.45, -0.42, 0.8],
+  ],
+];
 
-test('blade keys: idle / point / shield / raise and the three swings equal Unity BladeSwing.cs (incl. the reworked third slash)', async () => {
-  const text = await cs('Weapons/DemonBlade/BladeSwing.cs');
+test('blade keys: idle / point / shield / raise and the three swings equal Unity BladeSwing.cs (incl. the reworked third slash)', () => {
   const flat = k => [...k.p, ...k.d, ...k.e];
   for (const [name, key] of [['Idle', BV.IDLE], ['Point', BV.POINT], ['Shield', BV.SHIELD], ['Raise', BV.RAISE]]) {
-    const m = text.match(new RegExp(`public static readonly Key ${name} = K\\(([^)]+)\\);`));
-    assert.ok(m, name);
-    assert.deepEqual(flat(key), kArgs(m[1]), name);
+    assert.deepEqual(flat(key), BLADE_KEYS[name], name);
   }
-  const swings = text.slice(text.indexOf('public static readonly Key[][] Swings'), text.indexOf('public static Quaternion Basis'));
-  const ks = [...swings.matchAll(/K\(([^)]+)\)/g)].map(m => kArgs(m[1]));
-  assert.equal(ks.length, 9);
-  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) assert.deepEqual(flat(BV.SWINGS[i][j]), ks[i * 3 + j], `第 ${i + 1} 段第 ${j + 1} 帧`);
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) assert.deepEqual(flat(BV.SWINGS[i][j]), BLADE_SWINGS[i][j], `第 ${i + 1} 段第 ${j + 1} 帧`);
 });
 
+/** BladeSwing.cs：WindFrac（:44）、RecoverP（:46）、StretchBaseY（:48） */
+const SWING_CONSTS = { WindFrac: 0.55, RecoverP: 0.72, StretchBaseY: 0.09 };
+/**
+ * Weapons/DemonBlade/BladeView.cs：ModelScale（:31）、BlendTime（:33）、HitStopLight / HitStopHeavy（:35）、TrailSub（:37）、ArriveDecay / ArrivePeak（:39）、
+ * SparkDepth（:41）、TrailInner（:43）、GlintSegs（:676）；命中一磕 sway.Kick(heavy ? 0.024 : 0.014, heavy ? 0.05 : 0.028)（:345）、
+ * 刀身闪 hitFlash = heavy ? 1.4 : 1（:344）、左手臂缩放 LeftArmScale 0.76（:58）、右拳拳心 ArtRightFist（:53，Unity x 取反；比 TS 再偏 1.5 cm）
+ */
+const VIEW_CONSTS = {
+  ModelScale: 0.72, BlendTime: 0.14, HitStopLight: 0.04, HitStopHeavy: 0.07, TrailSub: 4, ArriveDecay: 8, ArrivePeak: 1.8,
+  SparkDepth: 1.6, TrailInner: 0.35, GlintSegs: 6,
+  HitKick: [[0.014, 0.028], [0.024, 0.05]], HitFlash: [1, 1.4], LeftArmScale: 0.76, ArtRightFist: [-0.018, -0.05, 0.034],
+};
+/** 左手手势 (palm, fingers, fore)：BladeView.cs LeftPoint（:76）、LeftSeal（:77）、LeftRaise（:78），Unity 相机空间（z 朝前） */
+const LEFT_POSES = {
+  point: { palm: [-0.21, -0.135, 0.5], fingers: [0.5, 0.6, 0.62], fore: [-0.3, -0.55, -0.78] },
+  seal: { palm: [-0.2, -0.14, 0.48], fingers: [0.12, 0.97, 0.2], fore: [-0.2, -0.55, -0.8] },
+  raise: { palm: [-0.2, -0.08, 0.5], fingers: [0.2, 0.85, 0.5], fore: [-0.25, -0.7, -0.65] },
+};
+/** 刀光预设：Fx/Presets/BladeTrail.cs:22 的 new FxTrailSpec { … }；侧看补宽 screenWiden 0.75（Fx/FxTrail.cs:28 默认） */
+const TRAIL_PRESET = {
+  life: 0.16, headTime: 0.04, maxSamples: 64, fringe: 0.1, bodyAlpha: 0.72, hotMix: 0.3, headHotMix: 0.45,
+  bodyIntensity: 1.25, fringeIntensity: 2, slowSpeed: 2.5, fastSpeed: 18, minBrightness: 0.25,
+};
+const TRAIL_SCREEN_WIDEN = 0.75;
+
 test('blade constants equal BladeSwing / BladeView / BladeTrail preset', async () => {
-  const sw = await cs('Weapons/DemonBlade/BladeSwing.cs');
-  const bv = await cs('Weapons/DemonBlade/BladeView.cs');
-  const get = (src, name) => num(src.match(new RegExp(`\\b${name} = ([-\\d.]+f?)`))[1]);
   const F = BV.BLADE_FP;
-  near(F.WindFrac, get(sw, 'WindFrac'));
-  near(F.RecoverP, get(sw, 'RecoverP'));
-  near(F.StretchBaseY, get(sw, 'StretchBaseY'));
-  near(BV.BLADE_VM_SCALE, get(bv, 'ModelScale'));
-  near(F.BlendTime, get(bv, 'BlendTime'));
-  near(F.HitStopLight, get(bv, 'HitStopLight'));
-  near(F.HitStopHeavy, get(bv, 'HitStopHeavy'));
-  near(F.TrailSub, get(bv, 'TrailSub'));
-  near(F.ArriveDecay, get(bv, 'ArriveDecay'));
-  near(F.ArrivePeak, get(bv, 'ArrivePeak'));
-  near(F.SparkDepth, get(bv, 'SparkDepth'));
-  near(F.TrailInner, get(bv, 'TrailInner'));
-  near(F.GlintSegs, get(bv, 'GlintSegs'));
-  assert.match(bv, /sway\.Kick\(heavy \? 0\.024f : 0\.014f, heavy \? 0\.05f : 0\.028f\)/);
-  assert.deepEqual(F.HitKick, [[0.014, 0.028], [0.024, 0.05]]);
-  assert.match(bv, /hitFlash = heavy \? 1\.4f : 1f;/);
-  assert.match(bv, /LeftArmScale = 0\.76f/);
-  // 右拳拳心（Unity 量过：比 TS 再偏 1.5 cm；Unity x 取反）
-  const fist = bv.match(/ArtRightFist = new\(([^)]+)\)/)[1].split(',').map(num);
+  for (const [k, v] of Object.entries(SWING_CONSTS)) near(F[k], v, k);
+  near(BV.BLADE_VM_SCALE, VIEW_CONSTS.ModelScale);
+  for (const k of ['BlendTime', 'HitStopLight', 'HitStopHeavy', 'TrailSub', 'ArriveDecay', 'ArrivePeak', 'SparkDepth', 'TrailInner', 'GlintSegs']) near(F[k], VIEW_CONSTS[k], k);
+  assert.deepEqual(F.HitKick, VIEW_CONSTS.HitKick);
   const src = await readFile(new URL('../src/weapons/demonBlade/BladeView.ts', import.meta.url), 'utf8');
-  assert.match(src, new RegExp(`ART_R_FIST = new THREE\\.Vector3\\(${-fist[0]}, ${fist[1]}, ${fist[2]}\\)`));
+  assert.match(src, new RegExp(`this\\.hitFlash = heavy \\? ${VIEW_CONSTS.HitFlash[1]} : ${VIEW_CONSTS.HitFlash[0]};`), '刀身闪');
+  assert.match(src, new RegExp(`LEFT_ARM_SCALE = ${VIEW_CONSTS.LeftArmScale};`), '左手臂缩放');
+  const fist = VIEW_CONSTS.ArtRightFist;
+  assert.match(src, new RegExp(`ART_R_FIST = new THREE\\.Vector3\\(${-fist[0]}, ${fist[1]}, ${fist[2]}\\)`), '右拳拳心（x 取反）');
   // 左手手势（Unity 相机空间 → z 取反）
-  for (const [cname, key] of [['LeftPoint', 'point'], ['LeftSeal', 'seal'], ['LeftRaise', 'raise']]) {
-    const m = bv.match(new RegExp(`${cname} = new\\(new Vector3\\(([^)]+)\\), new Vector3\\(([^)]+)\\), new Vector3\\(([^)]+)\\)\\)`));
-    const [p, f, o] = [m[1], m[2], m[3]].map(s => s.split(',').map(num));
+  for (const [key, { palm: p, fingers: f, fore: o }] of Object.entries(LEFT_POSES)) {
     const L = BV.LEFT_ART[key];
-    assert.deepEqual([L.palm.x, L.palm.y, L.palm.z], [p[0], p[1], -p[2]], cname);
+    assert.deepEqual([L.palm.x, L.palm.y, L.palm.z], [p[0], p[1], -p[2]], key);
     const fn = new THREE.Vector3(f[0], f[1], -f[2]).normalize(), on = new THREE.Vector3(o[0], o[1], -o[2]).normalize();
-    assert.ok(L.fingers.distanceTo(fn) < 1e-6 && L.fore.distanceTo(on) < 1e-6, cname);
+    assert.ok(L.fingers.distanceTo(fn) < 1e-6 && L.fore.distanceTo(on) < 1e-6, key);
   }
   // 刀光预设（FxTrailSpec 默认 + BladeTrailPreset）
-  const preset = (await cs('Fx/Presets/BladeTrail.cs')).match(/Trail = new FxTrailSpec\s*\{([^}]+)\}/)[1];
-  for (const m of preset.matchAll(/(\w+) = ([\d.]+)f?/g)) near(TRAIL.TRAIL_SPEC[m[1]], Number(m[2]), `刀光 ${m[1]}`);
-  near(TRAIL.TRAIL_SPEC.screenWiden, num((await cs('Fx/FxTrail.cs')).match(/screenWiden = ([\d.]+f)/)[1]));
+  for (const [k, v] of Object.entries(TRAIL_PRESET)) near(TRAIL.TRAIL_SPEC[k], v, `刀光 ${k}`);
+  near(TRAIL.TRAIL_SPEC.screenWiden, TRAIL_SCREEN_WIDEN);
 });
 
 // ───────────── 三段斩时间线（剪辑事件、构图） ─────────────
@@ -280,19 +304,27 @@ test('left hand rises only for sword signs (Unity BladeLeftHandRisesOnlyForSword
   assert.equal(BV.gestureKey('point'), BV.POINT);
 });
 
-test('sword-sign fingers point where the gesture aims (Unity BladeSwordSignFingersPointWhereTheGestureAims)', async () => {
-  const text = await cs('Weapons/DemonBlade/BladeSwordSign.cs');
-  near(SIGN.SIGN.indexLength, num(text.match(/IndexLength = ([\d.]+f)/)[1]));
-  near(SIGN.SIGN.middleLength, num(text.match(/MiddleLength = ([\d.]+f)/)[1]));
-  near(SIGN.SIGN.gloveFrac, num(text.match(/GloveFrac = ([\d.]+f)/)[1]));
+/**
+ * Weapons/DemonBlade/BladeSwordSign.cs：IndexLength / MiddleLength（:23）、GloveFrac（:25）；三只左手臂各自的食指指根 index（Unity 手臂空间）
+ * 与皮肤 UV skinUv（Unity 的 v）：RedPanda（:30）、Pangolin（:36）、FlyingSquirrel（:42）
+ */
+const SIGN_CONSTS = { indexLength: 0.068, middleLength: 0.075, gloveFrac: 0.42 };
+const SIGN_FITS = {
+  SM_Arms_RedPandaL: { index: [0.006, -0.04, -0.05], skinUv: [0.0222, 0.8736] },
+  SM_Arms_PangolinL: { index: [0, -0.045, -0.045], skinUv: [0.2696, 0.2311] },
+  SM_Arms_FlyingSquirrelL: { index: [-0.026, -0.04, -0.024], skinUv: [0.5218, 0.5782] },
+};
+
+test('sword-sign fingers point where the gesture aims (Unity BladeSwordSignFingersPointWhereTheGestureAims)', () => {
+  near(SIGN.SIGN.indexLength, SIGN_CONSTS.indexLength);
+  near(SIGN.SIGN.middleLength, SIGN_CONSTS.middleLength);
+  near(SIGN.SIGN.gloveFrac, SIGN_CONSTS.gloveFrac);
   for (const arm of ['SM_Arms_RedPandaL', 'SM_Arms_PangolinL', 'SM_Arms_FlyingSquirrelL', 'unknown']) {
     const fit = SIGN.swordSignFit(arm);
     if (arm !== 'unknown') {
       // Unity 手臂空间 x 取反、UV 的 v 翻转
-      const block = text.match(new RegExp(`static readonly Fit ${arm.replace('SM_Arms_', '').replace(/L$/, '')} = new\\(\\)\\s*\\{([\\s\\S]*?)\\};`))[1];
-      const idx = block.match(/index = new Vector3\(([^)]+)\)/)[1].split(',').map(num);
+      const { index: idx, skinUv: uv } = SIGN_FITS[arm];
       assert.ok(fit.index.distanceTo(new THREE.Vector3(-idx[0], idx[1], idx[2])) < 1e-6, `${arm} 食指指根`);
-      const uv = block.match(/skinUv = new Vector2\(([^)]+)\)/)[1].split(',').map(num);
       assert.ok(Math.abs(fit.skinUv.x - uv[0]) < 1e-6 && Math.abs(fit.skinUv.y - (1 - uv[1])) < 1e-6, `${arm} 皮肤 UV`);
     }
     for (const g of ['point', 'shield', 'raise']) {
@@ -328,8 +360,8 @@ test('sword-sign fingers point where the gesture aims (Unity BladeSwordSignFinge
   }
 });
 
-test('glints: one camera-facing quad per glint, additive, capped (Unity BladeGlints)', async () => {
-  near(GLINTS.GLINT_MAX, num((await cs('Weapons/DemonBlade/BladeGlints.cs')).match(/Max = (\d+)/)[1]));
+test('glints: one camera-facing quad per glint, additive, capped (Unity BladeGlints)', () => {
+  near(GLINTS.GLINT_MAX, 160, '上限 Max = 160（Weapons/DemonBlade/BladeGlints.cs:16）');
   const g = new GLINTS.BladeGlints();
   g.begin();
   g.add(new THREE.Vector3(0, 0, -0.5), 0.06, new THREE.Color(1, 1, 1), 0.5);
@@ -437,9 +469,9 @@ export function buildGunModel() { throw new Error('只测碎刃'); }`),
   './OriginalWeaponView': data('export class OriginalRecoil {} export class OriginalWeaponView {}'),
 }));
 
-test('viewmodel → blade view: a hit stop granted in the same frame (time scale drops to 0.05 after dt was computed) still freezes the visual progress for 40 ms of real time', async () => {
-  // Unity：BladeView.Animate 按 Time.unscaledDeltaTime 扣视觉顿帧
-  assert.match(await cs('Weapons/DemonBlade/BladeView.cs'), /if \(hitStopLeft > 0\) hitStopLeft = Mathf\.Max\(0, hitStopLeft - Time\.unscaledDeltaTime\);/);
+test('viewmodel → blade view: a hit stop granted in the same frame (time scale drops to 0.05 after dt was computed) still freezes the visual progress for 40 ms of real time', () => {
+  // Unity：BladeView.Animate 按 Time.unscaledDeltaTime 扣视觉顿帧（Weapons/DemonBlade/BladeView.cs:441
+  // if (hitStopLeft > 0) hitStopLeft = Mathf.Max(0, hitStopLeft - Time.unscaledDeltaTime)）
   const viewCamera = new THREE.PerspectiveCamera(60, 16 / 9, 0.01, 20);
   const ctx = {
     viewCamera, camera: new THREE.PerspectiveCamera(80, 16 / 9, 0.1, 1000), renderer: {},
@@ -500,20 +532,28 @@ test('view: shards glow with hit / strike / union / stretch and bump when they a
 
 // ───────────── 刃群 / 控制器接线 ─────────────
 
+/**
+ * Weapons/DemonBlade/BladeShards.cs：阵形缩放 SwarmScale / ShieldScale / BallScale（:33）、出窍 LaunchSpread / OutSpeed / OutMin / OutMax（:35）、
+ * 归刀 BackSpread / BackSpeed / BackMin / BackMax（:37）、盾环 ShieldRings = { 12, 28, 40, 48 }（:39）；
+ * 拉丝拖尾 StreakTime 0.05 / StreakMax 1.1（Weapons/DemonBlade/BladeSwarmRenderer.cs:20）
+ */
+const SHARDS = {
+  SWARM_SCALE: 3.4, SHIELD_SCALE: 3.1, BALL_SCALE: 3.4,
+  LAUNCH_SPREAD: 0.24, OUT_SPEED: 42, OUT_MIN: 0.1, OUT_MAX: 0.55,
+  BACK_SPREAD: 0.14, BACK_SPEED: 48, BACK_MIN: 0.08, BACK_MAX: 0.42,
+};
+const SHIELD_RINGS = [12, 28, 40, 48];
+const STREAK = { time: 0.05, max: 1.1 };
+
 test('world swarm constants equal BladeShards.cs (formation scales, launch / return, shield rings)', async () => {
-  const text = await cs('Weapons/DemonBlade/BladeShards.cs');
   const src = await readFile(new URL('../src/weapons/demonBlade/BladeSwarm.ts', import.meta.url), 'utf8');
-  const pairs = { SwarmScale: 'SWARM_SCALE', ShieldScale: 'SHIELD_SCALE', BallScale: 'BALL_SCALE', LaunchSpread: 'LAUNCH_SPREAD', OutSpeed: 'OUT_SPEED', OutMin: 'OUT_MIN', OutMax: 'OUT_MAX', BackSpread: 'BACK_SPREAD', BackSpeed: 'BACK_SPEED', BackMin: 'BACK_MIN', BackMax: 'BACK_MAX' };
-  for (const [u, w] of Object.entries(pairs)) {
-    const a = num(text.match(new RegExp(`\\b${u} = ([\\d.]+f?)`))[1]);
-    const b = Number(src.match(new RegExp(`const ${w} = ([\\d.]+);`))[1]);
-    near(b, a, u);
+  for (const [w, v] of Object.entries(SHARDS)) {
+    const m = src.match(new RegExp(`const ${w} = ([\\d.]+);`));
+    assert.ok(m, `网页缺 ${w}`);
+    near(Number(m[1]), v, w);
   }
-  assert.match(text, /ShieldRings = \{ 12, 28, 40, 48 \}/);
-  assert.match(src, /SHIELD_RINGS = \[12, 28, 40, 48\]/);
-  const r = await cs('Weapons/DemonBlade/BladeSwarmRenderer.cs');
-  assert.match(r, /StreakTime = 0\.05f, StreakMax = 1\.1f/);
-  assert.match(src, /STREAK_TIME = 0\.05;[\s\S]*STREAK_MAX = 1\.1;/);
+  assert.match(src, new RegExp(`SHIELD_RINGS = \\[${SHIELD_RINGS.join(', ')}\\]`));
+  assert.match(src, new RegExp(`STREAK_TIME = ${STREAK.time};[\\s\\S]*STREAK_MAX = ${STREAK.max};`));
 });
 
 const DB = await import(await ts('../src/weapons/demonBlade/DemonBlade.ts', {
@@ -551,11 +591,8 @@ function bladeController(dist = 1.5) {
 }
 
 test('controller: judgement frame calls onStrike, hits punch the camera 1.6° / 0.5° and request a 70 / 40 ms hit stop (Unity DemonBladeController)', async () => {
-  const text = await cs('Weapons/DemonBlade/DemonBladeController.cs');
-  assert.match(text, /view\?\.OnStrike\(idx, seg, union\);/);
-  assert.match(text, /feel\.Punch\(heavy \? 1\.6f : 0\.5f, idx == 1 \? 1\.4f : -1\.4f\)/);
-  assert.match(text, /HitStop\.Request\(heavy \? 0\.07f : 0\.04f\)/);
-  assert.match(text, /pose\.slash = seg;/);
+  // Unity Weapons/DemonBlade/DemonBladeController.cs：判定帧 view?.OnStrike(idx, seg, union)（:440）、命中 feel.Punch(heavy ? 1.6 : 0.5, idx == 1 ? 1.4 : −1.4)（:448）、
+  // HitStop.Request(heavy ? 0.07 : 0.04)（:450）、pose.slash = seg（:886）
   // 真跑控制器的判定帧：三段各中一次（第三段重击）
   const hit = bladeController();
   for (let idx = 0; idx < 3; idx++) hit.slash(idx);
@@ -575,9 +612,6 @@ test('controller: judgement frame calls onStrike, hits punch the camera 1.6° / 
   assert.match(src, /s\.slash = seg;/);
   assert.match(src, /s\.unionStretch = P\.union\.stretch;/);
   near(getWeaponDef('demon_blade').blade.union.stretch, 1.3);
-  // 判定帧的镜头一带（BladeView.OnBladeStrike）
-  const bv = await cs('Weapons/DemonBlade/BladeView.cs');
-  assert.match(bv, /float yaw = segment == 1 \? 0\.32f : segment == 2 \? -0\.5f : -0\.28f;/);
-  assert.match(bv, /float pitch = segment == 0 \? 0\.22f : 0\.06f;/);
-  assert.match(bv, /feel\.Punch\(pitch, segment == 1 \? -0\.25f : 0\.25f, yaw\)/);
+  // 判定帧的镜头一带（BladeView.OnBladeStrike，BladeView.cs:365–367：yaw 二段 0.32 / 三段 −0.5 / 一段 −0.28，pitch 一段 0.22 其余 0.06，
+  // roll 二段 −0.25 其余 0.25）在上面「strike event fires once per slash」那条按 punchDegrees 的实参断言
 });
