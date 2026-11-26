@@ -348,9 +348,10 @@ export class ScorpionArcher extends StandardEnemy {
         if (this.stateTime < 0.3) this.sandSpray(4);
         if (this.stateTime >= 0.18 && this.stateTime - dt < 0.18) {
           // 钻出时掀起沙石：站得太近会被打到
-          const p = this.ctx.player.position;
-          if (Math.hypot(p.x - this.position.x, p.z - this.position.z) < EMERGE_RADIUS * this.sizeScale + this.ctx.player.radius) {
-            this.ctx.combat.damagePlayer(this.def.damage * 0.8 * this.damageMult, 'none', this, this.position);
+          // Unity EnemyAI.Burst：对当前目标（被嘲讽时是灵体诱饵，打中无效）
+          const p = this.targetPos;
+          if (Math.hypot(p.x - this.position.x, p.z - this.position.z) < EMERGE_RADIUS * this.sizeScale + (this.taunted ? 0.35 : this.ctx.player.radius)) {
+            this.hitTarget(this.def.damage * 0.8 * this.damageMult, 'none', this.position);
           }
           if (this.distToPlayerXZ() < 8) this.ctx.fx.shake(0.18, 0.25);
         }

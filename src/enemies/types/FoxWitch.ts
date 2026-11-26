@@ -798,12 +798,16 @@ export class FoxWitch extends StandardEnemy {
     this.playerChest(_t);
     const along = _w.subVectors(_t, _p).dot(_v);
     const off = _w.addScaledVector(_v, -along).length();
-    const hit = pl.alive && along > 0 && along <= reach && off <= pl.radius + 0.25 && !ctx.world.segmentBlocked(_p, _t);
+    // 被嘲讽时瞄的是灵体诱饵（playerChest 已换成诱饵的瞄准点，半径按 0.4 m；Unity FoxWitchAI.FireMirror）
+    const taunted = this.taunted;
+    const hit = pl.alive && along > 0 && along <= reach && off <= (taunted ? 0.4 : pl.radius) + 0.25 && !ctx.world.segmentBlocked(_p, _t);
     _q.copy(_p).addScaledVector(_v, hit ? along : reach);
     ctx.fx.beam(_p, _q, C.beam, 0.14, 0.3);
     ctx.fx.burst(_q, C.frost, 16, 3, 0.5, 0.08, 4);
     ctx.audio.play('shot_beam', { position: _p, volume: 0.75, pitch: 1.4 });
-    if (hit) {
+    // HitTarget：打在诱饵上无效，不冻玩家
+    if (hit && taunted) this.decoyBlocked();
+    else if (hit) {
       ctx.combat.damagePlayer(this.def.damage * this.damageMult, 'none', this, _p);
       chillPlayer(ctx, MIRROR_SLOW, MIRROR_SLOW_TIME);
       ctx.fx.burst(_t, C.armor, 20, 2.5, 0.8, 0.08, -0.5);

@@ -1,5 +1,5 @@
 /**
- * 主菜单（照译 Unity G/UI/Screens/MainMenuScreen.cs，样式 css/unity/menu.css 的 .sf-menu）：
+ * 主菜单（照译 Unity G/UI/Screens/MainMenuScreen.cs，样式 css/screens/menu.css 的 .sf-menu）：
  *   左：导航（[继续征程] / 开始游戏 / 天赋 / 图鉴 / 设置 / 操作说明），悬停或键盘焦点时朱砂笔触从左扫开；
  *   右：书法标题「灵火破晓」逐字落墨 +「烈焰为弹 · 破此轮回」+ 朱印「不熄」盖下；左上魂晶余额，底部生涯统计（出征 / 通关 / 最远 / 最多清关 / 累计斩敌）。
  * 「继续征程」（M11d，Unity I5）：有未完成的征程（续玩档）时排在最前、当主按钮，小字写「关卡 · 英雄 · 用时 · 灵石」；

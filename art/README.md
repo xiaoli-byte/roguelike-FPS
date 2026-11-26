@@ -9,7 +9,7 @@
 
 场景物件使用厚实的大形、简化的切面、两至三个主要色块，纹饰和磨损只保留少量中尺度特征。沙寺采用暖砂岩与克制的靛青/赤陶点缀，霜山采用蓝灰石木与积雪、少量暖色，熔火采用暖炭灰玄武岩与铜 / 朱漆 / 橙色（紫色只在光照里，固有色不带紫：2026-11-07 用户否掉泛紫灰、斑驳、模糊的贴图，见 `art/pipeline/texture_clean.py`）。重点在主景、陪衬、远景的层次、路径辨识和组合效果；达到这个标准后就用于搭建。
 
-**场景构图与构成**（2026-11-04 用户指定的六期视频学习整理）：大型清晰、一个锚点、前中后三条明度带、631 主次配比、先构成后光影再颜色，以及缩略 / 灰度 / 眯眼自检，见 [docs/art/composition.md](../docs/art/composition.md)；自检脚本 `scripts/unity/composition_check.py`。
+**场景构图与构成**（2026-11-04 用户指定的六期视频学习整理）：大型清晰、一个锚点、前中后三条明度带、631 主次配比、先构成后光影再颜色，以及缩略 / 灰度 / 眯眼自检，见 [docs/art/composition.md](../docs/art/composition.md)；自检脚本 `scripts/art/composition_check.py`。
 
 普通摆件优先复用 `prop` 档：参考 2500 面、512² 贴图；近看地标与较大自然件使用 `nature_prop` 档：参考 5000 面、1024² 贴图。大物件或轮廓确有需要时再单独评估，不能因“更精致”默认提升面数和分辨率。第一人称枪械与人物继续按其近距离用途选预算。质量审核检查体量、比例、侧背面一致性、材质、持握与动画穿模，并在游戏镜头下验收。
 
@@ -21,9 +21,9 @@
 
 后续环境概念统一减少写实腐蚀、密集裂纹、微小刻花和细碎枝叶，使用简洁手绘色块与稳定的立体结构。离线 Hunyuan 步数、体素分辨率与最终游戏性能分别评估；运行时成本由实际 LOD、贴图、材质、光照与实例数量控制。
 
-**Unity 分支（2026-10-16 起）**：游戏迁到 Unity（`unity/`，URP）。发布物经 `art/pipeline/unity_export.py` 转成 FBX + 贴图 + `*.art.json`，Unity 里由 Spiritfire ▸ Art ▸ Sync All 生成风格化材质、Prefab 并做引擎侧 QA。详见 [docs/unity-art-pipeline.md](../docs/unity-art-pipeline.md)。
+**发布物就是终点**：流程到 `assetctl publish`（`public/assets` + `manifest.json`）为止，网页版直接读发布的 GLB。2026-10-16 至 11-15 的 Unity 分支（往 `unity/` 导 FBX 的 `unity_export.py` 等）已随游戏迁回 Three.js 退役，见 git 历史。
 
-**Unity 原生武器回同步 Three.js**：运行 `npm run unity:web:sync`。导出器读取 Unity 原生 Prefab、网格、通用动画曲线与 `Resources/Gunfire/Motion`，在 `public/assets/gunfire-original/` 生成带双手蒙皮和 AnimationClip 的 GLB，并逐字复制 16 份运动参数。网页主游戏为 6 把对应武器接入后坐弹簧，其中冲锋枪、左轮和灵炮使用原生双手与开火/换弹动画；其他 10 份运动文档仅供后续武器接入，不做首屏预加载。源包从 `Library/GunfireBundles` 或本机游戏目录读取；导出会拒绝非法或未归一化的蒙皮权重。`original-weapon.html` 是 `build:labs` 的检视入口，空格开火、R 换弹、A 瞄准。
+**原作武器（`public/assets/gunfire-original/`）已冻结**：Unity 时期从原生 Prefab 一次性导出的带双手蒙皮和 AnimationClip 的 GLB，加 16 份运动参数；导出器已退役，不再重导。网页主游戏为 6 把对应武器接入后坐弹簧，其中冲锋枪、左轮和灵炮使用原生双手与开火/换弹动画；其他 10 份运动文档仅供后续武器接入，不做首屏预加载。`original-weapon.html` 是 `build:labs` 的检视入口，空格开火、R 换弹、A 瞄准。
 
 ```
 游戏白模 ──▶ 00 白模 ──▶ 01 概念设计 ──▶ 02 高模 ──▶ 03 游戏化 ──▶ 04 自动QA ──▶ 05 审核 ──▶ 06 发布
@@ -234,9 +234,11 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 - `AssetLibrary` 模块被导入即读清单，后台只读英雄 / 第一人称手臂 / 灵宠 / 商人（`core`；不阻塞启动，敌人模块启动时就导入它，`main.ts` 是冻结文件，不改它）。
   **按需加载（2026-11-26）**：敌人 / 首领（`bind.source = enemy`）与枪模（`weapon`）不整批读。`Game.loadStage` 在上一关清掉之后、
   这一关刷怪之前调 `assets/StageArt.ts` 的 `prepareStageArt`：读「本张图的波次敌人 ∪ 本章名册 ∪ 本关首领（按前缀含各形态）」
-  与手上 / 各英雄初始的枪模，释放其余按需资产（`releaseUnused`，几何 / 材质 / 贴图交还 GPU、ImageBitmap 立刻关掉），
-  并释放上一张图不再用的关卡网格 / 贴图 / 场景文档（`UnityLevelLibrary.releaseExcept`）。本章名册来自
-  `public/assets/unity-levels/rosters.json`（`scripts/web/export-stage-rosters.mjs`，场景重发布后重跑，`tests/stage-rosters.test.mjs` 查同步）。
+  与手上 / 各英雄初始的枪模，释放其余按需资产（`releaseUnused`，几何 / 材质 / 贴图交还 GPU、ImageBitmap 立刻关掉）。
+  上一张图不再用的关卡网格 / 贴图 / 场景文档由关卡库在读新图时释放（`preload(document)` 开头的 `releaseExcept`）。
+  本章名册是生成的 TS 表 `src/assets/stageRosters.ts`（`scripts/web/export-stage-rosters.mjs` 读网页自己的关卡数据
+  `public/assets/levels/<图>/level.json`，关卡数据改了重跑，`tests/stage-rosters.test.mjs` 查同步）——按需加载这套不依赖 Unity 导出
+  （2026-11-26 用户：「不能有任何依赖unity的代码」）。
   漏预取的敌人第一只用程序化模型并补读；掉落 / 商店 / 第一人称的枪模先用程序化的、读到后原地换上；图鉴缩略图读到再拍。
   第四章普通敌人走 `world/plateau/play/assets`（自己读模型），这里不重复读。检视页要全量的调 `preload('all')`（或 `'weapons'`）。
   实测脚本：`node scripts/web/asset-memory-check.mjs <端口>`。

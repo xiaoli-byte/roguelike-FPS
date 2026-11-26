@@ -163,7 +163,9 @@ export class Bomber extends StandardEnemy {
     this.getBodyCenter(_c);
     this.ctx.fx.explosion(_c.clone(), BLAST_RADIUS, 0xff6a1f);
     this.ctx.audio.play('explosion', { position: _c });
-    blastPlayer(this.ctx, _c, BLAST_RADIUS, this.def.damage * this.damageMult, 'fire', this, 0.5, 0.8);
+    // 被灵宠嘲讽：扑的是灵体诱饵，炸不到玩家（照 Unity FireRatAI 自爆的规矩；这种怪 Unity 没有对应）
+    if (this.taunted) this.decoyBlocked();
+    else blastPlayer(this.ctx, _c, BLAST_RADIUS, this.def.damage * this.damageMult, 'fire', this, 0.5, 0.8);
     this.hp = 0;
     this.shield = 0;
     this.armor = 0;

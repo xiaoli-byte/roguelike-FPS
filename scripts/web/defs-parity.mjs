@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * M2 数据对照：Unity 冻结的定义表（public/assets/unity-gameplay/defs.json，schema 2）↔ 网页 TS 定义表。
+ * M2 数据对照：Unity 冻结的定义表（tests/fixtures/gameplay-defs.json，schema 2；原 public/assets 下的导出物，2026-11-26 挪到
+ * tests/fixtures 作基线，运行时不读）↔ 网页 TS 定义表。网页表是唯一来源；改了数要么和基线一致，要么在下面的 EXCEPTIONS 写明原因。
  *
  *   node scripts/web/defs-parity.mjs            打印差异报告（含已登记的例外）
  *   node scripts/web/defs-parity.mjs --strict   有未登记的差异时退出码 1
@@ -153,8 +154,9 @@ export async function importTs(file) {
 
 // ───────────────────────────── 读两边的表 ─────────────────────────────
 
-export async function loadUnity(root = ROOT) {
-  return JSON.parse(await readFile(path.join(root, 'public/assets/unity-gameplay/defs.json'), 'utf8'));
+/** 基线：Unity 冻结的定义表（tests/fixtures/gameplay-defs.json） */
+export async function loadBaseline(root = ROOT) {
+  return JSON.parse(await readFile(path.join(root, 'tests/fixtures/gameplay-defs.json'), 'utf8'));
 }
 
 /** 网页的表：武器（真模块）、英雄（三个技能文件里的 HeroDef + 选英雄界面元数据 + 基础属性）、敌人（types/*.ts 与第四章表里的 *_DEF） */
@@ -448,7 +450,7 @@ export function report(result) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const result = compare(await loadUnity(), await loadWeb());
+  const result = compare(await loadBaseline(), await loadWeb());
   console.log(report(result));
   const bad = result.diffs.some((d) => !d.reason) || result.missing.some((m) => !m.reason) || staleExceptions(result).length > 0;
   if (process.argv.includes('--strict') && bad) process.exitCode = 1;

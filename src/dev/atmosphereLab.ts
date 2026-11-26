@@ -11,7 +11,7 @@ import { INTERIOR_MIST_SIZE, type AtmosphereLayoutSource, type UnityAtmosphereLa
 
 /**
  * 空气透视检视页（atmosphere-lab.html）：同一个机位开 / 关对比。
- *   ?map=1-1      读 Unity 导出的场景（public/assets/unity-levels/scenes）；不带 map 是一片程序生成的层叠山谷
+ *   ?map=1-1      读关卡数据（public/assets/levels/<id>/level.json）；不带 map 是一片程序生成的层叠山谷
  *   ?atmosphere=0 关掉空气透视（只剩场景原有的雾；Unity 场景的环境也认这个参数，线性雾起点不会被往后推）；?cloud=0 只关云影
  *   Unity 场景的雾带 / 水面雾 / 落叶 / 鸟按这张图的数据摆（unityAtmosphereLayout.ts）；?layout=debug 把摆位画成线：
  *                 橙 = 崖脚雾带，红 = 内圈，品红 = 外圈，白 = 最远一圈，绿 = 谷底，青 / 蓝 = 水面，黄圈 = 遭遇场地，橙 = 落叶的树，白圈 = 鸟
@@ -56,9 +56,8 @@ if (mapId) {
     return loader();
   };
   const [{ UnitySceneView, unityAtmosphereBaseY }, { UnityLevelLibrary }, { CollisionWorld }] = await Promise.all([load('../world/UnitySceneView.ts'), load('../world/UnityLevelLibrary.ts'), load('../world/Collision.ts')]);
-  const response = await fetch(`/assets/unity-levels/scenes/${mapId}.json`);
-  if (!response.ok) throw new Error(`Unity 场景 ${mapId} 尚未导出`);
-  const doc = await response.json();
+  // 关卡数据：public/assets/levels/<id>/level.json（网页自己的关卡数据，2026-11-26 起不再读 Unity 导出）
+  const doc = await UnityLevelLibrary.scene(mapId);
   await UnityLevelLibrary.preload(doc, (loaded: number, total: number) => { status.textContent = `${mapId} · 读取 ${loaded}/${total}`; });
   // 平台、机关、水体会读游戏上下文（玩家、事件、时间、提示、特效、随机数）：检视页没有游戏，给一组不做事的桩，玩家放到地底下不触发任何东西
   const stubs = {

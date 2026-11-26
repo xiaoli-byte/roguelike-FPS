@@ -61,11 +61,14 @@ export function buildPaintProjector(baseUrl: string): PaintProjector {
   const ready = new Promise<void>((resolve) => {
     if (typeof document === 'undefined') { resolve(); return; }
     new THREE.ImageLoader().load(baseUrl + PAINT.url, (img) => {
-      tex.image = img;
-      tex.needsUpdate = true;
-      loaded = true;
-      if (baked) uniforms.uPaintOn.value = 1;
-      resolve();
+      // 先在后台解码（同 farMatte.ts）
+      void img.decode().catch(() => undefined).then(() => {
+        tex.image = img;
+        tex.needsUpdate = true;
+        loaded = true;
+        if (baked) uniforms.uPaintOn.value = 1;
+        resolve();
+      });
     }, undefined, () => resolve());   // 加载失败：退回程序着色
   });
 

@@ -1,5 +1,5 @@
 /**
- * 操作说明（照译 Unity G/UI/Screens/ControlsScreen.cs，样式 css/unity/menu.css 的 .sf-controls）：每个动作一行，键鼠一列、手柄一列——
+ * 操作说明（照译 Unity G/UI/Screens/ControlsScreen.cs，样式 css/screens/menu.css 的 .sf-controls）：每个动作一行，键鼠一列、手柄一列——
  * 键位从改键表（KeyBinds）现取（改过键就显示改后的）。底下两条要诀。「改键」直接打开设置的「按键」页，回来按新键位重建。
  * 主菜单里打开，不挡游戏；0.28 s 淡入上移。
  * 网页差异：没有手柄输入，手柄一列写「—」。

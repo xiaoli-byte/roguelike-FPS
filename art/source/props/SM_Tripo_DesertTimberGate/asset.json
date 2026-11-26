@@ -1,0 +1,439 @@
+{
+  "id": "SM_Tripo_DesertTimberGate",
+  "display": "驿站木门框（1-1 出生点的门框（照玩家视角构图概念图：褪色朱红的木门框，替换旧的黑石门和夯土残门））",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:53:15",
+          "files": {
+            "BO_SM_Tripo_DesertTimberGate_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertTimberGate_v001.json",
+              "sha256": "2545b54854b24c95b56e1c5e44cd1ccd7172ef60166e4abf68ff1052681e9cbf"
+            },
+            "BO_SM_Tripo_DesertTimberGate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertTimberGate_v001_views.json",
+              "sha256": "07d1d73ea1f6c35379dbd5054d7392fbbe6ab42d9a6fb987edee06902a1d0b2f"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.timberGate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.7,
+              0.0,
+              -1.4
+            ],
+            "max": [
+              4.7,
+              6.8,
+              1.4
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:53:15",
+          "files": {
+            "CN_SM_Tripo_DesertTimberGate_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_source.png",
+              "sha256": "ca61d1a054530f23ad6ddf7e98d0405f88c0311b6d82541c0e3a8541b48dc091"
+            },
+            "CN_SM_Tripo_DesertTimberGate_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_front.png",
+              "sha256": "6c12b8e8eae960a52f27b77cc44192c75e304da2dc4b9cee5ec5b7abca4bb917"
+            },
+            "CN_SM_Tripo_DesertTimberGate_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_left.png",
+              "sha256": "9b88bb31c90e83b10fb130bf507ef47b16fa69c7751469ae64bd3cfd96c4b58d"
+            },
+            "CN_SM_Tripo_DesertTimberGate_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_back.png",
+              "sha256": "502fe20ca5fb1d4bd978800410e72dc0fb59fdba3bb7ac25326489197e00d5fb"
+            },
+            "CN_SM_Tripo_DesertTimberGate_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_right.png",
+              "sha256": "f94a026af703e783675f25218034b8c1e7dcc8094cc355c610bbde70520f37d5"
+            },
+            "CN_SM_Tripo_DesertTimberGate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_sheet.png",
+              "sha256": "74bacb1006ac687a0593d53a740115cc8abec24573f6167eac29aa578d9bb020"
+            },
+            "CN_SM_Tripo_DesertTimberGate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_prompt.txt",
+              "sha256": "cf99966ff2815921c859dd3003bd60f612379f971cbbb5733500d105eb23d95e"
+            },
+            "CN_SM_Tripo_DesertTimberGate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertTimberGate_v001_registration.json",
+              "sha256": "6f84400a4941bdffc8c0bb42022e53d6de6c48562678ae56e1af8d8e6136f8a4"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.6-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.6-sunburst",
+            "size": "2048x1152",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 568,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 568
+              },
+              "output_tokens": 1413,
+              "output_tokens_details": {
+                "image_tokens": 1413,
+                "text_tokens": 0
+              },
+              "total_tokens": 1981
+            },
+            "request_id": "req_4aeaf3e9f0934408b03428f6d670fd2a",
+            "seconds": 30.8,
+            "variants": 1,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row",
+              "mirrored back view"
+            ],
+            "note": "背视没画成前视的镜像（旗杆 / 流苏还在同一侧），登记时镜像；尺寸按画出的比例 9.4 × 6.8 × 2.8",
+            "source_image": "SM_Tripo_DesertTimberGate_r1.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Pure flat white background. No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects.\n\nSTYLE: stylized hand-painted 3D game environment asset painted under even neutral white light with true base colours only: no baked lighting, no cast shadows, no ambient-occlusion darkening, no rim light. Thick chunky simplified silhouette, broad clean faceted planes, two or three dominant colour blocks (faded vermilion lacquer, weathered grey-brown wood, grey stone, dull gold tassels, sand-yellow sand), soft painted gradients, sparse medium-size wear. No photorealism, no micro-grain, no fine cracks, no realistic erosion detail, no tiny carvings. Physically plausible.\n\nOBJECT, ruined timber post-station gateway (9.6m wide x 6.8m tall x 1.8m deep): The free-standing timber gateway of a Han-dynasty Silk Road relay post station, standing alone over a desert road: two massive square timber posts about 0.9m thick and 6m tall, their faded vermilion lacquer worn through in long vertical streaks to grey-brown wood, each post standing on a squat dressed grey stone plinth 0.9m tall and 1.5m wide. Across the top a heavy double lintel 9.6m long: a thick upper beam, a thinner lower beam, and between them a row of five square wooden blocks. Under the lower beam, where it meets each post, one carved cloud-shaped corner bracket. The upper beam's left end sticks out 0.8m past the left post with a short round flagpole poking out sideways. A thick hemp cord with two golden tassels hangs from the lower beam down the inside of the right post. Clear opening between the posts 6.4m wide and 5m tall. A little drifted sand around both plinths. FRONT and BACK views: the full gateway, about 1.4 times as wide as tall; LEFT and RIGHT side views: one post seen end-on, narrow, the lintel depth 1.8m. Chunky simple timber, no roof, no doors, no hanging banner, no signboard.",
+          "source_sha256": "ca61d1a054530f23ad6ddf7e98d0405f88c0311b6d82541c0e3a8541b48dc091",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6433834399725614,
+              "offset": [
+                31,
+                346
+              ],
+              "size": [
+                450,
+                331
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6446375987249445,
+              "offset": [
+                187,
+                346
+              ],
+              "size": [
+                138,
+                331
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6433834399725614,
+              "offset": [
+                29,
+                346
+              ],
+              "size": [
+                454,
+                331
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6446375987249445,
+              "offset": [
+                187,
+                346
+              ],
+              "size": [
+                137,
+                331
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27 第一章重建件补：用户授权免审，按推荐方案直接通过；背视没画成前视的镜像（旗杆 / 流苏还在同一侧），登记时镜像；尺寸按画出的比例 9.4 × 6.8 × 2.8",
+            "time": "2026-11-27 00:53:15"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:57:43",
+          "files": {
+            "HP_SM_Tripo_DesertTimberGate_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTimberGate_v001_source.glb",
+              "sha256": "f3ad9b17898c5d7bb53180ba8e4ed3ae97916c829d290e436ee505a1f67033d3"
+            },
+            "HP_SM_Tripo_DesertTimberGate_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTimberGate_v001.glb",
+              "sha256": "eda99bceb8465038301227eef820f585253e7e8a79206b9de2f9a6dc0a693512"
+            },
+            "HP_SM_Tripo_DesertTimberGate_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTimberGate_v001_graph.json",
+              "sha256": "cd5928f3fa6b76e0e0461133a82b815551406dafbdea57f81c899f941b8b0c08"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/99f15fea-410f-4c96-b5d2-69b3d1eacab5",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13617,
+          "source_sha256": "f3ad9b17898c5d7bb53180ba8e4ed3ae97916c829d290e436ee505a1f67033d3"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:59:24",
+          "files": {
+            "HP_SM_Tripo_DesertTimberGate_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTimberGate_v002_source.glb",
+              "sha256": "c1ac21887c2120c81940d15550495a9566c9c658b43e2a8bf084ff9272d463cd"
+            },
+            "HP_SM_Tripo_DesertTimberGate_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTimberGate_v002.glb",
+              "sha256": "2925c182b90d94ed705f3a0ddf9dde30fcfa5411f85c4ceda47ab2b6143f30ea"
+            },
+            "HP_SM_Tripo_DesertTimberGate_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTimberGate_v002_graph.json",
+              "sha256": "8e905d34ea8ef1f06c2b84415910c7d1e2fd92edf4575c37d4e60051a28d7933"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:tone_match",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 13617,
+          "source_sha256": "c1ac21887c2120c81940d15550495a9566c9c658b43e2a8bf084ff9272d463cd"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:58:31",
+          "files": {
+            "SM_Tripo_DesertTimberGate_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertTimberGate_v001.blend",
+              "sha256": "6c03a281b4628c7d6445288478b98b392f7971dff605dd72ced4049a9ada690d"
+            },
+            "SM_Tripo_DesertTimberGate_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertTimberGate_v001.glb",
+              "sha256": "219af56d2c081c350845d96891aae980bdb5df3caf9229ef2f3f4febd08d7fee"
+            },
+            "SM_Tripo_DesertTimberGate_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertTimberGate_v001_metrics.json",
+              "sha256": "bf9adb41985e0cb76e29350a410c30dbf1a61ee36a90e4ae113005eb9e761d94"
+            },
+            "T_Tripo_DesertTimberGate_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTimberGate_BC.png",
+              "sha256": "197fa7a0cc97735e671749d109ef106722d3299b58210f605e626e581fd2bbae"
+            },
+            "T_Tripo_DesertTimberGate_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTimberGate_N.png",
+              "sha256": "63143f255a454ade87c2cc52ee7013e2e6f9298fda037e40564fcbbb96b88f61"
+            },
+            "T_Tripo_DesertTimberGate_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTimberGate_ORM.png",
+              "sha256": "7689e685ec281bc10ecec45399b3736e2c87bd6299790200243dde7c06fc2cb0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.876,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13617,
+              "verts": 7244
+            }
+          ],
+          "export_kb": 762.0,
+          "seconds": 47.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:00:09",
+          "files": {
+            "SM_Tripo_DesertTimberGate_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertTimberGate_v002.blend",
+              "sha256": "b22fb08d9a58e26af760a27b821416a5d80cb3bf6aeb73352ea2dcad9e4fc61d"
+            },
+            "SM_Tripo_DesertTimberGate_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertTimberGate_v002.glb",
+              "sha256": "486e74d38649b5396373a4d7063f734dc54b1f8c0937f76ff30effd014d1b1e8"
+            },
+            "SM_Tripo_DesertTimberGate_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertTimberGate_v002_metrics.json",
+              "sha256": "078bbdfc5c0d8bbef73d74ef3aa30c64f31eb566cc6c78958ee69a539481ba0c"
+            },
+            "T_Tripo_DesertTimberGate_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertTimberGate_BC.png",
+              "sha256": "785b74c4cd096234a114a775089be2ad164bb32de81f53f283e5fb0c61cbe04f"
+            },
+            "T_Tripo_DesertTimberGate_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertTimberGate_N.png",
+              "sha256": "35fbd750335aadbdc24f8385ab7988e54b6a7123c0a9761cfd826385e3c376e8"
+            },
+            "T_Tripo_DesertTimberGate_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertTimberGate_ORM.png",
+              "sha256": "7689e685ec281bc10ecec45399b3736e2c87bd6299790200243dde7c06fc2cb0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.876,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 13617,
+              "verts": 7244
+            }
+          ],
+          "export_kb": 736.8,
+          "seconds": 44.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:58:32",
+          "files": {
+            "SM_Tripo_DesertTimberGate_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertTimberGate_v001_validation_v001.json",
+              "sha256": "cfa7250e9e185692bfa9f878c98585ac4a83c5c388679f42d6e8b6fc35501a4d"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:00:09",
+          "files": {
+            "SM_Tripo_DesertTimberGate_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertTimberGate_v002_validation_v002.json",
+              "sha256": "faae5c99db03acb874aad43e73fd0e46e3b522c2e7804c86d800121ac4e0d641"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:58:40",
+          "files": {
+            "SM_Tripo_DesertTimberGate_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertTimberGate_v001_review_v001.png",
+              "sha256": "059e2241415170c29f2ecb1454e9f47b61b23caa62e291ad289c042a20635092"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:00:40",
+          "files": {
+            "SM_Tripo_DesertTimberGate_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertTimberGate_v002_review_v002.png",
+              "sha256": "ebe54f29f5927467b78b6d6922463082597a6333fd318b89f2111bc678d93d8d"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：P2.0 多视图 13617 面、纹理去光 4K；门洞通透、双层门楣间方木块之间有空隙、两只云纹雀替、左端旗杆、右柱流苏单独垂下、石础 + 积沙，剪影 IoU 0.876；底色 Lab 彩度 ×0.7 回到褪色朱红（只调色、不平滑），不紫不糊；用户授权免审",
+            "time": "2026-11-27 01:01:00"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 01:01:00",
+          "files": {
+            "SM_Tripo_DesertTimberGate.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertTimberGate.glb",
+              "sha256": "486e74d38649b5396373a4d7063f734dc54b1f8c0937f76ff30effd014d1b1e8"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertTimberGate.glb"
+        }
+      ]
+    }
+  }
+}

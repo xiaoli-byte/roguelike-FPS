@@ -36,6 +36,8 @@ export const PAL = {
   teal: [0.36, 0.5, 0.46],
   /** 楼板 / 踏板（旧木） */
   plank: [0.53, 0.41, 0.31],
+  /** 风吹日晒的素木（栈道、栈梯的栏杆：照 1-4 / 1-A 概念图，不上漆） */
+  weathered: [0.47, 0.39, 0.31],
   /** 梯级立板 / 梁下暗面 */
   timberDark: [0.28, 0.19, 0.14],
   /** 筒瓦（暖灰，带一点青） */
@@ -602,6 +604,8 @@ export interface RailOpts {
   span?: number;
   col?: RGB;
   panel?: RGB;
+  /** 望柱头的小斗（缺省灰青绿斗色）；栈道这类素木栏杆给木色 */
+  cap?: RGB;
   /** 碰撞盒名字；false = 不给 */
   collide?: string | false;
   /** 两头的望柱（和别的栏杆接上时可以省掉一头） */
@@ -619,7 +623,7 @@ export function railing(kit: Kit, a: V3, b: V3, o: RailOpts = {}): void {
     if ((i === 0 && o.ends?.[0] === false) || (i === n && o.ends?.[1] === false)) continue;
     const p = at(i / n, 0);
     kit.box([p[0], p[1] + (h + 0.1) / 2, p[2]], [0.13, h + 0.1, 0.13], col, 'paint', { dust: 0.4 });
-    kit.box([p[0], p[1] + h + 0.13, p[2]], [0.17, 0.07, 0.17], PAL.bracketBlock);
+    kit.box([p[0], p[1] + h + 0.13, p[2]], [0.17, 0.07, 0.17], o.cap ?? PAL.bracketBlock);
   }
   kit.beam(at(0, h), at(1, h), 0.08, 0.07, col);
   kit.beam(at(0, 0.56), at(1, 0.56), 0.1, 0.07, col);

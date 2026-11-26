@@ -557,11 +557,14 @@ export class Xingxing extends StandardEnemy {
   /** 跳砸起跳：按落点距离定飞行时间（落点锁定、亮预警圈） */
   private launchSlam(): void {
     const pl = this.ctx.player;
-    let dx = pl.position.x - this.position.x;
-    let dz = pl.position.z - this.position.z;
+    // 被嘲讽：跳向灵体诱饵、不预判（Unity XingxingAI.LaunchSlam：PlanSlam(PlayerPos, Taunted ? 0 : 速度)）
+    const tp = this.targetPos;
+    const lead = this.taunted ? 0 : SLAM_LEAD;
+    let dx = tp.x - this.position.x;
+    let dz = tp.z - this.position.z;
     const est = 0.4 + Math.hypot(dx, dz) * 0.03;
-    dx += pl.velocity.x * est * SLAM_LEAD;
-    dz += pl.velocity.z * est * SLAM_LEAD;
+    dx += pl.velocity.x * est * lead;
+    dz += pl.velocity.z * est * lead;
     const len = Math.max(0.01, Math.hypot(dx, dz));
     const dist = clamp(len - SLAM_SHORT, 1, SLAM_RANGE[1] + 1);
     this.slamTime = 0.4 + dist * 0.03;
@@ -589,7 +592,12 @@ export class Xingxing extends StandardEnemy {
     this.velocity.z *= 0.2;
     const r = SLAM_RADIUS * Math.min(1.25, this.sizeScale / 1.3);
     _v.set(this.position.x, this.position.y, this.position.z);
-    const hit = zonePlayer(ctx, _v, r, this.def.damage * SLAM_DAMAGE_MULT * this.damageMult, 'none', this, 1.6);
+    // Unity XingxingAI.ZonePlayer：对当前目标判定后走 HitTarget——被嘲讽时砸在灵体诱饵上，无效
+    let hit = false;
+    if (this.taunted) {
+      const tp = this.targetPos, dy = tp.y - _v.y;
+      if (Math.hypot(tp.x - _v.x, tp.z - _v.z) <= r + 0.175 && dy >= -0.6 && dy <= 1.6) this.decoyBlocked();
+    } else hit = zonePlayer(ctx, _v, r, this.def.damage * SLAM_DAMAGE_MULT * this.damageMult, 'none', this, 1.6);
     if (hit) chillPlayer(ctx, CHILL_TIME, CHILL_SLOW);
     spawnIceRing(ctx, _v, r);
     ctx.fx.shake(hit ? 0.3 : 0.15, 0.2);
@@ -604,14 +612,18 @@ export class Xingxing extends StandardEnemy {
     const pl = ctx.player;
     this.chunk.updateWorldMatrix(true, false);
     const from = this.chunk.getWorldPosition(new THREE.Vector3());
-    const d = Math.hypot(pl.position.x - from.x, pl.position.z - from.z);
+    // 被嘲讽：砸向灵体诱饵、不预判，冰块是不伤玩家的灵体弹（Unity XingxingAI.ThrowChunk：PredictPlayer + spirit = Taunted）
+    const spirit = this.taunted;
+    const tp = this.targetPos;
+    const d = Math.hypot(tp.x - from.x, tp.z - from.z);
     const T = 0.55 + d * 0.035;
-    const target = new THREE.Vector3(pl.position.x + pl.velocity.x * T * 0.3, pl.position.y, pl.position.z + pl.velocity.z * T * 0.3);
-    const gy = ctx.world.groundHeight(target.x, target.z, pl.position.y + 0.5);
+    const lead = spirit ? 0 : T * 0.3;
+    const target = new THREE.Vector3(tp.x + pl.velocity.x * lead, tp.y, tp.z + pl.velocity.z * lead);
+    const gy = ctx.world.groundHeight(target.x, target.z, tp.y + 0.5);
     if (Number.isFinite(gy)) target.y = gy;
     launchIceChunk(ctx, {
       from, target, flightTime: T, size: CHUNK_SIZE * this.sizeScale, radius: CHUNK_RADIUS,
-      damage: this.def.damage * CHUNK_DAMAGE_MULT * this.damageMult, source: this,
+      damage: this.def.damage * CHUNK_DAMAGE_MULT * this.damageMult, source: this, spirit,
     });
     ctx.audio.play('skill_throw', { position: from, volume: 0.55, pitch: 0.9 });
     this.releaseAttack();

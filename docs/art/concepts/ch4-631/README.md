@@ -11,7 +11,7 @@
 | 4-4 神山海子（终局 · 雷泽雷神） | 网页检视页有白盒（`src/world/haizi/`） | `4-4_haizi_blockout.jpg` | `4-4_haizi_scene_v5.jpg` | `4-4_haizi_kit_v1.jpg` | `4-4_haizi_route_overlay.jpg` | `4-4_haizi_route_plan.jpg` |
 | 4-A 雪域宫堡（新备选图） | 只有设计稿 [maps/4-A.md](../../../level-design/maps/4-A.md) + 按设计稿搭的最简白模 | `4-A_fortress_blockout.jpg` | `4-A_fortress_scene_v7.jpg` | `4-A_fortress_kit_v1.jpg` | `4-A_fortress_route_overlay.jpg` | `4-A_fortress_route_plan.jpg` |
 
-每张概念图另有一张六格自检图 `*_631check.jpg`（`scripts/unity/composition_check.py`）。提示词全文在 `prompts/`，工具在 `tools/`（见第 6 节）。
+每张概念图另有一张六格自检图 `*_631check.jpg`（`scripts/art/composition_check.py`）。提示词全文在 `prompts/`，工具在 `tools/`（见第 6 节）。
 
 依据：[composition.md](../../composition.md)（631、敌人优先、按视距分密度、纵深与氛围）、[art/README.md](../../../../art/README.md)、
 [chuanzang-v1.md](../../../level-design/chuanzang-v1.md)、[chuanzang-combat-v1.md](../../../level-design/chuanzang-combat-v1.md)、[enemy-roster-v2.md](../../enemy-roster-v2.md) 第四章、[run-variety.md](../../../level-design/run-variety.md)。
@@ -52,7 +52,7 @@
 
 ## 2. 631 自检
 
-`python scripts/unity/composition_check.py`，第二轮定稿：
+`python scripts/art/composition_check.py`，第二轮定稿：
 
 | 图 | 颜色 低饱和 / 固有色 / 高饱和 | 明度 暗 / 中暗 / 中间调 / 亮（平均 · 跨度） | 密度 安静 / 中等 / 密集 | 脚本提示 |
 |---|---|---|---|---|
@@ -332,7 +332,7 @@ node docs/art/concepts/ch4-631/tools/render_blockouts.mjs [4-2] [4-4] [4-A]   # 
 python docs/art/concepts/ch4-631/tools/route_maps.py                          # 重画叠标和俯视规划图
 python docs/art/concepts/ch4-631/tools/route_check_4A.py                      # 4-A 纸面路线检查
 node scripts/plateau/reach_probe.mjs 4-2|4-4                                  # 4-2 / 4-4 真地形可达性
-python scripts/unity/composition_check.py <图或目录> --out <目录>               # 631 自检
+python scripts/art/composition_check.py <图或目录> --out <目录>               # 631 自检
 python docs/art/concepts/ch4-631/tools/make_far_matte.py                      # 4-4 远山绘景（概念图 → public/assets/environment/haizi/）
 ```
 

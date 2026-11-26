@@ -471,7 +471,13 @@ export class FireRat extends StandardEnemy {
     this.ctx.fx.explosion(center, BLAST_RADIUS, 0xff8a2a);
     this.ctx.audio.play('explosion', { position: center, pitch: 1.15 });
     this.blastFx(center);
-    blastPlayer(this.ctx, center, BLAST_RADIUS, this.def.damage * this.damageMult, 'fire', this, 0.5, 0.7);
+    // 被嘲讽时扑的是灵体诱饵：炸不到玩家，照样震屏（Unity FireRatAI.Detonate：Taunted → DecoyBlocked + Blast.Shake）
+    if (this.taunted) {
+      this.decoyBlocked();
+      const p = this.ctx.player.position;
+      const d = Math.hypot(p.x - center.x, p.y + 1.1 - center.y, p.z - center.z);
+      this.ctx.fx.shake(0.7 * clamp01(1 - d / (BLAST_RADIUS * 3.2)), 0.3);
+    } else blastPlayer(this.ctx, center, BLAST_RADIUS, this.def.damage * this.damageMult, 'fire', this, 0.5, 0.7);
     this.leaveBurn(center);
     this.hp = 0;
     this.shield = 0;

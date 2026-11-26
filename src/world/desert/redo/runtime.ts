@@ -9,6 +9,8 @@ import { provideBoundaryField } from '../../mechanisms/MechanismData';
 import { WHITEBOXES } from '../whitebox';
 import { buildDeadPoplars, buildPoplars } from '../pieces/flora';
 import { buildCamelBones } from '../pieces/bones';
+import { redoFx } from './fx';
+import { REDO_FX } from './fxMaps';
 import type { BuiltPiece, PieceBox, PieceContext } from '../pieces/types';
 import type { DesertMapArt, DesertPart } from '../spec';
 import { MARGIN, boundaryUrl, compileWhitebox, redoLight, type CompiledMap, type PieceRequest } from './compile';
@@ -25,7 +27,8 @@ import { patchDesertDocument } from '../document';
 /** 地形四层贴图（起伏沙 / 黑戈壁砾石 / 龟裂土 / 赭红岩层，从旧沙漠地形搬到第一章自己的目录）和每张盖多少米 */
 const LAYERS = [
   { url: 'assets/desert/terrain/sand.webp', tile: 9 },
-  { url: 'assets/desert/terrain/gravel.webp', tile: 4 },
+  // 砾石：4 m 一铺时砾石斑有拳头到脸盆大，近景成一片豹纹斑（抢视线）；2.6 m 一铺缩成碎石粒
+  { url: 'assets/desert/terrain/gravel.webp', tile: 2.6 },
   { url: 'assets/desert/terrain/earth.webp', tile: 7 },
   { url: 'assets/desert/terrain/rock.webp', tile: 8 },
 ];
@@ -186,6 +189,8 @@ export function redoArt(id: string): DesertMapArt | null {
         b.group.add(p.object);
         parts.push({ update: p.update?.bind(p), dispose: () => { p.object.removeFromParent(); p.dispose(); } });
       }
+      // 特效（fx.ts）：沙脊吹沙、狼烟、尘卷风、落沙、贴地流沙、旗幡、落叶
+      parts.push(...redoFx(b, spec, REDO_FX[id], c.field.baseY));
       return parts;
     },
   };
@@ -236,8 +241,8 @@ function waterParts(doc: UnitySceneDocument, c: CompiledMap, group: THREE.Group)
     source.userData = {
       unityShader: 'Spiritfire/Water',
       // 泉水：浅处青绿、深处蓝，全画面唯一的冷色
-      unityColors: { _ShallowColor: [0.28, 0.7, 0.72, 0.55], _DeepColor: [0.06, 0.3, 0.42, 0.9] },
-      unityFloats: { _Alpha: 0.75, _WaveScale: 3, _WaveSpeed: 0.5, _WaveHeight: 0.02, _Sparkle: 1.2 },
+      unityColors: { _ShallowColor: [0.18, 0.78, 0.78, 0.6], _DeepColor: [0.04, 0.38, 0.5, 0.92] },
+      unityFloats: { _Alpha: 0.85, _WaveScale: 3, _WaveSpeed: 0.5, _WaveHeight: 0.02, _Sparkle: 1.2 },
     };
     const material = createUnityWaterMaterial(source, doc.environment);
     const mesh = new THREE.Mesh(geometry, material);

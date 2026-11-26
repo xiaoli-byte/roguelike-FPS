@@ -110,6 +110,12 @@ export class PickupManager {
     }
   }
 
+  /** center 周围 range 内（拾取物已落地展示过 0.3 s）的掉落物立刻开始吸向玩家；要不要（满血不吸血包）照常由 update 判断 */
+  attract(center: THREE.Vector3, range: number): void {
+    const now = this.ctx.time.now, r2 = range * range;
+    for (const p of this.list) if (!p.magnet && p.pos.distanceToSquared(center) < r2) p.vacuumAt = Math.min(p.vacuumAt, now);
+  }
+
   update(dt: number): void {
     if (this.list.length === 0) return;
     const ctx = this.ctx;

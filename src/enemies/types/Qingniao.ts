@@ -502,7 +502,8 @@ export class Qingniao extends StandardEnemy {
     this.playerChest(_p);
     this.getMuzzle(_c);
     const t = _c.distanceTo(_p) / FEATHER_SPEED;
-    _p.addScaledVector(pl.velocity, t * FEATHER_LEAD);
+    // 被嘲讽：对着灵体诱饵、不预判（Unity QingniaoAI.FireFeathers：PredictPlayer）
+    if (!this.taunted) _p.addScaledVector(pl.velocity, t * FEATHER_LEAD);
     // 横排方向：水平面内垂直于视线
     _side.set(_p.z - _c.z, 0, -(_p.x - _c.x));
     if (_side.lengthSq() < 1e-6) _side.set(1, 0, 0);
@@ -551,7 +552,8 @@ export class Qingniao extends StandardEnemy {
 
   /** 俯冲擦中：身体中心离玩家胸口 1.7 米内，一次 */
   private checkSwoopHit(): void {
-    if (this.swoopHit) return;
+    // 被嘲讽期间俯冲不伤玩家（Unity QingniaoAI.CheckSwoopHit：Taunted → 直接返回，不记命中）
+    if (this.swoopHit || this.taunted) return;
     const pl = this.ctx.player;
     this.getBodyCenter(_c);
     this.playerChest(_p);

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type {
-  DamageResult, EnemyDef, GameContext, IEnemy, ProjectileSpec, SpawnOptions, StatusId, StatusInstance,
+  DamageResult, Element, EnemyDef, GameContext, IEnemy, ProjectileSpec, SpawnOptions, StatusId, StatusInstance,
 } from '../core/types';
 import { ELEMENT_COLORS } from '../core/types';
 import { clamp, clamp01, rotateTowards, raySphere, rayVerticalCapsule } from '../core/math';
@@ -8,6 +8,15 @@ import type { MoveResult } from '../world/Collision';
 
 /** 敌人定义的可选扩展：scale = 基础缩放（模型、命中盒、头部判定一起乘；精英再乘 1.25） */
 export type ScaledEnemyDef = EnemyDef & { scale?: number };
+
+/** 灵体诱饵（Unity Decoys / EnemyAI.Taunt：灵宠讙）：脚底位置、还在不在（灵宠解除结契 = 不在） */
+export interface TauntDecoy {
+  readonly position: THREE.Vector3;
+  readonly alive: boolean;
+}
+
+/** 「格挡」浮字的全场节流（Unity EnemyAI.DecoyBlocked：一群怪同时打诱饵不刷屏） */
+let decoyTextAt = -Infinity;
 
 const GRAVITY = 26;
 /** 弱点规则：身体命中之后再往前看多远（米，Unity WeakpointRule.Window；同 combat/HitZone.ts 的 WEAKPOINT_WINDOW，这里不 import 免得测试打桩） */
@@ -125,6 +134,11 @@ export abstract class EnemyBase implements IEnemy {
   // 视线缓存
   private losTimer = 0;
   private losValue = false;
+
+  // 嘲讽（Unity EnemyAI.taunt / tauntUntil / tauntEye）
+  private tauntDecoy: TauntDecoy | null = null;
+  private tauntUntil = 0;
+  private tauntEye = 0.5;
 
   constructor(ctx: GameContext, def: EnemyDef, opts: SpawnOptions) {
     this.id = EnemyBase.nextId++;
@@ -450,21 +464,77 @@ export abstract class EnemyBase implements IEnemy {
     this.model.add(ring);
   }
 
+  // ───────────── 嘲讽（灵宠讙的灵体诱饵）─────────────
+
+  /** 被嘲讽中（目标是灵宠诱饵；Unity EnemyAI.Taunted）。诱饵没了（换宠 / 解除结契）或到时就把视线还给玩家 */
+  get taunted(): boolean {
+    const d = this.tauntDecoy;
+    if (d === null) return false;
+    if (d.alive && this.ctx.time.now < this.tauntUntil) return true;
+    this.tauntDecoy = null;
+    return false;
+  }
+
+  /**
+   * 嘲讽（Unity EnemyAI.Taunt）：seconds 秒内瞄准、走位、近战都对着 decoy（eyeHeight = 瞄准点离地高度）；重复嘲讽取更晚的结束时间。
+   * 打到诱饵无效：近战（melee）、直接命中（hitTarget）、默认射击（shoot 出灵体弹）在这里处理；其余招式照 Unity 各 AI 自己判断 taunted。
+   * 爆炸（blastPlayer）、地面区域、首领的招式在 Unity 里不看嘲讽（Blast.Player / HazardZone / BossHazards.Hurt），照样伤玩家。
+   */
+  taunt(decoy: TauntDecoy, seconds: number, eyeHeight = 0.5): void {
+    if (!this.alive || !decoy || !(seconds > 0)) return;
+    const now = this.ctx.time.now;
+    this.tauntUntil = this.tauntDecoy === decoy ? Math.max(this.tauntUntil, now + seconds) : now + seconds;
+    this.tauntDecoy = decoy;
+    this.tauntEye = eyeHeight;
+  }
+
+  /** 当前目标的脚底：被嘲讽时是诱饵，否则是玩家（Unity EnemyAI.PlayerPos） */
+  protected get targetPos(): THREE.Vector3 {
+    return this.taunted ? this.tauntDecoy!.position : this.ctx.player.position;
+  }
+
+  /** 诱饵挡下一击（Unity EnemyAI.DecoyBlocked）：全场共用节流 0.45 s 冒一个「格挡」 */
+  decoyBlocked(): void {
+    const d = this.tauntDecoy;
+    const now = this.ctx.time.now;
+    if (!d || now < decoyTextAt) return;
+    decoyTextAt = now + 0.45;
+    const ui = this.ctx.ui as unknown as { floatText?(pos: THREE.Vector3, text: string, color?: number, scale?: number): void };
+    _v3.set(d.position.x + (Math.random() - 0.5) * 0.5, d.position.y + 0.9 + (Math.random() - 0.5) * 0.5, d.position.z + (Math.random() - 0.5) * 0.5);
+    ui.floatText?.(_v3, '格挡', 0xd1dbf2, 0.9);
+  }
+
+  /**
+   * 对当前目标造成伤害（Unity EnemyAI.HitTarget / InfernoKit.HitPlayer）：被嘲讽时打在灵体诱饵上，无效（偶尔冒「格挡」）。
+   * 返回是否真的伤到了玩家。dmg 是最终值（调用方已乘 damageMult）
+   */
+  protected hitTarget(dmg: number, element: Element, from: THREE.Vector3 | null): boolean {
+    if (this.taunted) {
+      this.decoyBlocked();
+      return false;
+    }
+    return this.ctx.combat.damagePlayer(dmg, element, this, from) > 0;
+  }
+
   // ───────────── AI 辅助 ─────────────
 
   protected get player() {
     return this.ctx.player;
   }
 
-  /** 玩家胸口位置 */
+  /** 玩家胸口位置（被嘲讽时：诱饵的瞄准点） */
   playerChest(out: THREE.Vector3): THREE.Vector3 {
+    if (this.taunted) {
+      const d = this.tauntDecoy!.position;
+      return out.set(d.x, d.y + this.tauntEye, d.z);
+    }
     const p = this.ctx.player.position;
     return out.set(p.x, p.y + 1.15, p.z);
   }
 
-  /** 水平距离（到玩家） */
+  /** 水平距离（到玩家；被嘲讽时到诱饵） */
   distToPlayerXZ(): number {
-    const p = this.ctx.player.position;
+    const p = this.targetPos;
     return Math.hypot(p.x - this.position.x, p.z - this.position.z);
   }
 
@@ -481,7 +551,7 @@ export abstract class EnemyBase implements IEnemy {
     if (this.losTimer <= 0) {
       this.losTimer = 0.2 + Math.random() * 0.1;
       this.getHeadCenter(_v1);
-      this.losValue = !this.ctx.world.segmentBlocked(_v1, this.ctx.player.eye);
+      this.losValue = !this.ctx.world.segmentBlocked(_v1, this.taunted ? this.playerChest(_v2) : this.ctx.player.eye);
     }
     return this.losValue;
   }
@@ -513,7 +583,7 @@ export abstract class EnemyBase implements IEnemy {
   }
 
   protected facePlayer(turnRate: number, dt: number): void {
-    this.faceTowards(this.ctx.player.position, turnRate, dt);
+    this.faceTowards(this.targetPos, turnRate, dt);
   }
 
   /** 朝移动方向转身 */
@@ -614,14 +684,14 @@ export abstract class EnemyBase implements IEnemy {
       this.stopMoving();
       return true;
     }
-    return this.moveTo(this.ctx.player.position, speed, stopDist);
+    return this.moveTo(this.targetPos, speed, stopDist);
   }
 
   /**
    * 远程单位保持距离：太近后退，太远靠近，区间内横移（strafeSign = ±1）。
    */
   protected keepDistance(minD: number, maxD: number, speed: number, strafeSign: number): void {
-    const p = this.ctx.player.position;
+    const p = this.targetPos;
     const dx = p.x - this.position.x;
     const dz = p.z - this.position.z;
     const d = Math.hypot(dx, dz);
@@ -644,7 +714,9 @@ export abstract class EnemyBase implements IEnemy {
   ): void {
     const from = opts.from ? _v1.copy(opts.from) : this.getMuzzle(_v1);
     const target = opts.target ? _v2.copy(opts.target) : this.playerChest(_v2);
-    const lead = opts.lead ?? 0;
+    // 被嘲讽时射出的是「灵体弹」（Unity EnemyProjectile.spirit）：不预判、不追踪、不伤玩家，飞到诱饵就散掉、冒「格挡」
+    const spirit = this.taunted;
+    const lead = spirit ? 0 : opts.lead ?? 0;
     if (lead > 0 && !opts.target) {
       const t = from.distanceTo(target) / opts.speed;
       target.addScaledVector(this.ctx.player.velocity, t * lead);
@@ -663,19 +735,25 @@ export abstract class EnemyBase implements IEnemy {
       const t = dist / Math.max(1, Math.hypot(vel.x, vel.z));
       vel.y += 0.5 * opts.gravity * t;
     }
+    let lifetime = opts.lifetime ?? 6;
+    if (spirit) {
+      const arrive = Math.hypot(target.x - from.x, target.z - from.z) / Math.max(1, Math.hypot(vel.x, vel.z));
+      lifetime = Math.min(lifetime, arrive + 0.05);
+      this.ctx.tasks.delay(arrive, () => this.decoyBlocked());
+    }
     this.ctx.projectiles.spawn({
       owner: 'enemy',
       position: from.clone(),
       velocity: vel.clone(),
       gravity: opts.gravity ?? 0,
       radius: opts.radius ?? 0.22,
-      lifetime: opts.lifetime ?? 6,
-      enemyDamage: opts.damage * this.damageMult,
+      lifetime,
+      enemyDamage: spirit ? 0 : opts.damage * this.damageMult,
       element: opts.element ?? 'none',
       color: opts.color ?? this.def.color ?? 0xff5533,
       visual: opts.visual ?? 'orb',
       explosionRadius: opts.explosionRadius,
-      homing: opts.homing,
+      homing: spirit ? 0 : opts.homing,
       scale: opts.scale,
       sourceEnemy: this,
     });
@@ -686,15 +764,21 @@ export abstract class EnemyBase implements IEnemy {
    * 近战判定：玩家在 range（水平，含玩家半径）内且在前方 arcCos 夹角内则命中。damage 自动乘 damageMult。
    */
   protected melee(range: number, damage: number, arcCos = 0.2): boolean {
-    const p = this.ctx.player.position;
+    const taunted = this.taunted;
+    const p = this.targetPos;
     const dx = p.x - this.position.x;
     const dz = p.z - this.position.z;
     const d = Math.hypot(dx, dz);
-    if (d > range + this.ctx.player.radius) return false;
+    if (d > range + (taunted ? 0.35 : this.ctx.player.radius)) return false;
     if (Math.abs(p.y - this.position.y) > this.height + 0.6) return false;
     if (d > 0.01) {
       const fx = Math.sin(this.facing), fz = Math.cos(this.facing);
       if ((dx * fx + dz * fz) / d < arcCos) return false;
+    }
+    // 被嘲讽：打在灵体诱饵上，无效（偶尔冒「格挡」；Unity EnemyAI.HitTarget）
+    if (taunted) {
+      this.decoyBlocked();
+      return false;
     }
     this.ctx.combat.damagePlayer(damage * this.damageMult, 'none', this, this.position);
     this.ctx.audio.play('enemy_melee', { position: this.position });

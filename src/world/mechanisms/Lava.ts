@@ -99,8 +99,8 @@ export class LavaVolumeRuntime {
     g.setAttribute('position', new THREE.BufferAttribute(data.positions, 3));
     g.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(data.positions.length).map((_, i) => (i % 3 === 1 ? 1 : 0)), 3));
     g.setAttribute('uv', new THREE.BufferAttribute(data.uv, 2));
-    g.setAttribute('_unity_info', new THREE.BufferAttribute(data.info, 4));
-    g.setAttribute('_unity_flow', new THREE.BufferAttribute(data.flow, 4));
+    g.setAttribute('_lava_info', new THREE.BufferAttribute(data.info, 4));
+    g.setAttribute('_lava_flow', new THREE.BufferAttribute(data.flow, 4));
     g.setIndex(new THREE.BufferAttribute(data.indices, 1));
     g.computeBoundingSphere();
     const material = template.clone();

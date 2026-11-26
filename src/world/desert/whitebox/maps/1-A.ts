@@ -82,7 +82,7 @@ const CLIFF = 'SM_Env_DesertCliff', PLATFORM = 'SM_Tripo_DesertPlatformBlock', C
 const POSTWALL = 'SM_Tripo_DesertPosthouseWall', COVERWALL = 'SM_Tripo_DesertCoverWall', PARAPET = 'SM_Tripo_DesertBeaconParapet', GATEWAY = 'SM_Tripo_DesertGateway';
 const PAGODA = 'SM_Tripo_DesertTemplePagoda', FINIAL = 'SM_Tripo_DesertFinial', STUPA = 'SM_Tripo_DesertStupaBuried', SHRINE = 'SM_Tripo_DesertPortalShrine';
 const BUDDHA = 'SM_Tripo_DesertSeatedColossus', STELE = 'SM_Prop_DesertStele', BURNER = 'SM_Prop_DesertIncenseBurner', BRAZIER = 'SM_Tripo_DesertBrazier';
-const COLUMN_RUIN = 'SM_Tripo_DesertColumnRuin', RUIN = 'SM_Env_DesertRuin', BOULDER = 'SM_Env_DesertSandstone', GATE_OLD = 'SM_Env_DesertGate';
+const COLUMN_RUIN = 'SM_Tripo_DesertColumnRuin', RUIN = 'SM_Env_DesertRuin', BOULDER = 'SM_Env_DesertSandstone';
 const WRECK = 'SM_Tripo_DesertCaravanWreck', GOODS = 'SM_Tripo_DesertGoodsPile', BARRICADE = 'SM_Tripo_DesertBarricade', STALL = 'SM_Tripo_DesertMarketStall';
 const HOARD = 'SM_Tripo_DesertTreasureHoard', RELIQUARY = 'SM_Prop_DesertReliquary';
 // ───────────── 现有资产里没有、要新做的 ─────────────
@@ -141,7 +141,7 @@ const PAGODA_AT: V2 = [192, 54], PAGODA_TOP = r2(18 + PLAT_TOP + WB_ASSETS[PAGOD
 /** 山门（城门缩到 0.8 倍）：两侧门墩实心、门楼悬空，门洞约 3.6 m */
 const GATE_S = 0.8, [GATE_W, GATE_H, GATE_D] = WB_ASSETS[GATEWAY].size, GATE_FOOT = GATE_W * GATE_S / 3;
 /** 渡口门架（旧门件）：两根柱 + 门楣，框住对岸的崖 */
-const [FRAME_W, FRAME_H, FRAME_D] = WB_ASSETS[GATE_OLD].size;
+const TIMBER_GATE = 'SM_Tripo_DesertTimberGate';
 
 export const WB_1_A: WhiteboxSpec = {
   id: '1-A',
@@ -177,8 +177,12 @@ export const WB_1_A: WhiteboxSpec = {
     // 上崖壁（窟檐层以上 10 m）搭景时还是那件崖壁段放大 1.16 倍贴面——这里不标 asset：复用清单按图章的绝对高度 18 m 算缩放，会误报
     { op: 'poly', pts: [...FACE, [430, -10], [-10, -10]], h: 18, edge: 1.2, mode: 'max', mat: 'rock' },
     { op: 'paint', mat: 'gravel', closed: true, pts: [...FACE.map((p): V2 => [p[0], p[1] - 4.5]), [430, -10], [-10, -10]] },
-    { op: 'mound', at: [110, 8], r: [70, 13], h: 8, base: 18, shape: 'mesa', mat: 'rock' },
-    { op: 'mound', at: [330, 6], r: [80, 12], h: 10, base: 18, shape: 'mesa', mat: 'rock' },
+    // 后崖（构成复核 2026-11-26：只有 18 m 一层崖时，河滩上看是一条矮带）：崖顶台地北边再起一层近乎直立的岩崖，东西各一段到 56–58 m，
+    // 中间（塔院正后方）留低到 27 m——寺塔塔尖（42.6 m）衬着天，两段后崖在左右夹住它。崖 18 m → 后崖 56 m，雾里一层比一层淡。
+    // 必须整个放在图内（z ≥ 0）：编译时图外的高度场是沿图边续出去的，图外的图章不算（第一次放在 z < 0 的两道沙脊就被丢掉了）
+    { op: 'mound', at: [98, 7], r: [88, 13], h: 38, base: 18, shape: 'mesa', flat: 0.72, mat: 'rock' },
+    { op: 'mound', at: [338, 6], r: [86, 13], h: 40, base: 18, shape: 'mesa', flat: 0.72, mat: 'rock' },
+    { op: 'mound', at: [214, -6], r: [40, 11], h: 9, base: 18, shape: 'mesa', mat: 'rock' },
     // ① 木栈梯：每跑宽 8 m，下跑 17°、上跑 22°，西头一个 4 m 高的平台
     { op: 'ramp', pts: STAIR, hs: STAIR_H, half: 4, edge: 0, mode: 'max', mat: 'timber', piece: '贴崖木栈梯' },
     // ② 崩塌碎石坡：在崖体上豁开一道口子，8 → 12.2 → 18 m（17–19°），两侧是塌下来的碎石斜面
@@ -288,8 +292,9 @@ export const WB_1_A: WhiteboxSpec = {
     // S 渡口残台：驿站残墙（全身）、掩体矮墙半埋（半身）、门架（框住对岸的崖）
     piece(POSTWALL, [155, 252], { n: 2, rot: 90, mat: 'earth' }),
     piece(COVERWALL, [165, 261], { n: 3, sink: 1.5, mat: 'earth' }),
-    ...[-1, 1].map((side): WbBlock => ({ name: '渡口门架', kind: 'cyl', at: [168 + side * (FRAME_W / 2 - 0.5), 243.5], size: [0.5, 0.5], h: FRAME_H, mat: 'timber', asset: GATE_OLD })),
-    { name: '渡口门架', kind: 'box', at: [168, 243.5], size: [FRAME_W, FRAME_D], top: 1.6 + FRAME_H, clear: 1.6 + FRAME_H - 1.2, canopy: true, mat: 'timber', asset: GATE_OLD },
+    // 渡口门架：照概念图「出生第一眼」换成和 1-1 同一件褪色朱红木门框（Tripo，2026-11-27；9.4 × 6.8 × 2.8，正面朝南对着出生点，旗杆在西端）
+    ...[-1, 1].map((side): WbBlock => ({ name: '渡口门架', kind: 'box', at: [168 + side * 3.95, 243.5], size: [1.5, 1.5], h: 6, mat: 'timber', asset: TIMBER_GATE })),
+    { name: '渡口门架', kind: 'box', at: [168, 243.5], size: [9.4, 2.8], top: 1.6 + 6.8, clear: 1.6 + 5, canopy: true, mat: 'timber', asset: TIMBER_GATE },
     // 河滩遗骸（藏宝）：宝藏堆
     piece(HOARD, [241.5, 267.5], { rot: 20, mat: 'timber' }),
     // 崖脚阶地的落石（整块全身 / 半埋半身）

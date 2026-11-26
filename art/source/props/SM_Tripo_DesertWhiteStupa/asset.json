@@ -1,0 +1,438 @@
+{
+  "id": "SM_Tripo_DesertWhiteStupa",
+  "display": "白色覆钵塔（1-2 ③ 塔尖广场的地标：立在 10 m 塔座上的白色覆钵塔（替换暗色的半埋层塔））",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:25:32",
+          "files": {
+            "BO_SM_Tripo_DesertWhiteStupa_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertWhiteStupa_v001.json",
+              "sha256": "f3b2f6fe96ea70415e8d92763bf4e67a59513a248393e994c65cfd918f673311"
+            },
+            "BO_SM_Tripo_DesertWhiteStupa_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertWhiteStupa_v001_views.json",
+              "sha256": "12258f3e9c73b29a750a7291bd142d1565a1f6368c789a3e02d15c696e52f02b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.whiteStupa"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.1,
+              0.0,
+              -6.1
+            ],
+            "max": [
+              6.1,
+              19.8,
+              6.1
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:25:34",
+          "files": {
+            "CN_SM_Tripo_DesertWhiteStupa_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_source.png",
+              "sha256": "61889f4c9e2b8017e9352a25bcdf47a5ea78f2bd13a65a839c6a714d36f56eaf"
+            },
+            "CN_SM_Tripo_DesertWhiteStupa_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_front.png",
+              "sha256": "feb2b0ed87c1ca88d3cb0385fb6d4a305036b25c841c2bda04f5417a82101cd6"
+            },
+            "CN_SM_Tripo_DesertWhiteStupa_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_left.png",
+              "sha256": "c01528780e31dabdddba840c679c02a669bb7f1b5a4827be6edf844a10920a8e"
+            },
+            "CN_SM_Tripo_DesertWhiteStupa_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_back.png",
+              "sha256": "96ec16c7e7d7b721631de517c2f9667760e1c475d86519a9db0103d907382acb"
+            },
+            "CN_SM_Tripo_DesertWhiteStupa_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_right.png",
+              "sha256": "9869868ff32ae162dac13c02c00937198567fd3d38ecc850c993894ded36b19e"
+            },
+            "CN_SM_Tripo_DesertWhiteStupa_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_sheet.png",
+              "sha256": "4dfcda0702c61dd87bbc2fedef1cc5999796720c857f7d06d9b8f77cf8e7210f"
+            },
+            "CN_SM_Tripo_DesertWhiteStupa_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_prompt.txt",
+              "sha256": "e25ab35d9b84ff1a73d5e7dfc0e5a5c0241dd100b284443d3a81820a3c6bb706"
+            },
+            "CN_SM_Tripo_DesertWhiteStupa_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertWhiteStupa_v001_registration.json",
+              "sha256": "2fdab617a84c9cd0233aad9caf6c853bfcf0f478170736d93fe2d201da4a685b"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.6-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.6-sunburst",
+            "size": "2048x1152",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 520,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 520
+              },
+              "output_tokens": 1413,
+              "output_tokens_details": {
+                "image_tokens": 1413,
+                "text_tokens": 0
+              },
+              "total_tokens": 1933
+            },
+            "request_id": "req_6b4d158e6b494580bbf30bd61295a80a",
+            "seconds": 30.2,
+            "variants": 1,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "",
+            "source_image": "SM_Tripo_DesertWhiteStupa_r1.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Pure flat white background. No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects.\n\nSTYLE: stylized hand-painted 3D game environment asset painted under even neutral white light with true base colours only: no baked lighting, no cast shadows, no ambient-occlusion darkening, no rim light. Thick chunky simplified silhouette, broad clean faceted planes, two or three dominant colour blocks (chalky warm-white lime plaster, ochre mud brick, dull bronze-gold, a faded vermilion accent, sand-yellow sand), soft painted gradients, sparse medium-size wear. No photorealism, no micro-grain, no fine cracks, no realistic erosion detail, no tiny carvings. Physically plausible.\n\nOBJECT, whitewashed bell-shaped stupa (16.6m wide x 19.8m tall x 16.6m deep): A Silk Road Buddhist stupa of the inverted-bowl type: a square two-step plinth with chunky mouldings, on it a round drum, then one big plain bell-shaped dome swelling out wider than the drum, then a small square box on the dome top, then a tall tapering spire of thirteen thick stacked rings, a wide flat parasol disc and a short finial. The dome and plinth are whitewashed lime plaster, chalky warm white, with large worn patches where ochre mud brick shows through, especially low on the plinth; a drift of sand-yellow sand piled against two sides of the plinth. Spire rings dull bronze-gold, parasol disc dull bronze. One faded vermilion band around the drum. Overall proportion: about 0.85 times as wide as tall, the dome about 0.6 of the total width, the spire about 0.4 of the total height. Perfectly symmetric about the vertical axis, so all four views are the same shape; only the worn patches and the sand drift differ. Bold simple volumes, no tiny niches, no carved figures.",
+          "source_sha256": "61889f4c9e2b8017e9352a25bcdf47a5ea78f2bd13a65a839c6a714d36f56eaf",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.0094154757921905,
+              "offset": [
+                32,
+                141
+              ],
+              "size": [
+                447,
+                742
+              ],
+              "physical_height_m": 19.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.010790701236049,
+              "offset": [
+                29,
+                141
+              ],
+              "size": [
+                454,
+                742
+              ],
+              "physical_height_m": 19.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.0094154757921905,
+              "offset": [
+                35,
+                141
+              ],
+              "size": [
+                442,
+                742
+              ],
+              "physical_height_m": 19.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.010790701236049,
+              "offset": [
+                28,
+                141
+              ],
+              "size": [
+                455,
+                742
+              ],
+              "physical_height_m": 19.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27 第一章重建件补：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-27 00:25:34"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:43:48",
+          "files": {
+            "HP_SM_Tripo_DesertWhiteStupa_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWhiteStupa_v001_source.glb",
+              "sha256": "997ad75edb97673c7f98a3b9af1fd129c88e8f8322f357b886e72fa09229902f"
+            },
+            "HP_SM_Tripo_DesertWhiteStupa_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWhiteStupa_v001.glb",
+              "sha256": "2a450c82da8cb29ba323625dcbe1da557467025f28cc9095d390f9785672b894"
+            },
+            "HP_SM_Tripo_DesertWhiteStupa_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWhiteStupa_v001_graph.json",
+              "sha256": "9fb24b9840d55f22dedd0ea4a5e608402a24cd1b9c14ed9a2c50dcc40674e742"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/b9058d92-64a2-41d5-8a91-348afbe1e626",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15356,
+          "source_sha256": "997ad75edb97673c7f98a3b9af1fd129c88e8f8322f357b886e72fa09229902f"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:48:00",
+          "files": {
+            "HP_SM_Tripo_DesertWhiteStupa_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWhiteStupa_v002_source.glb",
+              "sha256": "dc2807da0cbcaca08fcbf1f7b3f36fc44e4337faa37925dc0382bbfdee927901"
+            },
+            "HP_SM_Tripo_DesertWhiteStupa_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWhiteStupa_v002.glb",
+              "sha256": "579b8cb6571c74bae9028c122dcc880aa6439965c283104d0ca9f2e481b646b7"
+            },
+            "HP_SM_Tripo_DesertWhiteStupa_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWhiteStupa_v002_graph.json",
+              "sha256": "04ad7587fb46f5cde235a89601566459ca0ba35eab64a846aa72ccf07684005b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:tone_match",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 15356,
+          "source_sha256": "dc2807da0cbcaca08fcbf1f7b3f36fc44e4337faa37925dc0382bbfdee927901"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:44:26",
+          "files": {
+            "SM_Tripo_DesertWhiteStupa_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertWhiteStupa_v001.blend",
+              "sha256": "5d46a09d64713d630cb390cae3ed35347fb2aa4a38ebfbcc53e0616e283c4110"
+            },
+            "SM_Tripo_DesertWhiteStupa_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertWhiteStupa_v001.glb",
+              "sha256": "c76c528c868e3523079e8f5b3ad095b62efeb3c1ffe2686d267b21c3cb4d42f9"
+            },
+            "SM_Tripo_DesertWhiteStupa_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertWhiteStupa_v001_metrics.json",
+              "sha256": "3f3f2c52504cb47998d97c3df980cc7a88d2d301412aa94c2b51b103643fa57a"
+            },
+            "T_Tripo_DesertWhiteStupa_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWhiteStupa_BC.png",
+              "sha256": "88b424046abea6f59c1271ffcc65297c5c8b73a8a1fe5179392e1a131a520fcc"
+            },
+            "T_Tripo_DesertWhiteStupa_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWhiteStupa_N.png",
+              "sha256": "c7cd4815a57cda85ee970d1b550d4345e6a098861b6ef47ca435357bd0b20945"
+            },
+            "T_Tripo_DesertWhiteStupa_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWhiteStupa_ORM.png",
+              "sha256": "ec4ec4ac3427b22c282177e2c8aea817b3ae11897d10a27833f49788f6b7d46d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15356,
+              "verts": 7729
+            }
+          ],
+          "export_kb": 600.6,
+          "seconds": 37.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:48:38",
+          "files": {
+            "SM_Tripo_DesertWhiteStupa_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertWhiteStupa_v002.blend",
+              "sha256": "8a548b701bc47f42d07380f1d86def2689951287685c2b9556e4b86f322e069e"
+            },
+            "SM_Tripo_DesertWhiteStupa_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertWhiteStupa_v002.glb",
+              "sha256": "6562450876e66b5635941f912a1f2153b88d269a61a244a1efefe5ba749d53be"
+            },
+            "SM_Tripo_DesertWhiteStupa_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertWhiteStupa_v002_metrics.json",
+              "sha256": "9a81e2c9616d6e4dd1dfae7ac9fd323e231638daecf2de3c3c0eff6abdfd765b"
+            },
+            "T_Tripo_DesertWhiteStupa_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertWhiteStupa_BC.png",
+              "sha256": "6fc3f6f82d7a172eda26a6456253b8f741717268f4f134942db6218c76d12cbd"
+            },
+            "T_Tripo_DesertWhiteStupa_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertWhiteStupa_N.png",
+              "sha256": "2cab0832aa36c01717ebc3c9be62f017484bfdd3df080f285de1cefe7fff48b6"
+            },
+            "T_Tripo_DesertWhiteStupa_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertWhiteStupa_ORM.png",
+              "sha256": "ec4ec4ac3427b22c282177e2c8aea817b3ae11897d10a27833f49788f6b7d46d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 15356,
+              "verts": 7729
+            }
+          ],
+          "export_kb": 601.4,
+          "seconds": 37.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:44:26",
+          "files": {
+            "SM_Tripo_DesertWhiteStupa_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertWhiteStupa_v001_validation_v001.json",
+              "sha256": "22a5ba7942a2aec1e801b2cb7d897f4c7412fe6759291c0e86eb2c88232e9c55"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:48:39",
+          "files": {
+            "SM_Tripo_DesertWhiteStupa_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertWhiteStupa_v002_validation_v002.json",
+              "sha256": "22a5ba7942a2aec1e801b2cb7d897f4c7412fe6759291c0e86eb2c88232e9c55"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:44:34",
+          "files": {
+            "SM_Tripo_DesertWhiteStupa_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertWhiteStupa_v001_review_v001.png",
+              "sha256": "dfab23691ff604ffc5866bd487dc0fe1849c8493141750deb62b9e600773b195"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:48:44",
+          "files": {
+            "SM_Tripo_DesertWhiteStupa_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertWhiteStupa_v002_review_v002.png",
+              "sha256": "6e24f4a0848ba5c99abdfc9da88c0bc5ede5c6beb645e4875327cd9a194c8011"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：P2.0 多视图 15356 面、纹理去光 4K；方形两级台基、鼓座朱带、钟形覆钵、方座、十三层相轮、宝盖、刹顶，四向一致，剪影 IoU 0.866；Tripo 去光后灰泥偏奶黄（彩度为概念 2 倍），底色彩度按四视图分位数匹配（中位 ×0.5、铜相轮 ×0.8）回到粉白灰泥（只调色、不平滑），不紫不糊；用户授权免审",
+            "time": "2026-11-27 00:50:52"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:50:52",
+          "files": {
+            "SM_Tripo_DesertWhiteStupa.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertWhiteStupa.glb",
+              "sha256": "6562450876e66b5635941f912a1f2153b88d269a61a244a1efefe5ba749d53be"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertWhiteStupa.glb"
+        }
+      ]
+    }
+  }
+}

@@ -3,10 +3,13 @@ import { Atmosphere } from './Atmosphere';
 import type { GameContext } from '../core/types';
 import type { UnityEnvironment } from './UnityLevelLibrary';
 
-type Properties = { unityFloats?: Record<string, number>; unityColors?: Record<string, [number, number, number, number]>; unityVectors?: Record<string, [number, number, number, number]> };
+type Rgba = [number, number, number, number];
+/** 材质标记（新键 floats / colors / vectors 优先，旧键 unity* 回退；同 UnityStylizedLit.materialMarks——这里内联一份，免得测试按 data: URL 加载时多一个相对 import） */
+type Properties = { floats?: Record<string, number>; colors?: Record<string, Rgba>; vectors?: Record<string, Rgba>; unityFloats?: Record<string, number>; unityColors?: Record<string, Rgba>; unityVectors?: Record<string, Rgba> };
+const marks = (p: Properties) => ({ floats: p.floats ?? p.unityFloats ?? {}, colors: p.colors ?? p.unityColors ?? {}, vectors: p.vectors ?? p.unityVectors ?? {} });
 
 function color(properties: Properties, name: string, fallback: [number, number, number, number]): THREE.Color {
-  const rgba = properties.unityColors?.[name] ?? fallback;
+  const rgba = marks(properties).colors[name] ?? fallback;
   return new THREE.Color().setRGB(rgba[0], rgba[1], rgba[2], THREE.SRGBColorSpace);
 }
 
@@ -165,8 +168,8 @@ void main() {
 
 export function createUnityWaterMaterial(source: THREE.MeshStandardMaterial, environment: UnityEnvironment): THREE.ShaderMaterial {
   const properties = source.userData as Properties;
-  const floats = properties.unityFloats ?? {};
-  const vectors = properties.unityVectors ?? {};
+  const floats = marks(properties).floats;
+  const vectors = marks(properties).vectors;
   const flow = vectors._Flow ?? [0, 0, 0, 1];
   const swirl = vectors._SwirlCenter ?? [0, 0, 2, 6];
   const sun = environment.sun;
@@ -176,7 +179,7 @@ export function createUnityWaterMaterial(source: THREE.MeshStandardMaterial, env
     uDeep: { value: color(properties, '_DeepColor', [0.05, 0.22, 0.4, 0.88]) },
     uFoamColor: { value: color(properties, '_FoamColor', [0.9, 0.97, 1, 1]) },
     uSunDirection: { value: new THREE.Vector3(...(sun?.forward ?? [0, -1, 0])).negate() },
-    uSunColor: { value: color({ unityColors: { sun: sun?.color ?? [1, 1, 1, 1] } }, 'sun', [1, 1, 1, 1]).multiplyScalar(sun?.intensity ?? 1) },
+    uSunColor: { value: color({ colors: { sun: sun?.color ?? [1, 1, 1, 1] } }, 'sun', [1, 1, 1, 1]).multiplyScalar(sun?.intensity ?? 1) },
     uAmbient: { value: color(properties, '_AmbientColor', environment.ambient.equator).multiplyScalar(environment.ambient.intensity) },
     uAlpha: { value: floats._Alpha ?? 0.72 },
     uWaveScale: { value: floats._WaveScale ?? 3 },

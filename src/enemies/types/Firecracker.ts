@@ -578,23 +578,27 @@ export class Firecracker extends StandardEnemy implements ExplosiveKin {
   pickTargets(count: number): THREE.Vector3[] {
     const ctx = this.ctx;
     const pl = ctx.player;
+    // 被嘲讽：落点围着灵体诱饵、不预判（Unity FirecrackerAI.PickVolleyTargets：PickTargets(PlayerPos, Taunted ? 0 : 速度)）；
+    // 火箭的爆炸本身不看嘲讽（Blast.Player），落在玩家身上照样伤
+    const tp = this.targetPos;
+    const lead = this.taunted ? 0 : 0.6;
     const out: THREE.Vector3[] = [];
-    const cands: [number, number][] = [[pl.position.x + pl.velocity.x * 0.6, pl.position.z + pl.velocity.z * 0.6]];
+    const cands: [number, number][] = [[tp.x + pl.velocity.x * lead, tp.z + pl.velocity.z * lead]];
     const a0 = ctx.rng.range(0, Math.PI * 2);
     for (let i = 0; i < 40; i++) {
       const a = a0 + i * 2.399963 + ctx.rng.range(-0.15, 0.15);
       const r = 1.8 + ((i * 0.618034 + 0.3) % 1) * (SPREAD - 1.8);
-      cands.push([pl.position.x + Math.sin(a) * r, pl.position.z + Math.cos(a) * r]);
+      cands.push([tp.x + Math.sin(a) * r, tp.z + Math.cos(a) * r]);
     }
     for (const [x, z] of cands) {
       if (out.length >= count) break;
-      _t.set(x, pl.position.y, z);
+      _t.set(x, tp.y, z);
       if (!ctx.nav.nearestWalkable(_t, _q)) _q.copy(_t);
-      if (Math.hypot(_q.x - pl.position.x, _q.z - pl.position.z) > SPREAD + 0.3) continue;
+      if (Math.hypot(_q.x - tp.x, _q.z - tp.z) > SPREAD + 0.3) continue;
       if (Math.hypot(_q.x - this.position.x, _q.z - this.position.z) < 3 + this.radius) continue;
       if (out.some((o) => Math.hypot(o.x - _q.x, o.z - _q.z) < ROCKET_GAP)) continue;
-      const gy = ctx.world.groundHeight(_q.x, _q.z, pl.position.y + 2);
-      out.push(new THREE.Vector3(_q.x, Number.isFinite(gy) ? gy : pl.position.y, _q.z));
+      const gy = ctx.world.groundHeight(_q.x, _q.z, tp.y + 2);
+      out.push(new THREE.Vector3(_q.x, Number.isFinite(gy) ? gy : tp.y, _q.z));
     }
     return out;
   }

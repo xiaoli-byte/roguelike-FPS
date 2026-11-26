@@ -566,7 +566,8 @@ export class Mamian extends StandardEnemy {
     const hit = ctx.world.raycast(_p, _v, step);
     _q.copy(_p).addScaledVector(_v, hit ? hit.distance : step);
     const pl = ctx.player;
-    if (pl.alive && !pl.isDashing && segmentHitsPlayer(ctx, _p, _q, HOOK_RADIUS * (this.isElite ? 1.15 : 1))) {
+    // 被嘲讽期间钩不到玩家（Unity MamianAI.FlyHook：!Taunted）
+    if (pl.alive && !this.taunted && !pl.isDashing && segmentHitsPlayer(ctx, _p, _q, HOOK_RADIUS * (this.isElite ? 1.15 : 1))) {
       this.hookPos.copy(_q);
       this.startDrag();
       return;
@@ -720,12 +721,18 @@ export class Mamian extends StandardEnemy {
     this.sweepWarn = null;
     const pl = this.ctx.player;
     const r = SWEEP_RADIUS * this.sizeScale / MAMIAN_DEF.scale!;
-    const dx = pl.position.x - this.position.x, dz = pl.position.z - this.position.z;
+    // 对当前目标判定（Unity MamianAI.SweepStrike：PlayerPos + HitPlayer）；被嘲讽时抡在灵体诱饵上，无效、不推
+    const tp = this.targetPos;
+    const dx = tp.x - this.position.x, dz = tp.z - this.position.z;
     const d = Math.hypot(dx, dz);
     this.ctx.fx.ring(_p.set(this.position.x, this.position.y + 0.1, this.position.z), r, INFERNO.ember, 0.35);
     if (!pl.alive || d > r + pl.radius * 0.5) return;
-    const feet = pl.position.y - this.position.y;
+    const feet = tp.y - this.position.y;
     if (feet > 0.9 || feet < -1.2) return;
+    if (this.taunted) {
+      this.decoyBlocked();
+      return;
+    }
     this.ctx.combat.damagePlayer(this.def.damage * SWEEP_MULT * this.damageMult, 'none', this, this.position);
     const inv = d > 1e-3 ? 1 / d : 0;
     pl.applyImpulse(_v.set(dx * inv * 7, 2.5, dz * inv * 7));

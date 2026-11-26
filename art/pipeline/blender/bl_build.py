@@ -94,7 +94,12 @@ bpy.ops.mesh.separate(type="LOOSE")
 bpy.ops.object.mode_set(mode="OBJECT")
 parts = sorted([o for o in bpy.context.view_layer.objects if o.type == "MESH"], key=lambda o: len(o.data.polygons), reverse=True)
 total = sum(len(o.data.polygons) for o in parts)
-keep = [o for o in parts if len(o.data.polygons) >= P.get("min_component_fraction", 0.01) * total]
+# Hunyuan 体素网格的散件多是噪点，按面数占比清掉；Tripo 智能网格是干净的低模，枪管 / 枪托这类简单形体本来就只有几十个面，
+# 按 1% 清会把它们整件删掉（2026-11-27 霰弹枪 20 个散件删了 14 个），所以 Tripo 来源只去掉不足 4 个面的碎屑
+if P.get("texture_source") == "highpoly":
+    keep = [o for o in parts if len(o.data.polygons) >= 4]
+else:
+    keep = [o for o in parts if len(o.data.polygons) >= P.get("min_component_fraction", 0.01) * total]
 for o in parts:
     if o not in keep:
         bpy.data.objects.remove(o)

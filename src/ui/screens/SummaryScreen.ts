@@ -1,5 +1,5 @@
 /**
- * 整局结算（照译 Unity G/UI/Screens/SummaryScreen.cs，样式 css/unity/menu.css 的 .sf-summary）：
+ * 整局结算（照译 Unity G/UI/Screens/SummaryScreen.cs，样式 css/screens/menu.css 的 .sf-summary）：
  *   大字「胜利 / 败北」（逐字落墨）+ 题记、英雄徽记与止步关卡、六格数值（用时 / 清关 / 击杀 / 总伤害 / 灵石 / 获得魂晶，错开滚动计数）、
  *   魂晶来源（局内收集 + 通关奖励）、秘卷 chips（稀有度色、×层数）、武器 chips；按钮「再来一局 · 英雄名」/「主菜单」。
  * 参数是 RunSummary（Game.endRun → UI.showSummary 传进来）。挡游戏：summary；返回键不关（二选一）。

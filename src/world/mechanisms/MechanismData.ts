@@ -1,5 +1,5 @@
 /**
- * 地图机关的导出数据（public/assets/unity-levels/mechanisms.json，scripts/web/export-mechanisms.mjs 从 Unity 场景 YAML 导出）。
+ * 地图机关数据：每张图的 level.json 里的 mechanisms 段（public/assets/levels/<id>/level.json；2026-11-26 由 Unity 导出的 mechanisms.json 一次性转来）。
  * 坐标都是网页的（Unity x 取反）；yaw = −Unity eulerAngles.y（度）；scenePath 和场景文档里 renderers / colliders 的 scenePath 一一对上。
  */
 import type { LavaShape, LavaTide } from './LavaCore';
@@ -144,15 +144,17 @@ export interface SoftBoundaryTuning {
 }
 
 export interface BoundaryData {
-  scenePath: string; asset: string; url: string; width: number; height: number; sha1: string;
+  /** url = 距离场文件（assets/levels/<id>/boundary.f32）；asset / sha1 是 Unity 导出时的来源字段，levels 目录的数据不带 */
+  scenePath: string; asset?: string; url: string; width: number; height: number; sha1?: string;
   /** 距离场原点 / 格距：Unity 坐标（网页按 −x 采样） */
   origin: [number, number]; cell: number; theme: string; tuning: SoftBoundaryTuning;
 }
 
 export interface SceneMechanisms {
-  scene: string;
-  source: string;
-  sceneSha1: string;
+  /** 来源字段（Unity 场景路径 / 导出来源 / 场景 sha1）：levels 目录的数据不带，第一章重做版自己编的还写着 */
+  scene?: string;
+  source?: string;
+  sceneSha1?: string;
   weather: WeatherData | null;
   boundary: BoundaryData | null;
   lava?: LavaVolumeData[];
@@ -182,17 +184,14 @@ export interface MechanismsDocument {
 }
 
 const BASE = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.BASE_URL : '/';
-let pending: Promise<MechanismsDocument | null> | null = null;
 const fields = new Map<string, Promise<Float32Array | null>>();
 
-/** mechanisms.json（读不到返回 null：老发布目录没有机关数据时关卡照常跑） */
+/**
+ * @deprecated 2026-11-26 起机关数据在每张图的 level.json 里（UnitySceneDocument.mechanisms），不再有整份的 mechanisms.json：
+ * 一律返回 null（调用方按「读不到」兜底）。只因第一章会话未入库的 terrainSculpt 还 import 它而保留同名导出，P5 去掉。
+ */
 export function loadMechanisms(): Promise<MechanismsDocument | null> {
-  pending ??= fetch(`${BASE}assets/unity-levels/mechanisms.json`).then(r => r.ok ? r.json() as Promise<MechanismsDocument> : null).catch(err => {
-    console.warn('[mechanisms] 读不到 mechanisms.json：本关没有地图机关', err);
-    pending = null;
-    return null;
-  });
-  return pending;
+  return Promise.resolve(null);
 }
 
 /** 运行时生成的距离场（第一章重做从白盒的可玩区算出来，没有文件）：先登记，loadBoundaryField 按同一个地址取 */

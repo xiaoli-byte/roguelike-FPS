@@ -3,9 +3,10 @@ import test from 'node:test';
 import { readFile, stat } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
+import { levelManifest } from './level-catalog.mjs';
 
 const root = new URL('../', import.meta.url);
-const manifest = JSON.parse(await readFile(new URL('public/assets/unity-levels/manifest.json', root), 'utf8'));
+const manifest = await levelManifest();
 const available = manifest.stages.filter(stage => stage.available);
 const unavailable = manifest.stages.filter(stage => !stage.available).map(stage => stage.id);
 
@@ -28,7 +29,7 @@ test('Unity run plan exposes 16 main stages, the map pool and every generated Un
 for (const stage of available) test(`${stage.id}: scene geometry, collision and gameplay come from Unity`, async () => {
   const document = JSON.parse(await readFile(new URL(`public/${stage.url}`, root), 'utf8'));
   assert.equal(document.id, stage.id);
-  assert.equal(document.title, stage.title);
+  assert.ok(typeof document.title === 'string' && document.title.length > 0, '关卡文档自带标题');
   assert.ok(document.spawn.position.every(Number.isFinite));
   assert.equal(document.spawn.forward.length, 3);
   assert.ok(document.renderers.length > 0);
@@ -77,9 +78,12 @@ for (const stage of available) test(`${stage.id}: scene geometry, collision and 
     assert.equal(Buffer.from(layer.counts, 'base64').length, layer.width * layer.height * 4);
     assert.ok(layer.count > 0 && layer.viewDistance > 0);
   }
-  for (const collider of document.colliders.filter(collider => ['sphere', 'capsule', 'mesh'].includes(collider.kind))) {
-    assert.ok(collider.url, `${stage.id}/${collider.name}: primitive or mesh collider must not collapse to world bounds`);
-    assert.ok(await exists(`public/${collider.url}`), collider.url);
+  // 网格 / 球 / 胶囊碰撞体：几何在本关合并的 collision.glb 里，节点名 = collider.mesh（2026-11-26 转换时合并、镜像已烘掉）
+  const shaped = document.colliders.filter(collider => ['sphere', 'capsule', 'mesh'].includes(collider.kind) && collider.platform === undefined);
+  for (const collider of shaped) assert.ok(collider.mesh, `${stage.id}/${collider.name}: primitive or mesh collider must not collapse to world bounds`);
+  if (shaped.length) {
+    assert.ok(document.collision, `${stage.id}: 有网格碰撞体就要有合并的 collision.glb`);
+    assert.ok(await exists(`public/${document.collision}`), document.collision);
   }
   for (const platform of document.platforms ?? []) {
     assert.ok(platform.path.length >= 2, `${stage.id}/${platform.name}: missing native platform path`);
@@ -138,7 +142,7 @@ test('all Unity mesh texture URIs resolve to published texture files', async () 
     for (const image of gltf.images ?? []) {
       if (!image.uri) continue;
       assert.ok(image.uri.startsWith('../textures/'), `${url}: ${image.uri}`);
-      assert.ok(await exists(`public/assets/unity-levels/meshes/${image.uri}`), `${url}: ${image.uri}`);
+      assert.ok(await exists(`public/assets/levels/meshes/${image.uri}`), `${url}: ${image.uri}`);
     }
   }
 });

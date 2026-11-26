@@ -16,7 +16,7 @@
 | `archive.py <ID> <task-uuid> <面数>` | `Downloads/<ID>.glb` → `art/source/_tripo_inbox/<UTC>_<ID>.glb` + 收据（sha256、实得面数；纹理默认记「去光」，`TRIPO_DELIGHT=0` 关） |
 | `run_pipe.py <ID>` | import → build → validate → review，日志在 `logs/` |
 | `ap.sh <ID> "<备注>"` | 审核通过（Claude AI visual review，用户授权免审）+ 发布 |
+| `tone_match.py measure\|apply <ID> [--factor 0.7\|qmap] [--run]` | Tripo 去光纹理比四视图艳 1.25–2 倍：量底色 vs 概念正视的 Lab 彩度；`apply` 只缩彩度（均匀或按分位数匹配概念），写 `_tripo_inbox/<UTC>_<ID>_tone.glb`，`--run` 接 import → build / validate / review（2026-11-27 第一章重建件） |
 | `codex_concept.py <ID>` | 用 Codex 桌面版自带的 codex-cli 跑 `tripo_assets.py concept`（11-07 试过：ChatGPT 账号不再支持 gpt-6.1-sol，`gpt-6-luna` 不出图） |
-| `wait_sync.py` | 等 Unity bridge 队列清空后跑 `bridge.sh sync` |
 
 `inputs/ logs/ sheets_raw/ prompts/` 和预览 jpg 不入库（`.gitignore`）。下载目录默认 `S:\文档\Downloads`，用 `TRIPO_DOWNLOADS` 改。

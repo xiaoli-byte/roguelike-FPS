@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { LEVEL_CATALOG, levelUrl } from './level/catalog';
+import type { SceneMechanisms } from './mechanisms/MechanismData';
 
 export interface UnityTerrain {
   size: [number, number, number];
@@ -174,7 +176,7 @@ export interface UnityActivator {
   scenePath?: string;
 }
 
-/** 场景清单里的一张图（manifest.json 的 stages[]）；每局路线的备选图（1-A / 2-A / 3-A）带 pool: true */
+/** 关卡目录里的一张图（由 level/catalog.ts 合成；原 Unity 导出的 manifest.json 的 stages[]）；每局路线的备选图（1-A / 2-A / 3-A）带 pool: true */
 export interface UnityManifestStage {
   id: string;
   title?: string;
@@ -250,13 +252,20 @@ export interface UnitySceneDocument {
   schema: number;
   id: string;
   title: string;
-  scene: string;
+  /** @deprecated 原 Unity 场景路径（Assets/Scenes/*.unity）：public/assets/levels 的文档不带，没有代码读它 */
+  scene?: string;
   spawn: { position: [number, number, number]; forward: [number, number, number] };
   bounds: { min: [number, number, number]; max: [number, number, number] };
   visualBounds?: { min: [number, number, number]; max: [number, number, number] };
   map?: { url: string; area: [number, number, number, number] };
   renderers: UnityRenderer[];
-  colliders: { kind: string; name: string; min: [number, number, number]; max: [number, number, number]; platform?: string; activator?: string; url?: string; center?: [number, number, number]; size?: [number, number, number]; rotation?: [number, number, number, number]; scenePath?: string }[];
+  /**
+   * 碰撞体。mesh = 网格 / 球 / 胶囊碰撞在 {@link collision} 那份 GLB 里的节点名（c<下标>，网页坐标，镜像已在转换时烘掉）；
+   * 没有 mesh 的按 min / max（box 再加 center / size / rotation 的有向盒）
+   */
+  colliders: { kind: string; name: string; min: [number, number, number]; max: [number, number, number]; platform?: string; activator?: string; mesh?: string; center?: [number, number, number]; size?: [number, number, number]; rotation?: [number, number, number, number]; scenePath?: string }[];
+  /** 本关全部网格碰撞合成的一份 GLB（assets/levels/<id>/collision.glb），节点名对 colliders[].mesh */
+  collision?: string;
   platforms: UnityPlatform[];
   water: UnityWater[];
   activators: UnityActivator[];
@@ -274,12 +283,14 @@ export interface UnitySceneDocument {
   entries?: UnityMonsterEntry[];
   /** 图内布局变体（LevelLayout）；没有 / 空 = 只有一种走法 */
   layout?: UnityLevelLayout | null;
+  /** 地图机关（熔岩、熔泉、流沙、软边界、天气……；原 Unity 导出的 mechanisms.json 里这一关的那段）；没有 = 这张图没有机关 */
+  mechanisms?: SceneMechanisms | null;
 }
 
 const BASE = import.meta.env.BASE_URL;
 
 class Library {
-  // 发布目录的网格走 EXT_meshopt_compression（scripts/unity/optimize-web-levels.mjs）
+  // public/assets/levels 的网格和碰撞走 EXT_meshopt_compression
   private readonly loader = new GLTFLoader().setDRACOLoader(new DRACOLoader()).setMeshoptDecoder(MeshoptDecoder);
   private readonly textureLoader = new THREE.TextureLoader();
   private readonly meshes = new Map<string, Promise<GLTF>>();
@@ -287,14 +298,15 @@ class Library {
   private readonly scenes = new Map<string, Promise<UnitySceneDocument | null>>();
   private manifestPending: Promise<UnityLevelManifest> | null = null;
 
-  /** 场景清单（public/assets/unity-levels/manifest.json）：局路线按它判断哪些图导出了（备选图带 pool: true） */
+  /**
+   * 关卡目录（src/world/level/catalog.ts）合成的清单：局路线按它判断哪些图有数据（备选图带 pool: true），url = assets/levels/<id>/level.json。
+   * 2026-11-26 前读 Unity 导出的 public/assets/unity-levels/manifest.json；返回 Promise 是沿用原来的签名
+   */
   manifest(): Promise<UnityLevelManifest> {
-    this.manifestPending ??= fetch(`${BASE}assets/unity-levels/manifest.json`).then(response => {
-      if (!response.ok) throw new Error(`Unity 场景清单读取失败：${response.status}`);
-      return response.json() as Promise<UnityLevelManifest>;
-    }).catch(error => {
-      this.manifestPending = null;
-      throw error;
+    this.manifestPending ??= Promise.resolve({
+      schema: 3,
+      source: 'src/world/level/catalog.ts',
+      stages: LEVEL_CATALOG.map(entry => ({ ...entry, url: entry.available ? levelUrl(entry.id) : undefined })),
     });
     return this.manifestPending;
   }
@@ -305,9 +317,9 @@ class Library {
       pending = (async () => {
         const item = (await this.manifest()).stages.find(stage => stage.id === id);
         if (!item) return null;
-        if (!item.available || !item.url) throw new Error(`Unity 场景 ${id} 尚未生成，不能使用旧网页地图代替`);
+        if (!item.available || !item.url) throw new Error(`关卡 ${id} 还没有数据（public/assets/levels），不能使用旧网页地图代替`);
         const response = await fetch(`${BASE}${item.url}`);
-        if (!response.ok) throw new Error(`Unity 场景 ${id} 读取失败：${response.status}`);
+        if (!response.ok) throw new Error(`关卡 ${id} 读取失败：${response.status}`);
         return await response.json() as UnitySceneDocument;
       })();
       this.scenes.set(id, pending);
@@ -347,9 +359,10 @@ class Library {
 
   /**
    * 换关：释放不属于 document 的网格、贴图与场景文档（GPU 资源交还、解码后的图关掉）。网格 / 贴图按 URL 缓存、各图共用的件留着。
-   * 只能在上一张图的场景已经卸掉、这一张还没搭之前调（assets/StageArt.ts 的 prepareStageArt）——此刻缓存里不在 keep 里的都没人在用；
-   * 新图要用的话照常现读。document = null（第一章重做版，文档由白盒现编）时全部释放。
-   * 2026-11-25 前从不淘汰：一局打下来每张图的网格 / 贴图都留在内存和显存里（单张图贴图解码后 0.2–1.1 GB）。返回释放了几项
+   * preload(document) 开头自己调：搭新图时上一张图的场景已经卸掉（StageDirector.loadWith 先 unload），缓存里不在 keep 里的都没人在用；
+   * 第一章重做版现编的文档也照它自己的渲染件留。document = null 时全部释放。
+   * 2026-11-25 前从不淘汰：一局打下来每张图的网格 / 贴图都留在内存和显存里（单张图贴图解码后 0.2–1.1 GB）。返回释放了几项。
+   * 关卡库迁到网页自己的关卡数据（public/assets/levels）时这一段要跟着搬。
    */
   releaseExcept(document: UnitySceneDocument | null): number {
     const keep = document ? documentUrls(document) : new Set<string>();
@@ -371,10 +384,13 @@ class Library {
   }
 
   async preload(document: UnitySceneDocument, onProgress?: (loaded: number, total: number) => void): Promise<void> {
+    // 上一张图不再用的网格 / 贴图 / 场景文档先放掉（各图共用的留着）
+    const released = this.releaseExcept(document);
+    if (released > 0) console.info(`[assets] ${document.id}：释放上一张图的关卡网格 / 贴图 ${released} 项`);
     const urls = [...new Set([
       ...document.renderers.map(renderer => renderer.url),
       ...(document.vegetation?.prototypes.map(prototype => prototype.url) ?? []),
-      ...document.colliders.flatMap(collider => collider.url ? [collider.url] : []),
+      ...(document.collision ? [document.collision] : []),
       ...(document.groundCover?.flatMap(layer => layer.url ? [layer.url] : []) ?? []),
     ])];
     let loaded = 0;
@@ -388,7 +404,7 @@ class Library {
   }
 }
 
-/** 一份场景文档会用到的网格 / 贴图 URL（渲染件、植被原型、碰撞网格、草皮、地形分层与 splat） */
+/** 一份场景文档会用到的网格 / 贴图 URL（渲染件、植被原型、合并的碰撞网格、草皮、地形分层与 splat） */
 export function documentUrls(document: UnitySceneDocument): Set<string> {
   const urls = new Set<string>();
   for (const r of document.renderers ?? []) {
@@ -397,7 +413,7 @@ export function documentUrls(document: UnitySceneDocument): Set<string> {
     for (const map of r.terrain?.alphamaps ?? []) urls.add(map);
   }
   for (const p of document.vegetation?.prototypes ?? []) urls.add(p.url);
-  for (const c of document.colliders ?? []) if (c.url) urls.add(c.url);
+  if (document.collision) urls.add(document.collision);
   for (const g of document.groundCover ?? []) {
     if (g.url) urls.add(g.url);
     if (g.texture) urls.add(g.texture);

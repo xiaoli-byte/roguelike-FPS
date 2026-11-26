@@ -1,5 +1,21 @@
+import { rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
+
+// Leftover Unity export kept in the repo until the Unity folder is deleted (docs/threejs-migration.md M14): nothing at
+// runtime reads it since 2026-11-26 (levels live in public/assets/levels), so keep vite from shipping its ~400 MB in dist/.
+const UNSHIPPED_PUBLIC = ['assets/unity-levels', 'assets/unity-gameplay'];
+const dropUnshippedPublic = (): Plugin => {
+  let outDir = 'dist';
+  return {
+    name: 'drop-unshipped-public',
+    apply: 'build',
+    configResolved(config) { outDir = config.build.outDir; },
+    closeBundle() {
+      for (const dir of UNSHIPPED_PUBLIC) rmSync(`${outDir}/${dir}`, { recursive: true, force: true });
+    },
+  };
+};
 
 // The dev server watches the repo root; keep it out of the Unity project and the agent worktrees (each has its own
 // unity/). Chokidar holds a handle on every folder it watches, and on Windows that blocks renaming the parent folder:
@@ -20,9 +36,10 @@ const isUnwatched = (path: string) => {
 // Inspection labs (whitebox-lab.html carries invulnerability, teleport and coin cheats) are served
 // by `vite` in development. Production ships only the game; `npm run build:labs` makes an internal build.
 export default defineConfig(({ mode }) => ({
+  plugins: [dropUnshippedPublic()],
   server: { port: 5173, strictPort: false, open: false, watch: { ignored: [isUnwatched] } },
   build: {
     target: 'es2022', chunkSizeWarningLimit: 2000,
-    rollupOptions: { input: mode === 'labs' ? { game: 'index.html', whitebox: 'whitebox-lab.html', plateau: 'plateau-lab.html', originalWeapon: 'original-weapon.html', unityMap: 'unity-map.html', animLab: 'anim-lab.html', desertLab: 'desert-lab.html', desertPieces: 'desert-pieces.html' } : { game: 'index.html' } },
+    rollupOptions: { input: mode === 'labs' ? { game: 'index.html', whitebox: 'whitebox-lab.html', plateau: 'plateau-lab.html', originalWeapon: 'original-weapon.html', animLab: 'anim-lab.html', desertLab: 'desert-lab.html', desertPieces: 'desert-pieces.html' } : { game: 'index.html' } },
   },
 }));

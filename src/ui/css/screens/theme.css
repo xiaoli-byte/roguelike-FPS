@@ -1,0 +1,412 @@
+/*
+ * 界面样式 · 主题（调色板变量、文字基准，挂在层根 .sf-root）。手写，直接改这里（类名都带 sf- 前缀；.sf-root 是界面层根，src/ui/toolkit/UIRoot.ts）。
+ * 像素值按 1920×1080 设计分辨率写，整层由 UILayers 缩放。
+ */
+
+.sf-root {
+    --ink-0: #07060a;
+    --ink-1: #0f0d12;
+    --ink-2: #18151c;
+    --ink-3: #251f29;
+    --paper: #efe4cc;
+    --paper-2: #c8b999;
+    --paper-3: #8a7f6d;
+    --cinnabar: #c9372a;
+    --cinnabar-hi: #ff5a3c;
+    --cinnabar-lo: #6b1b13;
+    --gold: #d4a955;
+    --gold-hi: #f4d893;
+    --gold-lo: #6f5626;
+    --jade: #52b6ec;
+    --jade-hi: #b8eaff;
+    --hp: #d33a2c;
+    --hp-hi: #ff7a5a;
+    --armor: #e0b23c;
+    --good: #86dc8f;
+    --bad: #ff6a4d;
+    --line: rgba(212, 169, 85, 0.42);
+    --line-soft: rgba(212, 169, 85, 0.16);
+    --rarity-0: #cfd3da;
+    --rarity-1: #62d36a;
+    --rarity-2: #4aa3ff;
+    --rarity-3: #b45cff;
+    --rarity-4: #ffa726;
+    --el-fire: #ff8c33;
+    --el-shock: #8cbfff;
+    --el-corrode: #99e64d;
+    color: var(--paper);
+    font-size: 15px;
+    /* 段间距 4px 没有对应的 CSS 属性（界面里的多段文字都是单段、\n 换行，看不出差别） */
+    text-wrap-mode: nowrap;
+}
+
+.sf-title {
+    font-family: var(--sf-font-title);
+    line-height: 1.3;
+}
+
+.sf-num {
+    font-family: var(--sf-font-num);
+    line-height: 1.15;
+}
+
+.sf-body {
+    font-family: var(--sf-font-body);
+    line-height: 1.5;
+    text-wrap-mode: wrap;
+}
+
+.sf-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(7, 6, 10, 0.62);
+}
+
+.sf-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    --sf-tint: var(--paper);
+}
+
+.sf-icon--coin {
+    --sf-tint: #e8b64a;
+}
+
+.sf-icon--essence {
+    --sf-tint: #9fd6ff;
+}
+
+.sf-icon--cloud {
+    width: 76px;
+    height: 30px;
+    --sf-tint: var(--gold);
+}
+
+.sf-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: 128px;
+    margin: 0;
+    padding: 11px 24px;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-align: center;
+    color: var(--paper);
+    background-color: var(--ink-2);
+    border-width: 1px;
+    border-color: var(--line);
+    border-radius: 2px;
+    transition-property: background-color, border-color, color, scale;
+    transition-duration: 0.2s, 0.2s, 0.2s, 0.12s;
+}
+
+.sf-btn:hover {
+    color: var(--gold-hi);
+    border-color: var(--gold);
+    background-color: rgb(52, 26, 26);
+}
+
+.sf-btn:focus {
+    color: var(--gold-hi);
+    border-color: var(--gold-hi);
+    background-color: rgb(60, 30, 28);
+}
+
+.sf-btn:active {
+    scale: 0.985 0.985;
+    translate: 0 1px;
+}
+
+.sf-btn:disabled {
+    opacity: 0.42;
+}
+
+.sf-btn--primary {
+    color: #fff4e2;
+    border-color: rgba(244, 216, 147, 0.7);
+    background-color: var(--cinnabar);
+}
+
+.sf-btn--primary:hover,
+.sf-btn--primary:focus {
+    color: #fffaf0;
+    border-color: var(--gold-hi);
+    background-color: #d8412f;
+}
+
+.sf-btn--ghost {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: var(--line-soft);
+    color: var(--paper-2);
+}
+
+.sf-btn--danger {
+    border-color: rgba(201, 55, 42, 0.55);
+    color: #f1b3a4;
+}
+
+.sf-btn--sm {
+    min-width: 0;
+    padding: 7px 14px;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.sf-frame {
+    padding: 28px 32px;
+    background-color: rgba(18, 15, 21, 0.97);
+    border-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-panel__title {
+    font-family: var(--sf-font-title);
+    line-height: 1.3;
+    font-size: 34px;
+    letter-spacing: 11px;
+    color: var(--paper);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    margin-bottom: 22px;
+}
+
+.sf-panel__sub {
+    margin-top: 6px;
+    color: var(--paper-3);
+    font-size: 13px;
+}
+
+.sf-seal {
+    font-family: var(--sf-font-title);
+    line-height: 1.3;
+    padding: 6px 5px;
+    font-size: 22px;
+    color: #f8e9d2;
+    background-color: var(--cinnabar);
+    border-width: 2px;
+    border-color: rgba(248, 233, 210, 0.85);
+    border-radius: 3px;
+    rotate: -5deg;
+}
+
+.sf-key {
+    font-family: var(--sf-font-num);
+    line-height: 1.15;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 7px;
+    font-size: 13px;
+    text-align: center;
+    justify-content: center;
+    font-weight: 700;
+    font-style: normal;
+    color: var(--gold-hi);
+    background-color: var(--ink-3);
+    border-width: 1px;
+    border-bottom-width: 3px;
+    border-color: var(--gold-lo);
+    border-radius: 4px;
+}
+
+.sf-chip {
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 10px;
+    font-size: 13px;
+    color: var(--paper-2);
+    border-width: 1px;
+    border-color: var(--line-soft);
+    background-color: rgba(7, 6, 10, 0.6);
+}
+
+.sf-rarity-0 {
+    color: var(--rarity-0);
+    border-color: rgba(207, 211, 218, 0.45);
+}
+
+.sf-rarity-1 {
+    color: var(--rarity-1);
+    border-color: rgba(98, 211, 106, 0.45);
+}
+
+.sf-rarity-2 {
+    color: var(--rarity-2);
+    border-color: rgba(74, 163, 255, 0.45);
+}
+
+.sf-rarity-3 {
+    color: var(--rarity-3);
+    border-color: rgba(180, 92, 255, 0.45);
+}
+
+.sf-rarity-4 {
+    color: var(--rarity-4);
+    border-color: rgba(255, 167, 38, 0.45);
+}
+
+.sf-el-fire {
+    color: var(--el-fire);
+}
+
+.sf-el-shock {
+    color: var(--el-shock);
+}
+
+.sf-el-corrode {
+    color: var(--el-corrode);
+}
+
+.sf-good {
+    color: var(--good);
+}
+
+.sf-bad {
+    color: var(--bad);
+}
+
+.sf-toasts {
+    position: absolute;
+    left: 28px;
+    top: 38%;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sf-toast {
+    flex-direction: row;
+    align-items: center;
+    max-width: 460px;
+    margin-bottom: 6px;
+    padding: 8px 16px 8px 12px;
+    border-left-width: 2px;
+    border-left-color: var(--gold-hi);
+    transform-origin: left;
+}
+
+.sf-toast__mark {
+    width: 7px;
+    height: 7px;
+    margin-right: 10px;
+    flex-shrink: 0;
+    rotate: 45deg;
+    background-color: var(--gold-hi);
+}
+
+.sf-toast__text {
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    text-wrap-mode: wrap;
+    flex-shrink: 1;
+    color: var(--paper);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.sf-toast__count {
+    margin-left: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    font-style: normal;
+    color: var(--gold-hi);
+}
+
+.sf-banner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 17%;
+    align-items: center;
+}
+
+.sf-banner__backdrop {
+    position: absolute;
+    left: 50%;
+    top: -26px;
+    width: 1040px;
+    height: 210px;
+    translate: -520px 0;
+}
+
+.sf-banner__row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-banner__title {
+    font-size: 66px;
+    letter-spacing: 20px;
+    padding-left: 20px;
+    text-align: center;
+    justify-content: center;
+    color: var(--gold-hi);
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.75);
+    -webkit-text-stroke-width: 2px;
+    paint-order: stroke fill;
+    -webkit-text-stroke-color: rgba(60, 40, 10, 0.7);
+}
+
+.sf-banner__cloud {
+    width: 76px;
+    height: 30px;
+    margin: 0 18px;
+    opacity: 0.8;
+}
+
+.sf-banner__cloud--r {
+    scale: -1 1;
+}
+
+.sf-banner__rule {
+    width: 560px;
+    height: 1px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+}
+
+.sf-banner__sub {
+    font-size: 17px;
+    letter-spacing: 8px;
+    padding-left: 8px;
+    text-align: center;
+    justify-content: center;
+    color: var(--paper);
+    text-shadow: 0 1px 3px rgb(0, 0, 0);
+}
+
+.sf-curtain {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #07060a;
+}
+
+.sf-flash {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}

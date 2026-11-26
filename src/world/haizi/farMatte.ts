@@ -92,10 +92,13 @@ export function buildFarMatte(baseUrl: string): FarMatte {
   const ready = new Promise<void>((resolve) => {
     if (typeof document === 'undefined') { resolve(); return; }
     new THREE.ImageLoader().load(baseUrl + M.url, (img) => {
-      tex.image = img;
-      tex.needsUpdate = true;
-      mesh.visible = true;
-      resolve();
+      // 先在后台解码（不然第一次画到时在主线程解这张大 webp，转身卡一下）
+      void img.decode().catch(() => undefined).then(() => {
+        tex.image = img;
+        tex.needsUpdate = true;
+        mesh.visible = true;
+        resolve();
+      });
     }, undefined, () => resolve());   // 加载失败：只是没有远山，场景照常
   });
   return { mesh, texture: tex, ready };

@@ -14,7 +14,7 @@ state so the rest of the route is unchanged:
   highpoly  the generated GLB (tool Blender, mode procedural, recipe@seed) — there is no separate sculpt
   build     the same GLB with its .blend, textures and metrics (LODs are modelled, not decimated)
 
-Then: assetctl validate / review / approve / publish → unity_export.py → bridge.sh sync.
+Then: assetctl validate / review / approve / publish (the published GLB is what the game loads).
 A three-quarter beauty render goes to docs/art/review/<asset>-v<build>.jpg for the report.
 """
 from __future__ import annotations

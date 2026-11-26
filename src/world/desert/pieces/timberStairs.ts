@@ -103,7 +103,8 @@ export function buildTimberStair(ctx: PieceContext, spec: StairSpec): BuiltPiece
     const flush = (t0: number, t1: number): void => {
       const pa: V3 = [A[0] + (B[0] - A[0]) * t0 - n[0] * 0.07, hy(t0), A[1] + (B[1] - A[1]) * t0 - n[1] * 0.07];
       const pb: V3 = [A[0] + (B[0] - A[0]) * t1 - n[0] * 0.07, hy(t1), A[1] + (B[1] - A[1]) * t1 - n[1] * 0.07];
-      railing(kit, pa, pb, { h: 1.05, collide: `${name} 勾栏` });
+      // 栈道 / 栈梯是素木栏杆（概念图里是风吹日晒的灰褐木，不是朱漆）
+      railing(kit, pa, pb, { h: 1.05, col: PAL.weathered, panel: PAL.timberDark, cap: PAL.weathered, collide: `${name} 勾栏` });
     };
     for (let c = 0; c < k; c++) {
       const t = (c + 0.5) / k;

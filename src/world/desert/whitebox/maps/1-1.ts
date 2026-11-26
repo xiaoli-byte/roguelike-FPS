@@ -33,20 +33,24 @@ export const WB_1_1: WhiteboxSpec = {
     { op: 'channel', pts: [[252, 94], [230, 116], [207, 140], [188, 166], [172, 194], [152, 222], [130, 246], [106, 268], [86, 290], [66, 318]], half: 7, h: -1.6, bank: 3, mat: 'mud' },
     // 古道过河的浅滩（两岸放缓）
     { op: 'ramp', pts: [[168, 164], [182, 164], [194, 160], [208, 156]], hs: [0, -1.4, -1.4, 0], half: 5, edge: 4, mat: 'road' },
-    // ② 雅丹石阵：矮 / 中 / 高三座鲸背丘 + 矮丘的上顶沙坡
-    { op: 'mound', at: [170, 98], r: [17, 7], h: 3.5, rot: WIND_ROT, shape: 'yardang', mat: 'rock', asset: 'SM_Tripo_DesertYardangSmall' },
-    { op: 'mound', at: [193, 68], r: [21, 8], h: 6, rot: WIND_ROT, shape: 'yardang', mat: 'rock', asset: 'SM_Tripo_DesertYardangMedium' },
-    { op: 'mound', at: [214, 50], r: [25, 9.5], h: 9, rot: WIND_ROT, shape: 'yardang', mat: 'rock', asset: 'SM_Tripo_DesertYardangMedium' },
+    // ② 雅丹石阵：矮 / 中 / 高三座鲸背丘 + 矮丘的上顶沙坡。
+    // 陡壁平顶（flat 0.82，同 1-2 的雅丹岛）：构成复核（2026-11-26）时圆鼓包把岩件整个吞掉，画面上只剩光滑的沙包；
+    // 陡壁上的岩层纹自己就读成层层的雅丹崖，岩件只在顶上和两头露出来
+    { op: 'mound', at: [170, 98], r: [17, 7], h: 3.5, rot: WIND_ROT, shape: 'yardang', flat: 0.82, mat: 'rock', asset: 'SM_Tripo_DesertYardangSmall' },
+    { op: 'mound', at: [193, 68], r: [21, 8], h: 6, rot: WIND_ROT, shape: 'yardang', flat: 0.82, mat: 'rock', asset: 'SM_Tripo_DesertYardangMedium' },
+    { op: 'mound', at: [214, 50], r: [25, 9.5], h: 9, rot: WIND_ROT, shape: 'yardang', flat: 0.82, mat: 'rock', asset: 'SM_Tripo_DesertYardangMedium' },
     { op: 'ramp', pts: [[157, 110], [166, 102]], hs: [0, 3.3], half: 3, edge: 3, mode: 'max', mat: 'sand' },
-    // ③ 烽燧台地：6 m 夯土台 + 东西两条夯土坡道
-    { op: 'poly', pts: [[267, 110], [303, 110], [303, 146], [267, 146]], h: 6, edge: 1.2, mode: 'max', mat: 'earth' },
-    { op: 'ramp', pts: [[240, 136], [268, 136]], hs: [0, 6], half: 4.5, edge: 2, mode: 'max', mat: 'earth' },
-    { op: 'ramp', pts: [[302, 138], [331, 152]], hs: [6, 0], half: 4.5, edge: 2, mode: 'max', mat: 'earth' },
+    // ③ 烽燧台地：9 m 夯土台 + 东西两条夯土坡道（2026-11-27 照概念图从 6 m 抬到 9 m，坡 18–20°）+ 台后一座岩台地：出生点望过去烽燧立在台地上
+    { op: 'poly', pts: [[267, 110], [303, 110], [303, 146], [267, 146]], h: 9, edge: 1.2, mode: 'max', mat: 'earth' },
+    { op: 'ramp', pts: [[240, 136], [268, 136]], hs: [0, 9], half: 4.5, edge: 2, mode: 'max', mat: 'earth' },
+    { op: 'ramp', pts: [[302, 138], [331, 152]], hs: [9, 0], half: 4.5, edge: 2, mode: 'max', mat: 'earth' },
+    // 台后的岩台地：在出生点 → 烽燧的视线延长线上、图的东沿（离烽燧 100 m），出生点望过去烽燧立在它前面；从 ③ 看它退在远处，不压台面
+    { op: 'mound', at: [377, 101], r: [30, 16], h: 21, rot: 10, shape: 'mesa', flat: 0.76, mat: 'rock' },
     // ④ 驼队残骸营地：沙洼（−2.5 m），南、东有沙丘围着
     { op: 'disc', at: [330, 215], r: 30, h: -2.5, edge: 16, mode: 'min', mat: 'sand' },
     { op: 'ridge', pts: [[286, 250], [316, 262], [350, 258], [374, 242]], h: [3, 6, 5, 3], stoss: 16, side: 1, mat: 'dune' },
     // 南戈壁的孤岩（商队遗货藏在背风面）
-    { op: 'mound', at: [204, 246], r: [17, 8], h: 6, rot: WIND_ROT, shape: 'yardang', mat: 'rock', asset: 'SM_Tripo_DesertYardangSmall' },
+    { op: 'mound', at: [204, 246], r: [17, 8], h: 6, rot: WIND_ROT, shape: 'yardang', flat: 0.82, mat: 'rock', asset: 'SM_Tripo_DesertYardangSmall' },
     // 古道
     { op: 'paint', mat: 'road', half: 3.5, pts: [[8, 165], [84, 165], [118, 165], [168, 164]] },
     { op: 'paint', mat: 'road', half: 3.5, pts: [[208, 156], [240, 138]] },
@@ -58,9 +62,23 @@ export const WB_1_1: WhiteboxSpec = {
     { kind: 'box', at: [22, 150], size: [14.6, 1], h: 3.2, mat: 'earth', asset: 'SM_Tripo_DesertPosthouseWall' },
     { kind: 'box', at: [20, 180], size: [9.7, 1], h: 2.6, mat: 'earth', asset: 'SM_Tripo_DesertPosthouseWall' },
     { kind: 'box', at: [12, 141], size: [4.8, 1.6], h: 4.3, rot: 20, mat: 'earth', asset: 'SM_Env_DesertRuin' },
-    { name: '驿站残门', kind: 'box', at: [42, 160.2], size: [1.4, 1.2], h: 6.8, mat: 'timber', asset: 'SM_Env_DesertGate' },
-    { name: '驿站残门', kind: 'box', at: [42, 169.8], size: [1.4, 1.2], h: 6.8, mat: 'timber', asset: 'SM_Env_DesertGate' },
-    { name: '驿站残门', kind: 'box', at: [42, 165], size: [1.4, 10.9], top: 6.8, clear: 5.4, canopy: true, mat: 'timber', landmark: '驿站残门', asset: 'SM_Env_DesertGate' },
+    // 驿站木门框（Tripo 件 SM_Tripo_DesertTimberGate，2026-11-27 照概念图「出生第一眼」换掉旧的黑石门框）：9.4 × 6.8 × 2.8，正面朝西对着出生点；
+    // 两根褪色朱红方木柱立在石础上（础 1.5 m 宽），门洞 6.4 × 5 m，双层门楣，北端伸出旗杆（挂幡是特效）
+    { name: '驿站残门', kind: 'box', at: [42, 161.05], size: [1.5, 1.5], h: 6, rot: 180, mat: 'timber', asset: 'SM_Tripo_DesertTimberGate' },
+    { name: '驿站残门', kind: 'box', at: [42, 168.95], size: [1.5, 1.5], h: 6, rot: 180, mat: 'timber', asset: 'SM_Tripo_DesertTimberGate' },
+    { name: '驿站残门', kind: 'box', at: [42, 165], size: [2.8, 9.4], top: 6.8, clear: 5, rot: 180, canopy: true, mat: 'timber', landmark: '驿站残门', asset: 'SM_Tripo_DesertTimberGate' },
+    // 门两侧的营地（概念图「出生第一眼」）：北边一个带篷的货摊、残车、货堆、火盆；南边两辆散架的车、陶罐、倒了的拒马
+    { name: '门北货摊', kind: 'box', at: [58, 152.5], size: [3.7, 1], h: 1, mat: 'timber', asset: 'SM_Tripo_DesertMarketStall' },
+    { name: '门北货摊', kind: 'box', at: [58, 152.5], size: [3.7, 2.2], h: 3.6, clear: 2.4, canopy: true, mat: 'roof', asset: 'SM_Tripo_DesertMarketStall' },
+    { kind: 'box', at: [50.5, 150], size: [3.8, 4], h: 1.8, rot: 25, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck' },
+    { kind: 'box', at: [55, 148.6], size: [1.7, 1.3], h: 1.1, rot: 10, mat: 'timber', asset: 'SM_Tripo_DesertGoodsPile', sink: 0.5 },
+    { kind: 'box', at: [53.2, 154.6], size: [1.7, 1.3], h: 1.1, rot: -25, mat: 'timber', asset: 'SM_Tripo_DesertGoodsPile', sink: 0.5 },
+    { kind: 'cyl', at: [62, 155.5], size: [0.65, 0.65], h: 2.4, mat: 'stone', asset: 'SM_Tripo_DesertBrazier' },
+    { kind: 'box', at: [60, 178.5], size: [3.8, 4], h: 1.8, rot: -20, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck' },
+    { kind: 'box', at: [66.5, 181.5], size: [3.8, 4], h: 1.8, rot: 45, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck' },
+    { kind: 'cyl', at: [56.5, 176.2], size: [0.45, 0.45], h: 0.84, mat: 'stone', asset: 'SM_Prop_DesertUrns' },
+    { kind: 'cyl', at: [57.6, 177.3], size: [0.45, 0.45], h: 0.84, mat: 'stone', asset: 'SM_Prop_DesertUrns' },
+    { kind: 'box', at: [53, 177.5], size: [4.8, 1.2], h: 1.2, rot: 12, mat: 'timber', asset: 'SM_Tripo_DesertBarricade' },
     // 汉长城（直段 5.33 m 一段连排）：北段（放大到 4.5 m）→ 角楼墩（转角件 ×1.6）→ 北豁口 → 中段 → 主缺口 12 m（两侧断口件）→ 南段，南端埋进干河床
     { kind: 'box', at: [86, 70], size: [1.8, 44], h: 4.5, mat: 'earth', asset: 'SM_Tripo_DesertHanWall' },
     { kind: 'box', at: [86, 96], size: [7.5, 7.5], h: 5.6, mat: 'earth', landmark: '长城角楼', asset: 'SM_Tripo_DesertHanWallCorner' },
@@ -72,26 +90,27 @@ export const WB_1_1: WhiteboxSpec = {
     // 缺口两侧的半埋矮墙（半身掩体：长城直段埋下去 2.4 m）
     { kind: 'box', at: [91, 153], size: [5.3, 1.4], h: 1.1, mat: 'earth', asset: 'SM_Tripo_DesertHanWall', sink: 2.4 },
     { kind: 'box', at: [93, 178], size: [1.4, 5.3], h: 1.1, mat: 'earth', asset: 'SM_Tripo_DesertHanWall', sink: 2.4 },
-    // ① 黑戈壁砾石滩：砂岩巨砾（3.4 × 2.9 × 2.5 m）埋下去 1.8 m 就是低宽的半身掩体，成簇；两块露全高当全身掩体
-    { kind: 'box', at: [106, 150], size: [3.4, 2.5], h: 1.05, rot: 25, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.8 },
-    { kind: 'box', at: [110.5, 146], size: [3.4, 2.5], h: 1.1, rot: -10, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.8 },
-    { kind: 'box', at: [126, 182], size: [3.4, 2.5], h: 1.05, rot: -20, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.8 },
-    { kind: 'box', at: [131, 178], size: [3.4, 2.5], h: 1.1, rot: 15, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.8 },
-    { kind: 'box', at: [132, 152], size: [3.4, 2.5], h: 1.05, rot: 40, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.8 },
+    // ① 黑戈壁砾石滩：风蚀卧石 A / B（Tripo，2026-11-27 换掉埋掉 1.8 m 的砂岩巨砾）是低宽的半身掩体，成簇；两块砂岩巨砾露全高当全身掩体
+    { kind: 'box', at: [106, 150], size: [3.65, 1.9], h: 1.0, rot: 25, mat: 'rock', asset: 'SM_Tripo_DesertLowRockA' },
+    { kind: 'box', at: [110.5, 146], size: [1.8, 1.6], h: 1.1, rot: -10, mat: 'rock', asset: 'SM_Tripo_DesertLowRockB', sink: 0.1 },
+    { kind: 'box', at: [126, 182], size: [3.65, 1.9], h: 1.0, rot: -20, mat: 'rock', asset: 'SM_Tripo_DesertLowRockA' },
+    { kind: 'box', at: [131, 178], size: [1.8, 1.6], h: 1.1, rot: 15, mat: 'rock', asset: 'SM_Tripo_DesertLowRockB', sink: 0.1 },
+    { kind: 'box', at: [132, 152], size: [3.65, 1.9], h: 1.0, rot: 40, mat: 'rock', asset: 'SM_Tripo_DesertLowRockA' },
     { kind: 'box', at: [112, 184], size: [3.4, 2.5], h: 2.6, rot: 10, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 0.3 },
     { kind: 'box', at: [140, 166], size: [3.4, 2.5], h: 2.6, rot: -30, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 0.3 },
     // ② 雅丹石阵：倒伏石柱（残柱件埋 0.5 m）、压低的砂岩
     { kind: 'box', at: [180, 90], size: [4.2, 3.4], h: 1.05, rot: 30, mat: 'stone', asset: 'SM_Tripo_DesertColumnRuin', sink: 0.5 },
-    { kind: 'box', at: [194, 86], size: [3.4, 2.5], h: 1.05, rot: -15, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.8 },
-    { kind: 'box', at: [176, 76], size: [3.4, 2.5], h: 1.1, rot: 50, mat: 'rock', asset: 'SM_Env_DesertSandstone', sink: 1.8 },
-    // ③ 烽燧（14 m，立在 6 m 台上）+ 台沿垛墙（1.1 m，1.89 m 一段连排，留出两条坡道口）+ 积薪（放大 1.7 倍）
-    { kind: 'box', at: [276, 119], size: [7.5, 5.5], top: 20, mat: 'earth', landmark: '烽燧', asset: 'SM_Tripo_DesertBeaconTower' },
-    { kind: 'box', at: [285, 110.6], size: [36, 0.8], top: 7.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
-    { kind: 'box', at: [302.4, 121], size: [0.8, 22], top: 7.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
-    { kind: 'box', at: [280, 145.4], size: [26, 0.8], top: 7.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
-    { kind: 'box', at: [267.6, 121], size: [0.8, 20], top: 7.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
-    { kind: 'box', at: [292, 128], size: [2, 2], top: 8.2, mat: 'timber', asset: 'SM_Tripo_DesertBrushwoodPile' },
-    { kind: 'box', at: [284, 138], size: [2, 2], top: 8.2, mat: 'timber', asset: 'SM_Tripo_DesertBrushwoodPile' },
+    { kind: 'box', at: [194, 86], size: [1.8, 1.6], h: 1.1, rot: -15, mat: 'rock', asset: 'SM_Tripo_DesertLowRockB', sink: 0.1 },
+    { kind: 'box', at: [176, 76], size: [3.65, 1.9], h: 1.0, rot: 50, mat: 'rock', asset: 'SM_Tripo_DesertLowRockA' },
+    // ③ 烽燧（19 m = 资产放大 1.36 倍，立在 9 m 台上）+ 台沿垛墙（1.1 m，1.89 m 一段连排，留出两条坡道口）+ 积薪（放大 1.7 倍）
+    // 构成复核（2026-11-26）：原大 14 m 时从出生门框里望过去只有一根火柴，全图的方向感全靠它（狼烟是特效那一步）
+    { kind: 'box', at: [277.5, 119.5], size: [10.2, 7.4], top: 28, mat: 'earth', landmark: '烽燧', asset: 'SM_Tripo_DesertBeaconTower' },
+    { kind: 'box', at: [285, 110.6], size: [36, 0.8], top: 10.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
+    { kind: 'box', at: [302.4, 121], size: [0.8, 22], top: 10.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
+    { kind: 'box', at: [280, 145.4], size: [26, 0.8], top: 10.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
+    { kind: 'box', at: [267.6, 121], size: [0.8, 20], top: 10.1, mat: 'earth', asset: 'SM_Tripo_DesertBeaconParapet' },
+    { kind: 'box', at: [292, 128], size: [2, 2], top: 11.2, mat: 'timber', asset: 'SM_Tripo_DesertBrushwoodPile' },
+    { kind: 'box', at: [284, 138], size: [2, 2], top: 11.2, mat: 'timber', asset: 'SM_Tripo_DesertBrushwoodPile' },
     // ④ 驼队残骸营地：残车 ×2、货堆（埋 0.5 m 成半身）、拒马、货摊（柜台 + 篷）、驼骨
     { kind: 'box', at: [318, 208], size: [3.8, 4], h: 1.8, rot: 20, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck' },
     { kind: 'box', at: [342, 223], size: [3.8, 4], h: 1.8, rot: -35, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck' },
@@ -101,7 +120,21 @@ export const WB_1_1: WhiteboxSpec = {
     { kind: 'box', at: [322, 196], size: [4.8, 1.2], h: 1.2, rot: -15, mat: 'timber', asset: 'SM_Tripo_DesertBarricade' },
     { name: '货摊', kind: 'box', at: [347, 211], size: [3.7, 1], h: 1, rot: 90, mat: 'timber', asset: 'SM_Tripo_DesertMarketStall' },
     { name: '货摊', kind: 'box', at: [347, 211], size: [2.2, 3.7], h: 3.6, clear: 2.4, canopy: true, mat: 'roof', asset: 'SM_Tripo_DesertMarketStall' },
-    { kind: 'box', at: [330, 234], size: [3, 1.5], h: 0.8, rot: 30, mat: 'stone', needs: '半埋驼骨：侧卧的骆驼骨架半埋在沙里，约 3 × 1 × 1.5 m（近景叙事件）' },
+    { kind: 'box', at: [330, 234], size: [2.7, 1.8], h: 1.0, rot: 30, mat: 'stone', asset: 'SM_Tripo_DesertCamelSkeleton' },
+    // ④ 营地南沿（构成复核 2026-11-26）：从北边进场看过去营地后面只有一道空沙丘线——补一处塌了一角的驿站院墙当背景块面（全身掩体），
+    // 西南角残屋、第二个货摊、一辆整车、红柳收边；营地中心 12 m 内不加东西（交战区留干净）
+    { kind: 'box', at: [322, 243], size: [14.6, 1], h: 3.2, rot: -8, mat: 'earth', asset: 'SM_Tripo_DesertPosthouseWall' },
+    { kind: 'box', at: [305.5, 233], size: [9.7, 1], h: 2.6, rot: 75, mat: 'earth', asset: 'SM_Tripo_DesertPosthouseWall' },
+    { kind: 'box', at: [310, 240.5], size: [4.8, 1.6], h: 4.3, rot: -20, mat: 'earth', asset: 'SM_Env_DesertRuin' },
+    { name: '货摊2', kind: 'box', at: [309, 219], size: [3.7, 1], h: 1, rot: 70, mat: 'timber', asset: 'SM_Tripo_DesertMarketStall' },
+    { name: '货摊2', kind: 'box', at: [309, 219], size: [2.2, 3.7], h: 3.6, clear: 2.4, canopy: true, rot: -20, mat: 'roof', asset: 'SM_Tripo_DesertMarketStall' },
+    { kind: 'box', at: [354, 233], size: [4.93, 5.24], h: 2.37, rot: 55, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck' },
+    { kind: 'cyl', at: [298, 213], size: [1.3, 1.3], h: 3.4, mat: 'plant', asset: 'SM_Env_DesertTamarisk' },
+    { kind: 'cyl', at: [362, 244], size: [1.3, 1.3], h: 3.4, mat: 'plant', asset: 'SM_Env_DesertTamarisk' },
+    { kind: 'cyl', at: [337, 247], size: [1.3, 1.3], h: 3, mat: 'plant', asset: 'SM_Env_DesertTamarisk' },
+    // 驼队帐篷（Tripo 件，2026-11-27）：南沿一顶门朝北对着营地、东边一顶门朝西；全身掩体
+    { name: '帐篷1', kind: 'box', at: [334, 238.5], size: [5.2, 3.8], h: 2.8, rot: 175, mat: 'timber', asset: 'SM_Tripo_DesertCaravanTent' },
+    { name: '帐篷2', kind: 'box', at: [356, 214], size: [5.2, 3.8], h: 2.8, rot: -100, mat: 'timber', asset: 'SM_Tripo_DesertCaravanTent' },
     // 出口祭坛（传送门件，门面朝西对着来路）
     { kind: 'box', at: [405, 196], size: [3.3, 9.7], h: 11, mat: 'stone', landmark: '出口祭坛', asset: 'SM_Tripo_DesertPortalShrine' },
     // 驻守点的摆件：倒毙驼队（残车）、戍卒残营（拒马 + 火盆）
@@ -112,13 +145,13 @@ export const WB_1_1: WhiteboxSpec = {
     { kind: 'box', at: [96, 91], size: [2.6, 1.9], h: 1.8, mat: 'timber', asset: 'SM_Tripo_DesertTreasureHoard' },
     { kind: 'box', at: [212, 257], size: [2.6, 1.9], h: 1.8, rot: 20, mat: 'timber', asset: 'SM_Tripo_DesertTreasureHoard' },
     { kind: 'box', at: [208, 259], size: [1.7, 1.3], h: 1.1, rot: -20, mat: 'timber', asset: 'SM_Tripo_DesertGoodsPile', sink: 0.5 },
-    // 干河床两岸的枯胡杨（给尺度；现有资产里没有，白盒里是 5–6 m 的细柱）
-    { kind: 'cyl', at: [222, 108], size: [0.45, 0.45], h: 5.5, mat: 'plant', needs: '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m' },
-    { kind: 'cyl', at: [214, 146], size: [0.45, 0.45], h: 6, mat: 'plant', needs: '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m' },
-    { kind: 'cyl', at: [176, 172], size: [0.45, 0.45], h: 5, mat: 'plant', needs: '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m' },
-    { kind: 'cyl', at: [182, 206], size: [0.45, 0.45], h: 6, mat: 'plant', needs: '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m' },
-    { kind: 'cyl', at: [140, 222], size: [0.45, 0.45], h: 5.5, mat: 'plant', needs: '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m' },
-    { kind: 'cyl', at: [138, 256], size: [0.45, 0.45], h: 5, mat: 'plant', needs: '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m' },
+    // 干河床两岸的枯胡杨（Tripo 件，2026-11-27；圆柱只挡树干，件按高度等比缩放、各转一个方向）
+    { kind: 'cyl', at: [222, 108], size: [0.5, 0.5], h: 5.5, rot: 30, mat: 'plant', asset: 'SM_Tripo_DesertDeadPoplar' },
+    { kind: 'cyl', at: [214, 146], size: [0.5, 0.5], h: 6, rot: -60, mat: 'plant', asset: 'SM_Tripo_DesertDeadPoplar' },
+    { kind: 'cyl', at: [176, 172], size: [0.5, 0.5], h: 5, rot: 110, mat: 'plant', asset: 'SM_Tripo_DesertDeadPoplar' },
+    { kind: 'cyl', at: [182, 206], size: [0.5, 0.5], h: 6, rot: -150, mat: 'plant', asset: 'SM_Tripo_DesertDeadPoplar' },
+    { kind: 'cyl', at: [140, 222], size: [0.5, 0.5], h: 5.5, rot: 70, mat: 'plant', asset: 'SM_Tripo_DesertDeadPoplar' },
+    { kind: 'cyl', at: [138, 256], size: [0.5, 0.5], h: 5, rot: -20, mat: 'plant', asset: 'SM_Tripo_DesertDeadPoplar' },
   ],
   play: [[6, 148], [46, 132], [66, 60], [96, 34], [150, 40], [205, 28], [262, 36], [318, 28], [372, 42], [394, 70], [410, 110], [406, 164],
     [412, 196], [408, 236], [400, 270], [384, 290], [350, 290], [250, 290], [150, 290], [96, 290], [72, 300], [60, 262], [52, 206], [6, 184]],

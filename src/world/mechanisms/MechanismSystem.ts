@@ -20,7 +20,7 @@ import type { Activatable, MechanismHost, SitePhase } from './Host';
 import { findLavaTemplate, LavaField, LavaVolumeRuntime } from './Lava';
 import { LavaGeyser, LavaSluice } from './LavaFeatures';
 import { FireGodThrone, FoundryChannels, FoundryLordGate, FoundryWindGate, ForgeWellDirector, LoreNote, ZheduoLevel } from './Levels';
-import { loadBoundaryField, loadMechanisms, type MechanismBase, type SceneMechanisms } from './MechanismData';
+import { loadBoundaryField, type MechanismBase, type SceneMechanisms } from './MechanismData';
 import { SceneParts, ScreenFlash } from './Parts';
 import { SafeGround } from './SafeGround';
 import { stageGates } from './StageGates';
@@ -182,12 +182,11 @@ export class MechanismSystem implements MechanismHost {
     if (ctx.game?.debug && typeof window !== 'undefined') (window as unknown as { __mechanisms?: unknown }).__mechanisms = this;
   }
 
-  /** 按 mechanisms.json 建（没有数据 / 读不到时返回 null，关卡照常） */
+  /** 按场景文档的 mechanisms 段建（没有数据时返回 null，关卡照常） */
   static async create(ctx: GameContext, document: UnitySceneDocument, viewGroup: THREE.Object3D): Promise<MechanismSystem | null> {
-    const doc = await loadMechanisms();
-    // 第一章重做版整份给机关数据（不读 Unity 导出的 mechanisms.json）；美术层：天气的基础雾色 / 风向跟新光照、新风向走
+    // 第一章重做版整份给机关数据（文档由白盒现编）；美术层：天气的基础雾色 / 风向跟新光照、新风向走
     const art = desertArt(document.id);
-    const raw = art?.mechanisms?.() ?? doc?.scenes[document.id];
+    const raw = art?.mechanisms?.() ?? document.mechanisms ?? null;
     if (!raw) return null;
     const data = patchDesertMechanisms(raw, art);
     const system = new MechanismSystem(ctx, document, data, viewGroup);

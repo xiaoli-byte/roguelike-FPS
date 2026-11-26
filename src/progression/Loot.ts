@@ -53,6 +53,8 @@ export class LootSystem implements ILoot {
   /** 商铺强化台旁边的狸猫行商（摆设，M12 的 Idle / Talk 片段） */
   private readonly merchants: MerchantNpcs;
   private offers: ScrollOffer[] = [];
+  /** 灵兽封印奖励（'pet' / 'pet:<id>' / 'pet:rarity=N'）：灵宠系统（src/pets/PetSystem）init 时接上；没接时退成灵石 */
+  petReward: ((reward: RewardType, pos: THREE.Vector3) => void) | null = null;
   /** 下一次可以打开秘卷选择的游戏时间 */
   private offerReadyAt = 0;
 
@@ -189,10 +191,26 @@ export class LootSystem implements ILoot {
         }
         break;
       }
+      case 'pet': {
+        // Unity PetReward：灵兽封印落在宝箱前方，朝玩家抛一点
+        if (this.petReward) this.petReward(reward, pos);
+        else this.pickups.dropCoins(pos, Math.round(ctx.rng.int(60, 120) * chapterMult * ctx.player.stats.mult('coinGainPct')), 1.7);
+        break;
+      }
       case 'none':
       default:
         break;
     }
+  }
+
+  /** 场上掉落物 delay 秒后吸向玩家（Unity Pickup.Vacuum：当康「丰穰」拱出的灵石） */
+  vacuum(delay = 0): void {
+    this.pickups.vacuumCoins(delay);
+  }
+
+  /** 把 center 周围 range 内的掉落物吸向玩家（Unity Pickup.Attract：白泽觉醒）：灵石总是吸，弹药 / 生命只在用得上时吸 */
+  attract(center: THREE.Vector3, range: number): void {
+    this.pickups.attract(center, range);
   }
 
   offerScrolls(count = 3, minRarity?: Rarity): void {

@@ -116,6 +116,11 @@ export interface PatchOptions {
   rim?: number;
   /** 草丛摆动（InstancedMesh） */
   sway?: number;
+  /**
+   * 远了缩小（InstancedMesh）：实例离镜头 [近, 远] 米之间缩到没有。小而亮的东西（野花）远了比一个像素还小，
+   * 镜头一动就一闪一闪（lookdev.ts 的闪点检测查出来的），不如干脆不画
+   */
+  shrink?: [number, number];
   /** 经幡翻动：需要 aFlap / aPhase / aWind 属性 */
   flutter?: boolean;
   /** 地表四材质细节贴图（草 / 岩 / 雪 / 土）：需要 aMat 属性（材质权重） */
@@ -130,7 +135,7 @@ export interface PatchOptions {
 }
 
 export function patchMaterial<T extends THREE.Material>(mat: T, opts: PatchOptions = {}): T {
-  const key = `pf:${opts.detail ? 1 : 0}:${opts.rim ?? 0}:${opts.sway ?? 0}:${opts.flutter ? 1 : 0}:${opts.splat ? 1 : 0}:${opts.sky ? 1 : 0}:${opts.contact ? 1 : 0}`;
+  const key = `pf:${opts.detail ? 1 : 0}:${opts.rim ?? 0}:${opts.sway ?? 0}:${opts.shrink ? opts.shrink.join('-') : 0}:${opts.flutter ? 1 : 0}:${opts.splat ? 1 : 0}:${opts.sky ? 1 : 0}:${opts.contact ? 1 : 0}`;
   mat.customProgramCacheKey = () => key;
   mat.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, WORLD_UNIFORMS);
@@ -173,6 +178,13 @@ ${opts.sky ? 'attribute float aSky; varying float vPfSky;' : ''}`);
   transformed.x += ldir.x * bend * k;
   transformed.z += ldir.y * bend * k;
 }`;
+    if (opts.shrink) begin += `
+#ifdef USE_INSTANCING
+{
+  float fd = distance(cameraPosition, (modelMatrix * vec4(instanceMatrix[3].xyz, 1.0)).xyz);
+  transformed *= 1.0 - smoothstep(${opts.shrink[0].toFixed(1)}, ${opts.shrink[1].toFixed(1)}, fd);
+}
+#endif`;
     vs = vs.replace('#include <begin_vertex>', begin);
     vs = vs.replace('#include <project_vertex>', `#include <project_vertex>
 {

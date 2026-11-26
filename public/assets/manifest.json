@@ -1679,26 +1679,31 @@
       },
       "bounds": {
         "min": [
-          -0.04457855969667435,
-          -0.10889171063899994,
-          -0.5401371717453003
+          -0.08061584085226059,
+          -0.10561860352754593,
+          -0.5432375073432922
         ],
         "max": [
-          0.05461890995502472,
-          0.10016492754220963,
-          0.31116846203804016
+          0.05430172011256218,
+          0.10075061023235321,
+          0.3171246349811554
         ]
       },
       "version": {
         "blockout": 1,
-        "concept": 1,
-        "highpoly": 1,
-        "build": 1
+        "concept": 3,
+        "highpoly": 2,
+        "build": 3
       },
-      "sha256": "53186bbfb35f2c323746b72c944e7b96d5fd4410c81ffaade648031452c01463",
-      "bytes": 431988,
-      "published": "2026-10-03 21:58:33",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
+      "sha256": "a0a315f7753c658dffd6764836b4403b4d9d0515f8d47c008e20b1e2db9f9e20",
+      "bytes": 362364,
+      "published": "2026-11-27 00:36:36",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
     },
     "SK_Weapon_Launcher": {
       "url": "assets/weapons/SK_Weapon_Launcher.glb",
@@ -12875,6 +12880,7 @@
         "source": "weapon",
         "id": "rifle"
       },
+      "priority": 1,
       "keepGlow": "none",
       "lodDistance": [
         0
@@ -12942,6 +12948,7 @@
         "source": "weapon",
         "id": "smg"
       },
+      "priority": 1,
       "keepGlow": "all",
       "lodDistance": [
         0
@@ -13009,6 +13016,7 @@
         "source": "weapon",
         "id": "revolver"
       },
+      "priority": 1,
       "keepGlow": "all",
       "lodDistance": [
         0
@@ -13076,6 +13084,7 @@
         "source": "weapon",
         "id": "railgun"
       },
+      "priority": 1,
       "keepGlow": "all",
       "lodDistance": [
         0
@@ -13143,6 +13152,7 @@
         "source": "weapon",
         "id": "sniper"
       },
+      "priority": 1,
       "keepGlow": "all",
       "lodDistance": [
         0
@@ -13210,6 +13220,7 @@
         "source": "weapon",
         "id": "shotgun"
       },
+      "priority": 1,
       "keepGlow": "all",
       "lodDistance": [
         0
@@ -15560,7 +15571,327 @@
         "checkpoint": "P2.0"
       },
       "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertCamelSkeleton": {
+      "url": "assets/props/SM_Tripo_DesertCamelSkeleton.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.camelSkeleton"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -1.3496040105819702,
+          0,
+          -0.8960000276565552
+        ],
+        "max": [
+          1.3496040105819702,
+          0.9850065112113953,
+          0.8960000276565552
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "d4674174a207341aac50ebfd50f7eb6f6891171ef75ea21268555937b9d3286c",
+      "bytes": 271904,
+      "published": "2026-11-27 00:43:38",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertDeadPoplar": {
+      "url": "assets/props/SM_Tripo_DesertDeadPoplar.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.deadPoplar"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -2.056790351867676,
+          0,
+          -2.062164068222046
+        ],
+        "max": [
+          2.056790351867676,
+          5.5,
+          2.062164068222046
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "d0f8ae2c7dcf76e91f06ee4f0844b0c957f2edd8fc2e8c019b5336eb40b98f37",
+      "bytes": 331828,
+      "published": "2026-11-27 00:43:39",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertLowRockA": {
+      "url": "assets/props/SM_Tripo_DesertLowRockA.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.lowRockA"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -1.824420690536499,
+          0,
+          -0.9438502788543701
+        ],
+        "max": [
+          1.824420690536499,
+          1,
+          0.9438502788543701
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "dc95fb27a33f08339b7fde74c0c656c7752559c0531d490ae9ff795e5a41d64f",
+      "bytes": 134064,
+      "published": "2026-11-27 00:50:50",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertLowRockB": {
+      "url": "assets/props/SM_Tripo_DesertLowRockB.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.lowRockB"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -0.8880693912506104,
+          0,
+          -0.796963095664978
+        ],
+        "max": [
+          0.8880693912506104,
+          1.2000000476837158,
+          0.796963095664978
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "a3a6de67cd04b554774871b0eeff005ab97e3d3ba97b1f4a82aa6dee31d8c059",
+      "bytes": 110656,
+      "published": "2026-11-27 00:43:37",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertPosthouseGate": {
+      "url": "assets/props/SM_Tripo_DesertPosthouseGate.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.posthouseGate"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -4.478906154632568,
+          0,
+          -1.7920000553131104
+        ],
+        "max": [
+          4.478906154632568,
+          4.870563983917236,
+          1.7920000553131104
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "70ead600469cc17a65eec9cbca8ef252303db53cfde50594244766e6805cdddb",
+      "bytes": 680652,
+      "published": "2026-11-27 00:50:51",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertWhiteStupa": {
+      "url": "assets/props/SM_Tripo_DesertWhiteStupa.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.whiteStupa"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -6.831999778747559,
+          0,
+          -6.3104023933410645
+        ],
+        "max": [
+          6.831999778747559,
+          19.06626319885254,
+          6.3104023933410645
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "6562450876e66b5635941f912a1f2153b88d269a61a244a1efefe5ba749d53be",
+      "bytes": 615864,
+      "published": "2026-11-27 00:50:52",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertCaravanTent": {
+      "url": "assets/props/SM_Tripo_DesertCaravanTent.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.caravanTent"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -2.589693069458008,
+          0,
+          -1.9040000438690186
+        ],
+        "max": [
+          2.589693069458008,
+          2.7959070205688477,
+          1.9040000438690186
+        ]
+      },
+      "version": {
+        "blockout": 2,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "f2277a3fd07fda16037b5abbdc7b8724ce408f7e183ede144fb1cd3e55a75afd",
+      "bytes": 330716,
+      "published": "2026-11-27 00:50:53",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertTimberGate": {
+      "url": "assets/props/SM_Tripo_DesertTimberGate.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.timberGate"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0
+      ],
+      "bounds": {
+        "min": [
+          -4.581830978393555,
+          0,
+          -1.510862946510315
+        ],
+        "max": [
+          4.581830978393555,
+          6.800000190734863,
+          1.510862946510315
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "486e74d38649b5396373a4d7063f734dc54b1f8c0937f76ff30effd014d1b1e8",
+      "bytes": 754516,
+      "published": "2026-11-27 01:01:00",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
     }
   },
-  "updated": "2026-11-08 13:10:24"
+  "updated": "2026-11-27 01:04:41"
 }

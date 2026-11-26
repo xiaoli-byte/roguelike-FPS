@@ -351,6 +351,21 @@ function fitAsset(asset: string, at: V2, rot: number, a: number, b: number, bott
   return { renderers, note: stretch > 1.7 ? `${tag}：${asset} 拉伸 ${stretch.toFixed(2)} 倍` : undefined };
 }
 
+/** 一件资产按高度等比缩放、包围盒中心对到 at（圆柱碰撞的件：树、香炉、塔） */
+function fitUniform(asset: string, at: V2, rot: number, bottom: number, height: number, tag: string): PropFit {
+  const box = assetBox(asset);
+  if (!box) return { renderers: [], note: `${tag}：资产 ${asset} 没有包围盒` };
+  const s = Math.max(0.05, height / (box.max[1] - box.min[1]));
+  const off = toWorld([0, 0], rot, (box.min[0] + box.max[0]) / 2 * s, (box.min[2] + box.max[2]) / 2 * s);
+  return {
+    renderers: [{
+      name: asset, url: `assets/props/${asset}.glb`,
+      position: [r3(at[0] - off[0]), r3(bottom - box.min[1] * s), r3(at[1] - off[1])],
+      rotation: qyaw(rot).map(r3) as Quat, scale: [r3(s), r3(s), r3(s)], scenePath: `Redo/${tag}#1`,
+    }],
+  };
+}
+
 /** 一组体块（同名同资产 = 同一件）在第一块的转角系里的占地并集 */
 function groupFrame(parts: ResolvedBlock[]): { at: V2; rot: number; a: number; b: number } {
   const rot = parts.find(p => p.kind === 'box')?.rot ?? 0;
@@ -470,7 +485,12 @@ export function compileWhitebox(spec: WhiteboxSpec, play: MapPlay | null = PLAY[
     const bottomGround = Math.min(...parts.map(groundUnder));
     const sink = Math.max(0, ...parts.map(p => p.sink ?? 0));
     const top = Math.max(...parts.map(p => p.y1));
-    const fit = fitAsset(asset, frame.at, frame.rot, frame.a, frame.b, bottomGround - sink - 0.05, top - (bottomGround - sink - 0.05), tag);
+    const bottom = bottomGround - sink - 0.05;
+    // 全是圆柱的一组（树、香炉、火盆、覆钵塔）：圆柱只是碰撞（树只挡树干），件按高度等比缩放、保持自己的比例；
+    // 按圆柱的占地去填，4.5 m 宽的胡杨会被压成一根 0.9 m 的棍
+    const fit = parts.every(p => p.kind === 'cyl')
+      ? fitUniform(asset, frame.at, parts[0].rot ?? 0, bottom, top - bottom, tag)
+      : fitAsset(asset, frame.at, frame.rot, frame.a, frame.b, bottom, top - bottom, tag);
     renderers.push(...fit.renderers);
     if (fit.note) notes.push(fit.note);
   }
