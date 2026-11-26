@@ -43,6 +43,9 @@ export interface EnemyArt {
   parts: AttachedPart[];
 }
 
+/** 已经提示过「不在预取里」的敌人（每种只提示一次） */
+const missed = new Set<string>();
+
 export function attachEnemyArt(o: EnemyArtOptions): EnemyArt {
   const lodScale = o.lowQuality ? 0.5 : 1;
   const attachments = AssetLibrary.findAttachments('enemy', o.defId, o.variant);
@@ -53,6 +56,13 @@ export function attachEnemyArt(o: EnemyArtOptions): EnemyArt {
   let body: SkinnedBody | null = null;
   let native: NativeBody | null = null;
   const asset = AssetLibrary.findBound('enemy', o.defId, o.variant);
+  // 进关预取（assets/StageArt.ts）漏掉的敌人（调试刷怪、旧地图）：这一只用程序化模型，同时补读，后面刷的就有美术
+  if (!asset && AssetLibrary.request('enemy', o.defId, o.variant)) {
+    if (!missed.has(o.defId)) {
+      missed.add(o.defId);
+      console.info(`[assets] ${o.defId} 不在本关预取里，这一只用程序化模型，已补读`);
+    }
+  }
   if (asset && asset.entry.kind === 'skeletal') {
     if (asset.entry.skeleton?.mode === 'native') body = native = attachNativeBody(o.host, asset, lodScale);
     else if (asset.entry.rig) body = attachPartsBody(o.host, asset, lodScale, sockets);

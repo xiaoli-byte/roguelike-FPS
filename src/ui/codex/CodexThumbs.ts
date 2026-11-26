@@ -94,12 +94,16 @@ export class CodexThumbs {
     if (e.kind === 'weapon') {
       const def = e.def as { id: string; element?: string };
       const inst = { uid: -1, defId: def.id, rarity: 0, element: def.element ?? 'none', level: 0, mag: 0, reserve: 0, affixes: [] } as unknown as WeaponInstance;
+      // 枪模也按需读：美术还没读到就等一等再拍（读不到 / 等太久就拍程序化的）
+      if (!AssetLibrary.findBound('weapon', def.id) && AssetLibrary.request('weapon', def.id) && tries(this, e) < 1200) return 'later';
       return bareGun(this.ctx.weapons.createWorldModel(inst));
     }
     if (e.kind === 'enemy') {
       const id = MODEL_OF[e.id] ?? e.id;
       const asset = AssetLibrary.findBound('enemy', id) ?? AssetLibrary.findBound('boss', id);
-      if (!asset) return AssetLibrary.enabled && !AssetLibrary.unavailable(id) && tries(this, e) < 120 ? 'later' : null;
+      // 敌人 / 首领的模型按关读（assets/StageArt.ts），图鉴里多半还没读：现读（request），读到之前先不拍。
+      // 换关时这些会随别的不在本关的资产一起释放，拍好的缩略图是缓存的图，不受影响。首领 4096 贴图读得慢，最多等约 20 秒（按帧数计）
+      if (!asset) return AssetLibrary.enabled && AssetLibrary.request('enemy', id) && tries(this, e) < 1200 ? 'later' : null;
       const root = cloneSkinned(asset.gltf.scene);
       for (const a of AssetLibrary.findAttachments('enemy', id)) root.add(a.gltf.scene.clone(true));
       return root;

@@ -3,6 +3,16 @@
  * 不依赖游戏主循环：地形、地标、经幡、散布、水、烟、远景都在 src/world/plateau/ 里，
  * 这里只负责组装、输入、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md。
  */
+import { AmbienceBed } from '../audio/AmbienceBed';
+import { AmbienceSense } from '../world/plateau/ambienceSense';
+import { bakeCoverMap } from '../world/plateau/coverMap';
+import { Rain } from '../world/plateau/rain';
+import { buildContactField } from '../world/plateau/contact';
+import { SkyAmbient } from '../world/plateau/skyAmbient';
+import { FilmPost } from '../render/FilmPost';
+import { SynthPlayer } from '../audio/SynthPlayer';
+import { WalkerSounds } from '../world/plateau/walkerSounds';
+import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { buildFarTerrain, buildMountains, buildSky, SKY } from '../world/plateau/backdrop';
@@ -33,6 +43,8 @@ renderer.setSize(innerWidth, innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
 renderer.toneMappingExposure = 1.0;
+// 出图后期（src/render/FilmPost.ts）：印片调色、泛光、部分自动曝光、暗角、颗粒、边角色差
+const film = new FilmPost(renderer);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
@@ -96,12 +108,31 @@ const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
 }, terrain, conductors);
+// 柔光（docs/art/reference-tingyuyuan.md 第四节第 3 项）：太阳的影子只压一部分、环境光从程序天空生成（网址 soft=0 关；O 键开关）
+const SHADOW_SOFT = 0.62;
+const softOn = new URLSearchParams(location.search).get('soft') !== '0';
+sun.shadow.intensity = softOn ? SHADOW_SOFT : 1;
+const skyAmbient = new SkyAmbient(renderer, scene, sky, hemi);
+skyAmbient.setEnabled(softOn);
 
+// 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
+buildContactField(scene, world, terrain);
+// 俯视遮挡图（plateau/coverMap.ts）+ GPU 雨（plateau/rain.ts）：檐下、树下、桥下没雨、是干的；网址 wet=0 关淋湿
+const cover = bakeCoverMap(renderer, scene, terrain, [grass.group, monsters.group, lords.group]);
+const rain = new Rain(scene);
+weather.builtinRain = false;
+// 环境声床（audio/AmbienceBed.ts + plateau/ambienceSense.ts）：风、颗粒雨声、江 / 溪 / 拍岸、雷，按站的地方实时调
+const ears = new AmbienceSense(terrain, cover, { windAt, baseWind: 0.34 });
+weather.strikeListeners.push(at => bed.strike(at, camera));
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────
 
 const walker = new Walker(world);
+// 声音：枪声、命中、脚步、起跳落地（正式游戏的合成配方）；第一次点画面 / 按键后才出声
+const audio = new SynthPlayer();
+const walkSfx = new WalkerSounds(audio, terrain);
+const bed = new AmbienceBed(audio);
 const optDouble = $<HTMLInputElement>('opt-double');
 optDouble.onchange = () => { walker.doubleJump = optDouble.checked; };
 
@@ -128,7 +159,7 @@ let jumpPressed = false, dashPressed = false, bigMap = false;
 /** 游玩模式（射击、雷魅、灵火、领主战）；null = 检视模式 */
 let play: PlayMode | null = null;
 let firing = false, reloadPressed = false, skillQ = false, skillE = false, anyKey = false, pick = 0;
-addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas) firing = true; });
+addEventListener('mousedown', e => { if (e.button === 0 && (document.pointerLockElement === canvas || (drag.active && e.target === canvas))) firing = true; });
 addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
@@ -146,6 +177,14 @@ addEventListener('keydown', e => {
     showHint(walker.fly ? '飞行模式' : '行走模式');
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
+  if (e.code === 'KeyO' && !e.repeat) {
+    const on = sun.shadow.intensity === 1;
+    sun.shadow.intensity = on ? SHADOW_SOFT : 1;
+    skyAmbient.setEnabled(on);
+    showHint(on ? '柔光：开（半透明影子 + 天空环境光）' : '柔光：关（原来的死影子 + 半球光）');
+  }
+  // P：出图后期开 / 关（对照用；网址 post=0 默认关，bloom=0 lut=0 ae=0 grain=0 ca=0 vig=0 关单项）
+  if (e.code === 'KeyP' && !e.repeat) { film.enabled = !film.enabled; showHint(film.enabled ? '出图后期：开' : '出图后期：关（原样直出）'); }
   const digit = /^Digit([1-9])$/.exec(e.code);
   if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
   if (digit && play && +digit[1] <= 3) pick = +digit[1];
@@ -162,16 +201,9 @@ function look(dx: number, dy: number): void {
   walker.yaw -= dx * LOOK_SENS;
   walker.pitch = Math.max(-1.52, Math.min(1.52, walker.pitch - dy * LOOK_SENS));
 }
-async function lockPointer(): Promise<void> {
-  try {
-    await canvas.requestPointerLock({ unadjustedMovement: true });
-  } catch (error) {
-    // 不支持原始输入时退回普通锁定；内嵌预览面板里不允许锁定，安静忽略
-    if (error instanceof Error && error.name === 'NotSupportedError') {
-      try { await canvas.requestPointerLock(); } catch { /* 忽略 */ }
-    }
-  }
-}
+// 锁不上鼠标（Claude 应用自带的浏览器面板就是）时改成按住拖动转视角（dragLook.ts）
+const drag = new DragLook(canvas, look, () => showHint('这个浏览器不让网页锁定鼠标：在画面上按住左键（或右键）拖动来转视角'));
+function lockPointer(): Promise<void> { return lockPointerOrDrag(canvas, drag); }
 canvas.addEventListener('click', () => { if (document.pointerLockElement !== canvas) void lockPointer(); });
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === canvas;
@@ -229,7 +261,7 @@ function applyQuality(q: keyof typeof QUALITY): void {
   (sun.shadow as { map: THREE.WebGLRenderTarget | null }).map = null;
   grass.radius = Q.grass;
 }
-$<HTMLSelectElement>('opt-quality').onchange = e => applyQuality((e.target as HTMLSelectElement).value as keyof typeof QUALITY);
+$<HTMLSelectElement>('opt-quality').onchange = e => { const v = (e.target as HTMLSelectElement).value as keyof typeof QUALITY; applyQuality(v); film.setQuality(v); };
 let adaptT = 0, adaptFrames = 0;
 function adaptResolution(dt: number): void {
   if (document.hidden) return;
@@ -599,6 +631,7 @@ async function startPlay(): Promise<void> {
   weather.stormy = false;
   walker.fly = false;
   const mode = new PlayMode(scene, camera, terrain, world, walker, weather, conductors);
+  mode.audio = audio;
   play = mode;
   await mode.start();
   showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · R 换弹 · F 点亮灵火 · 空格跳 · Shift 冲刺（无敌） · M 地图');
@@ -643,6 +676,8 @@ function frame(now: number, manual = false, render = true): void {
   jumpPressed = dashPressed = false;
   walker.eye(camera.position);
   camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ');
+  audio.listen(camera);
+  walkSfx.update(dt, walker);
   sky.position.copy(camera.position);
   // 阴影中心取镜头前方 60 m，按 8 m 吸附，避免阴影边缘闪烁
   ahead.set(-Math.sin(walker.yaw), 0, -Math.cos(walker.yaw)).multiplyScalar(60).add(camera.position);
@@ -654,6 +689,10 @@ function frame(now: number, manual = false, render = true): void {
   for (const a of anim) a.update(time, dt);
   monsters.update(time, dt);
   weather.update(dt, camera.position);
+  rain.update(camera, weather.level, WORLD_UNIFORMS.uWind.value, scene.fog ? (scene.fog as THREE.Fog).color : new THREE.Color('#888'), renderer.domElement.width, renderer.domElement.height, dt);
+  ears.update(dt, camera, weather.level, bed.params);
+  bed.update(dt);
+  skyAmbient.update();
   if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: reloadPressed, skillQ, skillE, pick, anyKey });
   else lords.update(time, dt, weather.level);
   reloadPressed = skillQ = skillE = anyKey = false;
@@ -663,7 +702,7 @@ function frame(now: number, manual = false, render = true): void {
   adaptResolution(dt);
   smoke.update(dt);
   if (render) {
-    renderer.render(scene, camera);
+    film.render(scene, camera, dt);
     drawMap();
     updateHud(dt);
   }
@@ -684,5 +723,5 @@ Object.assign(window, { plateau: {
   press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
   hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
   /** 渲染一帧（截图前） */
-  render: () => { renderer.render(scene, camera); },
+  render: () => { film.render(scene, camera); }, film, ambience: { bed, ears, cover },
 } });

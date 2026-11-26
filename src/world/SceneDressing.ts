@@ -128,7 +128,7 @@ export class SceneDressing {
     // Drawn unconditionally, so whether a landmark is still loading never shifts the shared stream.
     const lateSeed = Math.floor(rand() * 0x7fffffff);
     const lateRand = pendingLandmarks.length ? seededRandom(lateSeed) : null;
-    if (lateRand) void AssetLibrary.preload().then(() => {
+    if (lateRand) void AssetLibrary.preload('scene').then(() => {
       if (this.disposed) return;
       const lateContacts = pendingLandmarks.map(d => this.attachLandmark(ctx, L, d)).filter((p): p is Contact => !!p);
       if (lateContacts.length) {

@@ -345,7 +345,36 @@ class Library {
     return pending;
   }
 
+  /**
+   * 换关：释放不属于 document 的网格、贴图与场景文档（GPU 资源交还、解码后的图关掉）。网格 / 贴图按 URL 缓存、各图共用的件留着。
+   * preload(document) 开头自己调：搭新图时上一张图的场景已经卸掉（StageDirector.loadWith 先 unload），缓存里不在 keep 里的都没人在用；
+   * 第一章重做版现编的文档也照它自己的渲染件留。document = null 时全部释放。
+   * 2026-11-25 前从不淘汰：一局打下来每张图的网格 / 贴图都留在内存和显存里（单张图贴图解码后 0.2–1.1 GB）。返回释放了几项。
+   * 关卡库迁到网页自己的关卡数据（public/assets/levels）时这一段要跟着搬。
+   */
+  releaseExcept(document: UnitySceneDocument | null): number {
+    const keep = document ? documentUrls(document) : new Set<string>();
+    let n = 0;
+    for (const [url, pending] of this.meshes) {
+      if (keep.has(url)) continue;
+      this.meshes.delete(url);
+      void pending.then(gltf => disposeTree(gltf.scene), () => undefined);
+      n++;
+    }
+    for (const [url, pending] of this.textures) {
+      if (keep.has(url)) continue;
+      this.textures.delete(url);
+      void pending.then(disposeTexture, () => undefined);
+      n++;
+    }
+    for (const id of [...this.scenes.keys()]) if (id !== document?.id) this.scenes.delete(id);
+    return n;
+  }
+
   async preload(document: UnitySceneDocument, onProgress?: (loaded: number, total: number) => void): Promise<void> {
+    // 上一张图不再用的网格 / 贴图 / 场景文档先放掉（各图共用的留着）
+    const released = this.releaseExcept(document);
+    if (released > 0) console.info(`[assets] ${document.id}：释放上一张图的关卡网格 / 贴图 ${released} 项`);
     const urls = [...new Set([
       ...document.renderers.map(renderer => renderer.url),
       ...(document.vegetation?.prototypes.map(prototype => prototype.url) ?? []),
@@ -361,6 +390,43 @@ class Library {
       })));
     }
   }
+}
+
+/** 一份场景文档会用到的网格 / 贴图 URL（渲染件、植被原型、碰撞网格、草皮、地形分层与 splat） */
+export function documentUrls(document: UnitySceneDocument): Set<string> {
+  const urls = new Set<string>();
+  for (const r of document.renderers ?? []) {
+    urls.add(r.url);
+    for (const layer of r.terrain?.layers ?? []) urls.add(layer.url);
+    for (const map of r.terrain?.alphamaps ?? []) urls.add(map);
+  }
+  for (const p of document.vegetation?.prototypes ?? []) urls.add(p.url);
+  for (const c of document.colliders ?? []) if (c.url) urls.add(c.url);
+  for (const g of document.groundCover ?? []) {
+    if (g.url) urls.add(g.url);
+    if (g.texture) urls.add(g.texture);
+  }
+  return urls;
+}
+
+function disposeTexture(texture: THREE.Texture): void {
+  texture.dispose();
+  const image = texture.image as { close?: () => void } | null;
+  if (typeof image?.close === 'function') image.close();
+}
+
+function disposeTree(root: THREE.Object3D): void {
+  const textures = new Set<THREE.Texture>();
+  root.traverse(object => {
+    const mesh = object as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    mesh.geometry.dispose();
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      for (const value of Object.values(material)) if ((value as THREE.Texture | null)?.isTexture) textures.add(value as THREE.Texture);
+      material.dispose();
+    }
+  });
+  for (const texture of textures) disposeTexture(texture);
 }
 
 export const UnityLevelLibrary = new Library();

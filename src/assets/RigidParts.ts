@@ -6,9 +6,11 @@
  * 弹匣、转轮、泵动护木等照旧由原来的程序动画驱动。没有骨骼贴图，换枪 / 丢枪时也不用逐实例释放。
  *
  * 拆分结果按资产缓存（同一份 buildModel 代码构建出的模型绑定姿势相同），实例之间共享几何体与材质——调用方不要 dispose。
+ * 枪模按需读、换关会被释放（AssetLibrary.releaseUnused）：释放时这里的拆分缓存跟着作废、交还 GPU，下次读回来重新拆
+ * （不作废的话会拿到贴图已关掉的旧材质）。
  */
 import * as THREE from 'three';
-import type { LoadedAsset } from './AssetLibrary';
+import { AssetLibrary, type LoadedAsset } from './AssetLibrary';
 import { applyArtEnvironment } from './ArtEnvironment';
 import { jointPaths } from './PartsRig';
 
@@ -25,6 +27,13 @@ interface Split {
 }
 
 const cache = new Map<string, Split | null>();
+AssetLibrary.onRelease((id) => {
+  const split = cache.get(id);
+  cache.delete(id);
+  if (!split) return;
+  for (const piece of split.pieces) for (const geo of piece.geos) geo?.dispose();
+  split.material.dispose();
+});
 const FINGERPRINT_TOLERANCE = 2e-3;
 const _v = new THREE.Vector3();
 const _hostInv = new THREE.Matrix4();

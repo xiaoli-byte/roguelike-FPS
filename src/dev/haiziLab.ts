@@ -4,6 +4,18 @@
  * 这里只负责组装、输入、机位、平面图和天气。设计见 docs/level-design/chuanzang-combat-v1.md 4.5。
  * 首领战之后挂在 play 上（setPlay）：每帧在镜头摆好之后调 play.update，它可以接管镜头（登场演出）；inputLocked 时人不动。
  */
+import { AmbienceBed } from '../audio/AmbienceBed';
+import { AmbienceSense } from '../world/plateau/ambienceSense';
+import { bakeCoverMap } from '../world/plateau/coverMap';
+import { Rain } from '../world/plateau/rain';
+import { buildContactField } from '../world/plateau/contact';
+import { SkyAmbient } from '../world/plateau/skyAmbient';
+import { FilmPost } from '../render/FilmPost';
+import { SynthPlayer } from '../audio/SynthPlayer';
+import { WalkerSounds } from '../world/plateau/walkerSounds';
+import { WaterFx } from '../world/haizi/waterFx';
+import { WaterSound } from '../world/haizi/waterSound';
+import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { SKY } from '../world/plateau/backdrop';
@@ -58,6 +70,8 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.setSize(innerWidth, innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
+// 出图后期（src/render/FilmPost.ts）：印片调色、泛光、部分自动曝光、暗角、颗粒、边角色差
+const film = new FilmPost(renderer);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
@@ -85,10 +99,24 @@ const reflectSize = (): [number, number] => {
 };
 const arena = buildHaizi(scene, terrain, world, ...reflectSize());
 const { sky, lake, pillars, conductors, anim, grass, scatter } = arena;
+// 人在浅水里走、跳、冲刺时的涟漪和水花
+const waterFx = new WaterFx(scene, lake, terrain);
+// 水声（涉水、落水、冲刺、弹着水、拍岸）：第一次点画面 / 按键后才出声
+// 声音：枪声、命中、脚步、起跳落地（正式游戏的合成配方）+ 水声；第一次点画面 / 按键后才出声
+const audio = new SynthPlayer();
+waterFx.sound = new WaterSound(audio);
+const walkSfx = new WalkerSounds(audio, terrain);
+const bed = new AmbienceBed(audio);
 const fog = scene.fog as THREE.Fog;
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
 }, terrain, conductors);
+// 柔光（docs/art/reference-tingyuyuan.md 第四节第 3 项）：太阳的影子只压一部分、环境光从程序天空生成（网址 soft=0 关；O 键开关）
+const SHADOW_SOFT = 0.72;
+const softOn = new URLSearchParams(location.search).get('soft') !== '0';
+sun.shadow.intensity = softOn ? SHADOW_SOFT : 1;
+const skyAmbient = new SkyAmbient(renderer, scene, sky, hemi);
+skyAmbient.setEnabled(softOn);
 
 // 空气透视 + 雾带（composition.md 8.5）：章节默认值，云影压低（开阔碎石岸上斑驳的明暗会给怪打掩护）
 Atmosphere.bind(scene, { ...atmosphereForChapter(4), cloudShadow: DAWN.cloudShadow }, { baseY: LAKE.level });
@@ -117,6 +145,15 @@ for (const m of [lakeMist.mesh, footMist.mesh, clouds.mesh]) {
   mat.blendSrcAlpha = THREE.ZeroFactor; mat.blendDstAlpha = THREE.OneFactor;
 }
 scene.add(lakeMist.mesh, footMist.mesh, clouds.mesh);
+// 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
+buildContactField(scene, world, terrain);
+// 俯视遮挡图（plateau/coverMap.ts）+ GPU 雨（plateau/rain.ts）：檐下、树下、桥下没雨、是干的；网址 wet=0 关淋湿
+const cover = bakeCoverMap(renderer, scene, terrain, [grass.group]);
+const rain = new Rain(scene);
+weather.builtinRain = false;
+// 环境声床（audio/AmbienceBed.ts + plateau/ambienceSense.ts）：风、颗粒雨声、江 / 溪 / 拍岸、雷，按站的地方实时调
+const ears = new AmbienceSense(terrain, cover, { baseWind: 0.3, lap: 0 });
+weather.strikeListeners.push(at => bed.strike(at, camera));
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走与机位 ─────────────────────────────
@@ -155,7 +192,7 @@ let play: HaiziPlay | null = null;
 const keys = new Set<string>();
 let jumpPressed = false, dashPressed = false, reloadPressed = false, firing = false, bigMap = false;
 let skillQ = false, skillE = false, anyKey = false, pick = 0;
-addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas) firing = true; });
+addEventListener('mousedown', e => { if (e.button === 0 && (document.pointerLockElement === canvas || (drag.active && e.target === canvas))) firing = true; });
 addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
@@ -173,6 +210,14 @@ addEventListener('keydown', e => {
     showHint(walker.fly ? '飞行模式' : '行走模式');
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
+  if (e.code === 'KeyO' && !e.repeat) {
+    const on = sun.shadow.intensity === 1;
+    sun.shadow.intensity = on ? SHADOW_SOFT : 1;
+    skyAmbient.setEnabled(on);
+    showHint(on ? '柔光：开（半透明影子 + 天空环境光）' : '柔光：关（原来的死影子 + 半球光）');
+  }
+  // P：出图后期开 / 关（对照用；网址 post=0 默认关，bloom=0 lut=0 ae=0 grain=0 ca=0 vig=0 关单项）
+  if (e.code === 'KeyP' && !e.repeat) { film.enabled = !film.enabled; showHint(film.enabled ? '出图后期：开' : '出图后期：关（原样直出）'); }
   const digit = /^Digit([1-9])$/.exec(e.code);
   if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
 });
@@ -187,15 +232,9 @@ function look(dx: number, dy: number): void {
   walker.yaw -= dx * LOOK_SENS;
   walker.pitch = Math.max(-1.52, Math.min(1.52, walker.pitch - dy * LOOK_SENS));
 }
-async function lockPointer(): Promise<void> {
-  try {
-    await canvas.requestPointerLock({ unadjustedMovement: true });
-  } catch (error) {
-    if (error instanceof Error && error.name === 'NotSupportedError') {
-      try { await canvas.requestPointerLock(); } catch { /* 忽略 */ }
-    }
-  }
-}
+// 锁不上鼠标（Claude 应用自带的浏览器面板就是）时改成按住拖动转视角（dragLook.ts）
+const drag = new DragLook(canvas, look, () => showHint('这个浏览器不让网页锁定鼠标：在画面上按住左键（或右键）拖动来转视角'));
+function lockPointer(): Promise<void> { return lockPointerOrDrag(canvas, drag); }
 canvas.addEventListener('click', () => { if (document.pointerLockElement !== canvas) void lockPointer(); });
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === canvas;
@@ -255,6 +294,7 @@ function setRatio(r: number): void {
 }
 $<HTMLSelectElement>('opt-quality').onchange = e => {
   const Q = QUALITY[(e.target as HTMLSelectElement).value as keyof typeof QUALITY];
+  film.setQuality((e.target as HTMLSelectElement).value);
   ratioCap = Math.min(devicePixelRatio, Q.cap); setRatio(ratioCap);
   sun.shadow.mapSize.set(Q.shadow, Q.shadow);
   sun.shadow.map?.dispose();
@@ -375,6 +415,9 @@ function tick(dt: number, render: boolean): void {
   jumpPressed = dashPressed = false;
   walker.eye(camera.position);
   camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ');
+  waterFx.update(dt, walker, camera, renderer.domElement.width, renderer.domElement.height);
+  audio.listen(camera);
+  walkSfx.update(dt, walker);
   // 首领战（可以接管镜头）
   play?.update(dt, { firing: firing && !locked, interact: keys.has('KeyF') && !locked, reload: reloadPressed && !locked, keys, skillQ, skillE, pick, anyKey });
   reloadPressed = skillQ = skillE = anyKey = false;
@@ -391,11 +434,15 @@ function tick(dt: number, render: boolean): void {
   grass.update(camera.position);
   for (const a of anim) a.update(time, dt);
   weather.update(dt, camera.position);
+  rain.update(camera, weather.level, WORLD_UNIFORMS.uWind.value, scene.fog ? (scene.fog as THREE.Fog).color : new THREE.Color('#888'), renderer.domElement.width, renderer.domElement.height, dt);
+  ears.update(dt, camera, weather.level, bed.params);
+  bed.update(dt);
+  skyAmbient.update();
   Atmosphere.update(time);
   lake.update();
   if (!render) return;
   adaptResolution(dt);
-  renderer.render(scene, camera);
+  film.render(scene, camera, dt);
   drawMap();
   updateHud(dt);
 }
@@ -406,6 +453,9 @@ async function startPlay(): Promise<void> {
   if (play) return;
   walker.fly = false;
   const mode = new LeizePlay(scene, camera, terrain, world, walker, weather, arena, boundAt);
+  // 子弹打在湖面上：涟漪 + 水柱 + 弹着水声（waterFx.ts）
+  mode.fx.onWater = (at, k) => (k > 1 ? waterFx.splash(at, k) : waterFx.bulletHit(at, k));
+  mode.audio = audio;
   play = mode;
   await mode.start();
   showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · 空格跳 · Shift 冲刺（无敌）');
@@ -420,8 +470,8 @@ function simulate(seconds: number, step = 1 / 30, render = false): void {
 // 调试入口（检视、首领战接入用）
 Object.assign(window, {
   haizi: {
-    scene, camera, renderer, terrain, world, walker, weather, lake, pillars, conductors, arena, goTo, VIEWPOINTS, simulate,
-    SPAWN, PILLARS, COIL, keys,
+    scene, camera, renderer, terrain, world, walker, weather, lake, pillars, conductors, arena, goTo, VIEWPOINTS, simulate, waterFx, audio,
+    SPAWN, PILLARS, COIL, keys, ambience: { bed, ears, cover },
     get play() { return play; },
     setPlay: (p: HaiziPlay | null) => { play = p; },
     setFiring: (v: boolean) => { firing = v; },
@@ -430,6 +480,6 @@ Object.assign(window, {
     hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
     jump: () => { jumpPressed = true; },
     dash: () => { dashPressed = true; },
-    render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); },
+    render: () => { film.render(scene, camera); drawMap(); updateHud(0.3); }, film,
   },
 });

@@ -52,7 +52,7 @@ export class CollisionProxies {
     this.group.add(mesh);
     this.group.visible = artIsMissing(ids);
     // Settled loading decides once; anything still missing keeps its readable stand-in.
-    void AssetLibrary.preload().then(() => { if (!this.disposed) this.group.visible = artIsMissing(ids); },
+    void AssetLibrary.preload('scene').then(() => { if (!this.disposed) this.group.visible = artIsMissing(ids); },
       () => { if (!this.disposed) this.group.visible = true; });
   }
 

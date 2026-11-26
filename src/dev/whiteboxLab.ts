@@ -47,7 +47,7 @@ function refreshChoices(index = stageChoice.value || initial.get('stage') || '0'
   typeChoice.disabled = stageChoice.value === '4';
 }
 refreshChoices();
-await AssetLibrary.preload();
+await AssetLibrary.preload('all');
 const game = new Game(), ctx = game.ctx, director = ctx.stage as StageDirector;
 const walker = new WhiteboxWalker(ctx);
 const overview = new THREE.OrthographicCamera(-80, 80, 60, -60, .1, 600);
@@ -235,6 +235,8 @@ theme.onchange = () => {
   // 川藏高原是起伏地形，平地白盒表达不了，跳到它自己的地形检视页（docs/level-design/chuanzang-v1.md）
   if (theme.value === 'plateau') { location.href = '/plateau-lab.html'; return; }
   if (theme.value === 'plateau-4-2') { location.href = '/plateau-lab.html?map=4-2'; return; }
+  // 第一章全部场景重做的白盒（起伏地形 + 可达性探针）在它自己的检视页（docs/art/concepts/ch1-routes/）
+  if (theme.value === 'desert-redo') { location.href = '/desert-lab.html'; return; }
   refreshChoices('0'); loadStage();
 };
 stageChoice.onchange = () => { typeChoice.disabled = stageChoice.value === '4'; loadStage(); };

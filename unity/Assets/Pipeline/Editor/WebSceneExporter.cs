@@ -17,7 +17,8 @@ namespace Spiritfire.Art.Editor
 {
     public static class WebSceneExporter
     {
-        const string Output = "../public/assets/unity-levels.next";
+        // 原样导出放在 public/ 之外：public/ 下的一切都会被 vite build 拷进 dist/（发布由 optimize-web-levels.mjs 写 public/assets/unity-levels）
+        const string Output = "../exports/unity-levels-raw";
         static readonly Dictionary<string, string> Meshes = new();
         static readonly Dictionary<string, string> Textures = new();
         static readonly JObject SceneDocs = new();

@@ -27,7 +27,7 @@ if (white) document.querySelector('header p')!.textContent = params.get('legacy'
   : 'Tripo 原生骨骼 · 白模持枪检视';
 else document.querySelector('header p')!.textContent=params.get('legacy') === '1'
   ? '旧版程序化模型对比' : 'Tripo 原生骨骼 · 发布资产（LOD0 · BC/ORM 贴图）';
-await AssetLibrary.preload();
+await Promise.all([AssetLibrary.preload(), AssetLibrary.preload('weapons')]); // 枪模按需读，检视页手里要拿美术枪
 const panels = await Promise.all(heroIds.map(async id => {
   const hero = HEROES.find(h => h.id === id)!;
   const scene = new THREE.Scene();

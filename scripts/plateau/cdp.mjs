@@ -10,7 +10,7 @@
 // Chromium 默认用本机 Playwright 装的那份（%LOCALAPPDATA%/ms-playwright/chromium-*），也可以用环境变量 CHROME 指定。
 // 网页在后台标签页里不给 rAF：试玩一律用页面自己的 simulate(秒) 按固定步长推进，再手动渲染一帧截图。
 import { spawn } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -46,13 +46,17 @@ async function launchOnce({ width = 1280, height = 720, port = 9300, headless = 
   ];
   if (headless) args.push('--headless=new');
   const proc = spawn(findChrome(), [...args, 'about:blank'], { stdio: 'ignore' });
+  // 一次性的配置目录（每个约 400 MB）：关浏览器后删掉，进程退出时再兜底删一次——以前从不删，%TEMP% 攒了 800 多个把 H 盘写满（2026-11-22）
+  const dropProfile = () => { try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); } catch { /* 还被占着就算了 */ } };
+  proc.once('exit', () => setTimeout(dropProfile, 300));
+  process.once('exit', () => { try { proc.kill(); } catch { /* 已经退了 */ } dropProfile(); });
   // 等到有页面标签为止：调试端口一通 /json 可能还是空列表（about:blank 还没建），只等端口会误判「没起来」
   let page = null;
   for (let k = 0; k < 200 && !page; k++) {
     await sleep(150);
     try { page = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find(t => t.type === 'page') ?? null; } catch { /* 还没起来 */ }
   }
-  if (!page) { proc.kill(); throw new Error('Chromium 没有起来'); }
+  if (!page) { proc.kill(); setTimeout(dropProfile, 500); throw new Error('Chromium 没有起来'); }
   const ws = new WebSocket(page.webSocketDebuggerUrl);
   await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });
   let id = 0;
@@ -112,6 +116,8 @@ async function launchOnce({ width = 1280, height = 720, port = 9300, headless = 
       ws.close();
       await sleep(200);
       proc.kill();
+      await sleep(500);
+      dropProfile();
     },
   };
   return api;

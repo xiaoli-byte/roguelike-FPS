@@ -213,6 +213,8 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 
 **自动 QA（`validate`，✘ 阻塞 / ⚠ 记录）**
 
+- **发布后的清单门禁**（`npm test`，管线外手工发布的资产也查）：`tests/asset-manifest-loadable.test.mjs`——每个清单 GLB 都要有挂单图元 mesh 的 `<资产ID>_LOD0` 节点，
+  否则 `AssetLibrary` 认不出、运行时悄悄退回程序化模型（多材质的 mesh 会被 GLTFLoader 拆成 Group）；已知两条（骨龙铳、枪火 1301）列在测试里待修。许可见第 11 节。
 - 包级：文件大小 ≤ 上限；必需扩展三端可用（Draco、WebP）；只有一级 LOD（`_LOD0`，面数只记录不设闸门）；LOD 切换距离写在节点 extras；
   身高与白模差 ≤ 6%；脚底 |y| ≤ 1 cm；水平居中；一个材质；材质与贴图命名；贴图边长 = 规格且为 2 的幂；BC / N / ORM 齐全。
 - 骨骼：一个 skin；骨骼集合与游戏关节完全一致；每顶点 ≤ 4 影响；无零权重顶点；bone heat 失败顶点 ≤ 20；骨骼适配幅度 ≤ 0.25 rad 且左右对称；
@@ -229,7 +231,17 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 
 ## 8. 引擎接入
 
-- `AssetLibrary` 模块被导入即读清单并后台加载全部 GLB（不阻塞启动；敌人模块启动时就导入它，`main.ts` 是冻结文件，不改它）。
+- `AssetLibrary` 模块被导入即读清单，后台只读英雄 / 第一人称手臂 / 灵宠 / 商人（`core`；不阻塞启动，敌人模块启动时就导入它，`main.ts` 是冻结文件，不改它）。
+  **按需加载（2026-11-26）**：敌人 / 首领（`bind.source = enemy`）与枪模（`weapon`）不整批读。`Game.loadStage` 在上一关清掉之后、
+  这一关刷怪之前调 `assets/StageArt.ts` 的 `prepareStageArt`：读「本张图的波次敌人 ∪ 本章名册 ∪ 本关首领（按前缀含各形态）」
+  与手上 / 各英雄初始的枪模，释放其余按需资产（`releaseUnused`，几何 / 材质 / 贴图交还 GPU、ImageBitmap 立刻关掉）。
+  上一张图不再用的关卡网格 / 贴图 / 场景文档由关卡库在读新图时释放（`preload(document)` 开头的 `releaseExcept`）。
+  本章名册是生成的 TS 表 `src/assets/stageRosters.ts`（`scripts/web/export-stage-rosters.mjs` 读网页自己的关卡数据
+  `public/assets/levels/<图>/level.json`，关卡数据改了重跑，`tests/stage-rosters.test.mjs` 查同步）——按需加载这套不依赖 Unity 导出
+  （2026-11-26 用户：「不能有任何依赖unity的代码」）。
+  漏预取的敌人第一只用程序化模型并补读；掉落 / 商店 / 第一人称的枪模先用程序化的、读到后原地换上；图鉴缩略图读到再拍。
+  第四章普通敌人走 `world/plateau/play/assets`（自己读模型），这里不重复读。检视页要全量的调 `preload('all')`（或 `'weapons'`）。
+  实测脚本：`node scripts/web/asset-memory-check.mjs <端口>`。
 - 敌人与 Boss 都走 `EnemyArt.attachEnemyArt`（`StandardEnemy.init` 与 `BossBase.init` 里调用，必须在任何动画运行之前）：
   1. 身体：清单里 `bind = { source: "enemy", id: def.id }` 且没有 `attachment` 的骨骼网格。条目带 `rig.mode = "parts"` 走 `PartsRig`（6.4）；
      否则若该敌人有 `HumanoidRig`（约定存放在 `this.rig`），`SkinnedBody` 在绑定姿势下取关节矩阵求逆作 boneInverses，用 `THREE.LOD` 挂上各级 SkinnedMesh，隐藏被取代的脚本身体部件。
@@ -266,6 +278,11 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 
 - **Hunyuan3D 2.1 / 2mv**（Tencent Hunyuan 3D 2.1 / 2.0 Community License；2mv 权重来自 `tencent/Hunyuan3D-2mv` 的 `hunyuan3d-dit-v2-mv/model.fp16.safetensors`）：产出**不得在欧盟、英国、韩国境内使用或分发**；商业发行前请完整阅读许可证全文。
   清单里每条资产都带许可说明；面向这些地区发行前须替换为其他方式制作的资产。
+- **发布门禁**（`tests/asset-licenses.test.mjs`，在 `npm test` 里）：清单每条都要有 `license`，且落在已登记的类别里（Tripo / 项目原创 / Hunyuan / 第三方游戏）；
+  Hunyuan 的许可文本必须写明地区限制；不可再分发的资产只能是测试里白名单登记过的。2026-11-25 统计：Tripo 209、Hunyuan 123（受地区限制）、项目原创 12、第三方 6。
+  新的发布脚本写清单时一并写 `license`（2026-11-25 前 Tripo 生物、第一人称手臂、骨龙铳的 65 条漏写，已按生成方式补齐）。
+- **枪火提取武器**（`SK_Weapon_Gunfire*` 6 条与 `public/assets/gunfire-original/`）：从本机安装的游戏里提取，**不可再分发**。
+  2026-11-25 用户决定暂时保留（原型期主游戏的冲锋枪 / 左轮 / 灵炮等用它们的原生双手与动画），对外发布前必须换成自产资产。
 - **OpenAI 图像接口**：密钥只放 `art/pipeline/.env`（已忽略）或环境变量，不写进任何记录；每次调用的用量和请求号记录在 `asset.json`。
 - 美术风格描述不引用其他商业游戏的名字或角色，保证原创性。
 
@@ -282,4 +299,15 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
   需要更好时可加修正形状（corrective blend shape）或改用双四元数蒙皮。
 - 多视图高模的表面细节比 2.1 单视图略软，换来正确的厚度；两种模式按资产选择。
 - 单视图重建看不到的面（甲虫腹部、Boss 头顶）是扩散补色，游戏视角下基本看不到。
-- 贴图可进一步转 KTX2（GPU 压缩纹理）降低显存。
+- **运行时内存（2026-11-25 实测）**：正式包开局读完角色 / 武器等 116 个资产后，游戏页渲染进程私有内存 5228 MB；
+  `?classic`（不读美术资产）只有约 325 MB，即美术资产多占约 4.9 GB，主要是解码后的贴图（下载只有约 110 MB）：
+  24 把第一人称武器的 2048² 贴图、13 个首领的 4096² 高清贴图（`@hi.glb`）占了大头。这是浏览器里最接近崩溃线的一项。
+  2026-11-26 改成按需加载（第 8 节）后，`scripts/web/asset-memory-check.mjs`（无头 Chromium，开发服务器）实测游戏页渲染进程：
+  主菜单 1059 MB（21 个资产；旧行为同一环境 5254 MB、116 个）→ 进 1-1 2188 MB（34 个）→ 跳到 3-4 2891 MB（40 个，释放第一章敌人 8 个、
+  1-1 的关卡网格 / 贴图 116 项）。
+- **KTX2 评估（2026-11-25，KTX-Software 4.4.2 装在 `D:/AI-Tools/KTX-Software-4.4.2/bin`）**：不建议整体换成 KTX2。实测 12 张样本、相对现有 WebP q90：
+  ETC1S（q255、含 mip）体积 1.7–3.8 倍，固有色 PSNR 34–39 dB、放大三倍目测和 WebP 几乎一样，但 ORM 只有 31–32 dB、
+  法线平均偏 1–5.6°、最差 19–27°（Tripo 法线最差）；UASTC + zstd（含 RDO）画质 39–52 dB、法线误差 < 2°，体积却是 7–30 倍。
+  只给固有色上 ETC1S、法线 / ORM 留 WebP 只省约三成贴图内存，下载还变大。另外美术管线的 derive_* / strip_lods 用 Blender 重新导入已发布 GLB，
+  Blender 读不了 KTX2 贴图，真要做也只能在构建后转 dist（仓库和管线保持 WebP）。降内存更有效的是按需加载：只读本章的敌人与首领、
+  只读手上 / 掉落的武器，换章释放上一章。

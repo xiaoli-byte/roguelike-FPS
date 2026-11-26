@@ -424,6 +424,13 @@ export class LeizeBoss extends Boss {
       if (a.want > 0) { a.t -= dt; if (a.t <= 0) a.want = -1.3; }
       const before = a.h;
       a.h += Math.sign(a.want - a.h) * Math.min(Math.abs(a.want - a.h), dt * 1.4);
+      // 身段拱出水面 / 沉回水里的那一下：沿着身段砸起几团水
+      if ((before < 0) !== (a.h < 0)) {
+        for (let q = 0; q < 3; q++) {
+          const p = this.xzAt(a.s0 + ((q + 0.5) / 3) * (a.s1 - a.s0), _v);
+          ctx.fx.water(_v.set(p.x, lv, p.z), 1.4);
+        }
+      }
       // 拱起前 1.5 秒水下发亮（预警）：用水花提示
       if (a.want > 0 && a.h < 0 && Math.random() < 0.4) {
         const p = this.xzAt(a.s0 + Math.random() * (a.s1 - a.s0), _v);
@@ -494,12 +501,15 @@ export class LeizeBoss extends Boss {
         // 身段一节节拱出水面
         for (const [i, a] of this.arches.entries()) if (t > 3.0 + i * 0.4 && a.want <= 0) { a.want = ARCH_H; a.t = 10; }
         this.updateArches(dt);
+        // 上身破水而出：时不时一大团水砸起来
+        if (t > 2.8 && t < 5.4 && Math.random() < 0.06) ctx.fx.water(_v.set(base.x + (Math.random() - 0.5) * 7, this.lake.level, base.z + (Math.random() - 0.5) * 7), 1.6);
         if (t > 2.0 && Math.random() < 0.5) ctx.fx.spray(_v.set(base.x + (Math.random() - 0.5) * 8, this.lake.level + 0.1, base.z + (Math.random() - 0.5) * 8), ['#e8fbff', '#ffffff'], 2, 2, 2, 6, 0.8);
         // 手：先撑着水面，升起后抬到胸前，6.4 秒拍腹
         const clap = t > 6.0 && t < 6.8 ? Math.sin((t - 6.0) / 0.8 * Math.PI) : 0;
         for (const A of this.arms) A.hand.copy(this.chest).addScaledVector(this.fwd, 3 + 2 * (1 - k) - 1.2 * clap).add(_u.set(this.fwd.z * A.side * (4 - 2.5 * clap), -2 - 4 * (1 - k), -this.fwd.x * A.side * (4 - 2.5 * clap)));
         if (t > 6.4 && !rose) {
           rose = 1;
+          ctx.sfx?.('boss_roar', this.chest, 1.2);
           ctx.fx.burst(this.drum.getWorldPosition(_v).clone(), 5, '#ff6ae0');
           ctx.fx.shockwave(base.x, base.z, 46, 1.4, undefined, '#ff6ae0');
           ctx.shake(0.4);
@@ -624,6 +634,7 @@ export class LeizeBoss extends Boss {
     else if (ev === 'beat') {
       const n = this.mem.beats = (this.mem.beats ?? 0) + 1;
       ctx.fx.burst(this.drum.getWorldPosition(_v).clone(), 3, '#ff6ae0');
+      ctx.sfx?.('boss_slam', _v, 0.7);
       ctx.fx.shockwave(this.base.x, this.base.z, 30, 0.8, undefined, '#ff6ae0');
       ctx.shake(0.25);
       this.ring(id === 'tripleDrum' ? (n - 2) * 8 : n === 1 ? 0 : 7);
@@ -638,6 +649,8 @@ export class LeizeBoss extends Boss {
     } else if (ev === 'hit' && id === 'clawSlam') {
       const T = this.target;
       ctx.fx.spray(T, ['#e8fbff', '#8a7a60', '#ffffff'], 60, 9, 5, 12, 0.9);
+      ctx.sfx?.('boss_slam', T, 1.1);
+      if (ctx.fx.wet(T.x, T.z)) ctx.fx.water(_v.set(T.x, this.lake.level, T.z), 2.0);
       ctx.shake(0.45);
       if (Math.hypot(P.x - T.x, P.z - T.z) < 6 && !ctx.invulnerable()) ctx.hurt(26, '雷泽雷神的龙爪', this.g.knockFrom(T.x, T.z, 12, 6));
       let done = false;

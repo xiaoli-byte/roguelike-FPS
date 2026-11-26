@@ -25,7 +25,7 @@ const zoom = Number(params.get('zoom') ?? 1.6);
 const reloadAt = params.has('reload') ? Number(params.get('reload')) : -1;
 const aim = params.get('aim') === '1';
 
-await Promise.all([AssetLibrary.preload(), OriginalWeaponLibrary.preload()]);
+await Promise.all([AssetLibrary.preload(), AssetLibrary.preload('weapons'), OriginalWeaponLibrary.preload()]);
 const game = new Game();
 const ctx = game.ctx;
 ctx.player.resetForRun(hero);

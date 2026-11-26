@@ -29,6 +29,8 @@ const STUBS = {
     async load(node) { if (globalThis.__failLoad?.(node)) throw new Error('关卡搭不起来'); this.loads.push(node); }
     unload() {} }`,
   'assets/AssetLibrary.ts': 'export const AssetLibrary = { preload: async () => {} };',
+  // 进关前按本关读敌人美术（Game.loadStage）：流程测试不读模型
+  'assets/StageArt.ts': 'export async function prepareStageArt() { return []; }',
   'fx/Fx.ts': 'export class FxSystem { clear() {} update() {} }',
   'audio/AudioSystem.ts': 'export class AudioSystem { play() {} setMusic() {} applyVolumes() {} unlock() {} update() {} }',
   'ui/UI.ts': `export class UIManager {

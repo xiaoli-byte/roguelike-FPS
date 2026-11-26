@@ -112,6 +112,8 @@ def publish(asset: str, glb: Path, version: int, rig: dict, cls_name: str, cls: 
         "published": now(),
         "generator": {"tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
                       "mode": "tripo_native", "checkpoint": "P2.0"},
+        # 每条清单都要带许可（tests/asset-licenses.test.mjs 检查）；2026-11-25 前这里漏写，64 条是事后补的
+        "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
         "source_task": rig.get("task"),
     }
     if hi_glb is not None:

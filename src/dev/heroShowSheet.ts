@@ -23,7 +23,7 @@ const fid = params.has('fid') ? Number(params.get('fid')) : -1;
 const idle = params.get('idle') === '1';
 const side = params.get('side') === '1';
 
-await AssetLibrary.preload();
+await Promise.all([AssetLibrary.preload(), AssetLibrary.preload('weapons')]); // 枪模按需读，检视页手里要拿美术枪
 const rig = buildHeroModel(hero.id, hero.color);
 const def = getWeaponDef(hero.startingWeapon);
 rig.hand.add(buildGunModel(def.id, 0, def.element).root);

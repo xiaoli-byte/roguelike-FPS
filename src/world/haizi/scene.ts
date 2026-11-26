@@ -54,12 +54,41 @@ uniform vec4 uFarUV;
 uniform vec3 uFarK;
 uniform vec4 uFarPlane;
 uniform float uFlash;
+#define RIPPLES 40
+uniform vec4 uRip[RIPPLES];
 varying vec4 vUv;
 varying vec3 vWorld;
 float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float n(vec2 p) {
   vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
   return mix(mix(h(i), h(i + vec2(1.0, 0.0)), u.x), mix(h(i + vec2(0.0, 1.0)), h(i + vec2(1.0, 1.0)), u.x), u.y);
+}
+// 动态涟漪（waterFx.ts 往 uRip 里写，每个 = 圆心 x、z，起始时间，强度）：一圈往外推，圈后面拖几道越来越长的细波，
+// 越走越淡、越远越弱。返回水面坡度（扰动反射），crest = 浪峰（亮一点），foam = 刚溅起那一下的白沫圈
+vec2 rippleField(vec2 p, float t, out float crest, out float foam) {
+  vec2 g = vec2(0.0);
+  crest = 0.0; foam = 0.0;
+  for (int i = 0; i < RIPPLES; i++) {
+    vec4 R = uRip[i];
+    if (R.w <= 0.0) continue;
+    float age = t - R.z;
+    float life = 1.4 + 1.6 * min(R.w, 1.0);
+    if (age < 0.0 || age > life) continue;
+    vec2 dv = p - R.xy;
+    float d = length(dv);
+    float front = 0.12 + age * (0.8 + 0.9 * min(R.w, 1.5));
+    float x = d - front;
+    if (x > 0.45 || x < -1.6 - age * 0.8) continue;
+    float fade = 1.0 - age / life;
+    fade *= fade;
+    float env = exp(-x * x / (0.08 + 0.3 * age));
+    float a = R.w * fade * env / (1.0 + d * 0.7);
+    float k = 12.0 - 4.0 * min(age, 1.5);
+    g += (dv / max(d, 1e-3)) * (a * cos(x * k));
+    crest += a * max(0.0, sin(x * k));
+    foam += R.w * smoothstep(0.4, 0.0, age) * exp(-x * x * 7.0) / (1.0 + d * 1.5);
+  }
+  return g;
 }
 void main() {
   vec2 p = vWorld.xz;
@@ -70,6 +99,27 @@ void main() {
   w += (vec2(n(p * 1.6 + t * 0.6), n(p * 1.7 - t * 0.5)) - 0.5) * 0.45;
   vec4 uv = vUv;
   uv.xy += w * uRipple * uv.w;
+  float rCrest, rFoam;
+  vec2 rg = rippleField(p, t, rCrest, rFoam);
+  // 下雨：两层错开的格子里一个个雨点涟漪，雷暴越大越密（uFarK.z = 雷暴程度）
+  if (uFarK.z > 0.01) {
+    for (int L = 0; L < 2; L++) {
+      float sz = L == 0 ? 0.9 : 1.37;
+      vec2 q = p / sz + float(L) * 0.37;
+      vec2 cell = floor(q);
+      float rnd = h(cell + float(L) * 17.0);
+      if (rnd > uFarK.z * 0.85) continue;
+      // 雨点圈：半径扩到约 0.24 格（20–35 cm）就散，散得快（平方淡出），只轻轻掀一点白
+      vec2 dv = fract(q) - 0.5 - (vec2(h(cell + 3.1), h(cell + 5.7)) - 0.5) * 0.6;
+      float d = length(dv);
+      float ph = fract(t * (0.9 + rnd) + rnd * 7.0);
+      float x = d - ph * 0.24;
+      float a = exp(-x * x / 0.0008) * (1.0 - ph) * (1.0 - ph);
+      rg += (dv / max(d, 1e-3)) * a * cos(x * 80.0) * 0.4;
+      rCrest += a * 0.35;
+    }
+  }
+  uv.xy += rg * 0.13 * uv.w;
   vec4 tr = texture2DProj(tDiffuse, uv);
   vec3 view = normalize(cameraPosition - vWorld);
   // 远山倒影（概念图湖里那道金顶）：按真实几何，神山（仰角 10–21°）的倒影落在离岸 9 m 以内的水面上，出生点根本看不到。
@@ -78,7 +128,7 @@ void main() {
   // 布景只在神山方位附近盖（缺口那片坡的倒影让给金顶，两侧冰斗壁的倒影留着）
   if (uFarK.x > 0.0) {
     vec3 rd = vec3(-view.x, view.y, -view.z);
-    rd.xz += w * uRipple * 6.0;
+    rd.xz += w * uRipple * 6.0 + rg * 1.6;
     float el = atan(rd.y, length(rd.xz)) * uFarK.x;
     vec3 fd = vec3(normalize(rd.xz) * cos(el), sin(el)).xzy;
     // 从水面这一点出发打到绘景那张竖直面上（uFarPlane = 相机水平朝前 xz、板的距离）：玩家走开后倒影和山一起有视差，上下对得齐
@@ -108,6 +158,11 @@ void main() {
   float foam = smoothstep(1.6, 0.0, abs(r - uShoreR)) + smoothstep(1.2, 0.0, abs(r - uIslandR));
   foam *= smoothstep(0.45, 0.8, n(p * 1.3 + vec2(t * 0.4, -t * 0.3)));
   col = mix(col, vec3(0.92, 0.96, 0.97), clamp(foam, 0.0, 1.0) * 0.55);
+  // 涟漪：浪峰映出更多天光（斜着看更明显），刚溅起那一圈带白沫
+  col += vec3(0.8, 0.88, 0.92) * min(rCrest, 1.0) * (0.25 + 0.6 * fres);
+  // 迎着视线的坡面映的是更低处（暗一点）、背着的映天（亮一点）：圈的明暗交替
+  col *= 1.0 + clamp(dot(rg, normalize(vWorld.xz - cameraPosition.xz)) * 2.2, -0.22, 0.22);
+  col = mix(col, vec3(0.93, 0.97, 0.98), clamp(rFoam, 0.0, 1.0) * 0.65);
   // 通电（雷泽）：整片偏紫红，水面上一道道游走的电纹，一圈圈从湖心往外推
   col = mix(col, uTint * 0.6 + col * 0.4, uTintMix);
   float vein = 1.0 - smoothstep(0.0, 0.045, abs(n(p * 0.16 + vec2(t * 0.35, -t * 0.27)) - 0.5));
@@ -151,6 +206,7 @@ export class LakeSurface {
     this.mat = this.mesh.material as THREE.ShaderMaterial;
     this.mat.uniforms.uTime = WORLD_UNIFORMS.uTime;
     this.mat.uniforms.uFlash = WORLD_UNIFORMS.uFlash;
+    this.mat.uniforms.uRip = { value: this.ripples };
   }
 
   /** 水位偏移（米）：地形的 waterLevelAt、湖面网格、岸线白浪一起变 */
@@ -162,6 +218,19 @@ export class LakeSurface {
     this.mat.uniforms.uIslandR.value = Math.max(0, 8.3 - v * 0.9);
   }
   get level(): number { return LAKE.level + this.rise; }
+
+  /** 动态涟漪（和着色器里 RIPPLES 一样多，环形缓冲：最老的被顶掉） */
+  private readonly ripples = Array.from({ length: 40 }, () => new THREE.Vector4(0, 0, -1e3, 0));
+  private rippleNext = 0;
+
+  /**
+   * 在水面 (x, z) 起一圈涟漪。strength：0.1 = 站着不动时腿边的细纹，0.3 = 一步，1 = 跳进水里，1.5 封顶。
+   * 时间用 WORLD_UNIFORMS.uTime（和着色器同一个钟）
+   */
+  addRipple(x: number, z: number, strength: number): void {
+    this.ripples[this.rippleNext].set(x, z, WORLD_UNIFORMS.uTime.value, Math.min(1.5, strength));
+    this.rippleNext = (this.rippleNext + 1) % this.ripples.length;
+  }
 
   /** 湖水染色：color 是目标颜色，mix 0..1（0 = 原色） */
   setTint(color: THREE.ColorRepresentation, mix: number): void {
@@ -396,7 +465,7 @@ export function buildHaizi(scene: THREE.Scene, terrain: HaiziTerrain, world: Col
   // 投影绘景（paintProject.ts）：概念图从出生点相机投到冰斗壁、冰舌、缺口和远岸上。地形用自己的一份材质（共用的那份别的图也在用）
   const base = `${import.meta.env?.BASE_URL ?? '/'}`;
   const paint = buildPaintProjector(base);
-  const terrainMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true });
+  const terrainMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { detail: true, splat: true, sky: true, contact: true });
   paint.apply(terrainMat);
   for (const g of terrain.buildTiles(96)) {
     const m = new THREE.Mesh(g, terrainMat);

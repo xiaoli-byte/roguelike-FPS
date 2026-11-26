@@ -269,7 +269,7 @@ export class RedesignSceneView {
     this.buildArt();
     this.buildFlames();
     if (this.placements.some(p => !this.built.has(p.assetId)))
-      void AssetLibrary.preload().then(() => { if (!this.disposed) this.buildArt(); });
+      void AssetLibrary.preload('scene').then(() => { if (!this.disposed) this.buildArt(); });
   }
 
   /** Placement asset ids that are still drawn as greybox (missing or not yet loaded). */

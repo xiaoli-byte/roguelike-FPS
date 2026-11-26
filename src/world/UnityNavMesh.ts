@@ -33,6 +33,15 @@ export class UnityNavMesh implements INavGrid {
   private readonly nearestPoint = new THREE.Vector3();
   private search = 0;
   private heapSize = 0;
+  /** 每个三角形的邻居（建网时按共边一次算好，顺序同逐边查表） */
+  private readonly adjacency: number[][] = [];
+  /** XZ 平面的分桶索引：格子 → 包围盒压到这一格的三角形（序号升序）。找所在三角形 / 最近三角形只查附近的格子 */
+  private readonly bucketSize = 8;
+  private readonly bucketMinX: number;
+  private readonly bucketMinZ: number;
+  private readonly bucketsX: number;
+  private readonly bucketsZ: number;
+  private readonly buckets: number[][];
 
   constructor(private readonly ctx: GameContext, document: UnitySceneDocument) {
     const navigation = document.navigation;
@@ -60,6 +69,25 @@ export class UnityNavMesh implements INavGrid {
       this.addEdge(c, a, index);
     }
     const count = this.triangles.length;
+    for (let i = 0; i < count; i++) this.adjacency.push(this.computeNeighbours(i));
+    let minX = Infinity, minZ = Infinity, maxX = -Infinity, maxZ = -Infinity;
+    for (const v of this.vertices) {
+      minX = Math.min(minX, v.x); maxX = Math.max(maxX, v.x);
+      minZ = Math.min(minZ, v.z); maxZ = Math.max(maxZ, v.z);
+    }
+    if (!Number.isFinite(minX)) { minX = minZ = 0; maxX = maxZ = 0; }
+    this.bucketMinX = minX;
+    this.bucketMinZ = minZ;
+    this.bucketsX = Math.max(1, Math.ceil((maxX - minX) / this.bucketSize) + 1);
+    this.bucketsZ = Math.max(1, Math.ceil((maxZ - minZ) / this.bucketSize) + 1);
+    this.buckets = Array.from({ length: this.bucketsX * this.bucketsZ }, () => [] as number[]);
+    for (let i = 0; i < count; i++) {
+      const t = this.triangles[i], a = this.vertices[t.a], b = this.vertices[t.b], c = this.vertices[t.c];
+      const e = 1e-4;
+      const x0 = this.bucketX(Math.min(a.x, b.x, c.x) - e), x1 = this.bucketX(Math.max(a.x, b.x, c.x) + e);
+      const z0 = this.bucketZ(Math.min(a.z, b.z, c.z) - e), z1 = this.bucketZ(Math.max(a.z, b.z, c.z) + e);
+      for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++) this.buckets[z * this.bucketsX + x].push(i);
+    }
     this.g = new Float64Array(count);
     this.f = new Float64Array(count);
     this.parent = new Int32Array(count);
@@ -143,7 +171,19 @@ export class UnityNavMesh implements INavGrid {
     this.edges.set(key, list);
   }
 
+  private bucketX(x: number): number {
+    return Math.min(this.bucketsX - 1, Math.max(0, Math.floor((x - this.bucketMinX) / this.bucketSize)));
+  }
+
+  private bucketZ(z: number): number {
+    return Math.min(this.bucketsZ - 1, Math.max(0, Math.floor((z - this.bucketMinZ) / this.bucketSize)));
+  }
+
   private neighbours(index: number): number[] {
+    return this.adjacency[index];
+  }
+
+  private computeNeighbours(index: number): number[] {
     const triangle = this.triangles[index];
     const result: number[] = [];
     for (const [a, b] of [[triangle.a, triangle.b], [triangle.b, triangle.c], [triangle.c, triangle.a]]) {
@@ -155,7 +195,8 @@ export class UnityNavMesh implements INavGrid {
 
   private containing(x: number, y: number, z: number, checkHeight: boolean): number {
     let best = -1, vertical = Infinity;
-    for (let i = 0; i < this.triangles.length; i++) {
+    // 只查这一点所在格子里的三角形（含这一点的三角形，包围盒一定压到这一格；桶里序号升序，平局取序号小的，同逐个扫）
+    for (const i of this.buckets[this.bucketZ(z) * this.bucketsX + this.bucketX(x)]) {
       const triangle = this.triangles[i];
       const a = this.vertices[triangle.a], b = this.vertices[triangle.b], c = this.vertices[triangle.c];
       const ab = cross(a.x, a.z, b.x, b.z, x, z), bc = cross(b.x, b.z, c.x, c.z, x, z), ca = cross(c.x, c.z, a.x, a.z, x, z);
@@ -177,10 +218,36 @@ export class UnityNavMesh implements INavGrid {
     const containing = this.containing(point.x, point.y, point.z, true);
     if (containing >= 0) return containing;
     let best = -1, distance = Infinity;
-    for (let i = 0; i < this.triangles.length; i++) {
+    const consider = (i: number): void => {
       this.closest(i, point, this.nearestPoint);
       const candidate = this.nearestPoint.distanceToSquared(point);
-      if (candidate < distance) { distance = candidate; best = i; }
+      if (candidate < distance || (candidate === distance && i < best)) { distance = candidate; best = i; }
+    };
+    const inside = point.x >= this.bucketMinX && point.z >= this.bucketMinZ
+      && point.x <= this.bucketMinX + this.bucketsX * this.bucketSize && point.z <= this.bucketMinZ + this.bucketsZ * this.bucketSize;
+    if (!inside) {
+      // 在网格范围外：逐个查（少见）
+      for (let i = 0; i < this.triangles.length; i++) consider(i);
+      return best;
+    }
+    // 从所在格子一圈圈往外查：查完第 r 圈，没查过的三角形离这一点至少 r 格；已找到的比这还近就停（结果同逐个查）
+    const cx = this.bucketX(point.x), cz = this.bucketZ(point.z);
+    const seen = new Set<number>();
+    const rings = Math.max(this.bucketsX, this.bucketsZ);
+    for (let r = 0; r <= rings; r++) {
+      for (let z = cz - r; z <= cz + r; z++) {
+        if (z < 0 || z >= this.bucketsZ) continue;
+        for (let x = cx - r; x <= cx + r; x++) {
+          if (x < 0 || x >= this.bucketsX || (Math.abs(x - cx) < r && Math.abs(z - cz) < r)) continue;
+          for (const i of this.buckets[z * this.bucketsX + x]) {
+            if (seen.has(i)) continue;
+            seen.add(i);
+            consider(i);
+          }
+        }
+      }
+      const reach = r * this.bucketSize;
+      if (best >= 0 && distance < reach * reach) break;
     }
     return best;
   }

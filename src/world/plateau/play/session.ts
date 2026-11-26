@@ -3,6 +3,8 @@
  * 4-1 开放盆地（game.ts PlayMode：遇敌、灵火、垭口）、4-2 大鹗领主战（gorge/play.ts）、4-4 雷泽雷神（haizi/play.ts）各自继承它，
  * 只写这张图自己的东西（目标、奖励、场地机关、通关）。战斗设计见 docs/level-design/chuanzang-combat-v1.md。
  */
+import type { SfxId } from '../../../core/types';
+import type { SynthPlayer } from '../../../audio/SynthPlayer';
 import * as THREE from 'three';
 import type { HeightGrid } from '../grid';
 import type { CollisionWorld, Walker } from '../walker';
@@ -75,6 +77,7 @@ export abstract class PlaySession implements PlayCtx {
     private readonly boundFn: (x: number, z: number) => number,
   ) {
     this.fx = new CombatFx(scene, terrain, world);
+    this.fx.sfx = (id, at, volume) => this.sfx(id, at, volume);
     this.elements = new ElementSystem(this);
     this.kit = new Kit(this, camera);
     this.hud = new Hud();
@@ -130,14 +133,24 @@ export abstract class PlaySession implements PlayCtx {
 
   invulnerable(): boolean { return this.walker.dodging || this.cinema.locked || !this.player.alive || this.won; }
 
+  /** 音效输出（检视页接 SynthPlayer）；不接就没声 */
+  audio: SynthPlayer | null = null;
+  private wasReloading = false;
+  private lastCdQ = 0;
+  private lastCdE = 0;
+
+  sfx(id: SfxId, at?: THREE.Vector3, volume?: number): void { this.audio?.play(id, { position: at, volume }); }
+
   hurt(dmg: number, source: string, knock?: KnockBack, elem?: Elem): void {
     const P = this.player;
     if (!P.alive || this.won || this.cinema.locked || this.mem.god) return;
     if (this.walker.dodging) { this.hud.dodged(); return; }
     P.lastHurt = this.time;
     const s = Math.min(P.shield, dmg);
+    const hadShield = P.shield > 0;
     P.shield -= s;
     P.hp -= dmg - s;
+    this.sfx(hadShield && P.shield <= 0 ? 'shield_break' : 'player_hurt');
     if (knock) this.walker.knock(knock.x, knock.z, knock.up ?? 0);
     this.hud.hurt(dmg, s >= dmg, elem === 'shock');
     this.shake(Math.min(0.5, dmg / 40));
@@ -250,8 +263,20 @@ export abstract class PlaySession implements PlayCtx {
     if (input.reload && !locked) this.gun.startReload();
     const targets: Target[] = this.props.length ? [...this.actorCache, ...this.props] : this.actorCache;
     const shots = this.gun.update(dt, input.firing && P.alive && !this.won && !locked, this, targets);
-    for (const s of shots) this.onShot(s);
+    for (const s of shots) {
+      this.sfx('shot_rifle');
+      if (s.target && s.dealt > 0) this.sfx(s.mult > 1 ? 'hit_crit' : 'hit', s.point, 0.9);
+      if (s.killed) this.sfx('kill');
+      this.onShot(s);
+    }
+    const reloading = this.gun.reloading > 0;
+    if (reloading !== this.wasReloading) this.sfx(reloading ? 'reload_start' : 'reload_end');
+    this.wasReloading = reloading;
     this.kit.update(dt, { skillE: !!input.skillE, skillQ: !!input.skillQ }, locked || this.won);
+    // 技能出手（冷却从 0 跳满的那一帧）
+    if (this.kit.cdQ > this.lastCdQ + 0.5) this.sfx('skill_fire');
+    if (this.kit.cdE > this.lastCdE + 0.5) this.sfx('skill_throw');
+    this.lastCdQ = this.kit.cdQ; this.lastCdE = this.kit.cdE;
     this.updateFoes(dt);
     for (const b of this.bosses) {
       const d = Math.hypot(this.feet.x - b.arena.x, this.feet.z - b.arena.y);

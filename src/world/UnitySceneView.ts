@@ -15,6 +15,7 @@ import { UnityActivatorSystem } from './UnityActivators';
 import { renderUnityWaterDepth } from './UnityWaterMaterial';
 import { MechanismSystem } from './mechanisms/MechanismSystem';
 import { fallRecoveryHooks } from '../player/FallRecovery';
+import { DesertArtLayer, desertArt } from './desert';
 
 export class UnitySceneView {
   readonly group = new THREE.Group();
@@ -31,12 +32,18 @@ export class UnitySceneView {
   private activators: UnityActivatorSystem | null = null;
   /** 地图机关（M7：熔岩、熔泉、流沙、软边界、天气……）；检视页的 ctx 没有玩家 / 敌人时不建 */
   mechanisms: MechanismSystem | null = null;
+  /** 第一章美术重建层（src/world/desert/）：远景、沙丘脊、环境特效、补光、新模型 */
+  desert: DesertArtLayer | null = null;
 
   constructor(private readonly ctx: GameContext, private readonly document: UnitySceneDocument, features: { environment?: boolean; groundCover?: boolean; colliders?: boolean; mechanisms?: boolean; reportEnvironment?: (stage: string) => void } = {}) {
     this.group.name = `unity-scene-${document.id}`;
     this.artBrief = document.title;
+    const art = desertArt(document.id);
     this.environment = features.environment === false ? null
-      : new UnityEnvironmentView(ctx, document.environment, this.group, features.reportEnvironment, { chapter: Number.parseInt(document.id, 10) || 1, baseY: unityAtmosphereBaseY(document) });
+      : new UnityEnvironmentView(ctx, document.environment, this.group, features.reportEnvironment, {
+        chapter: Number.parseInt(document.id, 10) || 1, baseY: unityAtmosphereBaseY(document),
+        profile: art?.atmosphere, clouds: art?.clouds, shafts: art?.shafts, wind: art?.wind,
+      });
     this.ready = Promise.all([
       UnityLevelLibrary.preload(document), this.environment?.ready,
       features.colliders === false ? Promise.resolve() : loadUnityColliders(document, ctx.world),
@@ -101,6 +108,17 @@ export class UnitySceneView {
         await Promise.all(document.groundCover.map(layer => this.groundCover.add(document, layer, ctx.settings.quality !== 'low')));
         this.groundCover.update(ctx.camera.position);
       }
+      if (art) {
+        // 美术重建层也是锦上添花：建不起来只是少这一层
+        try {
+          const layer = new DesertArtLayer(ctx, document, art);
+          await layer.build(this.group);
+          if (this.disposed) layer.dispose();
+          else this.desert = layer;
+        } catch (err) {
+          console.error('[UnitySceneView] 第一章美术重建层没建起来', err);
+        }
+      }
       if (features.mechanisms !== false && ctx.player && ctx.enemies && ctx.combat && ctx.stage) {
         // 机关是锦上添花：出了错这张图没有机关，不能挡住进关
         try {
@@ -125,6 +143,7 @@ export class UnitySceneView {
     this.water?.update(dt);
     this.activators?.update(dt);
     this.mechanisms?.update(dt);
+    this.desert?.update(dt, t);
     renderUnityWaterDepth(this.ctx, new Set([...this.animatedMaterials].filter(material => material.userData.unityWater)));
     for (const material of this.animatedMaterials) material.uniforms.uTime.value = t;
   }
@@ -132,6 +151,8 @@ export class UnitySceneView {
   dispose(): void {
     this.disposed = true;
     if (this.mechanisms && fallRecoveryHooks.safe === this.mechanisms.safe) fallRecoveryHooks.safe = null;
+    this.desert?.dispose();
+    this.desert = null;
     this.mechanisms?.dispose();
     this.mechanisms = null;
     this.activators?.dispose();

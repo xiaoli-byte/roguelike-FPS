@@ -161,6 +161,8 @@ interface HeroSlot {
   readonly rig: HeroRig;
   /** 搭建时已用上发布的美术资产（false = 程序化回退，资产到达后重建） */
   readonly art: boolean;
+  /** 手里的初始武器搭建时已用上美术枪模（没有初始武器也算 true）；false = 枪模读到后重建 */
+  readonly gunArt: boolean;
   /** 位置（升降）/ 朝向 / 缩放；rig.root 挂在下面，本类不改 rig.root 的变换 */
   readonly pivot: THREE.Group;
   /** 挂在 rig.hand 上的枪模根节点（释放前先摘下） */
@@ -477,9 +479,17 @@ export class HeroPreview {
     }
     // A cold launch can build the stage before GLBs finish. Replace cached fallback
     // slots once the hero assets arrive so the selection screen shows the new art.
-    void AssetLibrary.preload().then(() => {
+    // 枪模按需读（AssetLibrary 的 weapons 范围）：各英雄的初始武器在这里读，读到后手里还是程序化枪模的也重建
+    const starting = [...new Set(this.ctx.heroes.map((h) => h.startingWeapon).filter((id) => hasWeaponDef(id)).map((id) => getWeaponDef(id).id))];
+    const startingOf = (heroId: string): string | null => {
+      const id = this.ctx.heroes.find((h) => h.id === heroId)?.startingWeapon;
+      return id && hasWeaponDef(id) ? getWeaponDef(id).id : null;
+    };
+    void Promise.all([AssetLibrary.preload(), AssetLibrary.ensureBound('weapon', starting)]).then(() => {
       if (!this.usable() || !this.built || !this.hero) return;
-      if (!this.slotList.some((s) => !s.art && AssetLibrary.findBound('hero', s.id))) return;
+      const stale = (s: HeroSlot): boolean => (!s.art && !!AssetLibrary.findBound('hero', s.id))
+        || (!s.gunArt && !!AssetLibrary.findBound('weapon', startingOf(s.id) ?? ''));
+      if (!this.slotList.some(stale)) return;
       for (const slot of this.slotList) this.disposeSlot(slot);
       this.slots.clear();
       this.slotList.length = 0;
@@ -938,6 +948,7 @@ export class HeroPreview {
       id: hero.id,
       rig,
       art: !!AssetLibrary.findBound('hero', hero.id),
+      gunArt: !hasWeaponDef(hero.startingWeapon) || !!AssetLibrary.findBound('weapon', getWeaponDef(hero.startingWeapon).id),
       pivot,
       gun,
       fades,

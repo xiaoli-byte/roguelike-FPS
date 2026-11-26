@@ -32,6 +32,7 @@ import { ProjectileSystem } from '../combat/Projectiles';
 import { UnityNavigation } from '../world/UnityNavigation';
 import { StageDirector } from '../world/StageDirector';
 import { AssetLibrary } from '../assets/AssetLibrary';
+import { prepareStageArt } from '../assets/StageArt';
 import { FxSystem } from '../fx/Fx';
 import { AudioSystem } from '../audio/AudioSystem';
 import { UIManager } from '../ui/UI';
@@ -387,8 +388,8 @@ export class Game implements IGame {
       // 放弃了（记了一局败北）就按放弃之后的生涯再定一次这一局的路线：Unity 先 Forfeit 再 Begin(ShuffleRoute() ? Build : null)，
       // 生涯第一局暂离后开新局，新局也洗牌
       if (this.forfeitSuspended()) await ctx.runPlan.prepare?.(ctx.run);
-      // 美术资源（角色 / 首领 / 道具 GLB）要在第一关刷怪前到齐：开局就站在场上的驻守怪、调试局直进的首领场，
-      // 刷出来时模型没到会一直是程序化占位体（同 Unity：进图时资源已就绪）。模块加载时已在后台开始读，这里只等它读完
+      // 美术资源要在第一关刷怪前到齐：开局就站在场上的驻守怪、调试局直进的首领场，刷出来时模型没到会一直是程序化占位体
+      // （同 Unity：进图时资源已就绪）。这里等的是英雄 / 武器 / 灵宠（模块加载时已在后台开始读）；敌人 / 首领由 loadStage 按本关读
       await AssetLibrary.preload();
       if (!await this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(false); return; }
       ctx.ui.showHUD(true);
@@ -651,6 +652,15 @@ export class Game implements IGame {
     run.difficulty = ctx.runPlan.difficultyFor(node);
     this.clearStage(false);
     ctx.stage.unload();
+    // 美术按需（assets/StageArt.ts）：上一关的敌人已清掉，释放这一关用不到的敌人 / 首领模型，读进这一关会出现的——
+    // 要在刷怪之前读完（驻守怪进关就站在场上；挂美术只能在动画跑起来之前）。读不到只是敌人用程序化模型，不挡进关
+    try {
+      const weapons = new Set<string>(ctx.heroes.map((h) => h.startingWeapon));
+      for (const w of ctx.weapons.slots) if (w) weapons.add(w.defId);
+      await prepareStageArt(node, [...weapons]);
+    } catch (err) {
+      console.warn('[Game] 本关美术预取失败，敌人先用程序化模型', err);
+    }
     try {
       await ctx.stage.load(node);
     } catch (err) {
@@ -862,6 +872,8 @@ export class Game implements IGame {
     const ctx = this.ctx;
     (window as unknown as Record<string, unknown>).__game = this;
     (window as unknown as Record<string, unknown>).__ctx = ctx;
+    // 美术资产库（按需读 / 换关释放的检视：loadedIds()；scripts/web/asset-memory-check.mjs 用）
+    (window as unknown as Record<string, unknown>).__assets = AssetLibrary;
     let god = false;
     // __balance()：平衡模型的整份推演（经济投影、逐关估算、首领用时；Unity BalanceModel.Report），敌人 / 首领数值现读 defs.json
     (window as unknown as Record<string, unknown>).__balance = async () => {

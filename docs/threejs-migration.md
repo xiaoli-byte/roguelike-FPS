@@ -53,7 +53,7 @@ npm run unity:web:publish   # = node scripts/unity/optimize-web-levels.mjs（不
 ```
 
 ```
-Unity 编辑器 ──bridge.sh webexport──▶ public/assets/unity-levels.next/   （原样导出，约 2.2 GB，Git 忽略）
+Unity 编辑器 ──bridge.sh webexport──▶ exports/unity-levels-raw/          （原样导出，约 2.5 GB，Git 忽略；不能放 public/ 下）
                                         │
                      node S/optimize-web-levels.mjs
                                         ▼
@@ -67,6 +67,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
   - 其余网格的顶点 / 索引缓冲走 `EXT_meshopt_compression`（无过滤器，逐字节无损，1.25 GB → 110 MB）；碰撞网格去掉用不到的法线和 UV。网页加载器挂 `MeshoptDecoder`。
   - 贴图 PNG → WebP（`S/webp_textures.py`）：颜色 q90；地形 splat 无损；**法线贴图先解包再 q95**（见第 8 节第 1 条）。
   - `--check` 只核对发布目录是不是由当前原样导出生成的。
+  - 原样导出 2026-11-25 从 `public/assets/unity-levels.next/` 挪到 `exports/unity-levels-raw/`：`vite build` 把 `public/` 整个拷进 `dist/`，Git 忽略挡不住，正式包因此多带了 2.5 GB。
 - 网页侧：`src/world/Unity*.ts` 读场景文档并搭场景（`UnitySceneView`）、碰撞（`Collision.ts` 高度场 + 三角网格）、导航（`UnityNavMesh.ts` A*）、关卡流程（`UnitySceneAdapter.ts` → `StageDirector`）。检视页 `unity-map.html?map=1-1`（`build:labs`）。
 
 ## 4. 分期与进度
@@ -105,7 +106,7 @@ Unity 编辑器 ──bridge.sh webgameplay──▶ public/assets/unity-gamepla
 - ⬜ 场景文档里的高度场 / 草皮密度 / 植被实例（4-3 一份 26 MB）拆成按内容寻址的二进制文件：重导出时地形没变就不产生新数据。
 - ⬜ 天空盒立方体贴图是 HDR，导出器 Blit 进 ARGB32 会截断高光。
 - ✅ 接上空气透视 / 云影层（`src/world/Atmosphere.ts`，「游戏场景搭建」会话做的网页独有层，用户 2026-11-15 定的「全部迁移到 Three.js、不必落到 Unity」）：`UnityEnvironmentView` 在雾 / 环境光 / 太阳建好后 `Atmosphere.bind`，每帧 `update(t)`，卸载时 `unbind`；Unity 自写着色器（水、熔岩 / 流体）挂上它的共享 uniform；低雾基准高度取最低水面，没有水取导航网格顶点高度的 5% 分位；接上后线性雾起点推到 ≥ 120 m（终点不动）。网址带 `atmosphere=0` 关掉，看 Unity 原样的雾。这是在 Unity 规格之上**有意加的一层**。
-- ✅ vite 开发服务器不再监视 `gunfire-reborn-replica/`（指向另一块盘上整个 Unity 工程的符号链接，chokidar 会跟进去）、`Library/`、`logfile/`、`public/assets/unity-levels.next/`：之前它对所有请求都不响应。
+- ✅ vite 开发服务器不再监视 `gunfire-reborn-replica/`（指向另一块盘上整个 Unity 工程的符号链接，chokidar 会跟进去）、`Library/`、`logfile/`、Unity 原样导出（现在是 `exports/unity-levels-raw/`）：之前它对所有请求都不响应。
 
 ### 4.2 走法变体 / 入场点的导出格式（✅ 2026-11-17 已导出：第一、二章主图与三张备选图各 2–3 种走法、6–8 个入场点；三四章老图还没有）
 

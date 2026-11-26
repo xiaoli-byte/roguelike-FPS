@@ -2,6 +2,7 @@
  * 游玩模式各模块共用的上下文：玩家状态、受击、命中判定、元素与演出的接口。
  * 战斗设计见 docs/level-design/chuanzang-combat-v1.md。
  */
+import type { SfxId } from '../../../core/types';
 import type * as THREE from 'three';
 import type { HeightGrid } from '../grid';
 import type { CollisionWorld, Walker } from '../walker';
@@ -128,6 +129,8 @@ export interface PlayCtx {
   wake(x: number, z: number, r: number): void;
   /** 屏幕震动（0..1） */
   shake(amount: number): void;
+  /** 音效（检视页接 src/audio/SynthPlayer.ts；正式游戏的适配层不接 = 没声）：at 给了就按距离衰减、左右摆位 */
+  sfx?(id: SfxId, at?: THREE.Vector3, volume?: number): void;
   /** 燎的火落在这里（燃爆雷、火灵、炎心子弹）：点燃龙卷、烽火这类场地机关 */
   onFire(at: THREE.Vector3, r: number): void;
   /** 玩家是否无敌（冲刺无敌帧、演出） */

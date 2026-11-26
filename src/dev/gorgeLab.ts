@@ -3,6 +3,16 @@
  * 地形、过河设施、地标、水、大鹗、动态环境都在 src/world/gorge/（和 4-1 共用的在 src/world/plateau/），
  * 这里只负责组装、输入（含溜索、急流）、机位、平面图和自动验收。设计见 docs/level-design/chuanzang-v1.md 第 3 节。
  */
+import { AmbienceBed } from '../audio/AmbienceBed';
+import { AmbienceSense } from '../world/plateau/ambienceSense';
+import { bakeCoverMap } from '../world/plateau/coverMap';
+import { Rain } from '../world/plateau/rain';
+import { buildContactField } from '../world/plateau/contact';
+import { SkyAmbient } from '../world/plateau/skyAmbient';
+import { FilmPost } from '../render/FilmPost';
+import { SynthPlayer } from '../audio/SynthPlayer';
+import { WalkerSounds } from '../world/plateau/walkerSounds';
+import { DragLook, lockPointerOrDrag } from './dragLook';
 import * as THREE from 'three';
 import { MouseLookFilter } from '../core/MouseLookFilter';
 import { buildMountains, buildSky, SKY } from '../world/plateau/backdrop';
@@ -82,6 +92,8 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.setSize(innerWidth, innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
+// 出图后期（src/render/FilmPost.ts）：印片调色、泛光、部分自动曝光、暗角、颗粒、边角色差
+const film = new FilmPost(renderer);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
@@ -140,6 +152,12 @@ const ironSet = new Set(crossings.ironConductors);
 const weather = new Weather({
   scene, sun, hemi, fog, clearFog: { color: fog.color.clone(), near: fog.near, far: fog.far }, stormFog: new THREE.Color(SKY.stormHorizon),
 }, terrain, [...conductors, ...crossings.ironConductors, ...crossings.conductors, ...props.thunderPosts.map(p => p.pos)]);
+// 柔光（docs/art/reference-tingyuyuan.md 第四节第 3 项）：太阳的影子只压一部分、环境光从程序天空生成（网址 soft=0 关；O 键开关）
+const SHADOW_SOFT = 0.62;
+const softOn = new URLSearchParams(location.search).get('soft') !== '0';
+sun.shadow.intensity = softOn ? SHADOW_SOFT : 1;
+const skyAmbient = new SkyAmbient(renderer, scene, sky, hemi);
+skyAmbient.setEnabled(softOn);
 // 铁索桥是全图最大的导体：落点离桥 30 m 以内，七成被铁链引走
 weather.attract = (x, z, r) => {
   let best: THREE.Vector3 | null = null, bd = 30;
@@ -156,6 +174,15 @@ hazards.onRockLand = (zone, at) => {
   }
   if (!walker.fly && Math.hypot(walker.feet.x - at.x, walker.feet.z - at.z) < 3 && Math.abs(walker.feet.y - at.y) < 4) showHint('被落石砸中！');
 };
+// 物件和地面的交界（plateau/contact.ts）：脚下湿暗带、苔圈、砂砾，沿地面线撒碎石（网址 contact=0 关）
+buildContactField(scene, world, terrain);
+// 俯视遮挡图（plateau/coverMap.ts）+ GPU 雨（plateau/rain.ts）：檐下、树下、桥下没雨、是干的；网址 wet=0 关淋湿
+const cover = bakeCoverMap(renderer, scene, terrain, [grass.group, monsters.group, dae.group]);
+const rain = new Rain(scene);
+weather.builtinRain = false;
+// 环境声床（audio/AmbienceBed.ts + plateau/ambienceSense.ts）：风、颗粒雨声、江 / 溪 / 拍岸、雷，按站的地方实时调
+const ears = new AmbienceSense(terrain, cover, { windAt, baseWind: 0.3 });
+weather.strikeListeners.push(at => bed.strike(at, camera));
 const buildMs = performance.now() - t0;
 
 // ───────────────────────────── 行走、溜索、急流 ─────────────────────────────
@@ -165,6 +192,10 @@ const boundAt = (x: number, z: number): number => {
   return terrain.basin[Math.round(z - terrain.minZ) * terrain.nx + Math.round(x - terrain.minX)];
 };
 const walker = new Walker(world, boundAt, MAP.softBoundary);
+// 声音：枪声、命中、脚步、起跳落地（正式游戏的合成配方）；第一次点画面 / 按键后才出声
+const audio = new SynthPlayer();
+const walkSfx = new WalkerSounds(audio, terrain);
+const bed = new AmbienceBed(audio);
 
 // 彩蛋 · 灵宠飞渡（3.8）：会飞的灵宠跟在身边；到风马旗台按 F
 // 镜头避让：点在任何碰撞体里（房子、桥楼、旗杆、碉楼……，多留 0.6 m）就算挡住
@@ -283,7 +314,7 @@ let jumpPressed = false, dashPressed = false, releasePressed = false, bigMap = f
 /** 游玩模式（大鹗领主战，chuanzang-combat-v1.md 4.4）；null = 检视模式 */
 let play: GorgePlay | null = null;
 let firing = false, skillQ = false, skillE = false, anyKey = false, pick = 0;
-addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas && play) firing = true; });
+addEventListener('mousedown', e => { if (e.button === 0 && (document.pointerLockElement === canvas || (drag.active && e.target === canvas)) && play) firing = true; });
 addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
@@ -309,6 +340,14 @@ addEventListener('keydown', e => {
     showHint(walker.fly ? '飞行模式' : '行走模式');
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
+  if (e.code === 'KeyO' && !e.repeat) {
+    const on = sun.shadow.intensity === 1;
+    sun.shadow.intensity = on ? SHADOW_SOFT : 1;
+    skyAmbient.setEnabled(on);
+    showHint(on ? '柔光：开（半透明影子 + 天空环境光）' : '柔光：关（原来的死影子 + 半球光）');
+  }
+  // P：出图后期开 / 关（对照用；网址 post=0 默认关，bloom=0 lut=0 ae=0 grain=0 ca=0 vig=0 关单项）
+  if (e.code === 'KeyP' && !e.repeat) { film.enabled = !film.enabled; showHint(film.enabled ? '出图后期：开' : '出图后期：关（原样直出）'); }
   const digit = /^Digit([1-9])$/.exec(e.code);
   if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
 });
@@ -323,15 +362,9 @@ function look(dx: number, dy: number): void {
   walker.yaw -= dx * LOOK_SENS;
   walker.pitch = Math.max(-1.52, Math.min(1.52, walker.pitch - dy * LOOK_SENS));
 }
-async function lockPointer(): Promise<void> {
-  try {
-    await canvas.requestPointerLock({ unadjustedMovement: true });
-  } catch (error) {
-    if (error instanceof Error && error.name === 'NotSupportedError') {
-      try { await canvas.requestPointerLock(); } catch { /* 忽略 */ }
-    }
-  }
-}
+// 锁不上鼠标（Claude 应用自带的浏览器面板就是）时改成按住拖动转视角（dragLook.ts）
+const drag = new DragLook(canvas, look, () => showHint('这个浏览器不让网页锁定鼠标：在画面上按住左键（或右键）拖动来转视角'));
+function lockPointer(): Promise<void> { return lockPointerOrDrag(canvas, drag); }
 canvas.addEventListener('click', () => { if (document.pointerLockElement !== canvas) void lockPointer(); });
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === canvas;
@@ -404,6 +437,7 @@ let ratioCap: number = QUALITY.high.cap, ratio = ratioCap;
 function setRatio(r: number): void { ratio = r; renderer.setPixelRatio(r); renderer.setSize(innerWidth, innerHeight, false); }
 $<HTMLSelectElement>('opt-quality').onchange = e => {
   const Q = QUALITY[(e.target as HTMLSelectElement).value as keyof typeof QUALITY];
+  film.setQuality((e.target as HTMLSelectElement).value);
   ratioCap = Q.cap; setRatio(Q.cap);
   sun.shadow.mapSize.set(Q.shadow, Q.shadow);
   sun.shadow.map?.dispose();
@@ -852,6 +886,8 @@ function tick(dt: number, render: boolean): void {
   for (const p of props.thunderPosts) p.charge = Math.min(1, p.charge + (weather.level > 0.6 ? dt / 25 : 0));
   if (flight.thirdPerson) { camera.position.copy(flight.cam); camera.lookAt(flight.look); }
   else { walker.eye(camera.position); camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ'); }
+  audio.listen(camera);
+  walkSfx.update(dt, walker);
   // 灵宠平时跟着飞：放在镜头摆好之后，用这一帧的眼睛和视线（不落后一帧，走路时不抖）
   flight.companion(time, dt, camera.position, camera.getWorldDirection(lookTmp), Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.aspect));
   // 滑翔越快视野越宽（飞渡结束后慢慢回到 72°）
@@ -870,12 +906,16 @@ function tick(dt: number, render: boolean): void {
   for (const b of props.beacons) if (b.lit) beaconSmoke.push(b.pos.clone().add(new THREE.Vector3(6, 20, 0)));
   if (dae.group.visible && !play) dae.update(time, dt, { bridgeCharge: crossings.charge, smoke: beaconSmoke });
   weather.update(dt, camera.position);
+  rain.update(camera, weather.level, WORLD_UNIFORMS.uWind.value, scene.fog ? (scene.fog as THREE.Fog).color : new THREE.Color('#888'), renderer.domElement.width, renderer.domElement.height, dt);
+  ears.update(dt, camera, weather.level, bed.params);
+  bed.update(dt);
+  skyAmbient.update();
   if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: keys.has('KeyR'), skillQ, skillE, pick, anyKey });
   skillQ = skillE = anyKey = false;
   pick = 0;
   if (!render) return;
   adaptResolution(dt);
-  renderer.render(scene, camera);
+  film.render(scene, camera, dt);
   drawMap();
   updateHud(dt);
 }
@@ -905,6 +945,7 @@ async function startPlay(): Promise<void> {
   walker.fly = false;
   const mode = new GorgePlay(scene, camera, terrain, world, walker, weather, crossings, props,
     [...conductors, ...crossings.ironConductors, ...crossings.conductors, ...props.thunderPosts.map(p => p.pos)], boundAt);
+  mode.audio = audio;
   play = mode;
   await mode.start();
   showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · F 挂溜索 · 空格跳 · Shift 冲刺（无敌）');
@@ -924,11 +965,11 @@ function simulate(seconds: number, hold: string[] = [], dt = 1 / 60): void {
 // 调试入口（检视用）
 Object.assign(window, { gorge: {
   scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, crossings, hazards, weather, dae, props, monsters, macroAt, PATHS, runChecks, buildMs, ride, tryZip, dropZip, simulate, swept, flight, tryFlight,
-  jump: () => { jumpPressed = true; }, render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); },
-  get play() { return play; }, startPlay,
+  jump: () => { jumpPressed = true; }, render: () => { film.render(scene, camera); drawMap(); updateHud(0.3); }, film,
+  get play() { return play; }, startPlay, ambience: { bed, ears, cover },
   setFiring: (v: boolean) => { firing = v; },
   press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
   hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
   /** 脚本化试玩：按固定步长推进（render = 最后渲染一帧），和 plateau.simulate 同一个签名 */
-  sim: (seconds: number, step = 1 / 30, render = false) => { for (let t = 0; t < seconds - 1e-6; t += step) tick(step, false); if (render) { renderer.render(scene, camera); } },
+  sim: (seconds: number, step = 1 / 30, render = false) => { for (let t = 0; t < seconds - 1e-6; t += step) tick(step, false); if (render) { film.render(scene, camera); } },
 } });

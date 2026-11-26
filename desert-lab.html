@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>赤沙古道 · 白盒检视</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17151a;color:#efe7d3;font:13px "Microsoft YaHei","PingFang SC",sans-serif}
+#view{width:100%;height:100%;display:block;outline:none}
+#panel{position:fixed;right:14px;top:14px;width:330px;max-height:calc(100vh - 28px);overflow-y:auto;background:#17151aec;border:1px solid #5a4f40;border-radius:6px;padding:12px 14px;box-sizing:border-box}
+#panel h1{font-size:15px;margin:0 0 2px;color:#f6e7c1;letter-spacing:1px}
+#panel .sub{color:#c9b58a;font-size:12px;margin-bottom:6px;line-height:1.6}
+#panel h2{font-size:12px;margin:12px 0 6px;color:#f5c428;border-bottom:1px solid #4a4032;padding-bottom:3px;font-weight:normal;letter-spacing:1px}
+#panel button{font:inherit;background:#3a3026;color:#f5eedc;border:1px solid #6b5c46;border-radius:3px;padding:4px 8px;margin:2px 2px 2px 0;cursor:pointer}
+#panel button:hover{background:#4c3f30}#panel button.on{background:#f5c428;color:#1c1810;border-color:#f5c428}
+#panel label{display:block;margin:3px 0;cursor:pointer}
+#maps{display:flex;gap:4px;margin:6px 0 4px}#maps a{flex:1;text-align:center;padding:4px 0;border:1px solid #6b5c46;border-radius:3px;color:#d8cbb0;text-decoration:none;font-size:12px}#maps a.on{background:#f5c428;color:#1c1810;border-color:#f5c428;font-weight:bold}
+table{border-collapse:collapse;width:100%;font-size:12px}td{padding:2px 4px;border-bottom:1px solid #332b22;vertical-align:top}
+.ok{color:#8fd18a}.bad{color:#ff8a7a}
+#hud{position:fixed;left:14px;top:14px;background:#17151ad0;border:1px solid #4a4032;border-radius:4px;padding:7px 10px;line-height:1.6;font-size:12px;white-space:pre-line;color:#e6dcc6;min-width:200px;pointer-events:none}
+#hud b{color:#f6e7c1;font-size:14px}
+#hint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17151ad8;border:1px solid #5a4f40;border-radius:4px;padding:6px 14px;color:#e6dcc6;pointer-events:none}
+#cross{position:fixed;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#fff8;box-shadow:0 0 2px #000;pointer-events:none;display:none}
+body.capture #panel,body.capture #hud,body.capture #hint,body.capture #cross{display:none!important}
+</style></head>
+<body>
+<canvas id="view" tabindex="0"></canvas>
+<div id="cross"></div>
+<div id="hud"></div>
+<div id="hint">数字键 / 右侧按钮切机位 · 拖动转视角 · WASD 飞行（Q / E 升降，Shift 加速）· F 落地走（玩家速度，空格跳）· O 开关标注</div>
+<div id="panel">
+  <h1 id="title">赤沙古道 · 白盒</h1>
+  <div id="maps"></div>
+  <div class="sub" id="mood"></div>
+  <h2>机位</h2><div id="views"></div>
+  <label><input type="checkbox" id="overlay" checked> 标注（点位、据点圈、探针实测的路线）</label>
+  <h2>走法（探针实测）</h2><table id="routes"></table>
+  <h2>点位检查</h2><table id="rows"></table>
+</div>
+<script type="module" src="/src/dev/desertLab.ts"></script>
+</body>
+</html>

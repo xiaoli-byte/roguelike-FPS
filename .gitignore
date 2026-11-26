@@ -65,9 +65,10 @@ art/source/**/02_reference/*.png
 art/source/**/03_work/*.png
 art/source/**/03_model/*.blend
 
-# Unity 场景网页导出：编辑器原样导出（bridge.sh webexport，约 2 GB）留在本机；
+# Unity 场景网页导出：编辑器原样导出（bridge.sh webexport，约 2.5 GB）留在本机，放在 public/ 之外——
+# public/ 下的一切都会被 vite build 原样拷进 dist/（2026-11-25 前放在 public/assets/unity-levels.next，正式包因此多带 2.5 GB）。
 # 入库的是 scripts/unity/optimize-web-levels.mjs 压缩后的发布目录 public/assets/unity-levels
-public/assets/unity-levels.next/
+exports/
 
 # 第四章战斗试玩的原始截图（scripts/plateau/playtest.mjs 生成，入库的是拼好的审阅总图）
 docs/art/review/ch4-combat/raw/

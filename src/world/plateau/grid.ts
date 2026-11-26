@@ -4,6 +4,7 @@
  * 行走、散布、天气、怪物摆放只依赖这里的接口。网格三角化方向固定，heightAt() 与渲染网格逐三角形一致。
  */
 import * as THREE from 'three';
+import { WORLD_UNIFORMS } from './materials';
 
 export interface GridBounds { minX: number; maxX: number; minZ: number; maxZ: number }
 
@@ -82,6 +83,59 @@ export abstract class HeightGrid {
    * 地形网格切成 tile × tile 米的瓦片（共用顶点属性，只分索引），做视锥剔除；
    * 外圈再加 40 m 的下垂裙边，和外围远景地形接不严时不露缝。
    */
+  private skyVis: Float32Array | null = null;
+
+  /**
+   * 天空可见度（0..1，每个格点一个）：朝 8 个方向找地平线的仰角 θ（最远 144 m），这个方向的天光份额按余弦加权是 cos²θ，
+   * 8 个方向平均。山谷、沟底、崖脚、陡坡背后变暗，开阔平地是 1。地形 AO 用（patchMaterial 的 sky 选项，只压环境光）。
+   */
+  skyVisibility(): Float32Array {
+    if (this.skyVis) return this.skyVis;
+    const { nx, nz, h } = this;
+    const out = new Float32Array(nx * nz);
+    const dirs = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]];
+    const steps = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
+    for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
+      const k = j * nx + i, h0 = h[k];
+      let sum = 0;
+      for (const [dx, dz] of dirs) {
+        const len = Math.hypot(dx, dz) * this.step;
+        let maxT = 0;
+        for (const s of steps) {
+          const i2 = i + dx * s, j2 = j + dz * s;
+          if (i2 < 0 || j2 < 0 || i2 >= nx || j2 >= nz) break;
+          const t = (h[j2 * nx + i2] - h0) / (s * len);
+          if (t > maxT) maxT = t;
+        }
+        sum += 1 / (1 + maxT * maxT);
+      }
+      out[k] = sum / dirs.length;
+    }
+    return (this.skyVis = out);
+  }
+
+  /**
+   * 地表四层（草 / 岩 / 雪 / 土）各自的代表色：这一层权重占八成以上的顶点色的平均（线性）。
+   * 地表着色器按高度混层时拿它们把顶点色往赢的那层拉（materials.ts 的 splat 块）。哪层没有纯的顶点就保持原值。
+   */
+  layerColors(out: THREE.Vector3[]): THREE.Vector3[] {
+    const n = this.nx * this.nz;
+    const sum = [0, 1, 2, 3].map(() => [0, 0, 0, 0]);
+    for (let k = 0; k < n; k++) {
+      const m0 = this.mat[k * 4], m1 = this.mat[k * 4 + 1], m2 = this.mat[k * 4 + 2], m3 = this.mat[k * 4 + 3];
+      const s = m0 + m1 + m2 + m3;
+      if (s <= 1e-3) continue;
+      const ws = [m0 / s, m1 / s, m2 / s, m3 / s];
+      for (let i = 0; i < 4; i++) {
+        if (ws[i] < 0.8) continue;
+        const acc = sum[i];
+        acc[0] += this.colors[k * 3]; acc[1] += this.colors[k * 3 + 1]; acc[2] += this.colors[k * 3 + 2]; acc[3]++;
+      }
+    }
+    for (let i = 0; i < 4; i++) if (sum[i][3] > 20) out[i].set(sum[i][0] / sum[i][3], sum[i][1] / sum[i][3], sum[i][2] / sum[i][3]);
+    return out;
+  }
+
   buildTiles(tile = 96): THREE.BufferGeometry[] {
     const { nx, nz } = this;
     const pos = new Float32Array(nx * nz * 3);
@@ -107,6 +161,9 @@ export abstract class HeightGrid {
     const base = nx * nz, total = base + ring.length;
     const P = new Float32Array(total * 3), N = new Float32Array(total * 3), C = new Float32Array(total * 3), M = new Float32Array(total * 4);
     P.set(pos); N.set(nrm); C.set(this.colors); M.set(this.mat);
+    const vis = this.skyVisibility(), SK = new Float32Array(total);
+    this.layerColors(WORLD_UNIFORMS.uLayerCol.value as THREE.Vector3[]);
+    SK.set(vis);
     ring.forEach((v, r) => {
       const o = (base + r) * 3;
       for (let q = 0; q < 3; q++) {
@@ -115,13 +172,15 @@ export abstract class HeightGrid {
         C[o + q] = this.colors[v * 3 + q] * 0.7;
       }
       for (let q = 0; q < 4; q++) M[(base + r) * 4 + q] = this.mat[v * 4 + q];
+      SK[base + r] = vis[v];
     });
+    const skyAttr = new THREE.BufferAttribute(SK, 1);
     const posAttr = new THREE.BufferAttribute(P, 3), nrmAttr = new THREE.BufferAttribute(N, 3), colAttr = new THREE.BufferAttribute(C, 3);
     const matAttr = new THREE.BufferAttribute(M, 4);
     const out: THREE.BufferGeometry[] = [];
     const make = (index: number[], box: THREE.Box3): void => {
       const g = new THREE.BufferGeometry();
-      g.setAttribute('position', posAttr); g.setAttribute('normal', nrmAttr); g.setAttribute('color', colAttr); g.setAttribute('aMat', matAttr);
+      g.setAttribute('position', posAttr); g.setAttribute('normal', nrmAttr); g.setAttribute('color', colAttr); g.setAttribute('aMat', matAttr); g.setAttribute('aSky', skyAttr);
       g.setIndex(index);
       g.boundingBox = box;
       g.boundingSphere = box.getBoundingSphere(new THREE.Sphere());

@@ -92,6 +92,10 @@ test('Unity water slows wading, rescues from deep water and follows spring phase
   const view = new UnityWaterView(ctx, document, new Map([['water', [renderer]]]));
   view.update(0.1);
   assert.ok(player.stats.get('moveSpeed') < player.stats.getBase('moveSpeed') * 0.6);
+  // 离盒心 4 m 还在 10 m 见方的水体里：照样算蹚水（水体盒按缩放后的尺寸判断，不是按单位盒）
+  player.position.set(4, 0.8, -4); player.onGround = true; view.update(0.1);
+  assert.ok(view.depthAt(player.position) > 1, String(view.depthAt(player.position)));
+  assert.ok(player.stats.get('moveSpeed') < player.stats.getBase('moveSpeed') * 0.6);
   player.position.set(20, 0, 20); player.onGround = true; view.update(0.1);
   assert.equal(player.stats.get('moveSpeed'), player.stats.getBase('moveSpeed'));
   player.position.set(0, 0.65, 0); view.update(0.1);
@@ -158,4 +162,14 @@ test('Unity activator supports interaction, shot hits, cooldown and platform sig
   assert.deepEqual(calls, [true, false]);
   system.update(0.1);
   system.dispose();
+});
+
+test('Unity 网格碰撞：斜面包围盒里、离斜面很远的身体不算碰上（2026-11-22 修的分离轴提前退出）', () => {
+  const world = new CollisionWorld();
+  // 一块 45° 的大斜面：从 (0,0,-20)…(20,0,-20) 斜到 (0,20,0)，包围盒是 20×20×20
+  world.addMesh(new Float32Array([0, 0, -20, 20, 0, -20, 0, 20, 0, 20, 20, 0]), new Uint32Array([0, 2, 1, 1, 2, 3]), 'wall');
+  // (10, 1, -3) 在包围盒里，但离斜面约 11 m
+  assert.equal(world.overlapsBody(10, 1, -3, 0.35, 1.8), null);
+  // 贴着斜面（离面 < 身体半宽）要碰上
+  assert.ok(world.overlapsBody(10, 9.6, -10, 0.35, 1.8));
 });
