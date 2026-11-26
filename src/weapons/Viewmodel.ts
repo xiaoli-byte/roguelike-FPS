@@ -339,6 +339,7 @@ export class Viewmodel {
       e = this.build(inst);
       this.entries.set(inst.uid, e);
       this.upgradeWhenSynced(e, inst);
+      this.upgradeWhenArt(e, inst);
     }
     this.cur = e;
     this.pivot.add(e.gun.root);
@@ -358,17 +359,33 @@ export class Viewmodel {
     if (!pending) return;
     void pending.then((asset) => {
       if (!asset || this.entries.get(inst.uid) !== entry || (entry.original && entry.recoil)) return;
-      const current = this.cur === entry;
-      this.disposeEntry(entry);
-      const upgraded = this.build(inst);
-      this.entries.set(inst.uid, upgraded);
-      if (current) {
-        this.cur = upgraded;
-        this.pivot.add(upgraded.gun.root);
-        upgraded.gun.muzzle.add(this.flash);
-        this.flash.visible = false;
-      }
+      this.rebuild(entry, inst);
     });
+  }
+
+  /**
+   * 美术枪模按需读（AssetLibrary 的 weapons 范围）：捡起来的枪还没读到美术时先用程序化枪模，读到后原地重建。
+   * 用原生枪模（OriginalWeaponLibrary）的不管
+   */
+  private upgradeWhenArt(entry: VmEntry, inst: WeaponInstance): void {
+    if (entry.original || AssetLibrary.findBound('weapon', inst.defId) || !AssetLibrary.request('weapon', inst.defId)) return;
+    void AssetLibrary.ensureBound('weapon', [inst.defId]).then(() => {
+      if (this.entries.get(inst.uid) !== entry || entry.original || !AssetLibrary.findBound('weapon', inst.defId)) return;
+      this.rebuild(entry, inst);
+    });
+  }
+
+  private rebuild(entry: VmEntry, inst: WeaponInstance): void {
+    const current = this.cur === entry;
+    this.disposeEntry(entry);
+    const upgraded = this.build(inst);
+    this.entries.set(inst.uid, upgraded);
+    if (current) {
+      this.cur = upgraded;
+      this.pivot.add(upgraded.gun.root);
+      upgraded.gun.muzzle.add(this.flash);
+      this.flash.visible = false;
+    }
   }
 
   /** 释放不再持有的武器模型 */

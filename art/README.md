@@ -231,7 +231,15 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 
 ## 8. 引擎接入
 
-- `AssetLibrary` 模块被导入即读清单并后台加载全部 GLB（不阻塞启动；敌人模块启动时就导入它，`main.ts` 是冻结文件，不改它）。
+- `AssetLibrary` 模块被导入即读清单，后台只读英雄 / 第一人称手臂 / 灵宠 / 商人（`core`；不阻塞启动，敌人模块启动时就导入它，`main.ts` 是冻结文件，不改它）。
+  **按需加载（2026-11-26）**：敌人 / 首领（`bind.source = enemy`）与枪模（`weapon`）不整批读。`Game.loadStage` 在上一关清掉之后、
+  这一关刷怪之前调 `assets/StageArt.ts` 的 `prepareStageArt`：读「本张图的波次敌人 ∪ 本章名册 ∪ 本关首领（按前缀含各形态）」
+  与手上 / 各英雄初始的枪模，释放其余按需资产（`releaseUnused`，几何 / 材质 / 贴图交还 GPU、ImageBitmap 立刻关掉），
+  并释放上一张图不再用的关卡网格 / 贴图 / 场景文档（`UnityLevelLibrary.releaseExcept`）。本章名册来自
+  `public/assets/unity-levels/rosters.json`（`scripts/web/export-stage-rosters.mjs`，场景重发布后重跑，`tests/stage-rosters.test.mjs` 查同步）。
+  漏预取的敌人第一只用程序化模型并补读；掉落 / 商店 / 第一人称的枪模先用程序化的、读到后原地换上；图鉴缩略图读到再拍。
+  第四章普通敌人走 `world/plateau/play/assets`（自己读模型），这里不重复读。检视页要全量的调 `preload('all')`（或 `'weapons'`）。
+  实测脚本：`node scripts/web/asset-memory-check.mjs <端口>`。
 - 敌人与 Boss 都走 `EnemyArt.attachEnemyArt`（`StandardEnemy.init` 与 `BossBase.init` 里调用，必须在任何动画运行之前）：
   1. 身体：清单里 `bind = { source: "enemy", id: def.id }` 且没有 `attachment` 的骨骼网格。条目带 `rig.mode = "parts"` 走 `PartsRig`（6.4）；
      否则若该敌人有 `HumanoidRig`（约定存放在 `this.rig`），`SkinnedBody` 在绑定姿势下取关节矩阵求逆作 boneInverses，用 `THREE.LOD` 挂上各级 SkinnedMesh，隐藏被取代的脚本身体部件。
@@ -292,6 +300,9 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 - **运行时内存（2026-11-25 实测）**：正式包开局读完角色 / 武器等 116 个资产后，游戏页渲染进程私有内存 5228 MB；
   `?classic`（不读美术资产）只有约 325 MB，即美术资产多占约 4.9 GB，主要是解码后的贴图（下载只有约 110 MB）：
   24 把第一人称武器的 2048² 贴图、13 个首领的 4096² 高清贴图（`@hi.glb`）占了大头。这是浏览器里最接近崩溃线的一项。
+  2026-11-26 改成按需加载（第 8 节）后，`scripts/web/asset-memory-check.mjs`（无头 Chromium，开发服务器）实测游戏页渲染进程：
+  主菜单 1059 MB（21 个资产；旧行为同一环境 5254 MB、116 个）→ 进 1-1 2188 MB（34 个）→ 跳到 3-4 2891 MB（40 个，释放第一章敌人 8 个、
+  1-1 的关卡网格 / 贴图 116 项）。
 - **KTX2 评估（2026-11-25，KTX-Software 4.4.2 装在 `D:/AI-Tools/KTX-Software-4.4.2/bin`）**：不建议整体换成 KTX2。实测 12 张样本、相对现有 WebP q90：
   ETC1S（q255、含 mip）体积 1.7–3.8 倍，固有色 PSNR 34–39 dB、放大三倍目测和 WebP 几乎一样，但 ORM 只有 31–32 dB、
   法线平均偏 1–5.6°、最差 19–27°（Tripo 法线最差）；UASTC + zstd（含 RDO）画质 39–52 dB、法线误差 < 2°，体积却是 7–30 倍。

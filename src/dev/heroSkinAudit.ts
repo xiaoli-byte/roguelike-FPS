@@ -18,7 +18,7 @@ const COLLAPSE = 0.35;
 const params = new URLSearchParams(location.search);
 const hero = HEROES.find((h) => h.id === params.get('hero')) ?? HEROES[0];
 
-await AssetLibrary.preload();
+await Promise.all([AssetLibrary.preload(), AssetLibrary.preload('weapons')]); // 枪模按需读，检视页手里要拿美术枪
 const rig = buildHeroModel(hero.id, hero.color);
 const def = getWeaponDef(hero.startingWeapon);
 rig.hand.add(buildGunModel(def.id, 0, def.element).root);

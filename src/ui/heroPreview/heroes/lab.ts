@@ -46,7 +46,7 @@ scene.add(rim);
 const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 32).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x2a2530, roughness: 0.9 }));
 scene.add(floor);
 
-await AssetLibrary.preload();
+await Promise.all([AssetLibrary.preload(), AssetLibrary.preload('weapons')]); // 枪模按需读，检视页手里要拿美术枪
 const rig = buildHeroModel(hero.id, hero.color);
 scene.add(rig.root);
 if (params.get('nogun') !== '1') {

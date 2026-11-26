@@ -46,14 +46,33 @@ const BASE = import.meta.env.BASE_URL;
 const disabled = typeof location !== 'undefined' && new URLSearchParams(location.search).has('classic');
 
 /**
- * 预加载范围。core = 角色、首领、挂件、武器、手臂、灵宠、商人（主游戏开局要等到齐的那一份）；
- * scene = 场景件（bind.source = 'scene'：232 条、约 120 MB、上千张 1024–2048 贴图），只有旧场景视图（ArenaView 路径）
- * 和检视页用——Unity 关卡读自己的发布目录 public/assets/unity-levels，不经清单。2026-11-25 前开局把两份一起读完才进第一关。
- * all = 两份都要（检视页）。
+ * 预加载范围（2026-11-25 实测：全部角色 / 武器读进来，游戏页渲染进程多占约 4.9 GB，主要是解码后的贴图）。
+ * core = 英雄、第一人称手臂、灵宠、商人（主游戏开局要等到齐的那一份）；
+ * enemies = 敌人 / 首领及其挂件（bind.source = 'enemy'）：主游戏不整批读，进关前由 assets/StageArt.ts 按本关会出现的预取
+ * （ensureBound），换关释放用不到的（releaseUnused）；
+ * weapons = 第一人称 / 掉落枪模（bind.source = 'weapon'，24 把 × 2048² 贴图，解码后约 1.5 GB）：手上的和各英雄的初始武器进关前读，
+ * 掉落 / 商店 / 图鉴用到时现读（先用程序化枪模，读到后换上），换关释放其余的；
+ * scene = 场景件（bind.source = 'scene'：232 条、约 120 MB），只有旧场景视图（ArenaView 路径）和检视页用——
+ * Unity 关卡读自己的发布目录 public/assets/unity-levels，不经清单；
+ * all = 三份都要（检视页）。
  */
-export type PreloadScope = 'core' | 'scene' | 'all';
+export type PreloadScope = 'core' | 'enemies' | 'weapons' | 'scene' | 'all';
 
-const isSceneEntry = (e: AssetEntry): boolean => e.bind?.source === 'scene';
+/** 按需读、换关可释放的绑定来源 */
+export const ON_DEMAND_SOURCES: ReadonlySet<string> = new Set(['enemy', 'weapon']);
+
+function scopeOf(e: AssetEntry): Exclude<PreloadScope, 'all'> {
+  if (e.bind?.source === 'scene') return 'scene';
+  if (e.bind?.source === 'enemy') return 'enemies';
+  if (e.bind?.source === 'weapon') return 'weapons';
+  return 'core';
+}
+
+/** 一个资产的身体 + 挂件是否属于这批绑定目标（variant 给了：该主题的和不带主题的；没给：全部变体） */
+function boundTo(e: AssetEntry, source: string, ids: ReadonlySet<string>, variant?: string): boolean {
+  const b = e.bind;
+  return !!b && b.source === source && ids.has(b.id) && (!variant || !b.variant || b.variant === variant);
+}
 
 class Library {
   private entries: Record<string, AssetEntry> = {};
@@ -62,6 +81,7 @@ class Library {
   private manifestReady: Promise<boolean> | null = null;
   private readonly scopes = new Map<PreloadScope, Promise<void>>();
   private readonly pending = new Map<string, Promise<void>>();
+  private readonly releaseListeners: ((id: string) => void)[] = [];
 
   /**
    * 读清单并加载一个范围的资产（同一范围只读一次，重复调用拿同一个 Promise）。
@@ -71,10 +91,80 @@ class Library {
     if (disabled) return Promise.resolve();
     let ready = this.scopes.get(scope);
     if (!ready) {
-      ready = scope === 'all' ? Promise.all([this.preload('core'), this.preload('scene')]).then(() => undefined) : this.loadScope(scope);
+      ready = scope === 'all'
+        ? Promise.all([this.preload('core'), this.preload('enemies'), this.preload('weapons'), this.preload('scene')]).then(() => undefined)
+        : this.loadScope(scope);
       this.scopes.set(scope, ready);
     }
     return ready;
+  }
+
+  /**
+   * 读这些绑定目标的资产（身体 + 挂件），读完 resolve（失败的照旧记进 unavailable，调用方退回程序化模型）。
+   * 例：ensureBound('enemy', ['grunt', 'boss_hanba'], 'desert')
+   */
+  async ensureBound(source: string, ids: Iterable<string>, variant?: string): Promise<void> {
+    if (disabled || !await this.readManifest()) return;
+    const want = new Set(ids);
+    const todo = Object.keys(this.entries).filter((id) => boundTo(this.entries[id], source, want, variant));
+    await this.loadIds(todo);
+  }
+
+  /**
+   * 同步版的补读：这个绑定目标清单里有、但还没读到时开始读（不等），返回 true = 读到之后再来取就有。
+   * 漏预取的敌人（召唤物、调试刷怪）第一只用程序化模型，后面的就有美术；图鉴缩略图据此决定「等一等」还是「没有模型」。
+   */
+  request(source: string, id: string, variant?: string): boolean {
+    if (disabled) return false;
+    if (Object.keys(this.entries).length === 0) {
+      void this.ensureBound(source, [id], variant);
+      return true;
+    }
+    const want = new Set([id]);
+    const todo = Object.keys(this.entries).filter((a) => boundTo(this.entries[a], source, want, variant) && !this.failed.has(a));
+    if (todo.length === 0) return false;
+    if (todo.some((a) => !this.loaded.has(a))) void this.loadIds(todo);
+    return true;
+  }
+
+  /**
+   * 释放按需读的资产里不在 keep（资产 id）中的：几何体、材质、贴图交还 GPU，解码后的图（ImageBitmap）立刻关掉。
+   * 只在没有实例在用的时候调（换关：上一关的敌人已经清掉之后）。还在读的不动。返回释放了几个
+   */
+  releaseUnused(keep: ReadonlySet<string>): number {
+    let n = 0;
+    for (const [id, asset] of this.loaded) {
+      if (!ON_DEMAND_SOURCES.has(asset.entry.bind?.source ?? '') || keep.has(id)) continue;
+      for (const listener of this.releaseListeners) listener(id);
+      disposeAsset(asset);
+      this.loaded.delete(id);
+      this.pending.delete(id);
+      n++;
+    }
+    return n;
+  }
+
+  /** 资产被释放前通知（按资产缓存了派生数据的模块据此清缓存：RigidParts 拆好的枪模部件） */
+  onRelease(listener: (id: string) => void): void {
+    this.releaseListeners.push(listener);
+  }
+
+  /** 清单里绑定到这些目标的资产 id（清单没读到时为空） */
+  boundIds(source: string, ids: Iterable<string>, variant?: string): string[] {
+    const want = new Set(ids);
+    return Object.keys(this.entries).filter((id) => boundTo(this.entries[id], source, want, variant));
+  }
+
+  /** 清单里某个绑定来源的全部绑定目标 id（如 'enemy' → grunt、boss_kunpeng_kun …；清单没读到时为空） */
+  knownBindIds(source: string): string[] {
+    const ids = new Set<string>();
+    for (const e of Object.values(this.entries)) if (e.bind?.source === source) ids.add(e.bind.id);
+    return [...ids];
+  }
+
+  /** 当前已读进来的资产 id（检视 / 测试用） */
+  loadedIds(): string[] {
+    return [...this.loaded.keys()];
   }
 
   /** 已加载的资产；未加载完 / 失败 / 被禁用时为 null */
@@ -131,17 +221,24 @@ class Library {
     return this.manifestReady;
   }
 
-  private async loadScope(scope: 'core' | 'scene'): Promise<void> {
+  private async loadScope(scope: Exclude<PreloadScope, 'all'>): Promise<void> {
     if (!await this.readManifest()) return;
-    const ids = Object.keys(this.entries).filter((id) => isSceneEntry(this.entries[id]) === (scope === 'scene'));
-    // 每个范围一套加载器，读完就释放 Draco 解码线程（DRACOLoader.dispose 之后不能再用，所以不跨范围共用）。
-    // three r186 的 DRACOLoader 默认用 import.meta.url 定位解码器，Vite 会把它打进产物，不需要另外拷贝
+    const ids = Object.keys(this.entries).filter((id) => scopeOf(this.entries[id]) === scope);
+    await this.loadIds(ids);
+    const done = ids.filter((id) => this.loaded.has(id)).length;
+    const label = { core: '英雄 / 手臂 / 灵宠', enemies: '敌人 / 首领', weapons: '枪模', scene: '场景件' }[scope];
+    console.info(`[assets] ${label}：已加载 ${done}/${ids.length} 个美术资产`);
+  }
+
+  /** 读一批资产（已读的跳过，正在读的等它）：每批一套加载器，读完就释放 Draco 解码线程（DRACOLoader.dispose 之后不能再用，所以不跨批共用）。
+   *  three r186 的 DRACOLoader 默认用 import.meta.url 定位解码器，Vite 会把它打进产物，不需要另外拷贝 */
+  private async loadIds(ids: readonly string[]): Promise<void> {
+    const todo = ids.filter((id) => !this.loaded.has(id) && !this.failed.has(id));
+    if (todo.length === 0) return;
     const draco = new DRACOLoader();
     const loader = new GLTFLoader().setDRACOLoader(draco);
-    for (let i = 0; i < ids.length; i += 6) await Promise.all(ids.slice(i, i + 6).map((id) => this.load(id, loader)));
+    for (let i = 0; i < todo.length; i += 6) await Promise.all(todo.slice(i, i + 6).map((id) => this.load(id, loader)));
     draco.dispose();
-    const done = ids.filter((id) => this.loaded.has(id)).length;
-    console.info(`[assets] ${scope === 'core' ? '角色 / 武器' : '场景件'}：已加载 ${done}/${ids.length} 个美术资产`);
   }
 
   private load(id: string, loader: GLTFLoader): Promise<void> {
@@ -170,6 +267,26 @@ class Library {
       this.failed.add(id);
       console.warn(`[assets] ${id} 加载失败，使用程序化模型`, err);
     }
+  }
+}
+
+/** 交还一个资产的 GPU 资源并关掉解码后的图（ImageBitmap 不关的话要等 GC，内存迟迟不降） */
+function disposeAsset(asset: LoadedAsset): void {
+  const textures = new Set<THREE.Texture>();
+  asset.gltf.scene.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    mesh.geometry.dispose();
+    (mesh as THREE.SkinnedMesh).skeleton?.dispose();
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      for (const value of Object.values(material)) if ((value as THREE.Texture | null)?.isTexture) textures.add(value as THREE.Texture);
+      material.dispose();
+    }
+  });
+  for (const texture of textures) {
+    texture.dispose();
+    const image = texture.image as { close?: () => void } | null;
+    if (typeof image?.close === 'function') image.close();
   }
 }
 

@@ -1071,28 +1071,41 @@ const _box = new THREE.Box3();
 const _center = new THREE.Vector3();
 const _size = new THREE.Vector3();
 
-/**
- * 世界掉落模型：缩放后的枪模 + 稀有度光晕（不含灯光）。
- * 模型以包围盒中心为原点，枪管朝 −Z。调用者负责加入场景与移除（不要 dispose 共享资源）。
- */
-export function buildWorldModel(defId: string, rarity: Rarity, element: Element): THREE.Group {
-  const def = getWeaponDef(defId);
+/** 掉落 / 商店用的枪模：缩放后以包围盒中心为原点挂到 holder 下（_size 留着这把枪的尺寸给光晕用） */
+function placeWorldGun(holder: THREE.Group, defId: string, worldScale: number, rarity: Rarity, element: Element): void {
   const gun = buildGunModel(defId, rarity, element);
   gun.root.traverse((o) => {
     const mesh = o as THREE.Mesh;
     // 半透明灯纱不投射阴影
     if (mesh.isMesh) mesh.castShadow = !(mesh.material as THREE.Material).transparent;
   });
-  gun.root.scale.setScalar(def.worldScale);
+  gun.root.scale.setScalar(worldScale);
   gun.root.updateMatrixWorld(true);
   _box.setFromObject(gun.root);
   _box.getCenter(_center);
   _box.getSize(_size);
   gun.root.position.sub(_center);
+  holder.add(gun.root);
+}
 
+/**
+ * 世界掉落模型：缩放后的枪模 + 稀有度光晕（不含灯光）。
+ * 模型以包围盒中心为原点，枪管朝 −Z。调用者负责加入场景与移除（不要 dispose 共享资源）。
+ */
+export function buildWorldModel(defId: string, rarity: Rarity, element: Element): THREE.Group {
+  const def = getWeaponDef(defId);
   const holder = new THREE.Group();
   holder.name = `weaponDrop:${def.id}`;
-  holder.add(gun.root);
+  placeWorldGun(holder, def.id, def.worldScale, rarity, element);
+  // 枪模按需读（AssetLibrary 的 weapons 范围，换关释放手上没有的）：还没读到时先摆程序化枪模，读到后原地换上
+  if (!AssetLibrary.findBound('weapon', def.id) && AssetLibrary.request('weapon', def.id)) {
+    void AssetLibrary.ensureBound('weapon', [def.id]).then(() => {
+      const old = holder.getObjectByName(`gun:${def.id}`);
+      if (!old || !AssetLibrary.findBound('weapon', def.id)) return;
+      holder.remove(old);
+      placeWorldGun(holder, def.id, def.worldScale, rarity, element);
+    });
+  }
   // 光晕随枪身长度与稀有度放大（贴图边缘透明，可见范围约为尺寸的一半）
   const halo = new THREE.Sprite(haloMat(rarity));
   const len = Math.max(_size.x, _size.z);
