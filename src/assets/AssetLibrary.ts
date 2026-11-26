@@ -32,6 +32,12 @@ export interface AssetEntry {
   sha256: string;
   /** Local shape generator used for this published build; older entries may omit it. */
   generator?: { tool: string; mode: string; checkpoint: string };
+  /**
+   * 同一个绑定目标（来源 + id + 主题）有多份身体时谁优先：大的优先，缺省 0，相同按清单顺序。只读选中的那份，读不出来退到下一份。
+   * 2026-11-27：七把武器同时绑了自产枪模和枪火提取 / 骨龙铳，原来取「先读完的那份」，每次进游戏不一样，按需读时还两份都读。
+   * 枪火提取的六把标 1（用户 2026-11-25「暂时保留」）；对外发布前删掉那几条，就回到自产枪模
+   */
+  priority?: number;
 }
 
 export interface LoadedAsset {
@@ -66,6 +72,11 @@ function scopeOf(e: AssetEntry): Exclude<PreloadScope, 'all'> {
   if (e.bind?.source === 'enemy') return 'enemies';
   if (e.bind?.source === 'weapon') return 'weapons';
   return 'core';
+}
+
+/** 同一绑定目标的几份身体排先后：该主题的变体压过默认的，再看 priority */
+function rank(e: AssetEntry, variant?: string): number {
+  return (variant && e.bind?.variant === variant ? 1000 : 0) + (e.priority ?? 0);
 }
 
 /** 一个资产的身体 + 挂件是否属于这批绑定目标（variant 给了：该主题的和不带主题的；没给：全部变体） */
@@ -106,8 +117,27 @@ class Library {
   async ensureBound(source: string, ids: Iterable<string>, variant?: string): Promise<void> {
     if (disabled || !await this.readManifest()) return;
     const want = new Set(ids);
-    const todo = Object.keys(this.entries).filter((id) => boundTo(this.entries[id], source, want, variant));
-    await this.loadIds(todo);
+    // 挂件全读；身体每个目标只读优先的那份，读不出来再试下一份（一轮一批，免得每份各起一套 Draco 解码线程）
+    const attachments = Object.keys(this.entries).filter((a) => boundTo(this.entries[a], source, want, variant) && this.entries[a].bind.attachment);
+    let pending = [...want];
+    for (let round = 0; pending.length > 0 || round === 0; round++) {
+      const picks = pending
+        .map((id) => ({ id, asset: this.bodyCandidates(source, id, variant).find((a) => !this.failed.has(a)) }))
+        .filter((p): p is { id: string; asset: string } => !!p.asset);
+      await this.loadIds([...picks.map((p) => p.asset), ...(round === 0 ? attachments : [])]);
+      pending = picks.filter((p) => !this.loaded.has(p.asset)).map((p) => p.id);
+    }
+  }
+
+  /** 绑到这个目标的身体（不含挂件），按优先次序：该主题的变体在前，再按 priority 大的在前、清单顺序 */
+  private bodyCandidates(source: string, id: string, variant?: string): string[] {
+    const ids = Object.keys(this.entries);
+    return ids
+      .filter((a) => {
+        const b = this.entries[a].bind;
+        return b?.source === source && b.id === id && !b.attachment && (!b.variant || b.variant === variant);
+      })
+      .sort((a, b) => rank(this.entries[b], variant) - rank(this.entries[a], variant) || ids.indexOf(a) - ids.indexOf(b));
   }
 
   /**
@@ -121,9 +151,11 @@ class Library {
       return true;
     }
     const want = new Set([id]);
-    const todo = Object.keys(this.entries).filter((a) => boundTo(this.entries[a], source, want, variant) && !this.failed.has(a));
-    if (todo.length === 0) return false;
-    if (todo.some((a) => !this.loaded.has(a))) void this.loadIds(todo);
+    const usable = Object.keys(this.entries).filter((a) => boundTo(this.entries[a], source, want, variant) && !this.failed.has(a));
+    if (usable.length === 0) return false;
+    if (!this.findBound(source, id, variant) || usable.some((a) => this.entries[a].bind.attachment && !this.loaded.has(a))) {
+      void this.ensureBound(source, [id], variant);
+    }
     return true;
   }
 
@@ -182,14 +214,16 @@ class Library {
    * variant 是章节主题（desert / frost / inferno）：有该主题的变体就用变体，否则回退到不带 variant 的默认资产。
    */
   findBound(source: string, id: string, variant?: string): LoadedAsset | null {
-    let fallback: LoadedAsset | null = null;
+    // 同一目标读进来了多份身体时（检视页整批读）按 priority 取，相同取先登记的——不看哪份先读完
+    let best: LoadedAsset | null = null;
+    const order = (a: LoadedAsset): number => Object.keys(this.entries).indexOf(a.id);
     for (const a of this.loaded.values()) {
       const b = a.entry.bind;
-      if (b?.source !== source || b.id !== id || b.attachment) continue;
-      if (variant && b.variant === variant) return a;
-      if (!b.variant && !fallback) fallback = a;
+      if (b?.source !== source || b.id !== id || b.attachment || (b.variant && b.variant !== variant)) continue;
+      const d = best ? rank(a.entry, variant) - rank(best.entry, variant) : 1;
+      if (d > 0 || (d === 0 && order(a) < order(best!))) best = a;
     }
-    return fallback;
+    return best;
   }
 
   /** 绑定到某个目标各挂点上的静态网格；variant 同 findBound：该主题有挂件变体就整套换用，否则用默认挂件 */

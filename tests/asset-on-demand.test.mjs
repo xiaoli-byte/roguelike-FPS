@@ -26,7 +26,8 @@ globalThis.__gltf = async (url) => {
   const map = new THREE.Texture();
   map.image = { width: 4, height: 4, close: () => closed.add(id) };
   const scene = new THREE.Group();
-  scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map })), { name: `${id}_LOD0` }));
+  // 名字带 Broken 的模拟枪火 1301：网格不按 _LOD0 命名，资产库读不出来
+  scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map })), { name: id.includes('Broken') ? `${id}_part` : `${id}_LOD0` }));
   return { scene };
 };
 
@@ -71,6 +72,8 @@ test('releaseUnused frees on-demand assets outside keep, closes their decoded im
   reset(MANIFEST);
   await AssetLibrary.preload('core');
   await AssetLibrary.ensureBound('enemy', ['grunt', 'boss_kunpeng_kun']);
+  await AssetLibrary.ensureBound('enemy', ['grunt'], 'frost');
+  assert.ok(AssetLibrary.get('SK_Enemy_Grunt_Frost'), '带主题读：该主题的变体优先');
   await AssetLibrary.ensureBound('weapon', ['smg']);
   const kun = AssetLibrary.get('SK_Boss_Kun');
   let geometryDisposed = false;
@@ -89,6 +92,28 @@ test('releaseUnused frees on-demand assets outside keep, closes their decoded im
   fetched.length = 0;
   await AssetLibrary.ensureBound('enemy', ['boss_kunpeng_kun']);
   assert.deepEqual(fetched, ['SK_Boss_Kun'], '释放后要用时再读');
+});
+
+test('two bodies bound to one weapon: only the higher priority one is read, a broken one falls back, the pick is stable', async () => {
+  const weapons = [
+    entry('SK_Weapon_Smg', { source: 'weapon', id: 'smg' }),
+    [...entry('SK_Weapon_Gunfire1002', { source: 'weapon', id: 'smg' })].map((v, i) => (i === 1 ? { ...v, priority: 1 } : v)),
+    entry('SK_Weapon_Shotgun', { source: 'weapon', id: 'shotgun' }),
+    [...entry('SK_Weapon_BrokenShotgun', { source: 'weapon', id: 'shotgun' })].map((v, i) => (i === 1 ? { ...v, priority: 1 } : v)),
+  ];
+  reset(weapons);
+  await AssetLibrary.ensureBound('weapon', ['smg', 'shotgun']);
+  assert.deepEqual(fetched.sort(), ['SK_Weapon_BrokenShotgun', 'SK_Weapon_Gunfire1002', 'SK_Weapon_Shotgun'], '优先的读一份；读不出来才读下一份');
+  assert.equal(AssetLibrary.findBound('weapon', 'smg').id, 'SK_Weapon_Gunfire1002');
+  assert.equal(AssetLibrary.findBound('weapon', 'shotgun').id, 'SK_Weapon_Shotgun');
+  // 检视页整批读：两份都在时也按 priority 取，不看哪份先读完
+  reset(weapons);
+  await AssetLibrary.ensureBound('weapon', ['smg']);
+  AssetLibrary.loaded.delete('SK_Weapon_Gunfire1002');
+  AssetLibrary.pending.delete('SK_Weapon_Gunfire1002');
+  await AssetLibrary.loadIds(['SK_Weapon_Smg']);
+  await AssetLibrary.loadIds(['SK_Weapon_Gunfire1002']);
+  assert.equal(AssetLibrary.findBound('weapon', 'smg').id, 'SK_Weapon_Gunfire1002');
 });
 
 test('request starts a read for a known binding and says whether art will come', async () => {
