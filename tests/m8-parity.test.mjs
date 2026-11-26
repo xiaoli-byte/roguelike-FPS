@@ -6,7 +6,8 @@
 //   5. 焚雷扩散灼烧：按距离取最近 16 个（Unity CombatTuning.Thunderfire.SpreadTargets）
 //   6. 格挡提示：整发被命中区挡掉弹「格挡」、派发事件；没被格挡的 0 伤害不发事件不弹字（Unity Combat / DamageNumbers）
 //   7. 货币叫法：局内货币叫灵石（Unity D13），属性名、天赋、宝箱提示、奖励名、商店与掉落提示都对 Unity 的原文
-// 常量、定义直接读 C# 源码比；行为用真的 Combat / Reactions / ScrollSystem（临时目录转译整张模块图，同 scroll-tactics.test.mjs）。
+// 常量、定义和 Unity 版删除前从 C# 冻结的规格比（tests/fixtures/spec/*.json）；行为用真的 Combat / Reactions / ScrollSystem
+// （临时目录转译整张模块图，同 scroll-tactics.test.mjs）。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { readFile, writeFile, mkdtemp, mkdir, rm } from 'node:fs/promises';
@@ -15,7 +16,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
-import { tsGraph } from './unity-parity-kit.mjs';
+import { spec, tsGraph } from './unity-parity-kit.mjs';
 
 const root = fileURLToPath(new URL('../src/', import.meta.url));
 const dir = await mkdtemp(path.join(tmpdir(), 'spiritfire-m8-parity-'));
@@ -39,19 +40,10 @@ async function ts(relative) {
   await writeFile(output, source);
   return url;
 }
-const cs = p => readFile(new URL(`../unity/Assets/Game/Scripts/${p}`, import.meta.url), 'utf8');
 const src = p => readFile(new URL(`../src/${p}`, import.meta.url), 'utf8');
-/** C# 里的 `const float A = 1f, B = 2.5f;` / `const int N = 3;` → { A: 1, B: 2.5, N: 3 } */
-function csConsts(source) {
-  const out = {};
-  for (const m of source.matchAll(/const\s+(?:float|int)\s+([^;(){}]+);/g)) {
-    for (const part of m[1].split(',')) {
-      const kv = part.match(/^\s*(\w+)\s*=\s*(-?[\d.]+(?:e-?\d+)?)f?\s*$/);
-      if (kv) out[kv[1]] = Number(kv[2]);
-    }
-  }
-  return out;
-}
+/** C# 常量，键 = 相对 Unity 工程 Game/Scripts 的文件名（#名字 = 文件里的一个类） */
+const K = spec('cs-consts');
+const COMBAT = spec('combat');
 
 const { ScrollSystem } = await import(await ts('progression/Scrolls.ts'));
 const { SCROLL_DEFS } = await import(await ts('progression/ScrollDefs.ts'));
@@ -128,27 +120,26 @@ function fixture() {
 
 // ───────────── 1. 弱点伤害% + 「破绽」 ─────────────
 
-test('weak_point「破绽」: definition read from Unity OffenseStatScrolls.cs, 119 scrolls in all', async () => {
-  const u = await cs('Progression/Scrolls/Offense/OffenseStatScrolls.cs');
-  const m = u.match(/new StatScroll \{ id = "weak_point", name = "([^"]+)", tags = new\[\] \{ "([^"]+)" \}, rarity = (\d), maxStacks = (\d), description = "([^"]+)", stats = new\[\] \{ \(Stat\.(\w+), ([\d.]+)f\) \} \}/);
-  assert.ok(m, 'Unity 源码里找到「破绽」');
+test('weak_point「破绽」: definition from Unity OffenseStatScrolls.cs, 119 scrolls in all', async () => {
+  const u = spec('scrolls').scrolls.weak_point;
+  assert.equal(u.src, 'Progression/Scrolls/Offense/OffenseStatScrolls.cs');
   const def = OFFENSE_SCROLLS.find(d => d.id === 'weak_point');
   assert.ok(def, '网页有「破绽」');
   assert.deepEqual(
     { name: def.name, tags: def.tags, rarity: def.rarity, maxStacks: def.maxStacks, description: def.description },
-    { name: m[1], tags: [m[2]], rarity: Number(m[3]), maxStacks: Number(m[4]), description: m[5] },
+    { name: u.name, tags: u.tags, rarity: u.rarity, maxStacks: u.maxStacks, description: u.description },
   );
-  assert.equal(m[6], 'WeakpointDamagePct');
+  assert.deepEqual(u.stats, [['WeakpointDamagePct', 0.15]]);
   assert.equal(SCROLL_DEFS.length, 119);
   assert.equal(OFFENSE_SCROLLS.at(-1).id, 'weak_point', '放在进攻表尾，前 24 张顺序不动');
   // 3 层：属性表 +45%
   const f = fixture();
   for (let i = 0; i < 3; i++) f.ctx.scrolls.add('weak_point');
-  close(f.ctx.player.stats.get('weakpointDamagePct'), 0.15 * Number(m[4]), '3 层');
+  close(f.ctx.player.stats.get('weakpointDamagePct'), u.stats[0][1] * u.maxStacks, '3 层');
 });
 
 test('weakpoint damage %: weak hits (and only weak hits) multiply by weakpointDamagePct, like Unity Combat.cs', async () => {
-  assert.match(await cs('Combat/Combat.cs'), /if \(weak\) mult \*= stats\?\.Mult\(Stat\.WeakpointDamagePct\) \?\? 1f;/);
+  // Unity Combat.cs：if (weak) mult *= stats?.Mult(Stat.WeakpointDamagePct) ?? 1f;
   const f = fixture();
   const e = f.enemy(3);
   const body0 = f.hit(e).dealt;
@@ -159,12 +150,9 @@ test('weakpoint damage %: weak hits (and only weak hits) multiply by weakpointDa
   close(body1, body0, '身体不变');
   close(weak1 / weak0, 1.45, '弱点 × (1 + 0.45)');
   close(weak0, body0 * 2, '弱点必暴（暴伤 ×2）');
-  // Unity 的 Stat 枚举（除注释）里每一项网页都有
-  const st = await cs('Core/Stats.cs');
-  const body = st.slice(st.indexOf('public enum Stat'), st.indexOf('public sealed class StatSheet')).replace(/\/\/[^\n]*/g, '');
-  const names = body.slice(body.indexOf('{') + 1, body.indexOf('}')).split(',').map(x => x.trim()).filter(Boolean);
+  // Unity 的 Stat 枚举里每一项网页都有
   const key = n => ({ MagPct: 'magSizePct' }[n] ?? n[0].toLowerCase() + n.slice(1));
-  assert.deepEqual(names.map(key).filter(k => !(k in BASE_STATS)), [], '网页 StatKey 覆盖 Unity Stat 枚举');
+  assert.deepEqual(COMBAT.statEnum.map(key).filter(k => !(k in BASE_STATS)), [], '网页 StatKey 覆盖 Unity Stat 枚举');
 });
 
 // ───────────── 2. 灵宠伤害源 ─────────────
@@ -187,7 +175,7 @@ test('pet source: only petDamagePct scales it and it never rolls a random crit (
 // ───────────── 3. 免疫提示 ─────────────
 
 test('immune: untargetable hits return immune, settle nothing and raise enemy:damaged at most once per 0.4 s (Unity Combat.Immune)', async () => {
-  assert.equal(IMMUNE_FEEDBACK_GAP, csConsts(await cs('Combat/Combat.cs')).ImmuneFeedbackGap);
+  assert.equal(IMMUNE_FEEDBACK_GAP, K['Combat/Combat.cs'].ImmuneFeedbackGap);
   const f = fixture();
   const e = f.enemy(3, 0, { untargetable: true });
   const r = f.hit(e);
@@ -368,12 +356,9 @@ test('immune results do not count as hits: thunder judgment only counts hits tha
 // ───────────── 3b. 格挡提示 ─────────────
 
 test('blocked: a hit zone that eats the whole shot pops 格挡 (not 免疫) and still raises enemy:damaged; unblocked zero damage stays silent', async () => {
-  const dn = await cs('UI/Widgets/DamageNumbers.cs');
-  assert.match(dn, /Kind\.Blocked => "格挡"/);
-  assert.match(dn, /if \(r\.blocked && r\.total < 1\)\s*\{\s*Queue\(t, pos, 0, false, Element\.None, Kind\.Blocked, false\);/);
-  assert.equal(BLOCKED_TEXT, '格挡');
-  assert.equal(BLOCKED_COLOR, Number.parseInt(dn.match(/BlockedColor = Hex\.Rgb\(0x([0-9a-f]+)\)/i)[1], 16));
-  assert.match(await cs('Combat/Combat.cs'), /if \(r\.total > 0 \|\| r\.immune \|\| r\.blocked\)/);
+  // Unity DamageNumbers：Kind.Blocked => "格挡"，r.blocked && r.total < 1 时弹「格挡」不弹数字；Combat：total > 0 || immune || blocked 才派发
+  assert.equal(BLOCKED_TEXT, COMBAT.damageNumbers.blockedText);
+  assert.equal(BLOCKED_COLOR, COMBAT.damageNumbers.blockedColor);
 
   const f = fixture();
   const shown = [];
@@ -419,15 +404,13 @@ test('blocked: a hit zone that eats the whole shot pops 格挡 (not 免疫) and 
 // ───────────── 7. 货币叫法 ─────────────
 
 test('currency is 灵石 (Unity D13): stat name, wealth talent, chest hint, reward name, shop / loot toasts match the Unity strings', async () => {
+  // Unity 原文（StatInfo、Talent_Wealth、CoinsReward、ShopCounter、UpgradeReward、LootDirector）
+  const S = spec('ui-screens').strings;
   const unityText = {
-    stat: (await cs('Core/StatInfo.cs')).match(/Stat\.CoinGainPct => new\(s, "([^"]+)"/)[1],
-    talent: (await cs('Progression/Meta/Talents/Talent_Wealth.cs')).match(/"财富", Stat\.CoinGainPct, 0\.08f, "([^"]+)"/)[1],
-    chest: [...(await cs('Loot/Rewards/CoinsReward.cs')).matchAll(/"(一大堆灵石[^"]*)"/g)].map(m => m[1]),
-    rewardName: (await cs('Loot/Rewards/CoinsReward.cs')).match(/Hint\(string\[\] args\) => "([^"]+)"/)[1],
-    notEnough: (await cs('Loot/Shop/ShopCounter.cs')).match(/NotEnough = "([^"]+)"/)[1],
-    upgrade: [...(await cs('Loot/Rewards/UpgradeReward.cs')).matchAll(/"([^"]*改为灵石)"/g)].map(m => m[1]),
-    scrollsFull: (await cs('Loot/LootDirector.cs')).match(/"(秘卷已全部满层，改为灵石)"/)[1],
+    stat: S.coinGainStatName, talent: S.wealthTalent, chest: S.coinsChestLines, rewardName: S.coinsRewardName,
+    notEnough: S.notEnough, upgrade: S.upgradeToCoins, scrollsFull: S.scrollsFull,
   };
+  assert.equal(unityText.scrollsFull, '秘卷已全部满层，改为灵石');
   const { STAT_INFO } = await import(await ts('core/Stats.ts'));
   assert.equal(STAT_INFO.coinGainPct.name, unityText.stat);
   assert.equal(unityText.stat, '灵石获取');
@@ -449,24 +432,21 @@ test('currency is 灵石 (Unity D13): stat name, wealth talent, chest hint, rewa
 // ───────────── 4. 玩家减益 ─────────────
 
 test('status ids: Unity StatusId = enemy statuses (5) + player-only debuffs chill / sunburn / ignite', async () => {
-  const u = await cs('Combat/Status/StatusEffect.cs');
-  const ids = u.match(/public enum StatusId \{([^}]*)\}/)[1].split(',').map(s => s.trim().toLowerCase());
+  const ids = COMBAT.statusIds;
   const types = await src('core/types.ts');
   const enemyIds = [...types.match(/export type StatusId =([^;]*);/)[1].matchAll(/'(\w+)'/g)].map(m => m[1]);
   const ps = await src('player/PlayerStatus.ts');
   const playerIds = [...ps.match(/export type PlayerStatusId =([^;]*);/)[1].matchAll(/'(\w+)'/g)].map(m => m[1]);
   assert.deepEqual([...enemyIds, ...playerIds].sort(), [...ids].sort());
-  // Unity：寒意 / 日晒 / 点燃 只挂玩家
-  for (const name of ['Chill', 'Sunburn', 'Ignite']) assert.match(await cs(`Combat/Status/${name}Status.cs`), /Hosts => StatusHosts\.Player;/, name);
+  // Unity：寒意 / 日晒 / 点燃 只挂玩家（Hosts => StatusHosts.Player）
+  for (const name of ['Chill', 'Sunburn', 'Ignite']) assert.equal(COMBAT.playerHost[name], true, name);
   assert.deepEqual(playerIds.sort(), ['chill', 'ignite', 'sunburn']);
 });
 
 // ───────────── 5. 焚雷扩散灼烧 ─────────────
 
 test('thunderfire spread burns only the nearest 16 within the radius (Unity CombatTuning.Thunderfire.SpreadTargets)', async () => {
-  const t = await cs('Combat/CombatTuning.cs');
-  const block = t.slice(t.indexOf('public static class Thunderfire'), t.indexOf('}', t.indexOf('public static class Thunderfire')));
-  assert.equal(TF_SPREAD_TARGETS, csConsts(block).SpreadTargets);
+  assert.equal(TF_SPREAD_TARGETS, K['Combat/CombatTuning.cs#Thunderfire'].SpreadTargets);
   assert.equal(TF_SPREAD_TARGETS, 16);
   const f = fixture();
   const center = f.enemy(0, 0);

@@ -1,4 +1,5 @@
-// 界面第二期（docs/threejs-migration.md M11c）：路由规则与数据映射的对照测试——都拿 Unity 的 C# 源码当规格读：
+// 界面第二期（docs/threejs-migration.md M11c）：路由规则与数据映射的对照测试——规格是 Unity 版删除前从它的 C# 源码冻结的
+// （tests/fixtures/spec/ui-screens.json、codex-roster.json、scrolls.json、elite-affixes.json）：
 //   · 路由：每个界面的 id、挡不挡游戏（BlockState）、停不停时间（FreezeTime）；UI.ts 的层位表登记了全部界面；局内热键（ScreenHotkeys）。
 //   · 键位：改键页动作表（SettingsScreen.Actions）、缺省键（GameInput）、按键说明（ControlsScreen.Rows），以及改键的存取。
 //   · 数据映射（src/ui/ScreenData.ts）：关卡卡片、整局结算、主菜单生涯、天赋行、秘卷卡面、选英雄技能行的文字。
@@ -9,7 +10,7 @@ import test, { after } from 'node:test';
 import { readFile, readdir } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
-import { tsGraph } from './unity-parity-kit.mjs';
+import { spec, tsGraph } from './unity-parity-kit.mjs';
 
 const dataModule = (source) => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 const read = async (path) => (await readFile(new URL(path, import.meta.url), 'utf8')).replace(/^﻿/, '');
@@ -32,8 +33,7 @@ const KIT = await graph.load('ui/screens/ScreenKit.ts');
 const THUMBS = await graph.load('ui/codex/CodexThumbs.ts');
 const PORTAL = await graph.load('world/Portal.ts');
 
-const U = '../unity/Assets/Game/Scripts/';
-const unity = (path) => read(U + path);
+const UI_SPEC = spec('ui-screens');
 
 // ───────────── 路由规则 ─────────────
 
@@ -47,17 +47,8 @@ async function webScreen(file) {
   return { id, block: block === 'null' ? null : block.replace(/'/g, ''), freeze: freeze === 'true' };
 }
 
-/** Unity 界面：Id、BlockState（缺省 GameState.Modal）、FreezeTime（缺省 true），照 Toolkit/UIRouter.cs 的 UIScreen */
-async function unityScreen(file) {
-  const s = await unity(`UI/Screens/${file}.cs`);
-  let id = /const string ScreenId = "([^"]+)"/.exec(s)?.[1];
-  // 借别的类的常量：HeroSelectScreen.ScreenId = MainMenuScreen.HeroSelectId、SummaryScreen.Id => MenuFlow.SummaryScreenId
-  const ref = /const string ScreenId = (\w+)\.(\w+);/.exec(s) ?? /override string Id => (\w+)\.(\w+);/.exec(s);
-  if (!id && ref) id = new RegExp(`${ref[2]} = "([^"]+)"`).exec(await unity(`UI/Screens/${ref[1]}.cs`))?.[1];
-  const block = /override GameState\? BlockState => ([\w.]+);/.exec(s)?.[1] ?? 'GameState.Modal';
-  const freeze = /override bool FreezeTime => (true|false);/.exec(s)?.[1] ?? 'true';
-  return { id, block: block === 'null' ? null : block.replace('GameState.', '').toLowerCase(), freeze: freeze === 'true' };
-}
+/** Unity 界面：Id、BlockState（缺省 GameState.Modal）、FreezeTime（缺省 true），照 Toolkit/UIRouter.cs 的 UIScreen（冻结的规格） */
+const unityScreen = async (file) => UI_SPEC.screens[file];
 
 const SCREEN_PAIRS = [
   ['PauseScreen', 'PauseScreen'], ['SettingsScreen', 'SettingsScreen'], ['ConfirmScreen', 'ConfirmScreen'], ['ControlsScreen', 'ControlsScreen'],
@@ -102,9 +93,7 @@ test('UI.ts 的层位表登记了注册的每个路由界面和四个 HUD 部件
 });
 
 test('局内热键照 Unity ScreenHotkeys：只在游玩中响应，行囊键开行囊、地图键开全图', async () => {
-  const cs = await unity('UI/Screens/ScreenHotkeys.cs');
-  const pairs = [...cs.matchAll(/GameInput\.Pressed\(GameAction\.(\w+)\)\) UIRouter\.Open\((\w+)\.ScreenId\)/g)].map((m) => [m[1], m[2]]);
-  assert.deepEqual(pairs, [['Inventory', 'InventoryPanel'], ['Map', 'MapScreen']]);
+  // Unity ScreenHotkeys：GameAction.Inventory → InventoryPanel、GameAction.Map → MapScreen
   const ui = await read('../src/ui/UI.ts');
   const web = [...ui.matchAll(/this\.keys\.matches\('(\w+)', code\)\) return this\.root\.router\.open\((\w+)\)/g)].map((m) => [m[1], m[2]]);
   assert.deepEqual(web, [['inventory', 'INVENTORY_ID'], ['map', 'MAP_ID']]);
@@ -119,17 +108,13 @@ const ACTION_OF = { Jump: 'jump', Dash: 'dash', Fire: 'fire', Aim: 'aim', Reload
 const codeOf = (k) => ({ space: 'Space', leftShift: 'ShiftLeft', rightShift: 'ShiftRight', escape: 'Escape', tab: 'Tab' })[k] ?? (/^\d$/.test(k) ? `Digit${k}` : `Key${k.toUpperCase()}`);
 
 test('改键页动作表照 Unity SettingsScreen.Actions（顺序、名字），缺省键照 GameInput 的键盘绑定', async () => {
-  const settings = await unity('UI/Screens/SettingsScreen.cs');
-  const block = /static readonly \(GameAction action, string label\)\[\] Actions =([\s\S]*?)\};/.exec(settings)[1];
-  const actions = [...block.matchAll(/\(GameAction\.(\w+), "([^"]+)"\)/g)].map((m) => ({ id: ACTION_OF[m[1]], label: m[2], unity: m[1] }));
+  const actions = UI_SPEC.binds.map((b) => ({ id: ACTION_OF[b.action], label: b.label, keyboard: b.keyboard, mouse: b.mouse }));
   assert.equal(actions.length, 16);
   assert.deepEqual(KB.BIND_DEFS.map((d) => [d.id, d.label]), actions.map((a) => [a.id, a.label]));
 
-  const input = (await read('../unity/Assets/Pipeline/Runtime/GameInput.cs'));
   for (const a of actions) {
-    const line = new RegExp(`Button\\(GameAction\\.${a.unity}, "([^"]+)"[^;]*;`).exec(input)[0];
-    const keys = [...line.matchAll(/"<Keyboard>\/(\w+)"/g)].map((m) => codeOf(m[1]));
-    const mouse = [...line.matchAll(/"<Mouse>\/(\w+)"/g)].map((m) => m[1]);
+    const keys = a.keyboard.map(codeOf);
+    const mouse = a.mouse;
     const def = KB.KeyBinds.def(a.id);
     assert.deepEqual(def.defaults, keys, `${a.label} 的键盘键`);
     // 纯鼠标动作（射击左键 / 瞄准右键）在网页是写死的；武器技能另绑的中键也写死在 core/Input，改键页只列键盘键
@@ -140,10 +125,7 @@ test('改键页动作表照 Unity SettingsScreen.Actions（顺序、名字），
 });
 
 test('按键说明照 Unity ControlsScreen.Rows（顺序、说明文字、固定键帽）', async () => {
-  const cs = await unity('UI/Screens/ControlsScreen.cs');
-  const block = /\)\[\] Rows =([\s\S]*?)\};/.exec(cs)[1];
-  const rows = [...block.matchAll(/\((?:GameAction\.(\w+)|null), "([^"]+)", (?:"([^"]+)"|null), (?:"([^"]+)"|null)\)/g)]
-    .map((m) => ({ id: m[1] ? ACTION_OF[m[1]] : null, label: m[2], ...(m[3] ? { fixedKb: m[3] } : {}) }));
+  const rows = UI_SPEC.controlRows.map((r) => ({ id: r.action ? ACTION_OF[r.action] : null, label: r.label, ...(r.fixedKb ? { fixedKb: r.fixedKb } : {}) }));
   assert.equal(rows.length, 16);
   assert.deepEqual(KB.CONTROL_ROWS.map((r) => ({ ...r })), rows);
 });
@@ -194,9 +176,6 @@ test('改键：只换第一个键盘键、写死的不能改、存档只存改�
 const brief = (o) => ({ label: '1-2 · 雅丹迷城', title: '雅丹迷城', chapter: 1, chapterName: '赤沙古道', difficulty: 1.16, isBoss: false, supplyCamp: false, rewardLabel: '', ...o });
 
 test('关卡卡片照 Unity StageCardScreen：四格、下一关预告、标签与「继续」', async () => {
-  const cs = await unity('UI/Screens/StageCardScreen.cs');
-  for (const lit of ['"下 一 关"', '（制作中）', '新章节 · ', '"首领关"', '"门外有补给营" : "关内有补给营"', '清关奖励 · ', '"继续" : "再走一遍本关"', '本关 +', '"本关未得"', '现有 '])
-    assert.ok(cs.includes(lit), `Unity 源码里有 ${lit}`);
   const v = SD.stageCardView({
     stage: brief({ label: '1-4 · 鸣沙月泉', title: '鸣沙月泉', difficulty: 1.48, isBoss: true }),
     next: brief({ label: '2-1 · 冰瀑栈道', title: '冰瀑栈道', chapter: 2, chapterName: '北冥昆仑', difficulty: 1.4, supplyCamp: true, rewardLabel: '武器' }),
@@ -220,21 +199,16 @@ test('关卡卡片照 Unity StageCardScreen：四格、下一关预告、标签�
 });
 
 test('整局结算 / 主菜单生涯照 Unity SummaryScreen / MainMenuScreen 的文字', async () => {
-  const sum = await unity('UI/Screens/SummaryScreen.cs');
-  for (const lit of ['"已击败全部首领"', '试玩通关 · ', '"首领关"', '止步于 ', '"魂火未熄，再入轮回"', '"首章已破，余火待燃"', '局内收集 ', '回主菜单可在「天赋」里花掉'])
-    assert.ok(sum.includes(lit), `Unity 源码里有 ${lit}`);
-  const spec = { label: '1-2 · 雅丹迷城', title: '雅丹迷城', isBoss: false };
-  assert.equal(SD.reachText({ victory: false, chapter: 0, stageIndex: 1 }, spec, false), '止步于 第一章 · 第 2 关（雅丹迷城）');
-  assert.equal(SD.reachText({ victory: false, chapter: 1, stageIndex: 3 }, { ...spec, isBoss: true, title: '北冥' }, false), '止步于 第二章 · 首领关（北冥）');
+  const stage = { label: '1-2 · 雅丹迷城', title: '雅丹迷城', isBoss: false };
+  assert.equal(SD.reachText({ victory: false, chapter: 0, stageIndex: 1 }, stage, false), '止步于 第一章 · 第 2 关（雅丹迷城）');
+  assert.equal(SD.reachText({ victory: false, chapter: 1, stageIndex: 3 }, { ...stage, isBoss: true, title: '北冥' }, false), '止步于 第二章 · 首领关（北冥）');
   assert.equal(SD.reachText({ victory: false, chapter: 2, stageIndex: 0 }, null, false), '止步于 第三章 · 第 1 关');
-  assert.equal(SD.reachText({ victory: true, chapter: 0, stageIndex: 3 }, spec, false), '试玩通关 · 1-2 · 雅丹迷城');
-  assert.equal(SD.reachText({ victory: true, chapter: 3, stageIndex: 3 }, spec, true), '已击败全部首领');
+  assert.equal(SD.reachText({ victory: true, chapter: 0, stageIndex: 3 }, stage, false), '试玩通关 · 1-2 · 雅丹迷城');
+  assert.equal(SD.reachText({ victory: true, chapter: 3, stageIndex: 3 }, stage, true), '已击败全部首领');
   assert.deepEqual([SD.epitaphText(false, false, 4), SD.epitaphText(true, true, 4), SD.epitaphText(true, false, 3)], ['魂火未熄，再入轮回', '首章已破，余火待燃', '三章尽破，烈焰长明']);
   assert.equal(SD.essenceNote(486, 200), '局内收集 286 + 通关奖励 200，已存入魂晶');
   assert.equal(SD.essenceNote(86, 0), '局内收集的魂晶已存入，回主菜单可在「天赋」里花掉');
 
-  const menu = await unity('UI/Screens/MainMenuScreen.cs');
-  for (const k of ['("出征", ', '("通关", ', '("最远", ', '("最多清关", ', '尚无出征记录。试玩版共 ', '击败沿途全部首领即可通关。']) assert.ok(menu.includes(k), k);
   assert.equal(SD.careerItems({ runs: 0, wins: 0, bestChapter: 0, bestStages: 0, totalKills: 0 }), null);
   assert.deepEqual(SD.careerItems({ runs: 12, wins: 2, bestChapter: 3, bestStages: 11, totalKills: 2486 }).map((i) => `${i.k} ${i.v}`), ['出征 12 次', '通关 2 次', '最远 第三章', '最多清关 11 关', '累计斩敌 2,486']);
   assert.equal(SD.careerItems({ runs: 1, wins: 0, bestChapter: 0, bestStages: 0, totalKills: 3 })[2].v, '—');
@@ -244,17 +218,13 @@ test('整局结算 / 主菜单生涯照 Unity SummaryScreen / MainMenuScreen 的
 });
 
 test('天赋行、秘卷卡面、选英雄技能行照 Unity TalentScreen / ScrollChoiceScreen / HeroSelectScreen', async () => {
-  const tal = await unity('UI/Screens/TalentScreen.cs');
-  for (const lit of ['当前 ', '下一级 ', '花费 {cost} 魂晶强化', '还差 {cost - have} 魂晶', '已点亮 ']) assert.ok(tal.includes(lit), lit);
-  const t = { id: 'vitality', name: '生命强化', description: '', maxLevel: 5, perLevel: 8, cost: (lv) => 60 + 60 * lv };
+  const t ={ id: 'vitality', name: '生命强化', description: '', maxLevel: 5, perLevel: 8, cost: (lv) => 60 + 60 * lv };
   const fmt = (v) => `+${v}`;
   assert.deepEqual(SD.talentRow(t, 3, 100, fmt), { level: '3 / 5', maxed: false, cost: 240, short: true, now: '当前 +24', next: '下一级 +32', tooltip: '还差 140 魂晶', pips: [true, true, true, false, false] });
   assert.equal(SD.talentRow(t, 1, 500, fmt).tooltip, '花费 120 魂晶强化');
   assert.deepEqual(SD.talentRow(t, 5, 0, fmt), { level: '5 / 5', maxed: true, cost: 0, short: false, now: '当前 +40', next: '', tooltip: '', pips: [true, true, true, true, true] });
   assert.deepEqual(SD.talentTotals([t, { ...t, id: 'b', maxLevel: 3 }], (id) => (id === 'b' ? 9 : 2)), { owned: 5, total: 8 });
 
-  const sc = await unity('UI/Screens/ScrollChoiceScreen.cs');
-  for (const lit of ['"升层" : "新得"', '（已满）', '层数 {cur} → {next} / {max}', '"唯一 · 已持有" : "唯一"', '"代价"']) assert.ok(sc.includes(lit), lit);
   const glass = LEGEND.find((d) => d.id === 'glass_cannon');
   const v = SD.scrollCardView(glass, 0, '传说');
   assert.deepEqual([v.state, v.rarityVertical, v.upside, v.downside, v.pips, v.count], ['新得', '传\n说', '武器伤害 +55%。', '受到的伤害 +35%。', [], '唯一']);
@@ -270,17 +240,13 @@ test('天赋行、秘卷卡面、选英雄技能行照 Unity TalentScreen / Scro
 });
 
 test('高风险传说卷的代价行照 Unity：卡面收益 / 「代价」朱字行分开（SplitDownside），行囊另起一行「代价：…」，图鉴整段说明代价行标红（Describe 富文本）', async () => {
-  const base = await unity('Progression/Scrolls/Legend/LegendScroll.cs');
-  assert.equal(SD.DOWNSIDE_PREFIX, /DownsidePrefix = "([^"]+)"/.exec(base)[1]);
-  assert.equal(SD.DOWNSIDE_COLOR, `#${/DownsideHex = "([0-9a-f]{6})"/.exec(base)[1]}`);
+  const base = spec('scrolls').legendScroll;
+  assert.equal(SD.DOWNSIDE_PREFIX, base.DownsidePrefix);
+  assert.equal(SD.DOWNSIDE_COLOR, `#${base.DownsideHex}`);
   assert.deepEqual([SD.DOWNSIDE_PREFIX, SD.DOWNSIDE_COLOR], [SCROLL_KIT.DOWNSIDE_PREFIX, SCROLL_KIT.DOWNSIDE_COLOR], 'ScreenData 与 ScrollKit 同值');
-  // Unity 卡面：传说卷（HighRisk）用 upside / downside 两段；别的卷从描述里摘红色代价行
-  const sc = await unity('UI/Screens/ScrollChoiceScreen.cs');
-  assert.match(sc, /if \(def is LegendScroll \{ HighRisk: true \} ls\)\s*\{\s*upside = Fill\(def, ls\.upside, stacks\);\s*downside = Fill\(def, ls\.downside, stacks\);/);
-  assert.match(sc, /ScreenKit\.Text\("sf-scroll__downlabel", down, "代价"\);\s*ScreenKit\.Text\("sf-scroll__downtext", down, downside\);/);
+  // Unity 卡面（ScrollChoiceScreen）：传说卷（HighRisk）用 upside / downside 两段，代价行是「代价」标签 + 朱字；别的卷从描述里摘红色代价行
   // 网页的七张传说卷逐张对 Unity Legendary.cs 的 Text(收益, 代价)
-  const legendary = await unity('Progression/Scrolls/Legend/Legendary.cs');
-  const pairs = [...legendary.matchAll(/Text\("([^"]+)"(?:, "([^"]+)")?\);/g)].map((m) => [m[1], m[2] ?? '']);
+  const pairs = UI_SPEC.legendTexts;
   const mine = LEGEND.filter((d) => !d.heroOnly);
   assert.equal(mine.length, pairs.length);
   for (const d of mine) {
@@ -297,8 +263,6 @@ test('高风险传说卷的代价行照 Unity：卡面收益 / 「代价」朱�
   assert.deepEqual(SD.splitDownside({ description: '射速每层 +{n}×5%。\n代价：受到的伤害每层 +{n}×3%。' }, 2), { upside: '射速每层 +2×5%。', downside: '受到的伤害每层 +2×3%。' });
   assert.deepEqual(SD.splitDownside({ description: '武器伤害 +8%。' }, 1), { upside: '武器伤害 +8%。', downside: '' });
   // 行囊（Unity ScrollList.Render，detailed）：收益富文本一行 + sf-owned__down「代价：」+ 代价；暂停页的小签不带说明
-  const list = await unity('UI/Screens/ScrollList.cs');
-  assert.match(list, /ScrollChoiceScreen\.SplitDownside\(def, stacks, out var up, out var down\);\s*ScreenKit\.Text\("sf-owned__desc", row, up, rich: true\);\s*if \(!string\.IsNullOrEmpty\(down\)\) ScreenKit\.Text\("sf-owned__down", row, "代价：" \+ down\);/);
   const kit = await read('../src/ui/screens/ScreenKit.ts');
   assert.match(kit, /const \{ upside, downside \} = splitDownside\(def, stacks\);\s*text\('sf-owned__desc', row, upside, UIFontRole\.Body, true\);\s*if \(downside\) text\('sf-owned__down', row, DOWNSIDE_PREFIX \+ downside\);/);
   // 图鉴（Unity CodexScreen.DescribeScroll：dDesc.text = s.Describe(1)，dDesc 是富文本标签）
@@ -309,22 +273,20 @@ test('高风险传说卷的代价行照 Unity：卡面收益 / 「代价」朱�
 
 // ───────────── 行囊属性表、精英印章色、图鉴武器缩略图、关卡卡片的触发 ─────────────
 
-/** Unity `Stat.MaxHp, Stat.CritChance…` → 网页 StatKey（首字母小写） */
-const statKeys = (block) => [...block.matchAll(/Stat\.(\w+)/g)].map((m) => m[1][0].toLowerCase() + m[1].slice(1));
+/** Unity Stat 枚举名（MaxHp、CritChance…）→ 网页 StatKey（首字母小写） */
+const statKeys = (names) => names.map((n) => n[0].toLowerCase() + n.slice(1));
 
 test('Tab 行囊常驻属性照 Unity StatGrid.KeyStats（14 项同序），暂停页精简表照 StatGrid.PauseStats', async () => {
-  const cs = await unity('UI/Screens/StatGrid.cs');
-  const keys = statKeys(/Stat\[\] KeyStats =\s*\{([\s\S]*?)\};/.exec(cs)[1]);
-  const pause = statKeys(/Stat\[\] PauseStats =\s*\{([\s\S]*?)\};/.exec(cs)[1]);
+  const keys = statKeys(UI_SPEC.statGrid.keyStats);
+  const pause = statKeys(UI_SPEC.statGrid.pauseStats);
   assert.equal(keys.length, 14);
   assert.deepEqual(INV.KEY_STATS, keys);
   assert.deepEqual(KIT.PAUSE_STATS, pause);
   // 行囊用的就是这张表（Unity InventoryPanel：StatGrid.Render(statsGrid, …, StatGrid.KeyStats, true)）
-  assert.match(await unity('UI/Screens/InventoryPanel.cs'), /StatGrid\.KeyStats, true\)/);
   assert.match(await read('../src/ui/screens/InventoryScreen.ts'), /renderStatGrid\(ctx, this\.statsGrid, KEY_STATS, true\)/);
   // 属性名照 Unity StatInfo（局内货币叫灵石，D13）
   const { STAT_INFO } = await graph.load('core/Stats.ts');
-  assert.equal(STAT_INFO.coinGainPct.name, /Stat\.CoinGainPct => new\(s, "([^"]+)"/.exec(await unity('Core/StatInfo.cs'))[1]);
+  assert.equal(STAT_INFO.coinGainPct.name, UI_SPEC.strings.coinGainStatName);
 });
 
 test('局内货币在界面上叫灵石（Unity D13）：src/ui 不出现「金币」；属性名、天赋说明、清关奖励名照 Unity', async () => {
@@ -333,37 +295,30 @@ test('局内货币在界面上叫灵石（Unity D13）：src/ui 不出现「金�
   // 天赋（Talent_*.cs 的 base(id, 名字, 属性, 每级, 说明)），天赋页逐行显示说明
   const meta = await read('../src/progression/Meta.ts');
   const web = Object.fromEntries([...meta.matchAll(/talent\('(\w+)', '([^']+)', '(\w+)', ([\d.]+), '([^']+)'\)/g)].map((m) => [m[1], [m[2], m[3], Number(m[4]), m[5]]]));
-  const dir = new URL(U + 'Progression/Meta/Talents/', import.meta.url);
-  const talents = (await readdir(dir)).filter((f) => /^Talent_\w+\.cs$/.test(f));
+  const talents = Object.entries(UI_SPEC.talents);
   assert.equal(talents.length, 10);
-  for (const f of talents) {
-    const m = /base\("(\w+)", "([^"]+)", Stat\.(\w+), ([\d.]+)f, "([^"]+)"\)/.exec(await unity(`Progression/Meta/Talents/${f}`));
-    assert.deepEqual(web[m[1]], [m[2], m[3][0].toLowerCase() + m[3].slice(1), Number(m[4]), m[5]], f);
-  }
+  for (const [id, t] of talents) assert.deepEqual(web[id], [t.name, t.stat[0].toLowerCase() + t.stat.slice(1), t.perLevel, t.description], t.src);
   // 关卡卡片「清关奖励 · …」（Unity StageCardScreen → Chest.Label）
-  const chest = await unity('Loot/Chest.cs');
   const run = await read('../src/progression/RunPlan.ts');
-  for (const key of ['weapon', 'scroll', 'coins', 'upgrade']) {
-    const label = new RegExp(`case "${key}": return "([^"]+)";`).exec(chest)[1];
-    assert.match(run, new RegExp(`\\b${key}: '${label}'`), `${key} → ${label}`);
-  }
+  for (const [key, label] of Object.entries(UI_SPEC.chestLabels)) assert.match(run, new RegExp(`\\b${key}: '${label}'`), `${key} → ${label}`);
 });
 
 test('掉落 / 宝箱 / 商店给玩家看的灵石提示照 Unity（D13）：强化 / 秘卷满层转灵石、宝箱「一大堆灵石」、商店「灵石不足」', async () => {
   const loot = await read('../src/progression/Loot.ts');
   const chests = await read('../src/progression/loot/Chests.ts');
   const shop = await read('../src/progression/loot/Shop.ts');
+  const S = UI_SPEC.strings;
   // 强化奖励没得强化（UpgradeReward.Grant：Toast(w != null ? 满级 : 没有武器)）
-  const up = /Toast\(w != null \? "([^"]+)" : "([^"]+)"\)/.exec(await unity('Loot/Rewards/UpgradeReward.cs'));
-  assert.ok(loot.includes(`ctx.ui.toast(w ? '${up[1]}' : '${up[2]}'`), `${up[1]} / ${up[2]}`);
+  const up = S.upgradeToast;
+  assert.ok(loot.includes(`ctx.ui.toast(w ? '${up.maxed}' : '${up.noWeapon}'`), `${up.maxed} / ${up.noWeapon}`);
   // 秘卷全部满层（LootDirector.OfferScrolls）
-  const full = /GameUI\.Toast\("(秘卷已全部满层[^"]*)"/.exec(await unity('Loot/LootDirector.cs'))[1];
+  const full = S.scrollsFull;
   assert.ok(loot.includes(`ctx.ui.toast('${full}'`), full);
   // 宝箱说明行（CoinsReward.Line 的普通档 / 精英档；网页按关卡类型，只在精英关标精英加成，见迁移计划 4.6 第 8 条）
-  const [, line, eliteLine] = /Line\(string\[\] args\) => [^?]+\? "([^"]+)" : "([^"]+)"/.exec(await unity('Loot/Rewards/CoinsReward.cs'));
+  const { normal: line, elite: eliteLine } = S.coinsLine;
   assert.ok(chests.includes(`return type === 'elite' ? '${eliteLine}' : '${line}';`), `${line} / ${eliteLine}`);
   // 商店买不起（ShopCounter.NotEnough；HUD 交互卡 PromptWidget 同样写这个）
-  const notEnough = /NotEnough = "([^"]+)"/.exec(await unity('Loot/Shop/ShopCounter.cs'))[1];
+  const notEnough = S.notEnough;
   assert.ok(shop.includes(`this.deny('${notEnough}')`), notEnough);
   assert.match(await read('../src/ui/hud/PromptWidget.ts'), new RegExp(notEnough));
   // 三份文件的字串里不再有「金币」（注释里说的是代码概念，不算）
@@ -372,28 +327,20 @@ test('掉落 / 宝箱 / 商店给玩家看的灵石提示照 Unity（D13）：�
 });
 
 test('精英印章的词缀纹样用词缀本身的颜色（Unity EliteSeal ← aura.Accent ← affix.Color），血条词缀小标签用 AffixLabels 的颜色', async () => {
-  const seal = await unity('UI/Widgets/EliteSeal.cs');
-  assert.match(seal, /var tint = sig == EliteSigil\.None \? Gold : aura\.Accent\.Value;/);
-  assert.match(await unity('Enemies/Affixes/EliteAffixes.cs'), /aura\.SetSigil\(affix\.Id, affix\.Color\)/);
+  // Unity EliteSeal：tint = sig == None ? Gold : aura.Accent；EliteAffixes：aura.SetSigil(affix.Id, affix.Color)
   const hex = (c) => c.slice(0, 3).map((v) => Math.round(v * 255)).reduce((a, v) => a * 256 + v, 0);
-  for (const id of AFFIXES.AFFIX_IDS) {
-    const name = id[0].toUpperCase() + id.slice(1);
-    const src = await unity(`Enemies/Affixes/EliteAffix_${name}.cs`);
-    const want = Number(/Color => Hex\.Rgb\((0x[0-9a-f]+)\)/.exec(src)[1]);
-    assert.equal(hex(BARS.AFFIX_SEAL_COLORS[id]), want, `${id} 印章色 = EliteAffix_${name}.Color`);
-  }
-  const bars = await unity('UI/Widgets/EnemyBars.cs');
-  for (const m of bars.matchAll(/\["(\w+)"\] = \("([^"]+)", Hex\.Rgb\((0x[0-9a-f]+)\), "([^"]+)"\)/g)) {
-    const l = BARS.AFFIX_LABELS[m[1]];
-    assert.deepEqual([l.name, hex(l.color), l.hint], [m[2], Number(m[3]), m[4]], `${m[1]} 小标签`);
+  const elite = spec('elite-affixes').affixes;
+  for (const id of AFFIXES.AFFIX_IDS) assert.equal(hex(BARS.AFFIX_SEAL_COLORS[id]), elite[id].color, `${id} 印章色 = ${elite[id].src} 的 Color`);
+  const labels = Object.entries(UI_SPEC.affixLabels);
+  assert.ok(labels.length >= 4, 'EnemyBars 的词缀小标签');
+  for (const [id, u] of labels) {
+    const l = BARS.AFFIX_LABELS[id];
+    assert.deepEqual([l.name, hex(l.color), l.hint], [u.name, u.color, u.hint], `${id} 小标签`);
   }
   assert.match(await read('../src/ui/hud/EnemyBars.ts'), /s\.seal\.bind\(s\.elite, affixId \|\| null, isAffixId\(affixId\) \? AFFIX_SEAL_COLORS\[affixId\] : null\);/);
 });
 
 test('图鉴武器缩略图只拍枪身：去掉掉落模型的稀有度光晕精灵再取景（Unity CodexThumbs 实例化裸枪 prefab）', async () => {
-  const cs = await unity('UI/Screens/CodexThumbs.cs');
-  assert.match(cs, /Object\.Instantiate\(prefab/);
-  assert.doesNotMatch(cs, /Halo|halo|光晕/);
   // 掉落模型里确实挂着光晕精灵
   assert.match(await read('../src/weapons/WeaponModels.ts'), /const halo = new THREE\.Sprite\(haloMat\(rarity\)\);[\s\S]*?holder\.add\(halo\);/);
   assert.match(await read('../src/ui/codex/CodexThumbs.ts'), /return bareGun\(this\.ctx\.weapons\.createWorldModel\(inst\)\);/);
@@ -413,10 +360,7 @@ test('图鉴武器缩略图只拍枪身：去掉掉落模型的稀有度光晕�
 });
 
 test('关卡卡片只在玩家从出口进门时弹（Unity GameSession.CompleteStage），检视页直接 game.advance 不弹', async () => {
-  const session = await unity('Core/GameSession.cs');
-  assert.match(session, /if \(Managed && !final && UIRouter\.Get\(StageCardScreen\.ScreenId\) != null\)/);
-  assert.equal([...session.matchAll(/UIRouter\.Open\(StageCardScreen\.ScreenId/g)].length, 1, 'Unity 只有过关这一处弹卡');
-  // Game.advance 本身不问 UI：检视页（adventureLab / whiteboxLab）的跳关、重置、换关直接调它
+  // Unity 只有过关（GameSession.CompleteStage）这一处弹卡；Game.advance 本身不问 UI：检视页（adventureLab / whiteboxLab）的跳关、重置、换关直接调它
   const game = await read('../src/core/Game.ts');
   const advance = /\n  advance\(next: StageNode\): void \{([\s\S]*?)\n  \}/.exec(game)[1];
   assert.doesNotMatch(advance, /stageCard/);
@@ -447,48 +391,15 @@ test('关卡卡片只在玩家从出口进门时弹（Unity GameSession.Complete
 
 // ───────────── 图鉴 ─────────────
 
-/** Unity 图鉴的敌人：Enemies/Defs 的每个定义类（[Defs(序)] + id），去掉附属单位；首领：Bosses 的 BossDef 子类（[Defs(序)]、Id、name、title），去掉测试场的 */
-async function unityRoster() {
-  const root = new URL(U + 'Enemies/Defs/', import.meta.url);
-  const consts = new Map();
-  for (const m of (await unity('Enemies/AI/Inferno/TantongAI.cs')).matchAll(/(\w+Id) = "([^"]+)"/g)) consts.set(`TantongAI.${m[1]}`, m[2]);
-  const enemies = [];
-  for (const d of await readdir(root, { withFileTypes: true })) {
-    if (!d.isDirectory()) continue;
-    const dir = d.name;
-    for (const f of (await readdir(new URL(dir + '/', root))).filter((n) => n.endsWith('.cs'))) {
-      const s = await unity(`Enemies/Defs/${dir}/${f}`);
-      const order = Number(/\[Defs\((\d+)\)\]/.exec(s)[1]);
-      const ref = /\bid = ([\w.]+),/.exec(s)?.[1];
-      const id = /const string Id = "([^"]+)"/.exec(s)?.[1] ?? /\bid = "([^"]+)"/.exec(s)?.[1] ?? consts.get(ref);
-      assert.ok(id, `${f} 读不到 id`);
-      enemies.push({ id, order });
-    }
-  }
-  const bosses = [];
-  for (const d of await readdir(new URL(U + 'Bosses/', import.meta.url), { withFileTypes: true })) {
-    if (!d.isDirectory()) continue;
-    const dir = d.name;
-    for (const f of (await readdir(new URL(U + `Bosses/${dir}/`, import.meta.url))).filter((n) => /Def\.cs$/.test(n))) {
-      const s = await unity(`Bosses/${dir}/${f}`);
-      const order = /\[Defs\((\d+)\)\]/.exec(s);
-      const id = /const string Id = "([^"]+)"/.exec(s);
-      if (!order || !id) continue;
-      bosses.push({ id: id[1], order: Number(order[1]), name: /\bname = "([^"]+)"/.exec(s)[1], title: /\btitle = "([^"]+)"/.exec(s)?.[1] ?? '' });
-    }
-  }
-  return { enemies, bosses };
-}
-
 test('图鉴敌人名册照 Unity：[Defs] 序、附属单位 / 测试场首领不列、首领名与称号、Lore 逐条一致', async () => {
-  const codex = await unity('Progression/Codex.cs');
-  const set = (name) => new Set([...new RegExp(`${name} = new\\(\\) \\{([^}]*)\\}`).exec(codex)[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]));
-  const hidden = new Set([...set('hiddenEnemies'), ...set('hiddenBosses')]);
+  // Unity 图鉴的敌人：Enemies/Defs 的每个定义类（[Defs(序)] + id），去掉附属单位；首领：Bosses 的 BossDef 子类（[Defs(序)]、Id、name、title），去掉测试场的
+  const roster = spec('codex-roster');
+  const hidden = new Set([...roster.hiddenEnemies, ...roster.hiddenBosses]);
   assert.deepEqual([...CX.HIDDEN_ENEMIES].sort(), [...hidden].sort());
-  const alias = /enemyAlias = new\(\) \{([^}]*)\}/.exec(codex)[1];
-  assert.deepEqual(CX.ENEMY_ALIAS, Object.fromEntries([...alias.matchAll(/\["(\w+)"\] = "(\w+)"/g)].map((m) => [m[1], m[2]])));
+  assert.deepEqual(CX.ENEMY_ALIAS, roster.enemyAlias);
 
-  const { enemies, bosses } = await unityRoster();
+  const enemies = roster.enemies.map(({ id, order }) => ({ id, order }));
+  const bosses = roster.bosses.map(({ id, order, name, title }) => ({ id, order, name, title }));
   const listed = enemies.filter((e) => CX.codexEnemyId(e.id) === e.id);
   assert.deepEqual(CX.ENEMY_ORDER, Object.fromEntries(listed.sort((a, b) => a.order - b.order).map((e) => [e.id, e.order])));
   assert.equal(listed.length, 37);
@@ -496,7 +407,7 @@ test('图鉴敌人名册照 Unity：[Defs] 序、附属单位 / 测试场首领�
   assert.deepEqual(CX.BOSS_CARDS, Object.fromEntries(shown.map((b) => [b.id, [b.order, b.name, b.title]])));
   assert.equal(shown.length, 7);
 
-  const lore = Object.fromEntries([...codex.matchAll(/\["(\w+)"\] = \((\d), "([^"]+)"\)/g)].map((m) => [m[1], [Number(m[2]), m[3]]]));
+  const lore = roster.lore;
   assert.deepEqual(CX.LORE, lore);
   assert.equal(Object.keys(lore).length, 32);
   // 角色名照 Unity RoleName：没有站位数据的网页敌人写「敌人」（Unity 每个敌人都有站位，落到「辅助」）
@@ -539,9 +450,8 @@ test('图鉴清单：只列 Unity 有的；武器按定义表、秘卷按稀有�
 });
 
 test('图鉴分页 4 × 3（Unity CodexScreen.Columns / Rows），翻页绕回', async () => {
-  const cs = await unity('UI/Screens/CodexScreen.cs');
-  const [, cols, rows] = /const int Columns = (\d+), Rows = (\d+)/.exec(cs);
-  assert.deepEqual([CX.CODEX_COLUMNS, CX.CODEX_ROWS, CX.CODEX_PER_PAGE], [Number(cols), Number(rows), cols * rows]);
+  const { columns: cols, rows } = UI_SPEC.codexPage;
+  assert.deepEqual([CX.CODEX_COLUMNS, CX.CODEX_ROWS, CX.CODEX_PER_PAGE], [cols, rows, cols * rows]);
   assert.deepEqual([0, 1, 12, 13, 44, 118].map(CX.pageCount), [1, 1, 1, 2, 4, 10]);
   assert.deepEqual([CX.wrapPage(-1, 4), CX.wrapPage(4, 4), CX.wrapPage(2, 4)], [3, 0, 2]);
 });
@@ -587,21 +497,19 @@ test('全图方位与投影照 Unity MapMarkers / MapScreen（导出器只翻 X�
     assert.ok(Math.abs(MM.deltaAngle(want, MM.bearing(ax, az, bx, bz))) < 1e-9);
   }
   // 俯视图：Unity u = (x_unity − xMin) / 宽、top = 1 − (z − zMin) / 高；网页的底图范围 = [−xMax, −xMin, zMin, zMax]（WebSceneExporter）
-  const doc = JSON.parse(await read('../public/assets/unity-levels/scenes/1-1.json'));
-  const area = doc.map.area;
+  // 底图范围和点位用 1-1（赤沙古道）关卡文档的值：map.area、出生点、9 处据点的 (x, z)
+  const area = [-291, 21, -1, 192];
+  const spawnXZ = [-26, 38];
+  const points = [spawnXZ, [-112, 50], [-220, 74], [-80, 58], [-142, 78], [-180, 142], [-146, 122], [-208, 112], [-86, 100], [-120, 100]];
   const [xMin, xMax, zMin, zMax] = [-area[1], -area[0], area[2], area[3]];
   const unityUV = (x, z) => ({ u: (-x - xMin) / (xMax - xMin), v: 1 - (z - zMin) / (zMax - zMin) });
-  const points = [doc.spawn.position, ...doc.encounters.map((e) => e.position)];
-  for (const [x, , z] of points) {
+  for (const [x, z] of points) {
     const w = MM.worldToMap(area, x, z), u = unityUV(x, z);
     assert.ok(Math.abs(w.u - u.u) < 1e-9 && Math.abs(w.v - u.v) < 1e-9, `${x}, ${z}`);
   }
-  const spawn = MM.worldToMap(area, doc.spawn.position[0], doc.spawn.position[2]);
+  const spawn = MM.worldToMap(area, spawnXZ[0], spawnXZ[1]);
   assert.ok(spawn.u < 0.25 && spawn.v > 0.7, '1-1 出生点在俯视图左下（古道起点）');
-  // 图框：左右各留 90、上下共留 230、最宽 1500（Unity MapScreen 常数），保持底图长宽比
-  const cs = await unity('UI/Screens/MapScreen.cs');
-  const [, side, tb, maxW] = /SideMargin = (\d+)f, TopBottom = (\d+)f, MaxW = (\d+)f/.exec(cs);
-  assert.deepEqual([side, tb, maxW].map(Number), [90, 230, 1500]);
+  // 图框：左右各留 90、上下共留 230、最宽 1500（Unity MapScreen 的 SideMargin / TopBottom / MaxW），保持底图长宽比
   assert.deepEqual(MM.mapBoxSize(1554, 1080, [0, 100, 0, 100]), { w: 850, h: 850 });
   assert.deepEqual(MM.mapBoxSize(1920, 1080, [0, 400, 0, 100]), { w: 1500, h: 375 });
 });

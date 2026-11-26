@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
-import { cs, tsGraph } from './unity-parity-kit.mjs';
+import { spec, tsGraph } from './unity-parity-kit.mjs';
 
 const gameSource = stripTypeScriptTypes(readFileSync(new URL('../src/core/Game.ts', import.meta.url), 'utf8'), { mode: 'transform' })
   .replace("from 'three'", "from './__three'");
@@ -167,14 +167,8 @@ async function resume(game) {
 // ───────────── 阵亡（Unity GameSession.OnDied：当场结算）─────────────
 
 test('阵亡当场结算（Unity OnDied → Bank(false)）：慢动作里已经删了续玩档、不能暂离也打不开暂停，暂停「返回主菜单」→「继续征程」免死的路堵死', async () => {
-  const unity = cs('Core/GameSession.cs');
-  const onDied = unity.slice(unity.indexOf('void OnDied()'), unity.indexOf('static RunSummary Bank('));
-  assert.ok(onDied.indexOf('TimeScaleArbiter.Request(this, 0.3f, TimeScaleArbiter.Priority.DeathSlowMo)') < onDied.indexOf('Bank(false)'), 'Unity：先慢动作，紧接着结算');
-  assert.match(unity, /if \(complete \|\| \(player && player\.Dead\)\)\s*\{[\s\S]*?if \(GameInput\.Pressed\(GameAction\.Reload\)\) Restart\(\);\s*return;\s*\}[\s\S]*?GameInput\.Pressed\(GameAction\.Pause\)/,
-    'Unity：玩家死了 Update 提前返回，不看暂停键');
-  const suspend = cs('Core/RunSuspend.cs');
-  assert.match(suspend, /public static bool CanSuspend\(RunState run\)\s*\{\s*if \(run == null \|\| !ShouldWrite\(run\)\) return false;/, 'Unity：结算过的局（ShouldWrite 为假）不能暂离');
-
+  // Unity：GameSession.OnDied 先慢动作 ×0.3 紧接着 Bank(false)；玩家死了 Update 提前返回、不看暂停键；
+  // RunSuspend.CanSuspend：结算过的局（ShouldWrite 为假）不能暂离
   const { store, game, ctx } = fresh();
   await startRun(game);
   ctx.run.essence = 40;
@@ -220,13 +214,7 @@ test('阵亡慢动作走完照常出结算界面：用的是阵亡时结算的�
 // ───────────── 进关快照（Unity SceneFlow.Arrive：entry = CloneRun(run) 在 StageLoaded 之前）─────────────
 
 test('进关快照拍在 stage:loaded 之前：聚宝盆入账、每关补的备弹不进续玩档；「暂离 → 继续征程」反复做灵石和弹药都不涨', async () => {
-  const flow = cs('Core/SceneFlow.cs');
-  const arrive = flow.slice(flow.indexOf('RunPersistence.RestoreAll(run);'));
-  assert.ok(arrive.indexOf('entry = CloneRun(run);') < arrive.indexOf('GameSession.Instance?.BeginStage('), 'Unity：先记进关快照，再 BeginStage → Announce');
-  const session = cs('Core/GameSession.cs');
-  const announce = session.slice(session.indexOf('void Announce(bool chapterCard)'));
-  assert.match(announce.slice(0, announce.indexOf('\n        }')), /GameEvents\.RaiseStageLoaded\(Stage\)/, 'Unity：StageLoaded 在 Announce 里发');
-
+  // Unity SceneFlow.Arrive：先记进关快照（entry = CloneRun(run)），再 BeginStage → Announce，StageLoaded 在 Announce 里发
   const { store, game, ctx } = fresh();
   await startRun(game);
   ctx.run.coins = 100;
@@ -342,11 +330,7 @@ test('开新局放弃旧征程要等场景清单：清单没到时不校验（�
 });
 
 test('清单没到时也认得未完成的征程（宽松读、不动盘上的档）：「继续征程」照样显示，开新局先弹确认框；确认之后清单到了才按败北结算（Unity MenuFlow.StartRun：Peek 到档就先确认）', async () => {
-  const flow = cs('UI/Screens/MenuFlow.cs');
-  const start = flow.slice(flow.indexOf('public static bool StartRun(string heroId, bool forfeitSuspended)'), flow.indexOf('static bool ShuffleRoute()'));
-  assert.match(start, /var suspended = RunSuspend\.Peek\(dev\);\s*if \(suspended != null\)\s*\{\s*if \(!forfeitSuspended\)\s*\{[\s\S]*?ConfirmScreen\.Ask\(/, 'Unity：Peek 到档就先弹确认框');
-  assert.match(start, /onConfirm = \(\) => StartRun\(hero, true\),[\s\S]*?return false;\s*\}\s*RunSuspend\.Forfeit\(dev\);/, 'Unity：确认之后才放弃');
-
+  // Unity MenuFlow.StartRun：RunSuspend.Peek 到档就先弹确认框（ConfirmScreen.Ask），确认之后才 Forfeit
   const { store, game, ctx, catalog, release } = altRouteSave();
   const s = game.suspendedRun();
   assert.ok(s, '清单没到：主菜单照样认得这份档（「继续征程」显示）');
@@ -415,13 +399,7 @@ test('场景清单请求失败（一直读不到）：主菜单、继续征程�
 });
 
 test('生涯第一局暂离后确认开新局：先放弃旧征程（记一局败北）再定新局的路线，新局洗牌（Unity MenuFlow.StartRun：Forfeit → Begin(ShuffleRoute() ? RunRoute.Build(seed) : null)）', async () => {
-  const flow = cs('UI/Screens/MenuFlow.cs');
-  const start = flow.slice(flow.indexOf('public static bool StartRun(string heroId, bool forfeitSuspended)'), flow.indexOf('static bool ShuffleRoute()'));
-  const forfeitAt = start.indexOf('RunSuspend.Forfeit(dev);');
-  const beginAt = start.indexOf('RunState.Begin(heroId, seed, null, dev, ShuffleRoute() ? RunRoute.Build(seed) : null);');
-  assert.ok(forfeitAt > 0 && beginAt > forfeitAt, 'Unity：先放弃旧征程，再开局排路线');
-  assert.match(flow, /static bool ShuffleRoute\(\)\s*\{\s*try \{ return CareerStats\.Current\.Runs > 0; \}/, 'Unity：生涯打过一局才洗牌');
-
+  // Unity：先放弃旧征程，再开局排路线；ShuffleRoute = 生涯打过一局（CareerStats.Runs > 0）才洗牌
   const { store, game, ctx } = fresh();
   await startRun(game);
   assert.equal(ctx.run.route, undefined, '生涯第一局：规划表的设计顺序');
@@ -448,21 +426,19 @@ test('生涯第一局暂离后确认开新局：先放弃旧征程（记一局�
 // ───────────── 主菜单：继续征程 / 开新局的确认框（Unity MainMenuScreen.Refresh、MenuFlow.StartRun）─────────────
 
 test('「继续征程」/「开始游戏」的小字与开新局的确认框文字照 Unity MainMenuScreen.Refresh / MenuFlow.StartRun', () => {
-  const menu = cs('UI/Screens/MainMenuScreen.cs');
-  assert.ok(menu.includes('· {hero?.name ?? r.heroId} · 用时 {ScreenKit.Clock(r.time)} · 灵石 {ScreenKit.Num(r.coins)}"'));
-  for (const lit of ['startHint.text = "放弃未完成的征程，重新选择英雄";', 'else startHint.text = "选择英雄，踏入第一章";', 'continueBtn = NavItem(nav, "继续征程", "", ContinueRun, true);'])
-    assert.ok(menu.includes(lit), lit);
+  // Unity MainMenuScreen.Refresh：「<关卡> · <英雄> · 用时 <时钟> · 灵石 <数>」；有档「放弃未完成的征程，重新选择英雄」，没档「选择英雄，踏入第一章」
   assert.deepEqual(SD.menuHints({ stageLabel: '1-2 · 雅丹迷城', heroName: '狐', time: 3725.9, coins: 12345 }),
     { continueHint: '1-2 · 雅丹迷城 · 狐 · 用时 1:02:05 · 灵石 12,345', startHint: '放弃未完成的征程，重新选择英雄' });
   assert.equal(SD.menuHints({ stageLabel: '1-1', heroName: '熊', time: 59.9, coins: 0 }).continueHint, '1-1 · 熊 · 用时 0:59 · 灵石 0');
   assert.deepEqual(SD.menuHints(null), { continueHint: '', startHint: '选择英雄，踏入第一章' });
 
-  const flow = cs('UI/Screens/MenuFlow.cs');
+  // Unity MenuFlow.StartRun 的确认框（冻结在 ui-screens.json 的 forfeitConfirm）
+  const unity = spec('ui-screens').forfeitConfirm;
   const t = SD.forfeitConfirmText('1-3');
-  assert.ok(flow.includes('message = $"开始新征程会放弃当前的征程（第 {suspended.run.stageCode} 关），确定吗？",'));
-  assert.equal(t.message, '开始新征程会放弃当前的征程（第 1-3 关），确定吗？');
-  for (const [k, v] of Object.entries({ title: t.title, detail: t.detail, confirmText: t.confirmText, cancelText: t.cancelText }))
-    assert.ok(flow.includes(`${k} = "${v}",`), `${k} = ${v}`);
+  assert.equal(unity.message, '开始新征程会放弃当前的征程（第 {suspended.run.stageCode} 关），确定吗？');
+  assert.equal(t.message, unity.message.replace('{suspended.run.stageCode}', '1-3'));
+  assert.deepEqual({ title: t.title, detail: t.detail, confirmText: t.confirmText, cancelText: t.cancelText },
+    { title: unity.title, detail: unity.detail, confirmText: unity.confirmText, cancelText: unity.cancelText });
 });
 
 test('开新局有未完成的征程时先弹确认框（MenuFlow.StartRun）：确认之前什么都不动，确认后旧局按败北结算再出征；没有就直接开', async () => {

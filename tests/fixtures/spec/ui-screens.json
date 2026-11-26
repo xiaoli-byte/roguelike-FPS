@@ -1,0 +1,251 @@
+{
+ "_comment": "Unity 版删除前一次性从它的 C# 源码 / EditMode 测试 / 导出物冻结的规格（2026-11-26，Unity 工程同提交 9eea6305），作网页的对照基线；不要从网页的表反向重生成。出处（*At、src）是相对 Unity 工程 Assets 目录的路径:行号，原文在 git 历史里。",
+ "screens": {
+  "PauseScreen": {"id": "pause", "block": "paused", "freeze": true},
+  "SettingsScreen": {"id": "settings", "block": null, "freeze": false},
+  "ConfirmScreen": {"id": "confirm", "block": null, "freeze": false},
+  "ControlsScreen": {"id": "controls", "block": null, "freeze": false},
+  "CodexScreen": {"id": "codex", "block": null, "freeze": false},
+  "MapScreen": {"id": "map", "block": "modal", "freeze": true},
+  "StageCardScreen": {"id": "stage-card", "block": "summary", "freeze": true},
+  "MainMenuScreen": {"id": "main-menu", "block": null, "freeze": false},
+  "HeroSelectScreen": {"id": "hero-select", "block": null, "freeze": false},
+  "TalentScreen": {"id": "talents", "block": null, "freeze": false},
+  "SummaryScreen": {"id": "summary", "block": "summary", "freeze": true},
+  "ScrollChoiceScreen": {"id": "scroll-choice", "block": "modal", "freeze": true},
+  "InventoryPanel": {"id": "inventory", "block": "modal", "freeze": true}
+ },
+ "screensNote": "UI/Screens/<文件>.cs 的 Id（ScreenId）/ BlockState（缺省 Modal）/ FreezeTime（缺省 true）",
+ "binds": [
+  {
+   "action": "Jump",
+   "label": "跳跃",
+   "keyboard": ["space"],
+   "mouse": []
+  },
+  {
+   "action": "Dash",
+   "label": "冲刺",
+   "keyboard": ["leftShift", "rightShift"],
+   "mouse": []
+  },
+  {
+   "action": "Fire",
+   "label": "射击",
+   "keyboard": [],
+   "mouse": ["leftButton"]
+  },
+  {
+   "action": "Aim",
+   "label": "瞄准",
+   "keyboard": [],
+   "mouse": ["rightButton"]
+  },
+  {
+   "action": "Reload",
+   "label": "换弹",
+   "keyboard": ["r"],
+   "mouse": []
+  },
+  {
+   "action": "Interact",
+   "label": "交互",
+   "keyboard": ["f"],
+   "mouse": []
+  },
+  {
+   "action": "SkillQ",
+   "label": "主技能",
+   "keyboard": ["q"],
+   "mouse": []
+  },
+  {
+   "action": "SkillE",
+   "label": "副技能",
+   "keyboard": ["e"],
+   "mouse": []
+  },
+  {
+   "action": "WeaponSkill",
+   "label": "武器技能",
+   "keyboard": ["v"],
+   "mouse": ["middleButton"]
+  },
+  {
+   "action": "Weapon1",
+   "label": "一号武器",
+   "keyboard": ["1"],
+   "mouse": []
+  },
+  {
+   "action": "Weapon2",
+   "label": "二号武器",
+   "keyboard": ["2"],
+   "mouse": []
+  },
+  {
+   "action": "Swap",
+   "label": "切换武器",
+   "keyboard": ["x"],
+   "mouse": []
+  },
+  {
+   "action": "PetSkill",
+   "label": "灵技",
+   "keyboard": ["g"],
+   "mouse": []
+  },
+  {
+   "action": "Inventory",
+   "label": "行囊",
+   "keyboard": ["tab"],
+   "mouse": []
+  },
+  {
+   "action": "Map",
+   "label": "地图",
+   "keyboard": ["m"],
+   "mouse": []
+  },
+  {
+   "action": "Pause",
+   "label": "暂停",
+   "keyboard": ["escape", "p"],
+   "mouse": []
+  }
+ ],
+ "bindsAt": "Game/Scripts/UI/Screens/SettingsScreen.cs:346",
+ "bindsNote": "改键页动作表（SettingsScreen.Actions）；keyboard / mouse 是 Pipeline/Runtime/GameInput.cs 里这个动作的缺省绑定（Unity 控件路径名）",
+ "controlRows": [
+  {"action": null, "label": "移动", "fixedKb": "W A S D"},
+  {"action": null, "label": "视角", "fixedKb": "鼠标"},
+  {"action": "Jump", "label": "跳跃（部分英雄可二段跳）", "fixedKb": null},
+  {"action": "Dash", "label": "冲刺（有充能与冷却）", "fixedKb": null},
+  {"action": "Fire", "label": "射击", "fixedKb": null},
+  {"action": "Aim", "label": "瞄准（缩放视野、降低散布）", "fixedKb": null},
+  {"action": "Reload", "label": "换弹", "fixedKb": null},
+  {"action": "Swap", "label": "切换武器（也可 1 / 2、滚轮）", "fixedKb": null},
+  {"action": "SkillQ", "label": "主技能（长冷却）", "fixedKb": null},
+  {"action": "SkillE", "label": "副技能（多充能投掷类）", "fixedKb": null},
+  {"action": "WeaponSkill", "label": "武器技能", "fixedKb": null},
+  {"action": "PetSkill", "label": "灵技（结契灵宠后）", "fixedKb": null},
+  {"action": "Interact", "label": "交互：拾取武器、开宝箱、购买、结契、进入出口", "fixedKb": null},
+  {"action": "Inventory", "label": "行囊：秘卷、属性、武器、灵宠", "fixedKb": null},
+  {"action": "Map", "label": "行旅图：全图、已发现的地点与目标", "fixedKb": null},
+  {"action": "Pause", "label": "暂停", "fixedKb": null}
+ ],
+ "controlRowsAt": "Game/Scripts/UI/Screens/ControlsScreen.cs:22",
+ "legendTexts": [["武器伤害 +55%。", "受到的伤害 +35%。"], ["每损失 1% 生命，伤害 +0.7%（最多 +63%）。", "护盾恢复延迟 +2 秒。"], ["暴击率 +25%，暴击伤害 +50%。", "武器的非暴击伤害 −30%。"], ["武器命中时 15% 概率射出一柄追踪飞剑，造成该次伤害 120% 的伤害。", ""], ["灵石获取 +50%；每持有 100 灵石，武器伤害 +4%（最多 +40%）。", "受到伤害时损失 3 灵石（每 0.5 秒最多一次）。"], ["吸血 +4%，击杀回复 6 生命。", "护盾上限 −40。"], ["射速 +35%，弹匣容量 +50%。", "换弹速度 −30%。"]],
+ "legendTextsAt": "Game/Scripts/Progression/Scrolls/Legend/Legendary.cs:19",
+ "statGrid": {
+  "keyStats": ["MaxHp", "MaxShield", "DamageReduction", "MoveSpeed", "DamagePct", "CritChance", "CritDamagePct", "FireRatePct", "ReloadSpeedPct", "ElementChancePct", "ElementDamagePct", "SkillDamagePct", "SkillHaste", "Luck"],
+  "pauseStats": ["MaxHp", "MaxShield", "DamagePct", "CritChance", "CritDamagePct", "FireRatePct", "ReloadSpeedPct", "MoveSpeed", "SkillHaste", "DamageReduction"],
+  "at": "Game/Scripts/UI/Screens/StatGrid.cs:15"
+ },
+ "talents": {
+  "affinity": {
+   "name": "元素亲和",
+   "stat": "ElementChancePct",
+   "perLevel": 0.03,
+   "description": "每级元素触发率 +3%",
+   "src": "Progression/Meta/Talents/Talent_Affinity.cs"
+  },
+  "barrier": {
+   "name": "护盾强化",
+   "stat": "MaxShield",
+   "perLevel": 6,
+   "description": "每级护盾上限 +6",
+   "src": "Progression/Meta/Talents/Talent_Barrier.cs"
+  },
+  "fortune": {
+   "name": "幸运",
+   "stat": "Luck",
+   "perLevel": 1,
+   "description": "每级幸运 +1（更容易出现高稀有度的武器与秘卷）",
+   "src": "Progression/Meta/Talents/Talent_Fortune.cs"
+  },
+  "haste": {
+   "name": "技能急速",
+   "stat": "SkillHaste",
+   "perLevel": 0.05,
+   "description": "每级技能急速 +5%",
+   "src": "Progression/Meta/Talents/Talent_Haste.cs"
+  },
+  "lethal": {
+   "name": "致命",
+   "stat": "CritChance",
+   "perLevel": 0.02,
+   "description": "每级暴击率 +2%",
+   "src": "Progression/Meta/Talents/Talent_Lethal.cs"
+  },
+  "mastery": {
+   "name": "武器精通",
+   "stat": "DamagePct",
+   "perLevel": 0.04,
+   "description": "每级武器伤害 +4%",
+   "src": "Progression/Meta/Talents/Talent_Mastery.cs"
+  },
+  "reload": {
+   "name": "装填",
+   "stat": "ReloadSpeedPct",
+   "perLevel": 0.05,
+   "description": "每级换弹速度 +5%",
+   "src": "Progression/Meta/Talents/Talent_Reload.cs"
+  },
+  "swift": {
+   "name": "迅捷",
+   "stat": "MoveSpeed",
+   "perLevel": 0.15,
+   "description": "每级移动速度 +0.15",
+   "src": "Progression/Meta/Talents/Talent_Swift.cs"
+  },
+  "vitality": {
+   "name": "生命强化",
+   "stat": "MaxHp",
+   "perLevel": 8,
+   "description": "每级生命上限 +8",
+   "src": "Progression/Meta/Talents/Talent_Vitality.cs"
+  },
+  "wealth": {
+   "name": "财富",
+   "stat": "CoinGainPct",
+   "perLevel": 0.08,
+   "description": "每级灵石获取 +8%",
+   "src": "Progression/Meta/Talents/Talent_Wealth.cs"
+  }
+ },
+ "chestLabels": {"weapon": "武器", "scroll": "秘卷", "coins": "灵石", "upgrade": "强化"},
+ "chestLabelsAt": "Game/Scripts/Loot/Chest.cs:61",
+ "strings": {
+  "coinGainStatName": "灵石获取",
+  "coinGainStatNameAt": "Game/Scripts/Core/StatInfo.cs:103",
+  "wealthTalent": "每级灵石获取 +8%",
+  "upgradeToast": {"maxed": "当前武器已满级，改为灵石", "noWeapon": "没有可强化的武器，改为灵石"},
+  "upgradeToastAt": "Game/Scripts/Loot/Rewards/UpgradeReward.cs:30",
+  "upgradeToCoins": ["当前武器已满级，改为灵石", "没有可强化的武器，改为灵石"],
+  "scrollsFull": "秘卷已全部满层，改为灵石",
+  "scrollsFullAt": "Game/Scripts/Loot/LootDirector.cs:204",
+  "coinsLine": {"normal": "一大堆灵石", "elite": "一大堆灵石（精英加成）"},
+  "coinsLineAt": "Game/Scripts/Loot/Rewards/CoinsReward.cs:24",
+  "coinsChestLines": ["一大堆灵石", "一大堆灵石（精英加成）"],
+  "coinsRewardName": "灵石",
+  "notEnough": "灵石不足",
+  "notEnoughAt": "Game/Scripts/Loot/Shop/ShopCounter.cs:18"
+ },
+ "affixLabels": {
+  "swift": {"name": "迅捷", "color": 4839679, "hint": "移速与攻速提高"},
+  "shielded": {"name": "坚盾", "color": 7314943, "hint": "额外护盾，脱战回盾"},
+  "volatile": {"name": "爆裂", "color": 16742970, "hint": "死亡时爆炸，别贴身击杀"},
+  "frenzied": {"name": "狂暴", "color": 16730674, "hint": "低血量时狂暴"}
+ },
+ "affixLabelsAt": "Game/Scripts/UI/Widgets/EnemyBars.cs:30",
+ "codexPage": {"columns": 4, "rows": 3, "at": "Game/Scripts/UI/Screens/CodexScreen.cs:26"},
+ "forfeitConfirm": {
+  "title": "开始新征程",
+  "detail": "放弃的征程按败北结算：已收集的魂晶照常入账，此操作不能撤销。",
+  "confirmText": "放弃并出征",
+  "cancelText": "取消",
+  "message": "开始新征程会放弃当前的征程（第 {suspended.run.stageCode} 关），确定吗？"
+ },
+ "forfeitConfirmAt": "Game/Scripts/UI/Screens/MenuFlow.cs:82"
+}

@@ -1,0 +1,37 @@
+{
+ "_comment": "Unity 版删除前一次性从它的 C# 源码 / EditMode 测试 / 导出物冻结的规格（2026-11-26，Unity 工程同提交 9eea6305），作网页的对照基线；不要从网页的表反向重生成。出处（*At、src）是相对 Unity 工程 Assets 目录的路径:行号，原文在 git 历史里。 sidecars：Art/Weapons/<id>/<id>.art.json 里绑定的武器与 LOD0 三角形数；prefabs：Weapons/Defs/Weapon_*.cs 的 prefab；motion：Resources/Gunfire/Motion/<编号>.json 解析后再 JSON.stringify 的 sha256（网页 public/assets/gunfire-original/motion 是它的镜像）。",
+ "sidecars": {
+  "SK_Weapon_Gunfire1001": {"weapon": "rifle", "tris": 4996, "src": "Art/Weapons/SK_Weapon_Gunfire1001/SK_Weapon_Gunfire1001.art.json"},
+  "SK_Weapon_Gunfire1002": {"weapon": "smg", "tris": 2394, "src": "Art/Weapons/SK_Weapon_Gunfire1002/SK_Weapon_Gunfire1002.art.json"},
+  "SK_Weapon_Gunfire1202": {"weapon": "revolver", "tris": 3068, "src": "Art/Weapons/SK_Weapon_Gunfire1202/SK_Weapon_Gunfire1202.art.json"},
+  "SK_Weapon_Gunfire1008": {"weapon": "railgun", "tris": 3336, "src": "Art/Weapons/SK_Weapon_Gunfire1008/SK_Weapon_Gunfire1008.art.json"},
+  "SK_Weapon_Gunfire1106": {"weapon": "sniper", "tris": 6502, "src": "Art/Weapons/SK_Weapon_Gunfire1106/SK_Weapon_Gunfire1106.art.json"},
+  "SK_Weapon_Gunfire1301": {"weapon": "shotgun", "tris": 2574, "src": "Art/Weapons/SK_Weapon_Gunfire1301/SK_Weapon_Gunfire1301.art.json"}
+ },
+ "prefabs": {
+  "rifle": {"prefab": "SK_Weapon_Gunfire1001", "at": "Game/Scripts/Weapons/Defs/Weapon_Rifle.cs:17"},
+  "smg": {"prefab": "SK_Weapon_Gunfire1002", "at": "Game/Scripts/Weapons/Defs/Weapon_Smg.cs:19"},
+  "revolver": {"prefab": "SK_Weapon_Gunfire1202", "at": "Game/Scripts/Weapons/Defs/Weapon_Revolver.cs:14"},
+  "railgun": {"prefab": "SK_Weapon_Gunfire1008", "at": "Game/Scripts/Weapons/Defs/Weapon_Railgun.cs:19"},
+  "sniper": {"prefab": "SK_Weapon_Gunfire1106", "at": "Game/Scripts/Weapons/Defs/Weapon_Sniper.cs:19"},
+  "shotgun": {"prefab": "SK_Weapon_Gunfire1301", "at": "Game/Scripts/Weapons/Defs/Weapon_Shotgun.cs:14"}
+ },
+ "motion": {
+  "1001": "e5314b60426f97cbe4793c3ed5e52a15eedb368567994439224d643be237621a",
+  "1002": "b4ed46a5aef4bad5b08a12a5d369a5f24d1c55ebb837a92dd2ea9c17a9c6a6f2",
+  "1003": "ce570c547ac98a1de5285d5ca2f34540e56db542785deb67147e95e31d35ca2d",
+  "1004": "7a67f2429b7e724ea0ef7d53652d90cfc73cff02c042a3b61b026242d5480ef9",
+  "1005": "a8f67de893a27f6677a0bdcd05aa7279490ac14eab2eebb0e12e42a9f9b53287",
+  "1006": "fe896ad9e76fdbeafdace3fb01daf62517a308471042e4f421bfd47de964cf8e",
+  "1008": "12de5b5685f78030fc50aa34b7d656aac51241df3b8cc061d0a43638ad1f21b4",
+  "1009": "6ae5ef5394da3694da8d812d278908d25ead7335d0899750cd566fea93c43df1",
+  "1010": "096c4c37f12be6c5962be3f0efc143f5d13a6b9ad16dd15ded20e27cafa49156",
+  "1013": "5d1a4a7b5029270f0a257a8fffcb493ab601c59e94c56a48c233c70c21587dad",
+  "1014": "3125f5df89783e3d4b2b5440d7b504acdaedf91a52c9a7c03c397f0d85688ef4",
+  "1101": "da6e54337e9d07a014651f2ce35018a1ba44ec0a81f137ca17e90ad468521a20",
+  "1102": "5ee1d8b4f1876468ca4dd9607277a95558ee56f95f1549ca418092f0761ca09a",
+  "1106": "784da6059fdc9019cf348252416035995837ae6f0fa9d83cebc66d17651a7cd8",
+  "1202": "f9340b639156e93254114635933daf806a1a22de17a98f9e1806dfb24eceb1c6",
+  "1301": "bd83651500253f14d72fee04a129df716544caf62df32797d964b116105f4334"
+ }
+}

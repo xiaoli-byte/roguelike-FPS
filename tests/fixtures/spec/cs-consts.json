@@ -227,7 +227,22 @@
   "assistSlowdown": 0.5,
   "assistPull": 0.12
  },
+ "Core/HitStop.cs": {
+  "DefaultScale": 0.05,
+  "MaxStop": 0.2,
+  "MinGap": 0.12,
+  "BudgetMax": 0.15,
+  "BudgetRate": 0.075,
+  "MinUseful": 0.012,
+  "KillStop": 0.035,
+  "EliteKillStop": 0.07,
+  "BossKillStop": 0.18,
+  "CritStop": 0.025,
+  "ReactionStop": 0.045,
+  "HeavyCritFraction": 0.18
+ },
  "Core/Stats.cs": {"MinMult": 0.05},
+ "Core/TimeScaleArbiter.cs": {"HitStop": 100, "DeathSlowMo": 200, "Transition": 300, "Modal": 400, "Pause": 500},
  "Encounters/SpawnModes/SpawnEntrance.cs": {"HopTime": 1.2, "PeekTime": 0.6, "JumpTime": 0.75, "FlySpeed": 12},
  "Enemies/AI/Plateau/PlateauEnemyAI.cs": {"LeashRange": 90, "ImpactRate": 0.05},
  "Enemies/Affixes/EliteAffix_Frenzied.cs": {"Threshold": 0.4},
@@ -278,6 +293,22 @@
   "RiseTime": 0.7
  },
  "Fx/CameraShake.cs": {"MaxStrength": 1.2, "MaxTime": 1.5, "VoiceCount": 8, "MergeWindow": 0.06, "StackShare": 0.35},
+ "Fx/GameplayVolumes.cs": {
+  "QualityPriority": 140,
+  "LowHealthPriority": 150,
+  "DashPriority": 151,
+  "SlowPriority": 152,
+  "HurtPriority": 153,
+  "LowHpStart": 0.35,
+  "LowHpFull": 0.1,
+  "HurtAttack": 0.03,
+  "HurtDecay": 0.14,
+  "DashHold": 0.05,
+  "DashFade": 0.27,
+  "HurtAberration": 0.4,
+  "DashAberration": 0.25,
+  "SlowAberration": 0.15
+ },
  "Pipeline/Runtime/PlayerMotor.cs": {
   "walkSpeed": 7.5,
   "groundAccel": 78,
@@ -349,6 +380,17 @@
   "AbyssFallSpeed": 20,
   "AbyssProbe": 400
  },
+ "Progression/ScrollRoll.cs": {
+  "LuckPerRarity": 0.1,
+  "ChapterPerRarity": 0.18,
+  "OwnedMult": 1.3,
+  "HeroOnlyMult": 1.5,
+  "ReactionWithSource": 1.4,
+  "ReactionWithoutSource": 0.5,
+  "FlowMult": 1.3
+ },
+ "Progression/Scrolls/Element/ElementalRounds.cs": {"ChancePerStack": 0.05},
+ "Progression/Scrolls/Utility/Mobility.cs#WarDrumScroll": {"Duration": 8, "FireRatePerStack": 0.15, "MoveSpeedPerStack": 0.5},
  "Skills/BearSkills.cs#BearBastion": {
   "Duration": 8,
   "Reduction": 0.5,
@@ -765,7 +807,22 @@
    "assistSlowdown": 38,
    "assistPull": 39
   },
+  "Core/HitStop.cs": {
+   "DefaultScale": 24,
+   "MaxStop": 25,
+   "MinGap": 25,
+   "BudgetMax": 25,
+   "BudgetRate": 25,
+   "MinUseful": 25,
+   "KillStop": 27,
+   "EliteKillStop": 27,
+   "BossKillStop": 27,
+   "CritStop": 27,
+   "ReactionStop": 27,
+   "HeavyCritFraction": 29
+  },
   "Core/Stats.cs": {"MinMult": 45},
+  "Core/TimeScaleArbiter.cs": {"HitStop": 20, "DeathSlowMo": 20, "Transition": 20, "Modal": 20, "Pause": 20},
   "Encounters/SpawnModes/SpawnEntrance.cs": {"HopTime": 21, "PeekTime": 21, "JumpTime": 21, "FlySpeed": 21},
   "Enemies/AI/Plateau/PlateauEnemyAI.cs": {"LeashRange": 32, "ImpactRate": 78},
   "Enemies/Affixes/EliteAffix_Frenzied.cs": {"Threshold": 15},
@@ -816,6 +873,22 @@
    "RiseTime": 25
   },
   "Fx/CameraShake.cs": {"MaxStrength": 17, "MaxTime": 19, "VoiceCount": 20, "MergeWindow": 21, "StackShare": 21},
+  "Fx/GameplayVolumes.cs": {
+   "QualityPriority": 26,
+   "LowHealthPriority": 26,
+   "DashPriority": 26,
+   "SlowPriority": 26,
+   "HurtPriority": 26,
+   "LowHpStart": 27,
+   "LowHpFull": 27,
+   "HurtAttack": 28,
+   "HurtDecay": 28,
+   "DashHold": 28,
+   "DashFade": 28,
+   "HurtAberration": 29,
+   "DashAberration": 29,
+   "SlowAberration": 29
+  },
   "Pipeline/Runtime/PlayerMotor.cs": {
    "walkSpeed": 23,
    "groundAccel": 25,
@@ -887,6 +960,17 @@
    "AbyssFallSpeed": 65,
    "AbyssProbe": 65
   },
+  "Progression/ScrollRoll.cs": {
+   "LuckPerRarity": 22,
+   "ChapterPerRarity": 22,
+   "OwnedMult": 23,
+   "HeroOnlyMult": 23,
+   "ReactionWithSource": 23,
+   "ReactionWithoutSource": 23,
+   "FlowMult": 23
+  },
+  "Progression/Scrolls/Element/ElementalRounds.cs": {"ChancePerStack": 10},
+  "Progression/Scrolls/Utility/Mobility.cs#WarDrumScroll": {"Duration": 76, "FireRatePerStack": 76, "MoveSpeedPerStack": 76},
   "Skills/BearSkills.cs#BearBastion": {
    "Duration": 256,
    "Reduction": 256,

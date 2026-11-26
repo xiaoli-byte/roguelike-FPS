@@ -1,17 +1,17 @@
 // M13 对照：Unity EditMode 的 Scroll*Tests.cs（Runtime / Offense / Element / Utility / Legend / Reaction / Tactics）→ node --test。
-// 这一份迁的是「定义与公式」：
-//   · 119 张秘卷的 id / 名字 / 稀有度 / 层数上限 / 标签 / 专属英雄 / 描述，逐张和 Unity 的定义源码（Progression/Scrolls/**）比；
+// Unity 一侧是 Unity 版删除前从 C# 冻结的规格（tests/fixtures/spec/scrolls.json、cs-consts.json）。这一份迁的是「定义与公式」：
+//   · 119 张秘卷的 id / 名字 / 稀有度 / 层数上限 / 标签 / 专属英雄 / 描述，逐张和 Unity 的定义（Progression/Scrolls/**）比；
 //   · Unity 测试里手抄的 TS 数据表（进攻 24、元素 10、功能 30、反应 24、战术 20）和网页的表顺序一致（进攻表尾 M8 补的「破绽」是 Unity 独有、手抄表里没有）；
 //   · 属性卷（StatScroll）：Unity 写的 (Stat, 每层值) 逐张装进网页的 ScrollSystem，属性表的增量一分不差；
 //   · 抽取权重（ScrollRoll.Weight / Pool）与 10 万次抽样、procScale、条件增伤四卷、元素弹三卷、传说卷的属性部分。
 // 逐卷的触发行为（Unity 那边约 4000 行、靠 ScrollScope / TacticsKit 的假宿主驱动）没有迁：战术 20 卷网页原本就有 tests/scroll-tactics.test.mjs
 // （Unity 的 ScrollTacticsTests 是从它移植过去的），其余见 docs/threejs-migration.md 第 7 节的表。
-// 只写测试：和 Unity 不一致的地方写成 todo（见文件末尾），不改实现。
+// 只写测试，不改实现。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
-import { combatRig, cs, csConsts, csTest, near, tsGraph } from './unity-parity-kit.mjs';
+import { combatRig, near, spec, tsGraph } from './unity-parity-kit.mjs';
 
 const graph = await tsGraph();
 after(() => graph.dispose());
@@ -29,54 +29,17 @@ const groups = {
   tactics: (await graph.load('progression/scrolls/defsTactics.ts')).TACTIC_SCROLLS,
 };
 const tsById = new Map(SCROLL_DEFS.map(d => [d.id, d]));
-const num = s => Number(String(s).trim().replace(/[fF]$/, ''));
 
-// ───────────── 读 Unity 的秘卷定义 ─────────────
+// ───────────── Unity 的秘卷定义（冻结的规格）─────────────
 
-const RARITY = { Common: 0, Uncommon: 1, Rare: 2, Epic: 3, Legendary: 4 };
-const scrollsRoot = new URL('../unity/Assets/Game/Scripts/Progression/Scrolls/', import.meta.url);
-const legendBase = cs('Progression/Scrolls/Legend/LegendScroll.cs');
-const TAG_CONST = { LegendTag: legendBase.match(/LegendTag = "([^"]+)"/)[1], RiskTag: legendBase.match(/RiskTag = "([^"]+)"/)[1] };
-/** Unity 的秘卷：{ id, file, body, name, rarity, maxStacks, tags, heroOnly, description | upside / downside, stats } */
-const unity = new Map();
-const sources = new Map();
-for (const dir of readdirSync(scrollsRoot, { withFileTypes: true }).filter(d => d.isDirectory())) {
-  for (const f of readdirSync(new URL(`${dir.name}/`, scrollsRoot)).filter(x => x.endsWith('.cs'))) {
-    const file = `${dir.name}/${f}`, src = readFileSync(new URL(file, scrollsRoot), 'utf8');
-    sources.set(file, src);
-    const legend = /: LegendScroll\b/.test(src);
-    const hits = [...src.matchAll(/\bid = (?:"(\w+)"|(ScrollId))\s*[;,]/g)];
-    hits.forEach((m, i) => {
-      const id = m[1] ?? src.match(/const string ScrollId = "(\w+)"/)[1];
-      const body = src.slice(m.index, hits[i + 1]?.index ?? m.index + 1400);
-      const rarity = body.match(/\brarity = (?:(\d)|Rarity\.(\w+))/);
-      const text = body.match(/\bText\("([^"]*)"(?:, "([^"]*)")?\)/);
-      const desc = body.match(/\bdescription = (\$?)"((?:[^"\\]|\\.)*)"/);
-      const tags = body.match(/\btags = new\[\] \{([^}]*)\}/)?.[1].split(',').map(s => s.trim()).filter(Boolean).map(t => (t.startsWith('"') ? t.replaceAll('"', '') : TAG_CONST[t]));
-      unity.set(id, {
-        id, file, body,
-        name: body.match(/\bname = "([^"]+)"/)?.[1],
-        rarity: rarity ? (rarity[1] !== undefined ? Number(rarity[1]) : RARITY[rarity[2]]) : legend ? 4 : undefined,
-        maxStacks: Number(body.match(/\bmaxStacks = (\d+)/)?.[1] ?? (legend ? 1 : 3)),
-        tags, heroOnly: body.match(/\bheroOnly = "(\w+)"/)?.[1],
-        description: desc && desc[1] !== '$' ? desc[2] : undefined, interpolated: !!desc && desc[1] === '$',
-        upside: text?.[1], downside: text?.[2],
-        stats: /new StatScroll\s*\{?\s*$/.test(src.slice(Math.max(0, m.index - 40), m.index)) || /StatScroll\s*\{\s*$/.test(src.slice(Math.max(0, m.index - 60), m.index))
-          ? [...(body.match(/\bstats = new\[\] \{([^}]*)\}/)?.[1] ?? '').matchAll(/\(Stat\.(\w+), (-?[\d.]+)f?\)/g)].map(s => [s[1], num(s[2])])
-          : null,
-      });
-    });
-    // 工厂函数造的：元素弹三卷、引子三卷（稀有度 / 层数 / 标签在工厂里）
-    for (const m of src.matchAll(/new ElementalRoundsScroll\("(\w+)", "([^"]+)", Element\.\w+, "([^"]+)"\)/g))
-      unity.set(m[1], { id: m[1], file, name: m[2], rarity: 1, maxStacks: 3, tags: ['元素', m[3], '命中'], description: `武器命中时每层 5% 概率额外附着${m[3]}。`, factory: true });
-    for (const m of src.matchAll(/RxLead\.Make\("(\w+)", "([^"]+)",/g))
-      unity.set(m[1], { id: m[1], file, name: m[2], rarity: 1, maxStacks: 3, factory: true });
-  }
-}
-// 工厂里写的数和上面抄的一致
-assert.match(sources.get('Element/ElementalRounds.cs'), /rarity = 1;\s*maxStacks = 3;\s*tags = new\[\] \{ "元素", label, "命中" \};\s*description = \$"武器命中时每层 5% 概率额外附着\{label\}。";/);
-assert.match(sources.get('Reaction/BasicLeads.cs'), /id = id, name = name, rarity = 1, maxStacks = 3,/);
-unity.delete('id');
+const SPEC = spec('scrolls');
+const K = spec('cs-consts');
+const TAG_CONST = { LegendTag: SPEC.legendScroll.LegendTag, RiskTag: SPEC.legendScroll.RiskTag };
+/**
+ * Unity 的秘卷：{ id, src, name, rarity, maxStacks, tags, heroOnly, description | descriptionTemplate / filled | upside / downside, stats, factory }
+ * （工厂函数造的元素弹三卷、引子三卷：稀有度 / 层数 / 标签在工厂里，导出时照工厂写法抄好）
+ */
+const unity = new Map(Object.entries(SPEC.scrolls));
 
 /** Unity Stat 枚举名 → 网页属性键 */
 const statKey = name => ({ MagPct: 'magSizePct' }[name] ?? name[0].toLowerCase() + name.slice(1));
@@ -137,38 +100,36 @@ test('描述是内插字符串 / 两段式的卷：数字逐个相同（传说�
     if (u.upside !== undefined) {
       assert.deepEqual(digits(t.description), digits(u.upside + (u.downside ?? '')), `${id}：Unity「${u.upside} / ${u.downside ?? ''}」网页「${t.description}」`);
       checked++;
-    } else if (u.interpolated) {
-      const tpl = u.body.match(/\bdescription = \$"((?:[^"\\]|\\.)*)"/)[1];
-      const consts = csConsts(sources.get(u.file));
-      const filled = tpl.replace(/\{(\w+)(?::[^}]*)?\}/g, (_, k) => (Number.isFinite(consts[k]) ? String(consts[k]) : '§'));
-      if (!filled.includes('§')) { assert.deepEqual(digits(t.description), digits(filled), `${id}：Unity「${filled}」网页「${t.description}」`); checked++; }
+    } else if (u.interpolated && u.filled) {
+      // C# 的内插描述，导出时已按同文件的常量填好
+      assert.deepEqual(digits(t.description), digits(u.filled), `${id}：Unity「${u.filled}」网页「${t.description}」`);
+      checked++;
     }
   }
+  // 引子三卷：Unity BasicLeads 的 chance = 0.08f * n
   for (const id of ['rx_lead_shock', 'rx_lead_fire', 'rx_lead_corrode']) assert.deepEqual(digits(tsById.get(id).description), [8], `${id}：每层 8%`);
-  assert.match(sources.get('Reaction/BasicLeads.cs'), /float chance = 0\.08f \* n;/);
   assert.ok(checked >= 7, `比过 ${checked} 张`);
 });
 
 test('Unity 测试里手抄的 TS 数据表：进攻 24 / 元素 10 / 功能 30 / 反应 24 / 战术 20，顺序同网页（进攻表尾的「破绽」不在手抄表里）', () => {
-  const tuples = (file, withTag) => [...csTest(file).matchAll(withTag ? /\("(\w+)", "([^"]+)", (\d), (\d+), "([^"]+)"\)/g : /\("(\w+)", "([^"]+)", (\d), (\d+)\)/g)];
+  // 每行 [id, 名字, 稀有度, 层数上限, (功能卷带一个标签)]
+  const T = SPEC.testTables;
   const check = (rows, list, label) => {
-    assert.deepEqual(rows.map(m => m[1]), list.map(d => d.id), `${label}：顺序`);
-    for (const m of rows) {
-      const d = tsById.get(m[1]);
-      assert.deepEqual([d.name, d.rarity, d.maxStacks], [m[2], Number(m[3]), Number(m[4])], `${label} ${m[1]}`);
-      if (m[5]) assert.ok(d.tags.includes(m[5]), `${label} ${m[1]} 带「${m[5]}」标签`);
+    assert.deepEqual(rows.map(m => m[0]), list.map(d => d.id), `${label}：顺序`);
+    for (const [id, name, rarity, maxStacks, tag] of rows) {
+      const d = tsById.get(id);
+      assert.deepEqual([d.name, d.rarity, d.maxStacks], [name, rarity, maxStacks], `${label} ${id}`);
+      if (tag) assert.ok(d.tags.includes(tag), `${label} ${id} 带「${tag}」标签`);
     }
   };
   // 「破绽」是 Unity 自己加的卷（OffenseStatScrolls.cs），ScrollOffenseTests 手抄的是 M8 之前的 TS 表：网页把它放在进攻表尾，前 24 张顺序不动
   assert.equal(groups.offense.at(-1).id, 'weak_point', '「破绽」在进攻表尾');
-  assert.ok(!tuples('ScrollOffenseTests.cs').some(m => m[1] === 'weak_point'));
-  check(tuples('ScrollOffenseTests.cs'), groups.offense.slice(0, -1), '进攻');
-  check(tuples('ScrollElementTests.cs'), groups.element, '元素');
-  check(tuples('ScrollUtilityTests.cs', true), groups.utility, '功能');
-  const idList = (file, re) => [...csTest(file).match(re)[1].matchAll(/"(\w+)"/g)].map(m => m[1]);
-  assert.deepEqual(idList('ScrollReactionTests.cs', /string\[\] \w+ =\s*\{([\s\S]*?)\};/), groups.reaction.map(d => d.id), '反应：顺序');
-  const tac = idList('ScrollTacticsTests.cs', /\{\s*("tac_crossfire"[\s\S]*?)\};/);
-  assert.deepEqual([...tac].sort(), groups.tactics.map(d => d.id).sort(), '战术：20 张');
+  assert.ok(!T.offense.some(m => m[0] === 'weak_point'));
+  check(T.offense, groups.offense.slice(0, -1), '进攻');
+  check(T.element, groups.element, '元素');
+  check(T.utility, groups.utility, '功能');
+  assert.deepEqual(T.reaction, groups.reaction.map(d => d.id), '反应：顺序');
+  assert.deepEqual([...T.tactics].sort(), groups.tactics.map(d => d.id).sort(), '战术：20 张');
   // 传说：独一份（层数上限 1）、英雄卷只进本英雄的池
   for (const d of groups.legend.filter(x => x.rarity === 4)) assert.equal(d.maxStacks, 1, `${d.id}：传说卷只能拿一张`);
   assert.deepEqual(groups.legend.filter(d => d.heroOnly).map(d => [d.id, d.heroOnly]), [['fox_resonance', 'fox'], ['falcon_sky', 'falcon'], ['bear_mountain', 'bear']]);
@@ -209,23 +170,14 @@ test('属性卷叠层的数（ScrollRuntimeTests.StatScrollStackMathMatchesTs）
 });
 
 test('传说卷的属性部分：Install 里无条件的 s.Stat(Stat.X, 常量) 同网页（玉碎 +55% 等）', async () => {
-  const src = sources.get('Legend/Legendary.cs'), consts = csConsts(src);
-  const classes = [...src.matchAll(/public sealed class (\w+) : LegendScroll([\s\S]*?)(?=\n    public sealed class |\n    \/\/\/ <summary>|\n}\s*$)/g)];
+  // Legendary.cs 每个传说卷 Install 顶层（回调外）的 s.Stat(Stat.X, 值)，常量名已按同文件解开
   let checked = 0;
-  for (const [, , body] of classes) {
-    const id = body.match(/\bid = (?:"(\w+)"|ScrollId)/);
-    if (!id || !id[1]) continue;
-    const install = body.match(/public override void Install\(ScrollScope s, int n\)\s*\{([\s\S]*?)\n        \}/)?.[1] ?? '';
-    // 只认 Install 顶层（8 + 4 = 12 个空格缩进）的 s.Stat：回调里的是有条件的
-    const flat = [...install.matchAll(/^ {12}s\.Stat\(Stat\.(\w+), (-?)(\w+|[\d.]+f?)\);/gm)];
-    if (!flat.length) continue;
+  for (const [id, stats] of Object.entries(SPEC.legendStats)) {
     const r = await rig(), before = r.snapshot();
-    r.give(id[1]);
+    r.give(id);
     const got = delta(before, r.snapshot());
-    for (const [, stat, sign, expr] of flat) {
-      const v = (sign ? -1 : 1) * (Number.isFinite(consts[expr]) ? consts[expr] : num(expr));
-      assert.ok(Number.isFinite(v), `${id[1]}：读不出 ${expr}`);
-      near(assert, got[statKey(stat)] ?? 0, v, 1e-6, `${id[1]} ${stat}`);
+    for (const [stat, v] of stats) {
+      near(assert, got[statKey(stat)] ?? 0, v, 1e-6, `${id} ${stat}`);
       checked++;
     }
   }
@@ -240,12 +192,11 @@ test('procScale：1 + max(0, 难度 − 1) × 0.85，难度低于 1 不打折、
   assert.equal(p(0.5), 1);
   near(assert, p(2.28), 1 + 1.28 * 0.85, 1e-9);
   assert.equal(p(NaN), 1);
-  assert.match(cs('Progression/ScrollKit.cs'), /0\.85f/);
 });
 
 test('条件增伤四卷：先声夺人 / 断命 / 近身搏杀 / 百步穿杨的阈值和每层加成同 Unity', async () => {
-  const src = sources.get('Offense/DamageScrolls.cs');
-  const classes = Object.fromEntries([...src.matchAll(/public sealed class (\w+) : ConditionalDamageScroll([\s\S]*?)(?=public sealed class |$)/g)].map(m => [m[2].match(/id = "(\w+)"/)[1], { perStack: num(m[2].match(/perStack = ([\d.]+)f?/)[1]), ...csConsts(m[2]) }]));
+  // DamageScrolls.cs 的 ConditionalDamageScroll 子类：perStack + 各自的常量
+  const classes = SPEC.conditional;
   assert.deepEqual(Object.keys(classes).sort(), ['close_combat', 'executioner', 'first_blood', 'sharpshooter']);
   const dealt = async (id, n, setup) => {
     const r = await rig();
@@ -274,7 +225,7 @@ test('条件增伤四卷：先声夺人 / 断命 / 近身搏杀 / 百步穿杨�
 });
 
 test('元素弹三卷：武器直接命中、没打死、这一击没附着同种状态时，每层 5% 概率附着（燃弹 / 雷弹 / 蚀弹）', async () => {
-  const chance = csConsts(sources.get('Element/ElementalRounds.cs')).ChancePerStack;
+  const chance = K['Progression/Scrolls/Element/ElementalRounds.cs'].ChancePerStack;
   assert.equal(chance, 0.05);
   for (const [id, status] of [['ignite_rounds', 'burn'], ['storm_rounds', 'shock'], ['acid_rounds', 'corrode']]) {
     const r = await rig();
@@ -301,9 +252,8 @@ test('元素弹三卷：武器直接命中、没打死、这一击没附着同�
 
 // ───────────── 抽取 ─────────────
 
-const rollCs = cs('Progression/ScrollRoll.cs');
-const RC = csConsts(rollCs);
-const rarityWeight = rollCs.match(/RarityWeight = \{([^}]+)\}/)[1].split(',').map(Number);
+const RC = K['Progression/ScrollRoll.cs'];
+const rarityWeight = SPEC.roll.rarityWeight;
 /** ScrollRoll.Weight */
 function unityWeight(d, c) {
   let w = rarityWeight[d.rarity];
@@ -341,9 +291,9 @@ test('抽取权重的常量同 Unity：基础权重、幸运 / 章节、已有 /
   assert.deepEqual([RC.LuckPerRarity, RC.ChapterPerRarity, RC.OwnedMult, RC.HeroOnlyMult, RC.ReactionWithSource, RC.ReactionWithoutSource, RC.FlowMult], [0.1, 0.18, 1.3, 1.5, 1.4, 0.5, 1.3]);
   assert.match(ts, /w \*= 1 \+ d\.rarity \* \(0\.1 \* luck \+ 0\.18 \* chapter\)/);
   const list = (src, name) => [...src.match(new RegExp(`${name}[^=]*= [\\[{]([^\\]}]+)[\\]}]`))[1].matchAll(/["'](\w+|[^"']+)["']/g)].map(m => m[1]);
-  assert.deepEqual(list(ts, 'FLOW_TAGS'), list(rollCs, 'FlowTags'));
-  assert.deepEqual(list(ts, 'ELEMENT_HEROES'), list(rollCs, 'ElementHeroes'));
-  assert.deepEqual(list(ts, 'ELEMENT_AFFIXES'), list(rollCs, 'ElementAffixes'));
+  assert.deepEqual(list(ts, 'FLOW_TAGS'), SPEC.roll.flowTags);
+  assert.deepEqual(list(ts, 'ELEMENT_HEROES'), SPEC.roll.elementHeroes);
+  assert.deepEqual(list(ts, 'ELEMENT_AFFIXES'), SPEC.roll.elementAffixes);
   // WeightFormulaMatchesTs 里的数
   const c = { luck: 2, chapter: 1, stacks: { owned: 1, maxed: 2 }, flows: ['焚雷'], hasElementSource: false };
   const p = POOL('fox'), by = id => p.find(d => d.id === id);
@@ -450,8 +400,7 @@ test('货币叫法同 Unity（D13）：点金手 / 悬赏令 / 聚宝盆 / 贪�
   assert.equal(tsById.get('midas_heart').downside, unity.get('midas_heart').downside);
   assert.match(tsById.get('midas_heart').description, /灵石获取 \+50%；每持有 100 灵石/);
   for (const d of SCROLL_DEFS) assert.doesNotMatch(`${d.description}${d.upside ?? ''}${d.downside ?? ''}`, /金币/, `${d.id}：局内货币叫灵石`);
-  // 聚宝盆的提示同 Unity：「聚宝盆：本金 P + 利息 I = G 灵石」
-  assert.match(sources.get('Utility/Economy.cs'), /Toast\(\$"聚宝盆：本金 \{principal\} \+ 利息 \{interest\} = \{gain\} 灵石"/);
+  // 聚宝盆的提示同 Unity（Utility/Economy.cs）：「聚宝盆：本金 {principal} + 利息 {interest} = {gain} 灵石」
   const r = await rig({ chapter: 1 });
   r.ctx.run.coins = 200;
   r.give('treasure_bowl');
@@ -464,8 +413,8 @@ test('货币叫法同 Unity（D13）：点金手 / 悬赏令 / 聚宝盆 / 贪�
 test('战鼓同 Unity WarDrumScroll：「每处据点开战时」，听据点开战（encounter:started），不随每一波续上', async () => {
   assert.equal(tsById.get('war_drum').description, unity.get('war_drum').description);
   assert.equal(unity.get('war_drum').description, '每处据点开战时，8 秒内射速每层 +15%、移动速度每层 +0.5。');
-  assert.match(unity.get('war_drum').body, /s\.OnEncounterStarted\(_ => ScrollKit\.ProcBuff\(s, buff, Duration\)\)/);
-  const mobility = sources.get('Utility/Mobility.cs'), c = csConsts(mobility.slice(mobility.indexOf('class WarDrumScroll')));
+  // Unity WarDrumScroll：s.OnEncounterStarted(_ => ScrollKit.ProcBuff(s, buff, Duration))
+  const c = K['Progression/Scrolls/Utility/Mobility.cs#WarDrumScroll'];
   assert.deepEqual([c.Duration, c.FireRatePerStack, c.MoveSpeedPerStack], [8, 0.15, 0.5]);
   // Unity ScrollUtilityTests.WarDrumBuffsFireRateAndSpeedWhenAnEncounterStarts：2 层 → 射速 +30%、移速 +1，8 s 后撤掉
   const r = await rig(), s = r.ctx.player.stats;
@@ -496,9 +445,9 @@ test('回春的描述与功能卷的标签顺序同 Unity：主标签在前（�
 test('高风险传说卷同 Unity LegendScroll：标签「高风险」，描述分收益 / 代价两段，代价另起一行「代价：…」（界面标红读 downside）', () => {
   assert.equal(Kit.RISK_TAG, TAG_CONST.RiskTag);
   assert.equal(Kit.LEGEND_TAG, TAG_CONST.LegendTag);
-  assert.equal(Kit.DOWNSIDE_PREFIX, legendBase.match(/DownsidePrefix = "([^"]+)"/)[1]);
-  assert.equal(Kit.DOWNSIDE_COLOR, `#${legendBase.match(/DownsideHex = "([0-9a-f]{6})"/)[1]}`);
-  assert.match(legendBase, /description = this\.downside == null \? upside : upside \+ "\\n" \+ DownsideLine\(this\.downside\);/);
+  assert.equal(Kit.DOWNSIDE_PREFIX, SPEC.legendScroll.DownsidePrefix);
+  assert.equal(Kit.DOWNSIDE_COLOR, `#${SPEC.legendScroll.DownsideHex}`);
+  // Unity LegendScroll：description = downside == null ? upside : upside + "\n" + DownsideLine(downside)（下面逐卷断言）
   const risky = ['glass_cannon', 'berserk_blood', 'gambler', 'midas_heart', 'blood_pact', 'overdrive'];
   for (const d of groups.legend.filter(x => !x.heroOnly)) {
     const u = unity.get(d.id);
