@@ -1,0 +1,471 @@
+{
+  "id": "SM_Tripo_DesertCaravanTent",
+  "display": "驼队帐篷（1-1 ④ 驼队残骸营地：被沙暴撕破、一角塌下的驼队毡帐（全身掩体））",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:25:35",
+          "files": {
+            "BO_SM_Tripo_DesertCaravanTent_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCaravanTent_v001.json",
+              "sha256": "11e6710aa2052aaafc7bbfd5c8ac120fa1981c9616453b5e85aedca6632870cf"
+            },
+            "BO_SM_Tripo_DesertCaravanTent_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCaravanTent_v001_views.json",
+              "sha256": "6d90cd146bb06e7a517c21e54830a08ab0386c0b489112636566952556328ef3"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.caravanTent"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.3,
+              0.0,
+              -1.9
+            ],
+            "max": [
+              2.3,
+              2.8,
+              1.9
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:25:53",
+          "files": {
+            "BO_SM_Tripo_DesertCaravanTent_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCaravanTent_v002.json",
+              "sha256": "2a2f350b55c53d6a6d052b4056cc293dcdb58923886a24afe618d2914748b017"
+            },
+            "BO_SM_Tripo_DesertCaravanTent_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCaravanTent_v002_views.json",
+              "sha256": "a442f3df0784f54b4620cadd98ed1c9dd7bc224bf18075f243bb339e201a8df5"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.caravanTent"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.7,
+              0.0,
+              -1.7
+            ],
+            "max": [
+              2.7,
+              2.8,
+              1.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:25:53",
+          "files": {
+            "CN_SM_Tripo_DesertCaravanTent_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_source.png",
+              "sha256": "9ebc9bfbe855c11091c7af0e741008d537986565dd692df8d2b54f2b976b2b84"
+            },
+            "CN_SM_Tripo_DesertCaravanTent_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_front.png",
+              "sha256": "cf549c57ffa4a943117752704b3923fc809c747c737ed98f7bf8fa1972a5b479"
+            },
+            "CN_SM_Tripo_DesertCaravanTent_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_left.png",
+              "sha256": "93818bc113f0ea963c852384c6bcaab1493995cebd092b04d166a78dcfe69b5e"
+            },
+            "CN_SM_Tripo_DesertCaravanTent_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_back.png",
+              "sha256": "757374edc9761cdc0c7500c4d6e04947e860dc157f6e84790f485a4c9757842a"
+            },
+            "CN_SM_Tripo_DesertCaravanTent_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_right.png",
+              "sha256": "da83507b6ca988889af84be32c98ba7295e8ab52b7b5946b70a16411738547bc"
+            },
+            "CN_SM_Tripo_DesertCaravanTent_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_sheet.png",
+              "sha256": "25f18791535b8c8e3746f257dbd418208df7e4eda2df734ab701961c191abc49"
+            },
+            "CN_SM_Tripo_DesertCaravanTent_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_prompt.txt",
+              "sha256": "11a13b10d1e14be70254db46c447235498a17ea7ffeed5a78f3bd4824e464d8a"
+            },
+            "CN_SM_Tripo_DesertCaravanTent_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanTent_v001_registration.json",
+              "sha256": "fcbe5cbadb086e6a146fbe0e11029ee915b7dce828b9752dc488a9fcaed22d2c"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "gpt-image-2.6-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.6-sunburst",
+            "size": "2048x1152",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 511,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 511
+              },
+              "output_tokens": 1413,
+              "output_tokens_details": {
+                "image_tokens": 1413,
+                "text_tokens": 0
+              },
+              "total_tokens": 1924
+            },
+            "request_id": "req_14a39a16004d47a89dc08a481e476513",
+            "seconds": 29.6,
+            "variants": 1,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "登记尺寸按画出的比例改成 5.4 × 2.8 × 3.4（前视 1.88、背视 1.93，侧视含拉绳和地桩）",
+            "source_image": "SM_Tripo_DesertCaravanTent_r1.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Pure flat white background. No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects.\n\nSTYLE: stylized hand-painted 3D game environment asset painted under even neutral white light with true base colours only: no baked lighting, no cast shadows, no ambient-occlusion darkening, no rim light. Thick chunky simplified silhouette, broad clean faceted planes, two or three dominant colour blocks (khaki-brown felt, beige canvas, grey-brown timber, a faded indigo accent, sand-yellow sand), soft painted gradients, sparse medium-size wear. No photorealism, no micro-grain, no fine cracks, no realistic erosion detail, no tiny carvings. Physically plausible.\n\nOBJECT, torn caravan felt tent (4.6m wide x 2.8m tall x 3.8m deep): A Silk Road caravan camp tent left behind after a sandstorm: a ridge tent of thick patched felt and canvas stretched over a frame of rough grey-brown timber poles, one tall forked pole at each end and a ridge pole between them. The left half still stands; the right end pole has snapped so that corner of the roof sags down to the sand, and one big torn flap of felt hangs loose. The front entrance flap is tied open, showing a dark empty inside. Thick hemp guy ropes run from the roof edges to wooden stakes in the sand; a low drift of sand-yellow sand has piled against the back and the windward side. Cloth colours: khaki-brown felt with a few lighter beige canvas patches and one faded indigo-blue striped band near the ridge. FRONT view: the long side with the open entrance, about 1.6 times as wide as tall. BACK view: the other long side with the sand drift. LEFT and RIGHT views: the gable ends, the left end standing, the right end sagging. Thick simplified folds, no fine wrinkles, no tiny ropes or knots.",
+          "source_sha256": "9ebc9bfbe855c11091c7af0e741008d537986565dd692df8d2b54f2b976b2b84",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7954262987820033,
+              "offset": [
+                33,
+                393
+              ],
+              "size": [
+                445,
+                237
+              ],
+              "physical_height_m": 2.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7848908511160165,
+              "offset": [
+                132,
+                393
+              ],
+              "size": [
+                247,
+                237
+              ],
+              "physical_height_m": 2.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8062484252960441,
+              "offset": [
+                27,
+                393
+              ],
+              "size": [
+                458,
+                237
+              ],
+              "physical_height_m": 2.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9259259259259257,
+              "offset": [
+                87,
+                393
+              ],
+              "size": [
+                337,
+                237
+              ],
+              "physical_height_m": 2.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27 第一章重建件补：用户授权免审，按推荐方案直接通过；登记尺寸按画出的比例改成 5.4 × 2.8 × 3.4（前视 1.88、背视 1.93，侧视含拉绳和地桩）",
+            "time": "2026-11-27 00:25:53"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:46:42",
+          "files": {
+            "HP_SM_Tripo_DesertCaravanTent_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanTent_v001_source.glb",
+              "sha256": "4766e29e1c46dea9d0ea120b8f678de9371ca692879d4725fa286dfac86e7b3c"
+            },
+            "HP_SM_Tripo_DesertCaravanTent_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanTent_v001.glb",
+              "sha256": "ad84e54e89f661670c6bd06b97a60221f7b56062863996ccf0b8fd76ab87cdfe"
+            },
+            "HP_SM_Tripo_DesertCaravanTent_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanTent_v001_graph.json",
+              "sha256": "599ee6b0f3235da52f4c86600e24c86432acf7d8381dccc2446cc953dc3789d1"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/de244b9c-bcb6-4bcd-8b20-b6a50b571153",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8354,
+          "source_sha256": "4766e29e1c46dea9d0ea120b8f678de9371ca692879d4725fa286dfac86e7b3c"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:50:03",
+          "files": {
+            "HP_SM_Tripo_DesertCaravanTent_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanTent_v002_source.glb",
+              "sha256": "75d426e2187ed41f3b4ea39a71e389c76278bcec215af7e80465c6128d780aeb"
+            },
+            "HP_SM_Tripo_DesertCaravanTent_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanTent_v002.glb",
+              "sha256": "5d9f2c2bbda3f6f6f6507339dc3110518342a886031ed9aa3cb69eb9a6029844"
+            },
+            "HP_SM_Tripo_DesertCaravanTent_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanTent_v002_graph.json",
+              "sha256": "008d204b1288c5ec56c6c8dc33188fda8003a9c5ac3eb7ad352e3a84d398b214"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:tone_match",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8354,
+          "source_sha256": "75d426e2187ed41f3b4ea39a71e389c76278bcec215af7e80465c6128d780aeb"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:46:55",
+          "files": {
+            "SM_Tripo_DesertCaravanTent_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertCaravanTent_v001.blend",
+              "sha256": "75ba42407878f64bb2369dbcddb65d8d6cb9f11d7f782e72639ba3fdfa46b693"
+            },
+            "SM_Tripo_DesertCaravanTent_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertCaravanTent_v001.glb",
+              "sha256": "587896e0607814c0b5ee22852a99c8a9f2b91f7d155efd78f0578d62ce535393"
+            },
+            "SM_Tripo_DesertCaravanTent_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCaravanTent_v001_metrics.json",
+              "sha256": "1fb57300fba6678a0be717fcdfcd405181cfe61f2aa9425bec4dec9019836507"
+            },
+            "T_Tripo_DesertCaravanTent_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCaravanTent_BC.png",
+              "sha256": "c54e894f9d2dc43f1f0669b7386ad70cfdae5417669da92328e795ba473ae6a8"
+            },
+            "T_Tripo_DesertCaravanTent_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCaravanTent_N.png",
+              "sha256": "dc490d3ae8be5bfbe8d0b0e186636428ba3eb63b735158b4c83d9444c10eda8f"
+            },
+            "T_Tripo_DesertCaravanTent_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCaravanTent_ORM.png",
+              "sha256": "4961981fbc8357b9e0fea4d755dd907e858316b8b67efb4fa7711a1e80e147b1"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.85,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8354,
+              "verts": 4700
+            }
+          ],
+          "export_kb": 325.6,
+          "seconds": 12.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:50:15",
+          "files": {
+            "SM_Tripo_DesertCaravanTent_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertCaravanTent_v002.blend",
+              "sha256": "be47e56671fb4ec9fd2739f5d0d481d11112750d4ffe1bbdb4261316c466a721"
+            },
+            "SM_Tripo_DesertCaravanTent_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertCaravanTent_v002.glb",
+              "sha256": "f2277a3fd07fda16037b5abbdc7b8724ce408f7e183ede144fb1cd3e55a75afd"
+            },
+            "SM_Tripo_DesertCaravanTent_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCaravanTent_v002_metrics.json",
+              "sha256": "9249c0d668df2d99f6d4c88ae82eb10a3cc44abf8973cde2cda6e3d3e9c1457b"
+            },
+            "T_Tripo_DesertCaravanTent_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCaravanTent_BC.png",
+              "sha256": "df655fda83171a9c4529c58e77ac8095e70442d0ec1b11f88c820a19fca98281"
+            },
+            "T_Tripo_DesertCaravanTent_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCaravanTent_N.png",
+              "sha256": "6b5e1ade104085e957042b039c9b4c34941199812b07eee33eb827c8a6786aa2"
+            },
+            "T_Tripo_DesertCaravanTent_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCaravanTent_ORM.png",
+              "sha256": "4961981fbc8357b9e0fea4d755dd907e858316b8b67efb4fa7711a1e80e147b1"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.85,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8354,
+              "verts": 4700
+            }
+          ],
+          "export_kb": 323.0,
+          "seconds": 11.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:46:55",
+          "files": {
+            "SM_Tripo_DesertCaravanTent_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertCaravanTent_v001_validation_v001.json",
+              "sha256": "ab4362ea7a929d3672e50f0fdc1824db064b3a2b5715c1ee25a0db32bb1d1fe5"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:50:15",
+          "files": {
+            "SM_Tripo_DesertCaravanTent_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertCaravanTent_v002_validation_v002.json",
+              "sha256": "38db4f83b3c2b1868429ef03938fcbabea262876549a5c22ec33018537367644"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:47:02",
+          "files": {
+            "SM_Tripo_DesertCaravanTent_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertCaravanTent_v001_review_v001.png",
+              "sha256": "e672ade2201c86c6820b3f4a00754a9e61b486d07df15eeac0c594c986c9af5b"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:50:21",
+          "files": {
+            "SM_Tripo_DesertCaravanTent_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertCaravanTent_v002_review_v002.png",
+              "sha256": "13b2a854e5be5eb02e2be2fe9ac6776c15e1e033ff172593e1c5c3ed98df079b"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：P2.0 多视图 8354 面、纹理去光 4K；左端叉杆立着、右端杆断一角塌下、正面门帘系开的浅凹门洞、背面积沙、靛蓝条带，剪影 IoU 0.85；底色 Lab 彩度 ×0.8（只调色、不平滑），不紫不糊；用户授权免审",
+            "time": "2026-11-27 00:50:53"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:50:53",
+          "files": {
+            "SM_Tripo_DesertCaravanTent.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertCaravanTent.glb",
+              "sha256": "f2277a3fd07fda16037b5abbdc7b8724ce408f7e183ede144fb1cd3e55a75afd"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertCaravanTent.glb"
+        }
+      ]
+    }
+  }
+}

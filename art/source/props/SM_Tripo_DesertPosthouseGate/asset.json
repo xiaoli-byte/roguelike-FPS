@@ -1,0 +1,441 @@
+{
+  "id": "SM_Tripo_DesertPosthouseGate",
+  "display": "驿站残门（1-1 出生点前的门框：走出门洞看到古道、长城缺口和远处烽燧）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:12",
+          "files": {
+            "BO_SM_Tripo_DesertPosthouseGate_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertPosthouseGate_v001.json",
+              "sha256": "e61263f14fd8cd4ca80978016a5b9925c091191099efe7aa4203d4951d6cda4b"
+            },
+            "BO_SM_Tripo_DesertPosthouseGate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertPosthouseGate_v001_views.json",
+              "sha256": "318b2b195c31526d4ec161ab24b26f85d7addff6d141861d67ee5da3205703c8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.posthouseGate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.9,
+              0.0,
+              -1.6
+            ],
+            "max": [
+              4.9,
+              5.5,
+              1.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:12",
+          "files": {
+            "CN_SM_Tripo_DesertPosthouseGate_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_source.png",
+              "sha256": "6e7eaa14f540916bd476091e575cd34ade7121c67e74444fc360b6b0f2532dc0"
+            },
+            "CN_SM_Tripo_DesertPosthouseGate_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_front.png",
+              "sha256": "7c7a7b9f9569057e8d221db6642bf8f55ac7084fd195a50ea4f7a602b5c0469b"
+            },
+            "CN_SM_Tripo_DesertPosthouseGate_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_left.png",
+              "sha256": "079a059533966a74554c91de6c8495f99565a05ae197b367c1c1e65d7e5d284b"
+            },
+            "CN_SM_Tripo_DesertPosthouseGate_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_back.png",
+              "sha256": "714f7ea7d4319d057bd0f444af3ffae6877fd19c94350e1d5ba286a2e9a84454"
+            },
+            "CN_SM_Tripo_DesertPosthouseGate_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_right.png",
+              "sha256": "a70eb4468a1a7c0714509c813f66d503fd8a20361f0068c7fa6ac3c35ad18a96"
+            },
+            "CN_SM_Tripo_DesertPosthouseGate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_sheet.png",
+              "sha256": "3982448b55d09b0cdfd0e09ff745b1a9b0d0aab02d7980ccce5c46419297f6ad"
+            },
+            "CN_SM_Tripo_DesertPosthouseGate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_prompt.txt",
+              "sha256": "a0e4968b0278d878d259cfa81d8a005ec6a87b1de1f5491ac12186545c694dd6"
+            },
+            "CN_SM_Tripo_DesertPosthouseGate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseGate_v001_registration.json",
+              "sha256": "bf910ef369727412a7a004cfaa12f9fff3ba4a5c5038914caa11e320169f55cf"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.6-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.6-sunburst",
+            "size": [
+              2048,
+              1152
+            ],
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 599,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 599
+              },
+              "output_tokens": 1413,
+              "output_tokens_details": {
+                "image_tokens": 1413,
+                "text_tokens": 0
+              },
+              "total_tokens": 2012
+            },
+            "request_id": "req_08091bd1abd84490bd60e8f1cab54c63",
+            "seconds": 38.9,
+            "variants": 1,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "",
+            "source_image": "SM_Tripo_DesertPosthouseGate_r3.png"
+          },
+          "prompt": "MANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Pure flat white background. No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects.\n\nSTYLE: stylized hand-painted 3D game environment asset painted under even neutral white light with true base colours only: no baked lighting, no cast shadows, no ambient-occlusion darkening, no rim light. Thick chunky simplified silhouette, broad clean faceted planes, two or three dominant colour blocks (pale sand-yellow rammed earth, dark khaki reed layers, grey-brown timber, a small faded vermilion accent), soft painted gradients, sparse medium-size wear. No photorealism, no micro-grain, no fine cracks, no realistic erosion detail, no tiny carvings. Physically plausible.\n\nOBJECT, ruined post-station gateway (9m wide x 5.5m tall x 2.4m deep): The ruined gateway of a Han-dynasty Silk Road relay post station: two massive free-standing gate piers of sand-yellow rammed earth in broad horizontal courses with thin darker khaki reed layers every half metre, sand drifted against the feet of both piers. The LEFT pier (in the FRONT view) is intact: a slender 1.8m wide, 2.4m deep, 5.2m tall, flat top. The RIGHT pier has collapsed to a ragged stepped top only 3.6m tall. Between them a WIDE clear walk-through opening 4m wide, more than twice the tall pier's width and three quarters of the tall pier's height. One thick squared grey-brown timber lintel beam lies ON TOP of the tall left pier's flat top, slopes gently down to the right across the opening and rests on the broken top of the short right pier; just beyond the right pier the beam is snapped and its splintered outer piece drops steeply down the outside of the right pier, its broken end stuck in the sand drift. One faded vermilion band on the beam. Nothing hangs into the opening below 3.4m. BACK view: mirrored, tall pier on the image-right. LEFT side view: the short pier and hanging beam piece nearest, the tall pier behind. RIGHT side view: the tall pier nearest. PROPORTIONS: FRONT and BACK about 1.65 times as wide as tall; side views about 0.5 times as wide as tall.",
+          "source_sha256": "6e7eaa14f540916bd476091e575cd34ade7121c67e74444fc360b6b0f2532dc0",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6952839207692367,
+              "offset": [
+                21,
+                383
+              ],
+              "size": [
+                470,
+                257
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6896767923759365,
+              "offset": [
+                180,
+                383
+              ],
+              "size": [
+                151,
+                257
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6990729339614397,
+              "offset": [
+                8,
+                383
+              ],
+              "size": [
+                495,
+                257
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6878277929325693,
+              "offset": [
+                176,
+                383
+              ],
+              "size": [
+                160,
+                257
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-22 第一章重建件：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-22 02:11:12"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:44:59",
+          "files": {
+            "HP_SM_Tripo_DesertPosthouseGate_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseGate_v001_source.glb",
+              "sha256": "c16dbf618472f91123a8ca834c44d99c9eba4949978ede0af795636505bb20da"
+            },
+            "HP_SM_Tripo_DesertPosthouseGate_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseGate_v001.glb",
+              "sha256": "bd0eb15c558f79f543d29357a509ac7f54a49e013db977d2ae7b9c94184caf2e"
+            },
+            "HP_SM_Tripo_DesertPosthouseGate_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseGate_v001_graph.json",
+              "sha256": "fa0311a103301e4a866956305402431316a1ed9c6d868ffb9805958d537055ec"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/9c87c50e-7f9a-470a-9ae8-7cf1e5093acf",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 14970,
+          "source_sha256": "c16dbf618472f91123a8ca834c44d99c9eba4949978ede0af795636505bb20da"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:49:14",
+          "files": {
+            "HP_SM_Tripo_DesertPosthouseGate_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseGate_v002_source.glb",
+              "sha256": "68aa2f5fcf86145e89eaf72131d9535a2b6ac2aedbc14a49f813dce4ef710a3d"
+            },
+            "HP_SM_Tripo_DesertPosthouseGate_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseGate_v002.glb",
+              "sha256": "54d0739ca67b8f79ab2446fbd745243163d8f75e176d69b046b276ebfce847f7"
+            },
+            "HP_SM_Tripo_DesertPosthouseGate_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseGate_v002_graph.json",
+              "sha256": "0c1ab8bb882c19a33422bddc34faa1439d03d253770f41a3a5bd74db23cf74dd"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:tone_match",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 14970,
+          "source_sha256": "68aa2f5fcf86145e89eaf72131d9535a2b6ac2aedbc14a49f813dce4ef710a3d"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:45:40",
+          "files": {
+            "SM_Tripo_DesertPosthouseGate_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertPosthouseGate_v001.blend",
+              "sha256": "f2432e3fab8ddf912a0562195af9ab0bdc69403ea6fb3a96e704ce6591ee3b19"
+            },
+            "SM_Tripo_DesertPosthouseGate_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertPosthouseGate_v001.glb",
+              "sha256": "6b663d6d5507d46b4d0725d4969143d583d5b2f5d9dec804212d924d8350d59c"
+            },
+            "SM_Tripo_DesertPosthouseGate_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertPosthouseGate_v001_metrics.json",
+              "sha256": "ed1b4722d34fecca68ef09a6b3ce633f0a1b901d81315ccb8142b8db7b1b87ce"
+            },
+            "T_Tripo_DesertPosthouseGate_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPosthouseGate_BC.png",
+              "sha256": "450607983d58e633b6729303b16ac16ef469197421cdf8d724a5bebdb48de035"
+            },
+            "T_Tripo_DesertPosthouseGate_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPosthouseGate_N.png",
+              "sha256": "923a4dad9475a8274172da4dc1971c43a164f6f8175073dfd4204617455677e8"
+            },
+            "T_Tripo_DesertPosthouseGate_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPosthouseGate_ORM.png",
+              "sha256": "bfc8a7cec7a9aed4468179ff772888c2308662eb22a569901f0b4965c12b3f0f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.673,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14970,
+              "verts": 8079
+            }
+          ],
+          "export_kb": 678.0,
+          "seconds": 39.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:49:47",
+          "files": {
+            "SM_Tripo_DesertPosthouseGate_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertPosthouseGate_v002.blend",
+              "sha256": "3f40b627f59273c2ed320bab0818ef84daaec761f2a76652921c6f51500cbae5"
+            },
+            "SM_Tripo_DesertPosthouseGate_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertPosthouseGate_v002.glb",
+              "sha256": "70ead600469cc17a65eec9cbca8ef252303db53cfde50594244766e6805cdddb"
+            },
+            "SM_Tripo_DesertPosthouseGate_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertPosthouseGate_v002_metrics.json",
+              "sha256": "2bd27764e1d3c321a099d847fe6f89665cacac4ec5ed8a6e0e5aa6dbd0953dd4"
+            },
+            "T_Tripo_DesertPosthouseGate_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertPosthouseGate_BC.png",
+              "sha256": "2ad96e775463bdcf95d07ae9406144af4c6a611eb3e403e4f7bb4ff0394e59e5"
+            },
+            "T_Tripo_DesertPosthouseGate_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertPosthouseGate_N.png",
+              "sha256": "1862a16ec177d599b55ae078081e0818f78e80f2e5b00906e83dcf6a8bb17ae7"
+            },
+            "T_Tripo_DesertPosthouseGate_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertPosthouseGate_ORM.png",
+              "sha256": "bfc8a7cec7a9aed4468179ff772888c2308662eb22a569901f0b4965c12b3f0f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.673,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 14970,
+              "verts": 8079
+            }
+          ],
+          "export_kb": 664.7,
+          "seconds": 32.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:45:41",
+          "files": {
+            "SM_Tripo_DesertPosthouseGate_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertPosthouseGate_v001_validation_v001.json",
+              "sha256": "26cf47b75a272b3dd5aa72f3a050164582c37653a95e5be58403a7623a54c75b"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:49:47",
+          "files": {
+            "SM_Tripo_DesertPosthouseGate_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertPosthouseGate_v002_validation_v002.json",
+              "sha256": "2ea52ecaa96d86689a3e6eae722a2cba96229e289378398513ed8c88cdc45d1a"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:45:55",
+          "files": {
+            "SM_Tripo_DesertPosthouseGate_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertPosthouseGate_v001_review_v001.png",
+              "sha256": "a6881c1ffdcb4f36c2ddee9c97b2bd129f221960a6b0cce385cb67a7dcd7ec7c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:49:54",
+          "files": {
+            "SM_Tripo_DesertPosthouseGate_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertPosthouseGate_v002_review_v002.png",
+              "sha256": "010bec4ec492e1c2c7c3444ca6727444c1ccd73bff4b47ad0b16598a0892fccc"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：P2.0 多视图 14970 面、纹理去光 4K；高墩 + 矮墩 + 斜搭断梁（外侧断头垂落插沙），门洞约两倍墩宽；剪影 IoU 0.673（正视 0.59，警告：模型墩更厚、积沙更宽，深度先顶到上限，等比后高 4.87 m）；底色 Lab 彩度 ×0.7 回到夯土沙黄（只调色、不平滑），不紫不糊；用户授权免审",
+            "time": "2026-11-27 00:50:51"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:50:51",
+          "files": {
+            "SM_Tripo_DesertPosthouseGate.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertPosthouseGate.glb",
+              "sha256": "70ead600469cc17a65eec9cbca8ef252303db53cfde50594244766e6805cdddb"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertPosthouseGate.glb"
+        }
+      ]
+    }
+  }
+}

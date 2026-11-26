@@ -82,7 +82,7 @@ const CLIFF = 'SM_Env_DesertCliff', PLATFORM = 'SM_Tripo_DesertPlatformBlock', C
 const POSTWALL = 'SM_Tripo_DesertPosthouseWall', COVERWALL = 'SM_Tripo_DesertCoverWall', PARAPET = 'SM_Tripo_DesertBeaconParapet', GATEWAY = 'SM_Tripo_DesertGateway';
 const PAGODA = 'SM_Tripo_DesertTemplePagoda', FINIAL = 'SM_Tripo_DesertFinial', STUPA = 'SM_Tripo_DesertStupaBuried', SHRINE = 'SM_Tripo_DesertPortalShrine';
 const BUDDHA = 'SM_Tripo_DesertSeatedColossus', STELE = 'SM_Prop_DesertStele', BURNER = 'SM_Prop_DesertIncenseBurner', BRAZIER = 'SM_Tripo_DesertBrazier';
-const COLUMN_RUIN = 'SM_Tripo_DesertColumnRuin', RUIN = 'SM_Env_DesertRuin', BOULDER = 'SM_Env_DesertSandstone', GATE_OLD = 'SM_Env_DesertGate';
+const COLUMN_RUIN = 'SM_Tripo_DesertColumnRuin', RUIN = 'SM_Env_DesertRuin', BOULDER = 'SM_Env_DesertSandstone';
 const WRECK = 'SM_Tripo_DesertCaravanWreck', GOODS = 'SM_Tripo_DesertGoodsPile', BARRICADE = 'SM_Tripo_DesertBarricade', STALL = 'SM_Tripo_DesertMarketStall';
 const HOARD = 'SM_Tripo_DesertTreasureHoard', RELIQUARY = 'SM_Prop_DesertReliquary';
 // ───────────── 现有资产里没有、要新做的 ─────────────
@@ -141,7 +141,7 @@ const PAGODA_AT: V2 = [192, 54], PAGODA_TOP = r2(18 + PLAT_TOP + WB_ASSETS[PAGOD
 /** 山门（城门缩到 0.8 倍）：两侧门墩实心、门楼悬空，门洞约 3.6 m */
 const GATE_S = 0.8, [GATE_W, GATE_H, GATE_D] = WB_ASSETS[GATEWAY].size, GATE_FOOT = GATE_W * GATE_S / 3;
 /** 渡口门架（旧门件）：两根柱 + 门楣，框住对岸的崖 */
-const [FRAME_W, FRAME_H, FRAME_D] = WB_ASSETS[GATE_OLD].size;
+const TIMBER_GATE = 'SM_Tripo_DesertTimberGate';
 
 export const WB_1_A: WhiteboxSpec = {
   id: '1-A',
@@ -292,8 +292,9 @@ export const WB_1_A: WhiteboxSpec = {
     // S 渡口残台：驿站残墙（全身）、掩体矮墙半埋（半身）、门架（框住对岸的崖）
     piece(POSTWALL, [155, 252], { n: 2, rot: 90, mat: 'earth' }),
     piece(COVERWALL, [165, 261], { n: 3, sink: 1.5, mat: 'earth' }),
-    ...[-1, 1].map((side): WbBlock => ({ name: '渡口门架', kind: 'cyl', at: [168 + side * (FRAME_W / 2 - 0.5), 243.5], size: [0.5, 0.5], h: FRAME_H, mat: 'timber', asset: GATE_OLD })),
-    { name: '渡口门架', kind: 'box', at: [168, 243.5], size: [FRAME_W, FRAME_D], top: 1.6 + FRAME_H, clear: 1.6 + FRAME_H - 1.2, canopy: true, mat: 'timber', asset: GATE_OLD },
+    // 渡口门架：照概念图「出生第一眼」换成和 1-1 同一件褪色朱红木门框（Tripo，2026-11-27；9.4 × 6.8 × 2.8，正面朝南对着出生点，旗杆在西端）
+    ...[-1, 1].map((side): WbBlock => ({ name: '渡口门架', kind: 'box', at: [168 + side * 3.95, 243.5], size: [1.5, 1.5], h: 6, mat: 'timber', asset: TIMBER_GATE })),
+    { name: '渡口门架', kind: 'box', at: [168, 243.5], size: [9.4, 2.8], top: 1.6 + 6.8, clear: 1.6 + 5, canopy: true, mat: 'timber', asset: TIMBER_GATE },
     // 河滩遗骸（藏宝）：宝藏堆
     piece(HOARD, [241.5, 267.5], { rot: 20, mat: 'timber' }),
     // 崖脚阶地的落石（整块全身 / 半埋半身）

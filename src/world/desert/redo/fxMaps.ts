@@ -20,10 +20,12 @@ export const REDO_FX: Record<string, RedoFx> = {
     ridges: { reach: 1.4, opacity: 0.8 },
     smoke: [
       // 烽燧狼烟：塔顶（25 m）起，70 m 高，到半空被东北风吹弯；风正对着出生点吹，偏 30° 让弯从出生门框里读得出
-      { origin: [277.5, 25.4, 119.5], height: 80, veer: 30, width: 5.5, opacity: 1 },
+      { origin: [277.5, 28.4, 119.5], height: 80, veer: 30, width: 5.5, opacity: 1 },
       // 戍卒残营的火盆：一缕细烟
       { origin: [327, 2.6, 180], height: 16, width: 0.9, opacity: 0.55, rise: 1.4, count: 24 },
     ],
+    // 东边天际压着的沙暴墙（概念图「出生第一眼」右侧天边那一道褐黄尘墙；④ 营地的周期沙暴就从那边来）
+    storm: { azimuth: [30, 76], distance: 750, height: 90 },
     // 狼烟是黑烟（烧狼粪 / 湿柴）：浅灰的烟逆着发亮的晨天整个化掉，压成深褐灰才立得住
     smokeOptions: { low: [0.3, 0.26, 0.23], high: [0.56, 0.52, 0.49] },
     // 尘卷风：南边戈壁、东北角，远远地游
@@ -34,8 +36,8 @@ export const REDO_FX: Record<string, RedoFx> = {
     // 贴地流沙：戈壁上几块开阔地（交战区自动避开）
     drift: [{ center: [205, 205], size: [80, 30] }, { center: [125, 222], size: [60, 26] }, { center: [250, 168], size: [56, 24] }, { center: [370, 130], size: [50, 24] }],
     banners: [
-      // 驿站残门的门楣右半挂一条破幡（概念图出生第一眼；左半门洞里是烽燧和狼烟，不能挡）
-      { kind: 'hang', at: [42, 5.3, 167.6], length: 3.4, width: 0.85, yaw: -90 },
+      // 照概念图「出生第一眼」：木门框门楣北端伸出的旗杆上挂一条破幡（在北柱外侧，不挡门洞里的烽燧和狼烟）
+      { kind: 'hang', at: [42, 6.3, 159.9], length: 3.6, width: 1.05, yaw: -90 },
       // 烽燧台东北角的令旗、营地两面
       { kind: 'pole', at: [300.5, 112.5], height: 6.5, length: 3.2, width: 0.8 },
       { kind: 'pole', at: [319.5, 201], height: 5.5, length: 2.8, width: 0.75, color: BANNER_COLORS.ochre },

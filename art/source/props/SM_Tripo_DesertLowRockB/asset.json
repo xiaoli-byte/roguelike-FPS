@@ -1,0 +1,441 @@
+{
+  "id": "SM_Tripo_DesertLowRockB",
+  "display": "风蚀卧石·块（半身掩体：敦实的蘑菇形砂岩块，底部风蚀收腰，顶面宽平）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:15",
+          "files": {
+            "BO_SM_Tripo_DesertLowRockB_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertLowRockB_v001.json",
+              "sha256": "ce885510c681460be9f689c857d3bdcb1f4a3c2eebed139f8f48e279ac3f0a98"
+            },
+            "BO_SM_Tripo_DesertLowRockB_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertLowRockB_v001_views.json",
+              "sha256": "a269d46fb6787ddd19b420f1ad66b0c40c055b3f28922853fa44cf0e563abc6d"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.lowRockB"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.1,
+              0.0,
+              -0.9
+            ],
+            "max": [
+              1.1,
+              1.2,
+              0.9
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-22 02:11:15",
+          "files": {
+            "CN_SM_Tripo_DesertLowRockB_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_source.png",
+              "sha256": "4f49f2d3ff3890d4bafe08d084c129a88ec40719aab9845d4cebbbb65bb98dbc"
+            },
+            "CN_SM_Tripo_DesertLowRockB_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_front.png",
+              "sha256": "8b8b4f94c5b65c170212d02f082b76320ff9ba0b2780685f1764eabc19c62b42"
+            },
+            "CN_SM_Tripo_DesertLowRockB_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_left.png",
+              "sha256": "2dab97dddfcabd7d2da6f082a1cc86c4f337a18820f7a72de98b3f91741af479"
+            },
+            "CN_SM_Tripo_DesertLowRockB_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_back.png",
+              "sha256": "6ccdc4e08d3e4c28a60bf3a9efd557f0f6f92771528ead056d22aed28c30a945"
+            },
+            "CN_SM_Tripo_DesertLowRockB_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_right.png",
+              "sha256": "b1014a4c638d7ed5eb0a5323ab6210303428cd5bba4e7fd3f7cad0435ff28627"
+            },
+            "CN_SM_Tripo_DesertLowRockB_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_sheet.png",
+              "sha256": "67ff867a585586721eabc898317b7df81071f894b1a11f5c09e99c3d95991fb9"
+            },
+            "CN_SM_Tripo_DesertLowRockB_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_prompt.txt",
+              "sha256": "c79095f4d3f6bf61a05cb887ebfb8ee385b123d64f6580a4b95bbc974b0d1f41"
+            },
+            "CN_SM_Tripo_DesertLowRockB_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertLowRockB_v001_registration.json",
+              "sha256": "7cb23ed6f495979ed15ab9f5421afee04ae89b90b740a71c417b2eb7d2e023ff"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.6-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.6-sunburst",
+            "size": [
+              2048,
+              1152
+            ],
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 495,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 495
+              },
+              "output_tokens": 1413,
+              "output_tokens_details": {
+                "image_tokens": 1413,
+                "text_tokens": 0
+              },
+              "total_tokens": 1908
+            },
+            "request_id": "req_39e19966d5c640839ee07104be3c6253",
+            "seconds": 24.0,
+            "variants": 1,
+            "selected_variant": 0,
+            "references": [],
+            "fixes": [
+              "layout row"
+            ],
+            "note": "",
+            "source_image": "SM_Tripo_DesertLowRockB_r2.png"
+          },
+          "prompt": "MANDATORY: a squat, solid, heavy rock: the waist is short and only slightly narrower than the cap (about 75 percent of the cap width); the thick cap fills the upper two thirds; strata bands are subtle, ochre-red dominant.\n\nMANDATORY: ONE SINGLE HORIZONTAL ROW of exactly four separate orthographic views of the SAME object, left to right: 1 FRONT view; 2 LEFT side view (object turned so its front points to the LEFT edge of the image); 3 BACK view; 4 RIGHT side view (object turned so its front points to the RIGHT edge of the image). Same scale and same ground line in all four, wide empty gaps between the views, every view complete and not cropped. Pure flat white background. No floor, no ground shadow, no text, no labels, no frames, no perspective, no extra objects.\n\nSTYLE: stylized hand-painted 3D game environment asset painted under even neutral white light with true base colours only: no baked lighting, no cast shadows, no ambient-occlusion darkening, no rim light. Thick chunky simplified silhouette, broad clean faceted planes, two or three dominant colour blocks (ochre-red sandstone, paler sand-yellow strata bands, sand-yellow drift sand), soft painted gradients, sparse medium-size wear. No photorealism, no micro-grain, no fine cracks, no realistic erosion detail, no tiny carvings. Physically plausible.\n\nOBJECT, squat mushroom-shaped rock (2.2m wide x 1.2m tall x 1.8m deep): A sturdy wind-eroded ochre-red sandstone block shaped a little like a mushroom: a broad thick cap with a wide flat top and gently rounded edges, sitting on a narrower waist that the sand-laden wind has undercut near the ground, so the cap overhangs the waist by about 0.3m on every side; the waist stands in a low mound of drifted sand. Horizontal strata bands of ochre-red and paler sand-yellow run around it, one chunky wind groove under the lip of the cap. Slightly asymmetric: one side of the cap a little lower and rounder than the other. FRONT and BACK views about 1.8 times as wide as tall; LEFT and RIGHT views about 1.5 times as wide as tall. One solid compact cover rock, no loose pebbles.",
+          "source_sha256": "4f49f2d3ff3890d4bafe08d084c129a88ec40719aab9845d4cebbbb65bb98dbc",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7421150278293134,
+              "offset": [
+                65,
+                387
+              ],
+              "size": [
+                381,
+                249
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7421150278293134,
+              "offset": [
+                115,
+                387
+              ],
+              "size": [
+                281,
+                249
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7399129060850127,
+              "offset": [
+                60,
+                387
+              ],
+              "size": [
+                391,
+                249
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7399129060850127,
+              "offset": [
+                112,
+                387
+              ],
+              "size": [
+                287,
+                249
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-22 第一章重建件：用户授权免审，按推荐方案直接通过",
+            "time": "2026-11-22 02:11:15"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:37:28",
+          "files": {
+            "HP_SM_Tripo_DesertLowRockB_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertLowRockB_v001_source.glb",
+              "sha256": "5456070d0eb83221c737cc71f348efe5a1f6894969acd99a4c44930a742ab3c1"
+            },
+            "HP_SM_Tripo_DesertLowRockB_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertLowRockB_v001.glb",
+              "sha256": "60d21718d6370a8328fc29640b93f53190fc6026734c43a4e2545494970719f7"
+            },
+            "HP_SM_Tripo_DesertLowRockB_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertLowRockB_v001_graph.json",
+              "sha256": "8f7301aece82b8904cc0786fe89985b851e2e28fdcdb26da4280dfc42fcfc4bc"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/e6c19954-c0dc-4a66-956e-76af4f862354",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 6107,
+          "source_sha256": "5456070d0eb83221c737cc71f348efe5a1f6894969acd99a4c44930a742ab3c1"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:39:43",
+          "files": {
+            "HP_SM_Tripo_DesertLowRockB_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertLowRockB_v002_source.glb",
+              "sha256": "ac1896759ac8faaaba8118a824426ab767373fe8b8bcbdc22cec8284c2aacfb6"
+            },
+            "HP_SM_Tripo_DesertLowRockB_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertLowRockB_v002.glb",
+              "sha256": "3cc32600c5fcf2b61f7a06ef216098a8d2ce4a0539867a5fccfd19365609ba5e"
+            },
+            "HP_SM_Tripo_DesertLowRockB_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertLowRockB_v002_graph.json",
+              "sha256": "01bc84de6ed9ffb4e58ee804c17c8fd90e923360253a2984e84edc67f8af3a70"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "local:tone_match",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 6107,
+          "source_sha256": "ac1896759ac8faaaba8118a824426ab767373fe8b8bcbdc22cec8284c2aacfb6"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:37:39",
+          "files": {
+            "SM_Tripo_DesertLowRockB_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertLowRockB_v001.blend",
+              "sha256": "b9d9380c0ac8d0063febf67046b7df4e1f366ce92cc961615a13b964fb021561"
+            },
+            "SM_Tripo_DesertLowRockB_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertLowRockB_v001.glb",
+              "sha256": "3de913403f4f02564958084f3d6b22c4276a72101801296d374e0b70ed576b96"
+            },
+            "SM_Tripo_DesertLowRockB_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertLowRockB_v001_metrics.json",
+              "sha256": "8a6f9d26e093571679f0d91aac8d821727e07566b243df68b82364ced365f81b"
+            },
+            "T_Tripo_DesertLowRockB_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertLowRockB_BC.png",
+              "sha256": "7c76668914b70a0207c18cab2efe32775112446f4f6f29ac29aad7ebd9d4afe8"
+            },
+            "T_Tripo_DesertLowRockB_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertLowRockB_N.png",
+              "sha256": "dfaea4608858cdbd6dccb1ab3ac5826513411c24b02a0ad86433fa930a87a31c"
+            },
+            "T_Tripo_DesertLowRockB_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertLowRockB_ORM.png",
+              "sha256": "330dca859f83904c37ba43d4b6bcd742f4d1609a2633a46e5ff06652cf114bca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.889,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6107,
+              "verts": 3090
+            }
+          ],
+          "export_kb": 113.5,
+          "seconds": 10.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:40:00",
+          "files": {
+            "SM_Tripo_DesertLowRockB_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertLowRockB_v002.blend",
+              "sha256": "c7fc85d825d1986f54eebdd8059aa30c73649d1be8389deda1434ced47abbbee"
+            },
+            "SM_Tripo_DesertLowRockB_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertLowRockB_v002.glb",
+              "sha256": "a3a6de67cd04b554774871b0eeff005ab97e3d3ba97b1f4a82aa6dee31d8c059"
+            },
+            "SM_Tripo_DesertLowRockB_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertLowRockB_v002_metrics.json",
+              "sha256": "c32678162ac7502e8dc824bfbe0636b33bae915d46cdd30425c45fd0cd14b1df"
+            },
+            "T_Tripo_DesertLowRockB_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertLowRockB_BC.png",
+              "sha256": "bdadd0658386829f47e757c843c89ab87b5d2ced7e8517538332767de09d2d67"
+            },
+            "T_Tripo_DesertLowRockB_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertLowRockB_N.png",
+              "sha256": "79cb4936dcc436315ede2ea93f3828cd284ca887568c30e8df33a33672b0498e"
+            },
+            "T_Tripo_DesertLowRockB_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertLowRockB_ORM.png",
+              "sha256": "330dca859f83904c37ba43d4b6bcd742f4d1609a2633a46e5ff06652cf114bca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.889,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6107,
+              "verts": 3090
+            }
+          ],
+          "export_kb": 108.1,
+          "seconds": 16.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:37:39",
+          "files": {
+            "SM_Tripo_DesertLowRockB_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertLowRockB_v001_validation_v001.json",
+              "sha256": "8744059ac72e473982dfc89ad243b188f41044426adb923c56ad66bc34bca674"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:40:01",
+          "files": {
+            "SM_Tripo_DesertLowRockB_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertLowRockB_v002_validation_v002.json",
+              "sha256": "69f65643320caca2d0602f1bcc3cec44a01f5733d93b29a4f3ce8c292d0d501e"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:37:45",
+          "files": {
+            "SM_Tripo_DesertLowRockB_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertLowRockB_v001_review_v001.png",
+              "sha256": "70c7505a06c016ca835b2363e93abd05ace07cc5b8fc1cf674e28a84017f8aa1"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:40:38",
+          "files": {
+            "SM_Tripo_DesertLowRockB_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertLowRockB_v002_review_v002.png",
+              "sha256": "8188853b173b0fb3b7f37d67307afb54f3b29057f623849c94e61a0da485f732"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-11-27：P2.0 多视图 6107 面、纹理去光 4K；蘑菇形帽 + 收腰（约帽宽 75%）+ 积沙，剪影 IoU 0.889；Tripo 去光底色比四视图艳 1.5 倍（橙得像熔岩），底色 Lab 彩度 ×0.7 回到概念的赭红砂岩（只调色、不平滑），不紫不糊；用户授权免审",
+            "time": "2026-11-27 00:43:36"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-11-27 00:43:37",
+          "files": {
+            "SM_Tripo_DesertLowRockB.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertLowRockB.glb",
+              "sha256": "a3a6de67cd04b554774871b0eeff005ab97e3d3ba97b1f4a82aa6dee31d8c059"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertLowRockB.glb"
+        }
+      ]
+    }
+  }
+}

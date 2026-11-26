@@ -72,12 +72,14 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
     look: {
       light: {
         sun: { color: [1, 0.8, 0.56], intensity: 1.6, shadowStrength: 0.9 },
-        ambient: { sky: [0.48, 0.58, 0.78], equator: [0.66, 0.55, 0.43], ground: [0.36, 0.27, 0.2], intensity: 0.85 },
-        fog: { color: [0.9, 0.74, 0.56], start: 70, end: 460 },
-        sky: { top: [0.38, 0.54, 0.76], horizon: [0.98, 0.8, 0.58], bottom: [0.62, 0.48, 0.34], sun: [1, 0.86, 0.6], sharpness: 2.2, horizonGlow: 0.75, sunSize: 0.0012, sunHalo: 0.55, exposure: 1.2 },
+        // 高保真对照概念图「出生第一眼」（2026-11-27）：逆光的门框、营地在概念图里还看得出朱红和木色——背光面的环境光抬高；
+        // 天顶是干净的蓝、地平线发金、低空一团团暖白的积云；空气比之前通透
+        ambient: { sky: [0.5, 0.6, 0.8], equator: [0.72, 0.58, 0.44], ground: [0.42, 0.31, 0.22], intensity: 1.15 },
+        fog: { color: [0.9, 0.74, 0.56], start: 80, end: 520 },
+        sky: { top: [0.3, 0.57, 0.84], horizon: [0.98, 0.8, 0.58], bottom: [0.62, 0.48, 0.34], sun: [1, 0.86, 0.6], sharpness: 2.4, horizonGlow: 0.75, sunSize: 0.0012, sunHalo: 0.5, exposure: 1.18 },
       },
-      atmosphere: { mistDensity: 0.0034, mistScaleHeight: 16, sunScatter: 0.6, airSkyBlend: 0.45, cloudShadow: 0.5 },
-      clouds: { low: 0.1, mid: 0.25, high: 0.55, sunGlow: 0 },
+      atmosphere: { mistDensity: 0.0024, mistScaleHeight: 16, sunScatter: 0.55, airSkyBlend: 0.4, cloudShadow: 0.5 },
+      clouds: { low: 0.32, mid: 0.3, high: 0.45, sunGlow: 0 },
       shafts: { strength: 0.32 },
       rimBack: 1.3,
       // 远景：近排低沙丘，二排台地（太阳底下钉一座逆光方山），三排更高更淡的台地；东边天际压一道沙暴纱幕
@@ -89,7 +91,11 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
         ],
         veils: [{ azimuth: 95, width: 40, amount: 0.55 }],
       },
-      grade: { ColorAdjustments: { postExposure: -0.62, saturation: -2, contrast: 30 }, WhiteBalance: { temperature: 8, tint: 0 } },
+      // 暗部抬一点、偏暖：逆光的门框 / 车 / 烽燧在概念图里是看得出颜色的暖褐，不是死黑的剪影
+      grade: {
+        ColorAdjustments: { postExposure: -0.55, saturation: 10, contrast: 26 }, WhiteBalance: { temperature: 8, tint: -5 },
+        ShadowsMidtonesHighlights: { active: true, shadows: [1.08, 1, 0.94, 0.14], midtones: [1, 1, 1, 0], highlights: [1, 1, 1, 0], shadowsStart: 0, shadowsEnd: 0.32, highlightsStart: 0.55, highlightsEnd: 1 },
+      },
     },
   },
   '1-2': {

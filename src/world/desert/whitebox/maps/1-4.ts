@@ -52,7 +52,7 @@ function barchan(at: V2, r: number, h: number, bite: number, slip: number): Whit
 
 const SANDSTONE = 'SM_Env_DesertSandstone';
 const NEED_POPLAR = '白杨：通直灰白树干 + 柱状树冠（树冠要有碰撞、能挡日晒射线），高 11–13 m；旧场景是程序占位（树干 + 五团叶团），原计划件名 SM_Tripo_DesertPoplar';
-const NEED_DEADWOOD = '胡杨枯木：主干粗壮扭曲、三四根断头粗枝、无叶，高约 5.5 m';
+const DEADWOOD = 'SM_Tripo_DesertDeadPoplar';
 const NEED_HALL = '月泉阁：两层木构楼阁（底层只有柱子的大开间敞厅，环线从柱间穿过；二层台 5.9 m）+ 东侧两面敞开的长廊 + 东头门楼 + 上二层的木梯（程序化木构件）';
 
 /**
@@ -70,8 +70,14 @@ const poplar = (x: number, z: number, tall = 12): WbBlock[] => [
   { kind: 'cyl', at: [x, z], size: [1.7, 1.7], top: tall, clear: 3, canopy: true, mat: 'plant', needs: NEED_POPLAR },
 ];
 /** 砂岩巨砾：整块露出 2.6 m（全身掩体），或埋掉 1.8 m 只露 1.05–1.1 m（半身） */
-const boulder = (x: number, z: number, rot: number, full = false): WbBlock =>
-  ({ kind: 'box', at: [x, z], size: [3.4, 2.5], h: full ? 2.6 : 1.08, rot, mat: 'rock', asset: SANDSTONE, sink: full ? 0.3 : 1.8 });
+/** 半身掩体：风蚀卧石（Tripo 2026-11-27）长 / 块交替——卧石 A 3.6 × 1.0 × 1.6（低长流线形）、卧石 B 2.2 × 1.2 × 1.8（蘑菇形，埋 0.1 m 露 1.1 m）；原来是砂岩巨砾埋掉 1.8 m 只露个顶 */
+let lowRockSeq = 0;
+const lowRock = (at: V2, rot = 0): WbBlock => (lowRockSeq++ % 2 === 0
+  ? { kind: 'box', at, size: [3.65, 1.9], h: 1.0, rot, mat: 'rock', asset: 'SM_Tripo_DesertLowRockA' }
+  : { kind: 'box', at, size: [1.8, 1.6], h: 1.1, rot, mat: 'rock', asset: 'SM_Tripo_DesertLowRockB', sink: 0.1 });
+const boulder = (x: number, z: number, rot: number, full = false): WbBlock => full
+  ? { kind: 'box', at: [x, z], size: [3.4, 2.5], h: 2.6, rot, mat: 'rock', asset: SANDSTONE, sink: 0.3 }
+  : lowRock([x, z], rot);
 /** 掩体矮墙埋到只露 1.1 m（半身） */
 const lowWall = (x: number, z: number, alongZ = false): WbBlock =>
   ({ kind: 'box', at: [x, z], size: alongZ ? [0.99, 4.91] : [4.91, 0.99], h: 1.1, mat: 'earth', asset: 'SM_Tripo_DesertCoverWall', sink: 1.5 });
@@ -177,10 +183,11 @@ export const WB_1_4: WhiteboxSpec = {
     { name: '残祠山门', kind: 'box', at: [166, 89], size: [0.9, 0.87], h: 4.2, mat: 'timber', asset: 'SM_Env_DesertGate' },
     { name: '残祠山门', kind: 'box', at: [163.1, 89], size: [6.76, 0.87], top: 4.2, clear: 3.3, canopy: true, mat: 'timber', asset: 'SM_Env_DesertGate' },
     // 北岸枯木（和 1-1 干河床边的胡杨枯木是同一件）、东北坡脚半埋的驼队残车
-    { kind: 'cyl', at: [150, 79.5], size: [0.45, 0.45], h: 5, mat: 'plant', needs: NEED_DEADWOOD },
-    { kind: 'cyl', at: [175, 80.5], size: [0.45, 0.45], h: 5.5, mat: 'plant', needs: NEED_DEADWOOD },
-    { kind: 'cyl', at: [206.5, 111], size: [0.45, 0.45], h: 5, mat: 'plant', needs: NEED_DEADWOOD },
-    { kind: 'cyl', at: [202, 99.5], size: [0.45, 0.45], h: 4.5, mat: 'plant', needs: NEED_DEADWOOD },
+    // 胡杨枯木换成 Tripo 件（2026-11-27）：圆柱只挡树干，件按高度等比缩放、各转一个方向
+    { kind: 'cyl', at: [150, 79.5], size: [0.5, 0.5], h: 5, rot: 20, mat: 'plant', asset: DEADWOOD },
+    { kind: 'cyl', at: [175, 80.5], size: [0.5, 0.5], h: 5.5, rot: 140, mat: 'plant', asset: DEADWOOD },
+    { kind: 'cyl', at: [206.5, 111], size: [0.5, 0.5], h: 5, rot: -70, mat: 'plant', asset: DEADWOOD },
+    { kind: 'cyl', at: [202, 99.5], size: [0.5, 0.5], h: 4.5, rot: 75, mat: 'plant', asset: DEADWOOD },
     { kind: 'box', at: [209, 104], size: [3.79, 4.03], h: 1.2, rot: 35, mat: 'timber', asset: 'SM_Tripo_DesertCaravanWreck', sink: 0.6 },
 
     // 东、西两岸坡脚的砂岩堆（环线外侧的掩体：半身 + 一块全身）
