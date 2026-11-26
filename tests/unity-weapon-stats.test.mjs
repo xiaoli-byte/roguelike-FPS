@@ -367,10 +367,10 @@ test('武器奖励串的发放与提示同 Unity（EconomyConfig.ApplyTier + Wea
 });
 
 test('场景文档里的武器奖励串（weapon:beam、weapon:stormpod:1、weapon:min=1）都是网页认得的武器', () => {
-  const dir = new URL('../public/assets/unity-levels/scenes/', import.meta.url);
+  const dir = new URL('../public/assets/levels/', import.meta.url);
   const seen = new Set();
   for (const f of ['1-1', '1-2', '1-3', '1-A', '2-1', '2-2', '2-3', '2-A', '3-1', '3-2', '3-3', '3-4', '3-A', '4-1', '4-3']) {
-    const doc = JSON.parse(readFileSync(new URL(`${f}.json`, dir), 'utf8'));
+    const doc = JSON.parse(readFileSync(new URL(`${f}/level.json`, dir), 'utf8'));
     for (const r of [...doc.caches.map(c => c.reward), ...doc.encounters.map(e => e.reward)]) if (r?.startsWith('weapon:')) seen.add(r);
   }
   assert.ok(seen.has('weapon:min=1') && seen.has('weapon:beam') && seen.has('weapon:stormpod:1'), [...seen].join(' '));

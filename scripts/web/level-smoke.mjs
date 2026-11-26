@@ -69,15 +69,10 @@ const VARIANT = flagValue('variant');
 const log = (...a) => console.log('[level-smoke]', ...a);
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
-/** 关卡目录里可用的图：src/world/level/catalog.ts（去 Unity 之后）；没有就读老的 public/assets/unity-levels/manifest.json（基线） */
+/** 关卡目录里可用的图（src/world/level/catalog.ts） */
 async function catalog() {
-  const ts = join(ROOT, 'src/world/level/catalog.ts');
-  if (existsSync(ts)) {
-    const { LEVEL_CATALOG } = await import(pathToFileURL(ts).href);
-    return LEVEL_CATALOG.filter(s => s.available).map(s => s.id);
-  }
-  const legacy = join(ROOT, 'public/assets/unity-levels/manifest.json');
-  return JSON.parse(readFileSync(legacy, 'utf8')).stages.filter(s => s.available).map(s => s.id);
+  const { LEVEL_CATALOG } = await import(pathToFileURL(join(ROOT, 'src/world/level/catalog.ts')).href);
+  return LEVEL_CATALOG.filter(s => s.available).map(s => s.id);
 }
 
 const all = await catalog();

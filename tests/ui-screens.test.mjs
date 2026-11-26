@@ -587,7 +587,7 @@ test('全图方位与投影照 Unity MapMarkers / MapScreen（导出器只翻 X�
     assert.ok(Math.abs(MM.deltaAngle(want, MM.bearing(ax, az, bx, bz))) < 1e-9);
   }
   // 俯视图：Unity u = (x_unity − xMin) / 宽、top = 1 − (z − zMin) / 高；网页的底图范围 = [−xMax, −xMin, zMin, zMax]（WebSceneExporter）
-  const doc = JSON.parse(await read('../public/assets/unity-levels/scenes/1-1.json'));
+  const doc = JSON.parse(await read('../public/assets/levels/1-1/level.json'));
   const area = doc.map.area;
   const [xMin, xMax, zMin, zMax] = [-area[1], -area[0], area[2], area[3]];
   const unityUV = (x, z) => ({ u: (-x - xMin) / (xMax - xMin), v: 1 - (z - zMin) / (zMax - zMin) });

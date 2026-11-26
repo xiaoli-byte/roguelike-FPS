@@ -3,6 +3,7 @@ import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
+import { levelManifest } from './level-catalog.mjs';
 
 const threeUrl = new URL('../node_modules/three/build/three.module.js', import.meta.url).href;
 const source = await readFile(new URL('../src/world/UnityNavMesh.ts', import.meta.url), 'utf8');
@@ -46,7 +47,7 @@ test('UnityNavMesh reports disconnected paths without directing agents through e
   assert.ok(path.at(-1).x <= 1);
 });
 
-const manifest = JSON.parse(await readFile(new URL('../public/assets/unity-levels/manifest.json', import.meta.url), 'utf8'));
+const manifest = await levelManifest();
 for (const stage of manifest.stages.filter(stage => stage.available)) {
   test(`${stage.id}: player spawn and main encounter use the baked Unity NavMesh`, async () => {
     const document = JSON.parse(await readFile(new URL(`../public/${stage.url}`, import.meta.url), 'utf8'));

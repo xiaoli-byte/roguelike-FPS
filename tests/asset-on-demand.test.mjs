@@ -188,6 +188,8 @@ levelSource = levelSource
   .replaceAll("'three/examples/jsm/loaders/GLTFLoader.js'", `'${dataModule('export class GLTFLoader { setDRACOLoader() { return this; } setMeshoptDecoder() { return this; } }')}'`)
   .replaceAll("'three/examples/jsm/loaders/DRACOLoader.js'", `'${dataModule('export class DRACOLoader {}')}'`)
   .replaceAll("'three/examples/jsm/libs/meshopt_decoder.module.js'", `'${dataModule('export const MeshoptDecoder = {};')}'`)
+  // 关卡目录（src/world/level/catalog.ts，没有 import）：去掉类型后原样作为 data: 模块
+  .replaceAll("'./level/catalog'", `'${dataModule(stripTypeScriptTypes(await readFile(new URL('../src/world/level/catalog.ts', import.meta.url), 'utf8'), { mode: 'transform' }))}'`)
   .replaceAll('import.meta.env.BASE_URL', "'/'");
 const { UnityLevelLibrary, documentUrls } = await import(dataModule(levelSource));
 
@@ -199,11 +201,13 @@ function fakeMesh(name, closedSet) {
   return { scene };
 }
 
-test('documentUrls collects renderers, terrain layers / splats, vegetation, colliders and ground cover', () => {
+test('documentUrls collects renderers, terrain layers / splats, vegetation, the merged collision GLB and ground cover', () => {
   const urls = documentUrls({
     renderers: [{ url: 'm/a.glb' }, { url: 'm/t.glb', terrain: { layers: [{ url: 't/l0.webp' }], alphamaps: ['t/s0.webp'] } }],
     vegetation: { prototypes: [{ url: 'm/tree.glb' }] },
-    colliders: [{ url: 'm/col.glb' }, { kind: 'box' }],
+    // 网格碰撞合在本关一份 collision.glb 里（colliders[].mesh 是节点名，不再各带 url）
+    colliders: [{ kind: 'mesh', mesh: 'c0' }, { kind: 'box' }],
+    collision: 'm/col.glb',
     groundCover: [{ url: 'm/grass.glb', texture: 't/grass.webp' }, { url: null, texture: null }],
   });
   assert.deepEqual([...urls].sort(), ['m/a.glb', 'm/col.glb', 'm/grass.glb', 'm/t.glb', 'm/tree.glb', 't/grass.webp', 't/l0.webp', 't/s0.webp']);

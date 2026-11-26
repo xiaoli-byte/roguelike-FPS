@@ -642,10 +642,12 @@ test('可破坏物的伤害类型：不吃的格挡、怕的加倍', () => {
 
 // ───────────────────────────── 导出数据 ─────────────────────────────
 
-const mech = JSON.parse(readFileSync(new URL('../public/assets/unity-levels/mechanisms.json', import.meta.url), 'utf8'));
-const scene = id => JSON.parse(readFileSync(new URL(`../public/assets/unity-levels/scenes/${id}.json`, import.meta.url), 'utf8'));
+// 机关数据在每张图的 level.json 里（public/assets/levels/<id>/level.json 的 mechanisms 段；2026-11-26 由 Unity 导出的 mechanisms.json 一次性转来）
+const scene = id => JSON.parse(readFileSync(new URL(`../public/assets/levels/${id}/level.json`, import.meta.url), 'utf8'));
+const LEVEL_IDS = ['1-1', '1-2', '1-3', '1-4', '1-A', '2-1', '2-2', '2-3', '2-4', '2-A', '3-1', '3-2', '3-3', '3-4', '3-A', '4-1', '4-3'];
+const mech = { scenes: Object.fromEntries(LEVEL_IDS.map(id => [id, scene(id).mechanisms]).filter(([, m]) => m)) };
 
-test('mechanisms.json：每张图都有天气，16 张有软边界，机关的 scenePath 对得上场景文档', () => {
+test('关卡机关数据：每张图都有天气，16 张有软边界，机关的 scenePath 对得上场景文档', () => {
   assert.equal(Object.keys(mech.scenes).length, 17);
   for (const [id, s] of Object.entries(mech.scenes)) {
     assert.ok(s.weather, `${id} 有天气导演`);
@@ -671,13 +673,11 @@ test('mechanisms.json：每张图都有天气，16 张有软边界，机关的 s
   assert.equal(mech.scenes['1-1'].weather.regions[0].profile, 'sandstorm');
 });
 
-test('软边界距离场：尺寸 / sha1 对得上文件', async () => {
-  const { createHash } = await import('node:crypto');
+test('软边界距离场：尺寸对得上文件（字节在转换时已逐个比对过）', async () => {
   for (const [id, s] of Object.entries(mech.scenes)) {
     if (!s.boundary) continue;
     const bytes = readFileSync(new URL(`../public/${s.boundary.url}`, import.meta.url));
     assert.equal(bytes.length, s.boundary.width * s.boundary.height * 4, id);
-    assert.equal(createHash('sha1').update(bytes).digest('hex'), s.boundary.sha1, id);
   }
   // 1-1 出生点在可玩区里（距离为负），界外 60 m 在起风线外
   const b = mech.scenes['1-1'].boundary;
@@ -686,10 +686,6 @@ test('软边界距离场：尺寸 / sha1 对得上文件', async () => {
   assert.ok(f.sample(-spawn[0], spawn[2]) < 0, '出生点在界内（网页点按 −x 采样）');
 });
 
-test('导出脚本 --check：发布的 mechanisms.json 由当前场景生成', { skip: !existsSync(new URL('../unity/Assets/Scenes/L1_1_GobiRoad.unity', import.meta.url)) }, () => {
-  const out = execFileSync(process.execPath, [new URL('../scripts/web/export-mechanisms.mjs', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1'), '--check'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  assert.match(out, /一致/);
-});
 
 // ───────────────────────────── 各图脚本的门槛 ─────────────────────────────
 

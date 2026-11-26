@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import test, { beforeEach } from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
+import { levelManifest } from './level-catalog.mjs';
 
 const data = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 async function ts(path, imports = {}) {
@@ -23,7 +24,7 @@ const Plan = await import(stagePlanUrl);
 const { RunRoute } = await import(runRouteUrl);
 const RunPlan = await import(runPlanUrl);
 const { pickLayoutVariant } = await import(levelLayoutUrl);
-const manifest = JSON.parse(await readFile(new URL('../public/assets/unity-levels/manifest.json', import.meta.url), 'utf8'));
+const manifest = await levelManifest();
 
 const { STAGES, POOL } = Plan;
 const freshRun = (seed = 1) => ({ heroId: 'fox', seed, chapter: 0, stageIndex: 0, stage: { chapter: 0, index: 0, type: 'combat', reward: 'scroll', theme: 'desert' },
