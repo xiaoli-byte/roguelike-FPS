@@ -198,8 +198,16 @@ export function stageCatalogVersion(): number {
   return catalogVersion;
 }
 
+const REDO_CODES = ['1-1', '1-2', '1-3', '1-4', '1-A'];
+
 /** 缺省判定：场景清单里导出了这张图（清单读到之前按 UnityStages.ts；备选图只认清单里 pool: true 的） */
 export function sceneExported(s: StageSpec): boolean {
+  // 第一章重做版：场景由白盒编出来，不看 Unity 导出的清单（开关同 src/world/desert/redo/active.ts；这里内联，
+  // 关卡排程的测试把本文件当内联模块加载，不能再引别的文件）
+  if (REDO_CODES.includes(s.map.code) && typeof location !== 'undefined') {
+    const p = new URLSearchParams(location.search);
+    if (p.get('desert') !== '0' && p.get('redo') === '1') return true;
+  }
   if (catalog) {
     const entry = catalog.get(s.map.code);
     return !!entry && entry.available !== false && (!s.map.alt || entry.pool === true);

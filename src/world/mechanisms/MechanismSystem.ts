@@ -185,10 +185,11 @@ export class MechanismSystem implements MechanismHost {
   /** 按 mechanisms.json 建（没有数据 / 读不到时返回 null，关卡照常） */
   static async create(ctx: GameContext, document: UnitySceneDocument, viewGroup: THREE.Object3D): Promise<MechanismSystem | null> {
     const doc = await loadMechanisms();
-    const raw = doc?.scenes[document.id];
+    // 第一章重做版整份给机关数据（不读 Unity 导出的 mechanisms.json）；美术层：天气的基础雾色 / 风向跟新光照、新风向走
+    const art = desertArt(document.id);
+    const raw = art?.mechanisms?.() ?? doc?.scenes[document.id];
     if (!raw) return null;
-    // 第一章美术重建层：天气的基础雾色 / 风向跟新光照、新风向走
-    const data = patchDesertMechanisms(raw, desertArt(document.id));
+    const data = patchDesertMechanisms(raw, art);
     const system = new MechanismSystem(ctx, document, data, viewGroup);
     await system.ready;
     return system;

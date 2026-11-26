@@ -76,7 +76,8 @@ if (!process.argv.includes('--report')) {
   const lines = ids.map(id => {
     const b = manifest[id].bounds, r = v => Math.round(v * 100) / 100;
     const size = [r(b.max[0] - b.min[0]), r(b.max[1] - b.min[1]), r(b.max[2] - b.min[2])];
-    return `  ${id}: { size: [${size.join(', ')}], use: ${JSON.stringify(USE[id] ?? '')}${AVOID.has(id) ? ', avoid: true' : ''} },`;
+    const r3 = v => Math.round(v * 1000) / 1000;
+    return `  ${id}: { size: [${size.join(', ')}], min: [${b.min.map(r3).join(', ')}], max: [${b.max.map(r3).join(', ')}], use: ${JSON.stringify(USE[id] ?? '')}${AVOID.has(id) ? ', avoid: true' : ''} },`;
   });
   const out = `// 自动生成：node scripts/desert/whitebox-assets.mjs —— 别手改；资产有增减就重跑（用途说明在脚本的 USE 表里）。
 // 第一章已发布的沙漠美术资产（public/assets/props/<ID>.glb）：白盒体块用 asset 字段对上它们，搭正式场景时直接换件。
@@ -84,6 +85,9 @@ if (!process.argv.includes('--report')) {
 export interface WbAsset {
   /** 发布后的包围盒 [宽 x, 高 y, 深 z]（m，正面朝 +Z，轴心在底面中心） */
   size: [number, number, number];
+  /** GLB 根空间里的包围盒（public/assets/manifest.json 的 bounds）：编进场景时按它对齐件的底面和中心 */
+  min: [number, number, number];
+  max: [number, number, number];
   use: string;
   /** 不要再用的件（题材不对 / 方案已废） */
   avoid?: boolean;

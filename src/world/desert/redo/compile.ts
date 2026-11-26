@@ -1,15 +1,17 @@
 import type { UnityEncounter, UnityMonsterEntry, UnityRenderer, UnitySceneDocument } from '../../UnityLevelLibrary';
-import { PROP_BOUNDS } from '../kitBounds';
+import type { MechanismBase, SceneMechanisms } from '../../mechanisms/MechanismData';
 import { WB_ASSETS } from '../whitebox/assets';
 import { buildTerrain, fbm, pointInPolygon, type ResolvedBlock, type WbTerrain } from '../whitebox/terrain';
 import { WhiteboxProbe, probeWhitebox, type ProbeReport } from '../whitebox/probe';
 import { WB_METRICS, type TerrainOp, type V2, type WbBlock, type WbMat, type WbSite, type WhiteboxSpec } from '../whitebox/types';
 import { REDO_MAPS, type RedoMapConfig } from './maps';
+import { PLAY, type MapPlay, type PlayEncounter } from './play';
 
 /**
  * 第一章重做：白盒 → 游戏的场景文档（UnitySceneDocument）。纯数据，node 里也能跑（测试 / 离线检查用）。
  * 游戏的所有玩法系统（据点波次、入场点、藏宝、出口、首领、碰撞、导航、机关）读的都是这份文档，
- * 所以把白盒编成同一种格式，旧场景的玩法数据（波次编制、奖励、先后关系）按据点名搬过来，版面全换成白盒的：
+ * 所以把白盒编成同一种格式；玩法数据（波次编制、奖励、先后关系、调色）读 play.ts（2026-11-26 从 Unity 导出一次性搬来，
+ * 用户：「以后unity是要删除的」——编译不再读 public/assets/unity-levels 的任何东西），按据点名对上，版面全是白盒的：
  *   - 地形：白盒地面（不含体块、不含由新件代替的坡道）+ 图外一圈续出来的沙丘 → 一张 1025² 的高度场；材质 → 旧地形的四层贴图权重；
  *   - 体块：标了 asset 的换成 public/assets/props 里的已有件（按体块的真实尺寸缩放、连排），碰撞用体块本身（简化形状）；
  *     标了 needs 的是新做的件（src/world/desert/pieces/），运行时建好再把它们的碰撞并进来；
@@ -50,6 +52,10 @@ export interface CompiledMap {
   /** 软边界距离场（Unity 坐标：网页点按 (−x, z) 采样；区内为负） */
   boundary: { width: number; height: number; origin: [number, number]; cell: number; field: Float32Array };
   pieces: PieceRequest[];
+  /** 机关数据（软边界、天气、流沙、补给营 / 安全区）：MechanismSystem 直接读这份，不读 Unity 导出的 mechanisms.json */
+  mechanisms: SceneMechanisms;
+  /** 后期调色（play.ts 里旧场景 Volume 的结果） */
+  grade: MapPlay['grade'];
   /** 编译时的提醒（缩放拉得太狠、对不上旧场景的据点……） */
   notes: string[];
 }
@@ -294,12 +300,10 @@ function buildNavigation(terrain: WbTerrain, probe: WhiteboxProbe): UnitySceneDo
 
 interface PropFit { renderers: UnityRenderer[]; note?: string }
 
-/** 资产包围盒（网页 PBR 件：底面在 0，正面 +Z） */
+/** 资产包围盒（public/assets/props 的网页 PBR 件，GLB 根空间：底面在 0，正面 +Z） */
 function assetBox(asset: string): { min: Vec3; max: Vec3 } | null {
-  const b = PROP_BOUNDS[`assets/props/${asset}.glb`];
-  if (b) return { min: b.min, max: b.max };
-  const s = WB_ASSETS[asset]?.size;
-  return s ? { min: [-s[0] / 2, 0, -s[2] / 2], max: [s[0] / 2, s[1], s[2] / 2] } : null;
+  const a = WB_ASSETS[asset];
+  return a ? { min: a.min, max: a.max } : null;
 }
 
 /**
@@ -366,9 +370,15 @@ function blockCollider(b: ResolvedBlock, groundUnder: number, path: string): Col
 
 const fuzzy = (a: string, b: string): boolean => a === b || a.includes(b) || b.includes(a);
 
-/** 旧场景的遭遇按名字对上（据点 → 必清遭遇，驻守点 → 可选小遭遇） */
-function matchEncounter(old: UnitySceneDocument | null, name: string, optional: boolean): UnityEncounter | undefined {
-  return old?.encounters.find(e => e.optional === optional && fuzzy(e.title, name));
+/** 玩法数据里的遭遇按名字对上（据点 → 必清遭遇，驻守点 → 可选小遭遇） */
+function matchEncounter(play: MapPlay | null, name: string, optional: boolean): PlayEncounter | undefined {
+  return play?.encounters.find(e => e.optional === optional && fuzzy(e.title, name));
+}
+
+/** 机关的公共字段（位置、朝向、矩阵） */
+function mechBase(scenePath: string, position: Vec3, yaw = 0): MechanismBase {
+  const q = qyaw(yaw), c = Math.cos(yaw * DEG), s = Math.sin(yaw * DEG);
+  return { scenePath, position, rotation: q, scale: [1, 1, 1], yaw, matrix: [c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, position[0], position[1], position[2], 1] };
 }
 
 /** 场地里的站位锚点：按旧场景的角色序列，正面朝来路、侧袭在两侧、远程 / 狙击 / 炮手往后并优先高处 */
@@ -409,7 +419,7 @@ function anchorsFor(site: WbSite, radius: number, roles: number[], lanes: number
 
 // ───────────── 编译 ─────────────
 
-export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | null): CompiledMap {
+export function compileWhitebox(spec: WhiteboxSpec, play: MapPlay | null = PLAY[spec.id] ?? null): CompiledMap {
   const config = REDO_MAPS[spec.id] ?? { margin: { rise: 5, dunes: 6 } };
   const notes: string[] = [];
   const terrain = buildTerrain(spec);
@@ -535,15 +545,14 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
     const p = enter > 0 ? pts[Math.max(0, enter - 3)] : spec.spawn.at;
     return [p[0] - site.at[0], p[1] - site.at[1]];
   };
-  const titleMap = new Map<string, string>();
   const encounters: UnityEncounter[] = [];
   const usedTitles = new Set<string>();
   const addEncounter = (site: WbSite, optional: boolean): void => {
-    let src = matchEncounter(old, site.name, optional);
+    let src = matchEncounter(play, site.name, optional);
     if (src && usedTitles.has(src.title)) src = undefined;
     // 驻守点是新加的、旧场景没有同名的：借一个还没用上的旧小遭遇的编制（只借波次，名字用新的）
     if (!src && optional) {
-      const spare = old?.encounters.find(e => e.optional && !usedTitles.has(e.title) && !spec.guards.some(g => fuzzy(e.title, g.name)));
+      const spare = play?.encounters.find(e => e.optional && !usedTitles.has(e.title) && !spec.guards.some(g => fuzzy(e.title, g.name)));
       if (spare) {
         src = { ...spare, title: site.name, waves: spare.waves.map(w => ({ ...w, label: site.name })) };
         notes.push(`驻守点 ${site.id} ${site.name}：旧场景没有同名遭遇，借「${spare.title}」的编制`);
@@ -552,13 +561,13 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
     }
     if (!src) { notes.push(`${optional ? '驻守点' : '据点'} ${site.id} ${site.name}：旧场景里没有同名遭遇，不编`); return; }
     usedTitles.add(src.title);
-    titleMap.set(src.title, src.title);
     const radius = site.r ?? (optional ? 14 : 26);
     const k = radius / Math.max(1, src.arenaRadius);
+    const { roles, lanes, ...rest } = structuredClone(src);
     encounters.push({
-      ...structuredClone(src),
+      ...rest,
       position: v3(site.at), triggerRadius: r3(src.triggerRadius * k), arenaRadius: radius,
-      anchors: anchorsFor(site, radius, src.anchors.map(a => a.role), src.anchors.map(a => a.lane), approachOf(site), terrain, probe),
+      anchors: anchorsFor(site, radius, roles, lanes, approachOf(site), terrain, probe),
       scenePath: `Redo/Sites/${site.id}`,
     });
   };
@@ -578,7 +587,7 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
   });
 
   const caches = spec.caches.map((c, k) => {
-    const src = old?.caches.find(o => fuzzy(o.title, c.name)) ?? old?.caches[k];
+    const src = play?.caches.find(o => fuzzy(o.title, c.name)) ?? play?.caches[k];
     // 有守军的藏宝：旧场景的守军遭遇名，对上新编的驻守点
     const guard = src?.guard && titles.has(src.guard) ? src.guard : null;
     return { title: c.name, position: v3(c.at), reward: src?.reward ?? 'coins', discoverRadius: c.r ?? 12, guard, scenePath: `Redo/Caches/${c.id}` };
@@ -593,7 +602,7 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
     title: c.name, position: v3(c.at), yaw: r3(Math.atan2(center[0] - c.at[0], center[1] - c.at[1]) / DEG), safeRadius: c.r ?? 10, openShop: true, scenePath: `Redo/Camps/${c.id}`,
   }));
   const bosses = (spec.extras ?? []).filter(e => e.kind === 'boss').map((b, k) => {
-    const src = old?.bosses[k];
+    const src = play?.bosses[k];
     const loop = mainRoute?.pts ?? [];
     const radius = Math.max(src?.radius ?? 30, ...loop.map(p => Math.hypot(p[0] - b.at[0], p[1] - b.at[1]) + 6));
     return {
@@ -602,8 +611,8 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
     };
   });
 
-  // ── 环境：旧场景的光 / 雾 / 天空打底，太阳方向换成白盒的（影子是构图的一部分） ──
-  const environment = structuredClone(old?.environment) ?? {
+  // ── 环境：玩法数据里的光 / 雾打底，太阳方向换成白盒的（影子是构图的一部分） ──
+  const environment = structuredClone(play?.environment) ?? {
     fog: { enabled: true, mode: 1, color: [0.88, 0.76, 0.6, 1], start: 40, end: 400, density: 0.01 },
     ambient: { mode: 1, sky: [0.6, 0.66, 0.75, 1], equator: [0.75, 0.66, 0.55, 1], ground: [0.5, 0.4, 0.3, 1], light: [0.5, 0.5, 0.5, 1], intensity: 1 },
     sun: null, sky: null, lights: [],
@@ -615,13 +624,13 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
     environment.sun = { ...sun, forward: [r3(-toSun[0]), r3(-toSun[1]), r3(-toSun[2])] };
   }
 
-  const play = spec.play ?? [[0, 0], [spec.size[0], 0], [spec.size[0], spec.size[1]], [0, spec.size[1]]];
-  const bx = play.map(p => p[0]), bz = play.map(p => p[1]);
+  const area = spec.play ?? [[0, 0], [spec.size[0], 0], [spec.size[0], spec.size[1]], [0, spec.size[1]]];
+  const bx = area.map(p => p[0]), bz = area.map(p => p[1]);
   let wmin = Infinity, wmax = -Infinity;
   for (const v of terrain.walk) { wmin = Math.min(wmin, v); wmax = Math.max(wmax, v); }
   const yawRad = spec.spawn.yaw * DEG;
   const doc: UnitySceneDocument = {
-    schema: old?.schema ?? 1, id: spec.id, title: old?.title ?? spec.name, scene: `Redo/${spec.id}`,
+    schema: 1, id: spec.id, title: play?.title ?? spec.name, scene: `Redo/${spec.id}`,
     spawn: { position: v3(spec.spawn.at), forward: [r3(Math.sin(yawRad)), 0, r3(-Math.cos(yawRad))] },
     bounds: { min: [Math.min(...bx), r3(wmin - 5), Math.min(...bz)], max: [Math.max(...bx), r3(wmax + 60), Math.max(...bz)] },
     visualBounds: { min: [-MARGIN, minY, -MARGIN], max: [spec.size[0] + MARGIN, maxY, spec.size[1] + MARGIN] },
@@ -631,5 +640,35 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
     environment,
     encounters, exits, caches, camps, bosses, entries, layout: null,
   };
-  return { doc, spec, config, terrain, probe, report, field, control, boundary: buildBoundary(spec), pieces, notes };
+  const boundary = buildBoundary(spec);
+  const mechanisms = buildMechanisms(spec, config, play, terrain, boundary, doc.camps);
+  return { doc, spec, config, terrain, probe, report, field, control, boundary, pieces, mechanisms, grade: play?.grade ?? null, notes };
+}
+
+/** 运行时生成的软边界距离场的地址（MechanismData.provideBoundaryField 按它登记） */
+export const boundaryUrl = (id: string): string => `redo/boundary/${id}.f32`;
+
+/** 机关数据：软边界（可玩区）、天气（沙暴挪到新据点）、流沙（白盒标的位置）、补给营 + 安全区（白盒的 camp 点位） */
+function buildMechanisms(spec: WhiteboxSpec, config: RedoMapConfig, play: MapPlay | null, terrain: WbTerrain, boundary: CompiledMap['boundary'], camps: UnitySceneDocument['camps']): SceneMechanisms {
+  const at = (p: V2): Vec3 => [r3(p[0]), r3(terrain.walkAt(p[0], p[1])), r3(p[1])];
+  const w = play?.weather;
+  const storm = config.storm, site = storm && [...spec.strongholds, ...spec.guards].find(s => s.id === storm.site);
+  const tuning = play?.boundaryTuning ?? { softStart: 0, windRamp: 14, pushBase: 4, pushGain: 18, hazeLead: 6, failsafe: 26, navInset: 2, tetherSlack: 2, tetherGrace: 1.2 };
+  return {
+    scene: `Redo/${spec.id}`, source: 'redo', sceneSha1: '',
+    weather: w ? {
+      ...mechBase('Redo/Weather', [0, 0, 0]),
+      baseFogColor: w.baseFogColor, baseFogStart: w.baseFogStart, baseFogEnd: w.baseFogEnd, theme: w.theme, whiteoutProfile: w.whiteoutProfile,
+      windDir: [spec.wind[0], spec.wind[1]], baseWind: w.baseWind,
+      regions: storm && site && w.region ? [{ ...w.region, center: at(site.at), radius: storm.radius, from: storm.from }] : [],
+    } : null,
+    boundary: {
+      scenePath: 'Redo/Boundary', asset: '', url: boundaryUrl(spec.id), width: boundary.width, height: boundary.height, sha1: '',
+      origin: boundary.origin, cell: boundary.cell, theme: 'Desert', tuning,
+    },
+    quicksand: play?.quicksand ? (config.quicksand ?? []).map((q, k) => ({ ...mechBase(`Redo/Quicksand${k + 1}`, at(q.at)), ...play.quicksand!, radius: q.r, coreRadius: r3(q.r * 0.4) })) : [],
+    // 补给营 + 安全区：模板取旧场景的（没有就用缺省：10 m 安全区、开商店）
+    camps: camps.map(c => ({ ...mechBase(c.scenePath ?? 'Redo/Camp', c.position, c.yaw), label: c.title, ...(play?.camp ?? { openShop: true, restoreOnArrive: false }), safeRadius: c.safeRadius })),
+    safeZones: camps.map(c => ({ ...mechBase(`${c.scenePath ?? 'Redo/Camp'}/Safe`, c.position, c.yaw), ...(play?.safeZone ?? { height: 6, pushMargin: 1.5, carveNavMesh: true }), radius: c.safeRadius })),
+  };
 }

@@ -28,6 +28,8 @@ export interface RedoMapConfig {
   far?: FarLandmark[];
   /** 周期沙暴：从哪个据点（白盒点位 id）、从哪边刮来（网页 XZ） */
   storm?: { site: string; from: V2; radius: number };
+  /** 流沙（白盒里画成泥色圆斑的位置、半径） */
+  quicksand?: { at: V2; r: number }[];
 }
 
 export const REDO_MAPS: Record<string, RedoMapConfig> = {
@@ -40,7 +42,7 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
     ],
     storm: { site: '4', from: [1, 0], radius: 30 },
   },
-  '1-2': { margin: { rise: 6, dunes: 7 } },
+  '1-2': { margin: { rise: 6, dunes: 7 }, quicksand: [{ at: [148, 97], r: 5 }, { at: [162, 96], r: 5.5 }, { at: [181, 100], r: 5 }] },
   '1-3': { margin: { rise: 5, dunes: 8 } },
   '1-4': { margin: { rise: 10, dunes: 10 }, poplar: 'green' },
   '1-A': { margin: { rise: 4, dunes: 5 }, poplar: 'gold' },

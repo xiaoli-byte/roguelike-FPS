@@ -35,15 +35,18 @@ const flag = name => { const i = args.indexOf(name); return i >= 0 ? args.splice
 const jsonOut = flag('--json');
 const ids = args.length ? args : Object.keys(WHITEBOXES);
 for (const id of ids) {
-  const old = JSON.parse(readFileSync(`public/assets/unity-levels/scenes/${id}.json`, 'utf8'));
+  // 只为对照寻路耗时：Unity 导出的旧场景还在就读，删了就跳过（编译本身不读它）
+  const oldFile = `public/assets/unity-levels/scenes/${id}.json`;
+  const old = existsSync(oldFile) ? JSON.parse(readFileSync(oldFile, 'utf8')) : null;
   const t0 = performance.now();
-  const c = compileWhitebox(WHITEBOXES[id], old);
+  const c = compileWhitebox(WHITEBOXES[id]);
   const ms = performance.now() - t0;
   const d = c.doc;
   console.log(`\n== ${id} ${d.title}（编译 ${ms.toFixed(0)} ms）`);
   console.log(`渲染件 ${d.renderers.length}（${new Set(d.renderers.map(r => r.name)).size} 种）· 碰撞 ${d.colliders.length} · 导航三角形 ${d.navigation.indices.length / 3} · 高度场 ${d.heightfields[0].resolution}²`);
   console.log(`遭遇 ${d.encounters.map(e => `${e.title}${e.optional ? '(可选)' : ''}[${e.anchors.length}锚 ${e.waves.length}波]`).join('、')}`);
   console.log(`入场点 ${d.entries.length} · 藏宝 ${d.caches.map(x => `${x.title}:${x.reward}${x.guard ? '/' + x.guard : ''}`).join('、')} · 出口 ${d.exits.length} · 补给营 ${d.camps.length} · 首领 ${d.bosses.map(b => b.id).join('、') || '无'}`);
+  console.log(`机关 软边界 ${c.mechanisms.boundary ? '有' : '无'} · 沙暴区 ${c.mechanisms.weather?.regions.length ?? 0} · 流沙 ${c.mechanisms.quicksand?.length ?? 0} · 补给营 ${c.mechanisms.camps?.length ?? 0} · 调色 ${c.grade ? '有' : '无'}`);
   console.log(`新件 ${c.pieces.map(p => p.kind === 'named' || p.kind === 'stair' ? p.name : p.kind === 'camelBones' ? '驼骨' : `${p.kind}×${p.trees.length}`).join('、')}`);
   for (const n of c.notes) console.log('  提醒：' + n);
   // 寻路耗时：用游戏的导航网格类，从出生点到每个据点 / 出口
@@ -64,7 +67,7 @@ for (const id of ids) {
     if (!ok) fails++;
   }
   console.log(`导航：建网 ${build.toFixed(0)} ms，出生点到 ${targets.length} 个目标寻路最慢 ${worst.toFixed(1)} ms${fails ? `，${fails} 个找不到路` : ''}`);
-  {
+  if (old) {
     // 对照：旧场景（Unity 烘的导航网格）同样从出生点到各遭遇
     const oldNav = new UnityNavMesh(ctx, old);
     let oldWorst = 0;

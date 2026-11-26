@@ -102,6 +102,8 @@ export interface DesertMapArt {
   patchDocument?(doc: UnitySceneDocument): void;
   /** 改机关数据（副本） */
   patchMechanisms?(data: SceneMechanisms): void;
+  /** 整份机关数据由这一层给（第一章重做版：不读 Unity 导出的 mechanisms.json） */
+  mechanisms?(): SceneMechanisms;
   /** 场景搭好后加的网页件 */
   build?(b: DesertBuild): Promise<DesertPart[]> | DesertPart[];
 }

@@ -2,27 +2,27 @@ import * as THREE from 'three';
 import { UnityLevelLibrary, type UnitySceneDocument } from '../../UnityLevelLibrary';
 import { createUnityTerrainMesh } from '../../UnityTerrainMesh';
 import { setStylizedEnvironment, stylizeTerrain, terrainStyle } from '../../UnityStylizedLit';
-import { provideBoundaryField, type SceneMechanisms } from '../../mechanisms/MechanismData';
-import { SoftBoundary } from '../../mechanisms/Boundary';
+import { provideBoundaryField } from '../../mechanisms/MechanismData';
 import { WHITEBOXES } from '../whitebox';
 import { buildDeadPoplars, buildPoplars } from '../pieces/flora';
 import { buildCamelBones } from '../pieces/bones';
 import type { BuiltPiece, PieceBox, PieceContext } from '../pieces/types';
 import type { DesertMapArt, DesertPart } from '../spec';
-import { compileWhitebox, type CompiledMap, type PieceRequest } from './compile';
+import { boundaryUrl, compileWhitebox, type CompiledMap, type PieceRequest } from './compile';
+import { patchDesertDocument } from '../document';
 
 /**
- * 第一章重做的运行时：进关前（StageDirector.prepareDesertArt）把白盒编成场景文档、建好新做的件，
- * 改文档时（patchDocument）整份换掉旧场景的版面，场景搭好后（build）铺地形网格、挂新件。
- * 机关数据（patchMechanisms）：软边界换成白盒可玩区算出来的距离场；沙暴区、流沙这类按旧坐标摆的机关清掉或挪到新位置。
+ * 第一章重做的运行时：进关前（StageDirector → desertDocument / prepareDesertArt）把白盒编成场景文档、建好新做的件，
+ * 场景文档整份由这里给（redoDocument），场景搭好后（build）铺地形网格、挂新件；机关数据（mechanisms）也整份由编译器生成。
+ * 不读 Unity 导出的任何东西（用户 2026-11-26：「以后unity是要删除的」）：玩法数据在 play.ts，地形贴图在 public/assets/desert/terrain。
  */
 
-/** 地形四层贴图（旧场景的沙漠地形层：起伏沙 / 黑戈壁砾石 / 龟裂土 / 赭红岩层）和每张盖多少米 */
+/** 地形四层贴图（起伏沙 / 黑戈壁砾石 / 龟裂土 / 赭红岩层，从旧沙漠地形搬到第一章自己的目录）和每张盖多少米 */
 const LAYERS = [
-  { url: 'assets/unity-levels/textures/t_52868a62b1f7162d15a9.webp', tile: 9 },
-  { url: 'assets/unity-levels/textures/t_95395f83d84a8de7b7b8.webp', tile: 4 },
-  { url: 'assets/unity-levels/textures/t_a787e9460e7888b84aa9.webp', tile: 7 },
-  { url: 'assets/unity-levels/textures/t_4e56f9302e97e7d607d0.webp', tile: 8 },
+  { url: 'assets/desert/terrain/sand.webp', tile: 9 },
+  { url: 'assets/desert/terrain/gravel.webp', tile: 4 },
+  { url: 'assets/desert/terrain/earth.webp', tile: 7 },
+  { url: 'assets/desert/terrain/rock.webp', tile: 8 },
 ];
 
 const compiled = new Map<string, CompiledMap>();
@@ -108,21 +108,25 @@ export async function prepareRedo(id: string, low = false): Promise<void> {
   if (!spec) return;
   let c = compiled.get(id);
   if (!c) {
-    const old = await UnityLevelLibrary.scene(id);
     const t0 = performance.now();
-    c = compileWhitebox(spec, old);
+    c = compileWhitebox(spec);
     console.info(`[desert/redo] ${id} 编译 ${Math.round(performance.now() - t0)} ms：渲染件 ${c.doc.renderers.length}、碰撞 ${c.doc.colliders.length}、导航三角形 ${c.doc.navigation.indices.length / 3}`, c.notes);
     compiled.set(id, c);
     provideBoundaryField(boundaryUrl(id), c.boundary.field);
   }
+  // 这一次进关的件已经建好、还没挂上（取文档时 prepare 过一次，搭场景前又 prepare 一次）：不重建
+  if (pending.has(id)) return;
   await loadNamedBuilders();
   const groundAt = (x: number, z: number): number => c!.terrain.groundAt(x, z);
-  const old = pending.get(id);
-  for (const p of old?.pieces ?? []) p.dispose();
   pending.set(id, await buildPieces(c, { ground: groundAt, low, environment: c.doc.environment }));
 }
 
-const boundaryUrl = (id: string): string => `redo/boundary/${id}.f32`;
+/** 整份场景文档（已改好：版面 + 新件的碰撞），StageDirector 直接用它进关 */
+export function redoDocument(id: string): UnitySceneDocument {
+  const c = compiled.get(id);
+  if (!c) throw new Error(`[desert/redo] ${id} 没有先 prepare`);
+  return patchDesertDocument(c.doc, redoArt(id));
+}
 
 /** 第一章重做的图：编好的文档整份换掉旧场景的版面 */
 export function redoArt(id: string): DesertMapArt | null {
@@ -142,25 +146,13 @@ export function redoArt(id: string): DesertMapArt | null {
       // 旧场景的小地图是旧版面，不能留
       delete doc.map;
     },
-    patchMechanisms(m: SceneMechanisms): void {
+    mechanisms() {
       const c = compiled.get(id);
-      if (!c) return;
-      const b = c.boundary;
-      m.boundary = {
-        scenePath: 'Redo/Boundary', asset: '', url: boundaryUrl(id), width: b.width, height: b.height, sha1: '',
-        origin: b.origin, cell: b.cell, theme: 'Desert', tuning: m.boundary?.tuning ?? SoftBoundary.defaults(),
-      };
-      // 按旧坐标摆的机关：挪不动的先清掉（流沙、地面区、安全区、补给营、可破坏物、碑文……按白盒重摆是后面的事）
-      for (const key of ['quicksand', 'surfaces', 'safeZones', 'camps', 'destructibles', 'lore', 'spans'] as const) if (m[key]) m[key] = [];
-      if (m.weather) {
-        const storm = c.config.storm, site = storm && [...c.spec.strongholds, ...c.spec.guards].find(s => s.id === storm.site);
-        m.weather = {
-          ...m.weather, windDir: [spec.wind[0], spec.wind[1]],
-          regions: storm && site && m.weather.regions[0]
-            ? [{ ...m.weather.regions[0], center: [site.at[0], c.terrain.walkAt(site.at[0], site.at[1]), site.at[1]], radius: storm.radius, from: storm.from }]
-            : [],
-        };
-      }
+      if (!c) throw new Error(`[desert/redo] ${id} 没有先 prepare`);
+      return structuredClone(c.mechanisms);
+    },
+    get grade() {
+      return compiled.get(id)?.grade ?? undefined;
     },
     async build(b): Promise<DesertPart[]> {
       const c = compiled.get(id);

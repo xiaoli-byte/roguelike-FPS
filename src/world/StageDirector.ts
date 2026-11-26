@@ -28,7 +28,7 @@ import { LevelObjectives, loadLevelObjectives, objectiveDriven } from './objecti
 import { chooseLevelLayout } from './LevelLayout';
 import { UnitySceneView } from './UnitySceneView';
 import { UnityAtmosphereDressing } from './unityAtmosphereDressing';
-import { desertArt, patchDesertDocument, prepareDesertArt } from './desert';
+import { desertArt, desertDocument, patchDesertDocument, prepareDesertArt } from './desert';
 import { UnityLevelLibrary, prepareUnityScene, unityHeights, unityPoint, type UnitySceneDocument } from './UnityLevelLibrary';
 
 /** 进场后第一波开始的时间（秒） */
@@ -201,7 +201,11 @@ export class StageDirector implements IStageDirector {
 
   load(stage: StageNode): Promise<void> {
     // 每局路线洗牌后槽位「1-1」可能用别的图（stage.map）
-    const pending = UnityLevelLibrary.scene(stage.map ?? `${stage.chapter + 1}-${stage.index + 1}`) as UnitySceneDocument | Promise<UnitySceneDocument | null> | null;
+    const mapId = stage.map ?? `${stage.chapter + 1}-${stage.index + 1}`;
+    // 第一章重做版：场景文档由白盒编出来（不读 Unity 导出的场景文件）
+    const redo = desertDocument(mapId);
+    if (redo) return redo.then(document => this.loadResolved(stage, document));
+    const pending = UnityLevelLibrary.scene(mapId) as UnitySceneDocument | Promise<UnitySceneDocument | null> | null;
     if (pending && typeof (pending as Promise<UnitySceneDocument | null>).then === 'function') {
       return Promise.resolve(pending).then(document => this.loadResolved(stage, document));
     }
