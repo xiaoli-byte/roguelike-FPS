@@ -231,6 +231,11 @@ export function chargePulse(charge: number, full: boolean, time: number): number
   return 0.8 + 0.7 * clamp01(charge) + (full ? Math.sin(time * 34) * 0.22 : Math.sin(time * 18) * 0.06);
 }
 
+/** 灵炮蓄力时枪口光球颜色的 HDR 倍率（Unity RailgunCharge.LateUpdate：Tint(orb, color × (1.5 + 1.5·charge) × a)） */
+export function chargeOrbBoost(charge: number): number {
+  return 1.5 + 1.5 * charge;
+}
+
 /**
  * 第一人称手套与袖子的材质。袖子是偏暗的布料色，只带一点英雄主题色倾向；主题色本身只用在袖口的一圈细滚边上，
  * 避免整条手臂变成一大块高饱和色块（例如赤狐的橙色）。dim < 1 时袖子再压暗（碎刃）。
@@ -1096,10 +1101,11 @@ export class Viewmodel {
       this.flash.scale.setScalar(e.def.flash * (0.7 + Math.random() * 0.5));
       this.flashMat.rotation = Math.random() * TAU;
     } else if (s.firing && e.def.mode === 'charge' && s.spin > 0.02) {
-      // 蓄力：枪口聚起一团逐渐增大的灵光（Unity RailgunCharge 的枪口光球：大小 flash × (0.25 + 0.55·t)，满蓄后忽明忽暗）
+      // 蓄力：枪口聚起一团逐渐增大的灵光（Unity RailgunCharge 的枪口光球：大小 flash × (0.25 + 0.55·t)，满蓄后忽明忽暗）。
+      // 着色 = 能量色 × HDR 倍率 (1.5 + 1.5·t) × a（RailgunCharge.cs:99–100，加色）：颜色乘倍率（材质不走色调映射，HDR 值吃得到泛光），透明度取 a
       const c = s.spin;
       this.flash.visible = true;
-      this.flashMat.color.copy(e.baseColor);
+      this.flashMat.color.copy(e.baseColor).multiplyScalar(chargeOrbBoost(c));
       this.flashMat.opacity = 0.2 + 0.45 * c + (s.chargeFull ? Math.random() * 0.2 : 0);
       this.flash.scale.setScalar(e.def.flash * (0.25 + 0.55 * c) * (0.92 + Math.random() * 0.16));
       this.flashMat.rotation += dt * (2 + 10 * c);

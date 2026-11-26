@@ -41,6 +41,7 @@ export function buildDemonBlade() {
 }`);
 const bvUrl = await ts('../src/weapons/demonBlade/BladeView.ts', {
   '../../core/math': mathUrl,
+  '../WeaponDefs': defsUrl,
   './BladeShape': shapeUrl,
   './BladeModel': modelStub,
   './BladeSwarm': data('export const SHARD_HOME = 0;'),
@@ -421,6 +422,60 @@ test('view: strike event fires once per slash on the judgement frame, punches th
   assert.equal(punches.length, 3, '判定帧镜头一带');
   assert.deepEqual(punches.map(p => p.map(x => Math.round(x * 100) / 100)), [[0.22, 0.25, -0.28], [0.06, -0.25, 0.32], [0.06, 0.25, -0.5]]);
   assert.equal(bursts.length, 3, '判定帧甩出火星（随 M11b 换预设）');
+});
+
+// blade-lab 检视页（src/dev/bladeLab.ts）给 BladeView 的假上下文只有 time / camera / viewCamera，挥砍进度也从不写 slash。
+// Unity 对应：BladeView.OnBladeStrike 的 if (feel) feel.Punch(…)、SpawnSparks 缺预设 / 相机就 return（BladeView.cs:363、:377）；
+// BladeView.Clip 的 slash ??= DefaultSlash(seg)，取武器表 blade.combo[seg]（BladeView.cs:585、:591–594）
+function labView(extra = {}) {
+  const fpCamera = new THREE.PerspectiveCamera(60, 16 / 9, 0.01, 50);
+  const v = new BV.BladeView({ time: { now: 0 }, camera: fpCamera, viewCamera: fpCamera, ...extra }, 0x5a6a7a);
+  fpCamera.add(v.root);
+  return { v, fpCamera };
+}
+/** 照 bladeLab.fpFrame 推进一段：swingP 按段时长走，hitP 是检视页自己写的数，slash 留 null */
+function labSlash(v, fpCamera, pose, seg, dur, hitP, onFrame) {
+  pose.swing = seg;
+  pose.hitP = hitP;
+  for (let t = 0; t <= dur + 1e-9; t += 1 / 60) {
+    pose.swingP = Math.min(1, t / dur);
+    v.pose(1 / 60, pose);
+    fpCamera.updateMatrixWorld(true);
+    v.animate(1 / 60, pose);
+    onFrame?.(v);
+  }
+}
+
+test('view: blade-lab fake context (time / camera / viewCamera only) runs all three slashes and the combo without throwing', () => {
+  const COMBO = [0.3, 0.3, 0.5];
+  for (const segs of [[0], [1], [2], [0, 1, 2]]) {
+    const { v, fpCamera } = labView();
+    const pose = BV.createBladePoseInput();
+    assert.equal(pose.slash, null, '检视页从不写 slash');
+    assert.doesNotThrow(() => {
+      for (const seg of segs) labSlash(v, fpCamera, pose, seg, COMBO[seg], seg === 2 ? 0.32 : 0.27);
+    }, `检视页 ${segs.length > 1 ? 'combo' : `slash${segs[0]}`} 越过判定帧不该抛异常`);
+    assert.equal(v.strikeEvents, segs.length, '判定帧事件照样派发（刃口白热一闪）');
+  }
+});
+
+test('view: with no slash entry the third slash still stretches to the weapon-table 2.2 (Unity BladeView.DefaultSlash)', () => {
+  // 带上 player / fx 桩：这条只看伸刃回退，不和上一条（假上下文抛异常）搅在一起
+  const stubs = { player: { punchDegrees() {} }, fx: { burst() {} } };
+  const { v, fpCamera } = labView(stubs);
+  const pose = BV.createBladePoseInput();
+  let peak = 1;
+  labSlash(v, fpCamera, pose, 2, 0.5, 0.32, view => { peak = Math.max(peak, view.stretchNow); });
+  assert.ok(peak > 2.1, `slash 为 null 时第三段也要伸到 2.2（实际 ${peak.toFixed(3)}）`);
+  // 前两段照武器表不伸
+  const b = labView(stubs);
+  let peak0 = 1;
+  labSlash(b.v, b.fpCamera, BV.createBladePoseInput(), 0, 0.3, 0.27, view => { peak0 = Math.max(peak0, view.stretchNow); });
+  near(peak0, 1, '第一段不伸刃', 1e-6);
+  const blade = getWeaponDef('demon_blade').blade;
+  for (let seg = 0; seg < 3; seg++) assert.equal(BV.defaultSlash(seg), blade.combo[seg], `第 ${seg + 1} 段回退到武器表 combo[${seg}]`);
+  assert.equal(BV.defaultSlash(7), blade.combo[2], '越界钳到最后一段（Mathf.Clamp(seg, 0, combo.Length − 1)）');
+  assert.equal(BV.defaultSlash(-1), blade.combo[0]);
 });
 
 test('view: hit stop freezes the visual progress for 40 / 70 ms of real time even when game time is slowed', () => {

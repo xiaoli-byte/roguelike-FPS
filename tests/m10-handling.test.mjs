@@ -621,6 +621,41 @@ test('railgun charge glow pulse and the energy colour (Unity RailgunCharge)', as
 });
 
 /**
+ * Unity Weapons/RailgunCharge.cs:99–100 枪口光球：a = 0.2 + 0.45·charge + (full ? rand·0.2 : 0)；Tint(orb, 能量色 × (1.5 + 1.5·charge) × a)（加色）。
+ * 网页：精灵颜色 = 能量色 × (1.5 + 1.5·charge)（HDR，不走色调映射），透明度 = a
+ */
+const railOrbBoost = charge => 1.5 + 1.5 * charge;
+const railOrbAlpha = charge => 0.2 + 0.45 * charge;
+
+test('railgun charge orb: energy colour × HDR boost (1.5 + 1.5·t), opacity a (Unity RailgunCharge orb tint)', () => {
+  const { vm } = vmHarness();
+  const s = VM.createViewmodelState();
+  vm.setWeapon(inst('railgun'));
+  s.firing = true;
+  for (const c of [0.1, 0.5, 0.95]) {
+    s.spin = c;
+    s.chargeFull = false;
+    vm.update(1 / 60, s);
+    const mat = vm.flash.material;
+    assert.equal(vm.flash.visible, true, `蓄力 ${c} 光球亮着`);
+    assert.equal(mat.blending, THREE.AdditiveBlending, '加色');
+    assert.equal(mat.toneMapped, false, 'HDR 值不被色调映射压掉');
+    const want = new THREE.Color(0xc9a8ff).multiplyScalar(railOrbBoost(c));
+    near(mat.color.r, want.r, `蓄力 ${c} r`, 1e-6); near(mat.color.g, want.g, `蓄力 ${c} g`, 1e-6); near(mat.color.b, want.b, `蓄力 ${c} b`, 1e-6);
+    near(mat.opacity, railOrbAlpha(c), `蓄力 ${c} 透明度`, 1e-6);
+  }
+  // 满蓄：透明度在 a .. a + 0.2 之间闪，颜色倍率到 3
+  s.spin = 1;
+  s.chargeFull = true;
+  vm.update(1 / 60, s);
+  const mat = vm.flash.material;
+  assert.ok(mat.opacity >= railOrbAlpha(1) - 1e-9 && mat.opacity <= railOrbAlpha(1) + 0.2 + 1e-9, `满蓄透明度 ${mat.opacity}`);
+  near(mat.color.b, new THREE.Color(0xc9a8ff).b * 3, '满蓄 ×3', 1e-6);
+  near(VM.chargeOrbBoost(0), 1.5);
+  near(VM.chargeOrbBoost(1), 3);
+});
+
+/**
  * Unity Weapons/WeaponTint.cs：稀有度亮度 Glow = { 0.5, 0.8, 1.1, 1.5, 2.0 }（:26）、MaterialBase 1.6（:27）；
  * 美术材质的发光基准 Art/Weapons/SK_Weapon_Burst/M_Weapon_Burst.mat:85 的 _EmissionColor 是 (1.6, 1.6, 1.6)，和 MaterialBase 一致
  */

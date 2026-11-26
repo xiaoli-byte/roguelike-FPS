@@ -6,7 +6,8 @@
  *   Unity 把这条时间线烘成剪辑（BladeSwingClip，采样之间线性插值，测试核对过和解析时间线处处吻合），网页直接求解析式。
  * - 剪辑的三个事件按视觉进度越过它们时派发：出刀（刀光起，另起一条）/ 判定帧（刃口白热一闪、甩出碎刃火星、镜头朝挥动方向轻轻一带）/ 收势（刀光止）。
  * - 命中：视觉进度停 40 ms（第三段 70 ms，真实时间），刀身闪亮，枪模弹簧往回一磕（onKick）。
- * - 伸刃：剪辑给这一段的伸长（第三段 2.2，刀根 0.09 以内不动），人刀合一常态伸长 1.3 × 强度叠在上面。
+ * - 伸刃：剪辑给这一段的伸长（第三段 2.2，刀根 0.09 以内不动），人刀合一常态伸长 1.3 × 强度叠在上面；控制器没给本段武器表时回退到武器表 combo[seg]（Unity DefaultSlash）。
+ * - 上下文里没有玩家 / 特效（blade-lab 检视页）时，判定帧的镜头一带与火星照 Unity 跳过（feel / 预设缺了就不做），其余照常。
  * - 剑指 / 立掌 / 举手：右手收刀到手势姿态（0.14 s），左手从画面下方抬进来（美术手臂整块网格没有手指骨骼：拳头前沿补两根伸直并拢的手指，
  *   BladeSwordSign；整只手按「手指指向 + 前臂朝画面左下」摆），剑指时指尖亮一点灵光。
  * - 碎片：刃群模块（BladeSwarm）记录每片在手里还是在外面；在手里的按原位显示，伸刃时沿刀线展开并带一点横向错动；刚归位的放大一下再落回，
@@ -21,6 +22,7 @@ import type { LoadedAsset } from '../../assets/AssetLibrary';
 import { applyArtEnvironment } from '../../assets/ArtEnvironment';
 import { attachStaticPart } from '../../assets/StaticAttachment';
 import { clamp01, DEG } from '../../core/math';
+import { getWeaponDef } from '../WeaponDefs';
 import { bladeCells, BLADE_LEN, rootBoundaryY, SHARD_COUNT, spineX } from './BladeShape';
 import { BLADE_PURPLE, buildDemonBlade, GRIP_Y, type DemonBladeModel } from './BladeModel';
 import { SHARD_HOME, type BladeSwarm, type ShardHomeProvider } from './BladeSwarm';
@@ -57,6 +59,18 @@ export interface BladePoseInput {
 
 export function createBladePoseInput(): BladePoseInput {
   return { swing: -1, swingP: 0, hitP: 0.3, slash: null, unionStretch: 1.3, gesture: 'none', union: 0, eye: 0, qi: 1 };
+}
+
+/** 武器表也空时的兜底（Unity BladeView.DefaultSlash：new BladeSlash { windup = 0.08f, duration = 0.3f, stretch = 1 }） */
+const FALLBACK_SLASH: BladeSlashSpec = { windup: 0.08, duration: 0.3, stretch: 1 };
+
+/**
+ * 控制器没给本段武器表（slash 为 null，如 blade-lab 检视页）时用的条目：武器表碎刃 combo[seg]（Unity BladeView.Clip 的 slash ??= DefaultSlash(seg)）。
+ * 第三段照样伸到 2.2，判定帧位置也按这一条（Unity 剪辑的 hitP = windup / duration）。
+ */
+export function defaultSlash(seg: number): BladeSlashSpec {
+  const combo = getWeaponDef('demon_blade').blade?.combo ?? [];
+  return combo.length > 0 ? combo[Math.min(combo.length - 1, Math.max(0, seg))] : FALLBACK_SLASH;
 }
 
 /** 关键帧：手（握持点）的相机空间位置、刀尖方向、刃口方向 */
@@ -552,8 +566,10 @@ export class BladeView implements ShardHomeProvider {
 
   /** 挥砍（Unity BladeView.AnimateSwing）：视觉进度（顿帧时停住）、刀光采样、剪辑事件 */
   private animateSwing(dt: number, s: BladePoseInput): void {
-    const hitP = s.hitP;
-    const slashK = s.slash ? Math.max(1, s.slash.stretch) : 1;
+    // 控制器没给本段武器表时回退到武器表 combo[seg]（Unity Clip：slash ??= DefaultSlash(seg)，剪辑 hitP = windup / max(0.05, duration)）
+    const slash = s.slash ?? defaultSlash(s.swing);
+    const hitP = s.slash ? s.hitP : slash.windup / Math.max(0.05, slash.duration);
+    const slashK = Math.max(1, slash.stretch);
     if (this.mode !== s.swing || s.swing !== this.lastSwing || s.swingP < this.visP - 0.3) {
       this.from.copy(this.cur);
       this.mode = s.swing;
@@ -614,13 +630,15 @@ export class BladeView implements ShardHomeProvider {
     // 镜头：一 = 右上 → 左下、二 = 左 → 右、三 = 大横扫；幅度不到命中冲击的一半，只让空挥也有「出刀」的感觉
     const yaw = seg === 1 ? 0.32 : seg === 2 ? -0.5 : -0.28;
     const pitch = seg === 0 ? 0.22 : 0.06;
-    this.ctx.player.punchDegrees(pitch, seg === 1 ? -0.25 : 0.25, yaw);
+    // 没有玩家 / 特效的场合（blade-lab 检视页的假上下文只给 time / camera / viewCamera）照 Unity 跳过：if (feel) feel.Punch(…)、SpawnSparks 缺预设 / 相机就 return
+    this.ctx.player?.punchDegrees(pitch, seg === 1 ? -0.25 : 0.25, yaw);
     this.spawnSparks(seg);
   }
 
   /** 判定帧甩出的火星：刀尖的屏幕位置往前 1.6 m 处顺着挥动方向（Unity BladeTrailPreset 的粒子层；随 M11b 换预设） */
   private spawnSparks(seg: number): void {
     const ctx = this.ctx;
+    if (!ctx.fx || !ctx.camera || !ctx.viewCamera) return;
     const tip = this.cur.bladePoint(spineX(BLADE_LEN), stretchY(BLADE_LEN, this.stretch), _v2);
     // root（枢轴）空间 → 武器相机空间 → 主相机（按屏幕位置对齐）
     this.root.updateWorldMatrix(true, false);
