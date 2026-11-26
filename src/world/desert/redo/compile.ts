@@ -499,8 +499,9 @@ export function compileWhitebox(spec: WhiteboxSpec, play: MapPlay | null = PLAY[
       for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) {
         const p: V2 = [x0 + (i + 0.5) * (x1 - x0) / nx, z0 + (j + 0.5) * (z1 - z0) / nz];
         if (!pointInPolygon(p[0], p[1], pts)) continue;
+        // 顶面压到地面下 3 cm：台面看到的是地形的铺地，台沿露出台基块的侧面（顶面的花纹在近景里会显成一个个暗洞）
         const top = ground.groundAt(p[0], p[1]);
-        const fit = fitAsset(o.asset, p, 0, (x1 - x0) / nx, (z1 - z0) / nz, top - h * s + 0.02, h * s, `${tag}_${i}_${j}`);
+        const fit = fitAsset(o.asset, p, 0, (x1 - x0) / nx, (z1 - z0) / nz, top - h * s - 0.03, h * s, `${tag}_${i}_${j}`);
         renderers.push(...fit.renderers);
       }
     }
@@ -634,7 +635,7 @@ export function compileWhitebox(spec: WhiteboxSpec, play: MapPlay | null = PLAY[
     spawn: { position: v3(spec.spawn.at), forward: [r3(Math.sin(yawRad)), 0, r3(-Math.cos(yawRad))] },
     bounds: { min: [Math.min(...bx), r3(wmin - 5), Math.min(...bz)], max: [Math.max(...bx), r3(wmax + 60), Math.max(...bz)] },
     visualBounds: { min: [-MARGIN, minY, -MARGIN], max: [spec.size[0] + MARGIN, maxY, spec.size[1] + MARGIN] },
-    renderers, colliders, platforms: [], water: [], activators: [],
+    renderers, colliders, platforms: [], water: buildWater(spec, ground, play), activators: [],
     heightfields: [heightfield],
     navigation: buildNavigation(terrain, probe),
     environment,
@@ -643,6 +644,35 @@ export function compileWhitebox(spec: WhiteboxSpec, play: MapPlay | null = PLAY[
   const boundary = buildBoundary(spec);
   const mechanisms = buildMechanisms(spec, config, play, terrain, boundary, doc.camps);
   return { doc, spec, config, terrain, probe, report, field, control, boundary, pieces, mechanisms, grade: play?.grade ?? null, notes };
+}
+
+/**
+ * 水体：白盒的水面多边形切成 6 m 见方的水体盒（玩法的水深 / 蹚水减速 / 首领吸干泉水都按盒子算），盒底 = 格子里最低的泉床，盒顶 = 水位。
+ * 1-4 的月牙泉叫 CrescentSpring（旱魃认这个名字吸干 / 复涌）；画面上的水面网格在运行时按多边形铺（redo/runtime.ts）。
+ */
+function buildWater(spec: WhiteboxSpec, ground: WbTerrain, play: MapPlay | null): UnitySceneDocument['water'] {
+  const tpl = play?.water ?? { shallow: 0.15, deep: 1.3, wadeSlow: 0.55, deepIsHazard: true, drownBurst: 0.05 };
+  const spring = spec.id === '1-4';
+  const out: UnitySceneDocument['water'] = [];
+  const cell = 6;
+  for (const w of spec.water ?? []) {
+    const xs = w.pts.map(p => p[0]), zs = w.pts.map(p => p[1]);
+    for (let x = Math.min(...xs); x < Math.max(...xs); x += cell) for (let z = Math.min(...zs); z < Math.max(...zs); z += cell) {
+      let bed = Infinity;
+      for (let i = 0; i <= 4; i++) for (let j = 0; j <= 4; j++) {
+        const px = x + cell * i / 4, pz = z + cell * j / 4;
+        if (pointInPolygon(px, pz, w.pts)) bed = Math.min(bed, ground.groundAt(px, pz));
+      }
+      if (!Number.isFinite(bed) || bed >= w.level - 0.05) continue;
+      const k = out.length + 1;
+      out.push({
+        id: `redo-water-${k}`, name: spring ? `CrescentSpring Water ${k}` : `Water ${k}`, scenePath: `Redo/Water/${k}`,
+        center: [r3(x + cell / 2), r3((bed + w.level) / 2), r3(z + cell / 2)], scale: [cell, r3(w.level - bed), cell], rotation: [0, 0, 0, 1],
+        ...tpl, spring, beds: [],
+      });
+    }
+  }
+  return out;
 }
 
 /** 运行时生成的软边界距离场的地址（MechanismData.provideBoundaryField 按它登记） */

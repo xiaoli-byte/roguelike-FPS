@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { UnityLevelLibrary, type UnitySceneDocument } from '../../UnityLevelLibrary';
 import { createUnityTerrainMesh } from '../../UnityTerrainMesh';
+import { createUnityWaterMaterial } from '../../UnityWaterMaterial';
 import { setStylizedEnvironment, stylizeTerrain, terrainStyle } from '../../UnityStylizedLit';
 import { provideBoundaryField } from '../../mechanisms/MechanismData';
 import { WHITEBOXES } from '../whitebox';
@@ -157,7 +158,7 @@ export function redoArt(id: string): DesertMapArt | null {
     async build(b): Promise<DesertPart[]> {
       const c = compiled.get(id);
       if (!c) return [];
-      const parts: DesertPart[] = [await terrainPart(b.document, c, b.group)];
+      const parts: DesertPart[] = [await terrainPart(b.document, c, b.group), ...waterParts(b.document, c, b.group)];
       const built = pending.get(id);
       pending.delete(id);
       for (const p of built?.pieces ?? []) {
@@ -198,4 +199,33 @@ async function terrainPart(doc: UnitySceneDocument, c: CompiledMap, group: THREE
       control.dispose();
     },
   };
+}
+
+/**
+ * 画面上的水面：白盒的水面多边形铺成一张平面（水体盒管玩法，这张只管看）。1-4 的叫 CrescentSpring Surface——
+ * UnityWaterView 按这个名字找到它，旱魃吸干泉水时让它跟着水位落下去、见底时藏起来。
+ */
+function waterParts(doc: UnitySceneDocument, c: CompiledMap, group: THREE.Group): DesertPart[] {
+  return (c.spec.water ?? []).map((w, k) => {
+    const shape = new THREE.Shape(w.pts.map(p => new THREE.Vector2(p[0], -p[1])));
+    // ShapeGeometry 在 XY 平面：绕 x 转 −90° 放平（y 取反抵掉，z = 白盒的 z）
+    const geometry = new THREE.ShapeGeometry(shape, 8).rotateX(-Math.PI / 2);
+    const source = new THREE.MeshStandardMaterial();
+    source.userData = {
+      unityShader: 'Spiritfire/Water',
+      // 泉水：浅处青绿、深处蓝，全画面唯一的冷色
+      unityColors: { _ShallowColor: [0.28, 0.7, 0.72, 0.55], _DeepColor: [0.06, 0.3, 0.42, 0.9] },
+      unityFloats: { _Alpha: 0.75, _WaveScale: 3, _WaveSpeed: 0.5, _WaveHeight: 0.02, _Sparkle: 1.2 },
+    };
+    const material = createUnityWaterMaterial(source, doc.environment);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.name = c.spec.id === '1-4' ? `CrescentSpring Surface ${k + 1}` : `Water Surface ${k + 1}`;
+    mesh.position.y = w.level;
+    mesh.renderOrder = 2;
+    group.add(mesh);
+    return {
+      update(_dt: number, t: number): void { material.uniforms.uTime.value = t; },
+      dispose(): void { mesh.removeFromParent(); geometry.dispose(); material.dispose(); },
+    };
+  });
 }

@@ -40,6 +40,8 @@ export interface MapPlay {
   safeZone: { radius: number; height: number; pushMargin: number; carveNavMesh: boolean } | null;
   /** 后期调色（旧场景 Volume 混好的结果） */
   grade: VolumeOverrides | null;
+  /** 水体的参数模板（浅 / 深阈值、蹚水减速、深水危险）；形状按白盒的水面多边形 */
+  water: { shallow: number; deep: number; wadeSlow: number; deepIsHazard: boolean; drownBurst: number } | null;
 }
 
 export const PLAY: Record<string, MapPlay> = {
@@ -951,7 +953,8 @@ export const PLAY: Record<string, MapPlay> = {
     "effectsSaturation": 1.15,
     "flash": 1
    }
-  }
+  },
+  "water": null
  },
  "1-2": {
   "title": "雅丹迷城",
@@ -1945,7 +1948,8 @@ export const PLAY: Record<string, MapPlay> = {
     "effectsSaturation": 1.15,
     "flash": 1
    }
-  }
+  },
+  "water": null
  },
  "1-3": {
   "title": "沉沙古城",
@@ -2991,7 +2995,8 @@ export const PLAY: Record<string, MapPlay> = {
     "effectsSaturation": 1.15,
     "flash": 1
    }
-  }
+  },
+  "water": null
  },
  "1-4": {
   "title": "鸣沙山月牙泉 · 旱魃",
@@ -3203,6 +3208,13 @@ export const PLAY: Record<string, MapPlay> = {
     "effectsSaturation": 1.15,
     "flash": 1
    }
+  },
+  "water": {
+   "shallow": 0.15,
+   "deep": 1.3,
+   "wadeSlow": 0.55,
+   "deepIsHazard": true,
+   "drownBurst": 0.05
   }
  },
  "1-A": {
@@ -4327,6 +4339,7 @@ export const PLAY: Record<string, MapPlay> = {
     "effectsSaturation": 1.15,
     "flash": 1
    }
-  }
+  },
+  "water": null
  }
 } as unknown as Record<string, MapPlay>;

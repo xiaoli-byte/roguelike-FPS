@@ -92,6 +92,10 @@ test('Unity water slows wading, rescues from deep water and follows spring phase
   const view = new UnityWaterView(ctx, document, new Map([['water', [renderer]]]));
   view.update(0.1);
   assert.ok(player.stats.get('moveSpeed') < player.stats.getBase('moveSpeed') * 0.6);
+  // 离盒心 4 m 还在 10 m 见方的水体里：照样算蹚水（水体盒按缩放后的尺寸判断，不是按单位盒）
+  player.position.set(4, 0.8, -4); player.onGround = true; view.update(0.1);
+  assert.ok(view.depthAt(player.position) > 1, String(view.depthAt(player.position)));
+  assert.ok(player.stats.get('moveSpeed') < player.stats.getBase('moveSpeed') * 0.6);
   player.position.set(20, 0, 20); player.onGround = true; view.update(0.1);
   assert.equal(player.stats.get('moveSpeed'), player.stats.getBase('moveSpeed'));
   player.position.set(0, 0.65, 0); view.update(0.1);

@@ -109,9 +109,10 @@ export class UnityWaterView implements StageWaterHook {
 
   private depth(body: Body, position: THREE.Vector3): number {
     if (body.level <= 0.001 && body.to <= body.from) return 0;
-    const centerY = body.bottom + body.scale.y * Math.max(0.02, body.level) * 0.5;
-    _local.copy(position).sub(_point.copy(body.center).setY(centerY)).applyQuaternion(body.inverse);
-    if (Math.abs(_local.x) > 0.5 || Math.abs(_local.z) > 0.5 || _local.y < -0.5 - 1e-3) return 0;
+    const half = body.scale.y * Math.max(0.02, body.level) * 0.5;
+    _local.copy(position).sub(_point.copy(body.center).setY(body.bottom + half)).applyQuaternion(body.inverse);
+    // 本地坐标是米（没除缩放）：按盒子的半宽 / 半深判断在不在水里，低于泉床不算
+    if (Math.abs(_local.x) > body.scale.x * 0.5 || Math.abs(_local.z) > body.scale.z * 0.5 || _local.y < -half - 1e-3) return 0;
     return Math.max(0, body.bottom + body.scale.y * body.level - position.y);
   }
 

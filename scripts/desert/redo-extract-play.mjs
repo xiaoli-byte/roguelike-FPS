@@ -36,6 +36,7 @@ for (const id of MAPS) {
     camp: m.camps?.[0] ? { safeRadius: m.camps[0].safeRadius, openShop: m.camps[0].openShop, restoreOnArrive: m.camps[0].restoreOnArrive } : null,
     safeZone: m.safeZones?.[0] ? { radius: m.safeZones[0].radius, height: m.safeZones[0].height, pushMargin: m.safeZones[0].pushMargin, carveNavMesh: m.safeZones[0].carveNavMesh } : null,
     grade: vols[id]?.resolved ?? null,
+    water: d.water?.[0] ? { shallow: d.water[0].shallow, deep: d.water[0].deep, wadeSlow: d.water[0].wadeSlow, deepIsHazard: d.water[0].deepIsHazard, drownBurst: d.water[0].drownBurst } : null,
   });
 }
 
@@ -81,6 +82,8 @@ export interface MapPlay {
   safeZone: { radius: number; height: number; pushMargin: number; carveNavMesh: boolean } | null;
   /** 后期调色（旧场景 Volume 混好的结果） */
   grade: VolumeOverrides | null;
+  /** 水体的参数模板（浅 / 深阈值、蹚水减速、深水危险）；形状按白盒的水面多边形 */
+  water: { shallow: number; deep: number; wadeSlow: number; deepIsHazard: boolean; drownBurst: number } | null;
 }
 
 export const PLAY: Record<string, MapPlay> = ${JSON.stringify(out, null, 1)} as unknown as Record<string, MapPlay>;
