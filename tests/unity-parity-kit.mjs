@@ -13,6 +13,12 @@ const srcRoot = fileURLToPath(new URL('../src/', import.meta.url));
 const scriptsRoot = new URL('../unity/Assets/Game/Scripts/', import.meta.url);
 const testsRoot = new URL('../unity/Assets/Game/Tests/', import.meta.url);
 
+/**
+ * 冻结的规格快照：tests/fixtures/spec/<name>.json（Unity 版删除前一次性从 C# / Unity 导出物导出，出处写在每份文件的 _comment、*At、_lines 里）。
+ * 常量总表 cs-consts.json 的键是相对 Unity 工程 Assets/Game/Scripts 的 C# 文件名（#名字 = 文件里的一段）。
+ */
+export const spec = name => JSON.parse(readFileSync(new URL(`./fixtures/spec/${name}.json`, import.meta.url), 'utf8'));
+
 /** Unity 运行时源码（相对 unity/Assets/Game/Scripts/） */
 export const cs = file => readFileSync(new URL(file, scriptsRoot), 'utf8');
 /** Unity EditMode 测试源码（相对 unity/Assets/Game/Tests/） */

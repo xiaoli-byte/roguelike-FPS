@@ -1,12 +1,13 @@
 // M13 对照：Unity EditMode 的 WeaponStatsTests.cs → node --test。
-// 解析器（WeaponStatsResolver.Compute ↔ resolveWeapon）逐项按 Unity 公式重算；品质 / 强化 / 掉落权重等常量从 C# 源码读。
+// 解析器（WeaponStatsResolver.Compute ↔ resolveWeapon）逐项按 Unity 公式重算；品质 / 强化 / 掉落权重等常量是 Unity 版删除前
+// 从 C# 冻结的规格（tests/fixtures/spec/weapons.json、cs-consts.json）。
 // 掷骰（WeaponRoller ↔ WeaponSystem.roll / rollRarity）：WeaponSystem 的第一人称模型、世界模型、碎刃控制器打桩，
 // 只借它原型上的 roll / rollRarity / upgradeCost（假的 this，只带 rng / 章节 / 属性表）。
-// 只写测试：和 Unity 不一致的地方写成 todo（见文件末尾），不改实现。
+// 只写测试，不改实现。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { readFileSync } from 'node:fs';
-import { cs, csConsts, csList, near, tsGraph } from './unity-parity-kit.mjs';
+import { near, spec, tsGraph } from './unity-parity-kit.mjs';
 
 const graph = await tsGraph({
   'weapons/Viewmodel.ts': 'export class Viewmodel {}\nexport const createViewmodelState = () => ({});\n',
@@ -21,14 +22,13 @@ const { Rng } = await graph.load('core/Rng.ts');
 const { Stats } = await graph.load('core/Stats.ts');
 const rules = await graph.load('progression/loot/rewardRules.ts');
 
-const defsCs = cs('Weapons/WeaponDefs.cs');
-const lib = csConsts(defsCs);
-const rarityDamage = csList(defsCs.match(/RarityDamage = \{([^}]+)\}/)[1]);
-const resolverCs = cs('Weapons/WeaponStatsResolver.cs');
-const resolver = csConsts(resolverCs);
-const rollerCs = cs('Weapons/WeaponRoller.cs');
-const roller = csConsts(rollerCs);
-const chapterRarity = [...rollerCs.match(/ChapterRarity =\s*\{([\s\S]*?)\};/)[1].matchAll(/new\[\] \{([^}]+)\}/g)].map(m => csList(m[1]));
+const SPEC = spec('weapons');
+const K = spec('cs-consts');
+const lib = K['Weapons/WeaponDefs.cs'];
+const rarityDamage = SPEC.rarityDamage;
+const resolver = K['Weapons/WeaponStatsResolver.cs'];
+const roller = K['Weapons/WeaponRoller.cs'];
+const chapterRarity = SPEC.chapterRarity;
 
 const def = id => W.getWeaponDef(id);
 let uid = 1;
@@ -50,7 +50,7 @@ test('品质 / 强化 / 解析器下限的常量同 Unity', () => {
   assert.equal(W.MAX_LEVEL, lib.MaxUpgrade);
   assert.equal(W.LEVEL_DAMAGE, lib.UpgradeStep);
   assert.deepEqual([resolver.MinReloadMult, resolver.MinSpreadMult], [0.25, 0.1]);
-  assert.match(resolverCs, /RoundHalfUp\(float v\) => Mathf\.FloorToInt\(v \+ 0\.5f\)/, 'Unity 的取整是 .5 进位（同 Math.round，不是银行家舍入）');
+  // Unity 的取整是 .5 进位（WeaponStatsResolver.RoundHalfUp = Mathf.FloorToInt(v + 0.5f)，同 Math.round，不是银行家舍入）：见下面的 roundHalfUp
 });
 
 test('没有词条时：每把武器 × 品质 × 强化 × 属性表，解析结果 = Unity 的公式（CurrentSixWeaponsMatchLegacyNumbers）', () => {
@@ -200,16 +200,16 @@ test('强化费用：round(50 × (等级 + 1) × (1 + 0.3 × 章))，负章节�
 
 const tsSystem = readFileSync(new URL('../src/weapons/WeaponSystem.ts', import.meta.url), 'utf8');
 
-test('各章稀有度权重表、随机元素几率、幸运公式的常量同 Unity（读两边源码）', () => {
+test('各章稀有度权重表、随机元素几率、幸运公式的常量同 Unity（网页源码 ↔ 冻结的 C# 规格）', () => {
   const ts = [...tsSystem.match(/CHAPTER_RARITY[^=]*=\s*\[([\s\S]*?)\];/)[1].matchAll(/\[([^\]]+)\]/g)].map(m => m[1].split(',').map(Number));
   assert.deepEqual(ts, chapterRarity);
   assert.equal(Number(tsSystem.match(/RANDOM_ELEMENT_CHANCE = ([\d.]+)/)[1]), roller.RandomElementChance);
-  assert.match(rollerCs, /RandomElements = \{ Element\.Fire, Element\.Shock, Element\.Corrode \}/);
+  assert.deepEqual(SPEC.randomElements, ['fire', 'shock', 'corrode']);
   assert.match(tsSystem, /RANDOM_ELEMENTS[^=]*= \['fire', 'shock', 'corrode'\]/);
   assert.deepEqual([roller.LuckCommonDiv, roller.LuckRarityMul], [0.12, 0.15]);
   assert.match(tsSystem, /x === 0 \? w \/ \(1 \+ 0\.12 \* luck\) : w \* \(1 \+ 0\.15 \* luck \* x\)/);
-  assert.match(rollerCs, /RandomElementMinRarity = Rarity\.Uncommon/);
-  assert.match(tsSystem, /element === 'none' && rarity >= 1 && rng\.chance\(RANDOM_ELEMENT_CHANCE\)/);
+  assert.equal(SPEC.randomElementMinRarity, 1, 'Unity RandomElementMinRarity = Rarity.Uncommon');
+  assert.match(tsSystem, new RegExp(`element === 'none' && rarity >= ${SPEC.randomElementMinRarity} && rng\\.chance\\(RANDOM_ELEMENT_CHANCE\\)`));
 });
 
 function system(seed, { luck = 0, chapter = 0 } = {}) {
@@ -302,11 +302,9 @@ test('武器奖励的提示文案同 Unity（WeaponReward.Hint）', () => {
   assert.equal(rules.weaponRewardHint('combat', 0), '一把随机武器');
   assert.equal(rules.weaponRewardHint('boss', 0), '一把史诗及以上品质的武器');
   assert.equal(rules.weaponRewardHint('boss', 1), '一把传说品质的武器');
-  const hintCs = cs('Loot/Rewards/WeaponReward.cs');
-  for (const text of ['一把随机武器', '及以上品质的武器', '品质的武器']) assert.ok(hintCs.includes(text), `Unity 源码里有「${text}」`);
 });
 
-// ───────────── 不一致清单（不改实现，交给 M8）─────────────
+// ───────────── 奖励串（M8 照 Unity 改齐的）─────────────
 
 test('武器奖励串同 Unity WeaponReward.Parse（WeaponStatsTests.WeaponRewardStringsParse）：weapon / weapon:min=N / weapon:<id> / weapon:<id>:N / weapon:<id>:min=N', () => {
   const p = rules.parseWeaponReward;
@@ -320,11 +318,6 @@ test('武器奖励串同 Unity WeaponReward.Parse（WeaponStatsTests.WeaponRewar
   assert.deepEqual(p('weapon:2:smg'), { id: 'smg', rarity: 2, minRarity: 0 });
   assert.deepEqual(p('weapon::smg: :min=-1'), { id: 'smg', rarity: null, minRarity: 0 });
   assert.deepEqual(p('weapon:smg:revolver:7'), { id: 'smg', rarity: 4, minRarity: 0 });
-  // Unity 源码：解析规则就是这几条
-  const src = cs('Loot/Rewards/WeaponReward.cs');
-  assert.match(src, /if \(a\.StartsWith\("min="\) && int\.TryParse\(a\.Substring\(4\), out var m\)\)\s*\{\s*min = Rarity\.Clamp\(m\);/);
-  assert.match(src, /else if \(int\.TryParse\(a, out var r\)\) rarity = Rarity\.Clamp\(r\);\s*else id \?\?= a;/);
-  assert.match(src, /if \(id != null && !rarity\.HasValue && !hasMin\) rarity = Rarity\.Common;/);
   // 种类：带参数的武器奖励也是 'weapon'
   for (const r of ['weapon', 'weapon:min=1', 'weapon:beam']) assert.equal(rules.rewardKey(r), 'weapon');
   for (const r of ['scroll', 'coins', 'heal', 'upgrade', 'none']) assert.equal(rules.rewardKey(r), r);
@@ -341,8 +334,6 @@ test('武器奖励串的发放与提示同 Unity（EconomyConfig.ApplyTier + Wea
   assert.deepEqual(roll('weapon:min=1', 'boss', 1), { minRarity: 1 });
   assert.deepEqual(roll('weapon:stormpod:1', 'combat', 0), { defId: 'stormpod', rarity: 1 });
   assert.deepEqual(roll('weapon:revolver:min=2', 'combat', 0), { defId: 'revolver', minRarity: 2 });
-  const econ = cs('Core/EconomyConfig.cs');
-  assert.match(econ, /case "weapon":\s*if \(args\.Length > 1\) return reward;\s*int min = WeaponMinRarity\(tier, chapter\);/);
   // 交给 WeaponSystem.roll：指定的武器 / 品质 / 保底都生效（Unity WeaponRoller.Roll：rarity 写了就用，低于保底抬到保底）
   for (let seed = 1; seed <= 40; seed++) {
     const s = system(seed, { chapter: 0 });
@@ -363,20 +354,4 @@ test('武器奖励串的发放与提示同 Unity（EconomyConfig.ApplyTier + Wea
   assert.equal(hint('weapon:beam'), def('beam').name, '普通品质只写名字');
   assert.equal(hint('weapon:revolver:min=2'), `${def('revolver').name}（稀有及以上）`);
   assert.equal(hint('weapon:no_such_gun:2'), '一把稀有品质的武器', '查不到的武器按没指定说；固定品质不写「及以上」');
-  assert.match(cs('Loot/Rewards/WeaponReward.cs'), /if \(spec\.rarity\.HasValue\) return spec\.rarity\.Value > 0 \? \$"\{Rarity\.Name\(spec\.rarity\.Value\)\} · \{def\.name\}" : def\.name;\s*return spec\.minRarity > 0 \? \$"\{def\.name\}（\{Rarity\.Name\(spec\.minRarity\)\}及以上）" : def\.name;/);
 });
-
-test('场景文档里的武器奖励串（weapon:beam、weapon:stormpod:1、weapon:min=1）都是网页认得的武器', () => {
-  const dir = new URL('../public/assets/unity-levels/scenes/', import.meta.url);
-  const seen = new Set();
-  for (const f of ['1-1', '1-2', '1-3', '1-A', '2-1', '2-2', '2-3', '2-A', '3-1', '3-2', '3-3', '3-4', '3-A', '4-1', '4-3']) {
-    const doc = JSON.parse(readFileSync(new URL(`${f}.json`, dir), 'utf8'));
-    for (const r of [...doc.caches.map(c => c.reward), ...doc.encounters.map(e => e.reward)]) if (r?.startsWith('weapon:')) seen.add(r);
-  }
-  assert.ok(seen.has('weapon:min=1') && seen.has('weapon:beam') && seen.has('weapon:stormpod:1'), [...seen].join(' '));
-  for (const r of seen) {
-    const spec = rules.parseWeaponReward(r);
-    if (spec.id !== null) assert.ok(W.hasWeaponDef(spec.id), `${r}：武器 ${spec.id} 在网页的武器表里`);
-  }
-});
-test.todo('ResolvedWeapon.projectileSpeed：Unity 解析器直接给出弹速（定义 × 玩家弹速 × 词条），网页只给 projSpeedMult，弹速在 Firing 里现乘（数值一致，只是字段不同）');

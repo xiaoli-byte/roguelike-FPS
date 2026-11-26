@@ -1,12 +1,12 @@
 // M13 对照：Unity EditMode 的 ReactionTuningTests.cs、ReactionTests.cs → node --test。
-// 调参表和常量直接读 CombatTuning.cs（Unity 的单一来源）与 Reactions.ts 比；判定（附着 / 引爆 / 强制反应 / 冷却 / 预算）
-// 用真的 Combat + ReactionSystem 驱动（Unity 那份用假的 IReactionEnv + ReactionScheduler：同样的输入、同样的断言，
-// 队列里的条目直接看 ReactionSystem 的内部字段——去类型后 private 只是普通属性）。
+// 调参表和常量是 Unity 版删除前从 CombatTuning.cs（Unity 的单一来源）冻结的规格（tests/fixtures/spec/combat.json、cs-consts.json），
+// 与 Reactions.ts 比；判定（附着 / 引爆 / 强制反应 / 冷却 / 预算）用真的 Combat + ReactionSystem 驱动
+// （Unity 那份用假的 IReactionEnv + ReactionScheduler：同样的输入、同样的断言，队列里的条目直接看 ReactionSystem 的内部字段——去类型后 private 只是普通属性）。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
-import { combatRig, cs, csConsts, near, tsGraph } from './unity-parity-kit.mjs';
+import { combatRig, near, spec, tsGraph } from './unity-parity-kit.mjs';
 
 const graph = await tsGraph();
 after(() => graph.dispose());
@@ -14,14 +14,16 @@ const RX = await graph.load('combat/Reactions.ts');
 const Types = await graph.load('core/types.ts');
 const EPS = 1e-4;
 
-const tuningSrc = cs('Combat/CombatTuning.cs');
+const SPEC = spec('combat');
+const K = spec('cs-consts');
 /** CombatTuning 里某个嵌套 static class 的常量 */
 function tune(name) {
-  const at = tuningSrc.indexOf(`public static class ${name}`);
-  assert.ok(at > 0, `CombatTuning.${name}`);
-  return csConsts(tuningSrc.slice(at, tuningSrc.indexOf('}', at)));
+  const c = K[`Combat/CombatTuning.cs#${name}`];
+  assert.ok(c, `CombatTuning.${name}`);
+  return c;
 }
-const general = csConsts(tuningSrc.slice(0, tuningSrc.indexOf('public static class Thunderfire')));
+/** CombatTuning 顶层（嵌套类之前）的总则常量 */
+const general = K['Combat/CombatTuning.cs#general'];
 /** Reactions.ts 里没导出的 const（读源码字面量） */
 const webSrc = readFileSync(new URL('../src/combat/Reactions.ts', import.meta.url), 'utf8');
 const web = Object.fromEntries([...webSrc.matchAll(/^const (\w+) = (-?[\d.]+(?:e-?\d+)?);/gm)].map(m => [m[1], Number(m[2])]));
@@ -30,8 +32,7 @@ const IDS = ['thunderfire', 'meltdown', 'veinseal', 'abyss'];
 // ───────────── 调参（ReactionTuningTests）─────────────
 
 test('TuningTableMatchesThreeJs: REACTION_TUNING ↔ CombatTuning.Reactions', () => {
-  const block = tuningSrc.slice(tuningSrc.indexOf('ReactionTune[] Reactions'), tuningSrc.indexOf('public static ReactionTune Of'));
-  const rows = [...block.matchAll(/new\(([\d.]+)f?, ([\d.]+)f?, ([\d.]+)f?, ([\d.]+)f?\)/g)].map(m => m.slice(1, 5).map(Number));
+  const rows = SPEC.reactions.tune;
   assert.equal(rows.length, 4, '反应种类');
   assert.deepEqual(Types.REACTION_IDS, IDS);
   IDS.forEach((id, i) => {
@@ -87,9 +88,9 @@ test('ReactionBaseMatchesThreeJs / BaseIsClampedBetweenFloorAndCapTimesStrength'
 });
 
 test('NamesColorsAndTagsMatchDesign', () => {
-  assert.deepEqual(IDS.map(id => Types.REACTION_NAMES[id]), [...tuningSrc.match(/ReactionNames = \{([^}]+)\}/)[1].matchAll(/"([^"]+)"/g)].map(m => m[1]));
+  assert.deepEqual(IDS.map(id => Types.REACTION_NAMES[id]), SPEC.reactions.names);
   assert.deepEqual(IDS.map(id => Types.REACTION_NAMES[id]), ['焚雷', '熔金', '封脉', '归墟']);
-  const unityColors = [...tuningSrc.match(/ReactionColors = \{([^}]+)\}/)[1].matchAll(/0x([0-9a-f]{6})/g)].map(m => parseInt(m[1], 16));
+  const unityColors = SPEC.reactions.colors;
   assert.deepEqual(IDS.map(id => Types.REACTION_COLORS[id]), unityColors);
   assert.deepEqual(unityColors, [0xffd84a, 0xff7a1a, 0x5affd0, 0xc89bff]);
   assert.equal(web.TF_ARC_COLOR ?? Number(webSrc.match(/TF_ARC_COLOR = (0x[0-9a-f]+)/)[1]), 0x6fd8ff);
@@ -479,9 +480,6 @@ test('LevelScaleIsOnePlusPoint85PerLevel: 反应威力下限随关卡难度', as
     near(assert, f.reactions[0].base, 14 * s, 1e-3, `S = 1 + max(0, 难度 − 1) × 0.85，难度 ${level}`);
   }
 });
-
-test.todo('【结构不同，不迁】ReactionTests.EveryOutcomeHasExactlyOneHandler / FrameBudgetResetsEachFrame：Unity 把五种结果拆成处理器类 + FrameBudget，'
-  + '网页是 ReactionSystem 里的 run* 方法与计数器（预算规则已由上面的用例按行为覆盖）');
 
 // M8 照 Unity 改齐（原来的 todo：网页点燃半径内全部）
 test('焚雷扩散灼烧：身体中心在半径内、按距离取最近 SpreadTargets = 16 个（Unity ReactionSystem.Nearest）', async () => {

@@ -1,0 +1,52 @@
+{
+ "_comment": "Unity 版删除前一次性从它的 C# 源码 / EditMode 测试 / 导出物冻结的规格（2026-11-26，Unity 工程同提交 9eea6305），作网页的对照基线；不要从网页的表反向重生成。出处（*At、src）是相对 Unity 工程 Assets 目录的路径:行号，原文在 git 历史里。 常量在 cs-consts.json。",
+ "layerTable": {
+  "none": [1, 0.75, 1],
+  "fire": [0.8, 1, 1.25],
+  "shock": [1.6, 0.8, 1],
+  "corrode": [1, 1.6, 1]
+ },
+ "layerTableAt": "Game/Scripts/Combat/Damage.cs:154",
+ "statDefaults": {
+  "MaxHp": 100,
+  "MaxShield": 50,
+  "ShieldRegenDelay": 3,
+  "ShieldRegenRate": 30,
+  "MoveSpeed": 7.5,
+  "JumpVelocity": 8.6,
+  "DashCharges": 1,
+  "DashCooldown": 1.6,
+  "CritChance": 0.05,
+  "PickupRadius": 3.5
+ },
+ "statDefaultsAt": "Game/Scripts/Core/Stats.cs:62",
+ "statEnum": ["MaxHp", "MaxShield", "ShieldRegenDelay", "ShieldRegenRate", "MoveSpeed", "DashCharges", "DashCooldown", "CritChance", "CritDamagePct", "DamagePct", "FireRatePct", "ReloadSpeedPct", "MagPct", "DamageReduction", "PickupRadius", "SkillHaste", "SkillDamagePct", "ExplosionDamagePct", "ElementChancePct", "KillHeal", "KillShield", "WeakpointDamagePct", "ReactionDamagePct", "ReactionHaste", "ExplosionRadiusPct", "PetDamagePct", "HpRegen", "Lifesteal", "JumpVelocity", "ExtraJumps", "AmmoReservePct", "SpreadPct", "RecoilPct", "ProjectileSpeedPct", "BossDamagePct", "EliteDamagePct", "ShieldDamagePct", "ArmorDamagePct", "ElementDamagePct", "FireDamagePct", "ShockDamagePct", "CorrodeDamagePct", "SecondaryCharges", "CoinGainPct", "Luck"],
+ "statEnumAt": "Game/Scripts/Core/Stats.cs:10",
+ "statusIds": ["burn", "shock", "corrode", "stun", "slow", "chill", "sunburn", "ignite"],
+ "statusIdsAt": "Game/Scripts/Combat/Status/StatusEffect.cs:12",
+ "playerHost": {
+  "Chill": true,
+  "Sunburn": true,
+  "Ignite": true,
+  "Burn": false,
+  "Shock": false,
+  "Corrode": false,
+  "Slow": false,
+  "Stun": false
+ },
+ "playerHostNote": "Combat/Status/<Name>Status.cs 里写着 Hosts => StatusHosts.Player 的为 true",
+ "reactions": {
+  "tune": [[1, 14, 80, 1], [1, 14, 100, 1.2], [1, 14, 90, 1.2], [1.5, 40, 320, 6]],
+  "tuneAt": "Game/Scripts/Combat/CombatTuning.cs:62",
+  "names": ["焚雷", "熔金", "封脉", "归墟"],
+  "namesAt": "Game/Scripts/Combat/CombatTuning.cs:73",
+  "colors": [16767050, 16742938, 5963728, 13147135],
+  "colorsAt": "Game/Scripts/Combat/CombatTuning.cs:75"
+ },
+ "damageNumbers": {
+  "blockedText": "格挡",
+  "blockedTextAt": "Game/Scripts/UI/Widgets/DamageNumbers.cs:126",
+  "blockedColor": 13226208,
+  "blockedColorAt": "Game/Scripts/UI/Widgets/DamageNumbers.cs:32"
+ }
+}

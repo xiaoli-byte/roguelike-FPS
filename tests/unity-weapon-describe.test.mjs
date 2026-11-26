@@ -1,9 +1,10 @@
 // M13 对照：Unity EditMode 的 WeaponDescriberTests.cs → node --test。
 // 武器描述（WeaponDescriber ↔ src/weapons/Describe.ts）与拾取对比行（CompareLine / CompareLines ↔ src/progression/loot/weaponPrompt.ts）。
 // 属性表用一张空的 Stats（Unity 传 null = 没有任何加成）。只写测试，不改实现。
+// Unity 一侧（强化上限、品质名）是 Unity 版删除前冻结的规格：tests/fixtures/spec/weapons.json、cs-consts.json。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
-import { cs, csConsts, tsGraph } from './unity-parity-kit.mjs';
+import { spec, tsGraph } from './unity-parity-kit.mjs';
 
 const graph = await tsGraph();
 after(() => graph.dispose());
@@ -19,11 +20,10 @@ let uid = 1;
 const make = (id, rarity = 0, o = {}) => ({ uid: uid++, defId: id, rarity, level: 0, element: W.getWeaponDef(id).element, mag: 0, reserve: 0, affixes: W.getWeaponDef(id).innate.map(a => ({ ...a })), ...o });
 const describe = (id, rarity = 0, o) => { const inst = make(id, rarity, o); return D.describeWeapon(inst, WS.resolveWeapon(inst, stats)); };
 const stat = (d, label) => d.stats.find(s => s.label === label)?.value ?? null;
-const lib = csConsts(cs('Weapons/WeaponDefs.cs'));
+const lib = spec('cs-consts')['Weapons/WeaponDefs.cs'];
 
 test('每把武器 × 每个品质都有描述：品质名、名字、秒伤 / 暴击 / 强化行；枪还有伤害 / 射速 / 弹匣 / 备弹 / 换弹 / 元素', () => {
-  const rarityNames = [...cs('Core/Rarity.cs').matchAll(/"(普通|精良|稀有|史诗|传说)"/g)].map(m => m[1]);
-  assert.deepEqual([...T.RARITY_NAMES], rarityNames.slice(0, 5), '品质名同 Unity 的 Rarity.Name');
+  assert.deepEqual([...T.RARITY_NAMES], spec('weapons').rarityNames, '品质名同 Unity 的 Rarity.Name');
   for (const def of W.WEAPON_DEFS) for (let r = 0; r < 5; r++) {
     const d = describe(def.id, r);
     assert.equal(d.rarityName, T.RARITY_NAMES[r], def.id);

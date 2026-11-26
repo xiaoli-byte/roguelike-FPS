@@ -1,0 +1,295 @@
+{
+ "_comment": "Unity 版删除前一次性从它的 C# 源码 / EditMode 测试 / 导出物冻结的规格（2026-11-26，Unity 工程同提交 9eea6305），作网页的对照基线；不要从网页的表反向重生成。出处（*At、src）是相对 Unity 工程 Assets 目录的路径:行号，原文在 git 历史里。 常量在 cs-consts.json。",
+ "attackTokenGap": [0.12, 0.32, 0.7],
+ "attackTokenGapAt": "Game/Scripts/Enemies/AttackTokens.cs:19",
+ "staggerSeconds": 0.6,
+ "staggerSecondsAt": "Game/Scripts/Enemies/EnemyDef.cs:63",
+ "plateauMoves": {
+  "SK_Enemy_Marmot": [
+   {
+    "id": "scream",
+    "name": "尖啸",
+    "windup": 1.2,
+    "active": 0.3,
+    "recover": 0.6,
+    "cooldown": 0,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 1.2, "name": "shout"}
+    ]
+   },
+   {
+    "id": "bite",
+    "name": "扑咬",
+    "windup": 0.35,
+    "active": 0.2,
+    "recover": 0.6,
+    "cooldown": 1.2,
+    "glint": false,
+    "noHit": false,
+    "events": []
+   },
+   {
+    "id": "burrow",
+    "name": "钻洞",
+    "windup": 0.25,
+    "active": 1.2,
+    "recover": 0.4,
+    "cooldown": 6,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 0.25, "name": "hide"},
+     {"at": 1.45, "name": "emerge"}
+    ]
+   }
+  ],
+  "SK_Enemy_Tiangou": [
+   {
+    "id": "howl",
+    "name": "雷吠",
+    "windup": 1.2,
+    "active": 0.6,
+    "recover": 0.6,
+    "cooldown": 7,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 1.2, "name": "lock"},
+     {"at": 1.8, "name": "strike"}
+    ]
+   },
+   {
+    "id": "pounce",
+    "name": "扑咬",
+    "windup": 0.3,
+    "active": 0.4,
+    "recover": 0.7,
+    "cooldown": 2.5,
+    "glint": false,
+    "noHit": false,
+    "events": []
+   }
+  ],
+  "SK_Enemy_Aoyin": [
+   {
+    "id": "stampede",
+    "name": "刨地 → 领群踩踏",
+    "windup": 1,
+    "active": 3,
+    "recover": 1.2,
+    "cooldown": 5,
+    "glint": true,
+    "noHit": false,
+    "events": []
+   },
+   {
+    "id": "gore",
+    "name": "四角挑",
+    "windup": 0.55,
+    "active": 0.25,
+    "recover": 0.7,
+    "cooldown": 1.6,
+    "glint": false,
+    "noHit": false,
+    "events": []
+   },
+   {
+    "id": "slam",
+    "name": "雷球砸地",
+    "windup": 1.4,
+    "active": 0.3,
+    "recover": 1,
+    "cooldown": 0,
+    "glint": true,
+    "noHit": false,
+    "events": []
+   }
+  ],
+  "SK_Enemy_Jufu": [
+   {
+    "id": "climb",
+    "name": "抢高",
+    "windup": 0.5,
+    "active": 1,
+    "recover": 0.5,
+    "cooldown": 0,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 1.5, "name": "land"}
+    ]
+   },
+   {
+    "id": "throw",
+    "name": "远投",
+    "windup": 1,
+    "active": 0.1,
+    "recover": 0.8,
+    "cooldown": 3,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 1, "name": "release"}
+    ]
+   },
+   {
+    "id": "shove",
+    "name": "推开",
+    "windup": 0.45,
+    "active": 0.2,
+    "recover": 0.6,
+    "cooldown": 2,
+    "glint": false,
+    "noHit": false,
+    "events": []
+   },
+   {
+    "id": "fall",
+    "name": "摔下高处",
+    "windup": 0,
+    "active": 0.8,
+    "recover": 1.5,
+    "cooldown": 0,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 0.8, "name": "land"}
+    ]
+   }
+  ],
+  "SK_Enemy_Manman": [
+   {
+    "id": "sweep",
+    "name": "电弧横扫",
+    "windup": 0.8,
+    "active": 1.2,
+    "recover": 1,
+    "cooldown": 6,
+    "glint": false,
+    "noHit": false,
+    "events": []
+   },
+   {
+    "id": "bolt",
+    "name": "电弹",
+    "windup": 0.4,
+    "active": 0.1,
+    "recover": 0.3,
+    "cooldown": 3,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 0.4, "name": "release"}
+    ]
+   }
+  ],
+  "SM_EnemyPart_LianguCore": [
+   {
+    "id": "beat",
+    "name": "鼓点",
+    "windup": 0.25,
+    "active": 0.1,
+    "recover": 0.85,
+    "cooldown": 0,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 0.25, "name": "beat"}
+    ]
+   },
+   {
+    "id": "clap",
+    "name": "惊雷",
+    "windup": 0.8,
+    "active": 0.2,
+    "recover": 1,
+    "cooldown": 3,
+    "glint": false,
+    "noHit": false,
+    "events": []
+   },
+   {
+    "id": "orb",
+    "name": "雷心弹",
+    "windup": 0.4,
+    "active": 0.1,
+    "recover": 1.3,
+    "cooldown": 0,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 0.4, "name": "release"}
+    ]
+   }
+  ],
+  "SK_Enemy_Dijiang": [
+   {
+    "id": "swell",
+    "name": "球雷",
+    "windup": 0.8,
+    "active": 0.1,
+    "recover": 0,
+    "cooldown": 0,
+    "glint": true,
+    "noHit": false,
+    "events": []
+   }
+  ],
+  "SK_Enemy_Qiongqi": [
+   {
+    "id": "glide",
+    "name": "掠空扑杀",
+    "windup": 0.7,
+    "active": 1.6,
+    "recover": 0.8,
+    "cooldown": 4,
+    "glint": true,
+    "noHit": false,
+    "events": [
+     {"at": 2.3, "name": "land"}
+    ]
+   },
+   {
+    "id": "spin",
+    "name": "翼刃雷旋",
+    "windup": 0.5,
+    "active": 0.4,
+    "recover": 0.8,
+    "cooldown": 3,
+    "glint": false,
+    "noHit": false,
+    "events": []
+   },
+   {
+    "id": "claw",
+    "name": "爪击",
+    "windup": 0.35,
+    "active": 0.5,
+    "recover": 0.6,
+    "cooldown": 1.2,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 0.45, "name": "hit1"},
+     {"at": 0.7, "name": "hit2"}
+    ]
+   },
+   {
+    "id": "absorb",
+    "name": "吞雷",
+    "windup": 0.8,
+    "active": 0.6,
+    "recover": 0.4,
+    "cooldown": 0,
+    "glint": false,
+    "noHit": true,
+    "events": [
+     {"at": 0.8, "name": "eat"}
+    ]
+   }
+  ]
+ },
+ "plateauMovesAt": "Game/Scripts/Enemies/AI/Plateau/PlateauKit.cs:53"
+}

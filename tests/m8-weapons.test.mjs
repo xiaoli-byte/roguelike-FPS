@@ -1,11 +1,12 @@
 // M8 武器 / 技能对照（Unity Weapons/WeaponController.cs、FireModes/*、FlameCone.cs、RailgunBeam.cs、Ballistics.cs，Skills/CastPose.cs、
-// SkillFx.cs、HeroSkills.cs、Bear / Falcon / LiaoSkills.cs → 网页 src/weapons/、src/player/）。常量从 C# 源码读出来比；
-// 行为断言照 Unity EditMode 的 FireModeTests（扳机 / 冲刺禁射）、CastPoseTests、WeaponSpecialsTests。
+// SkillFx.cs、HeroSkills.cs、Bear / Falcon / LiaoSkills.cs → 网页 src/weapons/、src/player/）。常量和 Unity 版删除前从 C# 冻结的规格
+// （tests/fixtures/spec/cs-consts.json、skills.json）比；行为断言照 Unity EditMode 的 FireModeTests（扳机 / 冲刺禁射）、CastPoseTests、WeaponSpecialsTests。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
+import { spec } from './unity-parity-kit.mjs';
 
 const threeUrl = new URL('../node_modules/three/build/three.module.js', import.meta.url).href;
 const data = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
@@ -14,18 +15,9 @@ async function ts(path, imports = {}) {
   for (const [key, value] of Object.entries({ three: threeUrl, ...imports })) source = source.replaceAll(`'${key}'`, `'${value}'`);
   return data(stripTypeScriptTypes(source, { mode: 'transform' }));
 }
-const cs = path => readFile(new URL(`../unity/Assets/Game/Scripts/${path}`, import.meta.url), 'utf8');
 const src = path => readFile(new URL(`../src/${path}`, import.meta.url), 'utf8');
-function csConsts(source) {
-  const out = {};
-  for (const m of source.matchAll(/const\s+(?:float|int)\s+([^;(){}]+);/g)) {
-    for (const part of m[1].split(',')) {
-      const kv = part.match(/^\s*(\w+)\s*=\s*(-?[\d.]+)f?\s*$/);
-      if (kv) out[kv[1]] = Number(kv[2]);
-    }
-  }
-  return out;
-}
+/** C# 常量，键 = 相对 Unity 工程 Game/Scripts 的文件名（#名字 = 文件里的一个类） */
+const K = spec('cs-consts');
 const near = (a, b, msg, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${msg ?? ''} ${a} ≠ ${b}`);
 
 const mathUrl = await ts('../src/core/math.ts');
@@ -43,28 +35,22 @@ const CAST = await import(await ts('../src/player/CastPose.ts'));
 // ───────────── 时序 / 手感常数 ─────────────
 
 test('weapon timing + feel constants match Unity WeaponTiming / WeaponController', async () => {
-  const t = csConsts(await cs('Weapons/FireModes/WeaponTiming.cs'));
+  const t = K['Weapons/FireModes/WeaponTiming.cs'];
   for (const k of Object.keys(FC.WEAPON_TIMING)) near(FC.WEAPON_TIMING[k], t[k], k);
-  const wc = await cs('Weapons/WeaponController.cs');
-  const c = csConsts(wc);
+  const c = K['Weapons/WeaponController.cs'];
   near(FC.WEAPON_FEEL.RecoilScale, c.RecoilScale);
   near(FC.WEAPON_FEEL.ViewKickScale, c.ViewKickScale);
   near(FC.WEAPON_FEEL.MeleeHudSpread, c.MeleeHudSpread);
-  assert.match(wc, /aimT = Mathf\.MoveTowards\(aimT, aiming \? 1 : 0, dt \* 7f\)/);
+  // WeaponController 行内写死的数：开镜每秒 7；跑动散布 |v| / 7.5 × (0.2 − 0.1·aim)；滞空 1.15 − 0.1·aim；连射累积 × (1 − 0.45·aim)；
+  // 弹丸锥 Lerp(1, 0.72, aim)；准星上限 0.25
   near(FC.WEAPON_FEEL.AimRate, 7);
-  assert.match(wc, /magnitude \/ 7\.5f\) \* \(0\.2f - 0\.1f \* aimT\)/);
-  assert.match(wc, /motor\.Grounded \? 1 : 1\.15f - 0\.1f \* aimT/);
-  assert.match(wc, /bloom \* \(1 - 0\.45f \* aimT\)\) \* R\.spreadMult/);
-  assert.match(wc, /Mathf\.Lerp\(1, 0\.72f, aimT\)/);
-  assert.match(wc, /Mathf\.Clamp\(spreadNow \+ PelletCone\(def, R\), 0, 0\.25f\)/);
   const F = FC.WEAPON_FEEL;
   assert.deepEqual([F.MoveSpread, F.MoveSpreadAim, F.MoveSpreadSpeed, F.AirSpread, F.AirSpreadAim, F.BloomAim, F.PelletAim, F.HudSpreadMax, F.HudLambda], [0.2, 0.1, 7.5, 1.15, 0.1, 0.45, 0.72, 0.25, 18]);
-  near(F.ScopeKick, csConsts(await cs('Weapons/Handling/WeaponSight.cs')).ScopeKick);
+  near(F.ScopeKick, K['Weapons/Handling/WeaponSight.cs'].ScopeKick);
   // WeaponSystem 真的在用
   const ws = await src('weapons/WeaponSystem.ts');
   assert.match(ws, /addRecoil\(pitch \* WEAPON_FEEL\.RecoilScale, yaw \* WEAPON_FEEL\.RecoilScale\)/);
   assert.match(ws, /kick\.call\(ctx\.player, def\.shake \* strength, shakeTime, def\.kick\.back \* strength\)/, '开枪的镜头反馈走 fireKick');
-  assert.match(wc, /feel\.FireKick\(def\.shake \* strength, def\.shake > 0\.15f \? 0\.16f : 0\.08f, def\.kickBack \* strength\)/);
 });
 
 test('trigger latch: buffered press or a held-but-unfired press counts as a pull (Unity TriggerState)', () => {
@@ -108,10 +94,6 @@ test('dash blocks firing but not charging / spin-up; aim is refused while reload
   assert.match(ws, /if \(blocked\) return;\s*this\.burstTimer -= dt;/, '点射：冲刺中暂停，冲刺完接着打');
   assert.match(ws, /const firing = want && !blocked && this\.spin >= 1 && hasAmmo;/, '机炮：转速保持但不开火');
   assert.match(ws, /this\.updateCharge\(dt, fireDown, inputOk, ready && hasAmmo && this\.cooldown <= 0,/, '蓄力不看 blocked');
-  assert.match(await cs('Weapons/FireModes/SpinupMode.cs'), /firing = want && !input\.blocked && spin >= 1 && host\.HasAmmo;/);
-  assert.match(await cs('Weapons/FireModes/ChargeMode.cs'), /bool can = input\.ready && host\.HasAmmo && host\.Cooldown <= 0;/);
-  assert.match(await cs('Weapons/FireModes/BurstMode.cs'), /if \(input\.blocked\) return;/);
-  assert.match(await cs('Weapons/WeaponController.cs'), /blocked = motor\.Dashing/);
 });
 
 test('aim, spread, charge and switch-pose formulas', () => {
@@ -159,9 +141,7 @@ test('beam: ticks ride the shared cooldown; chain jump uses the main hit templat
   assert.match(ws, /this\.ballistics\.beamTrace\(inst, R, this\.beamHit\);\s*this\.autoFire\(true, inst, R, infinite, rate\);/);
   const firing = await src('weapons/Firing.ts');
   assert.match(firing, /elementChance: R\.elementChance,\s*critMult: R\.critMult,[\s\S]{0,200}procDepth: 1,\s*tags: \['chain'\]/);
-  const b = await cs('Weapons/Ballistics.cs');
-  assert.match(b, /HitInfo\(in s, s\.damage \* def\.chainFraction, oc, \(oc - end\)\.normalized\);\s*info\.depth = 1;\s*info\.tags \|= DamageTag\.Chain;/);
-  const c = csConsts(b);
+  const c = K['Weapons/Ballistics.cs'];
   near(c.PierceKeep, 0.85);
   near(c.PointBlankRange, 1.3);
   assert.match(firing, /const PIERCE_KEEP = 0\.85;/);
@@ -175,13 +155,10 @@ test('beam: ticks ride the shared cooldown; chain jump uses the main hit templat
 const flamer = { id: 'flamer', mode: 'auto', range: 11, knockback: 0, projectile: { speed: 24, lifetime: 0.42, radius: 0.32, scale: 1.1, visual: 'flame', color: 0xff7a2a } };
 
 test('flame cone: constants and reach / radius match Unity FlameCone', async () => {
-  const text = await cs('Weapons/FlameCone.cs');
-  const c = csConsts(text);
+  const c = K['Weapons/FlameCone.cs'];
   near(FLAME.FLAME_CONE.HalfAngle, c.HalfAngle);
   near(FLAME.FLAME_CONE.StartOffset, c.StartOffset);
-  assert.match(text, /Visual = "flame"/);
-  assert.match(text, /Mathf\.RoundToInt\(5 \* Fx\.Density\)/);
-  assert.match(text, /\(tick \+ i\) % 3 == 0/);
+  // Unity FlameCone：每跳 RoundToInt(5 × 特效密度) 颗火舌，(tick + i) % 3 == 0 的那颗是烟
   assert.deepEqual([FLAME.FLAME_CONE.Flames, FLAME.FLAME_CONE.LickEvery], [5, 3]);
   assert.ok(FLAME.flameConeHandles(flamer));
   assert.ok(!FLAME.flameConeHandles({ ...flamer, mode: 'semi' }));
@@ -254,12 +231,9 @@ test('flame cone: one tick burns through the damage pipeline (no weakpoint, wall
 // ───────────── 贯虹虹光（RailgunBeam.cs） ─────────────
 
 test('railgun beam: constants, rainbow, taper and helix match Unity RailgunBeam', async () => {
-  const text = await cs('Weapons/RailgunBeam.cs');
-  const c = csConsts(text);
+  const c = K['Weapons/RailgunBeam.cs'];
   for (const k of ['Strands', 'Points', 'Life', 'Radius', 'Turns', 'SpinSpeed']) near(RAIL.RAILGUN_BEAM[k], c[k], k);
-  assert.match(text, /width = Mathf\.Clamp\(width, 0\.02f, 0\.3f\)/);
-  assert.match(text, /widthMultiplier = width \* 0\.55f \* \(1 - 0\.6f \* k\)/);
-  assert.match(text, /Radius \* \(1 \+ 1\.5f \* k\)/);
+  // Unity RailgunBeam：宽度 Clamp(width, 0.02, 0.3)，每股 width × 0.55 × (1 − 0.6k)，半径 Radius × (1 + 1.5k)
   const B = RAIL.RAILGUN_BEAM;
   assert.deepEqual([B.WidthMin, B.WidthMax, B.WidthShare, B.WidthShrink, B.Spread], [0.02, 0.3, 0.55, 0.6, 1.5]);
   // 彩虹：色相 u、饱和 0.8、明度 1
@@ -303,23 +277,21 @@ test('railgun beam: constants, rainbow, taper and helix match Unity RailgunBeam'
   assert.equal(scene.children.length, 1, '回池复用');
   // 接线：满蓄命中扫描 → 虹光
   assert.match(await src('weapons/Firing.ts'), /this\.fullChargeFx\?\.\(_muzzle, _end, def\.tracerWidth\)/);
-  assert.match(await cs('Weapons/Ballistics.cs'), /if \(s\.full\) RailgunBeam\.Spawn\(muzzle, end, s\.element/);
 });
 
 // ───────────── 施法姿势（CastPoseTests.cs） ─────────────
 
 test('cast pose: keyframes are the Unity tables; every hero skill has a style', async () => {
-  const text = await cs('Skills/CastPose.cs');
+  const SKILLS = spec('skills');
   for (const [name, style] of [['Throw', 'throw'], ['Summon', 'summon'], ['Slam', 'slam'], ['Raise', 'raise'], ['Mark', 'mark']]) {
-    const block = text.slice(text.indexOf(`static readonly Key[] ${name} =`), text.indexOf('};', text.indexOf(`static readonly Key[] ${name} =`)));
-    const rows = [...block.matchAll(/K\(([^)]+)\)/g)].map(m => m[1].split(',').map(v => parseFloat(v)));
+    const rows = SKILLS.castPose[name];
     const mine = CAST.CAST_TIMELINES[style].map(k => [k.t, ...k.pos, ...k.rot]);
     assert.equal(mine.length, rows.length, name);
     for (let i = 0; i < rows.length; i++) for (let j = 0; j < 7; j++) near(mine[i][j], rows[i][j], `${name}[${i}][${j}]`);
   }
   for (const id of ['fox_blaze_grenade', 'fox_nine_tails', 'falcon_storm_beacon', 'falcon_hawk_verdict', 'bear_earth_splitter', 'bear_bastion']) {
     assert.notEqual(CAST.castStyleFor(id), 'none', id);
-    assert.match(text, new RegExp(`"${id}"`));
+    assert.ok(SKILLS.castPoseSkills.includes(id), `Unity CastPose 也登记了 ${id}`);
   }
   assert.equal(CAST.castStyleFor('unknown_skill'), 'none');
   assert.deepEqual(['fox_blaze_grenade', 'falcon_storm_beacon', 'fox_nine_tails', 'bear_earth_splitter', 'bear_bastion', 'falcon_hawk_verdict'].map(CAST.castStyleFor),
@@ -377,38 +349,30 @@ test('cast pose overlays the viewmodel pose in the same convention as Unity Over
 // ───────────── 技能（HeroSkills / SkillFx / 三位英雄） ─────────────
 
 test('skills: deny reasons, hand origin and hero numbers match Unity', async () => {
-  const hero = await cs('Skills/HeroSkills.cs');
-  near(csConsts(hero).DenyInterval, 0.35);
+  near(K['Skills/HeroSkills.cs'].DenyInterval, 0.35);
   const sc = await src('player/SkillController.ts');
   assert.match(sc, /const DENY_INTERVAL = 0\.35;/);
+  // 拒绝原因同 Unity HeroSkills.SkillDeny（Cooldown / Busy / Failed）
   for (const reason of ['cooldown', 'busy', 'failed']) assert.match(sc, new RegExp(`this\\.deny\\(s, slot, '${reason}'\\)`));
   assert.match(sc, /this\.ctx\.events\.emit\('skill:denied', \{ slot, skillId: s\.def\.id, reason \}\)/);
-  assert.match(hero, /enum SkillDeny[\s\S]{0,400}Cooldown,[\s\S]{0,200}Busy,[\s\S]{0,200}Failed,/);
-  // 手边出手点：右 0.24、下 0.2、前 0.45，贴墙停在墙前
-  const fx = await cs('Skills/SkillFx.cs');
-  assert.match(fx, /eye\.right \* \(0\.24f \* side\) - eye\.up \* 0\.2f \+ eye\.forward \* 0\.45f/);
-  assert.match(fx, /Mathf\.Clamp\(radius, 0\.02f, 0\.3f\)/);
-  assert.match(fx, /hit\.distance - 0\.02f/);
+  // 手边出手点（Unity SkillFx）：右 0.24、下 0.2、前 0.45，半径夹在 0.02–0.3，贴墙停在墙前 0.02；继承玩家速度 × 0.35
   const common = await src('player/skills/common.ts');
   assert.match(common, /HAND_ORIGIN = \{ Right: 0\.24, Down: 0\.2, Forward: 0\.45, RadiusMin: 0\.02, RadiusMax: 0\.3, Skin: 0\.02 \}/);
-  assert.match(fx, /pv\.x \* 0\.35f/);
   assert.match(common, /p\.velocity\.x \* 0\.35/);
-  assert.match(fx, /falloff = 0\.45f/);
   // 燎
-  const liao = await cs('Skills/LiaoSkills.cs');
   const fox = await src('player/skills/fox.ts');
   const tsNum = (text, name) => Number(text.match(new RegExp(`const ${name} = (-?[\\d.]+);`))[1]);
-  const gc = csConsts(liao.slice(liao.indexOf('class LiaoBlazeGrenade'), liao.indexOf('class LiaoNineTails')));
-  const nc = csConsts(liao.slice(liao.indexOf('class LiaoNineTails')));
-  near(tsNum(fox, 'EMBER_BONUS'), csConsts(liao).EmberBonus);
-  assert.ok(liao.includes('const float Duration = 3, First = 0.3f, Interval = (Duration - First) / (Count - 1);'));
+  const gc = K['Skills/LiaoSkills.cs#LiaoBlazeGrenade'];
+  const nc = K['Skills/LiaoSkills.cs#LiaoNineTails'];
+  near(tsNum(fox, 'EMBER_BONUS'), K['Skills/LiaoSkills.cs'].EmberBonus);
+  // Unity LiaoNineTails：const float Duration = 3, First = 0.3f, Interval = (Duration - First) / (Count - 1)
   assert.deepEqual([tsNum(fox, 'FOXFIRE_DURATION'), tsNum(fox, 'FOXFIRE_FIRST')], [3, 0.3]);
   for (const [a, b] of [['GRENADE_RADIUS', 'Radius'], ['GRENADE_DAMAGE', 'Damage'], ['GRENADE_SPEED', 'Speed'], ['GRENADE_LIFT', 'Lift'], ['GRENADE_GRAVITY', 'Gravity'],
     ['GRENADE_LIFETIME', 'Lifetime'], ['GRENADE_KNOCKBACK', 'Knockback']]) near(tsNum(fox, a), gc[b], a);
   for (const [a, b] of [['FOXFIRE_COUNT', 'Count'], ['FOXFIRE_DAMAGE', 'Damage'], ['FOXFIRE_SPEED', 'Speed'],
     ['FOXFIRE_HOMING', 'Homing'], ['FOXFIRE_RANGE', 'Range']]) near(tsNum(fox, a), nc[b], a);
   // 鼯
-  const falconCs = csConsts(await cs('Skills/FalconSkills.cs'));
+  const falconCs = K['Skills/FalconSkills.cs'];
   const falcon = await src('player/skills/falcon.ts');
   for (const [a, b] of [['BEACON_RADIUS', 'Radius'], ['BEACON_INTERVAL', 'Interval'], ['BEACON_TARGETS', 'Targets'], ['BEACON_DAMAGE', 'Damage'], ['BEACON_TOP', 'Top'],
     ['BEACON_THROW_LIFETIME', 'ThrowLifetime'], ['HAWK_FIRE_RATE', 'FireRate'], ['HAWK_CHAIN_RANGE', 'ChainRange'], ['HAWK_CHAIN_RATIO', 'ChainRatio'], ['AIR_BONUS', 'AirBonus']]) {
@@ -420,10 +384,9 @@ test('skills: deny reasons, hand origin and hero numbers match Unity', async () 
 });
 
 test('bear: numbers, grounded-snap leap, dash lock and the bastion projectile ward match Unity BearSkills', async () => {
-  const text = await cs('Skills/BearSkills.cs');
-  const split = csConsts(text.slice(text.indexOf('class BearEarthSplitter'), text.indexOf('class BearBastion')));
-  const bast = csConsts(text.slice(text.indexOf('class BearBastion')));
-  const hide = csConsts(text.slice(0, text.indexOf('class BearThickHide')));
+  const split = K['Skills/BearSkills.cs#BearEarthSplitter'];
+  const bast = K['Skills/BearSkills.cs#BearBastion'];
+  const hide = K['Skills/BearSkills.cs#passive'];
   const bear = await import(await ts('../src/player/skills/bear.ts', {
     './common': data(`export class EffectSession { constructor(f) { this.f = f; } begin() {} end() {} track() {} get active() { return false; } }
       export const SKILL_COLORS = { earth: 1, gold: 2 }; export function cancelDash() {} export function radiusScale() { return 1; } export function shockwave() { return 0; }`),
@@ -446,12 +409,11 @@ test('bear: numbers, grounded-snap leap, dash lock and the bastion projectile wa
   assert.equal(bear.slamFromGround(false, 0.6, 0.1), false, '刚起跳');
   assert.equal(bear.slamFromGround(false, 0, 0.5), false);
   assert.equal(bear.slamFromGround(false, 0, -1), false, '脚下没有地面');
+  // Unity BearSkills：跃起期间 MotorLock.Dash；不动如山的挡弹罩是球形（ProjectileWard.Shape.Sphere，半径 WardRadius）；
+  // 挡下子弹时 SkillFx.Burst(金, 8, 2.5, 0.3, 0.05) + hit_armor（音量 0.6、音高 1.2）
   const mine = await src('player/skills/bear.ts');
   assert.match(mine, /slamSession\.track\(lock\.call\(p\)\)/, '跃起期间锁冲刺');
-  assert.match(text, /fr\.locks \|= MotorLock\.Dash;/);
   assert.match(mine, /shape: 'sphere'/);
-  assert.match(text, /ward\.shape = ProjectileWard\.Shape\.Sphere;\s*ward\.radius = WardRadius;/);
   assert.match(mine, /ctx\.fx\.burst\(_c, SKILL_COLORS\.gold, 8, 2\.5, 0\.3, 0\.05, 0\);\s*ctx\.audio\.play\('hit_armor', \{ position: _c, volume: 0\.6, pitch: 1\.2 \}\)/);
-  assert.match(text, /SkillFx\.Burst\(point, SkillFx\.Gold, 8, 2\.5f, 0\.3f, 0\.05f\);\s*GameAudio\.PlayAt\("hit_armor", point, 0\.6f, 1\.2f\);/);
   assert.match(await src('player/PlayerController.ts'), /this\.dashLockout <= 0 && this\.dashLocks <= 0\)/);
 });

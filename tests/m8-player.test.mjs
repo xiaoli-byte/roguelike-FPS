@@ -1,10 +1,12 @@
 // M8 玩家对照（Unity Player/CameraFeel.cs、Fx/CameraShake.cs、Player/PlayerStatus.cs + Combat/Status/{Chill,Ignite,Sunburn}Status.cs、
-// Player/SafeGround.cs、Player/MovementFx.cs、Pipeline/Runtime/PlayerMotor.cs 的后坐回正 → 网页 src/player/）。常量从 C# 源码读出来比。
+// Player/SafeGround.cs、Player/MovementFx.cs、Pipeline/Runtime/PlayerMotor.cs 的后坐回正 → 网页 src/player/）。
+// 常量和 Unity 版删除前从 C# 冻结的规格比（tests/fixtures/spec/cs-consts.json、player.json）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
+import { spec } from './unity-parity-kit.mjs';
 
 const threeUrl = new URL('../node_modules/three/build/three.module.js', import.meta.url).href;
 const data = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
@@ -13,19 +15,13 @@ async function ts(path, imports = {}) {
   for (const [key, value] of Object.entries({ three: threeUrl, ...imports })) source = source.replaceAll(`'${key}'`, `'${value}'`);
   return data(stripTypeScriptTypes(source, { mode: 'transform' }));
 }
-const unity = path => readFile(new URL(`../unity/Assets/${path}`, import.meta.url), 'utf8');
-const cs = path => unity(`Game/Scripts/${path}`);
 const src = path => readFile(new URL(`../src/${path}`, import.meta.url), 'utf8');
-function csConsts(source) {
-  const out = {};
-  for (const m of source.matchAll(/(?:const|public)\s+(?:float|int)\s+([^;(){}]+);/g)) {
-    for (const part of m[1].split(/,(?![^(]*\))/)) {
-      const kv = part.match(/^\s*(\w+)\s*=\s*(-?[\d.]+)f?\s*(?:\*\s*Mathf\.Rad2Deg|\/\s*PeakPerVelocity)?\s*$/);
-      if (kv) out[kv[1]] = Number(kv[2]);
-    }
-  }
-  return out;
-}
+/**
+ * C# 常量（const / public 数值字段），键 = 相对 Unity 工程 Game/Scripts 的文件名（PlayerMotor 在 Pipeline/Runtime）。
+ * 写成「弧度 × Mathf.Rad2Deg」「x / PeakPerVelocity」的，冻结的是前面那个字面量。
+ */
+const K = spec('cs-consts');
+const PLAYER = spec('player');
 const near = (a, b, msg, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${msg ?? ''} ${a} ≠ ${b}`);
 
 const mathUrl = await ts('../src/core/math.ts');
@@ -41,13 +37,13 @@ const MOVE = await import(await ts('../src/player/MovementFx.ts', { '../fx/extra
 // ───────────── 震屏（Fx/CameraShake.cs + FeelProfile） ─────────────
 
 test('camera shake: constants match Unity CameraShake / FeelProfile', async () => {
-  const c = csConsts(await cs('Fx/CameraShake.cs'));
+  const c = K['Fx/CameraShake.cs'];
   near(SHAKE.SHAKE.MaxStrength, c.MaxStrength);
   near(SHAKE.SHAKE.MaxTime, c.MaxTime);
   assert.equal(SHAKE.SHAKE.Voices, c.VoiceCount);
   near(SHAKE.SHAKE.MergeWindow, c.MergeWindow);
   near(SHAKE.SHAKE.StackShare, c.StackShare);
-  const feel = csConsts(await cs('Core/FeelProfile.cs'));
+  const feel = K['Core/FeelProfile.cs'];
   near(SHAKE.SHAKE.Exponent, feel.shakeExponent, 'trauma²');
   near(SHAKE.SHAKE.AmpMax, feel.shakeAmpMax ?? 1.8);
 });
@@ -95,8 +91,7 @@ test('camera shake: trauma² curve, voices stack at 35%, bursts inside 60 ms mer
 // ───────────── 镜头手感（Player/CameraFeel.cs） ─────────────
 
 test('camera rig: constants match Unity CameraFeel', async () => {
-  const text = await cs('Player/CameraFeel.cs');
-  const c = csConsts(text);
+  const c = K['Player/CameraFeel.cs'];
   const R = RIGM.RIG;
   // 长度 / 时间 / FOV：原样
   for (const k of ['StepLength', 'BobVertical', 'BobSide', 'SpringK', 'SpringC', 'PeakPerVelocity', 'LandImpulse', 'DashFov', 'SpeedFovMax', 'ExtraFovMax', 'AimSuppressKick',
@@ -106,17 +101,14 @@ test('camera rig: constants match Unity CameraFeel', async () => {
   near(R.HurtPush, c.HurtPush / c.PeakPerVelocity, 'HurtPush = 0.025 / 峰值系数');
   near(R.FireBack, c.FireBack / c.PeakPerVelocity, 'FireBack = 0.25 / 峰值系数');
   near(R.SpringStep, 1 / 120);
-  assert.deepEqual([...R.ShakePos], text.match(/ShakePos = new\(([^)]+)\)/)[1].split(',').map(parseFloat));
-  assert.deepEqual([...R.ShakeRot], text.match(/ShakeRot = new\(([^)]+)\)/)[1].split(',').map(parseFloat));
+  assert.deepEqual([...R.ShakePos], PLAYER.shakePos);
+  assert.deepEqual([...R.ShakeRot], PLAYER.shakeRot);
   near(c.ShakeAmpMax, 1.8);
   near(c.LungeFovSpeed, 15);
   assert.match(await src('player/PlayerController.ts'), /const LUNGE_FAST = 15;/);
-  // 重落地 / 重击 / 首领倒下的震屏
-  assert.match(text, /if \(fall > 14f\) CameraShake\.Add\(Mathf\.Min\(0\.5f, \(fall - 14f\) \* 0\.04f\), 0\.18f\)/);
+  // 重落地 / 重击 / 首领倒下的震屏（Unity CameraFeel：fall > 14 → Min(0.5, (fall − 14) × 0.04)、frac ≥ 0.08 → Min(0.45, frac × 1.6)、首领倒下 (0.7, 0.6)）
   near(R.HeavyLandSpeed, 14);
-  assert.match(text, /if \(frac >= 0\.08f\) CameraShake\.Add\(Mathf\.Min\(0\.45f, frac \* 1\.6f\), 0\.18f\)/);
   near(R.HeavyHitFraction, 0.08);
-  assert.match(text, /IsBoss\) CameraShake\.Add\(0\.7f, 0\.6f\)/);
   assert.match(await src('player/CameraRig.ts'), /if \(enemy\.isBoss\) this\.shake\.add\(0\.7, 0\.6\)/);
   // 元素反应的震屏强度
   assert.deepEqual(['thunderfire', 'abyss', 'meltdown', 'veinseal'].map(id => RIGM.reactionShake(id, 0)), [0.3, 0.26, 0.22, 0.16]);
@@ -143,14 +135,14 @@ test('camera rig: the K 140 / C 17 spring peaks ≈ v × 0.0382 after ≈ 0.093 
 });
 
 test('recoil: camera recoil fully recovers (Unity PlayerMotor.RecoilRecoverFraction = 1)', async () => {
-  const motor = csConsts(await unity('Pipeline/Runtime/PlayerMotor.cs'));
+  const motor = K['Pipeline/Runtime/PlayerMotor.cs'];
   const pc = await src('player/PlayerController.ts');
   const num = name => Number(pc.match(new RegExp(`const ${name} = ([\\d.]+);`))[1]);
   near(num('RECOIL_RECOVER_FRACTION'), motor.RecoilRecoverFraction);
   near(num('RECOIL_RECOVER_DELAY'), motor.RecoilRecoverDelay);
   near(num('RECOIL_RECOVER_RATE'), motor.RecoilRecoverRate);
   // 滑翔（鼯的被动）
-  const glide = csConsts(await cs('Skills/Glide.cs'));
+  const glide = K['Skills/Glide.cs'];
   near(num('GLIDE_FALL_SPEED'), glide.FallSpeed);
   near(num('GLIDE_GRAVITY_MULT'), glide.GravityMult);
   near(num('GLIDE_BRAKE'), glide.Brake);
@@ -160,11 +152,11 @@ test('recoil: camera recoil fully recovers (Unity PlayerMotor.RecoilRecoverFract
 // ───────────── 减益：寒意 / 点燃 / 日晒 ─────────────
 
 test('player status: constants match Unity Chill / Ignite / Sunburn', async () => {
-  const chill = csConsts(await cs('Combat/Status/ChillStatus.cs'));
+  const chill = K['Combat/Status/ChillStatus.cs'];
   for (const k of ['MaxSlow', 'DefaultSeconds', 'MaxEntries']) near(STATUS.CHILL[k], chill[k], k);
-  const ignite = csConsts(await cs('Combat/Status/IgniteStatus.cs'));
+  const ignite = K['Combat/Status/IgniteStatus.cs'];
   for (const k of ['DefaultSeconds', 'TickInterval', 'EndGrace', 'LastTickGrace']) near(STATUS.IGNITE[k], ignite[k], k);
-  const sun = csConsts(await cs('Combat/Status/SunburnStatus.cs'));
+  const sun = K['Combat/Status/SunburnStatus.cs'];
   near(SUN.SUNBURN_STACK_SECONDS, sun.StackSeconds);
   near(SUN.SUNBURN_TICK_INTERVAL, sun.TickInterval);
   near(SUN.SUNBURN_DAMAGE_PER_STACK, sun.DamagePerStack);
@@ -254,8 +246,7 @@ test('enemy-side entry points route into PlayerStatus when the player has one', 
 // ───────────── 安全落点 / 坠落回收（Player/SafeGround.cs） ─────────────
 
 test('fall recovery: constants match Unity SafeGround; kill line sits 40 m below the lowest safe point', async () => {
-  const text = await cs('Player/SafeGround.cs');
-  const c = csConsts(text);
+  const c = K['Player/SafeGround.cs'];
   near(FALL.SAFE.RecordInterval, c.recordInterval);
   near(FALL.SAFE.EdgeProbe, c.edgeProbe);
   near(FALL.SAFE.Spacing, c.spacing);
@@ -263,10 +254,7 @@ test('fall recovery: constants match Unity SafeGround; kill line sits 40 m below
   near(FALL.SAFE.DebugInvuln, c.DebugInvuln);
   near(FALL.SAFE.AbyssFallSpeed, c.AbyssFallSpeed);
   near(FALL.SAFE.AbyssProbe, c.AbyssProbe);
-  // HazardSpec.Fall：扣 10% 最大生命、1 s 无敌
-  const fall = text.slice(text.indexOf('HazardSpec Fall'), text.indexOf('};', text.indexOf('HazardSpec Fall')));
-  assert.match(fall, /burst = 0\.1f/);
-  assert.match(fall, /grace = 1f?\b/);
+  // Unity SafeGround 的 HazardSpec.Fall：扣 10% 最大生命（burst = 0.1f）、1 s 无敌（grace = 1f）
   near(FALL.FALL_SPEC.burst, 0.1);
   near(FALL.FALL_SPEC.grace, 1);
   assert.equal(FALL.killLine(-60, 3), -60);
@@ -320,16 +308,10 @@ test('fall recovery: records safe spots on solid ground and carries the player b
 // ───────────── 移动特效（Player/MovementFx.cs） ─────────────
 
 test('movement fx: numbers match Unity MovementFx', async () => {
-  const text = await cs('Player/MovementFx.cs');
   const M = MOVE.MOVE_FX;
-  assert.match(text, /r = Random\.Range\(0\.6f, 1\.6f\)/);
-  assert.match(text, /dir \* Random\.Range\(2f, 5f\)/);
-  assert.match(text, /-dir \* Random\.Range\(26f, 34f\), windColor, Random\.Range\(0\.035f, 0\.06f\), Random\.Range\(0\.14f, 0\.22f\)/);
+  // Unity MovementFx 的 Random.Range：冲刺风线半径 0.6–1.6、前方 2–5、速度 26–34、粗细 0.035–0.06、寿命 0.14–0.22
   assert.deepEqual([[...M.StreakRadius], [...M.StreakAhead], [...M.StreakSpeed], [...M.StreakSize], [...M.StreakLife]], [[0.6, 1.6], [2, 5], [26, 34], [0.035, 0.06], [0.14, 0.22]]);
-  assert.match(text, /if \(fall < 6f\) return;/);
-  assert.match(text, /Mathf\.Clamp01\(\(fall - 6f\) \/ 14f\)/);
-  assert.match(text, /Mathf\.Lerp\(8, 22, k\)/);
-  assert.match(text, /if \(fall >= 14f\) Telegraph\.Wave\(Feet \+ Vector3\.up \* 0\.04f, 1\.6f \+ 1\.2f \* k, 9f/);
+  // 落地：fall < 6 不出尘，k = Clamp01((fall − 6) / 14)，尘粒 Lerp(8, 22, k)，fall ≥ 14 出地面波纹
   assert.deepEqual([M.LandDustFrom, M.LandRingFrom, [...M.LandDust]], [6, 14, [8, 22]]);
   assert.deepEqual(MOVE.landDust(5.9), { count: 0, k: 0 });
   assert.deepEqual(MOVE.landDust(6), { count: 8, k: 0 });

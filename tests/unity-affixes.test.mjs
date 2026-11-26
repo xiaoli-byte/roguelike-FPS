@@ -1,15 +1,15 @@
 // M13 对照：Unity EditMode 的 AffixTests.cs、AffixTriggerTests.cs、LegendaryTests.cs → node --test。
-// 词条表（id / 区间 / 权重 / 固定 / perHit / 顺序）、准入条件、文本直接从 C# 源码里读：
+// 词条表（id / 区间 / 权重 / 固定 / perHit / 顺序）、准入条件、文本是 Unity 版删除前从 C# 源码冻结的规格（tests/fixtures/spec/affixes.json）：
 //   · 每条词条一个文件（Weapons/Affixes/Numeric|Trigger、Weapons/Legendaries），[Defs(order)] + base(...) + Text + Allow；
-//   · Allow 表达式机械翻译成 JS 再和网页的 allow 逐武器逐元素比；
-//   · 文本断言从 Unity 测试源码里把「期望文本 / 词条 id / 数值」三元组抠出来，喂给网页的 describeAffix。
+//   · Allow 表达式在导出时机械翻译成 JS，这里和网页的 allow 逐武器逐元素比；
+//   · 文本断言是从 Unity 测试源码里抠出来的「期望文本 / 词条 id / 数值」三元组，喂给网页的 describeAffix。
 // 触发 / 传说的运行时（AffixEffects）用假的 combat / host 驱动，断言同 Unity 那份。
-// 只写测试：和 Unity 不一致的地方写成 todo（见文件末尾），不改实现。
+// 只写测试，不改实现。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
-import { cs, csConsts, csTest, near, tsGraph } from './unity-parity-kit.mjs';
+import { near, spec, tsGraph } from './unity-parity-kit.mjs';
 
 const graph = await tsGraph();
 after(() => graph.dispose());
@@ -26,33 +26,12 @@ const ELEMENTS = ['none', 'fire', 'shock', 'corrode'];
 const EPS = 1e-4;
 const def = id => W.getWeaponDef(id);
 
-// ───────────── 读 Unity 的词条定义 ─────────────
+// ───────────── Unity 的词条定义（冻结的规格）─────────────
 
-const weaponsDir = new URL('../unity/Assets/Game/Scripts/Weapons/', import.meta.url);
-const num = s => Number(String(s).trim().replace(/[fF]$/, ''));
-const affixIds = Object.fromEntries([...cs('Weapons/WeaponStatsResolver.cs').matchAll(/(\w+) = "(\w+)"/g)].map(m => [m[1], m[2]]));
-const triggerBase = cs('Weapons/Affixes/Trigger/TriggerAffixDef.cs');
-const ELEMENT_CS = { 'Element.Fire': 'fire', 'Element.Shock': 'shock', 'Element.Corrode': 'corrode', 'Element.None': 'none' };
-
-/** C# 的 Allow 表达式 → JS（d = 武器定义，e = 实例元素，picked = 已抽到的 id）。有没认出来的片段就抛错 */
-function translateAllow(expr, element) {
-  let js = expr
-    .replaceAll('(c.def.cycle == null || c.def.cycle.Length == 0)', '!d.cycle')
-    .replaceAll('c.def.cycle == null || c.def.cycle.Length == 0', '!d.cycle')
-    .replaceAll('(c.def.cycle != null && c.def.cycle.Length > 0)', '!!d.cycle')
-    .replaceAll('AffixRules.GunOnly(c.def)', '!u.isBlade(d)')
-    .replaceAll('AffixRules.DirectHit(c.def)', 'u.directHit(d)')
-    .replaceAll('AffixRules.CanReact(c)', 'u.canReact(d, e, picked)')
-    .replaceAll('c.def.IsExplosive', 'u.isExplosive(d)')
-    .replaceAll('c.def.IsHitscan', 'u.isHitscan(d)')
-    .replaceAll('c.def.projectile != null', '!!d.projectile')
-    .replaceAll('c.def.mode != FireMode.Beam', "d.mode !== 'beam'")
-    .replaceAll('c.def.mode != FireMode.Charge', "d.mode !== 'charge'")
-    .replaceAll('c.element != Element.None', "e !== 'none'")
-    .replaceAll('c.element != element', `e !== '${element}'`);
-  assert.ok(!/\bc\.|AffixRules|FireMode|Element\./.test(js), `没翻译干净的 Allow：${expr} → ${js}`);
-  return new Function('u', 'd', 'e', 'picked', `return ${js};`);
-}
+const SPEC = spec('affixes');
+const K = spec('cs-consts');
+/** allow：导出时由 C# 的 Allow 表达式（allowCs）机械翻译成的 JS（u = 下面的 Unity 判定，d = 武器定义，e = 实例元素，picked = 已抽到的 id） */
+const withAllow = row => ({ ...row, allowFn: new Function('u', 'd', 'e', 'picked', `return ${row.allow};`) });
 
 /** Unity 的判定（WeaponDefs.cs / AffixDef.cs 的 AffixRules），直接读网页定义的字段，不走网页的 isHitscan 之类 */
 const U = {
@@ -64,44 +43,17 @@ const U = {
   hitsPerShot: d => d.pellets * (d.projectile ? d.projectile.count : 1),
   shotsPerSecond: d => d.fireRate * d.burstCount,
 };
-const rules = csConsts(cs('Weapons/Affixes/AffixDef.cs'));
+const rules = K['Weapons/Affixes/AffixDef.cs'];
 U.hitsPerSecond = d => (d.mode === 'charge' ? 1 / (1 / Math.max(0.01, d.fireRate) + d.chargeTime) : U.shotsPerSecond(d)) * U.hitsPerShot(d);
 U.perHitChance = (d, raw) => Math.min(rules.PerHitMax, Math.max(rules.PerHitMin, raw * rules.PerHitBase / Math.max(0.01, U.hitsPerSecond(d))));
+// AffixDef.cs 的 RarityScale(rarity) => 1 + 0.15f * Mathf.Max(0, rarity - 1)
 U.rarityScale = rarity => 1 + 0.15 * Math.max(0, rarity - 1);
 
-function readDefs(sub) {
-  const dir = new URL(sub, weaponsDir);
-  const out = [];
-  for (const file of readdirSync(dir).filter(f => f.endsWith('.cs') && f !== 'TriggerAffixDef.cs')) {
-    const src = readFileSync(new URL(file, dir), 'utf8');
-    const order = Number(src.match(/\[Defs\((\d+)\)\]/)[1]);
-    const args = src.match(/\)\s*:\s*base\(([^)]*)\)/)[1].split(',').map(s => s.trim());
-    const idConst = src.match(/const string Id = "(\w+)"/)?.[1];
-    const id = args[0] === 'Id' ? idConst : affixIds[args[0].replace('AffixIds.', '')];
-    assert.ok(id, `${file}：读不出 id`);
-    const row = { file, order, id, src };
-    if (sub.startsWith('Legendaries')) {
-      row.name = args[1].replaceAll('"', '');
-      row.allow = src.match(/Allow\(in AffixContext c\) => ([^;]+);/)?.[1] ?? 'true';
-      row.allowFn = row.allow === 'true' ? () => true : translateAllow(row.allow);
-    } else if (ELEMENT_CS[args[1]]) {
-      // SubElementAffix：区间 / 权重 / perHit 在基类里
-      const b = triggerBase.match(/SubElementAffix\([^)]*\)\s*:\s*base\(id, ([\d.]+)f?, ([\d.]+)f?, (\d+), perHit: true\)/);
-      Object.assign(row, { min: num(b[1]), max: num(b[2]), weight: num(b[3]), fixed: false, perHit: true });
-      row.allowFn = translateAllow(triggerBase.match(/Allow\(in AffixContext c\) => ([^;]+);/)[1], ELEMENT_CS[args[1]]);
-    } else {
-      Object.assign(row, { min: num(args[1]), max: num(args[2]), weight: num(args[3]), fixed: args.includes('isFixed: true'), perHit: args.includes('perHit: true') });
-      const allow = src.match(/Allow\(in AffixContext c\) => ([^;]+);/)?.[1];
-      row.allowFn = allow ? translateAllow(allow) : () => true;
-    }
-    out.push(row);
-  }
-  return out.sort((a, b) => a.order - b.order);
-}
-const numericCs = readDefs('Affixes/Numeric/');
-const triggerCs = readDefs('Affixes/Trigger/');
+// 每条一个 C# 文件（src），按 [Defs(order)] 排；SubElementAffix 的区间 / 权重 / perHit / Allow 在基类 TriggerAffixDef.cs 里
+const numericCs = SPEC.numeric.map(withAllow);
+const triggerCs = SPEC.trigger.map(withAllow);
 const rollableCs = [...numericCs, ...triggerCs].sort((a, b) => a.order - b.order);
-const legendaryCs = readDefs('Legendaries/');
+const legendaryCs = SPEC.legendary.map(withAllow);
 
 /** 测试里造的武器（同 Unity 测试里 new WeaponDef { … } 的那几把） */
 const smg = def('smg');
@@ -131,18 +83,17 @@ test('普通词条 29 条：id、顺序、区间、权重、固定、perHit 同 
     assert.equal(A.isLegendaryId(c.id), false);
   });
   // AffixTests / AffixTriggerTests 里手抄的那两张表也对一遍
-  for (const [file, cols] of [['AffixTests.cs', 5], ['AffixTriggerTests.cs', 5]]) {
-    const table = csTest(file).match(/\[\] Ts =\s*\{([\s\S]*?)\};/)[1];
-    const rows = [...table.matchAll(/\("(\w+)", ([\d.]+)f?, ([\d.]+)f?, (\d+), (true|false)\)/g)];
-    assert.ok(rows.length >= 14, `${file}：读到 ${rows.length} 行`);
-    for (const m of rows) {
-      const t = A.AFFIXES.find(a => a.id === m[1]);
-      assert.ok(t, m[1]);
-      assert.deepEqual([t.min, t.max, t.weight], [num(m[2]), num(m[3]), num(m[4])], `${file} ${m[1]}（${cols} 列）`);
+  for (const file of ['AffixTests', 'AffixTriggerTests']) {
+    const rows = SPEC.testTables[file];
+    assert.ok(rows.length >= 14, `${file}.cs：${rows.length} 行`);
+    for (const [id, min, max, weight] of rows) {
+      const t = A.AFFIXES.find(a => a.id === id);
+      assert.ok(t, id);
+      assert.deepEqual([t.min, t.max, t.weight], [min, max, weight], `${file}.cs ${id}`);
     }
   }
   assert.deepEqual([...A.AFFIX_COUNT], [0, 1, 1, 2, 3]);
-  assert.deepEqual([...A.AFFIX_COUNT], cs('Weapons/Affixes/AffixDef.cs').match(/int\[\] Count = \{([^}]+)\}/)[1].split(',').map(Number));
+  assert.deepEqual([...A.AFFIX_COUNT], SPEC.count.value, 'AffixDef.Count');
 });
 
 test('传说特性 10 条：id、名字、顺序同 Unity；不进普通词条池', () => {
@@ -157,26 +108,24 @@ test('传说特性 10 条：id、名字、顺序同 Unity；不进普通词条�
   });
   assert.ok(!A.AFFIXES.some(a => a.id.startsWith('lg_')));
   // LegendaryTests.Ts
-  const ts = [...csTest('LegendaryTests.cs').match(/\[\] Ts =\s*\{([\s\S]*?)\};/)[1].matchAll(/\("(lg_\w+)", "([^"]+)"\)/g)].map(m => [m[1], m[2]]);
-  assert.deepEqual(A.LEGENDARIES.map(l => [l.id, l.name]), ts);
+  assert.deepEqual(A.LEGENDARIES.map(l => [l.id, l.name]), SPEC.testTables.LegendaryTests);
 });
 
 // ───────────── 文本 ─────────────
 
 test('词条文本：Unity 测试里断言的每一句，网页 describeAffix 给出同一句', () => {
-  const numeric = [...csTest('AffixTests.cs').matchAll(/Assert\.AreEqual\("([^"]+)", AffixText\.Describe\(w, new WeaponAffix\("(\w+)", ([\d.]+)f?\)\)\)/g)];
-  const trigger = [...csTest('AffixTriggerTests.cs').matchAll(/Assert\.AreEqual\("([^"]+)", T\("(\w+)", ([\d.]+)f?\)\)/g)];
+  const { numeric, trigger } = SPEC.texts;
   assert.equal(numeric.length, 16, 'AffixTests.TextsMatchTs 的 16 句');
   assert.equal(trigger.length, 14, 'AffixTriggerTests.TextsMatchTs 的 14 句');
-  for (const [, text, id, v] of [...numeric, ...trigger]) assert.equal(A.describeAffix(smg, { id, value: num(v) }), text, id);
+  for (const [text, id, value] of [...numeric, ...trigger]) assert.equal(A.describeAffix(smg, { id, value }), text, id);
   assert.equal(A.describeAffix(smg, { id: 'no_such_affix', value: 1 }), null, '未知词条返回 null');
 });
 
 test('传说文本：【传说·名】前缀、发 / 跳 / 轮 / 段斩击；武器名带传说前缀', () => {
   const vars = { smg, 'Def("beam")': def('beam'), swarm: synth.swarm, blade: synth.blade };
-  const rows = [...csTest('LegendaryTests.cs').matchAll(/Assert\.AreEqual\("(【[^"]+)", T\("(lg_\w+)", (smg|swarm|blade|Def\("beam"\))\)\)/g)];
+  const rows = SPEC.texts.legendary;
   assert.equal(rows.length, 14, 'LegendaryTests.TextsCarryLegendaryPrefix 的 14 句');
-  for (const [, text, id, v] of rows) {
+  for (const [text, id, v] of rows) {
     const d = vars[v];
     const l = A.LEGENDARIES.find(x => x.id === id);
     assert.equal(A.describeAffix(d, { id, value: l.value(d) }), text, `${id} @ ${d.id}`);
@@ -272,13 +221,12 @@ test('传说数值：天命按每秒射击分档、万象 1.6 ÷ 每秒命中数
   near(assert, V('lg_prism', 'beam'), 0.16, EPS);
   near(assert, V('lg_prism', 'launcher'), 0.75, EPS, '上限');
   near(assert, V('lg_prism', bare({ fireRate: 20, pellets: 10 })), 0.05, EPS, '下限');
-  // 固定值：从每个 Legendary_*.cs 的 Value 里读
+  // 固定值：每个 Legendary_*.cs 的 Value（写死一个数的；随武器变的冻结成 null）
   for (const l of legendaryCs) {
-    const m = l.src.match(/float Value\(WeaponDef weapon\) => (-?[\d.]+)f?;/);
-    if (!m) continue;
-    for (const d of allDefs) assert.equal(V(l.id, d), num(m[1]), `${l.id} @ ${d.id}`);
+    if (l.value === null) continue;
+    for (const d of allDefs) assert.equal(V(l.id, d), l.value, `${l.id} @ ${d.id}`);
   }
-  assert.deepEqual(legendaryCs.filter(l => !/Value\(WeaponDef weapon\) => (-?[\d.]+)f?;/.test(l.src)).map(l => l.id), ['lg_nth', 'lg_prism'], '只有天命 / 万象随武器变');
+  assert.deepEqual(legendaryCs.filter(l => l.value === null).map(l => l.id), ['lg_nth', 'lg_prism'], '只有天命 / 万象随武器变');
 });
 
 // ───────────── 抽取 ─────────────
@@ -315,7 +263,6 @@ test('数值随稀有度放大（×1 / 1 / 1.15 / 1.3 / 1.45）并取整到 0.01
     }
   }
   assert.deepEqual([0, 1, 2, 3, 4].map(U.rarityScale).map(x => +x.toFixed(4)), [1, 1, 1.15, 1.3, 1.45]);
-  assert.match(cs('Weapons/Affixes/AffixDef.cs'), /RarityScale\(int rarity\) => 1 \+ 0\.15f \* Mathf\.Max\(0, rarity - 1\)/);
 });
 
 test('第一条按权重抽（冲锋枪无元素：出现率 = 权重 ÷ 准入池总权重）', () => {
@@ -407,10 +354,10 @@ test('抽出来的词条进解析器：伤害 / 射速 / 暴击 / 猎首 / 疾�
 
 // ───────────── 运行时：AffixEffects ─────────────
 
-const fxConsts = { ...csConsts(cs('Weapons/Affixes/AffixEffects.cs')) };
-const lgConsts = Object.fromEntries(legendaryCs.map(l => [l.id, csConsts(l.src)]));
+const fxConsts = { ...K['Weapons/Affixes/AffixEffects.cs'] };
+const lgConsts = Object.fromEntries(legendaryCs.map(l => [l.id, K[l.src]]));
 
-test('触发 / 传说的常量同 Unity（读两边源码）', () => {
+test('触发 / 传说的常量同 Unity（网页源码 ↔ 冻结的 C# 常量）', () => {
   const tsSrc = readFileSync(new URL('../src/weapons/AffixEffects.ts', import.meta.url), 'utf8');
   const ts = name => { const m = tsSrc.match(new RegExp(`const ${name} = (-?[\\d.]+);`)); assert.ok(m, `AffixEffects.ts 里没有 ${name}`); return Number(m[1]); };
   const pairs = [
@@ -432,13 +379,13 @@ test('触发 / 传说的常量同 Unity（读两边源码）', () => {
   assert.match(tsSrc, /now - rt\.frenzyTime > 0\.05/);
   assert.deepEqual([lgConsts.lg_nova.MinDamage, lgConsts.lg_nova.MaxDamage, lgConsts.lg_nova.Knockback, lgConsts.lg_nova.MaxChainDepth], [35, 220, 6, 2]);
   assert.match(tsSrc, /knockback: p\.kind === 'nova' \? 6 : 4/);
-  assert.equal(csConsts(triggerCs.find(a => a.id === 'headBlast').src).Knockback, 4);
+  assert.equal(K[triggerCs.find(a => a.id === 'headBlast').src].Knockback, 4);
   assert.match(tsSrc, /R\.legendary === 'lg_nova' && depth < 2/);
   const r = { dps: 0, perShot: 0 };
   assert.equal(WS.novaDamage(r), 35, '殉爆下限');
   assert.equal(WS.novaDamage({ dps: 1000, perShot: 1000 }), 220, '殉爆上限');
+  // Legendary_Nova.cs：0.35f * r.dps + 0.5f * r.perShot
   near(assert, WS.novaDamage({ dps: 100, perShot: 40 }), 0.35 * 100 + 0.5 * 40, 1e-9);
-  assert.match(cs('Weapons/Legendaries/Legendary_Nova.cs'), /0\.35f \* \w+\.dps \+ 0\.5f \* \w+\.perShot/);
 });
 
 /** 假环境（同 AffixTriggerTests.FakeEnv）：记下爆炸 / 弹射 / 附着 / 引爆 / 回填 / 护盾，rand 可调 */

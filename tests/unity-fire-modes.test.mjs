@@ -4,17 +4,18 @@
 // 不 import 任何东西，这里直接 import 比数值）；状态机本身还在 WeaponSystem（要输入 / 相机 / 第一人称模型 / 弹道全套上下文才能跑），
 // 读它的源码确认用的是 FireControl 的常量而不是另写一份。行为用例（连发追帧、点射、光束跳数、预热、蓄力、齐射、切枪防抖、
 // 整匣 / 逐发换弹、应急补给、六把枪的持续秒伤）见文件末尾的 todo。只写测试，不改实现。
+// Unity WeaponTiming.cs 的常量是 Unity 版删除前冻结的规格（tests/fixtures/spec/cs-consts.json）。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { readFileSync } from 'node:fs';
-import { cs, csConsts, near, tsGraph } from './unity-parity-kit.mjs';
+import { near, spec, tsGraph } from './unity-parity-kit.mjs';
 
 const graph = await tsGraph();
 after(() => graph.dispose());
 const FC = await graph.load('weapons/FireControl.ts');
 const { getWeaponDef } = await graph.load('weapons/WeaponDefs.ts');
-const timing = csConsts(cs('Weapons/FireModes/WeaponTiming.cs'));
-const timingCs = cs('Weapons/FireModes/WeaponTiming.cs');
+const K = spec('cs-consts');
+const timing = K['Weapons/FireModes/WeaponTiming.cs'];
 const web = readFileSync(new URL('../src/weapons/WeaponSystem.ts', import.meta.url), 'utf8');
 const T = FC.WEAPON_TIMING;
 
@@ -53,8 +54,7 @@ test('行内的数同 Unity：同帧最多补 4 发、空枪声间隔 0.3 s、�
 });
 
 test('蓄力伤害曲线：最低倍率 + (1 − 最低倍率) × t²（ChargeCurveAndFullChargeFlags）', () => {
-  assert.match(timingCs, /return minMult \+ \(1 - minMult\) \* t \* t;/);
-  // Unity 的三个点
+  // Unity WeaponTiming.ChargeMult：minMult + (1 - minMult) * t * t；Unity 的三个点
   near(assert, FC.chargeMult(0.2, 0), 0.2, 1e-6);
   near(assert, FC.chargeMult(0.2, 0.5), 0.4, 1e-6);
   near(assert, FC.chargeMult(0.2, 1), 1, 1e-6);
@@ -93,12 +93,12 @@ test('SwitchPoseHolstersThenDraws: 先收旧枪（前 40%）再抬新枪', () =>
 });
 
 test('狂热 2 s 没命中清空、狂热 / 疾化乘进实际射速（开火状态机读的那一行）', () => {
-  assert.equal(csConsts(cs('Weapons/Legendaries/Legendary_Frenzy.cs')).Decay, 2);
+  assert.equal(K['Weapons/Legendaries/Legendary_Frenzy.cs'].Decay, 2);
   assert.match(web, /rt\.frenzy > 0 && ctx\.time\.now - rt\.frenzyTime > 2\) rt\.frenzy = 0;/);
   assert.match(web, /const rate = R\.fireRate \* frenzyMult \* haste;/);
 });
 
-// ───────────── 没迁的 ─────────────
+// ───────────── 网页还没测的 ─────────────
 
-test.todo('FireModeTests 的行为用例（35 条里的 29 条：全自动追帧 / 闲置后不倾泻、半自动按住只打一发 / 冷却中按住到点开火 / 输入缓冲、点射、光束、预热、蓄力、齐射、切枪防抖、整匣 / 逐发换弹与打断、空枪自动换弹、无限弹药、应急补给、弹药比例与过关回填、六把枪持续秒伤、霰弹装一发打一发）：'
-  + 'M8 把扳机闩 / 计时 / 曲线 / 切枪姿态抽进了 FireControl.ts（tests/m8-weapons.test.mjs 测了），状态机还在 WeaponSystem 单体里，要给它做假输入 / 假弹道夹具才能逐帧驱动');
+test.todo('开火状态机的逐帧行为（全自动追帧 / 闲置后不倾泻、半自动按住只打一发 / 冷却中按住到点开火 / 输入缓冲、点射、光束、预热、蓄力、齐射、切枪防抖、整匣 / 逐发换弹与打断、空枪自动换弹、无限弹药、应急补给、弹药比例与过关回填、六把枪持续秒伤、霰弹装一发打一发）：'
+  + '扳机闩 / 计时 / 曲线 / 切枪姿态已在 FireControl.ts（tests/m8-weapons.test.mjs 测了），状态机还在 WeaponSystem 单体里，要给它做假输入 / 假弹道夹具才能逐帧驱动');

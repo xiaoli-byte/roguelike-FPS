@@ -1,11 +1,12 @@
 // M8 战斗契约 / 带电 / 命中区 / 弹体对照（Unity Combat/、Enemies/HitZone.cs + EnemyBody.cs → 网页 src/combat/）。
-// 常量直接从 C# 源码里读出来比，改了一边另一边就红；行为断言照 Unity EditMode（Ch4FoundationTests 的带电、CombatPipelineTests 的灵宠 / 弱点、
-// ProjectileTests 的挡弹区与弱点规则）。
+// 常量和 Unity 版删除前从 C# 冻结的规格（tests/fixtures/spec/cs-consts.json、combat.json）比；行为断言照 Unity EditMode
+// （Ch4FoundationTests 的带电、CombatPipelineTests 的灵宠 / 弱点、ProjectileTests 的挡弹区与弱点规则）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import * as THREE from 'three';
+import { spec } from './unity-parity-kit.mjs';
 
 const threeUrl = new URL('../node_modules/three/build/three.module.js', import.meta.url).href;
 const data = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
@@ -14,21 +15,10 @@ async function ts(path, imports = {}) {
   for (const [key, value] of Object.entries({ three: threeUrl, ...imports })) source = source.replaceAll(`'${key}'`, `'${value}'`);
   return data(stripTypeScriptTypes(source, { mode: 'transform' }));
 }
-const cs = path => readFile(new URL(`../unity/Assets/Game/Scripts/${path}`, import.meta.url), 'utf8');
 const src = path => readFile(new URL(`../src/${path}`, import.meta.url), 'utf8');
-
-/** C# 里的 `const float A = 1f, B = 2.5f;` / `const int N = 3;` / `public float x = 0.34f;` → { A: 1, B: 2.5, N: 3 } */
-function csConsts(source) {
-  const out = {};
-  for (const m of source.matchAll(/(?:const|public)\s+(?:float|int)\s+([^;(){}]+);/g)) {
-    for (const part of m[1].split(',')) {
-      const kv = part.match(/^\s*(\w+)\s*=\s*(-?[\d.]+(?:e-?\d+)?)f?\s*$/);
-      if (kv) out[kv[1]] = Number(kv[2]);
-    }
-  }
-  return out;
-}
-const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg ?? ''} ${a} ≠ ${b}`);
+/** C# 常量（const / public 数值字段），键 = 相对 Unity 工程 Game/Scripts 的文件名 */
+const K = spec('cs-consts');
+const near =(a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg ?? ''} ${a} ≠ ${b}`);
 
 const mathUrl = await ts('../src/core/math.ts');
 const PET = await import(await ts('../src/combat/PetContract.ts'));
@@ -49,10 +39,6 @@ test('pet contract: source "pet" only scales with petDamagePct and never rolls a
   const combat = await src('combat/Combat.ts');
   assert.match(combat, /!isPetHit\(req\) && ctx\.rng\.next\(\) < stats\.get\('critChance'\)/, '灵宠不掷随机暴击');
   assert.match(combat, /if \(weak\) mult \*= stats\.mult\('weakpointDamagePct'\)/, '弱点（含改判）吃「弱点伤害」');
-  // C#：同样的两条
-  const unity = await cs('Combat/Combat.cs');
-  assert.match(unity, /info\.source != DamageSource\.Pet && UnityEngine\.Random\.value </);
-  assert.match(unity, /if \(weak\) mult \*= stats\?\.Mult\(Stat\.WeakpointDamagePct\)/);
   const stats = await src('core/Stats.ts');
   assert.match(stats, /weakpointDamagePct: 0,\s*petDamagePct: 0/);
   if (CALC.isPetHit) {
@@ -88,17 +74,16 @@ test('force-weakpoint: only weapon / skill / explosion direct hits can be re-jud
 // ───────────── 命中区 / 弱点规则 ─────────────
 
 test('hit zones: constants match Unity EnemyBody / HitZone / WeakpointRule', async () => {
-  const body = csConsts(await cs('Enemies/EnemyBody.cs'));
-  const zone = csConsts(await cs('Enemies/HitZone.cs'));
-  const rule = csConsts(await cs('Combat/Projectiles/ProjectileTargeting.cs'));
+  const body = K['Enemies/EnemyBody.cs'];
+  const zone = K['Enemies/HitZone.cs'];
+  const rule = K['Combat/Projectiles/ProjectileTargeting.cs'];
   near(ZONE.ZONE_TOLERANCE, body.ZoneTolerance);
   near(ZONE.ZONE_FALLBACK, body.ZoneFallback);
   near(ZONE.FACING_COS, zone.facingCos);
   near(ZONE.WEAKPOINT_WINDOW, rule.Window);
   // 敌人射线、投射物各自内联了一份 1.5（不 import，免得测试打桩）：一起锁住
   for (const file of ['enemies/EnemyBase.ts', 'combat/Projectiles.ts']) assert.match(await src(file), new RegExp(`const WEAKPOINT_WINDOW = ${rule.Window};`), file);
-  assert.equal(ZONE.BLOCK_BELOW, 0.5);
-  assert.match(await cs('Combat/Damageable.cs'), /0\.5f/, 'Unity：倍率 < 0.5 记为格挡');
+  assert.equal(ZONE.BLOCK_BELOW, 0.5, '倍率 < 0.5 记为格挡（Unity Damageable）');
 });
 
 test('weakpoint rule: head first = weak; body first with the weakpoint within 1.5 m behind = weak at the body distance', () => {
@@ -152,7 +137,7 @@ test('hit zones: zoneAt picks by tolerance / priority / fallback; facing gate; b
 // ───────────── 带电（Ch4FoundationTests） ─────────────
 
 test('charge: constants match Unity Charge.cs', async () => {
-  const c = csConsts(await cs('Combat/Charge.cs'));
+  const c = K['Combat/Charge.cs'];
   for (const k of ['DefaultSeconds', 'ArcRadius', 'ArcDamage', 'ArcTargets', 'MaxHops', 'ArcsPerSecond']) near(CHARGE.CHARGE[k], c[k], k);
 });
 
@@ -201,8 +186,6 @@ test('charge: a charged kill arcs to the 2 nearest non-boss allies and the chain
 
 test('charge: the death arc picks like Unity Nearest — body centre within 8 m (no radius padding), only the nearest ArcTargets + 2 are candidates', async () => {
   // Unity Charge.Arc：ReactionSystem.Nearest(c, radius, ArcTargets + 2, from, false, near)，Nearest 按 Distance(from, CenterOf(d)) > range 剔除
-  assert.match(await cs('Combat/Charge.cs'), /ReactionSystem\.Nearest\(c, radius, ArcTargets \+ 2, from, false, near\);/);
-  assert.match(await cs('Combat/ReactionSystem.cs'), /float dd = Vector3\.Distance\(from, CenterOf\(d\)\);\s*if \(dd > range\) continue;/);
   const at = (x, extra = {}) => ({ alive: true, untargetable: false, isBoss: false, radius: 1.2, height: 2, getBodyCenter: o => o.set(x, 1, 0), ...extra });
   const c = new THREE.Vector3(0, 1, 0);
   const near = at(7.5), far = at(8.6);
@@ -245,14 +228,6 @@ test('charge: the death arc picks like Unity Nearest — body centre within 8 m 
 test('charge: a death arc that kills its first target stops there, like Unity (the nested Arc clears the shared near list)', async () => {
   // Unity Charge.Arc：near 是静态共用表；hop / 半径不合格在 near.Clear() 之前 return，否则进来清一次、走完再清一次。
   // 传电的 6 点雷伤打死目标 → Damageable.Died 同步 → ChargeState.OnDied → Charge.Arc 重入，把 near 清空，外层 `i < near.Count` 为假就停
-  const unity = await cs('Combat/Charge.cs');
-  assert.match(unity, /static readonly List<Damageable> near = new\(\);/);
-  assert.match(unity, /if \(hop > maxHops\) return 0;\s*var c = ReactionSystem\.CenterOf\(from\);\s*near\.Clear\(\);/);
-  assert.match(unity, /for \(int i = 0; i < near\.Count && n < ArcTargets; i\+\+\)/);
-  assert.match(unity, /near\.Clear\(\);\s*return n;/);
-  assert.match(unity, /if \(was && Hp && !Hp\.IsBoss\) Charge\.Arc\(Hp\);/);
-  assert.match(await cs('Combat/Damageable.cs'), /if \(r\.killed\)\s*try\s*\{\s*Died\?\.Invoke\(info\);/);
-
   const at = (x, hp = 100) => ({ alive: true, untargetable: false, isBoss: false, hp, radius: 0.5, height: 2, getBodyCenter: o => o.set(x, 1, 0) });
   // 和 Combat 一样：打死就同步派发 enemy:killed（ChargeSystem 在构造时订阅）
   const world = pool => {
@@ -321,11 +296,9 @@ test('charge: a death arc that kills its first target stops there, like Unity (t
 test('charge counts as shock for reactions (Unity GameReactionEnv.Has)', async () => {
   const rx = await src('combat/Reactions.ts');
   assert.equal((rx.match(/st\.has\('shock'\) \|\| this\.host\.isCharged\?\.\(enemy\) === true/g) ?? []).length, 2, '反应判定与引爆两处都读带电');
-  assert.match(await cs('Combat/Reactions/ReactionEnv.cs'), /StatusId\.Shock => s\.Shocked \|\| Charge\.IsCharged\(d\)/);
   // 领主：夔一直带电、飞廉二阶段起珠子在时带电；高原敌自己的带电经 foeCharged 读
   assert.match(await src('enemies/bosses/lords/Kui.ts'), /charge\.hold\(this, this\)/);
   assert.match(await src('enemies/bosses/lords/Feilian.ts'), /this\.phase >= 1 && this\.orbIntact && this\.introDone/);
-  assert.match(await cs('Bosses/Feilian/FeilianBrain.cs'), /bool charged = Phase >= 1 && OrbIntact && IntroDone;/);
   assert.match(await src('enemies/plateau/PlateauFoeAdapter.ts'), /foeCharged\(\): boolean/);
 });
 
@@ -334,7 +307,7 @@ test('charge counts as shock for reactions (Unity GameReactionEnv.Has)', async (
 // ───────────── 弹体：挡弹区、落地滚动 ─────────────
 
 test('projectiles: roll / bounce constants match Unity ProjectileMath', async () => {
-  const m = csConsts(await cs('Combat/Projectiles/ProjectileMath.cs'));
+  const m = K['Combat/Projectiles/ProjectileMath.cs'];
   const p = await src('combat/Projectiles.ts');
   const tsConst = name => Number(p.match(new RegExp(`const ${name} = ([\\d.]+);`))[1]);
   near(tsConst('ROLL_SPEED'), m.RollSpeed);
@@ -363,17 +336,15 @@ test('projectile wards: disc blocks both ways, sphere only blocks what flies in 
   assert.equal(wardEntry(sphere, V(0, 1, 0.5), V(0, 0, 1), 10), -1, '罩子里打出去的不被自己的罩子吃掉');
   assert.equal(wardEntry(sphere, V(0, 1, -5), V(0, 0, -1), 10), -1, '背着球飞');
   assert.equal(wardEntry({ ...sphere, radius: 0 }, V(0, 1, -5), V(0, 0, 1), 10), -1);
-  // Unity：ProjectileWard.Shape.Sphere / EntersSphere
-  assert.match(await cs('Combat/Projectiles/ProjectileWard.cs'), /Sphere/);
 });
 
 // ───────────── 状态 / 反应数值（CombatTuning.cs 是单一来源） ─────────────
 
 test('status + reaction numbers match Unity CombatTuning', async () => {
-  const t = await cs('Combat/CombatTuning.cs');
   const status = await src('combat/Status.ts');
   const rx = await src('combat/Reactions.ts');
-  const block = name => csConsts(t.slice(t.indexOf(`public static class ${name}`), t.indexOf('}', t.indexOf(`public static class ${name}`))));
+  /** CombatTuning 的嵌套类 */
+  const block = name => K[`Combat/CombatTuning.cs#${name}`];
   const burn = block('Burn'), shock = block('Shock'), corrode = block('Corrode'), control = block('Control');
   const has = (text, value, what) => assert.ok(new RegExp(`(?<![\\d.])${String(value).replace('.', '\\.')}(?![\\d])`).test(text), `${what} = ${value} 在网页源码里找不到`);
   for (const [k, v] of Object.entries(burn)) has(status, v, `Burn.${k}`);
@@ -381,17 +352,17 @@ test('status + reaction numbers match Unity CombatTuning', async () => {
   for (const [k, v] of Object.entries(corrode)) has(status, v, `Corrode.${k}`);
   for (const [k, v] of Object.entries(control)) has(status, v, `Control.${k}`);
   // 四种反应的 k / floor / cap / 冷却
-  const tune = [...t.matchAll(/new\(([\d.]+)f, (\d+), (\d+), ([\d.]+)f\)/g)].map(m => m.slice(1).map(Number));
+  const tune = spec('combat').reactions.tune;
   assert.deepEqual(tune, [[1, 14, 80, 1], [1, 14, 100, 1.2], [1, 14, 90, 1.2], [1.5, 40, 320, 6]]);
   for (const row of tune) for (const v of row) has(rx, v, `反应表 ${row.join('/')}`);
-  const totals = csConsts(t);
+  const totals = K['Combat/CombatTuning.cs'];
   for (const k of ['MaxReactionDepth', 'FrameBudget', 'QueueCap', 'CascadeDelay', 'AbyssWindup', 'IcdFloor', 'DetonateIcd', 'PinCapOfMaxHp', 'StrengthPerLevel']) has(rx + await src('combat/Combat.ts'), totals[k], k);
   // 击杀结算：精英魂晶 × 5、首领 60（KillResolver）；吸血单次上限 5%（至少 2 点）；免疫提示间隔 0.4 s
-  const kill = csConsts(await cs('Combat/KillResolver.cs'));
+  const kill = K['Combat/KillResolver.cs'];
   assert.deepEqual([kill.BossEssence, kill.EliteEssenceMult, kill.DefaultEssence], [60, 5, 1]);
   const combat = await src('combat/Combat.ts');
   assert.match(combat, /isBoss \? 60 : 1/);
-  const uc = csConsts(await cs('Combat/Combat.cs'));
+  const uc = K['Combat/Combat.cs'];
   assert.deepEqual([uc.LifestealCapRatio, uc.LifestealCapMin, uc.ImmuneFeedbackGap, uc.MaxExplodeDepth], [0.05, 2, 0.4, 6]);
   has(combat, 0.05, '吸血上限');
 });

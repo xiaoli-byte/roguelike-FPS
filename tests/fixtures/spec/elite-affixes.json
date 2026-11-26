@@ -1,0 +1,58 @@
+{
+ "_comment": "Unity 版删除前一次性从它的 C# 源码 / EditMode 测试 / 导出物冻结的规格（2026-11-26，Unity 工程同提交 9eea6305），作网页的对照基线；不要从网页的表反向重生成。出处（*At、src）是相对 Unity 工程 Assets 目录的路径:行号，原文在 git 历史里。 常量（护盾 / 爆裂 / 狂暴 / 龙卷）在 cs-consts.json。",
+ "ids": ["swift", "shielded", "volatile", "frenzied"],
+ "names": ["迅捷", "坚盾", "爆裂", "狂暴"],
+ "idsAt": "Game/Tests/EliteAffixTests.cs:50",
+ "affixes": {
+  "swift": {
+   "src": "Enemies/Affixes/EliteAffix_Swift.cs",
+   "id": "swift",
+   "name": "迅捷",
+   "color": 4839679,
+   "testColor": 4839679,
+   "mods": {"damage": 1, "rate": 1.5, "speed": 1.5, "taken": 1},
+   "modsAt": "Game/Scripts/Enemies/Affixes/EliteAffix_Swift.cs:13"
+  },
+  "shielded": {
+   "src": "Enemies/Affixes/EliteAffix_Shielded.cs",
+   "id": "shielded",
+   "name": "坚盾",
+   "color": 5213695,
+   "testColor": 5213695
+  },
+  "volatile": {
+   "src": "Enemies/Affixes/EliteAffix_Volatile.cs",
+   "id": "volatile",
+   "name": "爆裂",
+   "color": 16738847,
+   "testColor": 16738847
+  },
+  "frenzied": {
+   "src": "Enemies/Affixes/EliteAffix_Frenzied.cs",
+   "id": "frenzied",
+   "name": "狂暴",
+   "color": 16722456,
+   "testColor": 16722456,
+   "mods": {"damage": 1.2, "rate": 1.6, "speed": 1.35, "taken": 1},
+   "modsAt": "Game/Scripts/Enemies/Affixes/EliteAffix_Frenzied.cs:16"
+  }
+ },
+ "swift": {
+  "firstCooldown": [4.5, 6.5],
+  "firstCooldownAt": "Game/Scripts/Enemies/Affixes/EliteAffix_Swift.cs:37",
+  "band": [4, 24, 4],
+  "bandAt": "Game/Scripts/Enemies/Affixes/EliteAffix_Swift.cs:103"
+ },
+ "stations": {
+  "defaultArrival": {"ranged": 0.2, "support": 0.6, "flank": 0.85, "precision": 0.9, "artillery": 1.2},
+  "defaultArrivalAt": "Game/Scripts/Encounters/SpawnStations.cs:58",
+  "anchorBonus": [8, -3, 2, 3, -1.5],
+  "anchorBonusAt": "Game/Scripts/Encounters/SpawnStations.cs:261",
+  "eliteBodyScale": 1.25,
+  "eliteBodyScaleAt": "Game/Scripts/Encounters/SpawnStations.cs:88",
+  "raisedRoles": ["ranged", "precision", "artillery"],
+  "raisedRolesAt": "Game/Scripts/Encounters/SpawnStations.cs:69",
+  "roles": ["auto", "assault", "flank", "ranged", "precision", "artillery", "support"],
+  "rolesAt": "Game/Scripts/Encounters/EncounterSpec.cs:11"
+ }
+}

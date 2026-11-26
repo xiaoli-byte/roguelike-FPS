@@ -1,12 +1,12 @@
 // M13 对照：Unity EditMode 的 DamageCalcParityTests.cs、CombatPipelineTests.cs、StatSheetTests.cs → node --test。
 // 同样的输入、同样的断言；Unity 那份的对照组是「TS 逐行移植」，这里反过来：对照组是 Unity DamageCalc.cs 的逐行移植（unity*），
-// 表和常量直接从 C# 源码里读（Damage.cs 的 DamageTable、Stats.cs、Combat.cs、Status/*.cs），改了一边另一边就红。
-// 只写测试：网页和 Unity 不一致的地方写成 todo，不改实现。M8 照 Unity 补上的（弱点伤害%、灵宠伤害源、免疫结果、玩家减益）已改成真断言。
+// 表和常量是 Unity 版删除前从 C# 冻结的规格（Damage.cs 的 DamageTable、Stats.cs、Combat.cs、Status/*.cs → tests/fixtures/spec/combat.json、cs-consts.json）。
+// 只写测试，不改实现。M8 照 Unity 补上的（弱点伤害%、灵宠伤害源、免疫结果、玩家减益）已改成真断言。
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
-import { combatRig, cs, csConsts, csList, near, tsGraph } from './unity-parity-kit.mjs';
+import { combatRig, near, spec, tsGraph } from './unity-parity-kit.mjs';
 
 const graph = await tsGraph();
 after(() => graph.dispose());
@@ -17,6 +17,8 @@ const { IMMUNE_FEEDBACK_GAP } = await graph.load('combat/Combat.ts');
 const PS = await graph.load('player/PlayerStatus.ts');
 const SUN = await graph.load('enemies/bosses/HanbaSunburn.ts');
 const readSrc = file => readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
+const SPEC = spec('combat');
+const K = spec('cs-consts');
 
 const ELEMENTS = ['none', 'fire', 'shock', 'corrode'];
 const LAYERS = ['shield', 'armor', 'health'];
@@ -76,12 +78,7 @@ function unityDotStatMultiplier(s, rank, element) {
   return m > 0 && Number.isFinite(m) ? m : 1;
 }
 /** Damage.cs 的 DamageTable.Mult：[元素][Shield, Armor, Health] */
-const unityLayerTable = (() => {
-  const src = cs('Combat/Damage.cs');
-  const body = src.slice(src.indexOf('static readonly float[,] Mult'));
-  const rows = [...body.slice(0, body.indexOf('};')).matchAll(/\/\*\s*(\w+)\s*\*\/\s*\{([^}]+)\}/g)];
-  return Object.fromEntries(rows.map(m => [m[1].toLowerCase(), csList(m[2])]));
-})();
+const unityLayerTable = SPEC.layerTable;
 function unityLayerMultiplier(s, element, layer) {
   let m = unityLayerTable[element][LAYERS.indexOf(layer)];
   if (!s) return m;
@@ -197,7 +194,7 @@ test('NoStatsMeansNoMultiplier: 空属性表 = 1', () => {
 });
 
 test('MultFloorIsPerStat: Stats.mult 下限 0.05，逐项取下限再相乘', () => {
-  near(assert, csConsts(cs('Core/Stats.cs')).MinMult, 0.05, 1e-9, 'StatSheet.MinMult');
+  near(assert, K['Core/Stats.cs'].MinMult, 0.05, 1e-9, 'StatSheet.MinMult');
   const s = blank();
   s.add('damagePct', -3, 'debuff');
   s.add('explosionDamagePct', -0.99, 'debuff');
@@ -219,7 +216,7 @@ test('IsDotMatchesThreeJs: 全部来源 × 标签组合', () => {
 
 test('DotAndStatusPowerMatchThreeJs: 附着时除掉、每跳乘回', () => {
   const s = sheet();
-  const cap = csConsts(cs('Combat/CombatTuning.cs')).PinCapOfMaxHp;
+  const cap = K['Combat/CombatTuning.cs'].PinCapOfMaxHp;
   assert.equal(ST.STATUS_POWER_CAP, cap, 'STATUS_POWER_CAP ↔ CombatTuning.PinCapOfMaxHp');
   assert.equal(cap, 0.5);
   for (const rank of RANKS) for (const [status, element] of [['burn', 'fire'], ['shock', 'shock'], ['corrode', 'corrode']]) {
@@ -267,10 +264,10 @@ test('StatusPowerDividesOutWhatEachTickMultipliesBack: 一层灼烧烧满 = 那�
 });
 
 test('ExecuteThresholdMatchesThreeJs: 1e6 起算处决', async () => {
-  const unity = csConsts(cs('Combat/DamageCalc.cs')).ExecuteBase;
+  const unity = K['Combat/DamageCalc.cs'].ExecuteBase;
   assert.equal(unity, 1e6);
   // 网页的 EXECUTE_BASE 没导出：读源码里的字面量比
-  const web = Number((await import('node:fs')).readFileSync(new URL('../src/combat/Combat.ts', import.meta.url), 'utf8').match(/const EXECUTE_BASE = ([\de.]+);/)[1]);
+  const web = Number(readSrc('combat/Combat.ts').match(/const EXECUTE_BASE = ([\de.]+);/)[1]);
   assert.equal(web, unity);
 });
 
@@ -350,8 +347,8 @@ test('CritRules: 随机暴击 / noCrit / 持续伤害与反应不暴击', async 
 
 /** 常量：Status.ts ↔ Unity Combat/Status/*.cs（EnemyStatus 的同名常量引用的就是它们） */
 test('StatusConstantsMatchThreeJs (ReactionTuningTests): 灼烧 / 雷殛 / 蚀化 / 控制', async () => {
-  const burn = csConsts(cs('Combat/Status/BurnStatus.cs')), shock = csConsts(cs('Combat/Status/ShockStatus.cs'));
-  const corrode = csConsts(cs('Combat/Status/CorrodeStatus.cs')), stun = csConsts(cs('Combat/Status/StunStatus.cs')), slow = csConsts(cs('Combat/Status/SlowStatus.cs'));
+  const burn = K['Combat/Status/BurnStatus.cs'], shock = K['Combat/Status/ShockStatus.cs'];
+  const corrode = K['Combat/Status/CorrodeStatus.cs'], stun = K['Combat/Status/StunStatus.cs'], slow = K['Combat/Status/SlowStatus.cs'];
   assert.deepEqual([ST.BURN_DURATION, ST.BURN_TICK, ST.BURN_RATIO, ST.BURN_MAX_STACKS], [burn.Duration, burn.TickInterval, burn.Ratio, burn.MaxStacks]);
   assert.deepEqual([burn.Duration, burn.TickInterval, burn.Ratio, burn.MaxStacks], [4, 0.5, 0.16, 3]);
   assert.deepEqual([ST.SHOCK_MARK_DURATION, ST.SHOCK_CHAIN_RANGE, ST.SHOCK_CHAIN_TARGETS, ST.SHOCK_CHAIN_RATIO, ST.SHOCK_STUN_STACKS, ST.SHOCK_STUN_DURATION, DC.SHOCK_MARK_BONUS],
@@ -361,11 +358,11 @@ test('StatusConstantsMatchThreeJs (ReactionTuningTests): 灼烧 / 雷殛 / 蚀�
     [corrode.Duration, corrode.TickInterval, corrode.Ratio, corrode.Taken, corrode.SpeedFactor]);
   assert.deepEqual([corrode.Duration, corrode.TickInterval, corrode.Ratio, corrode.Taken, corrode.SpeedFactor], [5, 0.5, 0.08, 1.2, 0.8]);
   // 没导出的：读 Status.ts 源码里的字面量
-  const web = csConsts((await import('node:fs')).readFileSync(new URL('../src/combat/Status.ts', import.meta.url), 'utf8').replace(/^const (\w+) = ([\d.e-]+);/gm, 'const float $1 = $2;'));
+  const web = Object.fromEntries([...readSrc('combat/Status.ts').matchAll(/^const (\w+) = ([\d.e-]+);/gm)].map(m => [m[1], Number(m[2])]));
   assert.deepEqual([web.SHOCK_CHAIN_COOLDOWN, web.SLOW_DEFAULT_DURATION, web.SLOW_MAX, web.SLOW_MAX_ENTRIES, web.STUN_DEFAULT_DURATION],
     [shock.ChainCooldown, slow.DefaultSeconds, slow.Max, slow.MaxEntries, stun.DefaultSeconds]);
   assert.deepEqual([web.ELITE_STUN_SCALE, web.BOSS_STUN_SCALE, web.BOSS_STUN_MAX, web.BOSS_STUN_IMMUNITY, web.TICK_EPS],
-    [stun.EliteScale, stun.BossScale, stun.BossMax, stun.BossImmunity, csConsts(cs('Combat/Status/StatusEffect.cs')).TickEps]);
+    [stun.EliteScale, stun.BossScale, stun.BossMax, stun.BossImmunity, K['Combat/Status/StatusEffect.cs'].TickEps]);
 });
 
 test('BurnTotalPerApplicationIsPowerTimes128', () => {
@@ -462,7 +459,7 @@ test('StunScalesByRank: 精英 ×0.75，首领 ×0.35 且 ≤ 0.35 s', async () 
 // ───────────── 吸血 / 魂晶 / 不可选中 / 处决 ─────────────
 
 test('LifestealIsCappedPerHit: 单次上限 = 最大生命 5%，至少 2 点', async () => {
-  const unity = csConsts(cs('Combat/Combat.cs'));
+  const unity = K['Combat/Combat.cs'];
   assert.deepEqual([unity.LifestealCapRatio, unity.LifestealCapMin], [0.05, 2]);
   const heal = async (dealt, lifesteal, maxHp) => {
     const rig = await combatRig(graph, THREE);
@@ -492,7 +489,7 @@ test('EssenceByDefAndRank: 精英 ×5、首领没写按 60、分身 0', async ()
 });
 
 test('ImmuneFeedbackIsThrottledAndSkipsDots: 不可选中返回 immune、不结算，0.4 s 内同一敌人只提示一次，跳伤不提示', async () => {
-  assert.equal(IMMUNE_FEEDBACK_GAP, csConsts(cs('Combat/Combat.cs')).ImmuneFeedbackGap, 'Combat.ImmuneFeedbackGap');
+  assert.equal(IMMUNE_FEEDBACK_GAP, K['Combat/Combat.cs'].ImmuneFeedbackGap, 'Combat.ImmuneFeedbackGap');
   assert.equal(IMMUNE_FEEDBACK_GAP, 0.4);
   const rig = await combatRig(graph, THREE);
   const e = rig.enemy({ maxHp: 1000, untargetable: true });
@@ -548,16 +545,14 @@ test('StatSheet: AddAndRemoveBySource / SameSourceStacksAndRemovesTogether', () 
 });
 
 test('StatSheet.Default ↔ BASE_STATS：写了基础值的十项相同，其余为 0', () => {
-  const src = cs('Core/Stats.cs');
-  const unity = Object.fromEntries([...src.matchAll(/s\.SetBase\(Stat\.(\w+),\s*([\d.]+)f?\)/g)].map(m => [m[1], Number(m[2])]));
+  const unity = SPEC.statDefaults;
   const key = name => ({ MagPct: 'magSizePct' }[name] ?? name[0].toLowerCase() + name.slice(1));
   assert.equal(Object.keys(unity).length, 10);
   for (const [name, value] of Object.entries(unity)) assert.equal(BASE_STATS[key(name)], value, `${name} 基础值`);
   const defaults = new Set(Object.keys(unity).map(key));
   for (const [k, v] of Object.entries(BASE_STATS)) if (!defaults.has(k)) assert.equal(v, 0, `${k} 两边都没有基础值`);
   // 枚举 ↔ StatKey：两边一项不差（M8 补上了 weakpointDamagePct / petDamagePct）
-  const body = src.slice(src.indexOf('public enum Stat'), src.indexOf('public sealed class StatSheet')).replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
-  const names = body.slice(body.indexOf('{') + 1, body.indexOf('}')).split(',').map(x => x.trim()).filter(Boolean);
+  const names = SPEC.statEnum;
   const missing = names.map(key).filter(k => !(k in BASE_STATS));
   assert.deepEqual(missing, [], 'Unity 的 Stat 枚举里网页没有的项');
   assert.deepEqual(Object.keys(BASE_STATS).filter(k => !names.map(key).includes(k)), [], '网页的 StatKey 都在 Unity 枚举里');
@@ -566,7 +561,7 @@ test('StatSheet.Default ↔ BASE_STATS：写了基础值的十项相同，其余
 // ───────────── 玩家减益（CombatPipelineTests 的 C3：寒意 / 点燃 / 日晒，网页在 player/PlayerStatus.ts）─────────────
 
 test('ChillTakesStrongestCappedAt70Percent', () => {
-  const u = csConsts(cs('Combat/Status/ChillStatus.cs'));
+  const u = K['Combat/Status/ChillStatus.cs'];
   assert.deepEqual([PS.CHILL.MaxSlow, PS.CHILL.DefaultSeconds, PS.CHILL.MaxEntries], [u.MaxSlow, u.DefaultSeconds, u.MaxEntries]);
   near(assert, PS.chillFraction(35), 0.35, 1e-6, '> 1 按百分数');
   const chill = new PS.ChillInstance();
@@ -582,7 +577,7 @@ test('ChillTakesStrongestCappedAt70Percent', () => {
 });
 
 test('IgniteTicksEveryHalfSecondAndRefreshesWithoutStacking', () => {
-  const u = csConsts(cs('Combat/Status/IgniteStatus.cs'));
+  const u = K['Combat/Status/IgniteStatus.cs'];
   assert.deepEqual([PS.IGNITE.DefaultSeconds, PS.IGNITE.TickInterval, PS.IGNITE.EndGrace, PS.IGNITE.LastTickGrace], [u.DefaultSeconds, u.TickInterval, u.EndGrace, u.LastTickGrace]);
   const ignite = new PS.IgniteInstance(null);
   ignite.apply(3, 2);
@@ -602,7 +597,7 @@ test('IgniteTicksEveryHalfSecondAndRefreshesWithoutStacking', () => {
 });
 
 test('SunburnStacksWhileExposedAndFadesInShade', () => {
-  const u = csConsts(cs('Combat/Status/SunburnStatus.cs'));
+  const u = K['Combat/Status/SunburnStatus.cs'];
   assert.deepEqual(
     [SUN.SUNBURN_STACK_SECONDS, SUN.SUNBURN_TICK_INTERVAL, SUN.SUNBURN_DAMAGE_PER_STACK, SUN.SUNBURN_DECAY_DELAY, SUN.SUNBURN_DECAY_PER_SECOND, SUN.SUNBURN_MAX_STACKS],
     [u.StackSeconds, u.TickInterval, u.DamagePerStack, u.DecayDelay, u.DecayPerSecond, u.MaxStacks],
@@ -622,11 +617,11 @@ test('SunburnStacksWhileExposedAndFadesInShade', () => {
 });
 
 test('EveryStatusHasOneDefinition: Unity StatusId 的 8 项 = 网页敌人状态 5 项 + 玩家减益 3 项（寒意 / 日晒 / 点燃只挂玩家）', () => {
-  const ids = cs('Combat/Status/StatusEffect.cs').match(/public enum StatusId \{([^}]*)\}/)[1].split(',').map(x => x.trim().toLowerCase()).filter(Boolean);
+  const ids = SPEC.statusIds;
   const enemy = [...readSrc('core/types.ts').match(/export type StatusId =([^;]*);/)[1].matchAll(/'(\w+)'/g)].map(m => m[1]);
   const player = [...readSrc('player/PlayerStatus.ts').match(/export type PlayerStatusId =([^;]*);/)[1].matchAll(/'(\w+)'/g)].map(m => m[1]);
   assert.deepEqual([...enemy].sort(), ['burn', 'corrode', 'shock', 'slow', 'stun']);
   assert.deepEqual([...player].sort(), ['chill', 'ignite', 'sunburn']);
   assert.deepEqual([...enemy, ...player].sort(), [...ids].sort());
-  for (const name of ['Chill', 'Sunburn', 'Ignite']) assert.match(cs(`Combat/Status/${name}Status.cs`), /Hosts => StatusHosts\.Player;/, `${name} 只挂玩家`);
+  for (const name of ['Chill', 'Sunburn', 'Ignite']) assert.equal(SPEC.playerHost[name], true, `${name} 只挂玩家（${name}Status.cs：Hosts => StatusHosts.Player）`);
 });
