@@ -301,12 +301,13 @@ export const WB_1_3: WhiteboxSpec = {
     gable([155, 163], 82, 1.6, 1.8),
 
     // ── ③ 集市井台：井亭（Well 放大 1.8 倍，偏东南；③ 的落点留在井台中间）、货摊、拒马、货堆 ──
-    { name: '井亭', asset: WELL, kind: 'cyl', at: [295.8, 155.1], size: [0.3, 0.3], top: 4.12, mat: 'timber' },
-    { name: '井亭', asset: WELL, kind: 'cyl', at: [300.2, 155.1], size: [0.3, 0.3], top: 4.12, mat: 'timber' },
-    { name: '井亭', asset: WELL, kind: 'cyl', at: [295.8, 158.9], size: [0.3, 0.3], top: 4.12, mat: 'timber' },
-    { name: '井亭', asset: WELL, kind: 'cyl', at: [300.2, 158.9], size: [0.3, 0.3], top: 4.12, mat: 'timber' },
-    { name: '井亭', asset: WELL, kind: 'cyl', at: [298, 157], size: [1.3, 1.3], top: -1, mat: 'stone' },
-    { name: '井亭', asset: WELL, kind: 'box', at: [298, 157], size: [5.08, 4.46], top: 4.12, clear: 2.4, canopy: true, mat: 'roof', landmark: '井亭' },
+    // 井亭（资产放大 2.4 倍，8.2 m）：构成复核（2026-11-26）——1.8 倍时从街口望进下沉的井台只有一个小点，③ 没有中心物
+    { name: '井亭', asset: WELL, kind: 'cyl', at: [295.07, 154.47], size: [0.4, 0.4], top: 6.16, mat: 'timber' },
+    { name: '井亭', asset: WELL, kind: 'cyl', at: [300.93, 154.47], size: [0.4, 0.4], top: 6.16, mat: 'timber' },
+    { name: '井亭', asset: WELL, kind: 'cyl', at: [295.07, 159.53], size: [0.4, 0.4], top: 6.16, mat: 'timber' },
+    { name: '井亭', asset: WELL, kind: 'cyl', at: [300.93, 159.53], size: [0.4, 0.4], top: 6.16, mat: 'timber' },
+    { name: '井亭', asset: WELL, kind: 'cyl', at: [298, 157], size: [1.73, 1.73], top: -0.67, mat: 'stone' },
+    { name: '井亭', asset: WELL, kind: 'box', at: [298, 157], size: [6.77, 5.95], top: 6.16, clear: 3.87, canopy: true, mat: 'roof', landmark: '井亭' },
     barricade([280.5, 152], 90),
     barricade([294.5, 164.2], 20),
     goods([294, 143.5], 15),
@@ -358,10 +359,11 @@ export const WB_1_3: WhiteboxSpec = {
     coverWall([233, 199], 90),
     columnRuin([194, 203], 25),
 
-    // ── 寺塔（22 m，全图地标）：下半截塔身 + 收分的上半截，层檐悬空 ──
-    { name: '寺塔', asset: PAGODA, kind: 'box', at: [230, 246], size: [9.93, 10.08], top: 13, mat: 'timber' },
-    { name: '寺塔', asset: PAGODA, kind: 'box', at: [230, 246], size: [6.6, 6.7], top: 22.16, mat: 'timber', landmark: '寺塔' },
-    eave(12.4, 4.9), eave(11.8, 9), eave(11.2, 13.1), eave(8.8, 16.4), eave(8.2, 19.5), eave(7.4, 22.16),
+    // ── 寺塔（31 m，全图地标）：下半截塔身 + 收分的上半截，层檐悬空 ──
+    // 构成复核（2026-11-26）：22 m 时出生丘顶看过去只高出天际线 2°，城像一条平线；资产整体放大 1.4 倍，出生第一眼高出 4.5°
+    { name: '寺塔', asset: PAGODA, kind: 'box', at: [230, 246], size: [13.9, 14.1], top: 18.2, mat: 'timber' },
+    { name: '寺塔', asset: PAGODA, kind: 'box', at: [230, 246], size: [9.2, 9.4], top: 31, mat: 'timber', landmark: '寺塔' },
+    eave(17.4, 6.9), eave(16.5, 12.6), eave(15.7, 18.3), eave(12.3, 23), eave(11.5, 27.3), eave(10.4, 31),
     tamarisk([247, 238]),
     tamarisk([251, 249]),
 

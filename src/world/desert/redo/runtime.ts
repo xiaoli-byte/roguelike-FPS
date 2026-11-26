@@ -25,7 +25,8 @@ import { patchDesertDocument } from '../document';
 /** 地形四层贴图（起伏沙 / 黑戈壁砾石 / 龟裂土 / 赭红岩层，从旧沙漠地形搬到第一章自己的目录）和每张盖多少米 */
 const LAYERS = [
   { url: 'assets/desert/terrain/sand.webp', tile: 9 },
-  { url: 'assets/desert/terrain/gravel.webp', tile: 4 },
+  // 砾石：4 m 一铺时砾石斑有拳头到脸盆大，近景成一片豹纹斑（抢视线）；2.6 m 一铺缩成碎石粒
+  { url: 'assets/desert/terrain/gravel.webp', tile: 2.6 },
   { url: 'assets/desert/terrain/earth.webp', tile: 7 },
   { url: 'assets/desert/terrain/rock.webp', tile: 8 },
 ];

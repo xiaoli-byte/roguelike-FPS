@@ -158,12 +158,13 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
       rimBack: 0.3,
       // 沙山一面亮一面暗：背阳坡压深、偏冷（太阳也从 46° 压到 34°，和旱魃一阶段推到的 30° 接得上）
       terrainShadow: [0.56, 0.54, 0.82, 1],
-      // 远景：沙山外面一层层更远的沙海，最远一排台地
+      // 远景：沙山外面一层层更远、更高的沙海（鸣沙山的大沙山相对高 100–250 m），最远一排台地。
+      // 构成复核（2026-11-26）：50–180 m 时全被 30–44 m 的近环挡住，出生台上只看得见一道碗沿；现在从出生台望出去，远沙山一层层高出近环 1–5°
       far: {
         rows: [
-          { distance: 850, height: [50, 90], kind: 'dunes', density: 0.8, aerial: 0.12 },
-          { distance: 1300, height: [70, 130], kind: 'dunes', density: 0.6, aerial: 0.22 },
-          { distance: 2000, height: [100, 180], kind: { mesas: 2, dunes: 1 }, density: 0.4, aerial: 0.34 },
+          { distance: 950, height: [140, 210], kind: 'dunes', density: 0.85, aerial: 0.14 },
+          { distance: 1450, height: [190, 290], kind: 'dunes', density: 0.65, aerial: 0.26 },
+          { distance: 2200, height: [250, 380], kind: { mesas: 2, dunes: 1 }, density: 0.45, aerial: 0.38 },
         ],
       },
       grade: { ColorAdjustments: { postExposure: -0.55, saturation: 0, contrast: 32 }, WhiteBalance: { temperature: 4, tint: 0 } },
@@ -186,8 +187,9 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
       // 远景：崖顶后面（北）一层层更高的台地，崖才显得高；南边对岸低沙垄
       far: {
         rows: [
-          { distance: 800, height: [45, 80], kind: 'mesas', density: 0.6, sectors: [[110, 250]], outside: 0.3, aerial: 0.12 },
-          { distance: 1250, height: [80, 130], kind: 'mesas', density: 0.5, sectors: [[95, 265]], outside: 0.35, aerial: 0.2 },
+          // 构成复核（2026-11-26）：崖只有 18 m，出生点看过去是一条矮带——北边两排台地抬高，从河滩上看越过崖顶 + 后崖一层层露出来
+          { distance: 800, height: [80, 125], kind: 'mesas', density: 0.6, sectors: [[110, 250]], outside: 0.3, aerial: 0.14 },
+          { distance: 1250, height: [120, 180], kind: 'mesas', density: 0.5, sectors: [[95, 265]], outside: 0.35, aerial: 0.24 },
           { distance: 1900, height: [120, 190], kind: { mesas: 3, dunes: 1 }, density: 0.35, aerial: 0.32 },
         ],
       },
