@@ -341,8 +341,8 @@ export class Haozhi extends StandardEnemy {
     }
   }
 
-  /** 射出一圈冰刺：count 根，从 yaw0 起均分一周（世界方向） */
-  private fireQuills(count: number, damage: number, yaw0: number): void {
+  /** 射出一圈冰刺：count 根，从 yaw0 起均分一周（世界方向）；spirit = 出手者被嘲讽中，冰刺不伤玩家（Unity HaozhiAI.SprayQuills） */
+  private fireQuills(count: number, damage: number, yaw0: number, spirit: boolean): void {
     const y = this.position.y + QUILL_Y * this.sizeScale;
     for (let i = 0; i < count; i++) {
       const a = yaw0 + (i / count) * Math.PI * 2;
@@ -354,7 +354,7 @@ export class Haozhi extends StandardEnemy {
         gravity: 0,
         radius: QUILL_RADIUS,
         lifetime: QUILL_RANGE / QUILL_SPEED,
-        enemyDamage: damage,
+        enemyDamage: spirit ? 0 : damage,
         element: 'none',
         color: 0xcfe6ff,
         visual: 'shard',
@@ -371,7 +371,7 @@ export class Haozhi extends StandardEnemy {
     this.detonated = true;
     this.spokes?.release();
     this.spokes = null;
-    this.fireQuills(QUILLS, this.def.damage * this.damageMult, this.novaYaw);
+    this.fireQuills(QUILLS, this.def.damage * this.damageMult, this.novaYaw, this.taunted);
     const center = this.getBodyCenter(new THREE.Vector3());
     iceShatter(this.ctx, center, 1.4 * this.sizeScale, 0xd8ccff);
     this.ctx.fx.ring(center, QUILL_RANGE * 0.5, 0xc8bcff, 0.35);
@@ -421,7 +421,8 @@ export class Haozhi extends StandardEnemy {
     const dmg = this.def.damage * this.damageMult * 0.5;
     const center = this.getBodyCenter(new THREE.Vector3());
     iceShatter(this.ctx, center, 0.9 * this.sizeScale, 0xd8ccff);
-    this.ctx.tasks.delay(0.05, () => this.fireQuills(QUILLS / 2, dmg, yaw0));
+    const spirit = this.taunted;
+    this.ctx.tasks.delay(0.05, () => this.fireQuills(QUILLS / 2, dmg, yaw0, spirit));
   }
 
   protected override cancelAttack(): void {

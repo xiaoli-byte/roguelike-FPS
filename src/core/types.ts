@@ -185,12 +185,13 @@ export interface StatusInstance {
 
 export type StageType = 'combat' | 'elite' | 'treasure' | 'shop' | 'boss';
 /** 奖励种类（奖励串的第一段） */
-export type RewardKey = 'scroll' | 'weapon' | 'coins' | 'heal' | 'upgrade' | 'none';
+/** 'pet'：灵兽封印（Unity PetReward；M9 灵宠） */
+export type RewardKey = 'scroll' | 'weapon' | 'coins' | 'heal' | 'upgrade' | 'pet' | 'none';
 /**
  * 宝箱奖励串：种类，或带参数的武器奖励（Unity WeaponReward）——'weapon:<id>'（指定武器、普通品质）/ 'weapon:<id>:<品质>' /
  * 'weapon:min=N'（保底）/ 'weapon:<id>:min=N'；解析见 progression/loot/rewardRules.parseWeaponReward
  */
-export type RewardType = RewardKey | `weapon:${string}`;
+export type RewardType = RewardKey | `weapon:${string}` | `pet:${string}`;
 export type ThemeId = 'desert' | 'frost' | 'inferno';
 
 export const CHAPTER_COUNT = 4;
@@ -240,6 +241,16 @@ export interface RunState {
   weapons?: WeaponSave[];
   hp?: number;
   shield?: number;
+  /** 灵宠快照（Unity RunState.pet）：灵宠系统每帧写当前结契的那只（没有为 null），进关快照 / 续玩档跟着存，进关时按它重新结契（src/pets） */
+  pet?: PetSave | null;
+}
+
+/** 灵宠快照（Unity PetSave）：定义 id、灵契等级 / 经验、灵技冷却剩余（秒） */
+export interface PetSave {
+  id: string;
+  level: number;
+  xp: number;
+  cooldownLeft: number;
 }
 
 /** 一把枪的快照（续玩档；Unity WeaponSave）：定义 id、品质、强化、元素、弹药、是不是手上那把、词条 */
@@ -678,6 +689,10 @@ export interface IEnemy {
   readonly untargetable?: boolean;
   /** 此刻免疫眩晕（Boss 出招中等）：Combat 施加 stun 时直接忽略（不播特效、不派发事件）。缺省 false */
   readonly stunImmune?: boolean;
+  /** 被灵宠讙嘲讽中（Unity EnemyAI.Taunted；M9）：直接命中打在灵体诱饵上无效，由各招式自己判断。缺省 false */
+  readonly taunted?: boolean;
+  /** 诱饵挡下一击，冒「格挡」（Unity EnemyAI.DecoyBlocked，全场节流）；缺省不冒 */
+  decoyBlocked?(): void;
   getHeadCenter(out: THREE.Vector3): THREE.Vector3;
   getBodyCenter(out: THREE.Vector3): THREE.Vector3;
   /** 射线命中测试（头部球 + 身体胶囊） */

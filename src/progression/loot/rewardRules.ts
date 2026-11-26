@@ -23,9 +23,9 @@ export function weaponRewardHint(stageType: StageType, chapter: number): string 
 
 // ───────────── 奖励串（Unity RewardRegistry / WeaponReward）─────────────
 
-/** 奖励串的种类（第一段）：'weapon:min=3' → 'weapon' */
+/** 奖励串的种类（第一段）：'weapon:min=3' → 'weapon'、'pet:rarity=2' → 'pet' */
 export function rewardKey(reward: RewardType): RewardKey {
-  return reward.startsWith('weapon:') ? 'weapon' : reward as RewardKey;
+  return reward.startsWith('weapon:') ? 'weapon' : reward.startsWith('pet:') ? 'pet' : reward as RewardKey;
 }
 
 /** 解析后的武器奖励（Unity WeaponReward.Spec）：id = 指定武器（null = 随机）；rarity = 固定品质（null = 按章节表掷）；minRarity = 保底 */

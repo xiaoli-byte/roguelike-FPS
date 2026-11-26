@@ -619,7 +619,9 @@ export class Founder extends StandardEnemy {
     this.flingDecal = null;
     this.releaseAttack();
     _p.set(this.position.x, this.position.y + 0.02, this.position.z);
-    zonePlayer(ctx, _p, FLING.radius, this.def.damage * FLING.hit * this.damageMult, 'fire', this, 1.6);
+    // 被嘲讽时甩向灵体诱饵：圈内烫一下无效（Unity FounderAI.ReleaseFling：Taunted → DecoyBlocked）；熔铜区照留
+    if (this.taunted) this.decoyBlocked();
+    else zonePlayer(ctx, _p, FLING.radius, this.def.damage * FLING.hit * this.damageMult, 'fire', this, 1.6);
     spawnFirePool(ctx, _p, FLING.radius, FLING.pool, { playerDamage: this.def.damage * FLING.tick * this.damageMult, allyFrac: 0, source: this });
     for (let i = 0; i < 10; i++) {
       const a = (i / 10) * Math.PI * 2;

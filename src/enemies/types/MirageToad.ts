@@ -357,23 +357,27 @@ export class MirageToad extends StandardEnemy {
     const pl = ctx.player;
     this.root.updateMatrixWorld(true);
     this.getMuzzle(_mouth);
-    const dist = Math.hypot(pl.position.x - _mouth.x, pl.position.z - _mouth.z);
+    // 被嘲讽：吐向灵体诱饵、不预判（Unity MirageToadAI.Spit：PlayerPos / PredictPlayer 对着 Target），吐出的是灵体火珠
+    const spirit = this.taunted;
+    const tp = this.targetPos;
+    const dist = Math.hypot(tp.x - _mouth.x, tp.z - _mouth.z);
     const T = clamp(1.2 + (dist / 30) * 0.6, 1.2, 1.8);
-    _target.set(pl.position.x + pl.velocity.x * T * 0.45, pl.position.y, pl.position.z + pl.velocity.z * T * 0.45);
+    const lead = spirit ? 0 : T * 0.45;
+    _target.set(tp.x + pl.velocity.x * lead, tp.y, tp.z + pl.velocity.z * lead);
     if (index > 0) {
       const a = ctx.rng.range(0, Math.PI * 2), r = ctx.rng.range(2.5, 4);
       _target.x += Math.cos(a) * r;
       _target.z += Math.sin(a) * r;
     }
-    const gy = ctx.world.groundHeight(_target.x, _target.z, pl.position.y + 1);
-    _target.y = Number.isFinite(gy) ? gy : pl.position.y;
+    const gy = ctx.world.groundHeight(_target.x, _target.z, tp.y + 1);
+    _target.y = Number.isFinite(gy) ? gy : tp.y;
     const h = Math.hypot(_target.x - _mouth.x, _target.z - _mouth.z);
     ballisticVelocity(_mouth, _target, Math.max(1, h / T), BALL_GRAVITY, _vel);
     // 蜃火珠（真 / 幻影）：弹道、碰撞、预警、爆炸与余火都在 MirageFireball 里
     launchMirageFireball(ctx, {
       from: _mouth, velocity: _vel, gravity: BALL_GRAVITY, flightTime: T, target: _target,
       radius: BALL_RADIUS, damage: this.def.damage * this.damageMult, source: this,
-      illusion: this.isDecoy, scale: this.sizeScale,
+      illusion: this.isDecoy, scale: this.sizeScale, spirit: spirit && !this.isDecoy,
     });
     ctx.audio.play('shot_launcher', { position: _mouth, volume: 0.8, pitch: 0.55 });
     this.spitAge = 0;

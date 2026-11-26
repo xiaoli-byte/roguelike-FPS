@@ -450,6 +450,12 @@ export class LanternJelly extends StandardEnemy {
     this.getBodyCenter(_q);
     ctx.fx.burst(_q, C.shock, 24, 5, 0.4, 0.06, 0);
     ctx.audio.play('shock_zap', { position: _q, volume: 0.9, pitch: 0.8 });
+    // 被嘲讽：圈住的是灵体诱饵，无效（Unity LanternJellyAI.ReleaseShock：Contains(PlayerPos) 后 Taunted → DecoyBlocked）
+    if (this.taunted) {
+      const tp = this.targetPos, dy = tp.y - center.y;
+      if (Math.hypot(tp.x - center.x, tp.z - center.z) <= SHOCK.range + ctx.player.radius * 0.5 && dy >= -0.6 && dy <= SHOCK.rise) this.decoyBlocked();
+      return false;
+    }
     const hit = zonePlayer(ctx, center, SHOCK.range, this.def.damage * this.damageMult, 'shock', this, SHOCK.rise);
     if (hit) {
       chillPlayer(ctx, SHOCK.slow, SHOCK.slowTime);

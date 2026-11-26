@@ -260,7 +260,8 @@ export class Marksman extends StandardEnemy {
       _end.copy(_muzzle).addScaledVector(_dir, tp);
       if (!ctx.world.segmentBlocked(_muzzle, _end)) {
         endDist = tp;
-        ctx.combat.damagePlayer(this.def.damage * this.damageMult, 'none', this, _muzzle);
+        // 被灵宠嘲讽时射出的是灵体弹（照 Unity EnemyProjectile.spirit 的规矩）：不伤玩家
+        if (!this.taunted) ctx.combat.damagePlayer(this.def.damage * this.damageMult, 'none', this, _muzzle);
       }
     }
     _end.copy(_muzzle).addScaledVector(_dir, endDist);

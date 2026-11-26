@@ -304,7 +304,8 @@ export class Mortar extends StandardEnemy {
       gravity: SHELL_GRAVITY,
       radius: 0.26,
       lifetime: T + 2,
-      enemyDamage: this.def.damage * this.damageMult,
+      // 被灵宠嘲讽时打出的是灵体弹（照 Unity EnemyProjectile.spirit 的规矩）：爆炸不伤玩家
+      enemyDamage: this.taunted ? 0 : this.def.damage * this.damageMult,
       explosionRadius: SHELL_RADIUS,
       explodeOnExpire: true,
       element: 'fire',

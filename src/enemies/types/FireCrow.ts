@@ -335,7 +335,8 @@ export class FireCrow extends StandardEnemy implements ExplosiveKin {
         this.playerChest(_p);
         const gy = this.ctx.world.groundHeight(this.position.x, this.position.z, this.position.y + 0.5);
         const ground = Number.isFinite(gy) && this.position.y <= gy + 0.15;
-        const hitPlayer = pl.alive && _c.distanceTo(_p) <= DIVE_HIT * this.sizeScale;
+        // 被嘲讽时扑向灵体诱饵：玩家死了也照样撞（Unity FireCrowAI dive：Taunted || 活着）
+        const hitPlayer = (this.taunted || pl.alive) && _c.distanceTo(_p) <= DIVE_HIT * this.sizeScale;
         const blocked = this.stateTime > 0.08 && (this.moveResult.hitWall || this.moveResult.onGround);
         if (hitPlayer || ground || blocked || this.stateTime >= DIVE_MAX_TIME) {
           this.crash();
@@ -423,7 +424,9 @@ export class FireCrow extends StandardEnemy implements ExplosiveKin {
     this.line?.release();
     this.line = null;
     const center = this.getBodyCenter(new THREE.Vector3());
-    blastPlayer(ctx, center, BLAST_RADIUS, this.def.damage * this.damageMult, 'fire', this, 0.5, 0.6, 6);
+    // 被嘲讽时撞的是灵体诱饵：炸不到玩家（Unity FireCrowAI.Crash：Taunted → DecoyBlocked）；纸灰余火照留
+    if (this.taunted) this.decoyBlocked();
+    else blastPlayer(ctx, center, BLAST_RADIUS, this.def.damage * this.damageMult, 'fire', this, 0.5, 0.6, 6);
     gunpowderBlast(ctx, center, BLAST_RADIUS, 1.1);
     const gy = ctx.world.groundHeight(center.x, center.z, center.y + 0.5);
     if (Number.isFinite(gy) && center.y - gy < 2.5) {

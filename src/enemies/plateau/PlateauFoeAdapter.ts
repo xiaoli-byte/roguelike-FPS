@@ -158,7 +158,14 @@ export class PlateauCombatRuntime implements PlayCtx {
   }
 
   hurt(dmg: number, source: string, knock?: KnockBack, elem?: Elem): void {
-    this.hurtFrom(this.current, dmg, source, knock, elem);
+    // 直接出手（Unity PlateauEnemyAI.Strike → HitPlayer）：出手者被灵宠嘲讽时打在灵体诱饵上，无效、不推；
+    // 落雷（bolt）这类预警地面招不看嘲讽，照样伤
+    const foe = this.current;
+    if (foe?.taunted) {
+      foe.decoyBlocked();
+      return;
+    }
+    this.hurtFrom(foe, dmg, source, knock, elem);
   }
 
   /** 打玩家：伤害 × 出手者的伤害倍率（等级 × 精英 × 狂暴；Unity PlateauEnemyAI.Strike：dmg × DamageMult） */

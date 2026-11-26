@@ -211,7 +211,12 @@ export function castIceBeam(ctx: GameContext, s: IceBeamSpec): IceBeamResult {
   const hit = ctx.world.raycast(from, dir, s.range);
   const dist = hit ? hit.distance : s.range;
   const end = from.clone().addScaledVector(dir, dist);
-  const hitPlayer = segmentHitsPlayer(ctx, from, end, s.radius);
+  let hitPlayer = segmentHitsPlayer(ctx, from, end, s.radius);
+  // 出手者被嘲讽：光束打在灵体诱饵上，无效（Unity FuzhuAI.Fire → HitTarget）
+  if (hitPlayer && s.source?.taunted) {
+    s.source.decoyBlocked?.();
+    hitPlayer = false;
+  }
   if (hitPlayer) {
     ctx.combat.damagePlayer(s.damage, 'none', s.source, from);
     // 小推力（< 3 米/秒，不触发击退硬直）：被冰光冲得一晃
@@ -753,7 +758,8 @@ function pillarImpact(ctx: GameContext, c: THREE.Vector3, s: PillarVolleySpec, k
   const dx = p.position.x - c.x, dz = p.position.z - c.z;
   const d = Math.hypot(dx, dz);
   const dy = p.position.y - c.y;
-  if (p.alive && d <= s.radius + p.radius * 0.5 && dy > -0.8 && dy < 3.2) {
+  // 出手的冰鲸被嘲讽期间冰柱不伤玩家（Unity IceWhalePillar.Impact：!(owner && owner.Taunted)）
+  if (p.alive && !s.source?.taunted && d <= s.radius + p.radius * 0.5 && dy > -0.8 && dy < 3.2) {
     const kk = 1 - 0.4 * clamp01(d / s.radius);
     ctx.combat.damagePlayer(s.damage * kk, 'none', s.source, _a.set(c.x, c.y + 0.5, c.z));
     // 推出落点（冰棱阵随后封住这里）
@@ -823,7 +829,8 @@ export function spawnIceShockwave(ctx: GameContext, s: IceWaveSpec): void {
     }
     const p = ctx.player;
     // damage <= 0：只有视觉（玩家刚被同一招的爆心重击命中，不再吃第二段）
-    if (!hit && p.alive && s.damage > 0) {
+    // 出手者被嘲讽期间波面不伤玩家（Unity GroundWave.Check：owner.Taunted → 跳过，不记命中）
+    if (!hit && p.alive && s.damage > 0 && !s.source?.taunted) {
       const d = Math.hypot(p.position.x - c.x, p.position.z - c.z);
       if (d + p.radius >= prev && d - p.radius <= r + 0.4 && p.position.y - c.y < clear && p.position.y - c.y > -1) {
         _a.set(c.x, c.y + 0.5, c.z);

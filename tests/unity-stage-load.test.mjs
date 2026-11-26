@@ -91,9 +91,10 @@ for (const stage of manifest.stages.filter(stage => stage.available)) test(`${st
   await director.load({ chapter: stage.chapter - 1, index: stage.index, type: stage.kind, reward: stage.reward, theme: 'desert', map: stage.id });
   assert.ok(director.arena);
   assert.ok(director.whitebox);
-  // 藏宝点的奖励串（Unity RewardRegistry）：带参数的武器奖励原样交给 LootSystem.grant（weapon:min=1 不再退成金币），强化照旧是强化，网页没有的灵宠退成灵石
+  // 藏宝点的奖励串（Unity RewardRegistry）：带参数的武器奖励原样交给 LootSystem.grant（weapon:min=1 不再退成金币），强化照旧是强化，
+  // 灵兽封印（M9 灵宠）原样，网页没有的退成灵石
   const doc = JSON.parse(await readFile(new URL(`../public/assets/unity-levels/scenes/${stage.id}.json`, import.meta.url), 'utf8'));
-  const want = doc.caches.map(c => (c.reward.startsWith('weapon') ? c.reward : ['scroll', 'heal', 'upgrade'].includes(c.reward.split(':')[0]) ? c.reward.split(':')[0] : 'coins'));
+  const want = doc.caches.map(c => (c.reward.startsWith('weapon') || c.reward.split(':')[0] === 'pet' ? c.reward : ['scroll', 'heal', 'upgrade'].includes(c.reward.split(':')[0]) ? c.reward.split(':')[0] : 'coins'));
   assert.deepEqual(director.whitebox.plan.rewards.map(r => r.reward), want, `${stage.id}：藏宝点奖励`);
   director.unload();
 });

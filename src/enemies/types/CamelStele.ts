@@ -354,8 +354,9 @@ export class CamelStele extends StandardEnemy {
         const along = _v.dot(dir);
         const side = Math.abs(_v.x * dir.z - _v.z * dir.x);
         const rise = pl.position.y - start.y;
+        // 出手者被灵宠嘲讽期间波面不伤玩家（照 Unity GroundWave.Check：owner.Taunted → 跳过，不记命中）
         if (along >= dist - WAVE_SPEED * dt - 0.3 && along <= dist + 0.3 && side <= WAVE_HALF_WIDTH + pl.radius * 0.5
-          && rise > -0.6 && rise < WAVE_JUMP_CLEAR) {
+          && rise > -0.6 && rise < WAVE_JUMP_CLEAR && !source.taunted) {
           hit = true;
           ctx.combat.damagePlayer(dmg, 'none', source, front);
           _v.copy(dir).multiplyScalar(6);

@@ -156,6 +156,8 @@ function serializeRun(run: RunState): Record<string, unknown> {
   };
   if (run.talents) out.talents = { ...run.talents };
   if (run.route && run.route.length > 0) out.route = [...run.route];
+  // 灵宠（Unity RunState.pet：PetSave { id, level, xp, cooldownLeft }）；没有灵宠写 null
+  out.pet = run.pet && run.pet.id ? { id: run.pet.id, level: run.pet.level, xp: run.pet.xp, cooldownLeft: run.pet.cooldownLeft } : null;
   return out;
 }
 
@@ -250,6 +252,11 @@ function deserializeRun(o: Record<string, unknown>): RunState & { stageCode: str
   } as RunState & { stageCode: string; map: string };
   if (o.talents !== undefined && o.talents !== null) run.talents = intDict(o.talents, '天赋快照');
   if (Array.isArray(o.route) && o.route.length > 0) run.route = [...(o.route as string[])];
+  if (o.pet !== undefined && o.pet !== null) {
+    if (!isObject(o.pet)) throw new Error('pet 不是对象');
+    const p = o.pet;
+    run.pet = { id: typeof p.id === 'string' ? p.id : '', level: num(p.level, 1), xp: num(p.xp, 0), cooldownLeft: num(p.cooldownLeft, 0) };
+  }
   return run;
 }
 
@@ -285,6 +292,8 @@ function validate(run: RunState & { stageCode: string; map: string }, scenes: bo
     if (!ELEMENTS.includes(w.element)) throw new Error(`${w.id} 的元素 ${w.element} 不合法`);
     if (!(w.mag >= 0) || !(w.reserve >= 0)) throw new Error(`${w.id} 的弹药是负的`);
   }
+  // Unity RunSuspend.Validate：灵宠等级为负 / 经验、冷却不是有限数 = 坏档
+  if (run.pet && (run.pet.level < 0 || !Number.isFinite(run.pet.xp) || !Number.isFinite(run.pet.cooldownLeft))) throw new Error('灵宠数值不合法');
   if (run.talents) for (const [k, v] of Object.entries(run.talents)) if (!k || v < 0) throw new Error(`天赋快照 ${k || '（空）'} = ${v} 不合法`);
   // 章 / 关序 / 难度以规划表为准（档里的只是冗余）
   enterStage(run, stage);
