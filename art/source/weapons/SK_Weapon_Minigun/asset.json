@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
             "time": "2026-10-03 21:15:10"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:18:44",
+          "files": {
+            "CN_SK_Weapon_Minigun_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Minigun_v002_sheet.png",
+              "sha256": "4ba2767dd85cf2938b03a55174ff74f3bf174211897efcd5b8131c306eb31970"
+            },
+            "CN_SK_Weapon_Minigun_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Minigun_v002_front.png",
+              "sha256": "379b0e90ddc06063afbf1f0af593ab91ad36f122948b9ee8146e6ce80fc500b3"
+            },
+            "CN_SK_Weapon_Minigun_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Minigun_v002_left.png",
+              "sha256": "a8362e9bf66226dc89ca866c1d5bd68fee4a13dfe35ca5acf41b6f261045b6e2"
+            },
+            "CN_SK_Weapon_Minigun_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Minigun_v002_back.png",
+              "sha256": "fd78f07b41f00c434554186931a724842f3925264e1fe97fcf9409cc7332af42"
+            },
+            "CN_SK_Weapon_Minigun_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Minigun_v002_right.png",
+              "sha256": "71e2005d9aaa5f0b17ee80ca49f559f6d7aa3b05e02bad00c3b3e445c28c74f2"
+            },
+            "CN_SK_Weapon_Minigun_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Minigun_v002_compare.png",
+              "sha256": "bb5ae280e43809ef10ee688a676fb8ec78b8a3955b3efa14430b035b75adc571"
+            },
+            "CN_SK_Weapon_Minigun_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Minigun_v002_prompt.txt",
+              "sha256": "522d42d8e4e62cb750ea32dcbae0cfba9afcfed5ae725f7b9a70ff635b5e5383"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2050,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 592
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3230
+          },
+          "request_id": "req_42207b45882942289b2a607c5f4b78f7",
+          "seconds": 31.4,
+          "registration": {
+            "front": {
+              "scale": 0.9691,
+              "offset": [
+                83,
+                69
+              ],
+              "iou": 0.81,
+              "iou_unregistered_scale": 0.9839
+            },
+            "left": {
+              "scale": 0.9268,
+              "offset": [
+                132,
+                96
+              ],
+              "iou": 0.881,
+              "iou_unregistered_scale": 0.986
+            },
+            "back": {
+              "scale": 0.9691,
+              "offset": [
+                77,
+                69
+              ],
+              "iou": 0.782,
+              "iou_unregistered_scale": 0.9839
+            },
+            "right": {
+              "scale": 0.9268,
+              "offset": [
+                132,
+                96
+              ],
+              "iou": 0.883,
+              "iou_unregistered_scale": 0.986
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.814,
+            "left": 0.883,
+            "back": 0.785,
+            "right": 0.884
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "改写描述避开安全拦截后重出；六管束、金箍、侧弹鼓、提把齐全，四视图一致",
+            "time": "2026-11-27 01:19:39"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -441,11 +548,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 5.5
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:25:24",
+          "files": {
+            "HP_SK_Weapon_Minigun_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Minigun_v002_source.glb",
+              "sha256": "2eecca42216d19a835cfe5afcadaf3673878119691952e3a760c7649596a66ac"
+            },
+            "HP_SK_Weapon_Minigun_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Minigun_v002.glb",
+              "sha256": "ca0d8ed49f1ea4138e0d7b01baa47da7e8eb75b05782dc8cd1b69b0cf8415562"
+            },
+            "HP_SK_Weapon_Minigun_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Minigun_v002_graph.json",
+              "sha256": "a41b065f9b8012849fccf77c36df95abd36034ea0ae0f7c354e04b6564f9bc50"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/b24fb18f-6af5-4b46-9413-ecf2da4e468e",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 10951,
+          "source_sha256": "2eecca42216d19a835cfe5afcadaf3673878119691952e3a760c7649596a66ac"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -506,11 +639,59 @@
           "export_kb": 534.1,
           "seconds": 35.3,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:25:41",
+          "files": {
+            "SK_Weapon_Minigun_v002.blend": {
+              "path": "03_work/SK_Weapon_Minigun_v002.blend",
+              "sha256": "2369f6742335002a1d775e3fb14ce2d5f1ae4fd7c9a200740f5e1ed620e981d7"
+            },
+            "SK_Weapon_Minigun_v002.glb": {
+              "path": "04_export/SK_Weapon_Minigun_v002.glb",
+              "sha256": "3e19256ba418fb26ab6016fd808613e43934bbf7bc02508caf4ffd303394187b"
+            },
+            "SK_Weapon_Minigun_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Minigun_v002_metrics.json",
+              "sha256": "12136e80cfd78ba6caf227f388003856b06b494e7b703a90d1c2726b541bcad2"
+            },
+            "T_Weapon_Minigun_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Minigun_BC.png",
+              "sha256": "f8866b217dddcf8ce0ea2be42302062804d6621418ac36a81e42f658361ab0b4"
+            },
+            "T_Weapon_Minigun_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Minigun_N.png",
+              "sha256": "9ec99eb1026f57a04bc57f4215f33928b681f74a2f53560f2999cbdef1b16128"
+            },
+            "T_Weapon_Minigun_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Minigun_ORM.png",
+              "sha256": "14085cfae7466cca21573db7dad2c58b6c64b52bd3a23cd94672cae8b6a11040"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 10951,
+              "verts": 6108
+            }
+          ],
+          "export_kb": 534.5,
+          "seconds": 16.4,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -526,11 +707,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:25:41",
+          "files": {
+            "SK_Weapon_Minigun_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Minigun_v002_validation.json",
+              "sha256": "1ff70b21e445c3a4ef2804584b82fe4f9f7f11f5863ec8f74a1c95ccc9bd0bd2"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -565,11 +761,45 @@
             "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
             "time": "2026-10-03 21:58:36"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:25:46",
+          "files": {
+            "SK_Weapon_Minigun_v002_review.png": {
+              "path": "05_review/SK_Weapon_Minigun_v002_review.png",
+              "sha256": "4d585af2a17c756774bfcf9464270c907224cc7302fc4c45197db68b235ff94c"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：六管束、金箍、云纹侧鼓箱、皮缠提把齐全；侧鼓箱比白模外凸 7.5 cm，重武器可接受",
+            "time": "2026-11-27 01:26:16"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -581,6 +811,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Minigun.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:26:17",
+          "files": {
+            "SK_Weapon_Minigun.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Minigun.glb",
+              "sha256": "3e19256ba418fb26ab6016fd808613e43934bbf7bc02508caf4ffd303394187b"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Minigun.glb"
         }
       ]
