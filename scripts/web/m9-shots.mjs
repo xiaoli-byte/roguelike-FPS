@@ -1,6 +1,6 @@
 // M9 灵宠实机核对（docs/threejs-migration.md 4.8）：一个无头浏览器进 1-1（?debug&dev&debugStage=1-1），逐帧推进游戏（Game.frame，固定步长），
 // 逐只结契八只灵宠（window.__pets 调试入口），看跟随、出手、灵技、换关保留、换宠留封印、嘲讽，断言伤害数照灵宠规则、零报错，每只拍一张。
-//   [M9_ONLY=pets,swap,stage,taunt,altar] [M9_PETS=jingwei,yinglong] node scripts/web/m9-shots.mjs [端口=5721] [输出目录=docs/art/review/threejs-migration]
+//   [M9_ONLY=pets,stone,swap,stage,taunt,altar] [M9_PETS=jingwei,yinglong] node scripts/web/m9-shots.mjs [端口=5721] [输出目录=docs/art/review/threejs-migration]
 // worktree 里跑要给 vite 放行主检出的 node_modules（见 docs/threejs-migration.md 第 4 节 M11c 的说明）。
 import { launch } from '../plateau/cdp.mjs';
 
@@ -229,6 +229,58 @@ if (want('pets')) {
     await clearFoes();
     await god();
   }
+}
+
+if (want('stone')) {
+  // 精卫火石落地爆炸（审查第 1 轮）：照 Unity PlayerProjectile.Impact 播爆炸特效和爆炸声（弹体色 0xffd9a0）、边缘 30%——拍爆炸那一刻
+  await clearFoes();
+  await tidy();
+  await home();
+  await b.eval(`window.__pets.unbind(), window.__pets.give('jingwei', 1), true`);
+  await step(1.2);
+  await b.eval(`(() => {
+    const c = window.__ctx;
+    window.__booms = [];
+    const orig = c.combat.explode.bind(c.combat);
+    c.combat.explode = (at, r, q, o) => { if (q.source === 'pet') window.__booms.push({ t: c.time.now, r, o: { ...(o || {}) } }); return orig(at, r, q, o); };
+    return true;
+  })()`);
+  await foes(FOE, 3, 9);
+  await step(0.6);
+  await god();
+  await lookAhead();
+  const waitBoom = async (n, max) => {
+    for (let k = 0; k < max; k++) {
+      if ((await b.eval('window.__booms.length')) >= n) return true;
+      await step(1 / 60);
+    }
+    return false;
+  };
+  await lookAtPet();
+  const got = await waitBoom(1, 600);
+  await step(2 / 60);
+  await b.shot(`${out}/m9-jingwei-stone.jpg`);
+  const boom = await b.eval('window.__booms[0] ?? null');
+  check('精卫火石：落地爆炸边缘 30%、播爆炸特效（色 0xffd9a0）', got && boom && boom.o.falloff === 0.3 && boom.o.color === 0xffd9a0 && !boom.o.noFx, JSON.stringify(boom));
+  // 衔石填海：准星对着那一排怪的脚下，十颗火石陆续落下（怪还在出生显形、没扑过来时就放，画面里看得清落点）
+  await clearFoes();
+  await tidy();
+  await foes(FOE, 3, 13, true);
+  await step(0.1);
+  await god();
+  await b.eval(`(() => { const c = window.__ctx, p = c.player, s = window.__foeSpot, e = p.eye;
+    p.yaw = Math.atan2(-(s.x - e.x), -(s.z - e.z)); p.pitch = Math.atan2(s.y - 0.8 - e.y, Math.hypot(s.x - e.x, s.z - e.z)); return true; })()`);
+  await step(1 / 60);
+  const n0 = await b.eval('window.__booms.length');
+  const cast = await b.eval('window.__pets.forceSkill()');
+  const rained = await waitBoom(n0 + 3, 600);
+  await step(3 / 60);
+  await b.shot(`${out}/m9-jingwei-rain.jpg`);
+  await step(2);
+  const rain = await b.eval(`window.__booms.slice(${n0})`);
+  check('精卫「衔石填海」：火石雨每颗都带爆炸特效', cast === true && rained && rain.length >= 3 && rain.every(x => x.o.falloff === 0.3 && !x.o.noFx), `落地 ${rain.length} 颗`);
+  await clearFoes();
+  await god();
 }
 
 if (want('swap')) {
