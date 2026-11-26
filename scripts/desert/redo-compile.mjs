@@ -54,6 +54,8 @@ for (const id of ids) {
   const out = [];
   const from = new THREE.Vector3(...d.spawn.position);
   const targets = [...d.encounters.map(e => e.position), ...d.exits.map(e => e.position)];
+  // 先空跑一遍预热（第一次调用含 JIT 编译，不算）
+  for (const p of targets) nav.findPath(from, new THREE.Vector3(...p), out);
   let worst = 0, fails = 0;
   for (const p of targets) {
     const t2 = performance.now();
@@ -66,6 +68,7 @@ for (const id of ids) {
     // 对照：旧场景（Unity 烘的导航网格）同样从出生点到各遭遇
     const oldNav = new UnityNavMesh(ctx, old);
     let oldWorst = 0;
+    for (const e of old.encounters) oldNav.findPath(new THREE.Vector3(...old.spawn.position), new THREE.Vector3(...e.position), out);
     for (const e of old.encounters) {
       const t2 = performance.now();
       oldNav.findPath(new THREE.Vector3(...old.spawn.position), new THREE.Vector3(...e.position), out);

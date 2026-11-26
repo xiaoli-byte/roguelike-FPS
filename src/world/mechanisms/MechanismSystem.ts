@@ -28,6 +28,7 @@ import { Conductor, LightningStrikes, PlateauStorm, type PlateauStormSpec } from
 import { Telegraphs } from './Telegraph';
 import { WeatherDirector } from './Weather';
 import { WindField } from './Wind';
+import { desertArt, patchDesertMechanisms } from '../desert';
 
 /** 走法变体停用的物体（同 LevelLayout.applyLevelLayout 的 off 集合）：机关的 scenePath 落在它们下面就不建 */
 function layoutOff(document: UnitySceneDocument, ctx: GameContext): string[] {
@@ -184,8 +185,10 @@ export class MechanismSystem implements MechanismHost {
   /** 按 mechanisms.json 建（没有数据 / 读不到时返回 null，关卡照常） */
   static async create(ctx: GameContext, document: UnitySceneDocument, viewGroup: THREE.Object3D): Promise<MechanismSystem | null> {
     const doc = await loadMechanisms();
-    const data = doc?.scenes[document.id];
-    if (!data) return null;
+    const raw = doc?.scenes[document.id];
+    if (!raw) return null;
+    // 第一章美术重建层：天气的基础雾色 / 风向跟新光照、新风向走
+    const data = patchDesertMechanisms(raw, desertArt(document.id));
     const system = new MechanismSystem(ctx, document, data, viewGroup);
     await system.ready;
     return system;

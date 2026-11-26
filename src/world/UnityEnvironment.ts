@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import type { GameContext } from '../core/types';
 import type { UnityEnvironment as EnvironmentData } from './UnityLevelLibrary';
-import { Atmosphere, atmosphereForChapter } from './Atmosphere';
-import { CloudSky, cloudSkyForChapter } from './CloudSky';
+import { Atmosphere, atmosphereForChapter, type AtmosphereProfile } from './Atmosphere';
+import { CloudSky, cloudSkyForChapter, type CloudSkyProfile } from './CloudSky';
 import { SunShafts } from './SunShafts';
 import { stageHooks } from '../enemies/bosses/framework/StageHooks';
 
@@ -58,6 +58,11 @@ void main() {
 export interface UnityAtmosphereOptions {
   chapter: number;
   baseY: number;
+  /** 按图覆写（第一章美术重建层 src/world/desert/）：空气透视、云天、光柱（false = 不要）、风向（网页 XZ，风吹向的方向） */
+  profile?: Partial<AtmosphereProfile>;
+  clouds?: Partial<CloudSkyProfile>;
+  shafts?: { strength?: number; threshold?: number } | false;
+  wind?: [number, number];
 }
 
 /** 接上空气层后线性雾起点至少推到这里（终点不动），否则 40 m 起的线性雾会把低雾 / 空气层盖平 */
@@ -150,16 +155,18 @@ export class UnityEnvironmentView {
     if (atmosphere && ctx.scene.fog && atmosphereEnabled()) {
       report?.('atmosphere');
       if (ctx.scene.fog instanceof THREE.Fog) ctx.scene.fog.near = Math.min(Math.max(ctx.scene.fog.near, ATMOSPHERE_FOG_START), ctx.scene.fog.far);
-      Atmosphere.bind(ctx.scene, atmosphereForChapter(atmosphere.chapter), { baseY: atmosphere.baseY, sun: this.sun });
+      Atmosphere.bind(ctx.scene, { ...atmosphereForChapter(atmosphere.chapter), ...atmosphere.profile }, { baseY: atmosphere.baseY, sun: this.sun, wind: atmosphere.wind });
       this.atmosphere = true;
       // 云天 + 逆光光柱（CloudSky / SunShafts，网页独有，docs/art/composition.md 8.5）。渐变天球和 Procedural 天空
       // 自己画了太阳，云天的日晕给 0，免得两个太阳；立方体天空盒里没有太阳，保留章节默认的日晕。熔火章天是烟，光柱压到很弱
-      const clouds = cloudSkyForChapter(atmosphere.chapter);
+      const clouds = { ...cloudSkyForChapter(atmosphere.chapter), ...atmosphere.clouds };
       if (this.sky) clouds.sunGlow = 0;
       this.clouds = new CloudSky(clouds);
       parent.add(this.clouds.mesh);
-      this.shafts = new SunShafts(atmosphere.chapter === 3 ? { strength: 0.08 } : {});
-      parent.add(this.shafts.mesh);
+      if (atmosphere.shafts !== false) {
+        this.shafts = new SunShafts(atmosphere.shafts ?? (atmosphere.chapter === 3 ? { strength: 0.08 } : {}));
+        parent.add(this.shafts.mesh);
+      }
     }
     report?.('environment complete');
   }

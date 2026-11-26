@@ -57,6 +57,8 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
   }),
   './UnitySceneView': data(`import * as THREE from '${threeUrl}'; export class UnitySceneView {group=new THREE.Group();artInspectionViews=[];artBrief='';update(){}dispose(){this.group.removeFromParent();}}`),
   './unityAtmosphereDressing': data(`import * as THREE from '${threeUrl}'; export class UnityAtmosphereDressing {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
+  // 第一章美术重建层（src/world/desert/）：测试里不改文档
+  './desert': data(`export const desertArt = () => null; export const patchDesertDocument = doc => doc; export const prepareDesertArt = async () => {};`),
   './UnityLevelLibrary': data(`import {readFile} from 'node:fs/promises'; export const UnityLevelLibrary={scene:async id=>JSON.parse(await readFile(process.cwd()+'/public/assets/unity-levels/scenes/'+id+'.json','utf8'))}; export function unityHeights(){return new Float32Array();} export function unityPoint(v){return {x:v[0],y:v[1],z:v[2]};} export async function prepareUnityScene(){}`),
 });
 const { StageDirector } = await import(directorUrl);

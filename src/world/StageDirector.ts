@@ -28,6 +28,7 @@ import { LevelObjectives, loadLevelObjectives, objectiveDriven } from './objecti
 import { chooseLevelLayout } from './LevelLayout';
 import { UnitySceneView } from './UnitySceneView';
 import { UnityAtmosphereDressing } from './unityAtmosphereDressing';
+import { desertArt, patchDesertDocument, prepareDesertArt } from './desert';
 import { UnityLevelLibrary, prepareUnityScene, unityHeights, unityPoint, type UnitySceneDocument } from './UnityLevelLibrary';
 
 /** 进场后第一波开始的时间（秒） */
@@ -235,6 +236,11 @@ export class StageDirector implements IStageDirector {
     // 图内布局变体（LevelLayout）：这一局怎么走这张图——在搭场景之前把别的走法的出生点 / 出口 / 物体滤掉
     const layout = unityDocument ? chooseLevelLayout(unityDocument, ctx.run) : null;
     if (layout) unityDocument = layout.document;
+    // 第一章美术重建层（src/world/desert/）：光照 / 雾 / 天空、地形外圈、场景件、据点锚点在搭场景之前改好
+    if (unityDocument) {
+      await prepareDesertArt(unityDocument.id);
+      unityDocument = patchDesertDocument(unityDocument, desertArt(unityDocument.id));
+    }
     this.unityDocument = unityDocument;
     if (unityDocument) await prepareUnityScene(unityDocument);
     const objectives = unityDocument ? await loadLevelObjectives(unityDocument.id) : null;
@@ -273,7 +279,7 @@ export class StageDirector implements IStageDirector {
       if (unityDocument && this.view instanceof UnitySceneView) {
         // 氛围摆位是锦上添花：出了错只是这张图没有雾，不能挡住进关
         try {
-          this.dressing = new UnityAtmosphereDressing(unityDocument);
+          this.dressing = new UnityAtmosphereDressing(unityDocument, desertArt(unityDocument.id)?.layout);
           this.view.group.add(this.dressing.group);
         } catch (err) {
           console.warn('[StageDirector] 氛围摆位没建起来', err);

@@ -45,7 +45,7 @@ export interface UnityAtmosphereLayout {
   motes: MoteBox[];
 }
 
-interface Tuning {
+export interface Tuning {
   /** 各圈雾带的不透明度倍率（由近到远：崖脚 / 内圈 / 外圈 / 最远一圈）；0 = 这一圈不要 */
   rings?: number[];
   /** 谷底雾的不透明度倍率；0 = 不要 */
@@ -57,6 +57,8 @@ interface Tuning {
   /** 手摆的 */
   mist?: MistStream[];
   motes?: MoteBox[];
+  /** 手摆的鸟（在自动摆的那群之外） */
+  flocks?: BirdFlock[];
 }
 
 /** 崖后的一条烟带：沿 z 从北往南（顺风）排，两头淡出 */
@@ -104,9 +106,12 @@ function percentile(sorted: number[], p: number): number {
   return sorted.length ? sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))] : 0;
 }
 
-export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: number; z: number }): UnityAtmosphereLayout {
-  const tuning = TUNING[doc.id] ?? {}, chapter = Number.parseInt(doc.id, 10) || 1;
-  const layout: UnityAtmosphereLayout = { mist: [...(tuning.mist ?? [])], waterMist: [], leaves: [], birds: [], motes: [...(tuning.motes ?? [])] };
+/**
+ * override：替换这张图的微调表（第一章美术重建层 src/world/desert/ 的 layout 走这里）；不给就用本文件的 TUNING。
+ */
+export function unityAtmosphereLayout(doc: AtmosphereLayoutSource, wind: { x: number; z: number }, override?: Tuning): UnityAtmosphereLayout {
+  const tuning = override ?? TUNING[doc.id] ?? {}, chapter = Number.parseInt(doc.id, 10) || 1;
+  const layout: UnityAtmosphereLayout = { mist: [...(tuning.mist ?? [])], waterMist: [], leaves: [], birds: [...(tuning.flocks ?? [])], motes: [...(tuning.motes ?? [])] };
   const encounters = [
     ...(doc.encounters ?? []).map(e => ({ x: e.position[0], z: e.position[2], r: e.arenaRadius })),
     ...(doc.bosses ?? []).map(b => ({ x: b.center[0], z: b.center[2], r: b.radius })),

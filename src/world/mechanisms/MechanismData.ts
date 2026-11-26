@@ -195,6 +195,11 @@ export function loadMechanisms(): Promise<MechanismsDocument | null> {
   return pending;
 }
 
+/** 运行时生成的距离场（第一章重做从白盒的可玩区算出来，没有文件）：先登记，loadBoundaryField 按同一个地址取 */
+export function provideBoundaryField(url: string, field: Float32Array): void {
+  fields.set(url, Promise.resolve(field));
+}
+
 /** 软边界距离场（float32，小端） */
 export function loadBoundaryField(url: string): Promise<Float32Array | null> {
   let p = fields.get(url);

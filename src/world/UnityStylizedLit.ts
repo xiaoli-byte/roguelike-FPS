@@ -57,6 +57,8 @@ export const stylizedShared = {
   uSflTime: { value: 0 },
   /** Unity 全局 _WindDir（WeatherDirector 写）：xy = XZ 风向（Unity 坐标），z = 风力 0..1；全 0 = 着色器里的默认风 */
   uSflWindDir: { value: new THREE.Vector4(0, 0, 0, 0) },
+  /** 逆光时边缘光加强的倍率（网页独有，第一章美术重建层按图设；0 = 照 Unity 原样）：迎着太阳看时轮廓多亮 (1 + k) 倍 */
+  uSflRimBack: { value: 0 },
 };
 
 /**
@@ -154,6 +156,7 @@ uniform vec3 uSflAmbient1;
 uniform vec3 uSflAmbient2;
 uniform float uSflAmbientMode;
 uniform float uSflShadowStrength;
+uniform float uSflRimBack;
 #ifdef SFL_FOLIAGE
 	uniform vec3 uSflTranslucency;  // 逆光透光色 × 强度
 #endif
@@ -295,7 +298,9 @@ sflColor += sflAlbedo * uSflShadowTint * sflMainColor * uSflRamp.z * ( 1.0 - sfl
 #ifdef SFL_RIM
 	// 边缘光：菲涅尔经阶梯成一道细边，受光侧更亮
 	float sflFres = pow( 1.0 - saturate( dot( sflN, sflV ) ), uSflSpec.z );
-	sflColor += uSflRimColor * ( smoothstep( 0.35, 0.6, sflFres ) * uSflSpec.w * ( 0.45 + 0.55 * sflMainLit ) ) * sflMainColor * sflAlbedo * 1.5;
+	// 逆光加强（uSflRimBack，缺省 0 不变）：迎着太阳看时剪影镶一道亮边，不然低太阳的逆光机位是一片灰剪影
+	float sflRimBack = 1.0 + uSflRimBack * pow( saturate( dot( - sflV, sflMainDir ) ), 4.0 );
+	sflColor += uSflRimColor * ( smoothstep( 0.35, 0.6, sflFres ) * uSflSpec.w * ( 0.45 + 0.55 * sflMainLit ) * sflRimBack ) * sflMainColor * sflAlbedo * 1.5;
 #endif
 
 #ifdef SFL_FOLIAGE

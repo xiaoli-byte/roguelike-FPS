@@ -3,12 +3,15 @@ import { UnitySceneView } from '../world/UnitySceneView';
 import { yawFromDir } from '../core/math';
 import { UnityLevelLibrary, type UnitySceneDocument } from '../world/UnityLevelLibrary';
 import { CollisionWorld } from '../world/Collision';
+import { desertArt, patchDesertDocument, prepareDesertArt } from '../world/desert';
 
 const params = new URLSearchParams(location.search);
 const id = params.get('map') ?? '1-1';
 const response = await fetch(`/assets/unity-levels/scenes/${id}.json`);
 if (!response.ok) throw new Error(`Unity 场景 ${id} 尚未生成`);
-const documentData = await response.json() as UnitySceneDocument;
+// 第一章美术重建层（src/world/desert/）：和游戏里一样先改文档；网址带 desert=0 看 Unity 原样
+await prepareDesertArt(id);
+const documentData = patchDesertDocument(await response.json() as UnitySceneDocument, desertArt(id));
 const status = document.getElementById('status')!;
 window.addEventListener('error', event => {
   status.textContent = `${event.message}\n${event.error instanceof Error ? event.error.stack : ''}`;

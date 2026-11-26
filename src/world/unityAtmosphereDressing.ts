@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { AirLife } from './AirLife';
 import { Atmosphere } from './Atmosphere';
 import { MistStreams } from './MistStreams';
-import { unityAtmosphereLayout, type AtmosphereLayoutSource, type UnityAtmosphereLayout } from './unityAtmosphereLayout';
+import { unityAtmosphereLayout, type AtmosphereLayoutSource, type Tuning, type UnityAtmosphereLayout } from './unityAtmosphereLayout';
 
 /**
  * 把一张 Unity 导出场景的氛围摆位（unityAtmosphereLayout.ts 按这张图的数据算出来的）建成网格：
@@ -22,9 +22,10 @@ export class UnityAtmosphereDressing {
   readonly waterMist: MistStreams | null = null;
   readonly life: AirLife | null = null;
 
-  constructor(document: AtmosphereLayoutSource) {
+  /** tuning：替换这张图的摆位微调（第一章美术重建层的 layout） */
+  constructor(document: AtmosphereLayoutSource, tuning?: Tuning) {
     this.group.name = 'UnityAtmosphereDressing';
-    const layout = this.layout = unityAtmosphereLayout(document, Atmosphere.wind);
+    const layout = this.layout = unityAtmosphereLayout(document, Atmosphere.wind, tuning);
     if (layout.mist.length) {
       this.mist = new MistStreams(layout.mist);
       this.group.add(this.mist.mesh);

@@ -537,9 +537,21 @@ export function compileWhitebox(spec: WhiteboxSpec, old: UnitySceneDocument | nu
   };
   const titleMap = new Map<string, string>();
   const encounters: UnityEncounter[] = [];
+  const usedTitles = new Set<string>();
   const addEncounter = (site: WbSite, optional: boolean): void => {
-    const src = matchEncounter(old, site.name, optional);
+    let src = matchEncounter(old, site.name, optional);
+    if (src && usedTitles.has(src.title)) src = undefined;
+    // 驻守点是新加的、旧场景没有同名的：借一个还没用上的旧小遭遇的编制（只借波次，名字用新的）
+    if (!src && optional) {
+      const spare = old?.encounters.find(e => e.optional && !usedTitles.has(e.title) && !spec.guards.some(g => fuzzy(e.title, g.name)));
+      if (spare) {
+        src = { ...spare, title: site.name, waves: spare.waves.map(w => ({ ...w, label: site.name })) };
+        notes.push(`驻守点 ${site.id} ${site.name}：旧场景没有同名遭遇，借「${spare.title}」的编制`);
+        usedTitles.add(spare.title);
+      }
+    }
     if (!src) { notes.push(`${optional ? '驻守点' : '据点'} ${site.id} ${site.name}：旧场景里没有同名遭遇，不编`); return; }
+    usedTitles.add(src.title);
     titleMap.set(src.title, src.title);
     const radius = site.r ?? (optional ? 14 : 26);
     const k = radius / Math.max(1, src.arenaRadius);
