@@ -1,0 +1,138 @@
+{
+  "steps": {
+    "导入清理": 0.2,
+    "对齐": 0.9,
+    "低模与 UV": 6.9,
+    "供应方贴图": 0.0,
+    "烘焙": 6.8,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.1,
+    "导出": 2.4
+  },
+  "highpoly": {
+    "faces_raw": 12060,
+    "faces": 12060,
+    "verts": 6533,
+    "loose_parts": 20,
+    "kept_parts": 20,
+    "remesh_voxel_m": 0.0,
+    "texture_source": "highpoly (provider)"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.837,
+    "iou_per_view": {
+      "front": 0.883,
+      "left": 0.781,
+      "back": 0.888,
+      "right": 0.775
+    },
+    "height_m": 0.6996,
+    "blockout_height_m": 1.175
+  },
+  "uv": {
+    "smart_islands": 499,
+    "charts": 83,
+    "fallback_charts": 9,
+    "flipped_faces": 1,
+    "flipped_ratio": 0.0001,
+    "method": "merged",
+    "density_smart": 0.9868,
+    "density_merged": 1.0519
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider base colour baked from the Tripo source"
+  },
+  "bake_device": "OPTIX",
+  "textures": {
+    "T_Weapon_Sniper_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Sniper_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Sniper_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_17"
+    ],
+    "per_lod": {
+      "SK_Weapon_Sniper_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0176,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Sniper_LOD0": {
+        "cut_edges": 0,
+        "cap_tris": 0,
+        "merged_fragment_faces": 5,
+        "tris": 12000
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Sniper_LOD0",
+      "tris": 12000,
+      "verts": 6500,
+      "uv_min": [
+        0.0030011902563273907,
+        0.0030011506751179695
+      ],
+      "uv_max": [
+        0.9846901893615723,
+        0.9969987869262695
+      ],
+      "uv_utilization": 0.54,
+      "bbox_min": [
+        -0.0497,
+        -0.3764,
+        -0.1277
+      ],
+      "bbox_max": [
+        0.0907,
+        0.6996,
+        0.165
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/weapons/SK_Weapon_Sniper/04_export/SK_Weapon_Sniper_v003.glb",
+    "bytes": 484000
+  },
+  "blend": "art/source/weapons/SK_Weapon_Sniper/03_work/SK_Weapon_Sniper_v003.blend",
+  "total_seconds": 18.3,
+  "_seconds": 19.6
+}

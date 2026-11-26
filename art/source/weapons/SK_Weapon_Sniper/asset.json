@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
             "time": "2026-10-03 21:15:09"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:30:32",
+          "files": {
+            "CN_SK_Weapon_Sniper_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v002_sheet.png",
+              "sha256": "ee3bf82ca24fb8e1822f808646c3e95fa093202ab93dbb07d91fd81b177395e3"
+            },
+            "CN_SK_Weapon_Sniper_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v002_front.png",
+              "sha256": "f2bacb23a9f32092f2965c67df19659ab294dfe3c714aa0fb144d0cef67c5ed3"
+            },
+            "CN_SK_Weapon_Sniper_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v002_left.png",
+              "sha256": "c321267fe4056221b78bee270d6a1223bb73ae89df64a99fa9fbe7bd378c9678"
+            },
+            "CN_SK_Weapon_Sniper_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v002_back.png",
+              "sha256": "d87f69e7fe7a1b39221bec6f014d0c30b9b2573e64e678a288072983a51f9a55"
+            },
+            "CN_SK_Weapon_Sniper_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v002_right.png",
+              "sha256": "ed2b914288e8b2a650867ea5ef74bd6de8e3244e6203dda654dc7dc41c872f1e"
+            },
+            "CN_SK_Weapon_Sniper_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v002_compare.png",
+              "sha256": "f714fa8670b1dea41444af1e18853c4ddad2e6da712e472599fa14641fdc3da3"
+            },
+            "CN_SK_Weapon_Sniper_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v002_prompt.txt",
+              "sha256": "21fd4e6eed6c85ae905429ed860b9135d82d6d6fbfa61bdaf7064b2c6691edca"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2052,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 594
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3232
+          },
+          "request_id": "req_290419b8cc004e5a8b0562880e41db82",
+          "seconds": 30.2,
+          "registration": {
+            "front": {
+              "scale": 0.8758,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.787,
+              "iou_unregistered_scale": 0.9317
+            },
+            "left": {
+              "scale": 0.888,
+              "offset": [
+                204,
+                96
+              ],
+              "iou": 0.724,
+              "iou_unregistered_scale": 0.9298
+            },
+            "back": {
+              "scale": 0.8758,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.784,
+              "iou_unregistered_scale": 0.9317
+            },
+            "right": {
+              "scale": 0.8749,
+              "offset": [
+                204,
+                110
+              ],
+              "iou": 0.726,
+              "iou_unregistered_scale": 0.9308
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.789,
+            "left": 0.73,
+            "back": 0.785,
+            "right": 0.736
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "改写描述后重出：四视图一致、贴合白模剪影，作 Tripo 多视图输入",
+            "time": "2026-11-27 01:31:03"
           }
         }
       ]
@@ -489,7 +596,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -541,11 +648,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 2.1
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:37:08",
+          "files": {
+            "HP_SK_Weapon_Sniper_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v002_source.glb",
+              "sha256": "400d824765995ab59a53030759268da5736fc773fe2c08584f628bdf282e6e5a"
+            },
+            "HP_SK_Weapon_Sniper_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v002.glb",
+              "sha256": "df24a4ab7df66557de3e496bb7e2f7d4a01706da6eb2a6c2e98241296b81d2ef"
+            },
+            "HP_SK_Weapon_Sniper_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v002_graph.json",
+              "sha256": "ac56c09d0c7cd409991d1b0e7747dab765191d27193ba232b2d18e0d24239371"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/de391bd5-e64c-4040-898e-1b371fa326a9",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12060,
+          "source_sha256": "400d824765995ab59a53030759268da5736fc773fe2c08584f628bdf282e6e5a"
         }
       ]
     },
     "build": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -666,11 +799,59 @@
           "export_kb": 427.3,
           "seconds": 23.4,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:37:28",
+          "files": {
+            "SK_Weapon_Sniper_v003.blend": {
+              "path": "03_work/SK_Weapon_Sniper_v003.blend",
+              "sha256": "4b27c2537210bc03a6a84c286ff825dd0500a188bf86f3a89e9e0fa7c641db61"
+            },
+            "SK_Weapon_Sniper_v003.glb": {
+              "path": "04_export/SK_Weapon_Sniper_v003.glb",
+              "sha256": "a65653465ac900c208c38032ee8ab07e5cc3f5efab72bd575ed14a5c05363235"
+            },
+            "SK_Weapon_Sniper_v003_metrics.json": {
+              "path": "03_work/SK_Weapon_Sniper_v003_metrics.json",
+              "sha256": "ac5a42736ccae7154f201f5d0196825f352b726273e217971cbc77cb7bbd7fe5"
+            },
+            "T_Weapon_Sniper_BC.png": {
+              "path": "03_work/textures_v003/T_Weapon_Sniper_BC.png",
+              "sha256": "0a445f5ef79c58bf047449cea16e985fe57bb94712c4ff8a7b43347cf0879b90"
+            },
+            "T_Weapon_Sniper_N.png": {
+              "path": "03_work/textures_v003/T_Weapon_Sniper_N.png",
+              "sha256": "c1913c6c78c23c1ad85c3ab18c40359b148aa47e04ec40915bcbf451b3e54b69"
+            },
+            "T_Weapon_Sniper_ORM.png": {
+              "path": "03_work/textures_v003/T_Weapon_Sniper_ORM.png",
+              "sha256": "7834a36ba2a3841e6bae889d4da004fcbcdc6a84e5b977898d1d85953789f3dd"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.837,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12000,
+              "verts": 6500
+            }
+          ],
+          "export_kb": 472.7,
+          "seconds": 19.6,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -701,11 +882,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:37:28",
+          "files": {
+            "SK_Weapon_Sniper_v003_validation.json": {
+              "path": "05_review/SK_Weapon_Sniper_v003_validation.json",
+              "sha256": "699a754ee6bd543fee53ed2355740e824dc0bc8e9ed21961242d937eb4b710f3"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -768,11 +964,45 @@
             "note": "发光分区 v002：只保留鹰羽细刻线，缠带不发光；瞄准镜为美术（开镜时第一人称模型隐藏）",
             "time": "2026-10-03 21:59:33"
           }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:37:35",
+          "files": {
+            "SK_Weapon_Sniper_v003_review.png": {
+              "path": "05_review/SK_Weapon_Sniper_v003_review.png",
+              "sha256": "a971369782b4b97dc1aec544d2d5874ea3922e31317096de3d822695deb2ec87"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：长槽管、大瞄具、鹰羽雕纹木托、弹匣齐全，IoU 0.837",
+            "time": "2026-11-27 01:38:03"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -784,6 +1014,18 @@
             }
           },
           "from_build": 2,
+          "url": "assets/weapons/SK_Weapon_Sniper.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:40:43",
+          "files": {
+            "SK_Weapon_Sniper.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Sniper.glb",
+              "sha256": "a65653465ac900c208c38032ee8ab07e5cc3f5efab72bd575ed14a5c05363235"
+            }
+          },
+          "from_build": 3,
           "url": "assets/weapons/SK_Weapon_Sniper.glb"
         }
       ]

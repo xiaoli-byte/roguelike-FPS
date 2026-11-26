@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
             "time": "2026-10-03 21:15:07"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:26:35",
+          "files": {
+            "CN_SK_Weapon_Smg_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Smg_v002_sheet.png",
+              "sha256": "e49b607b4f21f836bc92e7eca0cacafd24c1b764dc1f3b50f4c947ca84fa622d"
+            },
+            "CN_SK_Weapon_Smg_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Smg_v002_front.png",
+              "sha256": "9f1c5ff9cb7075a6c90de49c8831ebca7f4b931311f29905ad5d2e300718bdb1"
+            },
+            "CN_SK_Weapon_Smg_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Smg_v002_left.png",
+              "sha256": "8f30d72e6fcfd4d80fc14c3487a4acf825300304290b072cee1b81f261dc5089"
+            },
+            "CN_SK_Weapon_Smg_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Smg_v002_back.png",
+              "sha256": "7f8687771a05b432b08f14cc8219c88b477e5298ec5d99b974c1a0e19dd64a9f"
+            },
+            "CN_SK_Weapon_Smg_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Smg_v002_right.png",
+              "sha256": "e6e1c782ab333e687fc64d2a80345d5fc70dd1100bd8c7067dd7e80b0f10bf16"
+            },
+            "CN_SK_Weapon_Smg_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Smg_v002_compare.png",
+              "sha256": "165f8dfded83dffa67114755c15633495f6995a9e890d5ea9eea5ec17a7cc867"
+            },
+            "CN_SK_Weapon_Smg_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Smg_v002_prompt.txt",
+              "sha256": "cfe20396777992935abfdbe52cb5280b88cf60eca2bf27c26377999527702b78"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2050,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 592
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3230
+          },
+          "request_id": "req_3f9991e5b8394a8cb3dad0f40aa463a6",
+          "seconds": 32.2,
+          "registration": {
+            "front": {
+              "scale": 0.9482,
+              "offset": [
+                52,
+                68
+              ],
+              "iou": 0.782,
+              "iou_unregistered_scale": 0.9775
+            },
+            "left": {
+              "scale": 0.9179,
+              "offset": [
+                208,
+                110
+              ],
+              "iou": 0.817,
+              "iou_unregistered_scale": 0.9765
+            },
+            "back": {
+              "scale": 0.9472,
+              "offset": [
+                52,
+                68
+              ],
+              "iou": 0.78,
+              "iou_unregistered_scale": 0.9765
+            },
+            "right": {
+              "scale": 0.9179,
+              "offset": [
+                208,
+                110
+              ],
+              "iou": 0.819,
+              "iou_unregistered_scale": 0.9765
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.786,
+            "left": 0.822,
+            "back": 0.785,
+            "right": 0.825
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "改写描述后重出：四视图一致、贴合白模剪影，作 Tripo 多视图输入",
+            "time": "2026-11-27 01:29:37"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -441,11 +548,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 3.9
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:35:30",
+          "files": {
+            "HP_SK_Weapon_Smg_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Smg_v002_source.glb",
+              "sha256": "d674c699864f9ec0a027542823bbed32f26d2306d7e1d7de93eb24c9e51187f7"
+            },
+            "HP_SK_Weapon_Smg_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Smg_v002.glb",
+              "sha256": "28e26f89e8cf7ed1c7f15b53f04ecf1b6b6baed40b713e4ca2ed6d29cbb6c96d"
+            },
+            "HP_SK_Weapon_Smg_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Smg_v002_graph.json",
+              "sha256": "e99125129a392d66652026b4c90eb857fb5209a3289fffe11be2e7d96d411a20"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/70b3a8f6-23b2-4a34-b1b8-df6b613e7317",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 11918,
+          "source_sha256": "d674c699864f9ec0a027542823bbed32f26d2306d7e1d7de93eb24c9e51187f7"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -506,11 +639,59 @@
           "export_kb": 480.2,
           "seconds": 32.5,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:35:50",
+          "files": {
+            "SK_Weapon_Smg_v002.blend": {
+              "path": "03_work/SK_Weapon_Smg_v002.blend",
+              "sha256": "22132fa9e9adf604b6acc0ed3cdb5cdcec611ef5613891e7577665c9dd2c0597"
+            },
+            "SK_Weapon_Smg_v002.glb": {
+              "path": "04_export/SK_Weapon_Smg_v002.glb",
+              "sha256": "e0b77b2e83e94b342ee1d87dc02a02b2cc9ac434f78115d1d54fc14d34f761e0"
+            },
+            "SK_Weapon_Smg_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Smg_v002_metrics.json",
+              "sha256": "49012ee52d7e3e9800c237b7dc2a548f6665dd0e907b2915ef96b2a0282c52e3"
+            },
+            "T_Weapon_Smg_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Smg_BC.png",
+              "sha256": "3e2bc849bddec774c71059d0720f231a9d828642cd193d90e217531bd6c4fa74"
+            },
+            "T_Weapon_Smg_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Smg_N.png",
+              "sha256": "2c5f9d71d00588810118eb85e02912166a7f87ac6c245466f76807e1e7dc0f15"
+            },
+            "T_Weapon_Smg_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Smg_ORM.png",
+              "sha256": "2031d9a21bc3db044aba755359514f0cdd0cec46f6972015d76cccda39a3ce7c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.838,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11917,
+              "verts": 6078
+            }
+          ],
+          "export_kb": 510.5,
+          "seconds": 19.6,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -526,11 +707,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:35:50",
+          "files": {
+            "SK_Weapon_Smg_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Smg_v002_validation.json",
+              "sha256": "287f3b1698c9085bf6fa2eb57e683cb0983baf2a0e7d340a7022b8a018dd848a"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -593,11 +789,45 @@
             "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
             "time": "2026-10-03 21:58:30"
           }
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:35:56",
+          "files": {
+            "SK_Weapon_Smg_v002_review.png": {
+              "path": "05_review/SK_Weapon_Smg_v002_review.png",
+              "sha256": "210ad0577cfdfdb60dda102603ac0cf2e3cc1ea0a866e35a0b83ab915b6bb0f4"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：蜂窝散热窗、琥珀色条纹、打孔枪口套、盒弹匣齐全；比白模厚 2.5 cm 可接受",
+            "time": "2026-11-27 01:36:54"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -609,6 +839,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Smg.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:36:55",
+          "files": {
+            "SK_Weapon_Smg.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Smg.glb",
+              "sha256": "e0b77b2e83e94b342ee1d87dc02a02b2cc9ac434f78115d1d54fc14d34f761e0"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Smg.glb"
         }
       ]

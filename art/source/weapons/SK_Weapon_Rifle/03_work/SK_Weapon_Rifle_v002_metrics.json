@@ -1,0 +1,139 @@
+{
+  "steps": {
+    "导入清理": 0.2,
+    "对齐": 0.9,
+    "低模与 UV": 7.1,
+    "供应方贴图": 0.0,
+    "烘焙": 6.8,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 0.7,
+    "导出": 1.9
+  },
+  "highpoly": {
+    "faces_raw": 11109,
+    "faces": 11109,
+    "verts": 5870,
+    "loose_parts": 23,
+    "kept_parts": 22,
+    "remesh_voxel_m": 0.0,
+    "texture_source": "highpoly (provider)"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.848,
+    "iou_per_view": {
+      "front": 0.893,
+      "left": 0.803,
+      "back": 0.887,
+      "right": 0.786
+    },
+    "height_m": 0.6298,
+    "blockout_height_m": 0.977
+  },
+  "uv": {
+    "smart_islands": 685,
+    "charts": 225,
+    "fallback_charts": 25,
+    "flipped_faces": 8,
+    "flipped_ratio": 0.0007,
+    "method": "merged",
+    "density_smart": 1.1655,
+    "density_merged": 1.2607
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider base colour baked from the Tripo source"
+  },
+  "bake_device": "OPTIX",
+  "textures": {
+    "T_Weapon_Rifle_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Rifle_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Rifle_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_10",
+      "j_13"
+    ],
+    "per_lod": {
+      "SK_Weapon_Rifle_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0147,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Rifle_LOD0": {
+        "cut_edges": 0,
+        "cap_tris": 0,
+        "merged_fragment_faces": 125,
+        "tris": 11108
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Rifle_LOD0",
+      "tris": 11108,
+      "verts": 5870,
+      "uv_min": [
+        0.0029196804389357567,
+        0.0029861717484891415
+      ],
+      "uv_max": [
+        0.9970929622650146,
+        0.9843505620956421
+      ],
+      "uv_utilization": 0.627,
+      "bbox_min": [
+        -0.0439,
+        -0.3288,
+        -0.1685
+      ],
+      "bbox_max": [
+        0.0324,
+        0.6298,
+        0.0998
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/weapons/SK_Weapon_Rifle/04_export/SK_Weapon_Rifle_v002.glb",
+    "bytes": 438224
+  },
+  "blend": "art/source/weapons/SK_Weapon_Rifle/03_work/SK_Weapon_Rifle_v002.blend",
+  "total_seconds": 17.5,
+  "_seconds": 18.9
+}

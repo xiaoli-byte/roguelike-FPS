@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
             "time": "2026-10-03 21:15:07"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:27:40",
+          "files": {
+            "CN_SK_Weapon_Rifle_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v002_sheet.png",
+              "sha256": "447bee9947ea6e2dd2538178e83c424025a3d6f340ea75d27433ddf5d55957a7"
+            },
+            "CN_SK_Weapon_Rifle_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v002_front.png",
+              "sha256": "1f50bbd18bfd3c6559ad4de7b5ab5c59f7abcadb610b51abf085b0fb1c81d6b0"
+            },
+            "CN_SK_Weapon_Rifle_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v002_left.png",
+              "sha256": "04bca9f3652b44d81474afb48072330ff9db0137ba155df2fc4dcc6883668d8e"
+            },
+            "CN_SK_Weapon_Rifle_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v002_back.png",
+              "sha256": "216c66dbb388f093176fe7cfdc128739dd952078069d8a0355369668380c570f"
+            },
+            "CN_SK_Weapon_Rifle_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v002_right.png",
+              "sha256": "6e7692abdd23b47e358f13da6ae3a3505173faf80ac54b573f60817a3b0f541b"
+            },
+            "CN_SK_Weapon_Rifle_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v002_compare.png",
+              "sha256": "4bcd5b0eeb9cfc2bca816b46a0cdb287438fc9e6be528092b5b9bbde01990a10"
+            },
+            "CN_SK_Weapon_Rifle_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v002_prompt.txt",
+              "sha256": "3c6b3e65c0528ef6a4dee3bb09dc35704a45cc91d4e4fbfaf246622c146a0ec2"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2072,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 614
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3252
+          },
+          "request_id": "req_9857d7686fcb49a490a7b279b62b6020",
+          "seconds": 31.1,
+          "registration": {
+            "front": {
+              "scale": 0.986,
+              "offset": [
+                128,
+                55
+              ],
+              "iou": 0.759,
+              "iou_unregistered_scale": 0.986
+            },
+            "left": {
+              "scale": 0.9564,
+              "offset": [
+                224,
+                82
+              ],
+              "iou": 0.829,
+              "iou_unregistered_scale": 0.986
+            },
+            "back": {
+              "scale": 0.986,
+              "offset": [
+                129,
+                55
+              ],
+              "iou": 0.762,
+              "iou_unregistered_scale": 0.986
+            },
+            "right": {
+              "scale": 0.9268,
+              "offset": [
+                223,
+                110
+              ],
+              "iou": 0.804,
+              "iou_unregistered_scale": 0.986
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.761,
+            "left": 0.833,
+            "back": 0.764,
+            "right": 0.808
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "改写描述后重出：四视图一致、贴合白模剪影，作 Tripo 多视图输入",
+            "time": "2026-11-27 01:29:38"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -441,11 +548,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 2.2
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:36:44",
+          "files": {
+            "HP_SK_Weapon_Rifle_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v002_source.glb",
+              "sha256": "974310ba0da38070fe3de26737abb6d27e21bb2c7cbe3f21ccacf4e8601d8229"
+            },
+            "HP_SK_Weapon_Rifle_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v002.glb",
+              "sha256": "7b1ff14871e92766c2709ac6f6a10fda823e828e74e4d245d3035485c171d193"
+            },
+            "HP_SK_Weapon_Rifle_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v002_graph.json",
+              "sha256": "cda808a5904914781db67c481d18ca9026d59e3618c3c5054351b3007ace6f61"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/7309fc3b-78ea-476f-bb5b-72e526a424c9",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 11111,
+          "source_sha256": "974310ba0da38070fe3de26737abb6d27e21bb2c7cbe3f21ccacf4e8601d8229"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -506,11 +639,59 @@
           "export_kb": 467.8,
           "seconds": 23.3,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:37:03",
+          "files": {
+            "SK_Weapon_Rifle_v002.blend": {
+              "path": "03_work/SK_Weapon_Rifle_v002.blend",
+              "sha256": "c2cefdafcfbf7b007997ff171c767c49ec12fd151d10054fc10f6dea3e727d83"
+            },
+            "SK_Weapon_Rifle_v002.glb": {
+              "path": "04_export/SK_Weapon_Rifle_v002.glb",
+              "sha256": "dc02f4f347458c57314920d50322bba79703c6922ceea5b08d1eb2cb1153924f"
+            },
+            "SK_Weapon_Rifle_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Rifle_v002_metrics.json",
+              "sha256": "2777f7868778018d1015eb2ded3942b715e4a319f6773844bbc2a375828055b6"
+            },
+            "T_Weapon_Rifle_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Rifle_BC.png",
+              "sha256": "12536be6b8a55f5656d883e6085009b983b45f3fbabad46e686d3162956d38a9"
+            },
+            "T_Weapon_Rifle_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Rifle_N.png",
+              "sha256": "a8769ef32483c515ca2f769aa0bf6090a3b3758bc7defb55b653beaf5c8901e6"
+            },
+            "T_Weapon_Rifle_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Rifle_ORM.png",
+              "sha256": "108251a6f25d0ebe26b1402ee492f101b62894e42de44644b9244b4aeea9fa5f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.848,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11108,
+              "verts": 5870
+            }
+          ],
+          "export_kb": 428.0,
+          "seconds": 18.9,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -526,11 +707,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:37:03",
+          "files": {
+            "SK_Weapon_Rifle_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Rifle_v002_validation.json",
+              "sha256": "dd648e3f388a836e7a9958db2b76a00c859c940f211f919eb064bcd0b2ca80c1"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -565,11 +761,45 @@
             "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
             "time": "2026-10-03 21:58:31"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:37:09",
+          "files": {
+            "SK_Weapon_Rifle_v002_review.png": {
+              "path": "05_review/SK_Weapon_Rifle_v002_review.png",
+              "sha256": "53989fc76124efb60f053b1336f18f5855c1887f3340ef95f42dc19523f8afb8"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：橄榄绿风纹机匣、弯弹匣、制退器、枪托齐全，IoU 0.848",
+            "time": "2026-11-27 01:38:03"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -581,6 +811,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Rifle.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:40:42",
+          "files": {
+            "SK_Weapon_Rifle.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Rifle.glb",
+              "sha256": "dc02f4f347458c57314920d50322bba79703c6922ceea5b08d1eb2cb1153924f"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Rifle.glb"
         }
       ]

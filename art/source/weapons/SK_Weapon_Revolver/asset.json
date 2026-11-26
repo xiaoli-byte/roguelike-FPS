@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "赤铜云纹枪身、深钢转轮、木握把金饰；剪影 IoU 0.78–0.93",
             "time": "2026-10-03 20:47:45"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:29:59",
+          "files": {
+            "CN_SK_Weapon_Revolver_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v002_sheet.png",
+              "sha256": "426750e7fe2b55ca1ed2b3eec2cac35b443d83009e8f833607d42e55a1762102"
+            },
+            "CN_SK_Weapon_Revolver_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v002_front.png",
+              "sha256": "73639da50bf788122906fc2ee8264a2de8d0ef4a3d7c01681c9c21c5cafc0e2c"
+            },
+            "CN_SK_Weapon_Revolver_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v002_left.png",
+              "sha256": "4758ce867c8bdfb9f32375eba130f5e3badf91470a3f3c142b4cba8674ec0e20"
+            },
+            "CN_SK_Weapon_Revolver_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v002_back.png",
+              "sha256": "f9e6d52de7d4a1ec9a241eecf99ae470e5bc87f365a4b2be85e8c28bd058cb40"
+            },
+            "CN_SK_Weapon_Revolver_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v002_right.png",
+              "sha256": "f355bf63db1ea3abe1e1d80a2b74ca70d4dc25a6f43cc8de1684b97e5c5f225b"
+            },
+            "CN_SK_Weapon_Revolver_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v002_compare.png",
+              "sha256": "9330121194f2e6db6f4edb266283453d21e9ba179e203fa39527681fa05d4584"
+            },
+            "CN_SK_Weapon_Revolver_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v002_prompt.txt",
+              "sha256": "0178f0cfdcb7456c1a5f969368e9881eafc56fc1c6614d169544145fcbe01ac2"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2066,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 608
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3246
+          },
+          "request_id": "req_ef1ab24aa79f4e948e93e7138d0bf1de",
+          "seconds": 32.0,
+          "registration": {
+            "front": {
+              "scale": 0.8808,
+              "offset": [
+                57,
+                172
+              ],
+              "iou": 0.78,
+              "iou_unregistered_scale": 0.8808
+            },
+            "left": {
+              "scale": 0.8273,
+              "offset": [
+                186,
+                203
+              ],
+              "iou": 0.894,
+              "iou_unregistered_scale": 0.8662
+            },
+            "back": {
+              "scale": 0.8797,
+              "offset": [
+                17,
+                172
+              ],
+              "iou": 0.782,
+              "iou_unregistered_scale": 0.8797
+            },
+            "right": {
+              "scale": 0.8143,
+              "offset": [
+                187,
+                213
+              ],
+              "iou": 0.887,
+              "iou_unregistered_scale": 0.8662
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.783,
+            "left": 0.897,
+            "back": 0.784,
+            "right": 0.893
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "改写描述后重出：四视图一致、贴合白模剪影，作 Tripo 多视图输入",
+            "time": "2026-11-27 01:31:03"
           }
         }
       ]
@@ -284,7 +391,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -336,11 +443,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 5.2
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:37:14",
+          "files": {
+            "HP_SK_Weapon_Revolver_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v002_source.glb",
+              "sha256": "a57ef5efddf5e8e27a42da96cc459e97d16e947224ba2773b150ea68fc33598f"
+            },
+            "HP_SK_Weapon_Revolver_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v002.glb",
+              "sha256": "423037375574de67a1d29df0a753acaabb4ee04eaecb661bfb44998a1b6a30de"
+            },
+            "HP_SK_Weapon_Revolver_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v002_graph.json",
+              "sha256": "cbb185e425924ffae221576e193c846dec4ca2e80ae2b225be29e2188d5f09fa"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/f85fddb1-fc90-4752-a193-86d6e2048f36",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 11353,
+          "source_sha256": "a57ef5efddf5e8e27a42da96cc459e97d16e947224ba2773b150ea68fc33598f"
         }
       ]
     },
     "build": {
-      "current": 3,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -516,11 +649,59 @@
           "export_kb": 492.0,
           "seconds": 35.8,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-11-27 01:37:35",
+          "files": {
+            "SK_Weapon_Revolver_v004.blend": {
+              "path": "03_work/SK_Weapon_Revolver_v004.blend",
+              "sha256": "21f146928178e3b3005e42a8a779a3b19f7ee321a6e7d7b7b21c8a477bcd9984"
+            },
+            "SK_Weapon_Revolver_v004.glb": {
+              "path": "04_export/SK_Weapon_Revolver_v004.glb",
+              "sha256": "bf6194361e63d72dfb6643b3e1c73be060b37448526596d765f768495c15ec87"
+            },
+            "SK_Weapon_Revolver_v004_metrics.json": {
+              "path": "03_work/SK_Weapon_Revolver_v004_metrics.json",
+              "sha256": "687f486c8ec3c8e739cbd53c51c23207061931fb9ce117148a34a43cf012080c"
+            },
+            "T_Weapon_Revolver_BC.png": {
+              "path": "03_work/textures_v004/T_Weapon_Revolver_BC.png",
+              "sha256": "64c799d58dbe9580914bbd0b2886636c453363b6ce2de80b351ebd208f8c03a7"
+            },
+            "T_Weapon_Revolver_N.png": {
+              "path": "03_work/textures_v004/T_Weapon_Revolver_N.png",
+              "sha256": "eaf4a0a0c50523b61b2548dfa9b187bd074ea410c5b9a10c8b6ba22cb207579f"
+            },
+            "T_Weapon_Revolver_ORM.png": {
+              "path": "03_work/textures_v004/T_Weapon_Revolver_ORM.png",
+              "sha256": "971bf48662ea3340613418fc11c9bb5f6d319fd4c01eda1b511be127920b1791"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.884,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11838,
+              "verts": 5968
+            }
+          ],
+          "export_kb": 426.5,
+          "seconds": 20.3,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 3,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -566,11 +747,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-11-27 01:37:35",
+          "files": {
+            "SK_Weapon_Revolver_v004_validation.json": {
+              "path": "05_review/SK_Weapon_Revolver_v004_validation.json",
+              "sha256": "55551a8f2f1d30a7c40917de7ac2b69b20e1cecc975b41a7da69cd98680345fc"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 3,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -667,11 +863,45 @@
             "note": "加入发光分区：云纹雕刻按实例发光（元素色 / 稀有度色），取代程序化发光平板",
             "time": "2026-10-03 21:05:49"
           }
+        },
+        {
+          "version": 4,
+          "created": "2026-11-27 01:37:42",
+          "files": {
+            "SK_Weapon_Revolver_v004_review.png": {
+              "path": "05_review/SK_Weapon_Revolver_v004_review.png",
+              "sha256": "d02a12f24f3e3caf6198a8de88ad7578593fad4b47354b11bd2448af1058df43"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：赤铜云纹框、八巢转轮、木握把金铆钉齐全，IoU 0.884",
+            "time": "2026-11-27 01:38:03"
+          }
         }
       ]
     },
     "publish": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -695,6 +925,18 @@
             }
           },
           "from_build": 3,
+          "url": "assets/weapons/SK_Weapon_Revolver.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-11-27 01:40:42",
+          "files": {
+            "SK_Weapon_Revolver.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Revolver.glb",
+              "sha256": "bf6194361e63d72dfb6643b3e1c73be060b37448526596d765f768495c15ec87"
+            }
+          },
+          "from_build": 4,
           "url": "assets/weapons/SK_Weapon_Revolver.glb"
         }
       ]
