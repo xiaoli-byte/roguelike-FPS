@@ -327,6 +327,24 @@ export class FilmPost {
   /** 换图 / 切到出生点后调：重新拿画面平均亮度当自动曝光的基准 */
   recalibrate(): void { this.aeReset = true; this.calibT = 0; }
 
+  /**
+   * 按场景那一遍的真实状态（画到 HDR 目标、不做色调映射）预编场景里所有材质的着色器——
+   * 直接 renderer.compileAsync 是按「画到屏幕、Neutral 色调映射」编的，编出来的变体这里一个都用不上（plateau/lookdev.ts 的预热用）。
+   */
+  async compileScene(scene: THREE.Scene, camera: THREE.Camera): Promise<void> {
+    const r = this.renderer;
+    if (!this.enabled || !this.supported) { await r.compileAsync(scene, camera); return; }
+    const prevTone = r.toneMapping, prevTarget = r.getRenderTarget();
+    r.toneMapping = THREE.NoToneMapping;
+    r.setRenderTarget(this.ensure());
+    try {
+      await r.compileAsync(scene, camera);
+    } finally {
+      r.setRenderTarget(prevTarget);
+      r.toneMapping = prevTone;
+    }
+  }
+
   /** 画一帧（代替 renderer.render(scene, camera)）。dt：真实秒数（自动曝光的适应用） */
   render(scene: THREE.Scene, camera: THREE.Camera, dt = 1 / 60): void {
     const r = this.renderer;

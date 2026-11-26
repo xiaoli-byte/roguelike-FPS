@@ -193,6 +193,8 @@ export class Rain {
   readonly group = new THREE.Group();
   /** 当前强度（0..1） */
   intensity = 0;
+  /** 逐项开关（lookdev.ts）：关掉就不画（淋湿照常） */
+  enabled = true;
   private readonly drops: THREE.ShaderMaterial[] = [];
   private readonly veils: { mesh: THREE.Mesh; mat: THREE.ShaderMaterial }[] = [];
   private readonly splash: THREE.ShaderMaterial;
@@ -258,7 +260,7 @@ export class Rain {
     const W = WORLD_UNIFORMS.uWet;
     W.value += (intensity - W.value) * Math.min(1, dt * (intensity > W.value ? 0.15 : 0.03));
     (WORLD_UNIFORMS.uRainSky.value as THREE.Vector3).set(fogColor.r, fogColor.g, fogColor.b);
-    this.group.visible = intensity > 0.01;
+    this.group.visible = this.enabled && intensity > 0.01;
     if (!this.group.visible) return;
     camera.getWorldPosition(this.cam);
     this.viewport.set(pixelWidth, pixelHeight);

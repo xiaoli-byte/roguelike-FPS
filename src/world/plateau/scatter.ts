@@ -133,7 +133,8 @@ export class GrassField {
   private readonly tuft = tuftGeometry();
   private readonly flower = flowerGeometry();
   private readonly grassMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { sway: 0.28 });
-  private readonly flowerMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { sway: 0.5 });
+  /** 野花 45–75 m 之间缩到没有：再远就比一个像素小，镜头一动就闪（闪点检测查出来的） */
+  private readonly flowerMat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true }), { sway: 0.5, shrink: [45, 75] });
   instances = 0;
 
   constructor(
