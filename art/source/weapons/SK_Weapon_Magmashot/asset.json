@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
             "time": "2026-10-06 17:39:56"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:52:12",
+          "files": {
+            "CN_SK_Weapon_Magmashot_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v002_sheet.png",
+              "sha256": "d1bb6233b67fae917f2eb6e7dd215344fdfb5cf765337e24ccf45128f0dec2d8"
+            },
+            "CN_SK_Weapon_Magmashot_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v002_front.png",
+              "sha256": "ad828076a350b8f33bc3ac5a266fdbb8956b45a1d98caa20936ede10c22e706f"
+            },
+            "CN_SK_Weapon_Magmashot_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v002_left.png",
+              "sha256": "d99675dd9d513940e7fbcfebaff41289e542fae9525b49e0ab5d81758697f08e"
+            },
+            "CN_SK_Weapon_Magmashot_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v002_back.png",
+              "sha256": "59c6e40ac966ca582b83eb0d0f2029f422e5b11eff83da89a95179060a312c97"
+            },
+            "CN_SK_Weapon_Magmashot_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v002_right.png",
+              "sha256": "569d3b3ec76cc21084408225d211fe8d929a70a8299cce54304180a143d15ba6"
+            },
+            "CN_SK_Weapon_Magmashot_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v002_compare.png",
+              "sha256": "c21e17d824844c5a76e2280cc0f8112f36098d2e91875882cb8ede5021d086b5"
+            },
+            "CN_SK_Weapon_Magmashot_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v002_prompt.txt",
+              "sha256": "bb590e47cfdcb41219effdd38985693c3a7bb1cd5c28b675680b9691920140f2"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.6-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2113,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 655
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3293
+          },
+          "request_id": "req_44311b2c0de34a5e9361598a2c038ab2",
+          "seconds": 33.3,
+          "registration": {
+            "front": {
+              "scale": 0.9591,
+              "offset": [
+                146,
+                41
+              ],
+              "iou": 0.786,
+              "iou_unregistered_scale": 0.9591
+            },
+            "left": {
+              "scale": 0.9293,
+              "offset": [
+                200,
+                55
+              ],
+              "iou": 0.863,
+              "iou_unregistered_scale": 0.9581
+            },
+            "back": {
+              "scale": 0.9591,
+              "offset": [
+                119,
+                41
+              ],
+              "iou": 0.793,
+              "iou_unregistered_scale": 0.9591
+            },
+            "right": {
+              "scale": 0.9303,
+              "offset": [
+                199,
+                55
+              ],
+              "iou": 0.858,
+              "iou_unregistered_scale": 0.9591
+            }
+          },
+          "note": "Background MUST be one flat plain light grey (#D6D6D6) everywhere, exactly like the input sheet: no dark background, no glow, no halo, no vignette, no drop shadow, no light bloom around the weapon.",
+          "silhouette_iou": {
+            "front": 0.788,
+            "left": 0.866,
+            "back": 0.795,
+            "right": 0.861
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 多视图输入：四视图一致、剪影贴合白模",
+            "time": "2026-11-27 01:06:04"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -445,11 +552,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 3.0
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:19:31",
+          "files": {
+            "HP_SK_Weapon_Magmashot_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v002_source.glb",
+              "sha256": "83c874b2b3689683ab588071fde35896195a2bf085b9e3dad88451745bdd8969"
+            },
+            "HP_SK_Weapon_Magmashot_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v002.glb",
+              "sha256": "482cc30e43f98b43b3e68de356d000690e2c772465d0a5360f13a348b0d88764"
+            },
+            "HP_SK_Weapon_Magmashot_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v002_graph.json",
+              "sha256": "93ed493b1d532a31b8a6cc319305db48cfee126fb18cc0727afa23253f9612f6"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/4dc0b277-bb1c-4e20-b58e-de9265302a9a",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 12158,
+          "source_sha256": "83c874b2b3689683ab588071fde35896195a2bf085b9e3dad88451745bdd8969"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -510,11 +643,59 @@
           "export_kb": 484.3,
           "seconds": 26.6,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:19:50",
+          "files": {
+            "SK_Weapon_Magmashot_v002.blend": {
+              "path": "03_work/SK_Weapon_Magmashot_v002.blend",
+              "sha256": "7d61214bcbfbc96a0818171da3f19d198dd1acbb51cef55f9d7ebc443477b722"
+            },
+            "SK_Weapon_Magmashot_v002.glb": {
+              "path": "04_export/SK_Weapon_Magmashot_v002.glb",
+              "sha256": "9aec566e417ac5f631883d7270f7014b16f9e0d41e45726a19c08f3141c81a90"
+            },
+            "SK_Weapon_Magmashot_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Magmashot_v002_metrics.json",
+              "sha256": "795cf9f23105e75c0f479712ad95d4de3244f39ae4e8173ec50b7a6c39aa5aff"
+            },
+            "T_Weapon_Magmashot_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Magmashot_BC.png",
+              "sha256": "9838e5b6f4f5ff9b7836facdf0c11daef949654d2936539ccf6e54bf97175651"
+            },
+            "T_Weapon_Magmashot_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Magmashot_N.png",
+              "sha256": "aec304ab5c89bf0e254529eadcfa98139759debe919785ad54f6b99a2a91bd01"
+            },
+            "T_Weapon_Magmashot_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Magmashot_ORM.png",
+              "sha256": "e99d9304bd162dc32c3ba3c242d28a581e14b52cf549e852c420b22f2266fd60"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 12000,
+              "verts": 6148
+            }
+          ],
+          "export_kb": 446.1,
+          "seconds": 17.9,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -530,11 +711,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:19:50",
+          "files": {
+            "SK_Weapon_Magmashot_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Magmashot_v002_validation.json",
+              "sha256": "4f5480ca4db33d64abb9102234e8cf183b935a01cc5bcb9568e12a40740e0020"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -569,11 +765,45 @@
             "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
             "time": "2026-10-06 18:05:00"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:19:56",
+          "files": {
+            "SK_Weapon_Magmashot_v002_review.png": {
+              "path": "05_review/SK_Weapon_Magmashot_v002_review.png",
+              "sha256": "df2506b325a4c9db483e9cca9702618ef5ba93f4f578f19360864433f751d328"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：赤蛟背鳍、黑铁双管、云纹木握把齐全；深度比白模厚 2.3 cm 可接受",
+            "time": "2026-11-27 01:20:42"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -585,6 +815,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Magmashot.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:20:42",
+          "files": {
+            "SK_Weapon_Magmashot.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Magmashot.glb",
+              "sha256": "9aec566e417ac5f631883d7270f7014b16f9e0d41e45726a19c08f3141c81a90"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Magmashot.glb"
         }
       ]

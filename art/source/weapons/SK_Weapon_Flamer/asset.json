@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
             "time": "2026-10-06 17:39:55"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:50:55",
+          "files": {
+            "CN_SK_Weapon_Flamer_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v002_sheet.png",
+              "sha256": "a89ff052f0b8db957b7a48d86eec3948fbe3d8fec7fc3d2630b79da34c307b11"
+            },
+            "CN_SK_Weapon_Flamer_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v002_front.png",
+              "sha256": "9d95af0aac157568409eb5cae23df574c16a7f8b02180ec3b2851a088fa6333f"
+            },
+            "CN_SK_Weapon_Flamer_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v002_left.png",
+              "sha256": "aafa09e89503aa96dcc9df2e732d7d049e5efb11d269022db123899119b3b1ef"
+            },
+            "CN_SK_Weapon_Flamer_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v002_back.png",
+              "sha256": "bd3b6f69259e9028184871206350f2bef9957ba0e62937d9673582e2c90616e4"
+            },
+            "CN_SK_Weapon_Flamer_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v002_right.png",
+              "sha256": "8ac612627dc2edf64c99686cb2034a7084a2cb827ef1d01178ef78f538d27d5b"
+            },
+            "CN_SK_Weapon_Flamer_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v002_compare.png",
+              "sha256": "59d23df44489577ef67fd6b44624f41c9ccc7bf12d872a6197e1470e9caf7ffa"
+            },
+            "CN_SK_Weapon_Flamer_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v002_prompt.txt",
+              "sha256": "14fd9767be1984349586ac7ccacdb6e2f77f60f5a03831c2feca6f7a934a737a"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.6-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2119,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 661
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3299
+          },
+          "request_id": "req_a42fbb2239064e38a71a8ec4fdc2410a",
+          "seconds": 33.8,
+          "registration": {
+            "front": {
+              "scale": 0.9892,
+              "offset": [
+                66,
+                55
+              ],
+              "iou": 0.942,
+              "iou_unregistered_scale": 0.9892
+            },
+            "left": {
+              "scale": 0.986,
+              "offset": [
+                184,
+                55
+              ],
+              "iou": 0.968,
+              "iou_unregistered_scale": 0.986
+            },
+            "back": {
+              "scale": 0.9892,
+              "offset": [
+                66,
+                55
+              ],
+              "iou": 0.93,
+              "iou_unregistered_scale": 0.9892
+            },
+            "right": {
+              "scale": 0.987,
+              "offset": [
+                182,
+                55
+              ],
+              "iou": 0.961,
+              "iou_unregistered_scale": 0.987
+            }
+          },
+          "note": "Background MUST be one flat plain light grey (#D6D6D6) everywhere, exactly like the input sheet: no dark background, no glow, no halo, no vignette, no drop shadow, no light bloom around the weapon.",
+          "silhouette_iou": {
+            "front": 0.943,
+            "left": 0.969,
+            "back": 0.933,
+            "right": 0.963
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 多视图输入：四视图一致、剪影贴合白模",
+            "time": "2026-11-27 01:06:03"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -445,11 +552,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 5.3
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:16:01",
+          "files": {
+            "HP_SK_Weapon_Flamer_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v002_source.glb",
+              "sha256": "a4bbda023361781751aa0a6396880b967cf39485e0b7f0e25694394d5cfecaee"
+            },
+            "HP_SK_Weapon_Flamer_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v002.glb",
+              "sha256": "01935a43fe2de92f2d979518c4e35c17a0e1d06e60a3b152364dda8d6376f8ae"
+            },
+            "HP_SK_Weapon_Flamer_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v002_graph.json",
+              "sha256": "82386f3a81415fd7bdbcd6a51a02c98e4ecf1be86545448ff837689717d78c9c"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/629d299f-2244-4a23-acde-35a5e72df4eb",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 10369,
+          "source_sha256": "a4bbda023361781751aa0a6396880b967cf39485e0b7f0e25694394d5cfecaee"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -510,11 +643,59 @@
           "export_kb": 497.4,
           "seconds": 30.0,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:16:24",
+          "files": {
+            "SK_Weapon_Flamer_v002.blend": {
+              "path": "03_work/SK_Weapon_Flamer_v002.blend",
+              "sha256": "9c160ce7604b50cc539e06f475b041acf4802caea346558a8f688ed6649c75c9"
+            },
+            "SK_Weapon_Flamer_v002.glb": {
+              "path": "04_export/SK_Weapon_Flamer_v002.glb",
+              "sha256": "ac771d579c91f9c8e0c77889e2b8da40be28e09870f7d67f233dbcf0623e1c1f"
+            },
+            "SK_Weapon_Flamer_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Flamer_v002_metrics.json",
+              "sha256": "58a978bad6cc38e02d60dd4215bf32da28ec03f3b0e942020e415beb6f203026"
+            },
+            "T_Weapon_Flamer_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Flamer_BC.png",
+              "sha256": "2fd3a3085f0f00f63691e8dd03ebcb2f530bcbf3478a29933790972f6662b766"
+            },
+            "T_Weapon_Flamer_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Flamer_N.png",
+              "sha256": "04779092879cedcafb1fccf791e6d3d08d015ccb5096f9c4f1a24dc8171c4ae0"
+            },
+            "T_Weapon_Flamer_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Flamer_ORM.png",
+              "sha256": "78f107536bfe03b74df3b43879634350209a564c5207afa8baea3e7b0fd04fa9"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.909,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 10369,
+              "verts": 5925
+            }
+          ],
+          "export_kb": 494.5,
+          "seconds": 21.6,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -530,11 +711,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:16:24",
+          "files": {
+            "SK_Weapon_Flamer_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Flamer_v002_validation.json",
+              "sha256": "234f9a8a76e71b884c6aa0a6056e31c1d81d4e61ae29ef922b677f137ed7b28e"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -569,11 +765,45 @@
             "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
             "time": "2026-10-06 18:04:58"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:16:31",
+          "files": {
+            "SK_Weapon_Flamer_v002_review.png": {
+              "path": "05_review/SK_Weapon_Flamer_v002_review.png",
+              "sha256": "fed54e707964cdcc8ff0490f38d80092fbdb2a3980475432691abdae8ba2d6ee"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：朱雀纹红漆机匣、燃料罐、喷口鳍片齐全，IoU 0.909",
+            "time": "2026-11-27 01:17:04"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -585,6 +815,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Flamer.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:17:04",
+          "files": {
+            "SK_Weapon_Flamer.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Flamer.glb",
+              "sha256": "ac771d579c91f9c8e0c77889e2b8da40be28e09870f7d67f233dbcf0623e1c1f"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Flamer.glb"
         }
       ]

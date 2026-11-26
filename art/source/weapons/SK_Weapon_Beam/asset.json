@@ -67,7 +67,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,6 +174,113 @@
             "by": "claude(AI初审)",
             "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
             "time": "2026-10-03 21:15:10"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 00:49:12",
+          "files": {
+            "CN_SK_Weapon_Beam_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Beam_v002_sheet.png",
+              "sha256": "733b6b1bd6da88aa4922ecba011c6ddfb2822a5936bb05105b6d660a0a761601"
+            },
+            "CN_SK_Weapon_Beam_v002_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Beam_v002_front.png",
+              "sha256": "7c0910391fcc96d5c154987c2d5375c1338cf0c13e50135c37701ec9734baf09"
+            },
+            "CN_SK_Weapon_Beam_v002_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Beam_v002_left.png",
+              "sha256": "ef185da8317ece66257270910af7f07943511dbdc48abebf3598ac5a8ea78827"
+            },
+            "CN_SK_Weapon_Beam_v002_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Beam_v002_back.png",
+              "sha256": "cc6d01c01d1e4916871ae03c57b2bfaee623d0b41c1bd6f4049dcbedbf11a044"
+            },
+            "CN_SK_Weapon_Beam_v002_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Beam_v002_right.png",
+              "sha256": "77622f2c414d2458950579d380d36e9fde52b8df6ea0a279b3b4268e9adabcdc"
+            },
+            "CN_SK_Weapon_Beam_v002_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Beam_v002_compare.png",
+              "sha256": "b7516e83c10036fbc0a9fa60f34cc1cd3a8ddf7392657d494ab2a415fb436f2e"
+            },
+            "CN_SK_Weapon_Beam_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Beam_v002_prompt.txt",
+              "sha256": "ce894e3421056f9803f6be960b2d0ce5c297718b972a946e41d0ad6129710376"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.6-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2080,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 622
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3260
+          },
+          "request_id": "req_c6066c920a064a60840180d6c4404b9b",
+          "seconds": 30.8,
+          "registration": {
+            "front": {
+              "scale": 0.9838,
+              "offset": [
+                34,
+                41
+              ],
+              "iou": 0.886,
+              "iou_unregistered_scale": 0.9692
+            },
+            "left": {
+              "scale": 0.9567,
+              "offset": [
+                181,
+                55
+              ],
+              "iou": 0.829,
+              "iou_unregistered_scale": 0.9713
+            },
+            "back": {
+              "scale": 0.9838,
+              "offset": [
+                34,
+                41
+              ],
+              "iou": 0.881,
+              "iou_unregistered_scale": 0.9692
+            },
+            "right": {
+              "scale": 0.9412,
+              "offset": [
+                182,
+                55
+              ],
+              "iou": 0.829,
+              "iou_unregistered_scale": 0.9703
+            }
+          },
+          "note": "Background MUST be one flat plain light grey (#D6D6D6) everywhere, exactly like the input sheet: no dark background, no glow, no halo, no vignette, no drop shadow, no light bloom around the weapon.",
+          "silhouette_iou": {
+            "front": 0.889,
+            "left": 0.833,
+            "back": 0.884,
+            "right": 0.832
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "",
+            "time": "2026-11-27 00:51:24"
           }
         }
       ]
@@ -389,7 +496,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -441,11 +548,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 5.2
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:13:23",
+          "files": {
+            "HP_SK_Weapon_Beam_v002_source.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Beam_v002_source.glb",
+              "sha256": "64c5a5c0ddc4b426707e73b4f2ed1bb0a28d8826d815af9d62b613212f609952"
+            },
+            "HP_SK_Weapon_Beam_v002.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Beam_v002.glb",
+              "sha256": "0db55eaea37593fb9c7292279679fd8d1bcb68a4ded3953f7ecac05948dd4b2b"
+            },
+            "HP_SK_Weapon_Beam_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Beam_v002_graph.json",
+              "sha256": "e070bee3dee45dbe73ff190b12c7c228d146ce3e93bd589dd7794ec894c5ccc7"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/0b309294-856b-40b7-ab58-6d90f8343d7f",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 11569,
+          "source_sha256": "64c5a5c0ddc4b426707e73b4f2ed1bb0a28d8826d815af9d62b613212f609952"
         }
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -506,11 +639,59 @@
           "export_kb": 516.9,
           "seconds": 35.5,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:13:46",
+          "files": {
+            "SK_Weapon_Beam_v002.blend": {
+              "path": "03_work/SK_Weapon_Beam_v002.blend",
+              "sha256": "5a29b9678e5a5ccd0c93f672e0c8df8add9aaec46c0f66c1784ed0ab716095f7"
+            },
+            "SK_Weapon_Beam_v002.glb": {
+              "path": "04_export/SK_Weapon_Beam_v002.glb",
+              "sha256": "a8ce71f683f23378e6f00c9cf22d86ff7e78474a0a08d01e9a005d47f2fe6413"
+            },
+            "SK_Weapon_Beam_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Beam_v002_metrics.json",
+              "sha256": "c15a63a7742cebc9ae18b32c53efa13415aa630a8c751a690fa3b33bd1671fda"
+            },
+            "T_Weapon_Beam_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Beam_BC.png",
+              "sha256": "2c2707a323eea64c443be9c510029151823b078c08bdf6d11350653b041a70d2"
+            },
+            "T_Weapon_Beam_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Beam_N.png",
+              "sha256": "c3827336ce0c0b213cb864cad2e87d660a80d159966e1ebed5d4528dbe8dd5bc"
+            },
+            "T_Weapon_Beam_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Beam_ORM.png",
+              "sha256": "d1f4a2bf7fcb673125e8e6509d483dfd36faccad06c0e930b27d9b81bdc80959"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11569,
+              "verts": 6372
+            }
+          ],
+          "export_kb": 465.6,
+          "seconds": 21.8,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -526,11 +707,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:13:46",
+          "files": {
+            "SK_Weapon_Beam_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Beam_v002_validation.json",
+              "sha256": "e40b0523658c86140e7226070b91fb57fc173497e6a8c58d81359d5b93fe3632"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -565,11 +761,45 @@
             "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
             "time": "2026-10-03 21:58:35"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:13:52",
+          "files": {
+            "SK_Weapon_Beam_v002_review.png": {
+              "path": "05_review/SK_Weapon_Beam_v002_review.png",
+              "sha256": "a0b1fe4920df485bf28cf42605c4b15b0aa4e0c0aee3ac709f188535ae3a4f15"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户授权免审）",
+            "note": "Tripo 重做：线圈枪口、云纹黑漆机匣齐全；深度比白模厚 1.7 cm 可接受",
+            "time": "2026-11-27 01:14:34"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -581,6 +811,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Beam.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-11-27 01:14:35",
+          "files": {
+            "SK_Weapon_Beam.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Beam.glb",
+              "sha256": "a8ce71f683f23378e6f00c9cf22d86ff7e78474a0a08d01e9a005d47f2fe6413"
+            }
+          },
+          "from_build": 2,
           "url": "assets/weapons/SK_Weapon_Beam.glb"
         }
       ]
