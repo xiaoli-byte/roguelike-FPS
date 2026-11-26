@@ -69,7 +69,7 @@
 
 ## 五、自检
 
-照 [composition.md](composition.md) 第 4 节：每个关键视角跑 `python scripts/unity/composition_check.py <截图>`，出六格自检图（原图、缩略、灰度、眯眼、翻转、细节密度热图）和 631 统计（颜色、明度、密度三档）。再加几条：
+照 [composition.md](composition.md) 第 4 节：每个关键视角跑 `python scripts/art/composition_check.py <截图>`，出六格自检图（原图、缩略、灰度、眯眼、翻转、细节密度热图）和 631 统计（颜色、明度、密度三档）。再加几条：
 
 - 缩到 25% 还能一眼分出地面、岩壁、路、熔岩、敌人；主色块不超过三个；没有高频噪点。
 - **射击游戏优先**（composition.md 第 6 节）：交战区和中景的背景是一条窄明度带的冷暗紫，明度对比省给怪——所以交战视角里「明度挤在一条带」的提示是有意的，汇报里写明；
