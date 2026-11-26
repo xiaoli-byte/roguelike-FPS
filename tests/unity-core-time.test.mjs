@@ -354,54 +354,23 @@ test('帧率上限的节拍：60 Hz 限 30 隔一帧跑一次；144 Hz 限 60 �
   near(run(60, 240), 60, 1, '上限比刷新率高 = 不限');
 });
 
-// ───────────── 常数逐个读 C# 源码比（本会话补）─────────────
+// ───────────── 常数逐个对冻结的 C# 规格（tests/fixtures/spec：Unity 删除前从 HitStop.cs、TimeScaleArbiter.cs、ClearSlowMo.cs、FeelProfile.cs、GameplayVolumes.cs 抽出）─────────────
 
 const { readFileSync } = await import('node:fs');
+const specJson = name => JSON.parse(readFileSync(new URL(`./fixtures/spec/${name}.json`, import.meta.url), 'utf8'));
+const CS = specJson('cs-consts'), CORE = specJson('core');
 
-function unitySource(rel) {
-  const text = readFileSync(new URL(`../unity/Assets/Game/Scripts/${rel}`, import.meta.url), 'utf8');
-  return text.startsWith('%TSD-Header') ? null : text;
-}
-
-/** C# 里 `const float A = 0.2f, B = 0.12f;` 这样的常数 → { A: 0.2, B: 0.12 } */
-function csConsts(src) {
-  const out = {};
-  for (const m of src.matchAll(/\bconst\s+(?:float|int|double)\s+([^;]+);/g)) {
-    for (const part of m[1].split(',')) {
-      const mm = /^\s*(\w+)\s*=\s*(-?[\d.]+)f?\s*$/.exec(part);
-      if (mm) out[mm[1]] = Number(mm[2]);
-    }
-  }
-  return out;
-}
-
-test('顿帧 / 仲裁优先级 / 手感表的常数逐个等于 C#（HitStop.cs、TimeScaleArbiter.cs、ClearSlowMo.cs、FeelProfile.cs、GameplayVolumes.cs）', (t) => {
-  const hs = unitySource('Core/HitStop.cs'), arb = unitySource('Core/TimeScaleArbiter.cs'), feel = unitySource('Core/FeelProfile.cs');
-  const vol = unitySource('Fx/GameplayVolumes.cs'), clear = unitySource('Core/ClearSlowMo.cs');
-  if (!hs || !arb || !feel || !vol || !clear) return t.skip('C# 被透明加密');
-  const h = csConsts(hs);
+test('顿帧 / 仲裁优先级 / 手感表的常数逐个等于 C#（冻结的 HitStop / TimeScaleArbiter / ClearSlowMo / FeelProfile 规格）', () => {
+  const h = CS['Core/HitStop.cs'];
   for (const k of ['DefaultScale', 'MaxStop', 'MinGap', 'BudgetMax', 'BudgetRate', 'MinUseful', 'KillStop', 'EliteKillStop', 'BossKillStop', 'CritStop', 'ReactionStop', 'HeavyCritFraction'])
     assert.equal(HIT_STOP[k], h[k], `HitStop.${k}`);
-  const p = csConsts(arb);
+  const p = CS['Core/TimeScaleArbiter.cs'];
   assert.deepEqual([TimePriority.HitStop, TimePriority.DeathSlowMo, TimePriority.SceneTransition, TimePriority.Modal, TimePriority.Pause],
     [p.HitStop, p.DeathSlowMo, p.Transition, p.Modal, p.Pause]);
-  assert.match(clear, /Priority = TimeScaleArbiter\.Priority\.HitStop - 10;/);
+  assert.equal(CORE.clearSlowMoPriority, 'HitStop - 10');
   assert.equal(ClearSlowMo.Priority, p.HitStop - 10);
-  // FeelProfile 的字段：字面量或引用 HitStop / GameplayVolumes 的常数
-  const refs = { HitStop: h, GameplayVolumes: csConsts(vol) };
+  // FeelProfile 的字段（引用 HitStop / GameplayVolumes 常数的已在冻结时按 C# 解开）
   const f = defaultFeel();
-  let n = 0;
-  for (const m of feel.matchAll(/public (?:float|int) ([^;]+);/g)) {
-    for (const part of m[1].split(',')) {
-      const mm = /^\s*(\w+)\s*=\s*(.+?)\s*$/.exec(part);
-      if (!mm) continue;
-      const [, key, raw] = mm;
-      const ref = /^([A-Za-z_]\w*)\.(\w+)$/.exec(raw);
-      const value = ref ? refs[ref[1]]?.[ref[2]] : Number(raw.replace(/f$/, ''));
-      assert.ok(Number.isFinite(value), `认不出 FeelProfile.${key} = ${raw}`);
-      assert.equal(f[key], value, `FeelProfile.${key}`);
-      n++;
-    }
-  }
-  assert.equal(n, Object.keys(f).length, '手感表的字段一个不少');
+  for (const [key, value] of Object.entries(CORE.feelProfile)) assert.equal(f[key], value, `FeelProfile.${key}`);
+  assert.equal(Object.keys(CORE.feelProfile).length, Object.keys(f).length, '手感表的字段一个不少');
 });

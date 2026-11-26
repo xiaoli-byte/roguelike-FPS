@@ -12,25 +12,19 @@ const near = (a, b, eps = 1e-3, msg = '') => assert.ok(Math.abs(a - b) <= eps, `
 
 // ───────────── 画质档 ─────────────
 
-test('三档画质的参数逐项等于 QualityProfile.cs（低 / 中 / 高）', (t) => {
-  const cs = readFileSync(new URL('../unity/Assets/Game/Scripts/Core/QualityProfile.cs', import.meta.url), 'utf8');
-  if (cs.startsWith('%TSD-Header')) return t.skip('QualityProfile.cs 被透明加密（先跑 node scripts/unity/dlp-unity-fix.mjs）');
+// 冻结的 QualityProfile.cs 规格（tests/fixtures/spec/core.json 的 quality：每档的字段，level 除外；枚举写成小写的枚举名）
+const CORE = JSON.parse(readFileSync(new URL('./fixtures/spec/core.json', import.meta.url), 'utf8'));
+
+test('三档画质的参数逐项等于 QualityProfile.cs（低 / 中 / 高）', () => {
   const names = { Low: Q.QUALITY_LOW, Medium: Q.QUALITY_MEDIUM, High: Q.QUALITY_HIGH };
   let checked = 0;
   for (const [name, profile] of Object.entries(names)) {
-    const body = new RegExp(`public static readonly QualityProfile ${name} = new\\(\\)\\s*\\{([\\s\\S]*?)\\};`).exec(cs)?.[1];
-    assert.ok(body, `C# 里有 ${name}`);
-    for (const m of body.matchAll(/(\w+) = ([^,\n]+),/g)) {
-      const [, key, raw] = m;
-      if (key === 'level') continue;
-      const value = raw.trim();
-      let want;
-      if (value === 'true' || value === 'false') want = value === 'true';
-      else if (/^-?[\d.]+f?$/.test(value)) want = Number(value.replace(/f$/, ''));
-      else if (value.startsWith('"')) want = value.slice(1, -1);
-      else want = value.split('.').pop().toLowerCase(); // 枚举：UpscalingFilterSelection.FSR → fsr、FurTier.Shells → shells
+    const want = CORE.quality[name];
+    assert.ok(want, `规格里有 ${name}`);
+    for (const [key, value] of Object.entries(want)) {
+      if (key === 'level' || key === 'label' && !(key in profile)) continue;
       assert.ok(key in profile, `${name}.${key} 网页表里有`);
-      assert.deepEqual(profile[key], want, `${name}.${key}`);
+      assert.deepEqual(profile[key], value, `${name}.${key}`);
       checked++;
     }
   }

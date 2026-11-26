@@ -681,39 +681,24 @@ test('续玩档里的关这个版本没有（场景没导出 / 试玩终点之�
 
 // ───────────── 本会话补的对照（读 C# 源码 / SaveServiceTests、RunSuspendTests 剩下的几条）─────────────
 
-const { readFileSync } = await import('node:fs');
 const { RunRng } = await importTs('../src/progression/RunRng.ts');
 
-/** 读 Unity 源码；被本机 DLP 透明加密时返回 null（先跑 node scripts/unity/dlp-unity-fix.mjs） */
-function unitySource(rel) {
-  const text = readFileSync(new URL(`../unity/Assets/Game/Scripts/${rel}`, import.meta.url), 'utf8');
-  return text.startsWith('%TSD-Header') ? null : text;
-}
+// 设置表对冻结的 GameSettings.cs 规格（tests/fixtures/spec/core.json：Unity 删除前从 GameSettings.All / GraphicsQuality.FrameCaps 抽出）
+const { readFileSync } = await import('node:fs');
+const CORE = JSON.parse(readFileSync(new URL('./fixtures/spec/core.json', import.meta.url), 'utf8'));
 
-test('设置表逐项读 GameSettings.cs 比：两边都有的项键 / 分组 / 类型 / 默认值 / 范围 / 步长 / 选项一致，Unity 独有的就是 UNITY_ONLY_SETTINGS', (t) => {
-  const cs = unitySource('Core/GameSettings.cs');
-  if (!cs) return t.skip('GameSettings.cs 被透明加密');
-  const groups = { GroupControls: '操作', GroupVideo: '画面', GroupAudio: '声音' };
-  const num = (s) => {
-    s = s.trim();
-    if (s === '(float)ArtQualityLevel.High') return 2;
-    const n = Number(s.replace(/f$/, ''));
-    assert.ok(Number.isFinite(n), `认不出 C# 的数 ${s}`);
-    return n;
-  };
-  const rows = [...cs.matchAll(/Add\(new SettingDef\("(\w+)", "([^"]+)", (\w+), SettingType\.(\w+), ([^,]+), ([^,]+), ([^,]+), ([^,)]+)([\s\S]*?)\)\);/g)];
-  assert.ok(rows.length >= 15, `C# 里认出 ${rows.length} 项`);
+test('设置表逐项对 GameSettings.cs：两边都有的项键 / 分组 / 类型 / 默认值 / 范围 / 步长 / 选项一致，Unity 独有的就是 UNITY_ONLY_SETTINGS', () => {
+  assert.ok(CORE.settings.length >= 15, `冻结的规格里有 ${CORE.settings.length} 项`);
   const unityKeys = [];
-  for (const [, key, label, group, type, def, min, max, step, rest] of rows) {
-    unityKeys.push(key);
-    const d = GS.findSetting(key);
+  for (const row of CORE.settings) {
+    unityKeys.push(row.key);
+    const d = GS.findSetting(row.key);
     if (!d) continue;
-    assert.equal(d.label, label, `${key} 显示名`);
-    assert.equal(d.group, groups[group], `${key} 分组`);
-    assert.equal(d.type, type.toLowerCase(), `${key} 类型`);
-    assert.deepEqual([d.defaultValue, d.min, d.max, d.step], [num(def), num(min), num(max), num(step)], `${key} 默认 / 范围 / 步长`);
-    const options = /new\[\]\s*\{([^}]*)\}/.exec(rest)?.[1];
-    if (options && options.includes('"')) assert.deepEqual([...d.options], [...options.matchAll(/"([^"]*)"/g)].map(m => m[1]), `${key} 选项`);
+    assert.equal(d.label, row.label, `${row.key} 显示名`);
+    assert.equal(d.group, row.group, `${row.key} 分组`);
+    assert.equal(d.type, row.type, `${row.key} 类型`);
+    assert.deepEqual([d.defaultValue, d.min, d.max, d.step], [row.defaultValue, row.min, row.max, row.step], `${row.key} 默认 / 范围 / 步长`);
+    if (row.options) assert.deepEqual([...d.options], row.options, `${row.key} 选项`);
   }
   // 画质的选项名在 C# 里是 ArtQuality.Label(...)：低 / 中 / 高
   assert.deepEqual([...GS.findSetting('quality').options], ['低', '中', '高']);
@@ -721,8 +706,7 @@ test('设置表逐项读 GameSettings.cs 比：两边都有的项键 / 分组 / 
   assert.deepEqual(webKeys, unityKeys.filter(k => webKeys.includes(k)), '登记顺序同 GameSettings.All');
   assert.deepEqual(unityKeys.filter(k => !webKeys.includes(k)), [...GS.UNITY_ONLY_SETTINGS], 'Unity 有、网页没有的项');
   // 帧率上限的档位 = GraphicsQuality.FrameCaps
-  const caps = /FrameCaps = \{([^}]*)\}/.exec(unitySource('Core/GraphicsQuality.cs') ?? '')?.[1];
-  if (caps) assert.deepEqual([...GS.FRAME_CAPS], caps.split(',').map(Number));
+  assert.deepEqual([...GS.FRAME_CAPS], CORE.frameCaps);
 });
 
 test('TalentsApplyToStatSheetUnderTalentSource：十项天赋按等级写进属性表（来源 talent）；重复套用不动属性表；改等级整体撤掉再加', () => {
