@@ -17,6 +17,5 @@
 | `run_pipe.py <ID>` | import → build → validate → review，日志在 `logs/` |
 | `ap.sh <ID> "<备注>"` | 审核通过（Claude AI visual review，用户授权免审）+ 发布 |
 | `codex_concept.py <ID>` | 用 Codex 桌面版自带的 codex-cli 跑 `tripo_assets.py concept`（11-07 试过：ChatGPT 账号不再支持 gpt-6.1-sol，`gpt-6-luna` 不出图） |
-| `wait_sync.py` | 等 Unity bridge 队列清空后跑 `bridge.sh sync` |
 
 `inputs/ logs/ sheets_raw/ prompts/` 和预览 jpg 不入库（`.gitignore`）。下载目录默认 `S:\文档\Downloads`，用 `TRIPO_DOWNLOADS` 改。
