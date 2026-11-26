@@ -6,13 +6,13 @@
 //   登场：镜头表的段落起止、名字卡、land = 过肩机位 + 落回 1.4 s、首领的登场动作在交还前播完；死亡演出 6 s（show 4.8 + land 1.2）；
 //   圣湖的游线在湖里、AngleOf 是 SwimPoint 的反函数、水位 = 基础 + 常驻 + 吼叫；
 //   据点模式：Unity BossEncounter.stronghold 默认关（只有 4-1 三领主开），结算延迟 6.3 s 大于死亡演出。
-// 网页另加：Unity 场景 YAML 导出的关卡目标（objectives.json）与 Unity 一致（6 座灵火坛、要点亮 3 座、据点门槛圆）；首领定义与 Unity defs.json 一致；
+// 网页另加：关卡目标表（src/world/objectives/data.ts，从 Unity 场景导出的 objectives.json 一次性转来）对得上 4-1 场景（6 座灵火坛、要点亮 3 座、据点门槛圆）；
+// 首领定义与 Unity defs.json 一致；
 // 镜像片段（sidestepL / wheelR）和夔的 sink 网页没导出，退回 sidestep / wheel / kneel。
 // 没有旧的 plateau 领主测试要改（src/world/plateau/play/bosses.ts 只给 plateau 试玩页用，没有测试）。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
-import { spawnSync } from 'node:child_process';
 import * as THREE from 'three';
 import { importTs } from './hanba-load.mjs';
 
@@ -26,7 +26,8 @@ const { huasheIntro } = await importTs('../src/enemies/bosses/lords/HuasheIntro.
 const { buildLordDeathScript, SHOULDER_SHOT } = await importTs('../src/enemies/bosses/lords/LordIntros.ts');
 const { HuasheLake } = await importTs('../src/enemies/bosses/lords/HuasheLake.ts');
 const { kuiStorm, bindKuiStorm, kuiStrike } = await importTs('../src/enemies/bosses/lords/KuiStorm.ts');
-const { STRONGHOLD_SETTLE_DELAY, objectiveDriven, inStrongholdThreshold } = await importTs('../src/world/objectives/LevelObjectives.ts');
+const { STRONGHOLD_SETTLE_DELAY, objectiveDriven, inStrongholdThreshold, loadLevelObjectives } = await importTs('../src/world/objectives/LevelObjectives.ts');
+const { LEVEL_OBJECTIVES } = await importTs('../src/world/objectives/data.ts');
 const { BreakBar } = await importTs('../src/enemies/bosses/framework/BreakBar.ts');
 
 const root = new URL('../', import.meta.url);
@@ -286,15 +287,29 @@ test('HuasheLake_SwimLineStaysInTheLake：虚拟湖的游线在湖里、AngleOf 
   near(lake.level, lake.baseLevel + 2, 1e-4, '水位 = 基础 + 常驻 + 吼叫');
 });
 
+// 4-1 场景文档里和领主相关的几项（抄自 public/assets/unity-levels/scenes/4-1.json，2026-11-26，18b5f320 导出；网页坐标）：
+// 圣湖水块、三领主的首领锚点（position = 出生点，center / floorY / radius = 首领场地）、遭遇场地名、灵火坛四角石柱渲染件的位置。
+const SCENE_41 = {
+  holyLake: { name: 'Water_HolyLake', center: [140, 7.21390247, 150], scale: [96, 5.5, 64], rotation: [0, -0.12467473, 0, 0.9921977] },
+  bosses: {
+    boss_feilian: { position: [-40, 37.8337555, 228], center: [-40, 37.8337555, 228], floorY: 37.8337555, radius: 34 },
+    boss_huashe: { position: [138, 9.963902, 140], center: [140, 9.963902, 150], floorY: 9.963902, radius: 52 },
+    boss_kui: { position: [-115, 48.3134766, 61], center: [-90, 52.3480148, 70], floorY: 52.3480148, radius: 32 },
+  },
+  encounters: ['牧民营地兽群', '冰川口兽群', '白塔溪谷兽群', '碉楼寨兽群', '垭口守卫', '经幡山头兽群', '圣湖岸兽群'],
+  altarPosts: {
+    Altar_1_s1: [188, 27.09436, 38], Altar_2_s2: [18, 7.510041, -60], Altar_3_s3: [-140, 11.7677774, -132],
+    Altar_4_s4: [96, 9.004182, 144], Altar_5_s5: [-64, 23.9460239, 178], Altar_6_s6: [-82, 49.0615349, 62],
+  },
+};
+
 test('HuasheLake_HolyLake：4-1 的 Water_HolyLake（中心 (140, 7.21, 150)、96 × 5.5 × 64、朝向 −14.3°）→ 水面 9.96、半轴 48 / 32；游线在湖里', async () => {
-  const doc = await json('public/assets/unity-levels/scenes/4-1.json');
-  const w = doc.water.find(x => x.name.startsWith('Water_HolyLake'));
-  assert.ok(w);
+  const w = SCENE_41.holyLake;
   const water = {
     name: w.name, center: new THREE.Vector3(...w.center), scale: new THREE.Vector3(...w.scale),
     quaternion: new THREE.Quaternion(...w.rotation),
   };
-  const boss = doc.bosses.find(b => b.id === 'boss_huashe');
+  const boss = SCENE_41.bosses.boss_huashe;
   const lake = new HuasheLake(new THREE.Vector3(boss.center[0], boss.floorY, boss.center[2]), boss.radius, water, null);
   assert.equal(lake.real, true);
   near(lake.baseLevel, 9.96, 0.01);
@@ -310,29 +325,29 @@ test('HuasheLake_HolyLake：4-1 的 Water_HolyLake（中心 (140, 7.21, 150)、9
 test('BossEncounter_Stronghold：只有 4-1 三领主是据点模式；结算等死亡演出放完（6.3 > 6）', async () => {
   assert.ok(STRONGHOLD_SETTLE_DELAY > new KuiDef().death.seconds, '据点结算等死亡演出放完');
   near(STRONGHOLD_SETTLE_DELAY, 6.3, 1e-6);
-  const manifest = await json('public/assets/unity-levels/manifest.json');
-  for (const stage of manifest.stages.filter(s => s.available && s.url)) {
-    const doc = await json(`public/${stage.url}`);
-    for (const b of doc.bosses) assert.equal(!!b.stronghold, stage.id === '4-1', `${stage.id} ${b.id} 的据点模式`);
+  // 据点模式只看关卡目标表（UnitySceneAdapter：场景首领锚点的 stronghold && 这一关走关卡目标）
+  for (const [id, o] of Object.entries(LEVEL_OBJECTIVES)) {
+    for (const b of o.bosses) assert.equal(b.stronghold, id === '4-1', `${id} ${b.bossId} 的据点模式`);
   }
+  assert.deepEqual(LEVEL_OBJECTIVES['4-1'].bosses.map(b => b.bossId).sort(), ['boss_feilian', 'boss_huashe', 'boss_kui']);
 });
 
-test('LevelObjective_41：objectives.json 照 Unity 场景——6 座灵火坛要点亮 3 座、①②③ 有守卫、④⑤⑥ 由领主点亮、门槛圆（残鼓 22 / 冰舌顶 32 / 湖岸 50）', async () => {
-  const all = await json('public/assets/unity-levels/objectives.json');
-  const o = all.levels['4-1'];
+test('LevelObjective_41：关卡目标表（src/world/objectives/data.ts）——6 座灵火坛要点亮 3 座、①②③ 有守卫、④⑤⑥ 由领主点亮、门槛圆（残鼓 22 / 冰舌顶 32 / 湖岸 50）', async () => {
+  const all = LEVEL_OBJECTIVES;
+  const o = all['4-1'];
   assert.ok(o);
   assert.ok(objectiveDriven(o));
   assert.equal(o.objective.altarsNeeded, 3);
   assert.equal(o.objective.altars.length, 6);
   assert.equal(o.objective.required.length, 0, '目标只看灵火');
   assert.equal(o.altars.length, 6);
-  const doc = await json('public/assets/unity-levels/scenes/4-1.json');
-  const sites = new Set(doc.encounters.map(e => e.title));
+  const doc = SCENE_41;
+  const sites = new Set(doc.encounters);
   for (const a of o.altars) {
     // 场景文档里同一个灵火坛的四角石柱渲染件在同一个位置
-    const r = doc.renderers.find(x => (x.scenePath ?? '').includes(`/${a.name}/`));
+    const r = doc.altarPosts[a.name];
     assert.ok(r, `${a.name} 在场景文档里`);
-    near(Math.hypot(r.position[0] - a.position[0], r.position[2] - a.position[2]), 0, 0.01, `${a.name} 位置`);
+    near(Math.hypot(r[0] - a.position[0], r[2] - a.position[2]), 0, 0.01, `${a.name} 位置`);
     if (a.guard) assert.ok(sites.has(a.guard), `${a.name} 的守卫 ${a.guard} 是场景里的遭遇`);
     near(a.kindleTime, 1.2, 1e-6);
   }
@@ -347,7 +362,7 @@ test('LevelObjective_41：objectives.json 照 Unity 场景——6 座灵火坛�
     assert.ok(o.altars.find(a => a.name === b.altar && !a.guard), `${b.bossId} 的坛不挂守卫`);
   }
   // 门槛：圆心 / 半径（Unity ZheduoLevel.strongholds）；夔的圆心在残鼓 = 出生点，不在拉则
-  const spawn = Object.fromEntries(doc.bosses.map(b => [b.id, b]));
+  const spawn = doc.bosses;
   near(lord.boss_kui.threshold.radius, 22, 1e-6);
   near(lord.boss_feilian.threshold.radius, 32, 1e-6);
   near(lord.boss_huashe.threshold.radius, 50, 1e-6);
@@ -360,14 +375,14 @@ test('LevelObjective_41：objectives.json 照 Unity 场景——6 座灵火坛�
     assert.ok(!inStrongholdThreshold(t, { x: s.position[0], y: t.maxY + 1, z: s.position[2] }), `${id} 门槛有高度上限`);
   }
   // 4-3 同样是灵火坛 N 选 M（没有据点首领）；前三章没有灵火坛
-  assert.equal(all.levels['4-3'].objective.altarsNeeded, 3);
-  assert.equal(all.levels['4-3'].altars.length, 5);
-  for (const id of ['1-1', '2-2', '3-3']) assert.ok(!objectiveDriven(all.levels[id]), `${id} 照旧终点战清关`);
-  // 导出文件是由当前 Unity 场景生成的（Unity 版已冻结：工作区里编辑器重存过、没提交的场景不算数，入库的 objectives.json 按已提交的场景生成）
-  const dirty = spawnSync('git', ['status', '--porcelain', '--', 'unity/Assets/Scenes'], { cwd: new URL('.', root), encoding: 'utf8' }).stdout?.trim();
-  if (dirty) return;
-  const r = spawnSync(process.execPath, ['scripts/web/export-level-objectives.mjs', '--check'], { cwd: new URL('.', root), encoding: 'utf8' });
-  assert.equal(r.status, 0, r.stderr || r.stdout);
+  assert.equal(all['4-3'].objective.altarsNeeded, 3);
+  assert.equal(all['4-3'].altars.length, 5);
+  assert.ok(objectiveDriven(all['4-3']));
+  for (const id of ['1-1', '2-2', '3-3']) assert.ok(!objectiveDriven(all[id]), `${id} 照旧终点战清关`);
+  for (const [id, level] of Object.entries(all)) assert.equal(objectiveDriven(level), id === '4-1' || id === '4-3', `${id} 走不走关卡目标`);
+  // loadLevelObjectives 查这张表（StageDirector 每关 await 它）；没有条目的关 = null
+  assert.equal(await loadLevelObjectives('4-1'), o);
+  assert.equal(await loadLevelObjectives('1-4'), null);
 });
 
 // ───────────── 框架：破防条条件填充 / 夔的雷暴适配层 ─────────────

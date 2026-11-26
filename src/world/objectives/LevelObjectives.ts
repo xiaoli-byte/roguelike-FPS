@@ -1,6 +1,6 @@
 /**
  * 关卡目标 + 首领据点模式（Unity Encounters/LevelObjective.cs、BossEncounter.cs 的据点分支、World/Levels/ZheduoLevel.cs 的据点门槛与灵火坛封印）。
- * 数据：public/assets/unity-levels/objectives.json（scripts/web/export-level-objectives.mjs 从场景 YAML 导出）。
+ * 数据：./data.ts 的 LEVEL_OBJECTIVES（2026-11-26 从 Unity 场景导出的 objectives.json 一次性转来，之后直接改那张表）。
  *   · 灵火坛：M 座里点亮 N 座（altarsNeeded；0 = 不要求）→ 目标完成；必清场地全部肃清同理（required，4-1 / 4-3 为空）。
  *     完成后交给关卡导演清关开出口（StageDirector 在没有遭遇进行时调 onCleared）。
  *   · 据点模式（stronghold 首领，4-1 三领主）：首领战不是终点战——倒下 6.3 s（等死亡演出放完）后结算：回满生命与护盾、本关魂晶（每个领主一次，force）、
@@ -14,6 +14,7 @@ import * as THREE from 'three';
 import type { GameContext, IEnemy } from '../../core/types';
 import { creditStageEssence } from '../../progression/Economy';
 import { SpiritAltar, FLAME_COLOR, type AltarSpec } from './SpiritAltar';
+import { LEVEL_OBJECTIVES } from './data';
 
 /** 据点模式：倒下后多久结算（等领主的死亡演出放完，秒；Unity BossEncounter.StrongholdSettleDelay） */
 export const STRONGHOLD_SETTLE_DELAY = 6.3;
@@ -48,28 +49,14 @@ export interface ObjectiveDoc {
 }
 
 export interface LevelObjectivesDoc {
-  scene: string;
   objective: ObjectiveDoc | null;
   altars: AltarSpec[];
   bosses: BossEncounterDoc[];
 }
 
-interface ObjectivesFile {
-  schema: number;
-  levels: Record<string, LevelObjectivesDoc>;
-}
-
-let filePending: Promise<ObjectivesFile | null> | null = null;
-
-/** 某一关的目标数据（objectives.json 第一次要的时候读，之后缓存；读不到 = null，关卡照旧） */
+/** 某一关的目标数据（查 data.ts 的表；没有条目 = null，关卡照旧）。保持 async：调用方（StageDirector）按读文件时的写法 await */
 export async function loadLevelObjectives(levelId: string): Promise<LevelObjectivesDoc | null> {
-  if (typeof fetch === 'undefined') return null;
-  filePending ??= fetch(`${import.meta.env?.BASE_URL ?? '/'}assets/unity-levels/objectives.json`)
-    .then(r => (r.ok ? r.json() as Promise<ObjectivesFile> : null))
-    .catch(() => null);
-  const file = await filePending;
-  if (!file) filePending = null;
-  return file?.levels?.[levelId] ?? null;
+  return LEVEL_OBJECTIVES[levelId] ?? null;
 }
 
 /** 这一关要不要走关卡目标（灵火坛 N 选 M / 据点首领） */
