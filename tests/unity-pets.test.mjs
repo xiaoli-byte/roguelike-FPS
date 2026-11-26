@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
-import { tsGraph } from './unity-parity-kit.mjs';
+import { combatRig, tsGraph } from './unity-parity-kit.mjs';
 import { importTs } from './hanba-load.mjs';
 
 const graph = await tsGraph({
@@ -428,5 +428,131 @@ test('嘲讽：被嘲讽的敌人走位 / 瞄准 / 近战都对着诱饵，近�
     assert.equal(hurts.length, 1);
   } finally {
     await g2.dispose();
+  }
+});
+
+/** 能 new 出 PetSystem、跑 init 的模块图：灵宠美术 / 特效 / 动画数据都打桩（node 里不读 GLB、不 fetch） */
+async function petSystemGraph() {
+  return tsGraph({
+    'pets/PetVisuals.ts': `export const SOCKET_NAMES = []; export function buildPetModel() { return null; } export function disposePetModel() {}
+      export function modelRigged() { return false; } export function socketOf() { return null; } export function instantiatePart() { return null; }`,
+    'pets/PetFx.ts': `import * as THREE from 'three';
+      export function glowSprite() { return new THREE.Object3D(); } export function marker() { return null; } export function textLabel() { return new THREE.Object3D(); }
+      export function disposeObject() {}
+      export class PetFxSystem { constructor() { this.group = new THREE.Group(); } attach() {} burst() {} pillar() {} beam() {} timedMarker() {} update() {} clear() {} }`,
+    'pets/PetSeal.ts': 'export class PetSeal {}',
+    'assets/AssetLibrary.ts': 'export const AssetLibrary = {};',
+    'anim/ClipPlayer.ts': 'export function clipData() { return Promise.resolve(null); }',
+  });
+}
+
+test('嘲讽只挡 Unity 也挡的那几条路：灵宠系统不给 Combat 挂全局受伤修饰器——被嘲讽的首领、敌人的爆炸照样伤玩家', async () => {
+  // Unity 只在这几处按 Taunted 挡伤害：Enemies/EnemyAI.cs:870–877 HitTarget、AI/Inferno/InfernoKit.cs:554–561 HitPlayer、
+  // EnemyProjectile.cs:156 / :228 / :248 spirit 弹、各 AI 自己的 `if (Taunted)`；而 Bosses/BossHazards.cs:390–396 Hurt →
+  // `Combat.DamagePlayer(damage, …, owner)`、Combat.cs:372–379 DamagePlayer、Enemies/Hazards/Blast.cs:51 Blast.Player 都不看嘲讽
+  const g = await petSystemGraph();
+  try {
+    const { PetSystem } = await g.load('pets/PetSystem.ts');
+    const rig = await combatRig(g, THREE);
+    const mods = [];
+    const addIncoming = rig.ctx.combat.addIncomingModifier.bind(rig.ctx.combat);
+    rig.ctx.combat.addIncomingModifier = fn => (mods.push(fn), addIncoming(fn));
+    Object.assign(rig.ctx, { loot: {}, game: { debug: false }, input: { enabled: false } });
+    const sys = new PetSystem(rig.ctx);
+    sys.init();
+    assert.equal(mods.length, 0, '灵宠系统不挂受伤修饰器（旧版把被嘲讽者的伤害一刀切记 0）');
+    const decoy = { position: new THREE.Vector3(0, 0, 1), alive: true };
+    const boss = { id: 90, isBoss: true, taunted: true, position: new THREE.Vector3(0, 0, 3), decoyBlocked() {} };
+    const hp0 = rig.ctx.player.hp;
+    rig.ctx.combat.damagePlayer(20, 'fire', boss, boss.position);
+    assert.equal(hp0 - rig.ctx.player.hp, 20, '被讙嘲讽的首领：首领招式（BossHazards.Hurt）照样伤玩家');
+    // 普通敌人被嘲讽时：直接命中（hitTarget = HitTarget）挡掉、冒「格挡」；它的爆炸（Blast.Player）照样伤
+    const { EnemyBase } = await g.load('enemies/EnemyBase.ts');
+    const { blastPlayer } = await g.load('enemies/Hazards.ts');
+    class Dummy extends EnemyBase {
+      buildModel() { return new THREE.Group(); }
+      think() {}
+      strike() { return this.hitTarget(10, 'none', this.position); }
+    }
+    const floats = [];
+    Object.assign(rig.ctx.player, { radius: 0.4, height: 1.8, velocity: new THREE.Vector3(), applyImpulse() {} });
+    rig.ctx.ui.floatText = (_p, t) => floats.push(t);
+    rig.ctx.world.segmentBlocked = () => false;
+    rig.ctx.player.takeDamage = function (n) { this.hp -= n; return n; };
+    const e = new Dummy(rig.ctx, { id: 'd', name: 'd', hp: 100, speed: 3, radius: 0.5, height: 1.8, damage: 10, coins: [0, 0] }, { position: new THREE.Vector3(0, 0, 2) });
+    e.taunt(decoy, 3);
+    const hp1 = rig.ctx.player.hp;
+    assert.equal(e.strike(), false, '直接命中打在诱饵上无效');
+    assert.deepEqual([rig.ctx.player.hp, floats], [hp1, ['格挡']]);
+    blastPlayer(rig.ctx, new THREE.Vector3(0, 1, 0.5), 3, 12, 'fire', e, 0.5, 0, 0);
+    assert.ok(rig.ctx.player.hp < hp1, '被嘲讽者的爆炸不看嘲讽（Blast.Player），照样伤');
+    // 不被嘲讽时直接命中照常
+    decoy.alive = false;
+    const hp2 = rig.ctx.player.hp;
+    assert.equal(e.strike(), true);
+    assert.equal(hp2 - rig.ctx.player.hp, 10);
+    sys.clear();
+  } finally {
+    await g.dispose();
+  }
+});
+
+test('嘲讽的各路判断照 Unity 逐只翻在 src/enemies：首领没有、近战 / 直接命中 / 地波 / 自爆 / 灵体弹有', () => {
+  // 首领的招式在 Unity 只有 BossBrain.HitPlayer → HitTarget（BossBrain.cs:1061，只有 Proxy 首领用，网页没有）挡；网页首领一处都不该挡
+  const bossFiles = ['Hazards.ts', 'BossBase.ts', 'Hanba.ts', 'KunPeng.ts', 'Qilin.ts', 'Warlord.ts', 'lords/Huashe.ts', 'lords/FeilianMoves.ts'];
+  for (const f of bossFiles) assert.doesNotMatch(src(`../src/enemies/bosses/${f}`), /taunted/, `首领 ${f} 不看嘲讽`);
+  // 各 AI 的出处（照 Unity 行号核对过的几处，改掉了这里会红）
+  const want = [
+    ['types/FireRat.ts', /if \(this\.taunted\) \{\s*this\.decoyBlocked\(\);/], // FireRatAI.cs:342 Taunted → DecoyBlocked + Blast.Shake
+    ['types/TombBeast.ts', /rise < WAVE_JUMP_CLEAR && !source\.taunted/], // GroundWave.cs:151 owner.Taunted → 跳过
+    ['types/IcePuffer.ts', /if \(this\.taunted\) this\.decoyBlocked\(\);\s*else blastPlayer/], // IcePufferAI.cs:231
+    ['types/FireCrow.ts', /if \(this\.taunted\) this\.decoyBlocked\(\);\s*else blastPlayer/], // FireCrowAI.cs:283
+    ['types/Qingniao.ts', /if \(this\.swoopHit \|\| this\.taunted\) return;/], // QingniaoAI.cs:355
+    ['types/XuanGui.ts', /pl\.alive && !this\.taunted && now - this\.lastSpinHit/], // XuanGuiAI.cs:506
+    ['types/Mamian.ts', /pl\.alive && !this\.taunted && !pl\.isDashing/], // MamianAI.cs:410
+    ['types/IronOx.ts', /if \(!pl\.alive \|\| this\.taunted\) return;/], // IronOxAI.cs:351
+    ['types/Tuo.ts', /!this\.roarHit && pl\.alive && !this\.taunted/], // TuoAI.cs:880 GroundWave（owner = this）
+    ['types/Haozhi.ts', /enemyDamage: spirit \? 0 : damage/], // HaozhiAI.cs:84 spirit = Taunted
+    ['types/Jiaoren.ts', /enemyDamage: spirit \? 0 :/], // JiaorenAI.cs:330
+    ['fx/MirageFireball.ts', /if \(spec\.spirit\) \{\s*spec\.source\?\.decoyBlocked\?\.\(\);\s*return;/], // MirageToadAI.cs:372 if (!spirit) FireZone
+    ['fx/FrostPackFx.ts', /if \(spec\.spirit\) spec\.source\?\.decoyBlocked\?\.\(\);\s*else blastPlayer/], // XingxingAI.cs:420
+    ['fx/FrostRangedFx.ts', /p\.alive && !s\.source\?\.taunted && d <= s\.radius/], // IceWhalePillar.cs:146
+    ['Affixes.ts', /!e\.alive \|\| !!e\.taunted/], // EliteAffix_Swift.cs:124
+  ];
+  for (const [f, re] of want) assert.match(src(`../src/enemies/${f}`), re, f);
+  // 不挡的几路：毕方的火矛、炭童的炭块（EnemyProjectile 没设 spirit：BifangAI.cs:446、TantongAI.cs:411）
+  assert.doesNotMatch(src('../src/enemies/fx/InfernoRangedFx.ts'), /taunted/);
+  assert.doesNotMatch(src('../src/enemies/fx/InfernoPackFx.ts'), /taunted/);
+});
+
+test('精卫火石落地爆炸照 PlayerProjectile.Impact：边缘 30%、播爆炸特效和爆炸声（色 = 弹体色 0xffd9a0）', async () => {
+  // Combat/Projectiles/ProjectileSpecs.cs:72 `explosionFalloff = 0.3f;`、:83 `color = new Color(1f, 0.851f, 0.627f);`；
+  // PlayerProjectile.cs:443–447 `falloff = explosionFalloff, …, color = color`（没设 noFx）；Combat.cs:426–430 没有 noFx 就播 Fx.Explosion + "explosion"
+  const { STONE_FALLOFF, STONE_EXPLOSION_COLOR } = await graph.load('pets/Pet.ts');
+  assert.equal(STONE_FALLOFF, 0.3);
+  assert.equal(STONE_EXPLOSION_COLOR, (255 << 16) | (Math.round(0.851 * 255) << 8) | Math.round(0.627 * 255));
+  const g = await petSystemGraph();
+  try {
+    const { PetSystem } = await g.load('pets/PetSystem.ts');
+    const booms = [];
+    const ctx = {
+      combat: { explode: (c, r, req, o) => (booms.push({ r, o: { ...o } }), 0) },
+      enemies: { raycast: () => null },
+      world: { raycast: () => false, groundHeight: () => 0 },
+      fx: { tracer() {} },
+    };
+    const sys = new PetSystem(ctx);
+    sys.current = { released: false };
+    let landed = 0;
+    sys.throwStone({
+      from: new THREE.Vector3(0, 1, 0), velocity: new THREE.Vector3(0, -6, 0), gravity: 22, radius: 0.15, life: 2, explodeRadius: 2.4,
+      request: { base: 16, element: 'fire', source: 'pet' }, partId: '', size: 0.16, glow: [1, 0.5, 0.2], onImpact: () => landed++,
+    });
+    for (let i = 0; i < 20 && booms.length === 0; i++) sys.updateStones(1 / 30);
+    assert.equal(booms.length, 1, '落地炸一次');
+    assert.deepEqual(booms[0], { r: 2.4, o: { falloff: 0.3, color: 0xffd9a0 } }, '不带 noFx：播爆炸特效和爆炸声');
+    assert.equal(landed, 1, '再回调落地特效（ShotFx.Impact / MuzzleFlash / Telegraph.Wave）');
+  } finally {
+    await g.dispose();
   }
 });

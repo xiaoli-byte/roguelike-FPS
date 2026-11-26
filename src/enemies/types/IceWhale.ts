@@ -467,16 +467,19 @@ export class IceWhale extends StandardEnemy {
   pickTargets(count: number): THREE.Vector3[] {
     const ctx = this.ctx;
     const pl = ctx.player;
+    // 被嘲讽：落点围着灵体诱饵、不预判（Unity IceWhaleAI.Spout：PickTargets(PlayerPos, Taunted ? 0 : 速度)）
+    const tp = this.targetPos;
+    const lead = this.taunted ? 0 : 0.6;
     const out: THREE.Vector3[] = [];
-    let fx = pl.position.x - this.position.x, fz = pl.position.z - this.position.z;
+    let fx = tp.x - this.position.x, fz = tp.z - this.position.z;
     const fl = Math.hypot(fx, fz) || 1;
     fx /= fl;
     fz /= fl;
     const cands: [number, number][] = [
-      [pl.position.x + pl.velocity.x * 0.6, pl.position.z + pl.velocity.z * 0.6],
-      [pl.position.x - fz * 4.2, pl.position.z + fx * 4.2],
-      [pl.position.x + fz * 4.2, pl.position.z - fx * 4.2],
-      [pl.position.x + fx * 4.0, pl.position.z + fz * 4.0],
+      [tp.x + pl.velocity.x * lead, tp.z + pl.velocity.z * lead],
+      [tp.x - fz * 4.2, tp.z + fx * 4.2],
+      [tp.x + fz * 4.2, tp.z - fx * 4.2],
+      [tp.x + fx * 4.0, tp.z + fz * 4.0],
     ];
     // 周围的随机点：落在玩家朝冰鲸看时的视野里（以「玩家 → 冰鲸」为中心 ±100° 的扇面，3–6.5 米），
     // 不砸到玩家看不见的身后；黄金比打散方向和半径，再加一点随机抖动
@@ -486,18 +489,18 @@ export class IceWhale extends StandardEnemy {
       const u = (u0 + i * 0.618034) % 1;
       const a = toWhale + (u * 2 - 1) * RANDOM_SPREAD + ctx.rng.range(-0.2, 0.2);
       const r = 3 + ((i * 0.381966 + 0.5) % 1) * 3.5 + ctx.rng.range(-0.3, 0.3);
-      cands.push([pl.position.x + Math.sin(a) * r, pl.position.z + Math.cos(a) * r]);
+      cands.push([tp.x + Math.sin(a) * r, tp.z + Math.cos(a) * r]);
     }
     // 第 4 个固定点（玩家身后）只给精英：普通冰鲸用随机点
     if (count < 7) cands.splice(3, 1);
     for (const [x, z] of cands) {
       if (out.length >= count) break;
-      _t.set(x, pl.position.y, z);
+      _t.set(x, tp.y, z);
       if (!ctx.nav.nearestWalkable(_t, _q)) _q.copy(_t);
       if (Math.hypot(_q.x - this.position.x, _q.z - this.position.z) < 4 + this.radius) continue;
       if (out.some((o) => Math.hypot(o.x - _q.x, o.z - _q.z) < 2.6)) continue;
-      const gy = ctx.world.groundHeight(_q.x, _q.z, pl.position.y + 2);
-      out.push(new THREE.Vector3(_q.x, Number.isFinite(gy) ? gy : pl.position.y, _q.z));
+      const gy = ctx.world.groundHeight(_q.x, _q.z, tp.y + 2);
+      out.push(new THREE.Vector3(_q.x, Number.isFinite(gy) ? gy : tp.y, _q.z));
     }
     return out;
   }
@@ -523,9 +526,13 @@ export class IceWhale extends StandardEnemy {
     this.slamFront(_p);
     const k = this.sizeScale;
     const r = SLAM_CORE * k;
-    const pl = ctx.player.position;
+    // 爆心对当前目标判定（Unity IceWhaleAI.Slam：PlayerPos + HitTarget）；被嘲讽时砸的是灵体诱饵，无效，冲击波照常推出（波面自己看嘲讽）
+    const taunted = this.taunted;
+    const pl = this.targetPos;
     const dd = Math.hypot(pl.x - _p.x, pl.z - _p.z);
-    const hit = ctx.player.alive && dd <= r + ctx.player.radius && pl.y - _p.y < 1.4 && pl.y - _p.y > -1;
+    const inCore = ctx.player.alive && dd <= r + (taunted ? 0.35 : ctx.player.radius) && pl.y - _p.y < 1.4 && pl.y - _p.y > -1;
+    const hit = inCore && !taunted;
+    if (inCore && taunted) this.decoyBlocked();
     if (hit) {
       ctx.combat.damagePlayer(this.def.damage * this.damageMult * SLAM_CORE_MULT, 'none', this, _p);
       const inv = dd > 0.05 ? 1 / dd : 0;

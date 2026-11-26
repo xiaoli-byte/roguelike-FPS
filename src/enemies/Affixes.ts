@@ -184,10 +184,10 @@ export class SwiftAffix implements AffixController, SwiftTornadoState {
     ctx.audio.play('enemy_charge', { position: e.position, volume: 0.65, pitch: 1.25 });
   }
 
-  /** 蓄风被打断：死了、眩晕、玩家阵亡（Unity Swift.Interrupted；网页没有嘲讽） */
+  /** 蓄风被打断：死了、被灵宠嘲讽、眩晕、玩家阵亡（Unity Swift.Interrupted） */
   private interrupted(): boolean {
     const e = this.e;
-    return !e.alive || e.stunTime > 0 || !e.ctx.player.alive;
+    return !e.alive || !!e.taunted || e.stunTime > 0 || !e.ctx.player.alive;
   }
 
   /** 脚下地面（往下 12 m 找，抬 4 cm）；没有地面用原高度 */

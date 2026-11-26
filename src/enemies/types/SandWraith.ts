@@ -345,11 +345,13 @@ export class SandWraith extends JerboaBlade {
     if (!this.hitDone) {
       this.hitDone = true;
       const pl = this.ctx.player;
-      const dx = pl.position.x - this.eruptAt.x, dz = pl.position.z - this.eruptAt.z, dy = pl.position.y - this.eruptAt.y;
+      // Unity EnemyAI.Burst：对当前目标（被嘲讽时是灵体诱饵，打中无效）
+      const tp = this.targetPos;
+      const dx = tp.x - this.eruptAt.x, dz = tp.z - this.eruptAt.z, dy = tp.y - this.eruptAt.y;
       const h = Math.hypot(dx, dz);
       let hit = false;
       if (pl.alive && h <= range + 0.35 && Math.abs(dy) <= 2.2) {
-        hit = this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * W.eruptMult, 'none', this, this.eruptAt) > 0;
+        hit = this.hitTarget(this.def.damage * this.damageMult * W.eruptMult, 'none', this.eruptAt);
       }
       if (hit) {
         this.eruptHits++;

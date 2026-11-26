@@ -321,7 +321,9 @@ export class IcePuffer extends StandardEnemy {
     this.ctx.audio.play('explosion', { position: center, pitch: 1.35, volume: 0.9 });
     iceShatter(this.ctx, center, 1.3 * this.sizeScale);
     this.ctx.fx.ring(center, BURST_RADIUS, 0xcff4ff, 0.4);
-    blastPlayer(this.ctx, center, BURST_RADIUS, this.def.damage * this.damageMult, 'none', this, 0.45, 0.6, 4);
+    // 被嘲讽时扑的是灵体诱饵：炸不到玩家（Unity IcePufferAI.Burst：Taunted → DecoyBlocked）；冻雾照留
+    if (this.taunted) this.decoyBlocked();
+    else blastPlayer(this.ctx, center, BURST_RADIUS, this.def.damage * this.damageMult, 'none', this, 0.45, 0.6, 4);
     spawnFrostFog(this.ctx, center, FOG_RADIUS * (this.isElite ? 1.2 : 1), FOG_TIME, FOG_SLOW);
     this.hp = 0;
     this.shield = 0;

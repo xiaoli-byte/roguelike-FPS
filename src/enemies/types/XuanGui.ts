@@ -559,13 +559,18 @@ export class XuanGui extends StandardEnemy {
     this.ctx.audio.play('enemy_melee', { position: _p, volume: 0.9, pitch: 0.6 });
     this.ctx.fx.burst(_p, FROST.ice, 6, 4, 0.3, 0.08 * this.sizeScale, 6);
     const d = this.distToPlayerXZ();
-    if (pl.alive && d <= PECK_REACH + pl.radius && this.facingDot() > 0.5 && this.verticalReach(2)) {
-      this.struck = true;
-      this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * PECK_MULT, 'none', this, _p);
-      _v.set(Math.sin(this.facing), 0, Math.cos(this.facing)).multiplyScalar(PECK_KNOCK);
-      _v.y = 4;
-      pl.applyImpulse(_v);
-      this.ctx.fx.shake(0.5, 0.25);
+    // 被嘲讽时啄的是灵体诱饵：HitTarget 无效（Unity XuanGuiAI.Peck）
+    const taunted = this.taunted;
+    if (pl.alive && d <= PECK_REACH + (taunted ? 0.35 : pl.radius) && this.facingDot() > 0.5 && this.verticalReach(2)) {
+      if (taunted) this.decoyBlocked();
+      else {
+        this.struck = true;
+        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * PECK_MULT, 'none', this, _p);
+        _v.set(Math.sin(this.facing), 0, Math.cos(this.facing)).multiplyScalar(PECK_KNOCK);
+        _v.y = 4;
+        pl.applyImpulse(_v);
+        this.ctx.fx.shake(0.5, 0.25);
+      }
     }
     this.closePecks++;
     this.rollCooldown(1.6, 2.4);
@@ -589,13 +594,18 @@ export class XuanGui extends StandardEnemy {
     const d = this.distToPlayerXZ();
     this.getHeadCenter(_p);
     this.ctx.audio.play('enemy_melee', { position: _p, volume: 0.8, pitch: 1.4 });
-    if (pl.alive && d <= BITE_REACH + pl.radius && this.facingDot() < BITE_BEHIND + 0.15 && this.verticalReach(2.4)) {
-      this.struck = true;
-      this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * BITE_MULT, 'none', this, _p);
-      _v.set(pl.position.x - this.position.x, 0, pl.position.z - this.position.z).normalize().multiplyScalar(6);
-      _v.y = 3;
-      pl.applyImpulse(_v);
-      this.ctx.fx.burst(pl.eye, FROST.violet, 8, 3, 0.4, 0.1, 2);
+    // 被嘲讽时咬的是灵体诱饵：HitTarget 无效（Unity XuanGuiAI.Bite）
+    const taunted = this.taunted;
+    if (pl.alive && d <= BITE_REACH + (taunted ? 0.35 : pl.radius) && this.facingDot() < BITE_BEHIND + 0.15 && this.verticalReach(2.4)) {
+      if (taunted) this.decoyBlocked();
+      else {
+        this.struck = true;
+        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * BITE_MULT, 'none', this, _p);
+        _v.set(pl.position.x - this.position.x, 0, pl.position.z - this.position.z).normalize().multiplyScalar(6);
+        _v.y = 3;
+        pl.applyImpulse(_v);
+        this.ctx.fx.burst(pl.eye, FROST.violet, 8, 3, 0.4, 0.1, 2);
+      }
     }
     this.biteCd = this.ctx.rng.range(BITE_COOLDOWN[0], BITE_COOLDOWN[1]);
   }
@@ -688,7 +698,8 @@ export class XuanGui extends StandardEnemy {
     // 撞到玩家
     const pl = this.ctx.player;
     const now = this.ctx.time.now;
-    if (pl.alive && now - this.lastSpinHit >= SPIN_HIT_GAP) {
+    // 被嘲讽期间旋转不撞玩家（Unity XuanGuiAI.Spin：player && !Taunted）
+    if (pl.alive && !this.taunted && now - this.lastSpinHit >= SPIN_HIT_GAP) {
       const dx = pl.position.x - this.position.x, dz = pl.position.z - this.position.z, dy = pl.position.y - this.position.y;
       if (Math.hypot(dx, dz) <= this.radius + pl.radius + 0.25 && dy > -1 && dy < 1.5 * this.sizeScale) {
         this.lastSpinHit = now;

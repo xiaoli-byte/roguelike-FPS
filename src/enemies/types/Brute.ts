@@ -267,6 +267,11 @@ export class Brute extends StandardEnemy {
     if (d > this.radius + pl.radius + 0.35 || !this.verticalReach(1.8)) return;
     if (d > 0.05 && (dx * this.chargeDir.x + dz * this.chargeDir.z) / d < 0.2) return;
     this.chargeHit = true;
+    // 被灵宠嘲讽：撞在灵体诱饵上，无效（照 Unity EnemyAI.HitTarget 的规矩；这种怪 Unity 没有对应）
+    if (this.taunted) {
+      this.decoyBlocked();
+      return;
+    }
     this.ctx.combat.damagePlayer(this.def.damage * this.damageMult, 'none', this, this.position);
     this.pushPlayer(9, 3.5);
     this.ctx.fx.shake(0.55, 0.3);

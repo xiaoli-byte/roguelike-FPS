@@ -3,7 +3,7 @@ import type { Element, GameContext, PetSave, RunState, System } from '../core/ty
 import type { PetDefView, PetSource, PetView } from '../ui/PetData';
 import { PET_TAG } from '../combat/PetContract';
 import { type PetDef, type PetRarity, PET_GOLD, PET_LIBRARY, defView, getPetDef, petForReward, rarityColor, rgbCss, rgbHex, rollPet } from './PetDefs';
-import { AWAKEN_LEVEL, MAX_LEVEL, Pet, type PetHost, type StoneSpec, flat, groundY } from './Pet';
+import { AWAKEN_LEVEL, MAX_LEVEL, Pet, STONE_EXPLOSION_COLOR, STONE_FALLOFF, type PetHost, type StoneSpec, flat, groundY } from './Pet';
 import { BEHAVIOURS, type PetZoneHandle } from './PetBehaviours';
 import { PetFxSystem, disposeObject, glowSprite, textLabel } from './PetFx';
 import { PetSeal, type SealHost } from './PetSeal';
@@ -16,7 +16,9 @@ import { clipData } from '../anim/ClipPlayer';
  *   · 每局只带 1 只；跨关：每帧把 { id, 灵契等级 / 经验, 灵技冷却剩余 } 写进 ctx.run.pet（进关快照 / 续玩档跟着存），
  *     新一关 stage:loaded 时按快照重新结契（Unity PetOwner.Restore：按「换回来」处理，神兽不再放出场演出，冷却接着算）；
  *   · 掉落：精英被击杀 6% 掉一个随机封印（Unity EconomyConfig.ElitePetChance）；宝箱 / 藏宝点奖励串 "pet" / "pet:<id>" / "pet:rarity=<0–2>"；
- *   · 嘲讽：被灵宠讙嘲讽的敌人（EnemyBase.taunted）打不到玩家——Combat 的受伤修饰器把它们的伤害记 0（Unity EnemyAI.HitTarget / spirit 弹丸）；
+ *   · 嘲讽：被灵宠讙嘲讽的敌人（EnemyBase.taunt / taunted）瞄准、走位、近战都对着灵体诱饵；只有 Unity 也挡的那几条路挡伤害——
+ *     近战 / 直接命中（EnemyBase.melee / hitTarget = Unity EnemyAI.HitTarget、InfernoKit.HitPlayer）、灵体弹（shoot = EnemyProjectile.spirit）、
+ *     各 AI 自己的 Taunted 判断（地波、自爆、喷吐……照 Unity 逐只翻在 src/enemies 里）；爆炸、地面区域、首领招式不看嘲讽，照样伤玩家；
  *   · 界面：UIManager.setPetSource（HUD 灵宠面板、行囊灵宠页、图鉴灵宠页签）；
  *   · 调试：?debug 时 window.__pets（give / altar / skill / xp / swap…）；?petAltar 时进关在出生点旁摆灵兽台（八只灵宠的封印）。
  * 场景里的东西（封印、火石、蚀雾、特效）在 clear()（Game.clearStage：换关 / 新开一局 / 回主菜单）收走；灵宠本体在回主菜单 / 新开一局时解除。
@@ -175,8 +177,6 @@ export class PetSystem implements System, PetHost, SealHost {
           this.clear();
         }
       }),
-      // 被嘲讽的敌人打不到玩家（Unity EnemyAI.HitTarget：打在灵体诱饵上无效；spirit 弹丸不伤玩家）
-      ctx.combat.addIncomingModifier((_amount, _element, source) => (source && (source as unknown as { taunted?: boolean }).taunted ? 0 : 1)),
     );
     // 宝箱 / 藏宝点的灵宠奖励（LootSystem.grant 的 'pet' 交给这里）
     (ctx.loot as unknown as { petReward?: (reward: string, pos: THREE.Vector3) => void }).petReward = (reward, pos) => this.grantReward(reward, pos);
@@ -517,8 +517,9 @@ export class PetSystem implements System, PetHost, SealHost {
     }
   }
 
+  /** 火石落地（Unity PlayerProjectile.Impact）：爆炸（边缘 30%、播爆炸特效和爆炸声，色 = 弹体色），再回调落地特效 */
   private detonateStone(s: Stone, at: THREE.Vector3): void {
-    if (!s.owner.released) this.ctx.combat.explode(at, s.spec.explodeRadius, s.spec.request, { noFx: true, falloff: 0.5 });
+    if (!s.owner.released) this.ctx.combat.explode(at, s.spec.explodeRadius, s.spec.request, { falloff: STONE_FALLOFF, color: STONE_EXPLOSION_COLOR });
     try {
       s.spec.onImpact?.(at.clone());
     } catch (err) {

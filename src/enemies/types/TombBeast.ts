@@ -513,17 +513,22 @@ export class TombBeast extends StandardEnemy {
     }
     const pl = this.ctx.player;
     if (!this.chargeHit && pl.alive) {
-      _v.subVectors(pl.position, this.position);
+      // Unity TombBeastAI 冲撞：对当前目标判定，被嘲讽时撞的是灵体诱饵（HitTarget 无效、不推不震）
+      const taunted = this.taunted;
+      _v.subVectors(this.targetPos, this.position);
       const along = _v.x * sx + _v.z * sz;
       const side = Math.abs(_v.x * sz - _v.z * sx);
-      if (along > -0.3 && along < (1.3 + 0.9) * k && side < 0.9 * k + pl.radius && _v.y > -1 && _v.y < 1.8 * k) {
+      if (along > -0.3 && along < (1.3 + 0.9) * k && side < 0.9 * k + (taunted ? 0.35 : pl.radius) && _v.y > -1 && _v.y < 1.8 * k) {
         this.chargeHit = true;
-        this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * CHARGE_DAMAGE_MULT, 'none', this, this.position);
-        _v.set(sx, 0, sz).multiplyScalar(CHARGE_KNOCK);
-        _v.y = 7;
-        pl.applyImpulse(_v);
-        this.ctx.fx.shake(0.9, 0.35);
-        this.ctx.audio.play('boss_slam', { position: pl.position, volume: 0.8, pitch: 1.3 });
+        if (taunted) this.decoyBlocked();
+        else {
+          this.ctx.combat.damagePlayer(this.def.damage * this.damageMult * CHARGE_DAMAGE_MULT, 'none', this, this.position);
+          _v.set(sx, 0, sz).multiplyScalar(CHARGE_KNOCK);
+          _v.y = 7;
+          pl.applyImpulse(_v);
+          this.ctx.fx.shake(0.9, 0.35);
+          this.ctx.audio.play('boss_slam', { position: pl.position, volume: 0.8, pitch: 1.3 });
+        }
       }
     }
     if (this.moveResult.hitWall && this.stateTime > 0.15) {
@@ -611,7 +616,9 @@ export class TombBeast extends StandardEnemy {
     spawnFireRing(ctx, ground, WAVE_RADIUS);
     ctx.fx.ring(ground, WAVE_RADIUS, 0xffd080, WAVE_RADIUS / WAVE_SPEED);
     this.quake(0.9, 26, 0.45);
-    blastPlayer(ctx, ground.clone().setY(ground.y + 0.6), STOMP_CORE * k, this.def.damage * this.damageMult * STOMP_CORE_MULT, 'none', this, 0.3, 0, 8);
+    // 被嘲讽时砸的是灵体诱饵（Unity TombBeastAI.Stomp：Taunted → DecoyBlocked，不炸玩家）
+    if (this.taunted) this.decoyBlocked();
+    else blastPlayer(ctx, ground.clone().setY(ground.y + 0.6), STOMP_CORE * k, this.def.damage * this.damageMult * STOMP_CORE_MULT, 'none', this, 0.3, 0, 8);
     this.launchWave(ground);
   }
 
@@ -630,7 +637,8 @@ export class TombBeast extends StandardEnemy {
         const dx = pl.position.x - center.x, dz = pl.position.z - center.z;
         const dist = Math.hypot(dx, dz);
         const rise = pl.position.y - center.y;
-        if (dist > inner && dist >= prev - 0.4 && dist <= r + 0.4 && rise > -0.6 && rise < WAVE_JUMP_CLEAR) {
+        // 出手者被嘲讽期间波面不伤玩家（Unity GroundWave.Check：owner.Taunted → 跳过，不记命中）
+        if (dist > inner && dist >= prev - 0.4 && dist <= r + 0.4 && rise > -0.6 && rise < WAVE_JUMP_CLEAR && !source.taunted) {
           hit = true;
           ctx.combat.damagePlayer(dmg, 'none', source, center);
           _v.set(dx, 0, dz).normalize().multiplyScalar(WAVE_KNOCK);

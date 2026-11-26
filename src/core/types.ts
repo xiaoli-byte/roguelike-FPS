@@ -687,6 +687,10 @@ export interface IEnemy {
   readonly untargetable?: boolean;
   /** 此刻免疫眩晕（Boss 出招中等）：Combat 施加 stun 时直接忽略（不播特效、不派发事件）。缺省 false */
   readonly stunImmune?: boolean;
+  /** 被灵宠讙嘲讽中（Unity EnemyAI.Taunted；M9）：直接命中打在灵体诱饵上无效，由各招式自己判断。缺省 false */
+  readonly taunted?: boolean;
+  /** 诱饵挡下一击，冒「格挡」（Unity EnemyAI.DecoyBlocked，全场节流）；缺省不冒 */
+  decoyBlocked?(): void;
   getHeadCenter(out: THREE.Vector3): THREE.Vector3;
   getBodyCenter(out: THREE.Vector3): THREE.Vector3;
   /** 射线命中测试（头部球 + 身体胶囊） */

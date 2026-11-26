@@ -51,7 +51,18 @@ export interface PetHost {
   spawnZone(pet: Pet, center: THREE.Vector3, radius: number, duration: number, damage: number, element: Element, chance: number, color: RGB): PetZoneHandle;
 }
 
-/** 灵宠的抛物线弹：命中敌人 / 墙 / 地面或到期时在落点做 explodeRadius 的范围伤害（中心 100% → 边缘 50%） */
+/**
+ * 火石落地爆炸的边缘伤害比例：中心 100% → 边缘 30%（Unity 精卫的火石走 PlayerProjectile.Spawn 旧接口，
+ * PlayerProjectileSpec 构造函数 explosionFalloff = 0.3f：Combat/Projectiles/ProjectileSpecs.cs:72；PlayerProjectile.cs:37 / :445 Impact 照用）
+ */
+export const STONE_FALLOFF = 0.3;
+/**
+ * 火石爆炸的特效色 = 弹体默认色 (1, 0.851, 0.627)（ProjectileSpecs.cs:83；PlayerProjectile.Impact 把它当 ExplosionOptions.color 传，
+ * Combat.cs:426–430 ExplodeAt 没有 noFx 就播 Fx.Explosion + 「explosion」音效）
+ */
+export const STONE_EXPLOSION_COLOR = 0xffd9a0;
+
+/** 灵宠的抛物线弹：命中敌人 / 墙 / 地面或到期时在落点做 explodeRadius 的范围伤害（中心 100% → 边缘 30%，带爆炸特效和爆炸声） */
 export interface StoneSpec {
   from: THREE.Vector3;
   velocity: THREE.Vector3;
@@ -987,9 +998,12 @@ export class Pet {
     return this.ctx.combat.damageEnemy(target, req);
   }
 
-  /** 范围伤害：墙后不受伤，中心 100% → 边缘 edge（不播爆炸特效，特效由调用方给） */
+  /**
+   * 范围伤害：墙后不受伤，中心 100% → 边缘 edge（Unity Pet.AoE → Combat.Explode 位置参数重载：Combat.cs:388–395 没设 noFx，
+   * 照播爆炸特效和爆炸声，色按元素）。八只目前都不用它（Unity 也没有调用方）
+   */
   aoe(center: THREE.Vector3, radius: number, amount: number, element: Element = 'none', statusChance = 0, edge = 0.5): number {
-    return this.ctx.combat.explode(center, radius, this.info(amount, element, statusChance), { noFx: true, falloff: edge });
+    return this.ctx.combat.explode(center, radius, this.info(amount, element, statusChance), { falloff: edge });
   }
 
   /** center 周围 radius 内活着、可选中的敌人（按距离排序） */

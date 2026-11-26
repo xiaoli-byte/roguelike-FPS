@@ -962,7 +962,8 @@ export class TantongEmber extends StandardEnemy implements FireSource {
     // 踩散
     const pl = this.ctx.player;
     const dx = pl.position.x - this.position.x, dz = pl.position.z - this.position.z;
-    if (pl.alive && dx * dx + dz * dz <= STOMP_RANGE * STOMP_RANGE && Math.abs(pl.position.y - this.position.y) < 0.7) {
+    // 被嘲讽期间不判踩散（Unity TantongEmberAI.Think：!Taunted）
+    if (pl.alive && !this.taunted && dx * dx + dz * dz <= STOMP_RANGE * STOMP_RANGE && Math.abs(pl.position.y - this.position.y) < 0.7) {
       this.stomp();
       return;
     }

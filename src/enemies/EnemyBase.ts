@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type {
-  DamageResult, EnemyDef, GameContext, IEnemy, ProjectileSpec, SpawnOptions, StatusId, StatusInstance,
+  DamageResult, Element, EnemyDef, GameContext, IEnemy, ProjectileSpec, SpawnOptions, StatusId, StatusInstance,
 } from '../core/types';
 import { ELEMENT_COLORS } from '../core/types';
 import { clamp, clamp01, rotateTowards, raySphere, rayVerticalCapsule } from '../core/math';
@@ -477,7 +477,8 @@ export abstract class EnemyBase implements IEnemy {
 
   /**
    * 嘲讽（Unity EnemyAI.Taunt）：seconds 秒内瞄准、走位、近战都对着 decoy（eyeHeight = 瞄准点离地高度）；重复嘲讽取更晚的结束时间。
-   * 打到诱饵无效、玩家不吃这只敌人的伤害（近战 / 默认射击在这里处理；其余招式的伤害由灵宠系统的受伤修饰器记 0）
+   * 打到诱饵无效：近战（melee）、直接命中（hitTarget）、默认射击（shoot 出灵体弹）在这里处理；其余招式照 Unity 各 AI 自己判断 taunted。
+   * 爆炸（blastPlayer）、地面区域、首领的招式在 Unity 里不看嘲讽（Blast.Player / HazardZone / BossHazards.Hurt），照样伤玩家。
    */
   taunt(decoy: TauntDecoy, seconds: number, eyeHeight = 0.5): void {
     if (!this.alive || !decoy || !(seconds > 0)) return;
@@ -493,7 +494,7 @@ export abstract class EnemyBase implements IEnemy {
   }
 
   /** 诱饵挡下一击（Unity EnemyAI.DecoyBlocked）：全场共用节流 0.45 s 冒一个「格挡」 */
-  protected decoyBlocked(): void {
+  decoyBlocked(): void {
     const d = this.tauntDecoy;
     const now = this.ctx.time.now;
     if (!d || now < decoyTextAt) return;
@@ -501,6 +502,18 @@ export abstract class EnemyBase implements IEnemy {
     const ui = this.ctx.ui as unknown as { floatText?(pos: THREE.Vector3, text: string, color?: number, scale?: number): void };
     _v3.set(d.position.x + (Math.random() - 0.5) * 0.5, d.position.y + 0.9 + (Math.random() - 0.5) * 0.5, d.position.z + (Math.random() - 0.5) * 0.5);
     ui.floatText?.(_v3, '格挡', 0xd1dbf2, 0.9);
+  }
+
+  /**
+   * 对当前目标造成伤害（Unity EnemyAI.HitTarget / InfernoKit.HitPlayer）：被嘲讽时打在灵体诱饵上，无效（偶尔冒「格挡」）。
+   * 返回是否真的伤到了玩家。dmg 是最终值（调用方已乘 damageMult）
+   */
+  protected hitTarget(dmg: number, element: Element, from: THREE.Vector3 | null): boolean {
+    if (this.taunted) {
+      this.decoyBlocked();
+      return false;
+    }
+    return this.ctx.combat.damagePlayer(dmg, element, this, from) > 0;
   }
 
   // ───────────── AI 辅助 ─────────────
