@@ -1,5 +1,5 @@
 /**
- * 灵宠面板（照译 Unity G/UI/Widgets/PetPanelWidget.cs，样式 css/unity/hud.css 的 .sf-pet）：左下、生命框上方。
+ * 灵宠面板（照译 Unity G/UI/Widgets/PetPanelWidget.cs，样式 css/screens/hud.css 的 .sf-pet）：左下、生命框上方。
  *   左侧品阶色竖条；灵宠名（品阶色、标题字体）+「品阶 · 称号」小字；灵契等级（觉醒 / 满级金字，未觉醒时注明几级觉醒）；经验细条；
  *   右侧 G 灵技盘（SkillDisc：冷却环 + 秒数，放出时闪一下）。
  * 只在结契了灵宠时显示。网页的灵宠本体是 M9：数据走 PetSource（UIManager.setPetSource），没接时本部件不显示。

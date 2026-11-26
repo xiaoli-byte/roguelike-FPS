@@ -1,6 +1,6 @@
 /*
- * 由 scripts/web/convert-uss.mjs 从 unity/Assets/Game/Resources/UI/dialog.uss 生成，不要手改（改 USS 后重跑脚本）。
- * :root → .sf-root（层根）；-unity-* 属性按脚本里的 MAPPED 表换成等价 CSS，UNSUPPORTED 表里的留注释。
+ * 界面样式 · 确认框。手写，直接改这里（类名都带 sf- 前缀；.sf-root 是界面层根，src/ui/toolkit/UIRoot.ts）。
+ * 像素值按 1920×1080 设计分辨率写，整层由 UILayers 缩放。
  */
 
 .sf-dialog-screen {

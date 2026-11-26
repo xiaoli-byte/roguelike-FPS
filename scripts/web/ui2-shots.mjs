@@ -1,6 +1,6 @@
-// 界面第二期实机截图（docs/threejs-migration.md M11c 验收）：无头 Chromium 按 1920×1080（界面缩放 = 1，像素 = USS 的设计像素）
+// 界面第二期实机截图（docs/threejs-migration.md M11c 验收）：无头 Chromium 按 1920×1080（界面缩放 = 1，像素 = 样式表的设计像素）
 // 逐个打开第二期的界面截图：主菜单、选英雄、天赋、图鉴、操作说明、改键页、确认框，局内的罗盘条、全图、行囊（行囊 / 灵宠页）、
-// 灵宠面板、秘卷三选一、秘卷触发弹字、精英印章、狙击镜、关卡卡片、整局结算。每张都跑一遍 USS 核对（见 USS_CHECK），最后报合计与页面错误数（应为 0）。
+// 灵宠面板、秘卷三选一、秘卷触发弹字、精英印章、狙击镜、关卡卡片、整局结算。每张都跑一遍样式核对（见 USS_CHECK），最后报合计与页面错误数（应为 0）。
 //   node scripts/web/ui2-shots.mjs [端口=5714] [输出目录=docs/art/review/threejs-migration]
 // 需要开发服务器（npx vite --port <端口>）；钩子 window.__game / __ctx 在网址带 ?debug 时存在（core/Game.ts）。?uishots 关掉「图鉴新收录」提示。
 // 在 agent worktree 里跑：node_modules 是指向主检出的目录联接，vite 按真实路径拒绝（draco 解码器 403 → 美术资产全退回程序化模型、
@@ -29,10 +29,10 @@ const STEP = `(() => {
 const step = (s) => b.eval(`window.__step(${s})`);
 
 /**
- * 每张截图都跑的 USS 核对（页面里算）：
- *   uss    转出来的 Unity 规则（css/unity/*.css，选择器带 sf- 的类规则，不含 sf-base 的基准）里写死的长度 / 颜色 / 排版值，逐个对比命中元素的计算样式。
- *          元素自己有内联样式的属性（= Unity 代码里 style.x = …）、同一属性被几条 Unity 规则同时写（按优先级挑赢家）都照算；
- *          宽高另列（flex 收缩 / 拉伸是排版结果，Yoga 一样会做），其余不一致就是有别的样式盖住了 USS。
+ * 每张截图都跑的样式核对（页面里算）：
+ *   uss    界面样式规则（css/screens/*.css，选择器带 sf- 的类规则，不含 sf-base 的基准）里写死的长度 / 颜色 / 排版值，逐个对比命中元素的计算样式。
+ *          元素自己有内联样式的属性（= 代码里 style.x = …）、同一属性被几条规则同时写（按优先级挑赢家）都照算；
+ *          宽高另列（flex 收缩 / 拉伸是排版结果），其余不一致就是有别的样式盖住了界面样式。
  *   legacy 把选择器里带 gf- 的旧样式规则（base.css 的 .gf-ui 容器、主菜单远景）全部摘掉再算一遍，sf 元素的计算样式应该一点不变。
  */
 const USS_CHECK = `(() => {
@@ -59,7 +59,7 @@ const USS_CHECK = `(() => {
   const legacy = [];
   before.forEach((v, k) => { if (v !== after[k] && legacy.length < 8) legacy.push((all[k].className || all[k].tagName) + ' ' + diff(v, after[k])); });
   function diff(a, b) { const x = a.split('|'), y = b.split('|'), n = [...PROPS, ...SIZE]; return n.map((p, i) => x[i] !== y[i] ? p + ':' + x[i] + '→' + y[i] : '').filter(Boolean).join(' '); }
-  // ── uss：Unity 规则的写死值 ──
+  // ── uss：界面样式规则的写死值 ──
   const spec = (sel) => { const s = sel.replace(/::[\\w-]+/g, ''); return [(s.match(/#/g) || []).length, (s.match(/\\.|\\[|:(?!:)/g) || []).length, (s.match(/(^|[\\s>+~])[a-zA-Z]+/g) || []).length]; };
   const cmp = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
   const rules = [];

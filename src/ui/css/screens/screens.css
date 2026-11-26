@@ -1,6 +1,6 @@
 /*
- * 由 scripts/web/convert-uss.mjs 从 unity/Assets/Game/Resources/UI/screens.uss 生成，不要手改（改 USS 后重跑脚本）。
- * :root → .sf-root（层根）；-unity-* 属性按脚本里的 MAPPED 表换成等价 CSS，UNSUPPORTED 表里的留注释。
+ * 界面样式 · 局内界面（行囊、设置、暂停……）。手写，直接改这里（类名都带 sf- 前缀；.sf-root 是界面层根，src/ui/toolkit/UIRoot.ts）。
+ * 像素值按 1920×1080 设计分辨率写，整层由 UILayers 缩放。
  */
 
 .sf-fill-abs {
@@ -345,7 +345,7 @@
     margin: 0;
 }
 
-.sf-slider .unity-base-slider__tracker {
+.sf-slider .sf-slider__tracker {
     height: 4px;
     margin-top: -2px;
     background-color: var(--ink-3);
@@ -353,7 +353,7 @@
     border-radius: 2px;
 }
 
-.sf-slider .unity-base-slider__dragger {
+.sf-slider .sf-slider__dragger {
     width: 16px;
     height: 16px;
     margin-top: -8px;
@@ -362,8 +362,8 @@
     border-color: var(--gold-hi);
 }
 
-.sf-slider:focus .unity-base-slider__dragger,
-.sf-slider:hover .unity-base-slider__dragger {
+.sf-slider:focus .sf-slider__dragger,
+.sf-slider:hover .sf-slider__dragger {
     background-color: var(--gold-hi);
     border-color: #fffaf0;
 }

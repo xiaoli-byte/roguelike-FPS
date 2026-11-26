@@ -1,5 +1,5 @@
 /**
- * 秘卷触发弹字（照译 Unity G/UI/Widgets/ScrollProcPop.cs，样式 css/unity/scrolls.css 的 .sf-procs）：秘卷效果触发一次，
+ * 秘卷触发弹字（照译 Unity G/UI/Widgets/ScrollProcPop.cs，样式 css/screens/scrolls.css 的 .sf-procs）：秘卷效果触发一次，
  * 就在准星右上方弹一行「◆ 卷名」，菱形和字按稀有度上色。
  *   · 同一卷 0.6 s 内再触发：合并成 ×N 并重新弹一下；最多 4 行，满了先收走最老的；
  *   · 每行 0.12 s 弹出（1.3 → 1 倍）→ 停 0.7 s → 0.35 s 上飘淡出；用不缩放时间。不认识的 id 不弹。

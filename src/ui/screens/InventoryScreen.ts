@@ -1,5 +1,5 @@
 /**
- * Tab 行囊面板（照译 Unity G/UI/Screens/InventoryPanel.cs + WeaponCard.cs，样式 css/unity/screens.css 的 .sf-inv / .sf-arm / .sf-petcard）：
+ * Tab 行囊面板（照译 Unity G/UI/Screens/InventoryPanel.cs + WeaponCard.cs，样式 css/screens/screens.css 的 .sf-inv / .sf-arm / .sf-petcard）：
  *   「行囊」页三栏——已获得秘卷（带当前层数下的说明）、属性网格（关键属性 + 所有偏离基础值的）、两把武器卡
  *   （槽位、名字 + 强化、品质 · 类别 · 元素、数值格、特性与词条）；
  *   「灵宠」页——结契灵宠的品阶、称号、灵契等级与经验、攻击方式、被动、灵技、觉醒（没有灵宠时写怎么结契）。

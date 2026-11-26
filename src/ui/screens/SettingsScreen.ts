@@ -339,7 +339,7 @@ export class SettingsScreen extends UIScreen {
 }
 
 /**
- * 滑条（Unity Slider 的元素结构：.unity-base-slider__drag-container > __tracker / __dragger，screens.css 的 .sf-slider 规则直接作用）。
+ * 滑条（元素结构照 Unity Slider：.sf-slider__drag-container > __tracker / __dragger，screens.css 的 .sf-slider 规则直接作用）。
  * 拖动 / 点击轨道调值，松手时 done = true（保存、声音页出确认音）；焦点在它上面时方向键左右调 1/20 量程（路由调 sfNudge）
  */
 export class Slider {
@@ -351,12 +351,12 @@ export class Slider {
   onHover: (() => void) | null = null;
 
   constructor(readonly min: number, readonly max: number, readonly step: number) {
-    this.el = el('sf-slider unity-base-slider');
+    this.el = el('sf-slider');
     this.el.tabIndex = 0;
     this.el.setAttribute('role', 'slider');
-    this.container = el('unity-base-slider__drag-container', this.el);
-    el('unity-base-slider__tracker', this.container);
-    this.dragger = el('unity-base-slider__dragger', this.container);
+    this.container = el('sf-slider__drag-container', this.el);
+    el('sf-slider__tracker', this.container);
+    this.dragger = el('sf-slider__dragger', this.container);
     let dragging = false;
     const at = (e: PointerEvent) => {
       const r = this.container.getBoundingClientRect();
