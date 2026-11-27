@@ -481,7 +481,7 @@
 | 底座 | `Enemies/AI/Plateau/PlateauEnemyAI.cs`：招式时间轴（`PlateauKit.cs` 的 `PlateauMoveRunner`，动画事件先到先出 + 时间兜底）、受击四层（覆写 F 的入口）、带电、四种死法、兽群警觉；释放帧局部顿帧 `ImpactHold` 让 Animator 和时间轴一起放慢 |
 | 每只的 AI | `Enemies/AI/Plateau/{Marmot,Tiangou,Aoyin,Jufu,Manman,Liangu,Dijiang,Qiongqi}AI.cs`；啸獭电网 `MarmotNet`、举父电场 `JufuStormField`、连鼓灵骨槌曲线 `LianguKeys.cs`（脚本生成）；兽群 / 出手名额 `PlateauPack`、几何 `PlateauGeo` |
 | 特效 | `Fx/Fx.Plateau.cs`：`PlateauPalette`、三层雷刃 `PlateauBolt / Arc / SkyBolt`（`PlateauBoltFx` 池化网格）、贴地主形 `PlateauSigil / Field / Shadow / Scorch`（`PlateauShape`，带靛紫暗衬）、月牙 `PlateauCrescent / Claw`、雷球 `PlateauOrb`、`PlateauBallLightning / Scream / FaceFlash / Glint / Crackle / ArcRing / Dirt / Feathers / FurFlame / Sparks`，延时序列 `PlateauFxSeq`；全部过 `FxBudget` |
-| 动作 | 采样 `scripts/unity/bake/SK_Enemy_*.mjs`（`_plateau.mjs`）；手 K `art/source/characters/SK_Enemy_*/anim/*_anims.py`（共用 `_plateau/plateau_keys.py`）→ `Anim/Keyframed/*.fbx`；事件 `Anim/SK_Enemy_*.events.json` |
+| 动作 | 采样 `scripts/anim/bake/SK_Enemy_*.mjs`（`_plateau.mjs`）；手 K `art/source/characters/SK_Enemy_*/anim/*_anims.py`（共用 `_plateau/plateau_keys.py`）→ `Anim/Keyframed/*.fbx`；事件 `Anim/SK_Enemy_*.events.json` |
 | 测试 | `plateau-foes`（逐只招式、受击、死亡、带电互动、动画事件对时间轴误差）、`beats-ch4-foes`（节拍条）、EditMode `PlateauFoesTests`、`RegistryTests`（分章核对敌人数） |
 | 对比图 | `docs/art/review/ch4-port/E/`：网页（`review/ch4-combat/foe-*.jpg`）对 Unity 节拍条 |
 

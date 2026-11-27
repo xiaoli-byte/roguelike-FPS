@@ -1,0 +1,436 @@
+{
+ "_comment": "Unity 版删除前一次性从它的 C# 源码冻结的动画规格（2026-11-27，按 tests/anim-keyframed.test.mjs 原来的正则抽取），作网页片段表 / 首领片段触发的对照基线；不要从网页反向重生成。出处是相对 Unity 工程 Assets 目录的路径，原文在 git 历史里（tag unity-final）。",
+ "aiPlayed": {
+  "Apsara": [
+   "chordWindup"
+  ],
+  "Enemy": [],
+  "FireRat": [
+   "curl",
+   "roll",
+   "dizzy"
+  ],
+  "FlyingEnemy": [],
+  "JerboaBlade": [
+   "slashWindup",
+   "slash",
+   "hopBack",
+   "crouch",
+   "leap",
+   "spin"
+  ],
+  "MirageToad": [
+   "mirage",
+   "puff"
+  ],
+  "SandWraith": [
+   "slashWindup",
+   "recover",
+   "slash",
+   "crouch",
+   "spin"
+  ],
+  "ScorpionArcher": [
+   "dive",
+   "snapWindup",
+   "fire",
+   "emerge",
+   "snap",
+   "aim"
+  ],
+  "TombBeast": [
+   "chargeWindup",
+   "charge",
+   "brake",
+   "stompWindup",
+   "stomp"
+  ],
+  "FoxWitch": [
+   "enter",
+   "blink",
+   "scream"
+  ],
+  "FrostCrab": [
+   "grabRecover",
+   "grabWindup",
+   "grab",
+   "sweepWindup",
+   "sweep",
+   "shellBreak"
+  ],
+  "Fuzhu": [
+   "crouch",
+   "charge",
+   "recover",
+   "leap",
+   "land"
+  ],
+  "Haozhi": [
+   "scrape",
+   "charge",
+   "bristle",
+   "stagger"
+  ],
+  "IcePuffer": [
+   "dive",
+   "inflate",
+   "recover"
+  ],
+  "IceWhale": [
+   "swell",
+   "spout",
+   "recover",
+   "slam",
+   "rear"
+  ],
+  "Jiaoren": [
+   "throw",
+   "jab",
+   "jabWindup",
+   "aim",
+   "recover",
+   "lungeWindup",
+   "lunge"
+  ],
+  "LanternJelly": [
+   "shockWindup",
+   "stagger"
+  ],
+  "Qingniao": [
+   "volley",
+   "recover",
+   "swoopDown",
+   "swoopUp",
+   "takeoff",
+   "screech",
+   "toPerch",
+   "perched"
+  ],
+  "Xingxing": [
+   "swipe",
+   "throwRelease",
+   "swipeWindup",
+   "slamWindup",
+   "recover",
+   "slamAir",
+   "throwWindup",
+   "climbPrep",
+   "climb",
+   "rally"
+  ],
+  "XuanGui": [
+   "rightself",
+   "peckWindup",
+   "peck",
+   "biteWindup",
+   "bite",
+   "backoff",
+   "retract",
+   "spin",
+   "overheat"
+  ],
+  "Bifang": [
+   "recover",
+   "glide",
+   "land",
+   "downed",
+   "fall",
+   "takeoff",
+   "cryBi",
+   "cryFang"
+  ],
+  "Firecracker": [
+   "stomp",
+   "brace",
+   "fuse",
+   "volley",
+   "recover",
+   "getup",
+   "toppled"
+  ],
+  "FireCrow": [
+   "ignite",
+   "dive"
+  ],
+  "Founder": [
+   "enter",
+   "pourWindup",
+   "pouring",
+   "flingWindup",
+   "retreat",
+   "crackStagger"
+  ],
+  "Huodou": [
+   "spit",
+   "recover",
+   "biteWindup",
+   "bark",
+   "eat",
+   "spitWindup",
+   "bite"
+  ],
+  "IronOx": [
+   "inhale",
+   "choke",
+   "spitWindup",
+   "spit",
+   "tossWindup",
+   "toss"
+  ],
+  "Mamian": [
+   "sweep",
+   "punch",
+   "recover",
+   "brawl",
+   "spin",
+   "throw",
+   "reel",
+   "drag",
+   "staggered",
+   "sweepWind",
+   "punchWind"
+  ],
+  "Nuo": [
+   "enter",
+   "wipe",
+   "spit",
+   "cover",
+   "spitWindup"
+  ],
+  "Tantong": [
+   "flail",
+   "throwRelease",
+   "recover",
+   "blowGo",
+   "pounceWindup",
+   "throwWindup",
+   "blow",
+   "pounce"
+  ],
+  "TantongEmber": [],
+  "Tuo": [
+   "toLava",
+   "swim",
+   "regrow",
+   "surge",
+   "lunge",
+   "bite",
+   "biteWindup",
+   "sweepWindup",
+   "sweep",
+   "roar"
+  ]
+ },
+ "aiPlayedAt": {
+  "Apsara": "Game/Scripts/Enemies/ApsaraAI.cs",
+  "Enemy": "Game/Scripts/Enemies/EnemyAI.cs",
+  "FireRat": "Game/Scripts/Enemies/FireRatAI.cs",
+  "FlyingEnemy": "Game/Scripts/Enemies/FlyingEnemyAI.cs",
+  "JerboaBlade": "Game/Scripts/Enemies/JerboaBladeAI.cs",
+  "MirageToad": "Game/Scripts/Enemies/MirageToadAI.cs",
+  "SandWraith": "Game/Scripts/Enemies/SandWraithAI.cs",
+  "ScorpionArcher": "Game/Scripts/Enemies/ScorpionArcherAI.cs",
+  "TombBeast": "Game/Scripts/Enemies/TombBeastAI.cs",
+  "FoxWitch": "Game/Scripts/Enemies/AI/Frost/FoxWitchAI.cs",
+  "FrostCrab": "Game/Scripts/Enemies/AI/Frost/FrostCrabAI.cs",
+  "Fuzhu": "Game/Scripts/Enemies/AI/Frost/FuzhuAI.cs",
+  "Haozhi": "Game/Scripts/Enemies/AI/Frost/HaozhiAI.cs",
+  "IcePuffer": "Game/Scripts/Enemies/AI/Frost/IcePufferAI.cs",
+  "IceWhale": "Game/Scripts/Enemies/AI/Frost/IceWhaleAI.cs",
+  "Jiaoren": "Game/Scripts/Enemies/AI/Frost/JiaorenAI.cs",
+  "LanternJelly": "Game/Scripts/Enemies/AI/Frost/LanternJellyAI.cs",
+  "Qingniao": "Game/Scripts/Enemies/AI/Frost/QingniaoAI.cs",
+  "Xingxing": "Game/Scripts/Enemies/AI/Frost/XingxingAI.cs",
+  "XuanGui": "Game/Scripts/Enemies/AI/Frost/XuanGuiAI.cs",
+  "Bifang": "Game/Scripts/Enemies/AI/Inferno/BifangAI.cs",
+  "Firecracker": "Game/Scripts/Enemies/AI/Inferno/FirecrackerAI.cs",
+  "FireCrow": "Game/Scripts/Enemies/AI/Inferno/FireCrowAI.cs",
+  "Founder": "Game/Scripts/Enemies/AI/Inferno/FounderAI.cs",
+  "Huodou": "Game/Scripts/Enemies/AI/Inferno/HuodouAI.cs",
+  "IronOx": "Game/Scripts/Enemies/AI/Inferno/IronOxAI.cs",
+  "Mamian": "Game/Scripts/Enemies/AI/Inferno/MamianAI.cs",
+  "Nuo": "Game/Scripts/Enemies/AI/Inferno/NuoAI.cs",
+  "Tantong": "Game/Scripts/Enemies/AI/Inferno/TantongAI.cs",
+  "TantongEmber": "Game/Scripts/Enemies/AI/Inferno/TantongEmberAI.cs",
+  "Tuo": "Game/Scripts/Enemies/AI/Inferno/TuoAI.cs"
+ },
+ "aiPlayedNote": "每个 <名字>AI.cs 里 Play / PlayTimed / Act / ActTimed / ActOnce / ActLoop / Go / Enter 第一个实参（小写开头的状态名），去重保序",
+ "aiFades": {
+  "FireRat": [
+   {
+    "state": "curl",
+    "timed": true,
+    "fade": 0.06
+   },
+   {
+    "state": "roll",
+    "timed": false,
+    "fade": 0.05
+   },
+   {
+    "state": "dizzy",
+    "timed": false,
+    "fade": 0.06
+   }
+  ],
+  "JerboaBlade": [
+   {
+    "state": "slashWindup",
+    "timed": true,
+    "fade": 0.05
+   },
+   {
+    "state": "slash",
+    "timed": false,
+    "fade": 0.03
+   },
+   {
+    "state": "hopBack",
+    "timed": false,
+    "fade": 0.05
+   },
+   {
+    "state": "crouch",
+    "timed": true,
+    "fade": 0.06
+   },
+   {
+    "state": "leap",
+    "timed": false,
+    "fade": 0.04
+   },
+   {
+    "state": "spin",
+    "timed": false,
+    "fade": 0.04
+   }
+  ],
+  "MirageToad": [
+   {
+    "state": "mirage",
+    "timed": false,
+    "fade": 0.08
+   },
+   {
+    "state": "puff",
+    "timed": true,
+    "fade": 0.08
+   }
+  ],
+  "ScorpionArcher": [
+   {
+    "state": "dive",
+    "timed": false,
+    "fade": 0.06
+   },
+   {
+    "state": "snapWindup",
+    "timed": true,
+    "fade": 0.06
+   },
+   {
+    "state": "fire",
+    "timed": false,
+    "fade": 0.04
+   },
+   {
+    "state": "emerge",
+    "timed": false,
+    "fade": 0.05
+   },
+   {
+    "state": "snap",
+    "timed": false,
+    "fade": 0.04
+   },
+   {
+    "state": "aim",
+    "timed": true,
+    "fade": 0.08
+   }
+  ],
+  "TombBeast": [
+   {
+    "state": "chargeWindup",
+    "timed": true,
+    "fade": 0.1
+   },
+   {
+    "state": "charge",
+    "timed": false,
+    "fade": 0.06
+   },
+   {
+    "state": "brake",
+    "timed": false,
+    "fade": 0.06
+   },
+   {
+    "state": "stompWindup",
+    "timed": true,
+    "fade": 0.08
+   },
+   {
+    "state": "stomp",
+    "timed": false,
+    "fade": 0.04
+   }
+  ]
+ },
+ "aiFadesNote": "第一章五种敌人 Play / PlayTimed 的状态、是否 PlayTimed、过渡秒数（按出现顺序）",
+ "kunpengActs": [
+  "dive",
+  "gust",
+  "inhale",
+  "perch",
+  "sink",
+  "slamWind",
+  "spit",
+  "spread",
+  "spreadEnd",
+  "swoopReady",
+  "takeoff",
+  "takeoff"
+ ],
+ "kunpengActsAt": "Game/Scripts/Bosses/KunPeng/Moves/*.cs（不含 KunPengMove.cs）的 Act(\"…\")，排序",
+ "kunpengHolds": [
+  0.05,
+  0.06,
+  0.06,
+  0.07,
+  0.07,
+  0.08,
+  0.08,
+  0.09
+ ],
+ "kunpengHoldsAt": "Game/Scripts/Bosses/KunPeng/Moves/*.cs + KunPengBrain.cs 的 ImpactHold(x)，排序",
+ "qilinActs": [
+  "Locomotion@0.05",
+  "Locomotion@0.1",
+  "Locomotion@0.1",
+  "Locomotion@0.1",
+  "breath@0.1",
+  "breath@0.1",
+  "drink@0.1",
+  "leap@0.1",
+  "pant@0.1",
+  "paw@0.08",
+  "rear@0.08",
+  "rear@0.08",
+  "roar@0.1",
+  "roar@0.1",
+  "roar@0.1",
+  "roar@0.1",
+  "scalesFire@0.03",
+  "stomp@0.04",
+  "stomp@0.08",
+  "stun@0.1",
+  "tuck@0.08",
+  "tuck@0.1"
+ ],
+ "qilinActsAt": "Game/Scripts/Bosses/Qilin/Moves/*.cs 的 Brain.PlayAct(\"片段\", 时长, 淡入=0.1)，「片段@淡入」排序",
+ "qilinIntroActs": [
+  "rear@1.2"
+ ],
+ "qilinIntroActsAt": "Game/Scripts/Bosses/Qilin/QilinBrain.cs 的 IntroTick 里的 PlayAct（「片段@时长」）"
+}

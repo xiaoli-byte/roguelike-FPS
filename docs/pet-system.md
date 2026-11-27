@@ -126,7 +126,7 @@
 2. **四视图**：`redesign_sheets.py --designs pet_designs_v1.json --turnaround <key>`，只画需要建模的实体（见 7.2）。
 3. Tripo 多视图建模 + 贴图（不用 Tripo 自动绑骨，和敌人一样）→ 骨骼表 `art/pipeline/creature_rigs/<ID>.json`（按网格实测，
    审查姿势 `creature_rigs/review_poses/<ID>.json`）→ `build_tripo_creature.py <ID> --publish`（ORM/AO、远处低模、校验、审查图）
-   → `unity_export.py` → 动作 `scripts/unity/bake-pet-anims.mjs`（待机 / 走 / 跑 / 出招，写 `native-anim.json`）→ Unity Sync。
+   → `unity_export.py` → 动作 `scripts/anim/bake-pet-anims.mjs`（待机 / 走 / 跑 / 出招，写 `native-anim.json`）→ Unity Sync。
 4. **2026-10-19 全部接通**：8 只都是骨骼动画模型，第一版的快速通道（`pet_concepts.py` / `pet_export.py` / `bl_pet_export.py`）退役，
    `Resources/Pets/<ID>.prefab` 改由 `PetArtImport` 从正式 Prefab 生成。
 
@@ -166,7 +166,7 @@
 ### 7.3 骨骼、动作约定（第二版，所有环节共用）
 
 骨骼由 `art/pipeline/creature_rigs/SK_Pet_<名>.json` 按网格实测摆放（坐标系：缩放落地后米制，前 = −Y，生物左 = +X，上 = +Z），
-名字必须让 Unity 的 `CreatureRigBuilder` 认出来（脚 IK、看向、弹簧骨），也是动作生成脚本 `scripts/unity/bake-pet-anims.mjs` 找骨骼的依据。
+名字必须让 Unity 的 `CreatureRigBuilder` 认出来（脚 IK、看向、弹簧骨），也是动作生成脚本 `scripts/anim/bake-pet-anims.mjs` 找骨骼的依据。
 
 | 体型 | 灵宠 | 骨骼 |
 |---|---|---|

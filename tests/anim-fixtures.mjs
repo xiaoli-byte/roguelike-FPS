@@ -6,7 +6,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
 
-register('../scripts/unity/ts-hooks.mjs', import.meta.url);
+register('../scripts/node/ts-hooks.mjs', import.meta.url);
 export const anim = await import('../src/anim/index.ts');
 
 export const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -45,15 +45,21 @@ export function buildSkeleton(id) {
 export const manifest = () => JSON.parse(readFileSync(join(ANIM_DIR, 'manifest.json'), 'utf8'));
 export const animData = (id) => JSON.parse(readFileSync(join(ANIM_DIR, `${id}.json`), 'utf8'));
 
-/** 采样源数据所在的 Characters 目录：本仓库 unity/，在 git worktree 里退到主工作区；都没有返回 null（相关用例跳过） */
+/** 采样中间件（不入库）：<根>/<资产>/anim/_tmp/<资产>.native-anim.json */
+const samplePath = (dir, id) => join(dir, id, 'anim/_tmp', `${id}.native-anim.json`);
+
+/**
+ * 采样源数据所在的目录（art/source/characters，scripts/anim/bake-*.mjs 写的，不入库）：本仓库的；在 git worktree 里没有就退到主工作区；
+ * 都没有返回 null（相关用例跳过）。2026-11-27 前在 unity/Assets/Art/Characters/<资产>/Anim/。
+ */
 export function sourceDir() {
-  const has = (dir) => existsSync(dir) && readdirSync(dir).some((id) => existsSync(join(dir, id, 'Anim', `${id}.native-anim.json`)));
-  const own = join(ROOT, 'unity/Assets/Art/Characters');
+  const has = (dir) => existsSync(dir) && readdirSync(dir).some((id) => existsSync(samplePath(dir, id)));
+  const own = join(ROOT, 'art/source/characters');
   if (has(own)) return own;
   try {
     const m = /^gitdir:\s*(.+)$/m.exec(readFileSync(join(ROOT, '.git'), 'utf8'));
     if (m) {
-      const main = join(resolve(m[1].trim(), '../../..'), 'unity/Assets/Art/Characters');
+      const main = join(resolve(m[1].trim(), '../../..'), 'art/source/characters');
       if (has(main)) return main;
     }
   } catch { /* .git 是目录 */ }
@@ -61,11 +67,12 @@ export function sourceDir() {
 }
 
 export function loadSource(dir, id) {
-  return JSON.parse(readFileSync(join(dir, id, 'Anim', `${id}.native-anim.json`), 'utf8'));
+  return JSON.parse(readFileSync(samplePath(dir, id), 'utf8'));
 }
 
+/** 事件叠加表（入库，手写）：art/anim/<资产>.events.json */
 export function loadOverlay(id) {
-  const p = join(ROOT, 'unity/Assets/Art/Characters', id, 'Anim', `${id}.events.json`);
+  const p = join(ROOT, 'art/anim', `${id}.events.json`);
   return existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')).clips ?? {} : {};
 }
 

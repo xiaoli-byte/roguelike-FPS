@@ -140,11 +140,11 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
 Three.js 版里，27 个原生骨架敌人（第一章到第三章的新阵容）每只都有逐只设计的程序动画：状态机、阻尼参数、步态相位和 IK。GLB 里没有关键帧，所以不重写这些动画，而是在 Node 里跑真实的敌人代码，把动作逐帧录下来：
 
 ```bash
-node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs              # 全部
-node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs fuzhu qingniao
+node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs              # 全部
+node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs fuzhu qingniao
 ```
 
-- **怎么跑游戏代码**：`scripts/unity/ts-hooks.mjs` 让 Node 直接 import `src/` 里的 TS（去掉类型、补全扩展名）。美术挂载换成桩：`stubs/EnemyArt.mjs` 按发布 GLB 的节点层级和 TRS 搭出同名骨架，交给真实的 `NativePose`，所以骨骼静止朝向与游戏里一致。特效、音效、伤害调用都是空操作。
+- **怎么跑游戏代码**：`scripts/node/ts-hooks.mjs` 让 Node 直接 import `src/` 里的 TS（去掉类型、补全扩展名）。美术挂载换成桩：`stubs/EnemyArt.mjs` 按发布 GLB 的节点层级和 TRS 搭出同名骨架，交给真实的 `NativePose`，所以骨骼静止朝向与游戏里一致。特效、音效、伤害调用都是空操作。
 - **场景脚本**：
   - **Idle**：关掉 AI，原地站立，自动找首尾最接近的一段做成无缝循环。
   - **Move**：玩家始终保持在 30 米外，取稳定移动的一段找循环点，并记下录制时的移动速度。

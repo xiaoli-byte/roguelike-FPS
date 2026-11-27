@@ -107,7 +107,7 @@
 |---|---|---|
 | **F 地基** | 第 2 节全部契约；RunPlan 第四章；fx-style 第四章底色；材质改非金属；平衡模型第四章 | `Combat/Charge*`、`World/{Conductor,LightningStrike,PlateauStorm,WindField}*`、`Bosses/{BreakBar,LordScaling}*`；共享改动：`BossBrain`、`BossDef`、`WeatherDirector`、`RunPlan`、`BuildOrder`、`SpawnThemes`、`TelegraphTone`、`EconomyConfig`、`BalanceModel`、首领血条 UI |
 | **M1 地图 4-1** | 600 × 500 m 开放盆地；7 据点 + 出生 + 垭口；天路、牧道、河谷、山脊高路；冰川河、圣湖、冰湖；地标白盒；风雪软边界；6 座灵火坛（3 处开垭口）；风场吸向飞廉；7 处遇敌 + 穷奇游猎线；三领主擂台的锚点和场地件位置；先写 `maps/4-1.md` | `Pipeline/Editor/Levels/Level_4_1.cs`、`LevelKit.Plateau.cs`（新分部）、`docs/level-design/maps/4-1.md`、4-1 地图套件 |
-| **E 雷魅** | 八只雷魅 + 雷牦 + 穷奇的 AI、受击、四种死法、带电互动（电网、比翼电弧、雷标、雷石电场）；采样配置 + 招牌招式手 K；特效；穷奇按精英走 EliteStrike；先写设计单 | `Enemies/AI/Plateau/**`、第四章 EnemyDef、`scripts/unity/bake/SK_Enemy_{Marmot,Tiangou,Aoyin,Jufu,Manman,Dijiang,Qiongqi}.mjs`、连鼓灵部件组装、`Fx/Fx.Plateau.cs`、`docs/art/vfx/foes-ch4.md`、`plateau-foes` / `beats-ch4-foes` 套件 |
+| **E 雷魅** | 八只雷魅 + 雷牦 + 穷奇的 AI、受击、四种死法、带电互动（电网、比翼电弧、雷标、雷石电场）；采样配置 + 招牌招式手 K；特效；穷奇按精英走 EliteStrike；先写设计单 | `Enemies/AI/Plateau/**`、第四章 EnemyDef、`scripts/anim/bake/SK_Enemy_{Marmot,Tiangou,Aoyin,Jufu,Manman,Dijiang,Qiongqi}.mjs`、连鼓灵部件组装、`Fx/Fx.Plateau.cs`、`docs/art/vfx/foes-ch4.md`、`plateau-foes` / `beats-ch4-foes` 套件 |
 | **B1 4-1 三领主** | 夔、飞廉、化蛇：BossDef / Brain / Moves；登场按 ch4-boss-intros.json 进 BossIntroDirector；场地机制（经幡杆回劈、风场与龙卷 / 火龙卷、湖面涨水与湿身导电）；破防；死亡演出；手 K + 特效；先写设计单 | `Bosses/{Kui,Feilian,Huashe}/**`、`Fx/Fx.{Kui,Feilian,Huashe}.cs`、`art/source/characters/SK_Boss_{Kui,Feilian,Huashe}/anim/**`、`docs/art/vfx/{kui,feilian,huashe}.md`、`boss-kui` / `boss-feilian` / `boss-huashe` 套件 |
 
 ### 第二期（第一期的地基落地、第二批收尾结束后）

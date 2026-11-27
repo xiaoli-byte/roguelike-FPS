@@ -1,0 +1,93 @@
+{
+  "about": "SK_Boss_Kui 的出手事件（归一化时刻 0–1），照 docs/art/ch4-move-events.json 的 clips 抄（去掉 warn / end）；手 K 片段的节拍事件由 art/source/characters/SK_Boss_Kui/anim/*_anims.py 并进来。NativeClipBuilder 写成 OnAnimEvent。",
+  "clips": {
+    "hop": [
+      {
+        "at": 0.773,
+        "name": "land"
+      }
+    ],
+    "leap": [
+      {
+        "at": 0.192,
+        "name": "glint"
+      },
+      {
+        "at": 0.692,
+        "name": "land"
+      }
+    ],
+    "leapChain": [
+      {
+        "at": 0.808,
+        "name": "land"
+      }
+    ],
+    "turnLeap": [
+      {
+        "at": 0.727,
+        "name": "land"
+      }
+    ],
+    "knuckle": [
+      {
+        "at": 0.333,
+        "name": "step"
+      },
+      {
+        "at": 0.667,
+        "name": "step"
+      },
+      {
+        "at": 1,
+        "name": "step"
+      }
+    ],
+    "clap": [
+      {
+        "at": 0.25,
+        "name": "glint"
+      },
+      {
+        "at": 0.429,
+        "name": "hit"
+      }
+    ],
+    "drum": [
+      {
+        "at": 0.222,
+        "name": "beat"
+      },
+      {
+        "at": 0.389,
+        "name": "beat"
+      },
+      {
+        "at": 0.556,
+        "name": "beat"
+      }
+    ],
+    "drum5": [
+      {
+        "at": 0.167,
+        "name": "beat"
+      },
+      {
+        "at": 0.292,
+        "name": "beat"
+      },
+      {
+        "at": 0.417,
+        "name": "beat"
+      },
+      {
+        "at": 0.542,
+        "name": "beat"
+      },
+      {
+        "at": 0.667,
+        "name": "beat"
+      }
+    ]
+  }
+}

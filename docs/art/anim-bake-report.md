@@ -7,9 +7,9 @@
 
 ```bash
 # 1) 采样（Node，几十秒；输出可再生成、不入库）
-node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs            # 全部
-node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs tuo SK_Boss_Warlord
-BAKE_VERBOSE=1 node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs qingniao   # 打印每个强制场景的状态序列
+node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs            # 全部
+node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs tuo SK_Boss_Warlord
+BAKE_VERBOSE=1 node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs qingniao   # 打印每个强制场景的状态序列
 
 # 2) 片段 + AC_ 状态机 + 弹簧链（Unity：Spiritfire ▸ Art ▸ Sync All）
 bash scripts/unity/bridge.sh sync
@@ -23,7 +23,7 @@ bash scripts/unity/bridge.sh sheets      # 可选：动作审核图 Assets/Art/_
 
 | 项 | 做法 |
 |---|---|
-| 每个资产一份采样配置 | `scripts/unity/bake/<资产 ID>.mjs`（下划线开头的文件不当配置）。原来写死在采样器里的 `IDLE_STATE / IDLE_LOOP_MAX / ALLIES / BOSSES` 全部搬进各自的文件；字段说明在 `bake-native-anims.mjs` 文件头 |
+| 每个资产一份采样配置 | `scripts/anim/bake/<资产 ID>.mjs`（下划线开头的文件不当配置）。原来写死在采样器里的 `IDLE_STATE / IDLE_LOOP_MAX / ALLIES / BOSSES` 全部搬进各自的文件；字段说明在 `bake-native-anims.mjs` 文件头 |
 | 强制进入状态 | `scenes[]`：`start` 直接调 AI 自己的入口（`beginLunge`、`startScreech`、`breakClaw`、`beginRoar`……与游戏里是同一段代码），`step` 每帧保持条件，`label` 给叠在状态上的演出起名（狐巫碎镜尖啸、祸斗吠叫），`loops` 把持续型状态切成无缝循环，`inPlace` 去掉离地高度（攀爬、坠落由玩法抬 / 降根节点） |
 | 场景道具 | `props`：`box`（高台、矮墙）、`pillar`（栖柱）、`lava`（熔岩掩码，同 `StageDirector.lavaSystem.lava`，导航同步避开）、`fire`（`FireFeed.registerFloorFire` 地火）、`ally`（友军桩，可冻住 AI、可设剩余血量） |
 | 采样器修正 | 玩家桩的 `isDashing / onGround / isLunging` 显式给值：以前 lenient 代理把 `isDashing` 当成空函数（真值），马面的钩子永远钩不中、拖拽一开始就判「冲刺逃脱」——现在自然出招就能录到 `drag` |
@@ -95,7 +95,7 @@ bash scripts/unity/bridge.sh sheets      # 可选：动作审核图 Assets/Art/_
 动作全在 `anim.ts` 的 `CreatureAnimator`（步态 + 受击 / 硬直 / 眩晕层）和 `poses.ts` 的招式姿势表里，输入只是一份 `AnimState`（move / phase / flap / … / pose / stage / k）加连续时间 t。
 所以第四章不跑 AI，改成**按招式时间轴推 AnimState** 采样：
 
-- 共用工具 `scripts/unity/bake/_plateau.mjs`（下划线开头 = 工具不是配置），雷魅（E 路）和领主（B 路）都用它；
+- 共用工具 `scripts/anim/bake/_plateau.mjs`（下划线开头 = 工具不是配置），雷魅（E 路）和领主（B 路）都用它；
   `bake-native-anims.mjs` 主流程只加了一个分支：配置里有 `plateau` 字段的资产走它（不再要求 `getEnemyEntry` 注册过），其余照旧。
 - 骨架、参照系、找循环点、切片段与原来完全同一套（`buildSkeleton` / `sample` / `findLoop` / `clipFrom` 由主流程传进去），输出同样的 `native-anim.json`。
 - 招式秒数默认取 `docs/art/ch4-move-events.json` 的 `moves`（windup / active / recover），每招录一段 = 三段之和，状态名 = 招式 id。
@@ -117,10 +117,10 @@ bash scripts/unity/bridge.sh sheets      # 可选：动作审核图 Assets/Art/_
 飞廉的低头冲撞在出手段跑步态）。这两份已在本机试采通过（夔 15 段、飞廉 15 段，各 0.1–0.2 s），配置本身归 B 路：
 
 ```js
-// scripts/unity/bake/SK_Boss_Kui.mjs
+// scripts/anim/bake/SK_Boss_Kui.mjs
 export default { plateau: { gait: 'kui', gaits: null, lead: { leapChain: ['leap', 1.2] } } };
 
-// scripts/unity/bake/SK_Boss_Feilian.mjs
+// scripts/anim/bake/SK_Boss_Feilian.mjs
 export default {
   plateau: {
     gait: 'quad', speed: 24, stride: 2.4,
@@ -131,7 +131,7 @@ export default {
 };
 ```
 
-第四章雷魅的采样结果（`node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs SK_Enemy_Marmot …`，七个资产共约 2 s）：
+第四章雷魅的采样结果（`node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs SK_Enemy_Marmot …`，七个资产共约 2 s）：
 
 | 资产 | 片段 |
 |---|---|

@@ -22,7 +22,7 @@ const V = (x, y, z) => ({ x, y, z });
 const Pr = 0.4;
 const def = new WarlordDef();
 
-const EVENTS_URL = new URL('../unity/Assets/Art/Characters/SK_Boss_Warlord/Anim/SK_Boss_Warlord.events.json', import.meta.url);
+const EVENTS_URL = new URL('../art/anim/SK_Boss_Warlord.events.json', import.meta.url);
 const unityEvents = await readFile(EVENTS_URL, 'utf8').then(t => JSON.parse(t).clips).catch(() => null);
 /** Unity 事件表里某段片段第一个名为 name 的事件的归一化时刻 */
 const uAt = (clip, name) => unityEvents?.[clip]?.events.find(e => e.name === name)?.at ?? NaN;

@@ -1,7 +1,7 @@
 // 原生骨架敌人的程序动画 → Unity 动画片段数据（离线采样）。
 //
-//   node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs            全部原生骨架敌人 / Boss / 英雄
-//   node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs fuzhu qingniao SK_Boss_Kun
+//   node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs            全部原生骨架敌人 / Boss / 英雄
+//   node --import ./scripts/node/register.mjs scripts/anim/bake-native-anims.mjs fuzhu qingniao SK_Boss_Kun
 //
 // Three.js 版每只怪的动作都是逐帧的程序动画（状态机 + 阻尼参数 + 步态相位 + IK），GLB 里没有关键帧。
 // 这里在 Node 里跑真实的敌人代码（真实 EnemyBase / StandardEnemy / NativePose / 碰撞 / 导航，特效与音效是空桩），
@@ -66,7 +66,7 @@ const { registerStandardEnemies } = await import('../../src/enemies/index.ts');
 const { getEnemyEntry } = await import('../../src/enemies/Registry.ts');
 const { attackDirector } = await import('../../src/enemies/AttackTokens.ts');
 const { registerFloorFire } = await import('../../src/enemies/inferno/FireFeed.ts');
-const { findNativeAsset, buildSkeleton } = await import('./stubs/EnemyArt.mjs');
+const { findNativeAsset, buildSkeleton } = await import('../node/stubs/EnemyArt.mjs');
 registerStandardEnemies();
 
 const noop = () => {};
@@ -686,7 +686,8 @@ const targets = Object.entries(manifest)
 
 let failed = 0;
 function write(t, r, t0) {
-  const out = new URL(`unity/Assets/Art/Characters/${t.id}/Anim/`, ROOT);
+  // 采样中间件（不入库，art/source/**/_tmp/ 已在 .gitignore）：scripts/web/export-native-anims.mjs 从这里读
+  const out = new URL(`art/source/characters/${t.id}/anim/_tmp/`, ROOT);
   mkdirSync(out, { recursive: true });
   const doc = { schema: 1, asset: t.id, defId: t.defId, fps: FPS, bones: r.bones, sockets: r.sockets, socketScale: r.socketScale, rest: r.rest.map((x) => Math.round(x * 1e5) / 1e5),
     clips: r.clips, notes: r.notes, baked: new Date().toISOString() };

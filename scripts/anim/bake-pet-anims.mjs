@@ -1,7 +1,7 @@
 // 灵宠的程序动画 → Unity 动画片段数据（native-anim.json，与 bake-native-anims.mjs 同一格式，下游 NativeClipBuilder / CreatureRig 不改）。
 //
-//   node --import ./scripts/unity/register.mjs scripts/unity/bake-pet-anims.mjs                      全部 8 只（发布 GLB → Unity 目录）
-//   node --import ./scripts/unity/register.mjs scripts/unity/bake-pet-anims.mjs dangkang zheng        指定几只（SK_Pet_X / x / 中文名）
+//   node --import ./scripts/node/register.mjs scripts/anim/bake-pet-anims.mjs                      全部 8 只（发布 GLB → Unity 目录）
+//   node --import ./scripts/node/register.mjs scripts/anim/bake-pet-anims.mjs dangkang zheng        指定几只（SK_Pet_X / x / 中文名）
 //   ... bake-pet-anims.mjs huan --from-export                       发布前：用最新的构建导出 art/source/characters/<ID>/04_export/<ID>_native_vNNN.glb
 //   ... bake-pet-anims.mjs huan --from-export --out art/source/pets/_animtest      写到草稿目录（<目录>/<ID>.native-anim.json）
 //   ... bake-pet-anims.mjs huan --from-rig [rig.json] --out <目录>  只有骨骼表（creature_rigs/<ID>.json）时预览
@@ -13,7 +13,7 @@
 // 规则：循环片段严格周期（所有频率都是循环长度的整数倍，含收尾帧）；步态的步幅 × 频率 / 支撑比 = 记录的 speed
 // （CreatureRig 的脚锁才不会和片段打架）；支撑脚在静止踝高；没有 Hit；片段名不带下划线；招式不循环、回 Locomotion。
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { relative, resolve, sep } from 'node:path';
+import { relative, resolve, sep, dirname } from 'node:path';
 import * as THREE from 'three';
 import {
   rootPath, Skeleton, skeletonFromGlb, skeletonFromRigJson, latestExport, loadManifest,
@@ -903,10 +903,9 @@ if (opt.check.length) {
   process.exit(0);
 }
 
-const CHAR_DIR = rootPath('unity/Assets/Art/Characters');
-const insideChars = (p) => { const r = relative(CHAR_DIR, p); return r === '' || (!r.startsWith('..') && !r.includes(':')); };
+/** 正式输出：采样中间件（不入库，art/source 下的 _tmp 目录在 .gitignore 里），scripts/web/export-native-anims.mjs 从这里读 */
+const sampleFile = (id) => rootPath(`art/source/characters/${id}/anim/_tmp/${id}.native-anim.json`);
 if ((opt.skeleton || opt.fromRig) && !opt.out) usage('--skeleton / --from-rig 只能写草稿目录：请加 --out <目录>（例如 art/source/pets/_animtest）');
-if (opt.out && insideChars(resolve(opt.out))) usage(`--out 不能指向 unity/Assets/Art/Characters 之内（${opt.out}）；正式输出不加 --out`);
 
 const manifest = loadManifest();
 const targets = wantPets.length ? wantPets.map((q) => findPet(q) ?? usage(`不认识的灵宠 ${q}（${Object.values(PETS).map((s) => s.key).join(' / ')}）`)) : Object.entries(PETS);
@@ -943,15 +942,10 @@ for (const [id, spec] of targets) {
       mkdirSync(dir, { recursive: true });
       file = `${dir}${sep}${id}${opt.skeleton ? `@${opt.skeleton}` : opt.fromRig ? '@rig' : ''}.native-anim.json`;
     } else {
-      const assetDir = `${CHAR_DIR}${sep}${id}`;
-      if (!existsSync(assetDir)) {
-        throw new Error(`Unity 里还没有 ${id}（unity/Assets/Art/Characters/${id}/ 不存在）：先发布并运行 python art/pipeline/unity_export.py ${id}；`
-          + '想先看效果就加 --out art/source/pets/_animtest');
-      }
-      mkdirSync(`${assetDir}${sep}Anim`, { recursive: true });
-      file = `${assetDir}${sep}Anim${sep}${id}.native-anim.json`;
+      if (!manifest[id]) throw new Error(`${id} 还没发布到 public/assets/manifest.json：先发布；想先看效果就加 --out art/source/pets/_animtest`);
+      file = sampleFile(id);
+      mkdirSync(dirname(file), { recursive: true });
     }
-    if (insideChars(file) && !(/^SK_Pet_/.test(id) && file.includes(`${sep}${id}${sep}Anim${sep}`) && !opt.skeleton && !opt.fromRig)) throw new Error(`拒绝写入 ${file}`);
     writeFileSync(file, JSON.stringify(doc));
     const names = Object.entries(doc.clips).map(([k, c]) => `${k}(${((c.frames.length - 1) / FPS).toFixed(2)}s${c.loop ? '↻' : ''}${c.next ? '→' + c.next : ''})`);
     console.log(`${id} ${spec.name}: ${names.join(' ')}  → ${relative(rootPath('.'), file)}  [${((Date.now() - t0) / 1000).toFixed(1)}s]`);

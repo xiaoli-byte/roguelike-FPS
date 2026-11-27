@@ -1,6 +1,6 @@
 // Node 模块钩子：让 Node 直接 import 游戏的 TS 源码（离线采样用，不经过 Vite）。
 // - resolve：src/ 里的 import 不带扩展名（'../core/math'），依次尝试 .ts / /index.ts；
-//   STUBS 里登记的模块（美术挂载等依赖浏览器 / GLB 加载的部分）换成 scripts/unity/stubs/ 下的桩。
+//   STUBS 里登记的模块（美术挂载等依赖浏览器 / GLB 加载的部分）换成 scripts/node/stubs/ 下的桩。
 // - load：.ts 源码用 Node 自带的 stripTypeScriptTypes（transform 模式，支持 enum / 参数属性）去掉类型。
 import { existsSync, readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';

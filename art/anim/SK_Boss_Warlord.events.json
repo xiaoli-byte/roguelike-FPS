@@ -1,0 +1,747 @@
+{
+  "schema": 1,
+  "about": "熔心魔将（人形骨架）的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。片段是手工关键帧，本文件和 FBX 都由 art/source/characters/SK_Boss_Warlord/anim/warlord_anims_humanoid.py 生成（姿势 / 片段表在 warlord_poses.py），别手改；at = 片段内归一化时刻。hit / impact = 释放帧（刀到 / 落地 / 插剑 / 收刀 / 竖劈 / 第二圈），smear / smearEnd = 大剑拖影起止，dash = 居合拔刀突进，fx:windup = 起手，step = 踏步，brake = 刹停，takeoff = 起跳，cast = 号令天火，gather / roar = 咆哮，kneel / collapse = 倒下，glare = 登场抬头；speed = 步态录制速度（混合树阈值）；fx:*Warning 只是标注预警从哪一帧画",
+  "clips": {
+    "sweepReady": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.2692,
+          "name": "fx:windup"
+        }
+      ],
+      "loop": false,
+      "next": "sweep"
+    },
+    "sweep": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "smear"
+        },
+        {
+          "at": 0.0417,
+          "name": "hit"
+        },
+        {
+          "at": 0.0417,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.25,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "sweepReady2": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.0,
+          "name": "fx:windup"
+        }
+      ],
+      "loop": false,
+      "next": "sweepBack"
+    },
+    "sweepBack": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "smear"
+        },
+        {
+          "at": 0.0417,
+          "name": "hit"
+        },
+        {
+          "at": 0.0417,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.25,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "slashA": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.08,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.52,
+          "name": "smear"
+        },
+        {
+          "at": 0.6,
+          "name": "hit"
+        },
+        {
+          "at": 0.6,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.72,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "slashB": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.08,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.52,
+          "name": "smear"
+        },
+        {
+          "at": 0.6,
+          "name": "hit"
+        },
+        {
+          "at": 0.6,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.72,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "slashC": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.08,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.52,
+          "name": "smear"
+        },
+        {
+          "at": 0.6,
+          "name": "hit"
+        },
+        {
+          "at": 0.6,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.64,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.72,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "chargeReady": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:lineWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.2963,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.7407,
+          "name": "step"
+        }
+      ],
+      "loop": false,
+      "next": "charge"
+    },
+    "charge": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.0278,
+          "name": "hitOpen"
+        },
+        {
+          "at": 0.0,
+          "name": "step"
+        },
+        {
+          "at": 0.1667,
+          "name": "step"
+        },
+        {
+          "at": 0.3333,
+          "name": "step"
+        },
+        {
+          "at": 0.5,
+          "name": "step"
+        },
+        {
+          "at": 0.6667,
+          "name": "step"
+        },
+        {
+          "at": 0.8333,
+          "name": "step"
+        }
+      ],
+      "loop": false
+    },
+    "chargeStop": {
+      "events": [
+        {
+          "at": 0.1333,
+          "name": "brake"
+        },
+        {
+          "at": 0.1333,
+          "name": "sfx:boss_slam"
+        }
+      ],
+      "loop": false
+    },
+    "crash": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "impact"
+        },
+        {
+          "at": 0.0333,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.0333,
+          "name": "sfx:boss_slam"
+        }
+      ],
+      "loop": false
+    },
+    "crouch": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:groundWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.2667,
+          "name": "fx:windup"
+        }
+      ],
+      "loop": false,
+      "next": "leap"
+    },
+    "leap": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:jump"
+        },
+        {
+          "at": 0.0,
+          "name": "takeoff"
+        },
+        {
+          "at": 0.619,
+          "name": "smear"
+        }
+      ],
+      "loop": false
+    },
+    "land": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "hit"
+        },
+        {
+          "at": 0.0,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:boss_slam"
+        },
+        {
+          "at": 0.0417,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "raise": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:boss_roar"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.1389,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.3333,
+          "name": "cast"
+        }
+      ],
+      "loop": false
+    },
+    "plant": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:boss_roar"
+        },
+        {
+          "at": 0.1026,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.359,
+          "name": "hit"
+        },
+        {
+          "at": 0.359,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.359,
+          "name": "sfx:boss_slam"
+        }
+      ],
+      "loop": false
+    },
+    "roar": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:boss_roar"
+        },
+        {
+          "at": 0.1667,
+          "name": "gather"
+        },
+        {
+          "at": 0.3056,
+          "name": "roar"
+        },
+        {
+          "at": 0.3056,
+          "name": "fx:shake"
+        }
+      ],
+      "loop": false
+    },
+    "Hit": {
+      "events": [],
+      "loop": false
+    },
+    "fall": {
+      "events": [],
+      "loop": true
+    },
+    "death": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:boss_roar"
+        },
+        {
+          "at": 0.4167,
+          "name": "kneel"
+        },
+        {
+          "at": 0.4167,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.875,
+          "name": "collapse"
+        },
+        {
+          "at": 0.875,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.875,
+          "name": "sfx:boss_slam"
+        }
+      ],
+      "loop": false
+    },
+    "Idle": {
+      "events": [],
+      "loop": true
+    },
+    "Walk": {
+      "events": [
+        {
+          "at": 0.0192,
+          "name": "sfx:footstep"
+        },
+        {
+          "at": 0.5192,
+          "name": "sfx:footstep"
+        }
+      ],
+      "loop": true,
+      "speed": 2.3
+    },
+    "Move": {
+      "events": [
+        {
+          "at": 0.0227,
+          "name": "sfx:footstep"
+        },
+        {
+          "at": 0.5227,
+          "name": "sfx:footstep"
+        }
+      ],
+      "loop": true,
+      "speed": 4.6
+    },
+    "introLand": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "hit"
+        },
+        {
+          "at": 0.0417,
+          "name": "smearEnd"
+        },
+        {
+          "at": 0.75,
+          "name": "glare"
+        }
+      ],
+      "loop": false
+    },
+    "iai": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:lineWarning"
+        },
+        {
+          "at": 0.125,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.4792,
+          "name": "smear"
+        },
+        {
+          "at": 0.5,
+          "name": "dash"
+        },
+        {
+          "at": 0.5,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.5625,
+          "name": "smearEnd"
+        },
+        {
+          "at": 0.75,
+          "name": "hit"
+        }
+      ],
+      "loop": false
+    },
+    "waveSlash": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:lineWarning"
+        },
+        {
+          "at": 0.1333,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.6,
+          "name": "smear"
+        },
+        {
+          "at": 0.6333,
+          "name": "hit"
+        },
+        {
+          "at": 0.6333,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.7333,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "waveCross": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:lineWarning"
+        },
+        {
+          "at": 0.15,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.35,
+          "name": "smear"
+        },
+        {
+          "at": 0.375,
+          "name": "hit"
+        },
+        {
+          "at": 0.375,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.425,
+          "name": "smearEnd"
+        },
+        {
+          "at": 0.55,
+          "name": "smear"
+        },
+        {
+          "at": 0.575,
+          "name": "impact"
+        },
+        {
+          "at": 0.575,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.65,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "thrustReady": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:lineWarning"
+        },
+        {
+          "at": 0.3333,
+          "name": "fx:windup"
+        }
+      ],
+      "loop": false,
+      "next": "thrust"
+    },
+    "thrust": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.0,
+          "name": "step"
+        },
+        {
+          "at": 0.25,
+          "name": "step"
+        },
+        {
+          "at": 0.5,
+          "name": "step"
+        },
+        {
+          "at": 0.75,
+          "name": "step"
+        }
+      ],
+      "loop": false
+    },
+    "thrustCut": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.4074,
+          "name": "smear"
+        },
+        {
+          "at": 0.4444,
+          "name": "hit"
+        },
+        {
+          "at": 0.4444,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.5556,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "spin": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:groundWarning"
+        },
+        {
+          "at": 0.2222,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.4444,
+          "name": "smear"
+        },
+        {
+          "at": 0.5,
+          "name": "hit"
+        },
+        {
+          "at": 0.5,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.6667,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "spinTwice": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:groundWarning"
+        },
+        {
+          "at": 0.1481,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.2963,
+          "name": "smear"
+        },
+        {
+          "at": 0.3333,
+          "name": "hit"
+        },
+        {
+          "at": 0.3333,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.463,
+          "name": "smearEnd"
+        },
+        {
+          "at": 0.5556,
+          "name": "smear"
+        },
+        {
+          "at": 0.5926,
+          "name": "impact"
+        },
+        {
+          "at": 0.5926,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.7037,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    },
+    "slashUp": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.08,
+          "name": "fx:windup"
+        },
+        {
+          "at": 0.52,
+          "name": "smear"
+        },
+        {
+          "at": 0.6,
+          "name": "hit"
+        },
+        {
+          "at": 0.6,
+          "name": "sfx:blade_swing"
+        },
+        {
+          "at": 0.72,
+          "name": "smearEnd"
+        }
+      ],
+      "loop": false
+    }
+  }
+}

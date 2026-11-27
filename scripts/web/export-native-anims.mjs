@@ -3,15 +3,14 @@
 //   node scripts/web/export-native-anims.mjs                    全部
 //   node scripts/web/export-native-anims.mjs SK_Enemy_Fuzhu     只转这几个
 //   node scripts/web/export-native-anims.mjs --check            只核对发布的文件是不是由当前源数据生成的（不写）
-//   --unity <目录>   Unity 工程目录（默认本仓库的 unity/；在 git worktree 里、本仓库没有 native-anim 时退到主工作区的 unity/）
 //
-// 输入（每个资产 unity/Assets/Art/Characters/<资产>/Anim/）：
-//   <资产>.native-anim.json   scripts/unity/bake-native-anims.mjs 在 Node 里跑网页敌人代码逐帧采的骨骼姿势（模型空间，30 fps，
-//                             不入库、可再生成）
-//   <资产>.events.json        事件叠加表（入库，手写）：补事件 / 替换事件 / 改连段 next、循环 loop、录制速度 speed
-//   AC_<资产>.controller      Unity 状态机（入库）：网页 AnimatorStateMachine 照它的拓扑与转换时长跑，不另写一份
-//   *.anim.meta               片段 guid → 片段名（控制器里按 guid 引用片段）
-//   Keyframed/*.fbx.meta      Unity 用 Blender 手 K 片段替换了哪些状态（这些状态网页暂用采样片段，清单里标出来）
+// 输入（2026-11-27 起不读 unity/）：
+//   art/source/characters/<资产>/anim/_tmp/<资产>.native-anim.json   scripts/anim/bake-native-anims.mjs / bake-pet-anims.mjs 在 Node 里
+//                             跑网页代码逐帧采的骨骼姿势（模型空间，30 fps，不入库、可再生成；git worktree 里没有就退到主工作区的同一路径）
+//   art/anim/<资产>.events.json   事件叠加表（入库，手写）：补事件 / 替换事件 / 改连段 next、循环 loop、录制速度 speed
+//   public/assets/anim/<资产>.json 的 controller   状态机（参数 / 层 / 状态 / 转换 / 混合树）：原来从 Unity 的 AC_<资产>.controller 读，
+//                             Unity 删除后以已发布的这份为源头原样带过去（要改状态机就直接改发布文件里的 controller）
+//   同一份发布文件里标了 keyframed 的状态   Blender 手 K 片段替换了哪些状态（原来读 Unity 的 Keyframed/*.fbx.meta）
 //   public/assets/characters/<资产>.glb   绑定骨架（节点层级与静止 TRS；和 Unity 那份 FBX 是同一个源 GLB）
 //
 // 换算照 Unity 的 NativeClipBuilder（去掉 glTF → Unity 的 X 镜像，网页本来就在 glTF 空间）：
@@ -29,7 +28,7 @@
 //           朝向 Int16（×32767），位置 Float32。关键帧按 Unity Reduce 的贪心规则精简，容差收紧到朝向分量 0.0005、位置 0.0003 m
 //           （Unity 用 0.0015 / 0.0008：长尾巴梢端累积到 1.5 cm；收紧后全量 3.5 MB、最大误差约 4 mm / 0.6°），
 //           资产里任何一个片段动过的骨骼，每个片段都写（不动的写 1 帧），切换片段时不会落回别的片段的姿势
-//   controller  AC_<资产>.controller 读出来的参数 / 层 / 状态 / 转换 / 混合树
+//   controller  状态机（参数 / 层 / 状态 / 转换 / 混合树；源头见上）
 //
 // 为什么不嵌进 GLB：角色 GLB 是美术管线的产物（Unity 的 *.art.json 记着它们的哈希，350/350 对得上），
 // 往里塞动画会让每次重采样都改一遍 1–2 MB 的模型文件；事件、连段、状态机也没有 glTF 的标准位置。单独的 JSON 小、可读、可核对。
@@ -38,7 +37,6 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
-import { readAnimatorController, readMetaGuid } from './unity-yaml.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT_DIR = join(ROOT, 'public/assets/anim');
@@ -50,12 +48,7 @@ const POS_MOVES_SQ = 1e-8;
 // ───────────── 参数 ─────────────
 const args = process.argv.slice(2);
 const check = args.includes('--check');
-let unityArg = null;
-const want = [];
-for (let i = 0; i < args.length; i++) {
-  if (args[i] === '--unity') unityArg = args[++i];
-  else if (!args[i].startsWith('--')) want.push(args[i]);
-}
+const want = args.filter((a) => !a.startsWith('--'));
 
 /** 主工作区：本仓库是 git worktree 时 .git 是个文件（gitdir: <主仓库>/.git/worktrees/<名>） */
 function mainCheckout() {
@@ -70,19 +63,26 @@ function mainCheckout() {
   }
 }
 
-const hasNative = (unityDir) => {
-  const chars = join(unityDir, 'Assets/Art/Characters');
-  return existsSync(chars) && readdirSync(chars).some((id) => existsSync(join(chars, id, 'Anim', `${id}.native-anim.json`)));
+/** 采样中间件（不入库）：本仓库的 art/source/characters/<资产>/anim/_tmp/；git worktree 里没有就退到主工作区的同一路径 */
+const SAMPLE_ROOTS = [ROOT, mainCheckout()].filter(Boolean).map((r) => join(r, 'art/source/characters'));
+const samplePath = (id) => {
+  for (const r of SAMPLE_ROOTS) {
+    const f = join(r, id, 'anim/_tmp', `${id}.native-anim.json`);
+    if (existsSync(f)) return f;
+  }
+  return null;
 };
-
-function pickUnityDir() {
-  if (unityArg) return resolve(unityArg);
-  const own = join(ROOT, 'unity');
-  if (hasNative(own)) return own;
-  const main = mainCheckout();
-  if (main && hasNative(join(main, 'unity'))) return join(main, 'unity');
-  throw new Error('找不到 *.native-anim.json（不入库，先跑 scripts/unity/bake-native-anims.mjs，或用 --unity 指定 Unity 工程目录）');
+/** 有采样中间件的资产（各根目录合起来） */
+function sampledIds() {
+  const ids = new Set();
+  for (const r of SAMPLE_ROOTS) {
+    if (!existsSync(r)) continue;
+    for (const id of readdirSync(r)) if (existsSync(join(r, id, 'anim/_tmp', `${id}.native-anim.json`))) ids.add(id);
+  }
+  return ids;
 }
+/** 事件叠加表（入库） */
+const overlayPathOf = (id) => join(ROOT, 'art/anim', `${id}.events.json`);
 
 // ───────────── GLB ─────────────
 function readGlbJson(path) {
@@ -193,11 +193,10 @@ function boundDefId(id) {
   }
 }
 
-function exportAsset(unityDir, id, warn) {
-  const animDir = join(unityDir, 'Assets/Art/Characters', id, 'Anim');
-  const nativePath = join(animDir, `${id}.native-anim.json`);
+function exportAsset(id, warn) {
+  const nativePath = samplePath(id);
   const dumpPath = keyframedDumpPath(id);
-  const srcText = existsSync(nativePath) ? readFileSync(nativePath, 'utf8') : null;
+  const srcText = nativePath ? readFileSync(nativePath, 'utf8') : null;
   const kdText = existsSync(dumpPath) ? readFileSync(dumpPath, 'utf8') : null;
   const native = srcText ? JSON.parse(srcText) : null;
   const kd = kdText ? JSON.parse(kdText) : null;
@@ -321,15 +320,14 @@ function exportAsset(unityDir, id, warn) {
 
   // 事件叠加表、手 K 替换表
   let overlay = {};
-  const overlayPath = join(animDir, `${id}.events.json`);
+  const overlayPath = overlayPathOf(id);
   if (existsSync(overlayPath)) {
     try { overlay = JSON.parse(readFileSync(overlayPath, 'utf8')).clips ?? {}; } catch (e) { warn(`${id}: 事件叠加表读不了（${e.message}），忽略`); }
   }
-  const keyDir = join(animDir, 'Keyframed');
-  const keyframed = existsSync(keyDir)
-    ? [...new Set(readdirSync(keyDir).filter((n) => /\.fbx(\.meta)?$/i.test(n)).map((n) => stateName(n.replace(/\.fbx(\.meta)?$/i, ''))))].sort()
-    : [];
-  if (kd) for (const k of keyframed) if (!kdClips[k]) warn(`${id}: Unity 有手 K 片段 ${k}，Blender 中间件里没有`);
+  // 手 K 替换表与状态机：取已发布的这份（Unity 删除后它就是源头）
+  const published = existsSync(outFile) ? (() => { try { return JSON.parse(readFileSync(outFile, 'utf8')); } catch { return null; } })() : null;
+  const keyframed = Object.entries(published?.clips ?? {}).filter(([, c]) => c.unity === 'keyframed').map(([k]) => k).sort();
+  if (kd) for (const k of keyframed) if (!kdClips[k]) warn(`${id}: 发布文件标了手 K 片段 ${k}，Blender 中间件里没有`);
 
   // 逐片段、逐帧：模型空间 → 局部
   const n = all.length;
@@ -423,20 +421,9 @@ function exportAsset(unityDir, id, warn) {
   }
   for (const k of Object.keys(overlay)) if (!clips[k] && !keyframed.includes(k)) warn(`${id}: 叠加表里的状态 ${k} 没有片段，忽略`);
 
-  // 状态机：AC_<资产>.controller
-  let controller = null;
-  const acPath = join(animDir, `AC_${id}.controller`);
-  if (existsSync(acPath)) {
-    const guidToClip = new Map();
-    for (const f of readdirSync(animDir).filter((x) => x.endsWith('.anim.meta'))) {
-      const guid = readMetaGuid(readFileSync(join(animDir, f), 'utf8'));
-      const clip = f.replace(/\.anim\.meta$/, '');
-      if (guid) guidToClip.set(guid, clip.startsWith(`${id}_`) ? clip.slice(id.length + 1) : clip);
-    }
-    const { unknownClips, ...ac } = readAnimatorController(readFileSync(acPath, 'utf8'), guidToClip);
-    if (unknownClips.length) warn(`${id}: 控制器引用了 ${unknownClips.length} 个找不到 .meta 的片段`);
-    controller = ac;
-  } else warn(`${id}: 没有 AC_${id}.controller，状态机按 NativeClipBuilder 的规则现搭（网页运行时 buildDefaultController）`);
+  // 状态机：已发布文件里的 controller 原样带过去（原来从 Unity 的 AC_<资产>.controller 读）
+  const controller = published?.controller ?? null;
+  if (!controller) warn(`${id}: 发布文件里没有 controller，状态机按 NativeClipBuilder 的规则现搭（网页运行时 buildDefaultController）`);
 
   // 控制器里有、网页没片段的状态：只有手 K（Blender）来源，等 GLB 导出
   const used = new Set();
@@ -478,13 +465,12 @@ function exportAsset(unityDir, id, warn) {
 }
 
 // ───────────── 主流程 ─────────────
-const unityDir = pickUnityDir();
-const charsDir = join(unityDir, 'Assets/Art/Characters');
 // 有采样数据（native-anim）或有 Blender 手 K 中间件（旱魃、商人只有后者）的资产；发布过 Blender 片段的资产即使本机没有中间件也列进来（保留原文件）
 const publishedBlender = (id) => {
   try { return Object.values(JSON.parse(readFileSync(join(OUT_DIR, `${id}.json`), 'utf8')).clips ?? {}).some((c) => c.src === 'blender'); } catch { return false; }
 };
-const ids = readdirSync(charsDir).filter((id) => existsSync(join(charsDir, id, 'Anim', `${id}.native-anim.json`)) || existsSync(keyframedDumpPath(id)) || (existsSync(join(charsDir, id, 'Anim')) && publishedBlender(id))).sort();
+const ids = [...new Set([...sampledIds(), ...readdirSync(OUT_DIR).filter((f) => f.endsWith('.json') && f !== 'manifest.json').map((f) => f.replace(/\.json$/, ''))])]
+  .filter((id) => samplePath(id) || existsSync(keyframedDumpPath(id)) || publishedBlender(id)).sort();
 const targets = want.length ? ids.filter((id) => want.includes(id)) : ids;
 const warnings = [];
 const warn = (m) => warnings.push(m);
@@ -499,7 +485,7 @@ let stale = 0;
 const readLf = (path) => readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 mkdirSync(OUT_DIR, { recursive: true });
 for (const id of targets) {
-  const r = exportAsset(unityDir, id, warn);
+  const r = exportAsset(id, warn);
   if (r.keep) {
     if (prevManifest?.assets?.[id]) manifest.assets[id] = prevManifest.assets[id];
     warn(`${id}: ${r.keep}`);
@@ -524,13 +510,8 @@ for (const id of targets) {
   const i = r.info;
   console.log(`${id}: ${i.nativeClips} 片段${i.blenderClips ? ` + Blender ${i.blenderClips}` : ''}（${i.eventClips} 带事件）${i.keyframed.length ? `  手K替换 ${i.keyframed.join(',')}` : ''}${i.pending.length ? `  待导 ${i.pending.join(',')}` : ''}  ${(Buffer.byteLength(text) / 1024).toFixed(0)} KB  键 ${i.keys}${old === text ? '' : check ? '  ✘ 过期' : '  已写'}`);
 }
-// 只有手 K 片段、没有采样数据、也还没导过 Blender 中间件的资产
-for (const id of readdirSync(charsDir).sort()) {
-  if (ids.includes(id)) continue;
-  const kd = join(charsDir, id, 'Anim', 'Keyframed');
-  if (!existsSync(kd)) continue;
-  manifest.keyframedOnly[id] = [...new Set(readdirSync(kd).filter((n) => /\.fbx(\.meta)?$/i.test(n)).map((n) => stateName(n.replace(/\.fbx(\.meta)?$/i, ''))))].sort();
-}
+// 只有手 K 片段、没有采样数据、也还没导过 Blender 中间件的资产：原来扫 Unity 的 Keyframed/*.fbx，Unity 删除后沿用上一份清单里的记录
+if (prevManifest?.keyframedOnly) for (const [id, states] of Object.entries(prevManifest.keyframedOnly)) if (!ids.includes(id)) manifest.keyframedOnly[id] = states;
 const sortObj = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 manifest.assets = sortObj(manifest.assets);
 manifest.skipped = sortObj(manifest.skipped);
@@ -549,7 +530,7 @@ if (oldManifest !== mtext) {
   if (!check) writeFileSync(manifestPath, mtext);
 }
 for (const w of warnings) console.warn(`⚠ ${w}`);
-console.log(`源：${unityDir}`);
+console.log(`源：${SAMPLE_ROOTS.join('、')}（采样）、art/anim（事件叠加表）`);
 console.log(`合计 ${manifest.totals.assets} 个资产、${manifest.totals.nativeClips} 个采样片段（${manifest.totals.eventClips} 个带事件）、${(manifest.totals.bytes / 1048576).toFixed(2)} MB；跳过 ${Object.keys(manifest.skipped).length}`);
 if (check) {
   console.log(stale ? `✘ ${stale} 个文件和源数据对不上，重新跑一遍导出` : '✔ 发布的动画与源数据一致');

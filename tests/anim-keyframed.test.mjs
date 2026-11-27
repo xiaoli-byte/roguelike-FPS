@@ -16,12 +16,13 @@ import { anim, animData, buildSkeleton, loadOverlay, manifest, ROOT } from './an
 
 const M = manifest();
 const FRAME = 1 / 30;
-const CHARS = join(ROOT, 'unity/Assets/Art/Characters');
-const overlayIds = existsSync(CHARS)
-  ? readdirSync(CHARS).filter((id) => existsSync(join(CHARS, id, 'Anim', `${id}.events.json`))).sort()
-  : [];
+// 事件叠加表（入库，手写）：art/anim/<资产>.events.json（2026-11-27 从 unity/ 的角色目录搬来）
+const OVERLAYS = join(ROOT, 'art/anim');
+const overlayIds = readdirSync(OVERLAYS).filter((f) => f.endsWith('.events.json')).map((f) => f.replace(/\.events\.json$/, '')).sort();
+// Unity 删除前从 C# 冻结的动画规格（敌人 AI 播的状态 / 过渡秒数、鲲鹏 / 火麒麟招式的片段触发与顿帧）
+const ANIM_SPEC = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/spec/anim.json'), 'utf8'));
 
-test('叠加表：Unity events.json 的每个片段、每条事件都在发布的动画数据里，时刻 = 归一化时刻 × 片段长（≤ 1 ms）', { skip: overlayIds.length === 0 && '没有 unity/ 目录' }, () => {
+test('叠加表：Unity events.json 的每个片段、每条事件都在发布的动画数据里，时刻 = 归一化时刻 × 片段长（≤ 1 ms）', () => {
   let clips = 0, events = 0;
   const missing = [];
   for (const id of overlayIds) {
@@ -82,7 +83,6 @@ test('手 K 片段：鲲 7、鹏 13、火麒麟两形态各 10、旱魃 10、商
 // ───────────── 敌人类的片段表 ─────────────
 
 const TYPES = join(ROOT, 'src/enemies/types');
-const AI = join(ROOT, 'unity/Assets/Game/Scripts/Enemies');
 
 /** 解析 clipCues() 的返回表：AI 状态 → 片段状态名（'loco' = Locomotion） */
 function cueTable(src) {
@@ -121,14 +121,13 @@ test('片段表：前三章 27 种有片段的敌人都有 clipCues，引用的�
   assert.deepEqual(enemyAssets.filter((id) => !plateau.includes(id) && !cued.some((t) => t.asset === id)), []);
 });
 
-test('片段表：Unity 对应 AI 里 Play / PlayTimed / Act* 播的每个状态，网页敌人类都播（片段表或直接 playClip）', { skip: !existsSync(AI) && '没有 unity/ 目录' }, () => {
+test('片段表：Unity 对应 AI 里 Play / PlayTimed / Act* 播的每个状态，网页敌人类都播（片段表或直接 playClip）', () => {
   let checked = 0;
   for (const t of cued) {
-    const path = [join(AI, `${t.name}AI.cs`), join(AI, 'AI/Frost', `${t.name}AI.cs`), join(AI, 'AI/Inferno', `${t.name}AI.cs`)].find(existsSync);
-    assert.ok(path, `${t.name} 找不到 Unity AI`);
-    const cs = readFileSync(path, 'utf8');
+    const unityPlayed = ANIM_SPEC.aiPlayed[t.name];
+    assert.ok(unityPlayed, `${t.name} 找不到 Unity AI 的冻结规格`);
     const states = new Set(animData(t.asset).controller.layers[0].states.map((s) => s.name));
-    const played = new Set([...cs.matchAll(/\b(?:Play|PlayTimed|Act|ActTimed|ActOnce|ActLoop|Go|Enter)\(\s*"([a-z]\w*)"/g)].map((x) => x[1]).filter((s) => states.has(s)));
+    const played = new Set(unityPlayed.filter((s) => states.has(s)));
     const web = new Set([...Object.values(t.table), ...[...t.src.matchAll(/playClip\('(\w+)'/g)].map((x) => x[1])]);
     for (const s of played) {
       assert.ok(web.has(s), `${t.name}: Unity 播 ${s}，网页没有`);
@@ -138,16 +137,15 @@ test('片段表：Unity 对应 AI 里 Play / PlayTimed / Act* 播的每个状态
   assert.ok(checked > 60, `对照了 ${checked} 个状态`);
 });
 
-test('片段表的过渡秒数：第一章六种敌人与 Unity 的 Play / PlayTimed 实参逐个相同', { skip: !existsSync(AI) && '没有 unity/ 目录' }, () => {
+test('片段表的过渡秒数：第一章六种敌人与 Unity 的 Play / PlayTimed 实参逐个相同', () => {
   let n = 0;
   for (const name of ['FireRat', 'JerboaBlade', 'MirageToad', 'ScorpionArcher', 'TombBeast']) {
     const t = cued.find((x) => x.name === name);
-    const cs = readFileSync(join(AI, `${name}AI.cs`), 'utf8');
-    for (const m of cs.matchAll(/\bPlay(Timed)?\("([a-z]\w*)",(?:[^;]*?,)?\s*([\d.]+)f\);/g)) {
-      const line = new RegExp(`^\\s*${m[2]}: \\{[^}]*fade: ([\\d.]+)`, 'm').exec(t.src);
-      assert.ok(line, `${name}.${m[2]} 没有片段表项`);
-      assert.equal(Number(line[1]), Number(m[3]), `${name}.${m[2]} 过渡秒数`);
-      assert.equal(/secs:/.test(new RegExp(`^\\s*${m[2]}: \\{[^}]*\\}`, 'm').exec(t.src)[0]), !!m[1], `${name}.${m[2]} 是不是 PlayTimed`);
+    for (const u of ANIM_SPEC.aiFades[name]) {
+      const line = new RegExp(`^\\s*${u.state}: \\{[^}]*fade: ([\\d.]+)`, 'm').exec(t.src);
+      assert.ok(line, `${name}.${u.state} 没有片段表项`);
+      assert.equal(Number(line[1]), u.fade, `${name}.${u.state} 过渡秒数`);
+      assert.equal(/secs:/.test(new RegExp(`^\\s*${u.state}: \\{[^}]*\\}`, 'm').exec(t.src)[0]), u.timed, `${name}.${u.state} 是不是 PlayTimed`);
       n++;
     }
   }
@@ -406,8 +404,6 @@ test('鲲 / 鹏 / 火麒麟：招式播的动作名都有片段，招式等的�
 const KPP = await import('../src/enemies/bosses/KunPengPlans.ts');
 const { KunPengDef: KPDef } = await import('../src/enemies/bosses/KunPengDef.ts');
 const { KunPeng } = await import('../src/enemies/bosses/KunPeng.ts');
-const KP_UNITY = join(ROOT, 'unity/Assets/Game/Scripts/Bosses/KunPeng');
-const QL_UNITY = join(ROOT, 'unity/Assets/Game/Scripts/Bosses/Qilin');
 const bossSrc = (f) => readFileSync(join(ROOT, 'src/enemies/bosses', f), 'utf8');
 /** 片段里事件的归一化时刻（Unity events.json 的 at） */
 const evAt = (d, clip, name) => {
@@ -481,9 +477,8 @@ function actCalls(src, re) {
   return out;
 }
 
-test('鲲鹏：招式播哪些片段照 Unity KunPengMove.Act（控制器自己连段的扑咬 / 猛砸 / 破水和中途回待机只换程序化姿势）', { skip: !existsSync(KP_UNITY) && '没有 unity/ 目录' }, () => {
-  const unity = readdirSync(join(KP_UNITY, 'Moves')).filter((f) => f.endsWith('.cs') && f !== 'KunPengMove.cs')
-    .flatMap((f) => actCalls(readFileSync(join(KP_UNITY, 'Moves', f), 'utf8'), /\bAct\("(\w+)"([^;]*)\);/g).map((c) => c.state));
+test('鲲鹏：招式播哪些片段照 Unity KunPengMove.Act（控制器自己连段的扑咬 / 猛砸 / 破水和中途回待机只换程序化姿势）', () => {
+  const unity = ANIM_SPEC.kunpengActs;
   const web = bossSrc('KunPengMoves.ts');
   const acts = actCalls(web, /this\.act\('(\w+)'([^;]*)\);/g);
   const clipStates = [...acts.filter((c) => c.args[1] !== 'false').map((c) => c.state), ...actCalls(web, /this\.clipAct\('(\w+)'([^;]*)\);/g).map((c) => c.state)];
@@ -497,10 +492,9 @@ test('鲲鹏：招式播哪些片段照 Unity KunPengMove.Act（控制器自己�
   for (const s of clipStates) assert.ok(kun.clips[s] || peng.clips[s], `${s} 有片段`);
 });
 
-test('鲲鹏：释放帧顿帧与 Unity 同帧同秒数；顿帧把片段压到 ×0.05（≤ 0.12 s）、之后 ×1.6 追回，欠下的时间还清；没有片段时不顿', { skip: !existsSync(KP_UNITY) && '没有 unity/ 目录' }, () => {
+test('鲲鹏：释放帧顿帧与 Unity 同帧同秒数；顿帧把片段压到 ×0.05（≤ 0.12 s）、之后 ×1.6 追回，欠下的时间还清；没有片段时不顿', () => {
   const holds = (src, re) => [...src.matchAll(re)].map((m) => Number(m[1]));
-  const unity = [...readdirSync(join(KP_UNITY, 'Moves')).filter((f) => f.endsWith('.cs')).map((f) => join(KP_UNITY, 'Moves', f)), join(KP_UNITY, 'KunPengBrain.cs')]
-    .flatMap((p) => holds(readFileSync(p, 'utf8'), /ImpactHold\((\d*\.\d+)f\)/g)).sort();
+  const unity = [...ANIM_SPEC.kunpengHolds].sort();
   const web = [...holds(bossSrc('KunPengMoves.ts'), /impactHold\((\d*\.\d+)\)/g), ...holds(bossSrc('KunPeng.ts'), /this\.impactHold\((\d*\.\d+)\)/g)].sort();
   assert.deepEqual(web, unity);
   assert.equal(web.length, 8);
@@ -547,37 +541,9 @@ test('鲲鹏 / 火麒麟：收招、转换结束、硬直结束回步态（Unity
   assert.match(ql, /fc\.frozen = t >= 0\.97;/);
 });
 
-test('首领回步态的时刻照 Unity BossBrain：IntroTick 结束 / FinishMove / EndTransition / EndStagger 无条件 PlayLocomotion，AbortMove 不播；PlayLocomotion = Play("Locomotion", 0.15f) 直接 CrossFadeInFixedTime', { skip: !existsSync(QL_UNITY) && '没有 unity/ 目录' }, () => {
-  const brain = readFileSync(join(ROOT, 'unity/Assets/Game/Scripts/Bosses/BossBrain.cs'), 'utf8');
-  const body = (sig) => {
-    const i = brain.indexOf(sig);
-    assert.ok(i >= 0, `BossBrain.cs 里没有 ${sig}`);
-    let depth = 0, j = brain.indexOf('{', i);
-    for (let k = j; k < brain.length; k++) {
-      if (brain[k] === '{') depth++;
-      else if (brain[k] === '}' && --depth === 0) return brain.slice(j, k + 1);
-    }
-    return '';
-  };
-  for (const sig of ['void FinishMove()', 'void EndTransition()', 'void EndStagger(bool resume)']) {
-    const b = body(sig);
-    assert.match(b, /\n\s*PlayLocomotion\(\);/, `${sig} 无条件 PlayLocomotion`);
-    assert.doesNotMatch(b, /if \([^)]*(state|Locomotion)[^)]*\)\s*PlayLocomotion/, `${sig} 不看当前状态`);
-  }
-  const introDone = brain.indexOf('IntroDone = true;');
-  assert.ok(introDone >= 0);
-  assert.match(brain.slice(introDone, brain.indexOf('SetState(RestState);', introDone)), /\n\s*PlayLocomotion\(\);/, '登场结束无条件 PlayLocomotion');
-  assert.doesNotMatch(body('public void AbortMove()'), /PlayLocomotion|PlayAct/, 'AbortMove 不回步态');
-  const ai = readFileSync(join(AI, 'EnemyAI.cs'), 'utf8');
-  assert.match(ai, /protected void PlayLocomotion\(\) => Play\("Locomotion", 0\.15f\);/);
-  assert.match(ai, /protected void Play\(string animState, float fade = 0\.08f\)\s*\{[^}]*anim\.CrossFadeInFixedTime\(animState, fade\);[^}]*\}/);
-});
-
-test('火麒麟：招式的片段与交叉淡入秒数照 Unity Brain.PlayAct（缺省 0.1，鳞刃 0.08 / 0.03、扑踏 0.04 / 0.08、扑掌 0.08、奔驰回步态 0.05）', { skip: !existsSync(QL_UNITY) && '没有 unity/ 目录' }, () => {
+test('火麒麟：招式的片段与交叉淡入秒数照 Unity Brain.PlayAct（缺省 0.1，鳞刃 0.08 / 0.03、扑踏 0.04 / 0.08、扑掌 0.08、奔驰回步态 0.05）', () => {
   const fadeOf = (args) => (args.length >= 2 ? Number(args[1].replace(/f$/, '')) : 0.1);
-  const unity = readdirSync(join(QL_UNITY, 'Moves')).filter((f) => f.endsWith('.cs'))
-    .flatMap((f) => actCalls(readFileSync(join(QL_UNITY, 'Moves', f), 'utf8'), /Brain\.PlayAct\("(\w+)"([^;]*)\);/g))
-    .map((c) => `${c.state}@${fadeOf(c.args)}`).sort();
+  const unity = ANIM_SPEC.qilinActs;
   const web = actCalls(bossSrc('QilinMoves.ts'), /this\.act\('(\w+)'([^;]*)\);/g).map((c) => `${c.state}@${fadeOf(c.args)}`).sort();
   assert.deepEqual(web, unity);
   const xuan = animData('SK_Boss_Qilin'), burn = animData('SK_Boss_QilinBurn');
@@ -607,11 +573,8 @@ function qilinClipRig() {
   return { q, calls, sync: () => q.syncClip(form, c) };
 }
 
-test('火麒麟登场：现身播一次 tuck（拉伸到 3.2 s），跃出段不再逐帧重播，落地只播一次 rear（照 Unity BossBrain.Spawn 的 PlayAct(intro) 与 QilinBrain.IntroTick）', { skip: !existsSync(QL_UNITY) && '没有 unity/ 目录' }, () => {
-  const brain = readFileSync(join(QL_UNITY, 'QilinBrain.cs'), 'utf8');
-  const body = brain.slice(brain.indexOf('protected override void IntroTick'), brain.indexOf('protected override void OnIntroEnd'));
-  const unityIntro = actCalls(body, /PlayAct\("(\w+)"([^;]*)\);/g).map((c) => `${c.state}@${Number(c.args[0].replace(/f$/, ''))}`);
-  assert.deepEqual(unityIntro, ['rear@1.2'], 'Unity 登场里只有落地那一下');
+test('火麒麟登场：现身播一次 tuck（拉伸到 3.2 s），跃出段不再逐帧重播，落地只播一次 rear（照 Unity BossBrain.Spawn 的 PlayAct(intro) 与 QilinBrain.IntroTick）', () => {
+  assert.deepEqual(ANIM_SPEC.qilinIntroActs, ['rear@1.2'], 'Unity 登场里只有落地那一下');
   const { q, calls, sync } = qilinClipRig();
   const def = q.bdef;
   assert.equal(def.intro.anim, 'tuck');
@@ -704,8 +667,8 @@ test('BossGaitAnimTests（火麒麟）：跃起的起跳帧 = 饮熔的蹲伏比
 // ───────────── 商人 ─────────────
 
 const { MerchantNpcs } = await import('../src/progression/loot/Merchant.ts');
-// Node 里 src/assets/AssetLibrary 换成 scripts/unity/stubs 的桩（ts-hooks）：测试改桩的 get / findBound，当作行商资产已加载
-const { AssetLibrary } = await import('../scripts/unity/stubs/AssetLibrary.mjs');
+// Node 里 src/assets/AssetLibrary 换成 scripts/node/stubs 的桩（ts-hooks）：测试改桩的 get / findBound，当作行商资产已加载
+const { AssetLibrary } = await import('../scripts/node/stubs/AssetLibrary.mjs');
 
 /** 无网格骨架 + 一块三角形的蒙皮网格（attachNativeBody 要 _LOD0 网格），当作已加载的行商资产 */
 function fakeMerchantAsset() {
