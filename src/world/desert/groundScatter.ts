@@ -31,6 +31,8 @@ export interface GroundScatterOptions {
   grass?: Partial<Record<string, number>>;
   /** 碎石密度（块 / m²） */
   pebbles?: Partial<Record<string, number>>;
+  /** 灌丛（骆驼刺、红柳）：现成的件按密度实例化（public/assets/props/<asset>.glb），路肩上加 shoulder 的密度 */
+  shrubs?: { asset: string; density: Partial<Record<string, number>>; shoulder?: number; scale?: [number, number] }[];
   /** 路肩：路边多宽算路肩（m），路肩上额外加的草 / 石密度 */
   shoulder?: { width: number; grass: number; pebbles: number };
   /** 这些圆里密度减半（据点场地中心：交战区不要满地碎东西） */
@@ -241,7 +243,7 @@ export class GroundScatter implements DesertPart {
           const c: Rgb = [root[0] + (tip[0] - root[0]) * t * 0.3, root[1] + (tip[1] - root[1]) * t * 0.3, root[2] + (tip[2] - root[2]) * t * 0.3];
           // 实例色 = 梢色的 0.85–1.1（几何里已经带了根暗梢亮）
           const k = 0.85 + r() * 0.25;
-          tileOf(px, pz).grass.push({ x: px, y: y - 0.03, z: pz, s: 0.75 + r() * 0.7, yaw: r() * Math.PI * 2, tilt: 0, c: [tip[0] * k * 0.92 + c[0] * 0.08, tip[1] * k * 0.92 + c[1] * 0.08, tip[2] * k * 0.92 + c[2] * 0.08] });
+          tileOf(px, pz).grass.push({ x: px, y: y - 0.03, z: pz, s: 0.95 + r() * 0.95, yaw: r() * Math.PI * 2, tilt: 0, c: [tip[0] * k * 0.92 + c[0] * 0.08, tip[1] * k * 0.92 + c[1] * 0.08, tip[2] * k * 0.92 + c[2] * 0.08] });
         } else {
           const big = r() < 0.04;
           const s = big ? 0.24 + r() * 0.16 : 0.06 + r() * r() * 0.18;
@@ -284,6 +286,68 @@ export class GroundScatter implements DesertPart {
     }
 
     if (o.ruts !== false && o.roads.length) this.buildRuts(surface, o);
+    // 灌丛：位置现在就定（同一个随机序列），件异步载入后挂上
+    for (const shrub of o.shrubs ?? []) {
+      const list: Inst[] = [];
+      const [s0, s1] = shrub.scale ?? [0.8, 1.3];
+      for (let z = z0; z < z1; z += 4) for (let x = x0; x < x1; x += 4) {
+        const px = x + r() * 4, pz = z + r() * 4;
+        const kind = surface.kind(px, pz);
+        if (!kind) continue;
+        const road = o.roads.length ? roadDistance(px, pz, o.roads) : Infinity;
+        // 路面上不长，路肩上加密
+        if (road < -0.5) continue;
+        const p = ((shrub.density[kind] ?? 0) + (road < shoulder.width + 1.5 ? shrub.shoulder ?? 0 : 0)) * 16 * thin * calmAt(px, pz);
+        if (p <= 0 || r() > p) continue;
+        const y = surface.height(px, pz);
+        if (!Number.isFinite(y) || !slopeOk(px, pz, y)) continue;
+        list.push({ x: px, y: y - 0.05, z: pz, s: s0 + r() * (s1 - s0), yaw: r() * Math.PI * 2, tilt: 0, c: [1, 1, 1] });
+      }
+      if (list.length) void this.loadShrub(shrub.asset, list);
+    }
+  }
+
+  /** 现成的灌丛件 → 实例化网格（材质补环境光、离镜头 80–110 m 缩没）；整件只一组实例，草 / 石那样分块不值得（几百棵） */
+  private async loadShrub(asset: string, list: { x: number; y: number; z: number; s: number; yaw: number }[]): Promise<void> {
+    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+    let gltf;
+    try {
+      gltf = await new GLTFLoader().loadAsync(`${import.meta.env.BASE_URL}assets/props/${asset}.glb`);
+    } catch (e) {
+      console.warn(`[groundScatter] ${asset} 载入失败`, e);
+      return;
+    }
+    if (this.disposed) return;
+    gltf.scene.updateMatrixWorld(true);
+    const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), v = new THREE.Vector3(), sc = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0);
+    gltf.scene.traverse(obj => {
+      const mesh = obj as THREE.Mesh;
+      if (!mesh.isMesh || /_LOD[1-9]$/.test(mesh.name)) return;
+      const src = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
+      const mat = src.clone();
+      // 背光面补环境光：自发光 = 贴图色 × 0.42
+      mat.emissive = new THREE.Color(AMBIENT, AMBIENT, AMBIENT);
+      mat.emissiveMap = src.map;
+      mat.onBeforeCompile = shader => {
+        shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+{
+  vec3 wo = (modelMatrix * instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+  transformed *= 1.0 - smoothstep(80.0, 110.0, distance(cameraPosition.xz, wo.xz));
+}`);
+      };
+      const inst = new THREE.InstancedMesh(mesh.geometry, mat, list.length);
+      const local = mesh.matrixWorld;
+      list.forEach((it, i) => {
+        m4.compose(v.set(it.x, it.y, it.z), q.setFromAxisAngle(up, it.yaw), sc.set(it.s, it.s, it.s)).multiply(local);
+        inst.setMatrixAt(i, m4);
+      });
+      inst.instanceMatrix.needsUpdate = true;
+      inst.computeBoundingSphere();
+      inst.name = `DesertGroundScatter.${asset}`;
+      inst.receiveShadow = true;
+      this.group.add(inst);
+      this.owned.push({ dispose: () => { inst.dispose(); mat.dispose(); } });
+    });
   }
 
   /** 每条路一条贴地带：1.5 m 一节，横向 13 个点（路面 + 两边路肩），乘法混合 */
@@ -345,7 +409,10 @@ export class GroundScatter implements DesertPart {
     this.uniforms.uTime.value = t;
   }
 
+  private disposed = false;
+
   dispose(): void {
+    this.disposed = true;
     this.group.removeFromParent();
     for (const d of this.owned) d.dispose();
   }

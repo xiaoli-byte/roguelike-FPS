@@ -71,7 +71,8 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
     // 破晓后一小时，迎着朝阳向东赶路：长影朝玩家倒过来，烽燧逆光成剪影，天在太阳那一侧最亮、发金，东边天际压着沙暴
     look: {
       light: {
-        sun: { color: [1, 0.8, 0.56], intensity: 1.6, shadowStrength: 0.9 },
+        // 日光收一点橙（概念图里天和太阳是金的，地面还是灰褐）
+        sun: { color: [1, 0.83, 0.62], intensity: 1.6, shadowStrength: 0.9 },
         // 高保真对照概念图「出生第一眼」（2026-11-27）：逆光的门框、营地在概念图里还看得出朱红和木色——背光面的环境光抬高；
         // 天顶是干净的蓝、地平线发金、低空一团团暖白的积云；空气比之前通透
         ambient: { sky: [0.5, 0.6, 0.8], equator: [0.72, 0.58, 0.44], ground: [0.42, 0.31, 0.22], intensity: 1.15 },
@@ -79,7 +80,8 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
         sky: { top: [0.3, 0.57, 0.84], horizon: [0.98, 0.8, 0.58], bottom: [0.62, 0.48, 0.34], sun: [1, 0.86, 0.6], sharpness: 2.4, horizonGlow: 0.75, sunSize: 0.0012, sunHalo: 0.5, exposure: 1.18 },
       },
       atmosphere: { mistDensity: 0.0024, mistScaleHeight: 16, sunScatter: 0.55, airSkyBlend: 0.4, cloudShadow: 0.5 },
-      clouds: { low: 0.32, mid: 0.3, high: 0.45, sunGlow: 0 },
+      // 概念图里是一团团暖白的积云（不是细丝）
+      clouds: { low: 0.6, mid: 0.25, high: 0.4, height: 380, sunGlow: 0 },
       shafts: { strength: 0.32 },
       rimBack: 1.3,
       // 远景：近排低沙丘，二排台地（太阳底下钉一座逆光方山），三排更高更淡的台地；东边天际压一道沙暴纱幕
@@ -93,7 +95,7 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
       },
       // 暗部抬一点、偏暖：逆光的门框 / 车 / 烽燧在概念图里是看得出颜色的暖褐，不是死黑的剪影
       grade: {
-        ColorAdjustments: { postExposure: -0.55, saturation: 10, contrast: 26 }, WhiteBalance: { temperature: 8, tint: -5 },
+        ColorAdjustments: { postExposure: -0.55, saturation: 8, contrast: 26 }, WhiteBalance: { temperature: 4, tint: -2 },
         ShadowsMidtonesHighlights: { active: true, shadows: [1.08, 1, 0.94, 0.14], midtones: [1, 1, 1, 0], highlights: [1, 1, 1, 0], shadowsStart: 0, shadowsEnd: 0.32, highlightsStart: 0.55, highlightsEnd: 1 },
       },
     },
@@ -106,10 +108,11 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
         sun: { color: [1, 0.86, 0.66], intensity: 1.7, shadowStrength: 0.8 },
         ambient: { sky: [0.52, 0.58, 0.74], equator: [0.68, 0.56, 0.44], ground: [0.4, 0.3, 0.22], intensity: 0.82 },
         fog: { color: [0.88, 0.72, 0.54], start: 50, end: 320 },
-        sky: { top: [0.55, 0.62, 0.72], horizon: [0.95, 0.8, 0.62], bottom: [0.64, 0.5, 0.36], sun: [1, 0.9, 0.7], sharpness: 1.6, horizonGlow: 0.9, sunSize: 0.0012, sunHalo: 0.7, exposure: 1.2 },
+        // 照概念图：天顶是蓝的、低空一层暖白的云，浮尘只压在地平线上（原来整片灰白眩光）
+        sky: { top: [0.38, 0.56, 0.8], horizon: [0.95, 0.8, 0.62], bottom: [0.64, 0.5, 0.36], sun: [1, 0.9, 0.7], sharpness: 2, horizonGlow: 0.85, sunSize: 0.0012, sunHalo: 0.6, exposure: 1.18 },
       },
-      atmosphere: { mistDensity: 0.0045, mistScaleHeight: 24, sunScatter: 0.75, airDensity: 0.0008, airSkyBlend: 0.3 },
-      clouds: { low: 0.08, mid: 0.2, high: 0.4, sunGlow: 0 },
+      atmosphere: { mistDensity: 0.003, mistScaleHeight: 22, sunScatter: 0.6, airDensity: 0.0006, airSkyBlend: 0.3 },
+      clouds: { low: 0.5, mid: 0.25, high: 0.4, height: 420, sunGlow: 0 },
       shafts: { strength: 0.38 },
       rimBack: 1.2,
       // 远景：近排雅丹舰群，二排雅丹 + 台地，三排台地；太阳那一侧（右前方）压一层浮尘
@@ -149,7 +152,8 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
     },
   },
   '1-4': {
-    margin: { rise: 10, dunes: 10 }, poplar: 'green',
+    // 白杨是偏黄的秋叶（概念图）
+    margin: { rise: 10, dunes: 10 }, poplar: 'gold',
     // 烈日下的露天沙洼：四面刀刃脊的沙山一面亮一面暗，月牙泉是全画面唯一的冷色，影子就是掩体
     look: {
       light: {
@@ -159,11 +163,13 @@ export const REDO_MAPS: Record<string, RedoMapConfig> = {
         sky: { top: [0.42, 0.6, 0.84], horizon: [0.97, 0.92, 0.84], bottom: [0.72, 0.6, 0.46], sun: [1, 0.98, 0.9], sharpness: 3.2, horizonGlow: 0.55, sunSize: 0.0012, sunHalo: 0.5, exposure: 1.18 },
       },
       atmosphere: { mistDensity: 0.002, mistScaleHeight: 26, sunScatter: 0.25, airSkyBlend: 0.5 },
-      clouds: { low: 0.1, mid: 0.15, high: 0.35, sunGlow: 0 },
+      // 概念图：蓝天上几团白积云
+      clouds: { low: 0.55, mid: 0.2, high: 0.35, height: 420, sunGlow: 0 },
       shafts: false,
       rimBack: 0.3,
       // 沙山一面亮一面暗：背阳坡压深、偏冷（太阳也从 46° 压到 34°，和旱魃一阶段推到的 30° 接得上）
-      terrainShadow: [0.56, 0.54, 0.82, 1],
+      // 背阳坡压深但不发紫（长廊铺地在阴影里一度显成紫灰）
+      terrainShadow: [0.62, 0.58, 0.64, 1],
       // 远景：沙山外面一层层更远、更高的沙海（鸣沙山的大沙山相对高 100–250 m），最远一排台地。
       // 构成复核（2026-11-26）：50–180 m 时全被 30–44 m 的近环挡住，出生台上只看得见一道碗沿；现在从出生台望出去，远沙山一层层高出近环 1–5°
       far: {

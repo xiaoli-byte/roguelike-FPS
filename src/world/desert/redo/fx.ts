@@ -53,7 +53,7 @@ export interface RedoFx {
   /** 天边的沙暴墙（圆心 = 图中心，墙脚 = 远景地面高度，受光朝白盒的太阳） */
   storm?: Omit<StormWallOptions, 'center' | 'baseY' | 'sunAzimuth'>;
   /** 地面散布（groundScatter.ts）：枯草、碎石按白盒地面材质的密度撒；路 = 白盒里路材质的涂抹 / 坡道，自动出车辙和砾石路肩 */
-  ground?: Pick<GroundScatterOptions, 'grass' | 'pebbles' | 'shoulder' | 'grassColor' | 'pebbleColors' | 'ruts' | 'rutTint'>;
+  ground?: Pick<GroundScatterOptions, 'grass' | 'pebbles' | 'shrubs' | 'shoulder' | 'grassColor' | 'pebbleColors' | 'ruts' | 'rutTint'>;
 }
 
 /** 白盒里的路：mat = road 的涂抹带（折线 + 半宽）和坡道 */

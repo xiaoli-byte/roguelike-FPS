@@ -25,6 +25,38 @@ import { patchDesertDocument } from '../document';
  */
 
 /** 地形四层贴图（起伏沙 / 黑戈壁砾石 / 龟裂土 / 赭红岩层，从旧沙漠地形搬到第一章自己的目录）和每张盖多少米 */
+/**
+ * 地形四层贴图的调色（饱和度倍率、明度倍率）：照构图概念图——能走的砾石地、土路是去了饱和的灰褐，
+ * 只有沙丘的沙保留暖黄（原贴图整片又橙又艳，2026-11-27 逐图还原时压的）
+ */
+const LAYER_TONE: [number, number][] = [[0.95, 0.97], [0.25, 0.78], [0.5, 0.9], [0.85, 1]];
+
+/** 贴图在 canvas 上按亮度往灰里收（sat）、整体压暗（val），出一张新贴图（原图是缓存里共用的，不改它） */
+function toneTexture(src: THREE.Texture, sat: number, val: number): THREE.Texture {
+  const img = src.image as (CanvasImageSource & { width: number; height: number }) | undefined;
+  if (!img?.width || typeof document === 'undefined' || (sat === 1 && val === 1)) return src;
+  const cv = document.createElement('canvas');
+  cv.width = img.width;
+  cv.height = img.height;
+  const g = cv.getContext('2d', { willReadFrequently: true });
+  if (!g) return src;
+  g.drawImage(img, 0, 0);
+  const d = g.getImageData(0, 0, cv.width, cv.height), p = d.data;
+  for (let i = 0; i < p.length; i += 4) {
+    const l = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
+    for (let c = 0; c < 3; c++) p[i + c] = Math.max(0, Math.min(255, (l + (p[i + c] - l) * sat) * val));
+  }
+  g.putImageData(d, 0, 0);
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = src.colorSpace;
+  t.wrapS = src.wrapS;
+  t.wrapT = src.wrapT;
+  t.flipY = src.flipY;
+  t.anisotropy = src.anisotropy;
+  t.needsUpdate = true;
+  return t;
+}
+
 const LAYERS = [
   { url: 'assets/desert/terrain/sand.webp', tile: 9 },
   // 砾石：4 m 一铺时砾石斑有拳头到脸盆大，近景成一片豹纹斑（抢视线）；2.6 m 一铺缩成碎石粒
@@ -205,11 +237,13 @@ async function terrainPart(doc: UnitySceneDocument, c: CompiledMap, group: THREE
   control.minFilter = THREE.LinearFilter;
   control.colorSpace = THREE.NoColorSpace;
   control.needsUpdate = true;
-  const layers = await Promise.all(LAYERS.map(l => UnityLevelLibrary.loadTexture(l.url, true)));
+  const raw = await Promise.all(LAYERS.map(l => UnityLevelLibrary.loadTexture(l.url, true)));
+  const layers = raw.map((t, k) => toneTexture(t, ...LAYER_TONE[k]));
   for (const layer of layers) { layer.anisotropy = 8; layer.needsUpdate = true; }
   // 着色器按 vMapUv 采样分层图：材质要挂一张 map 才有这个 varying
   const material = new THREE.MeshStandardMaterial({ map: control });
-  const style = terrainStyle(doc.id), shadow = REDO_MAPS[doc.id]?.look?.terrainShadow;
+  // 暗部色调缺省比沙漠章原来的 [0.7, 0.64, 0.82] 暖一档：铺地在阴影里不发紫灰
+  const style = terrainStyle(doc.id), shadow = REDO_MAPS[doc.id]?.look?.terrainShadow ?? ([0.7, 0.65, 0.72, 1] as [number, number, number, number]);
   stylizeTerrain(material, { control, layers, tiles: LAYERS.map(l => l.tile) }, shadow ? { ...style, shadowTint: shadow } : style, doc.environment);
   setStylizedEnvironment(doc.environment);
   const source = new THREE.Group();
@@ -271,7 +305,7 @@ function mergeGrade(base: VolumeOverrides | undefined, over: VolumeOverrides | u
  */
 async function farGroundPart(doc: UnitySceneDocument, c: CompiledMap, group: THREE.Group): Promise<DesertPart> {
   const size = 7000;
-  const sand = (await UnityLevelLibrary.loadTexture(LAYERS[0].url, true)).clone();
+  const sand = toneTexture(await UnityLevelLibrary.loadTexture(LAYERS[0].url, true), ...LAYER_TONE[0]).clone();
   sand.wrapS = sand.wrapT = THREE.RepeatWrapping;
   sand.repeat.set(size / LAYERS[0].tile, size / LAYERS[0].tile);
   sand.needsUpdate = true;

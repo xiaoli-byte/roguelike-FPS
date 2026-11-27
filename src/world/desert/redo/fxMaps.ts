@@ -18,9 +18,11 @@ export const REDO_FX: Record<string, RedoFx> = {
   '1-1': {
     // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
     ground: {
-      grass: { gravel: 0.07, sand: 0.025, mud: 0.05, dune: 0.008, earth: 0.02 },
+      grass: { gravel: 0.06, sand: 0.02, mud: 0.05, dune: 0.006, earth: 0.02 },
       pebbles: { gravel: 0.32, sand: 0.05, mud: 0.14, earth: 0.08, road: 0.03 },
-      shoulder: { width: 3, grass: 0.22, pebbles: 0.55 },
+      shoulder: { width: 3, grass: 0.18, pebbles: 0.55 },
+      // 戈壁上一簇簇骆驼刺，路边多一些（概念图「出生第一眼」「① 进场」近景）
+      shrubs: [{ asset: 'SM_Tripo_DesertCamelthorn', density: { gravel: 0.004, sand: 0.002, mud: 0.003 }, shoulder: 0.012, scale: [0.7, 1.25] }],
     },
     // 北边沙丘带、东边两段沙丘：脊上的沙朝西南吹进盆地
     ridges: { reach: 1.4, opacity: 0.8 },
@@ -31,7 +33,7 @@ export const REDO_FX: Record<string, RedoFx> = {
       { origin: [327, 2.6, 180], height: 16, width: 0.9, opacity: 0.55, rise: 1.4, count: 24 },
     ],
     // 东边天际压着的沙暴墙（概念图「出生第一眼」右侧天边那一道褐黄尘墙；④ 营地的周期沙暴就从那边来）
-    storm: { azimuth: [30, 76], distance: 750, height: 90 },
+    storm: { azimuth: [28, 80], distance: 720, height: 115, lit: [0.8, 0.57, 0.38], shade: [0.44, 0.31, 0.22], haze: 0.22, opacity: 1 },
     // 狼烟是黑烟（烧狼粪 / 湿柴）：浅灰的烟逆着发亮的晨天整个化掉，压成深褐灰才立得住
     smokeOptions: { low: [0.3, 0.26, 0.23], high: [0.56, 0.52, 0.49] },
     // 尘卷风：南边戈壁、东北角，远远地游
@@ -53,8 +55,8 @@ export const REDO_FX: Record<string, RedoFx> = {
   '1-2': {
     // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
     ground: {
-      grass: { gravel: 0.06, sand: 0.02, mud: 0.04, road: 0.004 },
-      pebbles: { gravel: 0.3, sand: 0.04, mud: 0.12, earth: 0.06, road: 0.04 },
+      grass: { gravel: 0.06, sand: 0.025, mud: 0.04, road: 0.006 },
+      pebbles: { gravel: 0.3, sand: 0.1, mud: 0.12, earth: 0.06, road: 0.06 },
       shoulder: { width: 2.5, grass: 0.15, pebbles: 0.4 },
     },
     ridges: false,
@@ -72,8 +74,8 @@ export const REDO_FX: Record<string, RedoFx> = {
   '1-3': {
     // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
     ground: {
-      grass: { sand: 0.01, gravel: 0.035, earth: 0.01 },
-      pebbles: { sand: 0.03, gravel: 0.24, earth: 0.06, road: 0.05, mud: 0.06 },
+      grass: { sand: 0.022, dune: 0.008, gravel: 0.035, earth: 0.01, stone: 0.012 },
+      pebbles: { sand: 0.03, gravel: 0.24, earth: 0.06, road: 0.05, mud: 0.06, stone: 0.08 },
       shoulder: { width: 1.8, grass: 0.06, pebbles: 0.3 },
     },
     // 城外的远丘（脊高 8–13 m）也吹；出生丘顶一带不吹（第一眼要看清城）

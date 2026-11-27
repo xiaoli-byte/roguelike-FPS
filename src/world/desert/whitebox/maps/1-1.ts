@@ -47,7 +47,8 @@ export const WB_1_1: WhiteboxSpec = {
     // 台后的岩台地：在出生点 → 烽燧的视线延长线上、图的东沿（离烽燧 100 m），出生点望过去烽燧立在它前面；从 ③ 看它退在远处，不压台面
     { op: 'mound', at: [377, 101], r: [30, 16], h: 21, rot: 10, shape: 'mesa', flat: 0.76, mat: 'rock' },
     // ④ 驼队残骸营地：沙洼（−2.5 m），南、东有沙丘围着
-    { op: 'disc', at: [330, 215], r: 30, h: -2.5, edge: 16, mode: 'min', mat: 'sand' },
+    // 营地沙洼的底是砾石（概念图 ④：深色砾石地上的营地；亮黄的沙只在南边的沙丘上）
+    { op: 'disc', at: [330, 215], r: 30, h: -2.5, edge: 16, mode: 'min', mat: 'gravel' },
     { op: 'ridge', pts: [[286, 250], [316, 262], [350, 258], [374, 242]], h: [3, 6, 5, 3], stoss: 16, side: 1, mat: 'dune' },
     // 南戈壁的孤岩（商队遗货藏在背风面）
     { op: 'mound', at: [204, 246], r: [17, 8], h: 6, rot: WIND_ROT, shape: 'yardang', flat: 0.82, mat: 'rock', asset: 'SM_Tripo_DesertYardangSmall' },
