@@ -3,6 +3,7 @@ import { registerEnemy } from '../Registry';
 import type { MonsterKind } from '../../world/plateau/spec';
 import { MONSTER_NAMES } from '../../world/plateau/spec';
 import { PlateauFoeAdapter } from './PlateauFoeAdapter';
+import { LEIZE_DEF, PlateauBossAdapter } from './PlateauBossAdapter';
 
 /**
  * 第四章九种雷魅的名册（M2：照 Unity 冻结的 EnemyRoster，tests/fixtures/gameplay-defs.json；tests/unity-defs-parity.test.mjs 对照）。
@@ -71,4 +72,6 @@ export function registerPlateauEnemies(): void {
   if (registered) return;
   registered = true;
   for (const def of PLATEAU_ENEMY_DEFS) registerEnemy(def, (ctx, opts) => new PlateauFoeAdapter(ctx, def, opts));
+  // 4-4 终局首领雷泽雷神（第四章网页原生高原场景，plateau=1）
+  registerEnemy(LEIZE_DEF, (ctx, opts) => new PlateauBossAdapter(ctx, LEIZE_DEF, opts));
 }

@@ -5,19 +5,23 @@
  *     （scripts/plateau/extract-play.mjs 从 Unity 导出一次性搬来的，运行时不读 unity-levels）；
  *   - 高度场：高原地形（Terrain）按 1 m 采样；碰撞：高原的碰撞世界（CollisionWorld 的方盒 / 圆柱）；
  *   - 模型（renderers）为空：画面由 layer.ts 挂高原自己的场景。
- * 坐标：正式游戏的 4-1 = 高原 4-1 绕竖轴转 180°（x、z 都取反），玩法数据本来就是正式坐标，高度场和碰撞在这里换过去。
+ * 坐标：正式游戏的 4-1 = 高原 4-1 绕竖轴转 180°（x、z 都取反），玩法数据本来就是正式坐标，高度场和碰撞在这里换过去；
+ * 4-4 没有 Unity 版，正式坐标就是高原坐标（玩法数据按 spec 编：play44.ts）。
  */
 import * as THREE from 'three';
 import type { UnitySceneDocument } from '../../UnityLevelLibrary';
+import { loadPlateauModels } from '../play/assets';
 import { buildPlateau41, type PlateauWorld } from './world41';
+import { buildPlateau44 } from './world44';
+import { play44 } from './play44';
 import { plateauStage } from './active';
 
 const BASE = import.meta.env?.BASE_URL ?? '/';
 
-/** 高原坐标 → 正式坐标（绕竖轴转 180°） */
-export const toGame = (x: number, z: number): [number, number] => [-x, -z];
+/** 高原坐标 → 正式坐标（4-1 绕竖轴转 180°；4-4 原样） */
+export const toGameFor = (w: PlateauWorld) => (x: number, z: number): [number, number] => (w.yaw !== 0 ? [-x, -z] : [x, z]);
 
-const BUILDERS: Record<string, () => PlateauWorld> = { '4-1': buildPlateau41 };
+const BUILDERS: Record<string, () => PlateauWorld> = { '4-1': buildPlateau41, '4-4': buildPlateau44 };
 
 let current: { id: string; world: PlateauWorld } | null = null;
 
@@ -42,8 +46,8 @@ function buildWorld(id: string): PlateauWorld {
 
 /** 高度场：覆盖整张高原地形的正方网格（1 m 一格），按正式坐标排（行 = z） */
 function heightfield(w: PlateauWorld): UnitySceneDocument['heightfields'][number] {
-  const T = w.terrain;
-  const [gx0, gz0] = toGame(T.maxX, T.maxZ);
+  const T = w.terrain, toGame = toGameFor(w);
+  const [gx0, gz0] = w.yaw !== 0 ? toGame(T.maxX, T.maxZ) : [T.minX, T.minZ];
   const n = Math.max(T.nx, T.nz);
   const raw = new Float32Array(n * n);
   let lo = Infinity, hi = -Infinity;
@@ -64,7 +68,7 @@ function heightfield(w: PlateauWorld): UnitySceneDocument['heightfields'][number
 
 /** 碰撞：高原的方盒（带朝向）→ 正式的方盒（OBB + 外接 AABB）；圆柱 → 外接方盒 */
 function colliders(w: PlateauWorld): UnitySceneDocument['colliders'] {
-  const out: UnitySceneDocument['colliders'] = [];
+  const out: UnitySceneDocument['colliders'] = [], toGame = toGameFor(w);
   const q = new THREE.Quaternion(), Y = new THREE.Vector3(0, 1, 0);
   w.world.list.forEach((c, i) => {
     if (c.off) return;
@@ -102,11 +106,19 @@ function play(id: string): Promise<PlayData> {
   return p;
 }
 
+/** 玩法数据：4-1 读搬来的 JSON；4-4 按 spec 编（先等两张绘景大图、雷神的模型） */
+async function playFor(id: string, w: PlateauWorld): Promise<PlayData> {
+  const h = (w as PlateauWorld & { haizi?: Parameters<typeof play44>[0] }).haizi;
+  if (!h) return play(id);
+  await Promise.all([h.arena.ready, loadPlateauModels(undefined, ['SK_Boss_Leize'])]);
+  return play44(h);
+}
+
 /** 这张图走高原原生场景时返回整份场景文档；不走返回 null（照旧读 Unity 导出的） */
 export function plateauDocument(id: string): Promise<UnitySceneDocument> | null {
   if (!plateauStage(id)) return null;
-  return play(id).then(data => {
-    const w = buildWorld(id);
+  const w = buildWorld(id);
+  return playFor(id, w).then(data => {
     return {
       ...data,
       scene: `plateau:${id}`,

@@ -37,6 +37,17 @@ export interface PlateauWorld {
   conductors: THREE.Vector3[];
   /** 雾（晴天）：近、远 */
   fog: { near: number; far: number };
+  /** 高原场景在正式游戏里绕竖轴转多少（弧度）：4-1 是 π（Unity 移植时换过坐标），4-4 是 0（正式坐标就是高原坐标） */
+  yaw: number;
+  /** 光（同检视页）：半球光 [天色, 地色, 强度]、太阳 [颜色, 强度]、柔光影子强度 */
+  rig: { hemi: [string, string, number]; sun: [string, number]; soft: number };
+  /** 声床：基础风、静水拍岸倍率 */
+  sound: { baseWind: number; lap: number };
+  /** 挂进正式游戏的场景时 / 卸下时（这张图要绑在场景上的东西：空气透视……） */
+  attach?(scene: THREE.Scene): void;
+  detach?(): void;
+  /** 遮挡图不拍的（草、雾带、云） */
+  coverHide: THREE.Object3D[];
   buildMs: number;
 }
 
@@ -77,6 +88,8 @@ export function buildPlateau41(): PlateauWorld {
   return {
     id: '4-1', terrain, world, local, sky, grass, conductors, windAt,
     sunDir: SKY.sunDir, horizon: SKY.horizon, stormHorizon: SKY.stormHorizon, fog: { near: 260, far: 4600 },
+    yaw: Math.PI, rig: { hemi: ['#c4dbff', '#6a8a44', 1.25], sun: ['#fff2dc', 2.9], soft: 0.62 }, sound: { baseWind: 0.34, lap: 1 },
+    coverHide: [grass.group],
     update(dt, time, cam) {
       grass.update(cam);
       for (const a of anim) a.update(time, dt);

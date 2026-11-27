@@ -200,6 +200,9 @@ export function stageCatalogVersion(): number {
 
 const REDO_CODES = ['1-1', '1-2', '1-3', '1-4', '1-A'];
 
+/** 第四章走网页原生高原场景的图（src/world/plateau/stage/active.ts 的 PLATEAU_STAGE_IDS） */
+const PLATEAU_CODES: readonly string[] = ['4-1', '4-4'];
+
 /** 缺省判定：场景清单里导出了这张图（清单读到之前按 UnityStages.ts；备选图只认清单里 pool: true 的） */
 export function sceneExported(s: StageSpec): boolean {
   // 第一章重做版：场景由白盒编出来，不看 Unity 导出的清单（开关同 src/world/desert/redo/active.ts；这里内联，
@@ -208,6 +211,8 @@ export function sceneExported(s: StageSpec): boolean {
     const p = new URLSearchParams(location.search);
     if (p.get('desert') !== '0' && p.get('redo') === '1') return true;
   }
+  // 第四章网页原生高原场景（网址 plateau=1，同 src/world/plateau/stage/active.ts；同上理由内联）：4-4 没有 Unity 导出，由高原场景编出来
+  if (PLATEAU_CODES.includes(s.map.code) && typeof location !== 'undefined' && new URLSearchParams(location.search).get('plateau') === '1') return true;
   if (catalog) {
     const entry = catalog.get(s.map.code);
     return !!entry && entry.available !== false && (!s.map.alt || entry.pool === true);

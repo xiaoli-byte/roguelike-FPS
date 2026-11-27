@@ -15,7 +15,8 @@ mkdirSync(out, { recursive: true });
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const log = (...a) => console.log('[stage-check]', ...a);
 
-// 检视页机位（高原坐标）：[名字, 站点 x, z, 看向 x, y, z]；正式坐标 = x、z 取反
+// 检视页机位（高原坐标）：[名字, 站点 x, z, 看向 x, y, z]；4-1 的正式坐标 = x、z 取反，4-4 原样
+const FLIP = { '4-1': -1, '4-4': 1 };
 const POSES = {
   '4-1': [
     ['出生点', -255, 205, 90, 60, -70],
@@ -24,7 +25,13 @@ const POSES = {
     ['圣湖海子', -90, -128, -160, 4, -165],
     ['垭口望贡嘎', 258, -182, 430, 420, -1550],
   ],
+  '4-4': [
+    ['出生点（南岸）', -18, 67.6, 0, 2, 0],
+    ['神山倒影（水边）', -6, 51.5, 0, 4, -40],
+    ['东柱旁', 64, 6, 0, 3, 0],
+  ],
 };
+const S = FLIP[map] ?? -1;
 
 const b = await launch({ width: 1280, height: 720 });
 const rec = { map, poses: [], errors: [] };
@@ -104,10 +111,10 @@ try {
   for (const [name, x, z, lx, ly, lz] of process.env.STORM_ONLY === '1' ? [] : POSES[map] ?? []) {
     // 正式坐标：x、z 取反；站到地面上，朝看点
     await b.eval(`(() => { const c = window.__ctx, p = c.player, w = c.world, V = p.position.constructor;
-      const x = ${-x}, z = ${-z}; const gy = w.groundHeight(x, z, 400, 0.3);
+      const x = ${S * x}, z = ${S * z}; const gy = w.groundHeight(x, z, 400, 0.3);
       p.teleport(new V(x, (Number.isFinite(gy) ? gy : 0) + 0.05, z), 0);
       window.__step(0.3);
-      const e = c.camera.getWorldPosition(new V()), L = [${-lx}, ${ly}, ${-lz}];
+      const e = c.camera.getWorldPosition(new V()), L = [${S * lx}, ${ly}, ${S * lz}];
       const dx = L[0] - e.x, dy = L[1] - e.y, dz = L[2] - e.z;
       p.yaw = Math.atan2(-dx, -dz); p.pitch = Math.max(-1.2, Math.min(1.2, Math.atan2(dy, Math.hypot(dx, dz))));
       return true; })()`);
@@ -119,8 +126,8 @@ try {
   if (storm === 'ok') {
     const [name, x, z, lx, ly, lz] = (POSES[map] ?? [])[1] ?? POSES[map][0];
     await b.eval(`(() => { const c = window.__ctx, p = c.player, w = c.world, V = p.position.constructor;
-      const x = ${-x}, z = ${-z}; const gy = w.groundHeight(x, z, 400, 0.3); p.teleport(new V(x, (Number.isFinite(gy) ? gy : 0) + 0.05, z), 0);
-      window.__step(0.3); const e = c.camera.getWorldPosition(new V()), L = [${-lx}, ${ly}, ${-lz}];
+      const x = ${S * x}, z = ${S * z}; const gy = w.groundHeight(x, z, 400, 0.3); p.teleport(new V(x, (Number.isFinite(gy) ? gy : 0) + 0.05, z), 0);
+      window.__step(0.3); const e = c.camera.getWorldPosition(new V()), L = [${S * lx}, ${ly}, ${S * lz}];
       const dx = L[0] - e.x, dy = L[1] - e.y, dz = L[2] - e.z; p.yaw = Math.atan2(-dx, -dz); p.pitch = Math.atan2(dy, Math.hypot(dx, dz)); return true; })()`);
     for (let k = 0; k < 20; k++) await b.eval('window.__step(1), true');
     rec.storm = await b.eval(`(async () => { const c = window.__ctx, m = window.__mechanisms;
