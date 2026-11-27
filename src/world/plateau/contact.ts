@@ -48,7 +48,7 @@ export interface ContactOptions {
   maxPebbles?: number;
 }
 
-export function buildContactField(scene: THREE.Scene, world: CollisionWorld, terrain: HeightGrid, opts: ContactOptions = {}): ContactField {
+export function buildContactField(scene: THREE.Object3D, world: CollisionWorld, terrain: HeightGrid, opts: ContactOptions = {}): ContactField {
   const cols = world.list.filter(c => grounded(c, terrain));
   // ── 1. 距离场
   const minX = terrain.minX, minZ = terrain.minZ;

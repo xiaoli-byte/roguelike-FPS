@@ -312,6 +312,12 @@ export function stepTicket(t: StormTicket, dt: number, random: () => number = Ma
   return false;
 }
 
+/**
+ * 关卡自己画天气（第四章网页原生的高原场景：plateau/stage/layer.ts 挂上）：挂上以后雷暴照样管票、落雷、导体、伤害，
+ * 但不再压暗主光、改雾、压环境光、加后期层、画线段雨——强度和闪光每帧交给它，由高原自己的天气画出来（光、雾、天色、GPU 雨、淋湿）
+ */
+export const stormVisuals: { external: ((level: number, flash: number) => void) | null } = { external: null };
+
 export class PlateauStorm {
   level = 0;
   flash = 0;
@@ -357,6 +363,12 @@ export class PlateauStorm {
       if (stepTicket(t, dt)) this.strikeFor(t);
       if (t.done) { this.tickets.splice(i, 1); continue; }
       this.level = Math.max(this.level, t.level);
+    }
+    if (stormVisuals.external) {
+      stormVisuals.external(this.level, this.flash);
+      this.restore();
+      this.updateRain(0, dt);
+      return;
     }
     this.lateUpdate(dt);
   }

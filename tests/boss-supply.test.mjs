@@ -56,6 +56,7 @@ const { StageDirector } = await import(await ts('../src/world/StageDirector.ts',
   './unityAtmosphereDressing': data(`import * as THREE from '${threeUrl}'; export class UnityAtmosphereDressing {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
   // 第一章美术重建层（src/world/desert/）：测试里不改文档
   './desert': data(`export const desertArt = () => null; export const patchDesertDocument = doc => doc; export const prepareDesertArt = async () => {}; export const desertDocument = () => null;`),
+  './plateau/stage/document': data(`export const plateauDocument = () => null;`),
   './UnityLevelLibrary': data('export const UnityLevelLibrary={scene:()=>null}; export function unityHeights(){return new Float32Array();} export function unityPoint(){return {};} export async function prepareUnityScene(){}'),
 }));
 globalThis.document = { createElement: () => ({ width: 0, height: 0, getContext: () => null }) };

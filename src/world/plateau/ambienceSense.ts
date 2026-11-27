@@ -23,6 +23,11 @@ export interface AmbienceSenseOpts {
   baseWind?: number;
   /** 静水拍岸的倍率（4-4 已经有 WaterSound 的拍岸声，给 0） */
   lap?: number;
+  /**
+   * 高原场景在世界里转了 180°（正式游戏：plateau/stage/layer.ts）：地形、材质、水面、风场按高原坐标查（x、z 取反），
+   * 遮挡图、声像按世界坐标
+   */
+  flip?: boolean;
 }
 
 const DIRS = 12;
@@ -77,13 +82,19 @@ export class AmbienceSense {
   private readonly windDir = new THREE.Vector2(1, 0);
   private windK = 0;
 
-  constructor(private readonly terrain: HeightGrid, private readonly cover: CoverMapResult | null, private readonly opts: AmbienceSenseOpts = {}) {}
+  /** 世界坐标 → 高原坐标的符号（flip 时 −1） */
+  private readonly S: number;
+
+  constructor(private readonly terrain: HeightGrid, private readonly cover: CoverMapResult | null, private readonly opts: AmbienceSenseOpts = {}) {
+    this.S = opts.flip ? -1 : 1;
+  }
 
   /** 某处头顶最高表面的高度：先查遮挡图，图外 / 没有就用地面和水面 */
   private top(x: number, z: number): number {
     const h = this.cover ? this.cover.heightAt(x, z) : -1e4;
     if (h > -1e3) return h;
-    return Math.max(this.terrain.heightAt(x, z), this.terrain.waterLevelAt(x, z));
+    const S = this.S;
+    return Math.max(this.terrain.heightAt(S * x, S * z), this.terrain.waterLevelAt(S * x, S * z));
   }
 
   /** 每帧：rain = 雨强（Weather.level）；结果写进 out（AmbienceBed.params） */
@@ -110,7 +121,7 @@ export class AmbienceSense {
   }
 
   private scan(e: THREE.Vector3): void {
-    const T = this.terrain;
+    const T = this.terrain, S = this.S;
     // ── 头顶、四周、檐口 ──
     const over = this.top(e.x, e.z) - e.y;
     this.roof = smooth(0.15, 0.8, over);
@@ -133,10 +144,10 @@ export class AmbienceSense {
     // ── 雨落在什么上 ──
     let soft = 0, hard = 0, water = 0, snow = 0;
     const surf = (x: number, z: number, w: number): void => {
-      const g = T.heightAt(x, z), wl = T.waterLevelAt(x, z), top = this.top(x, z);
+      const g = T.heightAt(S * x, S * z), wl = T.waterLevelAt(S * x, S * z), top = this.top(x, z);
       if (wl > g + 0.05 && top < wl + 0.3) { water += w; return; }
       if (top - g > 0.8) { hard += w; return; }   // 屋顶、墙头、桥面、大石头
-      const i = Math.round((x - T.minX) / T.step), j = Math.round((z - T.minZ) / T.step);
+      const i = Math.round((S * x - T.minX) / T.step), j = Math.round((S * z - T.minZ) / T.step);
       if (i < 0 || j < 0 || i >= T.nx || j >= T.nz) { soft += w; return; }
       const k = (j * T.nx + i) * 4, m = T.mat;
       const sum = m[k] + m[k + 1] + m[k + 2] + m[k + 3] || 1;
@@ -158,9 +169,10 @@ export class AmbienceSense {
     let roar = 0, stream = 0, lap = 0;
     this.roarDir.reset(); this.streamDir.reset(); this.lapDir.reset();
     const waterAt = (x: number, z: number, dx: number, dz: number, r: number, mul: number): void => {
-      const wl = T.waterLevelAt(x, z), depth = wl - T.heightAt(x, z);
+      const lx = S * x, lz = S * z;
+      const wl = T.waterLevelAt(lx, lz), depth = wl - T.heightAt(lx, lz);
       if (!(depth > 0.05)) return;
-      const gx = (T.waterLevelAt(x + 3, z) - T.waterLevelAt(x - 3, z)) / 6, gz = (T.waterLevelAt(x, z + 3) - T.waterLevelAt(x, z - 3)) / 6;
+      const gx = (T.waterLevelAt(lx + 3, lz) - T.waterLevelAt(lx - 3, lz)) / 6, gz = (T.waterLevelAt(lx, lz + 3) - T.waterLevelAt(lx, lz - 3)) / 6;
       const slope = Math.hypot(gx, gz);
       const flow = Number.isFinite(slope) ? smooth(0.004, 0.012, slope) : 0;
       const big = smooth(1.0, 2.2, depth);
@@ -175,7 +187,7 @@ export class AmbienceSense {
     // 江边听不见拍岸（三江口的缓水区也算静水，但轰鸣早盖住了）
     this.lap = clamp01(lap * 3 / DIRS) * (1 - this.roar);
     // ── 风场 ──
-    const w = this.opts.windAt?.(e.x, e.z);
-    if (w) { this.windK = w.strength; this.windDir.set(w.dx, w.dz); } else this.windK = 0;
+    const w = this.opts.windAt?.(S * e.x, S * e.z);
+    if (w) { this.windK = w.strength; this.windDir.set(S * w.dx, S * w.dz); } else this.windK = 0;
   }
 }

@@ -39,6 +39,7 @@ import { AudioSystem } from '../audio/AudioSystem';
 import { UIManager } from '../ui/UI';
 import { PerformanceMeter } from '../dev/PerformanceMeter';
 import { PostStack } from '../render/PostStack';
+import { stageFilm } from '../render/stageFilm';
 
 function placeholderRun(): RunState {
   const stage: StageNode = { chapter: 0, index: 0, type: 'combat', reward: 'none', theme: 'desert' };
@@ -314,6 +315,8 @@ export class Game implements IGame {
       const fog = scene.fog as { isFog?: boolean; far?: number } | null;
       this.culler.update((inspectionCamera ?? camera).position, cullDistances(qualityProfile(this.ctx.settings.quality), fog?.isFog ? fog.far ?? 0 : 0));
     }
+    // 第四章网页原生高原场景自带出图后期（render/stageFilm.ts，plateau/stage/layer.ts 挂上）：挂着就由它画这一帧（连枪模）
+    if (stageFilm.render(scene, inspectionCamera ?? camera, viewmodel ? { scene: viewScene, camera: viewCamera } : null)) return;
     if (this.post.render(inspectionCamera ?? camera, viewmodel)) return;
     renderer.clear();
     renderer.render(scene, inspectionCamera ?? camera);

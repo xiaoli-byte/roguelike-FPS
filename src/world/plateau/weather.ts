@@ -9,7 +9,8 @@ import { WORLD_UNIFORMS } from './materials';
 import type { HeightGrid } from './grid';
 
 export interface WeatherRig {
-  scene: THREE.Scene; sun: THREE.DirectionalLight; hemi: THREE.HemisphereLight; fog: THREE.Fog;
+  /** 闪电、预警圈、老的线段雨挂在这里（场景或者任何节点：正式游戏里是转过 180° 的高原根节点） */
+  scene: THREE.Object3D; sun: THREE.DirectionalLight; hemi: THREE.HemisphereLight; fog: THREE.Fog;
   clearFog: { color: THREE.Color; near: number; far: number }; stormFog: THREE.Color;
 }
 
@@ -22,6 +23,11 @@ export class Weather {
   stormy = false;
   /** 老的线段雨（GPU 雨 rain.ts 接上后关掉） */
   builtinRain = true;
+  /**
+   * 雷暴强度和闪光由外部给（正式游戏：机关里的雷暴 mechanisms/Storm.ts 管票、落雷、伤害，这里只照它的强度画光、雾、天色）。
+   * 不是 null 时忽略 stormy、自己也不落雷
+   */
+  external: { level: number; flash: number } | null = null;
   private storm = 0;
   private flash = 0;
   private nextStrike = 3;
@@ -75,10 +81,12 @@ export class Weather {
   }
 
   update(dt: number, camera: THREE.Vector3): void {
-    this.storm += ((this.stormy ? 1 : 0) - this.storm) * Math.min(1, dt * 0.6);
+    const ext = this.external;
+    if (ext) this.storm = ext.level;
+    else this.storm += ((this.stormy ? 1 : 0) - this.storm) * Math.min(1, dt * 0.6);
     const s = this.storm;
     WORLD_UNIFORMS.uStorm.value = s;
-    this.flash = Math.max(0, this.flash - dt * 4);
+    this.flash = ext ? Math.max(ext.flash, this.flash - dt * 4) : Math.max(0, this.flash - dt * 4);
     WORLD_UNIFORMS.uFlash.value = this.flash;
     const { sun, hemi, fog, clearFog, stormFog } = this.rig;
     sun.intensity = this.sunBase * (1 - 0.8 * s);
@@ -100,8 +108,8 @@ export class Weather {
       }
       (this.rain.geometry.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true;
     }
-    // 落雷
-    if (s > 0.6) {
+    // 落雷（强度由外部给时，落雷也归外部）
+    if (s > 0.6 && !ext) {
       this.nextStrike -= dt;
       if (this.nextStrike <= 0) { this.nextStrike = 2.5 + this.rand() * 4; this.warn(camera); }
     }

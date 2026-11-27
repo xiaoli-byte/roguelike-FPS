@@ -16,6 +16,8 @@ import { renderUnityWaterDepth } from './UnityWaterMaterial';
 import { MechanismSystem } from './mechanisms/MechanismSystem';
 import { fallRecoveryHooks } from '../player/FallRecovery';
 import { DesertArtLayer, desertArt } from './desert';
+import { PlateauStageLayer } from './plateau/stage/layer';
+import { dropPlateauWorld, plateauWorld } from './plateau/stage/document';
 
 export class UnitySceneView {
   readonly group = new THREE.Group();
@@ -34,12 +36,15 @@ export class UnitySceneView {
   mechanisms: MechanismSystem | null = null;
   /** 第一章美术重建层（src/world/desert/）：远景、沙丘脊、环境特效、补光、新模型 */
   desert: DesertArtLayer | null = null;
+  /** 第四章网页原生高原场景（plateau/stage/）：画面、灯光、天气、雨、声床都在这一层，Unity 那套环境不建 */
+  plateau: PlateauStageLayer | null = null;
 
   constructor(private readonly ctx: GameContext, private readonly document: UnitySceneDocument, features: { environment?: boolean; groundCover?: boolean; colliders?: boolean; mechanisms?: boolean; reportEnvironment?: (stage: string) => void } = {}) {
     this.group.name = `unity-scene-${document.id}`;
     this.artBrief = document.title;
     const art = desertArt(document.id);
-    this.environment = features.environment === false ? null
+    const plateau = plateauWorld(document.id);
+    this.environment = features.environment === false || plateau ? null
       : new UnityEnvironmentView(ctx, document.environment, this.group, features.reportEnvironment, {
         chapter: Number.parseInt(document.id, 10) || 1, baseY: unityAtmosphereBaseY(document),
         profile: art?.atmosphere, clouds: art?.clouds, shafts: art?.shafts, wind: art?.wind,
@@ -108,6 +113,13 @@ export class UnitySceneView {
         await Promise.all(document.groundCover.map(layer => this.groundCover.add(document, layer, ctx.settings.quality !== 'low')));
         this.groundCover.update(ctx.camera.position);
       }
+      if (plateau) {
+        // 高原场景就是这张图的画面：建不起来要让进关失败（关卡导演会退回）
+        const layer = new PlateauStageLayer(ctx, document, plateau);
+        await layer.build(this.group);
+        if (this.disposed) layer.dispose();
+        else this.plateau = layer;
+      }
       if (art) {
         // 美术重建层也是锦上添花：建不起来只是少这一层
         try {
@@ -144,6 +156,7 @@ export class UnitySceneView {
     this.activators?.update(dt);
     this.mechanisms?.update(dt);
     this.desert?.update(dt, t);
+    this.plateau?.update(dt, t);
     renderUnityWaterDepth(this.ctx, new Set([...this.animatedMaterials].filter(material => material.userData.unityWater)));
     for (const material of this.animatedMaterials) material.uniforms.uTime.value = t;
   }
@@ -153,6 +166,9 @@ export class UnitySceneView {
     if (this.mechanisms && fallRecoveryHooks.safe === this.mechanisms.safe) fallRecoveryHooks.safe = null;
     this.desert?.dispose();
     this.desert = null;
+    if (this.plateau) dropPlateauWorld();
+    this.plateau?.dispose();
+    this.plateau = null;
     this.mechanisms?.dispose();
     this.mechanisms = null;
     this.activators?.dispose();

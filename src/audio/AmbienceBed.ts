@@ -7,10 +7,27 @@
  * 浏览器没有 AudioWorklet（或载入失败）就安静地什么都不做。
  */
 import * as THREE from 'three';
-import type { SynthPlayer } from './SynthPlayer';
 import { AMBIENCE_DEFAULTS, AMBIENCE_WORKLET_SRC, type AmbienceParams } from './ambienceWorklet';
 
 export type { AmbienceParams };
+
+/** 声床要接的音频总线：起来时回调一次（已经起来就马上调），给出 AudioContext 和要接进去的节点 */
+export interface AmbiencePort {
+  onReady(fn: (p: { ac: AudioContext | null; out: AudioNode | null }) => void): void;
+}
+
+/** 处理器在一个 AudioContext 里只能注册一次（第二次 registerProcessor 会抛错）：按上下文缓存载入 */
+const modules = new WeakMap<BaseAudioContext, Promise<void>>();
+function loadModule(ac: BaseAudioContext): Promise<void> {
+  let p = modules.get(ac);
+  if (!p) {
+    const url = URL.createObjectURL(new Blob([AMBIENCE_WORKLET_SRC], { type: 'text/javascript' }));
+    p = ac.audioWorklet.addModule(url).finally(() => URL.revokeObjectURL(url));
+    p.catch(() => modules.delete(ac));
+    modules.set(ac, p);
+  }
+  return p;
+}
 
 const _d = new THREE.Vector3();
 const _r = new THREE.Vector3();
@@ -27,27 +44,39 @@ export class AmbienceBed {
   private rumbleIn = 10;
   private readonly queue: { at: number; dist: number; pan: number }[] = [];
 
-  constructor(player: SynthPlayer) {
+  /** player：检视页的 SynthPlayer（out = 总音量）或正式游戏 AudioSystem.ambiencePort()（out = Ambience 总线） */
+  constructor(player: AmbiencePort) {
     player.onReady(p => { void this.start(p); });
   }
 
   /** 处理器已经在跑 */
   get running(): boolean { return !!this.node; }
 
-  private async start(p: SynthPlayer): Promise<void> {
+  private disposed = false;
+
+  private async start(p: { ac: AudioContext | null; out: AudioNode | null }): Promise<void> {
     const ac = p.ac, out = p.out;
-    if (!ac || !out || !ac.audioWorklet) return;
-    const url = URL.createObjectURL(new Blob([AMBIENCE_WORKLET_SRC], { type: 'text/javascript' }));
+    if (!ac || !out || !ac.audioWorklet || this.disposed) return;
     try {
-      await ac.audioWorklet.addModule(url);
+      await loadModule(ac);
+      if (this.disposed) return;
       const node = new AudioWorkletNode(ac, 'ambience-bed', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [2] });
       node.connect(out);
       this.node = node;
       this.post();
     } catch (err) {
       console.warn('[AmbienceBed] 环境声床起不来，不出声', err);
-    } finally {
-      URL.revokeObjectURL(url);
+    }
+  }
+
+  /** 换关 / 离开：断开处理器（之后的 update 什么都不做） */
+  dispose(): void {
+    this.disposed = true;
+    this.queue.length = 0;
+    if (this.node) {
+      this.node.port.postMessage({ type: 'p', p: { ...this.params, volume: 0 } });
+      this.node.disconnect();
+      this.node = null;
     }
   }
 

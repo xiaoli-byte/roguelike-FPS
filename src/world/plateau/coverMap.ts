@@ -8,7 +8,7 @@
  * 世界 → 贴图：u = (x − minX) / 宽，v = 1 − (z − minZ) / 深（WORLD_UNIFORMS.uCoverXf = (minX, minZ, 1/宽, 1/深)）。
  */
 import * as THREE from 'three';
-import type { HeightGrid } from './grid';
+import type { GridBounds } from './grid';
 import { COVER_GLSL, WORLD_UNIFORMS } from './materials';
 
 export { COVER_GLSL };
@@ -41,9 +41,9 @@ export interface CoverMapResult {
 
 /**
  * 拍遮挡图。hide：额外不拍的（怪、草、会动的东西）；不写深度 / 透明的、粒子、线、精灵自动不拍。
- * res：贴图边长（像素），缺省 2048（4-1 约 0.34 m 一像素）；cpuRes：读回 CPU 那张的边长，缺省 1024（0 = 不读）。
+ * terrain：拍哪一块（世界坐标的边界；高原地形本身就是）。res：贴图边长（像素），缺省 2048（4-1 约 0.34 m 一像素）；cpuRes：读回 CPU 那张的边长，缺省 1024（0 = 不读）。
  */
-export function bakeCoverMap(renderer: THREE.WebGLRenderer, scene: THREE.Scene, terrain: HeightGrid, hide: THREE.Object3D[] = [], res = 2048, cpuRes = 1024): CoverMapResult {
+export function bakeCoverMap(renderer: THREE.WebGLRenderer, scene: THREE.Scene, terrain: GridBounds, hide: THREE.Object3D[] = [], res = 2048, cpuRes = 1024): CoverMapResult {
   const W = terrain.maxX - terrain.minX, D = terrain.maxZ - terrain.minZ;
   const target = new THREE.WebGLRenderTarget(res, res, {
     type: THREE.FloatType, format: THREE.RedFormat, depthBuffer: true, stencilBuffer: false, generateMipmaps: false,

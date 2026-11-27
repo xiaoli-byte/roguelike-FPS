@@ -44,6 +44,8 @@ export interface SkyAmbientOptions {
   gain?: number;
   /** 保留多少天空的色度（1 = 原样；天空的蓝比半球光的灰蓝浓得多，全保留的话阴面和地面会偏蓝紫）。缺省 0.75 */
   saturation?: number;
+  /** 天空在世界里绕竖轴转了多少（弧度）：正式游戏里高原场景整体转了 180°（plateau/stage/layer.ts），探针的方向要跟着转 */
+  yaw?: number;
 }
 
 export class SkyAmbient {
@@ -72,7 +74,9 @@ export class SkyAmbient {
   private async bake(): Promise<void> {
     const r = this.renderer;
     const env = new THREE.Scene();
-    env.add(linearSkyCopy(this.sky));
+    const skyCopy = linearSkyCopy(this.sky);
+    skyCopy.rotation.y = this.opts.yaw ?? 0;
+    env.add(skyCopy);
     // 下半球：地面反上来的光（离地平线越近越接近天色，像远处的地面在雾里）
     const ground = new THREE.Color(this.opts.ground ?? this.hemiGround);
     const g = new THREE.SphereGeometry(400, 32, 12, 0, Math.PI * 2, Math.PI / 2 + 0.03, Math.PI / 2 - 0.03);

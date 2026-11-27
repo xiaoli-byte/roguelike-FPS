@@ -29,6 +29,7 @@ import { chooseLevelLayout } from './LevelLayout';
 import { UnitySceneView } from './UnitySceneView';
 import { UnityAtmosphereDressing } from './unityAtmosphereDressing';
 import { desertArt, desertDocument, patchDesertDocument, prepareDesertArt } from './desert';
+import { plateauDocument } from './plateau/stage/document';
 import { UnityLevelLibrary, prepareUnityScene, unityHeights, unityPoint, type UnitySceneDocument } from './UnityLevelLibrary';
 
 /** 进场后第一波开始的时间（秒） */
@@ -205,6 +206,9 @@ export class StageDirector implements IStageDirector {
     // 第一章重做版：场景文档由白盒编出来（不读 Unity 导出的场景文件）
     const redo = desertDocument(mapId);
     if (redo) return redo.then(document => this.loadResolved(stage, document));
+    // 第四章网页原生高原场景（网址 plateau=1）：场景文档由高原场景编出来，玩法数据读 public/assets/plateau/
+    const plateau = plateauDocument(mapId);
+    if (plateau) return plateau.then(document => this.loadResolved(stage, document));
     const pending = UnityLevelLibrary.scene(mapId) as UnitySceneDocument | Promise<UnitySceneDocument | null> | null;
     if (pending && typeof (pending as Promise<UnitySceneDocument | null>).then === 'function') {
       return Promise.resolve(pending).then(document => this.loadResolved(stage, document));
@@ -280,7 +284,7 @@ export class StageDirector implements IStageDirector {
       this.view = unityDocument ? new UnitySceneView(ctx, unityDocument) : new ArenaView(ctx, L, theme, () => vis.next());
       ctx.scene.add(this.view.group);
       if (this.view instanceof UnitySceneView && this.view.ready) await this.view.ready;
-      if (unityDocument && this.view instanceof UnitySceneView) {
+      if (unityDocument && this.view instanceof UnitySceneView && !this.view.plateau) {
         // 氛围摆位是锦上添花：出了错只是这张图没有雾，不能挡住进关
         try {
           this.dressing = new UnityAtmosphereDressing(unityDocument, desertArt(unityDocument.id)?.layout);

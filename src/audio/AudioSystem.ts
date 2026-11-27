@@ -264,6 +264,22 @@ export class AudioSystem implements IAudio {
     if (!this.ac || this.ac.state !== 'running') return;
     this.applyMusic(this.musicWanted);
     if (this.bedWanted && !this.bed) this.startBed(this.bedWanted);
+    for (const fn of this.ambienceWaiters.splice(0)) fn({ ac: this.ac, out: this.mixer?.ambience ?? null });
+  }
+
+  private readonly ambienceWaiters: ((p: { ac: AudioContext | null; out: AudioNode | null }) => void)[] = [];
+
+  /**
+   * 实时环境声床（audio/AmbienceBed.ts，第四章网页原生高原场景用）接 Ambience 总线：声音系统跑起来时回调一次（已经在跑就马上调）。
+   * 和烘好的章节声床走同一条总线、同一个音量推子
+   */
+  ambiencePort(): { onReady(fn: (p: { ac: AudioContext | null; out: AudioNode | null }) => void): void } {
+    return {
+      onReady: fn => {
+        if (this.ac && this.ac.state === 'running' && this.mixer) fn({ ac: this.ac, out: this.mixer.ambience });
+        else this.ambienceWaiters.push(fn);
+      },
+    };
   }
 
   private fallback(): SynthFallback {

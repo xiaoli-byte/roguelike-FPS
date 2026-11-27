@@ -345,13 +345,17 @@ export class FilmPost {
     }
   }
 
-  /** 画一帧（代替 renderer.render(scene, camera)）。dt：真实秒数（自动曝光的适应用） */
-  render(scene: THREE.Scene, camera: THREE.Camera, dt = 1 / 60): void {
+  /**
+   * 画一帧（代替 renderer.render(scene, camera)）。dt：真实秒数（自动曝光的适应用）。
+   * view：第一人称枪模（正式游戏）——场景那一遍之后清深度、画进同一张图，和世界一起吃后期（泛光、调色、暗角）
+   */
+  render(scene: THREE.Scene, camera: THREE.Camera, dt = 1 / 60, view: { scene: THREE.Scene; camera: THREE.Camera } | null = null): void {
     const r = this.renderer;
     if (!this.enabled || !this.supported) {
       if (r.toneMapping !== this.toneMapping) r.toneMapping = this.toneMapping;
       r.setRenderTarget(null);
       r.render(scene, camera);
+      if (view) { r.clearDepth(); r.render(view.scene, view.camera); }
       return;
     }
     if (r.toneMapping !== THREE.NoToneMapping) r.toneMapping = THREE.NoToneMapping;
@@ -360,13 +364,13 @@ export class FilmPost {
     r.info.reset();
     r.info.autoReset = false;
     try {
-      this.renderFrame(scene, camera, dt);
+      this.renderFrame(scene, camera, dt, view);
     } finally {
       r.info.autoReset = autoReset;
     }
   }
 
-  private renderFrame(scene: THREE.Scene, camera: THREE.Camera, dt: number): void {
+  private renderFrame(scene: THREE.Scene, camera: THREE.Camera, dt: number, view: { scene: THREE.Scene; camera: THREE.Camera } | null): void {
     const r = this.renderer;
     const hdr = this.ensure();
     const S = this.settings;
@@ -377,6 +381,7 @@ export class FilmPost {
     r.setRenderTarget(hdr);
     r.clear(true, true, true);
     r.render(scene, camera);
+    if (view) { r.clearDepth(); r.render(view.scene, view.camera); }
     this.timer?.end();
 
     this.timer?.begin('post');
