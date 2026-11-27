@@ -152,7 +152,8 @@ export const WB_1_A: WhiteboxSpec = {
   sun: { azimuth: 236, elevation: 33 },
   wind: [0.94, 0.34],
   terrain: [
-    { op: 'base', h: 0, mat: 'sand' },
+    // 平地是砾石 / 压实的土（照构图概念图的近景：灰褐砾石地 + 枯草碎石；亮黄的沙只在沙丘、沙台上，2026-11-27 地面散布那一步改）
+    { op: 'base', h: 0, mat: 'gravel' },
     { op: 'noise', amp: 0.6, scale: 48, seed: 21, keep: [{ at: [215, 138], r: 30 }, { at: [250, 200], r: 28 }, { at: [165, 252], r: 16 }] },
     // 南岸尽头的沙垄（缓面朝北 = 朝图里，白杨林长在它脚下）
     { op: 'ridge', pts: [[-10, 314], [100, 310], [210, 315], [320, 310], [430, 314]], h: [5, 6, 4.5, 6, 5], stoss: 20, side: 1, mat: 'dune' },

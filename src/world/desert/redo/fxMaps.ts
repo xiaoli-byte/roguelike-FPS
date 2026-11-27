@@ -16,6 +16,12 @@ const ISLES_1_2: [number, number, number][] = [
 
 export const REDO_FX: Record<string, RedoFx> = {
   '1-1': {
+    // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
+    ground: {
+      grass: { gravel: 0.07, sand: 0.025, mud: 0.05, dune: 0.008, earth: 0.02 },
+      pebbles: { gravel: 0.32, sand: 0.05, mud: 0.14, earth: 0.08, road: 0.03 },
+      shoulder: { width: 3, grass: 0.22, pebbles: 0.55 },
+    },
     // 北边沙丘带、东边两段沙丘：脊上的沙朝西南吹进盆地
     ridges: { reach: 1.4, opacity: 0.8 },
     smoke: [
@@ -45,6 +51,12 @@ export const REDO_FX: Record<string, RedoFx> = {
     ],
   },
   '1-2': {
+    // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
+    ground: {
+      grass: { gravel: 0.06, sand: 0.02, mud: 0.04, road: 0.004 },
+      pebbles: { gravel: 0.3, sand: 0.04, mud: 0.12, earth: 0.06, road: 0.04 },
+      shoulder: { width: 2.5, grass: 0.15, pebbles: 0.4 },
+    },
     ridges: false,
     // 起风的上午：每座雅丹岛的脊上都在起沙，逆光看是一缕缕发亮的沙带
     extraRidges: ISLES_1_2.map(([a, b, z]) => ({ points: [[a + 3, z], [(a + b) / 2, z], [b - 3, z]] as V2[], reach: 26, size: 8, opacity: 1 })),
@@ -58,6 +70,12 @@ export const REDO_FX: Record<string, RedoFx> = {
     ],
   },
   '1-3': {
+    // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
+    ground: {
+      grass: { sand: 0.01, gravel: 0.035, earth: 0.01 },
+      pebbles: { sand: 0.03, gravel: 0.24, earth: 0.06, road: 0.05, mud: 0.06 },
+      shoulder: { width: 1.8, grass: 0.06, pebbles: 0.3 },
+    },
     // 城外的远丘（脊高 8–13 m）也吹；出生丘顶一带不吹（第一眼要看清城）
     ridges: { reach: 1.2, opacity: 0.7, skip: [{ at: [106, 78], r: 70 }] },
     // 沙瀑：北墙西段、西墙北段，沙丘漫过墙头的地方往城里倾泻
@@ -83,6 +101,12 @@ export const REDO_FX: Record<string, RedoFx> = {
     motes: [{ center: [210, 7, 168], size: [14, 10, 14], count: 160 }],
   },
   '1-4': {
+    // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
+    ground: {
+      grass: { sand: 0.006, mud: 0.05, gravel: 0.05 },
+      pebbles: { sand: 0.015, mud: 0.08, gravel: 0.26, stone: 0.02 },
+      shoulder: { width: 2, grass: 0.1, pebbles: 0.3 },
+    },
     // 鸣沙山：四面刀刃脊上一直在吹沙（这张图的招牌）；出生观景台一带不吹
     ridges: { reach: 1, opacity: 1, size: 1.25, minHeight: 15, skip: [{ at: [95, 80], r: 34 }] },
     // 烈日下沙色对沙色：向阳偏置拉满、沙带拉长一点，脊顶上那一溜才读得出来
@@ -97,6 +121,12 @@ export const REDO_FX: Record<string, RedoFx> = {
     motes: [{ center: [160, 2.6, 157], size: [16, 4, 10], count: 120 }],
   },
   '1-A': {
+    // 地面散布（照概念图近景）：砾石滩上一丛丛枯草和碎石、古道两道车辙 + 压暗的砾石路肩
+    ground: {
+      grass: { gravel: 0.08, mud: 0.06, sand: 0.03, stone: 0.01 },
+      pebbles: { gravel: 0.4, mud: 0.16, sand: 0.05, stone: 0.03, road: 0.03 },
+      shoulder: { width: 2.5, grass: 0.2, pebbles: 0.5 },
+    },
     ridges: { minHeight: 4 },
     // 崖顶的沙从崖沿上一股股往窟檐层上漏
     falls: [

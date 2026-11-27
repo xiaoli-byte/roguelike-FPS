@@ -166,7 +166,8 @@ export const WB_1_3: WhiteboxSpec = {
   sun: { azimuth: 238, elevation: 52 },
   wind: [0.71, 0.71],
   terrain: [
-    { op: 'base', h: 0, mat: 'sand' },
+    // 平地是砾石 / 压实的土（照构图概念图的近景：灰褐砾石地 + 枯草碎石；亮黄的沙只在沙丘、沙台上，2026-11-27 地面散布那一步改）
+    { op: 'base', h: 0, mat: 'gravel' },
     { op: 'noise', amp: 1.4, scale: 60, seed: 13 },
     // 城外远丘：只管天际线（落沙面朝东南）
     { op: 'ridge', pts: [[226, 28], [290, 18], [352, 32]], h: [8, 13, 9], stoss: 30, side: 1, mat: 'dune' },

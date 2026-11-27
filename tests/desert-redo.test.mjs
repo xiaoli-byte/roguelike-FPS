@@ -84,3 +84,27 @@ test('特效都摆在图里、幡杆不进据点场地中心', () => {
     }
   }
 });
+
+// 地面散布（groundScatter.ts）：密度照配置出数、车辙带的三角形朝上（2026-11-27 第一版绕向反了，整条带背面朝上被剔掉、游戏里看不见）
+const THREE = await import('three');
+const { GroundScatter } = await import('../src/world/desert/groundScatter.ts');
+test('地面散布：数量按密度、车辙带朝上', () => {
+  const surface = { height: () => 0, kind: (x, z) => (x < 50 ? 'gravel' : 'sand') };
+  const s = new GroundScatter(surface, {
+    bounds: [0, 0, 100, 100], roads: [{ pts: [[0, 50], [100, 50]], half: 3 }], wind: [1, 0],
+    grass: { gravel: 0.1 }, pebbles: { gravel: 0.3, sand: 0.05 }, shoulder: { width: 2, grass: 0, pebbles: 0 }, seed: 7,
+  });
+  // 砾石半边 50 × 100 m²：草约 500、石约 1500 + 沙地 250（据点减半没给）
+  assert.ok(s.counts.grass > 350 && s.counts.grass < 650, `草 ${s.counts.grass}`);
+  assert.ok(s.counts.pebbles > 1400 && s.counts.pebbles < 2100, `石 ${s.counts.pebbles}`);
+  let ruts;
+  s.group.traverse(o => { if (o.name === 'DesertGroundScatter.ruts') ruts = o; });
+  assert.ok(ruts, '没有车辙带');
+  const p = ruts.geometry.getAttribute('position'), idx = ruts.geometry.index;
+  const v = k => new THREE.Vector3(p.getX(idx.getX(k)), p.getY(idx.getX(k)), p.getZ(idx.getX(k)));
+  for (let t = 0; t < idx.count; t += 3 * 37) {
+    const n = new THREE.Vector3().crossVectors(v(t + 1).sub(v(t)), v(t + 2).sub(v(t)));
+    assert.ok(n.y > 0, `车辙带第 ${t / 3} 个三角形朝下`);
+  }
+  s.dispose();
+});

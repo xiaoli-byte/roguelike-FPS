@@ -1,6 +1,8 @@
 import { AirLife, type LeafCrown, type MoteBox } from '../../AirLife';
 import { Banners, type Banner } from '../banners';
 import { StormWall, type StormWallOptions } from '../stormWall';
+import { GroundScatter, type GroundScatterOptions, type ScatterRoad } from '../groundScatter';
+import type { WbTerrain } from '../whitebox/terrain';
 import {
   beaconSmoke, dustDevils, groundDrift, ridgeSand, sandFalls,
   type DriftPatch, type DustDevil, type GroundDriftOptions, type RidgeLine, type RidgeSandOptions, type SandFall, type SandFallOptions,
@@ -50,6 +52,32 @@ export interface RedoFx {
   motes?: MoteBox[];
   /** 天边的沙暴墙（圆心 = 图中心，墙脚 = 远景地面高度，受光朝白盒的太阳） */
   storm?: Omit<StormWallOptions, 'center' | 'baseY' | 'sunAzimuth'>;
+  /** 地面散布（groundScatter.ts）：枯草、碎石按白盒地面材质的密度撒；路 = 白盒里路材质的涂抹 / 坡道，自动出车辙和砾石路肩 */
+  ground?: Pick<GroundScatterOptions, 'grass' | 'pebbles' | 'shoulder' | 'grassColor' | 'pebbleColors' | 'ruts' | 'rutTint'>;
+}
+
+/** 白盒里的路：mat = road 的涂抹带（折线 + 半宽）和坡道 */
+function whiteboxRoads(spec: WhiteboxSpec): ScatterRoad[] {
+  const roads: ScatterRoad[] = [];
+  for (const op of spec.terrain) {
+    if (op.op === 'paint' && op.mat === 'road' && op.pts && op.half && !op.closed) roads.push({ pts: op.pts, half: op.half });
+    else if (op.op === 'ramp' && op.mat === 'road') roads.push({ pts: op.pts, half: op.half });
+  }
+  return roads;
+}
+
+/** 散布用的地面：图里、不压在体块下（行走面比地形高 0.25 m 以上 = 有体块）、不是水 / 木 / 瓦 / 植被 */
+function scatterSurface(b: DesertBuild, terrain: WbTerrain): { height(x: number, z: number): number; kind(x: number, z: number): string | null } {
+  const [W, D] = terrain.spec.size;
+  return {
+    height: (x, z) => b.terrainHeight(x, z),
+    kind: (x, z) => {
+      if (x < 0 || z < 0 || x > W || z > D) return null;
+      if (terrain.walkAt(x, z) > terrain.groundAt(x, z) + 0.25) return null;
+      const m = terrain.matAt(x, z);
+      return m === 'water' || m === 'timber' || m === 'roof' || m === 'plant' ? null : m;
+    },
+  };
 }
 
 const clamp = (v: number, a: number, b: number): number => Math.min(b, Math.max(a, v));
@@ -105,9 +133,22 @@ function poplarCrowns(spec: WhiteboxSpec, b: DesertBuild, color: number): LeafCr
   return crowns.length > 36 ? crowns.filter((_, k) => k % 2 === 0) : crowns;
 }
 
-export function redoFx(b: DesertBuild, spec: WhiteboxSpec, fx: RedoFx | undefined, baseY = 0): DesertPart[] {
+export function redoFx(b: DesertBuild, spec: WhiteboxSpec, fx: RedoFx | undefined, baseY = 0, terrain?: WbTerrain): DesertPart[] {
   if (!fx) return [];
   const parts: DesertPart[] = [];
+  if (fx.ground && terrain) {
+    const scatter = new GroundScatter(scatterSurface(b, terrain), {
+      ...fx.ground,
+      bounds: [0, 0, spec.size[0], spec.size[1]],
+      roads: whiteboxRoads(spec),
+      wind: spec.wind,
+      // 据点场地中心密度减半：交战区不要满地碎东西
+      calm: spec.strongholds.map(s => ({ x: s.at[0], z: s.at[1], r: (s.r ?? 24) * 0.45 })),
+      low: b.low,
+    });
+    b.group.add(scatter.group);
+    parts.push(scatter);
+  }
   if (fx.storm) {
     // 白盒太阳方位（从北顺时针）→ farLayer 方位（0 = +Z、90 = +X）
     const storm = new StormWall({ ...fx.storm, center: [spec.size[0] / 2, spec.size[1] / 2], baseY, sunAzimuth: 180 - spec.sun.azimuth });

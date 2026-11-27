@@ -190,7 +190,7 @@ export function redoArt(id: string): DesertMapArt | null {
         parts.push({ update: p.update?.bind(p), dispose: () => { p.object.removeFromParent(); p.dispose(); } });
       }
       // 特效（fx.ts）：沙脊吹沙、狼烟、尘卷风、落沙、贴地流沙、旗幡、落叶
-      parts.push(...redoFx(b, spec, REDO_FX[id], c.field.baseY));
+      parts.push(...redoFx(b, spec, REDO_FX[id], c.field.baseY, c.terrain));
       return parts;
     },
   };

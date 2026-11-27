@@ -91,7 +91,7 @@ const needName = (b: { needs?: string }): string => (b.needs ?? '').split('：')
 
 /** 材质 → 旧地形四层（0 起伏沙、1 黑戈壁砾石、2 龟裂土 / 夯土地、3 赭红岩层）的权重 */
 const LAYER: Record<WbMat, [number, number, number, number]> = {
-  sand: [1, 0, 0, 0], dune: [1, 0, 0, 0], gravel: [0, 1, 0, 0], road: [0.15, 0, 0.85, 0], mud: [0, 0.15, 0.85, 0],
+  sand: [1, 0, 0, 0], dune: [1, 0, 0, 0], gravel: [0, 1, 0, 0], road: [0.25, 0.4, 0.35, 0], mud: [0, 0.15, 0.85, 0],
   rock: [0, 0, 0, 1], earth: [0, 0, 0.45, 0.55], timber: [0, 0, 1, 0], roof: [0, 0, 1, 0], stone: [0, 0, 1, 0],
   water: [0, 0.3, 0.7, 0], plant: [0.35, 0, 0.65, 0],
 };
