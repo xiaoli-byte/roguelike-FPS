@@ -13,7 +13,6 @@ const manifest = JSON.parse(await readFile(new URL('public/assets/manifest.json'
  * 修好一条就从这里删掉；新出现的不许进来，先修资产。
  */
 const KNOWN_UNLOADABLE = {
-  SM_Weapon_BoneDragon: '手工发布（build_bone_dragon.py 直出），70 个部件节点，没有 _LOD0 网格；运行时退回程序化火炮',
   SK_Weapon_Gunfire1301: 'LOD0 有 2 个图元（两个材质），GLTFLoader 拆成 Group；运行时退回程序化霰弹枪',
 };
 
