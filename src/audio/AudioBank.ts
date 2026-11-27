@@ -1,5 +1,5 @@
 /**
- * 音频素材库：读 public/assets/audio/audio-manifest.json（scripts/web/publish-audio.mjs 从 Unity 拷来），解码 ogg。
+ * 音频素材库：读 public/assets/audio/audio-manifest.json（scripts/audio/bake.py 把 audio-bake.html 渲出的片段转成 ogg 直接写进来），解码 ogg。
  *
  * - 音效片段（246 个、单声道 44.1 kHz，解出来约 70 MB）：清单到了就全部预取解码（并发 6），不等用户手势——
  *   解码用 OfflineAudioContext（不需要解锁），解出的 AudioBuffer 和播放用的 AudioContext 无关、可以直接用。
@@ -93,7 +93,7 @@ export class AudioBank {
       m = await res.json() as AudioManifest;
       if (!Array.isArray(m.sfx) || !Array.isArray(m.clips)) throw new Error('清单缺 sfx / clips');
     } catch (err) {
-      console.warn('[Audio] 读不到 assets/audio/audio-manifest.json（先跑 node scripts/web/publish-audio.mjs），退回实时合成', err);
+      console.warn('[Audio] 读不到 assets/audio/audio-manifest.json（先跑 audio-bake.html + python -I scripts/audio/bake.py），退回实时合成', err);
       this.state = 'failed';
       return;
     }

@@ -1,6 +1,6 @@
 /**
  * 音频烘焙页（audio-bake.html）：把 Three.js 版程序合成的全部音效与配乐，用浏览器的 OfflineAudioContext 离线渲成 WAV，
- * 逐个 POST 给本机接收器（scripts/audio/bake_receiver.py）落盘，再由 scripts/audio/bake.py 转 ogg 放进 Unity。
+ * 逐个 POST 给本机接收器（scripts/audio/bake_receiver.py）落盘，再由 scripts/audio/bake.py 转 ogg 写进 public/assets/audio（网页 src/audio/AudioBank 按清单加载）。
  * Unity 版没有 WebAudio：音色以这里渲出的片段为准（与 Three.js 一字不差，以后可以逐个换成正式素材）。
  *
  * - 音效：每个 SfxId 渲 1–3 个变体（配方里有随机，pitch 抖动为 0 的提示音只渲 1 个）；带位置播放的敌方音色另存 <id>@enemy。
@@ -12,7 +12,7 @@
  * - Unity I6（超越）：旱魃主题 boss_hanba、三章环境声床 amb_*（Ambience.ts）、关键枪声 / 爆炸的分层片段
  *   <id>_t_<i> / <id>_b_<i> / <id>_r_<i>（瞬态 / 主体 / 尾音，三层相加 = 原片段，Unity 各挑各的变体、按距离配比）。
  *   打开 audio-bake.html?only=i6 只渲这一部分（不重渲、不改动已有的音效），清单只含这一部分，
- *   转换用 python -I scripts/audio/bake.py <输出目录> --partial 并进 Unity 现有清单。
+ *   转换用 python -I scripts/audio/bake.py <输出目录> --partial 并进现有清单。
  */
 import { SynthKit, type Recipe, type Voice } from '../audio/Synth';
 import { SFX, SFX_META, SFX_POSITIONAL } from '../audio/Sfx';

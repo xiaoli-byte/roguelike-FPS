@@ -1,34 +1,27 @@
 // 音频（M11e）：网页 src/audio/AudioRules.ts 对照 Unity 的 GameAudio / AudioMix / AudioDuck / AudioOcclusion / AmbienceZone /
 // MusicDirector / UISound / AudioMixerBuilder。
 // 一半断言照搬 Unity EditMode 测试（AudioI6Tests、GraphicsAudioTests 的 DuckRulesMatchThreeJs / DenseSoundsAreThrottled），
-// 另一半从 C# 源码里用正则读常数，和网页的常数逐个比（两边改了一边就会挂）。
-// 最后核对发布的素材：public/assets/audio 和 Unity 目录一致（publish-audio.mjs --check），每个 SfxId 都有片段。
+// 另一半把网页的常数和 Unity 删除前冻结的 C# 规格（tests/fixtures/spec/audio.json）逐个比。
+// 最后核对发布的素材：每个 SfxId 都有片段。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
 import { stripTypeScriptTypes } from 'node:module';
 
 const root = new URL('../', import.meta.url);
 const data = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 const ts = async path => import(data(stripTypeScriptTypes(readFileSync(new URL(path, root), 'utf8'), { mode: 'transform' })));
 const R = await ts('src/audio/AudioRules.ts');
-const cs = path => readFileSync(new URL(`unity/Assets/${path}`, root), 'utf8');
-const GameAudio = cs('Game/Scripts/Audio/GameAudio.cs');
-const AudioMix = cs('Game/Scripts/Audio/AudioMix.cs');
-const AudioDuck = cs('Game/Scripts/Audio/AudioDuck.cs');
-const Occlusion = cs('Game/Scripts/Audio/AudioOcclusion.cs');
-const Ambience = cs('Game/Scripts/Audio/AmbienceZone.cs');
-const Music = cs('Game/Scripts/Audio/MusicDirector.cs');
-const UISoundCs = cs('Game/Scripts/UI/Toolkit/UISound.cs');
-const Builder = cs('Pipeline/Editor/AudioMixerBuilder.cs');
+// Unity 删除前冻结的音频 C# 规格；下面的 GameAudio / AudioMix … 是规格里的文件名（num(文件, 名字) 查 consts）
+const AUDIO = JSON.parse(readFileSync(new URL('tests/fixtures/spec/audio.json', root), 'utf8'));
+const [GameAudio, AudioMix, AudioDuck, Occlusion, Ambience] = ['GameAudio', 'AudioMix', 'AudioDuck', 'Occlusion', 'Ambience'];
 
 const close = (a, b, eps = 1e-5, msg = '') => assert.ok(Math.abs(a - b) <= eps, `${msg} ${a} ≠ ${b}（±${eps}）`);
-/** C# 源码里 `Name = 1.5f` 的值 */
-function num(src, name) {
-  const m = new RegExp(`\\b${name}\\s*=\\s*(-?[\\d.]+)f?\\b`).exec(src);
-  assert.ok(m, `C# 里找不到 ${name}`);
-  return Number(m[1]);
+/** 冻结规格里 C# 文件 file 的 `Name = 1.5f` 的值 */
+function num(file, name) {
+  const v = AUDIO.consts[`${file}.${name}`];
+  assert.ok(v !== undefined, `规格里没有 ${file}.${name}`);
+  return v;
 }
 
 // ───────────── AudioI6Tests ─────────────
@@ -47,12 +40,7 @@ test('分层：近处三层都在，25 m 外没有「咔」，尾音比主体衰
   close(R.layerGain(R.LAYER_BODY, 30, 1.4), 1, 1e-9, 'k 先夹到 0..1');
   close(R.layerGain(R.LAYER_TAIL, 30, -0.2), 0, 1e-9);
   // C#：瞬态 / 主体 / 尾音的下标与后缀
-  assert.match(GameAudio, /LayerTransient = 0, LayerBody = 1, LayerTail = 2/);
-  assert.match(GameAudio, /LayerSuffix = \{ "_t", "_b", "_r" \}/);
   assert.deepEqual([...R.LAYER_SUFFIX], ['_t', '_b', '_r']);
-  assert.match(GameAudio, /InverseLerp\(8f, 25f, dist\)/);
-  assert.match(GameAudio, /layer == LayerTail \? 1f : 1\.6f/);
-  assert.match(GameAudio, /Random\.Range\(-0\.015f, 0\.015f\)/);
   close(R.LAYER_PITCH_JITTER, 0.015);
 });
 
@@ -82,9 +70,6 @@ test('每章声床、封闭关卡混响更多（AudioI6Tests.EachChapterHasItsBe
     [3, '3-4', -5], [3, '3-3', -10], [3, '3-A', -10], [1, null, -20]]) {
     assert.equal(R.reverbBaseDb(ch, scene), db, `${ch} ${scene}`);
   }
-  assert.match(Ambience, /chapter switch \{ 2 => -12f, 3 => -10f, _ => -20f \}/);
-  assert.match(Ambience, /StartsWith\("L2_4"\) \|\| scene\.StartsWith\("L3_2"\) \|\| scene\.StartsWith\("L3_4"\)\)\) db \+= 5f/);
-  assert.match(Ambience, /2 => "amb_frost",\s*3 => "amb_inferno",\s*_ => "amb_desert"/);
   assert.equal(R.BED_LEVEL, num(Ambience, 'BedLevel'));
   assert.equal(R.BED_FADE_IN, num(Ambience, 'FadeIn'));
   assert.equal(R.BED_DEAD_LEVEL, num(Ambience, 'DeadLevel'));
@@ -119,9 +104,6 @@ test('压低快照照 Three.js（GraphicsAudioTests.DuckRulesMatchThreeJs）', (
   assert.equal(R.PAUSED_DUCK, num(AudioDuck, 'PausedDuck'));
   assert.equal(R.SUMMARY_DUCK, num(AudioDuck, 'SummaryDuck'));
   assert.equal(R.DUCK_TRANSITION, num(AudioDuck, 'TransitionSeconds'));
-  assert.match(Builder, /Vol\(ctx, world, paused, AudioMix\.LinearToDb\(AudioDuck\.PausedDuck\)\)/);
-  assert.match(Builder, /Param\(ctx, lowpass, "Lowpass Simple", paused, "Cutoff freq", AudioMix\.PausedLowpass\)/);
-  assert.match(Builder, /Vol\(ctx, world, summary, AudioMix\.LinearToDb\(AudioDuck\.SummaryDuck\)\)/);
 });
 
 test('密集音节流（GraphicsAudioTests.DenseSoundsAreThrottled）', () => {
@@ -139,10 +121,8 @@ test('密集音节流（GraphicsAudioTests.DenseSoundsAreThrottled）', () => {
   assert.equal(g.gain, 1);
   assert.ok(R.denseAllow(null, 9, 0).allow);
   // 表和 C# 的 Dense 字典逐条一致
-  const table = {};
-  for (const m of GameAudio.matchAll(/\["(\w+)"\] = \((\d+), ([\d.]+)f\)/g)) table[m[1]] = [Number(m[2]), Number(m[3])];
+  const table = AUDIO.dense;
   assert.deepEqual(table, Object.fromEntries(Object.entries(R.DENSE).map(([k, v]) => [k, [...v]])));
-  assert.match(GameAudio, /gain = 1f \/ \(1f \+ 0\.35f \* live\)/);
 });
 
 test('混音台：限幅器、总线、暴露的五档音量（AudioMix / AudioMixerBuilder）', () => {
@@ -150,9 +130,6 @@ test('混音台：限幅器、总线、暴露的五档音量（AudioMix / AudioM
   assert.equal(R.LIMITER_ATTACK, num(AudioMix, 'LimiterAttack'));
   assert.equal(R.LIMITER_RELEASE, num(AudioMix, 'LimiterRelease'));
   // 组结构：UI 直接挂 Master，SFX / Music / Ambience / Reverb 在 World 下
-  assert.match(AudioMix, /PathSfx = "Master\/World\/SFX", PathMusic = "Master\/World\/Music"/);
-  assert.match(AudioMix, /PathAmbience = "Master\/World\/Ambience", PathReverb = "Master\/World\/Reverb", PathUi = "Master\/UI"/);
-  for (const p of ['MasterVolume', 'SfxVolume', 'MusicVolume', 'UiVolume', 'AmbienceVolume', 'ReverbSend']) assert.ok(AudioMix.includes(`"${p}"`), p);
   // 推子：玩家音量 → dB → 线性（0 = 静音）
   close(R.faderGain(1), 1, 1e-9);
   close(R.faderGain(0.5), 0.5, 1e-9);
@@ -161,13 +138,9 @@ test('混音台：限幅器、总线、暴露的五档音量（AudioMix / AudioM
   assert.equal(R.faderGain(Number.NaN), 1, '坏存档按 1');
   // SFX Reverb 的参数（mB / 秒）
   for (const [k, name] of [['dryLevel', 'Dry Level'], ['room', 'Room'], ['roomHF', 'Room HF'], ['decayTime', 'Decay Time'], ['reflections', 'Reflections'], ['reverb', 'Reverb']]) {
-    const m = new RegExp(`"SFX Reverb", gameplay, "${name}", (-?[\\d.]+)f?\\)`).exec(Builder);
-    assert.ok(m, name);
-    assert.equal(R.REVERB[k], Number(m[1]), name);
+    assert.equal(R.REVERB[k], AUDIO.reverb[name], name);
   }
-  assert.match(Builder, /SetValueForMixLevel", controller, gameplay, -80f\)/, '混响发送默认关');
   // 基础电平（GameAudio.Mix 的初值，清单缺 mix 时用）
-  assert.match(GameAudio, /master = 0\.8f, sfx = 0\.9f, music = 0\.3f/);
   assert.deepEqual({ ...R.DEFAULT_MIX }, { master: 0.8, sfx: 0.9, music: 0.3 });
   close(R.sfxBusLevel(R.DEFAULT_MIX), 0.72);
   close(R.musicBusLevel(R.DEFAULT_MIX), 0.24);
@@ -182,10 +155,6 @@ test('声道数、距离衰减、近处声像、远处 / 背后低通（GameAudi
   assert.equal(R.BEAM_HOLD, num(GameAudio, 'BeamHold'));
   assert.equal(R.MUSIC_FADE_OUT, num(GameAudio, 'FadeOut'));
   assert.equal(R.MUSIC_FADE_IN, num(GameAudio, 'FadeIn'));
-  assert.match(GameAudio, /gain \*= Mathf\.Pow\(k, 1\.6f\)/);
-  assert.match(GameAudio, /if \(!\(gain >= 0\.003f\)\) return;/);
-  assert.match(GameAudio, /Mathf\.Min\(4, volume\)/);
-  assert.match(GameAudio, /lowpassResonanceQ = 0\.7f/);
   assert.equal(R.VOICE_LOWPASS_Q, 0.7);
 
   assert.equal(R.distanceK(0), 1);
@@ -195,16 +164,12 @@ test('声道数、距离衰减、近处声像、远处 / 背后低通（GameAudi
   close(R.distanceGain(0.5), Math.pow(0.5, 1.6));
 
   // 近处声像收窄：min(1, dist/3) × 0.85，0.3 m 内不收
-  assert.match(GameAudio, /blend = Mathf\.Min\(1, dist \/ 3\) \* 0\.85f/);
   assert.equal(R.panBlend(0.2), 0);
   close(R.panBlend(1.5), 0.425);
   close(R.panBlend(3), 0.85);
   close(R.panBlend(30), 0.85);
 
   // 低通
-  assert.match(GameAudio, /float far = dist > 10 \? 900 \+ 17000 \* Mathf\.Pow\(1 - dist \/ \(SilentDist \+ 8\), 2\) : 20000;/);
-  assert.match(GameAudio, /float behind = front < -0\.25f \? 5500 : 20000;/);
-  assert.match(GameAudio, /if \(lp < 19000\)/);
   assert.equal(R.spatialLowpass(5, 1), 0, '近处正前方不开');
   assert.equal(R.spatialLowpass(5, -0.5), 5500, '背后 5.5 kHz');
   assert.equal(R.spatialLowpass(5, -0.2), 0, '侧后方 −0.2 不算背后');
@@ -230,7 +195,6 @@ test('声道数、距离衰减、近处声像、远处 / 背后低通（GameAudi
   assert.equal(R.voicePitch(1, 1, 0.04), 1.04);
   assert.equal(R.voicePitch(0.1, 0, 0.04), 0.25, '下限 0.25');
   assert.equal(R.voicePitch(5, 0, 0), 3, '上限 3');
-  assert.match(GameAudio, /Mathf\.Clamp\(pitch \* \(1 \+ UnityEngine\.Random\.Range\(-1f, 1f\) \* d\.meta\.pitch\), 0\.25f, 3f\)/);
   assert.equal(R.voiceVolume(1.7), 1, 'AudioSource.volume 上限 1');
   assert.equal(R.isUiSound('ui_click'), true);
   assert.equal(R.isUiSound('hit'), false);
@@ -240,9 +204,6 @@ test('声道数、距离衰减、近处声像、远处 / 背后低通（GameAudi
 });
 
 test('光束：0.05 s 起满、0.12 s 收完，目标 = clamp01(volume × 音效总线)（GameAudio.HoldBeam / Update）', () => {
-  assert.match(GameAudio, /beamTarget = Mathf\.Clamp01\(volume \* SfxBus\)/);
-  assert.match(GameAudio, /beam\.pitch = Mathf\.Clamp\(pitch, 0\.5f, 2f\)/);
-  assert.match(GameAudio, /dt \/ \(held \? 0\.05f : 0\.12f\) \* Mathf\.Max\(0\.2f, beamTarget\)/);
   close(R.beamTarget(0.35, 0.72), 0.252);
   assert.equal(R.beamTarget(3, 0.72), 1);
   assert.equal(R.beamPitch(0.1), 0.5);
@@ -270,13 +231,10 @@ test('Unity Mathf 的语义（MoveTowards / SmoothStep / InverseLerp）', () => 
 // ───────────── 声床 / 混响区 / 选曲 / 按钮音 ─────────────
 
 test('混响发送：从关直接跳到目标，之后 20 dB/s；局部混响区球边 3 m 渐变（AmbienceDirector.Update / AmbienceZone.ExtraAt）', () => {
-  assert.match(Ambience, /sendDb = sendDb <= Off \+ 0\.1f \? target : Mathf\.MoveTowards\(sendDb, target, dt \* 20f\);/);
-  assert.match(Ambience, /target = Mathf\.Min\(0, target\);/);
   assert.equal(R.reverbSendStep(-80, -12, 0.016), -12, '第一帧直接到');
   close(R.reverbSendStep(-12, -7, 0.1), -10, 1e-9, '2 dB / 0.1 s');
   assert.equal(R.reverbSendStep(-3, 6, 1), 0, '目标夹到 ≤ 0 dB');
 
-  assert.match(Ambience, /float w = 1 - Mathf\.Clamp01\(\(d - z\.radius\) \/ 3f\);/);
   const zones = [{ x: 0, y: 0, z: 0, radius: 20, extraDb: 8 }, { x: 100, y: 0, z: 0, radius: 10, extraDb: 3 }];
   assert.equal(R.zoneExtraAt(5, 0, 0, zones), 8);
   close(R.zoneExtraAt(21.5, 0, 0, zones), 4, 1e-9, '出球 1.5 m = 一半');
@@ -284,8 +242,6 @@ test('混响发送：从关直接跳到目标，之后 20 dB/s；局部混响区
   assert.equal(R.zoneExtraAt(100, 0, 5, zones), 3);
   assert.equal(R.zoneExtraAt(0, 0, 0, []), 0);
   // 关卡里摆的区：Unity 只有 3-3（Level_3_3.Dressing：半径 48、+4 dB，挂在原点的根上）
-  const lvl = cs('Pipeline/Editor/Levels/Level_3_3.Dressing.cs');
-  assert.match(lvl, /zone\.radius = 48f;\s*zone\.extraDb = 4f;/);
   assert.deepEqual(R.AMBIENCE_ZONES['3-3'], [{ x: 0, y: 0, z: 0, radius: 48, extraDb: 4 }]);
   assert.equal(Object.keys(R.AMBIENCE_ZONES).length, 1);
 });
@@ -299,10 +255,7 @@ test('章节：地图名的首位数字优先（FxTone.Detect）', () => {
 });
 
 test('选曲：交战 → combat，首领 → boss / 旱魃主题，其余 calm（MusicDirector）', () => {
-  assert.match(Music, /enemyId == HanbaDef\.Id && Resources\.Load<AudioClip>\("Audio\/Music\/boss_hanba"\) \? "boss_hanba" : "boss"/);
-  assert.match(Music, /next = Time\.unscaledTime \+ 0\.5f;/);
   assert.equal(R.MUSIC_POLL, 0.5);
-  assert.match(Music, /e\.enemyId\.StartsWith\("boss"\)/);
   assert.equal(R.bossMusic('boss_hanba', true), 'boss_hanba');
   assert.equal(R.bossMusic('boss_hanba', false), 'boss', '没烘焙时退回通用首领曲');
   assert.equal(R.bossMusic('boss_qilin', true), 'boss');
@@ -320,25 +273,14 @@ test('按钮音：静音类 > 禁用 → 拒绝 > 确认类 > 拒绝类 > 点击
   assert.equal(R.uiClickSound(b({ confirm: true })), 'ui_confirm');
   assert.equal(R.uiClickSound(b({ deny: true })), 'ui_deny');
   assert.equal(R.uiClickSound(b({})), 'ui_click');
-  assert.match(UISoundCs, /if \(now - lastHover < 0\.04f\) return;/);
   assert.equal(R.UI_HOVER_GAP, 0.04);
-  for (const id of ['ui_click', 'ui_hover', 'ui_confirm', 'ui_deny']) assert.ok(UISoundCs.includes(`"${id}"`), id);
-  const theme = cs('Game/Scripts/UI/Toolkit/UITheme.cs');
-  assert.match(theme, /SoundConfirm = "sf-sound-confirm", SoundDeny = "sf-sound-deny", Silent = "sf-silent"/);
-  assert.match(theme, /Button = "sf-btn"/);
   assert.deepEqual({ ...R.UI_CLASS }, { button: 'sf-btn', confirm: 'sf-sound-confirm', deny: 'sf-sound-deny', silent: 'sf-silent' });
 });
 
 // ───────────── 发布的素材 ─────────────
 
-test('public/assets/audio 与 Unity 一致，每个 SfxId 都有片段', () => {
-  const r = spawnSync(process.execPath, ['scripts/web/publish-audio.mjs', '--check'], { cwd: root, encoding: 'utf8' });
-  assert.equal(r.status, 0, `publish-audio --check：${r.stdout}${r.stderr}`);
+test('public/assets/audio：每个 SfxId 都有片段', () => {
   const m = JSON.parse(readFileSync(new URL('public/assets/audio/audio-manifest.json', root), 'utf8'));
-  const unity = JSON.parse(readFileSync(new URL('unity/Assets/Game/Resources/Audio/audio-manifest.json', root), 'utf8').replace(/^﻿/, ''));
-  assert.deepEqual(m.sfx, unity.sfx);
-  assert.deepEqual(m.music, unity.music);
-  assert.deepEqual(m.mix, unity.mix);
   const clips = new Set(m.clips);
   const types = readFileSync(new URL('src/core/types.ts', root), 'utf8');
   const union = /export type SfxId =([\s\S]*?);/.exec(types)[1];

@@ -1,5 +1,5 @@
 /**
- * 音频系统（IAudio 实现）：播 Unity 烘好的 ogg（public/assets/audio，scripts/web/publish-audio.mjs 发布），行为照 Unity 的
+ * 音频系统（IAudio 实现）：播烘好的 ogg（public/assets/audio，audio-bake.html 渲 + scripts/audio/bake.py 转），行为照 Unity 的
  * GameAudio / AudioDuck / AudioOcclusion / MusicDirector / AmbienceDirector 一比一照译（规则和常数在 AudioRules.ts）。
  *
  * 混音台（AudioMixer.ts，照 Spiritfire.mixer）：Master（限幅）→ World（暂停 / 模态快照 0.45 + 6 kHz 低通、结算 0.8）
@@ -764,7 +764,7 @@ export class AudioSystem implements IAudio {
     const ac = this.ac;
     if (!ac || ac.state !== 'running' || !this.mixer) return; // 解锁后再起
     if (this.bank.state === 'failed' || (this.bank.state === 'ready' && !this.bank.hasMusic(id))) {
-      this.warnOnce(`bed:${id}`, `[Audio] 没有环境声床 ${id}（重跑 audio-bake.html 的 I6 段 + scripts/audio/bake.py --partial，再 node scripts/web/publish-audio.mjs），静音`);
+      this.warnOnce(`bed:${id}`, `[Audio] 没有环境声床 ${id}（重跑 audio-bake.html 的 I6 段 + python -I scripts/audio/bake.py <输出目录> --partial），静音`);
       return;
     }
     const gain = ac.createGain();
